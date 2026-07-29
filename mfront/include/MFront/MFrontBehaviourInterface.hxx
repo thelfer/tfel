@@ -23,22 +23,23 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT MFrontBehaviourInterface
       : AbstractBehaviourInterface {
     //
-    static std::string getName();
+    [[nodiscard]] static std::string getName();
     void setOptions(const DataMap &) override;
-    std::string getInterfaceName() const override;
-    std::string getInterfaceVersion() const override;
-    std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription &,
-        const std::string &,
-        const std::vector<std::string> &,
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::string getInterfaceVersion() const override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    bool isBehaviourConstructorRequired(
-        const Hypothesis, const BehaviourDescription &) const override;
-    std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const override;
-    std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
-    buildMaterialPropertiesList(const BehaviourDescription &,
+    [[nodiscard]] bool isBehaviourConstructorRequired(
+        const Hypothesis, const BehaviourDescription&) const override;
+    [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::pair<std::vector<BehaviourMaterialProperty>,
+                            SupportedTypes::TypeSize>
+    buildMaterialPropertiesList(const BehaviourDescription&,
                                 const Hypothesis) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream &, const BehaviourDescription &) const override;

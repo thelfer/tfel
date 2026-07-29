@@ -48,6 +48,9 @@ namespace tfel::tests {
      */
     StdStreamTestOutput(const std::shared_ptr<std::ostream>&,
                         const bool = false);
+    //
+    StdStreamTestOutput(const StdStreamTestOutput&) = delete;
+    StdStreamTestOutput& operator=(const StdStreamTestOutput&) = delete;
     /*!
      * \brief begin a new test suite
      * \param[in] n: name of the test suite
@@ -76,10 +79,6 @@ namespace tfel::tests {
      * \param s: string to be added at beginning of line
      */
     TFEL_VISIBILITY_LOCAL void treatTest(const TestResult&, const std::string&);
-    //! \brief copy constructor (disabled)
-    StdStreamTestOutput(const StdStreamTestOutput&) = delete;
-    //! \brief assignement operator (disabled)
-    StdStreamTestOutput& operator=(const StdStreamTestOutput&) = delete;
     //! pointer used to close stream, if the class has to handle it
     std::shared_ptr<std::ostream> pos;
     //! output stream

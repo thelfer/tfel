@@ -29,7 +29,6 @@ namespace mfront::bbrick {
    * - \f$p\f$ is the total equivalent plastic strain.
    */
   struct StressBasedPorosityNucleationModelBase : PorosityNucleationModelBase {
-    std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -40,19 +39,18 @@ namespace mfront::bbrick {
         const StressPotential&,
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string&) const override;
-    std::string updateNextEstimateOfThePorosityIncrement(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string updateNextEstimateOfThePorosityIncrement(
         const BehaviourDescription&,
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string&) const override;
-    bool requiresSavingNucleatedPorosity() const final;
+    [[nodiscard]] bool requiresSavingNucleatedPorosity() const final;
     //! \brief destructor
     ~StressBasedPorosityNucleationModelBase() override;
 
    protected:
-    /*!
-     * \return the name of the underlying nucleation model.
-     */
-    virtual std::string getModelName() const = 0;
+    //! \return the name of the underlying nucleation model.
+    [[nodiscard]] virtual std::string getModelName() const = 0;
     //!
     BehaviourDescription::MaterialProperty fmax;
   };  // end of struct StressBasedPorosityNucleationModelBase

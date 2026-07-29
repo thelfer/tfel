@@ -45,7 +45,7 @@ namespace mtest {
      * \return the total number of unknowns (including the Lagrange
      * multipliers)
      */
-    virtual size_type getNumberOfUnknowns() const = 0;
+    [[nodiscard]] virtual size_type getNumberOfUnknowns() const = 0;
     /*!
      * \brief initialize the current state
      * \param[in] s : current state
@@ -77,7 +77,7 @@ namespace mtest {
     /*!
      * \brief perform the computation of the packaging step
      */
-    virtual bool doPackagingStep(StudyCurrentState&) const = 0;
+    [[nodiscard]] virtual bool doPackagingStep(StudyCurrentState&) const = 0;
     /*!
      * \brief compute the stiffness matrix and the residual
      * \return a pair containing:
@@ -129,7 +129,8 @@ namespace mtest {
     /*!
      * \param[in] : du unknows increment difference between two iterations
      */
-    virtual real getErrorNorm(const tfel::math::vector<real>&) const = 0;
+    [[nodiscard]] virtual real getErrorNorm(
+        const tfel::math::vector<real>&) const = 0;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -140,13 +141,13 @@ namespace mtest {
      * \param[in] dt: time increment
      * \return a boolean saying if all convergence criteria are met
      */
-    virtual bool checkConvergence(StudyCurrentState&,
-                                  const tfel::math::vector<real>&,
-                                  const tfel::math::vector<real>&,
-                                  const SolverOptions&,
-                                  const unsigned int,
-                                  const real,
-                                  const real) const = 0;
+    [[nodiscard]] virtual bool checkConvergence(StudyCurrentState&,
+                                                const tfel::math::vector<real>&,
+                                                const tfel::math::vector<real>&,
+                                                const SolverOptions&,
+                                                const unsigned int,
+                                                const real,
+                                                const real) const = 0;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -156,7 +157,7 @@ namespace mtest {
      * \param[in] dt: time increment
      * \return a description of all the criteria that were not met.
      */
-    virtual std::vector<std::string> getFailedCriteriaDiagnostic(
+    [[nodiscard]] virtual std::vector<std::string> getFailedCriteriaDiagnostic(
         const StudyCurrentState&,
         const tfel::math::vector<real>&,
         const tfel::math::vector<real>&,

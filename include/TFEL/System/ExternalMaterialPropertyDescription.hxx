@@ -50,57 +50,57 @@ namespace tfel::system {
      * \brief get the default value of a parameter
      * \param[in] p: parameter name
      */
-    double getParameterDefaultValue(const std::string&) const;
+    [[nodiscard]] double getParameterDefaultValue(const std::string&) const;
     /*!
      * \return true if the given variable has bounds
      * \param[in] v: variable name
      */
-    bool hasBounds(const std::string&) const;
+    [[nodiscard]] bool hasBounds(const std::string&) const;
     /*!
      * \return true if the given variable has a lower bound
      * \param[in] v: variable name
      */
-    bool hasLowerBound(const std::string&) const;
+    [[nodiscard]] bool hasLowerBound(const std::string&) const;
     /*!
      * \return true if the given variable has a upper bound
      * \param[in] v: variable name
      */
-    bool hasUpperBound(const std::string&) const;
+    [[nodiscard]] bool hasUpperBound(const std::string&) const;
     /*!
      * \return the lower bound of the given variable
      * \param[in] v: variable name
      */
-    long double getLowerBound(const std::string&) const;
+    [[nodiscard]] long double getLowerBound(const std::string&) const;
     /*!
      * \return the upper bound of the given variable
      * \param[in] v: variable name
      */
-    long double getUpperBound(const std::string&) const;
+    [[nodiscard]] long double getUpperBound(const std::string&) const;
     /*!
      * \return true if the given variable has bounds
      * \param[in] v: variable name
      */
-    bool hasPhysicalBounds(const std::string&) const;
+    [[nodiscard]] bool hasPhysicalBounds(const std::string&) const;
     /*!
      * \return true if the given variable has a lower physical bound
      * \param[in] v: variable name
      */
-    bool hasLowerPhysicalBound(const std::string&) const;
+    [[nodiscard]] bool hasLowerPhysicalBound(const std::string&) const;
     /*!
      * \return true if the given variable has a upper physical bound
      * \param[in] v: variable name
      */
-    bool hasUpperPhysicalBound(const std::string&) const;
+    [[nodiscard]] bool hasUpperPhysicalBound(const std::string&) const;
     /*!
      * \return the lower bound of the given variable
      * \param[in] v: variable name
      */
-    long double getLowerPhysicalBound(const std::string&) const;
+    [[nodiscard]] long double getLowerPhysicalBound(const std::string&) const;
     /*!
      * \return the upper bound of the given variable
      * \param[in] v: variable name
      */
-    long double getUpperPhysicalBound(const std::string&) const;
+    [[nodiscard]] long double getUpperPhysicalBound(const std::string&) const;
     //! \brief destructor
     ~ExternalMaterialPropertyDescription();
     //! \brief name of the law defining the material property

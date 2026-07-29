@@ -28,20 +28,22 @@ namespace lsdyna {
   struct MFRONT_LSDYNA_VISIBILITY_EXPORT LSDYNAException
       : public std::exception {
     LSDYNAException(const std::string&);
-    //! move constructor
+    //! \brief move constructor
     LSDYNAException(LSDYNAException&&) noexcept;
-    //! copy constructor
+    //! \brief copy constructor
     LSDYNAException(const LSDYNAException&);
-    const char* what() const noexcept final;
-    virtual const std::string& getMsg() const noexcept final;
-    //! destructor
-    ~LSDYNAException() noexcept override;
-
-   private:
+    //
     LSDYNAException() = delete;
     LSDYNAException& operator=(const LSDYNAException&) = delete;
     LSDYNAException& operator=(LSDYNAException&&) = delete;
-    //! error message
+    //
+    [[nodiscard]] const char* what() const noexcept final;
+    [[nodiscard]] virtual const std::string& getMsg() const noexcept final;
+    //! \brief destructor
+    ~LSDYNAException() noexcept override;
+
+   private:
+    //! \brief error message
     const std::string msg;
   };  // end of struct LSDYNAException
   /*!
@@ -54,12 +56,12 @@ namespace lsdyna {
      * \param[in] b : behaviour name
      */
     LSDYNAInvalidModellingHypothesis(const char*);
-    //! move constructor
+    //! \brief move constructor
     LSDYNAInvalidModellingHypothesis(
         LSDYNAInvalidModellingHypothesis&&) noexcept;
-    //! copy constructor
+    //! \brief copy constructor
     LSDYNAInvalidModellingHypothesis(const LSDYNAInvalidModellingHypothesis&);
-    //! destructor
+    //! \brief destructor
     ~LSDYNAInvalidModellingHypothesis() noexcept override;
     LSDYNAInvalidModellingHypothesis& operator=(
         const LSDYNAInvalidModellingHypothesis&) = delete;
@@ -71,16 +73,15 @@ namespace lsdyna {
   struct MFRONT_LSDYNA_VISIBILITY_EXPORT LSDYNAInvalidNTENSValue
       : public LSDYNAException {
     LSDYNAInvalidNTENSValue(const unsigned short);
-    //! move constructor
+    //! \brief move constructor
     LSDYNAInvalidNTENSValue(LSDYNAInvalidNTENSValue&&) noexcept;
-    //! copy constructor
+    //! \brief copy constructor
     LSDYNAInvalidNTENSValue(const LSDYNAInvalidNTENSValue&);
-    //! desctructor
-    ~LSDYNAInvalidNTENSValue() noexcept override;
-
-   private:
+    //
     LSDYNAInvalidNTENSValue() = delete;
     LSDYNAInvalidNTENSValue& operator=(const LSDYNAInvalidNTENSValue&) = delete;
+    //! \brief destructor
+    ~LSDYNAInvalidNTENSValue() noexcept override;
   };  // end of struct LSDYNAInvalidNTENSValue
   /*!
    * \brief exception thrown when an invalid dimension is detected
@@ -88,16 +89,15 @@ namespace lsdyna {
   struct MFRONT_LSDYNA_VISIBILITY_EXPORT LSDYNAInvalidDimension
       : public LSDYNAException {
     LSDYNAInvalidDimension(const std::string&, const unsigned short);
-    //! move constructor
+    //! \brief move constructor
     LSDYNAInvalidDimension(LSDYNAInvalidDimension&&) noexcept;
-    //! copy constructor
+    //! \brief copy constructor
     LSDYNAInvalidDimension(const LSDYNAInvalidDimension&);
-    //! destructor
-    ~LSDYNAInvalidDimension() noexcept override;
-
-   private:
+    //
     LSDYNAInvalidDimension() = delete;
     LSDYNAInvalidDimension& operator=(const LSDYNAInvalidDimension&) = delete;
+    //! \brief destructor
+    ~LSDYNAInvalidDimension() noexcept override;
   };  // end of struct LSDYNAInvalidDimension
 
 }  // end of namespace lsdyna

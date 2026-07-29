@@ -29,301 +29,293 @@
 #include "NUMODIS/Config.hxx"
 #include "NUMODIS/Vect3.hxx"
 
-namespace numodis {
+namespace numodis::math {
 
-  namespace math {
+  // Greatest common divisor for rings (including unsigned integers)
+  template <typename RingType>
+  RingType gcd_euclidean(RingType a, RingType b) {
+    constexpr auto zero = static_cast<RingType>(0);
+    // Reduce by GCD-remainder property [GCD(a,b) == GCD(b,a MOD b)]
+    while (true) {
+      if (a == zero) return b;
+      b %= a;
 
-    // Greatest common divisor for rings (including unsigned integers)
-    template <typename RingType>
-    RingType gcd_euclidean(RingType a, RingType b) {
-      constexpr auto zero = static_cast<RingType>(0);
-      // Reduce by GCD-remainder property [GCD(a,b) == GCD(b,a MOD b)]
-      while (true) {
-        if (a == zero) return b;
-        b %= a;
-
-        if (b == zero) return a;
-        a %= b;
-      }
-    }  // end of gcd_euclidean
-
-    //===============================================================
-    // GCD
-    //---------------------------------------------------------------
-    //! Compute the greatest common divisor of two positive integers
-    //---------------------------------------------------------------
-    /*!
-     * \param a first integer
-     * \param b second integer
-     * \return greatest common divisor
-     */
-    //===============================================================
-    template <typename IntegerType>
-    inline IntegerType GCD(const IntegerType& a, const IntegerType& b) {
-      // Avoid repeated construction
-      constexpr auto zero = static_cast<IntegerType>(0);
-      const auto result = gcd_euclidean(a, b);
-      return (result < zero) ? static_cast<IntegerType>(-result) : result;
+      if (b == zero) return a;
+      a %= b;
     }
+  }  // end of gcd_euclidean
 
-    TFELNUMODIS_VISIBILITY_EXPORT int GCD(const std::vector<int>& u);
+  //===============================================================
+  // GCD
+  //---------------------------------------------------------------
+  //! Compute the greatest common divisor of two positive integers
+  //---------------------------------------------------------------
+  /*!
+   * \param a first integer
+   * \param b second integer
+   * \return greatest common divisor
+   */
+  //===============================================================
+  template <typename IntegerType>
+  inline IntegerType GCD(const IntegerType& a, const IntegerType& b) {
+    // Avoid repeated construction
+    constexpr auto zero = static_cast<IntegerType>(0);
+    const auto result = gcd_euclidean(a, b);
+    return (result < zero) ? static_cast<IntegerType>(-result) : result;
+  }
 
-    //===============================================================
-    // iCrossProduct
-    //---------------------------------------------------------------
-    //! Cross product of two vectors (3D): W = U x V
-    //---------------------------------------------------------------
-    /*!
-      \param U first vector (3D)
-      \param V second vector (3D)
-      \param W cross-product
-    */
-    //===============================================================
-    inline void iCrossProduct(const std::vector<int>& U,
-                              const std::vector<int>& V,
-                              std::vector<int>& W) {
-      W[0] = U[1] * V[2] - U[2] * V[1];
-      W[1] = U[2] * V[0] - U[0] * V[2];
-      W[2] = U[0] * V[1] - U[1] * V[0];
-    }
+  TFELNUMODIS_VISIBILITY_EXPORT int GCD(const std::vector<int>& u);
 
-    //===============================================================
-    // iCrossProduct
-    //---------------------------------------------------------------
-    //! Cross product of two vectors (3D): W = U x V
-    //---------------------------------------------------------------
-    /*!
-      \param U first vector (3D)
-      \param V second vector (3D)
-      \param W cross-product
-    */
-    //===============================================================
-    inline void iCrossProduct(const int U[], const int V[], int W[]) {
-      W[0] = U[1] * V[2] - U[2] * V[1];
-      W[1] = U[2] * V[0] - U[0] * V[2];
-      W[2] = U[0] * V[1] - U[1] * V[0];
-    }
+  //===============================================================
+  // iCrossProduct
+  //---------------------------------------------------------------
+  //! Cross product of two vectors (3D): W = U x V
+  //---------------------------------------------------------------
+  /*!
+    \param U first vector (3D)
+    \param V second vector (3D)
+    \param W cross-product
+  */
+  //===============================================================
+  inline void iCrossProduct(const std::vector<int>& U,
+                            const std::vector<int>& V,
+                            std::vector<int>& W) {
+    W[0] = U[1] * V[2] - U[2] * V[1];
+    W[1] = U[2] * V[0] - U[0] * V[2];
+    W[2] = U[0] * V[1] - U[1] * V[0];
+  }
 
-    //===============================================================
-    // iScalProduct
-    //---------------------------------------------------------------
-    //! Scalar product of two std::vector<int>: U.V
-    //---------------------------------------------------------------
-    /*
-      \param U first vector
-      \param V second vector
-    */
-    //===============================================================
-    inline int iScalProduct(const std::vector<int>& U,
-                            const std::vector<int>& V) {
-      int sum = 0;
-      for (unsigned i = 0; i != U.size(); i++) sum += U[i] * V[i];
-      return sum;
-    }
+  //===============================================================
+  // iCrossProduct
+  //---------------------------------------------------------------
+  //! Cross product of two vectors (3D): W = U x V
+  //---------------------------------------------------------------
+  /*!
+    \param U first vector (3D)
+    \param V second vector (3D)
+    \param W cross-product
+  */
+  //===============================================================
+  inline void iCrossProduct(const int U[], const int V[], int W[]) {
+    W[0] = U[1] * V[2] - U[2] * V[1];
+    W[1] = U[2] * V[0] - U[0] * V[2];
+    W[2] = U[0] * V[1] - U[1] * V[0];
+  }
 
-    //===============================================================
-    // abs
-    //---------------------------------------------------------------
-    //! return the absolute value of a vector
-    //---------------------------------------------------------------
-    /*
-      \param U first vector
-      \param V second vector
-    */
-    //===============================================================
-    inline std::vector<int> abs(const std::vector<int>& U) {
-      std::vector<int> V(U);
-      for (unsigned i = 0; i != V.size(); i++) V[i] = std::abs(V[i]);
+  //===============================================================
+  // iScalProduct
+  //---------------------------------------------------------------
+  //! Scalar product of two std::vector<int>: U.V
+  //---------------------------------------------------------------
+  /*
+    \param U first vector
+    \param V second vector
+  */
+  //===============================================================
+  inline int iScalProduct(const std::vector<int>& U,
+                          const std::vector<int>& V) {
+    int sum = 0;
+    for (unsigned i = 0; i != U.size(); i++) sum += U[i] * V[i];
+    return sum;
+  }
 
-      return V;
-    }
+  //===============================================================
+  // abs
+  //---------------------------------------------------------------
+  //! return the absolute value of a vector
+  //---------------------------------------------------------------
+  /*
+    \param U first vector
+    \param V second vector
+  */
+  //===============================================================
+  inline std::vector<int> abs(const std::vector<int>& U) {
+    std::vector<int> V(U);
+    for (unsigned i = 0; i != V.size(); i++) V[i] = std::abs(V[i]);
 
-    //===============================================================
-    // dTripleProduct
-    //---------------------------------------------------------------
-    //! Triple product of three vectors: (UxV).W
-    //---------------------------------------------------------------
-    /*!
-      \param U first vector (3D)
-      \param V second vector (3D)
-      \param W third vector (3D)
-      \return triple product
-    */
-    //===============================================================
-    inline double dTripleProduct(const Vect3& U,
-                                 const Vect3& V,
-                                 const Vect3& W) {
-      return (U[1] * V[2] - U[2] * V[1]) * W[0] +
-             (U[2] * V[0] - U[0] * V[2]) * W[1] +
-             (U[0] * V[1] - U[1] * V[0]) * W[2];
-    }
+    return V;
+  }
 
-    //===============================================================
-    // dNorm
-    //---------------------------------------------------------------
-    //! Norm of a vector (3D)
-    //---------------------------------------------------------------
-    /*! \param X a vector                                          */
-    //===============================================================
-    inline double dNorm(const Vect3& X) { return X.Norm(); }
+  //===============================================================
+  // dTripleProduct
+  //---------------------------------------------------------------
+  //! Triple product of three vectors: (UxV).W
+  //---------------------------------------------------------------
+  /*!
+    \param U first vector (3D)
+    \param V second vector (3D)
+    \param W third vector (3D)
+    \return triple product
+  */
+  //===============================================================
+  inline double dTripleProduct(const Vect3& U, const Vect3& V, const Vect3& W) {
+    return (U[1] * V[2] - U[2] * V[1]) * W[0] +
+           (U[2] * V[0] - U[0] * V[2]) * W[1] +
+           (U[0] * V[1] - U[1] * V[0]) * W[2];
+  }
 
-    //===============================================================
-    // dNorm2
-    //---------------------------------------------------------------
-    //! Norm^2 of a vector (3D)
-    //---------------------------------------------------------------
-    /*! \param X a vector                                          */
-    //===============================================================
-    inline double dNorm2(const Vect3& X) { return X.SquareLength(); }
+  //===============================================================
+  // dNorm
+  //---------------------------------------------------------------
+  //! Norm of a vector (3D)
+  //---------------------------------------------------------------
+  /*! \param X a vector                                          */
+  //===============================================================
+  inline double dNorm(const Vect3& X) { return X.Norm(); }
 
-    //===============================================================
-    // dDistance
-    //---------------------------------------------------------------
-    //! Distance between two points (3D)
-    //---------------------------------------------------------------
-    /*!
-      \param X1 vector
-      \param X2 vector
-      \return distance between X1 and X2
-    */
-    //===============================================================
-    inline double dDistance(const Vect3& X1, const Vect3& X2) {
-      Vect3 X(X1 - X2);
-      return X.Norm();
-    }
+  //===============================================================
+  // dNorm2
+  //---------------------------------------------------------------
+  //! Norm^2 of a vector (3D)
+  //---------------------------------------------------------------
+  /*! \param X a vector                                          */
+  //===============================================================
+  inline double dNorm2(const Vect3& X) { return X.SquareLength(); }
 
-    //===============================================================
-    // dCubeRoot
-    //---------------------------------------------------------------
-    //! Cube root of x.
-    //---------------------------------------------------------------
-    /*!
-      This function works even if x is negative.
-      \param x
-      \return Cube root of x
-    */
-    //===============================================================
-    inline double dCubeRoot(const double x) {
-      return (x >= 0.0 ? pow(x, 1. / 3.) : -pow(-x, 1. / 3.));
-    }
+  //===============================================================
+  // dDistance
+  //---------------------------------------------------------------
+  //! Distance between two points (3D)
+  //---------------------------------------------------------------
+  /*!
+    \param X1 vector
+    \param X2 vector
+    \return distance between X1 and X2
+  */
+  //===============================================================
+  inline double dDistance(const Vect3& X1, const Vect3& X2) {
+    Vect3 X(X1 - X2);
+    return X.Norm();
+  }
 
-    //===============================================================
-    // dRound
-    //---------------------------------------------------------------
-    //! Returns the integer value closest to x
-    //---------------------------------------------------------------
-    /*!
-      There is no round function in the standard library. Some
-      compilers may include round though.
-      Examples:
-      x = -0.51 -> dRound = -1
-      x = -0.49 -> dRound =  0
-      x = 0.49 -> dRound = 0
-      x = 0.51 -> dRound = 1
-      \param x real number
-      \return the integer value closest to x
-    */
-    //===============================================================
-    inline int dRound(const double x) {
-      return static_cast<int>(x > 0.0 ? x + 0.5 : x - 0.5);
-    }
+  //===============================================================
+  // dCubeRoot
+  //---------------------------------------------------------------
+  //! Cube root of x.
+  //---------------------------------------------------------------
+  /*!
+    This function works even if x is negative.
+    \param x
+    \return Cube root of x
+  */
+  //===============================================================
+  inline double dCubeRoot(const double x) {
+    return (x >= 0.0 ? pow(x, 1. / 3.) : -pow(-x, 1. / 3.));
+  }
 
-    //===============================================================
-    // dInt
-    //---------------------------------------------------------------
-    //! Returns the smallest integer value less than x.
-    //---------------------------------------------------------------
-    /*!
-      Note that dInt is different from ceil!
-      Examples:
-      x = -0.51 -> dInt = -1
-      x = -0.49 -> dInt = -1
-      x =  0.49 -> dInt = 0
-      x =  0.51 -> dInt = 0
-      x = 1.01  -> dInt = 1
-      \param x real number
-      \return the smallest integer value less than x
-    */
-    //===============================================================
-    inline int dInt(const double x) {
-      const auto ix = static_cast<int>(x);
-      return x >= 0.0 ? ix : -1 + ix;
-    }
+  //===============================================================
+  // dRound
+  //---------------------------------------------------------------
+  //! Returns the integer value closest to x
+  //---------------------------------------------------------------
+  /*!
+    There is no round function in the standard library. Some
+    compilers may include round though.
+    Examples:
+    x = -0.51 -> dRound = -1
+    x = -0.49 -> dRound =  0
+    x = 0.49 -> dRound = 0
+    x = 0.51 -> dRound = 1
+    \param x real number
+    \return the integer value closest to x
+  */
+  //===============================================================
+  inline int dRound(const double x) {
+    return static_cast<int>(x > 0.0 ? x + 0.5 : x - 0.5);
+  }
 
-    //===============================================================
-    // Kronecker
-    //---------------------------------------------------------------
-    //! Returns the value of Kronecker (i,j)
-    //---------------------------------------------------------------
-    /*!
-      \param i an integer
-      \param j another integer
-      \return 1 if (i=j), 0 otherwise
-    */
-    //===============================================================
-    inline int Kronecker(const unsigned i, const unsigned j) {
-      return (i == j);
-    }
+  //===============================================================
+  // dInt
+  //---------------------------------------------------------------
+  //! Returns the smallest integer value less than x.
+  //---------------------------------------------------------------
+  /*!
+    Note that dInt is different from ceil!
+    Examples:
+    x = -0.51 -> dInt = -1
+    x = -0.49 -> dInt = -1
+    x =  0.49 -> dInt = 0
+    x =  0.51 -> dInt = 0
+    x = 1.01  -> dInt = 1
+    \param x real number
+    \return the smallest integer value less than x
+  */
+  //===============================================================
+  inline int dInt(const double x) {
+    const auto ix = static_cast<int>(x);
+    return x >= 0.0 ? ix : -1 + ix;
+  }
 
-    //===============================================================
-    // Abs<...>
-    //---------------------------------------------------------------
-    //! Calculate the absolute value
-    //===============================================================
-    template <class TYPE>
-    struct Abs {
-      //! \brief a simple alias
-      using argument_type = TYPE;
-      //! \brief a simple alias
-      using result_type = void;
-      //! defines the absolute value function of x
-      /*! \param x input value */
-      void operator()(TYPE& x) { x = (x >= 0 ? x : -x); }
-    };
+  //===============================================================
+  // Kronecker
+  //---------------------------------------------------------------
+  //! Returns the value of Kronecker (i,j)
+  //---------------------------------------------------------------
+  /*!
+    \param i an integer
+    \param j another integer
+    \return 1 if (i=j), 0 otherwise
+  */
+  //===============================================================
+  inline int Kronecker(const unsigned i, const unsigned j) { return (i == j); }
 
-    //===============================================================
-    // Sgn
-    //---------------------------------------------------------------
-    //! Return the sign of a number
-    //---------------------------------------------------------------
-    /*!
-      \param val input value
-      \return -1, 0 or 1
-    */
-    //===============================================================
-    template <typename T>
-    int Sgn(const T val) {
-      return (T(0) < val) - (val < T(0));
-    }
+  //===============================================================
+  // Abs<...>
+  //---------------------------------------------------------------
+  //! Calculate the absolute value
+  //===============================================================
+  template <class TYPE>
+  struct Abs {
+    //! \brief a simple alias
+    using argument_type = TYPE;
+    //! \brief a simple alias
+    using result_type = void;
+    //! defines the absolute value function of x
+    /*! \param x input value */
+    void operator()(TYPE& x) { x = (x >= 0 ? x : -x); }
+  };
 
-    //===============================================================
-    //                 NON-INLINE FUNCTIONS
-    //===============================================================
+  //===============================================================
+  // Sgn
+  //---------------------------------------------------------------
+  //! Return the sign of a number
+  //---------------------------------------------------------------
+  /*!
+    \param val input value
+    \return -1, 0 or 1
+  */
+  //===============================================================
+  template <typename T>
+  int Sgn(const T val) {
+    return (T(0) < val) - (val < T(0));
+  }
 
-    double dUnitVector(const Vect3& U, Vect3& V);
+  //===============================================================
+  //                 NON-INLINE FUNCTIONS
+  //===============================================================
 
-    double dUnitVector(Vect3& U);
+  double dUnitVector(const Vect3& U, Vect3& V);
 
-    bool dCollinear(const Vect3& U, const Vect3& V);
+  double dUnitVector(Vect3& U);
 
-    bool dCollinear(const Vect3& U, const Vect3& V, Vect3& W);
+  bool dCollinear(const Vect3& U, const Vect3& V);
 
-    bool dOrthogonal(const Vect3& U, const Vect3& V, double* res);
+  bool dCollinear(const Vect3& U, const Vect3& V, Vect3& W);
 
-    bool iCollinear(const std::vector<int>& U, const std::vector<int>& V);
+  bool dOrthogonal(const Vect3& U, const Vect3& V, double* res);
 
-    bool iCollinear(const std::vector<int>& U,
-                    const std::vector<int>& V,
-                    int* pdirection);
+  bool iCollinear(const std::vector<int>& U, const std::vector<int>& V);
 
-    void iSortVector(std::vector<int>& U);
+  bool iCollinear(const std::vector<int>& U,
+                  const std::vector<int>& V,
+                  int* pdirection);
 
-    void iSortVector3FirstValue(std::vector<int>& U);
+  void iSortVector(std::vector<int>& U);
 
-    int Epsilon(const unsigned i, const unsigned j, const unsigned k);
+  void iSortVector3FirstValue(std::vector<int>& U);
 
-  }  // end namespace math
+  int Epsilon(const unsigned i, const unsigned j, const unsigned k);
 
-}  // end of namespace numodis
+}  // end of namespace numodis::math
 
 #endif  // NUMEODIS_UTILITIES_HXX

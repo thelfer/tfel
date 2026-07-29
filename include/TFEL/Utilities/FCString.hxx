@@ -76,11 +76,11 @@ namespace tfel::utilities {
     template <std::size_t N2>
     basic_fcstring(const CStringNarrowedView<N2, CharT>&);
     //! move constructor
-    basic_fcstring(basic_fcstring&&);
+    basic_fcstring(basic_fcstring&&) noexcept;
     //! copy constructor
     basic_fcstring(const basic_fcstring&);
     //! move constructor
-    basic_fcstring& operator=(basic_fcstring&&);
+    basic_fcstring& operator=(basic_fcstring&&) noexcept;
     //! copy constructor
     basic_fcstring& operator=(const basic_fcstring&);
     /*!

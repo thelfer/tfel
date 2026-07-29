@@ -46,14 +46,15 @@ namespace tfel::math {
     using const_reference = const NumType&;
     using size_type = IndexType;
     using difference_type = ptrdiff_t;
-
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    //
+    TVectorTMatrixExpr() = delete;
+    //
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
 
    protected:
-    TVectorTMatrixExpr() = delete;
-
     struct ColumnConstIterator {
       using MType = std::decay_t<B>;
       using NumType = numeric_type<MType>;

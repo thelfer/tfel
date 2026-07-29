@@ -31,61 +31,41 @@ namespace mfront {
                           const ModelDescription&) override;
 
    protected:
+    virtual void buildDomainName() = 0;
+    virtual std::string getApplicationName() const = 0;
+    virtual void setOutputFileNames(const ModelDescription&) = 0;
+    //
     virtual void openOutputFiles();
-
     virtual void closeOutputFiles();
-
     virtual void generateOutputFiles(const FileDescription&,
                                      const ModelDescription&);
-
     virtual void writeHeaderFile(const FileDescription&,
                                  const ModelDescription&);
-
     virtual void writeSpecificPrivateMethodDeclaration(const FileDescription&,
                                                        const ModelDescription&);
-
     virtual void writeSrcFile(const FileDescription&, const ModelDescription&);
-
     virtual void writeAssignDefaultValue(const VariableDescription&);
-
     virtual std::string getGenTypeMethod(const std::string& type) const;
-
-    virtual void setOutputFileNames(const ModelDescription&) = 0;
-
     virtual void writeGetGlobalParameter(const VariableDescription&,
                                          const ModelDescription&);
-
     virtual void writeGetConstantMaterialProperty(const VariableDescription&,
                                                   const ModelDescription&);
-
-    virtual void buildDomainName() = 0;
-
-    virtual std::string getApplicationName() const = 0;
-
     virtual void generateDomainsList(const ModelDescription&);
-
     virtual void writeFunctionCall(
         const ModelDescription&,
         const std::vector<ModelDescription::Function>&);
-
     virtual void writeInitializeMethod(const ModelDescription&);
-
     virtual void writeInitializeOutputMethod(const ModelDescription&);
-
     virtual void writeInitializeInputMethod(const ModelDescription&);
-
     virtual void writeInitializeParametersMethod(const ModelDescription&);
-
     virtual bool initializeDefaultDomainListInConstrutor(
         const ModelDescription&) const;
-
+    //
     std::set<std::string> domains;
-
     std::ofstream headerFile;
     std::ofstream srcFile;
     std::string headerFileName;
     std::string srcFileName;
-
     bool hasDefaultConstructor;
     bool hasSpecializedDomain;
   };  // end of class MFrontPleiadesModelInterface

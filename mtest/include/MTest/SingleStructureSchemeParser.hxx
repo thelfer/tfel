@@ -97,9 +97,9 @@ namespace mtest {
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
      */
-    bool treatKeyword(SingleStructureScheme&, tokens_iterator&);
+    [[nodiscard]] bool treatKeyword(SingleStructureScheme&, tokens_iterator&);
     //! \return the list of keywords
-    std::vector<std::string> getKeyWordsList() const;
+    [[nodiscard]] std::vector<std::string> getKeyWordsList() const;
 
    private:
     //! a simple alias

@@ -36,7 +36,6 @@ namespace mfront::bbrick {
    */
   struct DelobelleRobinetSchafflerKinematicHardeningRule
       : KinematicHardeningRuleBase {
-    std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -46,7 +45,8 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const std::string&) const override;
-    std::string buildBackStrainImplicitEquations(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string buildBackStrainImplicitEquations(
         const BehaviourDescription&,
         const StressPotential&,
         const StressCriterion&,

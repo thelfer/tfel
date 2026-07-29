@@ -28,23 +28,22 @@ namespace mfront {
    */
   struct CastemModelInterface : public AbstractModelInterface {
     //! \return the name of the interface
-    static std::string getName();
-    //! \return the name of the generated library
-    std::string getLibraryName(const ModelDescription &) const;
+    [[nodiscard]] static std::string getName();
     //! \brief constructor
     CastemModelInterface();
     //
-    void setOptions(const DataMap &) override;
-    std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string &,
-        const std::vector<std::string> &,
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    void declareReservedNames(std::set<std::string> &) override;
-    void writeOutputFiles(const FileDescription &,
-                          const ModelDescription &) override;
-    void getTargetsDescription(TargetsDescription &,
-                               const ModelDescription &) override;
+    void declareReservedNames(std::set<std::string>&) override;
+    void writeOutputFiles(const FileDescription&,
+                          const ModelDescription&) override;
+    void getTargetsDescription(TargetsDescription&,
+                               const ModelDescription&) override;
+    //! \return the name of the generated library
+    [[nodiscard]] std::string getLibraryName(const ModelDescription&) const;
     //! \brief destructor
     ~CastemModelInterface() override;
 

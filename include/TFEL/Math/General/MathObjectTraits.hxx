@@ -91,17 +91,14 @@ namespace tfel::math {
                          tfel::typetraits::base_type<T>,
                          tfel::typetraits::base_type<numeric_type<T>>>;
   //! \brief cast the value to the base type
-  template <typename T>
-  TFEL_HOST_DEVICE constexpr std::
-      enable_if_t<tfel::typetraits::IsFundamentalNumericType<T>::cond, T&>
-      base_type_cast(T& v) noexcept {
+  template <tfel::typetraits::IsFundamentalNumericTypeConcept T>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr T& base_type_cast(T& v) noexcept {
     return v;
   }
   //! \brief cast the value to the base type
-  template <typename T>
-  TFEL_HOST_DEVICE constexpr std::
-      enable_if_t<tfel::typetraits::IsFundamentalNumericType<T>::cond, const T&>
-      base_type_cast(const T& v) noexcept {
+  template <tfel::typetraits::IsFundamentalNumericTypeConcept T>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr const T& base_type_cast(
+      const T& v) noexcept {
     return v;
   }
   /*!

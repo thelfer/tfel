@@ -479,7 +479,7 @@ namespace aster {
     dtg_dtm[5][0] = cste * a[1] * a[2];
     for (unsigned short i = 0; i != 6; ++i) {
       for (unsigned short j = 0; j != 9; ++j) {
-        AsterReal v = AsterReal(0);
+        auto v = AsterReal{0};
         for (unsigned short k = 0; k != 6; ++k) {
           for (unsigned short l = 0; l != 9; ++l) {
             const unsigned short ml_r = getRowIndex(l);

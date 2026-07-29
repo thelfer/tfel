@@ -29,18 +29,17 @@ namespace mfront {
     static std::string getName();
     //
     void setOptions(const DataMap &) override;
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         const std::string &,
         const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
     void getTargetsDescription(
-        TargetsDescription &,
-        const MaterialPropertyDescription &) const override;
-    void writeOutputFiles(const MaterialPropertyDescription &,
-                          const FileDescription &) const override;
+        TargetsDescription&, const MaterialPropertyDescription&) const override;
+    void writeOutputFiles(const MaterialPropertyDescription&,
+                          const FileDescription&) const override;
     //! \brief destructor
-    virtual ~ExcelMaterialPropertyInterface() override;
+    ~ExcelMaterialPropertyInterface() override;
   };  // end of MfrontExcelMaterialPropertyInterface
 
 }  // end of namespace mfront

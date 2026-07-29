@@ -330,7 +330,7 @@ namespace mfront {
      */
     void overrideByAParameter(const std::string&, const double);
     //! \return the list of overriden parameters
-    std::map<std::string, double> getOverridenParameters() const;
+    [[nodiscard]] std::map<std::string, double> getOverridenParameters() const;
     /*!
      * \brief check and complete the physical bounds of variables
      * \param[in] s: unit system
@@ -343,7 +343,7 @@ namespace mfront {
      * implies that no increment of an external loading is used in the
      * behaviour law.
      */
-    bool isUsableInPurelyImplicitResolution() const;
+    [[nodiscard]] bool isUsableInPurelyImplicitResolution() const;
     /*!
      * \brief set if this behaviour can be used in a purely implicit
      * resolution.
@@ -372,7 +372,7 @@ namespace mfront {
      * \brief get all the external state variables found to be
      * probably unusable in a purely implicit resolution.
      */
-    const std::set<std::string>&
+    [[nodiscard]] const std::set<std::string>&
     getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution()
         const;
     /*!
@@ -389,151 +389,160 @@ namespace mfront {
      * - `ExternalStateVariables`
      * - `Parameters`
      */
-    const VariableDescriptionContainer& getVariables(const std::string&) const;
+    [[nodiscard]] const VariableDescriptionContainer& getVariables(
+        const std::string&) const;
     //! \return all material properties
-    const VariableDescriptionContainer& getMaterialProperties() const;
-    //! \return all persistent variables
-    const VariableDescriptionContainer& getPersistentVariables() const;
-    //! \return all integration variables
-    const VariableDescriptionContainer& getIntegrationVariables() const;
-    //! \return all state variables
-    const VariableDescriptionContainer& getStateVariables() const;
-    //! \return all auxiliary state variables
-    const VariableDescriptionContainer& getAuxiliaryStateVariables() const;
-    //! \return all initialize variables
-    const VariableDescriptionContainer& getInitializeFunctionVariables() const;
-    //! \return all post-processing variables
-    const VariableDescriptionContainer& getPostProcessingVariables() const;
-    //! \return all external state variables
-    const VariableDescriptionContainer& getExternalStateVariables() const;
-    //! \return all local variables
-    const VariableDescriptionContainer& getLocalVariables() const;
-    //! \return all behaviour variables
-    const std::vector<BehaviourVariableDescription>& getBehaviourVariables()
+    [[nodiscard]] const VariableDescriptionContainer& getMaterialProperties()
         const;
+    //! \return all persistent variables
+    [[nodiscard]] const VariableDescriptionContainer& getPersistentVariables()
+        const;
+    //! \return all integration variables
+    [[nodiscard]] const VariableDescriptionContainer& getIntegrationVariables()
+        const;
+    //! \return all state variables
+    [[nodiscard]] const VariableDescriptionContainer& getStateVariables() const;
+    //! \return all auxiliary state variables
+    [[nodiscard]] const VariableDescriptionContainer&
+    getAuxiliaryStateVariables() const;
+    //! \return all initialize variables
+    [[nodiscard]] const VariableDescriptionContainer&
+    getInitializeFunctionVariables() const;
+    //! \return all post-processing variables
+    [[nodiscard]] const VariableDescriptionContainer&
+    getPostProcessingVariables() const;
+    //! \return all external state variables
+    [[nodiscard]] const VariableDescriptionContainer&
+    getExternalStateVariables() const;
+    //! \return all local variables
+    [[nodiscard]] const VariableDescriptionContainer& getLocalVariables() const;
+    //! \return all behaviour variables
+    [[nodiscard]] const std::vector<BehaviourVariableDescription>&
+    getBehaviourVariables() const;
     /*!
      * \return the behaviour variable factory whose class name matches the
      * argument
      * \param[in] n: behaviour variable factory' class name
      */
-    const BehaviourVariableDescription& getBehaviourVariableFactory(
-        const std::string&) const;
+    [[nodiscard]] const BehaviourVariableDescription&
+    getBehaviourVariableFactory(const std::string&) const;
     //! \return all behaviour variables factories
-    const std::vector<BehaviourVariableDescription>&
+    [[nodiscard]] const std::vector<BehaviourVariableDescription>&
     getBehaviourVariableFactories() const;
     //! \return all parameter variables
-    const VariableDescriptionContainer& getParameters() const;
+    [[nodiscard]] const VariableDescriptionContainer& getParameters() const;
     /*!
      * \return a variable description with the given name.
      * \param[in] n: name
      */
-    const VariableDescription& getPersistentVariableDescription(
+    [[nodiscard]] const VariableDescription& getPersistentVariableDescription(
         const std::string&) const;
     /*!
      * \return a variable description associated with the given
      * external name.
      * \param[in] n: name
      */
-    const VariableDescription& getPersistentVariableDescriptionByExternalName(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getPersistentVariableDescriptionByExternalName(const std::string&) const;
     /*!
      * \return a variable description with the given name.
      * \param[in] n: name
      */
-    const VariableDescription& getIntegrationVariableDescription(
+    [[nodiscard]] const VariableDescription& getIntegrationVariableDescription(
         const std::string&) const;
     /*!
      * \return a variable description associated with the given
      * external name.
      * \param[in] n: name
      */
-    const VariableDescription& getIntegrationVariableDescriptionByExternalName(
+    [[nodiscard]] const VariableDescription&
+    getIntegrationVariableDescriptionByExternalName(const std::string&) const;
+    /*!
+     * \return the state variable associated with the given name
+     * \param[in] n: name
+     */
+    [[nodiscard]] const VariableDescription& getStateVariableDescription(
         const std::string&) const;
     /*!
      * \return the state variable associated with the given name
      * \param[in] n: name
      */
-    const VariableDescription& getStateVariableDescription(
-        const std::string&) const;
-    /*!
-     * \return the state variable associated with the given name
-     * \param[in] n: name
-     */
-    const VariableDescription& getStateVariableDescriptionByExternalName(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getStateVariableDescriptionByExternalName(const std::string&) const;
     /*!
      * \return the auxiliary state variable associated with the given name
      * \param[in] n: name
      */
-    const VariableDescription& getAuxiliaryStateVariableDescription(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getAuxiliaryStateVariableDescription(const std::string&) const;
     /*!
      * \return the initialize variable associated with the given name
      * \param[in] n: name
      */
-    const VariableDescription& getInitializeFunctionVariableDescription(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getInitializeFunctionVariableDescription(const std::string&) const;
     /*!
      * \return the post-processing variable associated with the given name
      * \param[in] n: name
      */
-    const VariableDescription& getPostProcessingVariableDescription(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getPostProcessingVariableDescription(const std::string&) const;
     /*!
      * \param[in] n: name
      */
-    const VariableDescription& getExternalStateVariableDescription(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getExternalStateVariableDescription(const std::string&) const;
     /*!
      * \param[in] n: external name
      */
-    const VariableDescription&
+    [[nodiscard]] const VariableDescription&
     getExternalStateVariableDescriptionByExternalName(const std::string&) const;
     /*!
      * \param[in] n: name
      */
-    const VariableDescription& getParameterDescription(
+    [[nodiscard]] const VariableDescription& getParameterDescription(
         const std::string&) const;
     /*!
      * \param[in] n: external name
      */
-    const VariableDescription& getParameterDescriptionByExternalName(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getParameterDescriptionByExternalName(const std::string&) const;
     /*!
      * \param[in] n: external name
      */
-    const VariableDescription&
+    [[nodiscard]] const VariableDescription&
     getAuxiliaryStateVariableDescriptionByExternalName(
         const std::string&) const;
     /*!
      * \param[in] n: name
      */
-    const StaticVariableDescription& getStaticVariableDescription(
+    [[nodiscard]] const StaticVariableDescription& getStaticVariableDescription(
         const std::string&) const;
     /*!
      * \param[in] n: external name
      */
-    const VariableDescription&
+    [[nodiscard]] const VariableDescription&
     getInitializeFunctionVariableDescriptionByExternalName(
         const std::string&) const;
     /*!
      * \param[in] n: external name
      */
-    const VariableDescription&
+    [[nodiscard]] const VariableDescription&
     getPostProcessingVariableDescriptionByExternalName(
         const std::string&) const;
     /*!
      * \return a variable description with the given name.
      * \param[in] n: external name.
      */
-    const VariableDescription& getVariableDescription(const std::string&) const;
+    [[nodiscard]] const VariableDescription& getVariableDescription(
+        const std::string&) const;
     /*!
      * \return a variable description associated with the given
      * external name.
      * \param[in] n: external name.
      */
-    const VariableDescription& getVariableDescriptionByExternalName(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getVariableDescriptionByExternalName(const std::string&) const;
     /*!
      * \brief assign an attribute to variable
      * \param[in] v: variable name
@@ -550,94 +559,98 @@ namespace mfront {
     /*!
      * \return true if a least one modelling hypothesis is anisotropic
      */
-    bool isStressFreeExansionAnisotropic() const;
+    [[nodiscard]] bool isStressFreeExansionAnisotropic() const;
     /*!
 
      * \return the registred stress free expansion descriptions
      */
-    const std::vector<StressFreeExpansionDescription>&
+    [[nodiscard]] const std::vector<StressFreeExpansionDescription>&
     getStressFreeExpansionDescriptions() const;
     /*!
      * \return true if the given member is used in a code block
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isMemberUsedInCodeBlocks(const std::string&) const;
+    [[nodiscard]] bool isMemberUsedInCodeBlocks(const std::string&) const;
     /*!
      * \return if the given name is the name of a material property
      * \param[in] n: name
      */
-    bool isMaterialPropertyName(const std::string&) const;
+    [[nodiscard]] bool isMaterialPropertyName(const std::string&) const;
     /*!
      * \return if the given name is the name of a local variable
      * \param[in] n: name
      */
-    bool isLocalVariableName(const std::string&) const;
+    [[nodiscard]] bool isLocalVariableName(const std::string&) const;
     /*!
      * \return if the given name is the name of a persistent variable
      * \param[in] n: name
      */
-    bool isPersistentVariableName(const std::string&) const;
+    [[nodiscard]] bool isPersistentVariableName(const std::string&) const;
     /*!
      * \return if the given name is the name of an integration variable
      * \param[in] n: name
      */
-    bool isIntegrationVariableName(const std::string&) const;
+    [[nodiscard]] bool isIntegrationVariableName(const std::string&) const;
     /*!
      * \return if the given name is the name of the increment of an integration
      * variable
      * \param[in] n: name
      */
-    bool isIntegrationVariableIncrementName(const std::string&) const;
+    [[nodiscard]] bool isIntegrationVariableIncrementName(
+        const std::string&) const;
     /*!
      * \return if the given name is the name of a state variable
      * \param[in] n: name
      */
-    bool isStateVariableName(const std::string&) const;
+    [[nodiscard]] bool isStateVariableName(const std::string&) const;
     /*!
      * \return if the given name is the name of the increment of a state
      * variable
      * \param[in] n: name
      */
-    bool isStateVariableIncrementName(const std::string&) const;
+    [[nodiscard]] bool isStateVariableIncrementName(const std::string&) const;
     /*!
      * \return if the given name is the name of an auxiliary state variable
      * \param[in] n: name
      */
-    bool isAuxiliaryStateVariableName(const std::string&) const;
+    [[nodiscard]] bool isAuxiliaryStateVariableName(const std::string&) const;
     /*!
      * \return if the given name is the name of an initialize variable
      * \param[in] n: name
      */
-    bool isInitializeFunctionVariableName(const std::string&) const;
+    [[nodiscard]] bool isInitializeFunctionVariableName(
+        const std::string&) const;
     /*!
      * \return if the given name is the name of a post-processing variable
      * \param[in] n: name
      */
-    bool isPostProcessingVariableName(const std::string&) const;
+    [[nodiscard]] bool isPostProcessingVariableName(const std::string&) const;
     /*!
      * \return if the given name is the name of an external state variable
      * \param[in] n: name
      */
-    bool isExternalStateVariableName(const std::string&) const;
+    [[nodiscard]] bool isExternalStateVariableName(const std::string&) const;
     /*!
      * \return if the given name is the name of the increment of an external
      * state variable
      * \param[in] n: name
      */
-    bool isExternalStateVariableIncrementName(const std::string&) const;
+    [[nodiscard]] bool isExternalStateVariableIncrementName(
+        const std::string&) const;
     /*!
      * \return if the given name is the name of a parameter
      * \param[in] n: name
      */
-    bool isParameterName(const std::string&) const;
+    [[nodiscard]] bool isParameterName(const std::string&) const;
     /*!
      * \return true if the given name is the one of a static variable
      * \param[in] n : name
      */
-    bool isStaticVariableName(const std::string& n) const;
+    [[nodiscard]] bool isStaticVariableName(const std::string& n) const;
     //! \brief \return the static variables defined
-    const StaticVariableDescriptionContainer& getStaticVariables() const;
+    [[nodiscard]] const StaticVariableDescriptionContainer& getStaticVariables()
+        const;
     /*!
      * \brief add a material property
      * \param[in] v : variable description
@@ -719,11 +732,11 @@ namespace mfront {
      * \return true if a parameter with the given name exists
      * \param[in] n : name
      */
-    bool hasParameter(const std::string&) const;
+    [[nodiscard]] bool hasParameter(const std::string&) const;
     /*!
      * \return true if at least one parameter is defined
      */
-    bool hasParameters() const;
+    [[nodiscard]] bool hasParameters() const;
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
@@ -751,24 +764,25 @@ namespace mfront {
      * \return the default value of a paramater
      * \param[in] v : parameter default value
      */
-    double getFloattingPointParameterDefaultValue(const std::string&) const;
+    [[nodiscard]] double getFloattingPointParameterDefaultValue(
+        const std::string&) const;
     /*!
      * \return the default value of a paramater
      * \param[in] v: parameter default value
      * \param[in] i: index
      */
-    double getFloattingPointParameterDefaultValue(const std::string&,
-                                                  const unsigned short) const;
+    [[nodiscard]] double getFloattingPointParameterDefaultValue(
+        const std::string&, const unsigned short) const;
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value
      */
-    int getIntegerParameterDefaultValue(const std::string&) const;
+    [[nodiscard]] int getIntegerParameterDefaultValue(const std::string&) const;
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value
      */
-    unsigned short getUnsignedShortParameterDefaultValue(
+    [[nodiscard]] unsigned short getUnsignedShortParameterDefaultValue(
         const std::string&) const;
     /*!
      * \brief add a static variable description
@@ -778,12 +792,13 @@ namespace mfront {
     void addStaticVariable(const StaticVariableDescription&,
                            const RegistrationStatus);
     //! \return all the integer constants
-    virtual std::map<std::string, int> getIntegerConstants() const;
+    [[nodiscard]] virtual std::map<std::string, int> getIntegerConstants()
+        const;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
      */
-    int getIntegerConstant(const std::string&) const;
+    [[nodiscard]] int getIntegerConstant(const std::string&) const;
     /*!
      * \brief add a new stress free expansion description
      * \param[in] sfed: stress free expansion description
@@ -795,7 +810,7 @@ namespace mfront {
      */
     void appendToMembers(const std::string&);
     //! \return the material additional members
-    std::string getMembers() const;
+    [[nodiscard]] std::string getMembers() const;
     /*!
      * \brief add a new initialize function
      * \param[in] n: name of the initialize function
@@ -803,7 +818,8 @@ namespace mfront {
      */
     void addInitializeFunction(const std::string&, const CodeBlock&);
     //! \return the registred initialize functions
-    const std::map<std::string, CodeBlock>& getInitializeFunctions() const;
+    [[nodiscard]] const std::map<std::string, CodeBlock>&
+    getInitializeFunctions() const;
     /*!
      * \brief add a new post-processing
      * \param[in] n: name of the post-processing
@@ -811,19 +827,20 @@ namespace mfront {
      */
     void addPostProcessing(const std::string&, const CodeBlock&);
     //! \return the registred post-processings
-    const std::map<std::string, CodeBlock>& getPostProcessings() const;
+    [[nodiscard]] const std::map<std::string, CodeBlock>& getPostProcessings()
+        const;
     /*!
      * \brief append the given code to the members
      * \param[in] s : members
      */
     void appendToPrivateCode(const std::string&);
     //! \brief \return the material private code
-    std::string getPrivateCode() const;
+    [[nodiscard]] std::string getPrivateCode() const;
     /*!
      * \brief return the name of the code blocks defined so far
      * \param[in] h : modelling hypothesis
      */
-    std::vector<std::string> getCodeBlockNames() const;
+    [[nodiscard]] std::vector<std::string> getCodeBlockNames() const;
     /*!
      * \brief declare or update a code block
      * \param[in] n : name
@@ -841,45 +858,47 @@ namespace mfront {
      * \return the code block associated with the given name
      * \param[in] n : name
      */
-    const CodeBlock& getCodeBlock(std::string_view) const;
+    [[nodiscard]] const CodeBlock& getCodeBlock(std::string_view) const;
     /*!
      * \return the code block associated with the given name
      * \param[in] n  : name
      * \param[in] cn : behaviour class name
      * \param[in] b  : add profiling information
      */
-    std::string getCode(std::string_view, std::string_view, const bool) const;
+    [[nodiscard]] std::string getCode(std::string_view,
+                                      std::string_view,
+                                      const bool) const;
     /*!
      * \return true if a code block associated with the given name has
      * been defined
      * \param[in] n : name
      */
-    bool hasCode(std::string_view) const;
+    [[nodiscard]] bool hasCode(std::string_view) const;
     /*!
      * \return true a glossary was associated with the given
      * variable.
      * \param[in] v  : variable name
      */
-    bool hasGlossaryName(const std::string&) const;
+    [[nodiscard]] bool hasGlossaryName(const std::string&) const;
     /*!
      * \return true if an entry name was associated with the given
      * variable.
      * \param[in] v  : variable name
      */
-    bool hasEntryName(const std::string&) const;
+    [[nodiscard]] bool hasEntryName(const std::string&) const;
     /*!
      * \return the glossary or the entry name associated with the
      * given variable. If none was defined, return the variable name.
      * \param[in] v : variable name
      */
-    std::string getExternalName(const std::string&) const;
+    [[nodiscard]] std::string getExternalName(const std::string&) const;
     /*!
      * \return the external names associated with the
      * variables contained in the given container.
      * \see getExternalName
      * \param[in] v  : variables for which glossary names are requested
      */
-    std::vector<std::string> getExternalNames(
+    [[nodiscard]] std::vector<std::string> getExternalNames(
         const VariableDescriptionContainer&) const;
     /*!
      * get the external names associated with the variables
@@ -911,7 +930,7 @@ namespace mfront {
      * TFEL glossary.
      * \param[in] n : glossary name
      */
-    bool isGlossaryNameUsed(const std::string&) const;
+    [[nodiscard]] bool isGlossaryNameUsed(const std::string&) const;
     /*!
      * \brief associate an entry name to a variable
      * \param[in] n: variable name
@@ -922,13 +941,13 @@ namespace mfront {
      * look if the given name is used as an entry name
      * \param[in] n : name
      */
-    bool isUsedAsEntryName(const std::string&) const;
+    [[nodiscard]] bool isUsedAsEntryName(const std::string&) const;
     /*!
      * \return the name of the variable associated with the given
      * glossary or entry name
      * \param[in] n : name
      */
-    std::string getVariableNameFromGlossaryNameOrEntryName(
+    [[nodiscard]] std::string getVariableNameFromGlossaryNameOrEntryName(
         const std::string&) const;
     /*!
      * \brief add bounds to a variable
@@ -972,7 +991,7 @@ namespace mfront {
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-    bool isNameReserved(const std::string&) const;
+    [[nodiscard]] bool isNameReserved(const std::string&) const;
     /*!
      * \brief register a member name
      * \param[in] n : member name
@@ -1012,24 +1031,26 @@ namespace mfront {
      */
     void registerStaticMemberName(const std::string&);
     //! \brief \return all the registred member names
-    const std::set<std::string>& getRegistredMembersNames() const;
+    [[nodiscard]] const std::set<std::string>& getRegistredMembersNames() const;
     //! \brief \return all the registred static member names
-    const std::set<std::string>& getRegistredStaticMembersNames() const;
+    [[nodiscard]] const std::set<std::string>& getRegistredStaticMembersNames()
+        const;
     /*!
      * \return the name of all the variables (material properties,
      * state variables, auxiliary state variables, external state
      * variables, parameters)
      */
-    std::set<std::string> getVariablesNames() const;
+    [[nodiscard]] std::set<std::string> getVariablesNames() const;
     /*!
      * \brief retrieve all the symbols associated with the declared variables.
      * \param[out] symbols: map between symbols and replacement strings
      */
     void getSymbols(std::map<std::string, std::string>&) const;
     //! \return the list of user defined initialize blocks
-    std::vector<std::string> getUserDefinedInitializeCodeBlocksNames() const;
+    [[nodiscard]] std::vector<std::string>
+    getUserDefinedInitializeCodeBlocksNames() const;
     //! \return the list of user defined initialize blocks
-    const CodeBlock& getUserDefinedInitializeCodeBlock(
+    [[nodiscard]] const CodeBlock& getUserDefinedInitializeCodeBlock(
         const std::string&) const;
     /*!
      * \brief method that shall be called when all variables are declared.
@@ -1071,9 +1092,9 @@ namespace mfront {
        */
       void replace(const CodeBlock&, const Position, const bool);
       //! \brief \return the code block
-      const CodeBlock& get() const;
+      [[nodiscard]] const CodeBlock& get() const;
       //! \brief \return true if the code is mutable
-      bool isMutable() const;
+      [[nodiscard]] bool isMutable() const;
       //! \brief destructor
       ~CodeBlocksAggregator();
 
@@ -1109,7 +1130,8 @@ namespace mfront {
      * \brief return the variable description associated to the given name
      * \param[in] n: name
      */
-    VariableDescription& getVariableDescription(const std::string&);
+    [[nodiscard]] VariableDescription& getVariableDescription(
+        const std::string&);
     /*!
      * \brief add a variable to a container
      * \param[in] c: container

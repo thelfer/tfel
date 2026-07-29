@@ -27,14 +27,21 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT BehaviourInterfaceFactory {
     typedef std::shared_ptr<AbstractBehaviourInterface> (*InterfaceCreator)();
 
-    static BehaviourInterfaceFactory& getBehaviourInterfaceFactory();
-
-    std::vector<std::string> getRegistredInterfaces() const;
+    [[nodiscard]] static BehaviourInterfaceFactory&
+    getBehaviourInterfaceFactory();
+    //
+    BehaviourInterfaceFactory(const BehaviourInterfaceFactory&) = delete;
+    BehaviourInterfaceFactory(BehaviourInterfaceFactory&&) = delete;
+    BehaviourInterfaceFactory& operator=(const BehaviourInterfaceFactory&) =
+        delete;
+    BehaviourInterfaceFactory& operator=(BehaviourInterfaceFactory&&) = delete;
+    //
+    [[nodiscard]] std::vector<std::string> getRegistredInterfaces() const;
     /*!
      * \return true if the given interface exists
      * \param[in] n : interface name
      */
-    bool exists(const std::string&) const;
+    [[nodiscard]] bool exists(const std::string&) const;
     /*!
      * \return the unique name associated with the interface
      * \param[in] n: interface name
@@ -44,13 +51,13 @@ namespace mfront {
      * \return a newly created interface
      * \param[in] n : interface name
      */
-    std::shared_ptr<AbstractBehaviourInterface> getInterface(
+    [[nodiscard]] std::shared_ptr<AbstractBehaviourInterface> getInterface(
         const std::string&);
 
     void registerInterfaceCreator(const std::string&, InterfaceCreator);
 
     void registerInterfaceAlias(const std::string&, const std::string&);
-
+    //! \brief destructor
     ~BehaviourInterfaceFactory();
 
    private:
@@ -58,15 +65,8 @@ namespace mfront {
     typedef std::map<std::string, InterfaceCreator> InterfaceCreatorsContainer;
 
     TFEL_VISIBILITY_LOCAL BehaviourInterfaceFactory() = default;
-    BehaviourInterfaceFactory(const BehaviourInterfaceFactory&) = delete;
-    BehaviourInterfaceFactory(BehaviourInterfaceFactory&&) = delete;
-    BehaviourInterfaceFactory& operator=(const BehaviourInterfaceFactory&) =
-        delete;
-    BehaviourInterfaceFactory& operator=(BehaviourInterfaceFactory&&) = delete;
-
     TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer& getInterfaceCreatorsMap() const;
-
     TFEL_VISIBILITY_LOCAL
     AliasContainer& getAliasesMap() const;
   };

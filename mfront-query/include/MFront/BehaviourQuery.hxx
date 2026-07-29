@@ -53,7 +53,7 @@ namespace mfront {
                    std::shared_ptr<AbstractBehaviourDSL>,
                    const std::string&);
     //! \brief return the number of queries to be treated
-    std::size_t getNumberOfQueriesToBeTreated();
+    [[nodiscard]] std::size_t getNumberOfQueriesToBeTreated();
     //! \brief treat the requests
     virtual void exe();
     //! \brief destructor
@@ -61,7 +61,7 @@ namespace mfront {
 
    protected:
     //
-    std::shared_ptr<const AbstractDSL> getDSL() const override;
+    [[nodiscard]] std::shared_ptr<const AbstractDSL> getDSL() const override;
     void registerCommandLineCallBacks() override;
 
    private:
@@ -75,12 +75,10 @@ namespace mfront {
     //! \brief a simple alias
     using query2 = std::function<void(const FileDescription&,
                                       const BehaviourDescription&)>;
-    //! \brief treat a standard query
-    virtual void treatStandardQuery() final;
-    //! \brief treat a standard query (an option to the command line
-    //! \brief triggering the query is required)
-    virtual void treatStandardQuery2() final;
     //
+    virtual void treatStandardQuery() final;
+    virtual void treatStandardQuery2() final;
+    virtual void treatModellingHypothesis() final;
     void treatGeneratedSources() final;
     void treatSpecificTargetGeneratedSources() final;
     void treatAllSpecificTargetsGeneratedSources() final;
@@ -89,11 +87,9 @@ namespace mfront {
     void treatLibrariesDependencies() final;
     void treatSpecificTargets() final;
     void treatDSLTarget() final;
-    //! \brief treat the "--modelling-hypothesis" command line argument
-    virtual void treatModellingHypothesis() final;
     //! \return a query that show a list of variables
     template <const VariableDescriptionContainer& (BehaviourData::*m)() const>
-    query generateVariablesListQuery();
+    [[nodiscard]] query generateVariablesListQuery();
     //! \brief all the registred queries
     std::vector<std::pair<std::string, query>> queries;
     //! \brief all the registred queries

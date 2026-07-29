@@ -44,9 +44,10 @@ namespace mfront {
      *                 and the behaviour name)
      * \param[in] h : modelling hypothesis
      */
-    virtual std::string getSymbolName(const BehaviourInterfaceBase&,
-                                      const std::string&,
-                                      const Hypothesis) const;
+    [[nodiscard]] virtual std::string getSymbolName(
+        const BehaviourInterfaceBase&,
+        const std::string&,
+        const Hypothesis) const;
     /*!
      * \param[in] out: output file
      * \param[in] i: standard behaviour interface
@@ -130,7 +131,7 @@ namespace mfront {
      *                   (generally taking into account the material
      *                    and the behaviour name)
      */
-    void writeTemperatureRemovedFromExternalStateVariablesSymbol(
+    virtual void writeTemperatureRemovedFromExternalStateVariablesSymbol(
         std::ostream&,
         const BehaviourInterfaceBase&,
         const BehaviourDescription&,
@@ -507,7 +508,7 @@ namespace mfront {
      * \return if the interface treats the strain measure internally or if the
      * strain measure is handled by the calling code.
      */
-    virtual bool handleStrainMeasure() const = 0;
+    [[nodiscard]] virtual bool handleStrainMeasure() const = 0;
     //! \brief destructor
     virtual ~SymbolsGenerator();
 

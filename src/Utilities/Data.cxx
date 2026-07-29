@@ -176,10 +176,10 @@ namespace tfel::utilities {
     };
     if (p->value == "true") {
       ++p;
-      return Data(true);
+      return {true};
     } else if (p->value == "false") {
       ++p;
-      return Data(false);
+      return {false};
     } else if (p->flag == Token::String) {
       const auto name = CxxTokenizer::readString(p, pe);
       return readDataStructureOrString(name);
@@ -194,7 +194,7 @@ namespace tfel::utilities {
       auto v = std::stoi(p->value, &pos);
       throw_if(pos != p->value.size(), "invalid number '" + p->value + "'");
       ++p;
-      return Data(v);
+      return {v};
     }
     const auto r = [&p]() -> double {
       auto value = double{};
@@ -207,7 +207,7 @@ namespace tfel::utilities {
       }
       return value;
     }();
-    return Data(r);
+    return Data{r};
   }
 
   Data Data::read_vector(CxxTokenizer::const_iterator& p,
@@ -284,7 +284,7 @@ namespace tfel::utilities {
       CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
       if (p->value == "}") {
         ++p;
-        return Data();
+        return Data{};
       }
       // map or string vector
       ++p;

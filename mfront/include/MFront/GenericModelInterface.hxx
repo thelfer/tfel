@@ -28,16 +28,16 @@ namespace mfront {
    */
   struct GenericModelInterface final : public AbstractModelInterface {
     //! \return the name of the interface
-    static std::string getName();
-    //! \return the name of the generated library
-    std::string getLibraryName(const ModelDescription &) const;
+    [[nodiscard]] static std::string getName();
     //! \brief constructor
     GenericModelInterface();
-    //
+	//
     void setOptions(const DataMap &) override;
-    std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string &,
-        const std::vector<std::string> &,
+    //! \return the name of the generated library
+    [[nodiscard]] std::string getLibraryName(const ModelDescription&) const;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
     void declareReservedNames(std::set<std::string> &) override;

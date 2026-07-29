@@ -34,19 +34,21 @@ namespace mfront::bbrick {
   struct ScalarDamageHookeStressPotentialBase : HookeStressPotentialBase {
     //! \brief constructor
     ScalarDamageHookeStressPotentialBase();
-    std::vector<OptionDescription> getOptions(const BehaviourDescription&,
-                                              const bool) const override;
+    //
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const DataMap&) override;
-    std::vector<
+    [[nodiscard]] std::vector<OptionDescription> getOptions(
+        const BehaviourDescription&, const bool) const override;
+    [[nodiscard]] std::vector<
         std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
     getStressDerivatives(const BehaviourDescription&) const override;
-    std::string generateImplicitEquationDerivatives(const BehaviourDescription&,
-                                                    const std::string&,
-                                                    const std::string&,
-                                                    const std::string&,
-                                                    const bool) const override;
+    [[nodiscard]] std::string generateImplicitEquationDerivatives(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const bool) const override;
     //! \brief destructor
     ~ScalarDamageHookeStressPotentialBase() override;
 

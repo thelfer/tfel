@@ -84,11 +84,12 @@ namespace mfront {
      * \return the global options to be passed to DSLs related to material
      * properties.
      */
-    tfel::utilities::DataMap getMaterialPropertyDSLOptions() const;
+    [[nodiscard]] tfel::utilities::DataMap getMaterialPropertyDSLOptions()
+        const;
     //! \return the global options to be passed to DSLs related to behaviours.
-    tfel::utilities::DataMap getBehaviourDSLOptions() const;
+    [[nodiscard]] tfel::utilities::DataMap getBehaviourDSLOptions() const;
     //! \return the global options to be passed to DSLs related to models.
-    tfel::utilities::DataMap getModelDSLOptions() const;
+    [[nodiscard]] tfel::utilities::DataMap getModelDSLOptions() const;
 
    protected:
     //! \brief default constructor

@@ -60,8 +60,8 @@ namespace mfront {
                                 const FileDescription&,
                                 const std::string&,
                                 const Hypothesis) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~GenericBehaviourSymbolsGenerator() override;
   };  // end of struct GenericBehaviourSymbolsGenerator
 

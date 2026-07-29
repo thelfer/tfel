@@ -52,6 +52,13 @@ namespace tfel::system {
 
     ProcessManager();
 
+    /*!
+     *
+     * \note this method is not virtual to be callable in ProcessManager's
+     * constructor
+     */
+    void stopOnSignals(const bool);
+    //
     virtual void killProcess(const ProcessId);
 
     virtual void sendSignal(const ProcessId, const int = SIGTERM);
@@ -137,13 +144,11 @@ namespace tfel::system {
                          const std::string& = "",
                          const std::map<std::string, std::string>& = {});
 
-    virtual void stopOnSignals(const bool);
+    [[nodiscard]] virtual wstream getInputStream(const ProcessId) const;
 
-    virtual wstream getInputStream(const ProcessId) const;
+    [[nodiscard]] virtual rstream getOutputStream(const ProcessId) const;
 
-    virtual rstream getOutputStream(const ProcessId) const;
-
-    virtual ProcessId createProcess(ProcessManager::Command&);
+    [[nodiscard]] virtual ProcessId createProcess(ProcessManager::Command&);
 
     virtual void wait(const ProcessId);
 
@@ -222,7 +227,7 @@ namespace tfel::system {
     unsigned short sHandlerSIGINT;
     unsigned short sHandlerSIGTERM;
     unsigned short sHandlerSIGQUIT;
-    bool shallStopOnSignals;
+    bool shallStopOnSignals = false;
 
   };  // end of struct ProcessManager
 

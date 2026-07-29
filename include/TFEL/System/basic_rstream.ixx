@@ -34,8 +34,8 @@ namespace tfel::system {
   void basic_rstream<Child, Traits>::read(int fd,
                                           void* const buf,
                                           const size_t count) {
-    typedef typename std::conditional<Traits::isBlocking, BlockingStreamReader,
-                                      NonBlockingStreamReader>::type Reader;
+    using Reader = std::conditional_t<Traits::isBlocking, BlockingStreamReader,
+                                      NonBlockingStreamReader>;
     Reader::read(fd, buf, count);
   }
 
@@ -136,18 +136,14 @@ namespace tfel::system {
   }  // end of basic_rstream<Child,Traits>::operator>>
 
   template <typename Child, typename Traits>
-  basic_rstream<Child, Traits>::basic_rstream() {
-  }  // end of basic_rstream<Child,Traits>::basic_rstream
+  basic_rstream<Child, Traits>::basic_rstream() = default;
 
   template <typename Child, typename Traits>
-  basic_rstream<Child, Traits>::basic_rstream(const basic_rstream&) {
-  }  // end of basic_rstream<Child,Traits>::basic_rstream
+  basic_rstream<Child, Traits>::basic_rstream(const basic_rstream&) = default;
 
   template <typename Child, typename Traits>
   basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::operator=(
-      const basic_rstream<Child, Traits>&) {
-    return *this;
-  }  // end of basic_rstream<Child,Traits>::operator=
+      const basic_rstream<Child, Traits>&) = default;
 
   template <typename Child, typename Traits>
   void basic_rstream<Child, Traits>::read(char* const c, const size_t size) {

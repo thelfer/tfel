@@ -32,7 +32,12 @@ namespace mfmtg {
     using generator = std::function<std::shared_ptr<AbstractTestCase>(
         const TestCaseParameters&)>;
     //! \return the uniq instance of this class
-    static AbstractTestCaseFactory& get();
+    [[nodiscard]] static AbstractTestCaseFactory& get();
+    //
+    AbstractTestCaseFactory(AbstractTestCaseFactory&&) = delete;
+    AbstractTestCaseFactory(const AbstractTestCaseFactory&) = delete;
+    AbstractTestCaseFactory& operator=(AbstractTestCaseFactory&&) = delete;
+    AbstractTestCaseFactory& operator=(const AbstractTestCaseFactory&) = delete;
     /*!
      * \brief register a new test case
      * \param[in] n: test case
@@ -44,21 +49,13 @@ namespace mfmtg {
      * \param[in] n: name of the test case
      * \param[in] p: parameters
      */
-    std::shared_ptr<AbstractTestCase> generate(const std::string&,
-                                               const TestCaseParameters&) const;
+    [[nodiscard]] std::shared_ptr<AbstractTestCase> generate(
+        const std::string&, const TestCaseParameters&) const;
 
    private:
     //! \brief default constructor
     AbstractTestCaseFactory();
-    //! \brief move constructor (disabled)
-    AbstractTestCaseFactory(AbstractTestCaseFactory&&) = delete;
-    //! \brief copy constructor (disabled)
-    AbstractTestCaseFactory(const AbstractTestCaseFactory&) = delete;
-    //! \brief move assignement (disabled)
-    AbstractTestCaseFactory& operator=(AbstractTestCaseFactory&&) = delete;
-    //! \brief standard assignement (disabled)
-    AbstractTestCaseFactory& operator=(const AbstractTestCaseFactory&) = delete;
-    //! destructor
+    //! \brief destructor
     ~AbstractTestCaseFactory();
     //! list of registred generators
     std::map<std::string, generator> generators;

@@ -41,11 +41,11 @@ namespace tfel::check {
      */
     ConfigurationManager(const Configuration&);
     //! \brief move constructor
-    ConfigurationManager(ConfigurationManager&&);
+    ConfigurationManager(ConfigurationManager&&) noexcept;
     //! \brief copy constructor
     ConfigurationManager(const ConfigurationManager&);
     //! \brief move assignement
-    ConfigurationManager& operator=(ConfigurationManager&&);
+    ConfigurationManager& operator=(ConfigurationManager&&) noexcept;
     //! \brief standard assignement
     ConfigurationManager& operator=(const ConfigurationManager&);
     /*!
@@ -53,15 +53,17 @@ namespace tfel::check {
      * directory.
      * \param[in] n: directory name
      */
-    ConfigurationManager& getConfigurationManager(const std::string&);
+    [[nodiscard]] ConfigurationManager& getConfigurationManager(
+        const std::string&);
     /*!
      * \return the configuration associated at the specified
      * location.
      * \param[in] d: relative directory
      */
-    const Configuration& getConfiguration(const std::string&) const;
+    [[nodiscard]] const Configuration& getConfiguration(
+        const std::string&) const;
     //! \return the configuration associated at the root of the tree
-    const Configuration& getConfiguration() const;
+    [[nodiscard]] const Configuration& getConfiguration() const;
     /*!
      * \brief add a new substitution
      * \param[in] s1: string to be substituted
@@ -100,7 +102,8 @@ namespace tfel::check {
      * \return a pair which contains the first level and the rest of the
      * location
      */
-    static std::pair<std::string, std::string> extract(const std::string&);
+    [[nodiscard]] static std::pair<std::string, std::string> extract(
+        const std::string&);
     /*!
      * \brief modify the current configuration and those of the subdirectories
      * \param[in] f: function applying the modification

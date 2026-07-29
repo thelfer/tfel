@@ -20,13 +20,13 @@ namespace tfel::utilities {
 
   TestDocumentation::TestDocumentation(const TestDocumentation&) = default;
 
-  TestDocumentation::TestDocumentation(TestDocumentation&&) = default;
+  TestDocumentation::TestDocumentation(TestDocumentation&&) noexcept = default;
 
   TestDocumentation& TestDocumentation::operator=(const TestDocumentation&) =
       default;
 
-  TestDocumentation& TestDocumentation::operator=(TestDocumentation&&) =
-      default;
+  TestDocumentation& TestDocumentation::operator=(
+      TestDocumentation&&) noexcept = default;
 
   TestDocumentation::~TestDocumentation() = default;
 

@@ -33,7 +33,8 @@ namespace mfront {
 
    protected:
     void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-    std::string getLocalVariablesInitializers(const Hypothesis) const override;
+    [[nodiscard]] std::string getLocalVariablesInitializers(
+        const Hypothesis) const override;
 
   };  // end of DefaultCZMCodeGenerator
 

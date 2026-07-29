@@ -22,9 +22,6 @@ namespace mfront::bbrick {
    * \brief This class describes the MohrCoulomb stress criterion
    */
   struct MohrCoulombStressCriterion final : StressCriterionBase {
-    std::vector<OptionDescription> getOptions() const override;
-    std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-        const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -34,25 +31,31 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const Role) override;
-    std::string computeElasticPrediction(const std::string&,
-                                         const BehaviourDescription&,
-                                         const StressPotential&) const override;
-    std::string computeCriterion(const std::string&,
-                                 const BehaviourDescription&,
-                                 const StressPotential&) const override;
-    std::string computeNormal(const std::string&,
-                              const BehaviourDescription&,
-                              const StressPotential&,
-                              const Role) const override;
-    std::string computeNormalDerivative(const std::string&,
-                                        const BehaviourDescription&,
-                                        const StressPotential&,
-                                        const Role) const override;
-    bool isCoupledWithPorosityEvolution() const override;
-    bool isNormalDeviatoric() const override;
-    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const override;
-    //! destructor
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<BehaviourSymmetry>
+    getSupportedBehaviourSymmetries() const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeCriterion(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeNormal(const std::string&,
+                                            const BehaviourDescription&,
+                                            const StressPotential&,
+                                            const Role) const override;
+    [[nodiscard]] std::string computeNormalDerivative(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&,
+        const Role) const override;
+    [[nodiscard]] bool isCoupledWithPorosityEvolution() const override;
+    [[nodiscard]] bool isNormalDeviatoric() const override;
+    [[nodiscard]] PorosityEffectOnFlowRule
+    getPorosityEffectOnEquivalentPlasticStrain() const override;
+    //! \brief destructor
     ~MohrCoulombStressCriterion() override;
 
    protected:

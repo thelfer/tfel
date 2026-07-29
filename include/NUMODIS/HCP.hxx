@@ -50,43 +50,32 @@ namespace numodis {
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT HCP : public Crystallo {
     HCP();
-
-    HCP(HCP&&);
-
+    HCP(HCP&&) noexcept;
     HCP(const HCP&);
-
-    double Norm2(const IBurgers&) const override;
-
-    int getNsymmetries() const override;
-
-    GSystem Symmetry(int, const GSystem&) const override;
-
+    //
+    [[nodiscard]] double Norm2(const IBurgers&) const override;
+    [[nodiscard]] int getNsymmetries() const override;
+    [[nodiscard]] GSystem Symmetry(int, const GSystem&) const override;
     void GenerateEquivalentIBurgers(const IBurgers&,
                                     std::vector<IBurgers>&) const override;
-
     void GenerateEquivalentPlanes(const IPlane&,
                                   std::vector<IPlane>&) const override;
-
     void GenerateEquivalentIndices(
         const std::vector<int>&, std::vector<std::vector<int>>&) const override;
-
     void GenerateOrthogonalVector(const IPlane&, IDirection&) const override;
-
-    bool SamePlaneFamily(const IPlane&, const IPlane&) const override;
-
-    bool SameBurgersFamily(const IBurgers&, const IBurgers&) const override;
-
-    bool SameGlideSystem(const IPlane&,
-                         const IBurgers&,
-                         const IPlane&,
-                         const IBurgers&) const override;
-
+    [[nodiscard]] bool SamePlaneFamily(const IPlane&,
+                                       const IPlane&) const override;
+    [[nodiscard]] bool SameBurgersFamily(const IBurgers&,
+                                         const IBurgers&) const override;
+    [[nodiscard]] bool SameGlideSystem(const IPlane&,
+                                       const IBurgers&,
+                                       const IPlane&,
+                                       const IBurgers&) const override;
     void CrossProduct(const IPlane&, const IPlane&, IDirection&) const override;
-
     void CrossProduct(const IBurgers&,
                       const IDirection&,
                       IPlane&) const override;
-
+    //
     ~HCP() override;
 
     //===========================================================
@@ -96,7 +85,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \return number of indices                              */
     //===========================================================
-    int getNindices() const override;
+    [[nodiscard]] int getNindices() const override;
 
     //===========================================================
     // HCP::ScalProduct
@@ -113,8 +102,8 @@ namespace numodis {
 
     */
     //===========================================================
-    int ScalProduct(const IPlane& iplane,
-                    const IBurgers& iburgers) const override;
+    [[nodiscard]] int ScalProduct(const IPlane& iplane,
+                                  const IBurgers& iburgers) const override;
 
     //===========================================================
     // HCP::ScalProduct
@@ -131,15 +120,16 @@ namespace numodis {
 
     */
     //===========================================================
-    int ScalProduct(const IPlane& iplane,
-                    const IDirection& idirection) const override;
+    [[nodiscard]] int ScalProduct(const IPlane& iplane,
+                                  const IDirection& idirection) const override;
 
    private:
     void CrossProduct(const std::vector<int>& ivector0,
                       const std::vector<int>& ivector1,
                       std::vector<int>& ivector2) const;
 
-    std::vector<int> Symmetry(int k, const std::vector<int>& indices) const;
+    [[nodiscard]] std::vector<int> Symmetry(
+        int k, const std::vector<int>& indices) const;
 
     //! ratio c/a
     double _ratio;

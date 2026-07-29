@@ -86,20 +86,20 @@ namespace mfront {
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
      */
-    bool hasAttribute(const std::string_view) const;
+    [[nodiscard]] bool hasAttribute(const std::string_view) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    T& getAttribute(const std::string_view) requires(
+    [[nodiscard]] T& getAttribute(const std::string_view) requires(
         isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    const T& getAttribute(const std::string_view) const
+    [[nodiscard]] const T& getAttribute(const std::string_view) const
         requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
@@ -107,14 +107,15 @@ namespace mfront {
      * \param[in] v: default value if the attribute is not defined
      */
     template <typename T>
-    T getAttribute(const std::string_view, const T&) const
+    [[nodiscard]] T getAttribute(const std::string_view, const T&) const
         requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string, MaterialKnowledgeAttribute, std::less<>>&
-    getAttributes() const;
+    [[nodiscard]] const std::
+        map<std::string, MaterialKnowledgeAttribute, std::less<>>&
+        getAttributes() const;
     /*!
      * \brief add an external `MFront` file and the list of interfaces used to
      * treat it.
@@ -126,16 +127,17 @@ namespace mfront {
                                const std::vector<std::string>&,
                                const tfel::utilities::DataMap&);
     //! \return the external `MFront` files
-    const std::map<std::string,                           // file path
-                   std::tuple<std::vector<std::string>,   // list of interfaces
-                              tfel::utilities::DataMap>,  // DSL options
-                   std::less<>>&
+    [[nodiscard]] const std::map<
+        std::string,                           // file path
+        std::tuple<std::vector<std::string>,   // list of interfaces
+                   tfel::utilities::DataMap>,  // DSL options
+        std::less<>>&
     getExternalMFrontFiles() const;
     /*!
      * \brief return if an unit system has been associated to the material
      * knowledge
      */
-    bool hasUnitSystem() const;
+    [[nodiscard]] bool hasUnitSystem() const;
     /*!
      * \brief associate an unit system to the material knowledge
      * \param[in] s: unit system
@@ -145,7 +147,7 @@ namespace mfront {
      * \brief associate an unit system to the material knowledge
      * \param[in] s: unit system
      */
-    const std::string& getUnitSystem() const;
+    [[nodiscard]] const std::string& getUnitSystem() const;
     //! \brief destructor
     ~MaterialKnowledgeDescription();
 

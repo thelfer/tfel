@@ -32,12 +32,12 @@ namespace numodis {
   struct TFELNUMODIS_VISIBILITY_EXPORT FrankRead {
     FrankRead(const IsotropicLineTensionModel& linetension);
 
-    double computeBetaF(double alpha,
-                        double beta0,
-                        double tol = 0.00001,
-                        int Nmax = 20) const;
+    [[nodiscard]] double computeBetaF(double alpha,
+                                      double beta0,
+                                      double tol = 0.00001,
+                                      int Nmax = 20) const;
 
-    double computeActivationAngle(double alpha) const;
+    [[nodiscard]] double computeActivationAngle(double alpha) const;
 
     //====================================================================
     // FrankRead::Fx
@@ -51,7 +51,7 @@ namespace numodis {
       \return force acting on the first node along x direction
     */
     //====================================================================
-    double Fx(double alpha, double phi) const {
+    [[nodiscard]] double Fx(double alpha, double phi) const {
       return _linetension.E(phi - alpha) * cos(phi) -
              _linetension.dEdtheta(phi - alpha) * sin(phi);
     }
@@ -68,7 +68,7 @@ namespace numodis {
       \return force acting on the first node along y direction
     */
     //====================================================================
-    double Fy(double alpha, double phi) const {
+    [[nodiscard]] double Fy(double alpha, double phi) const {
       return _linetension.E(phi - alpha) * sin(phi) +
              _linetension.dEdtheta(phi - alpha) * cos(phi);
     }
@@ -85,7 +85,9 @@ namespace numodis {
       \return product between the stress, the Burgers vector and the Length
     */
     //=====================================================================
-    double SigmaBurgersLength(double alpha, double beta0, double betaF) const {
+    [[nodiscard]] double SigmaBurgersLength(double alpha,
+                                            double beta0,
+                                            double betaF) const {
       return this->Fy(alpha, beta0) - this->Fy(alpha, betaF);
     }
 
@@ -103,7 +105,9 @@ namespace numodis {
       \return difference between the two Fx forces
     */
     //=====================================================================
-    double Equation4(double alpha, double beta0, double betaF) const {
+    [[nodiscard]] double Equation4(double alpha,
+                                   double beta0,
+                                   double betaF) const {
       return this->Fx(alpha, beta0) - this->Fx(alpha, betaF);
     }
 

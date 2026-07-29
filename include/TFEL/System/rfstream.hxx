@@ -58,7 +58,7 @@ namespace tfel::system {
 
     void close();
 
-    int getFileDescriptor() const;
+    [[nodiscard]] int getFileDescriptor() const;
 
     //! \brief destructor
     ~rfstream();

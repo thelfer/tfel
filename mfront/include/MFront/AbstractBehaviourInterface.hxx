@@ -53,9 +53,9 @@ namespace mfront {
      * - etc...
      * \return the name of the interface
      */
-    virtual std::string getInterfaceName() const = 0;
+    [[nodiscard]] virtual std::string getInterfaceName() const = 0;
     //! \return the version of the interface
-    virtual std::string getInterfaceVersion() const = 0;
+    [[nodiscard]] virtual std::string getInterfaceVersion() const = 0;
     /*!
      * \brief give options to the interface
      *
@@ -76,10 +76,10 @@ namespace mfront {
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription &,
-        const std::string &,
-        const std::vector<std::string> &,
+    [[nodiscard]] virtual std::pair<bool, tokens_iterator> treatKeyword(
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) = 0;
     /*!
@@ -88,14 +88,14 @@ namespace mfront {
      * \param[in] h  : modelling hypothesis
      * \param[in] mb : behaviour description
      */
-    virtual bool isBehaviourConstructorRequired(
-        const Hypothesis, const BehaviourDescription &) const = 0;
+    [[nodiscard]] virtual bool isBehaviourConstructorRequired(
+        const Hypothesis, const BehaviourDescription&) const = 0;
     /*!
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
-    virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const = 0;
+    [[nodiscard]] virtual std::set<Hypothesis>
+    getModellingHypothesesToBeTreated(const BehaviourDescription&) const = 0;
     /*!
      * \return a pair which first member gives the position of the
      * material properties in the values given through the interface
@@ -104,9 +104,9 @@ namespace mfront {
      * \param[in] mb: behaviour description
      * \param[in] h:  modelling hypothesis
      */
-    virtual std::pair<std::vector<BehaviourMaterialProperty>,
-                      SupportedTypes::TypeSize>
-    buildMaterialPropertiesList(const BehaviourDescription &,
+    [[nodiscard]] virtual std::pair<std::vector<BehaviourMaterialProperty>,
+                                    SupportedTypes::TypeSize>
+    buildMaterialPropertiesList(const BehaviourDescription&,
                                 const Hypothesis) const = 0;
     /*!
      * write interface specific includes

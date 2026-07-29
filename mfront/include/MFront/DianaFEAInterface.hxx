@@ -29,41 +29,23 @@ namespace mfront {
     //! name of finite strain strategy attribute
     static const char* const finiteStrainStrategy;
     //! \return the name of the interface
-    static std::string getName();
-    /*!
-     * \param[in,out] mb: behaviour description
-     * \param[in] k  : keyword treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted
-     * \param[in] p  : iterator to the current token
-     * \param[in] pe : iterator past the end of the file
-     * \return a pair. The first entry is true if the keyword was
-     * treated by the interface. The second entry is an iterator after
-     * the last token treated.
-     */
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] static std::string getName();
+    //
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription&,
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    /*!
-     * \brief write output files
-     * \param[in] mb        : mechanical behaviour description
-     * \param[in] fd        : mfront file description
-     */
     void endTreatment(const BehaviourDescription&,
                       const FileDescription&) const override;
-    /*!
-     * \param[out] d  : target description
-     * \param[out] bd : behaviour description
-     */
     void getTargetsDescription(TargetsDescription&,
                                const BehaviourDescription&) override;
-    //! destructor
+    //! \brief destructor
     ~DianaFEAInterface() override;
 
    protected:
-    std::string getInterfaceName() const override;
+    [[nodiscard]] std::string getInterfaceName() const override;
     void writeBehaviourDataGradientSetter(
         std::ostream&,
         const Gradient&,
@@ -79,32 +61,29 @@ namespace mfront {
         const SupportedTypes::TypeSize) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
-    /*!
-     * \brief write the initialisation of a thermodynamic force
-     * \param[in] os : output file
-     * \param[in] v  : variable to be initialised
-     * \param[in] o  : variable offsert
-     */
     void writeBehaviourDataThermodynamicForceSetter(
         std::ostream&,
         const ThermodynamicForce&,
         const SupportedTypes::TypeSize) const override;
     void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream&) const override;
-    std::string getModellingHypothesisTest(const Hypothesis) const override;
-    std::map<UMATInterfaceBase::Hypothesis, std::string>
+    [[nodiscard]] std::string getModellingHypothesisTest(
+        const Hypothesis) const override;
+    [[nodiscard]] std::map<UMATInterfaceBase::Hypothesis, std::string>
     gatherModellingHypothesesAndTests(
         const BehaviourDescription&) const override;
-    std::string getFunctionNameBasis(const std::string&) const override;
-    std::set<Hypothesis> getModellingHypothesesToBeTreated(
+    [[nodiscard]] std::string getFunctionNameBasis(
+        const std::string&) const override;
+    [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
         const BehaviourDescription&) const override;
-    std::string getLibraryName(const BehaviourDescription&) const override;
+    [[nodiscard]] std::string getLibraryName(
+        const BehaviourDescription&) const override;
     void writeGetOutOfBoundsPolicyFunctionImplementation(
         std::ostream&,
         const BehaviourDescription&,
         const std::string&) const override;
-    bool areExternalStateVariablesSupported() const override;
-    bool isTemperatureIncrementSupported() const override;
+    [[nodiscard]] bool areExternalStateVariablesSupported() const override;
+    [[nodiscard]] bool isTemperatureIncrementSupported() const override;
     /*!
      * \return the input file example
      * \param[in] mb: behaviour description

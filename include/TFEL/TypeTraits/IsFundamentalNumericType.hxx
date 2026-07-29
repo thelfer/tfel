@@ -67,6 +67,10 @@ namespace tfel::typetraits {
     return IsFundamentalNumericType<std::decay_t<T>>::cond;
   }
 
+  template <typename T>
+  concept IsFundamentalNumericTypeConcept =
+      IsFundamentalNumericType<std::decay_t<T>>::cond;
+
 }  // end of namespace tfel::typetraits
 
 #endif /* LIB_TFEL_TYPETRAITS_ISFUNDAMENTALNUMERICTYPE_HXX */

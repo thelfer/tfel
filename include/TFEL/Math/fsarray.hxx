@@ -30,17 +30,19 @@ namespace tfel::math {
     //! \brief a simple alias
     using size_type = unsigned short;
     //
-    TFEL_HOST_DEVICE constexpr size_type size() const noexcept { return N; }
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type size() const noexcept {
+      return N;
+    }
     //
-    constexpr auto data() noexcept { return this->v; }
+    [[nodiscard]] constexpr auto data() noexcept { return this->v; }
     //
-    constexpr auto data() const noexcept { return this->v; }
+    [[nodiscard]] constexpr auto data() const noexcept { return this->v; }
     //! \brief access operator
-    TFEL_HOST_DEVICE constexpr ValueType& operator[](
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr ValueType& operator[](
         const size_type i) noexcept {
       return v[i];
     }
-    TFEL_HOST_DEVICE constexpr const ValueType& operator[](
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const ValueType& operator[](
         const size_type i) const noexcept {
       return v[i];
     }

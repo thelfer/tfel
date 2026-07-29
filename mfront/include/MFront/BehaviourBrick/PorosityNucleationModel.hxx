@@ -54,7 +54,8 @@ namespace mfront::bbrick {
      * \param[in] n: base name
      * \param[in] id: nucleation model id
      */
-    static std::string getVariableId(const std::string&, const std::string&);
+    [[nodiscard]] static std::string getVariableId(const std::string&,
+                                                   const std::string&);
     /*!
      * \param[in,out] bd: behaviour description
      * \param[in,out] dsl: abstract behaviour dsl
@@ -66,7 +67,7 @@ namespace mfront::bbrick {
                             const std::string&,
                             const DataMap&) = 0;
     //! \return the flow options
-    virtual std::vector<OptionDescription> getOptions() const = 0;
+    [[nodiscard]] virtual std::vector<OptionDescription> getOptions() const = 0;
     /*!
      * \brief complete the variable description
      * \param[in/out] bd: behaviour description
@@ -100,7 +101,7 @@ namespace mfront::bbrick {
      * \param[in] iflows: list of inelastic flows and their associated ids
      * \param[in] id: porosity nucleation model id
      */
-    virtual std::string updateNextEstimateOfThePorosityIncrement(
+    [[nodiscard]] virtual std::string updateNextEstimateOfThePorosityIncrement(
         const BehaviourDescription&,
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string&) const = 0;

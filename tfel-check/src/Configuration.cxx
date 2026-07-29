@@ -17,11 +17,11 @@ namespace tfel::check {
 
   Configuration::Configuration() = default;
 
-  Configuration::Configuration(Configuration&&) = default;
+  Configuration::Configuration(Configuration&&) noexcept = default;
 
   Configuration::Configuration(const Configuration&) = default;
 
-  Configuration& Configuration::operator=(Configuration&&) = default;
+  Configuration& Configuration::operator=(Configuration&&) noexcept = default;
 
   Configuration& Configuration::operator=(const Configuration&) = default;
 

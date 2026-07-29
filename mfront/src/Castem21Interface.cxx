@@ -22,7 +22,7 @@ namespace mfront {
     return "castem21";
   }  // end of getName
 
-  Castem21Interface::Castem21Interface() {}  // end of Castem21Interface
+  Castem21Interface::Castem21Interface() = default;
 
   std::string Castem21Interface::getInterfaceVersion() const {
     return "21";

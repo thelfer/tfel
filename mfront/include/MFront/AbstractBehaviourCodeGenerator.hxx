@@ -55,7 +55,7 @@ namespace mfront {
      * The source file contains implementations of functions common to all
      * interfaces.
      */
-    virtual bool isSrcFileRequired() const = 0;
+    [[nodiscard]] virtual bool isSrcFileRequired() const = 0;
     //! \brief destructor
     virtual ~AbstractBehaviourCodeGenerator();
   };  // end of AbstractBehaviourCodeGenerator

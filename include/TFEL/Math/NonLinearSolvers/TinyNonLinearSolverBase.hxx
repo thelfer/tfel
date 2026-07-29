@@ -164,14 +164,15 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr void
     executeInitialisationTaskBeforeBeginningOfCoreAlgorithm() noexcept {}
     //! \return the norm of the residual
-    TFEL_HOST_DEVICE NumericType computeResidualNorm() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] NumericType computeResidualNorm()
+        const noexcept {
       return norm(this->fzeros);
     }
     /*!
      * \brief check the convergence of the method
      * \param[in] e: current error
      */
-    TFEL_HOST_DEVICE constexpr bool checkConvergence(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr bool checkConvergence(
         const NumericType e) const noexcept {
       return e < this->epsilon;
     }
@@ -183,7 +184,7 @@ namespace tfel::math {
      */
     template <MatrixConcept FixedSizeMatrixType,
               VectorConcept FixedSizeVectorType>
-    TFEL_HOST_DEVICE bool solveLinearSystem(
+    TFEL_HOST_DEVICE [[nodiscard]] bool solveLinearSystem(
         FixedSizeMatrixType&, FixedSizeVectorType&) const noexcept;
     /*!
      * \brief update the jacobian matrix if required.

@@ -38,10 +38,10 @@ namespace tfel::math::anderson {
     //! \param Nmax Matrix size
     void resize(size_type Nmax);
     //! \return the matrix size
-    size_type getSize() const;
+    [[nodiscard]] size_type getSize() const;
     //! \param N Line index
     //! \return the address of the Nth line
-    pointer getLine(size_type N);
+    [[nodiscard]] pointer getLine(size_type N);
     // Shift the covariances
     void shift();
     //! Anderson weights by Gram-Schmidt process

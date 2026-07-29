@@ -45,13 +45,13 @@ namespace tfel::math {
     TFEL_MATH_INLINE void swap(const typename vector<T>::size_type,
                                const typename vector<T>::size_type);
     //! \return true is the permutation is the identity
-    TFEL_MATH_INLINE bool isIdentity() const;
+    [[nodiscard]] TFEL_MATH_INLINE bool isIdentity() const;
     /*!
      * \brief resize the permutation
      * This automatically calls the reset method
      */
     void resize(const typename vector<T>::size_type);
-    //! destructor
+    //! \brief destructor
     ~Permutation();
 
    private:

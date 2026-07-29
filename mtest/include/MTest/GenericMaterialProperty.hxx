@@ -26,7 +26,7 @@ namespace mtest {
      */
     GenericMaterialProperty(const std::string&, const std::string&);
     //
-    real getValue() const override;
+    [[nodiscard]] real getValue() const override;
     //! \brief destructor
     ~GenericMaterialProperty() override;
 

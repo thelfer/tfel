@@ -22,7 +22,7 @@ namespace mfront::bbrick {
   //! \brief class describing an inelastic flow.
   struct MFRONT_VISIBILITY_EXPORT PorosityNucleationModelBase
       : PorosityNucleationModel {
-    std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -59,12 +59,12 @@ namespace mfront::bbrick {
      * - automatically declared as options to the nucleation model
      * - initialized in the `@InitLocalVariables` code block
      */
-    virtual std::vector<MaterialCoefficientDescription>
+    [[nodiscard]] virtual std::vector<MaterialCoefficientDescription>
     getMaterialCoefficientDescriptions() const;
     /*!
      * \return a boolean stating if the nucleated porosity must be saved
      */
-    virtual bool requiresSavingNucleatedPorosity() const = 0;
+    [[nodiscard]] virtual bool requiresSavingNucleatedPorosity() const = 0;
     /*!
      * \brief list of material coefficients.
      *

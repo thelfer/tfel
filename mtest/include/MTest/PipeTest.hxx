@@ -94,7 +94,7 @@ namespace mtest {
       /*!
        * \return the results of the test
        */
-      virtual tfel::tests::TestResult getResults() const = 0;
+      [[nodiscard]] virtual tfel::tests::TestResult getResults() const = 0;
       //! \brief desctructor
       virtual ~UTest();
     };  // end of struct UnitTest
@@ -108,21 +108,21 @@ namespace mtest {
     //! \brief default constructor
     PipeTest();
     //! \return the name of the test
-    std::string name() const override;
+    [[nodiscard]] std::string name() const override;
     //! \return the group of the test
-    std::string classname() const override;
+    [[nodiscard]] std::string classname() const override;
     //! \brief return the mesh
-    const PipeMesh& getMesh() const;
+    [[nodiscard]] const PipeMesh& getMesh() const;
     /*!
      * \brief integrate the behaviour along the loading path
      * \param[in] bInit: if true, call the completeInitialisationMethod
      */
-    virtual tfel::tests::TestResult execute(const bool);
+    [[nodiscard]] virtual tfel::tests::TestResult execute(const bool);
     /*!
      * \brief integrate the behaviour along the loading path
      * \note this is equivalent to `execute(true)`
      */
-    tfel::tests::TestResult execute() override;
+    [[nodiscard]] tfel::tests::TestResult execute() override;
     /*!
      * integrate the behaviour over one step
      * \param[out] s: current structure state
@@ -159,7 +159,7 @@ namespace mtest {
      * \param[in] al: axial loading
      */
     virtual void setAxialLoading(const AxialLoading);
-    //! \brief \return the axial loading
+    //! \return the axial loading
     virtual AxialLoading getAxialLoading() const;
     /*!
      * \brief set the evolution of the radius of the mandrel
@@ -181,7 +181,7 @@ namespace mtest {
      * \param[in] t: radial loading type
      */
     virtual void setRadialLoading(const RadialLoading);
-    //! \brief \return the radial loading type
+    //! \return the radial loading type
     virtual RadialLoading getRadialLoading() const;
     /*!
      * \brief set the inner radius evolution
@@ -234,11 +234,10 @@ namespace mtest {
      * \param[in] e : criterion value
      */
     virtual void setResidualEpsilon(const real);
-    //! \return the total number of unknowns
-    size_type getNumberOfUnknowns() const override;
     //! \return the total number of nodes
-    virtual size_type getNumberOfNodes() const;
+    [[nodiscard]] virtual size_type getNumberOfNodes() const;
     //
+    [[nodiscard]] size_type getNumberOfUnknowns() const override;
     void initializeCurrentState(StudyCurrentState&) const override;
     void initializeWorkSpace(SolverWorkSpace&) const override;
     [[nodiscard]] std::pair<bool, real> prepare(StudyCurrentState&,
@@ -286,6 +285,9 @@ namespace mtest {
                                        const unsigned int) const override;
     void setModellingHypothesis(const std::string&) override;
     void setDefaultModellingHypothesis() override;
+    void printOutput(const real,
+                     const StudyCurrentState&,
+                     const bool) const override;
     /*!
      * \brief add a new profile postprocessing
      * \param[in] f: file name
@@ -296,22 +298,12 @@ namespace mtest {
     //! \brief turn hpp to true
     virtual void performSmallStrainAnalysis();
     /*!
-     * \brief print usefull information in the output file
-     * \param[in] t: time
-     * \param[in] s: current state
-     * \param[in] o: if true, this time has been specified by the
-     * user. Otherwise, it has been reached due to sub-stepping.
-     */
-    void printOutput(const real,
-                     const StudyCurrentState&,
-                     const bool) const override;
-    /*!
      * \brief compute the minium and maximum values of a scalar
      * variable
      * \param[in] s: structure state
      * \param[in] n: variable name
      */
-    virtual std::pair<real, real> computeMinimumAndMaximumValues(
+    [[nodiscard]] virtual std::pair<real, real> computeMinimumAndMaximumValues(
         const StudyCurrentState&, const std::string&) const;
     /*!
      * \brief compute the minium and maximum values of a scalar
@@ -319,7 +311,7 @@ namespace mtest {
      * \param[in] s: structure state
      * \param[in] e: function returning value at integration point
      */
-    virtual std::pair<real, real> computeMinimumAndMaximumValues(
+    [[nodiscard]] virtual std::pair<real, real> computeMinimumAndMaximumValues(
         const StudyCurrentState&,
         const std::function<real(const mtest::CurrentState&)>&) const;
     /*!
@@ -327,14 +319,14 @@ namespace mtest {
      * \param[in] s: structure state
      * \param[in] n: variable name
      */
-    virtual real computeMinimumValue(const StudyCurrentState&,
-                                     const std::string&) const;
+    [[nodiscard]] virtual real computeMinimumValue(const StudyCurrentState&,
+                                                   const std::string&) const;
     /*!
      * \brief compute the minimum value of a scalar variable
      * \param[in] s: structure state
      * \param[in] e: function returning value at integration point
      */
-    virtual real computeMinimumValue(
+    [[nodiscard]] virtual real computeMinimumValue(
         const StudyCurrentState&,
         const std::function<real(const mtest::CurrentState&)>&) const;
     /*!
@@ -342,14 +334,14 @@ namespace mtest {
      * \param[in] s: structure state
      * \param[in] n: variable name
      */
-    virtual real computeMaximumValue(const StudyCurrentState&,
-                                     const std::string&) const;
+    [[nodiscard]] virtual real computeMaximumValue(const StudyCurrentState&,
+                                                   const std::string&) const;
     /*!
      * \brief compute the maximum value of a scalar variable
      * \param[in] s: structure state
      * \param[in] e: function returning value at integration point
      */
-    virtual real computeMaximumValue(
+    [[nodiscard]] virtual real computeMaximumValue(
         const StudyCurrentState&,
         const std::function<real(const mtest::CurrentState&)>&) const;
 
@@ -364,7 +356,7 @@ namespace mtest {
      * \param[in] n: variable name
      * \param[in] c: enum element to choose the initial or final configuration
      */
-    virtual real computeIntegralValue(
+    [[nodiscard]] virtual real computeIntegralValue(
         const StudyCurrentState&,
         const std::string&,
         const Configuration = Configuration::INTIAL_CONFIGURATION) const;
@@ -375,7 +367,7 @@ namespace mtest {
      * \param[in] e: function returning value at integration point
      * \param[in] c: enum element to choose the initial or final configuration
      */
-    virtual real computeIntegralValue(
+    [[nodiscard]] virtual real computeIntegralValue(
         const StudyCurrentState&,
         const std::function<real(const mtest::CurrentState&)>&,
         const Configuration = Configuration::INTIAL_CONFIGURATION) const;
@@ -385,7 +377,7 @@ namespace mtest {
      * \param[in] n: variable name
      * \param[in] c: enum element to choose the initial or final configuration
      */
-    virtual real computeMeanValue(
+    [[nodiscard]] virtual real computeMeanValue(
         const StudyCurrentState&,
         const std::string&,
         const Configuration = Configuration::INTIAL_CONFIGURATION) const;
@@ -395,7 +387,7 @@ namespace mtest {
      * \param[in] n: variable name
      * \param[in] c: enum element to choose the initial or final configuration
      */
-    virtual real computeMeanValue(
+    [[nodiscard]] virtual real computeMeanValue(
         const StudyCurrentState&,
         const std::function<real(const mtest::CurrentState&)>&,
         const Configuration = Configuration::INTIAL_CONFIGURATION) const;

@@ -57,9 +57,9 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    static std::string getVariableId(const std::string&,
-                                     const std::string&,
-                                     const std::string&);
+    [[nodiscard]] static std::string getVariableId(const std::string&,
+                                                   const std::string&,
+                                                   const std::string&);
     /*!
      * \param[in,out] bd: behaviour description
      * \param[in,out] dsl: abstract behaviour dsl
@@ -79,9 +79,10 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeElasticPrediction(const BehaviourDescription&,
-                                                 const std::string&,
-                                                 const std::string&) const = 0;
+    [[nodiscard]] virtual std::string computeElasticPrediction(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const = 0;
     /*!
      * \brief return the code computing the radius of the elastic limit  at the
      * middle of the time step. The code defines a variable named "R"+fid+"_"+id
@@ -89,9 +90,10 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeElasticLimit(const BehaviourDescription&,
-                                            const std::string&,
-                                            const std::string&) const = 0;
+    [[nodiscard]] virtual std::string computeElasticLimit(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const = 0;
     /*!
      * \brief return the code computing the radius of the elastic limit and its
      * derivative with respect to the equivalent plastic strain at the middle of
@@ -104,7 +106,7 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeElasticLimitAndDerivative(
+    [[nodiscard]] virtual std::string computeElasticLimitAndDerivative(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const = 0;
@@ -120,8 +122,8 @@ namespace mfront::bbrick {
                               const std::string&,
                               const std::string&) const = 0;
     //! \return the flow options
-    virtual std::vector<OptionDescription> getOptions() const = 0;
-    //! destructor
+    [[nodiscard]] virtual std::vector<OptionDescription> getOptions() const = 0;
+    //! \brief destructor
     virtual ~IsotropicHardeningRule();
   };  // end of struct IsotropicHardeningRule
 

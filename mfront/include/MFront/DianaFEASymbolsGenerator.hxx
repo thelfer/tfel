@@ -24,7 +24,7 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT DianaFEASymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     DianaFEASymbolsGenerator();
     void writeBehaviourTypeSymbols(std::ostream&,
                                    const BehaviourInterfaceBase&,
@@ -40,8 +40,8 @@ namespace mfront {
                                 const FileDescription&,
                                 const std::string&,
                                 const Hypothesis) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~DianaFEASymbolsGenerator() override;
   };  // end of struct DianaFEASymbolsGenerator
 

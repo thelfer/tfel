@@ -72,13 +72,13 @@ namespace mtest {
     // case where s.mprops1 is empty
     std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
     if (s.mprops1.empty()) {
-      wk.mps[0] = real(0);
+      wk.mps[0] = real{0};
     }
     // using a local copy of internal state variables to handle the
     // case where iv0 is empty
     std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     if (s.iv0.empty()) {
-      wk.ivs[0] = real(0);
+      wk.ivs[0] = real{0};
     }
     const auto nstatv = static_cast<AsterInt>(wk.ivs.size());
     //
@@ -87,8 +87,8 @@ namespace mtest {
     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     // rotation matrix
     tmatrix<3u, 3u, real> drot = transpose(s.r);
-    stensor<3u, real> ue0(real(0));
-    stensor<3u, real> ude(real(0));
+    stensor<3u, real> ue0(real{0});
+    stensor<3u, real> ude(real{0});
     std::copy(s.e0.begin(), s.e0.end(), ue0.begin());
     for (decltype(s.e1.size()) i = 0; i != s.e1.size(); ++i) {
       ude(i) = s.e1(i) - s.e0(i);
