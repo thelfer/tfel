@@ -18,7 +18,8 @@ namespace tfel::math {
 
 #define TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL(X)                                \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   constexpr qt<unit::NoUnit,                                                  \
                typename tfel::typetraits::Promote<ValueType, X>::type>        \
@@ -29,7 +30,8 @@ namespace tfel::math {
     return a.getValue() + b;                                                  \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   constexpr qt<unit::NoUnit,                                                  \
                typename tfel::typetraits::Promote<ValueType, X>::type>        \
@@ -41,7 +43,8 @@ namespace tfel::math {
     return a + b.getValue();                                                  \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   constexpr qt<unit::NoUnit,                                                  \
                typename tfel::typetraits::Promote<ValueType, X>::type>        \
@@ -52,7 +55,8 @@ namespace tfel::math {
     return a.getValue() - b;                                                  \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   constexpr qt<unit::NoUnit,                                                  \
                typename tfel::typetraits::Promote<ValueType, X>::type>        \
@@ -65,7 +69,8 @@ namespace tfel::math {
   }                                                                           \
                                                                               \
   /* Multiplication by a scalar */                                            \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   constexpr qt<UnitType,                                                      \
                typename tfel::typetraits::Promote<ValueType, X>::type>        \
@@ -77,7 +82,8 @@ namespace tfel::math {
     return result((a.getValue()) * b);                                        \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   constexpr qt<UnitType,                                                      \
                typename tfel::typetraits::Promote<ValueType, X>::type>        \
@@ -90,7 +96,8 @@ namespace tfel::math {
     return result(b * (a.getValue()));                                        \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   constexpr qt<UnitType,                                                      \
                typename tfel::typetraits::Promote<ValueType, X>::type>        \
@@ -102,8 +109,8 @@ namespace tfel::math {
     return result((a.getValue()) / b);                                        \
   }                                                                           \
                                                                               \
-  template <typename ValueType, UnitConcept UnitType,                         \
-            typename OwnershipPolicy>                                         \
+  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
+            UnitConcept UnitType, typename OwnershipPolicy>                   \
   constexpr qt<typename tfel::math::internals::SubstractUnit<unit::NoUnit,    \
                                                              UnitType>::type, \
                typename tfel::typetraits::Promote<ValueType, X>::type>        \

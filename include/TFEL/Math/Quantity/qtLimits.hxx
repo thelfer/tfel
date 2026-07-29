@@ -23,7 +23,7 @@ namespace std {
    * \brief partial specialisation for quantities
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct numeric_limits<
       tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {

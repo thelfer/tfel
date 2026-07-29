@@ -77,7 +77,7 @@ namespace tfel::typetraits {
    * \see   IsScalar
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsScalar<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -89,7 +89,7 @@ namespace tfel::typetraits {
    * \see   IsScalar
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsScalar<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -102,7 +102,7 @@ namespace tfel::typetraits {
    * \see   IsReal
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsReal<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -114,7 +114,7 @@ namespace tfel::typetraits {
    * \see   IsReal
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsReal<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -127,7 +127,7 @@ namespace tfel::typetraits {
    * \see   IsComplex
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsComplex<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -139,7 +139,7 @@ namespace tfel::typetraits {
    * \see   IsComplex
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsComplex<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -173,7 +173,7 @@ namespace tfel::typetraits {
    * \see   RealPartType
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct RealPartType<
       tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -187,7 +187,7 @@ namespace tfel::typetraits {
    * \see   RealPartType
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct RealPartType<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -202,9 +202,9 @@ namespace tfel::typetraits {
    * \see   IsAssignableTo
    */
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   struct IsAssignableTo<
       tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>,
@@ -254,7 +254,7 @@ namespace tfel::typetraits {
   TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long double>);
 
   template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy>
   struct AbsType<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     using type = tfel::math::qt<UnitType, typename AbsType<ValueType>::type>;

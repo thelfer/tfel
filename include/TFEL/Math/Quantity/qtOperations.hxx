@@ -21,7 +21,8 @@
 
 #define TFEL_MATH_QT_SCALAR_OPERATIONS(X)                                     \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator<(                                  \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                \
@@ -31,7 +32,8 @@
     return a.getValue() < b;                                                  \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator<(                                  \
       const X& a,                                                             \
@@ -41,7 +43,8 @@
     return a < b.getValue();                                                  \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator<=(                                 \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                \
@@ -51,7 +54,8 @@
     return a.getValue() <= b;                                                 \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator<=(                                 \
       const X& a,                                                             \
@@ -61,7 +65,8 @@
     return a <= b.getValue();                                                 \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator>(                                  \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                \
@@ -71,7 +76,8 @@
     return a.getValue() > b;                                                  \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator>(                                  \
       const X& a,                                                             \
@@ -81,7 +87,8 @@
     return a > b.getValue();                                                  \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator>=(                                 \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                \
@@ -91,7 +98,8 @@
     return a.getValue() >= b;                                                 \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator>=(                                 \
       const X& a,                                                             \
@@ -101,7 +109,8 @@
     return a >= b.getValue();                                                 \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator==(                                 \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                \
@@ -111,7 +120,8 @@
     return a.getValue() == b;                                                 \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator==(                                 \
       const X& a,                                                             \
@@ -121,7 +131,8 @@
     return a == b.getValue();                                                 \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator!=(                                 \
       const X& a,                                                             \
@@ -131,7 +142,8 @@
     return a != b.getValue();                                                 \
   }                                                                           \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr bool operator!=(                                 \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                \
@@ -144,7 +156,8 @@
    * \brief Partial specialisation for qt with no unit and a scalar           \
    * \see   ResultType                                                        \
    */                                                                         \
-  template <typename ValueType, typename OwnershipPolicy>                     \
+  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
+            typename OwnershipPolicy>                                         \
   struct ResultType<Quantity<unit::NoUnit, ValueType, OwnershipPolicy>, X,    \
                     OpPlus> {                                                 \
     using type = qt<unit::NoUnit,                                             \
@@ -155,21 +168,24 @@
    * \brief Partial specialisation for qt with no unit and a scalar           \
    * \see   ResultType                                                        \
    */                                                                         \
-  template <typename ValueType, typename OwnershipPolicy>                     \
+  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
+            typename OwnershipPolicy>                                         \
   struct ResultType<X, Quantity<unit::NoUnit, ValueType, OwnershipPolicy>,    \
                     OpPlus> {                                                 \
     using type = qt<unit::NoUnit,                                             \
                     typename tfel::typetraits::Promote<ValueType, X>::type>;  \
   };                                                                          \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr qt<                                              \
       unit::NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>   \
   operator+(const Quantity<unit::NoUnit, ValueType, OwnershipPolicy>&,        \
             const X&) noexcept;                                               \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr qt<                                              \
       unit::NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>   \
@@ -181,7 +197,8 @@
    * \brief Partial specialisation for qt with no unit and a scalar           \
    * \see   ResultType                                                        \
    */                                                                         \
-  template <typename ValueType, typename OwnershipPolicy>                     \
+  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
+            typename OwnershipPolicy>                                         \
   struct ResultType<Quantity<unit::NoUnit, ValueType, OwnershipPolicy>, X,    \
                     OpMinus> {                                                \
     using type = qt<unit::NoUnit,                                             \
@@ -192,21 +209,24 @@
    * \brief Partial specialisation for qt with no unit and a scalar           \
    * \see   ResultType                                                        \
    */                                                                         \
-  template <typename ValueType, typename OwnershipPolicy>                     \
+  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
+            typename OwnershipPolicy>                                         \
   struct ResultType<X, Quantity<unit::NoUnit, ValueType, OwnershipPolicy>,    \
                     OpMinus> {                                                \
     using type = qt<unit::NoUnit,                                             \
                     typename tfel::typetraits::Promote<ValueType, X>::type>;  \
   };                                                                          \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr qt<                                              \
       unit::NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>   \
   operator-(const Quantity<unit::NoUnit, ValueType, OwnershipPolicy>&,        \
             const X&) noexcept;                                               \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr qt<                                              \
       unit::NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>   \
@@ -218,7 +238,8 @@
    * \brief Partial specialisation for qt by scalar product                   \
    * \see   ResultType                                                        \
    */                                                                         \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>, X,        \
                     OpMult> {                                                 \
@@ -230,7 +251,8 @@
    * \brief Partial specialisation for scalar by qt product                   \
    * \see   ResultType                                                        \
    */                                                                         \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   struct ResultType<X, Quantity<UnitType, ValueType, OwnershipPolicy>,        \
                     OpMult> {                                                 \
@@ -238,14 +260,16 @@
         qt<UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>; \
   };                                                                          \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr qt<                                              \
       UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>       \
   operator*(const Quantity<UnitType, ValueType, OwnershipPolicy>&,            \
             const X&) noexcept;                                               \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr qt<                                              \
       UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>       \
@@ -256,7 +280,8 @@
    * \brief Partial specialisation for qt by scalar division                  \
    * \see   ResultType                                                        \
    */                                                                         \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>, X,        \
                     OpDiv> {                                                  \
@@ -268,7 +293,8 @@
    * \brief Partial specialisation for scalar by qt division                  \
    * \see   ResultType                                                        \
    */                                                                         \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   struct ResultType<X, Quantity<UnitType, ValueType, OwnershipPolicy>,        \
                     OpDiv> {                                                  \
@@ -278,15 +304,16 @@
            typename tfel::typetraits::Promote<ValueType, X>::type>;           \
   };                                                                          \
                                                                               \
-  template <UnitConcept UnitType, typename ValueType,                         \
+  template <UnitConcept UnitType,                                             \
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
             typename OwnershipPolicy>                                         \
   TFEL_HOST_DEVICE constexpr qt<                                              \
       UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>       \
   operator/(const Quantity<UnitType, ValueType, OwnershipPolicy>&,            \
             const X&) noexcept;                                               \
                                                                               \
-  template <typename ValueType, UnitConcept UnitType,                         \
-            typename OwnershipPolicy>                                         \
+  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,        \
+            UnitConcept UnitType, typename OwnershipPolicy>                   \
   TFEL_HOST_DEVICE constexpr qt<                                              \
       typename tfel::math::internals::SubstractUnit<unit::NoUnit,             \
                                                     UnitType>::type,          \
@@ -296,7 +323,9 @@
 
 namespace tfel::math {
 
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <UnitConcept UnitType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            typename OwnershipPolicy>
   struct ComputeUnaryOperationResult<
       ScalarTag,
       UnaryOperatorTag,
@@ -311,9 +340,9 @@ namespace tfel::math {
    * \see   ResultType
    */
   template <UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>,
                     Quantity<UnitType, ValueType2, OwnershipPolicy2>,
@@ -324,10 +353,10 @@ namespace tfel::math {
   };
 
   template <UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
             UnitConcept UnitType2,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   TFEL_HOST_DEVICE constexpr qt<
       UnitType,
@@ -345,9 +374,9 @@ namespace tfel::math {
    * unit \see   ResultType
    */
   template <UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>,
                     Quantity<UnitType, ValueType2, OwnershipPolicy2>,
@@ -358,10 +387,10 @@ namespace tfel::math {
   };
 
   template <UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
             UnitConcept UnitType2,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   TFEL_HOST_DEVICE constexpr qt<
       UnitType,
@@ -379,10 +408,10 @@ namespace tfel::math {
    * \see   ResultType
    */
   template <UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
             UnitConcept UnitType2,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>,
                     Quantity<UnitType2, ValueType2, OwnershipPolicy2>,
@@ -393,10 +422,10 @@ namespace tfel::math {
   };
 
   template <UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
             UnitConcept UnitType2,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   constexpr auto operator*(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
@@ -412,10 +441,10 @@ namespace tfel::math {
    * \see   ResultType
    */
   template <UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
             UnitConcept UnitType2,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>,
                     Quantity<UnitType2, ValueType2, OwnershipPolicy2>,
@@ -427,10 +456,10 @@ namespace tfel::math {
   };
 
   template <UnitConcept UnitType,
-            typename ValueType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
             typename OwnershipPolicy,
             UnitConcept UnitType2,
-            typename ValueType2,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
             typename OwnershipPolicy2>
   constexpr auto operator/(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,

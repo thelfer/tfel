@@ -68,7 +68,7 @@ namespace tfel::typetraits {
   }
 
   template <typename T>
-  concept IsFundamentalNumericTypeConcept =
+  concept FundamentalNumericTypeConcept =
       IsFundamentalNumericType<std::decay_t<T>>::cond;
 
 }  // end of namespace tfel::typetraits

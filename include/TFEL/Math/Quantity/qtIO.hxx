@@ -19,7 +19,9 @@
 
 namespace tfel::math {
 
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <UnitConcept UnitType,
+            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            typename OwnershipPolicy>
   std::ostream& operator<<(
       std::ostream& os,
       const Quantity<UnitType, ValueType, OwnershipPolicy>& q) {
