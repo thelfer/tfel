@@ -19,9 +19,9 @@
 namespace tfel::check {
 
   Test::Test() = default;
-  Test::Test(Test&&) = default;
+  Test::Test(Test&&) noexcept = default;
   Test::Test(const Test&) = default;
-  Test& Test::operator=(Test&&) = default;
+  Test& Test::operator=(Test&&) noexcept = default;
   Test& Test::operator=(const Test&) = default;
   Test::~Test() = default;
 
@@ -40,7 +40,7 @@ namespace tfel::check {
     return this->comparison->getMsgLog() + "\n" + this->msgLog;
   }
 
-  const std::shared_ptr<Comparison> Test::getComparison() const {
+  std::shared_ptr<Comparison> Test::getComparison() const {
     return this->comparison;
   }
 

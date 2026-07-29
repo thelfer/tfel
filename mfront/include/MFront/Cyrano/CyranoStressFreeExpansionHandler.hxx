@@ -36,12 +36,12 @@ namespace cyrano {
    *                     step (TFEL conventions)
    */
   MFRONT_CYRANO_VISIBILITY_EXPORT void
-  CyranoStandardSmallStrainStressFreeExpansionHandler(CyranoReal *const,
-                                                      CyranoReal *const,
-                                                      const CyranoReal *const,
-                                                      const CyranoReal *const,
-                                                      const CyranoReal *const,
-                                                      const CyranoReal *const);
+  CyranoStandardSmallStrainStressFreeExpansionHandler(CyranoReal* const,
+                                                      CyranoReal* const,
+                                                      const CyranoReal* const,
+                                                      const CyranoReal* const,
+                                                      const CyranoReal* const,
+                                                      const CyranoReal* const);
   /*!
    * \brief handler of stress free expansion handler for logarithmic strains
    * \param[out] em : mechanical deformation at the beginning of the time
@@ -58,12 +58,12 @@ namespace cyrano {
    *                     step (TFEL conventions)
    */
   MFRONT_CYRANO_VISIBILITY_EXPORT void
-  CyranoLogarithmicStrainStressFreeExpansionHandler(CyranoReal *const,
-                                                    CyranoReal *const,
-                                                    const CyranoReal *const,
-                                                    const CyranoReal *const,
-                                                    const CyranoReal *const,
-                                                    const CyranoReal *const);
+  CyranoLogarithmicStrainStressFreeExpansionHandler(CyranoReal* const,
+                                                    CyranoReal* const,
+                                                    const CyranoReal* const,
+                                                    const CyranoReal* const,
+                                                    const CyranoReal* const,
+                                                    const CyranoReal* const);
 
 }  // end of namespace cyrano
 

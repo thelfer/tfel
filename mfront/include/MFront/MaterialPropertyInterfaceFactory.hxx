@@ -28,10 +28,19 @@ namespace mfront {
     typedef std::shared_ptr<AbstractMaterialPropertyInterface> (
         *InterfaceCreator)();
 
-    static MaterialPropertyInterfaceFactory&
+    [[nodiscard]] static MaterialPropertyInterfaceFactory&
     getMaterialPropertyInterfaceFactory();
-
-    std::vector<std::string> getRegistredInterfaces() const;
+    //
+    MaterialPropertyInterfaceFactory(const MaterialPropertyInterfaceFactory&) =
+        delete;
+    MaterialPropertyInterfaceFactory(MaterialPropertyInterfaceFactory&&) =
+        delete;
+    MaterialPropertyInterfaceFactory& operator=(
+        const MaterialPropertyInterfaceFactory&) = delete;
+    MaterialPropertyInterfaceFactory& operator=(
+        MaterialPropertyInterfaceFactory&&) = delete;
+    //
+    [[nodiscard]] std::vector<std::string> getRegistredInterfaces() const;
 
     void registerInterfaceCreator(const std::string&, InterfaceCreator);
 
@@ -39,19 +48,20 @@ namespace mfront {
 
     void registerInterfaceDependency(const std::string&, const std::string&);
 
-    std::vector<std::string> getInterfaceDependencies(const std::string&) const;
+    [[nodiscard]] std::vector<std::string> getInterfaceDependencies(
+        const std::string&) const;
     /*!
      * \return true if the given interface exists
      * \param[in] n : interface name
      */
-    bool exists(const std::string&) const;
+    [[nodiscard]] bool exists(const std::string&) const;
     /*!
      * \return a newly created interface
      * \param[in] n : interface name
      */
-    std::shared_ptr<AbstractMaterialPropertyInterface> getInterface(
-        const std::string&) const;
-
+    [[nodiscard]] std::shared_ptr<AbstractMaterialPropertyInterface>
+    getInterface(const std::string&) const;
+    //! \brief destructor
     ~MaterialPropertyInterfaceFactory();
 
    private:
@@ -62,15 +72,6 @@ namespace mfront {
 
     TFEL_VISIBILITY_LOCAL
     MaterialPropertyInterfaceFactory();
-
-    MaterialPropertyInterfaceFactory(const MaterialPropertyInterfaceFactory&) =
-        delete;
-    MaterialPropertyInterfaceFactory(MaterialPropertyInterfaceFactory&&) =
-        delete;
-    MaterialPropertyInterfaceFactory& operator=(
-        const MaterialPropertyInterfaceFactory&) = delete;
-    MaterialPropertyInterfaceFactory& operator=(
-        MaterialPropertyInterfaceFactory&&) = delete;
 
     TFEL_VISIBILITY_LOCAL
     InterfaceDependencyContainer& getDependenciesMap() const;

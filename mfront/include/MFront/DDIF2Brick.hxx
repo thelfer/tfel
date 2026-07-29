@@ -36,15 +36,17 @@ namespace mfront {
      * \param[in] bd_  : mechanical behaviour description
      */
     DDIF2Brick(AbstractBehaviourDSL&, BehaviourDescription&);
-    std::string getName() const override;
-    BehaviourBrickDescription getDescription() const override;
-    std::vector<bbrick::OptionDescription> getOptions(
-        const bool) const override;
+    //
     void initialize(const Parameters&, const DataMap&) override;
-    std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
     void completeVariableDeclaration() const override;
     void endTreatment() const override;
-    //! destructor
+    [[nodiscard]] std::string getName() const override;
+    [[nodiscard]] BehaviourBrickDescription getDescription() const override;
+    [[nodiscard]] std::vector<bbrick::OptionDescription> getOptions(
+        const bool) const override;
+    [[nodiscard]] std::vector<Hypothesis> getSupportedModellingHypotheses()
+        const override;
+    //! \brief destructor
     ~DDIF2Brick() override;
 
    protected:

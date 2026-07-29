@@ -57,34 +57,35 @@ namespace tfel::material {
      */
     PolyCrystalsSlidingSystems& operator=(const PolyCrystalsSlidingSystems&);
   };
-  
+
   /*!
-     * \brief the same class as PolyCrystalsSlidingSystems but with
-     * volume fraction associated to each grain (fourth item of each line of the file
-     * given as an argument to the method getPolyCrystalsSlidingSystems)
-     * \param[in] Np      : number of phases
-     * \param[in] GS      : class describing the sliding system of one phase
-     * \param[in] NumType : numeric type used
-     */
-    template <unsigned short Ng, typename GS, typename NumType>
-    struct ExtendedPolyCrystalsSlidingSystems {
-      static constexpr unsigned short Nss = GS::Nss;
-      typedef NumType real;
-      typedef tfel::math::stensor<3u, real> StrainStensor;
+   * \brief the same class as PolyCrystalsSlidingSystems but with
+   * volume fraction associated to each grain (fourth item of each line of the
+   * file given as an argument to the method getPolyCrystalsSlidingSystems)
+   * \param[in] Np      : number of phases
+   * \param[in] GS      : class describing the sliding system of one phase
+   * \param[in] NumType : numeric type used
+   */
+  template <unsigned short Ng, typename GS, typename NumType>
+  struct ExtendedPolyCrystalsSlidingSystems {
+    static constexpr unsigned short Nss = GS::Nss;
+    typedef NumType real;
+    typedef tfel::math::stensor<3u, real> StrainStensor;
 
-      static const ExtendedPolyCrystalsSlidingSystems &getPolyCrystalsSlidingSystems(
-          const std::string &);
-      tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
-      
-      //! \brief volume fractions per phases
-      tfel::math::vector<real> volume_fractions;
+    static const ExtendedPolyCrystalsSlidingSystems&
+    getPolyCrystalsSlidingSystems(const std::string&);
+    tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
 
-     private:
-      ExtendedPolyCrystalsSlidingSystems(const std::string &);
-      ExtendedPolyCrystalsSlidingSystems(const ExtendedPolyCrystalsSlidingSystems &);
-      ExtendedPolyCrystalsSlidingSystems &operator=(
-          const ExtendedPolyCrystalsSlidingSystems &);
-    };
+    //! \brief volume fractions per phases
+    tfel::math::vector<real> volume_fractions;
+
+   private:
+    ExtendedPolyCrystalsSlidingSystems(const std::string&);
+    ExtendedPolyCrystalsSlidingSystems(
+        const ExtendedPolyCrystalsSlidingSystems&);
+    ExtendedPolyCrystalsSlidingSystems& operator=(
+        const ExtendedPolyCrystalsSlidingSystems&);
+  };
 
 }  // end of namespace tfel::material
 

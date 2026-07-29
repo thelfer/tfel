@@ -104,9 +104,9 @@ namespace mfront {
 
    protected:
     //! \return the current Argument
-    virtual const tfel::utilities::Argument& getCurrentCommandLineArgument()
-        const = 0;
-    virtual bool treatUnknownArgumentBase();
+    [[nodiscard]] virtual const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const = 0;
+    [[nodiscard]] virtual bool treatUnknownArgumentBase();
     /*!
      * \brief method that must be called once all the arguments have been
      * parsed.

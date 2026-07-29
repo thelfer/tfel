@@ -19,13 +19,14 @@
 namespace mfront {
 
   /*!
-   * This class provides some helper function for behaviours
+   * \brief This class provides some helper function for behaviours
    * interfaces based on the umat standard
    */
   struct MFRONT_VISIBILITY_EXPORT AsterSymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     AsterSymbolsGenerator();
+    //
     void writeSpecificSymbols(std::ostream&,
                               const BehaviourInterfaceBase&,
                               const BehaviourDescription&,
@@ -45,8 +46,8 @@ namespace mfront {
                                 const FileDescription&,
                                 const std::string&,
                                 const Hypothesis) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~AsterSymbolsGenerator() override;
   };  // end of struct AsterSymbolsGenerator
 

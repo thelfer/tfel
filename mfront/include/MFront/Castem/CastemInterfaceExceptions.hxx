@@ -37,21 +37,21 @@ namespace castem {
     /*!
      * \brief throw an exception
      */
-    [[noreturn]] static void exe(const CastemReal *const,
-                                 const CastemReal *const,
-                                 CastemReal *const,
-                                 const CastemReal *const,
-                                 const CastemReal *const,
-                                 const CastemReal *const,
-                                 const CastemReal *const,
-                                 const CastemReal *const,
-                                 const CastemInt *const,
-                                 const CastemReal *const,
-                                 const CastemReal *const,
-                                 CastemReal *const,
-                                 const CastemInt *const,
-                                 CastemReal *const,
-                                 const StressFreeExpansionHandler &);
+    [[noreturn]] static void exe(const CastemReal* const,
+                                 const CastemReal* const,
+                                 CastemReal* const,
+                                 const CastemReal* const,
+                                 const CastemReal* const,
+                                 const CastemReal* const,
+                                 const CastemReal* const,
+                                 const CastemReal* const,
+                                 const CastemInt* const,
+                                 const CastemReal* const,
+                                 const CastemReal* const,
+                                 CastemReal* const,
+                                 const CastemInt* const,
+                                 CastemReal* const,
+                                 const StressFreeExpansionHandler&);
   };  // end of struct CastemUnSupportedCaseHandler
 
   /*!
@@ -92,7 +92,7 @@ namespace castem {
      * \param[in] e : the CastemException to be treated
      */
     static void treatCastemException(const std::string_view,
-                                     const CastemException &);
+                                     const CastemException&);
 
     /*!
      * \brief display the error message out of a material exception to the
@@ -101,7 +101,7 @@ namespace castem {
      * \param[in] e : the material exception to be treated
      */
     static void treatMaterialException(
-        const std::string_view, const tfel::material::MaterialException &);
+        const std::string_view, const tfel::material::MaterialException&);
 
     /*!
      * \brief display the error message out of a generic tfel
@@ -110,7 +110,7 @@ namespace castem {
      * \param[in] e : the exception to be treated
      */
     static void treatTFELException(const std::string_view,
-                                   const tfel::exception::TFELException &);
+                                   const tfel::exception::TFELException&);
 
     /*!
      * \brief display the error message out of a generic standard
@@ -119,7 +119,7 @@ namespace castem {
      * \param[in] e : the exception to be treated
      */
     static void treatStandardException(const std::string_view,
-                                       const std::exception &);
+                                       const std::exception&);
 
     /*!
      * \brief display the error message when an unknown exception is caught

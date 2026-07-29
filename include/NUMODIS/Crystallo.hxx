@@ -44,28 +44,30 @@ namespace numodis {
   struct TFELNUMODIS_VISIBILITY_EXPORT Crystallo {
     Crystallo();
 
-    Crystallo(Crystallo&&);
+    Crystallo(Crystallo&&) noexcept;
 
     Crystallo(const Crystallo&);
 
-    GSystem InitGSystem(const IBurgers& iburgers, const IPlane& iplane) const;
+    [[nodiscard]] GSystem InitGSystem(const IBurgers& iburgers,
+                                      const IPlane& iplane) const;
 
-    virtual Vect3 direction(const IDirection&) const;
+    [[nodiscard]] virtual Vect3 direction(const IDirection&) const;
 
-    virtual Vect3 normal(const IPlane&) const;
+    [[nodiscard]] virtual Vect3 normal(const IPlane&) const;
 
-    virtual Vect3 burgers_vector(const IBurgers&) const;
+    [[nodiscard]] virtual Vect3 burgers_vector(const IBurgers&) const;
 
-    virtual double Norm2(const IBurgers& iburgers) const = 0;
+    [[nodiscard]] virtual double Norm2(const IBurgers& iburgers) const = 0;
 
-    virtual GSystem Symmetry(int k, const GSystem& gsystem) const = 0;
+    [[nodiscard]] virtual GSystem Symmetry(int k,
+                                           const GSystem& gsystem) const = 0;
 
-    virtual int getNsymmetries() const = 0;
+    [[nodiscard]] virtual int getNsymmetries() const = 0;
 
-    virtual bool SameGlideSystem(const IPlane& iplane0,
-                                 const IBurgers& iburgers0,
-                                 const IPlane& iplane1,
-                                 const IBurgers& iburgers1) const;
+    [[nodiscard]] virtual bool SameGlideSystem(const IPlane& iplane0,
+                                               const IBurgers& iburgers0,
+                                               const IPlane& iplane1,
+                                               const IBurgers& iburgers1) const;
 
     virtual void GenerateEquivalentIBurgers(
         const IBurgers& iburgers, std::vector<IBurgers>& eqiburgers) const;
@@ -80,8 +82,8 @@ namespace numodis {
         const std::vector<int>& ind0,
         std::vector<std::vector<int>>& equivalent) const = 0;
 
-    virtual GSystem ComputeJunctionGSystem(const GSystem& gsystem1,
-                                           const GSystem& gsystem2) const;
+    [[nodiscard]] virtual GSystem ComputeJunctionGSystem(
+        const GSystem& gsystem1, const GSystem& gsystem2) const;
 
     //===========================================================
     // Crystallo::PrintName
@@ -90,7 +92,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \return the %Crystallo handler                         */
     //===========================================================
-    const std::string& PrintName() const { return _name; }
+    [[nodiscard]] const std::string& PrintName() const { return _name; }
 
     //===========================================================
     // Crystallo::getNindices
@@ -99,7 +101,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \return number of indices (default=3)                  */
     //===========================================================
-    virtual int getNindices() const { return 3; }
+    [[nodiscard]] virtual int getNindices() const { return 3; }
 
     //===========================================================
     // Crystallo::Collinear
@@ -114,8 +116,8 @@ namespace numodis {
 
     */
     //===========================================================
-    bool Collinear(const IDirection& idirection1,
-                   const IDirection& idirection2) const {
+    [[nodiscard]] bool Collinear(const IDirection& idirection1,
+                                 const IDirection& idirection2) const {
       return numodis::math::iCollinear(idirection1.getIndex(),
                                        idirection2.getIndex());
     }
@@ -176,8 +178,8 @@ namespace numodis {
 
     */
     //===========================================================
-    virtual int ScalProduct(const IPlane& iplane,
-                            const IBurgers& iburgers) const = 0;
+    [[nodiscard]] virtual int ScalProduct(const IPlane& iplane,
+                                          const IBurgers& iburgers) const = 0;
 
     //===========================================================
     // Crystallo::ScalProduct
@@ -194,8 +196,8 @@ namespace numodis {
 
     */
     //===========================================================
-    virtual int ScalProduct(const IPlane& iplane,
-                            const IDirection& idirection) const = 0;
+    [[nodiscard]] virtual int ScalProduct(
+        const IPlane& iplane, const IDirection& idirection) const = 0;
 
     //===========================================================
     // Crystallo::GenerateOrthogonalVector
@@ -225,8 +227,8 @@ namespace numodis {
 
     */
     //===========================================================
-    virtual bool SamePlaneFamily(const IPlane& iplane0,
-                                 const IPlane& iplane1) const = 0;
+    [[nodiscard]] virtual bool SamePlaneFamily(const IPlane& iplane0,
+                                               const IPlane& iplane1) const = 0;
 
     //===========================================================
     // Crystallo::SameBurgersFamily
@@ -243,10 +245,10 @@ namespace numodis {
 
     */
     //===========================================================
-    virtual bool SameBurgersFamily(const IBurgers& iburgers0,
-                                   const IBurgers& iburgers1) const = 0;
+    [[nodiscard]] virtual bool SameBurgersFamily(
+        const IBurgers& iburgers0, const IBurgers& iburgers1) const = 0;
 
-    const std::string getName() const { return _name; }
+    [[nodiscard]] const std::string getName() const { return _name; }
 
     virtual ~Crystallo();
 

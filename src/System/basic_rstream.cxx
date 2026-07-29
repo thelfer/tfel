@@ -22,7 +22,7 @@
 
 namespace tfel::system {
 
-  void BlockingStreamReader::read(int fd, void *const buf, const size_t count) {
+  void BlockingStreamReader::read(int fd, void* const buf, const size_t count) {
     ssize_t rread;
     if (count > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) {
       tfel::raise<SystemError>(
@@ -42,7 +42,7 @@ namespace tfel::system {
   }  // end of BlockingStreamReader::read
 
   void NonBlockingStreamReader::read(int fd,
-                                     void *const buf,
+                                     void* const buf,
                                      const size_t count) {
     ssize_t rread;
     if (count > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) {

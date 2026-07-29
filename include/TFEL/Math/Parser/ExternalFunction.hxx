@@ -26,27 +26,30 @@
 namespace tfel::math::parser {
 
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalFunction {
-    virtual double getValue() const = 0;
+    [[nodiscard]] virtual double getValue() const = 0;
     virtual void setVariableValue(const std::vector<double>::size_type,
                                   const double) = 0;
-    virtual std::vector<double>::size_type getNumberOfVariables() const = 0;
+    [[nodiscard]] virtual std::vector<double>::size_type getNumberOfVariables()
+        const = 0;
     virtual void checkCyclicDependency(const std::string&) const = 0;
     virtual void checkCyclicDependency(std::vector<std::string>&) const = 0;
-    virtual std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] virtual std::shared_ptr<ExternalFunction> differentiate(
         const std::vector<double>::size_type) const = 0;
-    virtual std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] virtual std::shared_ptr<ExternalFunction> differentiate(
         const std::string&) const = 0;
-    virtual std::shared_ptr<ExternalFunction> resolveDependencies() const = 0;
-    virtual std::shared_ptr<ExternalFunction>
+    [[nodiscard]] virtual std::shared_ptr<ExternalFunction>
+    resolveDependencies() const = 0;
+    [[nodiscard]] virtual std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         const std::vector<std::string>&) const = 0;
-    virtual std::shared_ptr<ExternalFunction>
+    [[nodiscard]] virtual std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         std::vector<std::string>&,
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&) const = 0;
     virtual void getParametersNames(std::set<std::string>&) const = 0;
+    //
     virtual ~ExternalFunction();
   };  // end of struct ExternalFunction
 

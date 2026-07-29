@@ -37,10 +37,10 @@ namespace mtest {
      */
     MaterialPropertyBase(const std::string&, const std::string&);
     //
-    std::size_t getNumberOfVariables() const override;
-    std::vector<std::string> getVariablesNames() const override;
-    std::vector<std::string> getParametersNames() const override;
-    std::string getOutputName() const override;
+    [[nodiscard]] std::size_t getNumberOfVariables() const override;
+    [[nodiscard]] std::vector<std::string> getVariablesNames() const override;
+    [[nodiscard]] std::vector<std::string> getParametersNames() const override;
+    [[nodiscard]] std::string getOutputName() const override;
     void setVariableValue(const std::string&, const real) override;
     void setVariableValue(const std::size_t, const real) override;
     void setParameter(const std::string&, const real) override;

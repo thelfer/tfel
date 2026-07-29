@@ -26,27 +26,27 @@ namespace mfront {
       : public SymbolsGenerator {
     //! constructor
     AbaqusSymbolsGenerator();
-    void writeBehaviourTypeSymbols(std::ostream &,
-                                   const BehaviourInterfaceBase &,
-                                   const BehaviourDescription &,
-                                   const std::string &) const override;
-    void writeBehaviourKinematicSymbols(std::ostream &,
-                                        const BehaviourInterfaceBase &,
-                                        const BehaviourDescription &,
-                                        const std::string &) const override;
-    void writeAdditionalSymbols(std::ostream &,
-                                const BehaviourInterfaceBase &,
-                                const BehaviourDescription &,
-                                const FileDescription &,
-                                const std::string &,
+    void writeBehaviourTypeSymbols(std::ostream&,
+                                   const BehaviourInterfaceBase&,
+                                   const BehaviourDescription&,
+                                   const std::string&) const override;
+    void writeBehaviourKinematicSymbols(std::ostream&,
+                                        const BehaviourInterfaceBase&,
+                                        const BehaviourDescription&,
+                                        const std::string&) const override;
+    void writeAdditionalSymbols(std::ostream&,
+                                const BehaviourInterfaceBase&,
+                                const BehaviourDescription&,
+                                const FileDescription&,
+                                const std::string&,
                                 const Hypothesis) const override;
-    void writeSpecificSymbols(std::ostream &,
-                              const BehaviourInterfaceBase &i,
-                              const BehaviourDescription &,
-                              const FileDescription &,
-                              const std::string &) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    void writeSpecificSymbols(std::ostream&,
+                              const BehaviourInterfaceBase& i,
+                              const BehaviourDescription&,
+                              const FileDescription&,
+                              const std::string&) const override;
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~AbaqusSymbolsGenerator() override;
   };  // end of struct AbaqusSymbolsGenerator
 

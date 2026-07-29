@@ -10,10 +10,10 @@ Calling other behaviours from a behaviour is useful in many situations
 and allows, for instance, to
 
 - write a macroscopic behaviour that calls microscopic behaviours inside
-  an homogeneization scheme.
+  a homogenization scheme.
 - implement a simple switch from one behaviour to another based on some
   criteria in a wrapper behaviour. This technique is often used in
-  nuclear fuel performance codes since the behaviour of materials are
+  nuclear fuel performance codes since the behaviour of materials is
   described by distinct constitutive equations in normal and off-normal
   operating conditions.
 - calling complex models based on any of the following DSLs:
@@ -46,7 +46,7 @@ This example illustrates the complexity of the declaration of a
 behaviour variable. The main reason for this complexity is due to the
 fact that the calling behaviour is responsible for declaring and
 managing the variables associated with `b1` (material properties,
-internal state variables, external state variable), etc.
+internal state variables, external state variables), etc.
 
 In particular, the behaviour variable and the calling behaviour may
 share some variables (material properties, external state variables).
@@ -56,7 +56,7 @@ calling behaviour will create one material property for each material
 property declared in the behaviour `Plasticity` (see the
 `shared_material_properties` option below for details on how to declare
 shared material properties). To avoid conflicts, the names and external
-names of this new material properties are modified using the options
+names of these new material properties are modified using the options
 `variables_prefix`, `variables_suffix`, `external_names_prefix` or
 `external_names_suffix`.
 
@@ -75,7 +75,7 @@ $ mfront-query --unicode-output=false --state-variables Plasticity.mfront
 ~~~~
 
 Those state variables are automatically declared as auxiliary state
-variables by the calling behaviour, but their names is changed, as
+variables by the calling behaviour, but their names are changed, as
 follows:
 
 ~~~~{.bash}
@@ -114,7 +114,7 @@ const auto r = b1.integrate(smflag, smt);
 where `smflag` and `smt` are parameters associated with the computation
 of the consistent tangent operator (see below).
 
-### Retrieveing the tangent operator
+### Retrieving the tangent operator
 
 The tangent operator can be retrieved using the `getTangentOperator`
 method as follows:
@@ -164,13 +164,13 @@ value, has the following effects:
   These auxiliary state variables are obtained by applying the
   transformation rules on names and external names.
 - the `initialize/reset` methods associated with this behaviour variable
-  (see bellow) will automatically initialize the gradients using the
+  (see below) will automatically initialize the gradients using the
   associated auxiliary state variables. Note that the `initialize`
   method associated with this behaviour variable is automatically called
   by the main `initialize` method of the calling behaviour (which is
   always called).
 - the `updateAuxiliaryStateVariables` method associated with this
-  behaviour variable (see bellow) stores the values of the gradients at
+  behaviour variable (see below) stores the values of the gradients at
   the end of the time step in the associated auxiliary state variables.
   Note that if the
   `automatically_save_associated_auxiliary_state_variables` option is
@@ -204,9 +204,9 @@ increment.
 
 ### Note on stress free strains
 
-Strain based Behaviours requires special care if the called behaviour
+Strain based behaviours require special care if the called behaviour
 declares stress free expansions (volumetric swelling, thermal expansion,
-etc.). In the case, the called behaviour exposes a method called
+etc.). In this case, the called behaviour exposes a method called
 `computeStressFreeStrain` that shall only be called **after** the
 initialization of the behaviour. This method returns a pair containing
 the stress free strains at the beginning of the time step and at the end
@@ -229,7 +229,7 @@ Note that these stress free strains are:
 
 ## Treatment of the persistent variables of the behaviour variable
 
-A behaviour variable may declares persistent variables, i.e. state
+A behaviour variable may declare persistent variables, i.e. state
 variables or auxiliary state variables. Those persistent variables are
 automatically declared as auxiliary state variables by the calling
 behaviour. The transformation rules on the names and external names are
@@ -261,7 +261,7 @@ transformation rules on the names and external names are
 When a material property (or an external state variable) of the
 behaviour variable is **not** declared as shared (the default), a new
 material property (or an external state variable) is automatically
-declaring applying the transformation rules on names.
+declared by applying the transformation rules on names.
 
 ## Access to the variables of the behaviour variable
 
@@ -303,13 +303,13 @@ However, this does not guarantee that calling the integration of the
 behaviour variable will lead to the same result as some internal
 variables may have evolved.
 
-In particular, the increment of the integration variables will not
-zeroed. Not zeroing those increment may accelerate the integration when
+In particular, the increment of the integration variables will not be
+zeroed. Not zeroing those increments may accelerate the integration when
 the behaviour integration is called multiple times as the solution of
 the previous call may be a good estimate for the new resolution.
 
 To initialize the behaviour and zero the increment of the integration
-variables , one may call the `reset` method instead:
+variables, one may call the `reset` method instead:
 
 ~~~~{.cxx}
 reset(b1); // calls initialize and zeros integration variable increments
@@ -318,7 +318,7 @@ reset(b1); // calls initialize and zeros integration variable increments
 > Note that even the `reset` method does not absolutely guarantee that
 > calling the integration of the behaviour variable will lead to the
 > same result as some internal variables may have evolved. This will probably
-> be the case assuming that the implementation of the called behaviour does
+> not be the case assuming that the implementation of the called behaviour does
 > not make any strange things internally.
 
 ## Integration
@@ -326,7 +326,7 @@ reset(b1); // calls initialize and zeros integration variable increments
 The `integrate` method performs the integration of the behaviour
 variable.
 
-Note that this method must be called after having the gradients at the
+Note that this method must be called after setting the gradients at the
 beginning of the time step (see also the `store_gradients` option for
 details), the thermodynamic forces at the beginning of the time step
 (see also the `store_thermodynamic_forces` option for details), and
@@ -401,7 +401,7 @@ variable are automatically saved.
 
 If this option is `false`, the author of the calling behaviour is
 responsible for updating those state variables by hand. This task can
-be deleguated to a specialized version of the
+be delegated to a specialized version of the
 `updateAuxiliaryStateVariables` method which takes the behaviour
 variable as its only argument, as follows:
 

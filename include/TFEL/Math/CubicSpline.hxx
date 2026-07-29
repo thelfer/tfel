@@ -30,7 +30,9 @@ namespace tfel::math {
     CubicSplineUninitialised() = default;
     CubicSplineUninitialised(const CubicSplineUninitialised&) = default;
     CubicSplineUninitialised(CubicSplineUninitialised&&) = default;
-    const char* what() const noexcept override final;
+    //
+    [[nodiscard]] const char* what() const noexcept final;
+    //
     ~CubicSplineUninitialised() noexcept override;
   };  // end of struct CubicSplineUninitialised
 
@@ -45,7 +47,7 @@ namespace tfel::math {
         const CubicSplineInvalidAbscissaVectorSize&) = default;
     CubicSplineInvalidAbscissaVectorSize(
         CubicSplineInvalidAbscissaVectorSize&&) = default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~CubicSplineInvalidAbscissaVectorSize() noexcept override;
   };  // end of struct CubicSplineInvalidAbscissaVectorSize
 
@@ -57,7 +59,7 @@ namespace tfel::math {
     CubicSplineNullPivot() = default;
     CubicSplineNullPivot(const CubicSplineNullPivot&) = default;
     CubicSplineNullPivot(CubicSplineNullPivot&&) = default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~CubicSplineNullPivot() noexcept override;
   };  // end of struct CubicSplineInvalidAbscissaVectorSize
 
@@ -72,7 +74,7 @@ namespace tfel::math {
         const CubicSplineInvalidOrdinateVectorSize&) = default;
     CubicSplineInvalidOrdinateVectorSize(
         CubicSplineInvalidOrdinateVectorSize&&) = default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~CubicSplineInvalidOrdinateVectorSize() noexcept override;
   };  // end of struct CubicSplineInvalidOrdinateVectorSize
 
@@ -85,7 +87,7 @@ namespace tfel::math {
     CubicSplineInvalidInputs() = default;
     CubicSplineInvalidInputs(const CubicSplineInvalidInputs&) = default;
     CubicSplineInvalidInputs(CubicSplineInvalidInputs&&) = default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~CubicSplineInvalidInputs() noexcept override;
   };  // end of struct CubicSplineInvalidInputs
 
@@ -99,7 +101,7 @@ namespace tfel::math {
         const CubicSplineUnorderedAbscissaVector&) = default;
     CubicSplineUnorderedAbscissaVector(CubicSplineUnorderedAbscissaVector&&) =
         default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~CubicSplineUnorderedAbscissaVector() noexcept override;
   };  // end of struct CubicSplineUnorderedAbscissaVector
 
@@ -176,25 +178,26 @@ namespace tfel::math {
      * \return the spline value at the given point
      * \param[in] x : point at which the spline is evaluated
      */
-    ValueType operator()(const AbscissaType) const;
+    [[nodiscard]] ValueType operator()(const AbscissaType) const;
     /*!
      * \return the spline integral
      * \param[in] xa: beginning of interval
      * \param[in] xb: end of interval
      */
-    result_type<ValueType, AbscissaType, OpMult> computeIntegral(
+    [[nodiscard]] result_type<ValueType, AbscissaType, OpMult> computeIntegral(
         const AbscissaType, const AbscissaType) const;
     /*!
      * \return the spline mean value
      * \param[in] xa: beginning of interval
      * \param[in] xb: end of interval
      */
-    ValueType computeMeanValue(const AbscissaType, const AbscissaType) const;
+    [[nodiscard]] ValueType computeMeanValue(const AbscissaType,
+                                             const AbscissaType) const;
     /*!
      * \return the spline value at the given point
      * \param[in] x : point at which the spline is evaluated
      */
-    ValueType getValue(const AbscissaType) const;
+    [[nodiscard]] ValueType getValue(const AbscissaType) const;
     /*!
      * \return the value of the spline and the value of its
      * derivative at the given point
@@ -221,7 +224,7 @@ namespace tfel::math {
                    derivative_type<ValueType, AbscissaType, AbscissaType>&,
                    const AbscissaType) const;
     //! \brief return the collocation points
-    const auto& getCollocationPoints() const;
+    [[nodiscard]] const auto& getCollocationPoints() const;
 
    protected:
     //! \brief a simple alias
@@ -233,8 +236,8 @@ namespace tfel::math {
        * \param p : first point
        * \param x : abscissa
        */
-      constexpr bool operator()(const Point&,
-                                const AbscissaType&) const noexcept;
+      [[nodiscard]] constexpr bool operator()(
+          const Point&, const AbscissaType&) const noexcept;
     };  // end of struct PointComparator
 
     /*!

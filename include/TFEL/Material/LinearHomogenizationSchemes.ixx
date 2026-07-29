@@ -29,21 +29,21 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType>& nu_i,
           const tfel::math::st2tost2<3u, types::real<StressType>>& A) {
     using real = types::real<StressType>;
-    //if ((nu > 0.5) || (nu < -1)) {
-    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
-    //}
-    //if (not(young > StressType{0})) {
-    //  tfel::reportContractViolation("E<=0");
-    //}
+    // if ((nu > 0.5) || (nu < -1)) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
+    // if (not(young > StressType{0})) {
+    //   tfel::reportContractViolation("E<=0");
+    // }
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
-    //if ((nu_i > 0.5) || (nu_i < -1)) {
-    //  tfel::reportContractViolation("nu_i>0.5 or nu_i<-1");
-    //}
-    //if (not(young_i > StressType{0})) {
-    //  tfel::reportContractViolation("E_i<=0");
-    //}
+    // if ((nu_i > 0.5) || (nu_i < -1)) {
+    //   tfel::reportContractViolation("nu_i>0.5 or nu_i<-1");
+    // }
+    // if (not(young_i > StressType{0})) {
+    //   tfel::reportContractViolation("E_i<=0");
+    // }
     using namespace tfel::math;
     st2tost2<3u, StressType> C_0;
     static constexpr auto value =
@@ -69,21 +69,21 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType>& nu_i,
           const tfel::math::st2tost2<3u, types::real<StressType>>& A) {
     using real = types::real<StressType>;
-    //if ((nu > 0.5) || (nu < -1)) {
-    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
-    //}
-    //if (not(young > StressType{0})) {
-    //  tfel::reportContractViolation("E<=0");
-    //}
+    // if ((nu > 0.5) || (nu < -1)) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
+    // if (not(young > StressType{0})) {
+    //   tfel::reportContractViolation("E<=0");
+    // }
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
-    //if ((nu_i > 0.5) || (nu_i < -1)) {
-    //  tfel::reportContractViolation("nu_i>0.5 or nu_i<-1");
-    //}
-    //if (not(young_i > StressType{0})) {
-    //  tfel::reportContractViolation("E_i<=0");
-    //}
+    // if ((nu_i > 0.5) || (nu_i < -1)) {
+    //   tfel::reportContractViolation("nu_i>0.5 or nu_i<-1");
+    // }
+    // if (not(young_i > StressType{0})) {
+    //   tfel::reportContractViolation("E_i<=0");
+    // }
     using namespace tfel::math;
     st2tost2<3u, StressType> C_0;
     static constexpr auto value =
@@ -109,12 +109,12 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType>& f,
           const StressType& young_i,
           const types::real<StressType>& nu_i) {
-    //if ((nu > 0.5) || (nu < -1)) {
-    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
-    //}
-    //if (not(young > StressType{0})) {
-    //  tfel::reportContractViolation("E<=0");
-    //}
+    // if ((nu > 0.5) || (nu < -1)) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
+    // if (not(young > StressType{0})) {
+    //   tfel::reportContractViolation("E<=0");
+    // }
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -155,12 +155,12 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType>& f,
           const StressType& young_i,
           const types::real<StressType>& nu_i) {
-    //if ((nu > 0.5) || (nu < -1)) {
-    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
-    //}
-    //if (not(young > StressType{0})) {
-    //  tfel::reportContractViolation("E<=0");
-    //}
+    // if ((nu > 0.5) || (nu < -1)) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
+    // if (not(young > StressType{0})) {
+    //   tfel::reportContractViolation("E<=0");
+    // }
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }

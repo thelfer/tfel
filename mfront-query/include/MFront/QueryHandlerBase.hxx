@@ -35,57 +35,60 @@ namespace mfront {
      * \param[in] argc: number of command line arguments
      * \param[in] argv: command line arguments
      */
-    QueryHandlerBase(const int, const char *const *const);
+    QueryHandlerBase(const int, const char* const* const);
     //! \brief destructor
     ~QueryHandlerBase() override;
 
    protected:
     //! \brief ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<QueryHandlerBase>;
-    const tfel::utilities::Argument &getCurrentCommandLineArgument()
-        const override final;
-    void treatUnknownArgument() override final;
-    std::string getVersionDescription() const override final;
-    std::string getUsageDescription() const override final;
+    [[nodiscard]] const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const final;
+    void treatUnknownArgument() final;
+    [[nodiscard]] std::string getVersionDescription() const final;
+    [[nodiscard]] std::string getUsageDescription() const final;
     /*!
      * \brief print the description of a variable
      * \param[in] v: variable
      * \param[in] spaces: string placed in front of the description (generally
      * spaces, hence the name)
      */
-    static void displayVariable(const mfront::VariableDescription &,
-                                const std::string & = std::string{});
+    static void displayVariable(const mfront::VariableDescription&,
+                                const std::string& = std::string{});
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! \return the abstract domain specific language
-    virtual std::shared_ptr<const AbstractDSL> getDSL() const = 0;
+    [[nodiscard]] virtual std::shared_ptr<const AbstractDSL> getDSL() const = 0;
     /*!
      * \return an object handling the `--generated-sources` query
      * \param[in] o: option passed the query
      */
-    virtual std::function<void()> generateGeneratedSourcesQuery(
-        const std::string &) const;
+    [[nodiscard]] virtual std::function<void()> generateGeneratedSourcesQuery(
+        const std::string&) const;
     /*!
      * \return an object handling the `--specific-target-generated-sources`
      * query.
      * \param[in] n: name of the specific target
      */
-    virtual std::function<void()> generateSpecificTargetGeneratedSourcesQuery(
-        const std::string &) const;
+    [[nodiscard]] virtual std::function<void()>
+    generateSpecificTargetGeneratedSourcesQuery(const std::string&) const;
     /*!
      * \return an object handling the `--all-specific-targets-generated-sources`
      * query.
      */
-    virtual std::function<void()>
+    [[nodiscard]] virtual std::function<void()>
     generateAllSpecificTargetsGeneratedSourcesQuery() const;
     //! \return an object handling the `--generated-headers` query
-    virtual std::function<void()> generateGeneratedHeadersQuery() const;
+    [[nodiscard]] virtual std::function<void()> generateGeneratedHeadersQuery()
+        const;
     //! \return an object handling the `--specific-targets` query
-    virtual std::function<void()> generateSpecificTargetsQuery() const;
+    [[nodiscard]] virtual std::function<void()> generateSpecificTargetsQuery()
+        const;
     //! \return an object handling the `--libraries-dependencies` query
-    virtual std::function<void()> generateLibrariesDependenciesQuery() const;
+    [[nodiscard]] virtual std::function<void()>
+    generateLibrariesDependenciesQuery() const;
     //! \return an object handling the `--cppflags` query
-    virtual std::function<void()> generateCppFlagsQuery() const;
+    [[nodiscard]] virtual std::function<void()> generateCppFlagsQuery() const;
     //! \brief treat the "--generated-sources" query
     virtual void treatGeneratedSources() = 0;
     //! \brief treat the "--specific-target-generated-sources" query

@@ -64,10 +64,10 @@ namespace cyrano {
        * \param[in]  sfeh   : function handling the stress-free expansion
        */
       TFEL_CYRANO_INLINE static void exe(
-          BData &bData,
-          IData &iData,
-          const CyranoReal *const STRAN,
-          const CyranoReal *const DSTRAN,
+          BData& bData,
+          IData& iData,
+          const CyranoReal* const STRAN,
+          const CyranoReal* const DSTRAN,
           const StressFreeExpansionHandler sfeh) {
         using tfel::fsalgo::copy;
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
@@ -78,8 +78,8 @@ namespace cyrano {
         std::pair<StressFreeExpansionType, StressFreeExpansionType> s;
         BV b(bData, iData);
         b.computeStressFreeExpansion(s);
-        const auto &s0 = s.first;
-        const auto &s1 = s.second;
+        const auto& s0 = s.first;
+        const auto& s1 = s.second;
         sfeh(eto, deto, STRAN, DSTRAN, &s0[0], &s1[0]);
         bData.setCYRANOBehaviourDataGradients(eto);
         iData.setCYRANOIntegrationDataGradients(deto);
@@ -93,9 +93,9 @@ namespace cyrano {
        * \param[in]  sfeh   : function handling the stress-free expansion
        */
       TFEL_CYRANO_INLINE static void exe(
-          BV &b,
-          const CyranoReal *const STRAN,
-          const CyranoReal *const DSTRAN,
+          BV& b,
+          const CyranoReal* const STRAN,
+          const CyranoReal* const DSTRAN,
           const StressFreeExpansionHandler sfeh) {
         using tfel::fsalgo::copy;
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
@@ -103,8 +103,8 @@ namespace cyrano {
         CyranoReal deto[3];
         std::pair<StressFreeExpansionType, StressFreeExpansionType> s;
         b.computeStressFreeExpansion(s);
-        const auto &s0 = s.first;
-        const auto &s1 = s.second;
+        const auto& s0 = s.first;
+        const auto& s1 = s.second;
         sfeh(eto, deto, STRAN, DSTRAN, &s0[0], &s1[0]);
         b.setCYRANOBehaviourDataGradients(eto);
         b.setCYRANOIntegrationDataGradients(deto);
@@ -131,10 +131,10 @@ namespace cyrano {
        *                      time step or driving variable increment
        * \param[in]  sfeh   : function handling the stress-free expansion
        */
-      TFEL_CYRANO_INLINE static void exe(BData &bData,
-                                         IData &iData,
-                                         const CyranoReal *const STRAN,
-                                         const CyranoReal *const DSTRAN,
+      TFEL_CYRANO_INLINE static void exe(BData& bData,
+                                         IData& iData,
+                                         const CyranoReal* const STRAN,
+                                         const CyranoReal* const DSTRAN,
                                          const StressFreeExpansionHandler) {
         CyranoReal eto[3];
         CyranoReal deto[3];
@@ -155,9 +155,9 @@ namespace cyrano {
        *                      time step or driving variable increment
        * \param[in]  sfeh   : function handling the stress-free expansion
        */
-      TFEL_CYRANO_INLINE static void exe(BV &b,
-                                         const CyranoReal *const STRAN,
-                                         const CyranoReal *const DSTRAN,
+      TFEL_CYRANO_INLINE static void exe(BV& b,
+                                         const CyranoReal* const STRAN,
+                                         const CyranoReal* const DSTRAN,
                                          const StressFreeExpansionHandler) {
         CyranoReal eto[3];
         CyranoReal deto[3];
@@ -179,8 +179,8 @@ namespace cyrano {
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef Behaviour<H, CyranoReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CYRANO_INLINE static void exe(BData &data,
-                                         const CyranoReal *const props) {
+      TFEL_CYRANO_INLINE static void exe(BData& data,
+                                         const CyranoReal* const props) {
         typedef CyranoTraits<BV> Traits;
         CyranoComputeStiffnessTensor<Traits::stype>::exe(
             data.getStiffnessTensor(), props);
@@ -194,8 +194,8 @@ namespace cyrano {
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, CyranoReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CYRANO_INLINE static void exe(BData &data,
-                                         const CyranoReal *const props) {
+      TFEL_CYRANO_INLINE static void exe(BData& data,
+                                         const CyranoReal* const props) {
         typedef CyranoTraits<BV> Traits;
         const unsigned short o = CyranoTraits<BV>::elasticPropertiesOffset;
         CyranoComputeThermalExpansionCoefficientTensor<H, Traits::stype>::exe(
@@ -209,7 +209,7 @@ namespace cyrano {
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef Behaviour<H, CyranoReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CYRANO_INLINE static void exe(BData &, const CyranoReal *const) {}
+      TFEL_CYRANO_INLINE static void exe(BData&, const CyranoReal* const) {}
     };  // end of struct DoNothingInitializer
 
     /*!
@@ -220,23 +220,23 @@ namespace cyrano {
      * structure will be used if the user tries to use it in 2D or 3D.
      */
     struct TFEL_VISIBILITY_LOCAL Error {
-      TFEL_CYRANO_INLINE Error(const CyranoReal *const,
-                               const CyranoReal *const,
-                               const CyranoReal *const,
-                               const CyranoReal *const,
-                               const CyranoReal *const,
-                               const CyranoReal *const,
-                               const CyranoReal *const,
-                               const CyranoReal *const,
-                               const CyranoReal *const,
-                               const CyranoReal *const,
+      TFEL_CYRANO_INLINE Error(const CyranoReal* const,
+                               const CyranoReal* const,
+                               const CyranoReal* const,
+                               const CyranoReal* const,
+                               const CyranoReal* const,
+                               const CyranoReal* const,
+                               const CyranoReal* const,
+                               const CyranoReal* const,
+                               const CyranoReal* const,
+                               const CyranoReal* const,
                                const StressFreeExpansionHandler,
                                const tfel::material::OutOfBoundsPolicy) {
       }  // end of Error
 
-      [[noreturn]] void exe(CyranoReal *const,
-                            CyranoReal *const,
-                            CyranoReal *const) {
+      [[noreturn]] void exe(CyranoReal* const,
+                            CyranoReal* const,
+                            CyranoReal* const) {
         typedef tfel::material::MechanicalBehaviourTraits<
             Behaviour<H, CyranoReal, false>>
             Traits;
@@ -260,16 +260,16 @@ namespace cyrano {
           DoNothingInitializer>::type AInitializer;
 
       TFEL_CYRANO_INLINE
-      IntegratorWithTimeStepping(const CyranoReal *const DTIME,
-                                 const CyranoReal *const STRAN,
-                                 const CyranoReal *const DSTRAN,
-                                 const CyranoReal *const TEMP,
-                                 const CyranoReal *const DTEMP,
-                                 const CyranoReal *const PROPS,
-                                 const CyranoReal *const PREDEF,
-                                 const CyranoReal *const DPRED,
-                                 CyranoReal *const STATEV,
-                                 CyranoReal *const STRESS,
+      IntegratorWithTimeStepping(const CyranoReal* const DTIME,
+                                 const CyranoReal* const STRAN,
+                                 const CyranoReal* const DSTRAN,
+                                 const CyranoReal* const TEMP,
+                                 const CyranoReal* const DTEMP,
+                                 const CyranoReal* const PROPS,
+                                 const CyranoReal* const PREDEF,
+                                 const CyranoReal* const DPRED,
+                                 CyranoReal* const STATEV,
+                                 CyranoReal* const STRESS,
                                  const StressFreeExpansionHandler sfeh,
                                  const tfel::material::OutOfBoundsPolicy op)
           : bData(TEMP,
@@ -297,9 +297,9 @@ namespace cyrano {
         this->bData.setCYRANOBehaviourDataThermodynamicForces(sig);
       }  // end of IntegratorWithTimeStepping
 
-      TFEL_CYRANO_INLINE2 void exe(CyranoReal *const DDSOE,
-                                   CyranoReal *const STRESS,
-                                   CyranoReal *const STATEV) {
+      TFEL_CYRANO_INLINE2 void exe(CyranoReal* const DDSOE,
+                                   CyranoReal* const STRESS,
+                                   CyranoReal* const STATEV) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
@@ -359,12 +359,12 @@ namespace cyrano {
               }
             }
 #ifdef MFRONT_CYRANO_VERBOSE
-          } catch (const tfel::material::DivergenceException &e) {
+          } catch (const tfel::material::DivergenceException& e) {
             std::cerr << "no convergence : " << e.what() << std::endl;
             r = BV::FAILURE;
           }
 #else  /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
-          } catch (const tfel::material::DivergenceException &) {
+          } catch (const tfel::material::DivergenceException&) {
             r = BV::FAILURE;
           }
 #endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
@@ -375,7 +375,7 @@ namespace cyrano {
             behaviour.checkBounds();
             this->iData.updateDrivingVariables(this->bData);
             behaviour.updateExternalStateVariables();
-            this->bData = static_cast<const BData &>(behaviour);
+            this->bData = static_cast<const BData&>(behaviour);
             if (iterations == 0) {
               if ((*DDSOE > 0.5) || (*DDSOE < -0.5)) {
                 ConsistentTangentOperatorHandler::exe(behaviour, DDSOE);
@@ -428,16 +428,16 @@ namespace cyrano {
           ThermalExpansionCoefficientTensorInitializer,
           DoNothingInitializer>::type AInitializer;
 
-      TFEL_CYRANO_INLINE Integrator(const CyranoReal *const DTIME,
-                                    const CyranoReal *const STRAN,
-                                    const CyranoReal *const DSTRAN,
-                                    const CyranoReal *const TEMP,
-                                    const CyranoReal *const DTEMP,
-                                    const CyranoReal *const PROPS,
-                                    const CyranoReal *const PREDEF,
-                                    const CyranoReal *const DPRED,
-                                    const CyranoReal *const STATEV,
-                                    const CyranoReal *const STRESS,
+      TFEL_CYRANO_INLINE Integrator(const CyranoReal* const DTIME,
+                                    const CyranoReal* const STRAN,
+                                    const CyranoReal* const DSTRAN,
+                                    const CyranoReal* const TEMP,
+                                    const CyranoReal* const DTEMP,
+                                    const CyranoReal* const PROPS,
+                                    const CyranoReal* const PREDEF,
+                                    const CyranoReal* const DPRED,
+                                    const CyranoReal* const STATEV,
+                                    const CyranoReal* const STRESS,
                                     const StressFreeExpansionHandler sfeh,
                                     const tfel::material::OutOfBoundsPolicy op)
           : behaviour(DTIME,
@@ -471,9 +471,9 @@ namespace cyrano {
       }  // end of Integrator::Integrator
 
       TFEL_CYRANO_INLINE2
-      void exe(CyranoReal *const DDSOE,
-               CyranoReal *const STRESS,
-               CyranoReal *const STATEV) {
+      void exe(CyranoReal* const DDSOE,
+               CyranoReal* const STRESS,
+               CyranoReal* const STATEV) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
@@ -550,7 +550,7 @@ namespace cyrano {
 
     struct StandardPredictionOperatorComputer {
       typedef Behaviour<H, CyranoReal, false> BV;
-      static typename BV::IntegrationResult exe(BV &b,
+      static typename BV::IntegrationResult exe(BV& b,
                                                 const typename BV::SMFlag smf,
                                                 const typename BV::SMType smt) {
         return b.computePredictionOperator(smf, smt);
@@ -559,7 +559,7 @@ namespace cyrano {
 
     struct PredictionOperatorIsNotAvalaible {
       typedef Behaviour<H, CyranoReal, false> BV;
-      static typename BV::IntegrationResult exe(BV &,
+      static typename BV::IntegrationResult exe(BV&,
                                                 const typename BV::SMFlag,
                                                 const typename BV::SMType) {
         typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
@@ -570,7 +570,7 @@ namespace cyrano {
 
     struct ConsistentTangentOperatorIsNotAvalaible {
       typedef Behaviour<H, CyranoReal, false> BV;
-      static void exe(BV &, CyranoReal *const) {
+      static void exe(BV&, CyranoReal* const) {
         typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
         throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
       }  // end of exe
@@ -578,10 +578,10 @@ namespace cyrano {
 
     struct SymmetricConsistentTangentOperatorComputer {
       typedef Behaviour<H, CyranoReal, false> BV;
-      static void exe(const BV &bv, CyranoReal *const DDSOE) {
+      static void exe(const BV& bv, CyranoReal* const DDSOE) {
         using namespace tfel::math;
         ST2toST2View<1u, CyranoReal> Kt{DDSOE};
-        const auto &Dt = bv.getTangentOperator();
+        const auto& Dt = bv.getTangentOperator();
         // conversion vers les conventions cyrano
         Kt(0, 0) = Dt(0, 0);
         Kt(1, 0) = Dt(2, 0);
@@ -597,10 +597,10 @@ namespace cyrano {
 
     struct GeneralConsistentTangentOperatorComputer {
       typedef Behaviour<H, CyranoReal, false> BV;
-      static void exe(const BV &bv, CyranoReal *const DDSOE) {
+      static void exe(const BV& bv, CyranoReal* const DDSOE) {
         using namespace tfel::math;
         ST2toST2View<1u, CyranoReal> Kt{DDSOE};
-        const auto &Dt = bv.getTangentOperator();
+        const auto& Dt = bv.getTangentOperator();
         // conversion vers les conventions cyrano
         Kt(0, 0) = Dt(0, 0);
         Kt(1, 0) = Dt(2, 0);

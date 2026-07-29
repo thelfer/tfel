@@ -48,11 +48,11 @@ namespace mfront {
     //! \brief copy constructor
     BehaviourBrickDescription(const BehaviourBrickDescription&);
     //! \brief move constructor
-    BehaviourBrickDescription(BehaviourBrickDescription&&);
+    BehaviourBrickDescription(BehaviourBrickDescription&&) noexcept;
     //! \brief standard assignement
     BehaviourBrickDescription& operator=(const BehaviourBrickDescription&);
     //! \brief move assignement
-    BehaviourBrickDescription& operator=(BehaviourBrickDescription&&);
+    BehaviourBrickDescription& operator=(BehaviourBrickDescription&&) noexcept;
     //! \brief destructor
     ~BehaviourBrickDescription();
     //! \brief type of the behaviour handled

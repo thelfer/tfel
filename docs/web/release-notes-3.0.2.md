@@ -68,7 +68,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/86/>
 ## Ticket #85 Add support for an in plane "relocalisation strain" in behaviours laws
 
 The `@Relocation` keyword can be used to impose a boundary condition
-specific the fuel performances describing the rigid body translation
+specific to the fuel performances describing the rigid body translation
 of fuel pellet fragment as an additional strain.
 
 - an external state variable name.
@@ -84,7 +84,7 @@ This keyword is only effective in:
 - plane strain.
 - plane stress.
 
-No expansion are added in the tridimensional and axisymmetrical
+No expansion is added in the tridimensional and axisymmetrical
 modelling hypotheses.
 
 ### Physical description
@@ -131,7 +131,7 @@ called was consistent with the modelling hypothesis used.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/84/>
 
-## Ticket #82: Python interface is broken if no material name if not defined
+## Ticket #82: Python interface is broken if no material name is defined
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/82/>
 
@@ -142,15 +142,15 @@ number to the names of:
 
 - The executables.
 - The libraries.
-- The python modules. Note that, to comply with `python` restriction
-  on module' names, the characters `.` and `-` are replace by `_` and
+- The python modules. Note that, to comply with `python` restrictions
+  on module names, the characters `.` and `-` are replaced by `_` and
   that only the first level modules are affected.
 - The directories in the `share` folder.
 
-The headers are installed in a subforder named `TFEL-${TVEL_VERSION}`.
+The headers are installed in a subfolder named `TFEL-${TVEL_VERSION}`.
 
 For example, if the `TFEL` version is `3.0.2-dev`, using
-`TFEL_APPEND_VERSION` opion will generate:
+`TFEL_APPEND_VERSION` option will generate:
 
 - The `mfront-3.0.2-dev` executable.
 - The `libTFELMaterial-3.0.2-dev.so` library.
@@ -180,7 +180,7 @@ executable.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/81/>
 
-### An helper function for importing `TFEL` modules
+### A helper function for importing `TFEL` modules
 
 ~~~~{.python}
 import os, importlib
@@ -206,10 +206,10 @@ def import_tfel_module(n,*v):
     return importlib.import_module('.'.join(m))
 ~~~~
 
-## Ticket #80: Adding the possiblity to compile a law using python module
+## Ticket #80: Adding the possibility to compile a law using python module
 
 `MFront` relies on external tools, called generators, for this step
-(this semantic is the same than the one used by `cmake`).
+(this semantic is the same as the one used by `cmake`).
 
 The only available generator is currently the `Makefile` generator,
 handled by the `MakefileGenerator` class. This generator can be used
@@ -227,9 +227,9 @@ m = mfront.MakefileGenerator()
 m.exe(dsl.getTargetsDescription())
 ~~~~
 
-The `exe` methods provides several overloads and may accept an
-additional argument of type `GeneratorOptions` which let the user
-specifiy the optimisation level to be used.
+The `exe` methods provide several overloads and may accept an
+additional argument of type `GeneratorOptions` which lets the user
+specify the optimisation level to be used.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/80/>
 
@@ -240,7 +240,7 @@ The problem appeared when local substepping is enabled.
 This feature was not tested for the `Cyrano` interface, which
 explains why this regression has not been detected so far.
 
-The problem was fixed and appropriate test were added.
+The problem was fixed and appropriate tests were added.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/79/>
 
@@ -255,8 +255,8 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/78/>
 
 The operators `*=` and `/=` are broken for fourth order tensors: the
 `std::is_same` metafunction return value must be accessed with the
-`value` member, not the `cond` member. This was a reminiscence an old
-remove class called `tfel::meta::IsSame` which was removed in
+`value` member, not the `cond` member. This was a reminiscence of an old
+removed class called `tfel::meta::IsSame` which was removed in
 `TFEL-3.0`.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/77/>
@@ -273,7 +273,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/75/>
 ## Ticket #73 AbaqusExplicit: wait for tasks termination when the `ThreadPool` threading model is used
 
 The `ThreadPool` class now has a `wait` method that stops the main
-thread up to tasks completion. This method is now called at the end of
+thread until tasks completion. This method is now called at the end of
 the integration in the `AbaqusExplicit` interface when the
 `ThreadPool` threading model is used.
 
@@ -281,7 +281,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/73/>
 
 ## Ticket #72: Error at compilation of documentation
 
-The latex documents declared a unnecessary dependency to the
+The latex documents declared an unnecessary dependency to the
 `stmaryrd` package. This package became outdated in recent `LaTeX`
 distributions causing some portability issues. This dependency has
 been removed.
@@ -294,8 +294,8 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/72/>
 ## Ticket #69: `@Profiling` true; Error in cygwin
 
 Under Windows, the `__declspec(dllexport)` attribute does not
-propagate to inner structures, wheres the visibility flags used under
-`POSIX` systems does. This attribute is now set also on the
+propagate to inner structures, whereas the visibility flags used under
+`POSIX` systems do. This attribute is now also set on the
 `BehaviourProfiler::Timer` structure.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/69/>
@@ -308,7 +308,7 @@ versions prior to 2.12, those interfaces are not fully compatible with
 `CalculiX` developers.
 
 To circumvent those issues, the `MFRONT_ABAQUS_NORUNTIMECHECKS` flag
-has been added. This flag desactivates:
+has been added. This flag deactivates:
 
 - checks related to the number of material properties (value of
   `NPROPS`)
@@ -363,7 +363,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/58/>
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/57/>
 
-## Ticket #54: Bug in StensorFromTinyVectorView: standard assignement fails
+## Ticket #54: Bug in StensorFromTinyVectorView: standard assignment fails
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/54/>
 
@@ -379,11 +379,11 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/52/>
 
 The documentation describing how to install `TFEL` on `Windows` has
 been updated: The main difficulty associated with building
-`TFEL/MFront` on [Windows plateform](http://windows.microsoft.com) is
-the lack of an unified build environment which must be set up by the
+`TFEL/MFront` on [Windows platform](http://windows.microsoft.com) is
+the lack of a unified build environment which must be set up by the
 user.
 
-The installation on [Windows plateform](http://windows.microsoft.com)
+The installation on [Windows platform](http://windows.microsoft.com)
 is thus described in the following pages:
 
 - [Installation based on `cmake` and `Visual Studio`](http://tfel.sourceforge.net/install-windows-VisualStudio.html).
@@ -392,7 +392,7 @@ is thus described in the following pages:
   requiring `Cast3M` to be installed.
 - [Installation based on `MSYS`](http://tfel.sourceforge.net/install-windows-msys.html).
 
-The two first solutions does not depend on `MSYS`.
+The two first solutions do not depend on `MSYS`.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/20/>
 

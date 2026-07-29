@@ -12,7 +12,7 @@ eqnPrefixTemplate: "($$i$$)"
 ---
 
 This document describes how to install `TFEL/MFront` on [Windows
-plateform](http://windows.microsoft.com) using the
+platform](http://windows.microsoft.com) using the
 [`MSYS2`](https://www.msys2.org/) environment.
 
 # Installing and updating [`MSYS2`](https://www.msys2.org/)
@@ -21,7 +21,7 @@ plateform](http://windows.microsoft.com) using the
 
 [`MSYS2`](https://www.msys2.org/) is a collection of GNU
 utilities, in particular `make` which is used by `MFront`. It also
-provides a convenient shell which is far more easier to use than the
+provides a convenient shell which is far easier to use than the
 `DOS` terminal provided by the `cmd` command.
 
 ## Updating [`MSYS2`](https://www.msys2.org/)
@@ -36,7 +36,7 @@ Close the terminal after completion.
 
 # Installing essential setup requirements
 
-Open a [`MSYS2`](https://www.msys2.org/) MINGW64 terminal and run:
+Open an [`MSYS2`](https://www.msys2.org/) MINGW64 terminal and run:
 
 ~~~~{.bash}
 $ pacman -S mingw-w64-x86_64-toolchain \

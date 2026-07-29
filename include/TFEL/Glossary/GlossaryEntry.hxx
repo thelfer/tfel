@@ -34,36 +34,41 @@ namespace tfel::glossary {
     //! \brief copy constructor
     GlossaryEntry(const GlossaryEntry&);
     //! \brief move constructor
-    GlossaryEntry(GlossaryEntry&&);
+    GlossaryEntry(GlossaryEntry&&) noexcept;
+    //
+    GlossaryEntry& operator=(const GlossaryEntry&) = delete;
+    GlossaryEntry& operator=(GlossaryEntry&&) noexcept = delete;
     //! \return the key
-    const std::string& getKey() const;
+    [[nodiscard]] const std::string& getKey() const;
     //! \return names asssociated with this key
-    const std::vector<std::string>& getNames() const;
+    [[nodiscard]] const std::vector<std::string>& getNames() const;
     /*!
      * \return the unit
      * \param[in] s: unit system
      */
-    const std::string& getUnit(const std::string_view) const;
+    [[nodiscard]] const std::string& getUnit(const std::string_view) const;
     //! \return the units
-    std::map<std::string, std::string> getUnits() const;
+    [[nodiscard]] std::map<std::string, std::string> getUnits() const;
     //! \return the type
-    const std::string& getType() const;
+    [[nodiscard]] const std::string& getType() const;
     //! \return the short description
-    const std::string& getShortDescription() const;
+    [[nodiscard]] const std::string& getShortDescription() const;
     //! \return the description
-    const std::vector<std::string>& getDescription() const;
+    [[nodiscard]] const std::vector<std::string>& getDescription() const;
     //! \return the notes
-    const std::vector<std::string>& getNotes() const;
+    [[nodiscard]] const std::vector<std::string>& getNotes() const;
     //! \return if lower physical bound is defined
-    bool hasLowerPhysicalBound(const std::string_view) const;
+    [[nodiscard]] bool hasLowerPhysicalBound(const std::string_view) const;
     //! \return the lower physical bound, if defined
-    std::string getLowerPhysicalBound(const std::string_view) const;
+    [[nodiscard]] std::string getLowerPhysicalBound(
+        const std::string_view) const;
     //! \return if upper physical bound is defined
-    bool hasUpperPhysicalBound(const std::string_view) const;
+    [[nodiscard]] bool hasUpperPhysicalBound(const std::string_view) const;
     //! \return the upper physical bound, if defined
-    std::string getUpperPhysicalBound(const std::string_view) const;
+    [[nodiscard]] std::string getUpperPhysicalBound(
+        const std::string_view) const;
     //! \brief cast operator to string. Equivalent to getKey()
-    operator const std::string&() const;
+    [[nodiscard]] operator const std::string&() const;
     //
     // note that export symbols are required for Microsoft's compiler
     TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT
@@ -105,10 +110,6 @@ namespace tfel::glossary {
                   const char* const,
                   const char* const,
                   const char* const);
-    //! \brief assignement operator
-    GlossaryEntry& operator=(const GlossaryEntry&) = delete;
-    //! \brief move assignement
-    GlossaryEntry& operator=(GlossaryEntry&&) = delete;
     /*!
      * \brief check if this entry is valid.
      * Called by constructors

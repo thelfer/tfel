@@ -26,12 +26,12 @@ namespace mfront::bbrick {
                     const std::string&,
                     const std::string&,
                     const DataMap&) override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::string computeStrainRateSensitivityFactor(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string computeStrainRateSensitivityFactor(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const override;
-    std::string computeStrainRateSensitivityFactorAndDerivative(
+    [[nodiscard]] std::string computeStrainRateSensitivityFactorAndDerivative(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const override;

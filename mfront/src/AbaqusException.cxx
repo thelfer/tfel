@@ -32,7 +32,7 @@ namespace abaqus {
   AbaqusException::AbaqusException(const std::string& s)
       : msg(s) {}  // end of AbaqusException::AbaqusException
 
-  AbaqusException::AbaqusException(AbaqusException&&) = default;
+  AbaqusException::AbaqusException(AbaqusException&&) noexcept = default;
 
   AbaqusException::AbaqusException(const AbaqusException&) = default;
 
@@ -40,14 +40,14 @@ namespace abaqus {
     return msg.c_str();
   }  // end of AbaqusException::what
 
-  std::string AbaqusException::getMsg() const noexcept {
+  const std::string& AbaqusException::getMsg() const noexcept {
     return msg;
   }  // end of AbaqusException::getMsg
 
   AbaqusException::~AbaqusException() noexcept = default;
 
   AbaqusInvalidModellingHypothesis::AbaqusInvalidModellingHypothesis(
-      AbaqusInvalidModellingHypothesis&&) = default;
+      AbaqusInvalidModellingHypothesis&&) noexcept = default;
 
   AbaqusInvalidModellingHypothesis::AbaqusInvalidModellingHypothesis(
       const AbaqusInvalidModellingHypothesis&) = default;
@@ -66,8 +66,8 @@ namespace abaqus {
                         std::to_string(static_cast<unsigned int>(N)) + "'") {
   }  // end of AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue
 
-  AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(AbaqusInvalidNTENSValue&&) =
-      default;
+  AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(
+      AbaqusInvalidNTENSValue&&) noexcept = default;
 
   AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(
       const AbaqusInvalidNTENSValue&) = default;
@@ -83,8 +83,8 @@ namespace abaqus {
   AbaqusInvalidDimension::AbaqusInvalidDimension(
       const AbaqusInvalidDimension&) = default;
 
-  AbaqusInvalidDimension::AbaqusInvalidDimension(AbaqusInvalidDimension&&) =
-      default;
+  AbaqusInvalidDimension::AbaqusInvalidDimension(
+      AbaqusInvalidDimension&&) noexcept = default;
 
   AbaqusInvalidDimension::~AbaqusInvalidDimension() noexcept = default;
 

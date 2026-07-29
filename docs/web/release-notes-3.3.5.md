@@ -17,7 +17,7 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-Version 3.3.5 has been released on June, 4th 2024. This version
+Version 3.3.5 has been released on June 4th, 2024. This version
 inherits from the bug fixes of:
 
 - Version [3.0.13](release-notes-3.0.13.html),

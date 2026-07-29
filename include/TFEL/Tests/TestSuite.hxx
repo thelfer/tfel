@@ -37,13 +37,21 @@ namespace tfel::tests {
      * \param[in] n: name of the function
      */
     TestSuite(const std::string&);
+    //! \brief move constructor (disabled)
+    TestSuite(TestSuite&&) = delete;
+    //! \brief copy constructor (disabled)
+    TestSuite(const TestSuite&) = delete;
+    //! \brief move assignement operator (disabled)
+    TestSuite& operator=(TestSuite&&) = delete;
+    //! \brief assignement operator (disabled)
+    TestSuite& operator=(const TestSuite&) = delete;
     /*!
      * \brief constructor
      * \param[in] n: name of the function
      */
     TestSuite(const char* const);
     //! \return the name of the test
-    std::string name() const;
+    [[nodiscard]] std::string name() const;
     /*!
      * \brief add a new test
      * \param t: test to be added
@@ -54,24 +62,16 @@ namespace tfel::tests {
      * \param  o: test output
      * \return tests global results
      */
-    TestResult execute(TestOutput&);
+    [[nodiscard]] TestResult execute(TestOutput&);
     /*!
      * \brief execute the test suite
      * \return tests global results
      */
-    TestResult execute();
+    [[nodiscard]] TestResult execute();
     //! \brief destructor
     ~TestSuite();
 
    private:
-    //! \brief move constructor (disabled)
-    TestSuite(TestSuite&&) = delete;
-    //! \brief copy constructor (disabled)
-    TestSuite(const TestSuite&) = delete;
-    //! \brief move assignement operator (disabled)
-    TestSuite& operator=(TestSuite&&) = delete;
-    //! \brief assignement operator (disabled)
-    TestSuite& operator=(const TestSuite&) = delete;
     //! list of all tests
     std::vector<TestPtr> tests;
     //! name of test suite (may be empty)

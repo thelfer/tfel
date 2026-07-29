@@ -32,59 +32,23 @@ namespace mtest {
      * \param[in] b : behaviour name
      */
     CyranoBehaviour(const Hypothesis, const std::string&, const std::string&);
-    /*!
-     * \brief compute the *real* rotation matrix
-     * \param[in] mp : material properties
-     * \param[in] r  : rotation matrix defined by the user
-     * \note this method is only meaningfull for the umat (Cast3M)
-     * interface
-     */
-    virtual tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
+    //
+    tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
-    /*!
-     * \return the default type of stiffness matrix used by the behaviour
-     */
-    virtual StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
-    /*!
-     * \brief allocate internal workspace
-     * \param[out] wk : behaviour workspace
-     */
-    virtual void allocateWorkSpace(BehaviourWorkSpace&) const override;
-    /*!
-     * \param[out] v : initial values of the driving variables
-     */
-    virtual void getGradientsDefaultInitialValues(
+    StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
+    void allocateWorkSpace(BehaviourWorkSpace&) const override;
+    void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;
-    /*!
-     * \brief integrate the mechanical behaviour over the time step
-     * \return a pair. The first member is true if the integration was
-     * successfull, false otherwise. The second member contains a time
-     * step scaling factor.
-     * \param[out] wk    : behaviour workspace
-     * \param[in]  s     : current state
-     * \param[in]  ktype : type of the stiffness matrix
-     */
-    virtual std::pair<bool, real> computePredictionOperator(
+    std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
         const CurrentState&,
         const StiffnessMatrixType) const override;
-    /*!
-     * \brief integrate the mechanical behaviour over the time step
-     * \return a pair. The first member is true if the integration was
-     * successfull, false otherwise. The second member contains a time
-     * step scaling factor.
-     * \param[out/in] s     : current state
-     * \param[out]    wk    : behaviour workspace
-     * \param[in]     dt    : time increment
-     * \param[in]     ktype : type of the stiffness matrix
-     */
-    virtual std::pair<bool, real> integrate(
-        CurrentState&,
-        BehaviourWorkSpace&,
-        const real,
-        const StiffnessMatrixType) const override;
-    //! destructor
+    std::pair<bool, real> integrate(CurrentState&,
+                                    BehaviourWorkSpace&,
+                                    const real,
+                                    const StiffnessMatrixType) const override;
+    //! \brief destructor
     ~CyranoBehaviour() override;
 
    protected:

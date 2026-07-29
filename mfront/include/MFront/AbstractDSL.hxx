@@ -47,21 +47,23 @@ namespace mfront {
       std::string description;
     };  // end of struct DSLOptionDescription
     //! \return the list of options accepted by the DSL
-    virtual std::vector<DSLOptionDescription> getDSLOptions() const = 0;
+    [[nodiscard]] virtual std::vector<DSLOptionDescription> getDSLOptions()
+        const = 0;
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType() const = 0;
+    [[nodiscard]] virtual DSLTarget getTargetType() const = 0;
     //! \return the description of the considered material knowledge
-    virtual const MaterialKnowledgeDescription&
+    [[nodiscard]] virtual const MaterialKnowledgeDescription&
     getMaterialKnowledgeDescription() const = 0;
     //! \return the file description associated with the treated file
-    virtual const FileDescription& getFileDescription() const = 0;
+    [[nodiscard]] virtual const FileDescription& getFileDescription() const = 0;
     /*!
      * \return the identifier (material property name, behaviour name, model
      * name) of the treated file
      */
-    virtual std::string getMaterialKnowledgeIdentifier() const = 0;
+    [[nodiscard]] virtual std::string getMaterialKnowledgeIdentifier()
+        const = 0;
     //! \return the material described by the treated file
-    virtual std::string getMaterialName() const = 0;
+    [[nodiscard]] virtual std::string getMaterialName() const = 0;
     /*!
      * \return the variable name associated with the given external name
      * \param[in] n: external name of the quantity overridable by a parameter
@@ -69,10 +71,11 @@ namespace mfront {
      * Depending on the DSL's, a parameter may override a parameter, but also a
      * material property for example.
      */
-    virtual std::string getOverridableVariableNameByExternalName(
+    [[nodiscard]] virtual std::string getOverridableVariableNameByExternalName(
         const std::string&) const = 0;
     //! \return the list of overriden parameters
-    virtual std::map<std::string, double> getOverridenParameters() const = 0;
+    [[nodiscard]] virtual std::map<std::string, double> getOverridenParameters()
+        const = 0;
     /*!
      * \brief analyse a file
      * \param[in] f     : file name
@@ -119,7 +122,8 @@ namespace mfront {
      * \note This method shall be called *after* the `analyseFile` or
      * `analyseString` methods.
      */
-    virtual const TargetsDescription& getTargetsDescription() const = 0;
+    [[nodiscard]] virtual const TargetsDescription& getTargetsDescription()
+        const = 0;
     /*!
      * \brief treat the specified file.
      * \note This method shall be called *after* the analyseFile method

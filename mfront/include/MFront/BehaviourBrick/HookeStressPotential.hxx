@@ -19,14 +19,16 @@ namespace mfront::bbrick {
   struct HookeStressPotential : HookeStressPotentialBase {
     //! \brief default constructor
     HookeStressPotential();
-    std::vector<
+    //
+    [[nodiscard]] std::vector<
         std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
     getStressDerivatives(const BehaviourDescription&) const override;
-    std::string generateImplicitEquationDerivatives(const BehaviourDescription&,
-                                                    const std::string&,
-                                                    const std::string&,
-                                                    const std::string&,
-                                                    const bool) const override;
+    [[nodiscard]] std::string generateImplicitEquationDerivatives(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const bool) const override;
     //! \brief destructor
     ~HookeStressPotential() override;
 

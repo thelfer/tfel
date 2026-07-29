@@ -24,33 +24,34 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT CastemSymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     CastemSymbolsGenerator();
-    void writeMainVariablesSymbols(std::ostream &,
-                                   const BehaviourInterfaceBase &,
-                                   const BehaviourDescription &,
-                                   const std::string &) const override;
-    void writeBehaviourTypeSymbols(std::ostream &,
-                                   const BehaviourInterfaceBase &,
-                                   const BehaviourDescription &,
-                                   const std::string &) const override;
-    void writeBehaviourKinematicSymbols(std::ostream &,
-                                        const BehaviourInterfaceBase &,
-                                        const BehaviourDescription &,
-                                        const std::string &) const override;
-    void writeAdditionalSymbols(std::ostream &,
-                                const BehaviourInterfaceBase &,
-                                const BehaviourDescription &,
-                                const FileDescription &,
-                                const std::string &,
+    //
+    void writeMainVariablesSymbols(std::ostream&,
+                                   const BehaviourInterfaceBase&,
+                                   const BehaviourDescription&,
+                                   const std::string&) const override;
+    void writeBehaviourTypeSymbols(std::ostream&,
+                                   const BehaviourInterfaceBase&,
+                                   const BehaviourDescription&,
+                                   const std::string&) const override;
+    void writeBehaviourKinematicSymbols(std::ostream&,
+                                        const BehaviourInterfaceBase&,
+                                        const BehaviourDescription&,
+                                        const std::string&) const override;
+    void writeAdditionalSymbols(std::ostream&,
+                                const BehaviourInterfaceBase&,
+                                const BehaviourDescription&,
+                                const FileDescription&,
+                                const std::string&,
                                 const Hypothesis) const override;
-    void writeSpecificSymbols(std::ostream &,
-                              const BehaviourInterfaceBase &,
-                              const BehaviourDescription &,
-                              const FileDescription &,
-                              const std::string &) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    void writeSpecificSymbols(std::ostream&,
+                              const BehaviourInterfaceBase&,
+                              const BehaviourDescription&,
+                              const FileDescription&,
+                              const std::string&) const override;
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~CastemSymbolsGenerator() override;
   };  // end of struct CastemSymbolsGenerator
 

@@ -20,6 +20,10 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.1.17 of the
 `TFEL` project.
 
+This version was released on June 22, 2026 along with [Version
+3.0.17](release-notes-3.0.17.html) and inherits from all fixes from this
+release.
+
 # Issues fixed
 
 ## Issue 976: [tfel-config] no `python` version displayed

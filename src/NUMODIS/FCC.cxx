@@ -33,7 +33,7 @@ namespace numodis {
     this->Init();
   }
 
-  FCC::FCC(FCC&&) = default;
+  FCC::FCC(FCC&&) noexcept = default;
 
   FCC::FCC(const FCC&) = default;
 

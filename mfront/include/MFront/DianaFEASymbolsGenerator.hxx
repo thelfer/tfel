@@ -24,24 +24,24 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT DianaFEASymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     DianaFEASymbolsGenerator();
-    void writeBehaviourTypeSymbols(std::ostream &,
-                                   const BehaviourInterfaceBase &,
-                                   const BehaviourDescription &,
-                                   const std::string &) const override;
-    void writeBehaviourKinematicSymbols(std::ostream &,
-                                        const BehaviourInterfaceBase &,
-                                        const BehaviourDescription &,
-                                        const std::string &) const override;
-    void writeAdditionalSymbols(std::ostream &,
-                                const BehaviourInterfaceBase &,
-                                const BehaviourDescription &,
-                                const FileDescription &,
-                                const std::string &,
+    void writeBehaviourTypeSymbols(std::ostream&,
+                                   const BehaviourInterfaceBase&,
+                                   const BehaviourDescription&,
+                                   const std::string&) const override;
+    void writeBehaviourKinematicSymbols(std::ostream&,
+                                        const BehaviourInterfaceBase&,
+                                        const BehaviourDescription&,
+                                        const std::string&) const override;
+    void writeAdditionalSymbols(std::ostream&,
+                                const BehaviourInterfaceBase&,
+                                const BehaviourDescription&,
+                                const FileDescription&,
+                                const std::string&,
                                 const Hypothesis) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~DianaFEASymbolsGenerator() override;
   };  // end of struct DianaFEASymbolsGenerator
 

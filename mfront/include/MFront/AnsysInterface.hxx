@@ -28,56 +28,92 @@ namespace mfront {
    */
   struct AnsysInterface : public UMATInterfaceBase {
     //! name of finite strain strategy attribute
-    static const char *const finiteStrainStrategy;
+    static const char* const finiteStrainStrategy;
     /*!
      * \return the name of the interface
      */
-    static std::string getName();
+    [[nodiscard]] static std::string getName();
     /*!
      * \return true if a finite strain strategy has been set up
      * \param[in] bd: behaviour description
      */
-    static bool hasFiniteStrainStrategy(const BehaviourDescription &);
+    [[nodiscard]] static bool hasFiniteStrainStrategy(
+        const BehaviourDescription&);
     /*!
      * \return the name of the finite strain strategy that has been set up
      * \param[in] bd: behaviour description
      */
-    static std::string getFiniteStrainStrategy(const BehaviourDescription &);
-    std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription &,
-        const std::string &,
-        const std::vector<std::string> &,
+    [[nodiscard]] static std::string getFiniteStrainStrategy(
+        const BehaviourDescription&);
+    //
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    void endTreatment(const BehaviourDescription &,
-                      const FileDescription &) const override;
-    void getTargetsDescription(TargetsDescription &,
-                               const BehaviourDescription &) override;
-    //! destructor
+    void endTreatment(const BehaviourDescription&,
+                      const FileDescription&) const override;
+    void getTargetsDescription(TargetsDescription&,
+                               const BehaviourDescription&) override;
+    //! \brief destructor
     ~AnsysInterface() override;
 
    protected:
+    [[nodiscard]] std::string getLibraryName(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::string getFunctionNameBasis(
+        const std::string&) const override;
+    [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::vector<std::pair<std::string, std::string>>
+    getBehaviourDataConstructorAdditionalVariables() const override;
+    [[nodiscard]] bool areExternalStateVariablesSupported() const override;
+    void completeBehaviourDataConstructor(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
+    void writeMTestFileGeneratorSetModellingHypothesis(
+        std::ostream&) const override;
+    void writeBehaviourDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const override;
+    void writeBehaviourDataGradientSetter(
+        std::ostream&,
+        const Gradient&,
+        const SupportedTypes::TypeSize) const override;
+    void writeIntegrationDataGradientSetter(
+        std::ostream&,
+        const Gradient&,
+        const SupportedTypes::TypeSize) const override;
+    void exportThermodynamicForce(
+        std::ostream&,
+        const std::string&,
+        const ThermodynamicForce&,
+        const SupportedTypes::TypeSize) const override;
+    void writeInterfaceSpecificIncludes(
+        std::ostream&, const BehaviourDescription&) const override;
+    void writeBehaviourDataThermodynamicForceSetter(
+        std::ostream&,
+        const ThermodynamicForce&,
+        const SupportedTypes::TypeSize) const override;
     /*!
      * \brief return the state variable offset used for variables used
      * internally by the ansys interface
      * \param[in] mb: behaviour description
      * \param[in] h:  modelling hypothesis
      */
-    virtual unsigned short getStateVariablesOffset(const BehaviourDescription &,
-                                                   const Hypothesis) const;
-    std::string getLibraryName(const BehaviourDescription &) const override;
+    [[nodiscard]] virtual unsigned short getStateVariablesOffset(
+        const BehaviourDescription&, const Hypothesis) const;
     /*!
      * \brief write a  specialisation of the AnsysTraits class
      * \param[in] out : ouptut file
      * \param[in] mb  : behaviour description
      * \param[in] h   : modelling hypothesis
      */
-    virtual void writeAnsysBehaviourTraits(std::ostream &,
-                                           const BehaviourDescription &,
+    virtual void writeAnsysBehaviourTraits(std::ostream&,
+                                           const BehaviourDescription&,
                                            const Hypothesis) const;
-    void writeMTestFileGeneratorSetModellingHypothesis(
-        std::ostream &) const override;
-    std::string getFunctionNameBasis(const std::string &) const override;
     /*!
      * \return the name of the function generated by the interface
      * \param[in] n: name of the behaviour as defined by interface
@@ -85,46 +121,16 @@ namespace mfront {
      *               and the behaviour name)
      * \param[in] h: modelling hypothesis
      */
-    virtual std::string getFunctionNameForHypothesis(const std::string &,
-                                                     const Hypothesis) const;
-    std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const override;
+    [[nodiscard]] virtual std::string getFunctionNameForHypothesis(
+        const std::string&, const Hypothesis) const;
     /*!
      * \return the input file example
      * \param[in] mb: behaviour description
      * \param[in] fd: file description
      */
-    virtual void writeInputFileExample(const BehaviourDescription &,
-                                       const FileDescription &) const;
+    virtual void writeInputFileExample(const BehaviourDescription&,
+                                       const FileDescription&) const;
 
-    virtual std::string getInterfaceName() const override;
-    void writeBehaviourDataMainVariablesSetters(
-        std::ostream &, const BehaviourDescription &) const override;
-    void writeBehaviourDataGradientSetter(
-        std::ostream &,
-        const Gradient &,
-        const SupportedTypes::TypeSize) const override;
-    void writeIntegrationDataGradientSetter(
-        std::ostream &,
-        const Gradient &,
-        const SupportedTypes::TypeSize) const override;
-    void exportThermodynamicForce(
-        std::ostream &,
-        const std::string &,
-        const ThermodynamicForce &,
-        const SupportedTypes::TypeSize) const override;
-    void writeInterfaceSpecificIncludes(
-        std::ostream &, const BehaviourDescription &) const override;
-    void writeBehaviourDataThermodynamicForceSetter(
-        std::ostream &,
-        const ThermodynamicForce &,
-        const SupportedTypes::TypeSize) const override;
-    std::vector<std::pair<std::string, std::string>>
-    getBehaviourDataConstructorAdditionalVariables() const override;
-    void completeBehaviourDataConstructor(
-        std::ostream &,
-        const Hypothesis,
-        const BehaviourDescription &) const override;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -136,10 +142,10 @@ namespace mfront {
      *                  expansion
      * \param[in] h:    modelling hypothesis
      */
-    virtual void writeFunctionBase(std::ostream &,
-                                   const BehaviourDescription &,
-                                   const std::string &,
-                                   const std::string &,
+    virtual void writeFunctionBase(std::ostream&,
+                                   const BehaviourDescription&,
+                                   const std::string&,
+                                   const std::string&,
                                    const Hypothesis) const;
     /*!
      * \brief write the call to the base function
@@ -150,9 +156,9 @@ namespace mfront {
      *                  and the behaviour name)
      * \param[in] h:    modelling hypothesis
      */
-    virtual void writeSmallStrainFunction(std::ostream &,
-                                          const BehaviourDescription &,
-                                          const std::string &,
+    virtual void writeSmallStrainFunction(std::ostream&,
+                                          const BehaviourDescription&,
+                                          const std::string&,
                                           const Hypothesis) const;
     /*!
      * \brief write the call to the base function
@@ -163,9 +169,9 @@ namespace mfront {
      *                  and the behaviour name)
      * \param[in] h:    modelling hypothesis
      */
-    virtual void writeFiniteStrainFunction(std::ostream &,
-                                           const BehaviourDescription &,
-                                           const std::string &,
+    virtual void writeFiniteStrainFunction(std::ostream&,
+                                           const BehaviourDescription&,
+                                           const std::string&,
                                            const Hypothesis) const;
     /*!
      * \brief write the call to the base function
@@ -177,9 +183,9 @@ namespace mfront {
      * \param[in] h:    modelling hypothesis
      */
     virtual void writeFiniteRotationSmallStrainFunction(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &,
+        std::ostream&,
+        const BehaviourDescription&,
+        const std::string&,
         const Hypothesis) const;
     /*!
      * \brief write the call to the base function
@@ -191,12 +197,10 @@ namespace mfront {
      * \param[in] h:    modelling hypothesis
      */
     virtual void writeMieheApelLambrechtLogarithmicStrainFunction(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &,
+        std::ostream&,
+        const BehaviourDescription&,
+        const std::string&,
         const Hypothesis) const;
-    //! \return true if the interface handles external state variables
-    virtual bool areExternalStateVariablesSupported() const override;
     /*!
      * \brief boolean stating the we want a comparison of the user
      * defined tangent operator with a numerical approximation.

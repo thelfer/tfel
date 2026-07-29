@@ -37,7 +37,7 @@
     // we have an exception
     try {
       std::rethrow_exception(pe);
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
       // additional action
       std::cerr << e.what() << std::endl;
     } catch (...) {
@@ -49,9 +49,9 @@
 #endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(const int argc, const char *const *const argv) {
-  auto find = [argv, argc](const char *v) {
-    for (const auto *a = argv; a != argv + argc; ++a) {
+int main(const int argc, const char* const* const argv) {
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
       if (::strcmp(*a, v) == 0) {
         return true;
       }
@@ -74,7 +74,7 @@ int main(const int argc, const char *const *const argv) {
     mfront::MFront mfront(argc, argv);
     mfront.exe();
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-  } catch (std::exception &e) {
+  } catch (std::exception& e) {
     if (bg) {
       MessageBox(nullptr, e.what(), "mfront", 0);
     } else {

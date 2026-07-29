@@ -33,10 +33,10 @@ namespace aster {
    * \param[in] d      : spatial dimension
    */
   MFRONT_ASTER_VISIBILITY_EXPORT void
-  AsterStandardSmallStrainStressFreeExpansionHandler(AsterReal *const,
-                                                     AsterReal *const,
-                                                     const AsterReal *const,
-                                                     const AsterReal *const,
+  AsterStandardSmallStrainStressFreeExpansionHandler(AsterReal* const,
+                                                     AsterReal* const,
+                                                     const AsterReal* const,
+                                                     const AsterReal* const,
                                                      const AsterInt);
 
 }  // end of namespace aster

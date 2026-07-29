@@ -27,24 +27,24 @@ extern "C" {
  * behaviours used by the `Cyrano` fuel performance code.
  */
 typedef void(TFEL_ADDCALL_PTR CyranoBehaviourPtr)(
-    const CyranoIntegerType *const, /* nombre de composantes des contraintes  */
-    const CyranoRealType *const, /* incrément de temps                     */
-    const CyranoRealType *const, /* matrice de passage du repère élement
+    const CyranoIntegerType* const, /* nombre de composantes des contraintes  */
+    const CyranoRealType* const, /* incrément de temps                     */
+    const CyranoRealType* const, /* matrice de passage du repère élement
                                     au repère global                       */
-    CyranoRealType *const,       /* matrice tangente                       */
-    const CyranoRealType *const, /* tenseur des déformations               */
-    const CyranoRealType *const, /* tenseur des incréments de déformations */
-    const CyranoRealType *const, /* température au début du pas            */
-    const CyranoRealType *const, /* incrément de température               */
-    const CyranoRealType *const, /* propriétés matériau                    */
-    const CyranoIntegerType *const, /* nombre de propriétés matériau          */
-    const CyranoRealType *const,    /* variables externes */
-    const CyranoRealType *const,    /* incréments des variables externes */
-    CyranoRealType *const,          /* variables internes   */
-    const CyranoIntegerType *const, /* nombre de variables internes */
-    CyranoRealType *const,          /* tenseur des contraintes */
-    const CyranoIntegerType *const, /* entier définissant le type de calcul  */
-    CyranoIntegerType *const);      /* code sortie */
+    CyranoRealType* const,       /* matrice tangente                       */
+    const CyranoRealType* const, /* tenseur des déformations               */
+    const CyranoRealType* const, /* tenseur des incréments de déformations */
+    const CyranoRealType* const, /* température au début du pas            */
+    const CyranoRealType* const, /* incrément de température               */
+    const CyranoRealType* const, /* propriétés matériau                    */
+    const CyranoIntegerType* const, /* nombre de propriétés matériau          */
+    const CyranoRealType* const,    /* variables externes */
+    const CyranoRealType* const,    /* incréments des variables externes */
+    CyranoRealType* const,          /* variables internes   */
+    const CyranoIntegerType* const, /* nombre de variables internes */
+    CyranoRealType* const,          /* tenseur des contraintes */
+    const CyranoIntegerType* const, /* entier définissant le type de calcul  */
+    CyranoIntegerType* const);      /* code sortie */
 
 #ifdef __cplusplus
 }  // end of extern "C"

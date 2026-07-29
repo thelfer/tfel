@@ -35,8 +35,8 @@ namespace tfel::system {
   void basic_wstream<Child, Traits>::write(int fd,
                                            const void* const buf,
                                            const size_t count) {
-    typedef typename std::conditional<Traits::isBlocking, BlockingStreamWriter,
-                                      NonBlockingStreamWriter>::type Writer;
+    using Writer = std::conditional_t<Traits::isBlocking, BlockingStreamWriter,
+                                      NonBlockingStreamWriter>;
     Writer::write(fd, buf, count);
   }
 
@@ -153,18 +153,14 @@ namespace tfel::system {
   }  // end of basic_wstream<Child,Traits>::operator<<
 
   template <typename Child, typename Traits>
-  basic_wstream<Child, Traits>::basic_wstream() {
-  }  // end of basic_wstream<Child,Traits>::basic_wstream
+  basic_wstream<Child, Traits>::basic_wstream() = default;
 
   template <typename Child, typename Traits>
-  basic_wstream<Child, Traits>::basic_wstream(const basic_wstream&) {
-  }  // end of basic_wstream<Child,Traits>::basic_wstream
+  basic_wstream<Child, Traits>::basic_wstream(const basic_wstream&) = default;
 
   template <typename Child, typename Traits>
   basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::operator=(
-      const basic_wstream<Child, Traits>&) {
-    return *this;
-  }  // end of basic_wstream<Child,Traits>::operator=
+      const basic_wstream<Child, Traits>&) = default;
 
   template <typename Child, typename Traits>
   void basic_wstream<Child, Traits>::write(const char* const c,

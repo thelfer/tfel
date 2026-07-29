@@ -63,7 +63,7 @@ namespace tfel::math {
   }  // end of IntegerEvaluator::TOperator::TOperator(const std::string& t_)
 
   IntegerEvaluator::TOperator::TOperator(const TOperator&) = default;
-  IntegerEvaluator::TOperator::TOperator(TOperator&&) = default;
+  IntegerEvaluator::TOperator::TOperator(TOperator&&) noexcept = default;
 
   std::string IntegerEvaluator::TOperator::getOperatorType() const {
     return this->type;

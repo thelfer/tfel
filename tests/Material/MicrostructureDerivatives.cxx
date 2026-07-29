@@ -77,7 +77,7 @@ struct MicrostructureDerivativesTest final
     micro1.addInclusionPhase(distrib1);
     micro1.addInclusionPhase(distrib2);
 
-    auto h_DS = computeDilute<3u, stress>(micro1,true);
+    auto h_DS = computeDilute<3u, stress>(micro1,0,{},true);
 
     auto dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr;
     std::cout<<dCDS_dkr[0](0,0)<<std::endl;

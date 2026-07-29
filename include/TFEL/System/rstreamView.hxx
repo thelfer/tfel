@@ -35,7 +35,7 @@ namespace tfel::system {
                              stream_traits<rstreamView<isBlocking>>> {
     rstreamView(const int);
 
-    int getFileDescriptor() const;
+    [[nodiscard]] int getFileDescriptor() const;
 
    private:
     const int fd;

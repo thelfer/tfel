@@ -16,28 +16,28 @@
 #define LIB_TFEL_MATH_WALPOLEBASIS_HXX
 
 #include <cmath>
-
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/TinyMatrixInvert.hxx"
 
 namespace tfel::math {
 
   template <typename real>
   struct TransverseIsotropicWalpoleBasis {
-    TFEL_HOST_DEVICE static stensor<3u, real> p(const tvector<3u, real>& n) {
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr stensor<3u, real> p(
+        const tvector<3u, real>& n) {
       constexpr auto sqrt2 = Cste<real>::sqrt2;
-      const stensor<3u, real> p_ = {n(0) * n(0),        n(1) * n(1),
-                                    n(2) * n(2),        sqrt2 * n(0) * n(1),
-                                    sqrt2 * n(0) * n(2), sqrt2 * n(1) * n(2)};
-      return p_;
+      return {n(0) * n(0),         n(1) * n(1),         n(2) * n(2),
+              sqrt2 * n(0) * n(1), sqrt2 * n(0) * n(2), sqrt2 * n(1) * n(2)};
     }
 
-    TFEL_HOST_DEVICE static stensor<3u, real> q(const tvector<3u, real>& n) {
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr stensor<3u, real> q(
+        const tvector<3u, real>& n) {
       return stensor<3u, real>::Id() - p(n);
     }
 
-    TFEL_HOST_DEVICE static st2tost2<3u, real> dyadic_ov(
-        const stensor<3u, real>& a, const stensor<3u, real>& b) {
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr st2tost2<3u, real>
+    dyadic_ov(const stensor<3u, real>& a, const stensor<3u, real>& b) {
       constexpr auto sqrt2 = Cste<real>::sqrt2;
       constexpr auto isqrt2 = Cste<real>::isqrt2;
       const auto a11 = a(0);
@@ -92,35 +92,43 @@ namespace tfel::math {
       return a_b;
     }
 
-    TFEL_HOST_DEVICE static st2tost2<3u, real> E1(const tvector<3u, real>& n) {
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr st2tost2<3u, real> E1(
+        const tvector<3u, real>& n) {
       return p(n) ^ p(n);
     }
 
-    TFEL_HOST_DEVICE static st2tost2<3u, real> E2(const tvector<3u, real>& n) {
-      return 0.5 * (q(n) ^ q(n));
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr st2tost2<3u, real> E2(
+        const tvector<3u, real>& n) {
+      return (q(n) ^ q(n)) / 2;
     }
 
-    TFEL_HOST_DEVICE static st2tost2<3u, real> E3(const tvector<3u, real>& n) {
-      return (1 / sqrt(2)) * p(n) ^ q(n);
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr st2tost2<3u, real> E3(
+        const tvector<3u, real>& n) {
+      constexpr auto isqrt2 = Cste<real>::isqrt2;
+      return isqrt2 * (p(n) ^ q(n));
     }
 
-    TFEL_HOST_DEVICE static st2tost2<3u, real> E4(const tvector<3u, real>& n) {
-      return (1 / sqrt(2)) * q(n) ^ p(n);
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr st2tost2<3u, real> E4(
+        const tvector<3u, real>& n) {
+      constexpr auto isqrt2 = Cste<real>::isqrt2;
+      return isqrt2 * (q(n) ^ p(n));
     }
 
-    TFEL_HOST_DEVICE static st2tost2<3u, real> F(const tvector<3u, real>& n) {
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr st2tost2<3u, real> F(
+        const tvector<3u, real>& n) {
       const st2tost2<3u, real> F_ = dyadic_ov(q(n), q(n));
       return F_ - E2(n);
     }
 
-    TFEL_HOST_DEVICE static st2tost2<3u, real> G(const tvector<3u, real>& n) {
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr st2tost2<3u, real> G(
+        const tvector<3u, real>& n) {
       st2tost2<3u, real> G_ = dyadic_ov(p(n), q(n));
       G_ += dyadic_ov(q(n), p(n));
       return G_;
     }
 
     template <typename T>
-    TFEL_HOST_DEVICE static std::array<T, 6> components(
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr std::array<T, 6> components(
         const tvector<3u, real>& n, const st2tost2<3u, T>& P) {
       const auto p1 = trace(E1(n) * P * E1(n));
       const auto p2 = trace(E2(n) * P * E2(n));

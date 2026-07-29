@@ -45,7 +45,7 @@ examination and validation results.
 
 # Material properties
 
-The `cyrano` interface for material properties generates function having
+The `cyrano` interface for material properties generates functions having
 the following prototype:
 
 ~~~~{.c++}
@@ -62,7 +62,7 @@ The second argument contains the arguments of the material property.
 
 The third argument gives the number of arguments.
 
-The fourth argument specify the policy used when an argument or the
+The fourth argument specifies the policy used when an argument or the
 output is out of these bounds.
 
 ## Error handling {#sec:error_handling}
@@ -124,7 +124,7 @@ concerning the axial direction are supported:
 ## Finite strain modelling
 
 `Cyrano3` finite strain modelling is based on the approach described by
-T. Helfer (See @helfer_extension_2015) which allows to easily extend
+T. Helfer (See @helfer_extension_2015) which allows easy extension of
 small strain mono-dimensional code to support finite strain modelling.
 
 ### Kinematic and mechanical equilibrium
@@ -162,7 +162,7 @@ following property:
 \dtot\,\vec{f}=\tns{\Pi}\,\colon\,\dtot\,\vec{S}_{0}  
 \]
 
-For pressure loading, one have:
+For pressure loading, one has:
 \[
 \dtot\,\vec{f}=-P\,\dtot\,\vec{s}
 \]
@@ -219,14 +219,14 @@ where:
 - \(S^{c}_{e}\) is the external surface of the upper cap in the current
   geometry, defined by \(S^{c}_{e}=\pi\,R_{e}^{2}\).
 
-Here, the pressure is assumed constant over the time step : the
-sensibility with the geometrical changes is neglected. Dependency of the
+Here, the pressure is assumed constant over the time step: the
+sensitivity to the geometrical changes is neglected. Dependency of the
 pressure with the volume can also be taken into account, as in `MTest`
 if all the slices are homogeneous, which is almost never the case.
 
 ##### Generalised plane stress
 
-In generalised plane stress, \(\Pi_{zz}\) is assumed uniform and can
+In generalised plane stress, \(\Pi_{zz}\) is assumed uniform and can be
 determined by:
 
 \[
@@ -245,7 +245,7 @@ In generalised plane strain, the total force is given by:
 F = 2\,\pi\,\int_{R_{i}^{0}}^{R_{e}^{0}}\Pi_{zz}\,R\,dR = P_{i}\,S^{c}_{i} - P_{e}\,S^{c}_{e}
 \]
 
-This is exactly the same relation as in same strain analysis, except for
+This is exactly the same relation as in small strain analysis, except for
 the dependency of \(S^{c}_{i}\) and \(S^{c}_{e}\) with the actual inner
 and outer radius which adds additional terms to the stiffness matrix
 

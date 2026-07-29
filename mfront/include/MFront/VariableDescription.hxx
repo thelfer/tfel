@@ -58,9 +58,9 @@ namespace mfront {
     //! \brief copy constructor
     VariableDescription(const VariableDescription&);
     //! \brief move constructor
-    VariableDescription(VariableDescription&&);
+    VariableDescription(VariableDescription&&) noexcept;
     //! \brief move operator
-    VariableDescription& operator=(VariableDescription&&);
+    VariableDescription& operator=(VariableDescription&&) noexcept;
     //! \brief assignement operator
     VariableDescription& operator=(const VariableDescription&);
     /*!
@@ -108,19 +108,20 @@ namespace mfront {
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
      */
-    bool hasAttribute(const std::string&) const;
+    [[nodiscard]] bool hasAttribute(const std::string&) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    T& getAttribute(const std::string&) requires(isVariableAttribute<T>);
+    [[nodiscard]] T& getAttribute(const std::string&) requires(
+        isVariableAttribute<T>);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    const T& getAttribute(const std::string&) const
+    [[nodiscard]] const T& getAttribute(const std::string&) const
         requires(isVariableAttribute<T>);
     /*!
      * \return the attribute with the given name or the given default
@@ -129,20 +130,21 @@ namespace mfront {
      * \param[in] v : value
      */
     template <typename T>
-    T getAttribute(const std::string&, const T&) const
+    [[nodiscard]] T getAttribute(const std::string&, const T&) const
         requires(isVariableAttribute<T>);
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string, VariableAttribute>& getAttributes() const;
+    [[nodiscard]] const std::map<std::string, VariableAttribute>&
+    getAttributes() const;
     //! \return true if bounds has been specified for this variable
-    bool hasBounds() const;
+    [[nodiscard]] bool hasBounds() const;
     /*!
      * \return true if bounds has been specified for this variable
      * \param[in] i: position
      */
-    bool hasBounds(const unsigned short) const;
+    [[nodiscard]] bool hasBounds(const unsigned short) const;
     /*!
      * \brief set bounds on this variable
      * \param[in] b: bounds
@@ -155,19 +157,20 @@ namespace mfront {
      */
     void setBounds(const VariableBoundsDescription&, const unsigned short);
     //! \return the bounds of this variable
-    const VariableBoundsDescription& getBounds() const;
+    [[nodiscard]] const VariableBoundsDescription& getBounds() const;
     /*!
      * \return the bounds of this variable
      * \param[in] i: position
      */
-    const VariableBoundsDescription& getBounds(const unsigned short) const;
+    [[nodiscard]] const VariableBoundsDescription& getBounds(
+        const unsigned short) const;
     //! \return true if physical bounds has been specified for this variable
-    bool hasPhysicalBounds() const;
+    [[nodiscard]] bool hasPhysicalBounds() const;
     /*!
      * \return true if bounds has been specified for this variable
      * \param[in] i: position
      */
-    bool hasPhysicalBounds(const unsigned short) const;
+    [[nodiscard]] bool hasPhysicalBounds(const unsigned short) const;
     /*!
      * \brief set physical bounds on this variable
      * \param[in] b: physical bounds
@@ -180,12 +183,12 @@ namespace mfront {
     void setPhysicalBounds(const VariableBoundsDescription&,
                            const unsigned short);
     //! \return the physical bounds of this variable
-    const VariableBoundsDescription& getPhysicalBounds() const;
+    [[nodiscard]] const VariableBoundsDescription& getPhysicalBounds() const;
     /*!
      * \return the physical bounds of this variable
      * \param[in] i: position
      */
-    const VariableBoundsDescription& getPhysicalBounds(
+    [[nodiscard]] const VariableBoundsDescription& getPhysicalBounds(
         const unsigned short) const;
     /*!
      * \brief associate a glossary name to the variable
@@ -208,13 +211,13 @@ namespace mfront {
      */
     void resetEntryName(const std::string&);
     //! \return true if the variable has a glossary name
-    bool hasGlossaryName() const;
+    [[nodiscard]] bool hasGlossaryName() const;
     //! \return true if the variable has a glossary name
-    bool hasEntryName() const;
+    [[nodiscard]] bool hasEntryName() const;
     //! \return the external name of the variable
-    const std::string& getExternalName() const;
+    [[nodiscard]] const std::string& getExternalName() const;
     //! \return if the variable describes a scalar
-    bool isScalar() const;
+    [[nodiscard]] bool isScalar() const;
     //! \brief destructor
     ~VariableDescription();
 
@@ -321,9 +324,10 @@ namespace mfront {
     VariableDescriptionContainer();
     VariableDescriptionContainer(
         const std::initializer_list<VariableDescription>&);
-    VariableDescriptionContainer(VariableDescriptionContainer&&);
+    VariableDescriptionContainer(VariableDescriptionContainer&&) noexcept;
     VariableDescriptionContainer(const VariableDescriptionContainer&);
-    VariableDescriptionContainer& operator=(VariableDescriptionContainer&&);
+    VariableDescriptionContainer& operator=(
+        VariableDescriptionContainer&&) noexcept;
     VariableDescriptionContainer& operator=(
         const VariableDescriptionContainer&);
     // resusing method from std::vector
@@ -351,19 +355,19 @@ namespace mfront {
      * \param[in] n : variable name
      * \return true if a variable with the given name exists
      */
-    bool contains(const std::string&) const;
+    [[nodiscard]] bool contains(const std::string&) const;
     /*!
      * \return the sum of the sizes of all the variables
      */
-    SupportedTypes::TypeSize getTypeSize() const;
+    [[nodiscard]] SupportedTypes::TypeSize getTypeSize() const;
     //! \return the sum of the array sizes of all the variables
-    unsigned short getNumberOfVariables() const;
+    [[nodiscard]] unsigned short getNumberOfVariables() const;
     /*!
      * \return the list of external names associated with this
      * container.
      * \see VariableDescription::getExternalName
      */
-    std::vector<std::string> getExternalNames() const;
+    [[nodiscard]] std::vector<std::string> getExternalNames() const;
     /*!
      * get the external names associated with this container.
      * \see VariableDescription::getExternalName
@@ -381,19 +385,20 @@ namespace mfront {
      * \return the variable with the given name
      * \param[in] n : name
      */
-    VariableDescription& getVariable(const std::string&);
+    [[nodiscard]] VariableDescription& getVariable(const std::string&);
     /*!
      * \return the variable with the given name
      * \param[in] n : name
      */
-    const VariableDescription& getVariable(const std::string&) const;
+    [[nodiscard]] const VariableDescription& getVariable(
+        const std::string&) const;
     /*!
      * \return the variable with the given name
      * \param[in] n:  external name
      */
-    const VariableDescription& getVariableByExternalName(
+    [[nodiscard]] const VariableDescription& getVariableByExternalName(
         const std::string&) const;
-    //! destructor
+    //! \brief destructor
     ~VariableDescriptionContainer();
   };  // end of struct VariableDescriptionContainer
 

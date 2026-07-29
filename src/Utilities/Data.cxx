@@ -22,25 +22,26 @@ namespace tfel::utilities {
 
   Data::Data() = default;
   Data::Data(const Data&) = default;
-  Data::Data(Data&&) = default;
+  Data::Data(Data&&) noexcept = default;
   Data& Data::operator=(const Data&) = default;
-  Data& Data::operator=(Data&&) = default;
+  Data& Data::operator=(Data&&) noexcept = default;
   Data::~Data() = default;
 
   DataStructure::DataStructure() = default;
   DataStructure::DataStructure(const DataStructure&) = default;
-  DataStructure::DataStructure(DataStructure&&) = default;
+  DataStructure::DataStructure(DataStructure&&) noexcept = default;
   DataStructure& DataStructure::operator=(const DataStructure&) = default;
-  DataStructure& DataStructure::operator=(DataStructure&&) = default;
+  DataStructure& DataStructure::operator=(DataStructure&&) noexcept = default;
   DataStructure::~DataStructure() = default;
 
   DataParsingOptions::DataParsingOptions() = default;
   DataParsingOptions::DataParsingOptions(const DataParsingOptions&) = default;
-  DataParsingOptions::DataParsingOptions(DataParsingOptions&&) = default;
+  DataParsingOptions::DataParsingOptions(DataParsingOptions&&) noexcept =
+      default;
   DataParsingOptions& DataParsingOptions::operator=(const DataParsingOptions&) =
       default;
-  DataParsingOptions& DataParsingOptions::operator=(DataParsingOptions&&) =
-      default;
+  DataParsingOptions& DataParsingOptions::operator=(
+      DataParsingOptions&&) noexcept = default;
   DataParsingOptions::~DataParsingOptions() = default;
 
   static void read_map(DataMap& r,
@@ -130,10 +131,10 @@ namespace tfel::utilities {
     };
     if (p->value == "true") {
       ++p;
-      return Data(true);
+      return {true};
     } else if (p->value == "false") {
       ++p;
-      return Data(false);
+      return {false};
     } else if (p->flag == Token::String) {
       const auto name = CxxTokenizer::readString(p, pe);
       return readDataStructureOrString(name);
@@ -146,11 +147,11 @@ namespace tfel::utilities {
       auto v = std::stoi(p->value, &pos);
       throw_if(pos != p->value.size(), "invalid number '" + p->value + "'");
       ++p;
-      return Data(v);
+      return {v};
     }
     const auto r = convert<double>(p->value);
     ++p;
-    return Data(r);
+    return {r};
   }
 
   Data Data::read_vector(CxxTokenizer::const_iterator& p,
@@ -227,7 +228,7 @@ namespace tfel::utilities {
       CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
       if (p->value == "}") {
         ++p;
-        return Data();
+        return Data{};
       }
       // map or string vector
       ++p;
@@ -345,9 +346,10 @@ namespace tfel::utilities {
   }
 
   DataMapValidator::DataMapValidator() = default;
-  DataMapValidator::DataMapValidator(DataMapValidator&&) = default;
+  DataMapValidator::DataMapValidator(DataMapValidator&&) noexcept = default;
   DataMapValidator::DataMapValidator(const DataMapValidator&) = default;
-  DataMapValidator& DataMapValidator::operator=(DataMapValidator&&) = default;
+  DataMapValidator& DataMapValidator::operator=(DataMapValidator&&) noexcept =
+      default;
   DataMapValidator& DataMapValidator::operator=(const DataMapValidator&) =
       default;
 

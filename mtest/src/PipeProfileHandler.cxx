@@ -17,10 +17,11 @@
 namespace mtest {
 
   PipeProfileHandler::PipeProfileHandler() = default;
-  PipeProfileHandler::PipeProfileHandler(PipeProfileHandler&&) = default;
-  PipeProfileHandler::PipeProfileHandler(const PipeProfileHandler&) = default;
-  PipeProfileHandler& PipeProfileHandler::operator=(PipeProfileHandler&&) =
+  PipeProfileHandler::PipeProfileHandler(PipeProfileHandler&&) noexcept =
       default;
+  PipeProfileHandler::PipeProfileHandler(const PipeProfileHandler&) = default;
+  PipeProfileHandler& PipeProfileHandler::operator=(
+      PipeProfileHandler&&) noexcept = default;
   PipeProfileHandler& PipeProfileHandler::operator=(const PipeProfileHandler&) =
       default;
 

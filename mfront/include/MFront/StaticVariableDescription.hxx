@@ -55,11 +55,11 @@ namespace mfront {
                               const unsigned int,
                               const StaticVariableValueType);
     //! \brief move constructor
-    StaticVariableDescription(StaticVariableDescription&&);
+    StaticVariableDescription(StaticVariableDescription&&) noexcept;
     //! \brief copy constructor
     StaticVariableDescription(const StaticVariableDescription&);
     //! \brief move assignement
-    StaticVariableDescription& operator=(StaticVariableDescription&&);
+    StaticVariableDescription& operator=(StaticVariableDescription&&) noexcept;
     //! \brief standard assignement
     StaticVariableDescription& operator=(const StaticVariableDescription&);
     //! \brief destructor
@@ -92,12 +92,13 @@ namespace mfront {
      * \param[in] n : variable name
      * \return true if a variable with the given name exists
      */
-    bool contains(const std::string&) const;
+    [[nodiscard]] bool contains(const std::string&) const;
     /*!
      * \param[in] n : variable name
      * \return the variable description with the given name
      */
-    const StaticVariableDescription& get(const std::string&) const;
+    [[nodiscard]] const StaticVariableDescription& get(
+        const std::string&) const;
   };
 
   //! a simple alias for backward compatibility

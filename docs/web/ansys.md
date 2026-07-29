@@ -39,22 +39,22 @@
 
 `MFront` version 3.1 provides an interface for the `ANSYS` `Mechanical
  APDL` (`MAPDL`) finite element solver. This interface is fairly
- features complete:
+ feature complete:
 
 - Isotropic and orthotropic materials are supported.
 - Small and finite strain behaviours are supported.
 
-It shall be pointed out that the `ANSYS` solvers has a long
+It shall be pointed out that the `ANSYS` solvers have a long
 history. In particular, the design choices made for the `USERMAT`
 interface were meant to allow the users to easily write finite-strain
 behaviours in rate-form.
 
-`MFront` strives to provides behaviours that can be used "just-like"
+`MFront` strives to provide behaviours that can be used "just-like"
 other `USERMAT` subroutines, but 
 
 ## Limitations
 
-The `USERMAT` subroutines has a number of shortcomings compared with
+The `USERMAT` subroutines have a number of shortcomings compared with
 other interfaces:
 
 - External state variables are *not* supported.
@@ -75,20 +75,20 @@ There are also cases of misuses of the generated libraries that can
 following:
 
 - The modelling hypothesis is not passed to the mechanical
-  behaviours. As a consequence, there is not way of distinguishing
+  behaviours. As a consequence, there is no way of distinguishing
   between the plane strain hypothesis and the axisymmetrical
   hypothesis, which is mandatory for consistent orthotropic axes
   management. Therefore, the user has to explicitly call the
   implementation of the behaviour corresponding to the modelling
-  hypothesis he wants to use, but there is not way to ensure the
+  hypothesis he wants to use, but there is no way to ensure the
   consistency of this choice and the choice of the modelling
-  hypothesis make for the mechanical computation.
+  hypothesis made for the mechanical computation.
 - Whether the computation takes into account finite strain
   transformation (non linear geometric effects according to the
   `ANSYS` wording) is not known to the behaviour, so some misuses of
   `MFront` behaviours can't be prevented. For example, small strain
   behaviours can be used in finite strain transformation using the
-  build-in Jauman corotational framework, which is only valid for
+  built-in Jauman corotational framework, which is only valid for
   isotropic behaviours. Using this framework with orthotropic
   behaviours can't be prevented.
 - The user must respect the order of definition of the material
@@ -105,7 +105,7 @@ following:
 
 The `ansys` interface is still in its early stage of development.
 
-# How the use `MFront` behaviours in `ANSYS`
+# How to use `MFront` behaviours in `ANSYS`
 
 When compiling mechanical behaviours with the `ansys` interface,
 `MFront` generates:
@@ -123,7 +123,7 @@ Those various files and their usage are now described.
   files needs to be recompiled at each run. This is very handy since
   compiling the `MFront` libraries can be time-consuming. Those
   libraries can be shared between computations and/or between users
-  when placed in a shared folders.
+  when placed in shared folders.
 - The fact that `MFront` generates one implementation per modelling
   hypothesis allows the distinction between the plane strain
   hypothesis and the axisymmetrical hypothesis. This is mandatory to
@@ -139,8 +139,8 @@ loader of the operating system.
 
 #### Under Linux
 
-Under Linux, the search path for dynamic libraries are specified using
-the `LD_LIBRARY_PATH` variable environment. This variable defines a
+Under Linux, the search path for dynamic libraries is specified using
+the `LD_LIBRARY_PATH` environment variable. This variable defines a
 colon-separated set of directories where libraries should be searched
 for first, before the standard set of directories.
 
@@ -152,13 +152,13 @@ can be considered by default.
 Under Windows, the dynamic libraries are searched:
 
 - in the current directory
-- in the directories listed in the `PATH` environment. This
+- in the directories listed in the `PATH` environment variable. This
   variable defines a semicolon-separated set of directories.
 
 ## Generated input files
 
 Here is an extract of the generated input file for a `MFront`
-behaviour named `Plasticitiy` for the plane strain modelling
+behaviour named `Plasticity` for the plane strain modelling
 hypothesis for the `ANSYS` solver:
 
 ~~~~{.pure}
@@ -168,9 +168,9 @@ hypothesis for the `ANSYS` solver:
 /com, -PoissonRatio
 /com, -H
 /com, -s0
-tb,user,<mat_id>,<numer of temperatures>,4
+tb,user,<mat_id>,<number of temperatures>,4
 /com, you shall now declare your material properties
-/com, using the tbtemp an tbdata instructions.
+/com, using the tbtemp and tbdata instructions.
 /com, See the Ansys "USER Material Subroutine" guide for details.
 /com, Declaration of state variables
 tb,state,<mat_id>,,5
@@ -204,7 +204,7 @@ Warnings and errors are written in a file called `mfront-usermat.log`.
 
 ### Compilation of the `usermatLib` library and the `test-executable` executable
 
-This paragraph describe how to use the `cmake` to compile the
+This paragraph describes how to use `cmake` to compile the
 `usermatLib` library and the `test-executable` executable.
 
 #### Using `Visual Studio 2017`
@@ -339,7 +339,7 @@ various shortcomings of the `USERMAT` interface, notably:
 > standard prefix (`lib` under `UNIX`) and from the file extension
 > (`.dll` under `Windows`, `.dylib` under `Mac Os`, `.so` under
 > `LiNuX`). The `usermat` function delivered with `MFront` will try every
-> combinaison until a suitable on is found.
+> combination until a suitable one is found.
 
 ### Testing an `mfront-usermat.dat` using `test-usermat`
 
@@ -349,13 +349,13 @@ The declarations in the `mfront-usermat.dat` file can lead to the following erro
 - The `TFEL` libraries can not be found.
 - The functions implementing the behaviours can not be found.
 
-Although every warning and errors are redirected in the
+Although every warning and error is redirected to the
 `mfront-usermat.log` file, those errors can be painful to analyse in
 `Ansys` because the generic `usermat` function closes `Ansys` on error.
 
 Thus, a simple executable called `test-usermat` is also provided. This
 executable reads the `mfront-usermat.dat` in the current directory. If
-its exists normally, then everything is `ok`.
+it exists normally, then everything is `ok`.
 
 # Main features of the `ANSYS` interface
 
@@ -363,12 +363,12 @@ The `ANSYS` solver provides the `USERMAT` interface. In this case, the
 behaviour shall compute:
 
 - The evolution of the state variables.
-- The value the Cauchy stress at the end of the time step.
+- The value of the Cauchy stress at the end of the time step.
 - The consistent tangent operator. The definition of the consistent
   tangent operator is given below.
 
 For finite strain analyses, small strain behaviours can be written in
-rate form. The behaviour in integrated in the Jauman framework,
+rate form. The behaviour is integrated in the Jauman framework,
 **which is only suitable for isotropic behaviours**.
 
 ## Supported behaviours
@@ -415,11 +415,11 @@ properties. \(2\) additional material properties are required in
   not have to be defined.
 
 The user shall use the input file example generated by `MFront` to see
-their relative positions of the material properties associated to the
+the relative positions of the material properties associated to the
 definition of the orthotropic axes.
 
 Those definitions are only meaningful if the direction of orthotropy
-are constants.
+is constant.
 
 ## Finite strain strategies
 
@@ -431,7 +431,7 @@ exist to:
 - guarantee some desirable properties such as energetic consistency
   and objectivity.
 
-Through the `@ANSYSFiniteStrainStrategy`, the user can select on of
+Through the `@ANSYSFiniteStrainStrategy`, the user can select one of
 various finite strain strategies supported by `MFront`, which are
 described in this paragraph.
 
@@ -443,7 +443,7 @@ described in this paragraph.
 ### The `Native` finite strain strategy
 
 Among them is the `Native` finite strain strategy which relies on
-build-in `ANSYS` facilities to integrate the behaviours written in
+built-in `ANSYS` facilities to integrate the behaviours written in
 rate form. The `Native` finite strain strategy will use the Jauman
 rate.
 
@@ -466,7 +466,7 @@ Two other finite strain strategies are available in `MFront` for the
 Those two strategies use lagrangian tensors, which automatically
 ensures the objectivity of the behaviour.
 
-Each of these two strategies define an energetic conjugate pair of
+Each of these two strategies defines an energetic conjugate pair of
 strain or stress tensors:
 
 - For the `FiniteRotationSmallStrain` case, the strain tensor is the
@@ -485,7 +485,7 @@ The second strategy is particularly suited for metals, as
 incompressible flows are characterized by a deviatoric logarithmic
 strain tensor, which is the exact transposition of the property used
 in small strain behaviours to handle plastic incompressibility. This
-means that all valid consistutive equations for small strain
+means that all valid constitutive equations for small strain
 behaviours can be automatically reused in finite strain analysis. This
 does *not* mean that a behaviour identified under the small strain
 assumptions can be directly used in a finite strain analysis: the
@@ -498,7 +498,7 @@ etc...
 
 ## Consistent tangent operator for finite strain behaviours
 
-The "ANSYS User Subroutines Reference Guide" gives indicates that the
+The "ANSYS User Subroutines Reference Guide" indicates that the
 tangent moduli required by `ANSYS` \(\CMJ\) is closely related to
 \(\tenseurq{C}^{\tau\,J}\), the moduli associated to the Jauman rate
 of the Kirchhoff stress :
@@ -507,7 +507,7 @@ of the Kirchhoff stress :
 J\,\CMJ=\CtJ
 \]
 
-where \(J\) is the derterminant of the deformation gradient
+where \(J\) is the determinant of the deformation gradient
 \(\tns{F}\).
 
 By definition, \(\CtJ\) satisfies:
@@ -520,7 +520,7 @@ where \(\tenseur{D}\) is the rate of deformation.
 
 !["Relation between tangent operators"](img/FiniteStrainTangentOperatorConvertion.svg "Supported relations between tangent operators in `MFront`")
 
-Most information reported here are extracted from the book of
+Most information reported here is extracted from the book of
 Belytschko (@belytschko_nonlinear_2000).
 
 ## Relations between tangent operator
@@ -645,7 +645,7 @@ The spin rate \(\delta\,\tenseur{W}\) associated with
 The previous relation can be used to relate to other moduli. See the
 section describing the isotropic case for details.
 
-# Biblography
+# Bibliography
 
 <!-- Local IspellDict: english -->
 

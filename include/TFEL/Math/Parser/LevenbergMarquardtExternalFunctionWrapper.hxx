@@ -24,18 +24,16 @@ namespace tfel::math::parser {
 
   struct TFELMATHPARSER_VISIBILITY_EXPORT
       LevenbergMarquardtExternalFunctionWrapper {
-    typedef tfel::math::vector<double>::size_type size_type;
-    typedef double NumericType;
+    using size_type = tfel::math::vector<double>::size_type;
+    using NumericType = double;
 
     LevenbergMarquardtExternalFunctionWrapper(
         std::shared_ptr<tfel::math::parser::ExternalFunction>,
         const size_type,
         const size_type);
 
-    size_type getNumberOfVariables() const;
-
-    size_type getNumberOfParameters() const;
-
+    [[nodiscard]] size_type getNumberOfVariables() const;
+    [[nodiscard]] size_type getNumberOfParameters() const;
     void operator()(double&,
                     tfel::math::vector<double>&,
                     const tfel::math::vector<double>&,

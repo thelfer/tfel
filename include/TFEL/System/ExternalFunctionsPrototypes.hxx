@@ -23,7 +23,7 @@
 #endif /* __cplusplus */
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-#define TFEL_ADDCALL_PTR __cdecl *
+#define TFEL_ADDCALL_PTR __cdecl*
 #else
 #define TFEL_ADDCALL_PTR *
 #endif /* defined _WIN32 || defined _WIN64 || defined __CYGWIN__ */
@@ -82,7 +82,7 @@ namespace tfel::system {
   extern "C" {
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR CastemFunctionPtr)(const double *);
+  typedef double(TFEL_ADDCALL_PTR CastemFunctionPtr)(const double*);
 
   //! a simple alias
   typedef double(TFEL_ADDCALL_PTR CFunction0Ptr)();
@@ -213,199 +213,199 @@ namespace tfel::system {
   typedef double(TFEL_ADDCALL_PTR FortranFunction0Ptr)();
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction1Ptr)(const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction1Ptr)(const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction2Ptr)(const double *,
-                                                       const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction2Ptr)(const double*,
+                                                       const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction3Ptr)(const double *,
-                                                       const double *,
-                                                       const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction3Ptr)(const double*,
+                                                       const double*,
+                                                       const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction4Ptr)(const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction4Ptr)(const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction5Ptr)(const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction5Ptr)(const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction6Ptr)(const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction6Ptr)(const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction7Ptr)(const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction7Ptr)(const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction8Ptr)(const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction8Ptr)(const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction9Ptr)(const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *,
-                                                       const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction9Ptr)(const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*,
+                                                       const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction10Ptr)(const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction10Ptr)(const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction11Ptr)(const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction11Ptr)(const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction12Ptr)(const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction12Ptr)(const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction13Ptr)(const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction13Ptr)(const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction14Ptr)(const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction14Ptr)(const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*);
 
   //! a simple alias
-  typedef double(TFEL_ADDCALL_PTR FortranFunction15Ptr)(const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *,
-                                                        const double *);
+  typedef double(TFEL_ADDCALL_PTR FortranFunction15Ptr)(const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*,
+                                                        const double*);
   //! \brief a simple alias.
   typedef int(TFEL_ADDCALL_PTR GenericBehaviourFctPtr)(
-      ::mfront_gb_BehaviourData *const);
+      ::mfront_gb_BehaviourData* const);
   //! \brief a simple alias.
   typedef int(TFEL_ADDCALL_PTR GenericBehaviourInitializeFunctionPtr)(
-      ::mfront_gb_BehaviourData *const, const ::mfront_gb_real *const);
+      ::mfront_gb_BehaviourData* const, const ::mfront_gb_real* const);
   //! \brief a simple alias.
   typedef int(TFEL_ADDCALL_PTR GenericBehaviourPostProcessingFctPtr)(
-      ::mfront_gb_real *const, ::mfront_gb_BehaviourData *const);
+      ::mfront_gb_real* const, ::mfront_gb_BehaviourData* const);
   //! \brief a simple alias.
   typedef void(TFEL_ADDCALL_PTR GenericBehaviourRotateGradientsFctPtr)(
-      ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
-      const ::mfront_gb_real *const);
+      ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
+      const ::mfront_gb_real* const);
   //! \brief a simple alias.
   typedef void(TFEL_ADDCALL_PTR GenericBehaviourRotateArrayOfGradientsFctPtr)(
-      ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
+      ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
       const mfront_gb_size_type);
   //! \brief a simple alias.
   typedef void(
       TFEL_ADDCALL_PTR GenericBehaviourRotateThermodynamicForcesFctPtr)(
-      ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
-      const ::mfront_gb_real *const);
+      ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
+      const ::mfront_gb_real* const);
   //! \brief a simple alias.
   typedef void(
       TFEL_ADDCALL_PTR GenericBehaviourRotateArrayOfThermodynamicForcesFctPtr)(
-      ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
+      ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
       const mfront_gb_size_type);
   //! \brief a simple alias.
   typedef void(
       TFEL_ADDCALL_PTR GenericBehaviourRotateTangentOperatorBlocksFctPtr)(
-      ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
-      const ::mfront_gb_real *const);
+      ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
+      const ::mfront_gb_real* const);
   //! \brief a simple alias.
   typedef void(TFEL_ADDCALL_PTR
                    GenericBehaviourRotateArrayOfTangentOperatorBlocksFctPtr)(
-      ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
-      const ::mfront_gb_real *const,
+      ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
+      const ::mfront_gb_real* const,
       const mfront_gb_size_type);
   /*!
    * a simple alias.
@@ -413,43 +413,43 @@ namespace tfel::system {
    * pleiades version of the castem finite element solver
    */
   typedef void(TFEL_ADDCALL_PTR CastemFctPtr)(
-      CastemRealType *const, /* stress                   */
-      CastemRealType *const, /* internal state variables */
-      CastemRealType *const, /* tangent operator         */
-      CastemRealType *const,
-      CastemRealType *const,
-      CastemRealType *const,
-      CastemRealType *const,
-      CastemRealType *const,
-      CastemRealType *const,
-      CastemRealType *const,
-      const CastemRealType *const, /* strain tensor    */
-      const CastemRealType *const, /* strain increment */
-      const CastemRealType *const,
-      const CastemRealType *const, /* time increment   */
-      const CastemRealType *const, /* temperature      */
-      const CastemRealType *const, /* temperature increment    */
-      const CastemRealType *const, /* external state variables */
-      const CastemRealType *const, /* external state variables increments   */
-      const char *const,
-      const CastemIntegerType *const,
-      const CastemIntegerType *const,
-      const CastemIntegerType *const, /* number of components of tensors */
-      const CastemIntegerType *const, /* number of internal state variables */
-      const CastemRealType *const, /* material properties                   */
-      const CastemIntegerType *const, /* number of material properties */
-      const CastemRealType *const,
-      const CastemRealType *const, /* rotation matrix                       */
-      CastemRealType *const,       /* estimation of the next time increment */
-      const CastemRealType *const,
-      const CastemRealType *const,
-      const CastemRealType *const,
-      const CastemIntegerType *const,
-      const CastemIntegerType *const,
-      const CastemIntegerType *const,
-      const CastemIntegerType *const,
-      const CastemIntegerType *const,
-      CastemIntegerType *const,
+      CastemRealType* const, /* stress                   */
+      CastemRealType* const, /* internal state variables */
+      CastemRealType* const, /* tangent operator         */
+      CastemRealType* const,
+      CastemRealType* const,
+      CastemRealType* const,
+      CastemRealType* const,
+      CastemRealType* const,
+      CastemRealType* const,
+      CastemRealType* const,
+      const CastemRealType* const, /* strain tensor    */
+      const CastemRealType* const, /* strain increment */
+      const CastemRealType* const,
+      const CastemRealType* const, /* time increment   */
+      const CastemRealType* const, /* temperature      */
+      const CastemRealType* const, /* temperature increment    */
+      const CastemRealType* const, /* external state variables */
+      const CastemRealType* const, /* external state variables increments   */
+      const char* const,
+      const CastemIntegerType* const,
+      const CastemIntegerType* const,
+      const CastemIntegerType* const, /* number of components of tensors */
+      const CastemIntegerType* const, /* number of internal state variables */
+      const CastemRealType* const, /* material properties                   */
+      const CastemIntegerType* const, /* number of material properties */
+      const CastemRealType* const,
+      const CastemRealType* const, /* rotation matrix                       */
+      CastemRealType* const,       /* estimation of the next time increment */
+      const CastemRealType* const,
+      const CastemRealType* const,
+      const CastemRealType* const,
+      const CastemIntegerType* const,
+      const CastemIntegerType* const,
+      const CastemIntegerType* const,
+      const CastemIntegerType* const,
+      const CastemIntegerType* const,
+      CastemIntegerType* const,
       const int /* hidden fortran parameter */);
   /*!
    * a simple alias.
@@ -457,129 +457,129 @@ namespace tfel::system {
    * pleiades version of the castem finite element solver
    */
   typedef void(TFEL_ADDCALL_PTR AbaqusFctPtr)(
-      AbaqusRealType *const, /* stress                   */
-      AbaqusRealType *const, /* internal state variables */
-      AbaqusRealType *const, /* tangent operator         */
-      AbaqusRealType *const,
-      AbaqusRealType *const,
-      AbaqusRealType *const,
-      AbaqusRealType *const,
-      AbaqusRealType *const,
-      AbaqusRealType *const,
-      AbaqusRealType *const,
-      const AbaqusRealType *const, /* strain tensor    */
-      const AbaqusRealType *const, /* strain increment */
-      const AbaqusRealType *const,
-      const AbaqusRealType *const, /* time increment   */
-      const AbaqusRealType *const, /* temperature      */
-      const AbaqusRealType *const, /* temperature increment    */
-      const AbaqusRealType *const, /* external state variables */
-      const AbaqusRealType *const, /* external state variables increments   */
-      const char *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const, /* number of components of tensors */
-      const AbaqusIntegerType *const, /* number of internal state variables */
-      const AbaqusRealType *const, /* material properties                   */
-      const AbaqusIntegerType *const, /* number of material properties */
-      const AbaqusRealType *const,
-      const AbaqusRealType *const, /* rotation matrix                       */
-      AbaqusRealType *const,       /* estimation of the next time increment */
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      AbaqusIntegerType *const,
+      AbaqusRealType* const, /* stress                   */
+      AbaqusRealType* const, /* internal state variables */
+      AbaqusRealType* const, /* tangent operator         */
+      AbaqusRealType* const,
+      AbaqusRealType* const,
+      AbaqusRealType* const,
+      AbaqusRealType* const,
+      AbaqusRealType* const,
+      AbaqusRealType* const,
+      AbaqusRealType* const,
+      const AbaqusRealType* const, /* strain tensor    */
+      const AbaqusRealType* const, /* strain increment */
+      const AbaqusRealType* const,
+      const AbaqusRealType* const, /* time increment   */
+      const AbaqusRealType* const, /* temperature      */
+      const AbaqusRealType* const, /* temperature increment    */
+      const AbaqusRealType* const, /* external state variables */
+      const AbaqusRealType* const, /* external state variables increments   */
+      const char* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const, /* number of components of tensors */
+      const AbaqusIntegerType* const, /* number of internal state variables */
+      const AbaqusRealType* const, /* material properties                   */
+      const AbaqusIntegerType* const, /* number of material properties */
+      const AbaqusRealType* const,
+      const AbaqusRealType* const, /* rotation matrix                       */
+      AbaqusRealType* const,       /* estimation of the next time increment */
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      AbaqusIntegerType* const,
       const int /* hidden fortran parameter */);
   /*!
    * a simple alias.
    * This is the prototype of the external functions used by the
    * pleiades version of the castem finite element solver
    */
-  typedef void(TFEL_ADDCALL_PTR AnsysFctPtr)(const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysIntegerType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             AnsysRealType *const,
-                                             AnsysRealType *const,
-                                             AnsysRealType *const,
-                                             AnsysRealType *const,
-                                             AnsysRealType *const,
-                                             AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const,
-                                             const AnsysRealType *const);
+  typedef void(TFEL_ADDCALL_PTR AnsysFctPtr)(const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const);
   /*!
    * a simple alias.
    * This is the prototype of the external functions used by the
    * abaqus explicit solver
    */
   typedef void(TFEL_ADDCALL_PTR AbaqusExplicitFctPtr)(
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusIntegerType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const char *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      const AbaqusRealType *const,
-      AbaqusRealType *const,
-      AbaqusRealType *const,
-      AbaqusRealType *const,
-      AbaqusRealType *const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusIntegerType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const char* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      const AbaqusRealType* const,
+      AbaqusRealType* const,
+      AbaqusRealType* const,
+      AbaqusRealType* const,
+      AbaqusRealType* const,
       const int /* hidden fortran parameter */);
   /*!
    * a simple alias.
@@ -587,61 +587,61 @@ namespace tfel::system {
    * Code_Aster finite element solver
    */
   typedef void(TFEL_ADDCALL_PTR AsterFctPtr)(
-      AsterRealType *const,          /* stress                   */
-      AsterRealType *const,          /* internal state variables */
-      AsterRealType *const,          /* tangent operator         */
-      const AsterRealType *const,    /* strain tensor    */
-      const AsterRealType *const,    /* strain increment */
-      const AsterRealType *const,    /* time increment   */
-      const AsterRealType *const,    /* temperature      */
-      const AsterRealType *const,    /* temperature increment    */
-      const AsterRealType *const,    /* external state variables */
-      const AsterRealType *const,    /* external state variables increments   */
-      const AsterIntegerType *const, /* number of components of tensors */
-      const AsterIntegerType *const, /* number of internal state variables */
-      const AsterRealType *const,    /* material properties                   */
-      const AsterIntegerType *const, /* number of material properties */
-      const AsterRealType *const,    /* rotation matrix                       */
-      AsterRealType *const,          /* estimation of the next time increment */
-      const AsterIntegerType *const);
+      AsterRealType* const,          /* stress                   */
+      AsterRealType* const,          /* internal state variables */
+      AsterRealType* const,          /* tangent operator         */
+      const AsterRealType* const,    /* strain tensor    */
+      const AsterRealType* const,    /* strain increment */
+      const AsterRealType* const,    /* time increment   */
+      const AsterRealType* const,    /* temperature      */
+      const AsterRealType* const,    /* temperature increment    */
+      const AsterRealType* const,    /* external state variables */
+      const AsterRealType* const,    /* external state variables increments   */
+      const AsterIntegerType* const, /* number of components of tensors */
+      const AsterIntegerType* const, /* number of internal state variables */
+      const AsterRealType* const,    /* material properties                   */
+      const AsterIntegerType* const, /* number of material properties */
+      const AsterRealType* const,    /* rotation matrix                       */
+      AsterRealType* const,          /* estimation of the next time increment */
+      const AsterIntegerType* const);
   //! a simple alias
-  using AsterIntegrationErrorMessageFctPtr = const char *(*)();
+  using AsterIntegrationErrorMessageFctPtr = const char* (*)();
   /*!
    * a simple alias.
    * This is the prototype of the external functions used by the
    * pleiades version of the castem finite element solver
    */
   typedef void(TFEL_ADDCALL_PTR CalculiXFctPtr)(
-      const char *const,
-      const CalculiXIntegerType *const,
-      const CalculiXIntegerType *const,
-      const CalculiXIntegerType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXIntegerType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      const CalculiXIntegerType *const,
-      const CalculiXIntegerType *const,
-      const CalculiXIntegerType *const,
-      const CalculiXIntegerType *const,
-      const CalculiXRealType *const,
-      CalculiXRealType *const,
-      CalculiXRealType *const,
-      CalculiXRealType *const,
-      const CalculiXIntegerType *const,
-      const CalculiXRealType *const,
-      const CalculiXRealType *const,
-      CalculiXRealType *const,
-      const CalculiXIntegerType *const,
+      const char* const,
+      const CalculiXIntegerType* const,
+      const CalculiXIntegerType* const,
+      const CalculiXIntegerType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXIntegerType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      const CalculiXIntegerType* const,
+      const CalculiXIntegerType* const,
+      const CalculiXIntegerType* const,
+      const CalculiXIntegerType* const,
+      const CalculiXRealType* const,
+      CalculiXRealType* const,
+      CalculiXRealType* const,
+      CalculiXRealType* const,
+      const CalculiXIntegerType* const,
+      const CalculiXRealType* const,
+      const CalculiXRealType* const,
+      CalculiXRealType* const,
+      const CalculiXIntegerType* const,
       const int /* hidden fortran parameter */);
 
   /*!
@@ -650,18 +650,18 @@ namespace tfel::system {
    * Diana FEA finite element solver
    */
   typedef void(TFEL_ADDCALL_PTR DianaFEAFctPtr)(
-      DianaFEARealType *const,
-      DianaFEARealType *const,
-      DianaFEARealType *const,
-      const DianaFEAIntegerType *const,
-      const DianaFEAIntegerType *const,
-      const DianaFEAIntegerType *const,
-      const DianaFEARealType *const,
-      const DianaFEARealType *const,
-      const DianaFEARealType *const,
-      const DianaFEARealType *const,
-      const DianaFEARealType *const,
-      const DianaFEARealType *const);
+      DianaFEARealType* const,
+      DianaFEARealType* const,
+      DianaFEARealType* const,
+      const DianaFEAIntegerType* const,
+      const DianaFEAIntegerType* const,
+      const DianaFEAIntegerType* const,
+      const DianaFEARealType* const,
+      const DianaFEARealType* const,
+      const DianaFEARealType* const,
+      const DianaFEARealType* const,
+      const DianaFEARealType* const,
+      const DianaFEARealType* const);
 
   }  // end of extern "C"
 

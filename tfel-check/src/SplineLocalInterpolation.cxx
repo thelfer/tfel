@@ -19,11 +19,11 @@ namespace tfel::check {
   SplineLocalInterpolation::SplineLocalInterpolation(
       const SplineLocalInterpolation&) = default;
   SplineLocalInterpolation::SplineLocalInterpolation(
-      SplineLocalInterpolation&&) = default;
+      SplineLocalInterpolation&&) noexcept = default;
   SplineLocalInterpolation& SplineLocalInterpolation::operator=(
       const SplineLocalInterpolation&) = default;
   SplineLocalInterpolation& SplineLocalInterpolation::operator=(
-      SplineLocalInterpolation&&) = default;
+      SplineLocalInterpolation&&) noexcept = default;
   SplineLocalInterpolation::~SplineLocalInterpolation() = default;
 
   void SplineLocalInterpolation::interpolate(

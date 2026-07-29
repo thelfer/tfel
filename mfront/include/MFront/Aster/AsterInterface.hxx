@@ -77,25 +77,25 @@ namespace aster {
   struct TFEL_VISIBILITY_LOCAL AsterInterface
       : protected AsterInterfaceExceptions {
     TFEL_ASTER_INLINE2 static int exe(
-        char *const emsg,
-        const AsterInt *const NTENS,
-        const AsterReal *const DTIME,
-        const AsterReal *const DROT,
-        AsterReal *const DDSOE,
-        const AsterReal *const STRAN,
-        const AsterReal *const DSTRAN,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
-        const AsterInt *const NUMMOD,
+        char* const emsg,
+        const AsterInt* const NTENS,
+        const AsterReal* const DTIME,
+        const AsterReal* const DROT,
+        AsterReal* const DDSOE,
+        const AsterReal* const STRAN,
+        const AsterReal* const DSTRAN,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
+        const AsterInt* const NUMMOD,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::material;
       if (*NUMMOD == 2u) {
         /*!
@@ -173,24 +173,24 @@ namespace aster {
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct Behaviour2DWrapper<aster::STANDARDSTRAINBASEDBEHAVIOUR, H> {
       TFEL_ASTER_INLINE2 static int exe(
-          char *const emsg,
-          const AsterInt *const,
-          const AsterReal *const DTIME,
-          const AsterReal *const DROT,
-          AsterReal *const DDSOE,
-          const AsterReal *const STRAN,
-          const AsterReal *const DSTRAN,
-          const AsterReal *const TEMP,
-          const AsterReal *const DTEMP,
-          const AsterReal *const PROPS,
-          const AsterInt *const NPROPS,
-          const AsterReal *const PREDEF,
-          const AsterReal *const DPRED,
-          AsterReal *const STATEV,
-          const AsterInt *const NSTATV,
-          AsterReal *const STRESS,
+          char* const emsg,
+          const AsterInt* const,
+          const AsterReal* const DTIME,
+          const AsterReal* const DROT,
+          AsterReal* const DDSOE,
+          const AsterReal* const STRAN,
+          const AsterReal* const DSTRAN,
+          const AsterReal* const TEMP,
+          const AsterReal* const DTEMP,
+          const AsterReal* const PROPS,
+          const AsterInt* const NPROPS,
+          const AsterReal* const PREDEF,
+          const AsterReal* const DPRED,
+          AsterReal* const STATEV,
+          const AsterInt* const NSTATV,
+          AsterReal* const STRESS,
           const tfel::material::OutOfBoundsPolicy op,
-          const StressFreeExpansionHandler &sfeh) {
+          const StressFreeExpansionHandler& sfeh) {
         using namespace tfel::math;
         using namespace tfel::material;
         using tfel::fsalgo::copy;
@@ -220,24 +220,24 @@ namespace aster {
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct Behaviour2DWrapper<aster::STANDARDFINITESTRAINBEHAVIOUR, H> {
       TFEL_ASTER_INLINE2 static int exe(
-          char *const emsg,
-          const AsterInt *const,
-          const AsterReal *const DTIME,
-          const AsterReal *const DROT,
-          AsterReal *const DDSOE,
-          const AsterReal *const STRAN,
-          const AsterReal *const DSTRAN,
-          const AsterReal *const TEMP,
-          const AsterReal *const DTEMP,
-          const AsterReal *const PROPS,
-          const AsterInt *const NPROPS,
-          const AsterReal *const PREDEF,
-          const AsterReal *const DPRED,
-          AsterReal *const STATEV,
-          const AsterInt *const NSTATV,
-          AsterReal *const STRESS,
+          char* const emsg,
+          const AsterInt* const,
+          const AsterReal* const DTIME,
+          const AsterReal* const DROT,
+          AsterReal* const DDSOE,
+          const AsterReal* const STRAN,
+          const AsterReal* const DSTRAN,
+          const AsterReal* const TEMP,
+          const AsterReal* const DTEMP,
+          const AsterReal* const PROPS,
+          const AsterInt* const NPROPS,
+          const AsterReal* const PREDEF,
+          const AsterReal* const DPRED,
+          AsterReal* const STATEV,
+          const AsterInt* const NSTATV,
+          AsterReal* const STRESS,
           const tfel::material::OutOfBoundsPolicy op,
-          const StressFreeExpansionHandler &sfeh) {
+          const StressFreeExpansionHandler& sfeh) {
         using namespace tfel::math;
         using namespace tfel::material;
         using tfel::fsalgo::copy;
@@ -262,24 +262,24 @@ namespace aster {
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct Behaviour2DWrapper<aster::COHESIVEZONEMODEL, H> {
       TFEL_ASTER_INLINE2 static int exe(
-          char *const emsg,
-          const AsterInt *const,
-          const AsterReal *const DTIME,
-          const AsterReal *const DROT,
-          AsterReal *const DDSOE,
-          const AsterReal *const STRAN,
-          const AsterReal *const DSTRAN,
-          const AsterReal *const TEMP,
-          const AsterReal *const DTEMP,
-          const AsterReal *const PROPS,
-          const AsterInt *const NPROPS,
-          const AsterReal *const PREDEF,
-          const AsterReal *const DPRED,
-          AsterReal *const STATEV,
-          const AsterInt *const NSTATV,
-          AsterReal *const STRESS,
+          char* const emsg,
+          const AsterInt* const,
+          const AsterReal* const DTIME,
+          const AsterReal* const DROT,
+          AsterReal* const DDSOE,
+          const AsterReal* const STRAN,
+          const AsterReal* const DSTRAN,
+          const AsterReal* const TEMP,
+          const AsterReal* const DTEMP,
+          const AsterReal* const PROPS,
+          const AsterInt* const NPROPS,
+          const AsterReal* const PREDEF,
+          const AsterReal* const DPRED,
+          AsterReal* const STATEV,
+          const AsterInt* const NSTATV,
+          AsterReal* const STRESS,
           const tfel::material::OutOfBoundsPolicy op,
-          const StressFreeExpansionHandler &sfeh) {
+          const StressFreeExpansionHandler& sfeh) {
         using tfel::fsalgo::copy;
         using tfel::material::ModellingHypothesis;
         AsterInt NTENS = 6u;
@@ -308,28 +308,28 @@ namespace aster {
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct CallBehaviour {
       TFEL_ASTER_INLINE2 static int exe(
-          char *const emsg,
-          const AsterInt *const,
-          const AsterReal *const DTIME,
-          const AsterReal *const DROT,
-          AsterReal *const DDSOE,
-          const AsterReal *const STRAN,
-          const AsterReal *const DSTRAN,
-          const AsterReal *const TEMP,
-          const AsterReal *const DTEMP,
-          const AsterReal *const PROPS,
-          const AsterInt *const NPROPS,
-          const AsterReal *const PREDEF,
-          const AsterReal *const DPRED,
-          AsterReal *const STATEV,
-          const AsterInt *const NSTATV,
-          AsterReal *const STRESS,
+          char* const emsg,
+          const AsterInt* const,
+          const AsterReal* const DTIME,
+          const AsterReal* const DROT,
+          AsterReal* const DDSOE,
+          const AsterReal* const STRAN,
+          const AsterReal* const DSTRAN,
+          const AsterReal* const TEMP,
+          const AsterReal* const DTEMP,
+          const AsterReal* const PROPS,
+          const AsterInt* const NPROPS,
+          const AsterReal* const PREDEF,
+          const AsterReal* const DPRED,
+          AsterReal* const STATEV,
+          const AsterInt* const NSTATV,
+          AsterReal* const STRESS,
           const tfel::material::OutOfBoundsPolicy op,
-          const StressFreeExpansionHandler &sfeh) {
+          const StressFreeExpansionHandler& sfeh) {
         using BV = Behaviour<H, AsterReal, false>;
         using Traits = tfel::material::MechanicalBehaviourTraits<BV>;
         using AsterTraits = AsterTraits<BV>;
-        auto getErrorMessage = [emsg](const char *const msg) {
+        auto getErrorMessage = [emsg](const char* const msg) {
           if (emsg != nullptr) {
             ::memset(emsg, 0, 128);
             ::strncpy(emsg, msg, 127);
@@ -343,39 +343,39 @@ namespace aster {
                                                Behaviour>>;
           Handler::exe(DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
                        NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
-        } catch (const AsterException &e) {
+        } catch (const AsterException& e) {
           getErrorMessage(e.what());
           if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatAsterException(Traits::getName(), e);
           }
           return -2;
-        } catch (const tfel::material::OutOfBoundsException &e) {
+        } catch (const tfel::material::OutOfBoundsException& e) {
           getErrorMessage(e.what());
           if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatMaterialException(Traits::getName(),
                                                              e);
           }
           return -3;
-        } catch (const tfel::material::DivergenceException &e) {
+        } catch (const tfel::material::DivergenceException& e) {
           getErrorMessage(e.what());
           if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatTFELException(Traits::getName(), e);
           }
           return -4;
-        } catch (const tfel::material::MaterialException &e) {
+        } catch (const tfel::material::MaterialException& e) {
           getErrorMessage(e.what());
           if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatStandardException(Traits::getName(),
                                                              e);
           }
           return -5;
-        } catch (const tfel::exception::TFELException &e) {
+        } catch (const tfel::exception::TFELException& e) {
           getErrorMessage(e.what());
           if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatTFELException(Traits::getName(), e);
           }
           return -6;
-        } catch (const std::exception &e) {
+        } catch (const std::exception& e) {
           getErrorMessage(e.what());
           if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatStandardException(Traits::getName(),

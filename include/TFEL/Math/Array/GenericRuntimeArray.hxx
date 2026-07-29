@@ -144,10 +144,12 @@ namespace tfel::math {
         (isAssignableTo<OtherArray, Child>()) &&
         (!std::is_same_v<OtherArray, Child>));
     //! \return a pointer to the underlying array serving as element storage.
-    typename GenericRuntimeArray<Child, ArrayPolicy>::pointer data() noexcept;
+    [[nodiscard]] typename GenericRuntimeArray<Child, ArrayPolicy>::pointer
+    data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    typename GenericRuntimeArray<Child, ArrayPolicy>::const_pointer data()
-        const noexcept;
+    [[nodiscard]]
+    typename GenericRuntimeArray<Child, ArrayPolicy>::const_pointer
+    data() const noexcept;
     //! \brief resize the array
     void resize(const typename ArrayPolicy::IndexingPolicy&);
     /*!
@@ -155,7 +157,7 @@ namespace tfel::math {
      * be greater than than the logical number of elements contained in the
      * array which is returned by `IndexingPolicy::size`.
      */
-    typename GenericRuntimeArray<Child, ArrayPolicy>::size_type
+    [[nodiscard]] typename GenericRuntimeArray<Child, ArrayPolicy>::size_type
     getContainerSize() const noexcept;
     // inheriting MutableRuntimeArrayBase' assignement operator
     using MutableRuntimeArrayBase<GenericRuntimeArray<Child, ArrayPolicy>,
@@ -187,7 +189,7 @@ namespace tfel::math {
         isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
                        value_type>());
     //
-    bool empty() const;
+    [[nodiscard]] bool empty() const;
     //
     void clear();
     //
@@ -197,7 +199,7 @@ namespace tfel::math {
     //! \brief assignement operator
     GenericRuntimeArray& operator=(const GenericRuntimeArray&);
     //! \brief move assigment
-    GenericRuntimeArray& operator=(GenericRuntimeArray&&);
+    GenericRuntimeArray& operator=(GenericRuntimeArray&&) noexcept;
 
    protected:
     //! \brief values holded

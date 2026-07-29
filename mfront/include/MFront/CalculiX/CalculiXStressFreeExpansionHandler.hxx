@@ -34,10 +34,10 @@ namespace calculix {
    */
   MFRONT_CALCULIX_VISIBILITY_EXPORT void
   CalculiXStandardSmallStrainStressFreeExpansionHandler(
-      CalculiXReal *const,
-      CalculiXReal *const,
-      const CalculiXReal *const,
-      const CalculiXReal *const,
+      CalculiXReal* const,
+      CalculiXReal* const,
+      const CalculiXReal* const,
+      const CalculiXReal* const,
       const CalculiXInt);
   /*!
    * standard handler of stress free expansion handler for logarithmic
@@ -53,10 +53,10 @@ namespace calculix {
    * \param[in] d      : spatial dimension
    */
   MFRONT_CALCULIX_VISIBILITY_EXPORT void
-  CalculiXLogarithmicStrainStressFreeExpansionHandler(CalculiXReal *const,
-                                                      CalculiXReal *const,
-                                                      const CalculiXReal *const,
-                                                      const CalculiXReal *const,
+  CalculiXLogarithmicStrainStressFreeExpansionHandler(CalculiXReal* const,
+                                                      CalculiXReal* const,
+                                                      const CalculiXReal* const,
+                                                      const CalculiXReal* const,
                                                       const CalculiXInt);
 
 }  // end of namespace calculix

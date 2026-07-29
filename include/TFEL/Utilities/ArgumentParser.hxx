@@ -39,11 +39,11 @@ namespace tfel::utilities {
        */
       CallBack(const std::string&, const std::function<void()>&, const bool);
       //! \brief move constructor
-      CallBack(CallBack&&);
+      CallBack(CallBack&&) noexcept;
       //! \brief copy constructor (deleted)
       CallBack(const CallBack&);
       //! \brief move assignement
-      CallBack& operator=(CallBack&&) = delete;
+      CallBack& operator=(CallBack&&) noexcept = delete;
       //! \brief assignement
       CallBack& operator=(const CallBack&) = delete;
       //! \brief description
@@ -63,6 +63,14 @@ namespace tfel::utilities {
      * \param argv : arguments list
      */
     ArgumentParser(const int, const char* const* const);
+    //! \brief copy constructor
+    ArgumentParser(const ArgumentParser&) = delete;
+    //! \brief move constructor
+    ArgumentParser(ArgumentParser&&) = delete;
+    //! \brief standard assignement
+    ArgumentParser& operator=(const ArgumentParser&) = delete;
+    //! \brief move assignement
+    ArgumentParser& operator=(ArgumentParser&&) = delete;
     /*!
      * \brief set the arguments to be parsed
      * \param argc : number of arguments given at command line
@@ -87,8 +95,8 @@ namespace tfel::utilities {
     //! \brief parse arguments using registred methods.
     virtual void parseArguments();
     //! \return the list of registred callbacks
-    const CallBacksContainer& getRegistredCallBacks() const;
-    //! destructor
+    [[nodiscard]] const CallBacksContainer& getRegistredCallBacks() const;
+    //! \brief destructor
     virtual ~ArgumentParser();
 
    protected:
@@ -96,19 +104,6 @@ namespace tfel::utilities {
     using AliasContainer = std::map<std::string, std::string>;
     //! \brief a simple alias
     using ArgsContainer = std::vector<Argument>;
-    /*!
-     * \brief register a default callbacks
-     *
-     * The default callbacks are :
-     * - '--help', '-h' which displays the list of the command line
-     *    arguments (if the treatHelp method is not overriden if the
-     *    derivate class)
-     * - '--version', '-v' which displays the current code version
-     *    using the getVersionDescription() method of the derivate
-     *    class (if the 'treatVersion' method is not overriden if the
-     *    derivate class)
-     */
-    virtual void registerDefaultCallBacks();
     /*!
      * \brief method called while parsing unregistred command line
      * arguments.
@@ -132,6 +127,12 @@ namespace tfel::utilities {
      * argument
      */
     virtual void treatVersion();
+
+   protected:
+    //! \return the version of the program being used
+    [[nodiscard]] virtual std::string getVersionDescription() const = 0;
+    //! \return the usage of the program being used
+    [[nodiscard]] virtual std::string getUsageDescription() const = 0;
     //! \brief container of all the call-backs
     CallBacksContainer callBacksContainer;
     //! \brief container of all the alias
@@ -144,24 +145,23 @@ namespace tfel::utilities {
     std::string programName;
 
    private:
-    //! \brief copy constructor
-    ArgumentParser(const ArgumentParser&) = delete;
-    //! \brief move constructor
-    ArgumentParser(ArgumentParser&&) = delete;
-    //! \brief standard assignement
-    ArgumentParser& operator=(const ArgumentParser&) = delete;
-    //! \brief move assignement
-    ArgumentParser& operator=(ArgumentParser&&) = delete;
+    /*!
+     * \brief register a default callbacks
+     *
+     * The default callbacks are :
+     * - '--help', '-h' which displays the list of the command line
+     *    arguments (if the treatHelp method is not overriden if the
+     *    derivate class)
+     * - '--version', '-v' which displays the current code version
+     *    using the getVersionDescription() method of the derivate
+     *    class (if the 'treatVersion' method is not overriden if the
+     *    derivate class)
+     */
+    void registerDefaultCallBacks();
     //! \brief replaces aliases by their usual names
-    virtual void replaceAliases();
+    void replaceAliases();
     //! \brief slip arguments and options
-    virtual void stripArguments();
-
-   protected:
-    //! \return the version of the program being used
-    virtual std::string getVersionDescription() const = 0;
-    //! \return the usage of the program being used
-    virtual std::string getUsageDescription() const = 0;
+    void stripArguments();
   };
 
 }  // end of namespace tfel::utilities

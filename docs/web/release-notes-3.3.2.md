@@ -17,7 +17,7 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-This version was released This version was released on September 21,
+This version was released on September 21,
 2021 along with `TFEL-3.0.9`, `TFEL-3.1.9` and `TFEL-3.2.6` and inherits
 from the issues solved in those versions.
 
@@ -25,6 +25,6 @@ from the issues solved in those versions.
 
 ## Issue #278: Fix reading a map of Data
 
-Empty map were not supported properly in `Data::read_map`.
+Empty maps were not supported properly in `Data::read_map`.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/278/>

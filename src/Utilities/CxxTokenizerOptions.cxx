@@ -18,11 +18,12 @@ namespace tfel::utilities {
   CxxTokenizerOptions::CxxTokenizerOptions() = default;
   CxxTokenizerOptions::CxxTokenizerOptions(const CxxTokenizerOptions&) =
       default;
-  CxxTokenizerOptions::CxxTokenizerOptions(CxxTokenizerOptions&&) = default;
+  CxxTokenizerOptions::CxxTokenizerOptions(CxxTokenizerOptions&&) noexcept =
+      default;
   CxxTokenizerOptions& CxxTokenizerOptions::operator=(
       const CxxTokenizerOptions&) = default;
-  CxxTokenizerOptions& CxxTokenizerOptions::operator=(CxxTokenizerOptions&&) =
-      default;
+  CxxTokenizerOptions& CxxTokenizerOptions::operator=(
+      CxxTokenizerOptions&&) noexcept = default;
   CxxTokenizerOptions::~CxxTokenizerOptions() = default;
 
 }  // end of namespace tfel::utilities

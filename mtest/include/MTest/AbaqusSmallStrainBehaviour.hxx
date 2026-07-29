@@ -34,34 +34,19 @@ namespace mtest {
     AbaqusSmallStrainBehaviour(const Hypothesis,
                                const std::string&,
                                const std::string&);
-    /*!
-     * \param[out] v : initial values of the driving variables
-     */
+    //
     void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;
-    //! destructor
+    //! \brief  destructor
     ~AbaqusSmallStrainBehaviour() override;
 
    protected:
-    /*!
-     * \brief call the mechanical behaviour
-     * \return a pair. The first member is true if the integration was
-     * successfull, false otherwise. The second member contains a time
-     * step scaling factor.
-     * \param[out]    Kt    : tangent operator
-     * \param[in,out] s     : current state
-     * \param[out]    wk    : workspace
-     * \param[in]     dt    : time increment
-     * \param[in]     ktype : type of the stiffness matrix
-     * \param[in] b : if true, integrate the behaviour over the time
-     * step, if false compute a prediction of the stiffness matrix
-     */
-    virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
-                                                 CurrentState&,
-                                                 BehaviourWorkSpace&,
-                                                 const real,
-                                                 const StiffnessMatrixType,
-                                                 const bool) const override;
+    std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
+                                         CurrentState&,
+                                         BehaviourWorkSpace&,
+                                         const real,
+                                         const StiffnessMatrixType,
+                                         const bool) const override;
   };  // end of struct Behaviour
 
 }  // end of namespace mtest

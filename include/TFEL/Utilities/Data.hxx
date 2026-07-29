@@ -38,11 +38,11 @@ namespace tfel::utilities {
     //! \brief default constructor
     DataStructure();
     //! \brief move constructor
-    DataStructure(DataStructure&&);
+    DataStructure(DataStructure&&) noexcept;
     //! \brief copy constructor
     DataStructure(const DataStructure&);
     //! \brief move assignement
-    DataStructure& operator=(DataStructure&&);
+    DataStructure& operator=(DataStructure&&) noexcept;
     //! \brief assignement
     DataStructure& operator=(const DataStructure&);
     //! \brief destructor
@@ -57,11 +57,11 @@ namespace tfel::utilities {
     //! \brief default constructor
     DataParsingOptions();
     //! \brief move constructor
-    DataParsingOptions(DataParsingOptions&&);
+    DataParsingOptions(DataParsingOptions&&) noexcept;
     //! \brief copy constructor
     DataParsingOptions(const DataParsingOptions&);
     //! \brief move assignement
-    DataParsingOptions& operator=(DataParsingOptions&&);
+    DataParsingOptions& operator=(DataParsingOptions&&) noexcept;
     //! \brief assignement
     DataParsingOptions& operator=(const DataParsingOptions&);
     //! \brief destructor
@@ -94,7 +94,7 @@ namespace tfel::utilities {
     struct isDataTypeCheck {
       //! \brief result type
       static constexpr bool value =
-          tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
+          tfel::meta::TLCountNbrOfT<std::decay_t<T>,
                                     tfel::utilities::DataTypes>::value == 1;
     };
 
@@ -175,11 +175,11 @@ namespace tfel::utilities {
     //! \brief default constructor
     Data();
     //! \brief move constructor
-    Data(Data&&);
+    Data(Data&&) noexcept;
     //! \brief copy constructor
     Data(const Data&);
     //! \brief move assignement
-    Data& operator=(Data&&);
+    Data& operator=(Data&&) noexcept;
     //! \brief assignement
     Data& operator=(const Data&);
     //! \brief destructor
@@ -221,11 +221,11 @@ namespace tfel::utilities {
     //! \brief constructor
     DataMapValidator();
     //! \brief move constructor
-    DataMapValidator(DataMapValidator&&);
+    DataMapValidator(DataMapValidator&&) noexcept;
     //! \brief move constructor
     DataMapValidator(const DataMapValidator&);
     //! \brief move assignement
-    DataMapValidator& operator=(DataMapValidator&&);
+    DataMapValidator& operator=(DataMapValidator&&) noexcept;
     //! \brief standard assignement
     DataMapValidator& operator=(const DataMapValidator&);
     //!

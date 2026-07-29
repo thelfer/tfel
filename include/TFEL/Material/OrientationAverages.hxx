@@ -27,7 +27,6 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) struct EllipsoidMeanLocalisator {
-           
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
     static constexpr auto eps =
@@ -42,7 +41,7 @@ namespace tfel::material::homogenization::elasticity {
         const LengthType& b,
         const LengthType& c) {
       if (!((a > LengthType{0}) && (b > LengthType{0}) &&
-              (c > LengthType{0}))) {
+            (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
 
@@ -162,17 +161,17 @@ namespace tfel::material::homogenization::elasticity {
              2 * muA * tfel::math::st2tost2<3u, real>::K();
     }  // end of Isotropic
 
-    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
-    TransverseIsotropic(const StressType& young,
-                        const real& nu,
-                        const StressType& young_i,
-                        const real& nu_i,
-                        const tfel::math::tvector<3u, real>& n_a,
-                        const LengthType& a,
-                        const LengthType& b,
-                        const LengthType& c) {
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real> TransverseIsotropic(
+        const StressType& young,
+        const real& nu,
+        const StressType& young_i,
+        const real& nu_i,
+        const tfel::math::tvector<3u, real>& n_a,
+        const LengthType& a,
+        const LengthType& b,
+        const LengthType& c) {
       if (!((a > LengthType{0}) && (b > LengthType{0}) &&
-              (c > LengthType{0}))) {
+            (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
       if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
@@ -248,13 +247,13 @@ namespace tfel::material::homogenization::elasticity {
     }  // end of TransverseIsotropic
 
     // overloading of the function, for IsotropicModuli objects
-    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
-    TransverseIsotropic(const IsotropicModuli<StressType>& IM0,
-                        const IsotropicModuli<StressType>& IM_i,
-                        const tfel::math::tvector<3u, real>& n_a,
-                        const LengthType& a,
-                        const LengthType& b,
-                        const LengthType& c) {
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real> TransverseIsotropic(
+        const IsotropicModuli<StressType>& IM0,
+        const IsotropicModuli<StressType>& IM_i,
+        const tfel::math::tvector<3u, real>& n_a,
+        const LengthType& a,
+        const LengthType& b,
+        const LengthType& c) {
       const auto Enu0 = IM0.ToYoungNu();
       const auto Enui = IM_i.ToYoungNu();
       return TransverseIsotropic(Enu0.young, Enu0.nu, Enui.young, Enui.nu, n_a,
@@ -272,7 +271,7 @@ namespace tfel::material::homogenization::elasticity {
         const LengthType& b,
         const LengthType& c) {
       if (!((a > LengthType{0}) && (b > LengthType{0}) &&
-              (c > LengthType{0}))) {
+            (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
       if (!(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
@@ -323,8 +322,8 @@ namespace tfel::material::homogenization::elasticity {
                       c);
     }  // end of overloading of Oriented
 
-
-    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u,real> UserDefinedDistributionOfSpheroids(
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
+    UserDefinedDistributionOfSpheroids(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IMi,
         const LengthType& a,
@@ -335,29 +334,36 @@ namespace tfel::material::homogenization::elasticity {
         tfel::reportContractViolation("a<=0 or b<=0");
       }
 
-      tfel::math::st2tost2<3u,real> A;
+      tfel::math::st2tost2<3u, real> A;
       const tfel::math::tvector<3u, real> n_1 = {1., 0., 0.};
-      
+
       using namespace tfel::math;
       if (areAlmostEqual(eps, b / a, real(1))) {
-        A = computeSphereLocalisationTensor<StressType>(
-            IM0, IMi);
+        A = computeSphereLocalisationTensor<StressType>(IM0, IMi);
       } else {
-        const auto A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
-        IM0, IMi, n_1, a/b);  
-        const auto AW = TransverseIsotropicWalpoleBasis<real>::components(n_1,A_);
-        const auto I = tfel::math::st2tost2<3u,real>::Id();
-        const auto J = tfel::math::st2tost2<3u,real>::J();
-        const auto id = stensor<3u,real>::Id();
-        const auto E1_=A4;
-        const auto A2i = A2^id;
-        const auto iA2 = id^A2;
-        const auto E2_ = 0.5*(3*J+A4-A2i-iA2);
-        const auto E3_=1/sqrt(2)*(A2i-A4);
-        const auto E4_=1/sqrt(2)*(iA2-A4);
-      const auto F_=I-TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id,A2)-TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2,id)-0.5*(3*J-A4-A2i-iA2);
-      const auto G_=TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id,A2)+TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2,id)-2*A4;
-        A = AW[0]*E1_+AW[1]*E2_+AW[2]*E3_+AW[3]*E4_+AW[4]*F_+AW[5]*G_;
+        const auto A_ =
+            computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
+                IM0, IMi, n_1, a / b);
+        const auto AW =
+            TransverseIsotropicWalpoleBasis<real>::components(n_1, A_);
+        const auto I = tfel::math::st2tost2<3u, real>::Id();
+        const auto J = tfel::math::st2tost2<3u, real>::J();
+        const auto id = stensor<3u, real>::Id();
+        const auto E1_ = A4;
+        const auto A2i = A2 ^ id;
+        const auto iA2 = id ^ A2;
+        const auto E2_ = 0.5 * (3 * J + A4 - A2i - iA2);
+        const auto E3_ = 1 / sqrt(2) * (A2i - A4);
+        const auto E4_ = 1 / sqrt(2) * (iA2 - A4);
+        const auto F_ =
+            I - TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id, A2) -
+            TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2, id) -
+            0.5 * (3 * J - A4 - A2i - iA2);
+        const auto G_ =
+            TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id, A2) +
+            TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2, id) - 2 * A4;
+        A = AW[0] * E1_ + AW[1] * E2_ + AW[2] * E3_ + AW[3] * E4_ + AW[4] * F_ +
+            AW[5] * G_;
       }
       return A;
     }  // end of UserDefinedDistributionOfSpheroids
@@ -405,6 +411,5 @@ namespace tfel::material::homogenization::elasticity {
     }  // end of DerivativesOfMeanLocalisator
        
 }  // end of namespace tfel::material::homogenization::elasticity
-
 
 #endif /* LIB_TFEL_MATERIAL_ORIENTATIONAVERAGES_HXX */

@@ -36,7 +36,7 @@ The page describes the new functionalities of Version 3.4 of the
 Figure @fig:tfel-3.4 presents some noticeable applications of `MFront`:
 
 a. Normalised residual topography after an indentation test on a single
-   crsytal of copper with Méric-Cailletaud' finite stain behaviour
+   crystal of copper with Méric-Cailletaud's finite strain behaviour
    [@meric_fe_1994] using `Ansys`.
    Contribution of A. Bourceret and A. Lejeune, (FEMTO).
 b. Slope failure analysis with strength reduction in
@@ -45,12 +45,12 @@ b. Slope failure analysis with strength reduction in
    (Geotechnical Institute, Technische Universität Bergakademie Freiberg).
 c. Integration of the `MGIS` integration in `Europlexus`.
    Contribution of P. Bouda, (CEA DM2S).
-d. Simulation of rolling using the innovative CEA' proto-application `MEFISTO`.
+d. Simulation of rolling using the innovative CEA's proto-application `MEFISTO`.
    Contribution of O. Jamond, (CEA DM2S).
-e. Industrial thermomechanical design of a cylinder block with an
+e. Industrial thermomechanical design of a cylinder block
    with MFront and Abaqus at Groupe PSA. This study is one result of the
    PhD thesis of L. Jacquinot which provides a continuous modelling of the
-   AlSi9Cu3Mg aluminium alloy behaviour from manufacturing to final usage
+   AlSi9Cu3Mg aluminium alloy behaviour from manufacturing to final usage.
    Contribution of A. Forré (Groupe PSA).
 f. Column collapse using the Material Point Method.
    Contribution of Ning Guo, Wenlong Li (Zhejiang University)
@@ -65,7 +65,7 @@ steel](img/PorousPlasticity-3.4.png){#fig:porous_plasticity width=95%}
 
 The major features of Version 3.4 are:
 
-- A better support generalised behaviours, in particular regarding the
+- Better support for generalised behaviours, in particular regarding the
   computation of the consistent tangent operator in the implicit schemes
   [@helfer_assisted_2020]. Examples of this features are presented in
   references

@@ -24,7 +24,7 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT LSDYNASymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     LSDYNASymbolsGenerator();
 
     void writeBehaviourTypeSymbols(std::ostream&,
@@ -41,8 +41,8 @@ namespace mfront {
                                 const FileDescription&,
                                 const std::string&,
                                 const Hypothesis) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~LSDYNASymbolsGenerator() override;
   };  // end of struct LSDYNASymbolsGenerator
 

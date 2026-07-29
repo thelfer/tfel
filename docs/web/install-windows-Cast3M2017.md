@@ -8,25 +8,25 @@ systems for the following reasons:
 - There is no default compiler on this platform.
 - The usage of command line is less common.
 
-This page is dedicated to show how this issues can be overcome and
+This page is dedicated to showing how this issue can be overcome and
 ease the `MFront` experience on `Windows`. We will focus on coupling
 with `Cast3M` `2017` which is packaged with a version of the `MinGW`
 compiler suite. **This tutorial makes the assumption that the user
-have installed the developer version of `Cast3M`**.
+has installed the developer version of `Cast3M`**.
 
 This tutorial will show that:
 
 - The installation does not require any administrator privileges.
 - The main trick is to appropriately update the `PATH` variable so
   that the `MinGW` and `TFEL` libraries are found when needed. This
-  can be done by creating small wrapper scripts as discussed bellow.
+  can be done by creating small wrapper scripts as discussed below.
 
 This tutorial is mostly based on `bat` scripts that can be downloaded
 [here](downloads/windows-install-scripts.tar.bz2).
 
 ## Notes on the installation directory
 
-For information, the author use the following convention: the scripts
+For information, the author uses the following convention: the scripts
 are decompressed in `C:\tfel-master\src`.
 
 By default, the previous scripts will install `TFEL` and `MFront` in
@@ -47,12 +47,12 @@ will open the script in `Notepad`, but any text editor will do.
 
 Various binary packages can be downloaded on the `github`
 website. Those binary packages are built against specific versions of
-`Cast3M`. When installing thoses packages, the user have the choice to
+`Cast3M`. When installing those packages, the user has the choice to
 modify the `PATH` variable globally.
 
-This tutorial can nevertheless be usefull: small scripts wrapping
+This tutorial can nevertheless be useful: small scripts wrapping
 calls to `MFront` can be a viable choice in the `Windows` environment,
-rather than relying on the command line. Be careful that modify the
+rather than relying on the command line. Be careful to modify the
 examples appropriately to reflect where `TFEL` and `MFront` have been
 installed.
 
@@ -74,7 +74,7 @@ The two first scripts are not mandatory: the user can directly
 download an archive from the github website
 (<https://github.com/thelfer/tfel/releases>).
 
-It also contains a directory called `test`. The usage is those scripts
+It also contains a directory called `test`. The usage of those scripts
 is fully detailed in the following sections.
 
 The other files contained in the archive will not be used in this
@@ -150,9 +150,9 @@ cmake.exe ..\tfel -G "MinGW Makefiles" ...
 
 For example, if you have downloaded version `3.0.1`, the name of the
 archive is `tfel-3.0.1.tar.bz2`. Assuming that this archive is
-decompressed in the same directory than the scripts, the name of the
+decompressed in the same directory as the scripts, the name of the
 directory containing the sources will be `tfel-3.0.1`. The previous
-line can thus be udpated as follows:
+line can thus be updated as follows:
 
 ~~~~{.bat}
 cmake.exe ..\tfel-3.0.1 -G "MinGW Makefiles" ...
@@ -175,7 +175,7 @@ The `test` directory contains an example showing how to perform
 - a `MFront` behaviour called `LogarithimcStrainPlasticity`.
 - a `Gibiane` script called `LogarithimcStrainPlasticity-ssna303.dgibi`.
 
-## Compilation the `MFront` behaviour
+## Compiling the `MFront` behaviour
 
 Launch the `mfront.bat` script. This script is basically a wrapper
 around the following call to `MFront`:
@@ -189,7 +189,7 @@ This command:
 - generates `C++` sources from the
   `LogarithmicStrainPlasticity.mfront` file and a `Makefile.mfront`
   file.
-- calls the `make` utility to compile the sources an generate the
+- calls the `make` utility to compile the sources and generate the
   `libUmatBehaviour.dll` library.
 
 There is one trick here: the name of `make` utility in the `MinGW`
@@ -203,7 +203,7 @@ set MAKE=mingw32-make
 
 ## Launch the `Cast3M` `2017` simulation
 
-The `Cast3M` solver can be used directly because it can't find the
+The `Cast3M` solver can't be used directly because it can't find the
 `TFEL` libraries automatically. The `launch-castem.bat` script thus
 first updates the `PATH` variable and then launches the `Cast3M`
 solver script.

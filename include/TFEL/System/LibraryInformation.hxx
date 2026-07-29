@@ -51,11 +51,11 @@ namespace tfel::system {
     //! copy constructor
     LibraryInformation(const LibraryInformation&);
     //! move constructor
-    LibraryInformation(LibraryInformation&&);
+    LibraryInformation(LibraryInformation&&) noexcept;
     //! standard assignement
     LibraryInformation& operator=(const LibraryInformation&);
     //! move constructor
-    LibraryInformation& operator=(LibraryInformation&&);
+    LibraryInformation& operator=(LibraryInformation&&) noexcept;
     /*!
      * \return List of sections that exist in binary file.
      */

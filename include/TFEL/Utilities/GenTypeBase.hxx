@@ -68,12 +68,12 @@ namespace tfel::utilities::internals {
 
    public:
     //! cast operator.
-    TFEL_INLINE operator Current &() {
-      return static_cast<Child *>(this)->template get<Current>();
+    TFEL_INLINE operator Current&() {
+      return static_cast<Child*>(this)->template get<Current>();
     }
     //! cast operator (const version).
-    TFEL_INLINE operator const Current &() const {
-      return static_cast<const Child *>(this)->template get<Current>();
+    TFEL_INLINE operator const Current&() const {
+      return static_cast<const Child*>(this)->template get<Current>();
     }
   };
 
@@ -119,37 +119,39 @@ namespace tfel::utilities {
     //! \brief a variable checking if the given type is valid
     template <typename T>
     static constexpr bool isValidType =
-        tfel::meta::TLCountNbrOfT<typename std::decay<T>::type, List>::value;
+        tfel::meta::TLCountNbrOfT<std::decay_t<T>, List>::value;
     //! \brief a simple alias
     using variant =
         typename tfel::utilities::internals::StdVariantFromTypeList<List>::type;
     //! \brief default constructor
     GenTypeBase() = default;
     //! \brief move constructor
-    GenTypeBase(GenTypeBase &&) = default;
+    GenTypeBase(GenTypeBase&&) = default;
     //! \brief copy constructor
-    GenTypeBase(const GenTypeBase &) = default;
+    GenTypeBase(const GenTypeBase&) = default;
     //! \brief constructor from a value
     template <typename T1>
-    GenTypeBase(T1 &&value) requires(isValidType<T1>)
+    GenTypeBase(T1&& value) requires(isValidType<T1>)
         : variant(std::forward<T1>(value)) {}
     // \brief assignement operator
-    GenTypeBase &operator=(GenTypeBase &&) = default;
+    GenTypeBase& operator=(GenTypeBase&&) = default;
     // \brief assignement operator
-    GenTypeBase &operator=(const GenTypeBase &) = default;
+    GenTypeBase& operator=(const GenTypeBase&) = default;
     // \brief assignement operator from a value
     template <typename T1>
-    GenTypeBase &operator=(T1 &&value) requires(isValidType<T1>) {
+    GenTypeBase& operator=(T1&& value) requires(isValidType<T1>) {
       variant::operator=(std::forward<T1>(value));
       return *this;
     }
     //! \return true if empty
-    bool empty() const { return std::holds_alternative<std::monostate>(*this); }
+    [[nodiscard]] bool empty() const {
+      return std::holds_alternative<std::monostate>(*this);
+    }
     /*!
      * \brief copy a GenType (calls the assignement operator).
      * \param src: object to be copied
      */
-    bool copy(const GenTypeBase &src) {
+    [[nodiscard]] bool copy(const GenTypeBase& src) {
       this->operator=(src);
       return true;
     }
@@ -159,28 +161,30 @@ namespace tfel::utilities {
      * \pre   T1 must be a type that the GenType can hold.
      */
     template <typename T1>
-    TFEL_INLINE void set(T1 &&src) requires(isValidType<T1>) {
+    TFEL_INLINE void set(T1&& src) requires(isValidType<T1>) {
       this->operator=(std::forward<T1>(src));
     }
     //
     template <typename T1>
-    TFEL_INLINE bool is() const requires(isValidType<T1>) {
+    [[nodiscard]] TFEL_INLINE bool is() const requires(isValidType<T1>) {
       return std::holds_alternative<T1>(*this);
     }
     //! \return the value hold by the `GenTypeBase`.
     template <typename T1>
-    TFEL_INLINE const T1 &get() const requires(isValidType<T1>) {
+    [[nodiscard]] TFEL_INLINE const T1& get() const requires(isValidType<T1>) {
       tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
       return std::get<T1>(*this);
     }
     //! \return the value hold by the `GenTypeBase`.
     template <typename T1>
-    TFEL_INLINE T1 &get() requires(isValidType<T1>) {
+    [[nodiscard]] TFEL_INLINE T1& get() requires(isValidType<T1>) {
       tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
       return std::get<T1>(*this);
     }
     //! \return the type index of the object
-    TFEL_INLINE unsigned short getTypeIndex() const { return this->index(); }
+    [[nodiscard]] TFEL_INLINE unsigned short getTypeIndex() const {
+      return this->index();
+    }
 
    protected:
     //! \brief clear the GenType
@@ -212,7 +216,7 @@ namespace tfel::utilities {
    * object.
    */
   template <typename T, typename List>
-  typename T::return_type apply(const GenTypeBase<List> &);
+  typename T::return_type apply(const GenTypeBase<List>&);
 
   /*!
    * Apply functor T to a GenTypeBase for the type holded by the
@@ -230,7 +234,7 @@ namespace tfel::utilities {
    * object.
    */
   template <typename T, typename List>
-  typename T::return_type apply(T &, const GenTypeBase<List> &);
+  typename T::return_type apply(T&, const GenTypeBase<List>&);
 
   /*!
    * Apply function T::apply to a GenTypeBase for the types holded
@@ -249,8 +253,8 @@ namespace tfel::utilities {
    * hold any object.
    */
   template <typename T, typename List>
-  typename T::return_type apply(const GenTypeBase<List> &,
-                                const GenTypeBase<List> &);
+  typename T::return_type apply(const GenTypeBase<List>&,
+                                const GenTypeBase<List>&);
 
   /*!
    * Apply functor T to a GenTypeBase for the types holded by the
@@ -270,9 +274,9 @@ namespace tfel::utilities {
    * object.
    */
   template <typename T, typename List>
-  typename T::return_type apply(T &,
-                                const GenTypeBase<List> &,
-                                const GenTypeBase<List> &);
+  typename T::return_type apply(T&,
+                                const GenTypeBase<List>&,
+                                const GenTypeBase<List>&);
 
   /*!
    * Apply function T::apply to a GenTypeBase for the type holded by the
@@ -290,7 +294,7 @@ namespace tfel::utilities {
    * object.
    */
   template <typename T, typename List>
-  typename T::return_type apply(GenTypeBase<List> &);
+  typename T::return_type apply(GenTypeBase<List>&);
 
   /*!
    * Apply functor T to a GenTypeBase for the type holded by the
@@ -308,7 +312,7 @@ namespace tfel::utilities {
    * object.
    */
   template <typename T, typename List>
-  typename T::return_type apply(T &, GenTypeBase<List> &);
+  typename T::return_type apply(T&, GenTypeBase<List>&);
 
   /*!
    * Apply function T::apply to a GenTypeBase for the types holded
@@ -327,7 +331,7 @@ namespace tfel::utilities {
    * hold any object.
    */
   template <typename T, typename List>
-  typename T::return_type apply(GenTypeBase<List> &, GenTypeBase<List> &);
+  typename T::return_type apply(GenTypeBase<List>&, GenTypeBase<List>&);
 
   /*!
    * Apply functor T to a GenTypeBase for the types holded by the
@@ -347,7 +351,7 @@ namespace tfel::utilities {
    * object.
    */
   template <typename T, typename List>
-  typename T::return_type apply(T &, GenTypeBase<List> &, GenTypeBase<List> &);
+  typename T::return_type apply(T&, GenTypeBase<List>&, GenTypeBase<List>&);
 
   template <typename... Types>
   using GenType =

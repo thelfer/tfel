@@ -47,8 +47,8 @@ denoted \(\tepsilonel\) and \(\tepsilonp\):
 
 ## Elastic behaviour
 
-The stress \(\tsigma\) is related to the the elastic strain
-\(\tepsilonel\) by a the orthotropic elastic stiffness
+The stress \(\tsigma\) is related to the elastic strain
+\(\tepsilonel\) by the orthotropic elastic stiffness
 \(\tenseurq{D}\):
 
 \[
@@ -104,9 +104,9 @@ where \(\mts{X}\) is the value of \(X\) at \(t+\theta\,\Delta\,t\),
 (tensorial) equation is noted \(f_{\tepsilonel}\) and the second
 (scalar) equation is noted \(f_{p}\).
 
-In practice, it is physically sound to make satisfy exactly the yield
+In practice, it is physically sound to satisfy exactly the yield
 condition at the end of the time step (otherwise, stress extrapolation
-can lead to stress state outside the yield surface and spurious
+can lead to a stress state outside the yield surface and spurious
 oscillations can also be observed). This leads to the choice
 \(\theta=1\).
 
@@ -153,9 +153,9 @@ The jacobian associated with this system is the identity matrix.
 
 In the plastic loading case, the system of equations to be solved is
 *non-linear*. We choose the Newton-Raphson algorithm with an
-analytical jacobian. Compared to other algorithm available in `MFront`
+analytical jacobian. Compared to other algorithms available in `MFront`
 (Runge-Kutta, Broyden, Newton-Raphson with numerical jacobian, etc..),
-this algorithm is generally the *most efficient* in pratice.
+this algorithm is generally the *most efficient* in practice.
 
 ## Preamble
 
@@ -169,7 +169,7 @@ specific language (dsl):
 Note that this dsl automatically declares the elastic strain `eel` as
 a state variable.
 
-As discussed before, we explicit state that a fully implicit
+As discussed before, we explicitly state that a fully implicit
 integration will be used by default:
 
 ~~~~{.cpp}
@@ -204,7 +204,7 @@ We then declare that we want to support all the modelling hypotheses:
 @ModellingHypotheses {".+"};
 ~~~~
 
-The support of plane stress modelling hypotheses are handled by the
+The support of plane stress modelling hypotheses is handled by the
 `StandardElasticity` brick and will not be discussed here.
 
 ### Usage of the `StandardElasticity` brick
@@ -251,14 +251,14 @@ This computed stiffness is stored in a variable `D`. A second variable
 `D_tdt` is also introduced. As the material properties are constants,
 `D_tdt` is an alias to `D`.
 
-The elastic material properties can be changed at runtime time by
+The elastic material properties can be changed at runtime by
 modifying the following parameters: `YoungModulus1`,
 `YoungModulus2`,`YoungModulus3`, `PoissonRatio12`, `PoissonRatio23`,
 `PoissonRatio13`, `ShearModulus12`, `ShearModulus23` and
 `ShearModulus13`.
 
 Rather than constants, one can also use correlations implemented in
-seperate `MFront` files. This allows to take into account the
+separate `MFront` files. This allows one to take into account the
 dependency of the material properties with the temperature for
 example. In this case, the variable `D` contains the stiffness tensor
 at \(t+\theta\,\Delta\,t\) and the variable `D_tdt` contains the

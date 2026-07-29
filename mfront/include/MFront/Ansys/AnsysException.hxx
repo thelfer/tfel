@@ -29,19 +29,20 @@ namespace ansys {
     //! \brief constructor
     AnsysException(std::string);
     //! \brief move constructor
-    AnsysException(AnsysException&&);
+    AnsysException(AnsysException&&) noexcept;
     //! \brief copy constructor
     AnsysException(const AnsysException&);
-
-    const char* what() const noexcept override final;
-    virtual std::string getMsg() const noexcept final;
+    //
+    AnsysException() = delete;
+    AnsysException& operator=(const AnsysException&) = delete;
+    AnsysException& operator=(AnsysException&&) noexcept = delete;
+    //
+    [[nodiscard]] const char* what() const noexcept final;
+    [[nodiscard]] virtual const std::string& getMsg() const noexcept final;
     //! \brief destructor
     ~AnsysException() noexcept override;
 
    private:
-    AnsysException() = delete;
-    AnsysException& operator=(const AnsysException&) = delete;
-    AnsysException& operator=(AnsysException&&) = delete;
     //! \brief error message
     const std::string msg;
   };  // end of struct AnsysException
@@ -56,15 +57,14 @@ namespace ansys {
      */
     AnsysInvalidModellingHypothesis(const char*);
     //! \brief move constructor
-    AnsysInvalidModellingHypothesis(AnsysInvalidModellingHypothesis&&);
+    AnsysInvalidModellingHypothesis(AnsysInvalidModellingHypothesis&&) noexcept;
     //! \brief copy constructor
     AnsysInvalidModellingHypothesis(const AnsysInvalidModellingHypothesis&);
-    //! \brief destructor
-    ~AnsysInvalidModellingHypothesis() noexcept override;
-
-   private:
+    //
     AnsysInvalidModellingHypothesis& operator=(
         const AnsysInvalidModellingHypothesis&) = delete;
+    //! \brief destructor
+    ~AnsysInvalidModellingHypothesis() noexcept override;
   };  // end of struct AnsysInvalidModellingHypothesis
   /*!
    * \brief exception thrown when an invalid value of the *NTENS
@@ -74,15 +74,14 @@ namespace ansys {
       : public AnsysException {
     AnsysInvalidNTENSValue(const unsigned short);
     //! \brief move constructor
-    AnsysInvalidNTENSValue(AnsysInvalidNTENSValue&&);
+    AnsysInvalidNTENSValue(AnsysInvalidNTENSValue&&) noexcept;
     //! \brief copy constructor
     AnsysInvalidNTENSValue(const AnsysInvalidNTENSValue&);
-    //! \brief desctructor
-    ~AnsysInvalidNTENSValue() noexcept override;
-
-   private:
+    //
     AnsysInvalidNTENSValue() = delete;
     AnsysInvalidNTENSValue& operator=(const AnsysInvalidNTENSValue&) = delete;
+    //! \brief desctructor
+    ~AnsysInvalidNTENSValue() noexcept override;
   };  // end of struct AnsysInvalidNTENSValue
   /*!
    * \brief exception thrown when an invalid dimension is detected
@@ -91,15 +90,14 @@ namespace ansys {
       : public AnsysException {
     AnsysInvalidDimension(const std::string&, const unsigned short);
     //! \brief move constructor
-    AnsysInvalidDimension(AnsysInvalidDimension&&);
+    AnsysInvalidDimension(AnsysInvalidDimension&&) noexcept;
     //! \brief copy constructor
     AnsysInvalidDimension(const AnsysInvalidDimension&);
-    //! \brief destructor
-    ~AnsysInvalidDimension() noexcept override;
-
-   private:
+    //
     AnsysInvalidDimension() = delete;
     AnsysInvalidDimension& operator=(const AnsysInvalidDimension&) = delete;
+    //! \brief destructor
+    ~AnsysInvalidDimension() noexcept override;
   };  // end of struct AnsysInvalidDimension
 
 }  // end of namespace ansys

@@ -81,9 +81,9 @@ namespace tfel::check {
     return r;
   }  // end of eval
 
-  Column::Column(Column&&) = default;
+  Column::Column(Column&&) noexcept = default;
   Column::Column(const Column&) = default;
-  Column& Column::operator=(Column&&) = default;
+  Column& Column::operator=(Column&&) noexcept = default;
   Column& Column::operator=(const Column&) = default;
 
   Column::Column(const int n) : num(n), byName(false) {
@@ -124,7 +124,7 @@ namespace tfel::check {
 
   const std::string& Column::getFilename() const { return this->f; }
 
-  const std::shared_ptr<tfel::utilities::TextData> Column::getData() const {
+  std::shared_ptr<const tfel::utilities::TextData> Column::getData() const {
     return this->data;
   }
 

@@ -23,28 +23,28 @@ namespace abaqus {
    * the umat interface
    */
   struct AbaqusData {
-    AbaqusReal *const STRESS;
-    AbaqusReal *const PNEWDT;
-    AbaqusReal *const DDSDDE;
-    AbaqusReal *const STATEV;
+    AbaqusReal* const STRESS;
+    AbaqusReal* const PNEWDT;
+    AbaqusReal* const DDSDDE;
+    AbaqusReal* const STATEV;
     //! internal energy
-    AbaqusReal *const SSE;
+    AbaqusReal* const SSE;
     //! plastic dissipation
-    AbaqusReal *const SPD;
+    AbaqusReal* const SPD;
     //! visoplastic dissipation
-    AbaqusReal *const SCD;
+    AbaqusReal* const SCD;
     const AbaqusInt NTENS;
     const AbaqusInt NPROPS;
     const AbaqusInt NSTATV;
     const AbaqusReal DTIME;
-    const AbaqusReal *const DROT;
-    const AbaqusReal *const STRAN;
-    const AbaqusReal *const DSTRAN;
-    const AbaqusReal *const TEMP;
-    const AbaqusReal *const DTEMP;
-    const AbaqusReal *const PROPS;
-    const AbaqusReal *const PREDEF;
-    const AbaqusReal *const DPRED;
+    const AbaqusReal* const DROT;
+    const AbaqusReal* const STRAN;
+    const AbaqusReal* const DSTRAN;
+    const AbaqusReal* const TEMP;
+    const AbaqusReal* const DTEMP;
+    const AbaqusReal* const PROPS;
+    const AbaqusReal* const PREDEF;
+    const AbaqusReal* const DPRED;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler<AbaqusReal> sfeh;
   };  // end of struct AbaqusData

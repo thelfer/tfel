@@ -33,19 +33,22 @@ namespace mfront::bbrick {
   struct DataIsotropicHardeningRule final
       : public IsotropicHardeningRule,
         private SingleVariableInterpolatedData {
+    //
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
                     const std::string&,
                     const DataMap&) override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::string computeElasticPrediction(const BehaviourDescription&,
-                                         const std::string&,
-                                         const std::string&) const override;
-    std::string computeElasticLimit(const BehaviourDescription&,
-                                    const std::string&,
-                                    const std::string&) const override;
-    std::string computeElasticLimitAndDerivative(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeElasticLimit(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeElasticLimitAndDerivative(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const override;
@@ -64,8 +67,9 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual void writeLinearInterpolationOfYieldRadius(
-        BehaviourDescription&, const std::string&, const std::string&) const;
+    void writeLinearInterpolationOfYieldRadius(BehaviourDescription&,
+                                               const std::string&,
+                                               const std::string&) const;
     /*!
      * \brief append two member functions beginning with `computeYieldRadius`
      * and `computeYieldRadiusAndDerivative`.
@@ -73,8 +77,9 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual void writeCubicSplineInterpolationOfYieldRadius(
-        BehaviourDescription&, const std::string&, const std::string&) const;
+    void writeCubicSplineInterpolationOfYieldRadius(BehaviourDescription&,
+                                                    const std::string&,
+                                                    const std::string&) const;
   };  // end of struct DataIsotropicHardeningRule
 
 }  // end of namespace mfront::bbrick

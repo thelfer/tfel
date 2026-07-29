@@ -11,7 +11,7 @@ solved are described below.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/193/>
 
-## Ticket #188: Default constructor of the `qt` class is ill formed: noexcept specifier is not correcty defined
+## Ticket #188: Default constructor of the `qt` class is ill formed: noexcept specifier is not correctly defined
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/188/>
 
@@ -33,7 +33,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/184/>
 
 For most algorithms with correction-prediction, the Runge-Kutta DSL has
 two strategies to evaluate the error. The first one (the default) is the
-euclidian norm and the second one the based on the absolute norm. The
+euclidian norm and the second one is based on the absolute norm. The
 DSL switches from one strategy to the other depending on the size of
 unknowns.
 
@@ -52,7 +52,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/180/>
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/178/>
 
-## Ticket #175: Add `rpath`to the `TFEL` libraries when generating the library on `Mac Os`
+## Ticket #175: Add `rpath` to the `TFEL` libraries when generating the library on `Mac Os`
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/175/>
 

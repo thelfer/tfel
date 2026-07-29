@@ -4,7 +4,7 @@
 # Introduction
 
 The purpose of behaviour bricks is to hide (by default) part of the
-behaviour implementation. In other word, they are meant to create a
+behaviour implementation. In other words, they are meant to create a
 context which simplifies the implementation of some specific behaviours'
 classes.
 
@@ -27,7 +27,7 @@ provide:
 - Automatic computation of the consistent tangent operator.
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (definitions of the axial strain as an
-  additional state variables and the associated equation enforcing the
+  additional state variable and the associated equation enforcing the
   plane stress condition).
 - Automatic addition of the "standard" terms associated
   with the elastic strain state variable.
@@ -53,11 +53,11 @@ name of the brick. This name can be given as a string.
 
 # List of available bricks
 
-The following brick are available:
+The following bricks are available:
 
 - the `StandardElasticity` brick, which has been described in the
   introduction of this page. In practice, the evolution of `MFront` and
-  the development of the `StandardElastoViscplasticity` brick, has made
+  the development of the `StandardElastoViscplasticity` brick has made
   the `StandardElasticity` brick a kind of special case of the
   `StandardElastoViscoplasticity` where the stress potential is limited
   to the Hooke's one and no inelastic flow is allowed. As such, most

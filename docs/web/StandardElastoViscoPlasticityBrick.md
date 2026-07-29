@@ -86,7 +86,7 @@ The brick decomposes the behaviour into two components:
 > evolution of porosity is described on a [dedicated
 > page](StandardElastoViscoPlasticityBrick-PorousPlasticity.html).
 
-## A detailled Example
+## A detailed Example
 
 ~~~~{.cpp}
 @Brick "StandardElastoViscoPlasticity" {
@@ -105,7 +105,7 @@ The brick decomposes the behaviour into two components:
   // Here we define only one viscplastic flow defined by the Norton law,
   // which is based:
   // - the von Mises stress criterion
-  // - one isotorpic hardening rule based on Voce formalism
+  // - one isotropic hardening rule based on Voce formalism
   // - one kinematic hardening rule following the Armstrong-Frederick law
   inelastic_flow : "Norton" {
     criterion : "Mises",
@@ -155,7 +155,7 @@ The Hooke stress potential is fully described
 ## The `IsotropicDamage` stress potential
 
 This stress potential adds to the Hooke stress potential the description
-of an isotropioc damage. The relation 
+of an isotropic damage. The relation
 \[
  \tsigma=\left(1-d\right)\,\tenseurq{D}\,\colon\,\tepsilonel
 \]
@@ -189,14 +189,14 @@ The DDIF2 stress potential is fully described
 
 ### About the equivalent strain
 
-Most inelastic flows introduces an equivalent strain as a measure of the
+Most inelastic flows introduce an equivalent strain as a measure of the
 material's hardening.
 
 This state variable is named `p`+`id` where `id` is an identifier
 associated with the inelastic flow. `id` is empty if only one inelastic
-flows is defined and contain a number otherwise. More precisely, when
+flow is defined and contains a number otherwise. More precisely, when
 several inelastic flows are defined, `0` is the `id` of the first
-inelatic flow, `1` is the `id` of the second inelatic flow, etc..
+inelastic flow, `1` is the `id` of the second inelastic flow, etc.
 
 The default external name of the equivalent strain depends on the
 inelastic flow selected:
@@ -206,7 +206,7 @@ inelastic flow selected:
 
 See Section
 @sec:StandardElastoViscoPlasticity:equivalent_strain_external_name for
-how to change the external name of the equilavent strain.
+how to change the external name of the equivalent strain.
 
 ## List of available inelastic flows
 
@@ -232,7 +232,7 @@ The plastic multiplier satifies the Kuhn-Tucker relation:
 \right.
 \]
 
-The flow is associated is \(f\) is equal to \(g\). In practice \(f\) is
+The flow is associated if \(f\) is equal to \(g\). In practice \(f\) is
 defined by a stress criterion \(\phi\), a set of kinematic hardening
 rules, and an isotropic hardening rule, as follows:
 
@@ -260,7 +260,7 @@ the `maximum_equivalent_stress_factor` option.
 
 In some cases, rejecting steps may also lead to a divergence of the
 Newton algorithm, so one may specify a relative threshold \(\beta\) on
-the iteration number which desactivate this check, i.e. the check is
+the iteration number which deactivates this check, i.e. the check is
 performed only if the current iteration number is below
 \(\beta\,\cdot\,i_{\max{}}\) where \(i_{\max{}}\) is the maximum number
 of iterations allowed for the Newton algorithm. A typical value for
@@ -314,7 +314,7 @@ The equivalent viscoplastic strain rate \(\dot{p}\) is defined as:
 \dfrac{1}{\dot{p}}=\sum_{i=1}^{N}\dfrac{1}{\dot{p}_{i}}
 \]
 
-where \(\dot{p}_{i}\) has an expression similar to the the Norton-Hoff
+where \(\dot{p}_{i}\) has an expression similar to the Norton-Hoff
 viscoplastic flow:
 
 \[
@@ -360,7 +360,7 @@ where:
 - `p` is the equivalent viscoplastic strain.
 
 This function shall be given by a string option named `vp`. This
-function must depend on `f`. Dependance to `p` is optional.
+function must depend on `f`. Dependence on `p` is optional.
 
 The function may also depend on other variables. Let `A` be such a
 variable. The `UserDefinedViscoplasticity` flow will look if an option
@@ -409,7 +409,7 @@ code.
 
 ### External name of the equivalent strain  {#sec:StandardElastoViscoPlasticity:equivalent_strain_external_name}
 
-All inelastic flows allows to change the external name of the equilvaent
+All inelastic flows allow changing the external name of the equivalent
 strain with the `equivalent_strain_external_name` option.
 
 #### Example of usage
@@ -427,7 +427,7 @@ strain with the `equivalent_strain_external_name` option.
 
 ### Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
 
-Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) shows
+Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) show
 sharp edges that may cause the failure of the standard Newton algorithm,
 due to oscillations in the prediction of the flow direction.
 
@@ -435,8 +435,8 @@ Rejecting Newton steps leading to a too large variation of the flow
 direction between the new estimate of the flow direction and the
 previous estimate is a cheap and efficient method to overcome this
 issue. This method can be viewed as a bisectional linesearch based on
-the Newton prediction: the Newton steps magnitude is divided by two if
-its results to a too large change in the flow direction.
+the Newton prediction: the Newton step's magnitude is divided by two if
+it results in a too large change in the flow direction.
 
 More precisely, the change of the flow direction is estimated by the
 computation of the cosine of the angle between the two previous

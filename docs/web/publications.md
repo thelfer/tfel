@@ -13,6 +13,8 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @badri_psd_2026
+    @amouzou-adoun_robust_2026
     @vedrine_constitutive_2026
     @ren_poro-elasto-viscoplastic_2026
     @masin_viscohypoplastic_2026

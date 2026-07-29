@@ -135,10 +135,10 @@ namespace aster {
        *                      at the beginning of the time step
        */
       TFEL_ASTER_INLINE static void exe(
-          BV &b,
-          const AsterReal *const STRAN,
-          const AsterReal *const DSTRAN,
-          const StressFreeExpansionHandler &sfeh) {
+          BV& b,
+          const AsterReal* const STRAN,
+          const AsterReal* const DSTRAN,
+          const StressFreeExpansionHandler& sfeh) {
         using std::pair;
         using tfel::fsalgo::copy;
         using namespace tfel::material;
@@ -155,8 +155,8 @@ namespace aster {
         }
         pair<StressFreeExpansionType, StressFreeExpansionType> s;
         b.computeStressFreeExpansion(s);
-        const auto &s0 = s.first;
-        const auto &s1 = s.second;
+        const auto& s0 = s.first;
+        const auto& s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], N);
         b.setASTERBehaviourDataGradients(dv0);
         b.setASTERIntegrationDataGradients(dv1);
@@ -179,10 +179,10 @@ namespace aster {
        * \param[in]  sfeh   : function handling the stress-free expansion
        *                      at the beginning of the time step
        */
-      TFEL_ASTER_INLINE static void exe(BV &b,
-                                        const AsterReal *const STRAN,
-                                        const AsterReal *const DSTRAN,
-                                        const StressFreeExpansionHandler &) {
+      TFEL_ASTER_INLINE static void exe(BV& b,
+                                        const AsterReal* const STRAN,
+                                        const AsterReal* const DSTRAN,
+                                        const StressFreeExpansionHandler&) {
         b.setASTERBehaviourDataGradients(STRAN);
         b.setASTERIntegrationDataGradients(DSTRAN);
       }  // end of exe
@@ -191,8 +191,8 @@ namespace aster {
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef Behaviour<H, AsterReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_ASTER_INLINE static void exe(BData &data,
-                                        const AsterReal *const props) {
+      TFEL_ASTER_INLINE static void exe(BData& data,
+                                        const AsterReal* const props) {
         typedef AsterTraits<BV> Traits;
         const bool buas = Traits::requiresUnAlteredStiffnessTensor;
         AsterComputeStiffnessTensor<AsterTraits<BV>::btype, H,
@@ -205,8 +205,8 @@ namespace aster {
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, AsterReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_ASTER_INLINE static void exe(BData &data,
-                                        const AsterReal *const props) {
+      TFEL_ASTER_INLINE static void exe(BData& data,
+                                        const AsterReal* const props) {
         const unsigned short o = AsterTraits<BV>::elasticPropertiesOffset;
         AsterComputeThermalExpansionCoefficientTensor<AsterTraits<BV>::btype, H,
                                                       AsterTraits<BV>::stype>::
@@ -217,28 +217,28 @@ namespace aster {
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef Behaviour<H, AsterReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_ASTER_INLINE static void exe(BData &, const AsterReal *const) {}
+      TFEL_ASTER_INLINE static void exe(BData&, const AsterReal* const) {}
     };  // end of struct DoNothingInitializer
 
     struct TFEL_VISIBILITY_LOCAL Error {
-      TFEL_ASTER_INLINE Error(const AsterReal *const,
-                              const AsterReal *const,
-                              const AsterReal *const,
-                              const AsterReal *const,
-                              const AsterReal *const,
-                              const AsterReal *const,
-                              const AsterReal *const,
-                              const AsterReal *const,
-                              const AsterReal *const,
-                              const AsterReal *const,
+      TFEL_ASTER_INLINE Error(const AsterReal* const,
+                              const AsterReal* const,
+                              const AsterReal* const,
+                              const AsterReal* const,
+                              const AsterReal* const,
+                              const AsterReal* const,
+                              const AsterReal* const,
+                              const AsterReal* const,
+                              const AsterReal* const,
+                              const AsterReal* const,
                               const tfel::material::OutOfBoundsPolicy,
-                              const StressFreeExpansionHandler &) {
+                              const StressFreeExpansionHandler&) {
       }  // end of Error
 
-      TFEL_ASTER_INLINE void exe(AsterReal *const,
-                                 AsterReal *const,
-                                 AsterReal *const,
-                                 const AsterReal *const) {
+      TFEL_ASTER_INLINE void exe(AsterReal* const,
+                                 AsterReal* const,
+                                 AsterReal* const,
+                                 const AsterReal* const) {
         throw(AsterInvalidModellingHypothesis());
       }  // end of Error::exe
 
@@ -257,18 +257,18 @@ namespace aster {
           ThermalExpansionCoefficientTensorInitializer,
           DoNothingInitializer>::type AInitializer;
 
-      TFEL_ASTER_INLINE Integrator(const AsterReal *const DTIME,
-                                   const AsterReal *const STRAN,
-                                   const AsterReal *const DSTRAN,
-                                   const AsterReal *const TEMP,
-                                   const AsterReal *const DTEMP,
-                                   const AsterReal *const PROPS,
-                                   const AsterReal *const PREDEF,
-                                   const AsterReal *const DPRED,
-                                   const AsterReal *const STATEV,
-                                   const AsterReal *const STRESS,
+      TFEL_ASTER_INLINE Integrator(const AsterReal* const DTIME,
+                                   const AsterReal* const STRAN,
+                                   const AsterReal* const DSTRAN,
+                                   const AsterReal* const TEMP,
+                                   const AsterReal* const DTEMP,
+                                   const AsterReal* const PROPS,
+                                   const AsterReal* const PREDEF,
+                                   const AsterReal* const DPRED,
+                                   const AsterReal* const STATEV,
+                                   const AsterReal* const STRESS,
                                    const tfel::material::OutOfBoundsPolicy op,
-                                   const StressFreeExpansionHandler &sfeh)
+                                   const StressFreeExpansionHandler& sfeh)
           : behaviour(DTIME,
                       TEMP,
                       DTEMP,
@@ -292,10 +292,10 @@ namespace aster {
       }  // end of Integrator::Integrator
 
       TFEL_ASTER_INLINE2
-      void exe(AsterReal *const DDSOE,
-               AsterReal *const STRESS,
-               AsterReal *const STATEV,
-               const AsterReal *const DSTRAN) {
+      void exe(AsterReal* const DDSOE,
+               AsterReal* const STRESS,
+               AsterReal* const STATEV,
+               const AsterReal* const DSTRAN) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
@@ -372,7 +372,7 @@ namespace aster {
       struct StandardPredictionOperatorComputer {
         typedef Behaviour<H, AsterReal, false> BV;
         static typename BV::IntegrationResult exe(
-            BV &b,
+            BV& b,
             const typename BV::SMFlag smf,
             const typename BV::SMType smt) {
           return b.computePredictionOperator(smf, smt);
@@ -382,7 +382,7 @@ namespace aster {
       struct PredictionOperatorIsNotAvalaible {
         typedef Behaviour<H, AsterReal, false> BV;
         [[noreturn]] static typename BV::IntegrationResult exe(
-            BV &, const typename BV::SMFlag, const typename BV::SMType) {
+            BV&, const typename BV::SMFlag, const typename BV::SMType) {
           typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
           throwPredictionOperatorIsNotAvalaible(Traits::getName());
         }  // end of exe
@@ -390,7 +390,7 @@ namespace aster {
 
       struct ConsistentTangentOperatorIsNotAvalaible {
         typedef Behaviour<H, AsterReal, false> BV;
-        static void exe(BV &, AsterReal *const) {
+        static void exe(BV&, AsterReal* const) {
           typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
           throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
         }  // end of exe
@@ -398,7 +398,7 @@ namespace aster {
 
       struct ConsistentTangentOperatorComputer {
         typedef Behaviour<H, AsterReal, false> BV;
-        static void exe(const BV &bv, AsterReal *const DDSOE) {
+        static void exe(const BV& bv, AsterReal* const DDSOE) {
           using tfel::material::ModellingHypothesisToSpaceDimension;
           const unsigned short N =
               ModellingHypothesisToSpaceDimension<H>::value;
@@ -408,8 +408,7 @@ namespace aster {
           using TangentOperatorViewType = typename AsterTangentOperatorType<
               AsterTraits<BV>::btype, AsterTraits<BV>::afsf, N>::view_type;
           TangentOperatorViewType Dt{DDSOE};
-          Dt =
-              static_cast<const TangentOperatorType &>(bv.getTangentOperator());
+          Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
           // l'opérateur tangent contient des sqrt(2) en petites déformations...
           AsterTangentOperator::normalize(Dt);
         }  // end of exe
@@ -417,14 +416,14 @@ namespace aster {
 
       struct SymmetricConsistentTangentOperatorComputer {
         typedef Behaviour<H, AsterReal, false> BV;
-        static void exe(const BV &bv, AsterReal *const DDSOE) {
+        static void exe(const BV& bv, AsterReal* const DDSOE) {
           ConsistentTangentOperatorComputer::exe(bv, DDSOE);
         }  // end of exe
       };
 
       struct GeneralConsistentTangentOperatorComputer {
         typedef Behaviour<H, AsterReal, false> BV;
-        static void exe(const BV &bv, AsterReal *const DDSOE) {
+        static void exe(const BV& bv, AsterReal* const DDSOE) {
           using tfel::material::ModellingHypothesisToSpaceDimension;
           const unsigned short N =
               ModellingHypothesisToSpaceDimension<H>::value;

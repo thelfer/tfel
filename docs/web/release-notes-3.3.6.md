@@ -22,6 +22,6 @@ This version was released on December 11, 2024 along with Versions
 
 # Issues fixed
 
-## Issue 597: Using the elastic material properties exported the behaviour is broken for orthotropic behaviours in the `Cast3M` interface
+## Issue 597: Using the elastic material properties exported by the behaviour is broken for orthotropic behaviours in the `Cast3M` interface
 
 For more details, see <https://github.com/thelfer/tfel/issues/597.

@@ -30,7 +30,14 @@ namespace mfmtg {
     //! a simple alias
     using generator = std::function<void(const AbstractTestCase&)>;
     //! \return the uniq instance of this class
-    static InputFileGeneratorFactory& get();
+    [[nodiscard]] static InputFileGeneratorFactory& get();
+    //
+    //! \brief move constructor (disabled)
+    InputFileGeneratorFactory(InputFileGeneratorFactory&&) = delete;
+    InputFileGeneratorFactory(const InputFileGeneratorFactory&) = delete;
+    InputFileGeneratorFactory& operator=(InputFileGeneratorFactory&&) = delete;
+    InputFileGeneratorFactory& operator=(const InputFileGeneratorFactory&) =
+        delete;
     /*!
      * \brief register a new input file generator for the given test case.
      * \param[in] n: name of the test case
@@ -43,21 +50,12 @@ namespace mfmtg {
      * targeted code \param[in] n: name of the test case \param[in] i: name of
      * the targeted code
      */
-    generator get(const std::string&, const std::string&) const;
+    [[nodiscard]] generator get(const std::string&, const std::string&) const;
 
    private:
     //! \brief default constructor
     InputFileGeneratorFactory();
-    //! \brief move constructor (disabled)
-    InputFileGeneratorFactory(InputFileGeneratorFactory&&) = delete;
-    //! \brief copy constructor (disabled)
-    InputFileGeneratorFactory(const InputFileGeneratorFactory&) = delete;
-    //! \brief move assignement (disabled)
-    InputFileGeneratorFactory& operator=(InputFileGeneratorFactory&&) = delete;
-    //! \brief standard assignement (disabled)
-    InputFileGeneratorFactory& operator=(const InputFileGeneratorFactory&) =
-        delete;
-    //! destructor
+    //! \brief destructor
     ~InputFileGeneratorFactory();
     //! list of registred generators
     std::map<std::string,           // test case

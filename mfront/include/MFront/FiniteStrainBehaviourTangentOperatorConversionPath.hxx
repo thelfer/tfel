@@ -45,14 +45,15 @@ namespace mfront {
      * \return an iterator to the conversion that leads to the specified
      * tangent operator or end() if none was found.
      */
-    const_iterator find(const TangentOperatorFlag) const;
+    [[nodiscard]] const_iterator find(const TangentOperatorFlag) const;
     /*!
      * get all path starting from a point
      * \param[in] b : starting point
      * \param[in] k : known tangent operator (defined by the user)
      * \param[in] converters : known conversions
      */
-    static std::vector<FiniteStrainBehaviourTangentOperatorConversionPath>
+    [[nodiscard]] static std::vector<
+        FiniteStrainBehaviourTangentOperatorConversionPath>
     getConversionsPath(
         const TangentOperatorFlag&,
         const std::vector<TangentOperatorFlag>&,
@@ -63,7 +64,8 @@ namespace mfront {
      * user-defined tangent operators.
      * \param[in] t     : search tangent operator
      */
-    static FiniteStrainBehaviourTangentOperatorConversionPath getShortestPath(
+    [[nodiscard]] static FiniteStrainBehaviourTangentOperatorConversionPath
+    getShortestPath(
         const std::vector<FiniteStrainBehaviourTangentOperatorConversionPath>&,
         const TangentOperatorFlag&);
 

@@ -448,7 +448,7 @@ namespace mfront {
       VariableInformation(const VariableInformation&) = default;
   MaterialPropertyDocumentationGenerator::VariableInformation&
   MaterialPropertyDocumentationGenerator::VariableInformation::operator=(
-      VariableInformation&&) = default;
+      VariableInformation&&) noexcept = default;
   MaterialPropertyDocumentationGenerator::VariableInformation&
   MaterialPropertyDocumentationGenerator::VariableInformation::operator=(
       const VariableInformation&) = default;

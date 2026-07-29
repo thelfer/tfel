@@ -36,7 +36,7 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT TargetsDescription {
     TargetsDescription();
     TargetsDescription(const TargetsDescription&);
-    TargetsDescription(TargetsDescription&&);
+    TargetsDescription(TargetsDescription&&) noexcept;
     ~TargetsDescription();
     /*!
      * \return the library description associated with the given
@@ -48,10 +48,11 @@ namespace mfront {
      * \note If the the library already exists and the suffix and/or
      * the type does not match, an exception is thrown
      */
-    LibraryDescription& getLibrary(const std::string&,
-                                   const std::string&,
-                                   const std::string&,
-                                   const LibraryDescription::LibraryType);
+    [[nodiscard]] LibraryDescription& getLibrary(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const LibraryDescription::LibraryType);
     /*!
      * \return the library description associated with the given
      * library name or a newly created one if non existed.
@@ -59,28 +60,30 @@ namespace mfront {
      * \param[in] p : library prefix
      * \param[in] s : library suffix
      */
-    LibraryDescription& getLibrary(const std::string&,
-                                   const std::string&,
-                                   const std::string&);
+    [[nodiscard]] LibraryDescription& getLibrary(const std::string&,
+                                                 const std::string&,
+                                                 const std::string&);
     /*!
      * \return the library description associated with the given
      * library name or a newly created one if non existed.
      * \param[in] n : name of the library searched
      * \param[in] p : library prefix
      */
-    LibraryDescription& getLibrary(const std::string&, const std::string&);
+    [[nodiscard]] LibraryDescription& getLibrary(const std::string&,
+                                                 const std::string&);
     /*!
      * \return the library description associated with the given
      * library name or a newly created one if non existed.
      * \param[in] n : name of the library searched
      */
-    LibraryDescription& getLibrary(const std::string&);
+    [[nodiscard]] LibraryDescription& getLibrary(const std::string&);
     /*!
      * \return the library description associated with the given
      * library name.
      * \param[in] n : name of the library searched
      */
-    const LibraryDescription& getLibrary(const std::string&) const;
+    [[nodiscard]] const LibraryDescription& getLibrary(
+        const std::string&) const;
     //! generated headers
     std::vector<std::string> headers;
     //! target system

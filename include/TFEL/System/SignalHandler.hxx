@@ -27,7 +27,7 @@ namespace tfel::system {
       : public SignalHandler {
     typedef void (*Fct)(const int);
     FctSignalHandler(const Fct);
-    void execute(const int) override final;
+    void execute(const int) final;
     ~FctSignalHandler() override;
 
    private:
@@ -37,21 +37,21 @@ namespace tfel::system {
   template <typename Class>
   struct MemberSignalHandler final : public SignalHandler {
     typedef void (Class::*Fct)(const int);
-    MemberSignalHandler(Class &, const Fct);
-    void execute(const int) override final;
+    MemberSignalHandler(Class&, const Fct);
+    void execute(const int) final;
     ~MemberSignalHandler() override;
 
    private:
-    Class &c;
+    Class& c;
     const Fct f;
   };  // end of struct MemberSignalHandler
 
   TFELSYSTEM_VISIBILITY_EXPORT
-  FctSignalHandler *sigPtrFun(const FctSignalHandler::Fct);
+  FctSignalHandler* sigPtrFun(const FctSignalHandler::Fct);
 
   template <typename Class>
-  MemberSignalHandler<Class> *sigMemFun(
-      Class &, const typename MemberSignalHandler<Class>::Fct);
+  MemberSignalHandler<Class>* sigMemFun(
+      Class&, const typename MemberSignalHandler<Class>::Fct);
 
 }  // namespace tfel::system
 

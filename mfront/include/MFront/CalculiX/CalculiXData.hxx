@@ -23,18 +23,18 @@ namespace calculix {
    * the umat interface
    */
   struct CalculiXData {
-    CalculiXReal *const STRESS;
-    CalculiXReal *const PNEWDT;
-    CalculiXReal *const DDSDDE;
-    CalculiXReal *const STATEV1;
+    CalculiXReal* const STRESS;
+    CalculiXReal* const PNEWDT;
+    CalculiXReal* const DDSDDE;
+    CalculiXReal* const STATEV1;
     //! time increment
     const CalculiXReal DTIME;
-    const CalculiXReal *const STATEV0;
-    const CalculiXReal *const DV0;
-    const CalculiXReal *const DV1;
+    const CalculiXReal* const STATEV0;
+    const CalculiXReal* const DV0;
+    const CalculiXReal* const DV1;
     //! temperature at the end of the time step
-    const CalculiXReal *const TEMP;
-    const CalculiXReal *const MPROPS;
+    const CalculiXReal* const TEMP;
+    const CalculiXReal* const MPROPS;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler sfeh;
   };  // end of struct CalculiXData

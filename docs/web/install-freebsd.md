@@ -22,4 +22,4 @@ The recommended compiler on `FreeBSD` is `clang`.
 
 # `python` bindings
 
-The `python` bindings shall work as expected..
+The `python` bindings shall work as expected.

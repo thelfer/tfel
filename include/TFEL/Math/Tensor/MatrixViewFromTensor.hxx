@@ -41,13 +41,15 @@ namespace tfel::math {
     typedef unsigned short IndexType;
     typedef EmptyRunTimeProperties RunTimeProperties;
 
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
 
     Expr(TensorType t_) : t(t_) {}  // end of Expr
 
-    NumType operator()(const unsigned short i, const unsigned short j) const {
+    [[nodiscard]] NumType operator()(const unsigned short i,
+                                     const unsigned short j) const {
       using tfel::math::internals::TensorConceptMatrixAccessOperator;
       constexpr auto N = getSpaceDimension<TensorType>();
       return TensorConceptMatrixAccessOperator<N>::exe(this->t, i, j);

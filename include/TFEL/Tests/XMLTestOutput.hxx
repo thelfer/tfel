@@ -32,6 +32,9 @@ namespace tfel::tests {
      * \param[in] o: output file name
      */
     XMLTestOutput(const std::string&);
+    //
+    XMLTestOutput(const XMLTestOutput&) = delete;
+    XMLTestOutput& operator=(const XMLTestOutput&) = delete;
     /*!
      * \brief begin a new test suite
      * \param[in] n: name of the test suite
@@ -51,7 +54,7 @@ namespace tfel::tests {
      * \param[in] r: (global) result of the test suite
      */
     void endTestSuite(const TestResult&) override;
-    //! Destructor
+    //! \brief destructor
     ~XMLTestOutput() override;
 
    private:
@@ -59,16 +62,12 @@ namespace tfel::tests {
      * \param r: result to be treated
      */
     TFEL_VISIBILITY_LOCAL void treatTest(const TestResult&);
-    //! \brief copy constructor (disabled)
-    XMLTestOutput(const XMLTestOutput&) = delete;
-    //! \brief assignement operator (disabled)
-    XMLTestOutput& operator=(const XMLTestOutput&) = delete;
     //! output stream
     std::ofstream os;
     //! output file name
     std::string file;
     //! number of test suite treated
-    unsigned short testsuite;
+    unsigned short testsuite = 0;
   };  // end of struct XMLTestOutput
 
 }  // end of namespace tfel::tests

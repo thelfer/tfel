@@ -21,8 +21,8 @@ namespace mtest {
 
   StructureCurrentState::StructureCurrentState() = default;
 
-  StructureCurrentState::StructureCurrentState(StructureCurrentState&&) =
-      default;
+  StructureCurrentState::StructureCurrentState(
+      StructureCurrentState&&) noexcept = default;
 
   StructureCurrentState::StructureCurrentState(const StructureCurrentState&) =
       default;
@@ -31,7 +31,7 @@ namespace mtest {
       const StructureCurrentState&) = default;
 
   StructureCurrentState& StructureCurrentState::operator=(
-      StructureCurrentState&&) = default;
+      StructureCurrentState&&) noexcept = default;
 
   StructureCurrentState::~StructureCurrentState() = default;
 

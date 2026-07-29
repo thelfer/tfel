@@ -127,7 +127,7 @@ namespace mfront {
      */
     struct AnalyticMaterialProperty {
       //! \return the list of the variables
-      std::vector<std::string> getVariablesNames() const;
+      [[nodiscard]] std::vector<std::string> getVariablesNames() const;
       //! \brief description of a material property
       std::string f;
     };  // end of AnalyticMaterialProperty

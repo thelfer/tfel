@@ -300,7 +300,7 @@ namespace mfront {
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n"
-       << "integrate(const SMFlag smflag,const SMType smt) override final{\n"
+       << "integrate(const SMFlag smflag,const SMType smt) final{\n"
        << "using namespace std;\n";
     if (this->bd.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype

@@ -26,7 +26,7 @@ namespace tfel::system {
     SystemError(const std::string&);
     SystemError(SystemError&&) = default;
     SystemError(const SystemError&) = default;
-    const char* what() const noexcept override;
+    [[nodiscard]] const char* what() const noexcept override;
     ~SystemError() noexcept override;
 
    private:

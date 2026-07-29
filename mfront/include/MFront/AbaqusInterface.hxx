@@ -27,18 +27,9 @@ namespace mfront {
    */
   struct AbaqusInterface : public AbaqusInterfaceBase {
     //! \return the name of the interface
-    static std::string getName();
-    /*!
-     * \param[in,out] mb: behaviour description
-     * \param[in] k  : keyword treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted
-     * \param[in] p  : iterator to the current token
-     * \param[in] pe : iterator past the end of the file
-     * \return a pair. The first entry is true if the keyword was
-     * treated by the interface. The second entry is an iterator after
-     * the last token treated.
-     */
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] static std::string getName();
+    //
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription&,
         const std::string&,
         const std::vector<std::string>&,
@@ -57,72 +48,38 @@ namespace mfront {
      */
     void getTargetsDescription(TargetsDescription&,
                                const BehaviourDescription&) override;
-    //! destructor
+    //! \brief destructor
     ~AbaqusInterface() override;
 
    protected:
-    std::string getInterfaceName() const override;
-    /*!
-     * write the initialisation of the driving variables
-     * \param[out] os: output file
-     * \param[in]  mb: mechanical behaviour description
-     */
-    virtual void writeBehaviourDataMainVariablesSetters(
-        std::ostream&, const BehaviourDescription&) const override;
-    /*!
-     * \brief write the initialisation of a driving variables
-     * \param[in] os : output file
-     * \param[in] v  : variable to be initialised
-     * \param[in] o  : variable offsert
-     */
-    virtual void writeBehaviourDataGradientSetter(
-        std::ostream&,
-        const Gradient&,
-        const SupportedTypes::TypeSize) const override;
-    /*!
-     * \brief write the initialisation of a driving variables
-     * \param[in] os : output file
-     * \param[in] v  : variable to be initialised
-     * \param[in] o  : variable offsert
-     */
-    virtual void writeIntegrationDataGradientSetter(
-        std::ostream&,
-        const Gradient&,
-        const SupportedTypes::TypeSize) const override;
-    /*!
-     * \brief write the instruction of exporting a thermodynamic force in an
-     * array \param[out] out : output stream \param[in]  a   : array name
-     * \param[in]  f   : thermodynamic force
-     * \param[in]  o   : thermodynamic force offset
-     */
-    virtual void exportThermodynamicForce(
-        std::ostream&,
-        const std::string&,
-        const ThermodynamicForce&,
-        const SupportedTypes::TypeSize) const override;
-    /*!
-     * write interface specific includes
-     * \param[in] out : output file
-     * \param[in] mb  : mechanical behaviour description
-     */
-    virtual void writeInterfaceSpecificIncludes(
-        std::ostream&, const BehaviourDescription&) const override;
-    /*!
-     * \brief write the initialisation of a thermodynamic force
-     * \param[in] os : output file
-     * \param[in] v  : variable to be initialised
-     * \param[in] o  : variable offsert
-     */
-    virtual void writeBehaviourDataThermodynamicForceSetter(
-        std::ostream&,
-        const ThermodynamicForce&,
-        const SupportedTypes::TypeSize) const override;
-    std::vector<std::pair<std::string, std::string>>
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::vector<std::pair<std::string, std::string>>
     getBehaviourDataConstructorAdditionalVariables() const override;
     void completeBehaviourDataConstructor(
         std::ostream&,
         const Hypothesis,
         const BehaviourDescription&) const override;
+    void writeBehaviourDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const override;
+    void writeBehaviourDataGradientSetter(
+        std::ostream&,
+        const Gradient&,
+        const SupportedTypes::TypeSize) const override;
+    void writeIntegrationDataGradientSetter(
+        std::ostream&,
+        const Gradient&,
+        const SupportedTypes::TypeSize) const override;
+    void exportThermodynamicForce(
+        std::ostream&,
+        const std::string&,
+        const ThermodynamicForce&,
+        const SupportedTypes::TypeSize) const override;
+    void writeInterfaceSpecificIncludes(
+        std::ostream&, const BehaviourDescription&) const override;
+    void writeBehaviourDataThermodynamicForceSetter(
+        std::ostream&,
+        const ThermodynamicForce&,
+        const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file

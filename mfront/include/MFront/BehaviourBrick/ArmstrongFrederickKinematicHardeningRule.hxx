@@ -27,7 +27,6 @@ namespace mfront::bbrick {
    * \f]
    */
   struct ArmstrongFrederickKinematicHardeningRule : KinematicHardeningRuleBase {
-    std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -37,7 +36,8 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const std::string&) const override;
-    std::string buildBackStrainImplicitEquations(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string buildBackStrainImplicitEquations(
         const BehaviourDescription&,
         const StressPotential&,
         const StressCriterion&,
@@ -45,13 +45,12 @@ namespace mfront::bbrick {
         const std::string&,
         const std::string&,
         const bool) const override;
-    //! destructor
+    //! \brief destructor
     ~ArmstrongFrederickKinematicHardeningRule() override;
 
    protected:
     //! \brief call-back
     BehaviourDescription::MaterialProperty D;
-
   };  // end of struct KinematicHardeningRule
 
 }  // end of namespace mfront::bbrick

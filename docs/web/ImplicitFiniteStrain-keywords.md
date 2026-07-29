@@ -16,7 +16,7 @@ The keyword `@APrioriTimeStepScalingFactor` is not documented yet
 # The `@AdditionalConvergenceChecks` keyword
 
 The `@AdditionalConvergenceChecks` keyword is meant to introduce a
-code block returning stating if convergence has been reached. More
+code block stating if convergence has been reached. More
 precisely, this code block is meant to modify a boolean variable
 called `converged`. This boolean is `true` if the standard convergence
 criterion has been reached, `false` otherwise.
@@ -128,8 +128,8 @@ expansion:
 
 - along the second direction of orthotropy if the default orthotropic axes
   convention has been selected.
-- along the 'z' direction if the pipe orthotropic axes has been
-  defined is defined. The 'z' direction is the second direction of
+- along the 'z' direction if the pipe orthotropic axes convention has
+  been defined. The 'z' direction is the second direction of
   orthotropy for all hypotheses except Generalised Plane Strain, Plane
   Strain and Plane Stress hypotheses.
 
@@ -292,7 +292,7 @@ The `ComputeStiffnessTensor` keyword is used to define the elastic
 stiffness tensor based on the elastic material properties given as an
 array of entries. After this array, a semicolon is expected.
 
-This array is used to automatically used to declare the elastic
+This array is automatically used to declare the elastic
 material properties of the behaviour (see the
 `@ElasticMaterialProperties` keyword for details).
 
@@ -326,7 +326,7 @@ order:
 - three Poisson ratio \((nu_{12},nu_{23},nu_{13})\)
 - three shear modulus \((G_{12},G_{23},G_{13})\)
 
-In the orthoropic case, computation of the stiffness tensor rely on the
+In the orthotropic case, computation of the stiffness tensor relies on the
 definition of an orthotropic convention. For example, the `Pipe`
 orthotropic convention will lead to automatically exchange the second
 and first axes when computing the stiffness tensor for the plane strain,
@@ -368,9 +368,9 @@ This keyword interprets the code block to generate two methods:
 
 ## Note
 
-If the user provide a way of computing the stress at the end of the
+If the user provides a way of computing the stress at the end of the
 time step through the `@ComputeFinalStress` keyword, we consider that
-the use of `@ComputeStress` is meaningless and advice the user to
+the use of `@ComputeStress` is meaningless and advise the user to
 rather compute explicitly the stress as part of the integration step.
 
 ## Example

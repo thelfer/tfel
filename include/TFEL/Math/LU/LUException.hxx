@@ -25,7 +25,7 @@ namespace tfel::math {
    */
   struct TFELMATH_VISIBILITY_EXPORT LUException : public MathRunTimeException {
     LUException();
-    LUException(LUException&&);
+    LUException(LUException&&) noexcept;
     LUException(const LUException&);
     //! \brief destructor
     ~LUException() noexcept override;
@@ -37,11 +37,11 @@ namespace tfel::math {
    */
   struct TFELMATH_VISIBILITY_EXPORT LUUnmatchedSize final : public LUException {
     LUUnmatchedSize();
-    LUUnmatchedSize(LUUnmatchedSize&&);
+    LUUnmatchedSize(LUUnmatchedSize&&) noexcept;
     LUUnmatchedSize(const LUUnmatchedSize&);
     //! \return a string describing the error
-    const char* what() const noexcept override final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~LUUnmatchedSize() noexcept override;
   };  // end of struct LUException
 
@@ -52,11 +52,11 @@ namespace tfel::math {
   struct TFELMATH_VISIBILITY_EXPORT LUMatrixNotSquare final
       : public LUException {
     LUMatrixNotSquare();
-    LUMatrixNotSquare(LUMatrixNotSquare&&);
+    LUMatrixNotSquare(LUMatrixNotSquare&&) noexcept;
     LUMatrixNotSquare(const LUMatrixNotSquare&);
     //! \return a string describing the error
-    const char* what() const noexcept override final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~LUMatrixNotSquare() noexcept override;
   };  // end of struct LUException
 
@@ -67,11 +67,11 @@ namespace tfel::math {
   struct TFELMATH_VISIBILITY_EXPORT LUInvalidMatrixSize final
       : public LUException {
     LUInvalidMatrixSize();
-    LUInvalidMatrixSize(LUInvalidMatrixSize&&);
+    LUInvalidMatrixSize(LUInvalidMatrixSize&&) noexcept;
     LUInvalidMatrixSize(const LUInvalidMatrixSize&);
     //! \return a string describing the error
-    const char* what() const noexcept override final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~LUInvalidMatrixSize() noexcept override;
   };  // end of struct LUException
 
@@ -81,11 +81,11 @@ namespace tfel::math {
    */
   struct TFELMATH_VISIBILITY_EXPORT LUNullPivot final : public LUException {
     LUNullPivot();
-    LUNullPivot(LUNullPivot&&);
+    LUNullPivot(LUNullPivot&&) noexcept;
     LUNullPivot(const LUNullPivot&);
     //! \return a string describing the error
-    const char* what() const noexcept override final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~LUNullPivot() noexcept override;
   };  // end of struct LUException
 
@@ -96,11 +96,11 @@ namespace tfel::math {
   struct TFELMATH_VISIBILITY_EXPORT LUNullDeterminant final
       : public LUException {
     LUNullDeterminant();
-    LUNullDeterminant(LUNullDeterminant&&);
+    LUNullDeterminant(LUNullDeterminant&&) noexcept;
     LUNullDeterminant(const LUNullDeterminant&);
     //! \return a string describing the error
-    const char* what() const noexcept override final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~LUNullDeterminant() noexcept override;
   };  // end of struct LUException
 

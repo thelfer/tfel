@@ -15,37 +15,21 @@
 #include <pybind11/stl.h>
 #include "TFEL/Math/ST2toST2/WalpoleBasis.hxx"
 
-
 void declareWalpoleBasis(pybind11::module_& m) {
   using namespace tfel::math;
   using TIBasis = TransverseIsotropicWalpoleBasis<double>;
-  pybind11::class_<TIBasis>(m,"WalpoleBasis")
+  pybind11::class_<TIBasis>(m, "WalpoleBasis")
       .def(pybind11::init<>())
-      .def("p", [](const tvector<3u,double> &n) {
-             return TIBasis::p(n);
-           })
-      .def("q", [](const tvector<3u,double> &n) {
-             return TIBasis::q(n);
-           })
-      .def("E1", [](const tvector<3u,double> &n) {
-             return TIBasis::E1(n);
-           })
-      .def("E2", [](const tvector<3u,double> &n) {
-             return TIBasis::E2(n);
-           })
-      .def("E3", [](const tvector<3u,double> &n) {
-             return TIBasis::E3(n);
-           })
-      .def("E4", [](const tvector<3u,double> &n) {
-             return TIBasis::E4(n);
-           })
-      .def("F", [](const tvector<3u,double> &n) {
-             return TIBasis::F(n);
-           })
-      .def("G", [](const tvector<3u,double> &n) {
-             return TIBasis::G(n);
-           })
-      .def("components", [](const tvector<3u,double> &n, const st2tost2<3u,double> &A) {
-             return TIBasis::components(n,A);
+      .def("p", [](const tvector<3u, double>& n) { return TIBasis::p(n); })
+      .def("q", [](const tvector<3u, double>& n) { return TIBasis::q(n); })
+      .def("E1", [](const tvector<3u, double>& n) { return TIBasis::E1(n); })
+      .def("E2", [](const tvector<3u, double>& n) { return TIBasis::E2(n); })
+      .def("E3", [](const tvector<3u, double>& n) { return TIBasis::E3(n); })
+      .def("E4", [](const tvector<3u, double>& n) { return TIBasis::E4(n); })
+      .def("F", [](const tvector<3u, double>& n) { return TIBasis::F(n); })
+      .def("G", [](const tvector<3u, double>& n) { return TIBasis::G(n); })
+      .def("components",
+           [](const tvector<3u, double>& n, const st2tost2<3u, double>& A) {
+             return TIBasis::components(n, A);
            });
 }

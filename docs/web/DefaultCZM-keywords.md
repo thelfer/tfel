@@ -60,8 +60,8 @@ expansion:
 
 - along the second direction of orthotropy if the default orthotropic axes
   convention has been selected.
-- along the 'z' direction if the pipe orthotropic axes has been
-  defined is defined. The 'z' direction is the second direction of
+- along the 'z' direction if the pipe orthotropic axes convention has been
+  defined. The 'z' direction is the second direction of
   orthotropy for all hypotheses except Generalised Plane Strain, Plane
   Strain and Plane Stress hypotheses.
 

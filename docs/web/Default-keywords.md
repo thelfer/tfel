@@ -60,8 +60,8 @@ expansion:
 
 - along the second direction of orthotropy if the default orthotropic axes
   convention has been selected.
-- along the 'z' direction if the pipe orthotropic axes has been
-  defined is defined. The 'z' direction is the second direction of
+- along the 'z' direction if the pipe orthotropic axes convention has been
+  defined. The 'z' direction is the second direction of
   orthotropy for all hypotheses except Generalised Plane Strain, Plane
   Strain and Plane Stress hypotheses.
 
@@ -197,7 +197,7 @@ of the behaviour.
 In the isotropic case, two entries are expected in the array, in that
 order:
 
-- the Young Modulus
+- the Young modulus
 - the Poisson ratio
 
 ## Orthotropic case
@@ -205,11 +205,11 @@ order:
 In the orthotropic case, 9 entries are expected in the array, in that
 order:
 
-- three Young modulus \((E_{1},E_{2},E_{3})\)
-- three Poisson ratio \((nu_{12},nu_{23},nu_{13})\)
-- three shear modulus \((G_{12},G_{23},G_{13})\)
+- three Young moduli \((E_{1},E_{2},E_{3})\)
+- three Poisson ratios \((nu_{12},nu_{23},nu_{13})\)
+- three shear moduli \((G_{12},G_{23},G_{13})\)
 
-In the orthoropic case, computation of the stiffness tensor rely on the
+In the orthotropic case, computation of the stiffness tensor relies on the
 definition of an orthotropic convention. For example, the `Pipe`
 orthotropic convention will lead to automatically exchange the second
 and first axes when computing the stiffness tensor for the plane strain,
@@ -237,21 +237,21 @@ evolves during the time step.
 
 # The `@ComputeStressFreeExpansion` keyword
 
-The `ComputeStressFreeExansion` keyword introduces a code block which
+The `ComputeStressFreeExpansion` keyword introduces a code block which
 allows the user to define an arbitrary expansion.
 
 The code block is meant to **update** two symmetric tensors `dl0_l0`
-and `dl1_l0` which respectively stands for the value of the expansion
+and `dl1_l0` which respectively stand for the value of the expansion
 at the beginning and at the end of the time step.
 
 ## Note
 
 - How `dl0_l0` and `dl1_l0` are treated depends on the behaviour type
   (small or finite strain, CZM) and on the finite strain strategies
-  used, if any (in this case, the user have to refer the interface
+  used, if any (in this case, the user has to refer to the interface
   documentation).
 - Local variables can't be used in a `@ComputeStressFreeExpansion`
-  block, because stress-free expansion are computed before the
+  block, because stress-free expansions are computed before the
   initialisation of those variables.
 
 ## Example
@@ -273,11 +273,11 @@ Ctau.setEntryName("SolidSwellingCoefficient");
 
 # The `@ComputeThermalExpansion` keyword
 
-The `ComputeThermalExansion` keyword is followed either by a material
-property description or an array of material descriptions (othotropic
+The `ComputeThermalExpansion` keyword is followed either by a material
+property description or an array of material descriptions (orthotropic
 behaviours) giving the mean linear thermal expansion coefficient.
 
-A material decription is either a floating point number, a formula or
+A material description is either a floating point number, a formula or
 the name of an external MFront file.
 
 The thermal expansion is computed as follows:
@@ -289,8 +289,8 @@ where:
 
 - \(T^{\alpha}\) is the reference temperature for the thermal
   expansion.
-- \(T^{i}\) is the reference temperature at which of the geometry has
-  been measured which is generally assumed to be equal to the
+- \(T^{i}\) is the reference temperature at which the geometry has
+  been measured, which is generally assumed to be equal to the
   temperature at the beginning of the computations, in the undeformed
   state.
 
@@ -324,7 +324,7 @@ Whatever the way used to defined \(T^{\alpha}\), a parameter called
 
 ## Parameter associated with the reference temperature for the geometry
 
-The reference temperature at which of the geometry has been measured,
+The reference temperature at which the geometry has been measured,
 \(T^{i}\), has a default value of \(293.15\,K\). This can be changed
 using the automatically defined
 `ReferenceTemperatureForInitialGeometry` parameter.
@@ -442,7 +442,7 @@ Options can be passed to a DSL as follows:
 
 ### Defining `DSL` options on the command line:
 
-`MFront` have various command line arguments to define options passed to DSLs:
+`MFront` has various command line arguments to define options passed to DSLs:
 
 - `--dsl-option`, which allows to define options passed to domain
   specific languages.
@@ -476,7 +476,7 @@ The following options are available for all DSLs:
   parameters can be modified from an external state file. This feature is
   only implemented by a few interfaces and is enabled by default.
 - `default_out_of_bounds_policy` (string), which selects the default out
-  of bounds policy. Allowed values ar `None` (the default), `Warning` or
+  of bounds policy. Allowed values are `None` (the default), `Warning` or
   `Strict`.
 - `out_of_bounds_policy_runtime_modification` (boolean), which states if
   the out-of-bounds policy can be changed at runtime. By default, this
@@ -489,7 +489,7 @@ The following options are available for all DSLs:
   (boolean), which states if the temperature shall be automatically
   declared as an external state variable.
 - `overriding_parameters`, which allows to specify overriding
-  parameters. This parameters must be a map associating variables names
+  parameters. This parameter must be a map associating variable names
   and default values of the overriding parameters.
 
 ## Example
@@ -569,14 +569,14 @@ This update is called at the end of the behaviour integration, if
 convergence was reached, after that:
 
 - Internal state variables have been updated.
-- The stress at the end of the time step have been computed.
+- The stress at the end of the time step has been computed.
 
 ## Example
 
 ~~~~ {#DissipatedEnergy .cpp}
 @DissipatedEnergy{
 	Psi_d += sig|(deto-deel)
-	// If would have been better to store the initial value of the
+	// It would have been better to store the initial value of the
     // stress in a local variable sig0 and then used 
 
 }
@@ -702,7 +702,7 @@ The keyword `@Initialize` is not documented yet
 
 The `@InitializeFunction` keyword introduces a code block that can be
 used to initialize internal state variables at the very beginning of the
-computation. Initialize functions may have user so-called
+computation. Initialize functions may have user-defined so-called
 *initialize function variables*.
 
 In this version, only the `generic` interface generates functions
@@ -713,7 +713,7 @@ the initialize functions generated by the `generic` interfaces).
 Because initialize functions are called before any behaviour
 integration, special care to the meaning of the variables must be taken:
 
-- The gradients and external state variable will have their values at
+- The gradients and external state variables will have their values at
   the beginning of the time step and their increments will be null.
 - The thermodynamic forces will have their values at the beginning of
   the time step.
@@ -750,13 +750,13 @@ Initialize function variables are introduced by the
 Initialize function variables are only defined in initialize functions,
 and can't be used in the other code blocks.
 
-Contrary most variables (internal state variables, external state
+Contrary to most variables (internal state variables, external state
 variables, etc.), initialize function variables can be defined after the
 first code block. However, care must be taken to declare initialize
 function variables **before** their use in an initialize function.
 
 Note that an initialize function variable can be used in different
-initialize function.
+initialize functions.
 
 # The `@InitializeLocalVariables` keyword
 
@@ -912,7 +912,7 @@ This update is called at the end of the behaviour integration, if
 convergence was reached, after that:
 
 - Internal state variables have been updated.
-- The stress at the end of the time step have been computed.
+- The stress at the end of the time step has been computed.
 
 ## Example
 
@@ -955,7 +955,7 @@ this symmetry is the default one, this keyword is seldom used.
 # The `@IsotropicElasticBehaviour` keyword
 
 The `@IsotropicElasticBehaviour` is used to declare that the elastic
-behaviour is isotropic even though the material as been declared
+behaviour is isotropic even though the material has been declared
 orthotropic. This declaration affects the `@RequireStiffnessTensor`
 behaviour.
 
@@ -996,7 +996,7 @@ The `@Link` keyword let the user specify additional linker flags used
 to build their shared library/executables. This keyword must be
 followed by a string or an array of strings.
 
-Usage of the `@Link` keyword is deprecated a linker flags are not
+Usage of the `@Link` keyword is deprecated as linker flags are not
 portable. The user may prefer using the `LDFLAGS` environment
 variable.
 
@@ -1004,7 +1004,7 @@ variable.
 
 ~~~~{.cpp}
 // explicit link with libm.so
-// (not necessary in pratice)
+// (not necessary in practice)
 @Link "-lm";
 ~~~~
 
@@ -1056,7 +1056,7 @@ a function using the `mfront` interface. This function is available
 in every standard code blocks.
 
 The `@MaterialLaw` keyword is followed by a string or an array of
-string identifying `mfront` files. 
+strings identifying `mfront` files. 
 
 ## Search paths
 
@@ -1070,7 +1070,7 @@ Files to be imported are searched, in that order:
 
 ## Note
 
-The `mfront` interface has been created to avoid names conflict.
+The `mfront` interface has been created to avoid name conflicts.
 
 For internal reasons, `mfront` reports the creation of an auxiliary
 library which is of no use.
@@ -1183,8 +1183,8 @@ The `@Model` keyword is used to call an external model from a
 behaviour. This model is called before any code block defining the
 behaviour.
 
-This model is meant to make evolve one or more state variables of the
-material.
+This model is meant to make one or more state variables of the
+material evolve.
 
 From the behaviour point of view, those state variables are declared
 as additional auxiliary state variables, but their values and their
@@ -1220,7 +1220,7 @@ The keyword `@ModellingHypothesis` is not documented yet
 The `@OrthotropicBehaviour` declares the behaviour to be orthotropic.
 
 As an option, the orthotropic behaviour can be followed by an
-orthotropic axes convention. Three orthotropic axes convention are
+orthotropic axes convention. Three orthotropic axes conventions are
 currently supported:
 
 - `Default`: no specific treatment. This can lead to serious
@@ -1228,7 +1228,7 @@ currently supported:
   definition of the orthotropic axes in most solvers.
 - `Pipe`: the behaviour has been written using the Pipe convention
   described in the MFront behaviour manual. With this convention, the
-  results of various keywords depends on the modelling hypothesis. For
+  results of various keywords depend on the modelling hypothesis. For
   example, this option allows a consistent definition of the elastic
   material properties (see `@StiffnessTensor`, `@ElasticProperties`),
   thermal expansion coefficients (see `@ComputeThermalExpansion`) and
@@ -1277,7 +1277,7 @@ The `@Paser` keyword is a deprecated synonymous of `@DSL`.
 
 # The `@PhysicalBounds` keyword
 
-The `@PhysicalBounds` keyword let the use define the physical domain
+The `@PhysicalBounds` keyword let the user define the physical domain
 of a variable.
 
 The `@PhysicalBounds` keyword is followed by a variable name, the
@@ -1330,7 +1330,7 @@ data structure named `initial_state`.
 Concerning material properties, they have their values at the end of the
 time step as usual.
 
-For the gradients and external state variables have their values at the
+The gradients and external state variables have their values at the
 end of the time step. Their values at the beginning of the time step are
 available in the `initial_state` data structure (if defined). Their
 increments have their usual values.
@@ -1364,7 +1364,7 @@ Post-processing variables are introduced by the
 Post-processing variables are only defined in post-processing, and
 can't be used in the other code blocks.
 
-Contrary most variables (internal state variables, external state
+Contrary to most variables (internal state variables, external state
 variables, etc.), post-processing variables can be defined after the
 first code block. However, care must be taken to declare post-processing
 variables **before** their use in a post-processing.
@@ -1387,7 +1387,7 @@ The keyword `@PredictionOperator` is not documented yet
 # The `@Private` keyword
 
 The `@Private` keyword let the user define private methods or members
-of in the generated behaviour class.
+in the generated behaviour class.
 
 ## Example
 
@@ -1403,7 +1403,7 @@ of in the generated behaviour class.
 
 The `@Profiling` keyword is followed by a boolean. If true, several
 high resolutions clocks will be introduced in the generated code to
-profile performance bottlenecks. The total time spend in various
+profile performance bottlenecks. The total time spent in various
 portions of the generated code will be stored and displayed when the
 calling process exits.
 
@@ -1424,8 +1424,8 @@ The keyword `@ProvidesTangentOperator` is not documented yet
 # The `@Relocation` keyword
 
 The `@Relocation` keyword can be used to impose a boundary condition
-specific the fuel performances describing the rigid body translation
-of fuel pellet fragment as an additional strain.
+specific to the fuel performances describing the rigid body translation
+of fuel pellet fragments as an additional strain.
 
 - an external state variable name.
 - a string giving an mfront file implementing a relocation model.
@@ -1440,7 +1440,7 @@ This keyword is only effective in:
 - plane strain.
 - plane stress.
 
-No expansion are added in the tridimensional and axisymmetrical
+No expansion is added in the tridimensional and axisymmetrical
 modelling hypotheses.
 
 ## Physical description
@@ -1534,8 +1534,8 @@ A single slip systems family can be defined by one of the following
 keywords: `@SlidingSystem`, `@GlidingSystem` or `@SlipSystem`. Those
 keywords are followed by the definition of one family of slip systems.
 
-A slip system is defined by its plane and its Burgers'vector as
-follows, for a `Cubic` and `FCC` crystal structures:
+A slip system is defined by its plane and its Burgers' vector as
+follows, for the `Cubic` and `FCC` crystal structures:
 
 ~~~~{.cpp}
 <1,-1,0>{1,1,1}
@@ -1552,11 +1552,11 @@ Thus, an example of the usage of the `@SlidingSystem` keyword is:
 @SlidingSystem <1,-1,0>{1,1,1};
 ~~~~
 
-For a given slip systems family, a set of slip systems are generated
+For a given slip systems family, a set of slip systems is generated
 by symmetry using code extracted from the `NUMODIS` code. The previous
 example defines \(12\) slip systems.
 
-Once the sliding system families has been defined, a static integer
+Once the sliding system families have been defined, a static integer
 variable called `Nss` is available which contains the total number of
 slip systems defined. In the previous example, `Nss` value is \(12\).
 
@@ -1592,7 +1592,7 @@ Consider the following example:
 @SlidingSystem <1,-1,0>{1,1,1};
 ~~~~
 
-If the previous code is saved a file called
+If the previous code is saved in a file called
 `SlipSystemGenerationTest.mfront`, one may use `mfront-query` as
 follows:
 
@@ -1670,7 +1670,7 @@ slip systems. The user can refer to the description of the
 
 The `@Sources` keyword let the user define a code block that will be
 integrated in the generated sources of a behaviour. This allows the
-user to implement their own classes or functions. These declarations of
+user to implement their own classes or functions. The declarations of
 such classes or functions can be made in a code block introduced by
 the `@Includes` keyword.
 
@@ -1784,7 +1784,7 @@ an equal sign and its value.
 
 # The `@StrainMeasure` keyword
 
-This keyword let the user choose to the strain measure. This choice
+This keyword let the user choose the strain measure. This choice
 also defines the meaning of the stress tensor by energetic duality.
 
 The following values are supported:
@@ -1795,7 +1795,7 @@ The following values are supported:
   strain analysis. The dual stress is the second Piola-Kirchhoff
   stress.
 - `Hencky`: the behaviour is meant to be used in a finite
-  strain analysis. The dual stress has now specific name.
+  strain analysis. The dual stress has no specific name.
 
 Two options can be specified:
 
@@ -1814,9 +1814,9 @@ material frame.
 
 ## Note
 
-1. The computation of the strain measure and its dual and the convertion
+1. The computation of the strain measure and its dual and the conversion
   of the tangent operator is delegated to the interface, because several
-  finite element solver already provides those operations natively
+  finite element solvers already provide those operations natively
   (`Code_Aster`, `ZebuloN`, etc...)
 
 ## Example
@@ -1834,7 +1834,7 @@ material frame.
 
 # The `@Swelling` keyword
 
-The `@Swelling` keyword allow the user to specify that an additional
+The `@Swelling` keyword allows the user to specify that an additional
 stress-free expansion must be taken into account.
 
 This keyword has the following options:
@@ -1866,14 +1866,14 @@ s =
 A stress-free expansion is either defined by:
 
 - A string pointing to a mfront model.
-- `0`, which allow the definition of a null swelling.
+- `0`, which allows the definition of a null swelling.
 - The name of an external state variable.
 
 ## Notes
 
 A null swelling is not allowed when only one stress-free expansion
 
-The definition of three stress-free expansion is only valid for
+The definition of three stress-free expansions is only valid for
 orthotropic behaviours and is not compatible with the `Volume` option.
 
 ## Examples
@@ -1931,7 +1931,7 @@ the possible values for `smt` are the following:
 # The `@UnitSystem` keyword
 
 The `@UnitSystem` keyword declares that the state variables, external
-state variables a parameters are expressed in a given unit system. In
+state variables and parameters are expressed in a given unit system. In
 the current version of `MFront`, the only supported unit system is the
 international system of units, denoted `SI`.
 
@@ -1961,9 +1961,9 @@ variables are not updated.
 
 In Runge-Kutta domain specific languages, the code declared by
 `UpdateAuxiliaryStateVariables` is called after each successful time
-step. Keep in mind that most Runge-Kutta algorithms performs internal
+step. Keep in mind that most Runge-Kutta algorithms perform internal
 substepping: in this case, the code declared by
-`UpdateAuxiliaryStateVariables` may be called several time during the
+`UpdateAuxiliaryStateVariables` may be called several times during the
 behaviour integration. An additional variable called `dt_`, which is
 lower than the total time step increment `dt` if substepping is
 performed, gives the current time increment. The external state
@@ -1996,7 +1996,7 @@ The `@UpdateAuxiliaryStateVars` keyword is a deprecated synonymous of
 
 # The `@UseQt` keyword
 
-The `UseQt` keyword (use quantities) specify if the behaviour
+The `UseQt` keyword (use quantities) specifies if the behaviour
 compilation should perform compile-time units checks. It is followed
 by a boolean.
 

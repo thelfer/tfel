@@ -47,25 +47,25 @@ namespace tfel::tests {
     //! copy constructor
     TestResult(TestResult&&) noexcept;
     //! assignement operator
-    TestResult& operator=(TestResult&&);
+    TestResult& operator=(TestResult&&) noexcept;
     //! assignement operator
     TestResult& operator=(const TestResult&);
     //! \brief report success
-    bool success() const;
+    [[nodiscard]] bool success() const;
     //! \return a description of the test
-    const std::string& getDescription() const;
+    [[nodiscard]] const std::string& getDescription() const;
     //! \return a description of why the test fails
-    const std::string& getFailureDescription() const;
+    [[nodiscard]] const std::string& getFailureDescription() const;
     /*!
      *  \return a read-only (constant) iterator that points to the
      *  first element in the vector.
      */
-    const_iterator begin() const;
+    [[nodiscard]] const_iterator begin() const;
     /*!
      *  \return an iterator that points one past
      *  the last element in the vector
      */
-    const_iterator end() const;
+    [[nodiscard]] const_iterator end() const;
     /*!
      * \brief This is a typical stack operation. The function
      * creates an element at the end of the vector and assigns the
@@ -82,8 +82,8 @@ namespace tfel::tests {
      */
     void setTestDuration(const double);
     //! \return the test duration
-    double duration() const;
-    //! destructor
+    [[nodiscard]] double duration() const;
+    //! \brief destructor
     ~TestResult();
 
    private:

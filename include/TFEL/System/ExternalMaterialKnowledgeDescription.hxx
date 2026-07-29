@@ -35,13 +35,13 @@ namespace tfel::system {
     ExternalMaterialKnowledgeDescription();
     //! \brief move constructor
     ExternalMaterialKnowledgeDescription(
-        ExternalMaterialKnowledgeDescription&&);
+        ExternalMaterialKnowledgeDescription&&) noexcept;
     //! \brief move constructor
     ExternalMaterialKnowledgeDescription(
         const ExternalMaterialKnowledgeDescription&);
     //! \brief move assignement
     ExternalMaterialKnowledgeDescription& operator=(
-        ExternalMaterialKnowledgeDescription&&);
+        ExternalMaterialKnowledgeDescription&&) noexcept;
     //! \brief standard assignement
     ExternalMaterialKnowledgeDescription& operator=(
         const ExternalMaterialKnowledgeDescription&);

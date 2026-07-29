@@ -47,10 +47,10 @@ namespace mfront {
      * \param[in] f    : filename
      */
     DocumentationGeneratorBase(const int,
-                               const char *const *const,
-                               const std::string &);
+                               const char* const* const,
+                               const std::string&);
     virtual void exe() const = 0;
-    //! destructor
+    //! \brief destructor
     ~DocumentationGeneratorBase() override;
 
     // Private member data
@@ -66,18 +66,18 @@ namespace mfront {
 
     //! \brief generate output on standard output
     bool std_output = false;
-    //! type of ouput
+    //! \brief type of ouput
     OutputType otype;
     //! \brief generate latex macros for header of output file
-    static void writeStandardLatexMacros(std::ostream &);
+    static void writeStandardLatexMacros(std::ostream&);
 
     //! \brief data structure describing a variable
     struct VariableInformationBase {
       VariableInformationBase();
-      VariableInformationBase(VariableInformationBase &&) noexcept;
-      VariableInformationBase(const VariableInformationBase &);
-      VariableInformationBase &operator=(VariableInformationBase &&);
-      VariableInformationBase &operator=(const VariableInformationBase &);
+      VariableInformationBase(VariableInformationBase&&) noexcept;
+      VariableInformationBase(const VariableInformationBase&);
+      VariableInformationBase& operator=(VariableInformationBase&&) noexcept;
+      VariableInformationBase& operator=(const VariableInformationBase&);
       ~VariableInformationBase() noexcept;
       std::string name;
       std::string type;
@@ -90,19 +90,19 @@ namespace mfront {
     //! ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<
         DocumentationGeneratorBase>;
+    //! \brief treat an unknown argument
+    void treatUnknownArgument() final;
+    //! \brief get the version description
+    [[nodiscard]] std::string getVersionDescription() const final;
+    //! \brief get the usage description
+    [[nodiscard]] std::string getUsageDescription() const final;
+    //! \brief return the current argument
+    [[nodiscard]] const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const final;
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! treat the web argument
     virtual void treatWeb();
-    //! return the current argument
-    const tfel::utilities::Argument &getCurrentCommandLineArgument()
-        const override final;
-    //! treat an unknown argument
-    void treatUnknownArgument() override final;
-    //! get the version description
-    std::string getVersionDescription() const override final;
-    //! get the usage description
-    std::string getUsageDescription() const override final;
 
   };  // end of struct DocumentationGeneratorBase
 

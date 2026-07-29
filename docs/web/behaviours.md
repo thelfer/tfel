@@ -61,7 +61,7 @@ techniques used: `ZebFront` mostly relies on object-oriented
 techniques where `MFront` relies on generic programming leading to
 almost orthogonal design choices.
 
-Three kind of mechanical behaviours are currently considered with
+Three kinds of mechanical behaviours are currently considered with
 `MFront`: small and finite strain behaviours and cohesive zone
 models.
 
@@ -82,7 +82,7 @@ At each time step, the following resolution procedure is used:
   be handled by behaviour implementations made with `MFront`;
 2. an iterative process similar to the Newton-Raphson algorithm is used
   to find a displacement that will satisfy the mechanical
-  equilibrium. Given an estimation of the displacement at the end the
+  equilibrium. Given an estimation of the displacement at the end of the
   time step, one computes at each integration point an estimation of
   the increment of the deformation tensor \(\Delta\,\tepsilonto\). The
   mechanical behaviour is then called and provides an associated
@@ -100,7 +100,7 @@ A mechanical behaviour can thus be viewed as functional:
 \mathcal{F}\paren{\bts{\tsigma},\bts{Y_{i}},\Delta\,\tepsilonto,\Delta\,t,\ldots}
 \]
 
-The dots \(\ldots\) means that the behaviour may also depend on
+The dots \(\ldots\) mean that the behaviour may also depend on
 external state variables evolutions with time, namely the temperature,
 the irradiation damage, and so on.
 
@@ -137,7 +137,7 @@ where \(\sigmaeq\) is the Von Mises stress, \(p\) the equivalent
 plastic strain, \(H\) the isotropic hardening slope and \(\sigma_{0}\)
 the initial elasticity limit.
 
-The generated code represent a total amount of \(1\,512\) lines of
+The generated code represents a total amount of \(1\,512\) lines of
 `̀C++` code and provides:
 
 1. optimised implementations of the behaviour for various modelling
@@ -148,12 +148,12 @@ The generated code represent a total amount of \(1\,512\) lines of
   in the description of the [TFEL/Math library](tfel-math.html).
 2. the computation of the prediction operator;
 3. meta-data about the required material properties, the number of
-  states variables, etc... that can be retrieved dynamically (For the
+  state variables, etc... that can be retrieved dynamically (For the
   sake of simplicity, no glossary name was specified in this example).
   This mechanism is typically used by solvers based on the [`MGIS`
   libray](https://thelfer.github.io/mgis/web/index.html) appropriately
   calling the behaviour;
-4. the computation of a tangent matrix operator (various choice are
+4. the computation of a tangent matrix operator (various choices are
   possible: elastic, secant, consistent);
 5. dynamically loadable functions allowing the user to change various
   parameters of the behaviour (the convergence criterion of the
@@ -167,7 +167,7 @@ The generated code represent a total amount of \(1\,512\) lines of
 
 Local divergence of the implicit algorithm can be handled through an
 appropriate substepping procedure. This feature is not enabled by
-default, but appropriate keywords gives to the end user explicit
+default, but appropriate keywords give the end user explicit
 control over this procedure.
 
 ### Finite strain strategies
@@ -178,11 +178,11 @@ strain computations can be generated. Two lagrangian finite strain
 strategies are currently available:
 
 1. finite rotations, small strains\cite{edf_loi_2013}. This
-  method allows the re-use a behaviour whose material parameters \(H\)
+  method allows the re-use of a behaviour whose material parameters \(H\)
   and \(\sigma_{0}\) were identified through small strain computations
   in the context of finite rotations without any
   re-identification. The physical meaning of the pre- and
-  post-processing stages are discussed by
+  post-processing stages is discussed by
   Doghri (see @doghri_mechanics_2000);
 2. lagrangian logarithmic strains as proposed by Miehe, Apel and
   Lambrecht (see @miehe_anisotropic_2002;edf_modeles_2013).  The use
@@ -255,7 +255,7 @@ The implementation of the Tvergaard cohesive zone model using the
 ~~~~
 
 Details about the computation of the consistent tangent operator were
-eluded. The opening displacement \(\vec{u}\) is automatically
+elided. The opening displacement \(\vec{u}\) is automatically
 decomposed into the normal opening displacement \(u_{n}\) and its
 tangential opening displacement \(\vec{u}_{t}\)
 
@@ -362,7 +362,7 @@ blocks [see @besson_mecanique_2001]:
 
 ### Time independent mechanisms
 
-For state variable associated with time-independent mechanisms, the
+For state variables associated with time-independent mechanisms, the
 implicit equation shall impose that the system lies on the yield
 surface when plastic loading occurs.
 
@@ -391,10 +391,10 @@ Several algorithms are available to solve the previous implicit system:
   sometimes be interesting as one may compute analytically some part of
   the jacobian matrix and let the algorithm compute the other parts. If
   the computation of those other parts takes a significant amount of CPU
-  time, this algorithm can in same cases outperform the Newton-Raphson
+  time, this algorithm can in some cases outperform the Newton-Raphson
   algorithm.
 - `PowellDogLeg_XX` algorithm, where `XX` is one of the previous
-  algorithm. Those trust-region algorithms implement the classical
+  algorithms. Those trust-region algorithms implement the classical
   Powell dogleg method [see @chen_modification_1981] to improve the
   robustness of the resolution.
 

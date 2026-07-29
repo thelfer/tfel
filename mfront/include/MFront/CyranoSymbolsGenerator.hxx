@@ -19,34 +19,35 @@
 namespace mfront {
 
   /*!
-   * This class provides some helper function for behaviours
+   * \brief this class provides some helper function for behaviours
    * interfaces based on the umat standard
    */
   struct MFRONT_VISIBILITY_EXPORT CyranoSymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     CyranoSymbolsGenerator();
-    void writeSpecificSymbols(std::ostream &,
-                              const BehaviourInterfaceBase &,
-                              const BehaviourDescription &,
-                              const FileDescription &,
-                              const std::string &) const override;
-    void writeAdditionalSymbols(std::ostream &,
-                                const BehaviourInterfaceBase &,
-                                const BehaviourDescription &,
-                                const FileDescription &,
-                                const std::string &,
+    //
+    void writeSpecificSymbols(std::ostream&,
+                              const BehaviourInterfaceBase&,
+                              const BehaviourDescription&,
+                              const FileDescription&,
+                              const std::string&) const override;
+    void writeAdditionalSymbols(std::ostream&,
+                                const BehaviourInterfaceBase&,
+                                const BehaviourDescription&,
+                                const FileDescription&,
+                                const std::string&,
                                 const Hypothesis) const override;
-    void writeBehaviourTypeSymbols(std::ostream &,
-                                   const BehaviourInterfaceBase &,
-                                   const BehaviourDescription &,
-                                   const std::string &) const override;
-    void writeBehaviourKinematicSymbols(std::ostream &,
-                                        const BehaviourInterfaceBase &,
-                                        const BehaviourDescription &,
-                                        const std::string &) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    void writeBehaviourTypeSymbols(std::ostream&,
+                                   const BehaviourInterfaceBase&,
+                                   const BehaviourDescription&,
+                                   const std::string&) const override;
+    void writeBehaviourKinematicSymbols(std::ostream&,
+                                        const BehaviourInterfaceBase&,
+                                        const BehaviourDescription&,
+                                        const std::string&) const override;
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~CyranoSymbolsGenerator() override;
   };  // end of struct CyranoSymbolsGenerator
 

@@ -19,7 +19,7 @@ versions `2.0.x`, and thus do not describe the latest available version.
 For a new (English speaking) user, we would highly recommend:
 
 - Read the **reference paper** @helfer_introducing_2015. Although this
-  paper covers versions `2.0.x`, it gives an good general overview of
+  paper covers versions `2.0.x`, it gives a good general overview of
   `TFEL` and `MFront`'s abilities.
 - Read the [`getting-started` page](getting-started.html).
 - Read the page dedicated to second and fourth order tensors,
@@ -37,7 +37,7 @@ For a new (English speaking) user, we would highly recommend:
 - Finally, you may want to have a look at the documentation of the
   interface of the solver that you plan to use (see below for links).
 
-For spanish users, Jordi Alberich have written "A spanish introduction
+For Spanish users, Jordi Alberich has written "A Spanish introduction
 to `MFront` and `Salome-MECA`", which is available
 [here](tutorial-spanish.html).
 
@@ -53,7 +53,7 @@ to `MFront` and `Salome-MECA`", which is available
 
 - A fairly complete tutorial is available
   [here](documents/tutoriel/tutoriel.pdf) (in French).
-- For spanish users, Jordi Alberich have written "A spanish
+- For Spanish users, Jordi Alberich has written "A Spanish
   introduction to `MFront` and `Salome-MECA`", which is available
   [here](tutorial-spanish.html).
 

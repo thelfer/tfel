@@ -29,11 +29,12 @@ namespace tfel::system {
   }  // end of ThreadPool::ResultBase::throwNullException
 
   ThreadedTaskResult<void>::ThreadedTaskResult() = default;
-  ThreadedTaskResult<void>::ThreadedTaskResult(ThreadedTaskResult&&) = default;
+  ThreadedTaskResult<void>::ThreadedTaskResult(ThreadedTaskResult&&) noexcept =
+      default;
   ThreadedTaskResult<void>::ThreadedTaskResult(const ThreadedTaskResult&) =
       default;
   ThreadedTaskResult<void>& ThreadedTaskResult<void>::operator=(
-      ThreadedTaskResult&&) = default;
+      ThreadedTaskResult&&) noexcept = default;
   ThreadedTaskResult<void>& ThreadedTaskResult<void>::operator=(
       const ThreadedTaskResult&) = default;
   ThreadedTaskResult<void>::~ThreadedTaskResult() = default;

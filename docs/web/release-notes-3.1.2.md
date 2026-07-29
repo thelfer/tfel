@@ -11,14 +11,14 @@ solved are described below.
 
 The documentation of the `vumat` interface has been badly understood in
 plane stress. In some cases (namely using the `Native` finite strain
-strategy), the conventions about tensors has not been transcribed
-appropriately (there have been a confusion with the `Abaqus/Standard`
+strategy), the conventions about tensors have not been transcribed
+appropriately (there has been confusion with the `Abaqus/Standard`
 conventions).
 
 > **Note**
 > 
 > The `Native` finite strain strategy in `Abaqus/Explicit` (based on a
-> corotational formulation) is not supported in `MTest`, so there is no
+> corotational formulation) is not supported in `MTest`, so there are no
 > unit-tests associated.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/131/>
@@ -34,13 +34,13 @@ The following statement would not work in previous versions:
 
 To solve this issue, a new method `readArrayOfVariablesSize` has been
 introduced in the `DSLBase` class. This method is now shared by all
-methods which reads the size of an array of variables.
+methods which read the size of an array of variables.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/130/>
 
 ## Ticket #129: Arrays of parameters are not supported in simple precision
 
-The trouble boils down to the fact that, du to intended limitations of
+The trouble boils down to the fact that, due to intended limitations of
 the `tvector` class, downcasting from double precision to single
 precision is not allowed by the assignment operator.
 
@@ -64,14 +64,14 @@ The trouble has been circumvented by introducing a minimal time step of
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/128/>
 
-## Ticket #127: Substepping in the `Cast3M` and `Cyrano` interface may lead to a invalid convergence du to integer overflow
+## Ticket #127: Substepping in the `Cast3M` and `Cyrano` interface may lead to an invalid convergence due to integer overflow
 
-Using substeping with a high number of substeps may lead to a to integer
+Using substepping with a high number of substeps may lead to an integer
 overflow in the counter associated with the remaining steps that have to
 be performed.
 
 This counter was declared as an `unsigned short`. For more than 14
-substeps, this counter would overflow and was automatically set egal to
+substeps, this counter would overflow and was automatically set equal to
 0, leading to an erroneous convergence. This counter has been changed to
 `unsigned int` to avoid the problem.
 
@@ -79,14 +79,14 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/127/>
 
 ## Ticket #126: Jacobian error in `DDIF2Base.ixx`
 
-There was a mistake in the jacobian computed in `treatFracture` method
-of the `DDIF2Base` class du to the complex branching made.
+There was a mistake in the jacobian computed in the `treatFracture` method
+of the `DDIF2Base` class due to the complex branching made.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/126/>
 
 ## Ticket #125: Compiling on gcc 8.0.1 (Fedora 28) fails
 
-Compiling `TFEL\ with `gcc` 8.0.1 (`Fedora 28`) fails in
+Compiling `TFEL` with `gcc` 8.0.1 (`Fedora 28`) fails in
 `CastemGenericPlaneStressHandler.hxx`.
 
 Reported errors *a priori* look like regressions in the compiler rather
@@ -101,9 +101,9 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/124/>
 
 ## Ticket #123: Implementation mistakes in various behaviours based on Implicit DSL and using a numerical jacobian (use of perturbated values to update auxiliary state variables)
 
-Various behaviours in the MFront' tests base used local variables to
-compute the increment of auxiliary state variables (in order to safe
-some computational times and reduce the implementation size). This trick
+Various behaviours in the MFront's tests base used local variables to
+compute the increment of auxiliary state variables (in order to save
+some computational time and reduce the implementation size). This trick
 is quite often used with analytical jacobian but can cause various
 problems with numerical jacobian if the consistent tangent operator is
 requested (in this case, the system is perturbated once after
@@ -134,7 +134,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/122/>
 
 ## Ticket #121: Modifying the reference values read in a file does not work in MTest
 
-In `MTest`, the following lines was not parsed appropriately:
+In `MTest`, the following lines were not parsed appropriately:
 
 ~~~~{.cpp}
 @Test<file> @reference_file@ {
@@ -144,9 +144,9 @@ In `MTest`, the following lines was not parsed appropriately:
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/122/>
 
-## Ticket #120: Direct call to Cast3M' umat behaviours in `MTest` is broken
+## Ticket #120: Direct call to Cast3M's umat behaviours in `MTest` is broken
 
-Since `TFEL` `3.1`, `MTest` is able to call raw Cast3M' umat behaviours
+Since `TFEL` `3.1`, `MTest` is able to call raw Cast3M's umat behaviours
 (not written using `MFront`). However, the handling of external state
 variables was broken.
 
@@ -163,16 +163,16 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/119/>
 
 The
 `BehaviourDescription::areMaterialPropertiesDependantOnStateVariables`
-method always returned `true`. This bugs led to unnecessary computations
+method always returned `true`. This bug led to unnecessary computations
 but did not affect the results.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/118/>
 
-## Ticket #117: Generated source fails to compile if one ask MTest file generation with array of internal state variables
+## Ticket #117: Generated source fails to compile if one asks for MTest file generation with array of internal state variables
 
 A `using namespace std;` statement has been removed in 3.1.0 in the generated code, which led to a compile time error (`ostringstream` undeclared) when:
 
-- generating a `MTest` file on failure
+- generating an `MTest` file on failure
 - there is an array of internal state variables (this case was not tested)
 
 A new test case has been introduced for testing all the cases.

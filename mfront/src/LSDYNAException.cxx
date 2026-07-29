@@ -32,7 +32,7 @@ namespace lsdyna {
   LSDYNAException::LSDYNAException(const std::string& s)
       : msg(s) {}  // end of LSDYNAException::LSDYNAException
 
-  LSDYNAException::LSDYNAException(LSDYNAException&&) = default;
+  LSDYNAException::LSDYNAException(LSDYNAException&&) noexcept = default;
 
   LSDYNAException::LSDYNAException(const LSDYNAException&) = default;
 
@@ -40,14 +40,14 @@ namespace lsdyna {
     return msg.c_str();
   }  // end of LSDYNAException::what
 
-  std::string LSDYNAException::getMsg() const noexcept {
+  const std::string& LSDYNAException::getMsg() const noexcept {
     return msg;
   }  // end of LSDYNAException::getMsg
 
   LSDYNAException::~LSDYNAException() noexcept = default;
 
   LSDYNAInvalidModellingHypothesis::LSDYNAInvalidModellingHypothesis(
-      LSDYNAInvalidModellingHypothesis&&) = default;
+      LSDYNAInvalidModellingHypothesis&&) noexcept = default;
 
   LSDYNAInvalidModellingHypothesis::LSDYNAInvalidModellingHypothesis(
       const LSDYNAInvalidModellingHypothesis&) = default;
@@ -66,8 +66,8 @@ namespace lsdyna {
                         std::to_string(static_cast<unsigned int>(N)) + "'") {
   }  // end of LSDYNAInvalidNTENSValue::LSDYNAInvalidNTENSValue
 
-  LSDYNAInvalidNTENSValue::LSDYNAInvalidNTENSValue(LSDYNAInvalidNTENSValue&&) =
-      default;
+  LSDYNAInvalidNTENSValue::LSDYNAInvalidNTENSValue(
+      LSDYNAInvalidNTENSValue&&) noexcept = default;
 
   LSDYNAInvalidNTENSValue::LSDYNAInvalidNTENSValue(
       const LSDYNAInvalidNTENSValue&) = default;
@@ -83,8 +83,8 @@ namespace lsdyna {
   LSDYNAInvalidDimension::LSDYNAInvalidDimension(
       const LSDYNAInvalidDimension&) = default;
 
-  LSDYNAInvalidDimension::LSDYNAInvalidDimension(LSDYNAInvalidDimension&&) =
-      default;
+  LSDYNAInvalidDimension::LSDYNAInvalidDimension(
+      LSDYNAInvalidDimension&&) noexcept = default;
 
   LSDYNAInvalidDimension::~LSDYNAInvalidDimension() noexcept = default;
 

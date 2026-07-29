@@ -32,18 +32,18 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const std::string&) const override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::vector<std::string> getKinematicHardeningsVariables(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<std::string> getKinematicHardeningsVariables(
         const std::string&, const std::string&) const override;
-    std::string computeKinematicHardeningsInitialValues(
+    [[nodiscard]] std::string computeKinematicHardeningsInitialValues(
         const std::string&, const std::string&) const override;
-    std::string computeKinematicHardenings(const std::string&,
-                                           const std::string&) const override;
-    std::string getBackStrainVariable(const std::string&,
-                                      const std::string&) const override;
-    std::string getBackStressDerivative(const std::string&,
-                                        const std::string&) const override;
-    std::string generateImplicitEquationDerivatives(
+    [[nodiscard]] std::string computeKinematicHardenings(
+        const std::string&, const std::string&) const override;
+    [[nodiscard]] std::string getBackStrainVariable(
+        const std::string&, const std::string&) const override;
+    [[nodiscard]] std::string getBackStressDerivative(
+        const std::string&, const std::string&) const override;
+    [[nodiscard]] std::string generateImplicitEquationDerivatives(
         const std::string&,
         const std::string&,
         const std::string&,

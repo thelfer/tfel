@@ -47,10 +47,10 @@ namespace castem {
    * - fourth paramater : expansion value at the end of the time step
    * - third  parameter : spatial dimension
    */
-  typedef void (*StressFreeExpansionHandler)(CastemReal *const,
-                                             CastemReal *const,
-                                             const CastemReal *const,
-                                             const CastemReal *const,
+  typedef void (*StressFreeExpansionHandler)(CastemReal* const,
+                                             CastemReal* const,
+                                             const CastemReal* const,
+                                             const CastemReal* const,
                                              const CastemInt);
 
 }  // end of namespace castem

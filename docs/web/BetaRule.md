@@ -135,7 +135,7 @@ $\left\{
 &f_{\tbeta_i} =\Delta\tenseur\beta_i - \Delta\tepsilonvp_i\left(\tepsilonto_i,\dtepsilonto_i\right)+D\,||\Delta\tepsilonvp_i\left(\tepsilonto_i,\dtepsilonto_i\right)||\,(\tenseur\beta_i+\theta\Delta\tenseur\beta_i) \qquad \forall i\\
     \end{aligned}\right.$
     
-where $\sigma_{0}$ is a parameter that give the same dimension and magnitude to the residues.
+where $\sigma_{0}$ is a parameter that gives the same dimension and magnitude to the residues.
 The jacobian matrix is given by
   
  $\left\{
@@ -164,7 +164,7 @@ The jacobian matrix is given by
 
 ## Consistent tangent operator
 
-We can also compute the tangent operator with a method similar as the method explained
+We can also compute the tangent operator with a method similar to the method explained
 in the [Implicit DSL](./implicit-dsl.html) documentation. We define $\Delta Y$ such as
 \begin{aligned}
 \Delta G_i = (\dtepsilonto_i, \dtbeta_i)\\
@@ -195,7 +195,7 @@ The implementation of the local behaviour is explained [here](./MericCailletaudS
 All files `MericCailletaudSingleCrystalViscoPlasticity.mfront`, `BetaRule.mfront` and `BetaRule.mtest` are available in the `MFrontGallery` project, [here](https://github.com/thelfer/MFrontGallery/tree/master/generic-behaviours/homogenization/).
 
 
-For the example, we assume that the composites is made of only 2 phases.
+For the example, we assume that the composite is made of only 2 phases.
 We hence define the integration variables:
 
 ~~~~ {#BetaRule .cpp .numberLines}
@@ -307,14 +307,14 @@ The computation of the stress and of the tangent operator is straightforward:
 }
 ~~~~
 
-Note that `getPartialJacobianInvert(iJs)` permits to obtain the 6x6 left-upper part of the
+Note that `getPartialJacobianInvert(iJs)` allows obtaining the 6x6 left-upper part of the
 inverse of the Jacobian. The left-upper part is associated with the first
 integration variable declared (here `Sig`).
 
 # Results
 
 We used `MTest` to carry out
-simulations of an uniaxial tensile test on a two-grain polycrystal.
+simulations of a uniaxial tensile test on a two-grain polycrystal.
 The first phase is stiffer than the second, and we also choose for the
 example a different Norton exponent between the phases.
 The following values are given by the `mtest` file:
@@ -348,7 +348,7 @@ a function of $\tepsilon_i$).
 # Implementation with static condensation
 
 When a huge number of phases are involved in the microstructure, the non-linear system previously presented becomes huge
-and the static condensation permits to handle this high number of unknowns.
+and the static condensation allows handling this high number of unknowns.
 Indeed, the linear system resolved at each step of the Newton algorithm is reduced by using only the macroscopic variables
 $\Delta\tenseur B$ and $\Delta\tenseur \Sigma$ as unknowns in this system. The increments of the local unknowns are deduced afterwards.
 
@@ -369,7 +369,7 @@ The corresponding residues are
 ## Static condensation
 
 Here we want to reduce our system and choose
-$\Delta\tenseur B$, $\Delta\tenseur \Sigma$ as the main unkonwns.
+$\Delta\tenseur B$, $\Delta\tenseur \Sigma$ as the main unknowns.
 
 To that extent, we first express the Newton-Raphson increments
 $\delta\dtepsilonto_i$ and $\delta\Delta\tenseur\beta_i$ as functions
@@ -409,7 +409,7 @@ $-\tenseur r_{\tepsilon_i}-\dfrac{\partial \tenseur r_{\tepsilon_i}}{\partial \D
 with
 $\tensq a_i=-\dfrac{\partial \tenseur r_{\tepsilon_i}}{\partial \Delta\tenseur \beta_i}\dbldot\left(\dfrac{\partial \tenseur r_{\tenseur \beta_i}}{\partial \Delta\tenseur \beta_i}\right)^{-1}\dbldot\dfrac{\partial \tenseur r_{\tenseur \beta_i}}{\partial \Delta\tepsilon_i}+\dfrac{\partial \tenseur r_{\tepsilon_i}}{\partial \Delta\tepsilon_i},\qquad \tenseur b_i = -\dfrac{\partial \tenseur r_{\tepsilon_i}}{\partial \Delta\tenseur \beta_i}\dbldot\left(\dfrac{\partial \tenseur r_{\tenseur \beta_i}}{\partial \Delta\tenseur \beta_i}\right)^{-1}\dbldot\tenseur r_{\tenseur\beta_i}$
 
-Here, if $\tensq a_i$ is not invertible, this means that the Newton-Raphson algorithm will fail to solve the non-linear system, which is independent from the static condensation. Hence, we assume $\tenseur a_i$ is invertible and we write
+Here, if $\tensq a_i$ is not invertible, this means that the Newton-Raphson algorithm will fail to solve the non-linear system, which is independent of the static condensation. Hence, we assume $\tenseur a_i$ is invertible and we write
 
 $\delta\Delta\tepsilonto_i=\tensq a_i^{-1}\dbldot\left[-\tenseur r_{\tepsilon_i}-\dfrac{\partial \tenseur r_{\tepsilon_i}}{\partial \Delta\tenseur B}\dbldot\delta\Delta\tenseur B-\dfrac{\partial \tenseur r_{\tepsilon_i}}{\partial \Delta\tenseur \Sigma}\dbldot\delta\Delta\tenseur\Sigma-\tenseur b_i\right]$
 
@@ -452,11 +452,11 @@ where
 
 We can see that $\delta\Delta\tenseur \Sigma$ and $\delta\Delta\tenseur B$ are solutions of a $12\times 12$ linear system, whose
 matrix is the jacobian matrix, noted $\tenseur J$ in the following.
-Here again, the existence of a unique solution to this system is strongly correlated to the convergence of the global Newton-Raphson algorithm, convergence which is independent to the static condensation.
+Here again, the existence of a unique solution to this system is strongly correlated to the convergence of the global Newton-Raphson algorithm, convergence which is independent of the static condensation.
 
 ## Computation of the macroscopic tangent operator
 
-The computation of the tangent operator is similar as above.
+The computation of the tangent operator is similar to above.
 Indeed, we can define $\Delta \tenseur Y=(\Delta \tenseur \Sigma,\Delta \tenseur B)$, and
 $\tenseur R=(\tenseur r_{\tenseur E},\tenseur r_{\tenseur B})$ so that for every $\Delta\tenseur E$,
 \begin{equation}

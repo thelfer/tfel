@@ -24,30 +24,30 @@ namespace tfel::system {
 
   struct TFELSYSTEM_VISIBILITY_EXPORT SignalManager {
     static void printBackTrace(const int);
-    static SignalManager &getSignalManager();
+    static SignalManager& getSignalManager();
     std::size_t registerHandler(const int,
-                                SignalHandler *const,
-                                struct sigaction &);
-    std::size_t registerHandler(const int, SignalHandler *const);
-    void setSpecificHandler(const int, SignalHandler *const);
+                                SignalHandler* const,
+                                struct sigaction&);
+    std::size_t registerHandler(const int, SignalHandler* const);
+    void setSpecificHandler(const int, SignalHandler* const);
     void removeHandler(const std::size_t);
     ~SignalManager();
 
    private:
     TFEL_VISIBILITY_LOCAL
-    static void callGdb(const int, const char *const);
+    static void callGdb(const int, const char* const);
     TFEL_VISIBILITY_LOCAL
     SignalManager();
     TFEL_VISIBILITY_LOCAL
-    SignalManager(const SignalManager &);
+    SignalManager(const SignalManager&);
     TFEL_VISIBILITY_LOCAL
-    SignalManager &operator=(const SignalManager &);
+    SignalManager& operator=(const SignalManager&);
     TFEL_VISIBILITY_LOCAL
     void eraseHandlers();
     TFEL_VISIBILITY_LOCAL
     static void treatAction(int);
-    std::map<int, std::map<std::size_t, SignalHandler *>> callBacks;
-    std::map<int, SignalHandler *> sHandlers;
+    std::map<int, std::map<std::size_t, SignalHandler*>> callBacks;
+    std::map<int, SignalHandler*> sHandlers;
     std::size_t handlerNbr;
   };  // end of struct SignalManager
 

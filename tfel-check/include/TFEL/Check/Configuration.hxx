@@ -29,11 +29,11 @@ namespace tfel::check {
     //! \brief default constructor
     Configuration();
     //! \brief move constructor
-    Configuration(Configuration&&);
+    Configuration(Configuration&&) noexcept;
     //! \brief copy constructor
     Configuration(const Configuration&);
     //! \brief move assignement
-    Configuration& operator=(Configuration&&);
+    Configuration& operator=(Configuration&&) noexcept;
     //! \brief standard assignement
     Configuration& operator=(const Configuration&);
     /*!
@@ -50,6 +50,8 @@ namespace tfel::check {
      * replaced by value.
      */
     std::map<std::string, std::string> substitutions;
+    //! \brief list of environment variables
+    std::map<std::string, std::string> environments;
     //! \brief directory in which the test is executed
     std::string directory;
     //! \brief global logger

@@ -86,14 +86,14 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] r: criterion' role
      */
-    static std::string getVariableId(const std::string&,
-                                     const std::string&,
-                                     const Role);
+    [[nodiscard]] static std::string getVariableId(const std::string&,
+                                                   const std::string&,
+                                                   const Role);
     //! \return the flow options
-    virtual std::vector<OptionDescription> getOptions() const = 0;
+    [[nodiscard]] virtual std::vector<OptionDescription> getOptions() const = 0;
     //! \return the list of supported behaviour symmetries
-    virtual std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-        const = 0;
+    [[nodiscard]] virtual std::vector<BehaviourSymmetry>
+    getSupportedBehaviourSymmetries() const = 0;
     /*!
      * \param[in,out] bd: behaviour description
      * \param[in,out] dsl: abstract behaviour dsl
@@ -125,7 +125,7 @@ namespace mfront::bbrick {
      * \param[in] bd: behaviour description
      * \param[in] sp: stress potential
      */
-    virtual std::string computeElasticPrediction(
+    [[nodiscard]] virtual std::string computeElasticPrediction(
         const std::string&,
         const BehaviourDescription&,
         const StressPotential&) const = 0;
@@ -138,9 +138,10 @@ namespace mfront::bbrick {
      * \param[in] bd: behaviour description
      * \param[in] sp: stress potential
      */
-    virtual std::string computeCriterion(const std::string&,
-                                         const BehaviourDescription&,
-                                         const StressPotential&) const = 0;
+    [[nodiscard]] virtual std::string computeCriterion(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const = 0;
     /*!
      * \return the code computing the criterion and its normal.
      *
@@ -165,10 +166,10 @@ namespace mfront::bbrick {
      * \param[in] sp: stress potential
      * \param[in] r: criterion' role
      */
-    virtual std::string computeNormal(const std::string&,
-                                      const BehaviourDescription&,
-                                      const StressPotential&,
-                                      const Role) const = 0;
+    [[nodiscard]] virtual std::string computeNormal(const std::string&,
+                                                    const BehaviourDescription&,
+                                                    const StressPotential&,
+                                                    const Role) const = 0;
     /*!
      * \brief return the code computing the criterion, its derivative, and its
      * second derivative.
@@ -196,19 +197,20 @@ namespace mfront::bbrick {
      * \param[in] sp: stress potential
      * \param[in] r: criterion' role
      */
-    virtual std::string computeNormalDerivative(const std::string&,
-                                                const BehaviourDescription&,
-                                                const StressPotential&,
-                                                const Role) const = 0;
+    [[nodiscard]] virtual std::string computeNormalDerivative(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&,
+        const Role) const = 0;
     //! \return if the the flow is coupled with the porosity evolution
-    virtual bool isCoupledWithPorosityEvolution() const = 0;
+    [[nodiscard]] virtual bool isCoupledWithPorosityEvolution() const = 0;
     //! \return if the normal is deviatoric
-    virtual bool isNormalDeviatoric() const = 0;
+    [[nodiscard]] virtual bool isNormalDeviatoric() const = 0;
     /*!
      * \return if using this stress criterion generally implies a
      * correction of the flow rule
      */
-    virtual PorosityEffectOnFlowRule
+    [[nodiscard]] virtual PorosityEffectOnFlowRule
     getPorosityEffectOnEquivalentPlasticStrain() const = 0;
     /*!
      * \return the code updating the upper bound of the porosity.
@@ -218,9 +220,8 @@ namespace mfront::bbrick {
      * \param[in] id: flow id
      * \param[in] r: criterion' role
      */
-    virtual std::string updatePorosityUpperBound(const BehaviourDescription&,
-                                                 const std::string&,
-                                                 const Role) const = 0;
+    [[nodiscard]] virtual std::string updatePorosityUpperBound(
+        const BehaviourDescription&, const std::string&, const Role) const = 0;
     //! \brief destructor
     virtual ~StressCriterion();
   };  // end of struct StressCriterion

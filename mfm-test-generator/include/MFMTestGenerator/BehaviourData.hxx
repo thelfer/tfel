@@ -30,9 +30,12 @@ namespace mfmtg {
      */
     BehaviourData(const TestCaseParameters&, const std::string&);
     //! \brief copy constructor
-    BehaviourData(BehaviourData&&);
+    BehaviourData(BehaviourData&&) noexcept;
     //! \brief copy constructor
     BehaviourData(const BehaviourData&);
+    //
+    BehaviourData& operator=(BehaviourData&&) noexcept;
+    BehaviourData& operator=(const BehaviourData&);
     //! \brief interface used to generator the behaviour (optional)
     const std::string interface;
     //! \brief path of the library in which the behaviour is implemented
@@ -47,12 +50,6 @@ namespace mfmtg {
     const std::map<std::string, Evolution> external_state_variables;
     //! \brief destructor
     ~BehaviourData();
-
-   private:
-    //! move assignement
-    BehaviourData& operator=(BehaviourData&&);
-    //! copy assignement
-    BehaviourData& operator=(const BehaviourData&);
   };  // end of struct BehaviourData
 
 }  // end of namespace mfmtg

@@ -30,37 +30,25 @@ namespace mfront::bbrick {
                     AbstractBehaviourDSL&,
                     const std::string&,
                     const DataMap&) override;
-
     void setPorosityEvolutionHandled(const bool) override;
-
-    bool isCoupledWithPorosityEvolution() const override;
-
+    [[nodiscard]] bool isCoupledWithPorosityEvolution() const override;
     void endTreatment(BehaviourDescription&,
                       const AbstractBehaviourDSL&,
                       const StressPotential&,
                       const std::string&) const override;
-
     void completeVariableDeclaration(BehaviourDescription&,
                                      const AbstractBehaviourDSL&,
                                      const std::string&) const override;
-    std::vector<OptionDescription> getOptions() const override;
-    bool requiresActivationState() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] bool requiresActivationState() const override;
     void computeInitialActivationState(BehaviourDescription&,
                                        const StressPotential&,
                                        const std::string&) const override;
-    std::string updateNextEstimateOfThePorosityIncrement(
+    [[nodiscard]] std::string updateNextEstimateOfThePorosityIncrement(
         const BehaviourDescription&, const std::string&) const override;
-    /*!
-     * \return the code updating the upper bound of the porosity.
-     * If this flow does not affect the porosity growth, the returned
-     * value may be empty. By default, this method calls the
-     * `updatePorosityUpperBound` of the underlying stress criterion.
-     * \param[in] bd: behaviour description
-     * \param[in] id: flow id
-     */
-    std::string updatePorosityUpperBound(const BehaviourDescription&,
-                                         const std::string&) const override;
-    //! destructor
+    [[nodiscard]] std::string updatePorosityUpperBound(
+        const BehaviourDescription&, const std::string&) const override;
+    //! \brief destructor
     ~InelasticFlowBase() override;
 
    protected:
@@ -90,10 +78,10 @@ namespace mfront::bbrick {
      */
     virtual void checkOptions(const DataMap&) const;
     //! \return the effect of the porosity on the flow rule.
-    virtual PorosityEffectOnFlowRule
+    [[nodiscard]] virtual PorosityEffectOnFlowRule
     getPorosityEffectOnEquivalentPlasticStrain() const;
     //! \return if this flow contributes to porosity growth
-    virtual bool contributesToPorosityGrowth() const;
+    [[nodiscard]] virtual bool contributesToPorosityGrowth() const;
     /*!
      * \brief add the contribution of this inelastic flow to the implicit
      * equation associated with the porosity evolution.
@@ -114,17 +102,19 @@ namespace mfront::bbrick {
      * \brief compute the effective stress at \f$t+\theta\,dt\f$.
      * \param[in] id: flow id
      */
-    virtual std::string computeEffectiveStress(const std::string& id) const;
+    [[nodiscard]] virtual std::string computeEffectiveStress(
+        const std::string& id) const;
     /*!
      * \param[in] bd: behaviour description
      * \param[in] sp: stress potential
      * \param[in] id: flow id
      * \param[in] b: tells if an analytical jacobian is required
      */
-    virtual std::string buildFlowImplicitEquations(const BehaviourDescription&,
-                                                   const StressPotential&,
-                                                   const std::string&,
-                                                   const bool) const = 0;
+    [[nodiscard]] virtual std::string buildFlowImplicitEquations(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const std::string&,
+        const bool) const = 0;
     //! \brief stress criterion
     std::shared_ptr<StressCriterion> sc;
     //! \brief flow criterion

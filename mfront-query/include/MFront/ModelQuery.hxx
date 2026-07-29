@@ -45,11 +45,11 @@ namespace mfront {
      * \param[in] f    : mfront file
      */
     ModelQuery(const int,
-               const char *const *const,
+               const char* const* const,
                std::shared_ptr<ModelDSL>,
-               const std::string &);
+               const std::string&);
     //! \brief return the number of queries to be treated
-    std::size_t getNumberOfQueriesToBeTreated();
+    [[nodiscard]] std::size_t getNumberOfQueriesToBeTreated();
     //! \brief treat the requests
     virtual void exe();
     //! \brief destructor
@@ -57,24 +57,23 @@ namespace mfront {
 
    protected:
     //
-    std::shared_ptr<const AbstractDSL> getDSL() const override;
+    [[nodiscard]] std::shared_ptr<const AbstractDSL> getDSL() const override;
     void registerCommandLineCallBacks() override;
 
    private:
     //! \brief a simple alias
     using query =
-        std::function<void(const FileDescription &, const ModelDescription &)>;
+        std::function<void(const FileDescription&, const ModelDescription&)>;
     //
-    void treatGeneratedSources() override final;
-    void treatSpecificTargetGeneratedSources() override final;
-    void treatAllSpecificTargetsGeneratedSources() override final;
-    void treatCppFlags() override final;
-    void treatGeneratedHeaders() override final;
-    void treatLibrariesDependencies() override final;
-    void treatSpecificTargets() override final;
-    void treatDSLTarget() override final;
-    //! \brief treat a standard query
     virtual void treatStandardQuery() final;
+    void treatGeneratedSources() final;
+    void treatSpecificTargetGeneratedSources() final;
+    void treatAllSpecificTargetsGeneratedSources() final;
+    void treatCppFlags() final;
+    void treatGeneratedHeaders() final;
+    void treatLibrariesDependencies() final;
+    void treatSpecificTargets() final;
+    void treatDSLTarget() final;
     //! \brief all the registred queries
     std::vector<std::pair<std::string, query>> queries;
     //! \brief abstract behaviour dsl

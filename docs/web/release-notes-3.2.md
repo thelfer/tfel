@@ -26,7 +26,7 @@ page](release-notes-3.1.3.html) for details.
 The `TFEL` project is a collaborative development of
 [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
 atomique") and [EDF](http://www.edf.com/ "Électricité de France")
-dedicated to material knowledge manangement with special focus on
+dedicated to material knowledge management with special focus on
 mechanical behaviours. It provides a set of libraries (including
 `TFEL/Math` and `TFEL/Material`) and several executables, in
 particular `MFront` and `MTest`.
@@ -106,16 +106,16 @@ The following new mathematical functions have been introduced:
 
 - `exp2`: returns the base-2 exponential.
 - `expm1`: returns the base-e exponential minus one.
-- `cbrt`: returns the cubic root
-- `log2`: computes the base-2 logarithm of the argment.
-- `log1p`: computes the logarithm of the argment plus one.
+- `cbrt`: returns the cubic root.
+- `log2`: computes the base-2 logarithm of the argument.
+- `log1p`: computes the logarithm of the argument plus one.
 - `acosh`: computes the inverse of the hyperbolic cosine.
 - `asinh`: computes the inverse of the hyperbolic sine.
 - `atanh`: computes the inverse of the hyperbolic tangent.
 - `erf`: computes the error function.
 - `erfc`: computes the complementary error function.
 - `tgamma`: computes the Gamma function.
-- `lgamma`: compute the natural logarithm of the gamma function.
+- `lgamma`: computes the natural logarithm of the gamma function.
 - `hypot`: returns the hypotenuse of a right-angled triangle whose
   legs are x and y, i.e. computes \(\sqrt{x^{2}+y^{2}}.
 - `atan2`: returns the principal value of the arc tangent of \(y/x\),
@@ -173,7 +173,7 @@ where \(I_{1}\), \(I_{2}\) and \(I_{3}\) are the invariants of
 \(\tsigma\).
 
 \(J_{2}\) and \(J_{3}\) are building blocks for many isotropic yield
-critera. Classically, \(J_{2}\) is directly related to the von Mises
+criteria. Classically, \(J_{2}\) is directly related to the von Mises
 stress \(\sigmaeq\):
 
 \[
@@ -303,8 +303,8 @@ by the following functions:
   `computesJ3OSecondDerivative`.
 
 Those functions take the stress tensor as first argument and each
-orthotropic coefficients. Each of those functions has an overload
-taking the stress tensor as its firs arguments and a tiny vector
+orthotropic coefficient. Each of those functions has an overload
+taking the stress tensor as its first argument and a tiny vector
 (`tfel::math::tvector`) containing the orthotropic coefficients.
 
 ### \(\pi\)-plane
@@ -343,7 +343,7 @@ vectors:
 \]
 
 This plane is used to characterize the iso-values of equivalent
-stresses which are not sensitive to the hydrostatic pression.
+stresses which are not sensitive to the hydrostatic pressure.
 
 Various functions are available:
 
@@ -361,10 +361,10 @@ Various functions are available:
 The following operations are supported:
 
 - addition of two symmetric tensors.
-- substraction of two symmetric tensors.
+- subtraction of two symmetric tensors.
 - multiplication by scalar.
 - in-place addition by a symmetric tensor.
-- in-place substraction by a symmetric tensor.
+- in-place subtraction by a symmetric tensor.
 - in-place multiplication by scalar.
 - in-place division by scalar.
 
@@ -407,7 +407,7 @@ for a in [pi*(-1.+(2.*i)/(nmax-1)) for i in range(0,nmax)]:
 
 #### Bindings related to the Hosford equivalent stress
 
-The `computeHosfordStress` function, which compute the Hosford
+The `computeHosfordStress` function, which computes the Hosford
 equivalent stress, is available.
 
 The following script shows how to print an iso-surface of the Hosford
@@ -469,7 +469,7 @@ for a in [pi*(-1.+(2.*i)/(nmax-1)) for i in range(0,nmax)]:
 
 This brick is used to describe a specific class of strain based
 behaviours based on an additive split of the total strain
-\(\tepsilonto\) into an elastic part \(\tepsilonel\) and an one or
+\(\tepsilonto\) into an elastic part \(\tepsilonel\) and one or
 several inelastic strains describing plastic (time-independent) flows
 and/or viscoplastic (time-dependent) flows:
 \[
@@ -537,7 +537,7 @@ Here is a complete usage:
 
 ### Extension of `Cyrano` to finite strain analysis
 
-As Cyrano, provides a mono-dimensional description of the fuel rod, its
+As Cyrano provides a mono-dimensional description of the fuel rod, its
 extension to finite strain follows the same treatment used for:
 
 - the extension of `MTest` to pipes.
@@ -581,15 +581,15 @@ This interface is tightly linked with the
 `MFrontGenericInterfaceSupport` project which is available on `github`:
 <https://github.com/thelfer/MFrontGenericInterfaceSupport>. This project
 has a more liberal licence which allows it to be included in both
-commercial and open-source solvers/library. This licensing choice
-explains why this project is not part of the `TFEL`.
+commercial and open-source solvers/libraries. This licensing choice
+explains why this project is not part of `TFEL`.
 
 ## Various improvements
 
 ### Inline material properties in mechanical behaviours {#sec:inline-mprops}
 
 Various keywords (such as `@ElasticMaterialProperties`,
-`@ComputeThermalExpansion`, `@HillTensor`, etc.)  expects one or more
+`@ComputeThermalExpansion`, `@HillTensor`, etc.) expect one or more
 material properties. In previous versions, those material properties
 were constants or defined by an external `MFront` file.
 
@@ -662,7 +662,7 @@ the behaviour of an isotropic or orthotropic material.
 .....
 ~~~~
 
-The following arguments are thus avaiable:
+The following arguments are thus available:
 
 - `--list-isotropic-hardening-rules`
 - `--list-kinematic-hardening-rules`
@@ -676,9 +676,9 @@ The following arguments are thus avaiable:
 
 # New functionalities in `MTest`
 
-## Events, activation and desactivation of constraints
+## Events, activation and deactivation of constraints
 
-Defining an event is a way to active/desactivate a constraint, (see
+Defining an event is a way to activate/deactivate a constraint (see
 `@ImposedStrain`, `@ImposedCohesiveForce`,
 `@ImposedOpeningDisplacement`, `@ImposedStrain`,
 `@ImposedDeformationGradient`, `@NonLinearConstraint`).
@@ -694,28 +694,28 @@ a list of times (given as an array of values).
 @Event 'Stop' 1;
 ~~~~~~~~
 
-### Activation and desactivation of constraints
+### Activation and deactivation of constraints
 
-At the end of the definition of a constraint, one may now optionnally
-set options on the active state of this contraint at the beginning of
-the computation, the activating events and desactivating events using a
+At the end of the definition of a constraint, one may now optionally
+set options on the active state of this constraint at the beginning of
+the computation, the activating events and deactivating events using a
 JSON-like structure. This structure starts with an opening curly brace
 (`{`) and ends with a closing curly brace (`}`). An option is given by
-its name, an double-dot character (`:`) and the value of the option.
+its name, a colon character (`:`) and the value of the option.
 Consecutive options are separated by a comma `,` (see below for an
 example). The following options are available:
 
 - `active`: states if the constraint is active at the beginning of the
-  computation. This is a boolean, so the expected value are either
+  computation. This is a boolean, so the expected values are either
   `true` or `false`.
-- `activating_event`: gives the name of the event which activate the
-  constraint. An array of string is expected.
+- `activating_event`: gives the name of the event which activates the
+  constraint. An array of strings is expected.
 - `activating_events`: gives the list of events which activate the
-  constraint. An array of string is expected.
-- `desactivating_event`: gives the name of the event which desactivate
-  the constraint. An array of string is expected.
-- `desactivating_events`: gives the list of events which desactivate the
-  constraint. An array of string is expected.
+  constraint. An array of strings is expected.
+- `desactivating_event`: gives the name of the event which deactivates
+  the constraint. An array of strings is expected.
+- `desactivating_events`: gives the list of events which deactivate the
+  constraint. An array of strings is expected.
 
 #### Example
 
@@ -727,19 +727,19 @@ example). The following options are available:
 
 ### User defined post-processings
 
-The `@UserDefinedPostProcessing` lets the user define is own
+The `@UserDefinedPostProcessing` lets the user define his own
 post-processings.
 
-This keywords is followed by:
+This keyword is followed by:
 
 - the name of the output file
-- the list of post-processings given by a string or and an array of
-  strings. Those strings defines formulae which are evaluated at the end
+- the list of post-processings given by a string or an array of
+  strings. Those strings define formulae which are evaluated at the end
   of the time step. Those formulae may depend on:
-    - the behaviour' driving variable
-    - the behaviour' thermodynamic forces
-    - the behaviour' internal state variables
-    - the behaviour' external state variables
+    - the behaviour's driving variable
+    - the behaviour's thermodynamic forces
+    - the behaviour's internal state variables
+    - the behaviour's external state variables
     - any evolution defined in the input file
 
 #### Example
@@ -765,8 +765,8 @@ nstante [C:\Codes\tfel\sources\build-vs-2015\bindings\python\tfel\py_tfel_materi
 
 The problem is that `constexpr` variables are poorly handled by `Visual
 Studio 2015`. The `constexpr` macro was introduced to handle this
-compiler (it boils down to `constexpr` for others compilers). The issue
-can be solved by changing the faulty line as as follows:
+compiler (it boils down to `constexpr` for other compilers). The issue
+can be solved by changing the faulty line as follows:
 
 ~~~~
 constexpr const auto isqrt6 = isqrt2 * isqrt3;
@@ -777,19 +777,19 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/137/>
 
 ## Ticket #112: MTEST outputs
 
-The `@UserDefinedPostProcessing` lets the user define is own
+The `@UserDefinedPostProcessing` lets the user define his own
 post-processings.
 
-This keywords is followed by:
+This keyword is followed by:
 
 - the name of the output file
-- the list of post-processings given by a string or and an array of
-  strings. Those strings defines formulae which are evaluated at the end
+- the list of post-processings given by a string or an array of
+  strings. Those strings define formulae which are evaluated at the end
   of the time step. Those formulae may depend on:
-    - the behaviour' driving variable
-    - the behaviour' thermodynamic forces
-    - the behaviour' internal state variables
-    - the behaviour' external state variables
+    - the behaviour's driving variable
+    - the behaviour's thermodynamic forces
+    - the behaviour's internal state variables
+    - the behaviour's external state variables
     - any evolution defined in the input file
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/112/>
@@ -800,8 +800,8 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/112/>
 
 The following header files have been renamed:
 
-- `Hosford.hxx` has been moved in `Hosford1972YieldCriterion.hxx`.
-- `Barlat.hxx` has been moved in `Barlat2004YieldCriterion.hxx`.
+- `Hosford.hxx` has been moved to `Hosford1972YieldCriterion.hxx`.
+- `Barlat.hxx` has been moved to `Barlat2004YieldCriterion.hxx`.
 
 # References
 

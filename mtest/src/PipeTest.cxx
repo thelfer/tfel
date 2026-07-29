@@ -110,7 +110,7 @@ namespace mtest {
         this->results.append(tfel::tests::TestResult(false, e.what()));
       }
     }  // end of check
-    tfel::tests::TestResult getResults() const override {
+    [[nodiscard]] tfel::tests::TestResult getResults() const override {
       if (this->results.success()) {
         std::ostringstream msg;
         msg << "IntegralTest::check : comparison for variable '" << this->name
@@ -232,7 +232,7 @@ namespace mtest {
      * extracted
      * \param[in] s: gauss point state
      */
-    virtual const tfel::math::vector<real>& getComputedValues(
+    [[nodiscard]] virtual const tfel::math::vector<real>& getComputedValues(
         const CurrentState&) const = 0;
     //! results of the test
     tfel::tests::TestResult results;
@@ -260,7 +260,7 @@ namespace mtest {
      * extracted
      * \param[in] s: gauss point state
      */
-    const tfel::math::vector<real>& getComputedValues(
+    [[nodiscard]] const tfel::math::vector<real>& getComputedValues(
         const CurrentState& s) const override {
       return s.s1;
     }
@@ -280,7 +280,7 @@ namespace mtest {
      * extracted
      * \param[in] s: gauss point state
      */
-    const tfel::math::vector<real>& getComputedValues(
+    [[nodiscard]] const tfel::math::vector<real>& getComputedValues(
         const CurrentState& s) const override {
       return s.e1;
     }
@@ -300,7 +300,7 @@ namespace mtest {
      * extracted
      * \param[in] s: gauss point state
      */
-    const tfel::math::vector<real>& getComputedValues(
+    [[nodiscard]] const tfel::math::vector<real>& getComputedValues(
         const CurrentState& s) const override {
       return s.iv1;
     }
@@ -331,8 +331,8 @@ namespace mtest {
     evm.insert({n, make_evolution(v)});
   }  // end of insert
 
-  static real getOxidationLength(const StudyCurrentState state,
-                                 const PipeTest::OxidationModel& m) {
+  [[nodiscard]] static real getOxidationLength(
+      const StudyCurrentState state, const PipeTest::OxidationModel& m) {
     if (m.model.get() == nullptr) {
       tfel::raise("getOxidationLength: internal error");
     }

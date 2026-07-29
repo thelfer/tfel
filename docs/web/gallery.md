@@ -46,7 +46,7 @@ behaviour. This framework is described
 - [A non-linear elastic behaviour that mimics the Ramberg-Osgood plastic
   behaviour on monotonic
   loadings](RambergOsgoodNonLinearElasticity.html) (useful in fracture
-  analysis
+  analysis)
 
 ## Damage
 
@@ -100,8 +100,8 @@ behaviour. This framework is described
   maxwellian viscoelastic composite with oriented ellipsoid is available [here](https://github.com/thelfer/MFrontGallery/blob/master/generic-behaviours/homogenization/Idiart_viscoelastic.mfront)
 - The description of the implementation of a polycrystal behaviour
   based on the Berveiller-Zaoui homogenisation scheme using an
-  explicit scheme is available.
-  [here](ExplicitBerveillerZaouiPolyCrystals.html)
+  explicit scheme is available
+  [here](ExplicitBerveillerZaouiPolyCrystals.html).
 - [\(\beta\)-rule](BetaRule.html) can also be implemented with
   `@BehaviourVariable` and hence any behaviour law on each phase.
 - A tutorial on implementation of Ponte-Castaneda bound [@castaneda_new_1992]

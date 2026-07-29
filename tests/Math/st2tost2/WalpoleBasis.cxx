@@ -34,91 +34,93 @@ struct WalpoleBasis final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "WalpoleBasis") {
   }  // end of WalpoleBasis
   tfel::tests::TestResult execute() override {
-  
-  static constexpr auto eps = std::numeric_limits<double>::epsilon();
+      
+    static constexpr auto eps = std::numeric_limits<double>::epsilon();
 
-  const auto n1 = tfel::math::tvector<3u,double>{0.,0.,1.};
-  const auto n2 = tfel::math::tvector<3u,double>{0.,sqrt(2)/2.,sqrt(2)/2.};
-  const auto theta = 3.1415/12;
-  const auto phi = 2*3.1415/5;
-  const auto n3 = tfel::math::tvector<3u,double>{sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta)};
-  this->template test<double>(n1,eps);
-  this->template test<double>(n2,10*eps);
-  this->template test<double>(n3,10*eps);
+    const auto n1 = tfel::math::tvector<3u,double>{0.,0.,1.};
+    const auto n2 = tfel::math::tvector<3u,double>{0.,sqrt(2)/2.,sqrt(2)/2.};
+    const auto theta = 3.1415/12;
+    const auto phi = 2*3.1415/5;
+    const auto n3 = tfel::math::tvector<3u,double>{sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta)};
+    this->template test<double>(n1,eps);
+    this->template test<double>(n2,10*eps);
+    this->template test<double>(n3,10*eps);
   
-  return this->result;
+    return this->result;
   }
- 
+    
   private:
   template <typename real>
-	void test(const tfel::math::tvector<3u,double>& n,real eps) {
-    
+  void test(const tfel::math::tvector<3u,double>& n,real eps) {
+
     using namespace tfel::math;
-    
-    const auto E1=TransverseIsotropicWalpoleBasis<double>::E1(n);
-    const auto E2=TransverseIsotropicWalpoleBasis<double>::E2(n);
-    const auto E3=TransverseIsotropicWalpoleBasis<double>::E3(n);
-    const auto E4=TransverseIsotropicWalpoleBasis<double>::E4(n);
-    const auto F=TransverseIsotropicWalpoleBasis<double>::F(n);
-    const auto G=TransverseIsotropicWalpoleBasis<double>::G(n);
-    const auto E1E1 = E1*E1;
-    const auto E1E3 = E1*E3;
-    TFEL_TESTS_ASSERT(norm(E1E1-E1)<eps);
-    TFEL_TESTS_ASSERT(norm(E1E3-E3)<eps);
-    const auto E2E2 = E2*E2;
-    const auto E2E4 = E2*E4;
-    TFEL_TESTS_ASSERT(norm(E2E2-E2)<eps);
-    TFEL_TESTS_ASSERT(norm(E2E4-E4)<eps);
-    const auto E3E2 = E3*E2;
-    const auto E3E4 = E3*E4;
-    TFEL_TESTS_ASSERT(norm(E3E2-E3)<eps);
-    TFEL_TESTS_ASSERT(norm(E3E4-E1)<10*eps);
-    const auto E4E1 = E4*E1;
-    const auto E4E3 = E4*E3;
-    TFEL_TESTS_ASSERT(norm(E4E1-E4)<eps);
-    TFEL_TESTS_ASSERT(norm(E4E3-E2)<10*eps);
-    const auto FF = F*F;
-    const auto GG = G*G;
-    TFEL_TESTS_ASSERT(norm(FF-F)<eps);
-    TFEL_TESTS_ASSERT(norm(GG-G)<eps);
-    
-    const auto I=st2tost2<3u,double>::Id();
-    const auto I_=TransverseIsotropicWalpoleBasis<double>::components(n,I);
-    const auto J=st2tost2<3u,double>::J();
-    const auto J_=TransverseIsotropicWalpoleBasis<double>::components(n,J);
-    const auto K=st2tost2<3u,double>::K();
-    const auto K_=TransverseIsotropicWalpoleBasis<double>::components(n,K);
-    
-    TFEL_TESTS_ASSERT(my_abs(I_[0]-1)<eps);
-    TFEL_TESTS_ASSERT(my_abs(I_[1]-1)<eps);
-    TFEL_TESTS_ASSERT(my_abs(I_[2]-0)<eps);
-    TFEL_TESTS_ASSERT(my_abs(I_[3]-0)<eps);
-    TFEL_TESTS_ASSERT(my_abs(I_[4]-1)<eps);
-    TFEL_TESTS_ASSERT(my_abs(I_[5]-1)<eps);
-    
-    TFEL_TESTS_ASSERT(my_abs(J_[0]-1./3)<eps);
-    TFEL_TESTS_ASSERT(my_abs(J_[1]-2./3)<eps);
-    TFEL_TESTS_ASSERT(my_abs(J_[2]-sqrt(2)/3)<eps);
-    TFEL_TESTS_ASSERT(my_abs(J_[3]-sqrt(2)/3)<eps);
-    TFEL_TESTS_ASSERT(my_abs(J_[4])<eps);
-    TFEL_TESTS_ASSERT(my_abs(J_[5])<eps);
-    
-    TFEL_TESTS_ASSERT(my_abs(K_[0]-2./3)<eps);
-    TFEL_TESTS_ASSERT(my_abs(K_[1]-1./3)<eps);
-    TFEL_TESTS_ASSERT(my_abs(K_[2]+sqrt(2)/3)<eps);
-    TFEL_TESTS_ASSERT(my_abs(K_[3]+sqrt(2)/3)<eps);
-    TFEL_TESTS_ASSERT(my_abs(K_[4]-1)<eps);
-    TFEL_TESTS_ASSERT(my_abs(K_[5]-1)<eps);
-    
-    const st2tost2<3u,double> tens =E1+2*E2+3*E3+4*E4+5*F+6*G;
-    const auto c1=TransverseIsotropicWalpoleBasis<double>::components(n,tens);
-    TFEL_TESTS_ASSERT(my_abs(c1[0]-1)<eps);
-    TFEL_TESTS_ASSERT(my_abs(c1[1]-2)<eps);
-    TFEL_TESTS_ASSERT(my_abs(c1[2]-3)<10*eps);
-    TFEL_TESTS_ASSERT(my_abs(c1[3]-4)<10*eps);
-    TFEL_TESTS_ASSERT(my_abs(c1[4]-5)<eps);
-    TFEL_TESTS_ASSERT(my_abs(c1[5]-6)<eps);
-    
+
+    const auto E1 = TransverseIsotropicWalpoleBasis<double>::E1(n);
+    const auto E2 = TransverseIsotropicWalpoleBasis<double>::E2(n);
+    const auto E3 = TransverseIsotropicWalpoleBasis<double>::E3(n);
+    const auto E4 = TransverseIsotropicWalpoleBasis<double>::E4(n);
+    const auto F = TransverseIsotropicWalpoleBasis<double>::F(n);
+    const auto G = TransverseIsotropicWalpoleBasis<double>::G(n);
+    const auto E1E1 = E1 * E1;
+    const auto E1E3 = E1 * E3;
+    TFEL_TESTS_ASSERT(norm(E1E1 - E1) < eps);
+    TFEL_TESTS_ASSERT(norm(E1E3 - E3) < eps);
+    const auto E2E2 = E2 * E2;
+    const auto E2E4 = E2 * E4;
+    TFEL_TESTS_ASSERT(norm(E2E2 - E2) < eps);
+    TFEL_TESTS_ASSERT(norm(E2E4 - E4) < eps);
+    const auto E3E2 = E3 * E2;
+    const auto E3E4 = E3 * E4;
+    TFEL_TESTS_ASSERT(norm(E3E2 - E3) < eps);
+    TFEL_TESTS_ASSERT(norm(E3E4 - E1) < 10 * eps);
+    const auto E4E1 = E4 * E1;
+    const auto E4E3 = E4 * E3;
+    TFEL_TESTS_ASSERT(norm(E4E1 - E4) < eps);
+    TFEL_TESTS_ASSERT(norm(E4E3 - E2) < 10 * eps);
+    const auto FF = F * F;
+    const auto GG = G * G;
+    TFEL_TESTS_ASSERT(norm(FF - F) < eps);
+    TFEL_TESTS_ASSERT(norm(GG - G) < eps);
+
+    const auto I = st2tost2<3u, double>::Id();
+    const auto I_ = TransverseIsotropicWalpoleBasis<double>::components(n, I);
+    const auto J = st2tost2<3u, double>::J();
+    const auto J_ = TransverseIsotropicWalpoleBasis<double>::components(n, J);
+    const auto K = st2tost2<3u, double>::K();
+    const auto K_ = TransverseIsotropicWalpoleBasis<double>::components(n, K);
+
+    TFEL_TESTS_ASSERT(my_abs(I_[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(my_abs(I_[1] - 1) < eps);
+    TFEL_TESTS_ASSERT(my_abs(I_[2] - 0) < eps);
+    TFEL_TESTS_ASSERT(my_abs(I_[3] - 0) < eps);
+    TFEL_TESTS_ASSERT(my_abs(I_[4] - 1) < eps);
+    TFEL_TESTS_ASSERT(my_abs(I_[5] - 1) < eps);
+
+    TFEL_TESTS_ASSERT(my_abs(J_[0] - 1. / 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(J_[1] - 2. / 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(J_[2] - sqrt(2) / 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(J_[3] - sqrt(2) / 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(J_[4]) < eps);
+    TFEL_TESTS_ASSERT(my_abs(J_[5]) < eps);
+
+    TFEL_TESTS_ASSERT(my_abs(K_[0] - 2. / 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(K_[1] - 1. / 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(K_[2] + sqrt(2) / 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(K_[3] + sqrt(2) / 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(K_[4] - 1) < eps);
+    TFEL_TESTS_ASSERT(my_abs(K_[5] - 1) < eps);
+
+    const st2tost2<3u, double> tens =
+        E1 + 2 * E2 + 3 * E3 + 4 * E4 + 5 * F + 6 * G;
+    const auto c1 =
+        TransverseIsotropicWalpoleBasis<double>::components(n, tens);
+    TFEL_TESTS_ASSERT(my_abs(c1[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(my_abs(c1[1] - 2) < eps);
+    TFEL_TESTS_ASSERT(my_abs(c1[2] - 3) < 10 * eps);
+    TFEL_TESTS_ASSERT(my_abs(c1[3] - 4) < 10 * eps);
+    TFEL_TESTS_ASSERT(my_abs(c1[4] - 5) < eps);
+    TFEL_TESTS_ASSERT(my_abs(c1[5] - 6) < eps);
+
   } // end of test
 };
 

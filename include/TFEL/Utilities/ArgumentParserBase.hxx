@@ -36,9 +36,9 @@ namespace tfel::utilities {
    */
   template <typename Child>
   struct ArgumentParserBase : public ArgumentParser {
-    //! a simple alias
+    //! \brief a simple alias
     using MemberFuncPtr = void (Child::*)();
-    //! default constructor
+    //! \brief default constructor
     ArgumentParserBase();
     /*!
      * \brief constructor
@@ -46,6 +46,11 @@ namespace tfel::utilities {
      * \param argv : arguments list
      */
     ArgumentParserBase(const int, const char* const* const);
+    //
+    ArgumentParserBase(const ArgumentParserBase&) = delete;
+    ArgumentParserBase(ArgumentParserBase&&) = delete;
+    ArgumentParserBase& operator=(const ArgumentParserBase&) = delete;
+    ArgumentParserBase& operator=(ArgumentParserBase&&) = delete;
     /*!
      * \brief register a new callback
      * \param key         : command line argument name
@@ -73,19 +78,8 @@ namespace tfel::utilities {
                              const MemberFuncPtr&,
                              const std::string& = "",
                              const bool = false);
-    //! destructor
+    //! \brief destructor
     ~ArgumentParserBase() override;
-
-   private:
-    //! copy constructor
-    ArgumentParserBase(const ArgumentParserBase&) = delete;
-    //! move constructor
-    ArgumentParserBase(ArgumentParserBase&&) = delete;
-    //! assignement
-    ArgumentParserBase& operator=(const ArgumentParserBase&) = delete;
-    //! move assignement
-    ArgumentParserBase& operator=(ArgumentParserBase&&) = delete;
-
   };  // end of ArgumentParserBase<Child>
 
 }  // end of namespace tfel::utilities

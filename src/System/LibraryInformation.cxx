@@ -116,13 +116,14 @@ namespace tfel::system {
 
   LibraryInformation::LibraryInformation(const LibraryInformation&) = default;
 
-  LibraryInformation::LibraryInformation(LibraryInformation&&) = default;
+  LibraryInformation::LibraryInformation(LibraryInformation&&) noexcept =
+      default;
 
   LibraryInformation& LibraryInformation::operator=(const LibraryInformation&) =
       default;
 
-  LibraryInformation& LibraryInformation::operator=(LibraryInformation&&) =
-      default;
+  LibraryInformation& LibraryInformation::operator=(
+      LibraryInformation&&) noexcept = default;
 
   std::vector<std::string> LibraryInformation::sections() {
     return this->impl->sections();

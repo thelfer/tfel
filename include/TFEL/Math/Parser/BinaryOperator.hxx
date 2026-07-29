@@ -102,30 +102,33 @@ namespace tfel::math::parser {
     BinaryOperation(const std::shared_ptr<Expr>,
                     const std::shared_ptr<Expr>) noexcept;
     //
-    bool isConstant() const override;
-    double getValue() const override final;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    std::string getCxxFormula(
-        const std::vector<std::string>&) const override final;
-    void checkCyclicDependency(std::vector<std::string>&) const override final;
-    std::shared_ptr<Expr> resolveDependencies(
-        const std::vector<double>&) const override final;
-    std::shared_ptr<Expr> differentiate(
+    BinaryOperation& operator=(const BinaryOperation&) = delete;
+    BinaryOperation& operator=(BinaryOperation&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] double getValue() const final;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] std::string getCxxFormula(
+        const std::vector<std::string>&) const final;
+    void checkCyclicDependency(std::vector<std::string>&) const final;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
+        const std::vector<double>&) const final;
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
-        const std::vector<double>&) const override final;
-    std::shared_ptr<Expr> clone(
-        const std::vector<double>&) const override final;
-    void getParametersNames(std::set<std::string>&) const override final;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+        const std::vector<double>&) const final;
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const final;
+    void getParametersNames(std::set<std::string>&) const final;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
-        const override final;
+        const final;
     ~BinaryOperation() override;
 
    private:
-    BinaryOperation& operator=(const BinaryOperation&) = delete;
-    BinaryOperation& operator=(BinaryOperation&&) = delete;
     const std::shared_ptr<Expr> a;
     const std::shared_ptr<Expr> b;
   };  // end of struct BinaryOperation

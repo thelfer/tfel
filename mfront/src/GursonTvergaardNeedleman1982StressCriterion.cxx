@@ -62,7 +62,7 @@ namespace mfront::bbrick {
           const Role r,
           const std::string& n) {
     if (n != "q_3") {
-      StandardPorousStressCriterionBase::
+      return StandardPorousStressCriterionBase::
           generateMissingMaterialPropertyInitializationCode(bd, dsl, id, r, n);
     }
     const auto params =

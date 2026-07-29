@@ -44,7 +44,8 @@ namespace tfel::check {
   ConfigurationManager::ConfigurationManager(const Configuration& src)
       : configuration(src) {}  // end of ConfigurationManager
 
-  ConfigurationManager::ConfigurationManager(ConfigurationManager&&) = default;
+  ConfigurationManager::ConfigurationManager(ConfigurationManager&&) noexcept =
+      default;
 
   ConfigurationManager::ConfigurationManager(const ConfigurationManager&) =
       default;
@@ -82,6 +83,19 @@ namespace tfel::check {
     return p->second.getConfiguration(r.second);
   }  // end of getConfigurationManager
 
+  void ConfigurationManager::addEnvironmentVariable(const std::string& s1,
+                                                    const std::string& s2,
+                                                    const bool b) {
+    this->modify([&s1, &s2, b](Configuration& c) {
+      if ((!c.environments.insert({s1, s2}).second) && (b)) {
+        tfel::raise(
+            "ConfigurationManager::addSubstitution: "
+            "the environment variable '" +
+            s1 + "' has already been defined");
+      }
+    });
+  }  // end of addSubstitution
+
   void ConfigurationManager::addSubstitution(const std::string& s1,
                                              const std::string& s2,
                                              const bool b) {
@@ -118,7 +132,7 @@ namespace tfel::check {
   }  // end of getConfiguration
 
   ConfigurationManager& ConfigurationManager::operator=(
-      ConfigurationManager&&) = default;
+      ConfigurationManager&&) noexcept = default;
 
   ConfigurationManager& ConfigurationManager::operator=(
       const ConfigurationManager&) = default;
@@ -154,6 +168,16 @@ namespace tfel::check {
             convert<std::map<std::string, std::string>>(Data::read(p, pe));
         for (const auto& v : variables) {
           c.addSubstitution("@" + v.first + "@", v.second);
+        }
+        CxxTokenizer::readSpecifiedToken("tfel::check::parse", ";", p, pe);
+      } else if (p->value == "environment_variables") {
+        ++p;
+        CxxTokenizer::readSpecifiedToken("tfel::check::parse", ":", p, pe);
+        CxxTokenizer::checkNotEndOfLine("tfel::check::parse", p, pe);
+        const auto variables =
+            convert<std::map<std::string, std::string>>(Data::read(p, pe));
+        for (const auto& v : variables) {
+          c.addEnvironmentVariable(v.first, v.second);
         }
         CxxTokenizer::readSpecifiedToken("tfel::check::parse", ";", p, pe);
       } else {

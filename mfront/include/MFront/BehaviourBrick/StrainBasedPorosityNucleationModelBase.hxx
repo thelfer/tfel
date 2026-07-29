@@ -29,7 +29,7 @@ namespace mfront::bbrick {
    * - \f$p\f$ is the total equivalent plastic strain.
    */
   struct StrainBasedPorosityNucleationModelBase : PorosityNucleationModelBase {
-    std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -40,11 +40,11 @@ namespace mfront::bbrick {
         const StressPotential&,
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string&) const override;
-    std::string updateNextEstimateOfThePorosityIncrement(
+    [[nodiscard]] std::string updateNextEstimateOfThePorosityIncrement(
         const BehaviourDescription&,
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string&) const override;
-    bool requiresSavingNucleatedPorosity() const override final;
+    [[nodiscard]] bool requiresSavingNucleatedPorosity() const final;
     //! \brief destructor
     ~StrainBasedPorosityNucleationModelBase() override;
 
@@ -52,12 +52,12 @@ namespace mfront::bbrick {
     /*!
      * \return the name of the underlying nucleation model.
      */
-    virtual std::string getModelName() const = 0;
+    [[nodiscard]] virtual std::string getModelName() const = 0;
     /*!
      * \return a boolean stating if the nucleated porosity of the underlying
      * nucleation model must be limited.
      */
-    virtual bool requiresLimitOnNucleationPorosity() const = 0;
+    [[nodiscard]] virtual bool requiresLimitOnNucleationPorosity() const = 0;
     //!
     BehaviourDescription::MaterialProperty fmax;
   };  // end of struct StrainBasedPorosityNucleationModelBase

@@ -18,7 +18,7 @@
 
 namespace tfel::math {
 
-  constexpr auto GaussKronrodQuadrature::eval_if_required(const auto &r) {
+  constexpr auto GaussKronrodQuadrature::eval_if_required(const auto& r) {
     if constexpr (ExpressionConcept<std::decay_t<decltype(r)>>) {
       return eval(r);
     } else {
@@ -28,7 +28,7 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::operator()(
-      const FunctionType &f,                                     //
+      const FunctionType& f,                                     //
       const real a,                                              //
       const real b,                                              //
       const NumericalParameters<real> params) const              //
@@ -108,7 +108,7 @@ namespace tfel::math {
   }  // end of operator()
 
   template <ScalarConcept real, typename FunctionType>
-  constexpr auto GaussKronrodQuadrature::operator()(const FunctionType &f,
+  constexpr auto GaussKronrodQuadrature::operator()(const FunctionType& f,
                                                     const real a,
                                                     const real b) const  //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)          //
@@ -188,10 +188,10 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::integrate(
-      const FunctionType &f,
+      const FunctionType& f,
       const real a,
       const real b,
-      const NumericalParameters<real> &params) const             //
+      const NumericalParameters<real>& params) const             //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
@@ -222,7 +222,7 @@ namespace tfel::math {
   }  // end of integrate
 
   template <ScalarConcept real, typename FunctionType>
-  constexpr auto GaussKronrodQuadrature::integrate(const FunctionType &f,
+  constexpr auto GaussKronrodQuadrature::integrate(const FunctionType& f,
                                                    const real a,
                                                    const real b) const  //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)         //
@@ -322,7 +322,7 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeUnboundedIntegral(
-      const FunctionType &f) const                               //
+      const FunctionType& f) const                               //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [f](const base_type<real> t) noexcept(
@@ -339,7 +339,7 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeLeftUnboundedIntegral(
-      const FunctionType &f,
+      const FunctionType& f,
       const real b) const                                        //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       requires(std::is_invocable_v<FunctionType, real>) {
@@ -357,7 +357,7 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeRightUnboundedIntegral(
-      const FunctionType &f,
+      const FunctionType& f,
       const real a) const                                        //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       requires(std::is_invocable_v<FunctionType, real>) {
@@ -375,8 +375,8 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeUnboundedIntegral(
-      const FunctionType &f,
-      const NumericalParameters<real> &params) const             //
+      const FunctionType& f,
+      const NumericalParameters<real>& params) const             //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [f](const base_type<real> t) noexcept(
@@ -393,9 +393,9 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeLeftUnboundedIntegral(
-      const FunctionType &f,
+      const FunctionType& f,
       const real b,
-      const NumericalParameters<real> &params) const             //
+      const NumericalParameters<real>& params) const             //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
@@ -419,9 +419,9 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeRightUnboundedIntegral(
-      const FunctionType &f,
+      const FunctionType& f,
       const real a,
-      const NumericalParameters<real> &params) const             //
+      const NumericalParameters<real>& params) const             //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,

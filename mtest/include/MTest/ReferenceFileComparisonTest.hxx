@@ -26,13 +26,11 @@
 
 namespace mtest {
 
-  /*!
-   * Test based on the comparison of the solution to a reference file
-   */
+  //! \brief Test based on the comparison of the solution to a reference file
   struct MTEST_VISIBILITY_EXPORT ReferenceFileComparisonTest
       : public MTest::UTest {
     /*!
-     * constructor
+     * \brief constructor
      * \param[in] d    : data
      * \param[in] c    : column
      * \param[in] v    : variable
@@ -46,7 +44,7 @@ namespace mtest {
                                 const std::function<real(const CurrentState&)>&,
                                 const real);
     /*!
-     * constructor
+     * \brief constructor
      * \param[in] d    : data
      * \param[in] v    : variable
      * \param[in] m    : evolution manager
@@ -61,6 +59,11 @@ namespace mtest {
                                 const std::string&,
                                 const std::function<real(const CurrentState&)>&,
                                 const real);
+    //
+    ReferenceFileComparisonTest& operator=(const ReferenceFileComparisonTest&) =
+        delete;
+    ReferenceFileComparisonTest& operator=(ReferenceFileComparisonTest&&) =
+        delete;
     /*!
      * \param[in] s:  state
      * \param[in] t:  time
@@ -72,24 +75,20 @@ namespace mtest {
                const real,
                const unsigned int) override;
     //! \return the results of the test
-    tfel::tests::TestResult getResults() const override;
-    //! destructor
+    [[nodiscard]] tfel::tests::TestResult getResults() const override;
+    //! \brief destructor
     ~ReferenceFileComparisonTest() override;
 
    protected:
-    ReferenceFileComparisonTest& operator=(const ReferenceFileComparisonTest&) =
-        delete;
-    ReferenceFileComparisonTest& operator=(ReferenceFileComparisonTest&&) =
-        delete;
-    //! reference values
+    //! \brief reference values
     const std::vector<real> values;
-    //! results of the test
+    //! \brief results of the test
     tfel::tests::TestResult results;
-    //! variable name
+    //! \brief variable name
     const std::string name;
-    //! value getter
+    //! \brief value getter
     std::function<real(const CurrentState&)> get;
-    //! criterium value
+    //! \brief criterium value
     const real eps;
   };
 

@@ -20,7 +20,7 @@ namespace aster {
 
   // Constructeur
   // drot : Matrice de passage élement/global
-  AsterRotationMatrix2D::AsterRotationMatrix2D(const AsterReal *const drot) {
+  AsterRotationMatrix2D::AsterRotationMatrix2D(const AsterReal* const drot) {
     // Matrice de passage matériau/global
     AsterReal a[4];
 
@@ -54,8 +54,8 @@ namespace aster {
   // e^m=N:e^g
   // eg : Déformations dans le repère global
   // em : Déformations dans le repère matériau
-  void AsterRotationMatrix2D::rotateStrainsForward(const AsterReal *const eg,
-                                                   AsterReal *const em) const {
+  void AsterRotationMatrix2D::rotateStrainsForward(const AsterReal* const eg,
+                                                   AsterReal* const em) const {
     // e11
     em[0] = MN[0][0] * eg[0] + MN[0][1] * eg[1] + MN[0][2] * eg[3];
     // e22
@@ -72,7 +72,7 @@ namespace aster {
   // sm : Contraintes dans le repère matériau
   // sg : Contraintes dans le repère global
   void AsterRotationMatrix2D::rotateStressesBackward(
-      const AsterReal *const sm, AsterReal *const sg) const {
+      const AsterReal* const sm, AsterReal* const sg) const {
     // s11
     sg[0] = MN[0][0] * sm[0] + MN[1][0] * sm[1] + 2 * MN[2][0] * sm[3];
     // s22
@@ -88,8 +88,8 @@ namespace aster {
   // s^m=M:s^g
   // sg : Contraintes dans le repère global
   // sm : Contraintes dans le repère matériau
-  void AsterRotationMatrix2D::rotateStressesForward(const AsterReal *const sg,
-                                                    AsterReal *const sm) const {
+  void AsterRotationMatrix2D::rotateStressesForward(const AsterReal* const sg,
+                                                    AsterReal* const sm) const {
     // s11
     sm[0] = MN[0][0] * sg[0] + MN[0][1] * sg[1] + 2 * MN[0][2] * sg[3];
     // s22
@@ -105,8 +105,8 @@ namespace aster {
   // e^g=M^T:e^m
   // em : Contraintes dans le repère matériau
   // eg : Contraintes dans le repère global
-  void AsterRotationMatrix2D::rotateStrainsBackward(const AsterReal *const em,
-                                                    AsterReal *const eg) const {
+  void AsterRotationMatrix2D::rotateStrainsBackward(const AsterReal* const em,
+                                                    AsterReal* const eg) const {
     // e11
     eg[0] = MN[0][0] * em[0] + MN[1][0] * em[1] + MN[2][0] * em[3];
     // e22
@@ -120,7 +120,7 @@ namespace aster {
   // Calcul de la déformation dans le repère global
   // D^g=tN:D^m:N
   void AsterRotationMatrix2D::rotateTangentOperatorBackward(
-      AsterReal *const D) const {
+      AsterReal* const D) const {
     // matrice N
     AsterReal N[4][4];
     for (unsigned short i = 0; i != 2; ++i) {
@@ -166,7 +166,7 @@ namespace aster {
 
   // Constructeur
   // drot : Matrice de passage élement/global
-  AsterRotationMatrix3D::AsterRotationMatrix3D(const AsterReal *const drot) {
+  AsterRotationMatrix3D::AsterRotationMatrix3D(const AsterReal* const drot) {
     // Contruction de la matrice de passage N (pour les tenseurs)
     // Première ligne
     MN[0][0] = drot[0] * drot[0];
@@ -221,8 +221,8 @@ namespace aster {
   // e^m=N:e^g
   // eg : Déformations dans le repère global
   // em : Déformations dans le repère matériau
-  void AsterRotationMatrix3D::rotateStrainsForward(const AsterReal *const eg,
-                                                   AsterReal *const em) const {
+  void AsterRotationMatrix3D::rotateStrainsForward(const AsterReal* const eg,
+                                                   AsterReal* const em) const {
     em[0] = MN[0][0] * eg[0] + MN[0][1] * eg[1] + MN[0][2] * eg[2] +
             MN[0][3] * eg[3] + MN[0][4] * eg[4] + MN[0][5] * eg[5];
     em[1] = MN[1][0] * eg[0] + MN[1][1] * eg[1] + MN[1][2] * eg[2] +
@@ -242,7 +242,7 @@ namespace aster {
   // sm : Contraintes dans le repère matériau
   // sg : Contraintes dans le repère global
   void AsterRotationMatrix3D::rotateStressesBackward(
-      const AsterReal *const sm, AsterReal *const sg) const {
+      const AsterReal* const sm, AsterReal* const sg) const {
     sg[0] = MN[0][0] * sm[0] + MN[1][0] * sm[1] + MN[2][0] * sm[2] +
             2 * (MN[3][0] * sm[3] + MN[4][0] * sm[4] + MN[5][0] * sm[5]);
     sg[1] = MN[0][1] * sm[0] + MN[1][1] * sm[1] + MN[2][1] * sm[2] +
@@ -261,8 +261,8 @@ namespace aster {
   // s^m=M:s^g
   // sg : Contraintes dans le repère global
   // sm : Contraintes dans le repère matériau
-  void AsterRotationMatrix3D::rotateStressesForward(const AsterReal *const sg,
-                                                    AsterReal *const sm) const {
+  void AsterRotationMatrix3D::rotateStressesForward(const AsterReal* const sg,
+                                                    AsterReal* const sm) const {
     sm[0] = MN[0][0] * sg[0] + MN[0][1] * sg[1] + MN[0][2] * sg[2] +
             2 * (MN[0][3] * sg[3] + MN[0][4] * sg[4] + MN[0][5] * sg[5]);
     sm[1] = MN[1][0] * sg[0] + MN[1][1] * sg[1] + MN[1][2] * sg[2] +
@@ -281,8 +281,8 @@ namespace aster {
   // e^g=M^T:e^m
   // em : Contraintes dans le repère matériau
   // eg : Contraintes dans le repère global
-  void AsterRotationMatrix3D::rotateStrainsBackward(const AsterReal *const em,
-                                                    AsterReal *const eg) const {
+  void AsterRotationMatrix3D::rotateStrainsBackward(const AsterReal* const em,
+                                                    AsterReal* const eg) const {
     eg[0] = MN[0][0] * em[0] + MN[1][0] * em[1] + MN[2][0] * em[2] +
             MN[3][0] * em[3] + MN[4][0] * em[4] + MN[5][0] * em[5];
     eg[1] = MN[0][1] * em[0] + MN[1][1] * em[1] + MN[2][1] * em[2] +
@@ -299,7 +299,7 @@ namespace aster {
 
   // compute the stiffness matrix in the global space
   void AsterRotationMatrix3D::rotateTangentOperatorBackward(
-      AsterReal *const D) const {
+      AsterReal* const D) const {
     // matrice N
     AsterReal N[6][6];
     for (unsigned short i = 0; i != 6; ++i) {

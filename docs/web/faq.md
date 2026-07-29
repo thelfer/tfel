@@ -24,7 +24,7 @@ the pages dedicated to:
 - the installation process (see also the dedicated entry in the FAQ
   below): <https://thelfer.github.io/tfel/web/documentation.html>
 
-If none of the resources available is satisfying, one may want to use:
+If none of the resources available are satisfying, one may want to use:
 
 - the `TFEL` forums: <https://github.com/thelfer/tfel/discussions>
 - the `TFEL` bug report: <https://github.com/thelfer/tfel/issues>
@@ -76,7 +76,7 @@ The installation process is fully described in the following pages:
 	  This tutorial can easily be adapted to other versions of
 	  `MinGW`, without requiring `Cast3M` to be installed.
     - [Installation based on `MSYS`](install-windows-msys.html).
-- The creation of binary packages are detailed [here](packages.html). 
+- The creation of binary packages is detailed [here](packages.html). 
 
 ## Which build systems shall I use (`autotools` or `cmake`)
 
@@ -92,10 +92,10 @@ state under `LinuX`. This can be used when `cmake` is not available.
 By default, the compilation of `mfront` takes advantage of the
 specific CPU of the host system (using flags such as `--march=native`
 with `clang` and `gcc`, `-xHost` with the `intel` compiler). However,
-the binaries generated can not:
+the binaries generated cannot:
 
-- be used to generated redistributable binary packages.
-- be installed on a NFS-like shared folder to be shared on a network
+- be used to generate redistributable binary packages.
+- be installed on an NFS-like shared folder to be shared on a network
   of computers.
 
 In both cases, the execution can fail with an `illegal instruction`
@@ -115,7 +115,7 @@ reason, the default behaviour of `mfront` is to use flags like
 `-march=native` when compiling the libraries (This can be disabled by
 selecting `--obuild=level0`).
 
-Thus, we test the availability of this flag whether
+Thus, we test the availability of this flag when
 `-Denable-portable-build=ON` is used.  Thus, a message such as
 `--enabling flag 'march=native'` barely states that this option is
 supported by the compiler.
@@ -137,7 +137,7 @@ Without `-Denable-portable-build=ON`, you shall see the
 `--march=native` flag twice: one time as a compiler flag, one time as
 part of the definition of the `OPTIMISATION_FLAGS` macro. With
 `-Denable-portable-build=ON`, you will see it only once, in the
-definition of the `OPTIMISATION`_FLAGS macro.
+definition of the `OPTIMISATION_FLAGS` macro.
 
 # MFront
 
@@ -145,7 +145,7 @@ definition of the `OPTIMISATION`_FLAGS macro.
 
 ### What is a DSL (domain specific language)
 
-`MFront` treats various kind of material knowledge:
+`MFront` treats various kinds of material knowledge:
 
 - [material properties](material-properties.html) (for instance the
   Young modulus, the thermal conductivity, etc.)
@@ -167,7 +167,7 @@ which is meant to be simple and expressive.
 - free or commercial finite element solvers (implicit or explicit)
 - mechanical solvers based on Fast Fourier Transform (FFT).
 
-Most solvers offers entry points to add user defined mechanical
+Most solvers offer entry points to add user defined mechanical
 behaviours. The most common one is `UMAT`, which is part of the
 `Abaqus/Standard` solver. In this case, the process of supporting a new
 solver is fairly easy, and we are ready to help setting it
@@ -175,8 +175,8 @@ up. However, extensive testing can be a long and tedious task: again,
 we are ready to help by providing advice, test cases and reference
 solutions.
 
-If no such entry point exist, then one may need to modify the
-solver. Again, we can provide valuable advice of how to do add support
+If no such entry point exists, then one may need to modify the
+solver. Again, we can provide valuable advice on how to add support
 for user defined behaviours and even provide tight integration with
 `MFront` (which can really ease user's life).
 
@@ -221,24 +221,24 @@ $ mfront --help-keywords=Implicit | pandoc -f markdown-markdown_in_html_blocks+t
 
 ## General questions about mechanical behaviours
 
-### Where can I find examples of well written behaviours ?
+### Where can I find examples of well written behaviours?
 
 The gallery has been created for that purpose. Various implementations
 of mechanical behaviour are covered in depth, including the
 description of the algorithm used. See [this page](gallery.html) for
 details.
 
-### My newly implemented behaviour does not converge, what can I do ?
+### My newly implemented behaviour does not converge, what can I do?
 
-Let us point that, there are no general guidelines, most troubles are
-behaviour specific. However, here are some advises that may help
-you. Note that those advises are worth considering during the
+Let us point out that there are no general guidelines, most troubles are
+behaviour specific. However, here is some advice that may help
+you. Note that this advice is worth considering during the
 behaviour implementation, before "real-world tests".
 
 The first thing to do is to identify the trouble.
 
 If your computations are very CPU intensive and if the divergence
-appends after a noticeable amount of time, it is worth enabling the
+appears after a noticeable amount of time, it is worth enabling the
 generation of a `MTest` file on failure. This feature is for example
 supported by the `castem` (`Cast3M`), `aster` and `cyrano` interfaces.
 
@@ -256,7 +256,7 @@ runtime. For example, it may show:
 #### Large values of the residual
 
 In this case, you may want to print some of your variables to see what
-is happening. If the large values appears due to unrealistic
+is happening. If the large values appear due to unrealistic
 prediction of the stresses, in particular at the second iteration, the
 `Implicit` scheme allows you to limit the `Newton` steps or use more
 robust algorithms (`PowellDogLeg`, `LevenbergMarquardt`). Otherwise,
@@ -270,7 +270,7 @@ with analytical jacobian). In this case, it is worth comparing your
 jacobian to a numerical one (see `@CompareToNumericalJaobian`). As
 this comparison is CPU intensive, please consider specifying this
 keyword in the command line rather than in your implementation to
-avoid forgetting removing it in your real-world tests:
+avoid forgetting to remove it in your real-world tests:
 
 ~~~~ {.bash}
 $ mfront --obuild --interface=castem --@CompareToNumericalJacobian=true norton.mfront
@@ -319,7 +319,7 @@ manual search of the problem.
 ### What are the variable types available in `MFront`
 
 For all domain specific languages, `MFront` defines the real
-`typedef` which is used to abstract to floating-point type used
+`typedef` which is used to abstract the floating-point type used
 by the calling solver. For example, if the calling solver works
 in double precision, real will be a `typedef` to `double`. If the
 calling solver works in quadruple precision, real will be a
@@ -378,15 +378,15 @@ The difference between those types is currently purely informative:
 the user can use these types to improve the readability of their code
 which is strongly encouraged.
 
-The `TFEL` library has support for quantities (number associated with
-units) which allows to checks for the consistency of operations at
+The `TFEL` library has support for quantities (numbers associated with
+units) which allows checking for the consistency of operations at
 compile-time (no cost at runtime). However, support for this feature
 has not been enabled in `MFront` yet: for the moment, we only have
 introduced the associated types.
 
 ### Orthotropic axes convention
 
-Most finite element solver can't have a unique definition of the
+Most finite element solvers can't have a unique definition of the
 orthotropic axes for all the modelling hypotheses.
 
 For example, one can define a pipe using the following axes

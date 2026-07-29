@@ -128,16 +128,6 @@ namespace ansys {
       e[2] = 0;
       e[3] = v[2] * cste;
     }  // end of exe
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] s: symmetric tensor to be filled
-     * \param[in]  v: values
-     */
-    template <typename T>
-    static inline void exe(tfel::math::tensor<2u, T>& F,
-                           const AnsysReal* const v) {
-      //      tfel::math::tensor<N, T>::buildFromFortranMatrix(F, v);
-    }  // end of exe
   };   // end of struct ImportGradients
   /*!
    * \brief class defining the convertion from ansys to mfront for

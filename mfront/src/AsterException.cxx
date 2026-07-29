@@ -39,7 +39,7 @@ namespace aster {
     return msg.c_str();
   }  // end of AsterException::what
 
-  std::string AsterException::getMsg() const noexcept {
+  const std::string& AsterException::getMsg() const noexcept {
     return msg;
   }  // end of AsterException::getMsg
 
@@ -51,9 +51,7 @@ namespace aster {
   }  // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
 
   AsterInvalidNTENSValue::AsterInvalidNTENSValue(
-      const AsterInvalidNTENSValue& e)
-      : AsterException(e) {
-  }  // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
+      const AsterInvalidNTENSValue&) = default;
 
   AsterInvalidNTENSValue::~AsterInvalidNTENSValue() noexcept = default;
 

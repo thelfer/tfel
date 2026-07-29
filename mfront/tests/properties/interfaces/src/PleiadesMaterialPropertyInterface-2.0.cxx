@@ -30,7 +30,7 @@ namespace mfront {
   PleiadesMaterialPropertyInterface::
       PleiadesMaterialPropertyInterface() noexcept = default;
 
-  std::string PleiadesMaterialPropertyInterface::getName(void) {
+  std::string PleiadesMaterialPropertyInterface::getName() {
     return "pleiades-2.0";
     // TODO: make a PleiadesMaterialPropertyInterface.cxx.in and use
     // @PACKAGE_VERSION@

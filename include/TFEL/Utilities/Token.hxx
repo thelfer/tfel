@@ -49,25 +49,25 @@ namespace tfel::utilities {
           const size_type,
           const size_type,
           const TokenFlag = Standard);
-    //! copy constructor
+    //! \brief copy constructor
     Token(const Token&);
-    //! move constructor
-    Token(Token&&);
-    //! assignement
+    //! \brief move constructor
+    Token(Token&&) noexcept;
+    //! \brief assignement
     Token& operator=(const Token&);
-    //! move assignement
-    Token& operator=(Token&&);
-    //! destructor
+    //! \brief move assignement
+    Token& operator=(Token&&) noexcept;
+    //! \brief destructor
     ~Token() noexcept;
-    //! string holded by the token
+    //! \brief string holded by the token
     std::string value;
-    //! line number
+    //! \brief line number
     size_type line = 0u;
-    //! offset in the line
+    //! \brief offset in the line
     size_type offset = 0u;
-    //! comment
+    //! \brief comment
     std::string comment;
-    //! type of the token
+    //! \brief type of the token
     TokenFlag flag = Standard;
   };  // end of struct Token
 

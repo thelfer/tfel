@@ -30,7 +30,7 @@ namespace tfel::utilities {
         c(c_),
         hasOption(b) {}  // end of ArgumentParser::CallBack::CallBack
 
-  ArgumentParser::CallBack::CallBack(CallBack&&) = default;
+  ArgumentParser::CallBack::CallBack(CallBack&&) noexcept = default;
 
   ArgumentParser::CallBack::CallBack(const CallBack&) = default;
 

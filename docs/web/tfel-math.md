@@ -859,6 +859,30 @@ In this example, `s1` and `s2` are two symmetric tensors stored in SoA
 format with a stride of 2. The component `s1[i]` is located at address
 `&values[0] + i * 2`, while `s2[i]` is at `&values[1] + i * 2`.
 
+### Views of derivatives with strided coalescent memory access
+
+The `map_derivative_strided` function creates a view of a derivative
+sub-block of a base matrix whose components are stored in SoA layout. It is
+typically used on the GPU to assemble a Jacobian block by block with
+coalescent memory access, without materialising a `tmatrix`.
+
+Its template parameters are the block position `I, J`, the function and
+variable types, and the number of rows `N` and columns `M` of the base
+matrix; the base matrix is passed as a pointer to its \((0, 0)\) component
+and a stride. The following snippet views the derivative of a symmetric
+tensor with respect to another symmetric tensor, i.e. a \(4\times 4\)
+sub-block whose top-left corner is element \((4, 0)\) of an \(8\times 8\)
+base matrix stored in SoA layout:
+
+~~~~{.cxx}
+// base pointer `p` to element (0, 0), stride `s` between consecutive components
+map_derivative_strided<4, 0, stensor<2u, double>, stensor<2u, double>, 8, 8>(p, s) =
+    st2tost2<2u, double>::Id();
+~~~~
+
+Its component \((a, b)\) is element \((4 + a, b)\) of the base matrix,
+located at address `p + ((4 + a) * 8 + b) * s`.
+
 # Solvers for fixed size non-linear systems {#sec:tfel_math:non_linear_solvers}
 
 The `TFEL/Math` library provides several non-linear solvers which are

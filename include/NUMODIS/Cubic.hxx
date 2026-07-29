@@ -40,40 +40,41 @@ namespace numodis {
   struct TFELNUMODIS_VISIBILITY_EXPORT Cubic : public Crystallo {
     Cubic();
 
-    Cubic(Cubic&&);
+    Cubic(Cubic&&) noexcept;
 
     Cubic(const Cubic&);
 
-    virtual Vect3 direction(const IDirection&) const override;
+    [[nodiscard]] Vect3 direction(const IDirection&) const override;
 
-    virtual Vect3 burgers_vector(const IBurgers&) const override;
+    [[nodiscard]] Vect3 burgers_vector(const IBurgers&) const override;
 
-    virtual Vect3 normal(const IPlane&) const override;
+    [[nodiscard]] Vect3 normal(const IPlane&) const override;
 
-    virtual double Norm2(const IBurgers& iburgers) const override;
+    [[nodiscard]] double Norm2(const IBurgers& iburgers) const override;
 
-    virtual int getNsymmetries() const override;
+    [[nodiscard]] int getNsymmetries() const override;
 
-    virtual GSystem Symmetry(int k, const GSystem& gsystem) const override;
+    [[nodiscard]] GSystem Symmetry(int k,
+                                   const GSystem& gsystem) const override;
 
-    virtual void GenerateEquivalentIndices(
+    void GenerateEquivalentIndices(
         const std::vector<int>& ind0,
         std::vector<std::vector<int>>& equivalent) const override;
 
-    virtual void GenerateOrthogonalVector(const IPlane& u,
-                                          IDirection& v) const override;
+    void GenerateOrthogonalVector(const IPlane& u,
+                                  IDirection& v) const override;
 
-    virtual void CrossProduct(const IPlane& iplane1,
-                              const IPlane& iplane2,
-                              IDirection& idirection) const override;
+    void CrossProduct(const IPlane& iplane1,
+                      const IPlane& iplane2,
+                      IDirection& idirection) const override;
 
-    virtual void CrossProduct(const IBurgers& iburgers,
-                              const IDirection& idirection,
-                              IPlane& iplane) const override;
+    void CrossProduct(const IBurgers& iburgers,
+                      const IDirection& idirection,
+                      IPlane& iplane) const override;
 
-    virtual void CrossProduct(const IDirection& idirection0,
-                              const IDirection& idirection1,
-                              IDirection& idirection2) const;
+    void CrossProduct(const IDirection& idirection0,
+                      const IDirection& idirection1,
+                      IDirection& idirection2) const;
 
     //===========================================================
     // Cubic::ScalProduct
@@ -90,8 +91,8 @@ namespace numodis {
 
     */
     //===========================================================
-    virtual int ScalProduct(const IPlane& iplane,
-                            const IBurgers& iburgers) const override;
+    [[nodiscard]] int ScalProduct(const IPlane& iplane,
+                                  const IBurgers& iburgers) const override;
 
     //===========================================================
     // Cubic::ScalProduct
@@ -108,8 +109,8 @@ namespace numodis {
 
     */
     //===========================================================
-    virtual int ScalProduct(const IPlane& iplane,
-                            const IDirection& idirection) const override;
+    [[nodiscard]] int ScalProduct(const IPlane& iplane,
+                                  const IDirection& idirection) const override;
 
     //===========================================================
     // Cubic::ScalProduct
@@ -126,29 +127,31 @@ namespace numodis {
 
     */
     //===========================================================
-    int ScalProduct(const IDirection& idirection0,
-                    const IDirection& idirection1) const {
+    [[nodiscard]] int ScalProduct(const IDirection& idirection0,
+                                  const IDirection& idirection1) const {
       return numodis::math::iScalProduct(idirection0.getIndex(),
                                          idirection1.getIndex());
     }
 
-    virtual bool SamePlaneFamily(const IPlane& iplane0,
-                                 const IPlane& iplane1) const override;
+    [[nodiscard]] bool SamePlaneFamily(const IPlane& iplane0,
+                                       const IPlane& iplane1) const override;
 
-    virtual bool SameBurgersFamily(const IBurgers& iburgers0,
-                                   const IBurgers& iburgers1) const override;
+    [[nodiscard]] bool SameBurgersFamily(
+        const IBurgers& iburgers0, const IBurgers& iburgers1) const override;
 
-    virtual bool SameGlideSystem(const IPlane& iplane0,
-                                 const IBurgers& iburgers0,
-                                 const IPlane& iplane1,
-                                 const IBurgers& iburgers1) const override;
+    [[nodiscard]] bool SameGlideSystem(
+        const IPlane& iplane0,
+        const IBurgers& iburgers0,
+        const IPlane& iplane1,
+        const IBurgers& iburgers1) const override;
 
-    virtual ~Cubic() override;
+    ~Cubic() override;
 
    protected:
     virtual void Init();
 
-    std::vector<int> Symmetry(int k, const std::vector<int>& indices) const;
+    [[nodiscard]] std::vector<int> Symmetry(
+        int k, const std::vector<int>& indices) const;
   };
 
 }  // end of namespace numodis

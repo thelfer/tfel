@@ -27,20 +27,27 @@ namespace tfel::math::parser {
                     const std::shared_ptr<Expr>,
                     const std::shared_ptr<Expr>) noexcept;
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    double getValue() const override;
-    std::string getCxxFormula(const std::vector<std::string>&) const override;
+    ConditionalExpr& operator=(const ConditionalExpr&) = delete;
+    ConditionalExpr& operator=(ConditionalExpr&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::string getCxxFormula(
+        const std::vector<std::string>&) const override;
 
     void checkCyclicDependency(std::vector<std::string>&) const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
     void getParametersNames(std::set<std::string>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -48,8 +55,6 @@ namespace tfel::math::parser {
     ~ConditionalExpr() override;
 
    private:
-    ConditionalExpr& operator=(const ConditionalExpr&) = delete;
-    ConditionalExpr& operator=(ConditionalExpr&&) = delete;
     const std::shared_ptr<LogicalExpr> c;
     const std::shared_ptr<Expr> a;
     const std::shared_ptr<Expr> b;

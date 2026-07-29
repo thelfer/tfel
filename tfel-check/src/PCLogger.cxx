@@ -23,9 +23,9 @@ std::mutex message_mutex;
 namespace tfel::check {
 
   PCLogger::PCLogger() = default;
-  PCLogger::PCLogger(PCLogger&&) = default;
+  PCLogger::PCLogger(PCLogger&&) noexcept = default;
   PCLogger::PCLogger(const PCLogger&) = default;
-  PCLogger& PCLogger::operator=(PCLogger&&) = default;
+  PCLogger& PCLogger::operator=(PCLogger&&) noexcept = default;
   PCLogger& PCLogger::operator=(const PCLogger&) = default;
   PCLogger::~PCLogger() = default;
 

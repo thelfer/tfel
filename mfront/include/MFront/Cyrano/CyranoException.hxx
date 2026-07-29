@@ -25,22 +25,18 @@ namespace cyrano {
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoException
       : public std::exception {
     CyranoException(const std::string&);
-
     CyranoException(const CyranoException&);
-
-    virtual const char* what() const noexcept override final;
-
-    virtual std::string getMsg() const noexcept final;
+    //
+    CyranoException() = delete;
+    CyranoException& operator=(const CyranoException&) = delete;
+    //
+    [[nodiscard]] const char* what() const noexcept final;
+    [[nodiscard]] virtual const std::string& getMsg() const noexcept final;
 
     ~CyranoException() noexcept override;
 
    private:
-    CyranoException();
-
-    CyranoException& operator=(const CyranoException&);
-
     const std::string msg;
-
   };  // end of struct CyranoException
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoIntegrationFailed final
@@ -48,32 +44,30 @@ namespace cyrano {
     CyranoIntegrationFailed();
     CyranoIntegrationFailed(const std::string&);
     CyranoIntegrationFailed(const CyranoIntegrationFailed&);
+    CyranoIntegrationFailed& operator=(const CyranoIntegrationFailed&) = delete;
     ~CyranoIntegrationFailed() noexcept override;
-
-   private:
-    CyranoIntegrationFailed& operator=(const CyranoIntegrationFailed&);
   };  // end of struct CyranoIntegrationFailed
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInvalidNTENSValue final
       : public CyranoException {
     CyranoInvalidNTENSValue(const unsigned short);
     CyranoInvalidNTENSValue(const CyranoInvalidNTENSValue&);
+    //
+    CyranoInvalidNTENSValue() = delete;
+    CyranoInvalidNTENSValue& operator=(const CyranoInvalidNTENSValue&) = delete;
+    //
     ~CyranoInvalidNTENSValue() noexcept override;
-
-   private:
-    CyranoInvalidNTENSValue();
-    CyranoInvalidNTENSValue& operator=(const CyranoInvalidNTENSValue&);
   };  // end of struct CyranoInvalidNTENSValue
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInvalidDimension final
       : public CyranoException {
     CyranoInvalidDimension(const std::string&, const unsigned short);
     CyranoInvalidDimension(const CyranoInvalidDimension&);
+    //
+    CyranoInvalidDimension() = delete;
+    CyranoInvalidDimension& operator=(const CyranoInvalidDimension&) = delete;
+    //
     ~CyranoInvalidDimension() noexcept override;
-
-   private:
-    CyranoInvalidDimension();
-    CyranoInvalidDimension& operator=(const CyranoInvalidDimension&);
   };  // end of struct CyranoInvalidDimension
 
 }  // end of namespace cyrano

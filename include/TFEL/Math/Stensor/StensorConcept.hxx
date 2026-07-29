@@ -124,7 +124,7 @@ namespace tfel::math {
    * dimension
    * \param[in] d: space dimension
    */
-  TFEL_HOST TFELMATH_VISIBILITY_EXPORT unsigned short getStensorSize(
+  TFELMATH_VISIBILITY_EXPORT unsigned short getStensorSize(
       const unsigned short);
 
   /*!

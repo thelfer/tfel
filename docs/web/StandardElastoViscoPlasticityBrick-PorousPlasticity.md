@@ -8,7 +8,7 @@ keywords: Porous plasticity. Ductile failure. Constitutive equations. MFront. St
 abstract: |
   This report describes the implementation of porous (visco-)plastic
   behaviours that may be used to describe ductile failure of metals
-  or the viscoplasticity of nuclears fuels.
+  or the viscoplasticity of nuclear fuels.
 
   Aside from the standard implicit scheme, this report describes a new
   implicit scheme based on a staggered approach. The presented algorithms have been introduced in the
@@ -76,9 +76,9 @@ and growth due to plastic flow.
 While some implementations of these models based on implicit schemes are
 already available in `MFront` (Gurson [@gurson1977],
 Gurson-Tvergaard-Needleman [@tvergaardneedleman1984], ...), their
-numerical treatment have specific issues:
+numerical treatment has specific issues:
 
-- Phenomenological laws describing porosity nucleation may have threshold to
+- Phenomenological laws describing porosity nucleation may have thresholds to
   be activated or inhibited.
 - Material failure usually happens when the porosity reaches a critical
   value corresponding to the collapse of the yield surface. Detection of
@@ -97,7 +97,7 @@ The purpose of this work is twofold:
   of nucleation laws and material failure.
 - Extend the [`StandardElastoViscoPlasticity`
   brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html)
-  to this class of behaviours, allowing a declarative syntax similar as:
+  to this class of behaviours, allowing a declarative syntax similar to:
 
 ~~~~{.cxx}
 @Brick "StandardElastoViscoPlasticity" {
@@ -135,7 +135,7 @@ The purpose of this work is twofold:
 This document is meant to be part of the MFront documentation. It will
 be available on the MFront website and on the ResearchGate page of the
 project. The authors have carefully checked that no unpublished material
-data has been used in the examples.
+data have been used in the examples.
 
 ## Outline
 
@@ -166,7 +166,7 @@ Section @sec:mfront:porous_plasticity:verifications is devoted to unit
 tests and verifications.
 
 Section @sec:mfront:porous_plasticity:applications describes early
-results that proves the robustness of the proposed schemes.
+results that prove the robustness of the proposed schemes.
 
 Appendix @sec:mfront:porous_plasticity:stress_criterion is dedicated to
 the computation of the stress criterion which may
@@ -213,8 +213,8 @@ identified as the plastic multiplier \(\lambda\).
 This class of models encompasses:
 
 - the work of Ponte-Castaneda (see @castaneda_effective_1991), which is
-  the theorical basis of several viscoplastic behaviours used in uranium
-  dioxyde fuels [@monerie_overall_2006;@salvo_experimental_2015];
+  the theoretical basis of several viscoplastic behaviours used in uranium
+  dioxide fuels [@monerie_overall_2006;@salvo_experimental_2015];
 - the work of Rousselier [@rousselier_1981].
 
 In the second class, the flow rule is affected by a correction factor
@@ -224,8 +224,8 @@ In the second class, the flow rule is affected by a correction factor
 \tdepsilonp = \dot{\lambda}\, \deriv{\sstar}{\tsigma} = (1 - f)\, \dot{p}\, \deriv{\sstar}{\tsigma}
 \]
 
-where $f$ is the porosity. Here, $p$ can be identified to the equivalent
-(visco-)plastic strain in the matrix and it is no more equal to the
+where $f$ is the porosity. Here, $p$ can be identified with the equivalent
+(visco-)plastic strain in the matrix and it is no longer equal to the
 plastic multiplier \(\lambda\).
 
 > **Note**
@@ -308,8 +308,7 @@ For $\left\{q_1,q_2,q_3,f_c,f_r \right\} =
 reduces to the Gurson model [@gurson1977] which has no free parameter.
 
 Note that the physical meaning of \(q_3\) different from \(q_1^2\) is
-doubtful. Moreover, the current implementation is incorrect for \(q_3
-> q_1^2\).
+doubtful. Moreover, the current implementation is incorrect for \(q_3 > q_1^2\).
 
 - **Rousselier-Tanguy-Besson** [@tanguybesson2002]
 

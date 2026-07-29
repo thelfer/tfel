@@ -39,11 +39,12 @@ namespace tfel::system {
     //! \brief default constructor
     ExternalBehaviourDescription();
     //! \brief move constructor
-    ExternalBehaviourDescription(ExternalBehaviourDescription&&);
+    ExternalBehaviourDescription(ExternalBehaviourDescription&&) noexcept;
     //! \brief copy constructor
     ExternalBehaviourDescription(const ExternalBehaviourDescription&);
     //! \brief move assignement
-    ExternalBehaviourDescription& operator=(ExternalBehaviourDescription&&);
+    ExternalBehaviourDescription& operator=(
+        ExternalBehaviourDescription&&) noexcept;
     //! \brief standard assignement
     ExternalBehaviourDescription& operator=(
         const ExternalBehaviourDescription&);
@@ -53,68 +54,68 @@ namespace tfel::system {
      * \brief get the default value of a double parameter
      * \param[in] p: parameter name
      */
-    double getRealParameterDefaultValue(const std::string&) const;
+    [[nodiscard]] double getRealParameterDefaultValue(const std::string&) const;
     /*!
      * \brief get the default value of an integer parameter
      * \param[in] p: parameter name
      */
-    int getIntegerParameterDefaultValue(const std::string&) const;
+    [[nodiscard]] int getIntegerParameterDefaultValue(const std::string&) const;
     /*!
      * \brief get the default value of an unsigned short parameter
      * \param[in] p: parameter name
      */
-    unsigned short getUnsignedShortParameterDefaultValue(
+    [[nodiscard]] unsigned short getUnsignedShortParameterDefaultValue(
         const std::string&) const;
     /*!
      * \return true if the given variable has bounds
      * \param[in] v: variable name
      */
-    bool hasBounds(const std::string&) const;
+    [[nodiscard]] bool hasBounds(const std::string&) const;
     /*!
      * \return true if the given variable has a lower bound
      * \param[in] v: variable name
      */
-    bool hasLowerBound(const std::string&) const;
+    [[nodiscard]] bool hasLowerBound(const std::string&) const;
     /*!
      * \return true if the given variable has a upper bound
      * \param[in] v: variable name
      */
-    bool hasUpperBound(const std::string&) const;
+    [[nodiscard]] bool hasUpperBound(const std::string&) const;
     /*!
      * \return the lower bound of the given variable
      * \param[in] v: variable name
      */
-    long double getLowerBound(const std::string&) const;
+    [[nodiscard]] long double getLowerBound(const std::string&) const;
     /*!
      * \return the upper bound of the given variable
      * \param[in] v: variable name
      */
-    long double getUpperBound(const std::string&) const;
+    [[nodiscard]] long double getUpperBound(const std::string&) const;
     /*!
      * \return true if the given variable has bounds
      * \param[in] v: variable name
      */
-    bool hasPhysicalBounds(const std::string&) const;
+    [[nodiscard]] bool hasPhysicalBounds(const std::string&) const;
     /*!
      * \return true if the given variable has a lower physical bound
      * \param[in] v: variable name
      */
-    bool hasLowerPhysicalBound(const std::string&) const;
+    [[nodiscard]] bool hasLowerPhysicalBound(const std::string&) const;
     /*!
      * \return true if the given variable has a upper physical bound
      * \param[in] v: variable name
      */
-    bool hasUpperPhysicalBound(const std::string&) const;
+    [[nodiscard]] bool hasUpperPhysicalBound(const std::string&) const;
     /*!
      * \return the lower bound of the given variable
      * \param[in] v: variable name
      */
-    long double getLowerPhysicalBound(const std::string&) const;
+    [[nodiscard]] long double getLowerPhysicalBound(const std::string&) const;
     /*!
      * \return the upper bound of the given variable
      * \param[in] v: variable name
      */
-    long double getUpperPhysicalBound(const std::string&) const;
+    [[nodiscard]] long double getUpperPhysicalBound(const std::string&) const;
     //! \brief name of the behavior
     std::string behaviour;
     //! \brief name of the hypothesis

@@ -20,6 +20,13 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.2.14 of the
 `TFEL` project.
 
+This version was released on June 22, 2026 along with:
+
+- [Version 3.0.17](release-notes-3.0.17.html),
+- [Version 3.1.17](release-notes-3.1.17.html)
+
+and inherits from all fixes from these releases.
+
 # Issues fixed
 
 ## Issue 901: [ansys] usermatLib compilation error (cmake>=4.0)

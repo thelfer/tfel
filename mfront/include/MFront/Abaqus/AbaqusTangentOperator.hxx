@@ -79,10 +79,10 @@ namespace abaqus {
     static void exe(const Behaviour& b, real* const DDSDDE) {
       using namespace tfel::material;
       typedef MechanicalBehaviourTraits<Behaviour> Traits;
-      using handler = typename std::conditional<
+      using handler = typename std::conditional_t<
           Traits::isConsistentTangentOperatorSymmetric,
           SymmetricConsistentTangentOperatorComputer,
-          GeneralConsistentTangentOperatorComputer>::type;
+          GeneralConsistentTangentOperatorComputer>;
       handler::exe(b, DDSDDE);
     }  // end of exe
    private:
@@ -135,10 +135,10 @@ namespace abaqus {
     static void exe(const Behaviour& b, real* const DDSDDE) {
       using namespace tfel::material;
       typedef MechanicalBehaviourTraits<Behaviour> Traits;
-      using handler = typename std::conditional<
+      using handler = typename std::conditional_t<
           Traits::isConsistentTangentOperatorSymmetric,
           SymmetricConsistentTangentOperatorComputer,
-          GeneralConsistentTangentOperatorComputer>::type;
+          GeneralConsistentTangentOperatorComputer>;
       handler::exe(b, DDSDDE);
     }  // end of exe
    private:

@@ -52,7 +52,7 @@ The following associated projects have been released simultaneously:
 
 # Tickets fixed
 
-## Ticket #166: The offset in material properties associated with the rotation matrix is not taken into account propertly in the `Ansys` interface
+## Ticket #166: The offset in material properties associated with the rotation matrix is not taken into account properly in the `Ansys` interface
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/166/>
 
@@ -62,7 +62,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/165/>
 
 ## Ticket #164: Prediction is not handled properly in the generic interface
 
-There was a error in the generated code, so the type of computation was
+There was an error in the generated code, so the type of computation was
 not handled properly:
 
 ~~~~
@@ -87,11 +87,11 @@ The issue is related to the fact that `sigfillset` is a macro under `Mac OS`.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/153/>
 
-## Ticket #150: Option specification for additonal keywords or variable substitution is inconsistent under Windows
+## Ticket #150: Option specification for additional keywords or variable substitution is inconsistent under Windows
 
 Options under Windows are allowed to be specified with `'/'` in place
 of `'--'` (both specifications are accepted). However, this did not
-work for additonal keywords or variable substitution.
+work for additional keywords or variable substitution.
 
 The following example failed:
 
@@ -101,9 +101,9 @@ $ mfront /@CompareToNumericalJacobian=true ...
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/150/>
 
-## Ticket #149: Ability to specify the path the python library at runtime
+## Ticket #149: Ability to specify the path to the python library at runtime
 
-The following environment variable can now be used to customize how `python` modules for material properties are build:
+The following environment variables can now be used to customize how `python` modules for material properties are built:
 
 - `PYTHON_INCLUDE_PATH`: path to the `python` header files.
 - `PYTHON_LIBRARY_PATH`: path to the `python` library.
@@ -132,7 +132,7 @@ The `Abaqus/Standard` solver defines three optional outputs:
 
 On the `MFront` side, the behaviour can optionally compute the stored
 and dissipated energies through the `@InternalEnergy` and
-`@DissipatedEnergy` keywords. This means that `MFront` behaviours does
+`@DissipatedEnergy` keywords. This means that `MFront` behaviours do
 not distinguish the energies dissipated by plasticity and
 viscoplasticity. The choice made in version `3.2.1` is to store the
 energy computed by the `@InternalEnergy` keyword in `SSE` and to store

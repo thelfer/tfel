@@ -61,31 +61,12 @@ namespace mtest {
                         const std::string&,
                         const EvolutionManager&,
                         const NormalisationPolicy);
-    /*!
-     * \return the number of Lagrange Multipliers
-     * associated with this contraint
-     */
-    unsigned short getNumberOfLagrangeMultipliers() const override;
-    /*!
-     * \brief builds up the stiffness matrix and the residual.
-     * \param[out] K:  stiffness matrix
-     * \param[out] r:  residual vector
-     * \param[in]  u0: value of the unknowns at the beginning
-     *                  of the time step
-     * \param[in]  u1: current estimate of the unknowns
-     * \param[in]  u1: current estimate of the unknowns
-     * \param[in]  k: approximation of the derivative of the
-     * thermodynamic force with respect to the driving variable, as
-     * returned by the mechanical behaviour.
-     * \param[in]  f: thermodynamic forces.
-     * \param[in]  u1: current estimate of the unknowns
-     * \param[in]  p:  position of the first lagrange multiplier
-     *                 in the residual
-     * \param[in]  d:  space dimension
-     * \param[in]  t:  beginning of the time step
-     * \param[in]  dt: time increment
-     * \param[in]  a:  normalisation factor
-     */
+    //
+    NonLinearConstraint& operator=(const NonLinearConstraint&) = delete;
+    NonLinearConstraint& operator=(NonLinearConstraint&&) = delete;
+    //
+    [[nodiscard]] unsigned short getNumberOfLagrangeMultipliers()
+        const override;
     void setValues(tfel::math::matrix<real>&,
                    tfel::math::vector<real>&,
                    const tfel::math::vector<real>&,
@@ -97,35 +78,20 @@ namespace mtest {
                    const real,
                    const real,
                    const real) const override;
-    /*!
-     * \param[in]  e    : driving variables
-     * \param[in]  s    : stresses
-     * \param[in]  eeps : criterium value for driving variables
-     * \param[in]  seps : criterium value for stresses
-     * \param[in]  t    : beginning of the time step
-     * \param[in]  dt   : time increment
-     */
-    bool checkConvergence(const tfel::math::vector<real>&,
-                          const tfel::math::vector<real>&,
-                          const real,
-                          const real,
-                          const real,
-                          const real) const override;
-    /*!
-     * \param[in]  e    : driving variables
-     * \param[in]  s    : thermodynamic forces
-     * \param[in]  eeps : criterium value for driving variables
-     * \param[in]  seps : criterium value for thermodynamic forces
-     * \param[in]  t    : beginning of the time step
-     * \param[in]  dt   : time increment
-     */
-    std::string getFailedCriteriaDiagnostic(const tfel::math::vector<real>&,
-                                            const tfel::math::vector<real>&,
-                                            const real,
-                                            const real,
-                                            const real,
-                                            const real) const override;
-    //! destructor
+    [[nodiscard]] bool checkConvergence(const tfel::math::vector<real>&,
+                                        const tfel::math::vector<real>&,
+                                        const real,
+                                        const real,
+                                        const real,
+                                        const real) const override;
+    [[nodiscard]] std::string getFailedCriteriaDiagnostic(
+        const tfel::math::vector<real>&,
+        const tfel::math::vector<real>&,
+        const real,
+        const real,
+        const real,
+        const real) const override;
+    //! \brief destructor
     ~NonLinearConstraint() override;
 
    protected:
@@ -138,18 +104,15 @@ namespace mtest {
      * \param[in]  t:  beginning of the time step
      * \param[in]  dt: time increment
      */
-    double eval(tfel::math::Evaluator&,
-                const tfel::math::vector<real>&,
-                const tfel::math::vector<real>&,
-                const real,
-                const real) const;
+    [[nodiscard]] double eval(tfel::math::Evaluator&,
+                              const tfel::math::vector<real>&,
+                              const tfel::math::vector<real>&,
+                              const real,
+                              const real) const;
     //! \brief evaluation of the constraint
     std::shared_ptr<Constraint> c;
     //! normalisation policy
     const Behaviour& b;
-    //! disabled operatorx
-    NonLinearConstraint& operator=(const NonLinearConstraint&) = delete;
-    NonLinearConstraint& operator=(NonLinearConstraint&&) = delete;
   };  // end of struct NonLinearConstraint
 
 }  // end of namespace mtest
