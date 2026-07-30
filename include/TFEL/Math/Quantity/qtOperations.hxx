@@ -38,66 +38,15 @@
     return a Op base_type_cast(b);                                            \
   }
 
-#define TFEL_MATH_QT_SCALAR_OPERATIONS(X)                                    \
-  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType,   \
-            typename OwnershipPolicy>                                        \
-  TFEL_HOST_DEVICE constexpr qt<                                             \
-      unit::NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>  \
-  operator+(const Quantity<unit::NoUnit, ValueType, OwnershipPolicy>&,       \
-            const X&) noexcept;                                              \
-                                                                             \
-  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType,   \
-            typename OwnershipPolicy>                                        \
-  TFEL_HOST_DEVICE constexpr qt<                                             \
-      unit::NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>  \
-  operator+(                                                                 \
-      const X&,                                                              \
-      const Quantity<unit::NoUnit, ValueType, OwnershipPolicy>&) noexcept;   \
-                                                                             \
-  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType,   \
-            typename OwnershipPolicy>                                        \
-  TFEL_HOST_DEVICE constexpr qt<                                             \
-      unit::NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>  \
-  operator-(const Quantity<unit::NoUnit, ValueType, OwnershipPolicy>&,       \
-            const X&) noexcept;                                              \
-                                                                             \
-  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType,   \
-            typename OwnershipPolicy>                                        \
-  TFEL_HOST_DEVICE constexpr qt<                                             \
-      unit::NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>  \
-  operator-(                                                                 \
-      const X&,                                                              \
-      const Quantity<unit::NoUnit, ValueType, OwnershipPolicy>&) noexcept;   \
-                                                                             \
-  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType,   \
-            typename OwnershipPolicy>                                        \
-  TFEL_HOST_DEVICE constexpr qt<                                             \
-      UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>      \
-  operator*(const Quantity<UnitType, ValueType, OwnershipPolicy>&,           \
-            const X&) noexcept;                                              \
-                                                                             \
-  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType,   \
-            typename OwnershipPolicy>                                        \
-  TFEL_HOST_DEVICE constexpr qt<                                             \
-      UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>      \
-  operator*(const X&,                                                        \
-            const Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept; \
-                                                                             \
-  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType,   \
-            typename OwnershipPolicy>                                        \
-  TFEL_HOST_DEVICE constexpr qt<                                             \
-      UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>      \
-  operator/(const Quantity<UnitType, ValueType, OwnershipPolicy>&,           \
-            const X&) noexcept;                                              \
-                                                                             \
-  template <StandardArithmeticTypeConcept ValueType, UnitConcept UnitType,   \
-            typename OwnershipPolicy>                                        \
-  TFEL_HOST_DEVICE constexpr qt<                                             \
-      typename tfel::math::internals::SubstractUnit<unit::NoUnit,            \
-                                                    UnitType>::type,         \
-      typename tfel::typetraits::Promote<ValueType, X>::type>                \
-  operator/(const X&,                                                        \
-            const Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept
+#define TFEL_MATH_QT_SCALAR_OPERATIONS(Op)                   \
+  template <QuantityConcept QuantityType,                    \
+            StandardArithmeticTypeConcept ScalarType>        \
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator Op( \
+      const QuantityType&, const ScalarType&) noexcept;      \
+  template <StandardArithmeticTypeConcept ScalarType,        \
+            QuantityConcept QuantityType>                    \
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator Op( \
+      const ScalarType&, const QuantityType&) noexcept;
 
 namespace tfel::math {
 
@@ -107,6 +56,13 @@ namespace tfel::math {
     using type = qt<quantity_unit<T>,
                     typename UnaryResultType<base_type<T>, OpNeg>::type>;
   };  // end of struct ComputeUnaryOperationResult
+
+  //! \brief negation operator
+  template <QuantityConcept QuantityType>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator-(
+      const QuantityType& q) noexcept {
+    return qt_rebind<QuantityType>{-base_type_cast(q)};
+  }  // end of operator-
 
   template <QuantityConcept T1, QuantityConcept T2>
   TFEL_HOST_DEVICE constexpr bool operator<(const T1& a, const T2& b) noexcept {
@@ -322,24 +278,10 @@ namespace tfel::math {
   TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(==)
   TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(!=)
 
-  TFEL_MATH_QT_SCALAR_OPERATIONS(unsigned short);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(unsigned int);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(long unsigned int);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(short);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(int);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(long int);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(float);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(double);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(long double);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<unsigned short>);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<unsigned int>);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<long unsigned int>);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<short>);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<int>);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<long int>);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<float>);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<double>);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<long double>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(+);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(-);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(*);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(/);
 
 }  // namespace tfel::math
 

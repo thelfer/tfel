@@ -19,13 +19,9 @@
 
 namespace tfel::math {
 
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy>
-  std::ostream& operator<<(
-      std::ostream& os,
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& q) {
-    os << q.getValue();
+  template <QuantityConcept QuantityType>
+  std::ostream& operator<<(std::ostream& os, const QuantityType& q) {
+    os << base_type_cast(q);
     return os;
   }
 
