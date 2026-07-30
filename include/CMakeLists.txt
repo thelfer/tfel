@@ -121,6 +121,7 @@ install_header(TFEL/FSAlgorithm fill.hxx)
 install_header(TFEL/FSAlgorithm for_each.hxx)
 install_header(TFEL/FSAlgorithm equal.hxx)
 
+install_header(TFEL/Math/Forward General.hxx)
 install_header(TFEL/Math/Forward vector.hxx)
 install_header(TFEL/Math/Forward qt.hxx)
 install_header(TFEL/Math/Forward Complex.hxx)
