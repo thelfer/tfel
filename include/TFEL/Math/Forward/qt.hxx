@@ -279,22 +279,13 @@ namespace tfel::math::unit {
    * \see GenerateUnit
    */
   using Density = GenerateUnit<1, -3, 0, 0, 0, 0, 0>::type;  // k.m-3
-
-  /*!
-   * \brief Declares the TemperatureGradient unit
-   */
+  //! \brief Declares the TemperatureGradient unit
   using TemperatureGradient =
       GenerateUnit<0, -1, 0, 0, 1, 0, 0>::type;  // K.m^{-1}
-  /*!
-   * \brief Declares the ThermalConductivity
-   * unit
-   */
+  //! \brief Declares the ThermalConductivity unit
   using ThermalConductivity =
       GenerateUnit<1, 1, -3, 0, -1, 0, 0>::type;  // kg.m.s-3.K-1
-
-  /*!
-   * \brief Declares the HeatFluxDensity unit
-   */
+  //! \brief Declares the HeatFluxDensity unit
   using HeatFluxDensity = GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type;  // kg.s-3
 
 }  // end of namespace tfel::math::unit

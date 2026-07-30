@@ -373,21 +373,22 @@ namespace tfel::math {
   };
 
   template <int N, QuantityConcept T>
-  TFEL_HOST_DEVICE constexpr auto power(const T& x) requires(
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto power(const T& x) requires(
       std::is_floating_point_v<base_type<T>>) {
     using Result = typename UnaryResultType<T, Power<N, 1u>>::type;
     return Result{power<N>(base_type_cast(x))};
   }
 
   template <int N, unsigned int D, QuantityConcept T>
-  TFEL_HOST_DEVICE constexpr auto power(const T& x) requires(
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto power(const T& x) requires(
       std::is_floating_point_v<base_type<T>>) {
     using Result = typename UnaryResultType<T, Power<N, D>>::type;
     return Result{power<N, D>(base_type_cast(x))};
   }
 
   template <QuantityConcept T>
-  constexpr auto square_root(const T& q) noexcept {
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto square_root(
+      const T& q) noexcept {
     return power<1, 2>(base_type_cast(q));
   }
 
