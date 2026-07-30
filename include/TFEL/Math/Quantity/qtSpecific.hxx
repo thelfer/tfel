@@ -15,54 +15,6 @@
 #define LIB_TFEL_MATH_QTSPECIFIC_HXX
 
 #include "TFEL/TypeTraits/AbsType.hxx"
-#include "TFEL/TypeTraits/BaseType.hxx"
-
-/*!
- * \def TFEL_MATH_QT_BASE_TYPE
- * \brief  An helper macro used to define BaseType for quantity.
- * \author Thomas Helfer
- * \date   26 Jul 2006
- */
-#define TFEL_MATH_QT_BASE_TYPE(X)                                       \
-  /*!                                                                   \
-   * \brief Partial specialisation for X                                \
-   * \see   BaseType                                                    \
-   */                                                                   \
-  template <tfel::math::UnitConcept UnitType, typename OwnershipPolicy> \
-  struct BaseType<tfel::math::Quantity<UnitType, X, OwnershipPolicy>> { \
-    /*!                                                                 \
-     * \brief result of the metafunction                                \
-     */                                                                 \
-    using type = X;                                                     \
-  }
-
-#define TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(X)                                   \
-  /*!                                                                          \
-   * \brief Partial specialisation for quantity                                \
-   * \see   IsAssignableTo                                                     \
-   */                                                                          \
-  template <typename T, typename OwnershipPolicy>                              \
-  struct IsAssignableTo<                                                       \
-      tfel::math::Quantity<tfel::math::unit::NoUnit, T, OwnershipPolicy>, X> { \
-    /*!                                                                        \
-     * \brief result of the metafunction                                       \
-     */                                                                        \
-    static constexpr bool cond = IsAssignableTo<T, X>::cond;                   \
-  };                                                                           \
-                                                                               \
-  /*!                                                                          \
-   * \brief Partial specialisation for quantity                                \
-   * \see   IsAssignableTo                                                     \
-   */                                                                          \
-  template <typename T, typename OwnershipPolicy>                              \
-  struct IsAssignableTo<                                                       \
-      X, tfel::math::Quantity<tfel::math::unit::NoUnit, T, OwnershipPolicy>> { \
-    /*!                                                                        \
-     * \brief result of the metafunction                                       \
-     */                                                                        \
-    static constexpr bool cond = IsAssignableTo<X, T>::cond;                   \
-  }
-
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/IsReal.hxx"
 #include "TFEL/TypeTraits/IsComplex.hxx"
@@ -76,10 +28,8 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsScalar
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct IsScalar<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::QuantityConcept QuantityType>
+  struct IsScalar<QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -88,11 +38,8 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsScalar
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct IsScalar<
-      const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::QuantityConcept QuantityType>
+  struct IsScalar<const QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -101,58 +48,48 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsReal
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct IsReal<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::QuantityConcept QuantityType>
+  struct IsReal<QuantityType> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsReal<ValueType>::cond;
+    static constexpr bool cond = IsReal<base_type<QuantityType>>::cond;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsReal
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct IsReal<
-      const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::QuantityConcept QuantityType>
+  struct IsReal<const QuantityType> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsReal<ValueType>::cond;
+    static constexpr bool cond = IsReal<base_type<QuantityType>>::cond;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsComplex
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct IsComplex<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::QuantityConcept QuantityType>
+  struct IsComplex<QuantityType> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsComplex<ValueType>::cond;
+    static constexpr bool cond = IsComplex<base_type<QuantityType>>::cond;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsComplex
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct IsComplex<
-      const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::QuantityConcept QuantityType>
+  struct IsComplex<const QuantityType> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsComplex<ValueType>::cond;
+    static constexpr bool cond = IsComplex<base_type<QuantityType>>::cond;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsFundamentalNumericType
    */
-  template <typename T>
-  struct IsFundamentalNumericType<tfel::math::qt<tfel::math::unit::NoUnit, T>> {
+  template <tfel::math::NoUnitQuantityConcept QuantityType>
+  struct IsFundamentalNumericType<QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -161,9 +98,8 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsFundamentalNumericType
    */
-  template <typename T>
-  struct IsFundamentalNumericType<
-      const tfel::math::qt<tfel::math::unit::NoUnit, T>> {
+  template <tfel::math::NoUnitQuantityConcept QuantityType>
+  struct IsFundamentalNumericType<const QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -172,92 +108,75 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   RealPartType
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct RealPartType<
-      tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::NoUnitQuantityConcept QuantityType>
+  struct RealPartType<QuantityType> {
     //! \brief result of the metafunction
-    typedef tfel::math::qt<UnitType, typename RealPartType<ValueType>::type>
-        type;
+    using type =
+        tfel::math::qt<tfel::math::quantity_unit<QuantityType>,
+                       typename RealPartType<base_type<QuantityType>>::type>;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   RealPartType
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct RealPartType<
-      const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::NoUnitQuantityConcept QuantityType>
+  struct RealPartType<const QuantityType> {
     //! \brief result of the metafunction
-    typedef const tfel::math::qt<UnitType,
-                                 typename RealPartType<ValueType>::type>
-        type;
+    using type =
+        tfel::math::qt<tfel::math::quantity_unit<QuantityType>,
+                       typename RealPartType<base_type<QuantityType>>::type>;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsAssignableTo
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy,
-            typename ValueType2,
-            typename OwnershipPolicy2>
-  struct IsAssignableTo<
-      tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>,
-      tfel::math::Quantity<UnitType, ValueType2, OwnershipPolicy2>> {
+  template <tfel::math::QuantityConcept QuantityType1,
+            tfel::math::QuantityConcept QuantityType2>
+  struct IsAssignableTo<QuantityType1, QuantityType2> {
     //! \brief result of the metafunction
-    static constexpr bool cond = std::is_same_v<
-        typename tfel::typetraits::Promote<ValueType, ValueType2>::type,
-        ValueType2>;
+    static constexpr bool cond =
+        (std::same_as<
+            typename Promote<tfel::math::base_type<QuantityType1>,
+                             tfel::math::base_type<QuantityType2>>::type,
+            tfel::math::base_type<QuantityType2>>)&&  //
+        (std::same_as<tfel::math::quantity_unit<QuantityType1>,
+                      tfel::math::quantity_unit<QuantityType2>>);
   };
 
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(unsigned short);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(unsigned int);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(long unsigned int);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(short);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(int);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(long int);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(float);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(double);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(long double);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<unsigned short>);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<unsigned int>);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<long unsigned int>);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<short>);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<int>);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<long int>);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<float>);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<double>);
-  TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<long double>);
+  /*!
+   * \brief Partial specialisation for quantity
+   * \see   IsAssignableTo
+   */
+  template <tfel::math::NoUnitQuantityConcept QuantityType,
+            tfel::math::StandardArithmeticTypeConcept ScalarType>
+  struct IsAssignableTo<QuantityType, ScalarType> {
+    //! \brief result of the metafunction
+    static constexpr bool cond =
+        IsAssignableTo<base_type<QuantityType>, ScalarType>::cond;
+  };
 
-  TFEL_MATH_QT_BASE_TYPE(unsigned short);
-  TFEL_MATH_QT_BASE_TYPE(unsigned int);
-  TFEL_MATH_QT_BASE_TYPE(long unsigned int);
-  TFEL_MATH_QT_BASE_TYPE(short);
-  TFEL_MATH_QT_BASE_TYPE(int);
-  TFEL_MATH_QT_BASE_TYPE(long int);
-  TFEL_MATH_QT_BASE_TYPE(float);
-  TFEL_MATH_QT_BASE_TYPE(double);
-  TFEL_MATH_QT_BASE_TYPE(long double);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<unsigned short>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<unsigned int>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long unsigned int>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<short>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<int>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long int>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<float>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<double>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long double>);
-
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
+  /*!
+   * \brief Partial specialisation for quantity
+   * \see   IsAssignableTo
+   */
+  template <StandardArithmeticTypeConcept ScalarType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
-  struct AbsType<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
-    using type = tfel::math::qt<UnitType, typename AbsType<ValueType>::type>;
+  struct IsAssignableTo<ScalarType,
+                        tfel::math::Quantity<tfel::math::unit::NoUnit,
+                                             ValueType,
+                                             OwnershipPolicy>> {
+    //! \brief result of the metafunction
+    static constexpr bool cond = IsAssignableTo<ScalarType, ValueType>::cond;
+  };
+
+  template <tfel::math::QuantityConcept QuantityType>
+  struct AbsType<QuantityType> {
+    using type = tfel::math::qt<
+        tfel::math::quantity_unit<QuantityType>,
+        typename AbsType<tfel::math::base_type<QuantityType>>::type>;
   };  // end of struct AbsType
 
 }  // end of namespace tfel::typetraits

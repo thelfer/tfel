@@ -34,9 +34,7 @@ namespace tfel::config::internals {
 
   template <typename T, bool use_qt>
   struct PositionType<1u, T, use_qt> {
-    typedef tfel::math::qt<tfel::math::unit::Length,
-                           tfel::math::qt<tfel::math::unit::NoUnit, T>>
-        type;
+    typedef tfel::math::qt<tfel::math::unit::Length, T> type;
   };
 
   template <typename T>

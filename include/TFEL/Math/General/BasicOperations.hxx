@@ -184,6 +184,17 @@ namespace tfel ::math {
 
   struct OpDiadicProduct {};
 
+  /*!
+   * \brief an helpful concept for the partial specialization
+   * of the `ResultType`, `ComputeBinaryResultType` classes, etc.
+   */
+  template <typename Operation>
+  concept BasicScalarBinaryOperationConcept =
+      std::same_as<Operation, OpPlus> ||   //
+      std::same_as<Operation, OpMinus> ||  //
+      std::same_as<Operation, OpMult> ||   //
+      std::same_as<Operation, OpDiv>;
+
 }  // end of namespace tfel::math
 
 namespace tfel::typetraits {

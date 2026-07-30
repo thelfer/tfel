@@ -71,7 +71,7 @@ namespace mfront {
     os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n"
        << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
+      os << "using " << a << " [[maybe_unused]] = typename "
          << "tfel::config::ScalarTypes<double, " << use_qt << ">::" << a
          << ";\n";
     }
