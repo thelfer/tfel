@@ -34,25 +34,25 @@ struct WalpoleBasis final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "WalpoleBasis") {
   }  // end of WalpoleBasis
   tfel::tests::TestResult execute() override {
-      
     static constexpr auto eps = std::numeric_limits<double>::epsilon();
 
-    const auto n1 = tfel::math::tvector<3u,double>{0.,0.,1.};
-    const auto n2 = tfel::math::tvector<3u,double>{0.,sqrt(2)/2.,sqrt(2)/2.};
-    const auto theta = 3.1415/12;
-    const auto phi = 2*3.1415/5;
-    const auto n3 = tfel::math::tvector<3u,double>{sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta)};
-    this->template test<double>(n1,eps);
-    this->template test<double>(n2,10*eps);
-    this->template test<double>(n3,10*eps);
-  
+    const auto n1 = tfel::math::tvector<3u, double>{0., 0., 1.};
+    const auto n2 =
+        tfel::math::tvector<3u, double>{0., sqrt(2) / 2., sqrt(2) / 2.};
+    const auto theta = 3.1415 / 12;
+    const auto phi = 2 * 3.1415 / 5;
+    const auto n3 = tfel::math::tvector<3u, double>{
+        sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)};
+    this->template test<double>(n1, eps);
+    this->template test<double>(n2, 10 * eps);
+    this->template test<double>(n3, 10 * eps);
+
     return this->result;
   }
-    
-  private:
-  template <typename real>
-  void test(const tfel::math::tvector<3u,double>& n,real eps) {
 
+ private:
+  template <typename real>
+  void test(const tfel::math::tvector<3u, double>& n, real eps) {
     using namespace tfel::math;
 
     const auto E1 = TransverseIsotropicWalpoleBasis<double>::E1(n);
@@ -121,7 +121,7 @@ struct WalpoleBasis final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(c1[4] - 5) < eps);
     TFEL_TESTS_ASSERT(my_abs(c1[5] - 6) < eps);
 
-  } // end of test
+  }  // end of test
 };
 
 TFEL_TESTS_GENERATE_PROXY(WalpoleBasis, "WalpoleBasis");
