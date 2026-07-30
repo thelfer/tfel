@@ -60,7 +60,7 @@ namespace mfront {
         (areQuantitiesSupported && useQuantities(mpd)) ? "true" : "false";
     os << "using NumericType [[maybe_unused]] = " << numeric_type << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
+      os << "using " << a << " [[maybe_unused]] = typename "
          << "tfel::config::ScalarTypes<" << numeric_type << ", " << use_qt
          << ">::" << a << ";\n";
     }

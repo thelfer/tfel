@@ -14,9 +14,12 @@
 #ifndef LIB_TFEL_MATH_FORWARD_QT_HXX
 #define LIB_TFEL_MATH_FORWARD_QT_HXX
 
+#include <concepts>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
+#include "TFEL/TypeTraits/BaseType.hxx"
+#include "TFEL/Math/Forward/General.hxx"
 
 namespace tfel::math::internals {
 
@@ -24,13 +27,15 @@ namespace tfel::math::internals {
    * \brief an helper structure which holds the value internally.
    * \param ValueType: the underlying numerical type.
    */
-  template <typename ValueType, bool AllowImplicitConversion>
+  template <StandardArithmeticTypeConcept ValueType,
+            bool AllowImplicitConversion>
   struct QuantityValueOwnershipPolicy;
   /*!
    * \brief an helper structure which wraps a reference to an external value.
    * \param ValueType: the underlying numerical type.
    */
-  template <typename ValueType, bool AllowImplicitConversion>
+  template <StandardArithmeticTypeConcept ValueType,
+            bool AllowImplicitConversion>
   struct QuantityReferenceOwnershipPolicy;
 
 }  // end of namespace tfel::math::internals
@@ -152,42 +157,42 @@ namespace tfel::math::unit {
    * \brief Declares the Mass unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, 0, 0, 0, 0, 0, 0>::type Mass;
+  using Mass = GenerateUnit<1, 0, 0, 0, 0, 0, 0>::type;
   /*!
    * \brief Declares the Length unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 1, 0, 0, 0, 0, 0>::type Length;
+  using Length = GenerateUnit<0, 1, 0, 0, 0, 0, 0>::type;
   /*!
    * \brief Declares the Time unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 0, 1, 0, 0, 0, 0>::type Time;
+  using Time = GenerateUnit<0, 0, 1, 0, 0, 0, 0>::type;
   /*!
    * \brief Declares the Ampere unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 0, 0, 1, 0, 0, 0>::type Ampere;
+  using Ampere = GenerateUnit<0, 0, 0, 1, 0, 0, 0>::type;
   /*!
    * \brief Declares the Temperature unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type Temperature;
+  using Temperature = GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type;
   /*!
    * \brief Declares the Kelvin unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type Kelvin;
+  using Kelvin = GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type;
   /*!
    * \brief Declares the Candela unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 0, 0, 0, 0, 1, 0>::type Candela;
+  using Candela = GenerateUnit<0, 0, 0, 0, 0, 1, 0>::type;
   /*!
    * \brief Declares the Mole unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 0, 0, 0, 0, 0, 1>::type Mole;
+  using Mole = GenerateUnit<0, 0, 0, 0, 0, 0, 1>::type;
 
   // Additional units
 
@@ -195,102 +200,93 @@ namespace tfel::math::unit {
    * \brief Declares the InvLength unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, -1, 0, 0, 0, 0, 0>::type InvLength;  // m-1
+  using InvLength = GenerateUnit<0, -1, 0, 0, 0, 0, 0>::type;  // m-1
 
   /*!
    * \brief Declares the InvTemperature unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 0, 0, 0, -1, 0, 0>::type InvTemperature;
+  using InvTemperature = GenerateUnit<0, 0, 0, 0, -1, 0, 0>::type;
 
   /*!
    * \brief Declares the Frequency unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 0, -1, 0, 0, 0, 0>::type Frequency;  // s-1
+  using Frequency = GenerateUnit<0, 0, -1, 0, 0, 0, 0>::type;  // s-1
 
   /*!
    * \brief Declares the Speed unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 1, -1, 0, 0, 0, 0>::type Speed;  // m.s-1
+  using Speed = GenerateUnit<0, 1, -1, 0, 0, 0, 0>::type;  // m.s-1
 
   /*!
    * \brief Declares the Acceleration unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<0, 1, -2, 0, 0, 0, 0>::type Acceleration;  // m.s-2
+  using Acceleration = GenerateUnit<0, 1, -2, 0, 0, 0, 0>::type;  // m.s-2
 
   /*!
    * \brief Declares the Momentum unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, 1, -1, 0, 0, 0, 0>::type Momentum;  // kg.m.s-1
+  using Momentum = GenerateUnit<1, 1, -1, 0, 0, 0, 0>::type;  // kg.m.s-1
 
   /*!
    * \brief Declares the Momentum unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, 1, -2, 0, 0, 0, 0>::type Force;  // kg.m.s-2
+  using Force = GenerateUnit<1, 1, -2, 0, 0, 0, 0>::type;  // kg.m.s-2
 
   /*!
    * \brief Declares the Newton unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, 1, -2, 0, 0, 0, 0>::type Newton;  // kg.m.s-2
+  using Newton = GenerateUnit<1, 1, -2, 0, 0, 0, 0>::type;  // kg.m.s-2
 
   /*!
    * \brief Declares the Stress unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type Stress;  // kg.m-1.s-2
+  using Stress = GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type;  // kg.m-1.s-2
 
   /*!
    * \brief Declares the StressRate unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, -1, -3, 0, 0, 0, 0>::type StressRate;  // kg.m-1.s-3
+  using StressRate = GenerateUnit<1, -1, -3, 0, 0, 0, 0>::type;  // kg.m-1.s-3
 
   /*!
    * \brief Declares the Pressure unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type Pressure;  // kg.m-1.s-2
+  using Pressure = GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type;  // kg.m-1.s-2
 
   /*!
    * \brief Declares the Energy unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, 2, -2, 0, 0, 0, 0>::type Energy;  // kg.m2.s-2
+  using Energy = GenerateUnit<1, 2, -2, 0, 0, 0, 0>::type;  // kg.m2.s-2
 
   /*!
    * \brief Declares the EnergyDensity unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type
-      EnergyDensity;  // kg.m-1.s-2
+  using EnergyDensity =
+      GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type;  // kg.m-1.s-2
   /*!
    * \brief Declares the Density unit
    * \see GenerateUnit
    */
-  typedef GenerateUnit<1, -3, 0, 0, 0, 0, 0>::type Density;  // k.m-3
-
-  /*!
-   * \brief Declares the TemperatureGradient unit
-   */
+  using Density = GenerateUnit<1, -3, 0, 0, 0, 0, 0>::type;  // k.m-3
+  //! \brief Declares the TemperatureGradient unit
   using TemperatureGradient =
       GenerateUnit<0, -1, 0, 0, 1, 0, 0>::type;  // K.m^{-1}
-  /*!
-   * \brief Declares the ThermalConductivity
-   * unit
-   */
-  typedef GenerateUnit<1, 1, -3, 0, -1, 0, 0>::type
-      ThermalConductivity;  // kg.m.s-3.K-1
-
-  /*!
-   * \brief Declares the HeatFluxDensity unit
-   */
-  typedef GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type HeatFluxDensity;  // kg.s-3
+  //! \brief Declares the ThermalConductivity unit
+  using ThermalConductivity =
+      GenerateUnit<1, 1, -3, 0, -1, 0, 0>::type;  // kg.m.s-3.K-1
+  //! \brief Declares the HeatFluxDensity unit
+  using HeatFluxDensity = GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type;  // kg.s-3
 
 }  // end of namespace tfel::math::unit
 
@@ -309,7 +305,9 @@ namespace tfel::math {
    * \author Thomas Helfer
    * \date   06 Jun 2006
    */
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType,
+            typename OwnershipPolicy>
   struct [[nodiscard]] Quantity;
 
   /*!
@@ -326,7 +324,7 @@ namespace tfel::math {
 
   //! \brief partial specialisation for quantities.
   template <UnitConcept QuantityUnitType,
-            typename QuantityValueType,
+            StandardArithmeticTypeConcept QuantityValueType,
             typename QuantityOwnershipPolicy>
   struct QuantityTraits<
       Quantity<QuantityUnitType, QuantityValueType, QuantityOwnershipPolicy>> {
@@ -337,14 +335,16 @@ namespace tfel::math {
   };
 
   //! \brief a simple alias
-  template <UnitConcept UnitType, typename ValueType = double>
+  template <UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType = double>
   using qt = Quantity<UnitType,
                       ValueType,
                       tfel::math::internals::QuantityValueOwnershipPolicy<
                           ValueType,
                           std::is_same_v<UnitType, unit::NoUnit>>>;
   //! \brief a simple alias
-  template <UnitConcept UnitType, typename ValueType = double>
+  template <UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType = double>
   using qt_ref =
       Quantity<UnitType,
                ValueType,
@@ -352,7 +352,8 @@ namespace tfel::math {
                    ValueType,
                    std::is_same_v<UnitType, unit::NoUnit>>>;
   //! \brief a simple alias
-  template <UnitConcept UnitType, typename ValueType = double>
+  template <UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType = double>
   using const_qt_ref =
       Quantity<UnitType,
                ValueType,
@@ -367,7 +368,7 @@ namespace tfel::math {
     using type = tfel::meta::InvalidType;
   };
   //! \brief partial specialisation for quantities
-  template <UnitConcept UnitType, typename ValueType>
+  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
   struct MakeQuantityReferenceType<qt<UnitType, ValueType>> {
     //! \brief result
     using type = qt_ref<UnitType, ValueType>;
@@ -375,13 +376,13 @@ namespace tfel::math {
 
   namespace internals {
 
-    template <typename ValueType>
+    template <StandardArithmeticTypeConcept ValueType>
     struct MakeQuantityValueType {
       //! \brief result of the metafunction
       using type = ValueType;
     };  // end of struct MakeQuantityValueType
 
-    template <typename ValueType>
+    template <StandardArithmeticTypeConcept ValueType>
     struct MakeQuantityValueType<qt<unit::NoUnit, ValueType>> {
       //! \brief result of the metafunction
       using type = ValueType;
@@ -390,7 +391,7 @@ namespace tfel::math {
   }  // end of namespace internals
 
   //! \brief a simple alias
-  template <typename ValueType,
+  template <StandardArithmeticTypeConcept ValueType,
             int N1 = 0,
             int N2 = 0,
             int N3 = 0,
@@ -424,7 +425,7 @@ namespace tfel::math {
 
   //! \brief a simple alias
   template <bool use_qt,
-            typename ValueType,
+            StandardArithmeticTypeConcept ValueType,
             int N1 = 0,
             int N2 = 0,
             int N3 = 0,
@@ -456,24 +457,72 @@ namespace tfel::math {
                                                             D6,
                                                             D7>,
                                                    ValueType>;
-
-  namespace internals {
-
-    template <typename T>
-    struct IsQuantity : std::false_type {};
-
-    template <UnitConcept UnitType,
-              typename ValueType,
-              typename OwnershipPolicy>
-    struct IsQuantity<Quantity<UnitType, ValueType, OwnershipPolicy>>
-        : std::true_type {};
-
-  }  // end of namespace internals
+  //! \brief cast the value to the base type
+  template <UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType,
+            typename OwnershipPolicy>
+  TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
+      Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept;
+  //! \brief cast the value to the base type
+  template <UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType,
+            typename OwnershipPolicy>
+  TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept;
+  //
+  template <typename T>
+  concept QuantityConcept =
+      ((UnitConcept<typename QuantityTraits<T>::UnitType>)&&  //
+       (StandardArithmeticTypeConcept<
+           typename QuantityTraits<T>::ValueType>)&&  //
+       (requires(T & v) {
+         {
+           base_type_cast(v)
+           } -> std::same_as<typename QuantityTraits<T>::ValueType&>;
+       }) &&  //
+       (requires(const T& v) {
+         {
+           base_type_cast(v)
+           } -> std::same_as<const typename QuantityTraits<T>::ValueType&>;
+       }));
 
   template <typename T>
-  TFEL_HOST_DEVICE constexpr auto isQuantity() {
-    return tfel::math::internals::IsQuantity<std::decay_t<T>>::value;
+  concept NoUnitQuantityConcept =
+      ((QuantityConcept<T>)&&  //
+       (std::same_as<typename QuantityTraits<T>::UnitType,
+                     tfel::math::unit::NoUnit>));
+
+  /*!
+   * \brief a function testing if a type is a quantity
+   *
+   * \note this function is kept for backward compatility with C++-17 when
+   * concepts were not yet available
+   */
+  template <typename T>
+  TFEL_HOST_DEVICE constexpr bool isQuantity() {
+    return QuantityConcept<std::decay_t<T>>;
   }
+
+}  // end of namespace tfel::math
+
+namespace tfel::typetraits {
+
+  //! \brief partial specialisation for quantities
+  template <tfel::math::QuantityConcept QuantityType>
+  struct BaseType<QuantityType> {
+    //! \brief result of the metafunction
+    using type = typename tfel::math::QuantityTraits<QuantityType>::ValueType;
+  };
+
+}  // end of namespace tfel::typetraits
+
+namespace tfel::math {
+
+  template <QuantityConcept T>
+  using quantity_unit = typename QuantityTraits<T>::UnitType;
+
+  template <QuantityConcept T>
+  using qt_rebind = qt<quantity_unit<T>, base_type<T>>;
 
 }  // end of namespace tfel::math
 
