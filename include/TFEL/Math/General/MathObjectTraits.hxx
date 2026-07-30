@@ -21,6 +21,7 @@
 #include "TFEL/TypeTraits/IsInvalid.hxx"
 #include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
+#include "TFEL/Math/Forward/General.hxx"
 
 namespace tfel::math {
 
@@ -84,56 +85,28 @@ namespace tfel::math {
   template <typename MathObjectType>
   using index_type =
       typename MathObjectTraits<std::decay_t<MathObjectType>>::size_type;
-  //! \brief a simple alias
-  template <typename T>
-  using base_type =
-      std::conditional_t<tfel::typetraits::isScalar<T>(),
-                         tfel::typetraits::base_type<T>,
-                         tfel::typetraits::base_type<numeric_type<T>>>;
+
   //! \brief cast the value to the base type
-  template <tfel::typetraits::FundamentalNumericTypeConcept T>
+  template <StandardArithmeticTypeConcept T>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr T& base_type_cast(T& v) noexcept {
     return v;
   }
   //! \brief cast the value to the base type
-  template <tfel::typetraits::FundamentalNumericTypeConcept T>
+  template <StandardArithmeticTypeConcept T>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr const T& base_type_cast(
       const T& v) noexcept {
     return v;
   }
-  /*!
-   * \brief an helper function around `isAssignableTo`
-   * \tparam  A, first type
-   * \tparam  B, second type
-   */
-  template <typename A, typename B>
-  TFEL_HOST_DEVICE constexpr bool isAssignableTo() {
-    return tfel::typetraits::isAssignableTo<A, B>();
-  }  // end of isAssignableTo
-
-  /*!
-   * \brief a simple wrapper around `tfel::typetraits::IsInvalid`
-   * \tparam T: tested type
-   */
-  template <typename T>
-  TFEL_HOST_DEVICE constexpr auto isInvalid() {
-    return tfel::typetraits::isInvalid<T>();
-  }  // end of isInvalid
-
-  /*!
-   * \brief a simple wrapper around `tfel::typetraits::IsScalar`
-   * \tparam T: tested type
-   */
-  template <typename T>
-  TFEL_HOST_DEVICE constexpr auto isScalar() {
-    return tfel::typetraits::isScalar<T>();
-  }  // end of isScalar
-
-  template <typename T>
-  concept ScalarConcept = tfel::typetraits::IsScalar<std::decay_t<T>>::cond;
 
   template <typename T>
   concept MathObjectConcept = MathObjectTraits<std::decay_t<T>>::is_specialized;
+
+  //! \brief partial specialisation for math objects
+  template <MathObjectConcept T>
+  struct BaseType<T> {
+    using type = tfel::typetraits::base_type<numeric_type<T>>;
+  };
+
   /*!
    * \brief an helper function to retrieve the space dimension associated
    * with a math object.

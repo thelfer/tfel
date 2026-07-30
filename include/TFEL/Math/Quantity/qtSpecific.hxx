@@ -15,26 +15,6 @@
 #define LIB_TFEL_MATH_QTSPECIFIC_HXX
 
 #include "TFEL/TypeTraits/AbsType.hxx"
-#include "TFEL/TypeTraits/BaseType.hxx"
-
-/*!
- * \def TFEL_MATH_QT_BASE_TYPE
- * \brief  An helper macro used to define BaseType for quantity.
- * \author Thomas Helfer
- * \date   26 Jul 2006
- */
-#define TFEL_MATH_QT_BASE_TYPE(X)                                       \
-  /*!                                                                   \
-   * \brief Partial specialisation for X                                \
-   * \see   BaseType                                                    \
-   */                                                                   \
-  template <tfel::math::UnitConcept UnitType, typename OwnershipPolicy> \
-  struct BaseType<tfel::math::Quantity<UnitType, X, OwnershipPolicy>> { \
-    /*!                                                                 \
-     * \brief result of the metafunction                                \
-     */                                                                 \
-    using type = X;                                                     \
-  }
 
 #define TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(X)                                   \
   /*!                                                                          \
@@ -77,7 +57,7 @@ namespace tfel::typetraits {
    * \see   IsScalar
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsScalar<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -89,7 +69,7 @@ namespace tfel::typetraits {
    * \see   IsScalar
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsScalar<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -102,7 +82,7 @@ namespace tfel::typetraits {
    * \see   IsReal
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsReal<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -114,7 +94,7 @@ namespace tfel::typetraits {
    * \see   IsReal
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsReal<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -127,7 +107,7 @@ namespace tfel::typetraits {
    * \see   IsComplex
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsComplex<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -139,7 +119,7 @@ namespace tfel::typetraits {
    * \see   IsComplex
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct IsComplex<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -173,7 +153,7 @@ namespace tfel::typetraits {
    * \see   RealPartType
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct RealPartType<
       tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -187,7 +167,7 @@ namespace tfel::typetraits {
    * \see   RealPartType
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct RealPartType<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
@@ -202,9 +182,9 @@ namespace tfel::typetraits {
    * \see   IsAssignableTo
    */
   template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
+            StandardArithmeticTypeConcept ValueType2,
             typename OwnershipPolicy2>
   struct IsAssignableTo<
       tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>,
@@ -234,30 +214,11 @@ namespace tfel::typetraits {
   TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<double>);
   TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(tfel::math::Complex<long double>);
 
-  TFEL_MATH_QT_BASE_TYPE(unsigned short);
-  TFEL_MATH_QT_BASE_TYPE(unsigned int);
-  TFEL_MATH_QT_BASE_TYPE(long unsigned int);
-  TFEL_MATH_QT_BASE_TYPE(short);
-  TFEL_MATH_QT_BASE_TYPE(int);
-  TFEL_MATH_QT_BASE_TYPE(long int);
-  TFEL_MATH_QT_BASE_TYPE(float);
-  TFEL_MATH_QT_BASE_TYPE(double);
-  TFEL_MATH_QT_BASE_TYPE(long double);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<unsigned short>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<unsigned int>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long unsigned int>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<short>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<int>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long int>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<float>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<double>);
-  TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long double>);
-
-  template <tfel::math::UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy>
-  struct AbsType<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
-    using type = tfel::math::qt<UnitType, typename AbsType<ValueType>::type>;
+  template <tfel::math::QuantityConcept QuantityType>
+  struct AbsType<QuantityType> {
+    using type = tfel::math::qt<
+        tfel::math::quantity_unit<QuantityType>,
+        typename AbsType<tfel::math::base_type<QuantityType>>::type>;
   };  // end of struct AbsType
 
 }  // end of namespace tfel::typetraits

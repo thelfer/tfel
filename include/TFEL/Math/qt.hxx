@@ -35,7 +35,7 @@
 
 namespace tfel::math::internals {
 
-  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+  template <StandardArithmeticTypeConcept ValueType,
             bool AllowImplicitConversion>
   struct QuantityValueOwnershipPolicy {
     //
@@ -121,7 +121,7 @@ namespace tfel::math::internals {
     ValueType value;
   };
 
-  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+  template <StandardArithmeticTypeConcept ValueType,
             bool AllowImplicitConversion>
   struct QuantityReferenceOwnershipPolicy {
     //! \brief default constructor
@@ -193,7 +193,7 @@ namespace tfel::math::internals {
 namespace tfel::math {
 
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct Quantity : OwnershipPolicy {
     static_assert(tfel::typetraits::IsFundamentalNumericType<ValueType>::cond);
@@ -209,8 +209,8 @@ namespace tfel::math {
           std::is_same_v<typename tfel::typetraits::Promote<T, T2>::type, T>;
     };
     //! \brief a simple alias
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType1,
-              tfel::typetraits::FundamentalNumericTypeConcept ValueType2>
+    template <StandardArithmeticTypeConcept ValueType1,
+              StandardArithmeticTypeConcept ValueType2>
     using promote =
         typename tfel::typetraits::Promote<ValueType1, ValueType2>::type;
     //! \brief a simple alias
@@ -218,7 +218,7 @@ namespace tfel::math {
     //
     using OwnershipPolicy::OwnershipPolicy;
     //
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
+    template <StandardArithmeticTypeConcept ValueType2,
               typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity(
         const Quantity<UnitType, ValueType2, OwnershipPolicy2>&
@@ -251,7 +251,7 @@ namespace tfel::math {
       return *this;
     }
     //! \brief assignement operator
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
+    template <StandardArithmeticTypeConcept ValueType2,
               typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(
         const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept
@@ -260,7 +260,7 @@ namespace tfel::math {
       return *this;
     }
     //! \brief operator +=
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
+    template <StandardArithmeticTypeConcept ValueType2,
               typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator+=(
         const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept
@@ -269,7 +269,7 @@ namespace tfel::math {
       return *this;
     }
     //! \brief operator -=
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
+    template <StandardArithmeticTypeConcept ValueType2,
               typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator-=(
         const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept
@@ -282,7 +282,7 @@ namespace tfel::math {
      * \tparam ValueType2: another numeric type
      * \param[in] a: a scalar
      */
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType2>
+    template <StandardArithmeticTypeConcept ValueType2>
     TFEL_HOST_DEVICE constexpr Quantity& operator*=(
         const ValueType2& a) noexcept
         requires(IsQtScalarOperationValid<ValueType, ValueType2>::cond) {
@@ -294,7 +294,7 @@ namespace tfel::math {
      * \tparam ValueType2: another numeric type
      * \param[in] a: a scalar
      */
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
+    template <StandardArithmeticTypeConcept ValueType2,
               typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator*=(
         const Quantity<unit::NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept
@@ -307,7 +307,7 @@ namespace tfel::math {
      * \tparam ValueType2: another numeric type
      * \param[in] a: a scalar
      */
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType2>
+    template <StandardArithmeticTypeConcept ValueType2>
     TFEL_HOST_DEVICE constexpr Quantity& operator/=(
         const ValueType2& a) noexcept
         requires(IsQtScalarOperationValid<ValueType, ValueType2>::cond) {
@@ -319,7 +319,7 @@ namespace tfel::math {
      * \tparam ValueType2: another numeric type
      * \param[in] a: a scalar
      */
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
+    template <StandardArithmeticTypeConcept ValueType2,
               typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator/=(
         const Quantity<unit::NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept
@@ -336,176 +336,56 @@ namespace tfel::math {
 
   // class template argument deduction guide line
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   Quantity(Quantity<UnitType, ValueType, OwnershipPolicy>)
       -> Quantity<UnitType, ValueType, OwnershipPolicy>;
 
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy,
-            UnitConcept UnitType2,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
-            typename OwnershipPolicy2>
-  TFEL_HOST_DEVICE constexpr bool operator<(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
-    static_assert(std::is_same_v<UnitType, UnitType2>,
-                  "invalid operation (unmatched unit)");
-    return a.getValue() < b.getValue();
-  }
-
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy,
-            UnitConcept UnitType2,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
-            typename OwnershipPolicy2>
-  TFEL_HOST_DEVICE constexpr bool operator<=(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
-    static_assert(std::is_same_v<UnitType, UnitType2>,
-                  "invalid operation (unmatched unit)");
-    return a.getValue() <= b.getValue();
-  }
-
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy,
-            UnitConcept UnitType2,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
-            typename OwnershipPolicy2>
-  TFEL_HOST_DEVICE constexpr bool operator>(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
-    static_assert(std::is_same_v<UnitType, UnitType2>,
-                  "invalid operation (unmatched unit)");
-    return a.getValue() > b.getValue();
-  }
-
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy,
-            UnitConcept UnitType2,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
-            typename OwnershipPolicy2>
-  TFEL_HOST_DEVICE constexpr bool operator>=(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
-    static_assert(std::is_same_v<UnitType, UnitType2>,
-                  "invalid operation (unmatched unit)");
-    return a.getValue() >= b.getValue();
-  }
-
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy,
-            UnitConcept UnitType2,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
-            typename OwnershipPolicy2>
-  TFEL_HOST_DEVICE constexpr bool operator==(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
-    static_assert(std::is_same_v<UnitType, UnitType2>,
-                  "invalid operation (unmatched unit)");
-    if constexpr (std::floating_point<UnitType>) {
-      return tfel::math::ieee754::fpclassify(a.getValue() - b.getValue()) ==
-             FP_ZERO;
-    } else {
-      return a.getValue() == b.getValue();
-    }
-  }
-
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy,
-            UnitConcept UnitType2,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType2,
-            typename OwnershipPolicy2>
-  TFEL_HOST_DEVICE constexpr bool operator!=(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
-    static_assert(std::is_same_v<UnitType, UnitType2>,
-                  "invalid operation (unmatched unit)");
-    return a.getValue() != b.getValue();
-  }
-
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr qt<UnitType, ValueType> abs(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
-    return v.getValue() < 0 ? qt<UnitType, ValueType>{-v.getValue()}
-                            : qt<UnitType, ValueType>{v.getValue()};
-  }
-
-  template <UnitConcept Unit,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy,
-            int N,
-            unsigned int D>
-  class UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
-                        Power<N, D>> {
-    using ResultUnit =
-        typename tfel::math::internals::PowerUnit<N, D, Unit>::type;
-    using ResultValueType =
-        typename UnaryResultType<ValueType, Power<N, D>>::type;
-
-   public:
-    //! \brief result of the metafunction
-    using type = qt<ResultUnit, ResultValueType>;
-  };
-
-  template <int N,
-            UnitConcept Unit,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr auto
-  power(const Quantity<Unit, ValueType, OwnershipPolicy>& x) requires(
-      std::is_floating_point_v<ValueType>) {
-    using Result =
-        typename UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
-                                 Power<N, 1u>>::type;
-    return Result{power<N>(x.getValue())};
-  }
-
-  //! \brief cast the value to the base type
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
       Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
     return v.getValue();
   }
-  //! \brief cast the value to the base type
+
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
     return v.getValue();
   }
 
-  template <int N,
-            unsigned int D,
-            UnitConcept Unit,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr auto
-  power(const Quantity<Unit, ValueType, OwnershipPolicy>& x) requires(
-      std::is_floating_point_v<ValueType>) {
-    using Result =
-        typename UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
-                                 Power<N, D>>::type;
-    return Result{power<N, D>(x.getValue())};
+  template <QuantityConcept T, int N, unsigned int D>
+  class UnaryResultType<T, Power<N, D>> {
+    using ResultUnit =
+        typename tfel::math::internals::PowerUnit<N, D, quantity_unit<T>>::type;
+    using ResultValueType =
+        typename UnaryResultType<base_type<T>, Power<N, D>>::type;
+
+   public:
+    //! \brief result of the metafunction
+    using type = qt<ResultUnit, ResultValueType>;
+  };
+
+  template <int N, QuantityConcept T>
+  TFEL_HOST_DEVICE constexpr auto power(const T& x) requires(
+      std::is_floating_point_v<base_type<T>>) {
+    using Result = typename UnaryResultType<T, Power<N, 1u>>::type;
+    return Result{power<N>(base_type_cast(x))};
   }
 
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
-            typename OwnershipPolicy>
-  constexpr auto square_root(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
-    return power<1, 2>(q.getValue());
+  template <int N, unsigned int D, QuantityConcept T>
+  TFEL_HOST_DEVICE constexpr auto power(const T& x) requires(
+      std::is_floating_point_v<base_type<T>>) {
+    using Result = typename UnaryResultType<T, Power<N, D>>::type;
+    return Result{power<N, D>(base_type_cast(x))};
+  }
+
+  template <QuantityConcept T>
+  constexpr auto square_root(const T& q) noexcept {
+    return power<1, 2>(base_type_cast(q));
   }
 
 }  // namespace tfel::math
@@ -523,7 +403,7 @@ namespace tfel::math::ieee754 {
    * \param[in] q: value to be tested
    */
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr int fpclassify(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
@@ -537,7 +417,7 @@ namespace tfel::math::ieee754 {
    * \param[in] q: value to be tested
    */
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr bool isnan(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
@@ -551,7 +431,7 @@ namespace tfel::math::ieee754 {
    * \param[in] q: value to be tested
    */
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr bool isfinite(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {

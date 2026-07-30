@@ -14,10 +14,12 @@
 #ifndef LIB_TFEL_MATH_FORWARD_QT_HXX
 #define LIB_TFEL_MATH_FORWARD_QT_HXX
 
+#include <concepts>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
-#include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
+#include "TFEL/TypeTraits/BaseType.hxx"
+#include "TFEL/Math/Forward/General.hxx"
 
 namespace tfel::math::internals {
 
@@ -25,14 +27,14 @@ namespace tfel::math::internals {
    * \brief an helper structure which holds the value internally.
    * \param ValueType: the underlying numerical type.
    */
-  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+  template <StandardArithmeticTypeConcept ValueType,
             bool AllowImplicitConversion>
   struct QuantityValueOwnershipPolicy;
   /*!
    * \brief an helper structure which wraps a reference to an external value.
    * \param ValueType: the underlying numerical type.
    */
-  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+  template <StandardArithmeticTypeConcept ValueType,
             bool AllowImplicitConversion>
   struct QuantityReferenceOwnershipPolicy;
 
@@ -313,7 +315,7 @@ namespace tfel::math {
    * \date   06 Jun 2006
    */
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct [[nodiscard]] Quantity;
 
@@ -331,7 +333,7 @@ namespace tfel::math {
 
   //! \brief partial specialisation for quantities.
   template <UnitConcept QuantityUnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept QuantityValueType,
+            StandardArithmeticTypeConcept QuantityValueType,
             typename QuantityOwnershipPolicy>
   struct QuantityTraits<
       Quantity<QuantityUnitType, QuantityValueType, QuantityOwnershipPolicy>> {
@@ -343,7 +345,7 @@ namespace tfel::math {
 
   //! \brief a simple alias
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType = double>
+            StandardArithmeticTypeConcept ValueType = double>
   using qt = Quantity<UnitType,
                       ValueType,
                       tfel::math::internals::QuantityValueOwnershipPolicy<
@@ -351,7 +353,7 @@ namespace tfel::math {
                           std::is_same_v<UnitType, unit::NoUnit>>>;
   //! \brief a simple alias
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType = double>
+            StandardArithmeticTypeConcept ValueType = double>
   using qt_ref =
       Quantity<UnitType,
                ValueType,
@@ -360,7 +362,7 @@ namespace tfel::math {
                    std::is_same_v<UnitType, unit::NoUnit>>>;
   //! \brief a simple alias
   template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType = double>
+            StandardArithmeticTypeConcept ValueType = double>
   using const_qt_ref =
       Quantity<UnitType,
                ValueType,
@@ -375,8 +377,7 @@ namespace tfel::math {
     using type = tfel::meta::InvalidType;
   };
   //! \brief partial specialisation for quantities
-  template <UnitConcept UnitType,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType>
+  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
   struct MakeQuantityReferenceType<qt<UnitType, ValueType>> {
     //! \brief result
     using type = qt_ref<UnitType, ValueType>;
@@ -384,13 +385,13 @@ namespace tfel::math {
 
   namespace internals {
 
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType>
+    template <StandardArithmeticTypeConcept ValueType>
     struct MakeQuantityValueType {
       //! \brief result of the metafunction
       using type = ValueType;
     };  // end of struct MakeQuantityValueType
 
-    template <tfel::typetraits::FundamentalNumericTypeConcept ValueType>
+    template <StandardArithmeticTypeConcept ValueType>
     struct MakeQuantityValueType<qt<unit::NoUnit, ValueType>> {
       //! \brief result of the metafunction
       using type = ValueType;
@@ -399,7 +400,7 @@ namespace tfel::math {
   }  // end of namespace internals
 
   //! \brief a simple alias
-  template <tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+  template <StandardArithmeticTypeConcept ValueType,
             int N1 = 0,
             int N2 = 0,
             int N3 = 0,
@@ -433,7 +434,7 @@ namespace tfel::math {
 
   //! \brief a simple alias
   template <bool use_qt,
-            tfel::typetraits::FundamentalNumericTypeConcept ValueType,
+            StandardArithmeticTypeConcept ValueType,
             int N1 = 0,
             int N2 = 0,
             int N3 = 0,
@@ -465,17 +466,72 @@ namespace tfel::math {
                                                             D6,
                                                             D7>,
                                                    ValueType>;
-
+  //! \brief cast the value to the base type
+  template <UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType,
+            typename OwnershipPolicy>
+  TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
+      Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept;
+  //! \brief cast the value to the base type
+  template <UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType,
+            typename OwnershipPolicy>
+  TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept;
+  //
   template <typename T>
   concept QuantityConcept =
-      ((UnitConcept<typename QuantityTraits<T>::UnitType>)&&(
-          tfel::typetraits::FundamentalNumericTypeConcept<
-              typename QuantityTraits<T>::ValueType>));
+      ((UnitConcept<typename QuantityTraits<T>::UnitType>)&&  //
+       (StandardArithmeticTypeConcept<
+           typename QuantityTraits<T>::ValueType>)&&  //
+       (requires(T & v) {
+         {
+           base_type_cast(v)
+           } -> std::same_as<typename QuantityTraits<T>::ValueType&>;
+       }) &&  //
+       (requires(const T& v) {
+         {
+           base_type_cast(v)
+           } -> std::same_as<const typename QuantityTraits<T>::ValueType&>;
+       }));
 
   template <typename T>
+  concept NoUnitQuantityConcept =
+      ((QuantityConcept<T>)&&  //
+       (std::same_as<typename QuantityTraits<T>::UnitType,
+                     tfel::math::unit::NoUnit>));
+
+  /*!
+   * \brief a function testing if a type is a quantity
+   *
+   * \note this function is kept for backward compatility with C++-17 when
+   * concepts were not yet available
+   */
+  template <typename T>
   TFEL_HOST_DEVICE constexpr bool isQuantity() {
-    return QuantityConcept<T>;
+    return QuantityConcept<std::decay_t<T>>;
   }
+
+}  // end of namespace tfel::math
+
+namespace tfel::typetraits {
+
+  //! \brief partial specialisation for quantities
+  template <tfel::math::QuantityConcept QuantityType>
+  struct BaseType<QuantityType> {
+    //! \brief result of the metafunction
+    using type = typename tfel::math::QuantityTraits<QuantityType>::ValueType;
+  };
+
+}  // end of namespace tfel::typetraits
+
+namespace tfel::math {
+
+  template <QuantityConcept T>
+  using quantity_unit = typename QuantityTraits<T>::UnitType;
+
+  template <QuantityConcept T>
+  using qt_rebind = qt<quantity_unit<T>, base_type<T>>;
 
 }  // end of namespace tfel::math
 
