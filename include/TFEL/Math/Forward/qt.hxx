@@ -14,7 +14,10 @@
 #ifndef LIB_TFEL_MATH_FORWARD_QT_HXX
 #define LIB_TFEL_MATH_FORWARD_QT_HXX
 
+#include <array>
+#include <numeric>
 #include <concepts>
+#include <algorithm>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
@@ -42,24 +45,63 @@ namespace tfel::math::internals {
 
 namespace tfel::math {
 
+  struct UnitExponent {
+    int numerator;
+    unsigned int denominator;
+  };
+
+  [[nodiscard]] constexpr bool isValid(const UnitExponent& e) noexcept {
+    return e.denominator != 0;
+  }
+
+  [[nodiscard]] constexpr bool isIrreductible(const UnitExponent& e) noexcept {
+    return std::gcd(e.numerator, e.denominator) == 1;
+  }
+
+  struct UnitExponents {
+    std::array<UnitExponent, 7> exponents;
+  };
+
+[[nodiscard]] constexpr bool isValid(const UnitExponents &e) noexcept {
+  return (std::all_of(e.exponents.begin(), e.exponents.end(),
+                      [](const UnitExponent &e1) { return isValid(e1); })) && //
+         (std::all_of(e.exponents.begin(), e.exponents.end(),
+                      [](const UnitExponent &e1) { return isIrreductible(e1); }));
+} // end of isValid
+  
+  template <int N1 = 0,
+            int N2 = 0,
+            int N3 = 0,
+            int N4 = 0,
+            int N5 = 0,
+            int N6 = 0,
+            int N7 = 0,  //
+            unsigned int D1 = 1,
+            unsigned int D2 = 1,
+            unsigned int D3 = 1,
+            unsigned int D4 = 1,
+            unsigned int D5 = 1,
+            unsigned int D6 = 1,
+            unsigned int D7 = 1>
+  [[nodiscard]] constexpr UnitExponents makeUnitExponents() noexcept {
+    return {.exponents = {UnitExponent{.numerator = N1, .denominator = D1},
+                          UnitExponent{.numerator = N2, .denominator = D2},
+                          UnitExponent{.numerator = N3, .denominator = D3},
+                          UnitExponent{.numerator = N4, .denominator = D4},
+                          UnitExponent{.numerator = N5, .denominator = D5},
+                          UnitExponent{.numerator = N6, .denominator = D6},
+                          UnitExponent{.numerator = N7, .denominator = D7}}};
+  }  // end of makeUnitExponents
+
   /*!
-   * \brief structure describing an unit
+   * \brief brief base class inherited by all unit classes
+   *
+   * \tparam e:  exponents defining the unit
    */
-  template <typename N1,
-            typename N2,
-            typename N3,
-            typename N4,
-            typename N5,
-            typename N6,
-            typename N7,
-            typename D1,
-            typename D2,
-            typename D3,
-            typename D4,
-            typename D5,
-            typename D6,
-            typename D7>
-  struct Unit;
+  template <UnitExponents e>
+  requires(isValid(e))  //
+      struct UnitBase {
+  };
 
   template <int N1,
             int N2,
@@ -75,219 +117,263 @@ namespace tfel::math {
             unsigned int D5 = 1,
             unsigned int D6 = 1,
             unsigned int D7 = 1>
-  struct GenerateUnit {
-    //! \brief result of the metafunction
-    using type = Unit<std::integral_constant<int, N1>,
-                      std::integral_constant<int, N2>,
-                      std::integral_constant<int, N3>,
-                      std::integral_constant<int, N4>,
-                      std::integral_constant<int, N5>,
-                      std::integral_constant<int, N6>,
-                      std::integral_constant<int, N7>,
-                      std::integral_constant<unsigned int, D1>,
-                      std::integral_constant<unsigned int, D2>,
-                      std::integral_constant<unsigned int, D3>,
-                      std::integral_constant<unsigned int, D4>,
-                      std::integral_constant<unsigned int, D5>,
-                      std::integral_constant<unsigned int, D6>,
-                      std::integral_constant<unsigned int, D7>>;
-  };
+  struct Unit : UnitBase<makeUnitExponents<N1,
+                                           N2,
+                                           N3,
+                                           N4,
+                                           N5,
+                                           N6,
+                                           N7,  //
+                                           D1,
+                                           D2,
+                                           D3,
+                                           D4,
+                                           D5,
+                                           D6,
+                                           D7>()> {};
 
-  namespace internal {
+  template <int N1 = 0,
+            int N2 = 0,
+            int N3 = 0,
+            int N4 = 0,
+            int N5 = 0,
+            int N6 = 0,
+            int N7 = 0>
+  struct StandardUnit : Unit<N1, N2, N3, N4, N5, N6, N7> {};
+
+  namespace internals {
+
+    struct ExtractUnitBase {
+     protected:
+      static constexpr void test(...) noexcept {};
+      template <UnitExponents exponents>
+      static constexpr UnitBase<exponents> test(
+          const UnitBase<exponents>&) noexcept {
+        return {};
+      }
+    };
 
     template <typename T>
-    struct UnitConceptImplementation : std::false_type {};
+    struct ExtractUnit : ExtractUnitBase {
+      using type = decltype(ExtractUnitBase::test(std::declval<T>()));
+    };
 
-    template <int N1,
-              int N2,
-              int N3,
-              int N4,
-              int N5,
-              int N6,
-              int N7,
-              unsigned int D1,
-              unsigned int D2,
-              unsigned int D3,
-              unsigned int D4,
-              unsigned int D5,
-              unsigned int D6,
-              unsigned int D7>
-    struct UnitConceptImplementation<
-        Unit<std::integral_constant<int, N1>,
-             std::integral_constant<int, N2>,
-             std::integral_constant<int, N3>,
-             std::integral_constant<int, N4>,
-             std::integral_constant<int, N5>,
-             std::integral_constant<int, N6>,
-             std::integral_constant<int, N7>,
-             std::integral_constant<unsigned int, D1>,
-             std::integral_constant<unsigned int, D2>,
-             std::integral_constant<unsigned int, D3>,
-             std::integral_constant<unsigned int, D4>,
-             std::integral_constant<unsigned int, D5>,
-             std::integral_constant<unsigned int, D6>,
-             std::integral_constant<unsigned int, D7>>> : std::true_type {};
+    template <>
+    struct ExtractUnit<tfel::meta::InvalidType> {
+      using type = void;
+    };
 
-  }  // namespace internal
+  }  // namespace internals
 
   template <typename T>
-  concept UnitConcept = internal::UnitConceptImplementation<T>::value;
+  concept UnitConcept =
+      !std::is_void_v<typename internals::ExtractUnit<T>::type>;
+
+  template <UnitExponents e>
+  requires(isValid(e))  //
+      [[nodiscard]] constexpr UnitExponents
+      get_unit_exponents(const UnitBase<e>&) noexcept {
+    return e;
+  }
+
+  template <UnitConcept UnitType>
+  [[nodiscard]] constexpr UnitExponents get_unit_exponents() noexcept {
+    return get_unit_exponents(UnitType{});
+  }
+
+  template <UnitConcept UnitType>
+  constexpr inline UnitExponents exponents = get_unit_exponents<UnitType>();
+
+  template <UnitConcept UnitType1, UnitConcept UnitType2>
+  inline constexpr bool areUnitsEqual =
+      std::same_as<typename internals::ExtractUnit<UnitType1>::type,
+                   typename internals::ExtractUnit<UnitType2>::type>;
 
 }  // end of namespace tfel::math
 
 namespace tfel::math::unit {
 
-  //! \brief a simple alias
-  using NoUnit = Unit<std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>>;
-
+  struct NoUnit : StandardUnit<> {};
   /*!
    * \brief Declares the Mass unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Mass = GenerateUnit<1, 0, 0, 0, 0, 0, 0>::type;
+  using Mass = StandardUnit<1, 0, 0, 0, 0, 0, 0>;
   /*!
    * \brief Declares the Length unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Length = GenerateUnit<0, 1, 0, 0, 0, 0, 0>::type;
+  using Length = StandardUnit<0, 1, 0, 0, 0, 0, 0>;
   /*!
    * \brief Declares the Time unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Time = GenerateUnit<0, 0, 1, 0, 0, 0, 0>::type;
+  using Time = StandardUnit<0, 0, 1, 0, 0, 0, 0>;
   /*!
    * \brief Declares the Ampere unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Ampere = GenerateUnit<0, 0, 0, 1, 0, 0, 0>::type;
+  using Ampere = StandardUnit<0, 0, 0, 1, 0, 0, 0>;
   /*!
    * \brief Declares the Temperature unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Temperature = GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type;
+  using Temperature = StandardUnit<0, 0, 0, 0, 1, 0, 0>;
   /*!
    * \brief Declares the Kelvin unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Kelvin = GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type;
+  using Kelvin = StandardUnit<0, 0, 0, 0, 1, 0, 0>;
   /*!
    * \brief Declares the Candela unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Candela = GenerateUnit<0, 0, 0, 0, 0, 1, 0>::type;
+  using Candela = StandardUnit<0, 0, 0, 0, 0, 1, 0>;
   /*!
    * \brief Declares the Mole unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Mole = GenerateUnit<0, 0, 0, 0, 0, 0, 1>::type;
+  using Mole = StandardUnit<0, 0, 0, 0, 0, 0, 1>;
 
   // Additional units
 
   /*!
    * \brief Declares the InvLength unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using InvLength = GenerateUnit<0, -1, 0, 0, 0, 0, 0>::type;  // m-1
+  using InvLength = StandardUnit<0, -1, 0, 0, 0, 0, 0>;  // m-1
 
   /*!
    * \brief Declares the InvTemperature unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using InvTemperature = GenerateUnit<0, 0, 0, 0, -1, 0, 0>::type;
+  using InvTemperature = StandardUnit<0, 0, 0, 0, -1, 0, 0>;
 
   /*!
    * \brief Declares the Frequency unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Frequency = GenerateUnit<0, 0, -1, 0, 0, 0, 0>::type;  // s-1
+  using Frequency = StandardUnit<0, 0, -1, 0, 0, 0, 0>;  // s-1
 
   /*!
    * \brief Declares the Speed unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Speed = GenerateUnit<0, 1, -1, 0, 0, 0, 0>::type;  // m.s-1
+  using Speed = StandardUnit<0, 1, -1, 0, 0, 0, 0>;  // m.s-1
 
   /*!
    * \brief Declares the Acceleration unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Acceleration = GenerateUnit<0, 1, -2, 0, 0, 0, 0>::type;  // m.s-2
+  using Acceleration = StandardUnit<0, 1, -2, 0, 0, 0, 0>;  // m.s-2
 
   /*!
    * \brief Declares the Momentum unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Momentum = GenerateUnit<1, 1, -1, 0, 0, 0, 0>::type;  // kg.m.s-1
+  using Momentum = StandardUnit<1, 1, -1, 0, 0, 0, 0>;  // kg.m.s-1
 
   /*!
    * \brief Declares the Momentum unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Force = GenerateUnit<1, 1, -2, 0, 0, 0, 0>::type;  // kg.m.s-2
+  using Force = StandardUnit<1, 1, -2, 0, 0, 0, 0>;  // kg.m.s-2
 
   /*!
    * \brief Declares the Newton unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Newton = GenerateUnit<1, 1, -2, 0, 0, 0, 0>::type;  // kg.m.s-2
+  using Newton = StandardUnit<1, 1, -2, 0, 0, 0, 0>;  // kg.m.s-2
 
   /*!
    * \brief Declares the Stress unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Stress = GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type;  // kg.m-1.s-2
+  using Stress = StandardUnit<1, -1, -2, 0, 0, 0, 0>;  // kg.m-1.s-2
 
   /*!
    * \brief Declares the StressRate unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using StressRate = GenerateUnit<1, -1, -3, 0, 0, 0, 0>::type;  // kg.m-1.s-3
+  using StressRate = StandardUnit<1, -1, -3, 0, 0, 0, 0>;  // kg.m-1.s-3
 
   /*!
    * \brief Declares the Pressure unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Pressure = GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type;  // kg.m-1.s-2
+  using Pressure = StandardUnit<1, -1, -2, 0, 0, 0, 0>;  // kg.m-1.s-2
 
   /*!
    * \brief Declares the Energy unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Energy = GenerateUnit<1, 2, -2, 0, 0, 0, 0>::type;  // kg.m2.s-2
+  using Energy = StandardUnit<1, 2, -2, 0, 0, 0, 0>;  // kg.m2.s-2
 
   /*!
    * \brief Declares the EnergyDensity unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using EnergyDensity =
-      GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type;  // kg.m-1.s-2
+  using EnergyDensity = StandardUnit<1, -1, -2, 0, 0, 0, 0>;  // kg.m-1.s-2
   /*!
    * \brief Declares the Density unit
-   * \see GenerateUnit
+   * \see StandardUnit
    */
-  using Density = GenerateUnit<1, -3, 0, 0, 0, 0, 0>::type;  // k.m-3
+  using Density = StandardUnit<1, -3, 0, 0, 0, 0, 0>;  // k.m-3
   //! \brief Declares the TemperatureGradient unit
-  using TemperatureGradient =
-      GenerateUnit<0, -1, 0, 0, 1, 0, 0>::type;  // K.m^{-1}
+  using TemperatureGradient = StandardUnit<0, -1, 0, 0, 1, 0, 0>;  // K.m^{-1}
   //! \brief Declares the ThermalConductivity unit
   using ThermalConductivity =
-      GenerateUnit<1, 1, -3, 0, -1, 0, 0>::type;  // kg.m.s-3.K-1
+      StandardUnit<1, 1, -3, 0, -1, 0, 0>;  // kg.m.s-3.K-1
   //! \brief Declares the HeatFluxDensity unit
-  using HeatFluxDensity = GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type;  // kg.s-3
+  using HeatFluxDensity = StandardUnit<1, 0, -3, 0, 0, 0, 0>;  // kg.s-3
 
+  [[nodiscard]] constexpr bool areAllDenominatorsOne(
+      const UnitExponents &e) noexcept {
+    return std::all_of(
+        e.exponents.begin(), e.exponents.end(),
+        [](const UnitExponent &e1) { return e1.denominator == 1; });
+  }  // end of isValid
+  
+  /*!
+   * \brief `UnitRebind` is a way to simply rebind some unit types from the
+   * unit exponents.
+   */
+  template <UnitExponents e>
+  requires(isValid(e))  //
+      struct UnitRebind {
+    using type = std::conditional_t<areAllDenominatorsOne(e),
+                                    StandardUnit<e.exponents[0].numerator,
+                                                 e.exponents[1].numerator,
+                                                 e.exponents[2].numerator,
+                                                 e.exponents[3].numerator,
+                                                 e.exponents[4].numerator,
+                                                 e.exponents[5].numerator,
+                                                 e.exponents[6].numerator>,
+                                    Unit<e.exponents[0].numerator,
+                                         e.exponents[1].numerator,
+                                         e.exponents[2].numerator,
+                                         e.exponents[3].numerator,
+                                         e.exponents[4].numerator,
+                                         e.exponents[5].numerator,
+                                         e.exponents[6].numerator,  //
+                                         e.exponents[0].denominator,
+                                         e.exponents[1].denominator,
+                                         e.exponents[2].denominator,
+                                         e.exponents[3].denominator,
+                                         e.exponents[4].denominator,
+                                         e.exponents[5].denominator,
+                                         e.exponents[6].denominator>>;
+  };
+
+  template <>
+  struct UnitRebind<exponents<NoUnit>> {
+    using type = NoUnit;
+  };
+  template <>
+  struct UnitRebind<exponents<Length>> {
+    using type = Length;
+  };
+  
 }  // end of namespace tfel::math::unit
 
 namespace tfel::math {
@@ -407,7 +493,7 @@ namespace tfel::math {
             unsigned int D6 = 1,
             unsigned int D7 = 1>
   using quantity = qt<
-      typename GenerateUnit<N1,
+    typename unit::UnitRebind<makeUnitExponents<N1,
                             N2,
                             N3,
                             N4,
@@ -420,7 +506,7 @@ namespace tfel::math {
                             D4,
                             D5,
                             D6,
-                            D7>::type,
+					   D7>()>::type,
       typename tfel::math::internals::MakeQuantityValueType<ValueType>::type>;
 
   //! \brief a simple alias
@@ -489,8 +575,8 @@ namespace tfel::math {
   template <typename T>
   concept NoUnitQuantityConcept =
       ((QuantityConcept<T>)&&  //
-       (std::same_as<typename QuantityTraits<T>::UnitType,
-                     tfel::math::unit::NoUnit>));
+       (areUnitsEqual<typename QuantityTraits<T>::UnitType,
+                      tfel::math::unit::NoUnit>));
 
   /*!
    * \brief a function testing if a type is a quantity
