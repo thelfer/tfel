@@ -57,8 +57,8 @@ namespace tfel::math {
                           add(e1.exponents[6], e2.exponents[6])}};
   }
 
-  [[nodiscard]] constexpr UnitExponents subtract(const UnitExponents &e1,
-                                            const UnitExponents &e2) noexcept {
+  [[nodiscard]] constexpr UnitExponents subtract(
+      const UnitExponents &e1, const UnitExponents &e2) noexcept {
     return {.exponents = {subtract(e1.exponents[0], e2.exponents[0]),
                           subtract(e1.exponents[1], e2.exponents[1]),
                           subtract(e1.exponents[2], e2.exponents[2]),
@@ -87,11 +87,11 @@ namespace tfel::math {
   }  // end of isValid
 
   namespace internals {
-  
+
     template <UnitConcept UnitType1, UnitConcept UnitType2>
     struct AddUnit {
       using type = typename unit::UnitRebind<add(exponents<UnitType1>,
-						 exponents<UnitType2>)>::type;
+                                                 exponents<UnitType2>)>::type;
     };
 
     template <UnitConcept UnitType1, UnitConcept UnitType2>
@@ -107,8 +107,8 @@ namespace tfel::math {
           makeUnitExponents<N, N, N, N, N, N, N, D, D, D, D, D, D, D>())>::type;
     };
 
-  }
-    
+  }  // namespace internals
+
 }  // end of namespace tfel::math
 
 // #include "TFEL/Math/Quantity/Unit.ixx"

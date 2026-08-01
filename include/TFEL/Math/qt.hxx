@@ -221,9 +221,8 @@ namespace tfel::math {
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity(const OtherQuantityType& src) noexcept
         requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
-            std::is_same_v<
-                promote<ValueType, base_type<OtherQuantityType>>,
-                ValueType>))
+            std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
+                           ValueType>))
         : OwnershipPolicy(base_type_cast(src)) {}  // end of Quantity
     //
     template <StandardArithmeticTypeConcept T>

@@ -121,7 +121,7 @@ namespace tfel::math {
    */
   template <QuantityConcept T1, QuantityConcept T2>
   requires(areUnitsEqual<quantity_unit<T1>,
-                        quantity_unit<T2>>)  //
+                         quantity_unit<T2>>)  //
       struct ResultType<T1, T2, OpPlus> {
     using type = qt<quantity_unit<T1>,
                     result_type<base_type<T1>, base_type<T2>, OpPlus>>;
@@ -140,7 +140,7 @@ namespace tfel::math {
    */
   template <QuantityConcept T1, QuantityConcept T2>
   requires(areUnitsEqual<quantity_unit<T1>,
-                        quantity_unit<T2>>)  //
+                         quantity_unit<T2>>)  //
       struct ResultType<T1, T2, OpMinus> {
     using type = qt<quantity_unit<T1>,
                     result_type<base_type<T1>, base_type<T2>, OpMinus>>;

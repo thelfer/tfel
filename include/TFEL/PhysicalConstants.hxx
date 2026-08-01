@@ -29,7 +29,8 @@ namespace tfel {
     //! a simple alias
     template <int N1, int N2, int N3, int N4, int N5, int N6, int N7>
     using quantity = tfel::math::qt<
-      typename tfel::math::unit::UnitRebind<tfel::math::makeUnitExponents<N1, N2, N3, N4, N5, N6, N7>()>::type,
+        typename tfel::math::unit::UnitRebind<
+            tfel::math::makeUnitExponents<N1, N2, N3, N4, N5, N6, N7>()>::type,
         NumericType>;
     //! Atomic mass constant (kg)
     static constexpr auto AtomicMassConstant =

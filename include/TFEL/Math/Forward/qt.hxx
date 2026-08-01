@@ -62,13 +62,15 @@ namespace tfel::math {
     std::array<UnitExponent, 7> exponents;
   };
 
-[[nodiscard]] constexpr bool isValid(const UnitExponents &e) noexcept {
-  return (std::all_of(e.exponents.begin(), e.exponents.end(),
-                      [](const UnitExponent &e1) { return isValid(e1); })) && //
-         (std::all_of(e.exponents.begin(), e.exponents.end(),
-                      [](const UnitExponent &e1) { return isIrreductible(e1); }));
-} // end of isValid
-  
+  [[nodiscard]] constexpr bool isValid(const UnitExponents& e) noexcept {
+    return (std::all_of(
+               e.exponents.begin(), e.exponents.end(),
+               [](const UnitExponent& e1) { return isValid(e1); })) &&  //
+           (std::all_of(
+               e.exponents.begin(), e.exponents.end(),
+               [](const UnitExponent& e1) { return isIrreductible(e1); }));
+  }  // end of isValid
+
   template <int N1 = 0,
             int N2 = 0,
             int N3 = 0,
@@ -145,7 +147,7 @@ namespace tfel::math {
 
     struct ExtractUnitBase {
      protected:
-      static constexpr void test(...) noexcept {};
+      static constexpr void test(...) noexcept {}
       template <UnitExponents exponents>
       static constexpr UnitBase<exponents> test(
           const UnitBase<exponents>&) noexcept {
@@ -328,12 +330,12 @@ namespace tfel::math::unit {
   using HeatFluxDensity = StandardUnit<1, 0, -3, 0, 0, 0, 0>;  // kg.s-3
 
   [[nodiscard]] constexpr bool areAllDenominatorsOne(
-      const UnitExponents &e) noexcept {
+      const UnitExponents& e) noexcept {
     return std::all_of(
         e.exponents.begin(), e.exponents.end(),
-        [](const UnitExponent &e1) { return e1.denominator == 1; });
+        [](const UnitExponent& e1) { return e1.denominator == 1; });
   }  // end of isValid
-  
+
   /*!
    * \brief `UnitRebind` is a way to simply rebind some unit types from the
    * unit exponents.
@@ -373,7 +375,7 @@ namespace tfel::math::unit {
   struct UnitRebind<exponents<Length>> {
     using type = Length;
   };
-  
+
 }  // end of namespace tfel::math::unit
 
 namespace tfel::math {
@@ -493,20 +495,20 @@ namespace tfel::math {
             unsigned int D6 = 1,
             unsigned int D7 = 1>
   using quantity = qt<
-    typename unit::UnitRebind<makeUnitExponents<N1,
-                            N2,
-                            N3,
-                            N4,
-                            N5,
-                            N6,
-                            N7,
-                            D1,
-                            D2,
-                            D3,
-                            D4,
-                            D5,
-                            D6,
-					   D7>()>::type,
+      typename unit::UnitRebind<makeUnitExponents<N1,
+                                                  N2,
+                                                  N3,
+                                                  N4,
+                                                  N5,
+                                                  N6,
+                                                  N7,
+                                                  D1,
+                                                  D2,
+                                                  D3,
+                                                  D4,
+                                                  D5,
+                                                  D6,
+                                                  D7>()>::type,
       typename tfel::math::internals::MakeQuantityValueType<ValueType>::type>;
 
   //! \brief a simple alias
