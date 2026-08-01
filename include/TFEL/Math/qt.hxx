@@ -31,6 +31,7 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/UnaryResultType.hxx"
 #include "TFEL/Math/Quantity/Unit.hxx"
+#include "TFEL/Math/Forward/qt.hxx"
 #include "TFEL/Math/power.hxx"
 
 namespace tfel::math::internals {

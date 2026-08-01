@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Math/Forward/qt.hxx"
+#include "TFEL/Math/Forward/Unit.hxx"
 
 namespace tfel::math {
 
@@ -111,5 +111,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-// #include "TFEL/Math/Quantity/Unit.ixx"
 #endif /* LIB_TFEL_MATH_UNIT_HXX */
