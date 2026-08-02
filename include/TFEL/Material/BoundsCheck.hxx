@@ -128,13 +128,13 @@ namespace tfel::material {
                                        lower_bound_as_string);
       }
     }
-    template <typename T, typename Unit, typename OwnerShipPolicy>
+    template <tfel::math::QuantityConcept QuantityType>
     static inline void lowerBoundCheck(
         const std::string_view name,
-        const tfel::math::Quantity<Unit, T, OwnerShipPolicy> value,
-        const T lBound,
+        const QuantityType& value,
+        const tfel::math::base_type<QuantityType> lBound,
         const OutOfBoundsPolicy p = Strict) {
-      if (value.getValue() < lBound) {
+      if (base_type_cast(value) < lBound) {
         if (p == None) {
           return;
         }
@@ -167,13 +167,13 @@ namespace tfel::material {
                                        upper_bound_as_string);
       }
     }
-    template <typename T, typename Unit, typename OwnerShipPolicy>
+    template <tfel::math::QuantityConcept QuantityType>
     static inline void upperBoundCheck(
         const std::string_view name,
-        const tfel::math::Quantity<Unit, T, OwnerShipPolicy> value,
-        const T uBound,
+        const QuantityType value,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
-      if (value.getValue() > uBound) {
+      if (base_type_cast(value) > uBound) {
         if (p == None) {
           return;
         }
@@ -210,14 +210,15 @@ namespace tfel::material {
                                   upper_bound_as_string);
       }
     }
-    template <typename T, typename Unit, typename OwnerShipPolicy>
+    template <tfel::math::QuantityConcept QuantityType>
     static inline void lowerAndUpperBoundsChecks(
         const std::string_view name,
-        const tfel::math::Quantity<Unit, T, OwnerShipPolicy> value,
-        const T lBound,
-        const T uBound,
+        const QuantityType value,
+        const tfel::math::base_type<QuantityType> lBound,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
-      if ((value.getValue() < lBound) || (value.getValue() > uBound)) {
+      if ((base_type_cast(value) < lBound) ||
+          (base_type_cast(value) > uBound)) {
         if (p == None) {
           return;
         }
@@ -274,12 +275,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(2)", s(2), lBound,
                                                  uBound, p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void lowerBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<1u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T lBound,
+        const tfel::math::stensor<1u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> lBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerBoundCheck(name + "(0)", s(0).getValue(), lBound,
                                        p);
@@ -288,12 +288,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(2)", s(2).getValue(), lBound,
                                        p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void upperBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<1u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T uBound,
+        const tfel::math::stensor<1u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::upperBoundCheck(name + "(0)", s(0).getValue(), uBound,
                                        p);
@@ -302,13 +301,12 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(2)", s(2).getValue(), uBound,
                                        p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
-        const tfel::math::stensor<1u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T lBound,
-        const T uBound,
+        const tfel::math::stensor<1u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> lBound,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(0)", s(0).getValue(),
                                                  lBound, uBound, p);
@@ -324,15 +322,15 @@ namespace tfel::material {
     using BoundsCheckBase::lowerAndUpperBoundsChecks;
     using BoundsCheckBase::lowerBoundCheck;
     using BoundsCheckBase::upperBoundCheck;
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static inline void lowerAndUpperBoundsChecks(
         const std::string& name,
-        const tfel::math::Quantity<Unit, T, OwnerShip> value,
-        const T lBound,
-        const T uBound,
+        const QuantityType& value,
+        const tfel::math::base_type<QuantityType> lBound,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
-      BoundsCheckBase::lowerBoundCheck(name, value.getValue(), lBound, p);
-      BoundsCheckBase::upperBoundCheck(name, value.getValue(), uBound, p);
+      BoundsCheckBase::lowerBoundCheck(name, base_type_cast(value), lBound, p);
+      BoundsCheckBase::upperBoundCheck(name, base_type_cast(value), uBound, p);
     }
     template <typename T>
     static void lowerBoundCheck(const std::string& name,
@@ -369,12 +367,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(3)", s(3), lBound,
                                                  uBound, p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void lowerBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<2u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T lBound,
+        const tfel::math::stensor<2u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> lBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerBoundCheck(name + "(0)", s(0).getValue(), lBound,
                                        p);
@@ -385,12 +382,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(3)", s(3).getValue(), lBound,
                                        p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void upperBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<2u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T uBound,
+        const tfel::math::stensor<2u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::upperBoundCheck(name + "(0)", s(0).getValue(), uBound,
                                        p);
@@ -401,13 +397,12 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(3)", s(3).getValue(), uBound,
                                        p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
-        const tfel::math::stensor<2u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T lBound,
-        const T uBound,
+        const tfel::math::stensor<2u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> lBound,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(0)", s(0).getValue(),
                                                  lBound, uBound, p);
@@ -468,12 +463,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(5)", s(5), lBound,
                                                  uBound, p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void lowerBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<3u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T lBound,
+        const tfel::math::stensor<3u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> lBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerBoundCheck(name + "(0)", s(0).getValue(), lBound,
                                        p);
@@ -488,12 +482,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(5)", s(5).getValue(), lBound,
                                        p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void upperBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<3u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T uBound,
+        const tfel::math::stensor<3u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::upperBoundCheck(name + "(0)", s(0).getValue(), uBound,
                                        p);
@@ -508,13 +501,12 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(5)", s(5).getValue(), uBound,
                                        p);
     }
-    template <typename T, typename Unit, typename OwnerShip>
+    template <tfel::math::QuantityConcept QuantityType>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
-        const tfel::math::stensor<3u, tfel::math::Quantity<Unit, T, OwnerShip>>&
-            s,
-        const T lBound,
-        const T uBound,
+        const tfel::math::stensor<3u, QuantityType>& s,
+        const tfel::math::base_type<QuantityType> lBound,
+        const tfel::math::base_type<QuantityType> uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(0)", s(0).getValue(),
                                                  lBound, uBound, p);

@@ -43,7 +43,7 @@ namespace tfel::math::internals {
     static_assert(std::is_same_v<ValueType, std::decay_t<ValueType>>,
                   "invalid value type");
     //! \brief default constructor
-    constexpr QuantityValueOwnershipPolicy() noexcept = default;
+    constexpr QuantityValueOwnershipPolicy() noexcept : value() {}
     //! \brief copy constructor.
     constexpr QuantityValueOwnershipPolicy(
         const QuantityValueOwnershipPolicy&) noexcept = default;
@@ -193,7 +193,7 @@ namespace tfel::math::internals {
 
 namespace tfel::math {
 
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct Quantity : OwnershipPolicy {
@@ -221,16 +221,17 @@ namespace tfel::math {
     //
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity(const OtherQuantityType& src) noexcept
-        requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
-            std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
-                           ValueType>))
+        requires(
+            (unit::areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
+                std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
+                               ValueType>))
         : OwnershipPolicy(base_type_cast(src)) {}  // end of Quantity
     //
     template <StandardArithmeticTypeConcept T>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(const T& src) noexcept
         requires((std::is_constructible_v<ValueType, T>)&&  //
                  (std::is_convertible_v<ValueType, T>)&&    //
-                 (areUnitsEqual<UnitType, unit::NoUnit>)) {
+                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)) {
       this->getValue() = src;
       return *this;
     }
@@ -238,7 +239,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr Quantity& operator+=(const T& src) noexcept
         requires((std::is_constructible_v<ValueType, T>)&&  //
                  (std::is_convertible_v<ValueType, T>)&&    //
-                 (areUnitsEqual<UnitType, unit::NoUnit>)) {
+                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)) {
       this->getValue() += src;
       return *this;
     }
@@ -246,7 +247,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr Quantity& operator-=(const T& src) noexcept
         requires((std::is_constructible_v<ValueType, T>)&&  //
                  (std::is_convertible_v<ValueType, T>)&&    //
-                 (areUnitsEqual<UnitType, unit::NoUnit>)) {
+                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)) {
       this->getValue() -= src;
       return *this;
     }
@@ -254,9 +255,10 @@ namespace tfel::math {
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(
         const OtherQuantityType& src) noexcept
-        requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
-            std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
-                           ValueType>)) {
+        requires(
+            (unit::areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
+                std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
+                               ValueType>)) {
       this->getValue() = base_type_cast(src);
       return *this;
     }
@@ -264,9 +266,10 @@ namespace tfel::math {
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator+=(
         const OtherQuantityType& src) noexcept
-        requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
-            std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
-                           ValueType>)) {
+        requires(
+            (unit::areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
+                std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
+                               ValueType>)) {
       this->getValue() += base_type_cast(src);
       return *this;
     }
@@ -274,9 +277,10 @@ namespace tfel::math {
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator-=(
         const OtherQuantityType& src) noexcept
-        requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
-            std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
-                           ValueType>)) {
+        requires(
+            (unit::areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
+                std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
+                               ValueType>)) {
       this->getValue() -= base_type_cast(src);
       return *this;
     }
@@ -337,14 +341,140 @@ namespace tfel::math {
     }
   };  // end of struct Quantity
 
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  struct qt : Quantity<UnitType,
+                       ValueType,
+                       tfel::math::internals::QuantityValueOwnershipPolicy<
+                           ValueType,
+                           unit::areUnitsEqual<UnitType, unit::NoUnit>>> {
+    //
+    TFEL_HOST_DEVICE constexpr qt() noexcept
+        : Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityValueOwnershipPolicy<
+                       ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>() {}
+    //
+    TFEL_HOST_DEVICE constexpr qt(qt&&) noexcept = default;
+    TFEL_HOST_DEVICE constexpr qt(const qt&) noexcept = default;
+    TFEL_HOST_DEVICE constexpr qt& operator=(qt&&) noexcept = default;
+    TFEL_HOST_DEVICE constexpr qt& operator=(const qt&) noexcept = default;
+    //
+    using Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityValueOwnershipPolicy<
+                       ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>::Quantity;
+    using Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityValueOwnershipPolicy<
+                       ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>::operator=;
+  };
+
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  struct QuantityTraits<qt<UnitType, ValueType>>
+      : QuantityTraits<
+            Quantity<UnitType,
+                     ValueType,
+                     tfel::math::internals::QuantityValueOwnershipPolicy<
+                         ValueType,
+                         unit::areUnitsEqual<UnitType, unit::NoUnit>>>> {};
+
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  struct qt_ref
+      : Quantity<UnitType,
+                 ValueType,
+                 tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                     ValueType,
+                     unit::areUnitsEqual<UnitType, unit::NoUnit>>> {
+    //
+    template <QuantityConcept QuantityType>
+    requires(unit::areUnitsEqual<quantity_unit<QuantityType>,
+                                 UnitType>)  //
+        constexpr qt_ref(QuantityType& src) noexcept
+        : Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                       ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>(
+              base_type_cast(src)) {}
+    //
+    constexpr qt_ref(ValueType& src) noexcept
+        : Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                       ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>(src) {}
+    constexpr qt_ref(qt_ref&&) noexcept = default;
+    constexpr qt_ref(const qt_ref&) noexcept = default;
+    using Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                       ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>::operator=;
+  };
+
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  struct QuantityTraits<qt_ref<UnitType, ValueType>>
+      : QuantityTraits<
+            Quantity<UnitType,
+                     ValueType,
+                     tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                         ValueType,
+                         unit::areUnitsEqual<UnitType, unit::NoUnit>>>> {};
+
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  struct const_qt_ref
+      : Quantity<UnitType,
+                 ValueType,
+                 tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                     const ValueType,
+                     unit::areUnitsEqual<UnitType, unit::NoUnit>>> {
+    //
+    template <QuantityConcept QuantityType>
+    requires(unit::areUnitsEqual<quantity_unit<QuantityType>,
+                                 UnitType>)  //
+        constexpr const_qt_ref(const QuantityType& src) noexcept
+        : Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                       const ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>(
+              base_type_cast(src)) {}
+    //
+    constexpr const_qt_ref(const ValueType& src) noexcept
+        : Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                       const ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>(src) {}
+    constexpr const_qt_ref(const_qt_ref&&) noexcept = default;
+    constexpr const_qt_ref(const const_qt_ref&) noexcept = default;
+    using Quantity<UnitType,
+                   ValueType,
+                   tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                       const ValueType,
+                       unit::areUnitsEqual<UnitType, unit::NoUnit>>>::operator=;
+  };
+
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  struct QuantityTraits<const_qt_ref<UnitType, ValueType>>
+      : QuantityTraits<
+            Quantity<UnitType,
+                     ValueType,
+                     tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                         const ValueType,
+                         unit::areUnitsEqual<UnitType, unit::NoUnit>>>> {};
+
   // class template argument deduction guide line
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   Quantity(Quantity<UnitType, ValueType, OwnershipPolicy>)
       -> Quantity<UnitType, ValueType, OwnershipPolicy>;
 
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
@@ -352,7 +482,7 @@ namespace tfel::math {
     return v.getValue();
   }
 
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
@@ -362,8 +492,8 @@ namespace tfel::math {
 
   template <QuantityConcept T, int N, unsigned int D>
   class UnaryResultType<T, Power<N, D>> {
-    using ResultUnit =
-        typename tfel::math::internals::PowerUnit<N, D, quantity_unit<T>>::type;
+    using ResultUnit = typename tfel::math::unit::internals::
+        PowerUnit<N, D, quantity_unit<T>>::type;
     using ResultValueType =
         typename UnaryResultType<base_type<T>, Power<N, D>>::type;
 

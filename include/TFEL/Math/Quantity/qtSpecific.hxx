@@ -142,14 +142,11 @@ namespace tfel::typetraits {
    * \see   IsAssignableTo
    */
   template <StandardArithmeticTypeConcept ScalarType,
-            StandardArithmeticTypeConcept ValueType,
-            typename OwnershipPolicy>
-  struct IsAssignableTo<ScalarType,
-                        tfel::math::Quantity<tfel::math::unit::NoUnit,
-                                             ValueType,
-                                             OwnershipPolicy>> {
+            tfel::math::NoUnitQuantityConcept QuantityType>
+  struct IsAssignableTo<ScalarType, QuantityType> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsAssignableTo<ScalarType, ValueType>::cond;
+    static constexpr bool cond =
+        IsAssignableTo<ScalarType, base_type<QuantityType>>::cond;
   };
 
   template <tfel::math::QuantityConcept QuantityType>

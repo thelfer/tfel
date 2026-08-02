@@ -101,7 +101,7 @@ struct qtTest final : public tfel::tests::TestCase {
   void test6() {
     using namespace tfel::math;
     using time = qt<unit::Time>;
-    constexpr Quantity t = time{1.2};
+    constexpr qt t = time{1.2};
     TFEL_TESTS_STATIC_ASSERT((std::is_same_v<decltype(t), const time>));
     TFEL_TESTS_STATIC_ASSERT(my_abs(t.getValue() - 1.2) < 1e-15);
   }

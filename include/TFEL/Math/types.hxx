@@ -79,7 +79,7 @@ namespace tfel::math {
    * \tparam Unit: unit used for the test
    * \tparam T: tested type
    */
-  template <UnitConcept Unit, typename T>
+  template <unit::UnitConcept Unit, typename T>
   requires(ScalarConcept<T> || MathObjectConcept<T>)  //
       constexpr bool checkUnitCompatibility();
 
