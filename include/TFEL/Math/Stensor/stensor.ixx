@@ -1132,24 +1132,28 @@ namespace tfel::math {
     constexpr auto N = getSpaceDimension<StensorType1>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
-      return {2 * s1[0] * s2[0], 2 * s1[1] * s2[1], 2 * s1[2] * s2[2]};
+      return {s1[0] * s2[0], s1[1] * s2[1], s1[2] * s2[2]};
     } else if constexpr (N == 2u) {
-      return {2 * s1[0] * s2[0] + s1[3] * s2[3],
-              2 * s1[1] * s2[1] + s1[3] * s2[3], 2 * s1[2] * s2[2],
-              (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]};
+      return {
+          s1[0] * s2[0] + s1[3] * s2[3] / 2, s1[1] * s2[1] + s1[3] * s2[3] / 2,
+          s1[2] * s2[2],
+          ((s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]) / 2};
     } else {
       using res = result_type<numeric_type<StensorType1>,
                               numeric_type<StensorType2>, OpMult>;
       constexpr auto icste = Cste<res>::isqrt2;
-      return {s1[4] * s2[4] + s1[3] * s2[3] + 2 * s1[0] * s2[0],
-              s1[5] * s2[5] + s1[3] * s2[3] + 2 * s1[1] * s2[1],
-              s1[5] * s2[5] + s1[4] * s2[4] + 2 * s1[2] * s2[2],
-              icste * s1[4] * s2[5] + icste * s1[5] * s2[4] +
-                  (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0],
-              icste * s1[3] * s2[5] + (s1[2] + s1[0]) * s2[4] +
-                  icste * s1[5] * s2[3] + s1[4] * s2[2] + s1[4] * s2[0],
-              (s1[2] + s1[1]) * s2[5] + icste * s1[3] * s2[4] +
-                  icste * s1[4] * s2[3] + s1[5] * s2[2] + s1[5] * s2[1]};
+      return {s1[4] * s2[4] / 2 + s1[3] * s2[3] / 2 + s1[0] * s2[0],
+                    s1[5] * s2[5] / 2 + s1[3] * s2[3] / 2 + s1[1] * s2[1],
+                    s1[5] * s2[5] / 2 + s1[4] * s2[4] / 2 + s1[2] * s2[2],
+                    (icste * s1[4] * s2[5] + icste * s1[5] * s2[4] +
+                     (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]) /
+                        2,
+                    (icste * s1[3] * s2[5] + (s1[2] + s1[0]) * s2[4] +
+                     icste * s1[5] * s2[3] + s1[4] * s2[2] + s1[4] * s2[0]) /
+                        2,
+                    ((s1[2] + s1[1]) * s2[5] + icste * s1[3] * s2[4] +
+                     icste * s1[4] * s2[3] + s1[5] * s2[2] + s1[5] * s2[1]) /
+                        2};
     }
   }
 
