@@ -1301,7 +1301,7 @@ namespace tfel {
                                     StensorNumType<StensorType2>,
                                     OpMult>::type>>::type
     symmetric_product(const StensorType1& s1, const StensorType2& s2) {
-      return {2 * s1[0] * s2[0], 2 * s1[1] * s2[1], 2 * s1[2] * s2[2]};
+      return {s1[0] * s2[0], s1[1] * s2[1], s1[2] * s2[2]};
     }
     template <typename StensorType1, typename StensorType2>
     typename std::enable_if<
@@ -1314,9 +1314,9 @@ namespace tfel {
                                     StensorNumType<StensorType2>,
                                     OpMult>::type>>::type
     symmetric_product(const StensorType1& s1, const StensorType2& s2) {
-      return {2 * s1[0] * s2[0] + s1[3] * s2[3],
-              2 * s1[1] * s2[1] + s1[3] * s2[3], 2 * s1[2] * s2[2],
-              (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]};
+      return {s1[0] * s2[0] + s1[3] * s2[3] / 2,
+              s1[1] * s2[1] + s1[3] * s2[3] / 2, s1[2] * s2[2],
+              ((s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]) / 2};
     }
     template <typename StensorType1, typename StensorType2>
     typename std::enable_if<
@@ -1333,15 +1333,18 @@ namespace tfel {
           typename ResultType<StensorNumType<StensorType1>,
                               StensorNumType<StensorType2>, OpMult>::type;
       constexpr const auto icste = Cste<res>::isqrt2;
-      return {s1[4] * s2[4] + s1[3] * s2[3] + 2 * s1[0] * s2[0],
-              s1[5] * s2[5] + s1[3] * s2[3] + 2 * s1[1] * s2[1],
-              s1[5] * s2[5] + s1[4] * s2[4] + 2 * s1[2] * s2[2],
-              icste * s1[4] * s2[5] + icste * s1[5] * s2[4] +
-                  (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0],
-              icste * s1[3] * s2[5] + (s1[2] + s1[0]) * s2[4] +
-                  icste * s1[5] * s2[3] + s1[4] * s2[2] + s1[4] * s2[0],
-              (s1[2] + s1[1]) * s2[5] + icste * s1[3] * s2[4] +
-                  icste * s1[4] * s2[3] + s1[5] * s2[2] + s1[5] * s2[1]};
+      return {s1[4] * s2[4] / 2 + s1[3] * s2[3] / 2 + s1[0] * s2[0],
+              s1[5] * s2[5] / 2 + s1[3] * s2[3] / 2 + s1[1] * s2[1],
+              s1[5] * s2[5] / 2 + s1[4] * s2[4] / 2 + s1[2] * s2[2],
+              (icste * s1[4] * s2[5] + icste * s1[5] * s2[4] +
+               (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]) /
+                  2,
+              (icste * s1[3] * s2[5] + (s1[2] + s1[0]) * s2[4] +
+               icste * s1[5] * s2[3] + s1[4] * s2[2] + s1[4] * s2[0]) /
+                  2,
+              ((s1[2] + s1[1]) * s2[5] + icste * s1[3] * s2[4] +
+               icste * s1[4] * s2[3] + s1[5] * s2[2] + s1[5] * s2[1]) /
+                  2};
     }
 
     template <typename StensorType>
