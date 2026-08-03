@@ -1,0 +1,19 @@
+name: Windows Visual Studio build
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  mvsc-2022:
+    runs-on: windows-2022, windows-2025-vs2026
+    steps:
+      - uses: actions/checkout@v3
+      - name: CI-Build
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --target=ALL_BUILD -j $(nproc)
+          cmake --build . --target=check -j $(nproc)
