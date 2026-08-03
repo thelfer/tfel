@@ -39,7 +39,7 @@ jobs:
       run: |
         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check -j $(nproc)
         mkdir ${{github.workspace}}/tests-results
-        cp -f $(find ${{github.workspace}}/build -name *.xml) ${{github.workspace}}/tests-results
+        cp --parents $(find ${{github.workspace}}/build -name *.xml) ${{github.workspace}}/tests-results
 
     - name: Print test log on failure
       if: ${{ matrix.os == 'ubuntu-latest' && failure() }}
@@ -50,7 +50,7 @@ jobs:
       uses: mikepenz/action-junit-report@v6
       if: ${{ matrix.os == 'ubuntu-latest' && (success() || failure()) }} # always run even if the previous step fails
       with:
-        report_paths: '**/tests-results/*.xml'
+        report_paths: '**/tests-results/**/*.xml'
 
     - name: Running tfel-check
       run: |
