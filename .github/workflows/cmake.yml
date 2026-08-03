@@ -61,4 +61,4 @@ jobs:
       run: |
         source ${{github.workspace}}/install/share/tfel/env/env.sh
         cd ${{github.workspace}}/install/share/tfel/test-suite
-        tfel-check
+        tfel-check  -j $(nproc)
