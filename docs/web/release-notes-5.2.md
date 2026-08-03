@@ -167,6 +167,14 @@ are available. A new [tutorial](PonteCastaneda1992.html)
 shows how to use it in the implementation of Ponte-Castaneda variational
 bound (1992), within the framework of non-linear elasticity.
 
+# Continuous integration
+
+## Github actions
+
+Github actions have been updated to supported a wider range of
+configurations, including testing based on `Visual Studio 2024` and
+`Visual Studio 2026`.
+
 # Acknowledgements
 
 The authors are grateful to the many contributors to the `TFEL/MFront`
