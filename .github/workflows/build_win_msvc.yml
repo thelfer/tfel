@@ -1,0 +1,25 @@
+name: Windows Visual Studio build
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  Visual-Studio-build-and-check:
+    strategy:
+      matrix:
+        os: [windows-2022, windows-2025-vs2026]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --target=ALL_BUILD --config ${{env.BUILD_TYPE}} -j $(nproc)
+    # - name: Check
+    #   run: cmake --build ${{github.workspace}}/build --target=check --config ${{env.BUILD_TYPE}} -j $(nproc)
