@@ -79,13 +79,6 @@ namespace tfel::math {
                           multiply(e1.exponents[6], e2.exponents[6])}};
   }
 
-  [[nodiscard]] constexpr bool areAllDenominatorsOne(
-      const UnitExponents &e) noexcept {
-    return std::all_of(
-        e.exponents.begin(), e.exponents.end(),
-        [](const UnitExponent &e1) { return e1.denominator == 1; });
-  }  // end of isValid
-
   namespace internals {
 
     template <UnitConcept UnitType1, UnitConcept UnitType2>
