@@ -45,15 +45,15 @@ namespace tfel::math {
             StandardArithmeticTypeConcept ScalarType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator*(
       const QuantityType& lhs, const ScalarType& rhs) noexcept {
-    return qt<quantity_unit<QuantityType>,                                
-              typename tfel::typetraits::Promote<base_type<QuantityType>, 
-                                                 ScalarType>::type>{      
+    return qt<quantity_unit<QuantityType>,
+              typename tfel::typetraits::Promote<base_type<QuantityType>,
+                                                 ScalarType>::type>{
         base_type_cast(lhs) * rhs};
   }
 
-  template <StandardArithmeticTypeConcept ScalarType,                     
-            QuantityConcept QuantityType>                                 
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator *(              
+  template <StandardArithmeticTypeConcept ScalarType,
+            QuantityConcept QuantityType>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator*(
       const ScalarType& lhs, const QuantityType& rhs) noexcept {
     return qt<quantity_unit<QuantityType>,
               typename tfel::typetraits::Promote<base_type<QuantityType>,
@@ -65,17 +65,17 @@ namespace tfel::math {
             StandardArithmeticTypeConcept ScalarType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator/(
       const QuantityType& lhs, const ScalarType& rhs) noexcept {
-    return qt<quantity_unit<QuantityType>,                                
-              typename tfel::typetraits::Promote<base_type<QuantityType>, 
-                                                 ScalarType>::type>{      
+    return qt<quantity_unit<QuantityType>,
+              typename tfel::typetraits::Promote<base_type<QuantityType>,
+                                                 ScalarType>::type>{
         base_type_cast(lhs) / rhs};
   }
 
-  template <StandardArithmeticTypeConcept ScalarType,                     
-            QuantityConcept QuantityType>                                 
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator /(              
+  template <StandardArithmeticTypeConcept ScalarType,
+            QuantityConcept QuantityType>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator/(
       const ScalarType& lhs, const QuantityType& rhs) noexcept {
-    return qt<typename internals::SubstractUnit<
+    return qt<typename internals::SubtractUnit<
                   unit::NoUnit, quantity_unit<QuantityType>>::type,
               typename tfel::typetraits::Promote<base_type<QuantityType>,
                                                  ScalarType>::type>{

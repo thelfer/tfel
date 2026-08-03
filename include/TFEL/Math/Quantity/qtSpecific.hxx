@@ -86,26 +86,6 @@ namespace tfel::typetraits {
 
   /*!
    * \brief Partial specialisation for qt
-   * \see   IsFundamentalNumericType
-   */
-  template <tfel::math::NoUnitQuantityConcept QuantityType>
-  struct IsFundamentalNumericType<QuantityType> {
-    //! \brief result of the metafunction
-    static constexpr bool cond = true;
-  };
-
-  /*!
-   * \brief Partial specialisation for qt
-   * \see   IsFundamentalNumericType
-   */
-  template <tfel::math::NoUnitQuantityConcept QuantityType>
-  struct IsFundamentalNumericType<const QuantityType> {
-    //! \brief result of the metafunction
-    static constexpr bool cond = true;
-  };
-
-  /*!
-   * \brief Partial specialisation for qt
    * \see   RealPartType
    */
   template <tfel::math::NoUnitQuantityConcept QuantityType>

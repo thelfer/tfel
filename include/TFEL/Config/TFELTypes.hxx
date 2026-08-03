@@ -43,14 +43,11 @@ namespace tfel::config {
     typedef tfel::math::qt<tfel::math::unit::Frequency, T> strainrate;
     typedef tfel::math::qt<tfel::math::unit::Force, T> force;
     typedef tfel::math::qt<tfel::math::unit::Stress, T> stress;
-    typedef tfel::math::qt<tfel::math::GenerateUnit<-1, 1, 2, 0, 0, 0, 0>::type,
-                           T>
+    typedef tfel::math::qt<tfel::math::StandardUnit<-1, 1, 2, 0, 0, 0, 0>, T>
         compliance;
-    typedef tfel::math::
-        qt<tfel::math::GenerateUnit<1, -1, -1, 0, 0, 0, 0>::type, T>
-            viscosity;
-    typedef tfel::math::qt<tfel::math::GenerateUnit<-1, 1, 1, 0, 0, 0, 0>::type,
-                           T>
+    typedef tfel::math::qt<tfel::math::StandardUnit<1, -1, -1, 0, 0, 0, 0>, T>
+        viscosity;
+    typedef tfel::math::qt<tfel::math::StandardUnit<-1, 1, 1, 0, 0, 0, 0>, T>
         viscouscompliance;
     typedef tfel::math::qt<tfel::math::unit::StressRate, T> stressrate;
     typedef tfel::math::qt<tfel::math::unit::Temperature, T> temperature;
