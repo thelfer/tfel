@@ -31,6 +31,7 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/UnaryResultType.hxx"
 #include "TFEL/Math/Quantity/Unit.hxx"
+#include "TFEL/Math/Forward/qt.hxx"
 #include "TFEL/Math/power.hxx"
 
 namespace tfel::math::internals {
@@ -220,17 +221,16 @@ namespace tfel::math {
     //
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity(const OtherQuantityType& src) noexcept
-        requires((std::same_as<UnitType, quantity_unit<OtherQuantityType>>)&&(
-            std::is_same_v<
-                promote<ValueType, base_type<OtherQuantityType>>,
-                ValueType>))
+        requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
+            std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
+                           ValueType>))
         : OwnershipPolicy(base_type_cast(src)) {}  // end of Quantity
     //
     template <StandardArithmeticTypeConcept T>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(const T& src) noexcept
         requires((std::is_constructible_v<ValueType, T>)&&  //
                  (std::is_convertible_v<ValueType, T>)&&    //
-                 (std::same_as<UnitType, unit::NoUnit>)) {
+                 (areUnitsEqual<UnitType, unit::NoUnit>)) {
       this->getValue() = src;
       return *this;
     }
@@ -238,7 +238,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr Quantity& operator+=(const T& src) noexcept
         requires((std::is_constructible_v<ValueType, T>)&&  //
                  (std::is_convertible_v<ValueType, T>)&&    //
-                 (std::same_as<UnitType, unit::NoUnit>)) {
+                 (areUnitsEqual<UnitType, unit::NoUnit>)) {
       this->getValue() += src;
       return *this;
     }
@@ -246,7 +246,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr Quantity& operator-=(const T& src) noexcept
         requires((std::is_constructible_v<ValueType, T>)&&  //
                  (std::is_convertible_v<ValueType, T>)&&    //
-                 (std::same_as<UnitType, unit::NoUnit>)) {
+                 (areUnitsEqual<UnitType, unit::NoUnit>)) {
       this->getValue() -= src;
       return *this;
     }
@@ -254,7 +254,7 @@ namespace tfel::math {
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(
         const OtherQuantityType& src) noexcept
-        requires((std::same_as<UnitType, quantity_unit<OtherQuantityType>>)&&(
+        requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
             std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
                            ValueType>)) {
       this->getValue() = base_type_cast(src);
@@ -264,7 +264,7 @@ namespace tfel::math {
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator+=(
         const OtherQuantityType& src) noexcept
-        requires((std::same_as<UnitType, quantity_unit<OtherQuantityType>>)&&(
+        requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
             std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
                            ValueType>)) {
       this->getValue() += base_type_cast(src);
@@ -274,7 +274,7 @@ namespace tfel::math {
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator-=(
         const OtherQuantityType& src) noexcept
-        requires((std::same_as<UnitType, quantity_unit<OtherQuantityType>>)&&(
+        requires((areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
             std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
                            ValueType>)) {
       this->getValue() -= base_type_cast(src);
