@@ -44,6 +44,40 @@ struct UnitTest final : public tfel::tests::TestCase {
         (!areUnitsEqual<NoUnit, UnitBase<makeUnitExponents<1>()>>));
     TFEL_TESTS_STATIC_ASSERT((areUnitsEqual<NoUnit, StandardUnit<>>));
     TFEL_TESTS_STATIC_ASSERT((!areUnitsEqual<NoUnit, StandardUnit<1>>));
+    constexpr auto e0 = UnitExponent{.numerator = 0, .denominator = 0};
+    constexpr auto e1 = UnitExponent{.numerator = 1, .denominator = 2};
+    constexpr auto e2 = UnitExponent{.numerator = 4, .denominator = 2};
+    TFEL_TESTS_STATIC_ASSERT(!isValid(e0));
+    TFEL_TESTS_STATIC_ASSERT(isValid(e1));
+    TFEL_TESTS_STATIC_ASSERT(isIrreductible(e1));
+    TFEL_TESTS_STATIC_ASSERT(!isIrreductible(e2));
+    //
+    constexpr auto ue0 =
+        UnitExponents{.exponents = {e0, e1, e1, e1, e1, e1, e1}};
+    constexpr auto ue1 =
+        UnitExponents{.exponents = {e1, e1, e1, e1, e1, e1, e1}};
+    constexpr auto ue2 =
+        UnitExponents{.exponents = {e2, e1, e1, e1, e1, e1, e1}};
+    constexpr auto ue3 =
+        makeUnitExponents<-1, 2, -3, 4, -5, 6, -7, 3, 9, 23, 5, 7, 13>();
+    TFEL_TESTS_STATIC_ASSERT(!isValid(ue0));
+    TFEL_TESTS_STATIC_ASSERT(isValid(ue1));
+    TFEL_TESTS_STATIC_ASSERT(!isValid(ue2));
+    TFEL_TESTS_STATIC_ASSERT(isValid(ue3));
+    TFEL_TESTS_STATIC_ASSERT(
+        (ue3.exponents[0] == UnitExponent{.numerator = -1, .denominator = 3}));
+    TFEL_TESTS_STATIC_ASSERT(
+        (ue3.exponents[1] == UnitExponent{.numerator = 2, .denominator = 9}));
+    TFEL_TESTS_STATIC_ASSERT(
+        (ue3.exponents[2] == UnitExponent{.numerator = -3, .denominator = 23}));
+    TFEL_TESTS_STATIC_ASSERT(
+        (ue3.exponents[3] == UnitExponent{.numerator = 4, .denominator = 5}));
+    TFEL_TESTS_STATIC_ASSERT(
+        (ue3.exponents[4] == UnitExponent{.numerator = -5, .denominator = 7}));
+    TFEL_TESTS_STATIC_ASSERT(
+        (ue3.exponents[5] == UnitExponent{.numerator = 6, .denominator = 13}));
+    TFEL_TESTS_STATIC_ASSERT(
+        (ue3.exponents[6] == UnitExponent{.numerator = -7, .denominator = 1}));
   }
   void test2() {
     using namespace tfel::math::unit;
@@ -54,7 +88,6 @@ struct UnitTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT((e3 == add(e1, e2)));
     TFEL_TESTS_STATIC_ASSERT((e4 == multiply(e1, e2)));
   }
-  void print(double);
   void test3() {
     using namespace tfel::math::unit;
     constexpr auto u0 = exponents<Time>;
@@ -77,6 +110,30 @@ struct UnitTest final : public tfel::tests::TestCase {
         (areUnitsEqual<UnitBase<subtract(u3, u4)>, StandardUnit<-1>>));
     TFEL_TESTS_STATIC_ASSERT(
         (areUnitsEqual<UnitBase<add(u3, u5)>, Unit<7, 0, 0, 0, 0, 0, 0, 6>>));
+    TFEL_TESTS_STATIC_ASSERT(areAllDenominatorsOne(exponents<Length>));
+    TFEL_TESTS_STATIC_ASSERT((
+        std::same_as<typename UnitRebind<makeUnitExponents<1>()>::type, Mass>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<typename UnitRebind<makeUnitExponents<0, 1>()>::type,
+                      Length>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<typename UnitRebind<makeUnitExponents<0, 0, 1>()>::type,
+                      Time>));
+    TFEL_TESTS_STATIC_ASSERT((
+        std::same_as<typename UnitRebind<makeUnitExponents<0, 0, 0, 1>()>::type,
+                     Ampere>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<
+            typename UnitRebind<makeUnitExponents<0, 0, 0, 0, 1>()>::type,
+            Temperature>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<
+            typename UnitRebind<makeUnitExponents<0, 0, 0, 0, 0, 1>()>::type,
+            Candela>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<
+            typename UnitRebind<makeUnitExponents<0, 0, 0, 0, 0, 0, 1>()>::type,
+            Mole>));
   }
 };  // end of struct UnitTest
 

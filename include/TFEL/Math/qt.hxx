@@ -197,8 +197,6 @@ namespace tfel::math {
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct Quantity : OwnershipPolicy {
-    static_assert(tfel::typetraits::IsFundamentalNumericType<ValueType>::cond);
-    static_assert(isScalar<ValueType>());
     /*!
      * An helper class to deal with some limitations of Visual Studio
      */
@@ -467,12 +465,22 @@ namespace tfel::math {
                          const ValueType,
                          unit::areUnitsEqual<UnitType, unit::NoUnit>>>> {};
 
-  // class template argument deduction guide line
+  // class template argument deduction guidelines
   template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   Quantity(Quantity<UnitType, ValueType, OwnershipPolicy>)
       -> Quantity<UnitType, ValueType, OwnershipPolicy>;
+  //
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  qt(qt<UnitType, ValueType>) -> qt<UnitType, ValueType>;
+  //
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  qt_ref(qt_ref<UnitType, ValueType>) -> qt_ref<UnitType, ValueType>;
+  //
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  const_qt_ref(const_qt_ref<UnitType, ValueType>)
+      -> const_qt_ref<UnitType, ValueType>;
 
   template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
