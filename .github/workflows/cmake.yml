@@ -32,7 +32,8 @@ jobs:
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j $(nproc)
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j $(nproc)
 
     - name: Test
       if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -40,6 +41,10 @@ jobs:
         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check -j $(nproc)
         mkdir ${{github.workspace}}/tests-results
         cp --parents $(find ${{github.workspace}}/build -name *.xml) ${{github.workspace}}/tests-results
+
+    - name: Install
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -j $(nproc)
 
     - name: Print test log on failure
       if: ${{ matrix.os == 'ubuntu-latest' && failure() }}
