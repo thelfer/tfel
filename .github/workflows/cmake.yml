@@ -12,9 +12,11 @@ env:
 
 jobs:
   build:
+
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
+
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -37,7 +39,7 @@ jobs:
       run: |
         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check -j $(nproc)
         mkdir ${{github.workspace}}/tests-results
-        cp $(find ${{github.workspace}}/build -name *.xml) ${{github.workspace}}/tests-results
+        cp -f $(find ${{github.workspace}}/build -name *.xml) ${{github.workspace}}/tests-results
 
     - name: Print test log on failure
       if: ${{ matrix.os == 'ubuntu-latest' && failure() }}
