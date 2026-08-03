@@ -6,7 +6,7 @@ on:
     branches: [ master ]
 
 jobs:
-  Visual Studio build and check:
+  Visual-Studio-build-and-check:
     strategy:
       matrix:
         os: [windows-2022, windows-2025-vs2026]
