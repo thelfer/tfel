@@ -42,7 +42,7 @@ jobs:
     - name: Print test log on failure
       if: ${{ matrix.os == 'ubuntu-latest' && failure() }}
       run: |
-        cat ${{github.workspace}}/build/Testing/Temporary/LastTest.log
+        cat ${{github.workspace}}/build/Testing/Temporary/*.log
 
     - name: Publish Test Report
       uses: mikepenz/action-junit-report@v6
