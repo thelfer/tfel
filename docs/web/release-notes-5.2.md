@@ -180,6 +180,15 @@ The Walpole basis relative to transverse isotropic fourth-order tensors (`st2tos
 is introduced with the `struct` `TransverseIsotropicWalpoleBasis`, member of
 `tfel::math`.
 
+## Refactoring of quantities
+
+Quantities were deeply refactored to:
+
+- improve maintainability (code is much more compact),
+- allow creating surrogate classes for quantities,
+- improve error message,
+- reduce size of the generated symbols.
+
 # New `TFEL/Material` features
 
 ## Homogenization
@@ -370,6 +379,13 @@ details](generic-parallel-material-property-interface.html).
 
 #### `CUDA`
 
+# Continuous integration
+
+## Github actions
+
+Github actions have been updated to supported a wider range of
+configurations, including testing based on `Visual Studio 2024` and
+`Visual Studio 2026`.
 
 # Acknowledgements
 
@@ -381,6 +397,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1001: [tfel-math] Introduce the `QuantityConcept` class to allow surrogate classes to be treated as quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/1001>
 
 ## Issue 995: [tfel-check] Adding @Environment section in configuration file
 

@@ -42,6 +42,7 @@ struct qtTest final : public tfel::tests::TestCase {
     this->test6();
     this->test7();
     this->test8();
+    this->test9();
     return this->result;
   }  // end of execute
  private:
@@ -165,6 +166,17 @@ struct qtTest final : public tfel::tests::TestCase {
     check_assignement.operator()<unit::NoUnit, double, true>();
     check_assignement.operator()<unit::Time, float, false>();
   }  // end of test8
+  void test9() {
+    using namespace tfel::math;
+    TFEL_TESTS_STATIC_ASSERT(StandardArithmeticTypeConcept<double>);
+    TFEL_TESTS_STATIC_ASSERT((QuantityConcept<qt<unit::NoUnit, double>>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<result_type<qt<unit::NoUnit, double>, double, OpPlus>,
+                      qt<unit::NoUnit, double>>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<result_type<qt<unit::NoUnit, float>, double, OpMinus>,
+                      qt<unit::NoUnit, double>>));
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(qtTest, "qtTest");
