@@ -33,7 +33,8 @@ namespace tfel::material {
      * \brief constructor
      * \param[in] c: setting
      */
-    TFEL_HOST_DEVICE TFEL_INLINE LogarithmicStrainHandlerBase(const Setting);
+    TFEL_HOST_DEVICE TFEL_INLINE explicit LogarithmicStrainHandlerBase(
+        const Setting);
     /*!
      * \brief throw an exception if the setting is not equal to
      * `LAGRANGIAN`.

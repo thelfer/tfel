@@ -21,7 +21,7 @@ namespace tfel::math {
   template <typename Field, typename real>
   struct FAnderson : public AndersonBase<Field, real> {
     //! constructor
-    FAnderson(const typename AndersonBase<Field, real>::Allocator);
+    explicit FAnderson(const typename AndersonBase<Field, real>::Allocator);
     //! Displacement fields for a new iteration
     //! \param uO,uN Old and new displacement field
     void newIter(Field*& uO, Field*& uN, Field*& Df);

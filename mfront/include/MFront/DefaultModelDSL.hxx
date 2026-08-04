@@ -31,7 +31,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    DefaultModelDSL(const DSLOptions&);
+    explicit DefaultModelDSL(const DSLOptions&);
     //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! \brief destructor

@@ -26,7 +26,7 @@ namespace mfront {
   struct MaterialPropertyInterfaceProxy {
     MaterialPropertyInterfaceProxy();
 
-    MaterialPropertyInterfaceProxy(const std::string&);
+    explicit MaterialPropertyInterfaceProxy(const std::string&);
 
     template <typename InputIterator>
     MaterialPropertyInterfaceProxy(const InputIterator, const InputIterator);

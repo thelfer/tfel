@@ -30,7 +30,7 @@ namespace numodis {
   //! line tension model
   //===============================================================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT FrankRead {
-    FrankRead(const IsotropicLineTensionModel& linetension);
+    explicit FrankRead(const IsotropicLineTensionModel& linetension);
 
     [[nodiscard]] double computeBetaF(double alpha,
                                       double beta0,

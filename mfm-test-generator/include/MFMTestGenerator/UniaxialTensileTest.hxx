@@ -29,7 +29,7 @@ namespace mfmtg {
   struct MFMTG_VISIBILITY_EXPORT UniaxialTensileTest : TestCaseBase,
                                                        BehaviourData {
     //! \brief default constructor
-    UniaxialTensileTest(const TestCaseParameters&);
+    explicit UniaxialTensileTest(const TestCaseParameters&);
     //! \brief imposed strain
     const Evolution imposed_strain;
     //! \brief destructor

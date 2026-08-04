@@ -200,7 +200,7 @@ namespace mfront {
      * \brief constructor
      * \param[in] opts: options passed to the DSL
      */
-    DSLBase(const DSLOptions&);
+    explicit DSLBase(const DSLOptions&);
     /*!
      * \brief add a dependency to an external `MFront` file
      * \param[in] f: file path

@@ -36,7 +36,7 @@ namespace tfel::tests {
      * \brief Constructor
      * \param[in] n: name of the function
      */
-    TestSuite(const std::string&);
+    explicit TestSuite(const std::string&);
     //! \brief move constructor (disabled)
     TestSuite(TestSuite&&) = delete;
     //! \brief copy constructor (disabled)
@@ -49,7 +49,7 @@ namespace tfel::tests {
      * \brief constructor
      * \param[in] n: name of the function
      */
-    TestSuite(const char* const);
+    explicit TestSuite(const char* const);
     //! \return the name of the test
     [[nodiscard]] std::string name() const;
     /*!

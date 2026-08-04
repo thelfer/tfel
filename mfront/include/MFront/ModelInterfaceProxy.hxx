@@ -26,7 +26,7 @@ namespace mfront {
   struct ModelInterfaceProxy {
     ModelInterfaceProxy();
 
-    ModelInterfaceProxy(const std::string&);
+    explicit ModelInterfaceProxy(const std::string&);
 
     template <typename InputIterator>
     ModelInterfaceProxy(const InputIterator, const InputIterator);

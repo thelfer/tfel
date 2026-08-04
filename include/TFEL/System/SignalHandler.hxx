@@ -26,7 +26,7 @@ namespace tfel::system {
   struct TFELSYSTEM_VISIBILITY_EXPORT FctSignalHandler final
       : public SignalHandler {
     typedef void (*Fct)(const int);
-    FctSignalHandler(const Fct);
+    explicit FctSignalHandler(const Fct);
     void execute(const int) final;
     ~FctSignalHandler() override;
 

@@ -214,7 +214,7 @@ namespace tfel::math::parser {
   };  // end of struct LogicalBinaryOperation
 
   struct TFEL_VISIBILITY_LOCAL NegLogicalExpression final : public LogicalExpr {
-    NegLogicalExpression(LogicalExprPtr) noexcept;
+    explicit NegLogicalExpression(LogicalExprPtr) noexcept;
     //
     NegLogicalExpression& operator=(const NegLogicalExpression&) = delete;
     NegLogicalExpression& operator=(NegLogicalExpression&&) = delete;

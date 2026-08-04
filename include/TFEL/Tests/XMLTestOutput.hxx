@@ -31,7 +31,7 @@ namespace tfel::tests {
      * \brief constructor
      * \param[in] o: output file name
      */
-    XMLTestOutput(const std::string&);
+    explicit XMLTestOutput(const std::string&);
     //
     XMLTestOutput(const XMLTestOutput&) = delete;
     XMLTestOutput& operator=(const XMLTestOutput&) = delete;

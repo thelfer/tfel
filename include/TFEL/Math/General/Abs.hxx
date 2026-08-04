@@ -51,7 +51,7 @@ namespace tfel::math {
     //! \brief a simple alias
     using result_type = void;
     //! \param [in] v : initial value
-    TFEL_HOST_DEVICE constexpr AbsSum(const T& v = T())
+    TFEL_HOST_DEVICE constexpr explicit AbsSum(const T& v = T())
         : result(v) {}  // end of AbsSum
     /*!
      * \brief add the absolute value of the argument to the result member

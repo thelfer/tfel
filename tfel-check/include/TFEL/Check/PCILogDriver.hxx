@@ -34,13 +34,13 @@ namespace tfel::check {
      * \brief constructor
      * \param os: output stream.
      */
-    PCILogDriver(std::ostream&);
+    explicit PCILogDriver(std::ostream&);
     /*!
      * \brief constructor
      * \param f: string containing the name of the file where logs are
      * to be written. Default : write to stdout (screen).
      */
-    PCILogDriver(const std::string&);
+    explicit PCILogDriver(const std::string&);
     //! move constructor
     PCILogDriver(PCILogDriver&&) noexcept;
     //! copy constructor

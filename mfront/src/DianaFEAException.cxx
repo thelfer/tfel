@@ -29,8 +29,8 @@ namespace std {
 
 namespace dianafea {
 
-  DianaFEAException::DianaFEAException(const std::string& s)
-      : msg(s) {}  // end of DianaFEAException::DianaFEAException
+  DianaFEAException::DianaFEAException(std::string s)
+      : msg(std::move(s)) {}  // end of DianaFEAException::DianaFEAException
 
   DianaFEAException::DianaFEAException(DianaFEAException&&) noexcept = default;
 

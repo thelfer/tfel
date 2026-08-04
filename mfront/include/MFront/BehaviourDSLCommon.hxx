@@ -183,7 +183,7 @@ namespace mfront {
      * \brief constructor
      * \param[in] opts: options passed to the DSL
      */
-    BehaviourDSLCommon(const DSLOptions&);
+    explicit BehaviourDSLCommon(const DSLOptions&);
     //
     void writeMaterialPropertyEvaluation(
         std::ostream&,

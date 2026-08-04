@@ -223,7 +223,7 @@ namespace mfront {
      * \brief constructor
      * \param[in] opts: options
      */
-    BehaviourDescription(const tfel::utilities::DataMap&);
+    explicit BehaviourDescription(const tfel::utilities::DataMap&);
     //! \brief copy constructor
     BehaviourDescription(const BehaviourDescription&);
     //

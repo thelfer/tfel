@@ -88,6 +88,7 @@ namespace tfel::math {
         GenericFixedSizeArray<tvector<N, ValueType>,
                               FixedSizeVectorPolicy<N, ValueType>>;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tvector,
                                                GenericFixedSizeArrayBase);
     /*!
@@ -96,6 +97,7 @@ namespace tfel::math {
      * \param[in] src: object to be copied
      */
     TFEL_HOST_DEVICE tvector(const fsarray<N, ValueType>&) noexcept;
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

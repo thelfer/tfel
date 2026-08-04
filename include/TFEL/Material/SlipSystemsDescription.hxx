@@ -70,7 +70,7 @@ namespace tfel::material {
       };
       using SSIContainer = std::vector<std::vector<SlidingSystemsInteraction>>;
       //! \brief constructor
-      InteractionMatrixStructure(const SSIContainer&);
+      explicit InteractionMatrixStructure(const SSIContainer&);
       //! \brief move constructor
       InteractionMatrixStructure(InteractionMatrixStructure&&) noexcept;
       //! \brief copy constructor
@@ -91,7 +91,7 @@ namespace tfel::material {
     /*!
      * \param[in] s:  crystal structure
      */
-    SlipSystemsDescription(const CrystalStructure);
+    explicit SlipSystemsDescription(const CrystalStructure);
     /*!
      * copy constructor
      * \param[in] src: object copied

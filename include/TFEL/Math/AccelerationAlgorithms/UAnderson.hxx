@@ -20,8 +20,8 @@ namespace tfel::math {
 
   template <typename Field, typename real>
   struct UAnderson : public AndersonBase<Field, real> {
-    //! constructor
-    UAnderson(const typename AndersonBase<Field, real>::Allocator);
+    //! \brief constructor
+    explicit UAnderson(const typename AndersonBase<Field, real>::Allocator);
     //! Displacement fields for a new iteration
     //! \param uO,uN Old and new displacement field
     void newIter(Field*& uO, Field*& uN);

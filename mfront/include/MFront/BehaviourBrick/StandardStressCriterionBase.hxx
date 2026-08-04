@@ -43,7 +43,7 @@ namespace mfront::bbrick {
      * \brief constructor
      * \param[in] n: name of the stress criterion
      */
-    StandardStressCriterionBase(const std::string& n);
+    explicit StandardStressCriterionBase(const std::string& n);
 
     [[nodiscard]] std::string computeElasticPrediction(
         const std::string&,

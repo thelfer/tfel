@@ -33,7 +33,7 @@ namespace tfel::check {
     /*!
      * \param[in] logDriver
      */
-    PCLogger(const Driver&);
+    explicit PCLogger(const Driver&);
     //! \brief move constructor
     PCLogger(PCLogger&&) noexcept;
     //! \brief copy constructor

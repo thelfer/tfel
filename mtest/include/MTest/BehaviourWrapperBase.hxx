@@ -30,7 +30,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] wb : wrapped behaviour
      */
-    BehaviourWrapperBase(const std::shared_ptr<Behaviour>&);
+    explicit BehaviourWrapperBase(const std::shared_ptr<Behaviour>&);
     //
     void allocateCurrentState(CurrentState&) const override;
     std::string getBehaviourName() const override;

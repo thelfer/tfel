@@ -31,7 +31,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    IsotropicMisesPlasticFlowDSL(const DSLOptions&);
+    explicit IsotropicMisesPlasticFlowDSL(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

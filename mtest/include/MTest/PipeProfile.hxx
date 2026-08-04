@@ -47,7 +47,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] cn: component
      */
-    PipeStressProfile(const unsigned short);
+    explicit PipeStressProfile(const unsigned short);
     /*!
      * put the requested value(s) in the output stream
      * \param[out] os: output stream
@@ -72,7 +72,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] cn: component
      */
-    PipeStrainProfile(const unsigned short);
+    explicit PipeStrainProfile(const unsigned short);
     /*!
      * put the requested value(s) in the output stream
      * \param[out] os: output stream
@@ -97,7 +97,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] cn: component
      */
-    PipeInternalStateVariableProfile(const unsigned short);
+    explicit PipeInternalStateVariableProfile(const unsigned short);
     /*!
      * put the requested value(s) in the output stream
      * \param[out] os: output stream

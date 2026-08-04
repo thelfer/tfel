@@ -29,8 +29,8 @@ namespace std {
 
 namespace calculix {
 
-  CalculiXException::CalculiXException(const std::string& s)
-      : msg(s) {}  // end of CalculiXException::CalculiXException
+  CalculiXException::CalculiXException(std::string s)
+      : msg(std::move(s)) {}  // end of CalculiXException::CalculiXException
 
   CalculiXException::CalculiXException(CalculiXException&&) noexcept = default;
 

@@ -36,7 +36,9 @@ namespace tfel::math {
       return RunTimeProperties();
     }
 
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_HOST_DEVICE constexpr Expr(T s_) noexcept : s(s_) {}  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
 
     TFEL_HOST_DEVICE constexpr Expr(const Expr&) = default;
     TFEL_HOST_DEVICE constexpr Expr(Expr&&) = default;

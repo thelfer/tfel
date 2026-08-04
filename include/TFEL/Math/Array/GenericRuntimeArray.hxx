@@ -97,8 +97,10 @@ namespace tfel::math {
         ArrayPolicy>::value_type;
     //! \brief default constructor
     GenericRuntimeArray() = default;
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief default constructor
     GenericRuntimeArray(const typename ArrayPolicy::IndexingPolicy&);
+    // NOLINTEND(google-explicit-constructor)
     //! \brief copy constructor
     GenericRuntimeArray(const GenericRuntimeArray&) = default;
     //! \brief move constructor

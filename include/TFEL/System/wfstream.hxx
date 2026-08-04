@@ -44,9 +44,9 @@ namespace tfel::system {
     // assignement operator
     wfstream& operator=(const wfstream&);
 
-    wfstream(const std::string&,
-             const int = O_CREAT | O_TRUNC | O_WRONLY,
-             const mode_t = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    explicit wfstream(const std::string&,
+                      const int = O_CREAT | O_TRUNC | O_WRONLY,
+                      const mode_t = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
     void open(const std::string&,
               const int = O_CREAT | O_TRUNC | O_WRONLY,

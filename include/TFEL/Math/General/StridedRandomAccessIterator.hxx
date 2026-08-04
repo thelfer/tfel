@@ -47,39 +47,41 @@ namespace tfel::math {
      * variables and we can not change this easily.
      */
     struct proxy {
-      //! a simple alias
+      //! \brief a simple alias
       using traits = std::iterator_traits<iterator_base>;
-      //! a simple alias
+      //! \brief a simple alias
       using reference = typename traits::reference;
       /*! default construtor
        * \param[in] p_ : value of the StridedRandomAccessIterator
        */
-      proxy(const StridedRandomAccessIterator p_) : p(p_) {}
-      //! move construtor
+      explicit proxy(const StridedRandomAccessIterator p_) : p(p_) {}
+      //! \brief move construtor
       proxy(proxy&&) = default;
-      //! copy construtor
+      //! \brief copy construtor
       proxy(const proxy&) = default;
-      //! move assignement
+      //! \brief move assignement
       proxy& operator=(proxy&&) = default;
-      //! standard assignement
+      //! \brief standard assignement
       proxy& operator=(const proxy&) = default;
-      //! assignement
+      //! \brief assignement
       template <typename T>
       proxy& operator=(const T& v) {
         *(p.current) = v;
         return *this;
       }
-      //! implicit conversion to value_type
+      // NOLINTBEGIN(google-explicit-constructor)
+      //! \brief implicit conversion to value_type
       inline operator reference() { return *(p.current); }
-      //! implicit conversion to value_type
+      //! \brief implicit conversion to value_type
       inline operator const reference&() const { return *(p.current); }
-      //! adress operator
+      // NOLINTEND(google-explicit-constructor)
+      //! \brief adress operator
       inline StridedRandomAccessIterator operator&() const { return p; }
 
      private:
       const StridedRandomAccessIterator p;
     };
-    //! a simple alias
+    //! \brief a simple alias
     using traits = std::iterator_traits<iterator_base>;
     /*!
      * \brief STL requirements
@@ -120,29 +122,29 @@ namespace tfel::math {
     //! default constructor
     explicit StridedRandomAccessIterator()
         : current(iterator_base()), stride(difference_type()) {}
-    //! move constructor
+    //! \brief move constructor
     StridedRandomAccessIterator(StridedRandomAccessIterator&&) = default;
-    //! copy constructor
+    //! \brief copy constructor
     StridedRandomAccessIterator(const StridedRandomAccessIterator&) = default;
-    //! move assignement
+    //! \brief move assignement
     StridedRandomAccessIterator& operator=(StridedRandomAccessIterator&&) =
         default;
-    //! standard assignement
+    //! \brief standard assignement
     StridedRandomAccessIterator& operator=(const StridedRandomAccessIterator&) =
         default;
-    //! dereference operator
-    proxy operator*() const {
+    //! \brief dereference operator
+    auto operator*() const {
       if (this->stride == 0) {
         throwNullStrideException();
       }
-      return {*this};
+      return proxy{*this};
     }
-    //! access operator
-    proxy operator[](const difference_type n) const {
+    //! \brief access operator
+    auto operator[](const difference_type n) const {
       if (this->stride == 0) {
         throwNullStrideException();
       }
-      return {*this + n};
+      return proxy{*this + n};
     }
 
     StridedRandomAccessIterator operator++() {
