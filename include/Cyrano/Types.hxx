@@ -31,6 +31,7 @@
 #endif
 #endif
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -47,11 +48,12 @@ typedef int CyranoIntegerType;
 #error "cyrano : unsupported machine type"
 #endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
 
-//! a simple alias
+//! \brief a simple alias
 typedef double CyranoRealType;
 
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_CYRANO_TYPES_HXX */

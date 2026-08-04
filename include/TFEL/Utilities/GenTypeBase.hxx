@@ -63,15 +63,15 @@ namespace tfel::utilities::internals {
       public GenTypeSpecializedAccessor<Child, typename List::Current>
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
   {
-    //! a simple alias.
-    typedef typename List::Current Current;
+    //! \brief a simple alias.
+    using Current = typename List::Current;
 
    public:
-    //! cast operator.
+    //! \brief cast operator.
     TFEL_INLINE operator Current&() {
       return static_cast<Child*>(this)->template get<Current>();
     }
-    //! cast operator (const version).
+    //! \brief cast operator (const version).
     TFEL_INLINE operator const Current&() const {
       return static_cast<const Child*>(this)->template get<Current>();
     }

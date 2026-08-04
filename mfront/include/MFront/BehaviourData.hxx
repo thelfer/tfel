@@ -1067,9 +1067,9 @@ namespace mfront {
      */
     struct CodeBlocksAggregator {
       //! \brief a simple alias
-      typedef BehaviourData::Position Position;
+      using Position = BehaviourData::Position;
       //! \brief a simple alias
-      typedef BehaviourData::Mode Mode;
+      using Model = BehaviourData::Mode;
       //! \brief constructor
       CodeBlocksAggregator();
       CodeBlocksAggregator(CodeBlocksAggregator&&) noexcept = default;

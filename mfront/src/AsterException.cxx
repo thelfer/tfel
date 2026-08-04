@@ -29,8 +29,8 @@ namespace std {
 
 namespace aster {
 
-  AsterException::AsterException(const std::string& s)
-      : msg(s) {}  // end of AsterException::AsterException
+  AsterException::AsterException(std::string s)
+      : msg(std::move(s)) {}  // end of AsterException::AsterException
 
   AsterException::AsterException(const AsterException& e)
       : msg(e.msg) {}  // end of AsterException::AsterException

@@ -102,8 +102,8 @@ namespace tfel::math {
     using StensorB = EvaluationResult<B>;
 
    public:
-    typedef result_type<StensorA, StensorB, OpDotProduct> Result;
-    typedef result_type<StensorA, StensorB, OpDotProduct> Handle;
+    using Result = result_type<StensorA, StensorB, OpDotProduct>;
+    using Handle = result_type<StensorA, StensorB, OpDotProduct>;
   };
 
   /*!

@@ -41,77 +41,77 @@ namespace tfel::system {
   };  // end of struct PosixError
 
   //! \brief a simple alias
-  using  EPERMError  =  PosixError<EPERM>;
+  using EPERMError = PosixError<EPERM>;
   //! \brief a simple alias
-  using  ENOENTError  =  PosixError<ENOENT>;
+  using ENOENTError = PosixError<ENOENT>;
   //! \brief a simple alias
-  using  ESRCHError  =  PosixError<ESRCH>;
+  using ESRCHError = PosixError<ESRCH>;
   //! \brief a simple alias
-  using  EINTRError  =  PosixError<EINTR>;
+  using EINTRError = PosixError<EINTR>;
   //! \brief a simple alias
-  using  EIOError  =  PosixError<EIO>;
+  using EIOError = PosixError<EIO>;
   //! \brief a simple alias
-  using  ENXIOError  =  PosixError<ENXIO>;
+  using ENXIOError = PosixError<ENXIO>;
   //! \brief a simple alias
-  using  E2BIGError  =  PosixError<E2BIG>;
+  using E2BIGError = PosixError<E2BIG>;
   //! \brief a simple alias
-  using  ENOEXECError  =  PosixError<ENOEXEC>;
+  using ENOEXECError = PosixError<ENOEXEC>;
   //! \brief a simple alias
-  using  EBADFError  =  PosixError<EBADF>;
+  using EBADFError = PosixError<EBADF>;
   //! \brief a simple alias
-  using  ECHILDError  =  PosixError<ECHILD>;
+  using ECHILDError = PosixError<ECHILD>;
   //! \brief a simple alias
-  using  EAGAINError  =  PosixError<EAGAIN>;
+  using EAGAINError = PosixError<EAGAIN>;
   //! \brief a simple alias
-  using  ENOMEMError  =  PosixError<ENOMEM>;
+  using ENOMEMError = PosixError<ENOMEM>;
   //! \brief a simple alias
-  using  EACCESError  =  PosixError<EACCES>;
+  using EACCESError = PosixError<EACCES>;
   //! \brief a simple alias
-  using  EFAULTError  =  PosixError<EFAULT>;
+  using EFAULTError = PosixError<EFAULT>;
   //! \brief a simple alias
-  using  EBUSYError  =  PosixError<EBUSY>;
+  using EBUSYError = PosixError<EBUSY>;
   //! \brief a simple alias
-  using  EEXISTError  =  PosixError<EEXIST>;
+  using EEXISTError = PosixError<EEXIST>;
   //! \brief a simple alias
-  using EXDEVError  =  PosixError<EXDEV> ;
+  using EXDEVError = PosixError<EXDEV>;
   //! \brief a simple alias
-  using  ENODEVError  =  PosixError<ENODEV>;
+  using ENODEVError = PosixError<ENODEV>;
   //! \brief a simple alias
-  using  ENOTDIRError  =  PosixError<ENOTDIR>;
+  using ENOTDIRError = PosixError<ENOTDIR>;
   //! \brief a simple alias
-  using   EISDIRError =  PosixError<EISDIR>;
+  using EISDIRError = PosixError<EISDIR>;
   //! \brief a simple alias
-  using  EINVALError  =  PosixError<EINVAL>;
+  using EINVALError = PosixError<EINVAL>;
   //! \brief a simple alias
-  using  ENFILEError  =  PosixError<ENFILE>;
+  using ENFILEError = PosixError<ENFILE>;
   //! \brief a simple alias
-  using  EMFILEError  =  PosixError<EMFILE>;
+  using EMFILEError = PosixError<EMFILE>;
   //! \brief a simple alias
-  using  ENOTTYError  =  PosixError<ENOTTY>;
+  using ENOTTYError = PosixError<ENOTTY>;
   //! \brief a simple alias
-  using  EFBIGError  =  PosixError<EFBIG>;
+  using EFBIGError = PosixError<EFBIG>;
   //! \brief a simple alias
-  using  ENOSPCError  =  PosixError<ENOSPC>;
+  using ENOSPCError = PosixError<ENOSPC>;
   //! \brief a simple alias
-  using  ESPIPEError  =  PosixError<ESPIPE>;
+  using ESPIPEError = PosixError<ESPIPE>;
   //! \brief a simple alias
-  using  EROFSError  =  PosixError<EROFS>;
+  using EROFSError = PosixError<EROFS>;
   //! \brief a simple alias
-  using  EMLINKError  =  PosixError<EMLINK>;
+  using EMLINKError = PosixError<EMLINK>;
   //! \brief a simple alias
-  using  EPIPEError  =  PosixError<EPIPE>;
+  using EPIPEError = PosixError<EPIPE>;
   //! \brief a simple alias
-  using  EDOMError  =  PosixError<EDOM>;
+  using EDOMError = PosixError<EDOM>;
   //! \brief a simple alias
-  using  ERANGEError  =  PosixError<ERANGE>;
+  using ERANGEError = PosixError<ERANGE>;
 
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
 #ifndef __HAIKU__
   //! \brief a simple alias
-  using  ENOTBLKError  =  PosixError<ENOTBLK>;
+  using ENOTBLKError = PosixError<ENOTBLK>;
 #endif /* __HAIKU__ */
   //! \brief a simple alias
-  using ETXTBSYError   =  PosixError<ETXTBSY>;
+  using ETXTBSYError = PosixError<ETXTBSY>;
 #endif /* LIB_TFEL_SYSTEMERROR_HXX */
 
 }  // end of namespace tfel::system

@@ -18,6 +18,7 @@
 #include "Cyrano/OutputStatus.hxx"
 #include "Cyrano/OutOfBoundsPolicy.hxx"
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -49,5 +50,6 @@ typedef void(TFEL_ADDCALL_PTR CyranoBehaviourPtr)(
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_CYRANO_BEHAVIOUR_HXX */

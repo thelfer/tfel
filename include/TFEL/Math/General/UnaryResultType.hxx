@@ -37,7 +37,7 @@ namespace tfel::math {
   template <typename TagA, typename TagOp, typename A, typename Op>
   struct ComputeUnaryOperationResult {
     //! result of the binary operation.
-    typedef tfel::meta::InvalidType type;
+    using type = tfel::meta::InvalidType;
   };  // end of ComputeUnaryOperationResult
 
   /*!

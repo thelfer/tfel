@@ -14,6 +14,7 @@
 #ifndef LIB_GENERIC_MATERIALPROPERTY_OUTPUTSTATUS_H
 #define LIB_GENERIC_MATERIALPROPERTY_OUTPUTSTATUS_H
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -76,5 +77,6 @@ typedef struct {
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_GENERIC_MATERIALPROPERTY_OUTPUTSTATUS_H */
