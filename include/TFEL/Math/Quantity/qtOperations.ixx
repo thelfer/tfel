@@ -75,7 +75,7 @@ namespace tfel::math {
             QuantityConcept QuantityType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator/(
       const ScalarType& lhs, const QuantityType& rhs) noexcept {
-    return qt<typename internals::SubtractUnit<
+    return qt<typename unit::internals::SubtractUnit<
                   unit::NoUnit, quantity_unit<QuantityType>>::type,
               typename tfel::typetraits::Promote<base_type<QuantityType>,
                                                  ScalarType>::type>{

@@ -120,8 +120,8 @@ namespace tfel::math {
    * the same unit
    */
   template <QuantityConcept T1, QuantityConcept T2>
-  requires(areUnitsEqual<quantity_unit<T1>,
-                         quantity_unit<T2>>)  //
+  requires(unit::areUnitsEqual<quantity_unit<T1>,
+                               quantity_unit<T2>>)  //
       struct ResultType<T1, T2, OpPlus> {
     using type = qt<quantity_unit<T1>,
                     result_type<base_type<T1>, base_type<T2>, OpPlus>>;
@@ -139,8 +139,8 @@ namespace tfel::math {
    * having the same unit
    */
   template <QuantityConcept T1, QuantityConcept T2>
-  requires(areUnitsEqual<quantity_unit<T1>,
-                         quantity_unit<T2>>)  //
+  requires(unit::areUnitsEqual<quantity_unit<T1>,
+                               quantity_unit<T2>>)  //
       struct ResultType<T1, T2, OpMinus> {
     using type = qt<quantity_unit<T1>,
                     result_type<base_type<T1>, base_type<T2>, OpMinus>>;
@@ -156,10 +156,9 @@ namespace tfel::math {
   //! \brief partial specialisation for multiplication of two quantity objects
   template <QuantityConcept T1, QuantityConcept T2>
   struct ResultType<T1, T2, OpMult> {
-    using type =
-        qt<typename tfel::math::internals::AddUnit<quantity_unit<T1>,
-                                                   quantity_unit<T2>>::type,
-           result_type<base_type<T1>, base_type<T2>, OpMult>>;
+    using type = qt<typename tfel::math::unit::internals::
+                        AddUnit<quantity_unit<T1>, quantity_unit<T2>>::type,
+                    result_type<base_type<T1>, base_type<T2>, OpMult>>;
   };
 
   template <QuantityConcept T1, QuantityConcept T2>
@@ -171,7 +170,7 @@ namespace tfel::math {
   template <QuantityConcept T1, QuantityConcept T2>
   struct ResultType<T1, T2, OpDiv> {
     using type =
-        qt<typename tfel::math::internals::
+        qt<typename tfel::math::unit::internals::
                SubtractUnit<quantity_unit<T1>, quantity_unit<T2>>::type,
            result_type<base_type<T1>, base_type<T2>, OpDiv>>;
   };
@@ -255,7 +254,7 @@ namespace tfel::math {
             QuantityConcept QuantityType>
   struct ResultType<ScalarType, QuantityType, OpDiv> {
     using type =
-        qt<typename tfel::math::internals::
+        qt<typename tfel::math::unit::internals::
                SubtractUnit<unit::NoUnit, quantity_unit<QuantityType>>::type,
            result_type<ScalarType, base_type<QuantityType>, OpDiv>>;
   };

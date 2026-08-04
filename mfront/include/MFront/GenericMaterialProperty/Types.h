@@ -20,6 +20,7 @@
 #include <stddef.h>
 #endif /* __cplusplus */
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -36,5 +37,6 @@ typedef size_t mfront_gmp_size_type;
 #ifdef __cplusplus
 } // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_MFRONT_GENERICMATERIALPROPERTY_TYPES_H */

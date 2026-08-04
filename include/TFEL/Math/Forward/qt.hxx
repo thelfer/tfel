@@ -60,7 +60,7 @@ namespace tfel::math {
    * \author Thomas Helfer
    * \date   06 Jun 2006
    */
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct [[nodiscard]] Quantity;
@@ -78,7 +78,7 @@ namespace tfel::math {
   };
 
   //! \brief partial specialisation for quantities.
-  template <UnitConcept QuantityUnitType,
+  template <unit::UnitConcept QuantityUnitType,
             StandardArithmeticTypeConcept QuantityValueType,
             typename QuantityOwnershipPolicy>
   struct QuantityTraits<
@@ -90,32 +90,18 @@ namespace tfel::math {
   };
 
   //! \brief a simple alias
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType = double>
-  using qt = Quantity<UnitType,
-                      ValueType,
-                      tfel::math::internals::QuantityValueOwnershipPolicy<
-                          ValueType,
-                          std::is_same_v<UnitType, unit::NoUnit>>>;
+  struct qt;
 
   //! \brief a simple alias
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType = double>
-  using qt_ref =
-      Quantity<UnitType,
-               ValueType,
-               tfel::math::internals::QuantityReferenceOwnershipPolicy<
-                   ValueType,
-                   std::is_same_v<UnitType, unit::NoUnit>>>;
+  struct qt_ref;
   //! \brief a simple alias
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType = double>
-  using const_qt_ref =
-      Quantity<UnitType,
-               ValueType,
-               tfel::math::internals::QuantityReferenceOwnershipPolicy<
-                   const ValueType,
-                   std::is_same_v<UnitType, unit::NoUnit>>>;
+  struct const_qt_ref;
   //! \brief an helper metafunction which transforms a quantity type into the a
   //! reference
   template <typename QuantityType>
@@ -124,20 +110,20 @@ namespace tfel::math {
     using type = tfel::meta::InvalidType;
   };
   //! \brief partial specialisation for quantities
-  template <UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
   struct MakeQuantityReferenceType<qt<UnitType, ValueType>> {
     //! \brief result
     using type = qt_ref<UnitType, ValueType>;
   };  // end of MakeQuantityReferenceType<qt<UnitType,ValueType>>
 
   //! \brief cast the value to the base type
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
       Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept;
   //! \brief cast the value to the base type
-  template <UnitConcept UnitType,
+  template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
@@ -145,7 +131,7 @@ namespace tfel::math {
   //
   template <typename T>
   concept QuantityConcept =
-      ((UnitConcept<typename QuantityTraits<T>::UnitType>)&&  //
+      ((unit::UnitConcept<typename QuantityTraits<T>::UnitType>)&&  //
        (StandardArithmeticTypeConcept<
            typename QuantityTraits<T>::ValueType>)&&  //
        (requires(T & v) {
@@ -162,8 +148,8 @@ namespace tfel::math {
   template <typename T>
   concept NoUnitQuantityConcept =
       ((QuantityConcept<T>)&&  //
-       (areUnitsEqual<typename QuantityTraits<T>::UnitType,
-                      tfel::math::unit::NoUnit>));
+       (unit::areUnitsEqual<typename QuantityTraits<T>::UnitType,
+                            tfel::math::unit::NoUnit>));
 
   /*!
    * \brief a function testing if a type is a quantity
@@ -233,21 +219,22 @@ namespace tfel::math {
             unsigned int D5 = 1,
             unsigned int D6 = 1,
             unsigned int D7 = 1>
-  using quantity = qt<typename unit::UnitRebind<makeUnitExponents<N1,
-                                                                  N2,
-                                                                  N3,
-                                                                  N4,
-                                                                  N5,
-                                                                  N6,
-                                                                  N7,
-                                                                  D1,
-                                                                  D2,
-                                                                  D3,
-                                                                  D4,
-                                                                  D5,
-                                                                  D6,
-                                                                  D7>()>::type,
-                      base_type<ValueType>>;
+  using quantity =
+      qt<typename unit::UnitRebind<unit::makeUnitExponents<N1,
+                                                           N2,
+                                                           N3,
+                                                           N4,
+                                                           N5,
+                                                           N6,
+                                                           N7,
+                                                           D1,
+                                                           D2,
+                                                           D3,
+                                                           D4,
+                                                           D5,
+                                                           D6,
+                                                           D7>()>::type,
+         base_type<ValueType>>;
 
   //! \brief a simple alias
   template <bool use_qt,

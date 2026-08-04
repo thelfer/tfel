@@ -27,7 +27,7 @@ namespace tfel::math {
 
   template <TensorConcept A>
   struct TFEL_VISIBILITY_LOCAL TensorTransposeExprBase : public ExprBase {
-    typedef EmptyRunTimeProperties RunTimeProperties;
+    using RunTimeProperties = EmptyRunTimeProperties;
     using IndexType = index_type<A>;
     using NumType = numeric_type<A>;
 

@@ -316,7 +316,7 @@ namespace mfront {
       std::map<std::string, std::string>&, const VariableDescription&);
 
   //! \brief a simple alias for backward compatibility
-  typedef VariableDescription VarHandler;
+  using VarHandler = VariableDescription;
 
   //! \brief a simple wrapper around the std::vector class
   struct MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer

@@ -28,7 +28,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T>
   class UnaryResultType<stensor<N, T>, OpNeg> {
-    typedef typename UnaryResultType<T, OpNeg>::type ResBase_;
+    using ResBase_ = typename UnaryResultType<T, OpNeg>::type;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),
@@ -47,7 +47,7 @@ namespace tfel::math {
                                      stensor<N, T>,
                                      Scal,
                                      OpMult> {
-    typedef result_type<T, Scal, OpMult> ResBase_;
+    using ResBase_ = result_type<T, Scal, OpMult>;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),
@@ -66,7 +66,7 @@ namespace tfel::math {
                                      stensor<N, T>,
                                      Scal,
                                      OpDiv> {
-    typedef result_type<T, Scal, OpDiv> ResBase_;
+    using ResBase_ = result_type<T, Scal, OpDiv>;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),
@@ -85,7 +85,7 @@ namespace tfel::math {
                                      Scal,
                                      stensor<N, T>,
                                      OpMult> {
-    typedef result_type<Scal, T, OpMult> ResBase_;
+    using ResBase_ = result_type<Scal, T, OpMult>;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),
@@ -99,7 +99,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T, typename T2>
   class ResultType<stensor<N, T>, stensor<N, T2>, OpPlus> {
-    typedef result_type<T, T2, OpPlus> ResBase_;
+    using ResBase_ = result_type<T, T2, OpPlus>;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),
@@ -113,7 +113,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T, typename T2>
   class ResultType<stensor<N, T>, stensor<N, T2>, OpMinus> {
-    typedef result_type<T, T2, OpMinus> ResBase_;
+    using ResBase_ = result_type<T, T2, OpMinus>;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),
@@ -127,7 +127,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T, typename T2>
   class ResultType<stensor<N, T>, stensor<N, T2>, OpMult> {
-    typedef result_type<T, T2, OpMult> ResBase_;
+    using ResBase_ = result_type<T, T2, OpMult>;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),
@@ -141,7 +141,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T, typename T2>
   class ResultType<stensor<N, T>, stensor<N, T2>, OpDiadicProduct> {
-    typedef result_type<T, T2, OpMult> ResBase_;
+    using ResBase_ = result_type<T, T2, OpMult>;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),
@@ -155,7 +155,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T, typename T2>
   class ResultType<stensor<N, T>, stensor<N, T2>, OpDotProduct> {
-    typedef result_type<T, T2, OpMult> ResBase_;
+    using ResBase_ = result_type<T, T2, OpMult>;
     static constexpr bool isValid =
         isScalar<T>() && isScalar<T2>() && isInvalid<ResBase_>();
 
