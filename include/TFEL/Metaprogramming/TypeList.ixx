@@ -140,7 +140,7 @@ namespace tfel::meta {
   struct TFEL_VISIBILITY_LOCAL TLRemoveNthFirstElt<TList, 0u> {
     static_assert(std::is_base_of_v<TL, TList>);
     //! \brief result of the metafunction
-    typedef TList type;
+    using type = TList;
   };
 
   template <>
@@ -153,8 +153,8 @@ namespace tfel::meta {
   struct TFEL_VISIBILITY_LOCAL TLRemoveNthFirstElt {
     static_assert(std::is_base_of_v<TL, TList>);
     //! \brief result of the metafunction
-    typedef
-        typename TLRemoveNthFirstElt<typename TList::Next, N - 1>::type type;
+    using type =
+        typename TLRemoveNthFirstElt<typename TList::Next, N - 1>::type;
   };
 
   /*!
@@ -173,7 +173,7 @@ namespace tfel::meta {
   struct TFEL_VISIBILITY_LOCAL TLFindNthElt<T, 0u> {
     static_assert(std::is_base_of_v<TL, T>);
     //! \brief result of the metafunction
-    typedef typename T::Current type;
+    using type = typename T::Current;
   };
 
   /*!
@@ -192,7 +192,7 @@ namespace tfel::meta {
      * The result of the metafunction. Return the Nth element of the T or TLE if
      * T contains less than N elements.
      */
-    typedef typename TLFindNthElt<typename T::Next, N - 1>::type type;
+    using type = typename TLFindNthElt<typename T::Next, N - 1>::type;
   };
 
   template <typename T, typename U>
@@ -303,10 +303,10 @@ namespace tfel::meta {
   template <typename TList>
   struct TLUnique {
    private:
-    typedef typename TList::Next Next;
-    typedef typename TList::Current Current;
-    typedef typename TLUnique<Next>::type UniqueNext;
-    typedef typename TLPrepend<UniqueNext, Current>::type Choice;
+    using Next = typename TList::Next;
+    using Current = typename TList::Current;
+    using UniqueNext = typename TLUnique<Next>::type;
+    using Choice = typename TLPrepend<UniqueNext, Current>::type;
     static constexpr bool unique = TLElementIsUnique<Current, TList>::cond;
 
    public:
@@ -324,30 +324,30 @@ namespace tfel::meta {
   struct TLContainsInvalidType {
    private:
     //! \brief a simple alias
-    typedef typename TList::Current Current;
+    using Current = typename TList::Current;
     //! \brief a simple alias
-    typedef typename TList::Next Next;
+    using Next = typename TList::Next;
     //! check if the current type is invalid.
     static constexpr bool cond1 = tfel::typetraits::IsInvalid<Current>::cond;
     //! check if all the next types in the TypeLis are invalid.
     static constexpr bool cond2 = TLContainsInvalidType<Next>::cond;
 
    public:
-    //! the result.
+    //! \brief the result.
     static constexpr bool cond = cond1 || cond2;
   };
 
   template <typename TList>
   class TLMaxSize {
-    //! a simple alias
-    typedef typename TList::Current Current;
-    //! a simple alias
-    typedef typename TList::Next Next;
-    //! the result of the algorithm for the next types of the TL.
+    //! \brief a simple alias
+    using Current = typename TList::Current;
+    //! \brief a simple alias
+    using Next = typename TList::Next;
+    //! \brief the result of the algorithm for the next types of the TL.
     static constexpr size_t nextValue = TLMaxSize<Next>::value;
 
    public:
-    //! the result of the algorithm.
+    //! \brief the result of the algorithm.
     static constexpr size_t value = sizeof(Current) > nextValue
                                         ? sizeof(Current)
                                         : nextValue;
@@ -359,21 +359,21 @@ namespace tfel::meta {
    */
   template <>
   struct TFEL_VISIBILITY_LOCAL TLMaxSize<TLE> {
-    //! the result
+    //! \brief the result
     static constexpr size_t value = 1;
   };  // end of struct TLMaxSize
 
   template <typename TList>
   class TLMaxAlign {
-    //! a simple alias
-    typedef typename TList::Current Current;
-    //! a simple alias
-    typedef typename TList::Next Next;
-    //! the result of the algorithm for the next types of the TL.
+    //! \brief a simple alias
+    using Current = typename TList::Current;
+    //! \brief a simple alias
+    using Next = typename TList::Next;
+    //! \brief the result of the algorithm for the next types of the TL.
     static constexpr size_t nextValue = TLMaxAlign<Next>::value;
 
    public:
-    //! the result of the algorithm.
+    //! \brief the result of the algorithm.
     static constexpr size_t value = alignof(Current) > nextValue
                                         ? alignof(Current)
                                         : nextValue;
@@ -385,21 +385,21 @@ namespace tfel::meta {
    */
   template <>
   struct TFEL_VISIBILITY_LOCAL TLMaxAlign<TLE> {
-    //! the result
+    //! \brief the result
     static constexpr size_t value = alignof(char);
   };  // end of struct TLMaxAlign
 
   template <typename TList, size_t size>
   class TLComputeAlignBound {
-    //! a simple alias
-    typedef typename TList::Current Current;
-    //! a simple alias
-    typedef typename TList::Next Next;
-    //! the result of the algorithm for next types of the TL.
-    typedef typename TLComputeAlignBound<Next, size>::type TailResult;
+    //! \brief a simple alias
+    using Current = typename TList::Current;
+    //! \brief a simple alias
+    using Next = typename TList::Next;
+    //! \brief the result of the algorithm for next types of the TL.
+    using TailResult = typename TLComputeAlignBound<Next, size>::type;
 
    public:
-    //! the result.
+    //! \brief the result.
     using type = std::conditional_t<(sizeof(Current) <= size),
                                     TLNode<Current, TailResult>,
                                     TailResult>;

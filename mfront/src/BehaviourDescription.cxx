@@ -815,7 +815,7 @@ namespace mfront {
                        "categories in two distinct modelling hypotheses. "
                        "This is not supported.");
         }
-        return {v, en, t};
+        return {.name = v, .ename = en, .category = t};
       }
     }
   }  // end of getMaterialPropertyInput
@@ -858,8 +858,8 @@ namespace mfront {
       }
       const auto& vn = v.getExternalName();
       if (vn == tfel::glossary::Glossary::Temperature) {
-        inputs.push_back({"T", tfel::glossary::Glossary::Temperature,
-                          MaterialPropertyInput::TEMPERATURE});
+        inputs.emplace_back("T", tfel::glossary::Glossary::Temperature,
+                            MaterialPropertyInput::TEMPERATURE);
       } else {
         const auto n =
             this->getVariableDescriptionByExternalName(*(hs.begin()), vn).name;
@@ -876,7 +876,7 @@ namespace mfront {
                        "types in two distinct modelling hypotheses. "
                        "This is not supported.");
         }
-        inputs.push_back({n, vn, t});
+        inputs.emplace_back(n, vn, t);
       }
     }
     return inputs;
@@ -1492,7 +1492,7 @@ namespace mfront {
                                  this->getTangentOperatorBlockName({thf2, g}));
       }
     }
-    this->mvariables.push_back({g, f});
+    this->mvariables.emplace_back(g, f);
   }  // end of addMainVariables
 
   const std::vector<std::pair<Gradient, ThermodynamicForce>>&
@@ -1776,7 +1776,7 @@ namespace mfront {
     if (this->useDefaultTangentOperatorBlocks) {
       for (const auto& f : this->getMainVariables()) {
         for (const auto& g : this->getMainVariables()) {
-          blocks.push_back({f.second, g.first});
+          blocks.emplace_back(f.second, g.first);
         }
       }
     }
@@ -2332,7 +2332,7 @@ namespace mfront {
       const BehaviourVariableDescription& md) {
     const auto fname = getBehaviourVariableFactoryClassName(md);
     this->addBehaviourVariableFactory(md, false, true);
-    this->auxiliaryModels.push_back(
+    this->auxiliaryModels.emplace_back(
         ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addAuxiliaryModelDescription
 
@@ -2672,8 +2672,8 @@ namespace mfront {
             << "' is delayed up to when the modelling hypotheses "
             << "are defined'\n";
       }
-      this->behaviourVariableFactoriesCandidates.push_back(
-          {v, isExternalModel, isAuxiliaryModel});
+      this->behaviourVariableFactoriesCandidates.emplace_back(
+          v, isExternalModel, isAuxiliaryModel);
     }
   }  // end of addBehaviourVariableFactory
 

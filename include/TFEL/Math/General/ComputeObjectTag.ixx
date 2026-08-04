@@ -60,7 +60,7 @@ namespace tfel::math {
   template <typename Type>
   struct ComputeObjectTag_<Type, true> {
     //! \brief Result
-    typedef ScalarTag type;
+    using type = ScalarTag;
   };  // end of ComputeObjectTag_<true,false,false,false,false,false,false>
 
   /*!
@@ -70,7 +70,7 @@ namespace tfel::math {
   template <typename Type>
   struct ComputeObjectTag_<Type, false, true> {
     //! \brief Result
-    typedef UnaryOperatorTag type;
+    using type = UnaryOperatorTag;
   };  // end of ComputeObjectTag_<true,false,false,false,false,false,false>
 
   /*!

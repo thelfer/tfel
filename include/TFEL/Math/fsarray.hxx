@@ -90,7 +90,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T>
   struct UnaryResultType<fsarray<N, T>, OpNeg> {
-    typedef typename UnaryResultType<T, OpNeg>::type ResultNumericType;
+    using ResultNumericType = typename UnaryResultType<T, OpNeg>::type;
 
    public:
     using type = std::conditional_t<isInvalid<ResultNumericType>(),
@@ -109,7 +109,7 @@ namespace tfel::math {
                                      fsarray<N, T>,
                                      Scal,
                                      OpMult> {
-    typedef result_type<T, Scal, OpMult> ResultNumericType;
+    using ResultNumericType = result_type<T, Scal, OpMult>;
 
    public:
     using type = std::conditional_t<isInvalid<ResultNumericType>(),
@@ -128,7 +128,7 @@ namespace tfel::math {
                                      fsarray<N, T>,
                                      Scal,
                                      OpDiv> {
-    typedef result_type<T, Scal, OpDiv> ResultNumericType;
+    using ResultNumericType = result_type<T, Scal, OpDiv>;
 
    public:
     using type = std::conditional_t<isInvalid<ResultNumericType>(),
@@ -147,7 +147,7 @@ namespace tfel::math {
                                      Scal,
                                      fsarray<N, T>,
                                      OpMult> {
-    typedef result_type<Scal, T, OpMult> ResultNumericType;
+    using ResultNumericType = result_type<Scal, T, OpMult>;
 
    public:
     using type = std::conditional_t<isInvalid<ResultNumericType>(),
@@ -161,7 +161,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T, typename T2>
   class ResultType<fsarray<N, T>, fsarray<N, T2>, OpPlus> {
-    typedef result_type<T, T2, OpPlus> ResultNumericType;
+    using ResultNumericType = result_type<T, T2, OpPlus>;
 
    public:
     using type = std::conditional_t<isInvalid<ResultNumericType>(),
@@ -175,7 +175,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T, typename T2>
   class ResultType<fsarray<N, T>, fsarray<N, T2>, OpMinus> {
-    typedef result_type<T, T2, OpMinus> ResultNumericType;
+    using ResultNumericType = result_type<T, T2, OpMinus>;
 
    public:
     using type = std::conditional_t<isInvalid<ResultNumericType>(),

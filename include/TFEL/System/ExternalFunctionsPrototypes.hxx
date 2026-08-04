@@ -31,6 +31,7 @@
 #include "Cyrano/MaterialProperty.hxx"
 #include "Cyrano/Behaviour.hxx"
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -668,5 +669,6 @@ namespace tfel::system {
 }  // end of namespace tfel::system
 
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */

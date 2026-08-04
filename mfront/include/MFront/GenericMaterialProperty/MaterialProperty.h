@@ -18,6 +18,7 @@
 #include "MFront/GenericMaterialProperty/OutputStatus.h"
 #include "MFront/GenericMaterialProperty/OutOfBoundsPolicy.h"
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -39,5 +40,6 @@ typedef mfront_gmp_real(
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_GENERIC_MATERIALPROPERTY_MATERIALPROPERTY_H */

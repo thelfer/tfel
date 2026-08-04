@@ -26,9 +26,9 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT StaticVariableDescription
       : public VariableDescriptionBase {
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    typedef double StaticVariableValueType;
+    using StaticVariableValueType = double;
 #else
-    typedef long double StaticVariableValueType;
+    using StaticVariableValueType = long double;
 #endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_HXX */
     /*!
      * \brief constructor
@@ -101,8 +101,8 @@ namespace mfront {
         const std::string&) const;
   };
 
-  //! a simple alias for backward compatibility
-  typedef StaticVariableDescriptionContainer StaticVarContainer;
+  //! \brief a simple alias for backward compatibility
+  using StaticVarContainer = StaticVariableDescriptionContainer;
 
 }  // end of namespace mfront
 

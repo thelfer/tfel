@@ -34,28 +34,29 @@ namespace tfel::config {
   struct ScalarTypes {
     using numeric_type = T;
     using real = tfel::math::qt<tfel::math::unit::NoUnit, T>;
-    typedef tfel::math::qt<tfel::math::unit::Time, T> time;
-    typedef tfel::math::qt<tfel::math::unit::Frequency, T> frequency;
-    typedef tfel::math::qt<tfel::math::unit::Length, T> length;
-    typedef tfel::math::qt<tfel::math::unit::Length, T> displacement;
-    typedef tfel::math::qt<tfel::math::unit::InvLength, T> inv_length;
-    typedef tfel::math::qt<tfel::math::unit::NoUnit, T> strain;
-    typedef tfel::math::qt<tfel::math::unit::Frequency, T> strainrate;
-    typedef tfel::math::qt<tfel::math::unit::Force, T> force;
-    typedef tfel::math::qt<tfel::math::unit::Stress, T> stress;
-    typedef tfel::math::qt<tfel::math::StandardUnit<-1, 1, 2, 0, 0, 0, 0>, T>
-        compliance;
-    typedef tfel::math::qt<tfel::math::StandardUnit<1, -1, -1, 0, 0, 0, 0>, T>
-        viscosity;
-    typedef tfel::math::qt<tfel::math::StandardUnit<-1, 1, 1, 0, 0, 0, 0>, T>
-        viscouscompliance;
-    typedef tfel::math::qt<tfel::math::unit::StressRate, T> stressrate;
-    typedef tfel::math::qt<tfel::math::unit::Temperature, T> temperature;
-    typedef tfel::math::qt<tfel::math::unit::InvTemperature, T>
-        thermalexpansion;
-    typedef tfel::math::qt<tfel::math::unit::Density, T> massdensity;
-    typedef tfel::math::qt<tfel::math::unit::EnergyDensity, T> energydensity;
-    typedef tfel::math::qt<tfel::math::unit::Speed, T> speed;
+    using time = tfel::math::qt<tfel::math::unit::Time, T>;
+    using frequency = tfel::math::qt<tfel::math::unit::Frequency, T>;
+    using length = tfel::math::qt<tfel::math::unit::Length, T>;
+    using displacement = tfel::math::qt<tfel::math::unit::Length, T>;
+    using inv_length = tfel::math::qt<tfel::math::unit::InvLength, T>;
+    using strain = tfel::math::qt<tfel::math::unit::NoUnit, T>;
+    using strainrate = tfel::math::qt<tfel::math::unit::Frequency, T>;
+    using force = tfel::math::qt<tfel::math::unit::Force, T>;
+    using stress = tfel::math::qt<tfel::math::unit::Stress, T>;
+    using compliance =
+        tfel::math::qt<tfel::math::unit::StandardUnit<-1, 1, 2, 0, 0, 0, 0>, T>;
+    using viscosity =
+        tfel::math::qt<tfel::math::unit::StandardUnit<1, -1, -1, 0, 0, 0, 0>,
+                       T>;
+    using viscouscompliance =
+        tfel::math::qt<tfel::math::unit::StandardUnit<-1, 1, 1, 0, 0, 0, 0>, T>;
+    using stressrate = tfel::math::qt<tfel::math::unit::StressRate, T>;
+    using temperature = tfel::math::qt<tfel::math::unit::Temperature, T>;
+    using thermalexpansion =
+        tfel::math::qt<tfel::math::unit::InvTemperature, T>;
+    using massdensity = tfel::math::qt<tfel::math::unit::Density, T>;
+    using energydensity = tfel::math::qt<tfel::math::unit::EnergyDensity, T>;
+    using speed = tfel::math::qt<tfel::math::unit::Speed, T>;
     using thermalconductivity =
         tfel::math::qt<tfel::math::unit::ThermalConductivity, T>;
   };
@@ -92,7 +93,7 @@ namespace tfel::config {
 
   /*!
    * \class Types
-   * \brief A set of useful typedef.
+   * \brief A set of useful using  = .
    * \param unsigned short N, space dimension.
    * \param typename T, numerical type, double by default.
    * \param bool use_quantities, says if one shall use quantities.
@@ -101,56 +102,53 @@ namespace tfel::config {
    */
   template <unsigned short N, typename T = double, bool use_quantities = true>
   struct Types : ScalarTypes<T, true> {
-    typedef tfel::math::tvector<N, typename ScalarTypes<T, true>::real> TVector;
-    typedef tfel::math::stensor<N, typename ScalarTypes<T, true>::real> Stensor;
-    typedef tfel::math::stensor<N, typename ScalarTypes<T, true>::frequency>
-        FrequencyStensor;
-    typedef tfel::math::tvector<N, typename ScalarTypes<T, true>::force>
-        ForceTVector;
-    typedef tfel::math::stensor<N, typename ScalarTypes<T, true>::stress>
-        StressStensor;
-    typedef tfel::math::stensor<N, typename ScalarTypes<T, true>::stressrate>
-        StressRateStensor;
-    typedef tfel::math::tvector<N, typename ScalarTypes<T, true>::length>
-        DisplacementTVector;
-    typedef tfel::math::stensor<N, tfel::math::qt<tfel::math::unit::NoUnit, T>>
-        StrainStensor;
-    typedef tfel::math::stensor<N,
-                                tfel::math::qt<tfel::math::unit::Frequency, T>>
-        StrainRateStensor;
-    typedef tfel::math::stensor<N,
-                                typename ScalarTypes<T, true>::thermalexpansion>
-        ThermalExpansionCoefficientTensor;
-    typedef tfel::math::tensor<N, tfel::math::qt<tfel::math::unit::NoUnit, T>>
-        Tensor;
-    typedef tfel::math::tensor<N, typename ScalarTypes<T, true>::frequency>
-        FrequencyTensor;
-    typedef tfel::math::tensor<N, typename ScalarTypes<T, true>::stress>
-        StressTensor;
-    typedef tfel::math::tensor<N, tfel::math::qt<tfel::math::unit::NoUnit, T>>
-        DeformationGradientTensor;
-    typedef tfel::math::tensor<N,
-                               tfel::math::qt<tfel::math::unit::Frequency, T>>
-        DeformationGradientRateTensor;
-    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::real>
-        Stensor4;
-    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::compliance>
-        ComplianceTensor;
-    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::viscosity>
-        ViscosityTensor;
-    typedef tfel::math::
-        st2tost2<N, typename ScalarTypes<T, true>::viscouscompliance>
-            ViscousComplianceTensor;
-    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::stress>
-        StiffnessTensor;
-    typedef typename tfel::config::internals::PositionType<N, T, true>::type
-        PositionType;
-    typedef typename tfel::config::internals::SpatialGradType<N, T, true>::type
-        SpatialGradType;
-    typedef typename tfel::config::internals::JacobianType<N, T, true>::type
-        JacobianType;
-    typedef typename tfel::config::internals::InvJacobianType<N, T, true>::type
-        InvJacobianType;
+    using TVector = tfel::math::tvector<N, typename ScalarTypes<T, true>::real>;
+    using Stensor = tfel::math::stensor<N, typename ScalarTypes<T, true>::real>;
+    using FrequencyStensor =
+        tfel::math::stensor<N, typename ScalarTypes<T, true>::frequency>;
+    using ForceTVector =
+        tfel::math::tvector<N, typename ScalarTypes<T, true>::force>;
+    using StressStensor =
+        tfel::math::stensor<N, typename ScalarTypes<T, true>::stress>;
+    using StressRateStensor =
+        tfel::math::stensor<N, typename ScalarTypes<T, true>::stressrate>;
+    using DisplacementTVector =
+        tfel::math::tvector<N, typename ScalarTypes<T, true>::length>;
+    using StrainStensor =
+        tfel::math::stensor<N, tfel::math::qt<tfel::math::unit::NoUnit, T>>;
+    using StrainRateStensor =
+        tfel::math::stensor<N, tfel::math::qt<tfel::math::unit::Frequency, T>>;
+    using ThermalExpansionCoefficientTensor =
+        tfel::math::stensor<N, typename ScalarTypes<T, true>::thermalexpansion>;
+    using Tensor =
+        tfel::math::tensor<N, tfel::math::qt<tfel::math::unit::NoUnit, T>>;
+    using FrequencyTensor =
+        tfel::math::tensor<N, typename ScalarTypes<T, true>::frequency>;
+    using StressTensor =
+        tfel::math::tensor<N, typename ScalarTypes<T, true>::stress>;
+    using DeformationGradientTensor =
+        tfel::math::tensor<N, tfel::math::qt<tfel::math::unit::NoUnit, T>>;
+    using DeformationGradientRateTensor =
+        tfel::math::tensor<N, tfel::math::qt<tfel::math::unit::Frequency, T>>;
+    using Stensor4 =
+        tfel::math::st2tost2<N, typename ScalarTypes<T, true>::real>;
+    using ComplianceTensor =
+        tfel::math::st2tost2<N, typename ScalarTypes<T, true>::compliance>;
+    using ViscosityTensor =
+        tfel::math::st2tost2<N, typename ScalarTypes<T, true>::viscosity>;
+    using ViscousComplianceTensor =
+        tfel::math::st2tost2<N,
+                             typename ScalarTypes<T, true>::viscouscompliance>;
+    using StiffnessTensor =
+        tfel::math::st2tost2<N, typename ScalarTypes<T, true>::stress>;
+    using PositionType =
+        typename tfel::config::internals::PositionType<N, T, true>::type;
+    using SpatialGradType =
+        typename tfel::config::internals::SpatialGradType<N, T, true>::type;
+    using JacobianType =
+        typename tfel::config::internals::JacobianType<N, T, true>::type;
+    using InvJacobianType =
+        typename tfel::config::internals::InvJacobianType<N, T, true>::type;
     /* Thermal related stuff */
     using TemperatureGradient = typename tfel::config::internals::
         TemperatureGradientType<N, T, true>::type;
@@ -158,9 +156,8 @@ namespace tfel::config {
         typename tfel::config::internals::HeatFluxVectorType<N, T, true>::type;
     using HeatFlux =
         typename tfel::config::internals::HeatFluxVectorType<N, T, true>::type;
-    typedef typename tfel::config::internals::
-        ThermalConductivityMatrixType<N, T, true>::type
-            ThermalConductivityMatrix;
+    using ThermalConductivityMatrix = typename tfel::config::internals::
+        ThermalConductivityMatrixType<N, T, true>::type;
   };
 
   /*!
@@ -168,45 +165,43 @@ namespace tfel::config {
    */
   template <unsigned short N, typename T>
   struct Types<N, T, false> : ScalarTypes<T, false> {
-    typedef tfel::math::tvector<N, T> TVector;
-    typedef tfel::math::stensor<N, T> Stensor;
-    typedef tfel::math::stensor<N, T> FrequencyStensor;
-    typedef tfel::math::tvector<N, T> ForceTVector;
-    typedef tfel::math::stensor<N, T> StressStensor;
-    typedef tfel::math::stensor<N, T> StressRateStensor;
-    typedef tfel::math::tvector<N, T> DisplacementTVector;
-    typedef tfel::math::stensor<N, T> StrainStensor;
-    typedef tfel::math::stensor<N, T> StrainRateStensor;
-    typedef tfel::math::stensor<N, T> ThermalExpansionCoefficientTensor;
-    typedef tfel::math::tensor<N, T> Tensor;
-    typedef tfel::math::tensor<N, T> FrequencyTensor;
-    typedef tfel::math::tensor<N, T> StressTensor;
-    typedef tfel::math::tensor<N, T> DeformationGradientTensor;
-    typedef tfel::math::tensor<N, T> DeformationGradientRateTensor;
-    typedef tfel::math::st2tost2<N, T> Stensor4;
-    typedef tfel::math::st2tost2<N, T> StiffnessTensor;
-    typedef tfel::math::st2tost2<N, T> ComplianceTensor;
-    typedef tfel::math::st2tost2<N, T> ViscosityTensor;
-    typedef tfel::math::st2tost2<N, T> ViscousComplianceTensor;
-    typedef typename tfel::config::internals::PositionType<N, T, false>::type
-        PositionType;
-    typedef typename tfel::config::internals::SpatialGradType<N, T, true>::type
-        SpatialGradType;
-    typedef typename tfel::config::internals::JacobianType<N, T, false>::type
-        JacobianType;
-    typedef typename tfel::config::internals::InvJacobianType<N, T, false>::type
-        InvJacobianType;
+    using TVector = tfel::math::tvector<N, T>;
+    using Stensor = tfel::math::stensor<N, T>;
+    using FrequencyStensor = tfel::math::stensor<N, T>;
+    using ForceTVector = tfel::math::tvector<N, T>;
+    using StressStensor = tfel::math::stensor<N, T>;
+    using StressRateStensor = tfel::math::stensor<N, T>;
+    using DisplacementTVector = tfel::math::tvector<N, T>;
+    using StrainStensor = tfel::math::stensor<N, T>;
+    using StrainRateStensor = tfel::math::stensor<N, T>;
+    using ThermalExpansionCoefficientTensor = tfel::math::stensor<N, T>;
+    using Tensor = tfel::math::tensor<N, T>;
+    using FrequencyTensor = tfel::math::tensor<N, T>;
+    using StressTensor = tfel::math::tensor<N, T>;
+    using DeformationGradientTensor = tfel::math::tensor<N, T>;
+    using DeformationGradientRateTensor = tfel::math::tensor<N, T>;
+    using Stensor4 = tfel::math::st2tost2<N, T>;
+    using StiffnessTensor = tfel::math::st2tost2<N, T>;
+    using ComplianceTensor = tfel::math::st2tost2<N, T>;
+    using ViscosityTensor = tfel::math::st2tost2<N, T>;
+    using ViscousComplianceTensor = tfel::math::st2tost2<N, T>;
+    using PositionType =
+        typename tfel::config::internals::PositionType<N, T, false>::type;
+    using SpatialGradType =
+        typename tfel::config::internals::SpatialGradType<N, T, true>::type;
+    using JacobianType =
+        typename tfel::config::internals::JacobianType<N, T, false>::type;
+    using InvJacobianType =
+        typename tfel::config::internals::InvJacobianType<N, T, false>::type;
     /* Thermal related stuff */
     using TemperatureGradient = typename tfel::config::internals::
         TemperatureGradientType<N, T, false>::type;
-    typedef
-        typename tfel::config::internals::HeatFluxVectorType<N, T, false>::type
-            HeatFluxVector;
+    using HeatFluxVector =
+        typename tfel::config::internals::HeatFluxVectorType<N, T, false>::type;
     using HeatFlux =
         typename tfel::config::internals::HeatFluxVectorType<N, T, false>::type;
-    typedef typename tfel::config::internals::
-        ThermalConductivityMatrixType<N, T, false>::type
-            ThermalConductivityMatrix;
+    using ThermalConductivityMatrix = typename tfel::config::internals::
+        ThermalConductivityMatrixType<N, T, false>::type;
   };
 
 }  // end of namespace tfel::config
