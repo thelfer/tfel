@@ -390,7 +390,7 @@ namespace tfel::math {
     template <QuantityConcept QuantityType>
     requires(unit::areUnitsEqual<quantity_unit<QuantityType>,
                                  UnitType>)  //
-        constexpr qt_ref(QuantityType& src) noexcept
+        explicit constexpr qt_ref(QuantityType& src) noexcept
         : Quantity<UnitType,
                    ValueType,
                    tfel::math::internals::QuantityReferenceOwnershipPolicy<
@@ -398,7 +398,7 @@ namespace tfel::math {
                        unit::areUnitsEqual<UnitType, unit::NoUnit>>>(
               base_type_cast(src)) {}
     //
-    constexpr qt_ref(ValueType& src) noexcept
+    explicit constexpr qt_ref(ValueType& src) noexcept
         : Quantity<UnitType,
                    ValueType,
                    tfel::math::internals::QuantityReferenceOwnershipPolicy<
@@ -433,7 +433,7 @@ namespace tfel::math {
     template <QuantityConcept QuantityType>
     requires(unit::areUnitsEqual<quantity_unit<QuantityType>,
                                  UnitType>)  //
-        constexpr const_qt_ref(const QuantityType& src) noexcept
+        explicit constexpr const_qt_ref(const QuantityType& src) noexcept
         : Quantity<UnitType,
                    ValueType,
                    tfel::math::internals::QuantityReferenceOwnershipPolicy<
@@ -441,7 +441,7 @@ namespace tfel::math {
                        unit::areUnitsEqual<UnitType, unit::NoUnit>>>(
               base_type_cast(src)) {}
     //
-    constexpr const_qt_ref(const ValueType& src) noexcept
+    explicit constexpr const_qt_ref(const ValueType& src) noexcept
         : Quantity<UnitType,
                    ValueType,
                    tfel::math::internals::QuantityReferenceOwnershipPolicy<
