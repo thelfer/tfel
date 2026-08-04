@@ -36,8 +36,8 @@ namespace tfel::math::internals {
     using type = T&;
   };
 
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
-  struct MakeViewReference<Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <unit::UnitConcept UnitType, typename ValueType>
+  struct MakeViewReference<qt<UnitType, ValueType>> {
     //! \brief result of the metafunction
     using type = qt_ref<UnitType, ValueType>;
   };
@@ -48,9 +48,8 @@ namespace tfel::math::internals {
     using type = const T&;
   };
 
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
-  struct MakeConstViewReference<
-      Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <unit::UnitConcept UnitType, typename ValueType>
+  struct MakeConstViewReference<qt<UnitType, ValueType>> {
     //! \brief result of the metafunction
     using type = const_qt_ref<UnitType, ValueType>;
   };

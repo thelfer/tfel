@@ -14,6 +14,7 @@
 #ifndef LIB_CYRANO_OUTOFBOUNDSPOLICY_HXX
 #define LIB_CYRANO_OUTOFBOUNDSPOLICY_HXX
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -48,5 +49,6 @@ typedef enum {
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_CYRANO_OUTOFBOUNDSPOLICY_HXX */

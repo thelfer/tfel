@@ -22,7 +22,7 @@
 namespace aster {
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterException : public std::exception {
-    AsterException(const std::string&);
+    AsterException(std::string);
     AsterException(const AsterException&);
     //
     AsterException() = delete;
