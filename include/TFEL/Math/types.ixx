@@ -12,10 +12,10 @@ namespace tfel::math {
 
   namespace internals {
 
-    template <UnitConcept Unit, typename Type>
+    template <unit::UnitConcept Unit, typename Type>
     struct CheckUnitCompatibilityImplementation;
 
-    template <UnitConcept Unit, ScalarConcept NumericType>
+    template <unit::UnitConcept Unit, ScalarConcept NumericType>
     struct CheckUnitCompatibilityImplementation<Unit, NumericType>
         : std::conditional_t<
               isQuantity<NumericType>(),
@@ -23,20 +23,20 @@ namespace tfel::math {
                            Unit>,
               std::true_type> {};
 
-    template <UnitConcept Unit, MathObjectConcept MathObjectType>
+    template <unit::UnitConcept Unit, MathObjectConcept MathObjectType>
     struct CheckUnitCompatibilityImplementation<Unit, MathObjectType>
         : CheckUnitCompatibilityImplementation<Unit,
                                                numeric_type<MathObjectType>> {};
 
   }  // namespace internals
 
-  template <UnitConcept Unit, typename T>
+  template <unit::UnitConcept Unit, typename T>
   requires(ScalarConcept<T> || MathObjectConcept<T>)  //
       struct CheckUnitCompatibility
       : internals::CheckUnitCompatibilityImplementation<Unit, std::decay_t<T>> {
   };
 
-  template <UnitConcept Unit, typename T>
+  template <unit::UnitConcept Unit, typename T>
   requires(ScalarConcept<T> || MathObjectConcept<T>)  //
       constexpr bool checkUnitCompatibility() {
     return CheckUnitCompatibility<Unit, std::decay_t<T>>::value;

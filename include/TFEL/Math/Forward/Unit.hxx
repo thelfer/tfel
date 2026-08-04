@@ -23,7 +23,7 @@
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/Math/Forward/General.hxx"
 
-namespace tfel::math {
+namespace tfel::math::unit {
 
   struct UnitExponent {
     int numerator;
@@ -170,10 +170,6 @@ namespace tfel::math {
   inline constexpr bool areUnitsEqual =
       std::same_as<typename internals::ExtractUnit<UnitType1>::type,
                    typename internals::ExtractUnit<UnitType2>::type>;
-
-}  // end of namespace tfel::math
-
-namespace tfel::math::unit {
 
   struct NoUnit : StandardUnit<> {};
   /*!

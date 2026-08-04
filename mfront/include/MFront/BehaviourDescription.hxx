@@ -1989,8 +1989,6 @@ namespace mfront {
      * \param[in] h: modelling hypothesis
      */
     void checkModellingHypothesis(const Hypothesis) const;
-    //! a simple alias
-    typedef std::shared_ptr<BehaviourData> MBDPtr;
     //! behaviour name
     std::string behaviour;
     //! dsl name
@@ -2023,7 +2021,7 @@ namespace mfront {
     //! default behaviour data
     BehaviourData d;
     //! specialisations
-    std::map<Hypothesis, MBDPtr> sd;
+    std::map<Hypothesis, std::shared_ptr<BehaviourData>> sd;
     /*!
      * \brief list of main variables, association of a gradient and a
      * thermodynamic force

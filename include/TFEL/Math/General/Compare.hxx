@@ -33,12 +33,13 @@ namespace tfel::math {
   /*
    * \brief compare two quantities with a precision
    */
-  template <std::floating_point ScalarType, UnitConcept UnitType>
+  template <QuantityConcept QuantityType>
   TFEL_HOST_DEVICE constexpr bool areAlmostEqual(
-      const ScalarType& eps,
-      const qt<UnitType, ScalarType>& a,
-      const qt<UnitType, ScalarType>& b) {
-    return std::abs(a.getValue() - b.getValue()) < eps;
+      const base_type<QuantityType>& eps,
+      const QuantityType& a,
+      const QuantityType&
+          b) requires(std::floating_point<base_type<QuantityType>>) {
+    return std::abs(base_type_cast(a) - base_type_cast(b)) < eps;
   }
 
 }  // end of namespace tfel::math
