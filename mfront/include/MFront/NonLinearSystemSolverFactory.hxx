@@ -41,7 +41,7 @@ namespace mfront {
      * \return the requested solver
      * \param[in] a : solver name
      */
-    [[nodiscard]] std::shared_ptr<NonLinearSystemSolver> getSolver(
+    [[nodiscard]] std::shared_ptr<AbstractNonLinearSystemSolver> getSolver(
         const std::string&) const;
     /*!
      * \param[in] a : solver name
