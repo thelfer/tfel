@@ -42,7 +42,7 @@ namespace tfel::system {
      * \brief constructor
      * \param[in] n: number of thread to be created
      */
-    ThreadPool(const size_type);
+    explicit ThreadPool(const size_type);
     /*!
      * \brief add a new task
      * \param[in] f: task

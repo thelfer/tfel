@@ -65,7 +65,9 @@ namespace tfel::check {
     }
     auto p = this->subordinates.find(r.first);
     if (p == this->subordinates.end()) {
-      p = this->subordinates.insert({r.first, this->configuration}).first;
+      p = this->subordinates
+              .insert({r.first, ConfigurationManager{this->configuration}})
+              .first;
     }
     return p->second.getConfigurationManager(r.second);
   }  // end of getConfigurationManager

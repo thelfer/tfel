@@ -51,7 +51,7 @@ namespace tfel::math::parser {
   };  // end of struct EvaluatorFunctionBase
 
   struct EvaluatorFunction1VBase : public EvaluatorFunctionBase {
-    EvaluatorFunction1VBase(const std::shared_ptr<Expr>);
+    explicit EvaluatorFunction1VBase(const std::shared_ptr<Expr>);
     //
     EvaluatorFunction1VBase& operator=(const EvaluatorFunction1VBase&) = delete;
     EvaluatorFunction1VBase& operator=(EvaluatorFunction1VBase&&) = delete;
@@ -328,7 +328,7 @@ namespace tfel::math::parser {
         const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     void getParametersNames(std::set<std::string>&) const override;
-    ~EvaluatorFunction1UPNV();
+    ~EvaluatorFunction1UPNV() override;
 
    protected:
     typename EvaluatorFunctionWrapper<N>::type1UP f;

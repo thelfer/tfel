@@ -40,6 +40,7 @@ namespace tfel::math {
     static constexpr auto unRollLoop = false;
     //! \brief constructor
     TFEL_HOST_DEVICE constexpr RuntimeVectorIndexingPolicy() : data_size(0) {}
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief constructor
     TFEL_HOST_DEVICE constexpr RuntimeVectorIndexingPolicy(const size_type s)
         : data_size(s) {}
@@ -47,6 +48,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr RuntimeVectorIndexingPolicy(
         const std::array<size_type, 1u>& s)
         : data_size(s[0]) {}
+    // NOLINTEND(google-explicit-constructor)
     //! \brief move constructor
     constexpr RuntimeVectorIndexingPolicy(RuntimeVectorIndexingPolicy&&) =
         default;
@@ -143,10 +145,12 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr RuntimeRowMajorMatrixIndexingPolicy(
         const size_type r, const size_type c)
         : n_rows(r), n_columns(c) {}
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief constructor
     TFEL_HOST_DEVICE constexpr RuntimeRowMajorMatrixIndexingPolicy(
         const std::array<size_type, 2u>& sizes)
         : n_rows(sizes[0]), n_columns(sizes[1]) {}
+    // NOLINTEND(google-explicit-constructor)
     //! \brief move constructor
     constexpr RuntimeRowMajorMatrixIndexingPolicy(
         RuntimeRowMajorMatrixIndexingPolicy&&) = default;

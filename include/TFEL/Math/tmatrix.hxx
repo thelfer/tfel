@@ -309,6 +309,7 @@ namespace tfel::math {
         GenericFixedSizeArray<tmatrix<N, M, ValueType>,
                               FixedSizeRowMajorMatrixPolicy<N, M, ValueType>>;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tmatrix,
                                                GenericFixedSizeArrayBase);
     /*!
@@ -319,6 +320,7 @@ namespace tfel::math {
     template <std::size_t... d>
     TFEL_HOST_DEVICE constexpr tmatrix(ValueType const (&... arrays)[d])  //
         requires((sizeof...(d) == N) && ((d == M) && ...));
+    // NOLINTEND(google-explicit-constructor)
     //! \return the identity matrix
     TFEL_HOST_DEVICE static constexpr auto Id();
     // inheriting GenericFixedSizeArray' access operators

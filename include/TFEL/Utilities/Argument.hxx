@@ -28,10 +28,11 @@ namespace tfel::utilities {
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT Argument {
     //! \param s : argument name
-    Argument(std::string);
+    Argument(std::string);  // NOLINT(google-explicit-constructor)
     //! \param s : argument name
-    Argument(const char* const s);
-    Argument(Argument&&) noexcept;
+    Argument(const char* const s);  // NOLINT(google-explicit-constructor)
+    //
+    Argument(Argument&&) noexcept;  // NOLINT(google-explicit-constructor)
     Argument(const Argument&);
     Argument& operator=(Argument&&) noexcept;
     Argument& operator=(const Argument&);

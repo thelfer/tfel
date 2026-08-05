@@ -44,7 +44,7 @@ namespace mfront {
      * \brief constructor from a variable description
      * \param[in] v: variable description
      */
-    ThermodynamicForce(const VariableDescription&);
+    explicit ThermodynamicForce(const VariableDescription&);
     //! \brief move constructor
     ThermodynamicForce(ThermodynamicForce&&) noexcept;
     //! \brief copy constructor

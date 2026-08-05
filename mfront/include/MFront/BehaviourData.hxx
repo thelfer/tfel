@@ -314,7 +314,7 @@ namespace mfront {
     //! \brief constructor
     BehaviourData();
     //! \brief copy constructor
-    explicit BehaviourData(const BehaviourData&);
+    BehaviourData(const BehaviourData&);
     //! \brief move constructor (disabled)
     BehaviourData(BehaviourData&&) = delete;
     //! \brief assignement operator (disabled)

@@ -38,7 +38,7 @@ namespace mtest {
     /*!
      * \param[in] umb: behaviour description
      */
-    CastemSmallStrainBehaviour(const StandardBehaviourDescription&);
+    explicit CastemSmallStrainBehaviour(const StandardBehaviourDescription&);
     //
     void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;

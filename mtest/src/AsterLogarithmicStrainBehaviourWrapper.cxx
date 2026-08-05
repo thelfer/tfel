@@ -31,7 +31,7 @@ namespace mtest {
     /*!
      * \param[in] s: state to be modified
      */
-    AsterComputePredictionLogarithmicStrainHandler(CurrentState& cs)
+    explicit AsterComputePredictionLogarithmicStrainHandler(CurrentState& cs)
         : tfel::material::LogarithmicStrainHandler<N, real>(
               tfel::material::LogarithmicStrainHandlerBase::EULERIAN,
               tfel::math::tensor<N, real>{cs.e0.data()}),
@@ -75,7 +75,7 @@ namespace mtest {
     /*!
      * \param[in] s: state to be modified
      */
-    AsterIntegrateLogarithmicStrainHandler(CurrentState& cs)
+    explicit AsterIntegrateLogarithmicStrainHandler(CurrentState& cs)
         : state(cs),
           h0(tfel::material::LogarithmicStrainHandlerBase::EULERIAN,
              tfel::math::tensor<N, real>{cs.e0.data()}),

@@ -54,7 +54,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \param nindices number of indices used to store b      */
     //===========================================================
-    IBurgers(const unsigned nindices = 3) : _index(nindices, 0) {}
+    explicit IBurgers(const unsigned nindices = 3) : _index(nindices, 0) {}
 
     //===========================================================
     // IBurgers::IBurgers

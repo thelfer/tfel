@@ -34,20 +34,20 @@ namespace tfel::tests {
      * \brief constructor
      * \param[in] o: output file name
      */
-    StdStreamTestOutput(const std::string&);
+    explicit StdStreamTestOutput(const std::string&);
     /*!
      * \brief constructor
      * \param[in] o: output stream
      * \param[in] b: color output
      */
-    StdStreamTestOutput(std::ostream&, const bool = true);
+    explicit StdStreamTestOutput(std::ostream&, const bool = true);
     /*!
      * \brief Constructor
      * \param[in] o: output stream
      * \param[in] b: color output
      */
-    StdStreamTestOutput(const std::shared_ptr<std::ostream>&,
-                        const bool = false);
+    explicit StdStreamTestOutput(const std::shared_ptr<std::ostream>&,
+                                 const bool = false);
     //
     StdStreamTestOutput(const StdStreamTestOutput&) = delete;
     StdStreamTestOutput& operator=(const StdStreamTestOutput&) = delete;

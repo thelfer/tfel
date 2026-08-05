@@ -27,7 +27,7 @@ namespace abaqus {
    */
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusException
       : public std::exception {
-    AbaqusException(const std::string&);
+    explicit AbaqusException(std::string);
     //! \brief move constructor
     AbaqusException(AbaqusException&&) noexcept;
     //
@@ -54,7 +54,7 @@ namespace abaqus {
     /*!
      * \param[in] b : behaviour name
      */
-    AbaqusInvalidModellingHypothesis(const char*);
+    explicit AbaqusInvalidModellingHypothesis(const char*);
     //! \brief move constructor
     AbaqusInvalidModellingHypothesis(
         AbaqusInvalidModellingHypothesis&&) noexcept;
@@ -72,7 +72,7 @@ namespace abaqus {
    */
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusInvalidNTENSValue
       : public AbaqusException {
-    AbaqusInvalidNTENSValue(const unsigned short);
+    explicit AbaqusInvalidNTENSValue(const unsigned short);
     //! \brief move constructor
     AbaqusInvalidNTENSValue(AbaqusInvalidNTENSValue&&) noexcept;
     //! \brief copy constructor

@@ -23,7 +23,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    DefaultDSLBase(const DSLOptions&);
+    explicit DefaultDSLBase(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

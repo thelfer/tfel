@@ -50,6 +50,7 @@ namespace tfel::math::internals {
     //! \brief move constructor.
     constexpr QuantityValueOwnershipPolicy(
         QuantityValueOwnershipPolicy&&) noexcept = default;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \brief constructor from a value
      * \param src: the src.
@@ -72,6 +73,7 @@ namespace tfel::math::internals {
                  (std::is_convertible_v<ValueType, T>)&&    //
                  (AllowImplicitConversion))
         : value(src) {}
+    // NOLINTEND(google-explicit-constructor)
     //! \brief return the value
     TFEL_HOST_DEVICE [[nodiscard]] constexpr ValueType& getValue() noexcept {
       return this->value;
@@ -100,6 +102,7 @@ namespace tfel::math::internals {
       this->value = src;
       return *this;
     }
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief conversion operator
     template <typename T>
     TFEL_HOST_DEVICE constexpr operator T&() noexcept
@@ -114,6 +117,7 @@ namespace tfel::math::internals {
                  (AllowImplicitConversion)) {
       return this->value;
     }
+    // NOLINTEND(google-explicit-constructor)
     //! \brief destructor
     ~QuantityValueOwnershipPolicy() noexcept = default;
 
@@ -167,6 +171,7 @@ namespace tfel::math::internals {
       this->value = src;
       return *this;
     }
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief conversion operator
     template <typename T>
     TFEL_HOST_DEVICE constexpr operator T&() noexcept
@@ -181,6 +186,7 @@ namespace tfel::math::internals {
                  (AllowImplicitConversion)) {
       return this->value;
     }
+    // NOLINTEND(google-explicit-constructor)
     //! \brief destructor
     ~QuantityReferenceOwnershipPolicy() noexcept = default;
 
@@ -217,6 +223,7 @@ namespace tfel::math {
     //
     using OwnershipPolicy::OwnershipPolicy;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     template <QuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity(const OtherQuantityType& src) noexcept
         requires(
@@ -224,6 +231,7 @@ namespace tfel::math {
                 std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
                                ValueType>))
         : OwnershipPolicy(base_type_cast(src)) {}  // end of Quantity
+    // NOLINTEND(google-explicit-constructor)
     //
     template <StandardArithmeticTypeConcept T>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(const T& src) noexcept

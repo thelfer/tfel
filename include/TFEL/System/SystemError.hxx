@@ -23,7 +23,7 @@ namespace tfel::system {
 
   struct TFELSYSTEM_VISIBILITY_EXPORT SystemError
       : public tfel::exception::TFELException {
-    SystemError(const std::string&);
+    explicit SystemError(const std::string&);
     SystemError(SystemError&&) = default;
     SystemError(const SystemError&) = default;
     [[nodiscard]] const char* what() const noexcept override;
@@ -35,7 +35,7 @@ namespace tfel::system {
 
   template <int N>
   struct PosixError : public SystemError {
-    PosixError(const std::string&);
+    explicit PosixError(const std::string&);
     PosixError(PosixError&&) = default;
     PosixError(const PosixError&) = default;
   };  // end of struct PosixError

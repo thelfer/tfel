@@ -34,7 +34,7 @@ namespace tfel::math {
   struct IntegerEvaluator::TNegation final : public IntegerEvaluator::TExpr {
     //! expression returned
     struct Negation final : public tfel::math::parser::IntegerExpr {
-      Negation(const parser::IntegerExprPtr);
+      explicit Negation(const parser::IntegerExprPtr);
       //
       Negation& operator=(const Negation&) = delete;
       Negation& operator=(Negation&&) = delete;
@@ -47,7 +47,7 @@ namespace tfel::math {
      private:
       const parser::IntegerExprPtr expr;
     };
-    TNegation(std::shared_ptr<IntegerEvaluator::TExpr>);
+    explicit TNegation(std::shared_ptr<IntegerEvaluator::TExpr>);
     [[nodiscard]] bool isOperator() const override;
     [[nodiscard]] parser::IntegerExprPtr analyse() override;
     void reduce() override;
@@ -144,7 +144,7 @@ namespace tfel::math {
   };
 
   struct IntegerEvaluator::TOperator final : public IntegerEvaluator::TExpr {
-    TOperator(const std::string&);
+    explicit TOperator(const std::string&);
     TOperator(const TOperator&);
     TOperator(TOperator&&) noexcept;
     //
@@ -175,7 +175,7 @@ namespace tfel::math {
 
   struct IntegerEvaluator::TNumber final : public IntegerEvaluator::TExpr {
     struct Number final : public tfel::math::parser::IntegerExpr {
-      Number(const int);
+      explicit Number(const int);
       Number(Number&&) = default;
       Number(const Number&) = default;
       Number& operator=(Number&&) = delete;
@@ -187,7 +187,7 @@ namespace tfel::math {
      private:
       const int value;
     };  // end of struct Number
-    TNumber(const int v);
+    explicit TNumber(const int v);
     //
     TNumber& operator=(const TNumber&) = delete;
     TNumber& operator=(TNumber&&) noexcept = delete;

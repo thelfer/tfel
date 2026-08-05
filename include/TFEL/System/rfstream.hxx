@@ -43,16 +43,16 @@ namespace tfel::system {
   struct TFELSYSTEM_VISIBILITY_EXPORT rfstream
       : public basic_rstream<rfstream, stream_traits<rfstream>>,
         protected std::shared_ptr<int> {
-    //! default constructor
+    //! \brief default constructor
     rfstream();
 
-    //! copy constructor
+    //! \brief copy constructor
     rfstream(const rfstream&);
 
     // assignement operator
     rfstream& operator=(const rfstream&);
 
-    rfstream(const std::string&, const int = O_RDONLY);
+    explicit rfstream(const std::string&, const int = O_RDONLY);
 
     void open(const std::string&, const int = O_RDONLY);
 
@@ -60,7 +60,7 @@ namespace tfel::system {
 
     [[nodiscard]] int getFileDescriptor() const;
 
-    //! \brief destructor
+    //! \brief \brief destructor
     ~rfstream();
 
   };  // end of struct basic_wstream

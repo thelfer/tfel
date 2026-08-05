@@ -2787,7 +2787,7 @@ namespace mfront {
                                             bv) {
         auto checkVariable = [this, &bdata, &bv](const VariableDescription& v,
                                                  const bool materialProperty) {
-          const auto& osource = [this, &bdata, &bv,
+          const auto& osource = [this, &bdata,
                                  &v]() -> std::optional<VariableDescription> {
             if (this->isGradientExternalName(v.getExternalName())) {
               return this->getGradientByExternalName(v.getExternalName());
@@ -2864,7 +2864,7 @@ namespace mfront {
                   "variable ");
             }
           }
-          auto report = [&v, &osource, &bv](const std::string_view& reason) {
+          auto report = [&osource, &bv](const std::string_view& reason) {
             tfel::raise("The sourve variable '" + osource->name +
                         "' declared by behaviour variable '" + bv.name +
                         "' is not compatible with the variable declared by the "

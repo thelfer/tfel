@@ -176,6 +176,7 @@ namespace tfel::math {
      * Id2 is the identity tensor
      */
     TFEL_HOST_DEVICE static constexpr auto K() noexcept;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \brief constructor from a t2tost2
      * \param[in] v : values
@@ -196,6 +197,7 @@ namespace tfel::math {
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(t2tot2,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     //! exposing GenericFixedSizeArray access operator
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

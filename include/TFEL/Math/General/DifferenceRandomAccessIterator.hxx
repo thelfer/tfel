@@ -46,33 +46,35 @@ namespace tfel::math {
      * variables and we can not change this easily.
      */
     struct proxy {
-      //! a simple alias
+      //! \brief a simple alias
       using traits = std::iterator_traits<iterator_base>;
-      //! a simple alias
+      //! \brief a simple alias
       using value_type = typename traits::value_type;
       /*! default construtor
        * \param[in] p_ : value of the DifferenceRandomAccessIterator
        */
-      proxy(const DifferenceRandomAccessIterator p_) : p(p_) {}
-      //! move construtor
+      explicit proxy(const DifferenceRandomAccessIterator p_) : p(p_) {}
+      //! \brief move construtor
       proxy(proxy&&) = default;
-      //! copy construtor
+      //! \brief copy construtor
       proxy(const proxy&) = default;
-      //! move assignement
+      //! \brief move assignement
       proxy& operator=(proxy&&) = default;
-      //! standard assignement
+      //! \brief standard assignement
       proxy& operator=(const proxy&) = default;
-      //! implicit conversion to value_type
+      // NOLINTBEGIN(google-explicit-constructor)
+      //! \brief implicit conversion to value_type
       inline operator const value_type() const {
         return *(p.first) - *(p.second);
       }
-      //! adress operator
+      // NOLINTEND(google-explicit-constructor)
+      //! \brief adress operator
       inline DifferenceRandomAccessIterator operator&() const { return p; }
 
      private:
       const DifferenceRandomAccessIterator p;
     };
-    //! a simple alias
+    //! \brief a simple alias
     using traits = std::iterator_traits<iterator_base>;
     /*!
      * \brief STL requirements
@@ -106,24 +108,24 @@ namespace tfel::math {
     explicit DifferenceRandomAccessIterator(const iterator_base i1,
                                             const iterator_base i2)
         : first(i1), second(i2) {}  // end of DifferenceRandomAccessIterator
-    //! default constructor
-    explicit DifferenceRandomAccessIterator()
+    //! \brief default constructor
+    DifferenceRandomAccessIterator()
         : first(iterator_base()), second(iterator_base()) {}
-    //! move constructor
+    //! \brief move constructor
     DifferenceRandomAccessIterator(DifferenceRandomAccessIterator&&) = default;
-    //! copy constructor
+    //! \brief copy constructor
     DifferenceRandomAccessIterator(const DifferenceRandomAccessIterator&) =
         default;
-    //! move assignement
+    //! \brief move assignement
     DifferenceRandomAccessIterator& operator=(
         DifferenceRandomAccessIterator&&) = default;
-    //! standard assignement
+    //! \brief standard assignement
     DifferenceRandomAccessIterator& operator=(
         const DifferenceRandomAccessIterator&) = default;
-    //! dereference operator
-    proxy operator*() const { return {*this}; }
-    //! access operator
-    proxy operator[](const difference_type n) const { return {*this + n}; }
+    //! \brief dereference operator
+    auto operator*() const { return proxy{*this}; }
+    //! \brief access operator
+    auto operator[](const difference_type n) const { return proxy{*this + n}; }
 
     DifferenceRandomAccessIterator operator++() {
       std::advance(this->first, 1);
@@ -171,9 +173,9 @@ namespace tfel::math {
       return d;
     }  // end of operator==
    private:
-    //! first iterator of the operation
+    //! \brief first iterator of the operation
     iterator_base first;
-    //! second iterator of the operation
+    //! \brief second iterator of the operation
     iterator_base second;
   };
 

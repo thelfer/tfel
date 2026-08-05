@@ -40,7 +40,7 @@ namespace tfel::math {
   };  // end of Evaluator::TExpr
 
   struct Evaluator::TNegation final : public Evaluator::TExpr {
-    TNegation(std::shared_ptr<Evaluator::TExpr>);
+    explicit TNegation(std::shared_ptr<Evaluator::TExpr>);
     TNegation(TNegation&&) = default;
     TNegation(const TNegation&) = default;
     [[nodiscard]] bool isOperator() const override;
@@ -53,7 +53,7 @@ namespace tfel::math {
   };  // end of struct Evaluator::TNegation
 
   struct Evaluator::TOperator final : public Evaluator::TExpr {
-    TOperator(const std::string&);
+    explicit TOperator(const std::string&);
     TOperator(TOperator&&) = default;
     TOperator(const TOperator&) = default;
     [[nodiscard]] bool isOperator() const override;
@@ -88,7 +88,7 @@ namespace tfel::math {
   };  // end of struct Evaluator::TLogicalExpr
 
   struct Evaluator::TNegLogicalExpr final : public Evaluator::TLogicalExpr {
-    TNegLogicalExpr(const std::shared_ptr<Evaluator::TLogicalExpr>);
+    explicit TNegLogicalExpr(const std::shared_ptr<Evaluator::TLogicalExpr>);
     void reduce() override;
     [[nodiscard]] parser::LogicalExprPtr analyse() override;
     ~TNegLogicalExpr() override;

@@ -23,7 +23,7 @@ namespace tfel::math::parser {
 
   struct TFELMATHPARSER_VISIBILITY_EXPORT ConstantExternalFunction final
       : public ExternalFunction {
-    ConstantExternalFunction(const double);
+    explicit ConstantExternalFunction(const double);
     //
     ConstantExternalFunction& operator=(const ConstantExternalFunction&) =
         delete;

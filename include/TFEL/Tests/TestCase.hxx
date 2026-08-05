@@ -197,7 +197,7 @@ namespace tfel::tests {
      * \brief constructor
      * \param[in] n: name  of the test
      */
-    TestCase(const std::string&);
+    explicit TestCase(const std::string&);
     /*!
      * \brief constructor
      * \param[in] g: group of the test

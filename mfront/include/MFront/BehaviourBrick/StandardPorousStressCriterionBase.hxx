@@ -43,7 +43,7 @@ namespace mfront::bbrick {
      * \brief constructor
      * \param[in] n: name of the stress criterion
      */
-    StandardPorousStressCriterionBase(const std::string& n);
+    explicit StandardPorousStressCriterionBase(const std::string& n);
     //
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
