@@ -64,6 +64,24 @@ struct STensorTestComponents final : public tfel::tests::TestCase {
     setComponent<stress, stress>(sig, 1, 0, stress(1e9));
     TFEL_TESTS_ASSERT(my_abs(stress(1e9) - sig(3) / sqrt2) < 1e9 * seps);
 
+    // generateIdComponent(i) must match Id()(i) value-for-value,
+    // for every Voigt index, in every supported space dimension.
+    constexpr auto Id3D = stensor<3u, double>::Id();
+    for (unsigned short i = 0; i < 6; ++i) {
+      TFEL_TESTS_ASSERT(
+          my_abs(stensor<3u, double>::generateIdComponent(i) - Id3D(i)) < eps);
+    }
+    constexpr auto Id2D = stensor<2u, double>::Id();
+    for (unsigned short i = 0; i < 4; ++i) {
+      TFEL_TESTS_ASSERT(
+          my_abs(stensor<2u, double>::generateIdComponent(i) - Id2D(i)) < eps);
+    }
+    constexpr auto Id1D = stensor<1u, double>::Id();
+    for (unsigned short i = 0; i < 3; ++i) {
+      TFEL_TESTS_ASSERT(
+          my_abs(stensor<1u, double>::generateIdComponent(i) - Id1D(i)) < eps);
+    }
+
     return this->result;
   }  // end of execute
 };

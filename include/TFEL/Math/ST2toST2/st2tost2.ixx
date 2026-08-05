@@ -94,7 +94,7 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::fromRotationMatrix
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::Id() noexcept {
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::Id() noexcept {
     constexpr auto c0 = T{0};
     constexpr auto c1 = T{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -118,7 +118,15 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::Id
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::IxI() noexcept {
+  TFEL_HOST_DEVICE constexpr T st2tost2<N, T>::generateIdComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c1 = T{1};
+    return c1 * (i == j);
+  }  // end of st2tost2<N,T>::generateIdComponent
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::IxI() noexcept {
     constexpr auto c1 = T{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
@@ -143,7 +151,15 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::Id
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::K() noexcept {
+  TFEL_HOST_DEVICE constexpr T st2tost2<N, T>::generateIxIComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c1 = T{1};
+    return c1 * ((i < 3) & (j < 3));
+  }  // end of st2tost2<N,T>::generateIxIComponent
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::K() noexcept {
     constexpr auto c2_3 = T{2} / T{3};
     constexpr auto mc1_3 = -T{1} / T{3};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -171,7 +187,18 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::K
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::M() noexcept {
+  TFEL_HOST_DEVICE constexpr T st2tost2<N, T>::generateKComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c2_3 = T{2} / T{3};
+    constexpr auto c1_3 = T{1} / T{3};
+    return c2_3 * (i == j) * ((i < 3) & (j < 3)) +
+                  (i == j) * ((i >= 3) & (j >= 3)) -
+           c1_3 * (1 - (i == j)) * ((i < 3) & (j < 3));
+  }  // end of st2tost2<N,T>::generateKComponent
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::M() noexcept {
     constexpr auto c1 = T{1};
     constexpr auto mc1_2 = -T{1} / T{2};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -199,7 +226,18 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::M
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::J() noexcept {
+  TFEL_HOST_DEVICE constexpr T st2tost2<N, T>::generateMComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c3_2 = T{3} / T{2};
+    constexpr auto c1_2 = T{1} / T{2};
+    return c3_2 * (i == j) *
+               (((i < 3) & (j < 3)) | ((i >= 3) & (j >= 3))) -
+           c1_2 * ((i < 3) & (j < 3));
+  }  // end of st2tost2<N,T>::generateMComponent
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::J() noexcept {
     constexpr auto c1_3 = T{1} / T{3};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
@@ -222,6 +260,14 @@ namespace tfel::math {
               c0,   c0,   c0,   c0, c0, c0};
     }
   }  // end of st2tost2<N,T>::J
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr T st2tost2<N, T>::generateJComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c1_3 = T{1} / T{3};
+    return c1_3 * ((i < 3) & (j < 3));
+  }  // end of st2tost2<N,T>::generateJComponent
 
   template <typename NumType, typename T>
   TFEL_HOST_DEVICE constexpr void setComponent(ST2toST2Concept auto& A,
