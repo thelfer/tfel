@@ -31,8 +31,10 @@ namespace tfel::math {
         public MutableArraySTLCompatibilityLayer<Child, ArrayPolicy> {
     //! \brief default constructor
     MutableRuntimeArrayBase() = default;
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief constructor from an indexing policy
     MutableRuntimeArrayBase(const typename ArrayPolicy::IndexingPolicy&);
+    // NOLINTEND(google-explicit-constructor)
     //! \brief copy constructor
     MutableRuntimeArrayBase(const MutableRuntimeArrayBase&) = default;
     //! \brief move constructor

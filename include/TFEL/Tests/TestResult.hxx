@@ -32,7 +32,7 @@ namespace tfel::tests {
      * \brief constructor
      * \param[in] b: tells if the test is a success
      */
-    TestResult(const bool);
+    explicit TestResult(const bool);
     /*!
      * \brief constructor
      * \param[in] b: tells if the test is a success

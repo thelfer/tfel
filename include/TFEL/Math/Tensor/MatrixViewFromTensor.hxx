@@ -46,7 +46,9 @@ namespace tfel::math {
       return RunTimeProperties();
     }
 
+    // NOLINTBEGIN(google-explicit-constructor)
     Expr(TensorType t_) : t(t_) {}  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
 
     [[nodiscard]] NumType operator()(const unsigned short i,
                                      const unsigned short j) const {

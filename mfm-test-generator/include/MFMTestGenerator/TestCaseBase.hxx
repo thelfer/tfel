@@ -28,7 +28,7 @@ namespace mfmtg {
      * \brief constructor
      * \param[in] p: parameters
      */
-    TestCaseBase(const TestCaseParameters&);
+    explicit TestCaseBase(const TestCaseParameters&);
     void addInputFileGenerator(const generator&) override;
     void generate() const override;
     //! \brief destructor

@@ -35,7 +35,8 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \param nindices number of indices                      */
     //===========================================================
-    IDirection(size_type nindices) : _index(std::vector<int>(nindices, 0)) {}
+    explicit IDirection(size_type nindices)
+        : _index(std::vector<int>(nindices, 0)) {}
 
     //===========================================================
     // IDirection::IDirection

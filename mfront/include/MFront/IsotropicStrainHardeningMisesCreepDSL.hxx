@@ -29,7 +29,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    IsotropicStrainHardeningMisesCreepDSL(const DSLOptions&);
+    explicit IsotropicStrainHardeningMisesCreepDSL(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

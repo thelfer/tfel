@@ -29,7 +29,7 @@ namespace tfel::math {
     Permutation& operator=(const Permutation&) = delete;
     //! default constructor
     TFEL_MATH_INLINE
-    Permutation(const typename vector<T>::size_type);
+    explicit Permutation(const typename vector<T>::size_type);
     /*!
      * \brief set this permutation vector to be equal to the
      * identity

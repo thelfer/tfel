@@ -32,10 +32,12 @@ namespace tfel::math {
     //! \brief a simple alias
     using GenericRuntimeArrayBase =
         GenericRuntimeArray<vector, RuntimeVectorArrayPolicy<ValueType>>;
+    // NOLINTBEGIN(google-explicit-constructor)
     // inheriting constructors
     TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(vector, GenericRuntimeArrayBase);
-    //!
+    //! \brief constructor
     vector(const typename vector::size_type, const ValueType& = ValueType{});
+    // NOLINTEND(google-explicit-constructor)
     //!
     template <typename InputIterator>
     vector(const InputIterator, const InputIterator);

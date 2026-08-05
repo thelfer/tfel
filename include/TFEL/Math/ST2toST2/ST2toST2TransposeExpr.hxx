@@ -57,7 +57,8 @@ namespace tfel::math {
      * \param[in] i: row number
      * \param[in] j: colum number
      */
-    TFEL_HOST_DEVICE constexpr ST2toST2TransposeExpr(A l) noexcept : a(l) {}
+    TFEL_HOST_DEVICE constexpr explicit ST2toST2TransposeExpr(A l) noexcept
+        : a(l) {}
     /*!
      * \brief access operator
      * \param[in] i: row number

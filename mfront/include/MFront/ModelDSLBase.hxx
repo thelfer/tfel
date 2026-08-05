@@ -66,7 +66,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    ModelDSLBase(const DSLOptions&);
+    explicit ModelDSLBase(const DSLOptions&);
 
     virtual void analyse();
 

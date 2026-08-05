@@ -117,8 +117,10 @@ namespace tfel::math {
         stensor<N, ValueType>,
         FixedSizeVectorPolicy<StensorDimeToSize<N>::value, ValueType>>;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(stensor,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

@@ -35,10 +35,11 @@ namespace tfel::math {
             Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 1u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] B : second tensor of the product
      */
@@ -55,6 +56,7 @@ namespace tfel::math {
       this->v[3] = this->v[5] = value_type(0);
       this->v[6] = this->v[7] = value_type(0);
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
@@ -111,10 +113,11 @@ namespace tfel::math {
             Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<2u>>>,
         public array_holder<25u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 2u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] B : second tensor of the product
      */
@@ -150,6 +153,7 @@ namespace tfel::math {
       this->v[23] = value_type(0);
       this->v[24] = B[0];
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
@@ -221,10 +225,11 @@ namespace tfel::math {
             Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<3u>>>,
         public array_holder<81u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 3u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] B : second tensor of the product
      */
@@ -280,6 +285,7 @@ namespace tfel::math {
       this->v[72] = this->v[73] = this->v[75] = this->v[76] = this->v[77] =
           this->v[79] = value_type(0);
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor

@@ -36,8 +36,10 @@ namespace tfel::math {
     using GenericRuntimeArrayBase =
         GenericRuntimeArray<matrix,
                             RuntimeRowMajorMatrixArrayPolicy<ValueType>>;
+    // NOLINTBEGIN(google-explicit-constructor)
     // inheriting constructors
     TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(matrix, GenericRuntimeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief constructor
      * \param[in] n: number of rows

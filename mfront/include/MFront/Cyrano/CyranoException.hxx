@@ -24,7 +24,7 @@ namespace cyrano {
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoException
       : public std::exception {
-    CyranoException(const std::string&);
+    explicit CyranoException(const std::string&);
     CyranoException(const CyranoException&);
     //
     CyranoException() = delete;
@@ -42,7 +42,7 @@ namespace cyrano {
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoIntegrationFailed final
       : public CyranoException {
     CyranoIntegrationFailed();
-    CyranoIntegrationFailed(const std::string&);
+    explicit CyranoIntegrationFailed(const std::string&);
     CyranoIntegrationFailed(const CyranoIntegrationFailed&);
     CyranoIntegrationFailed& operator=(const CyranoIntegrationFailed&) = delete;
     ~CyranoIntegrationFailed() noexcept override;
@@ -50,7 +50,7 @@ namespace cyrano {
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInvalidNTENSValue final
       : public CyranoException {
-    CyranoInvalidNTENSValue(const unsigned short);
+    explicit CyranoInvalidNTENSValue(const unsigned short);
     CyranoInvalidNTENSValue(const CyranoInvalidNTENSValue&);
     //
     CyranoInvalidNTENSValue() = delete;
@@ -61,7 +61,7 @@ namespace cyrano {
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInvalidDimension final
       : public CyranoException {
-    CyranoInvalidDimension(const std::string&, const unsigned short);
+    explicit CyranoInvalidDimension(const std::string&, const unsigned short);
     CyranoInvalidDimension(const CyranoInvalidDimension&);
     //
     CyranoInvalidDimension() = delete;

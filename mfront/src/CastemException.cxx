@@ -29,8 +29,8 @@ namespace std {
 
 namespace castem {
 
-  CastemException::CastemException(const std::string& s)
-      : msg(s) {}  // end of CastemException::CastemException
+  CastemException::CastemException(std::string s)
+      : msg(std::move(s)) {}  // end of CastemException::CastemException
 
   const char* CastemException::what() const noexcept {
     return msg.c_str();

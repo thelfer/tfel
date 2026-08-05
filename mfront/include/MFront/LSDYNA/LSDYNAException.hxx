@@ -27,7 +27,7 @@ namespace lsdyna {
    */
   struct MFRONT_LSDYNA_VISIBILITY_EXPORT LSDYNAException
       : public std::exception {
-    LSDYNAException(const std::string&);
+    explicit LSDYNAException(std::string);
     //! \brief move constructor
     LSDYNAException(LSDYNAException&&) noexcept;
     //! \brief copy constructor
@@ -55,7 +55,7 @@ namespace lsdyna {
     /*!
      * \param[in] b : behaviour name
      */
-    LSDYNAInvalidModellingHypothesis(const char*);
+    explicit LSDYNAInvalidModellingHypothesis(const char*);
     //! \brief move constructor
     LSDYNAInvalidModellingHypothesis(
         LSDYNAInvalidModellingHypothesis&&) noexcept;
@@ -72,7 +72,7 @@ namespace lsdyna {
    */
   struct MFRONT_LSDYNA_VISIBILITY_EXPORT LSDYNAInvalidNTENSValue
       : public LSDYNAException {
-    LSDYNAInvalidNTENSValue(const unsigned short);
+    explicit LSDYNAInvalidNTENSValue(const unsigned short);
     //! \brief move constructor
     LSDYNAInvalidNTENSValue(LSDYNAInvalidNTENSValue&&) noexcept;
     //! \brief copy constructor

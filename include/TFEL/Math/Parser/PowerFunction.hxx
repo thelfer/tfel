@@ -32,7 +32,7 @@ namespace tfel::math::parser {
      * \brief constructor
      * \param[in] e: expression
      */
-    PowerFunction(const std::shared_ptr<Expr>) noexcept;
+    explicit PowerFunction(const std::shared_ptr<Expr>) noexcept;
     //
     PowerFunction& operator=(const PowerFunction&) = delete;
     PowerFunction& operator=(PowerFunction&&) = delete;

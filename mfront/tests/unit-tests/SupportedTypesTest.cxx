@@ -137,8 +137,9 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
       TFEL_TESTS_CHECK_THROW(mfront::SupportedTypes::getTypeSize(v1),
                              std::runtime_error);
     };
-    check("Stensor", SupportedTypes::STENSOR);
-    check("derivative_type<Stensor,real>", SupportedTypes::STENSOR);
+    check("Stensor", SupportedTypes::TypeSize{SupportedTypes::STENSOR});
+    check("derivative_type<Stensor,real>",
+          SupportedTypes::TypeSize{SupportedTypes::STENSOR});
     check("Stensor4", SupportedTypes::TypeSize::buildFromExponents(0u, 2u, 0u));
     check("tfel::math::st2tost2<N,real>",
           SupportedTypes::TypeSize::buildFromExponents(0u, 2u, 0u));

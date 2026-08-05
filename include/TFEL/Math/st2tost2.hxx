@@ -174,6 +174,7 @@ namespace tfel::math {
     static constexpr st2tost2 M() noexcept;
     static constexpr st2tost2 J() noexcept;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(st2tost2,
                                                GenericFixedSizeArrayBase);
     /*!
@@ -185,6 +186,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr st2tost2(ValueType const (&... arrays)[d])  //
         requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
                  ((d == StensorDimeToSize<N>::value) && ...));
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

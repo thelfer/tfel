@@ -67,8 +67,10 @@ namespace tfel::glossary {
     //! \return the upper physical bound, if defined
     [[nodiscard]] std::string getUpperPhysicalBound(
         const std::string_view) const;
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief cast operator to string. Equivalent to getKey()
     [[nodiscard]] operator const std::string&() const;
+    // NOLINTEND(google-explicit-constructor)
     //
     // note that export symbols are required for Microsoft's compiler
     TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT

@@ -21,7 +21,7 @@
 namespace tfel::math::parser {
 
   struct Negation final : public Expr {
-    Negation(const std::shared_ptr<Expr>);
+    explicit Negation(const std::shared_ptr<Expr>);
     //
     Negation& operator=(const Negation&) = delete;
     Negation& operator=(Negation&&) = delete;

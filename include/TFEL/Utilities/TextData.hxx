@@ -52,7 +52,7 @@ namespace tfel::utilities {
      *   used:
      *   set key autotitle columnhead
      */
-    TextData(const std::string&, const std::string& = "");
+    explicit TextData(const std::string&, const std::string& = "");
     //
     TextData() = delete;
     TextData(TextData&&) = delete;
