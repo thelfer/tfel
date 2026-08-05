@@ -6,7 +6,7 @@
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-nvhpc-gpu.json ../Inconel600_YoungModulus-qt.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-nvhpc-gpu.json ../UO2_YoungModulus_Martin1989.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-stlpar-parunseq-nvhpc-gpu.json";
-@Command "@TFEL_NVHPC_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native -stdpar=gpu --std=c++@TFEL_CXX_STANDARD@ ../test-stlpar.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
+@Command "@TFEL_NVHPC_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native -stdpar=gpu --std=c++@TFEL_CXX_STANDARD@ ../test-stlpar.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelUO2-stlpar -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
 @Command "./test-stlpar test-stlpar-parunseq-nvhpc";
 
 @CleanFiles {"test-stlpar"};

@@ -19,6 +19,7 @@
 #include "PoissonRatioTest-generic-parallel-sycl.hxx"
 #include "Inconel600_YoungModulus-generic-parallel-sycl.hxx"
 #include "Inconel600_YoungModulus_qt-generic-parallel-sycl.hxx"
+#include "UO2_YoungModulus_Martin1989-generic-parallel-sycl.hxx"
 
 struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
   Iconel600YoungModulusTest()
@@ -37,6 +38,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     this->test8();
     this->test9();
     this->test10();
+    this->test11();
     return this->result;
   }  // end of execute
 
@@ -428,6 +430,43 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     to_host(nu, d_nu2, Q);
     TFEL_TESTS_ASSERT(std::abs(nu[0] - 0.39991) < eps);
   }
+
+  void test11() {
+    constexpr auto eps = double{1e-2};
+    //
+    auto young = [](const double T, const double f) {
+      constexpr auto E0 = 2.2693e11;
+      constexpr auto dE_dT = -1.53994698e7;
+      constexpr auto d2E_dT2 = -1.9198278e4;
+      constexpr auto f0 = 0.4;
+      return (1 - f / f0) * (E0 + dE_dT * T + (d2E_dT2 / 2) * T * T);
+    };
+    //
+    auto output = mfront_gmp_OutputStatus{};
+    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+    //
+    auto Q = sycl::queue{sycl::gpu_selector_v};
+    auto E = usm_vector(4, Q);
+    const auto T = usm_vector({300, 500, 300, 800}, Q);
+    const auto f = usm_vector({0, 0.1, 0.15, 0.12}, Q);
+    //
+    auto d_E = to_device(E, Q);
+    auto d_T = to_device(T, Q);
+    auto d_f = to_device(f, Q);
+    //
+    const auto args = std::array<const double *, 2u>{d_T.get(), d_f.get()};
+    const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1,1};
+    UO2_YoungModulus_Martin1989(&output, d_E.get(), 1, &Q, args.data(),
+                                args_strides.data(), args.size(), 4, policy);
+    to_host(E, d_E, Q);
+    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
+    for (std::size_t i = 0; i != E.size(); ++i) {
+      TFEL_TESTS_ASSERT(std::abs(E[i] - young(T[i], f[i])) < eps);
+    }
+  }
+
 };
 
 TFEL_TESTS_GENERATE_PROXY(Iconel600YoungModulusTest,

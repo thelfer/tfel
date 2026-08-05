@@ -6,7 +6,7 @@
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-cuda-nvcc.json ../Inconel600_YoungModulus-qt.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-cuda-nvcc.json ../UO2_YoungModulus_Martin1989.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-cuda-nvcc.json";
-@Command "@TFEL_NVCC_COMPILER@ -O3 --std=c++@TFEL_CXX_STANDARD@ -I @TFEL_INCLUDE_DIR@ -I include ../test-cuda.cu -o test-cuda -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-cuda -lGenericParallelMaterialLaw-cuda";
+@Command "@TFEL_NVCC_COMPILER@ -O3 --std=c++@TFEL_CXX_STANDARD@ -I @TFEL_INCLUDE_DIR@ -I include ../test-cuda.cu -o test-cuda -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelUO2-cuda -lGenericParallelInconel600-cuda -lGenericParallelMaterialLaw-cuda";
 @Command "./test-cuda test-cuda-nvcc";
 
 @CleanDirectories {"include", "src"};

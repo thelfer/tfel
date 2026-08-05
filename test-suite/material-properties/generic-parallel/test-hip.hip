@@ -21,6 +21,7 @@
 #include "PoissonRatioTest-generic-parallel-hip.hxx"
 #include "Inconel600_YoungModulus-generic-parallel-hip.hxx"
 #include "Inconel600_YoungModulus_qt-generic-parallel-hip.hxx"
+#include "UO2_YoungModulus_Martin1989-generic-parallel-hip.hxx"
 
 [[nodiscard]] std::unique_ptr<double, void (*)(double *const) noexcept>
 createManagedData(const std::size_t s) {
@@ -63,6 +64,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     this->test8();
     this->test9();
     this->test10();
+    this->test11();
     return this->result;
   }  // end of execute
 
@@ -337,6 +339,38 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     PoissonRatioTest2(&output, nu.get(), nullptr, 0, 1, policy);
     TFEL_TESTS_ASSERT(std::abs(*nu - 0.39991) < eps);
   }
+
+  void test11() {
+    constexpr auto eps = double{1e-2};
+    auto output = mfront_gmp_OutputStatus{};
+    //
+    auto young = [](const double T, const double f) {
+      constexpr auto E0 = 2.2693e11;
+      constexpr auto dE_dT = -1.53994698e7;
+      constexpr auto d2E_dT2 = -1.9198278e4;
+      constexpr auto f0 = 0.4;
+      return (1 - f / f0) * (E0 + dE_dT * T + (d2E_dT2 / 2) * T * T);
+    };
+    //
+    auto E = createManagedData(4);
+    const auto T = createManagedData({300, 500, 300, 800});
+    const auto f = createManagedData({0, 0.1, 0.15, 0.12});
+    //
+    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+    const auto args = std::array<const double *, 2u>{T.get(), f.get()};
+    const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1, 1};
+    UO2_YoungModulus_Martin1989(&output, E.get(), 1, args.data(),
+                                args_strides.data(), args.size(), 4, policy);
+    //
+    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
+    for (std::size_t i = 0; i != 4; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(getValue(E, i) -
+                                 young(getValue(T, i), getValue(f, i))) < eps);
+    }
+  }
+
 };
 
 TFEL_TESTS_GENERATE_PROXY(Iconel600YoungModulusTest,
