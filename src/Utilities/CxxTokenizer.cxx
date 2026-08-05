@@ -83,6 +83,10 @@ namespace tfel::utilities {
     this->dotAsSeparator = b;
   }  // end of CxxTokenizer::treatDotAsSeparator
 
+  void CxxTokenizer::treatPlusAsSeparator(const bool b) {
+    this->plusAsSeparator = b;
+  }  // end of CxxTokenizer::treatPlusAsSeparator
+
   void CxxTokenizer::treatMinusAsSeparator(const bool b) {
     this->minusAsSeparator = b;
   }  // end of CxxTokenizer::treatMinusAsSeparator
@@ -156,17 +160,24 @@ namespace tfel::utilities {
 
   struct is_separator {
     //! constructor
-    explicit is_separator(const bool bd, const bool bm, const bool ba)
+    explicit is_separator(const bool bd,
+                          const bool bp,
+                          const bool bm,
+                          const bool ba)
         : dot_as_separator(bd),
+          plus_as_separator(bp),
           minus_as_separator(bm),
           grave_accent_as_separator(ba) {}  // end of is_separator
     bool operator()(const std::string::value_type& c) const {
       using ctype = std::string::value_type;
       constexpr std::array<ctype, 24> s = {
           {'?', ';', '/', '!', '&', '*', '|', '{', '}',  '[',  ']', '(',
-           ')', '%', '=', '^', ',', ':', '<', '>', '\'', '\"', '+', '\\'}};
+           ')', '%', '=', '^', ',', ':', '<', '>', '\'', '\"', '\\'}};
       if (c == '.') {
         return this->dot_as_separator;
+      }
+      if (c == '+') {
+        return this->plus_as_separator;
       }
       if (c == '-') {
         return this->minus_as_separator;
@@ -179,13 +190,17 @@ namespace tfel::utilities {
 
    protected:
     bool dot_as_separator = true;
+    bool plus_as_separator = true;
     bool minus_as_separator = true;
     bool grave_accent_as_separator = true;
   };
 
   struct is_separator_or_space : public is_separator {
-    explicit is_separator_or_space(const bool bd, const bool bm, const bool ba)
-        : is_separator(bd, bm, ba) {}
+    explicit is_separator_or_space(const bool bd,
+                                   const bool bp,
+                                   const bool bm,
+                                   const bool ba)
+        : is_separator(bd, bp, bm, ba) {}
     bool operator()(const std::string::value_type& c) const {
       return ((std::isspace(c)) || (is_separator::operator()(c)));
     }
@@ -687,10 +702,11 @@ namespace tfel::utilities {
     advance(o, p, 1);
     ignore_space(o, p, pe);
     throw_if(p == pe, "lonely ‘#’");
-    auto pn = std::find_if(
-        p, pe,
-        is_separator_or_space(this->dotAsSeparator, this->minusAsSeparator,
-                              this->graveAccentAsSeparator));
+    auto pn =
+        std::find_if(p, pe,
+                     is_separator_or_space(
+                         this->dotAsSeparator, this->plusAsSeparator,
+                         this->minusAsSeparator, this->graveAccentAsSeparator));
     throw_if(p == pn, "unexpected token '" + std::string(1u, *p) + "'");
     const auto key = std::string{p, pn};
     throw_if(!is_preprocessor_keyword('#' + key),
@@ -807,7 +823,8 @@ namespace tfel::utilities {
           }
         } else if (((p == b) ||
                     (is_separator_or_space(
-                        this->dotAsSeparator, this->minusAsSeparator,
+                        this->dotAsSeparator, this->plusAsSeparator,
+                        this->minusAsSeparator,
                         this->graveAccentAsSeparator)(*(std::prev(p))))) &&
                    ((pn != pe) && ((*pn == '.') || (std::isdigit(*pn))))) {
           if (this->treatNumbers) {
@@ -852,7 +869,8 @@ namespace tfel::utilities {
         const auto as = findSeparator(p, pe, this->additional_separators);
         const auto pw = std::find_if(
             p, pe,
-            is_separator_or_space(this->dotAsSeparator, this->minusAsSeparator,
+            is_separator_or_space(this->dotAsSeparator, this->plusAsSeparator,
+                                  this->minusAsSeparator,
                                   this->graveAccentAsSeparator));
         if (as.first < pw) {
           if (as.first == p) {
@@ -1001,6 +1019,11 @@ namespace tfel::utilities {
   }
 
   bool CxxTokenizer::isValidIdentifier(std::string_view s, const bool b) {
+    return CxxTokenizer::isValidIdentifier(s, {.allowCxxKeywords = b});
+  }  // end of isValidIdentifier
+
+  bool CxxTokenizer::isValidIdentifier(std::string_view s,
+                                       const IsValidIdentifierOptions& opts) {
     if (s.empty()) {
       return false;
     }
@@ -1009,6 +1032,15 @@ namespace tfel::utilities {
       return false;
     }
     for (; p != s.end(); ++p) {
+      if ((*p == '+') && (opts.allowPlusSign)) {
+        continue;
+      }
+      if ((*p == '-') && (opts.allowMinusSign)) {
+        continue;
+      }
+      if ((*p == '.') && (opts.allowDotCharacter)) {
+        continue;
+      }
       if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_')) {
         return false;
       }
@@ -1016,7 +1048,7 @@ namespace tfel::utilities {
         return false;
       }
     }
-    if (b) {
+    if (!opts.allowCxxKeywords) {
       if (isReservedCxxKeywords(s)) {
         return false;
       }
@@ -1349,6 +1381,15 @@ namespace tfel::utilities {
   CxxTokenizer::size_type CxxTokenizer::size() const {
     return this->tokens.size();
   }  // end of CxxTokenizer::size
+
+  void CxxTokenizer::substitute(
+      const std::map<std::string, std::string>& substitutions) {
+    for (auto& token : this->tokens) {
+      for (const auto& [s1, s2] : substitutions) {
+        token.value = tfel::utilities::replace_all(token.value, s1, s2);
+      }
+    }
+  }  // end of substitute
 
   CxxTokenizer::~CxxTokenizer() = default;
 

@@ -83,6 +83,13 @@ namespace mfront {
 
   ExcelMaterialPropertyInterface::~ExcelMaterialPropertyInterface() = default;
 
+  void ExcelMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, ExcelMaterialPropertyInterface::tokens_iterator>
   ExcelMaterialPropertyInterface::treatKeyword(
       const std::string& k,

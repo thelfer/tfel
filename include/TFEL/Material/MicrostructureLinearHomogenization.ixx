@@ -163,6 +163,7 @@ namespace tfel::material::homogenization::elasticity {
           const std::vector<tfel::math::stensor<N, StressType>>&
               polarisations) {
     using real = tfel::types::real<StressType>;
+
     const auto np = micro.getNumberOfPhases();
     const auto f0 = micro.getMatrixFraction();
     const auto C0 = micro.getMatrixElasticity();

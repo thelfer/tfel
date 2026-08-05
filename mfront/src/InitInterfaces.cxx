@@ -19,6 +19,7 @@
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/MFrontBehaviourInterface.hxx"
 #include "MFront/GenericMaterialPropertyInterface.hxx"
+#include "MFront/GenericParallelMaterialPropertyInterface.hxx"
 #include "MFront/GenericBehaviourInterface.hxx"
 #include "MFront/GenericModelInterface.hxx"
 #include "MFront/CMaterialPropertyInterface.hxx"
@@ -48,10 +49,12 @@
 
 #ifdef HAVE_CASTEM
 #include "MFront/CastemMaterialPropertyInterface.hxx"
+#include "MFront/Castem21MaterialPropertyInterface.hxx"
 #include "MFront/CastemInterface.hxx"
 #include "MFront/Castem21Interface.hxx"
 #include "MFront/AmitexInterface.hxx"
 #include "MFront/CastemModelInterface.hxx"
+#include "MFront/Castem21ModelInterface.hxx"
 #endif
 
 #ifdef HAVE_CYRANO
@@ -146,10 +149,13 @@ namespace mfront {
 #endif /* HAVE_JAVA */
 
 #ifdef HAVE_CASTEM
-    const char* castemINames[6] = {"castem",   "Castem",   "Cast3M",
-                                   "castem21", "Castem21", "Cast3M21"};
+    const char* castemINames[3] = {"castem", "Castem", "Cast3M"};
     MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface>
-        castemLawProxy(castemINames, castemINames + 6);
+        castemLawProxy(castemINames, castemINames + 3);
+    const char* castem21INames[3] = {"castem21", "Castem21", "Cast3M21"};
+    MaterialPropertyInterfaceProxy<Castem21MaterialPropertyInterface>
+        castem21LawProxy(castem21INames, castem21INames + 3);
+
     const char* castemBNames[3] = {"umat", "Castem", "Cast3M"};
     BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,
                                                        castemBNames + 3);
@@ -160,15 +166,15 @@ namespace mfront {
     //
     BehaviourInterfaceProxy<AmitexInterface> amitexProxy;
     //
-    const char* castemINames2[6] = {"castem",   "Castem",   "Cast3M",
-                                    "castem21", "Castem21", "Cast3M21"};
-    ModelInterfaceProxy<CastemModelInterface> cmProxy(castemINames2,
-                                                      castemINames2 + 6);
+    ModelInterfaceProxy<CastemModelInterface> cmProxy(castemINames,
+                                                      castemINames + 3);
+    ModelInterfaceProxy<Castem21ModelInterface> cm21Proxy(castem21INames,
+                                                          castem21INames + 3);
 
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_CYRANO
-    const char* cyranoINames[3] = {"cyrano", "Cyrano"};
+    const char* cyranoINames[2] = {"cyrano", "Cyrano"};
     MaterialPropertyInterfaceProxy<CyranoMaterialPropertyInterface>
         cyranoLawProxy(cyranoINames, cyranoINames + 2);
     BehaviourInterfaceProxy<CyranoInterface> cyranoProxy;
@@ -208,6 +214,8 @@ namespace mfront {
 #endif /* HAVE_LSDYNA */
 
     MaterialPropertyInterfaceProxy<GenericMaterialPropertyInterface> gmpProxy;
+    MaterialPropertyInterfaceProxy<GenericParallelMaterialPropertyInterface>
+        pgmpProxy;
     BehaviourInterfaceProxy<GenericBehaviourInterface> gbProxy;
     ModelInterfaceProxy<GenericModelInterface> gmProxy;
 

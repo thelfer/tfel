@@ -1,0 +1,17 @@
+dsl_options: {
+  disable_runtime_checks: false
+},
+interfaces_options: {
+  generic-parallel: {
+    backend: {hip: {
+        number_of_threads_per_block: 64
+      }
+    }
+  }
+},
+compilation_options : {
+  hip: {
+    compiler: "@TFEL_HIPCC_COMPILER@",
+    compilation_flags: "@TFEL_HIPCC_FLAGS@ --compiler-options=-fPIC --std=c++@TFEL_CXX_STANDARD@ --expt-relaxed-constexpr -isystem @TFEL_HIP_INCLUDE_DIR@ -diag-suppress 20012"
+  }
+}

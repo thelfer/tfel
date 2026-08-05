@@ -31,6 +31,8 @@ namespace mfront {
     [[nodiscard]] static std::string getName();
     //! \brief constructor
     GenericModelInterface();
+	//
+    void setOptions(const DataMap &) override;
     //! \return the name of the generated library
     [[nodiscard]] std::string getLibraryName(const ModelDescription&) const;
     [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
@@ -38,11 +40,11 @@ namespace mfront {
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    void declareReservedNames(std::set<std::string>&) override;
-    void writeOutputFiles(const FileDescription&,
-                          const ModelDescription&) override;
-    void getTargetsDescription(TargetsDescription&,
-                               const ModelDescription&) override;
+    void declareReservedNames(std::set<std::string> &) override;
+    void writeOutputFiles(const FileDescription &,
+                          const ModelDescription &) override;
+    void getTargetsDescription(TargetsDescription &,
+                               const ModelDescription &) override;
     //! \brief destructor
     ~GenericModelInterface() override;
 
@@ -52,15 +54,15 @@ namespace mfront {
      * \param fd: file description
      * \param md: model description
      */
-    virtual void writeHeaderFile(const FileDescription&,
-                                 const ModelDescription&);
+    virtual void writeHeaderFile(const FileDescription &,
+                                 const ModelDescription &);
     /*!
      * \brief generate the source file
      * \param fd: file description
      * \param md: model description
      */
-    virtual void writeSourceFile(const FileDescription&,
-                                 const ModelDescription&);
+    virtual void writeSourceFile(const FileDescription &,
+                                 const ModelDescription &);
 
   };  // end of struct GenericModelInterface
 

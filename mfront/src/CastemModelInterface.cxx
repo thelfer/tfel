@@ -126,6 +126,13 @@ namespace mfront {
 
   CastemModelInterface::CastemModelInterface() = default;
 
+  void CastemModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::string CastemModelInterface::getLibraryName(
       const ModelDescription& md) const {
     if (md.library.empty()) {

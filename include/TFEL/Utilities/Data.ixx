@@ -90,7 +90,7 @@ namespace tfel::utilities::internals {
       }
       return true;
     }
-  };  // end of DataConvertor<std::vector<std::string>>
+  };  // end of DataConvertor<std::vector<T>>
 
   //! partial specialisation for `std::map`
   template <typename T>
@@ -138,7 +138,14 @@ namespace tfel::utilities {
        (tfel::meta::TLCountNbrOfT<std::decay_t<Type>, DataTypes>::value ==
         1))) {
     return this->addDataValidator(k, [](const Data& d) {
-      const auto b = (... || d.template is<Type>());
+      auto check = [&d]<typename T1>(){
+	if constexpr (std::same_as<T1, DataStructure>) {
+	    return DataStructure::is_convertible(d);
+	  } else {
+	  return d.template is<T1>();
+        }
+      };
+      const auto b = (... || check.template operator()<Type>());
       if (!b) {
         tfel::raise("invalid type");
       }

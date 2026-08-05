@@ -23,6 +23,7 @@ namespace mfront {
   struct MFrontPleiadesModelInterfaceBase : public AbstractModelInterface {
     MFrontPleiadesModelInterfaceBase();
     //
+    void setOptions(const DataMap& opts) override;
     void declareReservedNames(std::set<std::string>&) override;
     void getTargetsDescription(TargetsDescription&,
                                const ModelDescription&) override;

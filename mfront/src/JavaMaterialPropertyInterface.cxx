@@ -119,6 +119,13 @@ namespace mfront {
 
   JavaMaterialPropertyInterface::~JavaMaterialPropertyInterface() = default;
 
+  void JavaMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   void JavaMaterialPropertyInterface::getTargetsDescription(
       TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
     const auto lib = getMaterialLawLibraryNameBase(mpd) + "-java";
