@@ -24,7 +24,7 @@ namespace castem {
 
   struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemException
       : public std::exception {
-    CastemException(const std::string&);
+    explicit CastemException(std::string);
     CastemException(const CastemException&) = default;
     CastemException(CastemException&&) = default;
     [[nodiscard]] const char* what() const noexcept final;
@@ -37,7 +37,7 @@ namespace castem {
   struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemIntegrationFailed final
       : public CastemException {
     CastemIntegrationFailed();
-    CastemIntegrationFailed(const std::string&);
+    explicit CastemIntegrationFailed(const std::string&);
     CastemIntegrationFailed(const CastemIntegrationFailed&);
     CastemIntegrationFailed& operator=(const CastemIntegrationFailed&) = delete;
     ~CastemIntegrationFailed() noexcept override;
@@ -47,7 +47,7 @@ namespace castem {
 
   struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemInvalidNTENSValue final
       : public CastemException {
-    CastemInvalidNTENSValue(const unsigned short);
+    explicit CastemInvalidNTENSValue(const unsigned short);
     CastemInvalidNTENSValue(const CastemInvalidNTENSValue&);
     //
     CastemInvalidNTENSValue() = delete;

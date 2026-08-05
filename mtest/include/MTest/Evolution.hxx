@@ -67,7 +67,7 @@ namespace mtest {
      * constructor
      * \param[in] v : value of the evolution
      */
-    ConstantEvolution(const real);
+    explicit ConstantEvolution(const real);
     //
     ConstantEvolution& operator=(const ConstantEvolution&) = delete;
     ConstantEvolution& operator=(ConstantEvolution&&) = delete;

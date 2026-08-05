@@ -29,8 +29,8 @@
 namespace tfel::check {
 
   struct TFELCHECK_VISIBILITY_EXPORT Column {
-    Column(int);
-    Column(std::string);
+    explicit Column(int);
+    explicit Column(std::string);
     Column(Column&&) noexcept;
     Column(const Column&);
     Column& operator=(Column&&) noexcept;

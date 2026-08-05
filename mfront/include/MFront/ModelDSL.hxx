@@ -32,7 +32,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    ModelDSL(const DSLOptions&);
+    explicit ModelDSL(const DSLOptions&);
     /*!
      * \return a copy of the description of the model treated by the
      * dsl.

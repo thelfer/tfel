@@ -29,8 +29,8 @@ namespace std {
 
 namespace lsdyna {
 
-  LSDYNAException::LSDYNAException(const std::string& s)
-      : msg(s) {}  // end of LSDYNAException::LSDYNAException
+  LSDYNAException::LSDYNAException(std::string s)
+      : msg(std::move(s)) {}  // end of LSDYNAException::LSDYNAException
 
   LSDYNAException::LSDYNAException(LSDYNAException&&) noexcept = default;
 

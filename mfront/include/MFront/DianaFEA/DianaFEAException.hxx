@@ -27,7 +27,7 @@ namespace dianafea {
    */
   struct MFRONT_DIANAFEA_VISIBILITY_EXPORT DianaFEAException
       : public std::exception {
-    DianaFEAException(const std::string&);
+    explicit DianaFEAException(std::string);
     //! move constructor
     DianaFEAException(DianaFEAException&&) noexcept;
     //! copy constructor
@@ -55,7 +55,7 @@ namespace dianafea {
     /*!
      * \param[in] b : behaviour name
      */
-    DianaFEAInvalidModellingHypothesis(const char*);
+    explicit DianaFEAInvalidModellingHypothesis(const char*);
     //! move constructor
     DianaFEAInvalidModellingHypothesis(
         DianaFEAInvalidModellingHypothesis&&) noexcept;
@@ -65,7 +65,7 @@ namespace dianafea {
     //
     DianaFEAInvalidModellingHypothesis& operator=(
         const DianaFEAInvalidModellingHypothesis&) = delete;
-    //! destructor
+    //! \brief destructor
     ~DianaFEAInvalidModellingHypothesis() noexcept override;
   };  // end of struct DianaFEAInvalidModellingHypothesis
   /*!
@@ -74,7 +74,7 @@ namespace dianafea {
    */
   struct MFRONT_DIANAFEA_VISIBILITY_EXPORT DianaFEAInvalidNTENSValue final
       : public DianaFEAException {
-    DianaFEAInvalidNTENSValue(const unsigned short);
+    explicit DianaFEAInvalidNTENSValue(const unsigned short);
     //! move constructor
     DianaFEAInvalidNTENSValue(DianaFEAInvalidNTENSValue&&) noexcept;
     //! copy constructor

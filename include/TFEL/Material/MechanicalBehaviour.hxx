@@ -83,21 +83,26 @@ namespace tfel::material {
       //! \brief standard assignement
       constexpr IntegrationResult& operator=(
           const IntegrationResult&) noexcept = default;
+      // NOLINTBEGIN(google-explicit-constructor)
       /*!
        * \brief constructor from an ExitStatus
        */
-      TFEL_HOST_DEVICE constexpr IntegrationResult(const ExitStatus s) noexcept
+      TFEL_HOST_DEVICE constexpr explicit(false)
+          IntegrationResult(const ExitStatus s) noexcept
           : status(s) {}  // end of IntegrationResult
       /*!
        * \brief constructor from a boolean value
        */
-      TFEL_HOST_DEVICE constexpr IntegrationResult(const bool b) noexcept
+      TFEL_HOST_DEVICE constexpr explicit(false)
+          IntegrationResult(const bool b) noexcept
           : status(b ? SUCCESS : FAILURE) {}  // end of IntegrationResult
 
       //! \brief convertion operator to the ExistStatus enumeration
-      TFEL_HOST_DEVICE constexpr operator ExitStatus() const noexcept {
+      TFEL_HOST_DEVICE constexpr explicit(false) operator ExitStatus()
+          const noexcept {
         return this->status;
       }
+      // NOLINTEND(google-explicit-constructor)
       //! \brief destructor
       inline ~IntegrationResult() noexcept = default;
 

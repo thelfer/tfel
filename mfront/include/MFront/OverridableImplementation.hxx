@@ -85,7 +85,7 @@ namespace mfront {
      * \brief default construtor
      * \param[in] f: file
      */
-    OverridableImplementation(const std::string&);
+    explicit OverridableImplementation(const std::string&);
     /*!
      * \brief override the information associated with the given tag
      * tparam Tag: tag to the information that shall be overriden

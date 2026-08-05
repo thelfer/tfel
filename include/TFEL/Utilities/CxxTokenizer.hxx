@@ -230,12 +230,12 @@ namespace tfel::utilities {
      * \brief constructor with options
      * \param[in] o: options
      */
-    CxxTokenizer(const CxxTokenizerOptions &);
+    explicit CxxTokenizer(const CxxTokenizerOptions&);
     /*!
      * \brief constructor from a file
      * \param[in] f : file name
      */
-    CxxTokenizer(const std::string &);
+    explicit CxxTokenizer(const std::string&);
     /*!
      * \brief constructor from a file
      * \param[in] f : file name

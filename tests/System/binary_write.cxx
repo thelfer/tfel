@@ -33,7 +33,7 @@ struct BinaryReadWriteTest final : public tfel::tests::TestCase {
 
     int fd[2];
     if (::pipe(fd) != 0) {
-      return false;
+      return tfel::tests::TestResult{false};
     }
     // integers
     this->test(fd, false);

@@ -21,7 +21,7 @@ namespace tfel::system {
 
   template <typename F>
   struct ThreadPool::Wrapper {
-    Wrapper(F&& f_) : f(f_) {}
+    explicit Wrapper(F&& f_) : f(f_) {}
     template <typename... Args>
     ThreadedTaskResult<std::invoke_result_t<F, Args...>> operator()(
         Args&&... args) {

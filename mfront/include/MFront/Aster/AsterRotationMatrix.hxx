@@ -20,7 +20,7 @@
 namespace aster {
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterRotationMatrix2D {
-    AsterRotationMatrix2D(const AsterReal* const);
+    explicit AsterRotationMatrix2D(const AsterReal* const);
 
     // Compute stresses in the material space
     void rotateStressesForward(const AsterReal* const, AsterReal* const) const;
@@ -39,7 +39,7 @@ namespace aster {
   };  // end of struct AsterRotationMatrix2D
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterRotationMatrix3D {
-    AsterRotationMatrix3D(const AsterReal* const);
+    explicit AsterRotationMatrix3D(const AsterReal* const);
 
     // Compute stresses in the material space
     void rotateStressesForward(const AsterReal* const, AsterReal* const) const;

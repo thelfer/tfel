@@ -23,9 +23,11 @@ namespace tfel::system {
 
   template <typename Child, typename Traits>
   struct basic_wstream {
-    operator int();
+    // NOLINTBEGIN(google-explicit-constructor)
+    explicit(false) operator int();
 
-    operator int() const;
+    explicit(false) operator int() const;
+    // NOLINTEND(google-explicit-constructor)
 
     basic_wstream& operator<<(const char&);
 

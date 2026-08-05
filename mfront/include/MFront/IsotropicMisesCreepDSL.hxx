@@ -28,7 +28,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    IsotropicMisesCreepDSL(const DSLOptions&);
+    explicit IsotropicMisesCreepDSL(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

@@ -215,14 +215,14 @@ namespace mfront {
       auto expr =
           std::regex{*(q.material_filter),
                      q.regular_expression_syntax | std::regex_constants::icase};
-      filters.push_back([&elm, &q, r = expr](const EntryPoint& e) noexcept {
+      filters.push_back([&elm, r = expr](const EntryPoint& e) noexcept {
         return std::regex_match(elm.getMaterial(e.library, e.name), r);
       });
     }
     if (q.name_filter.has_value()) {
       auto expr = std::regex{*(q.name_filter), q.regular_expression_syntax |
                                                    std::regex_constants::icase};
-      filters.push_back([&q, r = expr](const EntryPoint& e) noexcept {
+      filters.push_back([r = expr](const EntryPoint& e) noexcept {
         return std::regex_match(e.name, r);
       });
     }

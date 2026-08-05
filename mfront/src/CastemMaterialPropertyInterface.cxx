@@ -387,7 +387,7 @@ namespace mfront {
         tfel::utilities::replace_all(
             tfel::utilities::tokenize(file, tfel::system::dirSeparator())
                 .back(),
-        "\\", "\\\\"));
+            "\\", "\\\\"));
 #else
     exportStringSymbol(
         out, name + "_src",

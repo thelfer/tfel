@@ -27,7 +27,7 @@ namespace calculix {
    */
   struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXException
       : public std::exception {
-    CalculiXException(const std::string&);
+    explicit CalculiXException(std::string);
     //! \brief move constructor
     CalculiXException(CalculiXException&&) noexcept;
     //! \brief copy constructor
@@ -55,7 +55,7 @@ namespace calculix {
     /*!
      * \param[in] b : behaviour name
      */
-    CalculiXInvalidModellingHypothesis(const char*);
+    explicit CalculiXInvalidModellingHypothesis(const char*);
     //! \brief move constructor
     CalculiXInvalidModellingHypothesis(
         CalculiXInvalidModellingHypothesis&&) noexcept;
@@ -74,7 +74,7 @@ namespace calculix {
    */
   struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidNTENSValue final
       : public CalculiXException {
-    CalculiXInvalidNTENSValue(const unsigned short);
+    explicit CalculiXInvalidNTENSValue(const unsigned short);
     //! \brief move constructor
     CalculiXInvalidNTENSValue(CalculiXInvalidNTENSValue&&) noexcept;
     //! \brief copy constructor

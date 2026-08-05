@@ -32,7 +32,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    ImplicitDSLBase(const DSLOptions&);
+    explicit ImplicitDSLBase(const DSLOptions&);
     /*!
      * \return the solver used to integrate the mechanical behaviour
      * \throw this methods throws is the solver is not defined yet.

@@ -48,7 +48,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    IsotropicBehaviourDSLBase(const DSLOptions&);
+    explicit IsotropicBehaviourDSLBase(const DSLOptions&);
     //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     void getSymbols(std::map<std::string, std::string>&,

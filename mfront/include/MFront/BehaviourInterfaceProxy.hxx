@@ -26,7 +26,7 @@ namespace mfront {
   struct BehaviourInterfaceProxy {
     BehaviourInterfaceProxy();
 
-    BehaviourInterfaceProxy(const std::string&);
+    explicit BehaviourInterfaceProxy(const std::string&);
 
     template <typename InputIterator>
     BehaviourInterfaceProxy(const InputIterator, const InputIterator);

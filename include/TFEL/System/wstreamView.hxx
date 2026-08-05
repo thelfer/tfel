@@ -33,7 +33,7 @@ namespace tfel::system {
   struct wstreamView
       : public basic_wstream<wstreamView<isBlocking>,
                              stream_traits<wstreamView<isBlocking>>> {
-    wstreamView(const int);
+    explicit wstreamView(const int);
 
     [[nodiscard]] int getFileDescriptor() const;
 

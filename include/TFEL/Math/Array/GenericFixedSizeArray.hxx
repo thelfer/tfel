@@ -150,6 +150,7 @@ namespace tfel::math {
         requires(std::is_same_v<
                  typename std::iterator_traits<InputIterator>::value_type,
                  base_type<value_type>>);
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \brief copy constructor from an object assignable to the `Child` class.
      * \param[in] src: source
@@ -161,6 +162,7 @@ namespace tfel::math {
         const OtherArray&) noexcept  //
         requires((isAssignableTo<OtherArray, Child>()) &&
                  (!std::is_same_v<OtherArray, Child>));
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \return the physical size used by the underlying array. This size must
      * be greater than than the logical number of elements contained in the

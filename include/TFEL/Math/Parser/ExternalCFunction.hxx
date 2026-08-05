@@ -167,7 +167,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<0u> final
       : public ExternalCFunctionBase<0u> {
     typedef tfel::system::CFunction0Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -181,7 +181,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<1u> final
       : public ExternalCFunctionBase<1u> {
     typedef tfel::system::CFunction1Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -195,7 +195,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<2u> final
       : public ExternalCFunctionBase<2u> {
     typedef tfel::system::CFunction2Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -209,7 +209,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<3u> final
       : public ExternalCFunctionBase<3u> {
     typedef tfel::system::CFunction3Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -223,7 +223,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<4u> final
       : public ExternalCFunctionBase<4u> {
     typedef tfel::system::CFunction4Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -237,7 +237,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<5u> final
       : public ExternalCFunctionBase<5u> {
     typedef tfel::system::CFunction5Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -251,7 +251,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<6u> final
       : public ExternalCFunctionBase<6u> {
     typedef tfel::system::CFunction6Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -265,7 +265,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<7u> final
       : public ExternalCFunctionBase<7u> {
     typedef tfel::system::CFunction7Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -279,7 +279,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<8u> final
       : public ExternalCFunctionBase<8u> {
     typedef tfel::system::CFunction8Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -293,7 +293,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<9u> final
       : public ExternalCFunctionBase<9u> {
     typedef tfel::system::CFunction9Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -307,7 +307,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<10u> final
       : public ExternalCFunctionBase<10u> {
     typedef tfel::system::CFunction10Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -321,7 +321,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<11u> final
       : public ExternalCFunctionBase<11u> {
     typedef tfel::system::CFunction11Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -335,7 +335,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<12u> final
       : public ExternalCFunctionBase<12u> {
     typedef tfel::system::CFunction12Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -349,7 +349,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<13u> final
       : public ExternalCFunctionBase<13u> {
     typedef tfel::system::CFunction13Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -363,7 +363,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<14u> final
       : public ExternalCFunctionBase<14u> {
     typedef tfel::system::CFunction14Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
@@ -377,7 +377,7 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunction<15u> final
       : public ExternalCFunctionBase<15u> {
     typedef tfel::system::CFunction15Ptr FunctionPtr;
-    ExternalCFunction(FunctionPtr);
+    explicit ExternalCFunction(FunctionPtr);
     //
     [[nodiscard]] double getValue() const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()

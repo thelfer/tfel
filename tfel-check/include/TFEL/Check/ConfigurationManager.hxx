@@ -39,7 +39,7 @@ namespace tfel::check {
      * \brief constructor from a configuration.
      * \param[in] src: configuration
      */
-    ConfigurationManager(const Configuration&);
+    explicit ConfigurationManager(const Configuration&);
     //! \brief move constructor
     ConfigurationManager(ConfigurationManager&&) noexcept;
     //! \brief copy constructor

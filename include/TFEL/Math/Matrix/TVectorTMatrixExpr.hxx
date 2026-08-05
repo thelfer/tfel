@@ -78,7 +78,8 @@ namespace tfel::math {
     struct VectorConstIterator {
       using VType = std::decay_t<A>;
       using NumType = numeric_type<VType>;
-      TFEL_HOST_DEVICE constexpr VectorConstIterator(const VType& v_) noexcept
+      TFEL_HOST_DEVICE constexpr explicit VectorConstIterator(
+          const VType& v_) noexcept
           : v(v_), i(0) {}
       TFEL_HOST_DEVICE constexpr VectorConstIterator& operator++() noexcept {
         ++i;

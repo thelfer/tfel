@@ -692,7 +692,7 @@ namespace tfel::system {
     const auto p2 = this->inputs.find(id);
     throw_if(p2 == this->inputs.end(),
              "no stream associated with pid " + std::to_string(id));
-    return {p2->second};
+    return wstream{p2->second};
   }  // end of ProcessManager::getInputStream
 
   ProcessManager::rstream ProcessManager::getOutputStream(
@@ -710,7 +710,7 @@ namespace tfel::system {
     const auto p2 = this->outputs.find(id);
     throw_if(p2 == this->outputs.end(),
              "no stream associated with pid " + std::to_string(id));
-    return {p2->second};
+    return rstream{p2->second};
   }  // end of ProcessManager::getOutputStream
 
   void ProcessManager::execute(const std::string& cmd,

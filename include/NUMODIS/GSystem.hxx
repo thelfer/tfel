@@ -39,7 +39,7 @@ namespace numodis {
     //-------------------------------------------------------------
     //! Constructor
     //=============================================================
-    GSystem(const unsigned size) : _iburgers(size), _iplane(size) {}
+    explicit GSystem(const unsigned size) : _iburgers(size), _iplane(size) {}
 
     //=============================================================
     // GSystem::GSystem

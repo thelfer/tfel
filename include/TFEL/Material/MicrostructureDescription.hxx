@@ -34,7 +34,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
                                               LengthType>()) struct Inclusion {
     std::array<LengthType, N> semiLengths;
-    Inclusion(std::array<LengthType, N> semiL) : semiLengths(semiL) {}
+    explicit Inclusion(std::array<LengthType, N> semiL) : semiLengths(semiL) {}
   };
 
   /*!
@@ -561,13 +561,14 @@ namespace tfel::material::homogenization::elasticity {
 
     ParticulateMicrostructure() = default;
 
-    ParticulateMicrostructure(const tfel::math::st2tost2<N, StressType>& C0)
+    explicit ParticulateMicrostructure(
+        const tfel::math::st2tost2<N, StressType>& C0)
         : Microstructure<N, StressType>(),
           number_of_phases(1),
           inclusion_phases{},
           matrix_phase(Phase<N, StressType>(real(1), C0)) {}
 
-    ParticulateMicrostructure(const IsotropicModuli<StressType>& IM0)
+    explicit ParticulateMicrostructure(const IsotropicModuli<StressType>& IM0)
         : Microstructure<N, StressType>(),
           number_of_phases(1),
           inclusion_phases{},

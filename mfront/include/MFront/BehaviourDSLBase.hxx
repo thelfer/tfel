@@ -35,7 +35,7 @@ namespace mfront {
      * \brief constructor
      * \param[in] opts: options passed to the DSL
      */
-    BehaviourDSLBase(const DSLOptions&);
+    explicit BehaviourDSLBase(const DSLOptions&);
     /*!
      * \brief associate a call-back to a member function of the derived class
      * (using CRTP).

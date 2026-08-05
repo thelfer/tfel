@@ -716,7 +716,7 @@ namespace mfront {
                                           const TypeFlag& f2) {
       auto N = getTensorialObjectSpaceDimension(t);
       if (N == 0) {
-        return TypeSize::getDerivativeSize(a, f1, f2);
+        return TypeSize::getDerivativeSize(a, TypeSize{f1}, TypeSize{f2});
       }
       const auto s1 = TypeSize(f1).getValueForDimension(N);
       const auto s2 = TypeSize(f2).getValueForDimension(N);
@@ -727,8 +727,8 @@ namespace mfront {
     if (std::find(st2tost2_alias.begin(), st2tost2_alias.end(), t.type) !=
         st2tost2_alias.end()) {
       SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
-      return TypeSize::getDerivativeSize(a, SupportedTypes::STENSOR,
-                                         SupportedTypes::STENSOR);
+      return TypeSize::getDerivativeSize(a, TypeSize{SupportedTypes::STENSOR},
+                                         TypeSize{SupportedTypes::STENSOR});
     }
     //
     if (t.type == "tfel::math::st2tost2") {
