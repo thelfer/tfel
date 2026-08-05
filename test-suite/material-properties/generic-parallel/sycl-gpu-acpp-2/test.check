@@ -4,6 +4,7 @@
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-sycl-default-acpp-2.json ../PoissonRatioTest.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-sycl-default-acpp-2.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-sycl-default-acpp-2.json ../Inconel600_YoungModulus-qt.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-sycl-default-acpp-2.json ../UO2_YoungModulus_Martin1989.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-sycl-default-acpp-2.json";
 
 @Command "@TFEL_ACPP_COMPILER@ -I @TFEL_INCLUDE_DIR@ -DTFEL_SYCL_DEVICE=1 -DTFEL_SYCL_USM_ALLOCATOR=1 -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-sycl-usm.cxx -o test-sycl-usm-1-1 -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-sycl -lGenericParallelMaterialLaw-sycl";
