@@ -18,48 +18,25 @@
 
 namespace mfront {
 
-  /*!
-   * \brief
-   */
+  //! \brief interface used internally by MFront
   struct MFrontModelInterface final : public AbstractModelInterface {
     //! \return the name of the interface
     static std::string getName();
-    //! constructor
+    //! \brief constructor
     MFrontModelInterface();
-    /*!
-     * \param[in]     k:  key being treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted
-     * \param[in,out] p:  iterator to the token after the key being treated
-     * \param[out]    pe: iterator past the end of the file
-     * \return a pair. The first member of the pair is true if the
-     * keyword was handled by interface. The second member of the pair
-     * is an iterator after the last token used to treat the keyword.
-     * pair.
-     */
+    //
+    void setOptions(const DataMap &) override;
     std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string&,
-        const std::vector<std::string>&,
+        const std::string &,
+        const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
-    /*!
-     * \param[out] names: reserved names
-     */
-    void declareReservedNames(std::set<std::string>&) override;
-    /*!
-     * \brief write the output files for the given model description
-     * \param[in] fd: file description
-     * \param[in] md: model description
-     */
-    void writeOutputFiles(const FileDescription&,
-                          const ModelDescription&) override;
-    /*!
-     * \brief : fill the target descripton
-     * \param[out] td: target description
-     * \param[in]  md: model description
-     */
-    void getTargetsDescription(TargetsDescription&,
-                               const ModelDescription&) override;
-    //! destructor
+    void declareReservedNames(std::set<std::string> &) override;
+    void writeOutputFiles(const FileDescription &,
+                          const ModelDescription &) override;
+    void getTargetsDescription(TargetsDescription &,
+                               const ModelDescription &) override;
+    //! \brief destructor
     ~MFrontModelInterface() override;
   };  // end of struct MFrontModelInterface
 

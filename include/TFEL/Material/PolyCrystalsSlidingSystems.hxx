@@ -36,8 +36,8 @@ namespace tfel::material {
     //! a simple alias
     typedef tfel::math::stensor<3u> StrainStensor;
     //! return the unique instance of the class
-    static const PolyCrystalsSlidingSystems& getPolyCrystalsSlidingSystems(
-        const std::string& = "");
+    static const PolyCrystalsSlidingSystems &getPolyCrystalsSlidingSystems(
+        const std::string & = "");
     //! tensor of directional senses, sorted by phases
     tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
 
@@ -47,15 +47,15 @@ namespace tfel::material {
      * by the getPolyCrystalsSlidingSystems method)
      * \param[in] f : file where the angles are declared
      */
-    PolyCrystalsSlidingSystems(const std::string&);
+    PolyCrystalsSlidingSystems(const std::string &);
     /*!
      * copy constructor (declared private to disable it)
      */
-    PolyCrystalsSlidingSystems(const PolyCrystalsSlidingSystems&);
+    PolyCrystalsSlidingSystems(const PolyCrystalsSlidingSystems &);
     /*!
      * assignement operatore (declared private to disable it)
      */
-    PolyCrystalsSlidingSystems& operator=(const PolyCrystalsSlidingSystems&);
+    PolyCrystalsSlidingSystems &operator=(const PolyCrystalsSlidingSystems &);
   };
 
   /*!
@@ -72,19 +72,21 @@ namespace tfel::material {
     typedef NumType real;
     typedef tfel::math::stensor<3u, real> StrainStensor;
 
-    static const ExtendedPolyCrystalsSlidingSystems&
-    getPolyCrystalsSlidingSystems(const std::string&);
+    static const ExtendedPolyCrystalsSlidingSystems &
+    getPolyCrystalsSlidingSystems(const std::string &);
+
     tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
 
     //! \brief volume fractions per phases
     tfel::math::vector<real> volume_fractions;
 
    private:
-    ExtendedPolyCrystalsSlidingSystems(const std::string&);
+
+   ExtendedPolyCrystalsSlidingSystems(const std::string &);
     ExtendedPolyCrystalsSlidingSystems(
-        const ExtendedPolyCrystalsSlidingSystems&);
-    ExtendedPolyCrystalsSlidingSystems& operator=(
-        const ExtendedPolyCrystalsSlidingSystems&);
+        const ExtendedPolyCrystalsSlidingSystems &);
+    ExtendedPolyCrystalsSlidingSystems &operator=(
+        const ExtendedPolyCrystalsSlidingSystems &);
   };
 
 }  // end of namespace tfel::material

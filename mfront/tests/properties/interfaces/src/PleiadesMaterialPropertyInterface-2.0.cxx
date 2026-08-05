@@ -36,6 +36,13 @@ namespace mfront {
     // @PACKAGE_VERSION@
   }
 
+  void PleiadesMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, PleiadesMaterialPropertyInterface::const_iterator>
   PleiadesMaterialPropertyInterface::treatKeyword(
       const std::string& k,

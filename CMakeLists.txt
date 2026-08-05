@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0022 NEW)
 cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0074 NEW)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
   cmake_policy(SET CMP0167 NEW)  
 endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
@@ -578,17 +579,10 @@ else(TFEL_APPEND_SUFFIX)
 endif(TFEL_APPEND_SUFFIX)
 
 # install test-suite
-if(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY test-suite
-    DESTINATION share/tfel-${TFEL_SUFFIX}/
-    COMPONENT code
-    PATTERN ".svn" EXCLUDE)
-else(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY test-suite
-    DESTINATION share/tfel/
-    COMPONENT code
-    PATTERN ".svn" EXCLUDE)
-endif(TFEL_APPEND_SUFFIX)
+install(DIRECTORY test-suite
+  DESTINATION ${TFEL_DATAROOTDIR}
+  COMPONENT code
+  PATTERN ".svn" EXCLUDE)
 
 set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})

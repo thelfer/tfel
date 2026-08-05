@@ -55,6 +55,12 @@ namespace mfront {
   }  // end of
      // MFrontPleiadesModelInterfaceBase::MFrontPleiadesModelInterfaceBase
 
+  void MFrontPleiadesModelInterfaceBase::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface");
+    }
+  }  // end of setOptions
+
   void MFrontPleiadesModelInterfaceBase::declareReservedNames(
       std::set<std::string>& v) {
     v.insert({"msg", "oss", "mesh", "nodes", "mesh", "node_k", "gnode_k", "dt",

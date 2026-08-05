@@ -142,6 +142,8 @@ namespace mfront {
      * option
      */
     virtual void treatInstallPath();
+    //! \brief treat the `--configuration-file` command line option
+    virtual void treatConfigurationFile();
     //! \brief treat the `--dsl-option` command line option
     virtual void treatDSLOption();
     //! \brief treat the `--material-property-dsl-option` command line option

@@ -24,6 +24,8 @@ namespace mfront {
       : AbstractBehaviourInterface {
     //
     [[nodiscard]] static std::string getName();
+    //
+    void setOptions(const DataMap &) override;
     [[nodiscard]] std::string getInterfaceName() const override;
     [[nodiscard]] std::string getInterfaceVersion() const override;
     [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
@@ -41,39 +43,39 @@ namespace mfront {
     buildMaterialPropertiesList(const BehaviourDescription&,
                                 const Hypothesis) const override;
     void writeInterfaceSpecificIncludes(
-        std::ostream&, const BehaviourDescription&) const override;
-    void exportMechanicalData(std::ostream&,
+        std::ostream &, const BehaviourDescription &) const override;
+    void exportMechanicalData(std::ostream &,
                               const Hypothesis,
-                              const BehaviourDescription&) const override;
-    void writeBehaviourConstructorHeader(std::ostream&,
-                                         const BehaviourDescription&,
+                              const BehaviourDescription &) const override;
+    void writeBehaviourConstructorHeader(std::ostream &,
+                                         const BehaviourDescription &,
                                          const Hypothesis,
-                                         const std::string&) const override;
-    void writeBehaviourConstructorBody(std::ostream&,
-                                       const BehaviourDescription&,
+                                         const std::string &) const override;
+    void writeBehaviourConstructorBody(std::ostream &,
+                                       const BehaviourDescription &,
                                        const Hypothesis) const override;
     void writeBehaviourDataConstructor(
-        std::ostream&,
+        std::ostream &,
         const Hypothesis,
-        const BehaviourDescription&) const override;
+        const BehaviourDescription &) const override;
     void writeBehaviourDataMainVariablesSetters(
-        std::ostream&, const BehaviourDescription&) const override;
+        std::ostream &, const BehaviourDescription &) const override;
     void writeIntegrationDataConstructor(
-        std::ostream&,
+        std::ostream &,
         const Hypothesis,
-        const BehaviourDescription&) const override;
+        const BehaviourDescription &) const override;
     void writeIntegrationDataMainVariablesSetters(
-        std::ostream&, const BehaviourDescription&) const override;
-    void writeBehaviourInitializeFunctions(std::ostream&,
-                                           const BehaviourDescription&,
+        std::ostream &, const BehaviourDescription &) const override;
+    void writeBehaviourInitializeFunctions(std::ostream &,
+                                           const BehaviourDescription &,
                                            const Hypothesis) const override;
-    void writeBehaviourPostProcessings(std::ostream&,
-                                       const BehaviourDescription&,
+    void writeBehaviourPostProcessings(std::ostream &,
+                                       const BehaviourDescription &,
                                        const Hypothesis) const override;
-    void endTreatment(const BehaviourDescription&,
-                      const FileDescription&) const override;
-    void getTargetsDescription(TargetsDescription&,
-                               const BehaviourDescription&) override;
+    void endTreatment(const BehaviourDescription &,
+                      const FileDescription &) const override;
+    void getTargetsDescription(TargetsDescription &,
+                               const BehaviourDescription &) override;
     //! \brief destructor
     ~MFrontBehaviourInterface() override;
   };  // end of AbstractBehaviourInterface

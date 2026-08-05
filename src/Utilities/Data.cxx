@@ -34,6 +34,51 @@ namespace tfel::utilities {
   DataStructure& DataStructure::operator=(DataStructure&&) noexcept = default;
   DataStructure::~DataStructure() = default;
 
+  bool DataStructure::is_convertible(const Data& d) noexcept {
+    if ((d.is<std::string>()) || (d.is<DataStructure>())) {
+      return true;
+    }
+    if (!d.is<DataMap>()) {
+      return false;
+    }
+    const auto& m = d.get<DataMap>();
+    if (m.size() != 1) {
+      return false;
+    }
+    return m.begin()->second.is<DataMap>();
+  }  // end of is_convertible
+
+  DataStructure DataStructure::convert(const Data& d) {
+    if (d.is<DataStructure>()) {
+      return d.get<DataStructure>();
+    }
+    if (d.is<std::string>()) {
+      auto r = DataStructure{};
+      r.name = d.get<std::string>();
+      return r;
+    }
+    if (!d.is<DataMap>()) {
+      tfel::raise(
+          "DataStructure::convert: given data is "
+          "not convertible to a data structure");
+    }
+    const auto& m = d.get<DataMap>();
+    if (m.size() != 1) {
+      tfel::raise(
+          "DataStructure::convert: given data is "
+          "not convertible to a data structure");
+    }
+    if (!m.begin()->second.is<DataMap>()) {
+      tfel::raise(
+          "DataStructure::convert: given data is "
+          "not convertible to a data structure");
+    }
+    auto r = DataStructure{};
+    r.name = m.begin()->first;
+    r.data = m.begin()->second.get<DataMap>();
+    return r;
+  }  // end of convert
+
   DataParsingOptions::DataParsingOptions() = default;
   DataParsingOptions::DataParsingOptions(const DataParsingOptions&) = default;
   DataParsingOptions::DataParsingOptions(DataParsingOptions&&) noexcept =
@@ -138,7 +183,9 @@ namespace tfel::utilities {
     } else if (p->flag == Token::String) {
       const auto name = CxxTokenizer::readString(p, pe);
       return readDataStructureOrString(name);
-    } else if (CxxTokenizer::isValidIdentifier(p->value)) {
+    } else if ((o.allowRawStrings) &&
+               (CxxTokenizer::isValidIdentifier(p->value,
+                                                o.rawStringParsingOptions))) {
       const auto name = p->value;
       ++p;
       return readDataStructureOrString(name);
@@ -149,9 +196,18 @@ namespace tfel::utilities {
       ++p;
       return {v};
     }
-    const auto r = convert<double>(p->value);
-    ++p;
-    return {r};
+    const auto r = [&p]() -> double {
+      auto value = double{};
+      try {
+        value = convert<double>(p->value);
+        ++p;
+      } catch (...) {
+        tfel::raise("Data::read_value: can't convert token '" + p->value +
+                    "' to a Data object");
+      }
+      return value;
+    }();
+    return Data{r};
   }
 
   Data Data::read_vector(CxxTokenizer::const_iterator& p,
@@ -352,6 +408,17 @@ namespace tfel::utilities {
       default;
   DataMapValidator& DataMapValidator::operator=(const DataMapValidator&) =
       default;
+
+  void DataMapValidator::addStrictlyPositiveIntegerCheck(const std::string& k) {
+    this->addDataValidator(k, [k](const Data& d) {
+      if (!d.is<int>()) {
+        tfel::raise("data named '" + k + "' is not an integer");
+      }
+      if (d.get<int>() <= 0) {
+        tfel::raise("data named '" + k + "' is not strictly postive");
+      }
+    });
+  }  // end of addStrictlyPositiveIntegerCheck
 
   DataMapValidator& DataMapValidator::addDataValidator(const std::string& k,
                                                        const DataValidator& f) {

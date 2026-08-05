@@ -95,6 +95,13 @@ namespace mfront {
     return "generic";
   }  // end of getName
 
+  void GenericModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, GenericModelInterface::tokens_iterator>
   GenericModelInterface::treatKeyword(const std::string& k,
                                       const std::vector<std::string>& i,

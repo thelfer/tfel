@@ -111,6 +111,14 @@ cmake usefull variables
   `OFF` to build static libraries instead.
 - `pandoc_reference_filter`: path to the reference filter used by `pandoc`.
   Currently, both `pandoc-crossref` and `pandoc-xnos` have been tested
+- `generic-parallel-configurations`: list of configurations to be
+  supported. See next paragraph for details and the list of supported
+  configurations.
+- `TFEL_GXX_COMPILER`: path to the `g++` compiler.
+- `TFEL_CLANGXX_COMPILER`: path to the `clang++` compiler.
+- `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler.
+- `TFEL_NVHPC_COMPILER`: path to NVIDIA's `nvhpc` compiler.
+- `TFEL_ACPP_COMPILER`: path to AdaptativeCpp's `acpp` compiler.
 
 cmake typical usage
 ===================
@@ -146,6 +154,7 @@ cmake ../tfel -DCMAKE_BUILD_TYPE=Release -Denable-developer-warnings=ON -Denable
 
 cmake ../tfel -DCMAKE_BUILD_TYPE=Release -Denable-developer-warnings=ON -Denable-random-tests=ON -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-cadna=OFF -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON  -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/master/install-python-3.7
 
+cmake ../tfel/ -Dgeneric-parallel-configurations="cuda-nvcc;cuda-clang;hip-hipcc;hip-clang;stlpar-parunseq-gcc;stlpar-parunseq-clang;stlpar-parunseq-nvhpc-gpu;stlpar-parunseq-icpx" -DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.8/bin/nvcc -DCUDAToolkit_ROOT=/usr/local/cuda-12.8/ -Dhip_DIR=`spack location -i hip`/lib/cmake/hip
 
 main targets:
 =============
