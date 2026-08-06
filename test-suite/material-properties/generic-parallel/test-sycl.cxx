@@ -335,8 +335,8 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     const auto T = std::vector<double>{300, 500, 300, 800};
     const auto f = std::vector<double>{0, 0.1, 0.15, 0.12};
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 2u>{T.data(),f.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1,1};
+    const auto args = std::array<const double *, 2u>{T.data(), f.data()};
+    const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1, 1};
     auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     UO2_YoungModulus_Martin1989(&output, E.data(), 1, &Q, args.data(),
                                 args_strides.data(), args.size(), 4, policy);
@@ -347,7 +347,6 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(E[i] - young(T[i], f[i])) < eps);
     }
   }
-
 };
 
 TFEL_TESTS_GENERATE_PROXY(Iconel600YoungModulusTest,

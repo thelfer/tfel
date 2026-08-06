@@ -455,7 +455,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     auto d_f = to_device(f, Q);
     //
     const auto args = std::array<const double *, 2u>{d_T.get(), d_f.get()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1,1};
+    const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1, 1};
     UO2_YoungModulus_Martin1989(&output, d_E.get(), 1, &Q, args.data(),
                                 args_strides.data(), args.size(), 4, policy);
     to_host(E, d_E, Q);
@@ -466,7 +466,6 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(E[i] - young(T[i], f[i])) < eps);
     }
   }
-
 };
 
 TFEL_TESTS_GENERATE_PROXY(Iconel600YoungModulusTest,

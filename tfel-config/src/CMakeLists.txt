@@ -17,6 +17,14 @@ if(TFEL_HAVE_MADNEX)
     PUBLIC TFEL_HAVE_MADNEX)
 endif(TFEL_HAVE_MADNEX)
 
+if(enable-tdls)
+  target_compile_definitions(tfel-config
+    PUBLIC TFEL_MATH_TDLS_SUPPORT)
+  set(TFEL_TDLS_INCLUDEDIR $<TARGET_PROPERTY:tdls::tdls,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_compile_definitions(tfel-config
+    PUBLIC "TFEL_TDLS_INCLUDEDIR=\"${TFEL_TDLS_INCLUDEDIR}\"")
+endif(enable-tdls)
+
 if(enable-python-bindings)
   target_compile_definitions(tfel-config
     PUBLIC TFEL_PYTHON_BINDINGS)

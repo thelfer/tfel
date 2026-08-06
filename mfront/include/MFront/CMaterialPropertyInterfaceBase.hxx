@@ -76,24 +76,24 @@ namespace mfront {
      * \param[in] mpd: material property description
      */
     [[nodiscard]] virtual std::string getFunctionName(
-        const MaterialPropertyDescription&) const = 0;
+        const MaterialPropertyDescription &) const = 0;
     /*!
      * \param[in] mpd: material property description
      */
     [[nodiscard]] virtual std::string getCheckBoundsFunctionName(
-        const MaterialPropertyDescription&) const = 0;
+        const MaterialPropertyDescription &) const = 0;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
     [[nodiscard]] virtual std::string getHeaderFileName(
-        const std::string&, const std::string&) const = 0;
+        const std::string &, const std::string &) const = 0;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
     [[nodiscard]] virtual std::string getSrcFileName(
-        const std::string&, const std::string&) const = 0;
+        const std::string &, const std::string &) const = 0;
     /*!
      * \return the list of supported floating-point types. Supported
      * floating-point types are `float`, `double` and `long double`. For each
@@ -283,7 +283,7 @@ namespace mfront {
      * \param[in] mpd: material property description
      */
     [[nodiscard]] virtual std::string getSymbolName(
-        const MaterialPropertyDescription&) const;
+        const MaterialPropertyDescription &) const;
     /*!
      * \brief : write the source file. The headerFile member has been
      * opened appropriately and will be closed after the call.
