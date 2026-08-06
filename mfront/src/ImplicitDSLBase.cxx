@@ -533,7 +533,7 @@ namespace mfront {
     if (s == nullptr) {
       tfel::raise(
           "ImplicitDSLBase::setLinearSystemSolver: "
-          "invalid nonlinear solver '" +
+          "invalid linear solver '" +
           n + "'given");
     }
     if (this->linear_solver != nullptr) {
