@@ -33,7 +33,7 @@ The page describes the new functionalities of Version 5.2 of the
 
 # Highlights
 
-## Support for the `TDLS` (`TinyDeviceCalledLinearSolver`)
+## Support for the `TDLS` (`TinyDeviceCallableLinearSolver`)
 
 The `TDLS` library provides an highly optimized linear solver on `CPU`s
 and `GPU`s:
