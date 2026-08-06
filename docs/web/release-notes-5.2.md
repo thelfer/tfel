@@ -301,7 +301,6 @@ are available. A new [tutorial](PonteCastaneda1992.html)
 shows how to use it in the implementation of Ponte-Castaneda variational
 bound (1992), within the framework of non-linear elasticity.
 
-<<<<<<< HEAD
 # New features in `MFront`
 
 ## The `@LinearSystemSolver` keyword
