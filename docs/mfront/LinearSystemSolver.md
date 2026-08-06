@@ -9,7 +9,7 @@ are supported:
   `TFEL` is not compiled with support for the `TDLS` library, selecting
   this solver falls back to the `Default` solver.
 
-The name of the solver can optionnaly be followed by a dictionary
+The name of the solver can optionally be followed by a dictionary
 allowing to parametrize the solver.
 
 ## Supported Parameters
