@@ -6,7 +6,7 @@ are supported:
   library. As implied by its name, this solver is used by default.
 - `TDLS` (or equivalently `TinyDeviceCallableLinearSolver`). See
   <https://trsxvz.github.io/TDLS/getting_started.html> for details. If
-  `TFEL` is not compiled with support of the `TDLS` library selecting
+  `TFEL` is not compiled with support for the `TDLS` library, selecting
   this solver falls back the the `Default` Solver.
 
 The name of the solver can optionnaly be followed by a dictionary
