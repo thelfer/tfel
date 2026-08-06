@@ -570,7 +570,7 @@ namespace mfront {
           "ImplicitDSLBase::setLinearSystemSolver",
           "invalid linear solver '" + n +
               "'. Valid linear solvers are "
-              "'TDLS' (or 'TinyDeviceCallableLinearSystemSolver') and "
+              "'TDLS' (or 'TinyDeviceCallableLinearSolver') and "
               "'Default'");
     }
   }  // end of setLinearSystemSolver
