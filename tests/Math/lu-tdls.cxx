@@ -122,7 +122,7 @@ int main() {
   //  typedef TestFunctionWrapper<test2> Wrapper2;
   auto& m = TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("lu-tdsl.xml");
+  m.addXMLTestOutput("lu-tdls.xml");
   m.addTest("TDLSSolveInPlace",
             std::make_shared<Wrapper1>("TDLSSolveInPlaceTest<long double>"));
   m.addTest("TDLSSolveInPlace",
