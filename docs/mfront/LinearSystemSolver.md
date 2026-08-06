@@ -1,4 +1,4 @@
-The `@LinearSystemSolver` keyword is used to select the linear sytem
+The `@LinearSystemSolver` keyword is used to select the linear system
 solver. It is followed by the name of solver. Currently, two solvers
 are supported:
 
