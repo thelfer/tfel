@@ -71,12 +71,12 @@ namespace mfront {
       if ((s == "first_acceptable") ||  //
           (s == "first-acceptable") ||  //
           (s == "FirstAcceptable")) {
-        this->out_of_tile_search_strategy ==
+        this->out_of_tile_search_strategy =
             OutOfTileSearchStrategy::FIRST_ACCEPTABLE;
       } else if ((s == "full_scan") ||  //
                  (s == "full-scan") ||  //
                  (s == "FullScan")) {
-        this->out_of_tile_search_strategy == OutOfTileSearchStrategy::FULL_SCAN;
+        this->out_of_tile_search_strategy = OutOfTileSearchStrategy::FULL_SCAN;
       } else {
         tfel::raise(
             "TDLSLinearSystemSolver: "  //

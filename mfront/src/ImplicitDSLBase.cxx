@@ -300,7 +300,7 @@ namespace mfront {
       return DataMap{};
     }();
     this->setLinearSystemSolver(s, opts);
-    this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
+    this->readSpecifiedToken("ImplicitDSLBase::treatLinearSystemSolver", ";");
   }  // end of treatLinearSystemSolver
 
   void ImplicitDSLBase::treatProcessNewCorrection() {
@@ -533,8 +533,8 @@ namespace mfront {
     if (s == nullptr) {
       tfel::raise(
           "ImplicitDSLBase::setLinearSystemSolver: "
-          "invalid nonlinear solver '" +
-          n + "'given");
+          "invalid linear solver '" +
+          n + "' given");
     }
     if (this->linear_solver != nullptr) {
       tfel::raise(
@@ -570,7 +570,7 @@ namespace mfront {
           "ImplicitDSLBase::setLinearSystemSolver",
           "invalid linear solver '" + n +
               "'. Valid linear solvers are "
-              "'TDLS' (or 'TinyDeviceCallableLinearSystemSolver') and "
+              "'TDLS' (or 'TinyDeviceCallableLinearSolver') and "
               "'Default'");
     }
   }  // end of setLinearSystemSolver

@@ -35,7 +35,7 @@ template <typename T>
                                         3, 0, 1};
   auto b = tfel::math::tvector<3, T>{5, -1, -2};
   tfel::math::tvector<3, int> piv;
-  tdls::solve_inplace(m, piv, b);
+  if (!tdls::solve_inplace(m, piv, b)) return false;
   return ((std::abs(b(0) + T{1}) < eps) &&  //
           (std::abs(b(1) - T{2}) < eps) &&  //
           (std::abs(b(2) - T{1}) < eps));
@@ -49,7 +49,7 @@ template <typename T>
                                         2, -2, -1};
   auto b = tfel::math::tvector<3, T>{12, 11, 2};
   auto piv = tfel::math::tvector<3, int>{};
-  tdls::solve_inplace(m, piv, b);
+  if (!tdls::solve_inplace(m, piv, b)) return false;
   return ((std::abs(b(0) - T{3}) < eps) &&  //
           (std::abs(b(1) - T{1}) < eps) &&  //
           (std::abs(b(2) - T{2}) < eps));
@@ -68,8 +68,8 @@ template <typename T>
   auto b2 = tfel::math::tvector<4, T>{0, -12, -42, 36};
   //
   auto piv = tfel::math::tvector<4, int>{};
-  tdls::solve_inplace(m, piv, b);
-  tdls::solve_inplace(m2, piv, b2);
+  if (!tdls::solve_inplace(m, piv, b)) return false;
+  if (!tdls::solve_inplace(m2, piv, b2)) return false;
   return ((std::abs(b(0) + T(0.5)) < eps) &&    //
           (std::abs(b(1) - 1) < eps) &&         //
           (std::abs(b(2) - T(1) / 3) < eps) &&  //
@@ -78,7 +78,7 @@ template <typename T>
           (std::abs(b2(1) - 6) < eps) &&        //
           (std::abs(b2(2) - 2) < eps) &&        //
           (std::abs(b2(3) + 12) < eps));
-}  // end of TinyMatrixSolveTest
+}  // end of TDLSSolveInPlaceTest3
 
 template <typename T>
 [[nodiscard]] bool TDLSSolveInPlaceTest4() noexcept {
@@ -90,7 +90,7 @@ template <typename T>
   const auto b = tfel::math::tvector<4, T>{0, -2, -7, 6};
   const auto b2 = tfel::math::tvector<4, T>{0, -12, -42, 36};
   auto piv = tfel::math::tvector<4, int>{};
-  tdls::factorize(m, piv);
+  if (!tdls::factorize(m, piv)) return false;
   auto x = tfel::math::tvector<4, T>{};
   auto x2 = tfel::math::tvector<4, T>{};
   tdls::substitute(m, piv, b, x);
@@ -103,7 +103,7 @@ template <typename T>
           (std::abs(x2(1) - 6) < eps) &&        //
           (std::abs(x2(2) - 2) < eps) &&        //
           (std::abs(x2(3) + 12) < eps));
-}  // end of TinyMatrixSolveTest
+}  // end of TDLSSolveInPlaceTest4
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
@@ -119,7 +119,6 @@ int main() {
   using Wrapper9 = TestFunctionWrapper<TDLSSolveInPlaceTest4<long double>>;
   using Wrapper10 = TestFunctionWrapper<TDLSSolveInPlaceTest4<double>>;
   using Wrapper11 = TestFunctionWrapper<TDLSSolveInPlaceTest4<float>>;
-  //  typedef TestFunctionWrapper<test2> Wrapper2;
   auto& m = TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("lu-tdls.xml");
@@ -139,11 +138,11 @@ int main() {
             std::make_shared<Wrapper7>("TDLSSolveInPlaceTest3<double>"));
   m.addTest("TDLSSolveInPlace - 3",
             std::make_shared<Wrapper8>("TDLSSolveInPlaceTest3<float>"));
-  m.addTest("TDLSSolveInPlace - 3",
+  m.addTest("TDLSSolveInPlace - 4",
             std::make_shared<Wrapper9>("TDLSSolveInPlaceTest4<long double>"));
-  m.addTest("TDLSSolveInPlace - 3",
+  m.addTest("TDLSSolveInPlace - 4",
             std::make_shared<Wrapper10>("TDLSSolveInPlaceTest4<double>"));
-  m.addTest("TDLSSolveInPlace - 3",
+  m.addTest("TDLSSolveInPlace - 4",
             std::make_shared<Wrapper11>("TDLSSolveInPlaceTest4<float>"));
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main
