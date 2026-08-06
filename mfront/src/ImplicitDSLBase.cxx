@@ -534,7 +534,7 @@ namespace mfront {
       tfel::raise(
           "ImplicitDSLBase::setLinearSystemSolver: "
           "invalid linear solver '" +
-          n + "'given");
+          n + "' given");
     }
     if (this->linear_solver != nullptr) {
       tfel::raise(
