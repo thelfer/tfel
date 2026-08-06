@@ -76,7 +76,7 @@ namespace mfront {
       } else if ((s == "full_scan") ||  //
                  (s == "full-scan") ||  //
                  (s == "FullScan")) {
-        this->out_of_tile_search_strategy == OutOfTileSearchStrategy::FULL_SCAN;
+        this->out_of_tile_search_strategy = OutOfTileSearchStrategy::FULL_SCAN;
       } else {
         tfel::raise(
             "TDLSLinearSystemSolver: "  //
