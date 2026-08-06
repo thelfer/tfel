@@ -146,7 +146,7 @@ namespace mfront {
     /*!
      * \brief set the linear solver
      * \param[in] s: linear solver
-     * \param[in] opts: option passed to sovlver
+     * \param[in] opts: option passed to solver
      */
     virtual void setLinearSystemSolver(const std::string&,
                                        const tfel::utilities::DataMap&);
