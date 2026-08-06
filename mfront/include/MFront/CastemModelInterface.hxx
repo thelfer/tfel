@@ -38,13 +38,13 @@ namespace mfront {
         const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
-    void declareReservedNames(std::set<std::string>&) override;
-    void writeOutputFiles(const FileDescription&,
-                          const ModelDescription&) override;
-    void getTargetsDescription(TargetsDescription&,
-                               const ModelDescription&) override;
+    void declareReservedNames(std::set<std::string> &) override;
+    void writeOutputFiles(const FileDescription &,
+                          const ModelDescription &) override;
+    void getTargetsDescription(TargetsDescription &,
+                               const ModelDescription &) override;
     //! \return the name of the generated library
-    [[nodiscard]] std::string getLibraryName(const ModelDescription&) const;
+    [[nodiscard]] std::string getLibraryName(const ModelDescription &) const;
     //! \brief destructor
     ~CastemModelInterface() override;
 

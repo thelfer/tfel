@@ -120,31 +120,32 @@ namespace tfel::math {
   template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
-      Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept;
-  //! \brief cast the value to the base type
-  template <unit::UnitConcept UnitType,
-            StandardArithmeticTypeConcept ValueType,
-            typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept;
   //
   template <typename T>
-  concept QuantityConcept =
+  concept ImmutableQuantityConcept =
       ((unit::UnitConcept<typename QuantityTraits<T>::UnitType>)&&  //
-       (StandardArithmeticTypeConcept<
-           typename QuantityTraits<T>::ValueType>)&&  //
-       (requires(T & v) {
-         {
-           base_type_cast(v)
-           } -> std::same_as<typename QuantityTraits<T>::ValueType&>;
-       }) &&  //
        (requires(const T& v) {
          {
            base_type_cast(v)
            } -> std::same_as<const typename QuantityTraits<T>::ValueType&>;
        }));
-
+  //
+  template <typename T>
+  concept QuantityConcept = ((ImmutableQuantityConcept<T>)&&  //
+      (requires(T& v) {
+        {
+          base_type_cast(v)
+          } -> std::same_as<typename QuantityTraits<T>::ValueType&>;
+      }));
+  //
+  template <typename T>
+  concept NoUnitImmutableQuantityConcept =
+      ((ImmutableQuantityConcept<T>)&&  //
+       (unit::areUnitsEqual<typename QuantityTraits<T>::UnitType,
+                            tfel::math::unit::NoUnit>));
+  //
   template <typename T>
   concept NoUnitQuantityConcept =
       ((QuantityConcept<T>)&&  //
@@ -167,7 +168,7 @@ namespace tfel::math {
 namespace tfel::typetraits {
 
   //! \brief partial specialisation for quantities
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct BaseType<QuantityType> {
     //! \brief result of the metafunction
     using type = typename tfel::math::QuantityTraits<QuantityType>::ValueType;
@@ -177,7 +178,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsFundamentalNumericType
    */
-  template <tfel::math::NoUnitQuantityConcept QuantityType>
+  template <tfel::math::NoUnitImmutableQuantityConcept QuantityType>
   struct IsFundamentalNumericType<QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
@@ -197,10 +198,10 @@ namespace tfel::typetraits {
 
 namespace tfel::math {
 
-  template <QuantityConcept T>
+  template <ImmutableQuantityConcept T>
   using quantity_unit = typename QuantityTraits<T>::UnitType;
 
-  template <QuantityConcept T>
+  template <ImmutableQuantityConcept T>
   using qt_rebind = qt<quantity_unit<T>, base_type<T>>;
 
   //! \brief a simple alias

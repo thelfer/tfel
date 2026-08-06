@@ -203,6 +203,14 @@ namespace tfel::math {
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   struct Quantity : OwnershipPolicy {
+    //
+    static_assert(requires(const OwnershipPolicy& p) {
+      { p.getValue() } -> std::same_as<const ValueType&>;
+    });
+    //
+    static constexpr auto is_mutable = requires(OwnershipPolicy & p) {
+      { p.getValue() } -> std::same_as<ValueType&>;
+    };
     /*!
      * An helper class to deal with some limitations of Visual Studio
      */
@@ -224,7 +232,7 @@ namespace tfel::math {
     using OwnershipPolicy::OwnershipPolicy;
     //
     // NOLINTBEGIN(google-explicit-constructor)
-    template <QuantityConcept OtherQuantityType>
+    template <ImmutableQuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity(const OtherQuantityType& src) noexcept
         requires(
             (unit::areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
@@ -235,58 +243,64 @@ namespace tfel::math {
     //
     template <StandardArithmeticTypeConcept T>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(const T& src) noexcept
-        requires((std::is_constructible_v<ValueType, T>)&&  //
-                 (std::is_convertible_v<ValueType, T>)&&    //
-                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)) {
+        requires((std::is_constructible_v<ValueType, T>)&&        //
+                 (std::is_convertible_v<ValueType, T>)&&          //
+                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)&&  //
+                 (is_mutable)) {
       this->getValue() = src;
       return *this;
     }
     template <StandardArithmeticTypeConcept T>
     TFEL_HOST_DEVICE constexpr Quantity& operator+=(const T& src) noexcept
-        requires((std::is_constructible_v<ValueType, T>)&&  //
-                 (std::is_convertible_v<ValueType, T>)&&    //
-                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)) {
+        requires((std::is_constructible_v<ValueType, T>)&&        //
+                 (std::is_convertible_v<ValueType, T>)&&          //
+                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)&&  //
+                 (is_mutable)) {
       this->getValue() += src;
       return *this;
     }
     template <StandardArithmeticTypeConcept T>
     TFEL_HOST_DEVICE constexpr Quantity& operator-=(const T& src) noexcept
-        requires((std::is_constructible_v<ValueType, T>)&&  //
-                 (std::is_convertible_v<ValueType, T>)&&    //
-                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)) {
+        requires((std::is_constructible_v<ValueType, T>)&&        //
+                 (std::is_convertible_v<ValueType, T>)&&          //
+                 (unit::areUnitsEqual<UnitType, unit::NoUnit>)&&  //
+                 (is_mutable)) {
       this->getValue() -= src;
       return *this;
     }
     //! \brief assignement operator
-    template <QuantityConcept OtherQuantityType>
+    template <ImmutableQuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(
         const OtherQuantityType& src) noexcept
         requires(
             (unit::areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
                 std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
-                               ValueType>)) {
+                               ValueType>)&&  //
+            (is_mutable)) {
       this->getValue() = base_type_cast(src);
       return *this;
     }
     //! \brief operator +=
-    template <QuantityConcept OtherQuantityType>
+    template <ImmutableQuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator+=(
         const OtherQuantityType& src) noexcept
         requires(
             (unit::areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
                 std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
-                               ValueType>)) {
+                               ValueType>)&&  //
+            (is_mutable)) {
       this->getValue() += base_type_cast(src);
       return *this;
     }
     //! \brief operator -=
-    template <QuantityConcept OtherQuantityType>
+    template <ImmutableQuantityConcept OtherQuantityType>
     TFEL_HOST_DEVICE constexpr Quantity& operator-=(
         const OtherQuantityType& src) noexcept
         requires(
             (unit::areUnitsEqual<UnitType, quantity_unit<OtherQuantityType>>)&&(
                 std::is_same_v<promote<ValueType, base_type<OtherQuantityType>>,
-                               ValueType>)) {
+                               ValueType>)&&  //
+            (is_mutable)) {
       this->getValue() -= base_type_cast(src);
       return *this;
     }
@@ -298,7 +312,8 @@ namespace tfel::math {
     template <StandardArithmeticTypeConcept ValueType2>
     TFEL_HOST_DEVICE constexpr Quantity& operator*=(
         const ValueType2& a) noexcept
-        requires(IsQtScalarOperationValid<ValueType, ValueType2>::cond) {
+        requires((IsQtScalarOperationValid<ValueType, ValueType2>::cond) &&  //
+                 (is_mutable)) {
       this->getValue() *= a;
       return *this;
     }
@@ -307,11 +322,12 @@ namespace tfel::math {
      * \tparam ValueType2: another numeric type
      * \param[in] a: a scalar
      */
-    template <NoUnitQuantityConcept OtherQuantityType>
-    TFEL_HOST_DEVICE constexpr Quantity& operator*=(
-        const OtherQuantityType& a) noexcept
-        requires(IsQtScalarOperationValid<ValueType,
-                                          base_type<OtherQuantityType>>::cond) {
+    template <NoUnitImmutableQuantityConcept OtherQuantityType>
+    TFEL_HOST_DEVICE constexpr Quantity&
+    operator*=(const OtherQuantityType& a) noexcept requires(
+        (IsQtScalarOperationValid<ValueType,
+                                  base_type<OtherQuantityType>>::cond) &&  //
+        (is_mutable)) {
       this->getValue() *= base_type_cast(a);
       return *this;
     }
@@ -323,7 +339,8 @@ namespace tfel::math {
     template <StandardArithmeticTypeConcept ValueType2>
     TFEL_HOST_DEVICE constexpr Quantity& operator/=(
         const ValueType2& a) noexcept
-        requires(IsQtScalarOperationValid<ValueType, ValueType2>::cond) {
+        requires((IsQtScalarOperationValid<ValueType, ValueType2>::cond) &&  //
+                 (is_mutable)) {
       this->getValue() /= a;
       return *this;
     }
@@ -332,11 +349,12 @@ namespace tfel::math {
      * \tparam ValueType2: another numeric type
      * \param[in] a: a scalar
      */
-    template <NoUnitQuantityConcept OtherQuantityType>
-    TFEL_HOST_DEVICE constexpr Quantity& operator/=(
-        const OtherQuantityType& a) noexcept
-        requires(IsQtScalarOperationValid<ValueType,
-                                          base_type<OtherQuantityType>>::cond) {
+    template <NoUnitImmutableQuantityConcept OtherQuantityType>
+    TFEL_HOST_DEVICE constexpr Quantity&
+    operator/=(const OtherQuantityType& a) noexcept requires(
+        (IsQtScalarOperationValid<ValueType,
+                                  base_type<OtherQuantityType>>::cond) &&  //
+        (is_mutable)) {
       this->getValue() /= base_type_cast(a);
       return *this;
     }
@@ -396,8 +414,8 @@ namespace tfel::math {
                      unit::areUnitsEqual<UnitType, unit::NoUnit>>> {
     //
     template <QuantityConcept QuantityType>
-    requires(unit::areUnitsEqual<quantity_unit<QuantityType>,
-                                 UnitType>)  //
+    requires((unit::areUnitsEqual<quantity_unit<QuantityType>, UnitType>)&&(
+        std::same_as<ValueType, base_type<QuantityType>>))  //
         explicit constexpr qt_ref(QuantityType& src) noexcept
         : Quantity<UnitType,
                    ValueType,
@@ -438,9 +456,9 @@ namespace tfel::math {
                      const ValueType,
                      unit::areUnitsEqual<UnitType, unit::NoUnit>>> {
     //
-    template <QuantityConcept QuantityType>
-    requires(unit::areUnitsEqual<quantity_unit<QuantityType>,
-                                 UnitType>)  //
+    template <ImmutableQuantityConcept QuantityType>
+    requires((unit::areUnitsEqual<quantity_unit<QuantityType>, UnitType>)&&(
+        std::same_as<ValueType, base_type<QuantityType>>))  //
         explicit constexpr const_qt_ref(const QuantityType& src) noexcept
         : Quantity<UnitType,
                    ValueType,
@@ -494,7 +512,8 @@ namespace tfel::math {
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
   TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
-      Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
+      Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept
+      requires(Quantity<UnitType, ValueType, OwnershipPolicy>::is_mutable) {
     return v.getValue();
   }
 
@@ -506,7 +525,7 @@ namespace tfel::math {
     return v.getValue();
   }
 
-  template <QuantityConcept T, int N, unsigned int D>
+  template <ImmutableQuantityConcept T, int N, unsigned int D>
   class UnaryResultType<T, Power<N, D>> {
     using ResultUnit = typename tfel::math::unit::internals::
         PowerUnit<N, D, quantity_unit<T>>::type;
@@ -518,21 +537,21 @@ namespace tfel::math {
     using type = qt<ResultUnit, ResultValueType>;
   };
 
-  template <int N, QuantityConcept T>
+  template <int N, ImmutableQuantityConcept T>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto power(const T& x) requires(
       std::is_floating_point_v<base_type<T>>) {
     using Result = typename UnaryResultType<T, Power<N, 1u>>::type;
     return Result{power<N>(base_type_cast(x))};
   }
 
-  template <int N, unsigned int D, QuantityConcept T>
+  template <int N, unsigned int D, ImmutableQuantityConcept T>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto power(const T& x) requires(
       std::is_floating_point_v<base_type<T>>) {
     using Result = typename UnaryResultType<T, Power<N, D>>::type;
     return Result{power<N, D>(base_type_cast(x))};
   }
 
-  template <QuantityConcept T>
+  template <ImmutableQuantityConcept T>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto square_root(
       const T& q) noexcept {
     return power<1, 2>(base_type_cast(q));

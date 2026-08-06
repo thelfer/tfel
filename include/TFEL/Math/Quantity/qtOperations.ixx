@@ -18,21 +18,23 @@ namespace tfel::math {
 
 #define TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL1(Op)                             \
                                                                              \
-  template <QuantityConcept QuantityType,                                    \
+  template <ImmutableQuantityConcept QuantityType,                           \
             StandardArithmeticTypeConcept ScalarType>                        \
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator Op(                 \
       const QuantityType& lhs, const ScalarType& rhs) noexcept {             \
-    static_assert(NoUnitQuantityConcept<QuantityType>, "invalid operation"); \
+    static_assert(NoUnitImmutableQuantityConcept<QuantityType>,              \
+                  "invalid operation");                                      \
     return qt<unit::NoUnit, typename tfel::typetraits::Promote<              \
                                 base_type<QuantityType>, ScalarType>::type>{ \
         base_type_cast(lhs) Op rhs};                                         \
   }                                                                          \
                                                                              \
   template <StandardArithmeticTypeConcept ScalarType,                        \
-            QuantityConcept QuantityType>                                    \
+            ImmutableQuantityConcept QuantityType>                           \
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator Op(                 \
       const ScalarType& lhs, const QuantityType& rhs) noexcept {             \
-    static_assert(NoUnitQuantityConcept<QuantityType>, "invalid operation"); \
+    static_assert(NoUnitImmutableQuantityConcept<QuantityType>,              \
+                  "invalid operation");                                      \
     return qt<unit::NoUnit, typename tfel::typetraits::Promote<              \
                                 base_type<QuantityType>, ScalarType>::type>{ \
         lhs Op base_type_cast(rhs)};                                         \
@@ -41,7 +43,7 @@ namespace tfel::math {
   TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL1(+)
   TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL1(-)
 
-  template <QuantityConcept QuantityType,
+  template <ImmutableQuantityConcept QuantityType,
             StandardArithmeticTypeConcept ScalarType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator*(
       const QuantityType& lhs, const ScalarType& rhs) noexcept {
@@ -52,7 +54,7 @@ namespace tfel::math {
   }
 
   template <StandardArithmeticTypeConcept ScalarType,
-            QuantityConcept QuantityType>
+            ImmutableQuantityConcept QuantityType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator*(
       const ScalarType& lhs, const QuantityType& rhs) noexcept {
     return qt<quantity_unit<QuantityType>,
@@ -61,7 +63,7 @@ namespace tfel::math {
         lhs * base_type_cast(rhs)};
   }
 
-  template <QuantityConcept QuantityType,
+  template <ImmutableQuantityConcept QuantityType,
             StandardArithmeticTypeConcept ScalarType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator/(
       const QuantityType& lhs, const ScalarType& rhs) noexcept {
@@ -72,7 +74,7 @@ namespace tfel::math {
   }
 
   template <StandardArithmeticTypeConcept ScalarType,
-            QuantityConcept QuantityType>
+            ImmutableQuantityConcept QuantityType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator/(
       const ScalarType& lhs, const QuantityType& rhs) noexcept {
     return qt<typename unit::internals::SubtractUnit<

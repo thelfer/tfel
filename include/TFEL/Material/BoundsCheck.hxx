@@ -48,8 +48,8 @@ namespace tfel::material {
      */
     template <typename T>
     static std::string convert_to_string(const T& value) {
-      if constexpr (tfel::math::isQuantity<T>()) {
-        return std::to_string(value.getValue());
+      if constexpr (tfel::math::ImmutableQuantityConcept<T>) {
+        return std::to_string(base_type_cast(value));
       } else {
         return std::to_string(value);
       }

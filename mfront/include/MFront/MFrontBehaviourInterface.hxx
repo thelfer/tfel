@@ -29,18 +29,18 @@ namespace mfront {
     [[nodiscard]] std::string getInterfaceName() const override;
     [[nodiscard]] std::string getInterfaceVersion() const override;
     [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription&,
-        const std::string&,
-        const std::vector<std::string>&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
     [[nodiscard]] bool isBehaviourConstructorRequired(
-        const Hypothesis, const BehaviourDescription&) const override;
+        const Hypothesis, const BehaviourDescription &) const override;
     [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription&) const override;
+        const BehaviourDescription &) const override;
     [[nodiscard]] std::pair<std::vector<BehaviourMaterialProperty>,
                             SupportedTypes::TypeSize>
-    buildMaterialPropertiesList(const BehaviourDescription&,
+    buildMaterialPropertiesList(const BehaviourDescription &,
                                 const Hypothesis) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream &, const BehaviourDescription &) const override;
