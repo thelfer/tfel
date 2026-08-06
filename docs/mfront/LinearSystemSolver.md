@@ -39,7 +39,7 @@ The following options are supported:
   `first_acceptable` (or equivalently `first-acceptable` or
   `FirstAcceptable`) or `full_scan` (or equivalently `full-scan` or
   `FullScan`).
-- unroll_inner_loop: expected values are either `true` or `false`. If
+- `unroll_inner_loop`: expected values are either `true` or `false`. If
   `true`, loops indexing register tiles carry a forced-unroll pragma -
   the guard that keeps tiles in registers on GPU backends, where a
   rolled loop indexes the tile dynamically and demotes it to slow local
