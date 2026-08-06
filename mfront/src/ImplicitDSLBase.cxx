@@ -300,7 +300,7 @@ namespace mfront {
       return DataMap{};
     }();
     this->setLinearSystemSolver(s, opts);
-    this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
+    this->readSpecifiedToken("ImplicitDSLBase::treatLinearSystemSolver", ";");
   }  // end of treatLinearSystemSolver
 
   void ImplicitDSLBase::treatProcessNewCorrection() {
