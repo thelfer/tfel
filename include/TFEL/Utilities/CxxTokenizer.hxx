@@ -230,12 +230,12 @@ namespace tfel::utilities {
      * \brief constructor with options
      * \param[in] o: options
      */
-    explicit CxxTokenizer(const CxxTokenizerOptions&);
+    explicit CxxTokenizer(const CxxTokenizerOptions &);
     /*!
      * \brief constructor from a file
      * \param[in] f : file name
      */
-    explicit CxxTokenizer(const std::string&);
+    explicit CxxTokenizer(const std::string &);
     /*!
      * \brief constructor from a file
      * \param[in] f : file name
@@ -390,14 +390,14 @@ namespace tfel::utilities {
      * \param[in] i : index
      * \throw an exception if i>=this->size()
      */
-    [[nodiscard]] const Token& operator[](const size_type) const;
+    [[nodiscard]] const Token &operator[](const size_type) const;
     //! \return the number of token
     [[nodiscard]] size_type size() const;
     //! \brief destructor
     virtual ~CxxTokenizer();
 
    protected:
-    [[nodiscard]] static bool isValidFunctionIdentifier(const std::string&,
+    [[nodiscard]] static bool isValidFunctionIdentifier(const std::string &,
                                                         const bool = true);
     /*!
      * \param[in]     in:   input stream

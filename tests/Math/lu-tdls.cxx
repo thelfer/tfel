@@ -35,7 +35,9 @@ template <typename T>
                                         3, 0, 1};
   auto b = tfel::math::tvector<3, T>{5, -1, -2};
   tfel::math::tvector<3, int> piv;
-  if (!tdls::solve_inplace(m, piv, b)) return false;
+  if (!tdls::solve_inplace(m, piv, b)) {
+    return false;
+  }
   return ((std::abs(b(0) + T{1}) < eps) &&  //
           (std::abs(b(1) - T{2}) < eps) &&  //
           (std::abs(b(2) - T{1}) < eps));
@@ -49,7 +51,9 @@ template <typename T>
                                         2, -2, -1};
   auto b = tfel::math::tvector<3, T>{12, 11, 2};
   auto piv = tfel::math::tvector<3, int>{};
-  if (!tdls::solve_inplace(m, piv, b)) return false;
+  if (!tdls::solve_inplace(m, piv, b)) {
+    return false;
+  }
   return ((std::abs(b(0) - T{3}) < eps) &&  //
           (std::abs(b(1) - T{1}) < eps) &&  //
           (std::abs(b(2) - T{2}) < eps));
@@ -68,8 +72,12 @@ template <typename T>
   auto b2 = tfel::math::tvector<4, T>{0, -12, -42, 36};
   //
   auto piv = tfel::math::tvector<4, int>{};
-  if (!tdls::solve_inplace(m, piv, b)) return false;
-  if (!tdls::solve_inplace(m2, piv, b2)) return false;
+  if (!tdls::solve_inplace(m, piv, b)) {
+    return false;
+  }
+  if (!tdls::solve_inplace(m2, piv, b2)) {
+    return false;
+  }
   return ((std::abs(b(0) + T(0.5)) < eps) &&    //
           (std::abs(b(1) - 1) < eps) &&         //
           (std::abs(b(2) - T(1) / 3) < eps) &&  //
@@ -90,7 +98,9 @@ template <typename T>
   const auto b = tfel::math::tvector<4, T>{0, -2, -7, 6};
   const auto b2 = tfel::math::tvector<4, T>{0, -12, -42, 36};
   auto piv = tfel::math::tvector<4, int>{};
-  if (!tdls::factorize(m, piv)) return false;
+  if (!tdls::factorize(m, piv)) {
+    return false;
+  }
   auto x = tfel::math::tvector<4, T>{};
   auto x2 = tfel::math::tvector<4, T>{};
   tdls::substitute(m, piv, b, x);

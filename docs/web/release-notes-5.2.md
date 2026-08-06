@@ -378,8 +378,6 @@ are:
 };
 ~~~~
 
-# New `MFront` features
-
 ## Configuration file
 
 `MFront` now allows to define options in a configuration file define

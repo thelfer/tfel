@@ -138,11 +138,11 @@ namespace tfel::utilities {
        (tfel::meta::TLCountNbrOfT<std::decay_t<Type>, DataTypes>::value ==
         1))) {
     return this->addDataValidator(k, [](const Data& d) {
-      auto check = [&d]<typename T1>(){
-	if constexpr (std::same_as<T1, DataStructure>) {
-	    return DataStructure::is_convertible(d);
-	  } else {
-	  return d.template is<T1>();
+      auto check = [&d]<typename T1>() {
+        if constexpr (std::same_as<T1, DataStructure>) {
+          return DataStructure::is_convertible(d);
+        } else {
+          return d.template is<T1>();
         }
       };
       const auto b = (... || check.template operator()<Type>());
