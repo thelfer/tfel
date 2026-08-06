@@ -138,7 +138,7 @@ int main() {
             std::make_shared<Wrapper7>("TDLSSolveInPlaceTest3<double>"));
   m.addTest("TDLSSolveInPlace - 3",
             std::make_shared<Wrapper8>("TDLSSolveInPlaceTest3<float>"));
-  m.addTest("TDLSSolveInPlace - 3",
+  m.addTest("TDLSSolveInPlace - 4",
             std::make_shared<Wrapper9>("TDLSSolveInPlaceTest4<long double>"));
   m.addTest("TDLSSolveInPlace - 3",
             std::make_shared<Wrapper10>("TDLSSolveInPlaceTest4<double>"));
