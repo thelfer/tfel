@@ -78,7 +78,7 @@ template <typename T>
           (std::abs(b2(1) - 6) < eps) &&        //
           (std::abs(b2(2) - 2) < eps) &&        //
           (std::abs(b2(3) + 12) < eps));
-}  // end of TinyMatrixSolveTest
+}  // end of TDLSSolveInPlaceTest3
 
 template <typename T>
 [[nodiscard]] bool TDLSSolveInPlaceTest4() noexcept {
