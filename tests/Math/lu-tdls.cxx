@@ -68,7 +68,7 @@ template <typename T>
   auto b2 = tfel::math::tvector<4, T>{0, -12, -42, 36};
   //
   auto piv = tfel::math::tvector<4, int>{};
-  tdls::solve_inplace(m, piv, b);
+  if (!tdls::solve_inplace(m, piv, b)) return false;
   tdls::solve_inplace(m2, piv, b2);
   return ((std::abs(b(0) + T(0.5)) < eps) &&    //
           (std::abs(b(1) - 1) < eps) &&         //
