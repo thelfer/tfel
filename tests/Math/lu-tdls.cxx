@@ -119,7 +119,6 @@ int main() {
   using Wrapper9 = TestFunctionWrapper<TDLSSolveInPlaceTest4<long double>>;
   using Wrapper10 = TestFunctionWrapper<TDLSSolveInPlaceTest4<double>>;
   using Wrapper11 = TestFunctionWrapper<TDLSSolveInPlaceTest4<float>>;
-  //  typedef TestFunctionWrapper<test2> Wrapper2;
   auto& m = TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("lu-tdls.xml");
