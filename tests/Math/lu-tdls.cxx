@@ -1,5 +1,5 @@
 /*!
- * \file  tests/Math/lu.cxx
+ * \file  tests/Math/lu-tdls.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 14 avr 2009
