@@ -471,7 +471,6 @@ details](generic-parallel-material-property-interface.html).
 
 #### `CUDA`
 
->>>>>>> master
 # Continuous integration
 
 ## Github actions
