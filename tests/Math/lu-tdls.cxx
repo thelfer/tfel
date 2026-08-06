@@ -103,7 +103,7 @@ template <typename T>
           (std::abs(x2(1) - 6) < eps) &&        //
           (std::abs(x2(2) - 2) < eps) &&        //
           (std::abs(x2(3) + 12) < eps));
-}  // end of TinyMatrixSolveTest
+}  // end of TDLSSolveInPlaceTest4
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
