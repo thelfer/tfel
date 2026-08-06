@@ -25,7 +25,7 @@ The following options are supported:
 - `tile_size`: the matrix is processed as a grid of `tile_size x
   tile_size` register tiles. This is the main performance axis of the
   solvers - tune it per system dimension. The `tile_size` can be a
-  strictly positive integer or a string. In `tile_size` is a string, it
+  strictly positive integer or a string. If `tile_size` is a string, it
   is interpreted as an integer formula whose variables can be any integer
   constant (see the `@IntegerConstant` keyword), `N`, `TVectorSize`,
   `StensorSize` or `TensorSize`. This formula must evaluate to a
