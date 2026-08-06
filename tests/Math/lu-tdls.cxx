@@ -35,7 +35,7 @@ template <typename T>
                                         3, 0, 1};
   auto b = tfel::math::tvector<3, T>{5, -1, -2};
   tfel::math::tvector<3, int> piv;
-  tdls::solve_inplace(m, piv, b);
+  if (!tdls::solve_inplace(m, piv, b)) return false;
   return ((std::abs(b(0) + T{1}) < eps) &&  //
           (std::abs(b(1) - T{2}) < eps) &&  //
           (std::abs(b(2) - T{1}) < eps));
