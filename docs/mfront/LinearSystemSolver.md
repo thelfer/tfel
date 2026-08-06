@@ -32,7 +32,7 @@ The following options are supported:
   strictly positive integer for all hypotheses supported by the
   behaviour.
 - `schedule`: expected values are either `left_looking` (or equivalently
-  `left`, `left-looking` or `LeftLooking`) and `right_looking` (or
+  `left`, `left-looking` or `LeftLooking`) or `right_looking` (or
   equivalently `right`, `right-looking` or `RightLooking`). This
   parameter defines the elimination schedule of the tiled factorization.
 - `out_of_tile_search_strategy`: expected values are either
