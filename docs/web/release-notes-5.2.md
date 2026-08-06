@@ -380,7 +380,6 @@ are:
 };
 ~~~~
 
-=======
 # New `MFront` features
 
 ## Configuration file
