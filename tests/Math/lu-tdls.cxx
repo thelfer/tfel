@@ -90,7 +90,7 @@ template <typename T>
   const auto b = tfel::math::tvector<4, T>{0, -2, -7, 6};
   const auto b2 = tfel::math::tvector<4, T>{0, -12, -42, 36};
   auto piv = tfel::math::tvector<4, int>{};
-  tdls::factorize(m, piv);
+  if (!tdls::factorize(m, piv)) return false;
   auto x = tfel::math::tvector<4, T>{};
   auto x2 = tfel::math::tvector<4, T>{};
   tdls::substitute(m, piv, b, x);
