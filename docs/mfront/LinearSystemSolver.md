@@ -7,7 +7,7 @@ are supported:
 - `TDLS` (or equivalently `TinyDeviceCallableLinearSolver`). See
   <https://trsxvz.github.io/TDLS/getting_started.html> for details. If
   `TFEL` is not compiled with support for the `TDLS` library, selecting
-  this solver falls back the the `Default` Solver.
+  this solver falls back to the `Default` solver.
 
 The name of the solver can optionnaly be followed by a dictionary
 allowing to parametrize the solver.
