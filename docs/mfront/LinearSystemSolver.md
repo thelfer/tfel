@@ -1,5 +1,5 @@
 The `@LinearSystemSolver` keyword is used to select the linear system
-solver. It is followed by the name of solver. Currently, two solvers
+solver. It is followed by the name of the solver. Currently, two solvers
 are supported:
 
 - `Default`. This uses the solvers provided natively by the `TFEL/Math`
