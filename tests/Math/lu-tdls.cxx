@@ -69,7 +69,7 @@ template <typename T>
   //
   auto piv = tfel::math::tvector<4, int>{};
   if (!tdls::solve_inplace(m, piv, b)) return false;
-  tdls::solve_inplace(m2, piv, b2);
+  if (!tdls::solve_inplace(m2, piv, b2)) return false;
   return ((std::abs(b(0) + T(0.5)) < eps) &&    //
           (std::abs(b(1) - 1) < eps) &&         //
           (std::abs(b(2) - T(1) / 3) < eps) &&  //
