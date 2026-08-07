@@ -120,17 +120,22 @@ namespace tfel::math {
   template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
+  TFEL_HOST_DEVICE constexpr decltype(auto) base_type_cast(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept;
   //
   template <typename T>
   concept ImmutableQuantityConcept =
       ((unit::UnitConcept<typename QuantityTraits<T>::UnitType>)&&  //
-       (requires(const T& v) {
-         {
-           base_type_cast(v)
-           } -> std::same_as<const typename QuantityTraits<T>::ValueType&>;
-       }));
+       ((requires(const T& v) {
+          {
+            base_type_cast(v)
+            } -> std::same_as<const typename QuantityTraits<T>::ValueType&>;
+        }) ||
+        (requires(const T& v) {
+          {
+            base_type_cast(v)
+            } -> std::same_as<typename QuantityTraits<T>::ValueType>;
+        })));
   //
   template <typename T>
   concept QuantityConcept = ((ImmutableQuantityConcept<T>)&&  //

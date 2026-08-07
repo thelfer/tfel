@@ -204,9 +204,12 @@ namespace tfel::math {
             typename OwnershipPolicy>
   struct Quantity : OwnershipPolicy {
     //
-    static_assert(requires(const OwnershipPolicy& p) {
-      { p.getValue() } -> std::same_as<const ValueType&>;
-    });
+    static_assert((requires(const OwnershipPolicy& p) {
+	  { p.getValue() } -> std::same_as<const ValueType&>;
+	})||(requires(const OwnershipPolicy& p) {
+	    { p.getValue() } -> std::same_as<ValueType>;
+	  })
+      );
     //
     static constexpr auto is_mutable = requires(OwnershipPolicy & p) {
       { p.getValue() } -> std::same_as<ValueType&>;
@@ -520,7 +523,7 @@ namespace tfel::math {
   template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,
             typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
+  TFEL_HOST_DEVICE constexpr decltype(auto) base_type_cast(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
     return v.getValue();
   }
