@@ -128,11 +128,17 @@ namespace tfel::math {
   };
 
   template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr auto operator+(const T1& a, const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation");
+  TFEL_HOST_DEVICE constexpr auto operator+(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>)
+  {
     return result_type<T1, T2, OpPlus>{base_type_cast(a) + base_type_cast(b)};
   }
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr auto operator+(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) = delete;
+
+#pragma message("all invalid operations must be deleted")
 
   /*!
    * \brief partial specialisation for subtraction of two quantity objects
