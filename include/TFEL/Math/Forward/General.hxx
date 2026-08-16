@@ -60,6 +60,9 @@ namespace tfel::math {
   concept ScalarConcept = tfel::typetraits::IsScalar<std::decay_t<T>>::cond;
 
   template <typename T>
+  concept MutableScalarConcept = ScalarConcept<T> &&(!std::is_const_v<T>);
+
+  template <typename T>
   struct BaseType {
     //! \brief result of the metafunction
     using type = tfel::meta::InvalidType;
