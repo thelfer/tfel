@@ -28,8 +28,8 @@ namespace tfel::math::unit {
   struct UnitExponent {
     int numerator;
     unsigned int denominator;
-    friend constexpr bool operator==(const UnitExponent&,
-                                     const UnitExponent&) noexcept;
+    [[nodiscard]] friend constexpr bool operator==(const UnitExponent&,
+                                                   const UnitExponent&) noexcept = default;
   };
 
   [[nodiscard]] constexpr bool isValid(const UnitExponent& e) noexcept {
@@ -40,13 +40,10 @@ namespace tfel::math::unit {
     return std::gcd(e.numerator, e.denominator) == 1;
   }
 
-  [[nodiscard]] constexpr bool operator==(
-      const UnitExponent& e1, const UnitExponent& e2) noexcept = default;
-
   struct UnitExponents {
     std::array<UnitExponent, 7> exponents;
-    friend constexpr bool operator==(const UnitExponents&,
-                                     const UnitExponents&) noexcept;
+    [[nodiscard]] friend constexpr bool operator==(const UnitExponents&,
+                                                   const UnitExponents&) noexcept = default;
   };
 
   [[nodiscard]] constexpr bool isValid(const UnitExponents& e) noexcept {
@@ -57,9 +54,6 @@ namespace tfel::math::unit {
                e.exponents.begin(), e.exponents.end(),
                [](const UnitExponent& e1) { return isIrreductible(e1); }));
   }  // end of isValid
-
-  [[nodiscard]] constexpr bool operator==(
-      const UnitExponents& e1, const UnitExponents& e2) noexcept = default;
 
   template <int N1 = 0,
             int N2 = 0,
