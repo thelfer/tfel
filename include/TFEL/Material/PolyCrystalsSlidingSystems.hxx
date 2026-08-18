@@ -81,8 +81,7 @@ namespace tfel::material {
     tfel::math::vector<real> volume_fractions;
 
    private:
-
-   ExtendedPolyCrystalsSlidingSystems(const std::string &);
+    ExtendedPolyCrystalsSlidingSystems(const std::string &);
     ExtendedPolyCrystalsSlidingSystems(
         const ExtendedPolyCrystalsSlidingSystems &);
     ExtendedPolyCrystalsSlidingSystems &operator=(

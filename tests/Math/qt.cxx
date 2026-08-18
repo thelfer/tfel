@@ -54,6 +54,7 @@ struct qtTest final : public tfel::tests::TestCase {
     constexpr qt<unit::Acceleration, unsigned short> a(2);
     constexpr qt<unit::Force> f = m1 * a;
     const auto value = qt<unit::NoUnit>(3);
+    TFEL_TESTS_STATIC_ASSERT((unit::areUnitsEqual<unit::Mass, unit::Mass>));
     TFEL_TESTS_STATIC_ASSERT(!isQuantity<double>());
     TFEL_TESTS_STATIC_ASSERT(isQuantity<qt<unit::Mass>>());
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 150.) < 1.e-14);

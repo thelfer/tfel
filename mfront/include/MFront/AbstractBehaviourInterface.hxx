@@ -77,9 +77,9 @@ namespace mfront {
      * the last token treated.
      */
     [[nodiscard]] virtual std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription&,
-        const std::string&,
-        const std::vector<std::string>&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) = 0;
     /*!
@@ -89,13 +89,13 @@ namespace mfront {
      * \param[in] mb : behaviour description
      */
     [[nodiscard]] virtual bool isBehaviourConstructorRequired(
-        const Hypothesis, const BehaviourDescription&) const = 0;
+        const Hypothesis, const BehaviourDescription &) const = 0;
     /*!
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
     [[nodiscard]] virtual std::set<Hypothesis>
-    getModellingHypothesesToBeTreated(const BehaviourDescription&) const = 0;
+    getModellingHypothesesToBeTreated(const BehaviourDescription &) const = 0;
     /*!
      * \return a pair which first member gives the position of the
      * material properties in the values given through the interface
@@ -106,7 +106,7 @@ namespace mfront {
      */
     [[nodiscard]] virtual std::pair<std::vector<BehaviourMaterialProperty>,
                                     SupportedTypes::TypeSize>
-    buildMaterialPropertiesList(const BehaviourDescription&,
+    buildMaterialPropertiesList(const BehaviourDescription &,
                                 const Hypothesis) const = 0;
     /*!
      * write interface specific includes

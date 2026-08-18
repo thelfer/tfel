@@ -20,37 +20,72 @@
 #include "TFEL/Math/Quantity/Unit.hxx"
 #include "TFEL/Math/qt.hxx"
 
-#define TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(Op)                         \
-  template <QuantityConcept QuantityType,                                     \
-            StandardArithmeticTypeConcept ScalarType>                         \
-  TFEL_HOST_DEVICE constexpr bool operator Op(const QuantityType& a,          \
-                                              const ScalarType& b) noexcept { \
-    static_assert(NoUnitQuantityConcept<QuantityType>,                        \
-                  "invalid operation (unmatched unit)");                      \
-    return base_type_cast(a) Op b;                                            \
-  }                                                                           \
-  template <StandardArithmeticTypeConcept ScalarType,                         \
-            QuantityConcept QuantityType>                                     \
-  TFEL_HOST_DEVICE constexpr bool operator Op(                                \
-      const ScalarType& a, const QuantityType& b) noexcept {                  \
-    static_assert(NoUnitQuantityConcept<QuantityType>,                        \
-                  "invalid operation (unmatched unit)");                      \
-    return a Op base_type_cast(b);                                            \
-  }
+#define TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(Op)                        \
+  template <ImmutableQuantityConcept QuantityType,                           \
+            StandardArithmeticTypeConcept ScalarType>                        \
+  TFEL_HOST_DEVICE constexpr bool                                            \
+  operator Op(const QuantityType& a, const ScalarType& b) noexcept requires( \
+      NoUnitImmutableQuantityConcept<QuantityType>) {                        \
+    return base_type_cast(a) Op b;                                           \
+  }                                                                          \
+  template <ImmutableQuantityConcept QuantityType,                           \
+            StandardArithmeticTypeConcept ScalarType>                        \
+  TFEL_HOST_DEVICE constexpr bool                                            \
+  operator Op(const QuantityType& a, const ScalarType& b) noexcept requires( \
+      !NoUnitImmutableQuantityConcept<QuantityType>) =                       \
+      delete /* ("invalid operation (unmatched unit)") */;                   \
+                                                                             \
+  template <StandardArithmeticTypeConcept ScalarType,                        \
+            ImmutableQuantityConcept QuantityType>                           \
+  TFEL_HOST_DEVICE constexpr bool                                            \
+  operator Op(const ScalarType& a, const QuantityType& b) noexcept requires( \
+      NoUnitImmutableQuantityConcept<QuantityType>) {                        \
+    return a Op base_type_cast(b);                                           \
+  }                                                                          \
+  template <StandardArithmeticTypeConcept ScalarType,                        \
+            ImmutableQuantityConcept QuantityType>                           \
+  TFEL_HOST_DEVICE constexpr bool                                            \
+  operator Op(const ScalarType& a, const QuantityType& b) noexcept requires( \
+      !NoUnitImmutableQuantityConcept<QuantityType>) =                       \
+      delete /*("invalid operation (unmatched unit)") */
 
-#define TFEL_MATH_QT_SCALAR_OPERATIONS(Op)                   \
-  template <QuantityConcept QuantityType,                    \
+#define TFEL_MATH_QT_SCALAR_OPERATIONS(Op)                               \
+  template <ImmutableQuantityConcept QuantityType,                       \
+            StandardArithmeticTypeConcept ScalarType>                    \
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                          \
+  operator Op(const QuantityType&, const ScalarType&) noexcept requires( \
+      NoUnitImmutableQuantityConcept<QuantityType>);                     \
+  template <ImmutableQuantityConcept QuantityType,                       \
+            StandardArithmeticTypeConcept ScalarType>                    \
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                          \
+  operator Op(const QuantityType&, const ScalarType&) noexcept requires( \
+      !NoUnitImmutableQuantityConcept<QuantityType>) =                   \
+      delete /* ("invalid operation (unmatched unit)") */;               \
+  template <StandardArithmeticTypeConcept ScalarType,                    \
+            ImmutableQuantityConcept QuantityType>                       \
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                          \
+  operator Op(const ScalarType&, const QuantityType&) noexcept requires( \
+      NoUnitImmutableQuantityConcept<QuantityType>);                     \
+  template <StandardArithmeticTypeConcept ScalarType,                    \
+            ImmutableQuantityConcept QuantityType>                       \
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                          \
+  operator Op(const ScalarType&, const QuantityType&) noexcept requires( \
+      !NoUnitImmutableQuantityConcept<QuantityType>) =                   \
+      delete /* ("invalid operation (unmatched unit)") */
+
+#define TFEL_MATH_QT_SCALAR_OPERATIONS2(Op)                  \
+  template <ImmutableQuantityConcept QuantityType,           \
             StandardArithmeticTypeConcept ScalarType>        \
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator Op( \
       const QuantityType&, const ScalarType&) noexcept;      \
   template <StandardArithmeticTypeConcept ScalarType,        \
-            QuantityConcept QuantityType>                    \
+            ImmutableQuantityConcept QuantityType>           \
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator Op( \
-      const ScalarType&, const QuantityType&) noexcept;
+      const ScalarType&, const QuantityType&) noexcept
 
 namespace tfel::math {
 
-  template <QuantityConcept T>
+  template <ImmutableQuantityConcept T>
   struct ComputeUnaryOperationResult<ScalarTag, UnaryOperatorTag, T, OpNeg> {
     //! \brief result
     using type = qt<quantity_unit<T>,
@@ -58,47 +93,59 @@ namespace tfel::math {
   };  // end of struct ComputeUnaryOperationResult
 
   //! \brief negation operator
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator-(
       const QuantityType& q) noexcept {
     return qt_rebind<QuantityType>{-base_type_cast(q)};
   }  // end of operator-
 
-  template <QuantityConcept T1, QuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr bool operator<(const T1& a, const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation (unmatched unit)");
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator<(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) {
     return base_type_cast(a) < base_type_cast(b);
   }  // end of operator<
 
-  template <QuantityConcept T1, QuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr bool operator<=(const T1& a,
-                                             const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation (unmatched unit)");
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator<(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) =
+          delete /* ("invalid operation (unmatched unit)") */;
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator<=(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) {
     return base_type_cast(a) <= base_type_cast(b);
   }  // end of operator<=
 
-  template <QuantityConcept T1, QuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr bool operator>(const T1& a, const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation (unmatched unit)");
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator<=(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) =
+          delete /* ("invalid operation (unmatched unit)") */;
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator>(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) {
     return base_type_cast(a) > base_type_cast(b);
   }  // end of operator>
 
-  template <QuantityConcept T1, QuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr bool operator>=(const T1& a,
-                                             const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation (unmatched unit)");
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator>(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) =
+          delete /* ("invalid operation (unmatched unit)") */;
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator>=(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) {
     return base_type_cast(a) >= base_type_cast(b);
   }  // end of operator>=
 
-  template <QuantityConcept T1, QuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr bool operator==(const T1& a,
-                                             const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation (unmatched unit)");
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator>=(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) =
+          delete /* ("invalid operation (unmatched unit)") */;
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator==(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) {
     if constexpr (std::floating_point<quantity_unit<T1>>) {
       return tfel::math::ieee754::fpclassify(base_type_cast(a) -
                                              base_type_cast(b)) == FP_ZERO;
@@ -107,19 +154,27 @@ namespace tfel::math {
     }
   }  // end of operator==
 
-  template <QuantityConcept T1, QuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr bool operator!=(const T1& a,
-                                             const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation (unmatched unit)");
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator==(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) =
+          delete /* ("invalid operation (unmatched unit)") */;
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator!=(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) {
     return base_type_cast(a) != base_type_cast(b);
   }  // end of operator!=
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr bool operator!=(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) =
+          delete /* ("invalid operation (unmatched unit)") */;
 
   /*!
    *\brief partial specialisation for addition of two quantity objects having
    * the same unit
    */
-  template <QuantityConcept T1, QuantityConcept T2>
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
   requires(unit::areUnitsEqual<quantity_unit<T1>,
                                quantity_unit<T2>>)  //
       struct ResultType<T1, T2, OpPlus> {
@@ -127,18 +182,22 @@ namespace tfel::math {
                     result_type<base_type<T1>, base_type<T2>, OpPlus>>;
   };
 
-  template <QuantityConcept T1, QuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr auto operator+(const T1& a, const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation");
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr auto operator+(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) {
     return result_type<T1, T2, OpPlus>{base_type_cast(a) + base_type_cast(b)};
   }
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr auto operator+(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) =
+          delete /* ("invalid operation (unmatched unit)") */;
 
   /*!
    * \brief partial specialisation for subtraction of two quantity objects
    * having the same unit
    */
-  template <QuantityConcept T1, QuantityConcept T2>
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
   requires(unit::areUnitsEqual<quantity_unit<T1>,
                                quantity_unit<T2>>)  //
       struct ResultType<T1, T2, OpMinus> {
@@ -146,28 +205,32 @@ namespace tfel::math {
                     result_type<base_type<T1>, base_type<T2>, OpMinus>>;
   };
 
-  template <QuantityConcept T1, QuantityConcept T2>
-  TFEL_HOST_DEVICE constexpr auto operator-(const T1& a, const T2& b) noexcept {
-    static_assert(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>,
-                  "invalid operation");
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr auto operator-(const T1& a, const T2& b) noexcept
+      requires(std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) {
     return result_type<T1, T2, OpPlus>{base_type_cast(a) - base_type_cast(b)};
-  }
+  }  // end of operator-
+
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
+  TFEL_HOST_DEVICE constexpr auto operator-(const T1& a, const T2& b) noexcept
+      requires(!std::is_same_v<quantity_unit<T1>, quantity_unit<T2>>) =
+          delete /* ("invalid operation (unmatched unit)") */;
 
   //! \brief partial specialisation for multiplication of two quantity objects
-  template <QuantityConcept T1, QuantityConcept T2>
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
   struct ResultType<T1, T2, OpMult> {
     using type = qt<typename tfel::math::unit::internals::
                         AddUnit<quantity_unit<T1>, quantity_unit<T2>>::type,
                     result_type<base_type<T1>, base_type<T2>, OpMult>>;
   };
 
-  template <QuantityConcept T1, QuantityConcept T2>
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
   constexpr auto operator*(const T1& a, const T2& b) noexcept {
     return result_type<T1, T2, OpMult>{base_type_cast(a) * base_type_cast(b)};
   }  // end of operator*
 
   //! \brief partial specialisation for division of two quantity objects
-  template <QuantityConcept T1, QuantityConcept T2>
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
   struct ResultType<T1, T2, OpDiv> {
     using type =
         qt<typename tfel::math::unit::internals::
@@ -175,7 +238,7 @@ namespace tfel::math {
            result_type<base_type<T1>, base_type<T2>, OpDiv>>;
   };
 
-  template <QuantityConcept T1, QuantityConcept T2>
+  template <ImmutableQuantityConcept T1, ImmutableQuantityConcept T2>
   constexpr auto operator/(const T1& a, const T2& b) noexcept {
     return result_type<T1, T2, OpDiv>{base_type_cast(a) / base_type_cast(b)};
   }  // end of operator/
@@ -185,7 +248,7 @@ namespace tfel::math {
    * with no unit
    */
   template <StandardArithmeticTypeConcept ScalarType,
-            NoUnitQuantityConcept QuantityType>
+            NoUnitImmutableQuantityConcept QuantityType>
   struct ResultType<ScalarType, QuantityType, OpPlus> {
     using type = qt<unit::NoUnit,
                     result_type<ScalarType, base_type<QuantityType>, OpPlus>>;
@@ -195,7 +258,7 @@ namespace tfel::math {
    * \brief partial specialisation for a quantity with no unit and a fundamental
    * numeric type
    */
-  template <NoUnitQuantityConcept QuantityType,
+  template <NoUnitImmutableQuantityConcept QuantityType,
             StandardArithmeticTypeConcept ScalarType>
   struct ResultType<QuantityType, ScalarType, OpPlus> {
     using type = qt<unit::NoUnit,
@@ -207,7 +270,7 @@ namespace tfel::math {
    * with no unit
    */
   template <StandardArithmeticTypeConcept ScalarType,
-            NoUnitQuantityConcept QuantityType>
+            NoUnitImmutableQuantityConcept QuantityType>
   struct ResultType<ScalarType, QuantityType, OpMinus> {
     using type = qt<unit::NoUnit,
                     result_type<ScalarType, base_type<QuantityType>, OpMinus>>;
@@ -217,7 +280,7 @@ namespace tfel::math {
    * \brief partial specialisation for a quantity with no unit and a fundamental
    * numeric type
    */
-  template <NoUnitQuantityConcept QuantityType,
+  template <NoUnitImmutableQuantityConcept QuantityType,
             StandardArithmeticTypeConcept ScalarType>
   struct ResultType<QuantityType, ScalarType, OpMinus> {
     using type = qt<unit::NoUnit,
@@ -229,7 +292,7 @@ namespace tfel::math {
    * with no unit
    */
   template <StandardArithmeticTypeConcept ScalarType,
-            QuantityConcept QuantityType>
+            ImmutableQuantityConcept QuantityType>
   struct ResultType<ScalarType, QuantityType, OpMult> {
     using type = qt<quantity_unit<QuantityType>,
                     result_type<ScalarType, base_type<QuantityType>, OpMult>>;
@@ -239,7 +302,7 @@ namespace tfel::math {
    * \brief partial specialisation for a quantity with no unit and a fundamental
    * numeric type
    */
-  template <QuantityConcept QuantityType,
+  template <ImmutableQuantityConcept QuantityType,
             StandardArithmeticTypeConcept ScalarType>
   struct ResultType<QuantityType, ScalarType, OpMult> {
     using type = qt<quantity_unit<QuantityType>,
@@ -251,7 +314,7 @@ namespace tfel::math {
    * with no unit
    */
   template <StandardArithmeticTypeConcept ScalarType,
-            QuantityConcept QuantityType>
+            ImmutableQuantityConcept QuantityType>
   struct ResultType<ScalarType, QuantityType, OpDiv> {
     using type =
         qt<typename tfel::math::unit::internals::
@@ -263,24 +326,24 @@ namespace tfel::math {
    * \brief partial specialisation for a quantity with no unit and a fundamental
    * numeric type
    */
-  template <QuantityConcept QuantityType,
+  template <ImmutableQuantityConcept QuantityType,
             StandardArithmeticTypeConcept ScalarType>
   struct ResultType<QuantityType, ScalarType, OpDiv> {
     using type = qt<quantity_unit<QuantityType>,
                     result_type<base_type<QuantityType>, ScalarType, OpDiv>>;
   };
 
-  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(<)
-  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(<=)
-  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(>)
-  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(>=)
-  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(==)
-  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(!=)
+  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(<);
+  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(<=);
+  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(>);
+  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(>=);
+  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(==);
+  TFEL_MATH_QT_NOUNIT_COMPARISION_OPERATORS(!=);
 
   TFEL_MATH_QT_SCALAR_OPERATIONS(+);
   TFEL_MATH_QT_SCALAR_OPERATIONS(-);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(*);
-  TFEL_MATH_QT_SCALAR_OPERATIONS(/);
+  TFEL_MATH_QT_SCALAR_OPERATIONS2(*);
+  TFEL_MATH_QT_SCALAR_OPERATIONS2(/);
 
 }  // namespace tfel::math
 

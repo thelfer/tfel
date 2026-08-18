@@ -20,12 +20,6 @@
 
 namespace tfel::math::unit {
 
-  [[nodiscard]] constexpr bool operator==(const UnitExponent &e1,
-                                          const UnitExponent &e2) noexcept {
-    return ((e1.numerator == e2.numerator) &&
-            (e1.denominator == e2.denominator));
-  }  // end of operator==
-
   [[nodiscard]] constexpr UnitExponent add(const UnitExponent &e1,
                                            const UnitExponent &e2) noexcept {
     const auto numerator = e1.numerator * static_cast<int>(e2.denominator) +
@@ -51,17 +45,6 @@ namespace tfel::math::unit {
     const auto g = static_cast<unsigned int>(std::gcd(numerator, denominator));
     return {numerator / static_cast<int>(g), denominator / g};
   }
-
-  [[nodiscard]] constexpr bool operator==(const UnitExponents &e1,
-                                          const UnitExponents &e2) noexcept {
-    return (e1.exponents[0] == e2.exponents[0]) &&
-           (e1.exponents[1] == e2.exponents[1]) &&
-           (e1.exponents[2] == e2.exponents[2]) &&
-           (e1.exponents[3] == e2.exponents[3]) &&
-           (e1.exponents[4] == e2.exponents[4]) &&
-           (e1.exponents[5] == e2.exponents[5]) &&
-           (e1.exponents[6] == e2.exponents[6]);
-  }  // end of operator==
 
   [[nodiscard]] constexpr UnitExponents add(const UnitExponents &e1,
                                             const UnitExponents &e2) noexcept {

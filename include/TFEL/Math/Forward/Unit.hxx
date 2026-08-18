@@ -28,6 +28,8 @@ namespace tfel::math::unit {
   struct UnitExponent {
     int numerator;
     unsigned int denominator;
+    [[nodiscard]] friend constexpr bool operator==(const UnitExponent&,
+                                                   const UnitExponent&) noexcept = default;
   };
 
   [[nodiscard]] constexpr bool isValid(const UnitExponent& e) noexcept {
@@ -40,6 +42,8 @@ namespace tfel::math::unit {
 
   struct UnitExponents {
     std::array<UnitExponent, 7> exponents;
+    [[nodiscard]] friend constexpr bool operator==(const UnitExponents&,
+                                                   const UnitExponents&) noexcept = default;
   };
 
   [[nodiscard]] constexpr bool isValid(const UnitExponents& e) noexcept {
@@ -123,40 +127,17 @@ namespace tfel::math::unit {
             int N7 = 0>
   struct StandardUnit : Unit<N1, N2, N3, N4, N5, N6, N7> {};
 
-  namespace internals {
-
-    struct ExtractUnitBase {
-     protected:
-      static constexpr void test(...) noexcept {}
-      template <UnitExponents exponents>
-      static constexpr UnitBase<exponents> test(
-          const UnitBase<exponents>&) noexcept {
-        return {};
-      }
-    };
-
-    template <typename T>
-    struct ExtractUnit : ExtractUnitBase {
-      using type = decltype(ExtractUnitBase::test(std::declval<T>()));
-    };
-
-    template <>
-    struct ExtractUnit<tfel::meta::InvalidType> {
-      using type = void;
-    };
-
-  }  // namespace internals
-
-  template <typename T>
-  concept UnitConcept =
-      !std::is_void_v<typename internals::ExtractUnit<T>::type>;
-
   template <UnitExponents e>
   requires(isValid(e))  //
       [[nodiscard]] constexpr UnitExponents
       get_unit_exponents(const UnitBase<e>&) noexcept {
     return e;
   }
+
+  template <typename T>
+  concept UnitConcept = requires(const T& t) {
+    { get_unit_exponents(t) } -> std::same_as<UnitExponents>;
+  };
 
   template <UnitConcept UnitType>
   [[nodiscard]] constexpr UnitExponents get_unit_exponents() noexcept {
@@ -166,11 +147,13 @@ namespace tfel::math::unit {
   template <UnitConcept UnitType>
   constexpr inline UnitExponents exponents = get_unit_exponents<UnitType>();
 
-  template <UnitConcept UnitType1, UnitConcept UnitType2>
-  inline constexpr bool areUnitsEqual =
-      std::same_as<typename internals::ExtractUnit<UnitType1>::type,
-                   typename internals::ExtractUnit<UnitType2>::type>;
+  template <typename UnitType1, typename UnitType2>
+  concept areUnitsEqual = (exponents<UnitType1> == exponents<UnitType2>);
 
+  /*!
+   * \brief Declares the null unit
+   * \see StandardUnit
+   */
   struct NoUnit : StandardUnit<> {};
   /*!
    * \brief Declares the Mass unit

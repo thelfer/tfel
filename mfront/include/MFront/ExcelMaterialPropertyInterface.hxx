@@ -35,9 +35,10 @@ namespace mfront {
         tokens_iterator,
         const tokens_iterator) override;
     void getTargetsDescription(
-        TargetsDescription&, const MaterialPropertyDescription&) const override;
-    void writeOutputFiles(const MaterialPropertyDescription&,
-                          const FileDescription&) const override;
+        TargetsDescription &,
+        const MaterialPropertyDescription &) const override;
+    void writeOutputFiles(const MaterialPropertyDescription &,
+                          const FileDescription &) const override;
     //! \brief destructor
     ~ExcelMaterialPropertyInterface() override;
   };  // end of MfrontExcelMaterialPropertyInterface
