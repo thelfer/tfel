@@ -22,7 +22,7 @@ namespace std {
   /*!
    * \brief partial specialisation for quantities
    */
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct numeric_limits<QuantityType> {
     using ValueType = tfel::math::base_type<QuantityType>;
     using UnitType = tfel::math::quantity_unit<QuantityType>;

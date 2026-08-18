@@ -86,6 +86,19 @@ The following configurations are supported for parallel computations:
 - `sycl-default-icpx`: configuration associated with `SYCL` programming
   model INTEL's `icpx` compiler.
 
+## Add a `build-tests` target
+
+In previous versions, tests were compiled and run using the `check`
+target, which internally calls `ctest` for running the test. One
+drawback of this approach is that `ctest` could not be run in parallel.
+
+The `build-tests` target (which is a dependency of the `check` target)
+only compiles the tests. To run the tests, one may still call the
+`check` target or call directly `ctest`.
+
+If the `build-tests` target has not been called, the `check` target
+works as in previous versions.
+
 # New `TFEL/Config` features
 
 The `TFEL/Config` library is now documented on [this
@@ -484,6 +497,37 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1014: [cmake] Add a `build-tests` target
+ 
+For more details, see <https://github.com/thelfer/tfel/issues/1014>
+
+## Issue 1013: [tfel-math] Refine `QuantityConcept` to take mutability into account
+
+For more details, see <https://github.com/thelfer/tfel/issues/1013>
+￼
+
+## Issue 1010: [clang-tidy] fix warnings related to the google-explicit-constructor check
+
+For more details, see <https://github.com/thelfer/tfel/issues/1010>
+
+￼
+## Issue 1007: [github-actions] Add continuous integration for the generic-parallel interface with CUDA backend
+
+For more details, see <https://github.com/thelfer/tfel/issues/1007>
+
+## Issue 1006: [github-actions] Add tests based on `tfel-check`
+
+For more details, see <https://github.com/thelfer/tfel/issues/1006>
+
+## Issue 1004:  [github-actions] Add support actions based on Visual Studio
+
+For more details, see <https://github.com/thelfer/tfel/issues/1004>
+
+￼
+## Issue 1003:[tfel-math] Improve error messages when using quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/1003>
 
 ## Issue 1001: [tfel-math] Introduce the `QuantityConcept` class to allow surrogate classes to be treated as quantities
 

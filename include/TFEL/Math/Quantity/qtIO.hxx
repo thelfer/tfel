@@ -19,7 +19,7 @@
 
 namespace tfel::math {
 
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   std::ostream& operator<<(std::ostream& os, const QuantityType& q) {
     os << base_type_cast(q);
     return os;

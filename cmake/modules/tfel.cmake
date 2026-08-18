@@ -428,7 +428,7 @@ function(mfront_check_library_base lib interface directory intrinsic_sources)
     PRIVATE TFELMath
     PRIVATE TFELUtilities
     PRIVATE TFELException)
-  add_dependencies(check ${lib})
+  add_dependencies(build-tests ${lib})
 endfunction(mfront_check_library_base)
 
 function(mfront_behaviour_check_library lib interface)

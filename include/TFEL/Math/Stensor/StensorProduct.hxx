@@ -27,8 +27,9 @@ namespace tfel::math {
 
   template <StensorConcept A, StensorConcept B>
   class TFEL_VISIBILITY_LOCAL StensorProductExprBase : public ExprBase {
-    using Result =
-        ComputeBinaryResult<std::decay_t<A>, std::decay_t<B>, OpMult>::Result;
+    using Result = typename ComputeBinaryResult<std::decay_t<A>,
+                                                std::decay_t<B>,
+                                                OpMult>::Result;
 
    public:
     typedef EmptyRunTimeProperties RunTimeProperties;

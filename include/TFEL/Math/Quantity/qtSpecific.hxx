@@ -28,7 +28,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsScalar
    */
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct IsScalar<QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
@@ -38,7 +38,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsScalar
    */
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct IsScalar<const QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
@@ -48,7 +48,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsReal
    */
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct IsReal<QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = IsReal<base_type<QuantityType>>::cond;
@@ -58,7 +58,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsReal
    */
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct IsReal<const QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = IsReal<base_type<QuantityType>>::cond;
@@ -68,7 +68,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsComplex
    */
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct IsComplex<QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = IsComplex<base_type<QuantityType>>::cond;
@@ -78,7 +78,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsComplex
    */
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct IsComplex<const QuantityType> {
     //! \brief result of the metafunction
     static constexpr bool cond = IsComplex<base_type<QuantityType>>::cond;
@@ -88,7 +88,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   RealPartType
    */
-  template <tfel::math::NoUnitQuantityConcept QuantityType>
+  template <tfel::math::NoUnitImmutableQuantityConcept QuantityType>
   struct RealPartType<QuantityType> {
     //! \brief result of the metafunction
     using type =
@@ -100,7 +100,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   RealPartType
    */
-  template <tfel::math::NoUnitQuantityConcept QuantityType>
+  template <tfel::math::NoUnitImmutableQuantityConcept QuantityType>
   struct RealPartType<const QuantityType> {
     //! \brief result of the metafunction
     using type =
@@ -112,7 +112,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsAssignableTo
    */
-  template <tfel::math::QuantityConcept QuantityType1,
+  template <tfel::math::ImmutableQuantityConcept QuantityType1,
             tfel::math::QuantityConcept QuantityType2>
   struct IsAssignableTo<QuantityType1, QuantityType2> {
     //! \brief result of the metafunction
@@ -129,7 +129,7 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for quantity
    * \see   IsAssignableTo
    */
-  template <tfel::math::NoUnitQuantityConcept QuantityType,
+  template <tfel::math::NoUnitImmutableQuantityConcept QuantityType,
             tfel::math::StandardArithmeticTypeConcept ScalarType>
   struct IsAssignableTo<QuantityType, ScalarType> {
     //! \brief result of the metafunction
@@ -149,7 +149,7 @@ namespace tfel::typetraits {
         IsAssignableTo<ScalarType, base_type<QuantityType>>::cond;
   };
 
-  template <tfel::math::QuantityConcept QuantityType>
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
   struct AbsType<QuantityType> {
     using type = tfel::math::qt<
         tfel::math::quantity_unit<QuantityType>,
