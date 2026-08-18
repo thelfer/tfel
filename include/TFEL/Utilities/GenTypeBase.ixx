@@ -104,7 +104,7 @@ namespace tfel::utilities::internals {
             unsigned short M = 0>
   struct GenTypeBaseApplyII {
    public:
-    using return_type = T::return_type;
+    using return_type = typename T::return_type;
 
    private:
     struct EndRecursion {

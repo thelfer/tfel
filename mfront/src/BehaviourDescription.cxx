@@ -858,8 +858,8 @@ namespace mfront {
       }
       const auto& vn = v.getExternalName();
       if (vn == tfel::glossary::Glossary::Temperature) {
-        inputs.emplace_back("T", tfel::glossary::Glossary::Temperature,
-                            MaterialPropertyInput::TEMPERATURE);
+        inputs.push_back({"T", tfel::glossary::Glossary::Temperature,
+	    MaterialPropertyInput::TEMPERATURE});
       } else {
         const auto n =
             this->getVariableDescriptionByExternalName(*(hs.begin()), vn).name;
@@ -876,7 +876,7 @@ namespace mfront {
                        "types in two distinct modelling hypotheses. "
                        "This is not supported.");
         }
-        inputs.emplace_back(n, vn, t);
+        inputs.push_back({n, vn, t});
       }
     }
     return inputs;
