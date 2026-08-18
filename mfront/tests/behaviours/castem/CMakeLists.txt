@@ -690,7 +690,7 @@ function(test_castem_cxx test_arg)
       TFELGlossary TFELSystem TFELUtilities TFELTests TFELException)
   set_tests_properties(${test_arg}
       PROPERTIES DEPENDS MFrontCastemBehaviours)
-  add_dependencies(check ${test_arg})
+  add_dependencies(build-tests ${test_arg})
 endfunction(test_castem_cxx)
 
 test_castem_cxx(UMATExternalBehaviourDescription)

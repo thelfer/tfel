@@ -70,7 +70,7 @@ function(mfront_check_library lib interface ext)
   target_link_libraries(${lib} PRIVATE TFELException)
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
-  add_dependencies(check ${lib})
+  add_dependencies(build-tests ${lib})
 endfunction(mfront_check_library)
 
 function(mfront_check_module lib interface ext)
@@ -86,7 +86,7 @@ function(mfront_check_module lib interface ext)
   target_link_libraries(${lib} PRIVATE TFELException)
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
-  add_dependencies(check ${lib})
+  add_dependencies(build-tests ${lib})
 endfunction(mfront_check_module)
 
 set(mfront_SOURCES
@@ -215,7 +215,7 @@ target_include_directories(test-c
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_link_libraries(test-c MFrontMaterialProperties)
 add_test(NAME test-c COMMAND test-c)
-add_dependencies(check test-c)
+add_dependencies(build-tests test-c)
 add_dependencies(test-c MFrontMaterialProperties)
 
 add_executable(test-cxx EXCLUDE_FROM_ALL test-cxx.cxx)
@@ -224,7 +224,7 @@ target_include_directories(test-cxx
 target_link_libraries(test-cxx MFrontMaterialProperties-cxx
   TFELTests)
 add_test(NAME test-cxx COMMAND test-cxx)
-add_dependencies(check test-cxx)
+add_dependencies(build-tests test-cxx)
 add_dependencies(test-cxx MFrontMaterialProperties-cxx)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST test-cxx
@@ -237,7 +237,7 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 if(HAVE_FORTRAN)
   add_executable(test-f EXCLUDE_FROM_ALL test-f.c compute.f)
   add_test(NAME test-f COMMAND test-f)
-  add_dependencies(check test-f)
+  add_dependencies(build-tests test-f)
   add_dependencies(test-f MFrontMaterialProperties-fortran)
   target_link_libraries(test-f MFrontMaterialProperties-fortran)
   IF(GNU_FORTRAN_COMPILER)

@@ -5,7 +5,7 @@ function(tests_math_numerical_integration test_arg)
   target_link_libraries(${test_arg}
     TFELMath TFELUtilities TFELException TFELTests)
   add_test(NAME ${test_arg} COMMAND ${test_arg})
-  add_dependencies(check ${test_arg})
+  add_dependencies(build-tests ${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST ${test_arg}
   	         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
