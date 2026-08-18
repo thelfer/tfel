@@ -121,12 +121,15 @@ option(enable-testing "enable tests" ON)
 option(enable-mfront-quantity-tests "enable tests of behaviours using quantities (such tests fails on old compilers)" ON)
 if(enable-testing)
   enable_testing()
+  add_custom_target(build-tests)
   if(CMAKE_CONFIGURATION_TYPES)
     add_custom_target(check COMMAND
-      ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
+      ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>
+      DEPENDS build-tests)
   else(CMAKE_CONFIGURATION_TYPES)
     add_custom_target(check COMMAND
-      ${CMAKE_CTEST_COMMAND} -T test )
+      ${CMAKE_CTEST_COMMAND} -T test
+      DEPENDS build-tests)
   endif(CMAKE_CONFIGURATION_TYPES)
 endif()
 
