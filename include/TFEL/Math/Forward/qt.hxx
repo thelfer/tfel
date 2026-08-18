@@ -138,12 +138,13 @@ namespace tfel::math {
         })));
   //
   template <typename T>
-  concept QuantityConcept = ((ImmutableQuantityConcept<T>)&&  //
-      (requires(T& v) {
-        {
-          base_type_cast(v)
-          } -> std::same_as<typename QuantityTraits<T>::ValueType&>;
-      }));
+  concept QuantityConcept =
+      ((ImmutableQuantityConcept<T>)&&  //
+       (requires(T & v) {
+         {
+           base_type_cast(v)
+           } -> std::same_as<typename QuantityTraits<T>::ValueType&>;
+       }));
   //
   template <typename T>
   concept NoUnitImmutableQuantityConcept =

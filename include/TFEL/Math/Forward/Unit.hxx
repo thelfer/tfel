@@ -38,8 +38,8 @@ namespace tfel::math::unit {
     return std::gcd(e.numerator, e.denominator) == 1;
   }
 
-  [[nodiscard]] constexpr bool operator==(const UnitExponent &e1,
-                                          const UnitExponent &e2) noexcept {
+  [[nodiscard]] constexpr bool operator==(const UnitExponent& e1,
+                                          const UnitExponent& e2) noexcept {
     return ((e1.numerator == e2.numerator) &&
             (e1.denominator == e2.denominator));
   }  // end of operator==
@@ -57,8 +57,8 @@ namespace tfel::math::unit {
                [](const UnitExponent& e1) { return isIrreductible(e1); }));
   }  // end of isValid
 
-  [[nodiscard]] constexpr bool operator==(const UnitExponents &e1,
-                                          const UnitExponents &e2) noexcept {
+  [[nodiscard]] constexpr bool operator==(const UnitExponents& e1,
+                                          const UnitExponents& e2) noexcept {
     return (e1.exponents[0] == e2.exponents[0]) &&
            (e1.exponents[1] == e2.exponents[1]) &&
            (e1.exponents[2] == e2.exponents[2]) &&
@@ -148,7 +148,7 @@ namespace tfel::math::unit {
   }
 
   template <typename T>
-  concept UnitConcept = requires(const T& t){
+  concept UnitConcept = requires(const T& t) {
     { get_unit_exponents(t) } -> std::same_as<UnitExponents>;
   };
 

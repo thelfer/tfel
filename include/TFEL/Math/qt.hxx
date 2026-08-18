@@ -205,11 +205,11 @@ namespace tfel::math {
   struct Quantity : OwnershipPolicy {
     //
     static_assert((requires(const OwnershipPolicy& p) {
-	  { p.getValue() } -> std::same_as<const ValueType&>;
-	})||(requires(const OwnershipPolicy& p) {
-	    { p.getValue() } -> std::same_as<ValueType>;
-	  })
-      );
+                    { p.getValue() } -> std::same_as<const ValueType&>;
+                  }) ||
+                  (requires(const OwnershipPolicy& p) {
+                    { p.getValue() } -> std::same_as<ValueType>;
+                  }));
     //
     static constexpr auto is_mutable = requires(OwnershipPolicy & p) {
       { p.getValue() } -> std::same_as<ValueType&>;
