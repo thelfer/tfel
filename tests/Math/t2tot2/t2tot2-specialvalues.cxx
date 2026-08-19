@@ -39,6 +39,9 @@ struct T2tot2SpecialValuesTest final : public tfel::tests::TestCase {
     this->testIdxId2();
     this->testK();
     this->testK2();
+    this->testGenerateIdComponent();
+    this->testGenerateIxIComponent();
+    this->testGenerateKComponent();
     return this->result;
   }  // end of execute
  private:
@@ -99,6 +102,42 @@ struct T2tot2SpecialValuesTest final : public tfel::tests::TestCase {
     for (size_type i = 0; i != TensorDimeToSize<N>::value; ++i) {
       for (size_type j = 0; j != TensorDimeToSize<N>::value; ++j) {
         TFEL_TESTS_ASSERT(std::abs(k(i, j) - k2(i, j)) < 1.e-14);
+      }
+    }
+  }
+  void testGenerateIdComponent() {
+    using namespace tfel::math;
+    using size_type = typename t2tot2<N, double>::size_type;
+    const auto id = t2tot2<N, double>::Id();
+    for (size_type i = 0; i != TensorDimeToSize<N>::value; ++i) {
+      for (size_type j = 0; j != TensorDimeToSize<N>::value; ++j) {
+        TFEL_TESTS_ASSERT(
+            std::abs(t2tot2<N, double>::generateIdComponent(i, j) -
+                     id(i, j)) < 1.e-14);
+      }
+    }
+  }
+  void testGenerateIxIComponent() {
+    using namespace tfel::math;
+    using size_type = typename t2tot2<N, double>::size_type;
+    const auto IdxId = t2tot2<N, double>::IxI();
+    for (size_type i = 0; i != TensorDimeToSize<N>::value; ++i) {
+      for (size_type j = 0; j != TensorDimeToSize<N>::value; ++j) {
+        TFEL_TESTS_ASSERT(
+            std::abs(t2tot2<N, double>::generateIxIComponent(i, j) -
+                     IdxId(i, j)) < 1.e-14);
+      }
+    }
+  }
+  void testGenerateKComponent() {
+    using namespace tfel::math;
+    using size_type = typename t2tot2<N, double>::size_type;
+    const auto k = t2tot2<N, double>::K();
+    for (size_type i = 0; i != TensorDimeToSize<N>::value; ++i) {
+      for (size_type j = 0; j != TensorDimeToSize<N>::value; ++j) {
+        TFEL_TESTS_ASSERT(
+            std::abs(t2tot2<N, double>::generateKComponent(i, j) -
+                     k(i, j)) < 1.e-14);
       }
     }
   }
