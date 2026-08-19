@@ -28,8 +28,8 @@ namespace tfel::math::unit {
   struct UnitExponent {
     int numerator;
     unsigned int denominator;
-    [[nodiscard]] friend constexpr bool operator==(const UnitExponent&,
-                                                   const UnitExponent&) noexcept = default;
+    [[nodiscard]] friend constexpr bool operator==(
+        const UnitExponent&, const UnitExponent&) noexcept = default;
   };
 
   [[nodiscard]] constexpr bool isValid(const UnitExponent& e) noexcept {
@@ -42,8 +42,8 @@ namespace tfel::math::unit {
 
   struct UnitExponents {
     std::array<UnitExponent, 7> exponents;
-    [[nodiscard]] friend constexpr bool operator==(const UnitExponents&,
-                                                   const UnitExponents&) noexcept = default;
+    [[nodiscard]] friend constexpr bool operator==(
+        const UnitExponents&, const UnitExponents&) noexcept = default;
   };
 
   [[nodiscard]] constexpr bool isValid(const UnitExponents& e) noexcept {

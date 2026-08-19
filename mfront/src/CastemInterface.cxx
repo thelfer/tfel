@@ -13,17 +13,14 @@
 
 #include <iterator>
 #include <algorithm>
-
 #include <sstream>
 #include <fstream>
 #include <cstdlib>
 #include <stdexcept>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
-
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/CodeGeneratorUtilities.hxx"
@@ -457,36 +454,61 @@ namespace mfront {
         ModellingHypothesis::GENERALISEDPLANESTRAIN);
   }
 
-  std::string CastemInterface::treatScalar(const std::string& s) {
-    return "'" + makeUpperCase(s.substr(0, 4)) + "'";
+  CastemInterface::UniqueCast3MIdentifiersGenerator::
+      UniqueCast3MIdentifiersGenerator() {
+    this->ids.insert({{"YoungModulus", "YOUN"},
+                      {"PoissonRatio", "NU"},
+                      {"MassDensity", "RHO"},
+                      {"ThermalExpansion", "ALP"},
+                      {"PlateWidth", "DIM3"},
+                      {"YoungModulus1", "YG1"},
+                      {"YoungModulus2", "YG2"},
+                      {"YoungModulus3", "YG3"},
+                      {"PoissonRatio12", "NU12"},
+                      {"PoissonRatio13", "NU13"},
+                      {"PoissonRatio23", "NU23"},
+                      {"ShearModulus12", "G12"},
+                      {"ShearModulus13", "G13"},
+                      {"ShearModulus23", "G23"},
+                      {"V1X", "V1X"},
+                      {"V1Y", "V1Y"},
+                      {"V1Z", "V1Z"},
+                      {"V2X", "V2X"},
+                      {"V2Y", "V2Y"},
+                      {"V2Z", "V2Z"},
+                      {"NormalStiffness", "kn"},
+                      {"TangentialStiffness", "kt"},
+                      {"NormalThermalExpansion", "ALPN"},
+                      {"Temperature", "T"}});
+  }  // end of UniqueCast3MIdentifiersGenerator
+
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatScalar(
+      const std::string& en, const std::string& s) {
+    return this->getQuotedId(en, s);
   }
 
-  std::string CastemInterface::treatScalar(const std::string& s,
-                                           const unsigned short a) {
-    if (a < 9) {
-      return "'" + makeUpperCase(s.substr(0, 3)) + std::to_string(a) + "'";
-    }
-    return "'" + makeUpperCase(s.substr(0, 2)) + std::to_string(a) + "'";
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatScalar(
+      const std::string& en, const std::string& s, const unsigned short a) {
+    return this->getQuotedId(en, s, a);
   }
 
-  std::string CastemInterface::treatTVector(const Hypothesis h,
-                                            const std::string& s) {
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatTVector(
+      const Hypothesis h, const std::string& en, const std::string& s) {
     auto res = std::string{};
-    const auto s2 = makeUpperCase(s.substr(0, 2));
     switch (h) {
       case ModellingHypothesis::TRIDIMENSIONAL:
-        res = "'" + s2 + "X' " + "'" + s2 + "Y' " + "'" + s2 + "Z'";
+        res = this->getQuotedIds(en, s, {"X", "Y", "Z"});
         break;
       case ModellingHypothesis::AXISYMMETRICAL:
-        res = "'" + s2 + "R' " + "'" + s2 + "Z'";
+        res = this->getQuotedIds(en, s, {"R", "Z"});
         break;
       case ModellingHypothesis::PLANESTRAIN:
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::GENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "X' " + "'" + s2 + "Y'";
+        res = this->getQuotedIds(en, s, {"X", "Y"});
         break;
       case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "R'";
+        res = this->getQuotedIds(en, s, {"R"});
         break;
       default:
         auto msg = std::string{};
@@ -499,27 +521,26 @@ namespace mfront {
     return res;
   }
 
-  std::string CastemInterface::treatTVector(const Hypothesis h,
-                                            const std::string& s,
-                                            const unsigned short a) {
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatTVector(
+      const Hypothesis h,
+      const std::string& en,
+      const std::string& s,
+      const unsigned short a) {
     auto res = std::string{};
-    std::ostringstream stmp;
-    stmp << a;
-    const auto s2 = makeUpperCase(s.substr(0, 1)) + stmp.str();
     switch (h) {
       case ModellingHypothesis::TRIDIMENSIONAL:
-        res = "'" + s2 + "X' " + "'" + s2 + "Y' " + "'" + s2 + "Z'";
+        res = this->getQuotedIds(en, s, a, {"X", "Y", "Z"});
         break;
       case ModellingHypothesis::AXISYMMETRICAL:
-        res = "'" + s2 + "R' " + "'" + s2 + "Z'";
+        res = this->getQuotedIds(en, s, a, {"R", "Z"});
         break;
       case ModellingHypothesis::PLANESTRAIN:
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::GENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "X' " + "'" + s2 + "Y'";
+        res = this->getQuotedIds(en, s, a, {"X", "Y"});
         break;
       case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "R' " + "'" + s2 + "Z'";
+        res = this->getQuotedIds(en, s, a, {"R"});
         break;
       default:
         auto msg = std::string{};
@@ -532,27 +553,23 @@ namespace mfront {
     return res;
   }
 
-  std::string CastemInterface::treatStensor(const Hypothesis h,
-                                            const std::string& s) {
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatStensor(
+      const Hypothesis h, const std::string& en, const std::string& s) {
     auto res = std::string{};
-    const auto s2 = makeUpperCase(s.substr(0, 2));
     switch (h) {
       case ModellingHypothesis::TRIDIMENSIONAL:
-        res = "'" + s2 + "XX' " + "'" + s2 + "YY' " + "'" + s2 + "ZZ' " + "'" +
-              s2 + "XY' " + "'" + s2 + "XZ' " + "'" + s2 + "YZ'";
+        res = this->getQuotedIds(en, s, {"XX", "YY", "ZZ", "XY", "XZ", "YZ"});
         break;
       case ModellingHypothesis::AXISYMMETRICAL:
-        res = "'" + s2 + "RR' " + "'" + s2 + "ZZ' " + "'" + s2 + "TT' " + "'" +
-              s2 + "RZ'";
+        res = this->getQuotedIds(en, s, {"RR", "ZZ", "TT", "RZ"});
         break;
       case ModellingHypothesis::PLANESTRAIN:
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::GENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "XX' " + "'" + s2 + "YY' " + "'" + s2 + "ZZ' " + "'" +
-              s2 + "XY'";
+        res = this->getQuotedIds(en, s, {"XX", "YY", "ZZ", "XY"});
         break;
       case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "RR' " + "'" + s2 + "ZZ' " + "'" + s2 + "TT'";
+        res = this->getQuotedIds(en, s, {"RR", "ZZ", "TT"});
         break;
       default:
         auto msg = std::string{};
@@ -565,30 +582,27 @@ namespace mfront {
     return res;
   }
 
-  std::string CastemInterface::treatStensor(const Hypothesis h,
-                                            const std::string& s,
-                                            const unsigned short a) {
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatStensor(
+      const Hypothesis h,
+      const std::string& en,
+      const std::string& s,
+      const unsigned short a) {
     auto res = std::string{};
-    std::ostringstream stmp;
-    stmp << a;
-    const auto s2 = makeUpperCase(s.substr(0, 1)) + stmp.str();
     switch (h) {
       case ModellingHypothesis::TRIDIMENSIONAL:
-        res = "'" + s2 + "XX' " + "'" + s2 + "YY' " + "'" + s2 + "ZZ' " + "'" +
-              s2 + "XY' " + "'" + s2 + "XZ' " + "'" + s2 + "YZ'";
+        res =
+            this->getQuotedIds(en, s, a, {"XX", "YY", "ZZ", "XY", "XZ", "YZ"});
         break;
       case ModellingHypothesis::AXISYMMETRICAL:
-        res = "'" + s2 + "RR' " + "'" + s2 + "ZZ' " + "'" + s2 + "TT' " + "'" +
-              s2 + "RZ'";
+        res = this->getQuotedIds(en, s, a, {"RR", "ZZ", "TT", "RZ"});
         break;
       case ModellingHypothesis::PLANESTRAIN:
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::GENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "XX' " + "'" + s2 + "YY' " + "'" + s2 + "ZZ' " + "'" +
-              s2 + "XY'";
+        res = this->getQuotedIds(en, s, a, {"XX", "YY", "ZZ", "XY"});
         break;
       case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "RR' " + "'" + s2 + "ZZ' " + "'" + s2 + "TT'";
+        res = this->getQuotedIds(en, s, a, {"RR", "ZZ", "TT"});
         break;
       default:
         auto msg = std::string{};
@@ -601,28 +615,24 @@ namespace mfront {
     return res;
   }
 
-  std::string CastemInterface::treatTensor(const Hypothesis h,
-                                           const std::string& s) {
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatTensor(
+      const Hypothesis h, const std::string& en, const std::string& s) {
     auto res = std::string{};
-    const auto s2 = makeUpperCase(s.substr(0, 2));
     switch (h) {
       case ModellingHypothesis::TRIDIMENSIONAL:
-        res = "'" + s2 + "XX' '" + s2 + "YY' '" + s2 + "ZZ' '" + s2 + "XY' '" +
-              s2 + "YX' '" + s2 + "XZ' '" + s2 + "ZX' '" + s2 + "YZ' '" + s2 +
-              "ZY'";
+        res = this->getQuotedIds(
+            en, s, {"XX", "YY", "ZZ", "XY", "YX", "XZ", "ZX", "YZ", "ZY"});
         break;
       case ModellingHypothesis::AXISYMMETRICAL:
-        res = "'" + s2 + "RR' '" + s2 + "ZZ' '" + s2 + "TT' '" + s2 + "RZ' '" +
-              s2 + "ZR'";
+        res = this->getQuotedIds(en, s, {"RR", "ZZ", "TT", "RZ", "ZR"});
         break;
       case ModellingHypothesis::PLANESTRAIN:
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::GENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "XX' '" + s2 + "YY' '" + s2 + "ZZ' '" + s2 + "XY' '" +
-              s2 + "YX'";
+        res = this->getQuotedIds(en, s, {"XX", "YY", "ZZ", "XY", "YX"});
         break;
       case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "RR' '" + s2 + "ZZ' '" + s2 + "TT'";
+        res = this->getQuotedIds(en, s, {"RR", "ZZ", "TT"});
         break;
       default:
         auto msg = std::string{};
@@ -635,31 +645,27 @@ namespace mfront {
     return res;
   }
 
-  std::string CastemInterface::treatTensor(const Hypothesis h,
-                                           const std::string& s,
-                                           const unsigned short a) {
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatTensor(
+      const Hypothesis h,
+      const std::string& en,
+      const std::string& s,
+      const unsigned short a) {
     auto res = std::string{};
-    std::ostringstream stmp;
-    stmp << a;
-    const auto s2 = makeUpperCase(s.substr(0, 1)) + stmp.str();
     switch (h) {
       case ModellingHypothesis::TRIDIMENSIONAL:
-        res = "'" + s2 + "XX' '" + s2 + "YY' '" + s2 + "ZZ' '" + s2 + "XY' '" +
-              s2 + "YX' '" + s2 + "XZ' '" + s2 + "ZX' '" + s2 + "YZ' '" + s2 +
-              "ZY'";
+        res = this->getQuotedIds(
+            en, s, a, {"XX", "YY", "ZZ", "XY", "YX", "XZ", "ZX", "YZ", "ZY"});
         break;
       case ModellingHypothesis::AXISYMMETRICAL:
-        res = "'" + s2 + "RR' '" + s2 + "ZZ' '" + s2 + "TT' '" + s2 + "RZ' '" +
-              s2 + "ZR'";
+        res = this->getQuotedIds(en, s, a, {"RR", "ZZ", "TT", "RZ", "ZR"});
         break;
       case ModellingHypothesis::PLANESTRAIN:
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::GENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "XX' '" + s2 + "YY' '" + s2 + "ZZ' '" + s2 + "XY' '" +
-              s2 + "YX'";
+        res = this->getQuotedIds(en, s, a, {"XX", "YY", "ZZ", "XY", "YX"});
         break;
       case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
-        res = "'" + s2 + "RR' '" + s2 + "ZZ' '" + s2 + "TT'";
+        res = this->getQuotedIds(en, s, a, {"RR", "ZZ", "TT"});
         break;
       default:
         auto msg = std::string{};
@@ -671,6 +677,94 @@ namespace mfront {
     }
     return res;
   }
+
+  bool CastemInterface::UniqueCast3MIdentifiersGenerator::isIdAlreadyUsed(
+      const std::string& n) const {
+    for (const auto& [vn, id] : this->ids) {
+      static_cast<void>(vn);
+      if (id == n) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isIdAlreadyUsed
+
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::getUniqueId(
+      const std::string& en, const std::string& v, const std::string& s) {
+    if (this->ids.contains(en)) {
+      return this->ids.at(en);
+    }
+    if (s.size() <= 3) {
+      const auto g = makeUpperCase(v.substr(0, 4 - s.size()) + s);
+      if (!this->isIdAlreadyUsed(g)) {
+        this->ids.insert({en, g});
+        return g;
+      }
+    }
+    //
+    auto id = std::string{};
+    while (true) {
+      if (this->count > 999) {
+        tfel::raise(
+            "CastemInterface::UniqueCast3MIdentifiersGenerator::getUniqueId: "
+            "upper limit in unique identifier generation reached");
+      }
+      const auto g = "V" + std::to_string(this->count);
+      if (!this->isIdAlreadyUsed(g)) {
+        id = g;
+        break;
+      }
+      ++(this->count);
+    }
+    this->ids.insert({en, id});
+    return id;
+  }
+
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::getQuotedId(
+      const std::string& en, const std::string& v) {
+    const auto id = this->getUniqueId(en, v, "");
+    return '"' + id + '"';
+  }
+
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::getQuotedId(
+      const std::string& en, const std::string& v, const unsigned short a) {
+    const auto id = this->getUniqueId(en + '[' + std::to_string(a) + ']', v,
+                                      std::to_string(a));
+    return '"' + id + '"';
+  }  // end of getQuotedIds
+
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::getQuotedIds(
+      const std::string& en,
+      const std::string& v,
+      const std::vector<std::string>& cs) {
+    auto r = std::string{};
+    for (auto p = cs.begin(); p != cs.end();) {
+      const auto id = this->getUniqueId(en + '[' + *p + ']', v, *p);
+      r += '"' + id + '"';
+      if (++p != cs.end()) {
+        r += ' ';
+      }
+    }
+    return r;
+  }  // end of getQuotedIds
+
+  std::string CastemInterface::UniqueCast3MIdentifiersGenerator::getQuotedIds(
+      const std::string& en,
+      const std::string& v,
+      const unsigned short a,
+      const std::vector<std::string>& cs) {
+    auto r = std::string{};
+    for (auto p = cs.begin(); p != cs.end();) {
+      const auto id =
+          this->getUniqueId(en + '[' + std::to_string(a) + ']' + '[' + *p + ']',
+                            v, std::to_string(a) + *p);
+      r += '"' + id + '"';
+      if (++p != cs.end()) {
+        r += ' ';
+      }
+    }
+    return r;
+  }  // end of getQuotedIds
 
   std::set<CastemInterface::Hypothesis>
   CastemInterface::getModellingHypothesesToBeTreated(
@@ -2326,13 +2420,15 @@ namespace mfront {
 
   void CastemInterface::writeVariableDescriptionContainerToGibiane(
       std::ostream& out,
+      UniqueCast3MIdentifiersGenerator& ids,
       const Hypothesis h,
       const VariableDescriptionContainer& v) const {
-    this->writeVariableDescriptionsToGibiane(out, h, v.begin(), v.end());
+    this->writeVariableDescriptionsToGibiane(out, ids, h, v.begin(), v.end());
   }
 
   void CastemInterface::writeVariableDescriptionsToGibiane(
       std::ostream& out,
+      UniqueCast3MIdentifiersGenerator& ids,
       const Hypothesis h,
       const VariableDescriptionContainer::const_iterator pb,
       const VariableDescriptionContainer::const_iterator pe) const {
@@ -2342,10 +2438,10 @@ namespace mfront {
       tmp += ' ';
       if (flag == SupportedTypes::SCALAR) {
         if (p->arraySize == 1) {
-          tmp += treatScalar(p->name);
+          tmp += ids.treatScalar(p->getExternalName(), p->name);
         } else {
           for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += treatScalar(p->name, j);
+            tmp += ids.treatScalar(p->getExternalName(), p->name, j);
             if (++j != p->arraySize) {
               tmp += ' ';
             }
@@ -2353,10 +2449,10 @@ namespace mfront {
         }
       } else if (flag == SupportedTypes::TVECTOR) {
         if (p->arraySize == 1) {
-          tmp += treatTVector(h, p->name);
+          tmp += ids.treatTVector(h, p->getExternalName(), p->name);
         } else {
           for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += treatTVector(h, p->name, j);
+            tmp += ids.treatTVector(h, p->getExternalName(), p->name, j);
             if (++j != p->arraySize) {
               tmp += ' ';
             }
@@ -2364,10 +2460,10 @@ namespace mfront {
         }
       } else if (flag == SupportedTypes::STENSOR) {
         if (p->arraySize == 1) {
-          tmp += treatStensor(h, p->name);
+          tmp += ids.treatStensor(h, p->getExternalName(), p->name);
         } else {
           for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += treatStensor(h, p->name, j);
+            tmp += ids.treatStensor(h, p->getExternalName(), p->name, j);
             if (++j != p->arraySize) {
               tmp += ' ';
             }
@@ -2375,10 +2471,10 @@ namespace mfront {
         }
       } else if (flag == SupportedTypes::TENSOR) {
         if (p->arraySize == 1) {
-          tmp += treatTensor(h, p->name);
+          tmp += ids.treatTensor(h, p->getExternalName(), p->name);
         } else {
           for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += treatTensor(h, p->name, j);
+            tmp += ids.treatTensor(h, p->getExternalName(), p->name, j);
             if (++j != p->arraySize) {
               tmp += ' ';
             }
@@ -2395,6 +2491,7 @@ namespace mfront {
 
   void CastemInterface::writeGibianeMappingComments(
       std::ostream& out,
+      UniqueCast3MIdentifiersGenerator& ids,
       const Hypothesis h,
       const VariableDescriptionContainer& v) const {
     for (const auto& pv : v) {
@@ -2404,46 +2501,52 @@ namespace mfront {
       if (flag == SupportedTypes::SCALAR) {
         if (pv.arraySize == 1) {
           tmp += pv.getExternalName();
-          tmp += ": " + treatScalar(pv.name) + "\n";
+          tmp += ": " + ids.treatScalar(pv.getExternalName(), pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp += pv.getExternalName();
-            tmp += ": " + treatScalar(pv.name, j) + "\n";
+            tmp +=
+                ": " + ids.treatScalar(pv.getExternalName(), pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TVECTOR) {
         if (pv.arraySize == 1) {
           tmp += pv.getExternalName();
-          tmp += ": " + treatTVector(h, pv.name);
+          tmp += ": " + ids.treatTVector(h, pv.getExternalName(), pv.name);
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp += pv.getExternalName();
-            tmp += ": " + treatTVector(h, pv.name, j) + "\n";
+            tmp += ": " +
+                   ids.treatTVector(h, pv.getExternalName(), pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::STENSOR) {
         if (pv.arraySize == 1) {
           tmp += pv.getExternalName();
-          tmp += ": " + treatStensor(h, pv.name) + "\n";
+          tmp +=
+              ": " + ids.treatStensor(h, pv.getExternalName(), pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp += pv.getExternalName();
-            tmp += ": " + treatStensor(h, pv.name, j) + "\n";
+            tmp += ": " +
+                   ids.treatStensor(h, pv.getExternalName(), pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TENSOR) {
         if (pv.arraySize == 1) {
           tmp += pv.getExternalName();
-          tmp += ": " + treatTensor(h, pv.name) + "\n";
+          tmp +=
+              ": " + ids.treatTensor(h, pv.getExternalName(), pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp += pv.getExternalName();
-            tmp += ": " + treatTensor(h, pv.name, j) + "\n";
+            tmp += ": " + ids.treatTensor(h, pv.getExternalName(), pv.name, j) +
+                   "\n";
           }
         }
       } else {
         tfel::raise(
-            "CastemInterface::writeVariableDescriptionContainerToGibiane: "
+            "CastemInterface::writeGibianeMappingComments: "
             "internal error, tag unsupported");
       }
       out << tmp;
@@ -2452,13 +2555,11 @@ namespace mfront {
 
   void CastemInterface::writeGibianeMappingComments(
       std::ostream& out,
+      UniqueCast3MIdentifiersGenerator& ids,
       const std::pair<std::vector<BehaviourMaterialProperty>,
                       SupportedTypes::TypeSize>& mprops) const {
     auto throw_if = [](const bool c, const std::string& msg) {
-      tfel::raise_if(c,
-                     "checkFiniteStrainStrategyDefinitionConsistency "
-                     "(CastemInterface): " +
-                         msg);
+      tfel::raise_if(c, "CastemInterface::writeGibianeMappingComments: " + msg);
     };
     for (const auto& pm : mprops.first) {
       const auto flag = SupportedTypes::getTypeFlag(pm.type);
@@ -2468,11 +2569,11 @@ namespace mfront {
       tmp += "** - ";
       if (pm.arraySize == 1) {
         tmp += pm.getExternalName();
-        tmp += ": " + treatScalar(pm.name) + "\n";
+        tmp += ": " + ids.treatScalar(pm.getExternalName(), pm.name) + "\n";
       } else {
         for (unsigned short j = 0; j != pm.arraySize; ++j) {
           tmp += pm.getExternalName();
-          tmp += treatScalar(pm.name, j) + "\n";
+          tmp += ids.treatScalar(pm.getExternalName(), pm.name, j) + "\n";
         }
       }
       out << tmp;
@@ -2505,6 +2606,7 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& bd,
       const Hypothesis h) const {
+    auto ids = UniqueCast3MIdentifiersGenerator{};
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(
           b, "CastemInterface::generateInputFileExampleForHypothesis: " + m);
@@ -2558,7 +2660,7 @@ namespace mfront {
     }
 
     out << "** List of material properties:\n**\n";
-    this->writeGibianeMappingComments(out, mprops);
+    this->writeGibianeMappingComments(out, ids, mprops);
 
     std::ostringstream mcoel;
     mcoel << "coel = 'MOTS' ";
@@ -2567,10 +2669,10 @@ namespace mfront {
       throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       if (pm->arraySize == 1) {
-        mcoel << treatScalar(pm->name);
+        mcoel << ids.treatScalar(pm->getExternalName(), pm->name);
       } else {
         for (unsigned short j = 0; j != pm->arraySize;) {
-          mcoel << treatScalar(pm->name, j);
+          mcoel << ids.treatScalar(pm->getExternalName(), pm->name, j);
           if (++j != pm->arraySize) {
             mcoel << " ";
           }
@@ -2586,11 +2688,11 @@ namespace mfront {
 
     if (!persistentVarsHolder.empty()) {
       out << "** List of state variables:\n**\n";
-      this->writeGibianeMappingComments(out, h, persistentVarsHolder);
+      this->writeGibianeMappingComments(out, ids, h, persistentVarsHolder);
 
       std::ostringstream mstatev;
       mstatev << "statev = 'MOTS' ";
-      this->writeVariableDescriptionContainerToGibiane(mstatev, h,
+      this->writeVariableDescriptionContainerToGibiane(mstatev, ids, h,
                                                        persistentVarsHolder);
       mstatev << ";";
       writeGibianeInstruction(out, mstatev.str());
@@ -2599,14 +2701,14 @@ namespace mfront {
 
     std::ostringstream mappingexternalStateVarsComment;
     out << "** List of external state variables:\n**\n";
-    this->writeGibianeMappingComments(out, h, externalStateVarsHolder);
+    this->writeGibianeMappingComments(out, ids, h, externalStateVarsHolder);
     std::ostringstream mparam;
     mparam << "params = 'MOTS' 'T'";
     if (!externalStateVarsHolder.empty()) {
       mparam << " ";
       const auto pb = std::next(externalStateVarsHolder.begin());
       const auto pe = externalStateVarsHolder.end();
-      this->writeVariableDescriptionsToGibiane(mparam, h, pb, pe);
+      this->writeVariableDescriptionsToGibiane(mparam, ids, h, pb, pe);
     }
     mparam << ";";
     writeGibianeInstruction(out, mparam.str());
@@ -2648,11 +2750,11 @@ namespace mfront {
         }
       }
       if (pm->arraySize == 1) {
-        tmp = treatScalar(pm->name);
+        tmp = ids.treatScalar(pm->getExternalName(), pm->name);
         mi << tmp << " x" << makeLowerCase(pm->name);
       } else {
         for (unsigned short j = 0; j != pm->arraySize;) {
-          tmp = treatScalar(pm->name, j);
+          tmp = ids.treatScalar(pm->getExternalName(), pm->name, j);
           mi << tmp << " x" << makeLowerCase(pm->name) << j;
           if (++j != pm->arraySize) {
             mi << " ";
@@ -2701,12 +2803,19 @@ namespace mfront {
           << "* in the Cast3M finite element solver\n"
           << "* \\author " << fd.authorName << '\n'
           << "* \\date   " << fd.date << '\n'
-          << "*\n\n";
+          << "*\n"
+          << "* \\warning: this file is generated automatically to provide \n"
+          << "* a template to use the " << bd.getClassName()
+          << " behaviour law.\n"
+          << "* This file may contain illegal or outdated\n"
+          << "* instructions as Cast3M syntax evolve with time.\n"
+          << "* The user must thoroughly review the proposed examples.\n\n";
       // elastic properties, if any
       if (bd.areElasticMaterialPropertiesDefined()) {
+        auto ids = UniqueCast3MIdentifiersGenerator{};
         const auto& emps = bd.getElasticMaterialProperties();
         const auto& empds = bd.getElasticMaterialPropertiesDescriptions();
-        auto gen_emp = [this, &bd, &out](
+        auto gen_emp = [this, &ids, &out, &bd](
                            const BehaviourDescription::MaterialProperty& emp,
                            const MaterialPropertyDescription& empd,
                            const char* const n) {
@@ -2725,7 +2834,7 @@ namespace mfront {
             if (!empd.inputs.empty()) {
               out << n << " . 'VARIABLES' = 'MOTS' ";
               this->writeVariableDescriptionsToGibiane(
-                  out, uh, empd.inputs.begin(), empd.inputs.end());
+                  out, ids, uh, empd.inputs.begin(), empd.inputs.end());
               out << ";\n";
             }
           }
