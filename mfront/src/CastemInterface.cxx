@@ -456,30 +456,33 @@ namespace mfront {
 
   CastemInterface::UniqueCast3MIdentifiersGenerator::
       UniqueCast3MIdentifiersGenerator() {
-    this->ids.insert({{"YoungModulus", "YOUN"},
-                      {"PoissonRatio", "NU"},
-                      {"MassDensity", "RHO"},
-                      {"ThermalExpansion", "ALP"},
-                      {"PlateWidth", "DIM3"},
-                      {"YoungModulus1", "YG1"},
-                      {"YoungModulus2", "YG2"},
-                      {"YoungModulus3", "YG3"},
-                      {"PoissonRatio12", "NU12"},
-                      {"PoissonRatio13", "NU13"},
-                      {"PoissonRatio23", "NU23"},
-                      {"ShearModulus12", "G12"},
-                      {"ShearModulus13", "G13"},
-                      {"ShearModulus23", "G23"},
-                      {"V1X", "V1X"},
-                      {"V1Y", "V1Y"},
-                      {"V1Z", "V1Z"},
-                      {"V2X", "V2X"},
-                      {"V2Y", "V2Y"},
-                      {"V2Z", "V2Z"},
-                      {"NormalStiffness", "kn"},
-                      {"TangentialStiffness", "kt"},
-                      {"NormalThermalExpansion", "ALPN"},
-                      {"Temperature", "T"}});
+    this->ids.insert(
+        {{"YoungModulus", "YOUN"},
+         {"PoissonRatio", "NU"},
+         {"MassDensity", "RHO"},
+         {"ThermalExpansion", "ALP"},
+         {"ReferenceTemperatureForThermalExpansionCoefficient", "TALP"},
+         {"ReferenceTemperatureForThermalExpansion", "TREF"},
+         {"PlateWidth", "DIM3"},
+         {"YoungModulus1", "YG1"},
+         {"YoungModulus2", "YG2"},
+         {"YoungModulus3", "YG3"},
+         {"PoissonRatio12", "NU12"},
+         {"PoissonRatio13", "NU13"},
+         {"PoissonRatio23", "NU23"},
+         {"ShearModulus12", "G12"},
+         {"ShearModulus13", "G13"},
+         {"ShearModulus23", "G23"},
+         {"V1X", "V1X"},
+         {"V1Y", "V1Y"},
+         {"V1Z", "V1Z"},
+         {"V2X", "V2X"},
+         {"V2Y", "V2Y"},
+         {"V2Z", "V2Z"},
+         {"NormalStiffness", "kn"},
+         {"TangentialStiffness", "kt"},
+         {"NormalThermalExpansion", "ALPN"},
+         {"Temperature", "T"}});
   }  // end of UniqueCast3MIdentifiersGenerator
 
   std::string CastemInterface::UniqueCast3MIdentifiersGenerator::treatScalar(
@@ -723,14 +726,14 @@ namespace mfront {
   std::string CastemInterface::UniqueCast3MIdentifiersGenerator::getQuotedId(
       const std::string& en, const std::string& v) {
     const auto id = this->getUniqueId(en, v, "");
-    return '"' + id + '"';
+    return '\'' + id + '\'';
   }
 
   std::string CastemInterface::UniqueCast3MIdentifiersGenerator::getQuotedId(
       const std::string& en, const std::string& v, const unsigned short a) {
     const auto id = this->getUniqueId(en + '[' + std::to_string(a) + ']', v,
                                       std::to_string(a));
-    return '"' + id + '"';
+    return '\'' + id + '\'';
   }  // end of getQuotedIds
 
   std::string CastemInterface::UniqueCast3MIdentifiersGenerator::getQuotedIds(
@@ -740,7 +743,7 @@ namespace mfront {
     auto r = std::string{};
     for (auto p = cs.begin(); p != cs.end();) {
       const auto id = this->getUniqueId(en + '[' + *p + ']', v, *p);
-      r += '"' + id + '"';
+      r += '\'' + id + '\'';
       if (++p != cs.end()) {
         r += ' ';
       }
@@ -758,7 +761,7 @@ namespace mfront {
       const auto id =
           this->getUniqueId(en + '[' + std::to_string(a) + ']' + '[' + *p + ']',
                             v, std::to_string(a) + *p);
-      r += '"' + id + '"';
+      r += '\'' + id + '\'';
       if (++p != cs.end()) {
         r += ' ';
       }
