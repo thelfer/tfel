@@ -12,6 +12,8 @@
  */
 
 #include <ostream>
+#include "MFront/BehaviourData.hxx"
+#include "MFront/BehaviourDescription.hxx"
 #include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/DefaultLinearSystemSolver.hxx"
 
@@ -29,6 +31,47 @@ namespace mfront {
     os << solver.getExternalAlgorithmClassName(bd, h) << "::solveLinearSystem("
        << s.matrix << ", " << s.rhs << ");\n";
   }  // end of writeLinearSystemResolution
+
+  AbstractLinearSystemSolver::MatrixDecompositionResult
+  DefaultLinearSystemSolver::writeMatrixDecomposition(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const AbstractNonLinearSystemSolver&,
+      const Hypothesis h,
+      const MatrixDecompositionVariables& s) const {
+    const auto& d = bd.getBehaviourData(h);
+    const auto& isvs = d.getIntegrationVariables();
+    const auto nivs = mfront::getTypeSize(isvs);
+    auto perturbation_type = "TinyPermutation<" + nivs.asString() + ">";
+    os << "auto mfront_jacobian_permutation = "<< perturbation_type<< "{};\n";
+    if (s.returned_value.has_value()) {
+      os << *(s.returned_value) << " = ";
+    }
+    os << "TinyMatrixSolve<" << nivs << ", NumericType, false>"
+       << "::decomp(" << s.matrix
+       << ", mfront_jacobian_permutation);\n";
+    return {.matrix = s.matrix,
+            .matrix_size = nivs.asString(),
+            .variables = {{.type = perturbation_type,
+                           .name = "mfront_jacobian_permutation"}}};
+  }  // end of writeLinearSystemResolution
+
+  void DefaultLinearSystemSolver::writeLinearSystemSubstitution(
+      std::ostream& os,
+      const MatrixDecompositionResult& r,
+      const LinearSystemSubstitutionVariables& s) const {
+    if (r.variables.size() != 1) {
+      tfel::raise(
+          "invalide number of variables resulting from the matrix "
+          "decomposition");
+    }
+    if (s.returned_value.has_value()) {
+      os << *(s.returned_value) << " = ";
+    }
+    os << "TinyMatrixSolve<" << r.matrix_size
+       << ", NumericType, false>::back_substitute(" << r.matrix << ", "
+       << r.variables.begin()->name << ", " << s.rhs << ");";
+  }  // end of writeLinearSystemSubstitution
 
   DefaultLinearSystemSolver::~DefaultLinearSystemSolver() = default;
 

@@ -26,6 +26,16 @@ namespace mfront {
         const AbstractNonLinearSystemSolver&,
         const Hypothesis,
         const LinearSystemVariables&) const override;
+    MatrixDecompositionResult writeMatrixDecomposition(
+        std::ostream&,
+        const BehaviourDescription&,
+        const AbstractNonLinearSystemSolver&,
+        const Hypothesis,
+        const MatrixDecompositionVariables&) const override;
+    void writeLinearSystemSubstitution(
+        std::ostream &,
+        const MatrixDecompositionResult &,
+        const LinearSystemSubstitutionVariables &) const override;
     //! \brief destructor
     ~DefaultLinearSystemSolver() override;
   };

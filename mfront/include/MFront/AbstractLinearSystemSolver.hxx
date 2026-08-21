@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_ABSTRACTLINEARSYSTEMSOLVER_HXX
 #define LIB_MFRONT_ABSTRACTLINEARSYSTEMSOLVER_HXX
 
+#include <set>
 #include <iosfwd>
 #include <optional>
 #include <string_view>
@@ -32,9 +33,48 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractLinearSystemSolver {
     //
-    struct LinearSystemVariables {
+    struct MatrixDecompositionVariables {
       std::optional<std::string> returned_value;
       std::string matrix;
+    };
+    //! \brief structure containing results of the
+    struct [[nodiscard]] MatrixDecompositionResult {
+      struct VariableDescription {
+        //
+        std::string type;
+        std::string name;
+        auto operator<=>(const VariableDescription&) const = default;
+      };
+      //! \brief name of the decomposed matrix
+      std::string matrix;
+      //! \brief size (number of rows or columns) of the decomposed matrix
+      std::string matrix_size;
+      /*!
+       * \brief list of variables that are generated during the decomposition
+       * and that will be used later by the substitution operations
+       */
+      std::set<VariableDescription> variables;
+    };
+    //
+    struct LinearSystemVariables {
+      /*!
+       * \brief name of the variable containing a boolean stating the success
+       * or the failure of the resolution
+       */
+      std::optional<std::string> returned_value;
+      //! \brief name of the matrix
+      std::string matrix;
+      //! \brief name of the variable holding the right hand side
+      std::string rhs;
+    };
+    //
+    struct LinearSystemSubstitutionVariables {
+      /*!
+       * \brief name of the variable containing a boolean stating the success
+       * or the failure of the resolution
+       */
+      std::optional<std::string> returned_value;
+      //! \brief name of the variable holding the right hand side
       std::string rhs;
     };
     //! a simple alias
@@ -45,6 +85,10 @@ namespace mfront {
     virtual std::vector<std::string> getReservedNames() const = 0;
     /*!
      * \brief write the resolution of a linear system
+     * \param[in] os: output stream
+     * \param[in] solver: nonlinear solver
+     * \param[in] h: modelling hypothesis
+     * \param[in] s: description of the linear system
      */
     virtual void writeLinearSystemResolution(
         std::ostream&,
@@ -52,6 +96,34 @@ namespace mfront {
         const AbstractNonLinearSystemSolver&,
         const Hypothesis,
         const LinearSystemVariables&) const = 0;
+    /*!
+     * \brief write the decomposition of a matrix prior to a resolution
+     * of one or several linear systems (see write
+     * `writeLinearSystemSubstitution`)
+     *
+     * \param[in] os: output stream
+     * \param[in] solver: nonlinear solver
+     * \param[in] h: modelling hypothesis
+     * \param[in] s: description of the linear system
+     */
+    virtual MatrixDecompositionResult writeMatrixDecomposition(
+        std::ostream&,
+        const BehaviourDescription&,
+        const AbstractNonLinearSystemSolver&,
+        const Hypothesis,
+        const MatrixDecompositionVariables&) const = 0;
+    /*!
+     * \brief write the resolution of a linear system after the matrix
+     * decomposition
+     *
+     * \param[in] os: output stream
+     * \param[in] r: result of the matrix decomposition
+     * \param[in] rhs: name of the right hand sie
+     */
+    virtual void writeLinearSystemSubstitution(
+        std::ostream &,
+        const MatrixDecompositionResult &,
+        const LinearSystemSubstitutionVariables &) const = 0;
     /*!
      * \brief write the solver specific members
      * \param[in] out : output file

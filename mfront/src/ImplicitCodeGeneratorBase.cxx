@@ -596,12 +596,14 @@ namespace mfront {
     const auto& isvs = d.getIntegrationVariables();
     const auto nivs = mfront::getTypeSize(isvs);
     const auto& cb = this->bd.getCodeBlock(h, n);
+    auto decomposition_results =
+        AbstractLinearSystemSolver::MatrixDecompositionResult{};
     if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
-      os << "TinyPermutation<" << nivs << "> jacobian_permutation;\n"
-         << "if(!TinyMatrixSolve<" << nivs << ", NumericType, false>"
-         << "::decomp(this->jacobian,jacobian_permutation)){\n"
-         << "return false;\n"
-         << "}\n";
+      os << "auto mfront_jacobian_decomposition_success = true;\n";
+      decomposition_results = this->linear_solver.writeMatrixDecomposition(
+          os, this->bd, this->solver, h,
+          {.returned_value = "mfront_jacobian_decomposition_success",
+           .matrix = "this->jacobian"});
     }
     if (hasAttribute<std::vector<Derivative>>(
             cb, CodeBlock::used_jacobian_invert_blocks)) {
@@ -617,10 +619,13 @@ namespace mfront {
          << ", NumericType>::size_type mfront_idx=0; mfront_idx != " << nivs
          << "; ++mfront_idx){\n"
          << "jacobian_invert(mfront_idx, mfront_idx) = NumericType(1);\n"
-         << "}\n"
-         << "if(!TinyMatrixSolve<" << nivs
-         << ", NumericType, false>::back_substitute("
-         << "this->jacobian, jacobian_permutation, jacobian_invert)){\n"
+         << "}\n";
+      os << "auto mfront_jacobian_substitution_success = true;\n";
+      this->linear_solver.writeLinearSystemSubstitution(
+          os, decomposition_results,
+          {.returned_value = "mfront_jacobian_substitution_success",
+           .rhs = "jacobian_invert"});
+      os << "if(!mfront_jacobian_substitution_success){\n"
          << "return false;\n"
          << "}\n";
       auto cr = SupportedTypes::TypeSize{};  // current row
@@ -712,8 +717,11 @@ namespace mfront {
          << "bool& mfront_success_reference;\n"
          << "}; // end of struct GetPartialJacobianInvert\n"
          << "GetPartialJacobianInvert "
-            "getPartialJacobianInvert(*this, jacobian_permutation, "
-            "mfront_success);\n";
+            "getPartialJacobianInvert(*this";
+      for (const auto& v : decomposition_results.variables) {
+        os << ", " << v.name;
+      }
+      os << ", mfront_success);\n";
     }
     const auto attr = CodeBlock::
         used_implicit_equations_derivatives_with_respect_to_gradients_or_external_state_variables;
@@ -895,8 +903,11 @@ namespace mfront {
            << "bool& mfront_success_reference;\n"
            << "};\n"
            << "GetIntegrationVariablesDerivatives_" << givd.name << " "
-           << "getIntegrationVariablesDerivatives_" << givd.name
-           << "(*this, jacobian_permutation," << m << ", mfront_success);\n";
+           << "getIntegrationVariablesDerivatives_" << givd.name << "(*this";
+        for (const auto& v : decomposition_results.variables) {
+          os << ", " << v.name;
+        }
+        os << " ," << m << ", mfront_success);\n";
       }
     }
     //
