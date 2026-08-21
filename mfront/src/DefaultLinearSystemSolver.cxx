@@ -41,7 +41,8 @@ namespace mfront {
     const auto& d = bd.getBehaviourData(h);
     const auto& isvs = d.getIntegrationVariables();
     const auto nivs = mfront::getTypeSize(isvs);
-    auto perturbation_type = "::tfel::math::TinyPermutation<" + nivs.asString() + ">";
+    auto perturbation_type =
+        "::tfel::math::TinyPermutation<" + nivs.asString() + ">";
     return {.matrix = n,
             .matrix_size = nivs.asString(),
             .variables = {{.type = perturbation_type,
@@ -67,7 +68,8 @@ namespace mfront {
     if (s.returned_value.has_value()) {
       os << *(s.returned_value) << " = ";
     }
-    os << "::tfel::math::TinyMatrixSolve<" << results.matrix_size << ", NumericType, false>"
+    os << "::tfel::math::TinyMatrixSolve<" << results.matrix_size
+       << ", NumericType, false>"
        << "::decomp(" << s.matrix << ", " << results.variables.begin()->name
        << ");\n";
     return results;

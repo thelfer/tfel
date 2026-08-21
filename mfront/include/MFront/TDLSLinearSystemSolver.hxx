@@ -26,25 +26,25 @@ namespace mfront {
      * \brief constructor
      * \param[in] opts: options passed to the linear solver
      */
-    TDLSLinearSystemSolver(const tfel::utilities::DataMap&);
+    TDLSLinearSystemSolver(const tfel::utilities::DataMap &);
     //
     std::vector<std::string> getSpecificHeaders() const override;
     std::vector<std::string> getReservedNames() const override;
-    void writeSpecificMembers(std::ostream&,
-                              const BehaviourDescription&,
+    void writeSpecificMembers(std::ostream &,
+                              const BehaviourDescription &,
                               const Hypothesis) const override;
     void writeLinearSystemResolution(
-        std::ostream&,
-        const BehaviourDescription&,
-        const AbstractNonLinearSystemSolver&,
+        std::ostream &,
+        const BehaviourDescription &,
+        const AbstractNonLinearSystemSolver &,
         const Hypothesis,
-        const LinearSystemVariables&) const override;
+        const LinearSystemVariables &) const override;
     MatrixDecompositionResult writeMatrixDecomposition(
-        std::ostream&,
-        const BehaviourDescription&,
-        const AbstractNonLinearSystemSolver&,
+        std::ostream &,
+        const BehaviourDescription &,
+        const AbstractNonLinearSystemSolver &,
         const Hypothesis,
-        const MatrixDecompositionVariables&) const override;
+        const MatrixDecompositionVariables &) const override;
     void writeLinearSystemSubstitution(
         std::ostream &,
         const MatrixDecompositionResult &,

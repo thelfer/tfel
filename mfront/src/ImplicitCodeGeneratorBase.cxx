@@ -917,8 +917,7 @@ namespace mfront {
           }
           os << "}\n";
         }
-        os << "private:\n"
-           << this->bd.getClassName() << "& behaviour;\n";
+        os << "private:\n" << this->bd.getClassName() << "& behaviour;\n";
         for (const auto& v : decomposition_results.variables) {
           os << "const " << v.type
              << "& mfront_get_integration_variables_derivatives_" << v.name
@@ -954,7 +953,8 @@ namespace mfront {
     const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
                                         "eto", 1u, 0u};
     for (std::size_t i = 0; i != isvs.size(); ++i) {
-      os << "[[nodiscard]] TFEL_HOST_DEVICE bool\ncomputePartialJacobianInvert(";
+      os << "[[nodiscard]] TFEL_HOST_DEVICE "
+            "bool\ncomputePartialJacobianInvert(";
       for (const auto& v : decomposition_results.variables) {
         os << "const " << v.type << "& " << v.name << ",\n";
       }

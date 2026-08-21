@@ -43,7 +43,7 @@ namespace mfront {
         //
         std::string type;
         std::string name;
-        auto operator<=>(const VariableDescription&) const = default;
+        auto operator<=>(const VariableDescription &) const = default;
       };
       //! \brief name of the decomposed matrix
       std::string matrix;
@@ -91,11 +91,11 @@ namespace mfront {
      * \param[in] s: description of the linear system
      */
     virtual void writeLinearSystemResolution(
-        std::ostream&,
-        const BehaviourDescription&,
-        const AbstractNonLinearSystemSolver&,
+        std::ostream &,
+        const BehaviourDescription &,
+        const AbstractNonLinearSystemSolver &,
         const Hypothesis,
-        const LinearSystemVariables&) const = 0;
+        const LinearSystemVariables &) const = 0;
     /*!
      * \brief write the decomposition of a matrix prior to a resolution
      * of one or several linear systems (see write
@@ -122,11 +122,11 @@ namespace mfront {
      * \param[in] s: description of the linear system
      */
     virtual MatrixDecompositionResult writeMatrixDecomposition(
-        std::ostream&,
-        const BehaviourDescription&,
-        const AbstractNonLinearSystemSolver&,
+        std::ostream &,
+        const BehaviourDescription &,
+        const AbstractNonLinearSystemSolver &,
         const Hypothesis,
-        const MatrixDecompositionVariables&) const = 0;
+        const MatrixDecompositionVariables &) const = 0;
     /*!
      * \brief write the resolution of a linear system after the matrix
      * decomposition
@@ -145,8 +145,8 @@ namespace mfront {
      * \param[in] md  : mechanical description
      * \param[in] h   : modelling hypotheis
      */
-    virtual void writeSpecificMembers(std::ostream&,
-                                      const BehaviourDescription&,
+    virtual void writeSpecificMembers(std::ostream &,
+                                      const BehaviourDescription &,
                                       const Hypothesis) const = 0;
     //! \brief destructor
     virtual ~AbstractLinearSystemSolver();
