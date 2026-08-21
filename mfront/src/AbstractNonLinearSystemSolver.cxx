@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/src/NonLinearSystemSolver.cxx
+ * \file  mfront/src/AbstractNonLinearSystemSolver.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 22 août 2014
@@ -11,10 +11,10 @@
  * project under specific licensing conditions.
  */
 
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 
 namespace mfront {
 
-  NonLinearSystemSolver::~NonLinearSystemSolver() = default;
+  AbstractNonLinearSystemSolver::~AbstractNonLinearSystemSolver() = default;
 
 }  // end of namespace mfront

@@ -2,7 +2,7 @@
  * \file  mfront/include/MFront/UserDefinedNonLinearSystem.hxx
  * \brief
  * \author Thomas Helfer
- * \brief 09/09/2021
+ * \date 09/09/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

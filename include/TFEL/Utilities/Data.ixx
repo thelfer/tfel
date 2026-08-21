@@ -130,19 +130,24 @@ namespace tfel::utilities::internals {
 
 namespace tfel::utilities {
 
-  template <typename T1>
+  template <typename... Type>
   DataMapValidator&
   DataMapValidator::addDataTypeValidator(const std::string& k) requires(
-      tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1) {
+      (sizeof...(Type) > 0) &&
+      (... &&
+       (tfel::meta::TLCountNbrOfT<std::decay_t<Type>, DataTypes>::value ==
+        1))) {
     return this->addDataValidator(k, [](const Data& d) {
-      if constexpr (std::same_as<T1, DataStructure>) {
-        if (!DataStructure::is_convertible(d)) {
-          tfel::raise("invalid type");
+      auto check = [&d]<typename T1>() {
+        if constexpr (std::same_as<T1, DataStructure>) {
+          return DataStructure::is_convertible(d);
+        } else {
+          return d.template is<T1>();
         }
-      } else {
-        if (!d.template is<T1>()) {
-          tfel::raise("invalid type");
-        }
+      };
+      const auto b = (... || check.template operator()<Type>());
+      if (!b) {
+        tfel::raise("invalid type");
       }
     });
   }  // end of addDataTypeValidator
