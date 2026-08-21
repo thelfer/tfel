@@ -33,27 +33,44 @@ namespace mfront {
   }  // end of writeLinearSystemResolution
 
   AbstractLinearSystemSolver::MatrixDecompositionResult
-  DefaultLinearSystemSolver::writeMatrixDecomposition(
-      std::ostream& os,
+  DefaultLinearSystemSolver::getMatrixDecompositionResults(
       const BehaviourDescription& bd,
       const AbstractNonLinearSystemSolver&,
       const Hypothesis h,
-      const MatrixDecompositionVariables& s) const {
+      const std::string& n) const {
     const auto& d = bd.getBehaviourData(h);
     const auto& isvs = d.getIntegrationVariables();
     const auto nivs = mfront::getTypeSize(isvs);
-    auto perturbation_type = "TinyPermutation<" + nivs.asString() + ">";
-    os << "auto mfront_jacobian_permutation = "<< perturbation_type<< "{};\n";
-    if (s.returned_value.has_value()) {
-      os << *(s.returned_value) << " = ";
-    }
-    os << "TinyMatrixSolve<" << nivs << ", NumericType, false>"
-       << "::decomp(" << s.matrix
-       << ", mfront_jacobian_permutation);\n";
-    return {.matrix = s.matrix,
+    auto perturbation_type = "::tfel::math::TinyPermutation<" + nivs.asString() + ">";
+    return {.matrix = n,
             .matrix_size = nivs.asString(),
             .variables = {{.type = perturbation_type,
                            .name = "mfront_jacobian_permutation"}}};
+  }  // end of getMatrixDecompositionResults
+
+  AbstractLinearSystemSolver::MatrixDecompositionResult
+  DefaultLinearSystemSolver::writeMatrixDecomposition(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const AbstractNonLinearSystemSolver& solver,
+      const Hypothesis h,
+      const MatrixDecompositionVariables& s) const {
+    auto results = this->getMatrixDecompositionResults(bd, solver, h, s.matrix);
+    if (results.variables.size() != 1) {
+      tfel::raise(
+          "DefaultLinearSystemSolver::writeMatrixDecomposition: "
+          "invalid number of variables resulting from the decomposition");
+    }
+    for (const auto& v : results.variables) {
+      os << "auto " << v.name << " = " << v.type << "{};\n";
+    }
+    if (s.returned_value.has_value()) {
+      os << *(s.returned_value) << " = ";
+    }
+    os << "::tfel::math::TinyMatrixSolve<" << results.matrix_size << ", NumericType, false>"
+       << "::decomp(" << s.matrix << ", " << results.variables.begin()->name
+       << ");\n";
+    return results;
   }  // end of writeLinearSystemResolution
 
   void DefaultLinearSystemSolver::writeLinearSystemSubstitution(
@@ -68,9 +85,9 @@ namespace mfront {
     if (s.returned_value.has_value()) {
       os << *(s.returned_value) << " = ";
     }
-    os << "TinyMatrixSolve<" << r.matrix_size
+    os << "::tfel::math::TinyMatrixSolve<" << r.matrix_size
        << ", NumericType, false>::back_substitute(" << r.matrix << ", "
-       << r.variables.begin()->name << ", " << s.rhs << ");";
+       << r.variables.begin()->name << ", " << s.rhs << ");\n";
   }  // end of writeLinearSystemSubstitution
 
   DefaultLinearSystemSolver::~DefaultLinearSystemSolver() = default;

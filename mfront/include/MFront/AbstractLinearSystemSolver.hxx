@@ -101,6 +101,21 @@ namespace mfront {
      * of one or several linear systems (see write
      * `writeLinearSystemSubstitution`)
      *
+     * \param[in] bd: behaviour description
+     * \param[in] solver: nonlinear solver
+     * \param[in] h: modelling hypothesis
+     * \param[in] s: description of the linear system
+     */
+    virtual MatrixDecompositionResult getMatrixDecompositionResults(
+        const BehaviourDescription &,
+        const AbstractNonLinearSystemSolver &,
+        const Hypothesis,
+        const std::string &) const = 0;
+    /*!
+     * \brief write the decomposition of a matrix prior to a resolution
+     * of one or several linear systems (see write
+     * `writeLinearSystemSubstitution`)
+     *
      * \param[in] os: output stream
      * \param[in] solver: nonlinear solver
      * \param[in] h: modelling hypothesis
