@@ -880,7 +880,7 @@ namespace mfront {
           this->linear_solver.writeLinearSystemSubstitution(
               os, local_decomposition_results,
               {.returned_value = "this->mfront_success_reference",
-               .rhs = "this->mfront_local_rhs"});
+               .rhs = "mfront_local_lhs"});
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (std::size_t i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
