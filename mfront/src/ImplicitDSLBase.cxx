@@ -1358,12 +1358,12 @@ namespace mfront {
 #ifdef TFEL_MATH_TDLS_SUPPORT
 #ifdef MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER
       this->setLinearSystemSolver("TDLS", {});
-#else /* MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER*/
+#else  /* MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER*/
       this->setLinearSystemSolver("Default", {});
 #endif /* MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER */
-#else/* TFEL_MATH_TDLS_SUPPORT */
+#else  /* TFEL_MATH_TDLS_SUPPORT */
       this->setLinearSystemSolver("Default", {});
-#endif/* TFEL_MATH_TDLS_SUPPORT*/
+#endif /* TFEL_MATH_TDLS_SUPPORT*/
     }
     BehaviourDSLCommon::completeVariableDeclaration();
     if (this->mb.getAttribute<bool>(
