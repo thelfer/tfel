@@ -192,7 +192,7 @@ namespace mfront {
     if (s.returned_value.has_value()) {
       os << *(s.returned_value) << " = ";
     }
-    os << "tdls::solve_inplace<MFrontTDLSLinearSystemConfiguration>("
+    os << "::tdls::solve_inplace<MFrontTDLSLinearSystemConfiguration>("
        << s.matrix << ", mfront_tdls_pivot, " << s.rhs << ");\n";
   }  // end of writeLinearSystemResolution
 
@@ -236,8 +236,8 @@ namespace mfront {
     if (s.returned_value.has_value()) {
       os << *(s.returned_value) << " = ";
     }
-    os << tdls_solver << "::template factorize<true, false>(" << s.matrix
-       << ".data(), 1, " << results.variables.begin()->name << ".data(), 1);\n";
+    os << "::tdls::factorize<MFrontTDLSLinearSystemConfiguration>(" << s.matrix
+       << ", " << results.variables.begin()->name << ");\n";
     return results;
   }  // end of writeMatrixDecomposition
 
@@ -256,10 +256,9 @@ namespace mfront {
     if (s.returned_value.has_value()) {
       os << *(s.returned_value) << " = true;\n";
     }
-    os << tdls_solver << "::template substitute_inplace_multirhs<"
-       << s.rhs_column_size << ", true, true, false, 0>(" << r.matrix
-       << ".data(), 1, " << r.variables.begin()->name << ".data(), 1, " << s.rhs
-       << ".data(), 1, 0);\n";
+    os << "::tdls::substitute_inplace<MFrontTDLSLinearSystemConfiguration>("
+       << r.matrix << ", " << r.variables.begin()->name << ", " << s.rhs
+       << ");\n";
   }  // end of writeLinearSystemSubstitution
 
   TDLSLinearSystemSolver::~TDLSLinearSystemSolver() = default;

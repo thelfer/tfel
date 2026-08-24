@@ -42,11 +42,22 @@ maximum GPU performance:
 - <https://github.com/trsxvz/tdls>
 - [API reference](https://trsxvz.github.io/TDLS/api/index.html)
 
+When compiling `TFEL`, one must explicitly enable support for the `TDLS`
+library, see below.
+
 # Known incompatibilities
 
 - `MFront`' interfaces have to implement a method named `setOptions`.
 
 # Improvements to the build system
+
+## New `cmake` options
+
+- `enable-tdls`: add support for Tiny Device-callable Linear Solvers
+  (`TDLS`) library. `OFF` by default.
+- `enable-tdls-as-default-linear-system-solver-in-mfront`: use `TDLS`
+  as the default linear solver. Requires `enable-tdls` to be `ON`.
+  `OFF` by default.
 
 ## User-defined `cmake` variables
 
@@ -58,6 +69,8 @@ maximum GPU performance:
 - `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler.
 - `TFEL_NVHPC_COMPILER`: path to NVIDIA's `nvhpc` compiler.
 - `TFEL_ACPP_COMPILER`: path to AdaptativeCpp's `acpp` compiler.
+- `TDLS_DIR`: directory where to find the `cmake` files installed by the
+  Tiny Device-callable Linear Solvers (`TDLS`) library.
 
 ## Supported parallel configurations
 
