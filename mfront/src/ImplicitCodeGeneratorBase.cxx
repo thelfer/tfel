@@ -627,7 +627,8 @@ namespace mfront {
       this->linear_solver.writeLinearSystemSubstitution(
           os, decomposition_results,
           {.returned_value = "mfront_jacobian_substitution_success",
-           .rhs = "jacobian_invert"});
+           .rhs = "jacobian_invert",
+           .rhs_column_size = nivs.asString()});
       os << "if(!mfront_jacobian_substitution_success){\n"
          << "return false;\n"
          << "}\n";
@@ -880,7 +881,8 @@ namespace mfront {
           this->linear_solver.writeLinearSystemSubstitution(
               os, local_decomposition_results,
               {.returned_value = "this->mfront_success_reference",
-               .rhs = "mfront_local_lhs"});
+               .rhs = "mfront_local_lhs",
+               .rhs_column_size = nc.asString()});
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (std::size_t i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
@@ -977,7 +979,8 @@ namespace mfront {
       this->linear_solver.writeLinearSystemSubstitution(
           os, decomposition_results,
           {.returned_value = "mfront_jacobian_substitution_success",
-           .rhs = "vect_e"});
+           .rhs = "vect_e",
+           .rhs_column_size = n.asString()});
       os << "if(!mfront_jacobian_substitution_success){\n"
          << "return false;\n"
          << "}\n";

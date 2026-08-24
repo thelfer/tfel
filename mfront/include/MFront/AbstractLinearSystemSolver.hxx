@@ -76,6 +76,8 @@ namespace mfront {
       std::optional<std::string> returned_value;
       //! \brief name of the variable holding the right hand side
       std::string rhs;
+      //! \brief number of columns of the rhs
+      std::string rhs_column_size;
     };
     //! a simple alias
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;

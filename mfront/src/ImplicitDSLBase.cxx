@@ -1355,7 +1355,9 @@ namespace mfront {
       this->setNonLinearSolver("NewtonRaphson");
     }
     if (this->linear_solver == nullptr) {
-      this->setLinearSystemSolver("Default", {});
+#pragma message("Test")
+      //      this->setLinearSystemSolver("Default", {});
+      this->setLinearSystemSolver("TDLS", {});
     }
     BehaviourDSLCommon::completeVariableDeclaration();
     if (this->mb.getAttribute<bool>(

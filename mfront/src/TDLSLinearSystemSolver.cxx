@@ -188,13 +188,79 @@ namespace mfront {
     const auto& ivs = d.getIntegrationVariables();
     const auto n = ivs.getTypeSize();
     os << "auto mfront_tdls_pivot = "
-       << "tfel::math::tvector<" << n << ", int>{};\n";
+       << "tfel::math::fsarray<" << n << ", int>{};\n";
     if (s.returned_value.has_value()) {
       os << *(s.returned_value) << " = ";
     }
     os << "tdls::solve_inplace<MFrontTDLSLinearSystemConfiguration>("
        << s.matrix << ", mfront_tdls_pivot, " << s.rhs << ");\n";
   }  // end of writeLinearSystemResolution
+
+  AbstractLinearSystemSolver::MatrixDecompositionResult
+  TDLSLinearSystemSolver::getMatrixDecompositionResults(
+      const BehaviourDescription& bd,
+      const AbstractNonLinearSystemSolver&,
+      const Hypothesis h,
+      const std::string& n) const {
+    const auto& d = bd.getBehaviourData(h);
+    const auto& isvs = d.getIntegrationVariables();
+    const auto nivs = mfront::getTypeSize(isvs);
+    auto perturbation_type =
+        "::tfel::math::fsarray<" + nivs.asString() + ", int>";
+    return {.matrix = n,
+            .matrix_size = nivs.asString(),
+            .variables = {{.type = perturbation_type,
+                           .name = "mfront_jacobian_permutation"}}};
+  }  // end of getMatrixDecompositionResults
+
+  AbstractLinearSystemSolver::MatrixDecompositionResult
+  TDLSLinearSystemSolver::writeMatrixDecomposition(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const AbstractNonLinearSystemSolver& solver,
+      const Hypothesis h,
+      const MatrixDecompositionVariables& s) const {
+    const auto results =
+        this->getMatrixDecompositionResults(bd, solver, h, s.matrix);
+    const auto tdls_solver = "::tdls::TiledLUppSolverStatic<NumericType, " +
+                             results.matrix_size +
+                             ", MFrontTDLSLinearSystemConfiguration>";
+    if (results.variables.size() != 1) {
+      tfel::raise(
+          "TDLSLinearSystemSolver::writeMatrixDecomposition: "
+          "invalid number of variables resulting from the decomposition");
+    }
+    for (const auto& v : results.variables) {
+      os << "auto " << v.name << " = " << v.type << "{};\n";
+    }
+    if (s.returned_value.has_value()) {
+      os << *(s.returned_value) << " = ";
+    }
+    os << tdls_solver << "::template factorize<true, false>(" << s.matrix
+       << ".data(), 1, " << results.variables.begin()->name << ".data(), 1);\n";
+    return results;
+  }  // end of writeMatrixDecomposition
+
+  void TDLSLinearSystemSolver::writeLinearSystemSubstitution(
+      std::ostream& os,
+      const MatrixDecompositionResult& r,
+      const LinearSystemSubstitutionVariables& s) const {
+    const auto tdls_solver = "::tdls::TiledLUppSolverStatic<NumericType, " +
+                             r.matrix_size +
+                             ", MFrontTDLSLinearSystemConfiguration>";
+    if (r.variables.size() != 1) {
+      tfel::raise(
+          "invalide number of variables resulting from the matrix "
+          "decomposition");
+    }
+    if (s.returned_value.has_value()) {
+      os << *(s.returned_value) << " = true;\n";
+    }
+    os << tdls_solver << "::template substitute_inplace_multirhs<"
+       << s.rhs_column_size << ", true, true, false, 0>(" << r.matrix
+       << ".data(), 1, " << r.variables.begin()->name << ".data(), 1, " << s.rhs
+       << ".data(), 1, 0);\n";
+  }  // end of writeLinearSystemSubstitution
 
   TDLSLinearSystemSolver::~TDLSLinearSystemSolver() = default;
 
