@@ -39,7 +39,7 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target build-tests -j $(nproc)
-        ctest --build-config ${{env.BUILD_TYPE}} -j $(nproc)
+        ctest --test-dir ${{github.workspace}}/build --build-config ${{env.BUILD_TYPE}} -j $(nproc)
         mkdir ${{github.workspace}}/tests-results
         cp --parents $(find ${{github.workspace}}/build -path ${{github.workspace}}/build/Testing -prune -o -type f  -name "*.xml" -print) ${{github.workspace}}/tests-results
 
