@@ -69,7 +69,7 @@ library, see below.
 - `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler.
 - `TFEL_NVHPC_COMPILER`: path to NVIDIA's `nvhpc` compiler.
 - `TFEL_ACPP_COMPILER`: path to AdaptativeCpp's `acpp` compiler.
-- `TDLS_DIR`: directory where to find the `cmake` files installed by the
+- `tdls_DIR`: directory where to find the `cmake` files installed by the
   Tiny Device-callable Linear Solvers (`TDLS`) library.
 
 ## Supported parallel configurations
