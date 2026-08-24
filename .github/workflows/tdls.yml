@@ -46,18 +46,20 @@ jobs:
               -B ${{github.workspace}}/build                               \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                       \
               -Denable-tdls=ON                                             \
-              -Denable-as-default-linear-system-solver-in-mfront=ON        \
+              -Denable-tdls-as-default-linear-system-solver-in-mfront=ON   \
               -Dtdls_DIR=${{github.workspace}}/install-tdls/lib/cmake/tdls \
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
       run: |
+        cmake --build ${{github.workspace}}/build --target lu-tdls --config ${{env.BUILD_TYPE}} -j $(nproc)
         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j $(nproc)
 
     - name: Test
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check -j $(nproc)
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target build-tests -j $(nproc)
+        ctest --build-config ${{env.BUILD_TYPE}} -j $(nproc)
         mkdir ${{github.workspace}}/tests-results
         cp --parents $(find ${{github.workspace}}/build -path ${{github.workspace}}/build/Testing -prune -o -type f  -name "*.xml" -print) ${{github.workspace}}/tests-results
 
