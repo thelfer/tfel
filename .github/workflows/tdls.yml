@@ -19,16 +19,17 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    - name: Checkout TDLS
-      uses: actions/checkout@v7
-      with:
-        repository: trsxvz/TDLS
-        path: TDLS
 
     steps:
     - uses: actions/checkout@v7
       with:
         path: tfel
+
+    - name: Checkout TDLS
+      uses: actions/checkout@v7
+      with:
+        repository: trsxvz/TDLS
+        path: TDLS
 
     - name: Installing TDLS
       run: |
