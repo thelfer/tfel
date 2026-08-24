@@ -46,7 +46,7 @@ jobs:
               -B ${{github.workspace}}/build                               \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                       \
               -Denable-tdls=ON                                             \
-              -Denable--as-default-linear-system-solver-in-mfront=ON       \
+              -Denable-as-default-linear-system-solver-in-mfront=ON        \
               -Dtdls_DIR=${{github.workspace}}/install-tdls/lib/cmake/tdls \
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
