@@ -1,0 +1,14 @@
+@Author Thomas Helfer;
+@Date   24/08/2026;
+@Description{
+  "This file is used to test the configuration of the TDLS solver"
+}
+@ModellingHypotheses {".+"};
+
+@Epsilon 1e-14;
+@Brick "StandardElasticity";
+
+@Parameter stress young = 78e9;
+young.setGlossaryName("YoungModulus");
+@Parameter nu    = 0.3;
+nu.setGlossaryName("PoissonRatio");

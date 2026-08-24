@@ -28,7 +28,9 @@ namespace mfront {
             .addDataTypeValidator<int, std::string>("tile_size")
             .addDataTypeValidator<std::string>("schedule")
             .addDataTypeValidator<std::string>("out_of_tile_search_strategy")
-            .addDataTypeValidator<bool>("unroll_inner_loop");
+            .addDataTypeValidator<bool>("unroll_inner_loop")
+            .addDataTypeValidator<double>("out_of_tile_search_threshold")
+            .addDataTypeValidator<double>("singular_pivot_threshold");
     validator.validate(opts);
     if (opts.contains("tile_size")) {
       if (is<int>(opts, "tile_size")) {
@@ -84,6 +86,26 @@ namespace mfront {
             "or 'full_scan', got '" +
             s + "')");
       }
+    }
+    if (opts.contains("out_of_tile_search_threshold")) {
+      const auto v = get<double>(opts, "out_of_tile_search_threshold");
+      if ((v < 0) || (std::fpclassify(v) == FP_ZERO)) {
+        tfel::raise(
+            "TDLSLinearSystemSolver: invalid value for the "
+            "'out_of_tile_search_threshold' option, expecting a strictly "
+            "positive value");
+      }
+      this->out_of_tile_search_threshold = v;
+    }
+    if (opts.contains("singular_pivot_threshold")) {
+      const auto v = get<double>(opts, "singular_pivot_threshold");
+      if ((v < 0) || (std::fpclassify(v) == FP_ZERO)) {
+        tfel::raise(
+            "TDLSLinearSystemSolver: invalid value for the "
+            "'singular_pivot_threshold' option, expecting a strictly "
+            "positive value");
+      }
+      this->singular_pivot_threshold = v;
     }
   }
 
@@ -166,6 +188,14 @@ namespace mfront {
       } else {
         os << "false;\n";
       }
+    }
+    if (this->out_of_tile_search_threshold.has_value()) {
+      os << "static constexpr auto oot_threshold = NumericType{"
+         << *out_of_tile_search_threshold << "};\n";
+    }
+    if (this->singular_pivot_threshold.has_value()) {
+      os << "static constexpr auto singular_eps = NumericType{"
+         << *(this->singular_pivot_threshold) << "};\n";
     }
     if (this->unroll_inner.has_value()) {
       os << "static constexpr bool unroll_inner = ";

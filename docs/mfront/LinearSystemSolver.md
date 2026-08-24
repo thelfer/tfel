@@ -45,6 +45,14 @@ The following options are supported:
   rolled loop indexes the tile dynamically and demotes it to slow local
   memory. If `false`, no unroll pragma anywhere - faster compiles, GPU
   performance not guaranteed.
+- `out_of_tile_search_threshold`: acceptable-pivot threshold of the
+  out-of-tile search. An in-tile pivot candidate whose magnitude reaches
+  this value is accepted without looking outside the tile; below it, the
+  search extends to the rows under the tile (out-of-tile pivoting) and
+  the best corrected candidate wins.
+- `singular_pivot_threshold`: the factorization is declared singular
+  when even the best candidate of the out-of-tile recovery stays below
+  this threshold.
 
 If a parameter is not defined, the default values are inherited for the
 `TiledLUppDefaultConfig` class defined by the `TDLS` library. See the
@@ -56,6 +64,10 @@ are:
 - `right_looking` for `schedule`
 - `first_acceptable` for `out_of_tile_search_strategy`
 - `true` for `unroll_inner_loop`
+- `1e-10` for `out_of_tile_search_threshold` (or `1e-4` for simple
+  precision)
+- `std::numeric_limits<double>::min()` for `singular_pivot_threshold`
+  (or `std::numeric_limits<float>::min()` for simple precision)
 
 ## Example
 

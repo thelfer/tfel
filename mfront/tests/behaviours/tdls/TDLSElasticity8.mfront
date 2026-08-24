@@ -1,0 +1,8 @@
+@DSL Implicit;
+@Behaviour TDLSElasticity8;
+
+@LinearSystemSolver TDLS {
+  singular_pivot_threshold : 0
+};
+
+@Import "TDLSElasticity-common.mfront";
