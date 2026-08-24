@@ -5,3 +5,8 @@ find_package(TFELException REQUIRED
   HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/TFELMathTargets.cmake")
+
+set(TFEL_MATH_TDLS_SUPPORT @enable-tdls@)
+if(TFEL_MATH_TDLS_SUPPORT)
+  find_package(tdls REQUIRED HINTS @tdls_DIR@)
+endif(TFEL_MATH_TDLS_SUPPORT)

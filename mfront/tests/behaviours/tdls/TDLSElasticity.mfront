@@ -1,0 +1,11 @@
+@DSL Implicit;
+@Behaviour TDLSElasticity;
+@LinearSystemSolver TDLS {
+  tile_size : 3,
+  schedule : "right_looking",
+  out_of_tile_search_strategy : "first_acceptable",
+  unroll_inner_loop : true,
+  out_of_tile_search_threshold : 1e-10,
+  singular_pivot_threshold : 1e-100
+};
+@Import "TDLSElasticity-common.mfront";

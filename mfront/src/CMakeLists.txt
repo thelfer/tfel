@@ -155,7 +155,10 @@ set(TFELMFront_SOURCES
     ImplicitGenericBehaviourDSL.cxx
     ImplicitModelDSL.cxx
     ImplicitCZMDSL.cxx
-    NonLinearSystemSolver.cxx
+    AbstractLinearSystemSolver.cxx
+    LinearSystemSolverBase.cxx
+    DefaultLinearSystemSolver.cxx
+    AbstractNonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
     NonLinearSystemSolverFactory.cxx
     UserDefinedNonLinearSystemSolver.cxx
@@ -503,7 +506,29 @@ if(HAVE_CYRANO)
     TFELException)
 endif(HAVE_CYRANO)
 
+if(enable-tdls)
+  set(TFELMFront_SOURCES
+      TDLSLinearSystemSolver.cxx
+      ${TFELMFront_SOURCES})
+endif(enable-tdls)
+
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
+if(enable-tdls)
+  target_compile_definitions(TFELMFront
+    PUBLIC TFEL_MATH_TDLS_SUPPORT)
+  if(enable-tdls-as-default-linear-system-solver-in-mfront)
+    target_compile_definitions(TFELMFront
+      PRIVATE MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER)
+  endif(enable-tdls-as-default-linear-system-solver-in-mfront)
+  if(enable-static)
+    target_compile_definitions(TFELMFront-static
+      PUBLIC TFEL_MATH_TDLS_SUPPORT)
+    if(enable-tdls-as-default-linear-system-solver-in-mfront)
+      target_compile_definitions(TFELMFront-static
+        PRIVATE MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER)
+    endif(enable-tdls-as-default-linear-system-solver-in-mfront)
+  endif(enable-static)
+endif(enable-tdls)
 target_include_directories(TFELMFront
    PUBLIC 
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

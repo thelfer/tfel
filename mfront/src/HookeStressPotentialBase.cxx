@@ -18,7 +18,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"

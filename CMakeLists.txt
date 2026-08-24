@@ -379,6 +379,17 @@ if(enable-java)
   tfel_add_c_cxx_definitions("TFEL_JAVA_INCLUDES=\"${JNI_INCLUDES_FLAGS}\"")
 endif(enable-java)
 
+# Add support for Tiny Device-callable Linear Solver library
+#
+# - https://trsxvz.github.io/TDLS/index.html
+# - https://github.com/trsxvz/TDLS
+
+option(enable-tdls "enable TDLS support" OFF)
+if(enable-tdls)
+  find_package(tdls REQUIRED)
+  option(enable-tdls-as-default-linear-system-solver-in-mfront OFF)
+endif(enable-tdls)
+
 # cadna
 include(cmake/modules/cadna.cmake)
 
