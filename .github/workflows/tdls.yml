@@ -1,4 +1,4 @@
-name: CMake
+name: CI with TDLS enabled
 
 on:
   push:
