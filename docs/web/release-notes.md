@@ -1,6 +1,30 @@
-% Release notes
-% Helfer Thomas
-% April 21, 2015
+---
+title: Release notes
+author: Helfer Thomas
+date: 25/08/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
+
+# Major versions
+
+| Version | Release Notes |
+|---------|----------------|
+| **5.x** | [v5.2](release-notes-5.2.html) |
+| **5.1** | [v5.1](release-notes-5.1.html) |
+| **5.0** | [v5.0](release-notes-5.0.html) |
+| **4.x** | [v4.2](release-notes-4.2.html) |
+| **3.x** | [v3.4](release-notes-3.4.html) |
+
+# Minor versions
+
+Release notes of minor versions are available in their dedicated pages:
+for version X.Y.Z, open the page named `release-notes-X.Y.Z.html`.
 
 # Versions 2.0.x
 
