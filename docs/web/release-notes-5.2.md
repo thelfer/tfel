@@ -547,6 +547,11 @@ For more details, see <https://github.com/thelfer/tfel/issues/1014>
 For more details, see <https://github.com/thelfer/tfel/issues/1013>
 ￼
 
+## Issue 1012: [github-actions] Add testing of `TFEL` with `madnex`
+
+For more details, see <https://github.com/thelfer/tfel/issues/1012>
+￼
+
 ## Issue 1010: [clang-tidy] fix warnings related to the google-explicit-constructor check
 
 For more details, see <https://github.com/thelfer/tfel/issues/1010>
