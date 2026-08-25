@@ -9,35 +9,35 @@ figPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
+include-before: |
+  <div id="slideshow">
+    <ul class="slides">
+  	<li><img src="img/AnsysTwistOfABar.svg" width="620" height="320" alt="Torsional twist of a notched bar using a Hosford plastic behaviour with a bilinear hardening law. Alex Grishin. Ansys MAPDL. 2020." /></li>
+  	<li><img src="img/AbdominalMusclesModelling2019.png" width="620" height="320" alt="Abdominal muscles modelling by Lluís Tuset, Gerard Fortuny, Joan Herrero, Dolors Puigjaner, Josep M. López." /></li>
+  	<li><img src="img/PSACylinderHeadDesign.png" width="620" height="320" alt="This PSA study by Agathe Forré et al. deals with the Thermal-Mechanical Fatigue design of automotive cylinder heads." /></li>
+  	<li>
+  		<video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+  		<source src="media/DeepDrawing.mp4" type="video/mp4">
+  		Your browser does not support the video tag.
+  		</video>
+  	</li>
+  	<li><img src="img/JUSM18_RDEGEILH_Fissuration_culasses.png" width="620" height="320" alt="Cylinder heads cracking of 900 MWe reactors back- up diesel generators" /></li>
+  	<li><img src="img/CalculiX_MFRONT_WSL.png" width="620" height="320" alt="CalculiX and MFront in the bConverged environment" /></li>
+      <li><img src="img/VeRCoRs.png" width="620" height="320" alt="Simulation of the VeRCoRs mock-up of a nuclear building" /></li>
+  	<li><img src="img/AbaqusFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li>
+      <li><img src="img/BrittleFracturePhaseField.png" width="620" height="320" alt="Phase field modelling of brittle fracture" /></li>
+      <li><img src="img/FuelRod-ddif2.png" width="620" height="320" alt="Fuel pellet cracking" /></li>
+      <li><img src="img/172_5pc.png" width="620" height="320" alt="Polycrystals computation" /></li>
+  	<li><img src="img/VoidsGrowth.png" width="620" height="320" alt="Void growth" /></li>
+  	<li><img src="img/AMITEX_FFTP_sig1.png" width="620" height="320" alt="Polycrystals computation based on FFT" /></li>
+  	<li><img src="img/hsnv125.png" width="620" height="320" alt="Unit testing of a Chaboche-like viscoplastic beahviour" /></li>
+    </ul>
+    <span class="arrow previous"></span>
+    <span class="arrow next"></span>
+  </div>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script src="js/slideshow.js"></script>
 ---
-
-<div id="slideshow">
-  <ul class="slides">
-	<li><img src="img/AnsysTwistOfABar.svg" width="620" height="320" alt="Torsional twist of a notched bar using a Hosford plastic behaviour with a bilinear hardening law. Alex Grishin. Ansys MAPDL. 2020." /></li>
-	<li><img src="img/AbdominalMusclesModelling2019.png" width="620" height="320" alt="Abdominal muscles modelling by Lluís Tuset, Gerard Fortuny, Joan Herrero, Dolors Puigjaner, Josep M. López." /></li>
-	<li><img src="img/PSACylinderHeadDesign.png" width="620" height="320" alt="This PSA study by Agathe Forré et al. deals with the Thermal-Mechanical Fatigue design of automotive cylinder heads." /></li>
-	<li>
-		<video style="display:block; margin: 0 auto;" width="640" height="320" controls>
-		<source src="media/DeepDrawing.mp4" type="video/mp4">
-		Your browser does not support the video tag.
-		</video>
-	</li>
-	<li><img src="img/JUSM18_RDEGEILH_Fissuration_culasses.png" width="620" height="320" alt="Cylinder heads cracking of 900 MWe reactors back- up diesel generators" /></li>
-	<li><img src="img/CalculiX_MFRONT_WSL.png" width="620" height="320" alt="CalculiX and MFront in the bConverged environment" /></li>
-    <li><img src="img/VeRCoRs.png" width="620" height="320" alt="Simulation of the VeRCoRs mock-up of a nuclear building" /></li>
-	<li><img src="img/AbaqusFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li>
-    <li><img src="img/BrittleFracturePhaseField.png" width="620" height="320" alt="Phase field modelling of brittle fracture" /></li>
-    <li><img src="img/FuelRod-ddif2.png" width="620" height="320" alt="Fuel pellet cracking" /></li>
-    <li><img src="img/172_5pc.png" width="620" height="320" alt="Polycrystals computation" /></li>
-	<li><img src="img/VoidsGrowth.png" width="620" height="320" alt="Void growth" /></li>
-	<li><img src="img/AMITEX_FFTP_sig1.png" width="620" height="320" alt="Polycrystals computation based on FFT" /></li>
-	<li><img src="img/hsnv125.png" width="620" height="320" alt="Unit testing of a Chaboche-like viscoplastic beahviour" /></li>
-  </ul>
-  <span class="arrow previous"></span>
-  <span class="arrow next"></span>
-</div>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script src="js/slideshow.js"></script>
 
 # Overview
 
@@ -98,14 +98,79 @@ A set of interfaces are provided for various solvers:
 For material properties, various interfaces are also provided and
 cover the following languages: `C`, `C++`, `python`, `fortran`, etc.
 
-# History
+# 🏁 Getting Started
 
-- Versions prior to 0.1 were developed by T. Helfer as an independent project.
-- Starting with version 1.0, TFEL was developed as a sub-project of
-  the PLEIADES platform.
-- Versions higher than 2.0 are open-source and distributed under the
-  [GPL](https://gnu.org/licenses/gpl.html "GNU General Public
-  License") license with linking exception.
+New to TFEL/MFront? Start here!
+
+| Resource | Description | Difficulty |
+|----------|-------------|------------|
+| [Getting Started](getting-started.html) | Step-by-step guide for beginners. | ⭐ |
+| [Installation Guide](install.html) | How to install TFEL/MFront on Linux, Windows, macOS, and FreeBSD. | ⭐/⭐⭐ |
+| [Documentation](documentations.html) | List of all available documentation. | ⭐/⭐⭐/⭐⭐⭐ |
+| [FAQ](faq.html) | Frequently asked questions and troubleshooting. | ⭐ |
+
+# 🔧 Development & Contribution
+
+For developers and contributors.
+
+| Resource | Description |
+|----------|-------------|
+| [Contributing](contributing.html) | How to contribute to TFEL/MFront. |
+| [Compiling MFront Shared Libraries](compiling-mfront-shared-libraries.html) | Guide for building shared libraries. |
+| [CMake Options](https://github.com/thelfer/tfel/blob/master/CMakeLists.txt) | Advanced CMake configuration. |
+| [Coverity Scan](coverity-scan.html) | Static analysis for TFEL. |
+| [Packages](packages.html) | Creating binary packages for TFEL. |
+| [TFEL System](TFELSystem.html) | Overview of TFEL's architecture. |
+
+# 📜 Release Notes & History
+
+Stay up-to-date with the latest changes.
+
+| Version | Release Notes |
+|---------|----------------|
+| **5.x** | [v5.2](release-notes-5.2.html) |
+| **5.1** | [v5.1](release-notes-5.1.html) |
+| **5.0** | [v5.0](release-notes-5.0.html) |
+| **4.x** | [v4.2](release-notes-4.2.html) |
+| **3.x** | [v3.4](release-notes-3.4.html) |
+| **All Versions** | [Release Notes Archive](./release-notes/) |
+
+> **Note**: For a consolidated changelog, see [CHANGELOG.md](CHANGELOG.md).
+
+# 🌍 Community & Support
+
+Get help and connect with the TFEL/MFront community.
+
+| Resource | Description |
+|----------|-------------|
+| [GitHub Discussions](https://github.com/thelfer/tfel/discussions) | Ask questions, share ideas. |
+| [GitHub Issues](https://github.com/thelfer/tfel/issues) | Report bugs or request features. |
+| [Mailing List](mailto:tfel-contact@cea.fr) | Official contact for support. |
+| [Associated Projects](associated-projects.html) | Projects using or extending TFEL/MFront. |
+| [Publications](publications.html) | Scientific papers and references. |
+| [News](news.html) | Latest news and announcements. |
+
+# 📚 External Resources
+
+Additional materials and references.
+
+| Resource | Description |
+|----------|-------------|
+| [TFEL/MFront Reference Manual (PDF)](documents/mfront/mfront.pdf) | Complete reference manual (French). |
+| [Behaviours Manual (PDF)](documents/mfront/behaviours.pdf) | Guide to writing mechanical behaviours (French). |
+| [MTest User Guide (PDF)](documents/mtest/mtest.pdf) | MTest documentation. |
+| [TFEL Doc Repository](https://github.com/thelfer/tfel-doc) | Additional talks, tutorials, and documents. |
+| [Bibliography](bibliography.bib) | References cited in the documentation. |
+
+---
+
+## 📌 Legend
+
+- ⭐: Beginner
+- ⭐⭐: Intermediate
+- ⭐⭐⭐: Advanced
+
+> **Note**: This documentation is a **work in progress**. Contributions are welcome! See [Contributing](contributing.html) for details.
 
 # Licences
 
