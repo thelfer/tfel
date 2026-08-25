@@ -85,6 +85,7 @@ jobs:
 
     - name: Running tfel-check
       run: |
+        export LD_LIBRARY_PATH=${{github.workspace}}/install-madnex/lib:$LD_LIBRARY_PATH
         source ${{github.workspace}}/install/share/tfel/env/env.sh
         cd ${{github.workspace}}/install/share/tfel/test-suite
         tfel-check  -j $(nproc)
