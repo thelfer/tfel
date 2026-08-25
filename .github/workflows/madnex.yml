@@ -1,4 +1,4 @@
-name: CI with madnex support enabled
+name: CI with python bindings and madnex support enabled
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt upgrade
-        sudo apt install -y libhdf5-dev
+        sudo apt install -y libhdf5-dev libpython3-dev python3-numpy pybind11-dev
 
     - name: Checkout Madnex
       uses: actions/checkout@v7
@@ -48,11 +48,12 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake ${{github.workspace}}/tfel                                         \
-              -B ${{github.workspace}}/build                                     \
-              -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                             \
-              -Denable-madnex=ON                                                 \
-              -DMadnex_DIR=${{github.workspace}}/install-madnex/lib/cmake/madnex \
+        cmake ${{github.workspace}}/tfel                                           \
+              -B ${{github.workspace}}/build                                       \
+              -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
+              -Denable-madnex=ON                                                   \
+              -Denable-python=ON -Denable-python-bindings=ON                       \
+              -DMadnex_DIR=${{github.workspace}}/install-madnex/share/madnex/cmake \
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
