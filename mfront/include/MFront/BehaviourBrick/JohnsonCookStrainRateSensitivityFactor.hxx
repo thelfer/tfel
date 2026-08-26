@@ -2,7 +2,7 @@
  * \file   MFront/BehaviourBrick/JohnsonCookStrainRateSensitivityFactor.hxx
  * \brief
  * \author Thomas Helfer
- * \date   27/11/2024
+ * \date 27/11/2024
  */
 
 #ifndef LIB_MFRONT_BBRICKS_JOHNSONCOOKSTRAINRATESENSITIVITYFACTOR_HXX

@@ -2,7 +2,7 @@
  * \file   test-lsdyna.cxx
  * \brief
  * \author th202608
- * \date   14/06/2018
+ * \date 14/06/2018
  */
 
 #include <cstdlib>

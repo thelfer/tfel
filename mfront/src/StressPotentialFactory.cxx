@@ -2,7 +2,7 @@
  * \file   mfront/src/StressPotentialFactory.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  */
 
 #include "TFEL/Raise.hxx"

@@ -2,7 +2,7 @@
  * \file   mfront/src/CastemInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   17 Jan 2007
+ * \date 17/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -917,7 +917,7 @@ namespace mfront {
         << "* \\brief  This file declares the umat interface for the "
         << mb.getClassName() << " behaviour law\n"
         << "* \\author " << fd.authorName << '\n'
-        << "* \\date   " << fd.date << '\n'
+        << "* \\date " << fd.date << '\n'
         << "*/\n\n";
 
     const auto header = this->getHeaderGuard(mb);
@@ -1054,7 +1054,7 @@ namespace mfront {
         << "* \\brief  This file implements the umat interface for the "
         << mb.getClassName() << " behaviour law\n"
         << "* \\author " << fd.authorName << '\n'
-        << "* \\date   " << fd.date << '\n'
+        << "* \\date " << fd.date << '\n'
         << "*/\n\n";
 
     this->getExtraSrcIncludes(out, mb);
@@ -2805,7 +2805,7 @@ namespace mfront {
           << " behaviour law\n"
           << "* in the Cast3M finite element solver\n"
           << "* \\author " << fd.authorName << '\n'
-          << "* \\date   " << fd.date << '\n'
+          << "* \\date " << fd.date << '\n'
           << "*\n"
           << "* \\warning: this file is generated automatically to provide \n"
           << "* a template to use the " << bd.getClassName()

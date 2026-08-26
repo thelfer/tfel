@@ -2,7 +2,7 @@
  * \file   tfel-check/src/TestLauncher.cxx
  * \brief  Class to manage tfel unit tests.
  * \author Thomas Helfer
- * \date   26 jan 2008
+ * \date 26/01/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

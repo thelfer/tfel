@@ -2,7 +2,7 @@
  * \file   test-external-behaviour-call.cxx
  * \brief
  * \author th202608
- * \date   08/01/2019
+ * \date 08/01/2019
  */
 
 #include <cstdlib>

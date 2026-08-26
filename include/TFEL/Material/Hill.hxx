@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/Hill.hxx
  * \author Thomas Helfer
- * \date   26 March 2009
+ * \date 26/03/2009
  * \brief  This file declares the hillTensor function.
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.

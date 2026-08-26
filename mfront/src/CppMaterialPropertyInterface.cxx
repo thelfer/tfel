@@ -2,7 +2,7 @@
  * \file   mfront/src/CppMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -259,7 +259,7 @@ namespace mfront {
       header << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      header << "* \\date   " << fd.date << '\n';
+      header << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       header << fd.description << '\n';
@@ -368,7 +368,7 @@ namespace mfront {
       src << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      src << "* \\date   " << fd.date << '\n';
+      src << "* \\date " << fd.date << '\n';
     }
     src << " */\n\n"
         << "#include<stdexcept>\n"

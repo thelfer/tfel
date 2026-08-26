@@ -2,7 +2,7 @@
  * \file   strided_coalesced_view.cxx
  * \brief
  * \author Tristan Chenaille
- * \date   15/01/2026
+ * \date 15/01/2026
  */
 
 #ifdef NDEBUG

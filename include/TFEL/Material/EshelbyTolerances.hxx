@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/EshelbyTolerances.hxx
  * \brief  This file declares tolerance values relative to the floatting-point
- * types \author Antoine Martin \date   5 sept 2025 \copyright Copyright (C)
+ * types \author Antoine Martin \date 05/09/2025 \copyright Copyright (C)
  * 2006-2025 CEA/DEN, EDF R&D. All rights reserved. This project is publicly
  * released under either the GNU GPL Licence with linking exception or the
  * CECILL-A licence. A copy of thoses licences are delivered with the sources of

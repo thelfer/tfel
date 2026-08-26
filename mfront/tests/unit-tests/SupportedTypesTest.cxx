@@ -2,7 +2,7 @@
  * \file   mfront/tests/unit-tests/SupportedTypesTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   30/08/2021
+ * \date 30/08/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * re served.
  * This project is publicly released under either the GNU GPL Licence with

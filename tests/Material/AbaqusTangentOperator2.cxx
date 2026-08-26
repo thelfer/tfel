@@ -1,7 +1,7 @@
 /*!
  * \file   AbaqusTangentOperator2.cxx
  * \author Thomas Helfer
- * \date   13 août 2016
+ * \date 13/08/2016
  * \brief This test verify that the abaqus tangent operator
  *        is correctly computed by comparing its value to
  *        an numerical perturbation

@@ -5,7 +5,7 @@
  *
  *
  * \author: sb152252
- * \date 26 oct. 2017
+ * \date 26/10/2017
  *
  * Copyright © CEA 2017
  */

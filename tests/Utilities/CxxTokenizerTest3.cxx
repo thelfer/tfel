@@ -1,7 +1,7 @@
 /*!
  * \file   tests/Utilities/CxxTokenizerTest3.cxx
  * \brief
- * \date   09/03/2023
+ * \date 09/03/2023
  */
 
 #ifdef NDEBUG

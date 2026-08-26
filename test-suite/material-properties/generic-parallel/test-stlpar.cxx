@@ -2,7 +2,7 @@
  * \file   test-stlpar.cxx
  * \brief
  * \author Thomas Helfer
- * \date   22/04/2026
+ * \date 22/04/2026
  */
 
 #include <array>

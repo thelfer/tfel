@@ -2,7 +2,7 @@
  * \file   TFEL/Metaprogramming/Concepts.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/09/2025
+ * \date 03/09/2025
  */
 
 #ifndef LIB_TFEL_METAPROGRAMMING_CONCEPTS_HXX

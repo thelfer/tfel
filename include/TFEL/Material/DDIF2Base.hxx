@@ -2,7 +2,7 @@
  * \file  include/TFEL/Material/DDIF2Base.hxx
  * \brief
  * \author Thomas Helfer
- * \date 12 mar 2010
+ * \date 12/03/2010
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

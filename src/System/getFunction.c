@@ -3,7 +3,7 @@
  * \brief  this file implements some C wrappers around the dlsym
  * system call.
  * \author Thomas Helfer
- * \date   18/12/2008
+ * \date 18/12/2008
  */
 
 #include"getFunction.impl"

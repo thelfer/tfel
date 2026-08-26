@@ -2,7 +2,7 @@
  * \file   dianafea_external_behaviour_call.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08/01/2019
+ * \date 08/01/2019
  */
 
 #include <array>

@@ -1,7 +1,7 @@
 /*!
  * \file   MFront/BehaviourBrick/StrainRateSensitiveIsotropicHardeningRule.hxx
  * \brief  This file declares the StrainRateSensitiveIsotropicHardeningRule
- * class \author Thomas Helfer \date   13/11/2024
+ * class \author Thomas Helfer \date 13/11/2024
  */
 
 #ifndef LIB_MFRONT_BBRICKS_STRAINRATESENSITIVEISOTROPICHARDENINGRULE_HXX

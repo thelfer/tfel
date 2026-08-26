@@ -3,7 +3,7 @@
  * \brief  This header declares a set of functions
  * useful to DSL dedicated to behaviours
  * \author Thomas Helfer
- * \date   24/04/2025
+ * \date 24/04/2025
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURDSLUTILITIES_HXX

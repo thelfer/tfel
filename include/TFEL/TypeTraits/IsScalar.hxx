@@ -3,7 +3,7 @@
  * \brief  This file declares the IsScalar traits class
  * and specialises it for standard numeric types.
  * \author Thomas Helfer
- * \date   07/07/2006
+ * \date 07/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,7 +25,7 @@
  * "real" numeric types.
  *
  * \author Thomas Helfer
- * \date   28/06/2006
+ * \date 28/06/2006
  */
 #define TFEL_META_IS_SCALAR(X)           \
   /*!                                    \
@@ -62,7 +62,7 @@ namespace tfel::typetraits {
    * \see IsReal, IsComplex
    *
    * \author Thomas Helfer
-   * \date   04/07/2006
+   * \date 04/07/2006
    */
   template <typename T>
   struct IsScalar {

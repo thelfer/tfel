@@ -2,7 +2,7 @@
  * \file   include/MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICHARDENINGRULEFACTORY_HXX

@@ -2,7 +2,7 @@
  * \file   mfront/src/JohnsonCookStrainRateSensitivityFactor.cxx
  * \brief
  * \author Thomas Helfer
- * \date   27/11/2024
+ * \date 27/11/2024
  */
 
 #include <sstream>

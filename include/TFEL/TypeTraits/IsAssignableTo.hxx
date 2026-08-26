@@ -4,7 +4,7 @@
  * its partial specialisation for each standard numeric types.
  *
  * \author Thomas Helfer
- * \date   28 jun 2006
+ * \date 28/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,7 +26,7 @@
  * \brief An helper macro to specialise IsAssignableTo for each
  * standard numeric types.
  * \author Thomas Helfer
- * \date   28 jun 2006
+ * \date 28/06/2006
  */
 #define TFEL_MATH_IS_ASSIGNABLE_(X, Y)                                    \
   /*!                                                                     \
@@ -46,7 +46,7 @@
  * \brief An helper macro to specialise IsAssignableTo for each
  * standard numeric types.
  * \author Thomas Helfer
- * \date   28 jun 2006
+ * \date 28/06/2006
  */
 #define TFEL_MATH_IS_ASSIGNABLE(X)                                     \
   TFEL_MATH_IS_ASSIGNABLE_(X, unsigned short);                         \
@@ -81,7 +81,7 @@ namespace tfel::typetraits {
    *
    * \see Promote
    * \author Thomas Helfer
-   * \date   28 jun 2006
+   * \date 28/06/2006
    */
   template <typename A, typename B>
   struct IsAssignableTo {

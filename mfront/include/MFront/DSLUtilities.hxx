@@ -3,7 +3,7 @@
  * \brief  This header declares a set of functions to read
  * information from an mfront file
  * \author Thomas Helfer
- * \date   23/04/2025
+ * \date 23/04/2025
  */
 
 #ifndef LIB_MFRONT_DSLUTILITIES_HXX

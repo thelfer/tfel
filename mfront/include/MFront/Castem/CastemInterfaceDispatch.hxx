@@ -37,7 +37,7 @@ namespace castem {
    * \class  CastemInterfaceDispatch
    * \brief
    * \author Thomas Helfer
-   * \date   24 Jul 2013
+   * \date 24/07/2013
    */
   template <
       CastemBehaviourType type,
@@ -74,7 +74,7 @@ namespace castem {
    * \class  CastemInterfaceDispatch
    * \brief  partial specialisation for models
    * \author Thomas Helfer
-   * \date   24 Jul 2013
+   * \date 24/07/2013
    */
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -136,7 +136,7 @@ namespace castem {
    * \class  CastemInterfaceDispatch
    * \brief  partial specialisation for small strain behaviours
    * \author Thomas Helfer
-   * \date   24 Jul 2013
+   * \date 24/07/2013
    */
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -187,7 +187,7 @@ namespace castem {
    * \class  CastemInterfaceDispatch
    * \brief  partial specialisation for small strain behaviours
    * \author Thomas Helfer
-   * \date   24 Jul 2013
+   * \date 24/07/2013
    */
   template <
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
@@ -246,7 +246,7 @@ namespace castem {
    * \class  CastemInterfaceDispatch
    * \brief  partial specialisation for small strain behaviours
    * \author Thomas Helfer
-   * \date   24 Jul 2013
+   * \date 24/07/2013
    */
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,

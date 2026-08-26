@@ -2,7 +2,7 @@
  * \file tfel-check/tests/unitTest/test_Test.cxx
  * tests the Test class
  * \author Rémy Petkantchin
- * \date 11 juin 2013
+ * \date 11/06/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

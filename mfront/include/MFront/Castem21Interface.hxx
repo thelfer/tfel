@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/Castem21Interface.hxx
  * \brief  This file declares the Castem21Interface class
  * \author Thomas Helfer
- * \date   23/02/2021
+ * \date 23/02/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

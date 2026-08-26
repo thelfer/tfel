@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/ResultType.hxx
  * \brief  This file declares the ResultType class.
  * \author Thomas Helfer
- * \date   24 jun 2006
+ * \date 24/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

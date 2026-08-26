@@ -1,7 +1,7 @@
 /*!
  * \file   tests/Math/matrix.cxx
  * \author Thomas Helfer
- * \date   29/04/2024
+ * \date 29/04/2024
  */
 
 #ifdef NDEBUG

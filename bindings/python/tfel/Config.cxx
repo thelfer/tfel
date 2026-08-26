@@ -2,7 +2,7 @@
  * \file   bindings/python/tfel/Config.cxx
  * \brief
  * \author Thomas Helfer
- * \date   02/04/2023
+ * \date 02/04/2023
  */
 
 #include <string>

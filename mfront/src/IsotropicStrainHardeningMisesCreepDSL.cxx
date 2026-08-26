@@ -2,7 +2,7 @@
  * \file   mfront/src/IsotropicStrainHardeningMisesCreepDSL.cxx
  * \brief
  * \author Thomas Helfer
- * \date   02 jui 2007
+ * \date 02/06/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/BehaviourData.hxx
  * \brief  This file declares the BehaviourData class
  * \author Thomas Helfer
- * \date   21 Mars 2014
+ * \date 21/03/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

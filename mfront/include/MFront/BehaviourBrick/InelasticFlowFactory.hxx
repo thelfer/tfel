@@ -2,7 +2,7 @@
  * \file   include/MFront/BehaviourBrick/InelasticFlowFactory.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWFACTORY_HXX

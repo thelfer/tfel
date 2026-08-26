@@ -2,7 +2,7 @@
  * \file   NonLinearConstraint.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03 march 2017
+ * \date 03/03/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

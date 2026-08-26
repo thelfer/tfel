@@ -2,7 +2,7 @@
  * \file   MFrontDatabase.cxx
  * \brief
  * \author th202608
- * \date   13/11/2025
+ * \date 13/11/2025
  */
 
 #include <pybind11/pybind11.h>

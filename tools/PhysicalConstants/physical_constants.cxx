@@ -2,7 +2,7 @@
  * \file   physical_constants.cxx
  * \brief
  * \author Thomas Helfer
- * \date   18 août 2017
+ * \date 18/08/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -134,7 +134,7 @@ static void generate_cxx(const std::vector<Constant>& cs) {
      << " * \\file   include/TFEL/PhysicalConstants.hxx\n"
      << " * \\brief\n"
      << " * \\author Thomas Helfer\n"
-     << " * \\date   18 août 2017\n"
+     << " * \\date 18/08/2017\n"
      << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights\n"
      << " * reserved.\n"
      << " * This project is publicly released under either the GNU GPL "
@@ -237,7 +237,7 @@ static void generate_python(const std::vector<Constant>& cs) {
      << " * \\file   bindings/python/tfel/PhysicalConstants.cxx\n"
      << " * \\brief\n"
      << " * \\author Thomas Helfer\n"
-     << " * \\date   18 août 2017\n"
+     << " * \\date 18/08/2017\n"
      << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights \n"
      << " * reserved. \n"
      << " * This project is publicly released under either the GNU GPL Licence "
@@ -317,7 +317,7 @@ static void generate_fortran77(const std::vector<Constant>& cs) {
   os << "C> \\file   bindings/fortran77/TFELPHYSICALCONSTANTS.cxx\n"
      << "C> \\brief\n"
      << "C> \\author Thomas Helfer\n"
-     << "C> \\date   18 août 2017\n"
+     << "C> \\date 18/08/2017\n"
      << "C> \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights \n"
      << "C> reserved. \n"
      << "C> This project is publicly released under either the GNU GPL Licence "
@@ -385,7 +385,7 @@ static void generate_fortran90(const std::vector<Constant>& cs) {
         "recommended values,\n"
      << "!           http://physics.nist.gov/cuu/Constants/index.html\n"
      << "!> \\author Thomas Helfer\n"
-     << "!> \\date   18 août 2017\n"
+     << "!> \\date 18/08/2017\n"
      << "!> \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights \n"
      << "!  reserved. \n"
      << "!  This project is publicly released under either the GNU GPL Licence "

@@ -2,7 +2,7 @@
  * \file   strided_derivative_view.cxx
  * \brief
  * \author Tristan Chenaille
- * \date   08/06/2026
+ * \date 08/06/2026
  */
 
 #include <array>

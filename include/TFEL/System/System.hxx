@@ -2,7 +2,7 @@
  * \file   include/TFEL/System/System.hxx
  * \brief  This file declares the System class
  * \author Thomas Helfer
- * \date   06 Nov 2007
+ * \date 06/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

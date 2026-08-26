@@ -3,7 +3,7 @@
  * \brief
  *§
  * \author Thomas Helfer
- * \date   09/11/2007
+ * \date 09/11/2007
  */
 
 #ifndef LIB_TFEL_SYSTEM_PROCESSMANAGER_H

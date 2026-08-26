@@ -2,7 +2,7 @@
  * \file   LibraryInformation.hxx
  * \brief A class for querying information about a library.
  * \author Thomas Helfer
- * \date   28 mars 2017
+ * \date 28/03/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

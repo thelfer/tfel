@@ -2,7 +2,7 @@
  * \file   NUMODIS/Config.hxx
  * \brief
  * \author Thomas Helfer
- * \date   08 juin 2017
+ * \date 08/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

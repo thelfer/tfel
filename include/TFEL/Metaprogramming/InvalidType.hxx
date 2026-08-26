@@ -2,7 +2,7 @@
  * \file   include/TFEL/Metaprogramming/InvalidType.hxx
  * \brief  This file declares the `InvalidType` class
  * \author Thomas Helfer
- * \date   28/08/2006
+ * \date 28/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,7 +23,7 @@ namespace tfel::meta {
    * instanciated. This type is generally used to give default and
    * invalid values to fields in traits class.
    * \author Thomas Helfer
-   * \date   28/08/2006
+   * \date 28/08/2006
    */
   struct InvalidType;
 

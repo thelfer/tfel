@@ -2,7 +2,7 @@
  * \file   include/TFEL/Config/TFELTypes.hxx
  * \brief  This file implements the Types class
  * \author Thomas Helfer
- * \date   08 Aug 2006
+ * \date 08/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -98,7 +98,7 @@ namespace tfel::config {
    * \param typename T, numerical type, double by default.
    * \param bool use_quantities, says if one shall use quantities.
    * \author Thomas Helfer
-   * \date   08 Aug 2006
+   * \date 08/08/2006
    */
   template <unsigned short N, typename T = double, bool use_quantities = true>
   struct Types : ScalarTypes<T, true> {

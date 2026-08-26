@@ -1,7 +1,7 @@
 /*!
  * \file   tests/Math/types.cxx
  * \author Thomas Helfer
- * \date   11/11/2024
+ * \date 11/11/2024
  */
 
 #include "TFEL/Math/types.hxx"

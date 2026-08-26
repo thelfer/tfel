@@ -120,7 +120,7 @@ void writeFileHeader(std::ostream& out, const FourthOrderTensorProduct& p) {
   out << " * \\file  " << getName(p) << "ProductExpr.hxx" << endl;
   out << " * \\brief" << endl;
   out << " * \\author Thomas Helfer" << endl;
-  out << " * \\date 16 juin 2014" << endl;
+  out << " * \\date 16/06/2014" << endl;
   out << " */" << endl;
   out << "" << endl;
   out << "#ifndef LIB_TFEL_MATH_" << toupper(getName(p)) << "PRODUCTEXPR_HXX"

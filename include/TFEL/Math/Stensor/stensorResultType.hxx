@@ -3,7 +3,7 @@
  * \brief  this file implements partial specialisations of the
  * ResultType class for stensor.
  * \author Thomas Helfer
- * \date   03 Jul 2006
+ * \date 03/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

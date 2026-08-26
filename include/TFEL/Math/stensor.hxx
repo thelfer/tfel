@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/stensor.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 May 2006
+ * \date 04/05/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

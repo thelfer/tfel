@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/Aster/AsterInterface.hxx
  * \brief  This file implements the AsterInterface class.
  * \author Thomas Helfer
- * \date   28 Jul 2006
+ * \date 28/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -69,7 +69,7 @@ namespace aster {
    * reduce both compile-time and library size).
    *
    * \author Thomas Helfer
-   * \date   28 Jul 2006
+   * \date 28/07/2006
    */
   template <
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>

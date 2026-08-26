@@ -2,7 +2,7 @@
  * \file   mfront/src/BehaviourVariableDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06/01/2025
+ * \date 06/01/2025
  */
 
 #include "TFEL/Raise.hxx"

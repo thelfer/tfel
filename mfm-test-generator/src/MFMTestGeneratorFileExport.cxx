@@ -2,7 +2,7 @@
  * \file   mfm-test-generator/src/MFMTestGeneratorFileExport.cxx
  * \brief
  * \author Thomas Helfer
- * \date   01/03/2022
+ * \date 01/03/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

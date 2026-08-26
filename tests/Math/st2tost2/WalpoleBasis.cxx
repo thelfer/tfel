@@ -2,7 +2,7 @@
  * \file   tests/Math/st2tost2/WalpoleBasis.cxx
  * \brief
  * \author Antoine Martin
- * \date   15 may 2026
+ * \date 15/05/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

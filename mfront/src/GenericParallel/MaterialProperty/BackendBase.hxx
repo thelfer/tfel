@@ -2,7 +2,7 @@
  * \file   mfront/src/GenericParallel/MaterialProperty/AbstractBackend.cxx
  * \brief  This file implements the `AbstractBackend` class
  * \author Thomas Helfer
- * \date   07/04/2026
+ * \date 07/04/2026
  */
 
 #include "MFront/GenericParallel/MaterialProperty/AbstractBackend.hxx"

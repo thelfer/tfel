@@ -2,7 +2,7 @@
  * \file   MFront/BehaviourVariableDescription.hxx
  * \brief  This file declares the BehaviourVariableDescription class
  * \author Thomas Helfer
- * \date   06/01/2025
+ * \date 06/01/2025
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURVARIABLEDESCRIPTION_HXX

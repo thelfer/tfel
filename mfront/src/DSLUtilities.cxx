@@ -2,7 +2,7 @@
  * \file   mfront/src/DSLUtilities.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23/04/2025
+ * \date 23/04/2025
  */
 
 #include <sstream>

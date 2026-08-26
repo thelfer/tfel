@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Helfer Thomas
- * \date   09 nov 2007
+ * \date 09/11/2007
  */
 
 #include <sys/wait.h>

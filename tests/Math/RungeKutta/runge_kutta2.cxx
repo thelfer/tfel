@@ -2,7 +2,7 @@
  * \file   tests/Math/RungeKutta/runge_kutta2.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20 jui 2006
+ * \date 20/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

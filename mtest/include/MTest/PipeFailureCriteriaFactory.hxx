@@ -2,7 +2,7 @@
  * \file   mtest/include/MTest/PipeFailureCriteriaFactory.hxx
  * \brief
  * \author Thomas Helfer
- * \date   12/09/2022
+ * \date 12/09/2022
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
  * delivered with the sources of TFEL. CEA or EDF may also distribute this

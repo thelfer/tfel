@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/RungeKutta4.hxx
  * \brief  This file declares the RungeKutta4 class.
  * \author Thomas Helfer
- * \date   01 Sep 2006
+ * \date 01/09/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

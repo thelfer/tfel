@@ -2,7 +2,7 @@
  * \file   omi_for_c.h
  * \brief    
  * \author HELFER Thomas
- * \date   03 avril 2025
+ * \date 03/04/2025
  */
 
 #ifndef LIB_OMI_FOR_C_H

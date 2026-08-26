@@ -147,7 +147,7 @@ namespace mfront {
       this->headerFile << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      this->headerFile << "* \\date   " << fd.date << '\n';
+      this->headerFile << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       this->headerFile << fd.description << '\n';
@@ -385,7 +385,7 @@ namespace mfront {
       this->srcFile << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      this->srcFile << "* \\date   " << fd.date << '\n';
+      this->srcFile << "* \\date " << fd.date << '\n';
     }
     this->srcFile << " */\n\n"
                   << "#include<iostream>\n"

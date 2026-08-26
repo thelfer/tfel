@@ -57,7 +57,7 @@ namespace dianafea {
    * \class  DianaFEAInterfaceExceptions
    * \brief  Exceptions class for DianaFEA interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_DIANAFEA_VISIBILITY_EXPORT DianaFEAInterfaceExceptions {
     /*!

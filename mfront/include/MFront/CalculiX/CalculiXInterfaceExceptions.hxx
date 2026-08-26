@@ -56,7 +56,7 @@ namespace calculix {
    * \class  CalculiXInterfaceExceptions
    * \brief  Exceptions class for CalculiX interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInterfaceExceptions {
     /*!

@@ -3,7 +3,7 @@
  * \brief  this file declares some C wrappers around the dlsym
  * system call.
  * \author Helfer Thomas
- * \date   13 déc 2008
+ * \date 13/12/2008
  */
 
 #ifndef LIB_TFEL_SYSTEM_GETFUNCTION_H

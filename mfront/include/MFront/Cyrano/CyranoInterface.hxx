@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/Cyrano/CyranoInterface.hxx
  * \brief  This file implements the CyranoInterface class.
  * \author Thomas Helfer
- * \date   21 fév 2014
+ * \date 21/02/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,7 +29,7 @@ namespace cyrano {
    * \class  CyranoInterface
    * \brief  This class create an interface between Behaviour and Cyrano
    * \author Thomas Helfer
-   * \date   28 Jul 2006
+   * \date 28/07/2006
    */
   template <
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>

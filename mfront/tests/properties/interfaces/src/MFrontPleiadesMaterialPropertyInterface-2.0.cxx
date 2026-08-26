@@ -5,7 +5,7 @@
  *
  *
  * \author: sb152252
- * \date 26 oct. 2017
+ * \date 26/10/2017
  *
  * Copyright © CEA 2017
  */
@@ -97,7 +97,7 @@ namespace mfront {
       os << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << '\n';
+      os << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       os << fd.description << '\n';
@@ -172,7 +172,7 @@ namespace mfront {
     }
 
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << '\n';
+      os << "* \\date " << fd.date << '\n';
     }
 
     os << " */\n\n"

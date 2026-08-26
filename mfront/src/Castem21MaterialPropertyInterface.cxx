@@ -2,7 +2,7 @@
  * \file   mfront/src/Castem21MaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15/04/2026
+ * \date 15/04/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/Castem/CastemRotationMatrix.hxx
  * \brief  This file declares the CastemRotationMatrix class
  * \author E. Castelier
- * \date   17/03/2008
+ * \date 17/03/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

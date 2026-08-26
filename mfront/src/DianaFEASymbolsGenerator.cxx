@@ -2,7 +2,7 @@
  * \file   DianaFEASymbolsGenerator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08/01/2019
+ * \date 08/01/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

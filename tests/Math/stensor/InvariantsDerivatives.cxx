@@ -2,7 +2,7 @@
  * \file   InvariantsDerivatives.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23 déc. 2016
+ * \date 23/12/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file   src/Math/PowerFunction.cxx
  * \brief
  * \author Thomas Heler
- * \date   25/04/2022
+ * \date 25/04/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

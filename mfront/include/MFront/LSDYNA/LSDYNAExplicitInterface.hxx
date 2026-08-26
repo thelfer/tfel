@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/LSDYNA/LSDYNAExplicitInterface.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19 mars 2016
+ * \date 19/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file   include/TFEL/MATH/FischerBurmeister.hxx
  * \brief
  * \author Thomas Helfer
- * \date   29/05/2019
+ * \date 29/05/2019
  */
 
 #ifndef LIB_TFEL_MATH_FISCHERBURMEISTER_HXX

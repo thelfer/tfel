@@ -1,7 +1,7 @@
 /*! 
  * \file   test-c
  * \author Helfer Thomas
- * \date   16 jan 2010
+ * \date 16/01/2010
  */
 
 #ifdef NDEBUG

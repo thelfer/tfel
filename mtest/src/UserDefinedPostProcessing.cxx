@@ -2,7 +2,7 @@
  * \file   mtest/src/UserDefinedPostProcessing.cxx
  * \brief
  * \author Thomas Helfer
- * \date   27/02/2018
+ * \date 27/02/2018
  */
 
 #include "TFEL/Raise.hxx"

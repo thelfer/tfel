@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/DotProduct.hxx
  * \brief
  * \author Thomas Helfer
- * \date   30 jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,7 +31,7 @@ namespace tfel::math {
    * \see inner_product
    *
    * \author Thomas Helfer
-   * \date   01 Sep 2006
+   * \date 01/09/2006
    */
   template <unsigned int N>
   struct dotProduct {
@@ -71,7 +71,7 @@ namespace tfel::math {
    * dotProduct algorithm.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct dotProduct<0u> {
@@ -80,7 +80,7 @@ namespace tfel::math {
      * \sa dotProduct<N>::exe() for details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator1, typename InputIterator2, typename T>
     TFEL_HOST_DEVICE static constexpr T exe(InputIterator1,

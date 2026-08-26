@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/Abs.hxx
  * \brief  This file declares the abs function
  * \author Thomas Helfer
- * \date   13 Feb 2007
+ * \date 13/02/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

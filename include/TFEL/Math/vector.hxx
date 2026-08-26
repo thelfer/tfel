@@ -4,7 +4,7 @@
  * on STL'vector storage class. This classe is suitable for describing
  * medium sized vectors.
  * \author Thomas Helfer
- * \date   05 oct 2006
+ * \date 05/10/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

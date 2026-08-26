@@ -28,7 +28,7 @@
  * occur in TFEL_PP_DO_JOIN2 but does in TFEL_PP_DO_JOIN.
  *
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date 28/08/2006
  */
 #define TFEL_PP_JOIN(X, Y) TFEL_PP_DO_JOIN(X, Y)
 
@@ -37,7 +37,7 @@
  * \brief An helper macro for TFEL_PP_JOIN
  * \see TFEL_PP_JOIN
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date 28/08/2006
  */
 #define TFEL_PP_DO_JOIN(X, Y) TFEL_PP_DO_JOIN2(X, Y)
 
@@ -46,7 +46,7 @@
  * \brief An helper macro for TFEL_PP_JOIN
  * \see TFEL_PP_JOIN
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date 28/08/2006
  */
 #define TFEL_PP_DO_JOIN2(X, Y) X##Y
 

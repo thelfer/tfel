@@ -2,7 +2,7 @@
  * \file   FiniteStrainSingleCrystalBrick.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/10/2016
+ * \date 04/10/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

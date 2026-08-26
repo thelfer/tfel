@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/loop.hxx
  * \brief  this file implements the loop class.
  * \author Thomas Helfer
- * \date   18/04/2018
+ * \date 18/04/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -61,7 +61,7 @@ namespace tfel::fsalgo {
   /*!
    * \class loop
    * \author Thomas Helfer
-   * \date   18/04/2018
+   * \date 18/04/2018
    * This class is meant to manually unroll a loop a compile time.
    * The body of the loop is passed as a callable taking the
    * current indice as argument.

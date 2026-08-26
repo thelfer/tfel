@@ -56,7 +56,7 @@ namespace abaqus {
    * \class  AbaqusInterfaceExceptions
    * \brief  Exceptions class for Abaqus interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusInterfaceExceptions {
     /*!

@@ -3,7 +3,7 @@
  * \file   mfront/include/MFront/IsotropicBehaviourCodeGeneratorBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/08/2022
+ * \date 03/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

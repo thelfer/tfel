@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/BehaviourBrick/HookeStressPotential.hxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIAL_HXX

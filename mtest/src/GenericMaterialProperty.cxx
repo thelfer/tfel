@@ -2,7 +2,7 @@
  * \file   mtest/src/GenericMaterialProperty.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10/08/2021
+ * \date 10/08/2021
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
  * delivered with the sources of TFEL. CEA or EDF may also distribute this

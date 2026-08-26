@@ -2,7 +2,7 @@
  * \file   coalesced_view.cxx
  * \brief
  * \author th202608
- * \date   24/10/2025
+ * \date 24/10/2025
  */
 
 #ifdef NDEBUG

@@ -2,7 +2,7 @@
  * \file  tfel-check/src/PCJUnitDriver.cxx
  * \brief JUnit log formater class implemetation.
  * \author sb152252
- * \date 1 sept. 2009
+ * \date 01/09/2009
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

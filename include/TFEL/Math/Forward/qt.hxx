@@ -58,7 +58,7 @@ namespace tfel::math {
    * double).
    * \see unit_samples.hxx, IsFundamentalNumericType
    * \author Thomas Helfer
-   * \date   06 Jun 2006
+   * \date 06/06/2006
    */
   template <unit::UnitConcept UnitType,
             StandardArithmeticTypeConcept ValueType,

@@ -2,7 +2,7 @@
  * \file   UserDefinedPostProcessing.hxx
  * \brief
  * \author Thomas Helfer
- * \date   27/02/2018
+ * \date 27/02/2018
  */
 
 #ifndef LIB_MTEST_USERDEFINEDPOSTPROCESSING_HXX

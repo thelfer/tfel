@@ -58,7 +58,7 @@ namespace castem {
    * \class  CastemInterfaceExceptions
    * \brief  Base class for castem interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemInterfaceExceptions {
     /*!

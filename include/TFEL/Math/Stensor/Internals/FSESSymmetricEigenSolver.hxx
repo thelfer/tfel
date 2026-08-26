@@ -2,7 +2,7 @@
  * \file   FSESSymmetricEigenSolver.hxx
  * \brief
  * \author Joachim Kopp/Thomas Helfer
- * \date   30/12/2016
+ * \date 30/12/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  *

@@ -3,7 +3,7 @@
  * \brief  This file declares the RealPartType traits class
  * and specialises it for standard numeric types.
  * \author Thomas Helfer
- * \date   23 Aug 2006
+ * \date 23/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,7 +23,7 @@
  * \brief An helper macro to specialise RealPartType for each standard
  * "real" numeric types.
  * \author Thomas Helfer
- * \date   23 Aug 2006
+ * \date 23/08/2006
  */
 #define TFEL_TYPETRAITS_REALPARTTYPE(X)  \
   /*!                                    \
@@ -41,7 +41,7 @@
  * standard "real"
  * numeric types.
  * \author Thomas Helfer
- * \date   23 Aug 2006
+ * \date 23/08/2006
  */
 #define TFEL_TYPETRAITS_REALPARTTYPEII(X)       \
   /*!                                           \
@@ -66,7 +66,7 @@ namespace tfel::typetraits {
    * \return type, type of the real part of the argument
    *
    * \author Thomas Helfer
-   * \date   23 Aug 2006
+   * \date 23/08/2006
    */
   template <typename T>
   struct RealPartType {

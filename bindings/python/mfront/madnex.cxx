@@ -2,7 +2,7 @@
  * \file   bindings/python/mfront/madnex.cxx
  * \brief
  * \author Thomas Helfer
- * \date   30/03/2023
+ * \date 30/03/2023
  */
 
 #include <pybind11/pybind11.h>

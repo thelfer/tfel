@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/InverseLangevinFunction.hxx
  * \brief
  * \author Thomas Helfer, Annie Morch
- * \date   08/09/2022
+ * \date 08/09/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

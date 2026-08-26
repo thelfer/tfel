@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/LinearHomogenizationSchemes.hxx
  * \author Antoine Martin
- * \date   24 October 2024
+ * \date 24/10/2024
  * \brief  This file declares some homogenization schemes based on solution of
  * Eshelby problem.
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All

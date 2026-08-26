@@ -2,7 +2,7 @@
  * \file   tests/Math/stensor8.cxx
  * \brief
  * \author Thomas Helfer
- * \date   12 nov. 2013
+ * \date 12/11/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

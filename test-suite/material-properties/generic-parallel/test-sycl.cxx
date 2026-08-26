@@ -2,7 +2,7 @@
  * \file   test-sycl.cxx
  * \brief
  * \author Thomas Helfer
- * \date   19/05/2026
+ * \date 19/05/2026
  */
 
 #include <array>

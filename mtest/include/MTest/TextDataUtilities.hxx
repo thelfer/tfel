@@ -2,7 +2,7 @@
  * \file   TextDataUtilities.hxx
  * \brief
  * \author Thomas Helfer
- * \date   11 janv. 2016
+ * \date 11/01/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

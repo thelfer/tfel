@@ -56,7 +56,7 @@ namespace ansys {
    * \class  AnsysInterfaceExceptions
    * \brief  Exceptions class for Ansys interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInterfaceExceptions {
     /*!

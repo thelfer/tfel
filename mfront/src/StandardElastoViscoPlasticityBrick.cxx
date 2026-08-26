@@ -2,7 +2,7 @@
  * \file   mfront/src/StandardElastoViscoPlasticityBrick.cxx
  * \brief
  * \author Thomas Helfer
- * \date   17/03/2018
+ * \date 17/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

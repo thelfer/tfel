@@ -2,7 +2,7 @@
  * \file   mfront/src/UserDefinedIsotropicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28/03/2022
+ * \date 28/03/2022
  */
 
 #include <sstream>
