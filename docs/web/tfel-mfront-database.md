@@ -1,5 +1,5 @@
 ---
-title:  Overview of the `TFELMFrontDatabase` library
+title: Overview of the TFELMFrontDatabase library
 author: Thomas Helfer
 date: 13/11/2025
 lang: en-EN

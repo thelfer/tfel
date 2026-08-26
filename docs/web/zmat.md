@@ -1,6 +1,15 @@
-% MFront usage in [ZeBuLoN](http://www.zset-software.com/products/zebulon)
-% Helfer Thomas
-% October 13, 2014
+---
+title: MFront usage in ZeBuLoN
+author: Helfer Thomas
+date: 13/10/2014
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 This document shows how to use `MFront` mechanical behaviour in the
 [ZeBuLoN finite element solver](http://www.zset-software.com/products/zebulon). It

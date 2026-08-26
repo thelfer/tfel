@@ -1,6 +1,15 @@
-% Skorohold-Olevsky Viscous Sintering (SOVS) model
-% Balaguer J. (Instituto de Tecnología Cerámica (ITC-AICE), Universitat Jaume I, Castellón (Spain)), Helfer T.
-% May 2019
+---
+title: Skorohold-Olevsky Viscous Sintering (SOVS) model
+author: Balaguer J., Helfer T.
+date: 05/2019
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\paren}[1]{{\left(#1\right)}}
 \newcommand{\tenseur}[1]{\underline{#1}}
@@ -335,7 +344,7 @@ e=\trace{\tepsilonin}
 > reason to keep its value from one step to the other. Such a variable
 > is called in `MFront` an *integration variable*.
 >
-> In pratice, for this integration variable \(e\), `MFront` automatically
+> In practice, for this integration variable \(e\), `MFront` automatically
 > defines:
 >
 > - a variable `e` meant to store the value of \(e\) at the beginning of
@@ -481,7 +490,7 @@ The `StandardElasticity` brick which provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 The usage of the `StandardElasticity` is introduced as follows:

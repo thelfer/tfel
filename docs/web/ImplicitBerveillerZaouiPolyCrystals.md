@@ -226,7 +226,7 @@ Méric-Cailletaud behaviour [@meric_single_1991], is straightforward
 using an explicit scheme and feasible for the implicit scheme although
 more involved.
 
-For the example, we will follow the work of Onimus et al. with sightly
+For the example, we will follow the work of Onimus et al. with slightly
 modified material coefficients [@onimus_polycrystalline_2009].
 
 # Implicit integration scheme {#sec:mfront:bz:implicit_scheme}
@@ -401,9 +401,9 @@ It shall be emphasised that even for the simple localisation equation of
 the Berveiller-Zaoui homogeneization scheme, the computation of the
 derivatives \(\deriv{\kphase{\tsigma}}{\Delta\,\tEpsilonel}\) and
 \(\deriv{\kphase{\tsigma}}{\Delta\,\,\tEpsilonvp}\) are quite involved
-due to the accomodation function.
+due to the accommodation function.
 
-> **Derivatives of the accomodation function**
+> **Derivatives of the accommodation function**
 > 
 > \[
 > \deriv{\alpha}{\Sigmaeq}=\dfrac{6\,M\,P}{\paren{2\,\Sigmaeq+3\,M\,P}^{2}}
@@ -746,7 +746,7 @@ follows:
   ∂fεᵉˡ∕∂Δεᵛᵖ = I₄;
 ~~~~
 
-The following lines of code computes the accomodation factor and the
+The following lines of code computes the accommodation factor and the
 associated derivatives:
 
 
@@ -1033,7 +1033,7 @@ advantage.
 # Conclusions
 
 The proposed implicit scheme is, to the best of our knowledge original
-and may be of significant importance for the use of such homogeneized
+and may be of significant importance for the use of such homogenized
 behaviours in structural applications.
 
 This implicit scheme will be extended in a straightforward manner to

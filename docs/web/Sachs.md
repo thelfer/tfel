@@ -1,6 +1,15 @@
-% Implementation of Sachs/Reuss homogenization scheme with a BehaviourVariable
-% Helfer Thomas/Martin Antoine
-% February 6, 2025
+---
+title: Implementation of Sachs/Reuss homogenization scheme with a BehaviourVariable
+author: Helfer Thomas, Martin Antoine
+date: 06/02/2025
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\D}{\mathrm{d}}
 \newcommand{\tenseur}[1]{\underline{#1}}

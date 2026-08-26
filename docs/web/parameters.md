@@ -1,7 +1,7 @@
 ---
-title: Parameters in `MFront`
-author: Thomas
-date: 6/10/2014
+title: Parameters in MFront
+author: Thomas Helfer
+date: 06/10/2014
 lang: en-EN
 link-citations: true
 colorlinks: true

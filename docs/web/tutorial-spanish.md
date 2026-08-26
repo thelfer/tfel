@@ -1,6 +1,16 @@
-% A spanish introduction to `MFront` and `Salome-MECA`
-% Jordi Alberich Domingo (alberichjordi@gmail.com)
-% 2017
+---
+title: A Spanish introduction to MFront and Salome-MECA
+author: Jordi Alberich Domingo
+email: alberichjordi@gmail.com
+date: 2017
+lang: es-ES
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
@@ -256,7 +266,7 @@ Este archivo de entrada se presenta como una lista de palabras clave, o
 instrucciones, empezando con el símbolo `@`. Algunas partes del archivo
 están directamente escritas en C++, pues `MFront` se basa en este
 lenguaje, aunque intenta reducir al mínimo su uso para hacerlo más
-accesible a las personas con menos capacidad de desarrollo informático.
+accessible a las personas con menos capacidad de desarrollo informático.
 
 **Orden de las instrucciones:** No se impone un orden en las
 instrucciones, aunque se debe destacar que MFront analiza el archivo
@@ -1474,7 +1484,7 @@ distintas herramientas para poder trabajar con este solver FEM, llamada
 `SALOME-MECA`. Además del propio solver, Salome-Meca incluye también
 herramientas para trabajar con Code-Aster como `Eficas` con el que
 podemos escribir los casos FEM mediante una interfaz gráfica la cual da
-acceso a todos los comandos posibles y evalúa los pasos necesarios para
+accesso a todos los comandos posibles y evalúa los pasos necesarios para
 cumplir con cada comando. Con `ASTK` se puede manejar y configurar
 las simulaciones a realizar.
 
@@ -1897,7 +1907,7 @@ necesarios de este documento, se necesitará trabajar en un entorno
 Linux, por lo que, en el caso personal, se ha instalado un sistema
 Ubuntu desde una máquina virtual en un equipo Mac.
 
-En este punto, y los siguientes, para evitar problemas de accesos a
+En este punto, y los siguientes, para evitar problemas de accessos a
 determinados archivos o carpetas, se trabajará como `root` desde el
 Terminal del sistema:
 

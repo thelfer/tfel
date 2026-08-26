@@ -650,7 +650,7 @@ int main() {
   std::tie(seq_m, n_m, dseq_df_m, dn_ds_m, dn_df_m) =
       computeMichelAndSuquet1992HollowSphereTestStressSecondDerivative(sig, f - 1e-8, params, seps);
 
-  std::cout << "Analitical derivative of the equivalent stress with respect to the porosity: "
+  std::cout << "Analytical derivative of the equivalent stress with respect to the porosity: "
             << dseq_df << "\n";
   std::cout << "Numerical derivative of the equivalent stress with respect to the porosity: "
             << (seq_p - seq_m) / (2e-8) << '\n';
@@ -700,7 +700,7 @@ Difference:
  [0,0,0,0,0,1.32349e-23]]
 
 Testing the derivatives with respect to the porosity
-Analitical derivative of the equivalent stress with respect to the porosity: 2.95999e+07
+Analytical derivative of the equivalent stress with respect to the porosity: 2.95999e+07
 Numerical derivative of the equivalent stress with respect to the porosity: 2.95999e+07
 Analytical derivative of the normal with respect to the porosity:[ 1.47999 -0.0357341 -0.0357341 0 0 0 ]
 Numerical derivative of the normal with respect to the porosity:[ 1.47999 -0.0357341 -0.0357341 0 0 0 ]
@@ -840,7 +840,7 @@ One may test it under a simple tensile test:
 > if the initial porosity is null with this time discretization.
 > The main reason is that the centered finite difference used to evaluate
 > the jacobian numerically is wrong when bounds are imposed to some
-> state variables (i.e. the pertubated porosity can't be negative).
+> state variables (i.e. the perturbed porosity can't be negative).
 >
 > In the numerical jacobian case, one solution is to allow sub-steppings.
 

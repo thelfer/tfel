@@ -293,7 +293,7 @@ Equations @eq:isotropic_linear_harderning:ddp_ddeto and
 \(\deriv{\mts{\tenseur{n}}}{\Delta\,\tepsilonto}\) are linear
 combinations of the two fourth order tensors \(\tenseur{M}\) and
 \(\mts{\tenseur{n}}\,\otimes\,\mts{\tenseur{n}}\) which only acts on the
-deviatoric parts of the symmetric tensors. The following properites then holds:
+deviatoric parts of the symmetric tensors. The following properties then holds:
 
 \[
 \left\{
@@ -323,7 +323,7 @@ The consistent tangent operator is then:
 \end{aligned}
 \]
 
-and finaly,
+and finally,
 
 \[
 \begin{aligned}
@@ -482,7 +482,7 @@ The current implementation only provides the elastic operator:
 
 We could also provide a tangent operator, but this would mean
 saving an auxiliary state variable stating if a plastic loading
-occured at the previous time step.
+occurred at the previous time step.
 
 ## Behaviour integration
 
@@ -495,8 +495,8 @@ The `Default` DSL allows to compute the consistent tangent operator
 either inside the `@Integrator` code block or in a dedicated code block
 name `@TangentOperator`.
 
-The first choice is simplier and more efficient for the considered
-implementation, but this requires to explicitely state that the
+The first choice is simpler and more efficient for the considered
+implementation, but this requires to explicitly state that the
 consistent tangent operator is defined in the `@Integrator` code block
 using the `@ProvidesSymmetricTangentOperator` keyword, as follows:
 

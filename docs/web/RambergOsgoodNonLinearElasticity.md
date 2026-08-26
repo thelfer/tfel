@@ -1,6 +1,15 @@
-% Non linear elasticity of the Ramberg-Osgood type
-% Thomas Helfer, Duc Vinh Nguyen
-% 10/11
+---
+title: Non linear elasticity of the Ramberg-Osgood type
+author: Thomas Helfer, Duc Vinh Nguyen
+date: 10/11/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\paren}[1]{{\left(#1\right)}}
 \newcommand{\tenseur}[1]{\underline{#1}}

@@ -1,6 +1,15 @@
-% The `mfm` tool
-% Thomas Helfer
-% 30/08/2017
+---
+title: The mfm tool
+author: Thomas Helfer
+date: 30/08/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 `mfm` is a tool that allows querying a library about the entry points
 defined by `MFront`. Depending on the interface, an entry point can be

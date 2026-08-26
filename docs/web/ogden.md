@@ -1,6 +1,15 @@
-% Implementation of the Ogden hyperelastic behaviour
-% T. Helfer
-% 09/01/2017
+---
+title: Implementation of the Ogden hyperelastic behaviour
+author: T. Helfer
+date: 09/01/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\tenseur}[1]{\underline{#1}}

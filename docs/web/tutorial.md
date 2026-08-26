@@ -1,6 +1,15 @@
-% Introduction à MFront 
-% Helfer Thomas; Jean-Michel Proix
-% September 16, 2014
+---
+title: Introduction à MFront
+author: Helfer Thomas, Jean-Michel Proix
+date: 16/09/2014
+lang: fr-FR
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 Cette page est extraitre du tutoriel MFront : [tutoriel.pdf](documents/tutoriel/tutoriel.pdf).
 

@@ -30,7 +30,7 @@ include-before: |
       <li><img src="img/172_5pc.png" width="620" height="320" alt="Polycrystals computation" /></li>
   	<li><img src="img/VoidsGrowth.png" width="620" height="320" alt="Void growth" /></li>
   	<li><img src="img/AMITEX_FFTP_sig1.png" width="620" height="320" alt="Polycrystals computation based on FFT" /></li>
-  	<li><img src="img/hsnv125.png" width="620" height="320" alt="Unit testing of a Chaboche-like viscoplastic beahviour" /></li>
+  	<li><img src="img/hsnv125.png" width="620" height="320" alt="Unit testing of a Chaboche-like viscoplastic behaviour" /></li>
     </ul>
     <span class="arrow previous"></span>
     <span class="arrow next"></span>

@@ -1,6 +1,15 @@
-% `UTF-8` support in `MFront`
-% Thomas Helfer
-% 16/07/2019
+---
+title: UTF-8 support in MFront
+author: Thomas Helfer
+date: 16/07/2019
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 Some recent scientific programming languages like
 [`Julia`](https://julialang.org/) or \(\nabla\) allow the usage of (a

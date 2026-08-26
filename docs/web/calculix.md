@@ -1,6 +1,15 @@
-% How to use `MFront` in `CalculiX`
-% Thomas Helfer, Rafal Brzegowy
-% 2/02/2017
+---
+title: How to use MFront in CalculiX
+author: Thomas Helfer, Rafal Brzegowy
+date: 02/02/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 <div id="slideshow">
   <ul class="slides">

@@ -1,3 +1,17 @@
+---
+title: Model keywords
+author: TFEL Team
+date: 25/08/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "877665i877665"
+tblPrefixTemplate: "877665i877665"
+secPrefixTemplate: "877665i877665"
+eqnPrefixTemplate: "(877665i877665)"
+---
+
+
 % `Model` keywords
 
 
@@ -671,7 +685,7 @@ fc.setDefaultValue(1.e-2);
 
 # The `@Parser` keyword
 
-The `@Paser` keyword is a deprecated synonymous of `@DSL`.
+The `@Parser` keyword is a deprecated synonymous of `@DSL`.
 
 # The `@PhysicalBounds` keyword
 

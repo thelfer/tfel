@@ -145,7 +145,7 @@ This stress potential provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 
@@ -222,7 +222,7 @@ The plastic strain rate satisfies:
 \tdepsilonp=\dot{\lambda}\,\deriv{g}{\tsigma}
 \]
 
-The plastic multiplier satifies the Kuhn-Tucker relation:
+The plastic multiplier satisfies the Kuhn-Tucker relation:
 \[
 \left\{
 \begin{aligned}
@@ -368,7 +368,7 @@ named `A` has been given to the flow:
 
 
 - If this option exists, it will be interpreted as a material
-  coefficient as usal and this option can be a number, a formula or the
+  coefficient as usual and this option can be a number, a formula or the
   name of an external `MFront` file.
 - If this option does not exist, a suitable variable will be search in
   the variables defined in the behaviour (static variables, parameters,
@@ -712,7 +712,7 @@ the following restrictions apply:
   `Tridimensional` modelling hypothesis is supported.q
 - if the `Plate` orthotropic axis convention is used, only the
   `Tridimensional` and `PlaneStress` modelling hypotheses are supported.
-- if the `Pipe` orthotropic axis convention is used, only theI
+- if the `Pipe` orthotropic axis convention is used, only their
   `Tridimensional`, `Axisymmetrical`,
   `AxisymmetricalGeneralisedPlainStrain`, and
   `AxisymmetricalGeneralisedPlainStres` modelling hypotheses are
@@ -902,7 +902,7 @@ flow. This name can be changed using the
 
 > **Note**
 >
-> The follwing hardening rules can be combined to define
+> The following hardening rules can be combined to define
 > more complex hardening rules. For example, the following
 > code adds to Voce hardening:
 >
@@ -1041,7 +1041,7 @@ be such a variable. The `UserDefined` isotropic hardening rule will look
 if an option named `A` has been given:
 
 - If this option exists, it will be interpreted as a material
-  coefficient as usal and this option can be a number, a formula or the
+  coefficient as usual and this option can be a number, a formula or the
   name of an external `MFront` file.
 - If this option does not exist, a suitable variable will be search in
   the variables defined in the behaviour (static variables, parameters,
@@ -1083,7 +1083,7 @@ equivalent strain and equivalent stress.
 
 This isotropic hardening rule can be parametrised using three entries:
 
-- `values`: which must a dictionnary giving the value of the yield
+- `values`: which must a dictionary giving the value of the yield
   surface radius as a function of the equivalent plastic strain.
 - `interpolation`: which allows to select the interpolation type.
   Possible values are `linear` (default choice) and `cubic_spline`.
@@ -1115,7 +1115,7 @@ The `StrainRateSensitive` isotropic hardening rule is defined by:
 
 where:
 
-- \(R_{0}\paren{p}\) is the yield radius corresponding to an infinitly
+- \(R_{0}\paren{p}\) is the yield radius corresponding to an infinitely
   slow loading. It can be built by summing any isotropic hardening rule
   already implemented in the `StandardElastoViscoPlasticity\ brick.
 - \(R_{rs}\paren{\dot{p}}\) is a correction describing the strain rate
@@ -1127,8 +1127,8 @@ options:
 - `rate_independent_isotropic_hardening`: this option introduces a
   contribution to \(R_{0}\paren{p}\). This option can be repeated
   multiple times.
-- `rate_sensitivity_factor`: this option introduces the rate sensivity
-  factor \(R_{rs}\paren{\dot{p}}\). The list of available rate sensivity
+- `rate_sensitivity_factor`: this option introduces the rate sensitivity
+  factor \(R_{rs}\paren{\dot{p}}\). The list of available rate sensitivity
   factors is given in section @sec:rate_sensitivity_factors.
 
 #### Example of usage

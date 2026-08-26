@@ -1,6 +1,15 @@
-% News
-% Helfer Thomas
-% January 23, 2017
+---
+title: News
+author: Helfer Thomas
+date: 23/01/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
@@ -1542,7 +1551,7 @@ to the
 solver through the `umat` subroutine.
 
 The following results shows the results obtained on notched beam under
-a cyclic loading with an isotropic hardening plastic beahviour
+a cyclic loading with an isotropic hardening plastic behaviour
 implemented with `mfront`:
 
 ![](img/abaqus-isotropichardening1.png "")
@@ -1599,7 +1608,7 @@ the official announcement (in french):
   > http://dx.doi.org/10.1016/j.camwa.2015.06.027.
   > 
   > [3] Implantation de lois de comportement mécanique à l’aide de
-  > MFront : simplicité, efficacité, robustesse et
+  > MFront : simplicité, efficacité, robustresse et
   > portabilité. T. Helfer, J.M. Proix, O. Fandeur. 12ème Colloque
   > National en Calcul des Structures 18-22 Mai 2015, Giens (Var)
 
@@ -1646,7 +1655,7 @@ formats: Microsoft Word
 OpenOffice/LibreOffice
 [ODT](http://en.wikipedia.org/wiki/OpenDocument).
 
-`mfront-doc` is developped in the 3.0.x branche of `TFEL`. A overview
+`mfront-doc` is developed in the 3.0.x branche of `TFEL`. A overview
 of the `mfront-doc` functionalities can be found
 [here](mfront-doc.html).
 
@@ -1871,7 +1880,7 @@ The main purpose of
 is to implement an efficient distributed mechanical solver based on
 Fast Fourier
 Transform. [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
-is developped by CEA in the Departement of Nuclear
+is developed by CEA in the Departement of Nuclear
 Material.
 
 [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)

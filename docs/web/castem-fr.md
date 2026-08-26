@@ -1,6 +1,15 @@
-% Utilisation de MFront dans [Cast3M](http://www-cast3m.cea.fr/)
-% Helfer Thomas
-% August 19, 2014
+---
+title: Utilisation de MFront dans Cast3M
+author: Helfer Thomas
+date: 19/08/2014
+lang: fr-FR
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}

@@ -129,7 +129,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/106/>
 
 ## Ticket #105: Getting version number of `MFront`
 
-In order to check the MFront usage with `CYRANO3`, its would be usefull
+In order to check the MFront usage with `CYRANO3`, its would be useful
 to retrieve the version of `MFront`:
 
 - used to generate a given shared library.

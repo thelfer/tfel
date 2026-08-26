@@ -1,5 +1,5 @@
 ---
-title:  Numerical integration in the `TFEL/Math` library
+title: Numerical integration in the TFEL/Math library
 author: Thomas Helfer
 date: 12/10/2025
 lang: en-EN
@@ -9,7 +9,6 @@ colorlinks: true
 figPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
-lstPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 header-includes:
 bibliography: bibliography.bib

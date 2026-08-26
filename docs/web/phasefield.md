@@ -1,6 +1,15 @@
-% Phase field approach of brittle fracture with the `Cast3M` finite element solver
-% T. Helfer
-% 13/01/2017
+---
+title: Phase field approach of brittle fracture with the Cast3M finite element solver
+author: T. Helfer
+date: 13/01/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
 \newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}

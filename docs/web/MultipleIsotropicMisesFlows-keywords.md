@@ -1,3 +1,17 @@
+---
+title: MultipleIsotropicMisesFlows keywords
+author: TFEL Team
+date: 25/08/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "877665i877665"
+tblPrefixTemplate: "877665i877665"
+secPrefixTemplate: "877665i877665"
+eqnPrefixTemplate: "(877665i877665)"
+---
+
+
 % `MultipleIsotropicMisesFlows` keywords
 
 
@@ -1006,7 +1020,7 @@ variable.
 
 ~~~~{.cpp}
 // explicit link with libm.so
-// (not necessary in pratice)
+// (not necessary in practice)
 @Link "-lm";
 ~~~~
 
@@ -1275,7 +1289,7 @@ fc.setDefaultValue(1.e-2);
 
 # The `@Parser` keyword
 
-The `@Paser` keyword is a deprecated synonymous of `@DSL`.
+The `@Parser` keyword is a deprecated synonymous of `@DSL`.
 
 # The `@PhysicalBounds` keyword
 
@@ -1376,7 +1390,7 @@ post-processing. Typically, one may compute the principal strains in a
 dedicated post-processing and in a post-processing computing the
 principal strains and the strain eigen vectors.
 
-## Exemple of usage
+## Example of usage
 
 ~~~~{.cxx}
 //! principal strains
@@ -1808,7 +1822,7 @@ material frame.
 
 ## Note
 
-1. The computation of the strain measure and its dual and the convertion
+1. The computation of the strain measure and its dual and the conversion
   of the tangent operator is delegated to the interface, because several
   finite element solver already provides those operations natively
   (`Code_Aster`, `ZebuloN`, etc...)

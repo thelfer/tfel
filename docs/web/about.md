@@ -1,6 +1,15 @@
-% About
-% Helfer Thomas; Jean-Michel Proix
-% Janvier 19, 2015
+---
+title: About
+author: Helfer Thomas, Jean-Michel Proix
+date: 19/01/2015
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 # Contributors
 

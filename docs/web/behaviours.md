@@ -151,7 +151,7 @@ The generated code represents a total amount of \(1\,512\) lines of
   state variables, etc... that can be retrieved dynamically (For the
   sake of simplicity, no glossary name was specified in this example).
   This mechanism is typically used by solvers based on the [`MGIS`
-  libray](https://thelfer.github.io/mgis/web/index.html) appropriately
+  library](https://thelfer.github.io/mgis/web/index.html) appropriately
   calling the behaviour;
 4. the computation of a tangent matrix operator (various choices are
   possible: elastic, secant, consistent);
@@ -159,7 +159,7 @@ The generated code represents a total amount of \(1\,512\) lines of
   parameters of the behaviour (the convergence criterion of the
   implicit algorithm, the \(\theta\) parameter of the implicit
   algorithm, the hardening slope \(H\) and the initial elasticity
-  limit \(\sigma_{0}\), etc.). Those functions by-pass the standard
+  limit \(\sigma_{0}\), etc.). Those functions bypass the standard
   behaviour call and are an extremely light-weight manner to
   dynamically modify a behaviour (almost no runtime cost).
 

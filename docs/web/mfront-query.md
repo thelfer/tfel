@@ -1,5 +1,5 @@
 ---
-title: Description of `mfront-query`
+title: Description of mfront-query
 author: Thomas Helfer
 date: 15/03/2022
 lang: en-EN

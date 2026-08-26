@@ -1,6 +1,15 @@
-% Result of the Coverity tools
-% Helfer Thomas
-% 26 Août 2015
+---
+title: Result of the Coverity tools
+author: Helfer Thomas
+date: 26/08/2015
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 <center>
 <a href="https://scan.coverity.com/projects/tfel">

@@ -1,6 +1,15 @@
-% MTest: unit mechanical behaviour testing
-% Helfer Thomas; Jean-Michel Proix
-% August 19, 2014
+---
+title: "MTest: unit mechanical behaviour testing"
+author: Helfer Thomas, Jean-Michel Proix
+date: 19/08/2014
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\paren}[1]{{\left(#1\right)}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}

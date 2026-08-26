@@ -1,6 +1,5 @@
 function(pandoc_html file_path)
   cmake_path(GET file_path FILENAME _file)
-  message(STATUS "${file_path} ${_file}")
   ADD_CUSTOM_COMMAND(
     OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${_file}.html
     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/${file_path}.md
@@ -290,8 +289,8 @@ if(TFEL_APPEND_SUFFIX)
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
   install(FILES 404.html apple-touch-icon-precomposed.png 
-    CHANGELOG.md contributing.md crossdomain.xml favicon.ico
-    humans.txt LICENSE.md README.md robots.txt TODO.md
+    contributing.md crossdomain.xml favicon.ico
+    humans.txt robots.txt 
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website)
 else(TFEL_APPEND_SUFFIX)
@@ -300,8 +299,8 @@ else(TFEL_APPEND_SUFFIX)
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
   install(FILES 404.html apple-touch-icon-precomposed.png 
-    CHANGELOG.md contributing.md crossdomain.xml favicon.ico
-    humans.txt LICENSE.md README.md robots.txt TODO.md
+    contributing.md crossdomain.xml favicon.ico
+    humans.txt robots.txt
     DESTINATION share/doc/tfel/web
     COMPONENT website)
 endif(TFEL_APPEND_SUFFIX)

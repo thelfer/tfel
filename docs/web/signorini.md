@@ -1,6 +1,15 @@
-% Implementation of the Signorini hyperelastic behaviour
-% T. Helfer, T. Baranger
-% 01/01/2017
+---
+title: Implementation of the Signorini hyperelastic behaviour
+author: T. Helfer, T. Baranger
+date: 01/01/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\tenseur}[1]{\underline{#1}}

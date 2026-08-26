@@ -1,6 +1,15 @@
-% Description of the slip systems, orientation tensors and of the interaction matrices of single crystal and their usage
-% Thomas Helfer
-% 11/09/2017
+---
+title: Description of the slip systems, orientation tensors and of the interaction matrices of single crystal and their usage
+author: Thomas Helfer
+date: 11/09/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 This page's purpose is twofold:
 

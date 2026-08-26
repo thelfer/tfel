@@ -1,5 +1,5 @@
 ---
-title: The `TFEL/PhysicalConstants` library
+title: The TFEL/PhysicalConstants library
 author: Thomas Helfer
 date: 17/08/2021
 lang: en-EN

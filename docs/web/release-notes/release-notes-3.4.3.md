@@ -46,7 +46,7 @@ finite strain behaviours.
 
 With the support of generic behaviours introduced in version 3.3 and
 extended in Version 3.4,this difference appears less important and
-point-wise models can be seen as a particular case of generic beahviours
+point-wise models can be seen as a particular case of generic behaviours
 without gradient (and no conjugated thermodynamic force) and tangent
 operator blocks.
 

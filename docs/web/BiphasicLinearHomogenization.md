@@ -1,6 +1,15 @@
-% Implementation of mean-field homogenization schemes for biphasic elastic media
-% Martin Antoine
-% February 24, 2025
+---
+title: Implementation of mean-field homogenization schemes for biphasic elastic media
+author: Martin Antoine
+date: 24/02/2025
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\D}{\mathrm{d}}
 \newcommand{\tenseur}[1]{\underline{#1}}

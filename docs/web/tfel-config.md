@@ -1,5 +1,5 @@
 ---
-title:  Overview of the `TFEL/Config` library
+title: Overview of the TFEL/Config library
 author: Thomas Helfer
 date: 12/06/2026
 lang: en-EN

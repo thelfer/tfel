@@ -1,6 +1,15 @@
-% Implementation of Barlat' Yld2004-18p behaviour
-% Thomas Helfer, Dominique Deloison
-% 7/01/2018
+---
+title: Implementation of Barlat Yld2004-18p behaviour
+author: Thomas Helfer, Dominique Deloison
+date: 07/01/2018
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
@@ -231,7 +240,7 @@ brick which provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 

@@ -1,6 +1,15 @@
-% Implementation of a perfect plastic behaviour using the Drucker yield criterion (@drucker_relation_1949) and two of its extensions to orthotropy (@cazacu_generalization_2001)
-% Thomas Helfer
-% 21/11/2017
+---
+title: Implementation of a perfect plastic behaviour using the Drucker yield criterion
+author: Thomas Helfer
+date: 21/11/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\paren}[1]{{\left(#1\right)}}

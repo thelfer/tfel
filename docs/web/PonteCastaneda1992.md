@@ -1,13 +1,17 @@
 ---
 title: Ponte-Castaneda variational bound for homogenization in non-linear elasticity
 author: Antoine Martin
-date: 5/01/2026
+date: 05/01/2026
 lang: en-EN
 link-citations: true
 colorlinks: true
 geometry:
   - margin=2cm
 papersize: a4
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
 figPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
@@ -129,7 +133,7 @@ The resolution hence consists in
 \[
  \text{Find}\,e^r=\langle \epsiloneq^2\rangle_r\,\text{such that}\quad\langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}
 \]
-where \(W_0^{\mathrm{eff}}\) is the effective energy of a linear comparison composite whose elastic moduli are \(k_r\) annd \(\mu_0^r\) such that:
+where \(W_0^{\mathrm{eff}}\) is the effective energy of a linear comparison composite whose elastic moduli are \(k_r\) and \(\mu_0^r\) such that:
 \[
 \mu_0^r= \Frac23\deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right).
 \]

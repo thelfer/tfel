@@ -1,6 +1,15 @@
-% Invariant-based implementation of the Mohr-Coulomb elasto-plastic model in OpenGeoSys using MFront
-% Gentien Marois, Thomas Nagel, Dmitri Naumov, Thomas Helfer
-% 1/08/2019
+---
+title: Invariant-based implementation of the Mohr-Coulomb elasto-plastic model in OpenGeoSys using MFront
+author: Gentien Marois, Thomas Nagel, Dmitri Naumov, Thomas Helfer
+date: 01/08/2019
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 <!--
 pandoc --filter pandoc-crossref --filter pandoc-citeproc --bibliography=bibliography.bib -fmarkdown+tex_math_single_backslash MohrCoulomb.md -o MohrCoulomb.pdf --toc --number-sections  -V geometry:margin=1in
@@ -386,7 +395,7 @@ a.setEntryName("TensionCutOffParameter");
 In `MFront`, an integration variable is defined to store a variable and
 use it in various code blocks.
 
-Here several local variables are declared such as the bolean variable F:
+Here several local variables are declared such as the boolean variable F:
 if true, plastic loading
 
 ~~~~{.cxx}
@@ -721,7 +730,7 @@ Figure @fig:MC_stress_paths within the \(\pi\)-plane. This shows that
 a) yield is correctly detected, and b) the stress-state is correctly
 pulled back onto the yield surface.
 
-![Verification against analytical example. Description in @Nagel2016.](img/MohrCoulombAnalitical.svg "Verification against analytical example. Description in @Nagel2016"){#fig:MC_vis width=125%}
+![Verification against analytical example. Description in @Nagel2016.](img/MohrCoulombAnalytical.svg "Verification against analytical example. Description in @Nagel2016"){#fig:MC_vis width=125%}
 
 The second test (included as a benchmark) follows an analytical solution
 for a stress-free cavity in an infinite medium under a variable

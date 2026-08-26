@@ -1,6 +1,15 @@
-% On the Fisher-Burmeister complementary function and its applications to multi-surface plasticity
-% Thomas Helfer
-% 17/01/2019
+---
+title: On the Fisher-Burmeister complementary function and its applications to multi-surface plasticity
+author: Thomas Helfer
+date: 17/01/2019
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\paren}[1]{{\left(#1\right)}}
 

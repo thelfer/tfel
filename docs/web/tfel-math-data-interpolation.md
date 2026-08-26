@@ -1,5 +1,5 @@
 ---
-title: Data interpolation in `TFEL/Math`
+title: Data interpolation in TFEL/Math
 author: Thomas Helfer, Étienne Castelier
 date: 29/07/2022
 lang: en-EN

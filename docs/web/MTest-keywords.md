@@ -1,3 +1,17 @@
+---
+title: MTest keywords
+author: TFEL Team
+date: 25/08/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "877665i877665"
+tblPrefixTemplate: "877665i877665"
+secPrefixTemplate: "877665i877665"
+eqnPrefixTemplate: "(877665i877665)"
+---
+
+
 % `MTest` keywords
 
 
@@ -251,7 +265,7 @@ given, the value corresponding to this first time is used. After the
 last time given, the value corresponding this last time is used.
 
 If the `function` option has been selected, a string is expected which
-wil be interpreted as a function of time. The time is represented by
+will be interpreted as a function of time. The time is represented by
 the variable `t`.
 
 ## Example (constant evolution):
@@ -297,7 +311,7 @@ given, the value corresponding to this first time is used. After the
 last time given, the value corresponding this last time is used.
 
 If the `function` option has been selected, a string is expected which
-wil be interpreted as a function of time. The time is represented by
+will be interpreted as a function of time. The time is represented by
 the variable `t`.
 
 ## Example (constant evolution)
@@ -623,7 +637,7 @@ The keyword `@OpeningDisplacementEpsilon` is not documented yet
 # The `@OutputFile` keyword
 
 The `@OutputFile` keywords specifies the name of the output file. By
-default, the name of output file is egal to the name of the input
+default, the name of output file is equal to the name of the input
 file, minus the `.mtest` extension if present, plus `.res`.
 
 ## Example
@@ -692,7 +706,7 @@ The `@Real` keyword let the user define a constant.
 This keyword is followed by the name of the constant, as a string and
 by the value of the constant.
 
-## Exemple
+## Example
 
 ~~~~ {.cpp}
 @Real 'SXX0' 20.6;
@@ -941,7 +955,7 @@ stepping. See the `@MaximumNumberOfSubSteps` for details.
 @Times {0.,3600.};         // 1  time step of  3600. seconds
 ~~~~~~~~
 
-## Exemple
+## Example
 
 ~~~~ {.cpp}
 @Times {0.,3600. in 10};   // 10 time steps of 360   seconds

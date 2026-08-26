@@ -1,6 +1,15 @@
-% Extending the `StandardElastoViscoPlasticity` brick with a new stress criterion
-% Thomas Helfer, Jérémy Hure, Mohamed Shokeir
-% April 2020
+---
+title: Extending the StandardElastoViscoPlasticity brick with a new stress criterion
+author: Thomas Helfer, Jérémy Hure, Mohamed Shokeir
+date: 04/2020
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
@@ -102,7 +111,7 @@ The header files `StressCriterionTemplate.hxx` and
 `Green1972StressCriterion.hxx` and `Green1972StressCriterion.ixx`.
 
 The `MFront` template files must be copied in the working directory and
-renamed appropriatly.
+renamed appropriately.
 
 This can be done by taping the following commands in the terminal (under
 `LiNuX` or `Mac Os`):

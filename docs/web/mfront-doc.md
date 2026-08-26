@@ -1,6 +1,15 @@
-% mfront-doc: a documentation generator from `MFront` files
-% Helfer Thomas
-% August 19, 2015
+---
+title: "mfront-doc: a documentation generator from MFront files"
+author: Helfer Thomas
+date: 19/08/2015
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 # Description
 

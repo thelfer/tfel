@@ -1,6 +1,15 @@
-% Implementation of Cailletaud-Pilvin beta rule for homogenization
-% Helfer Thomas/Martin Antoine
-% February 10, 2025
+---
+title: Implementation of Cailletaud-Pilvin beta rule for homogenization
+author: Helfer Thomas, Martin Antoine
+date: 10/02/2025
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\D}{\mathrm{d}}
 \newcommand{\tenseur}[1]{\underline{#1}}

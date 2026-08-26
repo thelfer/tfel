@@ -1,5 +1,5 @@
 ---
-title: Automation of unit-tests of scientific tools using `tfel-check`
+title: Automation of unit-tests of scientific tools using tfel-check
 author: Thomas Helfer, Stéphane Bernaud
 date: 21/11/2017
 lang: en-EN

@@ -1,6 +1,15 @@
-% How to build and use `TFEL` and `MFront` on `Windows` with the `Visual Studio` compiler
-% Thomas Helfer
-% 1/09/2017
+---
+title: How to build and use TFEL and MFront on Windows with the Visual Studio compiler
+author: Thomas Helfer
+date: 01/09/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 Building and using `MFront` on `Windows` is more complex than on other
 systems for the following reasons:
