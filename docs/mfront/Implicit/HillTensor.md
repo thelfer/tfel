@@ -49,7 +49,7 @@ Those material properties can be defined by:
 The computation of the Hill tensor rely on the definition of an
 orthotropic convention. For example, the `Pipe` orthotropic convention
 will lead to automatically exchange the second and first axes for the
-plane strain, plane stress and generalised plane strain hypotheses. See
+plane strain, plane stress and generalized plane strain hypotheses. See
 the `OrthotropicBehaviour` keyword for details.
 
 ## Example
