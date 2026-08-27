@@ -24,7 +24,7 @@ The following options are supported:
 
 - `tile_size`: the matrix is processed as a grid of `tile_size x
   tile_size` register tiles. This is the main performance axis of the
-  solvers - tune it per system dimension. The `tile_size` can be a
+  solvers. Tune it per system dimension. The `tile_size` can be a
   strictly positive integer or a string. If `tile_size` is a string, it
   is interpreted as an integer formula whose variables can be any integer
   constant (see the `@IntegerConstant` keyword), `N`, `TVectorSize`,
@@ -43,11 +43,11 @@ The following options are supported:
   out-of-tile search threshold. With `full_scan`, all the rows below
   the tile are scanned and the best corrected candidate wins.
 - `unroll_inner_loop`: expected values are either `true` or `false`. If
-  `true`, loops indexing register tiles carry a forced-unroll pragma -
+  `true`, loops indexing register tiles carry a forced-unroll pragma,
   the guard that keeps tiles in registers on GPU backends, where a
   rolled loop indexes the tile dynamically and demotes it to slow local
-  memory. If `false`, no unroll pragma anywhere - faster compiles, GPU
-  performance not guaranteed.
+  memory. If `false`, no unroll pragma anywhere, for faster compiles,
+  GPU performance not guaranteed.
 - `out_of_tile_search_threshold`: acceptable-pivot threshold of the
   out-of-tile search. An in-tile pivot candidate whose magnitude reaches
   this value is accepted without looking outside the tile; below it, the
@@ -73,7 +73,7 @@ are:
 - `std::numeric_limits<double>::min()` for `singular_pivot_threshold`
   (or `std::numeric_limits<float>::min()` for single precision)
 
-## Example
+## Examples
 
 ~~~~ {#LinearSystemSolver .cpp}
 @LinearSystemSolver TDLS{

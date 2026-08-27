@@ -551,7 +551,7 @@ namespace mfront {
 #else
       reportWarning(
           "ImplicitDSLBase::setLinearSystemSolver: "
-          "MFront was not build with TDLS support, "
+          "MFront was not built with TDLS support, "
           "falling back to default linear solver");
       this->setLinearSystemSolver("Default", {});
 #endif
