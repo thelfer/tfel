@@ -107,6 +107,21 @@ namespace mfront {
       }
       this->singular_pivot_threshold = v;
     }
+    if (this->singular_pivot_threshold.has_value()) {
+      if (!this->out_of_tile_search_threshold.has_value()) {
+        tfel::raise(
+            "TDLSLinearSystemSolver: the 'singular_pivot_threshold' option "
+            "requires the 'out_of_tile_search_threshold' option: the TDLS "
+            "library requires the former not to exceed the latter, whose "
+            "default value depends on the numeric type");
+      }
+      if (*(this->singular_pivot_threshold) >
+          *(this->out_of_tile_search_threshold)) {
+        tfel::raise(
+            "TDLSLinearSystemSolver: the 'singular_pivot_threshold' option "
+            "must not exceed the 'out_of_tile_search_threshold' option");
+      }
+    }
   }
 
   std::vector<std::string> TDLSLinearSystemSolver::getSpecificHeaders() const {
