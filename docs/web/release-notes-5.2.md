@@ -33,11 +33,11 @@ The page describes the new functionalities of Version 5.2 of the
 
 # Highlights
 
-## Support for the `TDLS` (`TinyDeviceCallableLinearSolver`)
+## Support for the `TDLS` library (Tiny Device-callable Linear Solvers)
 
-The `TDLS` library provides tiny linear solvers for small dense systems,
-callable on `CPU`s as well as inside `GPU` kernels, and designed for
-maximum GPU performance:
+The `TDLS` library provides direct linear solvers for small dense
+systems, callable on `CPU`s as well as inside `GPU` kernels, and
+designed for maximum GPU performance:
 
 - <https://github.com/trsxvz/tdls>
 - [API reference](https://trsxvz.github.io/TDLS/api/index.html)
