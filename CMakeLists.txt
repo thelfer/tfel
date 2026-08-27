@@ -387,7 +387,8 @@ endif(enable-java)
 option(enable-tdls "enable TDLS support" OFF)
 if(enable-tdls)
   find_package(tdls REQUIRED)
-  option(enable-tdls-as-default-linear-system-solver-in-mfront OFF)
+  option(enable-tdls-as-default-linear-system-solver-in-mfront
+         "use TDLS as the default linear system solver in MFront" OFF)
 endif(enable-tdls)
 
 # cadna
