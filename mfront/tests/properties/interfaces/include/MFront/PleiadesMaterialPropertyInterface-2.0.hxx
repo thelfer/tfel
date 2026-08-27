@@ -51,7 +51,12 @@ namespace mfront {
     /*!
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
-     */
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.*/
     void writeHeaderFile(const MaterialPropertyDescription& mpd,
                          const FileDescription& fd) const;
 

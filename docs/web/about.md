@@ -17,6 +17,8 @@ eqnPrefixTemplate: "($$i$$)"
 - Jean-Michel Proix
 - Antoine Martin
 - Maxence Wangerez
+- Tristan Chenaille
+- Raphaël Prat
 - Jérémy Hure
 - Chao Ling
 - Mehran Ghasabeh
