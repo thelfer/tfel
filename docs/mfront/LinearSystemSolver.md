@@ -54,8 +54,8 @@ The following options are supported:
   when even the best candidate of the out-of-tile recovery stays below
   this threshold.
 
-If a parameter is not defined, the default values are inherited for the
-`TiledLUppDefaultConfig` class defined by the `TDLS` library. See the
+If a parameter is not defined, the default values are inherited from the
+`TiledLUppConfig` class defined by the `TDLS` library. See the
 [API reference](https://trsxvz.github.io/TDLS/api/index.html) for
 details. At the time of writing this documentation, those default values
 are:

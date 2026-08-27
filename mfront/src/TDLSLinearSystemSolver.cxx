@@ -126,12 +126,13 @@ namespace mfront {
       const BehaviourDescription& bd,
       const Hypothesis h) const {
     LinearSystemSolverBase::writeSpecificMembers(os, bd, h);
-    os << "struct MFrontTDLSLinearSystemConfiguration\n"
-       << ": tdls::TiledLUppDefaultConfig<NumericType>{\n";
+    // initializers follow the member order of tdls::TiledLUppConfig
+    os << "static constexpr auto MFrontTDLSLinearSystemConfiguration =\n"
+       << "tdls::TiledLUppConfig<NumericType>{";
     if (this->tile_size.has_value()) {
-      os << "static constexpr int tile_size = ";
+      os << "\n.tile_size = ";
       if (std::holds_alternative<int>(*(tile_size))) {
-        os << std::get<int>(*(tile_size)) << ";\n";
+        os << std::get<int>(*(tile_size)) << ",";
       } else {
         const auto f = std::get<std::string>(*(tile_size));
         for (const auto& hs : bd.getModellingHypotheses()) {
@@ -169,40 +170,40 @@ namespace mfront {
                 "' (value calculated is '" + std::to_string(ts) + "')");
           }
         }
-        os << f << ";\n";
+        os << f << ",";
       }
     }
     if (this->schedule.has_value()) {
-      os << "static constexpr tdls::TiledLUppSchedule schedule = ";
+      os << "\n.schedule = ";
       if (*(this->schedule) == SchedulePolicy::LEFT_LOOKING) {
-        os << "tdls::TiledLUppSchedule::LeftLooking;\n";
+        os << "tdls::TiledLUppSchedule::LeftLooking,";
       } else {
-        os << "tdls::TiledLUppSchedule::RightLooking;\n";
-      }
-    }
-    if (this->out_of_tile_search_strategy.has_value()) {
-      os << "static constexpr bool oot_first_acceptable = ";
-      if (*(this->out_of_tile_search_strategy) ==
-          OutOfTileSearchStrategy::FIRST_ACCEPTABLE) {
-        os << "true;\n";
-      } else {
-        os << "false;\n";
+        os << "tdls::TiledLUppSchedule::RightLooking,";
       }
     }
     if (this->out_of_tile_search_threshold.has_value()) {
-      os << "static constexpr auto oot_threshold = NumericType{"
-         << *out_of_tile_search_threshold << "};\n";
+      os << "\n.oot_threshold = NumericType{" << *out_of_tile_search_threshold
+         << "},";
     }
     if (this->singular_pivot_threshold.has_value()) {
-      os << "static constexpr auto singular_eps = NumericType{"
-         << *(this->singular_pivot_threshold) << "};\n";
+      os << "\n.singular_eps = NumericType{"
+         << *(this->singular_pivot_threshold) << "},";
+    }
+    if (this->out_of_tile_search_strategy.has_value()) {
+      os << "\n.oot_first_acceptable = ";
+      if (*(this->out_of_tile_search_strategy) ==
+          OutOfTileSearchStrategy::FIRST_ACCEPTABLE) {
+        os << "true,";
+      } else {
+        os << "false,";
+      }
     }
     if (this->unroll_inner.has_value()) {
-      os << "static constexpr bool unroll_inner = ";
+      os << "\n.unroll_inner = ";
       if (*(this->unroll_inner)) {
-        os << "true;\n";
+        os << "true,";
       } else {
-        os << "false;\n";
+        os << "false,";
       }
     }
     os << "};\n\n";
