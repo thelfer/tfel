@@ -1,7 +1,7 @@
 @DSL Implicit;
 @Behaviour TDLSElasticity2;
 @LinearSystemSolver TDLS {
-  tile_size : 3,
+  tile_size : "StensorSize",
   schedule : "RightLooking",
   out_of_tile_search_strategy : "FirstAcceptable",
   unroll_inner_loop : true
