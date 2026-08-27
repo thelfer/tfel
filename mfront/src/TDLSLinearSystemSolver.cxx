@@ -29,8 +29,8 @@ namespace mfront {
             .addDataTypeValidator<std::string>("schedule")
             .addDataTypeValidator<std::string>("out_of_tile_search_strategy")
             .addDataTypeValidator<bool>("unroll_inner_loop")
-            .addDataTypeValidator<double>("out_of_tile_search_threshold")
-            .addDataTypeValidator<double>("singular_pivot_threshold");
+            .addDataTypeValidator<int, double>("out_of_tile_search_threshold")
+            .addDataTypeValidator<int, double>("singular_pivot_threshold");
     validator.validate(opts);
     if (opts.contains("tile_size")) {
       if (is<int>(opts, "tile_size")) {
@@ -88,7 +88,10 @@ namespace mfront {
       }
     }
     if (opts.contains("out_of_tile_search_threshold")) {
-      const auto v = get<double>(opts, "out_of_tile_search_threshold");
+      const auto v =
+          is<int>(opts, "out_of_tile_search_threshold")
+              ? static_cast<double>(get<int>(opts, "out_of_tile_search_threshold"))
+              : get<double>(opts, "out_of_tile_search_threshold");
       if ((v < 0) || (std::fpclassify(v) == FP_ZERO)) {
         tfel::raise(
             "TDLSLinearSystemSolver: invalid value for the "
@@ -98,7 +101,9 @@ namespace mfront {
       this->out_of_tile_search_threshold = v;
     }
     if (opts.contains("singular_pivot_threshold")) {
-      const auto v = get<double>(opts, "singular_pivot_threshold");
+      const auto v = is<int>(opts, "singular_pivot_threshold")
+                         ? static_cast<double>(get<int>(opts, "singular_pivot_threshold"))
+                         : get<double>(opts, "singular_pivot_threshold");
       if ((v < 0) || (std::fpclassify(v) == FP_ZERO)) {
         tfel::raise(
             "TDLSLinearSystemSolver: invalid value for the "
