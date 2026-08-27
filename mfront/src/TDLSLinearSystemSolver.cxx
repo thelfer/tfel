@@ -299,9 +299,6 @@ namespace mfront {
           "invalide number of variables resulting from the matrix "
           "decomposition");
     }
-    if (s.returned_value.has_value()) {
-      os << *(s.returned_value) << " = true;\n";
-    }
     os << "::tdls::substitute_inplace<MFrontTDLSLinearSystemConfiguration>("
        << r.matrix << ", " << r.variables.begin()->name << ", " << s.rhs
        << ");\n";
