@@ -285,9 +285,7 @@ namespace mfront {
     const auto opts = [this] {
       using namespace tfel::utilities;
       if (this->current->value == "{") {
-        DataParsingOptions o;
-        o.allowMultipleKeysInMap = true;
-        const auto options = Data::read(this->current, this->tokens.end(), o);
+        const auto options = Data::read(this->current, this->tokens.end());
         if (options.empty()) {
           return DataMap{};
         }
