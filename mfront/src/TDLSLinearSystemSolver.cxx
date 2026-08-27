@@ -29,8 +29,8 @@ namespace mfront {
             .addDataTypeValidator<std::string>("schedule")
             .addDataTypeValidator<std::string>("out_of_tile_search_strategy")
             .addDataTypeValidator<bool>("unroll_inner_loop")
-            .addDataTypeValidator<double>("out_of_tile_search_threshold")
-            .addDataTypeValidator<double>("singular_pivot_threshold");
+            .addDataTypeValidator<int, double>("out_of_tile_search_threshold")
+            .addDataTypeValidator<int, double>("singular_pivot_threshold");
     validator.validate(opts);
     if (opts.contains("tile_size")) {
       if (is<int>(opts, "tile_size")) {
@@ -88,7 +88,10 @@ namespace mfront {
       }
     }
     if (opts.contains("out_of_tile_search_threshold")) {
-      const auto v = get<double>(opts, "out_of_tile_search_threshold");
+      const auto v =
+          is<int>(opts, "out_of_tile_search_threshold")
+              ? static_cast<double>(get<int>(opts, "out_of_tile_search_threshold"))
+              : get<double>(opts, "out_of_tile_search_threshold");
       if ((v < 0) || (std::fpclassify(v) == FP_ZERO)) {
         tfel::raise(
             "TDLSLinearSystemSolver: invalid value for the "
@@ -98,7 +101,9 @@ namespace mfront {
       this->out_of_tile_search_threshold = v;
     }
     if (opts.contains("singular_pivot_threshold")) {
-      const auto v = get<double>(opts, "singular_pivot_threshold");
+      const auto v = is<int>(opts, "singular_pivot_threshold")
+                         ? static_cast<double>(get<int>(opts, "singular_pivot_threshold"))
+                         : get<double>(opts, "singular_pivot_threshold");
       if ((v < 0) || (std::fpclassify(v) == FP_ZERO)) {
         tfel::raise(
             "TDLSLinearSystemSolver: invalid value for the "
@@ -106,6 +111,21 @@ namespace mfront {
             "positive value");
       }
       this->singular_pivot_threshold = v;
+    }
+    if (this->singular_pivot_threshold.has_value()) {
+      if (!this->out_of_tile_search_threshold.has_value()) {
+        tfel::raise(
+            "TDLSLinearSystemSolver: the 'singular_pivot_threshold' option "
+            "requires the 'out_of_tile_search_threshold' option: the TDLS "
+            "library requires the former not to exceed the latter, whose "
+            "default value depends on the numeric type");
+      }
+      if (*(this->singular_pivot_threshold) >
+          *(this->out_of_tile_search_threshold)) {
+        tfel::raise(
+            "TDLSLinearSystemSolver: the 'singular_pivot_threshold' option "
+            "must not exceed the 'out_of_tile_search_threshold' option");
+      }
     }
   }
 
@@ -126,12 +146,13 @@ namespace mfront {
       const BehaviourDescription& bd,
       const Hypothesis h) const {
     LinearSystemSolverBase::writeSpecificMembers(os, bd, h);
-    os << "struct MFrontTDLSLinearSystemConfiguration\n"
-       << ": tdls::TiledLUppDefaultConfig<NumericType>{\n";
+    // initializers follow the member order of tdls::TiledLUppConfig
+    os << "static constexpr auto MFrontTDLSLinearSystemConfiguration =\n"
+       << "tdls::TiledLUppConfig<NumericType>{";
     if (this->tile_size.has_value()) {
-      os << "static constexpr int tile_size = ";
+      os << "\n.tile_size = ";
       if (std::holds_alternative<int>(*(tile_size))) {
-        os << std::get<int>(*(tile_size)) << ";\n";
+        os << std::get<int>(*(tile_size)) << ",";
       } else {
         const auto f = std::get<std::string>(*(tile_size));
         for (const auto& hs : bd.getModellingHypotheses()) {
@@ -169,40 +190,40 @@ namespace mfront {
                 "' (value calculated is '" + std::to_string(ts) + "')");
           }
         }
-        os << f << ";\n";
+        os << f << ",";
       }
     }
     if (this->schedule.has_value()) {
-      os << "static constexpr tdls::TiledLUppSchedule schedule = ";
+      os << "\n.schedule = ";
       if (*(this->schedule) == SchedulePolicy::LEFT_LOOKING) {
-        os << "tdls::TiledLUppSchedule::LeftLooking;\n";
+        os << "tdls::TiledLUppSchedule::LeftLooking,";
       } else {
-        os << "tdls::TiledLUppSchedule::RightLooking;\n";
-      }
-    }
-    if (this->out_of_tile_search_strategy.has_value()) {
-      os << "static constexpr bool oot_first_acceptable = ";
-      if (*(this->out_of_tile_search_strategy) ==
-          OutOfTileSearchStrategy::FIRST_ACCEPTABLE) {
-        os << "true;\n";
-      } else {
-        os << "false;\n";
+        os << "tdls::TiledLUppSchedule::RightLooking,";
       }
     }
     if (this->out_of_tile_search_threshold.has_value()) {
-      os << "static constexpr auto oot_threshold = NumericType{"
-         << *out_of_tile_search_threshold << "};\n";
+      os << "\n.oot_threshold = NumericType{" << *out_of_tile_search_threshold
+         << "},";
     }
     if (this->singular_pivot_threshold.has_value()) {
-      os << "static constexpr auto singular_eps = NumericType{"
-         << *(this->singular_pivot_threshold) << "};\n";
+      os << "\n.singular_eps = NumericType{"
+         << *(this->singular_pivot_threshold) << "},";
+    }
+    if (this->out_of_tile_search_strategy.has_value()) {
+      os << "\n.oot_first_acceptable = ";
+      if (*(this->out_of_tile_search_strategy) ==
+          OutOfTileSearchStrategy::FIRST_ACCEPTABLE) {
+        os << "true,";
+      } else {
+        os << "false,";
+      }
     }
     if (this->unroll_inner.has_value()) {
-      os << "static constexpr bool unroll_inner = ";
+      os << "\n.unroll_inner = ";
       if (*(this->unroll_inner)) {
-        os << "true;\n";
+        os << "true,";
       } else {
-        os << "false;\n";
+        os << "false,";
       }
     }
     os << "};\n\n";
@@ -282,9 +303,6 @@ namespace mfront {
       tfel::raise(
           "invalide number of variables resulting from the matrix "
           "decomposition");
-    }
-    if (s.returned_value.has_value()) {
-      os << *(s.returned_value) << " = true;\n";
     }
     os << "::tdls::substitute_inplace<MFrontTDLSLinearSystemConfiguration>("
        << r.matrix << ", " << r.variables.begin()->name << ", " << s.rhs

@@ -24,7 +24,7 @@ The following options are supported:
 
 - `tile_size`: the matrix is processed as a grid of `tile_size x
   tile_size` register tiles. This is the main performance axis of the
-  solvers - tune it per system dimension. The `tile_size` can be a
+  solvers. Tune it per system dimension. The `tile_size` can be a
   strictly positive integer or a string. If `tile_size` is a string, it
   is interpreted as an integer formula whose variables can be any integer
   constant (see the `@IntegerConstant` keyword), `N`, `TVectorSize`,
@@ -38,24 +38,28 @@ The following options are supported:
 - `out_of_tile_search_strategy`: expected values are either
   `first_acceptable` (or equivalently `first-acceptable` or
   `FirstAcceptable`) or `full_scan` (or equivalently `full-scan` or
-  `FullScan`).
+  `FullScan`). With `first_acceptable`, the search below the tile stops
+  at the first candidate whose corrected magnitude reaches the
+  out-of-tile search threshold. With `full_scan`, all the rows below
+  the tile are scanned and the best corrected candidate wins.
 - `unroll_inner_loop`: expected values are either `true` or `false`. If
-  `true`, loops indexing register tiles carry a forced-unroll pragma -
+  `true`, loops indexing register tiles carry a forced-unroll pragma,
   the guard that keeps tiles in registers on GPU backends, where a
   rolled loop indexes the tile dynamically and demotes it to slow local
-  memory. If `false`, no unroll pragma anywhere - faster compiles, GPU
-  performance not guaranteed.
+  memory. If `false`, no unroll pragma anywhere, for faster compiles,
+  GPU performance not guaranteed.
 - `out_of_tile_search_threshold`: acceptable-pivot threshold of the
   out-of-tile search. An in-tile pivot candidate whose magnitude reaches
   this value is accepted without looking outside the tile; below it, the
   search extends to the rows under the tile (out-of-tile pivoting) and
-  the best corrected candidate wins.
+  the best candidate wins.
 - `singular_pivot_threshold`: the factorization is declared singular
   when even the best candidate of the out-of-tile recovery stays below
-  this threshold.
+  this threshold. This option must be set together with the
+  `out_of_tile_search_threshold` option and must not exceed it.
 
-If a parameter is not defined, the default values are inherited for the
-`TiledLUppDefaultConfig` class defined by the `TDLS` library. See the
+If a parameter is not defined, the default values are inherited from the
+`TiledLUppConfig` class defined by the `TDLS` library. See the
 [API reference](https://trsxvz.github.io/TDLS/api/index.html) for
 details. At the time of writing this documentation, those default values
 are:
@@ -64,12 +68,12 @@ are:
 - `right_looking` for `schedule`
 - `first_acceptable` for `out_of_tile_search_strategy`
 - `true` for `unroll_inner_loop`
-- `1e-10` for `out_of_tile_search_threshold` (or `1e-4` for simple
+- `1e-10` for `out_of_tile_search_threshold` (or `1e-4` for single
   precision)
 - `std::numeric_limits<double>::min()` for `singular_pivot_threshold`
-  (or `std::numeric_limits<float>::min()` for simple precision)
+  (or `std::numeric_limits<float>::min()` for single precision)
 
-## Example
+## Examples
 
 ~~~~ {#LinearSystemSolver .cpp}
 @LinearSystemSolver TDLS{
