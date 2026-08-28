@@ -46,7 +46,7 @@ struct MicrostructureDerivativesTest final
     using stress = typename tfel::config::Types<1u, real, true>::stress;
     using length = typename tfel::config::Types<1u, real, true>::length;
 
-    //this->template test_1<real, stress, length>();
+    this->template test_1<real, stress, length>();
     this->template test_1<real, real, real>();
     
     return this->result;
@@ -67,10 +67,10 @@ struct MicrostructureDerivativesTest final
     const auto KGi = tfel::material::KGModuli<stress>(stress(100),stress(40));
 
     Spheroid<length> spheroid1(a, b);
-    IsotropicDistribution<stress> distrib1(spheroid1, real(0.2), KGi);
+    IsotropicDistribution<stress> distrib1(spheroid1, real(0.02), KGi);
 
     unsigned short int index = 0;
-    TransverseIsotropicDistribution<stress> distrib2(spheroid1, real(0.2), KGi,
+    TransverseIsotropicDistribution<stress> distrib2(spheroid1, real(0.02), KGi,
                                                      n_b, index);
 
     ParticulateMicrostructure<3u, stress> micro1(KG0);
@@ -81,21 +81,31 @@ struct MicrostructureDerivativesTest final
 
     auto dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr;
     std::cout<<dCDS_dkr[0](0,0)<<std::endl;
+    std::cout<<dCDS_dkr[1](0,0)<<std::endl;
+    std::cout<<dCDS_dkr[2](0,0)<<std::endl;
 
     auto dCDS_dmur = h_DS.derivative_of_homogenized_stiffness_wrt_mur;
     std::cout<<dCDS_dmur[0](0,0)<<std::endl;
-
-    auto h_MT = computeMoriTanaka<3u, stress>(micro1,true);
+    std::cout<<dCDS_dmur[1](0,0)<<std::endl;
+    std::cout<<dCDS_dmur[2](0,0)<<std::endl;
+    
+    
+    auto h_MT = computeMoriTanaka<3u, stress>(micro1,0,{},true);
     auto dCMT_dkr = h_MT.derivative_of_homogenized_stiffness_wrt_kr;
     std::cout<<dCMT_dkr[0](0,0)<<std::endl;
+    std::cout<<dCMT_dkr[1](0,0)<<std::endl;
+    std::cout<<dCMT_dkr[2](0,0)<<std::endl;
+
     auto dCMT_dmur = h_MT.derivative_of_homogenized_stiffness_wrt_mur;
     std::cout<<dCMT_dmur[0](0,0)<<std::endl;
+    std::cout<<dCMT_dmur[1](0,0)<<std::endl;
+    std::cout<<dCMT_dmur[2](0,0)<<std::endl;
 
-    auto h_SC = computeSelfConsistent<3u, stress>(micro1,1e-5,true,true);
+    auto h_SC = computeSelfConsistent<3u, stress>(micro1,1e-5,true,0,{},true);
     auto dCSC_dkr = h_SC.derivative_of_homogenized_stiffness_wrt_kr;
-    std::cout<<dCSC_dkr[0](0,0)<<std::endl;
+    //std::cout<<dCSC_dkr[0](0,0)<<std::endl;
     auto dCSC_dmur = h_SC.derivative_of_homogenized_stiffness_wrt_mur;
-    std::cout<<dCSC_dmur[0](0,0)<<std::endl;
+    //std::cout<<dCSC_dmur[0](0,0)<<std::endl;
     
   }  
 

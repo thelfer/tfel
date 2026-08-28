@@ -752,7 +752,38 @@ print("P_eff_DS: ",P_eff_DS)
 
 In fact, the functions `computeDiluteScheme`, `computeMoriTanakaScheme`
 `computeSelfConsistentScheme`... return an object `HomogenizationScheme`
-which possesses the attributes `homogenized_stiffness`,`mean_strain_localisation_tensors`
-and `effective_polarisation`.
+which possesses the following attributes:
+
+ - `homogenized_stiffness`
+ - `mean_strain_localisation_tensors`
+ - `effective_polarisation`
+ - `derivative_of_homogenized_stiffness_wrt_kr`
+ - `derivative_of_homogenized_stiffness_wrt_mur`
+
+#### Second-moments of the strains
+
+The second-moments of the strains are classically obtained
+with the derivatives of the homogenized stiffness w.r.t. the
+elastic moduli. These derivatives are provided by the
+`HomogenizationScheme`, in the case the phases are locally isotropic
+(and only in 3D). This can be done as follows:
+
+~~~~{.py}
+h_DS = hm.computeDiluteScheme(micro_1,polarisations=[],with_Chom_derivatives=True)
+dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr
+print("dCDS_dk0: ",dCDS_dkr[0])
+print("dCDS_dk1: ",dCDS_dkr[1])
+~~~~
+
+Here, the `boolean` `with_Chom_derivatives` is set equal to `True`
+to compute the derivatives of the homogenized stiffness
+If it is `False`, the attribute `.derivative_of_homogenized_stiffness_wrt_kr`
+is an empty list. If it is computed, this attribute is a list
+which contains as many tensors as the number of phases in the
+`ParticulateMicrostructure`. The tensor number `i` corresponds to the
+derivative of the homogenized stiffness w.r.t. the bulk modulus
+`ki` relative to phase `i`.
+
+
 
 <!-- Local IspellDict: english -->

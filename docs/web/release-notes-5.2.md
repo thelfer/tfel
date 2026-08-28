@@ -243,6 +243,13 @@ tensors. This distribution can be used in a `ParticulateMicrostructure`
 and the associated homogenization schemes can be used with
 these microstructures.
 
+In the homogenization schemes relative to the `ParticulateMicrostructure`,
+the computation of the derivatives of the homogenized stiffness tensor
+w.r.t. the isotropic moduli is available. It can be obtained
+by using the attributes `.derivative_of_homogenized_stiffness_wrt_kr`
+and `.derivative_of_homogenized_stiffness_wrt_mur` of the
+`HomogenizationScheme` object (only for isotropic phases).
+
 # New features in `tfel-check`
 
 ## Parallelization

@@ -1091,12 +1091,14 @@ Note that the 4 `InclusionDistribution` classes are currently available in 3d on
  
 ### Computation of homogenization schemes
 
-The file `MicrostructureLinearHomogenization.ixx` introduces a `HomogenizationScheme` object
-which has three attributes:
+The file `MicrostructureLinearHomogenization.hxx` introduces a `HomogenizationScheme` object
+which has five attributes:
  
  - `homogenized_stiffness`
  - `effective_polarisation`
  - `mean_strain_localisation_tensors`
+ - `derivative_of_homogenized_stiffness_wrt_kr`
+ - `derivative_of_homogenized_stiffness_wrt_mur`
 
 This is the object that the functions listed below return:
 
@@ -1187,6 +1189,34 @@ And we can recover the effective polarization:
 ~~~~{.cpp}
 auto P_eff_DS=hmDS_pola.effective_polarisation;
 ~~~~
+
+### Second-moments of the strains
+
+The second-moments of the strains are classically obtained
+with the derivatives of the homogenized stiffness w.r.t. the
+elastic moduli. These derivatives are also provided by the
+`HomogenizationScheme`, in the case the phases are locally isotropic
+(and only in 3D). This can be done as follows:
+
+~~~~{.cpp}
+auto compute_derivatives = true;
+auto h_DS = computeDilute<3u, stress>(micro_1,0,{},compute_derivatives);
+auto dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr;
+std::cout<<dCDS_dkr[0](0,0)<<std::endl;
+~~~~
+
+Here, a `boolean` is passed as the last argument of the function
+`computeDilute`. This `boolean` (whose default value is `false`)
+specifies if the derivatives of the homogenized stiffness must
+be computed or not. If it is not computed (or if a dimension
+different from 3 is used), the attribute
+`.derivative_of_homogenized_stiffness_wrt_kr` is an
+empty `std::vector`. If it is computed, this attribute is a `std::vector`
+which contains as many tensors as the number of phases in the
+`ParticulateMicrostructure`. The tensor number `i` corresponds to the
+derivative of the homogenized stiffness w.r.t. the bulk modulus
+`ki` relative to phase `i`. This tensor is a `st2tost2<3, real>`
+object.
 
 
 <!-- Local IspellDict: english -->
