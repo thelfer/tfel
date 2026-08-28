@@ -54,7 +54,7 @@ namespace tfel::math::parser {
      * \brief constructor
      * \param[in] e: expression representing the argument of the function
      */
-    Function(const std::shared_ptr<Expr>) noexcept;
+    explicit Function(const std::shared_ptr<Expr>) noexcept;
     //! \brief argument
     const std::shared_ptr<Expr> expr;
   };

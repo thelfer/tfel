@@ -1,8 +1,8 @@
 /*!
- * \file  mfront/src/NonLinearSystemSolver.cxx
+ * \file   mfront/src/Castem21ModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 22 août 2014
+ * \date   15/04/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,10 +11,16 @@
  * project under specific licensing conditions.
  */
 
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/Castem21ModelInterface.hxx"
 
 namespace mfront {
 
-  NonLinearSystemSolver::~NonLinearSystemSolver() = default;
+  std::string Castem21ModelInterface::getName() {
+    return "castem21";
+  }  // end of getName
+
+  Castem21ModelInterface::Castem21ModelInterface() = default;
+
+  Castem21ModelInterface::~Castem21ModelInterface() = default;
 
 }  // end of namespace mfront

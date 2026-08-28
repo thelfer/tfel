@@ -28,7 +28,7 @@ namespace tfel::math {
     //! \brief memory allocator
     using Allocator = std::function<Field*()>;
     //! \brief constructor
-    AndersonBase(const Allocator);
+    explicit AndersonBase(const Allocator);
     //
     [[nodiscard]] const std::vector<Field*>& getU() const;
     [[nodiscard]] const std::vector<Field*>& getD() const;

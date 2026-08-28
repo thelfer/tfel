@@ -2,7 +2,7 @@
  * \file  mfront/include/MFront/UserDefinedNonLinearSystem.hxx
  * \brief
  * \author Thomas Helfer
- * \brief 09/09/2021
+ * \date 09/09/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,10 +23,8 @@ namespace mfront {
   struct UserDefinedNonLinearSystemSolver : public NonLinearSystemSolverBase {
     //! \brief
     using DataMap = tfel::utilities::DataMap;
-    /*!
-     * \brief constructor
-     */
-    UserDefinedNonLinearSystemSolver(const DataMap&);
+    //! \brief constructor
+    explicit UserDefinedNonLinearSystemSolver(const DataMap&);
     [[nodiscard]] bool usesJacobian() const override;
     [[nodiscard]] bool usesJacobianInvert() const override;
     [[nodiscard]] bool requiresNumericalJacobian() const override;

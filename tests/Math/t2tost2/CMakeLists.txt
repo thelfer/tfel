@@ -6,7 +6,7 @@ macro(tests_t2tost2 test_arg)
     set_property(TEST ${test_arg}
   	         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  add_dependencies(check ${test_arg})
+  add_dependencies(build-tests ${test_arg})
   target_link_libraries(${test_arg}  TFELMath TFELUtilities TFELException TFELTests)
 endmacro(tests_t2tost2)
 

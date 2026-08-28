@@ -39,7 +39,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] umb: behaviour description
      */
-    CastemStandardBehaviour(const StandardBehaviourDescription&);
+    explicit CastemStandardBehaviour(const StandardBehaviourDescription&);
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     void allocateWorkSpace(BehaviourWorkSpace&) const override;
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(

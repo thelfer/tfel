@@ -12,21 +12,54 @@ env:
 
 jobs:
   build:
+
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
+
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
+      with:
+        path: tfel
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: |
+        cmake ${{github.workspace}}/tfel                           \
+              -B ${{github.workspace}}/build                       \
+              -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}               \
+              -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j $(nproc)
 
-#    - name: Test
-#      working-directory: ${{github.workspace}}/build
-#      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check
-      
+    - name: Test
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target build-tests -j $(nproc)
+        ctest --test-dir ${{github.workspace}}/build --build-config ${{env.BUILD_TYPE}} -j $(nproc)
+        mkdir ${{github.workspace}}/tests-results
+        cp --parents $(find ${{github.workspace}}/build -path ${{github.workspace}}/build/Testing -prune -o -type f  -name "*.xml" -print) ${{github.workspace}}/tests-results
+
+    - name: Install
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -j $(nproc)
+
+    - name: Print test log on failure
+      if: ${{ matrix.os == 'ubuntu-latest' && failure() }}
+      run: |
+        cat ${{github.workspace}}/build/Testing/Temporary/*.log
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v6
+      if: ${{ matrix.os == 'ubuntu-latest' && (success() || failure()) }} # always run even if the previous step fails
+      with:
+        report_paths: '**/tests-results/**/*.xml'
+
+    - name: Running tfel-check
+      run: |
+        source ${{github.workspace}}/install/share/tfel/env/env.sh
+        cd ${{github.workspace}}/install/share/tfel/test-suite
+        tfel-check  -j $(nproc)

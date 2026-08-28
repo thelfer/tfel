@@ -22,11 +22,11 @@ namespace std {
   /*!
    * \brief partial specialisation for quantities
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct numeric_limits<
-      tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
+  struct numeric_limits<QuantityType> {
+    using ValueType = tfel::math::base_type<QuantityType>;
+    using UnitType = tfel::math::quantity_unit<QuantityType>;
+
     static constexpr bool is_specialized =
         numeric_limits<ValueType>::is_specialized;
 

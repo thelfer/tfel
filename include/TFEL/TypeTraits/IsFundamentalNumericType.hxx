@@ -21,6 +21,9 @@
 
 namespace tfel::typetraits {
 
+  template <typename T>
+  concept StandardArithmeticTypeConcept = std::is_arithmetic_v<T>;
+
   /*!
    * \brief Traits class which says if its argument is one of the
    * standard numerical types
@@ -37,21 +40,24 @@ namespace tfel::typetraits {
   template <typename T>
   struct IsFundamentalNumericType {
     //! \brief result
-    static constexpr bool cond = std::is_arithmetic_v<T>;
+    static constexpr bool cond = false;
   };
 
-  /*!
-   * \brief partial specialisation for `tfel::math::Complex`
-   */
+  //! \brief partial specialisation for standard arithmetic types
+  template <StandardArithmeticTypeConcept T>
+  struct IsFundamentalNumericType<T> {
+    //! \brief result
+    static constexpr bool cond = true;
+  };
+
+  //! \brief partial specialisation for `tfel::math::Complex`
   template <typename T>
   struct IsFundamentalNumericType<tfel::math::Complex<T>> {
     //! \brief result
     static constexpr bool cond = std::is_arithmetic_v<T>;
   };
 
-  /*!
-   * \brief partial specialisation for `const tfel::math::Complex`
-   */
+  //! \brief partial specialisation for `const tfel::math::Complex`
   template <typename T>
   struct IsFundamentalNumericType<const tfel::math::Complex<T>> {
     //! \brief result
@@ -68,7 +74,7 @@ namespace tfel::typetraits {
   }
 
   template <typename T>
-  concept IsFundamentalNumericTypeConcept =
+  concept FundamentalNumericTypeConcept =
       IsFundamentalNumericType<std::decay_t<T>>::cond;
 
 }  // end of namespace tfel::typetraits

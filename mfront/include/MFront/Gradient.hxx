@@ -51,7 +51,7 @@ namespace mfront {
      * \brief constructor from a variable description
      * \param[in] v: variable description
      */
-    Gradient(const VariableDescription&);
+    explicit Gradient(const VariableDescription&);
     //! \brief move constructor
     Gradient(Gradient&&) noexcept;
     //! \brief copy constructor

@@ -19,7 +19,7 @@ namespace tfel::utilities::internals {
 
   template <typename T, typename List, unsigned short N = 0>
   struct GenTypeBaseApply {
-    typedef typename T::return_type return_type;
+    using return_type = typename T::return_type;
 
    private:
     struct EndRecursion {
@@ -61,7 +61,7 @@ namespace tfel::utilities::internals {
                            GenTypeBaseApply<T, List, N + 1>>;
 
     [[nodiscard]] static return_type apply(const GenTypeBase<List>& v) {
-      typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value;
+      using current_value = typename tfel::meta::TLFindNthElt<List, N>::type;
       if (v.template is<current_value>()) {
         return T::apply(v.template get<current_value>());
       } else {
@@ -70,7 +70,7 @@ namespace tfel::utilities::internals {
     }
 
     [[nodiscard]] static return_type apply(T& f, const GenTypeBase<List>& v) {
-      typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value;
+      using current_value = typename tfel::meta::TLFindNthElt<List, N>::type;
       if (v.template is<current_value>()) {
         return f(v.template get<current_value>());
       } else {
@@ -79,7 +79,7 @@ namespace tfel::utilities::internals {
     }
 
     static return_type apply(GenTypeBase<List>& v) {
-      typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value;
+      using current_value = typename tfel::meta::TLFindNthElt<List, N>::type;
       if (v.template is<current_value>()) {
         return T::apply(v.template get<current_value>());
       } else {
@@ -88,7 +88,7 @@ namespace tfel::utilities::internals {
     }
 
     static return_type apply(T& f, GenTypeBase<List>& v) {
-      typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value;
+      using current_value = typename tfel::meta::TLFindNthElt<List, N>::type;
       if (v.template is<current_value>()) {
         return f(v.template get<current_value>());
       } else {
@@ -104,7 +104,7 @@ namespace tfel::utilities::internals {
             unsigned short M = 0>
   struct GenTypeBaseApplyII {
    public:
-    typedef typename T::return_type return_type;
+    using return_type = typename T::return_type;
 
    private:
     struct EndRecursion {
@@ -149,35 +149,32 @@ namespace tfel::utilities::internals {
     };  // end of struct EndRecursionII
 
    public:
-    typedef typename std::conditional_t<
-        ((N + 1 == tfel::meta::TLSize<List>::value) ||
-         (M + 1 == tfel::meta::TLSize<List>::value)),
-        typename std::conditional_t<std::is_same_v<return_type, void>,
-                                    EndRecursionII,
-                                    EndRecursion>,
-        GenTypeBaseApplyII<T, List, N + 1, M + 1>>
-        Next;
-    typedef typename std::conditional_t<
-        ((N + 1 == tfel::meta::TLSize<List>::value) ||
-         (M + 1 == tfel::meta::TLSize<List>::value)),
-        typename std::conditional_t<std::is_same_v<return_type, void>,
-                                    EndRecursionII,
-                                    EndRecursion>,
-        GenTypeBaseApplyII<T, List, N + 1, M>>
-        NextI;
-    typedef typename std::conditional_t<
-        ((N + 1 == tfel::meta::TLSize<List>::value) ||
-         (M + 1 == tfel::meta::TLSize<List>::value)),
-        typename std::conditional_t<std::is_same_v<return_type, void>,
-                                    EndRecursionII,
-                                    EndRecursion>,
-        GenTypeBaseApplyII<T, List, N, M + 1>>
-        NextII;
+    using Next =
+        std::conditional_t<((N + 1 == tfel::meta::TLSize<List>::value) ||
+                            (M + 1 == tfel::meta::TLSize<List>::value)),
+                           std::conditional_t<std::is_same_v<return_type, void>,
+                                              EndRecursionII,
+                                              EndRecursion>,
+                           GenTypeBaseApplyII<T, List, N + 1, M + 1>>;
+    using NextI =
+        std::conditional_t<((N + 1 == tfel::meta::TLSize<List>::value) ||
+                            (M + 1 == tfel::meta::TLSize<List>::value)),
+                           std::conditional_t<std::is_same_v<return_type, void>,
+                                              EndRecursionII,
+                                              EndRecursion>,
+                           GenTypeBaseApplyII<T, List, N + 1, M>>;
+    using NextII =
+        std::conditional_t<((N + 1 == tfel::meta::TLSize<List>::value) ||
+                            (M + 1 == tfel::meta::TLSize<List>::value)),
+                           std::conditional_t<std::is_same_v<return_type, void>,
+                                              EndRecursionII,
+                                              EndRecursion>,
+                           GenTypeBaseApplyII<T, List, N, M + 1>>;
 
     [[nodiscard]] static return_type apply(const GenTypeBase<List>& v1,
                                            const GenTypeBase<List>& v2) {
-      typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value1;
-      typedef typename tfel::meta::TLFindNthElt<List, M>::type current_value2;
+      using current_value1 = typename tfel::meta::TLFindNthElt<List, N>::type;
+      using current_value2 = typename tfel::meta::TLFindNthElt<List, M>::type;
       const auto b1 = v1.template is<current_value1>();
       const auto b2 = v2.template is<current_value2>();
       if (b1 && b2) {
@@ -194,8 +191,8 @@ namespace tfel::utilities::internals {
     [[nodiscard]] static return_type apply(T& f,
                                            const GenTypeBase<List>& v1,
                                            const GenTypeBase<List>& v2) {
-      typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value1;
-      typedef typename tfel::meta::TLFindNthElt<List, M>::type current_value2;
+      using current_value1 = typename tfel::meta::TLFindNthElt<List, N>::type;
+      using current_value2 = typename tfel::meta::TLFindNthElt<List, M>::type;
       const auto b1 = v1.template is<current_value1>();
       const auto b2 = v2.template is<current_value2>();
       if (b1 && b2) {
@@ -211,8 +208,8 @@ namespace tfel::utilities::internals {
 
     [[nodiscard]] static return_type apply(GenTypeBase<List>& v1,
                                            GenTypeBase<List>& v2) {
-      typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value1;
-      typedef typename tfel::meta::TLFindNthElt<List, M>::type current_value2;
+      using current_value1 = typename tfel::meta::TLFindNthElt<List, N>::type;
+      using current_value2 = typename tfel::meta::TLFindNthElt<List, M>::type;
       const auto b1 = v1.template is<current_value1>();
       const auto b2 = v2.template is<current_value2>();
       if (b1 && b2) {
@@ -229,8 +226,8 @@ namespace tfel::utilities::internals {
     [[nodiscard]] static return_type apply(T& f,
                                            GenTypeBase<List>& v1,
                                            GenTypeBase<List>& v2) {
-      typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value1;
-      typedef typename tfel::meta::TLFindNthElt<List, M>::type current_value2;
+      using current_value1 = typename tfel::meta::TLFindNthElt<List, N>::type;
+      using current_value2 = typename tfel::meta::TLFindNthElt<List, M>::type;
       const auto b1 = v1.template is<current_value1>();
       const auto b2 = v2.template is<current_value2>();
       if (b1 && b2) {

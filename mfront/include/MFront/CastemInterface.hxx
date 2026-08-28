@@ -14,8 +14,11 @@
 #ifndef LIB_MFRONT_CASTEMINTERFACE_HXX
 #define LIB_MFRONT_CASTEMINTERFACE_HXX
 
+#include <map>
 #include <string>
+#include <vector>
 #include <iosfwd>
+#include <cstddef>
 
 #include "MFront/InterfaceBase.hxx"
 #include "MFront/UMATInterfaceBase.hxx"
@@ -83,24 +86,61 @@ namespace mfront {
 
    protected:
     //
-    [[nodiscard]] static std::string treatScalar(const std::string&);
-    [[nodiscard]] static std::string treatScalar(const std::string&,
-                                                 const unsigned short);
-    [[nodiscard]] static std::string treatTVector(const Hypothesis,
-                                                  const std::string&);
-    [[nodiscard]] static std::string treatTVector(const Hypothesis,
-                                                  const std::string&,
-                                                  const unsigned short);
-    [[nodiscard]] static std::string treatStensor(const Hypothesis,
-                                                  const std::string&);
-    [[nodiscard]] static std::string treatStensor(const Hypothesis,
-                                                  const std::string&,
-                                                  const unsigned short);
-    [[nodiscard]] static std::string treatTensor(const Hypothesis,
-                                                 const std::string&);
-    [[nodiscard]] static std::string treatTensor(const Hypothesis,
-                                                 const std::string&,
-                                                 const unsigned short);
+    struct UniqueCast3MIdentifiersGenerator {
+      UniqueCast3MIdentifiersGenerator();
+      //
+      [[nodiscard]] std::string treatScalar(const std::string&,
+                                            const std::string&);
+      [[nodiscard]] std::string treatScalar(const std::string&,
+                                            const std::string&,
+                                            const unsigned short);
+      [[nodiscard]] std::string treatTVector(const Hypothesis,
+                                             const std::string&,
+                                             const std::string&);
+      [[nodiscard]] std::string treatTVector(const Hypothesis,
+                                             const std::string&,
+                                             const std::string&,
+                                             const unsigned short);
+      [[nodiscard]] std::string treatStensor(const Hypothesis,
+                                             const std::string&,
+                                             const std::string&);
+      [[nodiscard]] std::string treatStensor(const Hypothesis,
+                                             const std::string&,
+                                             const std::string&,
+                                             const unsigned short);
+      [[nodiscard]] std::string treatTensor(const Hypothesis,
+                                            const std::string&,
+                                            const std::string&);
+      [[nodiscard]] std::string treatTensor(const Hypothesis,
+                                            const std::string&,
+                                            const std::string&,
+                                            const unsigned short);
+
+     private:
+      [[nodiscard]] bool isIdAlreadyUsed(const std::string&) const;
+      [[nodiscard]] std::string getUniqueId(const std::string&,
+                                            const std::string&,
+                                            const std::string&);
+      [[nodiscard]] std::string getQuotedId(const std::string&,
+                                            const std::string&);
+      [[nodiscard]] std::string getQuotedId(const std::string&,
+                                            const std::string&,
+                                            const unsigned short);
+      [[nodiscard]] std::string getQuotedIds(const std::string&,
+                                             const std::string&,
+                                             const std::vector<std::string>&);
+      [[nodiscard]] std::string getQuotedIds(const std::string&,
+                                             const std::string&,
+                                             const unsigned short,
+                                             const std::vector<std::string>&);
+      /*!
+       * \brief a map giving the generated Cast3M identifier for a given
+       * external name (including array index and component)
+       */
+      std::map<std::string, std::string> ids;
+      //! \brief counter used to generate unique ids
+      std::size_t count = std::size_t{};
+    };
     //
     [[nodiscard]] std::string getLibraryName(
         const BehaviourDescription&) const override;
@@ -166,22 +206,26 @@ namespace mfront {
 
     virtual void writeVariableDescriptionContainerToGibiane(
         std::ostream&,
+        UniqueCast3MIdentifiersGenerator&,
         const Hypothesis,
         const VariableDescriptionContainer&) const;
 
     virtual void writeVariableDescriptionsToGibiane(
         std::ostream&,
+        UniqueCast3MIdentifiersGenerator&,
         const Hypothesis,
         const VariableDescriptionContainer::const_iterator,
         const VariableDescriptionContainer::const_iterator) const;
 
     virtual void writeGibianeMappingComments(
         std::ostream&,
+        UniqueCast3MIdentifiersGenerator&,
         const Hypothesis,
         const VariableDescriptionContainer&) const;
 
     virtual void writeGibianeMappingComments(
         std::ostream&,
+        UniqueCast3MIdentifiersGenerator&,
         const std::pair<std::vector<BehaviourMaterialProperty>,
                         SupportedTypes::TypeSize>&) const;
 

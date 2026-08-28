@@ -36,7 +36,7 @@ namespace mtest {
     /*!
      * \param[in] umb: behaviour description
      */
-    CastemFiniteStrainBehaviour(const StandardBehaviourDescription&);
+    explicit CastemFiniteStrainBehaviour(const StandardBehaviourDescription&);
 
     void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;

@@ -31,7 +31,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] wb : wrapped behaviour
      */
-    AsterLogarithmicStrainBehaviourWrapper(
+    explicit AsterLogarithmicStrainBehaviourWrapper(
         const std::shared_ptr<AsterSmallStrainBehaviour>&);
     Hypothesis getHypothesis() const override;
     BehaviourType getBehaviourType() const override;

@@ -54,10 +54,10 @@ struct TestFunction final : public tfel::tests::Test {
     for (x = this->xa; x <= this->xb; x += this->dx) {
       ev.setVariableValue("x", x);
       if (std::abs(fct(x) - ev.getValue()) > e) {
-        return false;
+        return tfel::tests::TestResult{false};
       }
     }
-    return true;
+    return tfel::tests::TestResult{true};
   }  // end of execute
 
  private:

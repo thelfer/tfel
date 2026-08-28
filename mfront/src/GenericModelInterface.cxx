@@ -71,7 +71,7 @@ namespace mfront {
     os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n"
        << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
+      os << "using " << a << " [[maybe_unused]] = typename "
          << "tfel::config::ScalarTypes<double, " << use_qt << ">::" << a
          << ";\n";
     }
@@ -94,6 +94,13 @@ namespace mfront {
   std::string GenericModelInterface::getName() {
     return "generic";
   }  // end of getName
+
+  void GenericModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool, GenericModelInterface::tokens_iterator>
   GenericModelInterface::treatKeyword(const std::string& k,

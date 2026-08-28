@@ -33,7 +33,7 @@ namespace mfront {
     const auto use_qt = useQuantities(md) ? "true" : "false";
     os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
+      os << "using " << a << " [[maybe_unused]] = typename "
          << "tfel::config::ScalarTypes<NumericType, " << use_qt << ">::" << a
          << ";\n";
     }
@@ -72,6 +72,13 @@ namespace mfront {
   }  // end of MFrontModelInterface::getName
 
   MFrontModelInterface::MFrontModelInterface() = default;
+
+  void MFrontModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool, MFrontModelInterface::tokens_iterator>
   MFrontModelInterface::treatKeyword(const std::string& k,

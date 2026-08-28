@@ -18,7 +18,7 @@
 #include <string>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/SupportedTypes.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 
 namespace mfront {
 
@@ -32,7 +32,7 @@ namespace mfront {
    * base class for non linear system solver providing some helpfull
    * common methods
    */
-  struct NonLinearSystemSolverBase : public NonLinearSystemSolver {
+  struct NonLinearSystemSolverBase : public AbstractNonLinearSystemSolver {
     /*!
      * \brief brief build a suitable specialisation of the class implementing
      * the algorithm.

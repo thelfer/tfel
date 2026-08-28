@@ -51,6 +51,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/GeneratorOptions.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/CMakeGenerator.hxx"
 
 namespace mfront {
@@ -84,6 +85,7 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "generating 'src/CMakeList.txt'\n";
     }
+    auto& cm = ConfigurationManager::get();
     MFrontLockGuard lock;
     std::ofstream m("src/CMakeLists.txt");
     m.exceptions(std::ios::badbit | std::ios::failbit);
@@ -180,9 +182,14 @@ namespace mfront {
         << "\n";
     }
     // include_directories
-    const auto include_directories = [&t, &o] {
+    const auto include_directories = [&cm, &t, &o] {
       auto r = std::vector<std::string>{};
       r.push_back("../include");
+      for (const auto& path : cm.getIncludePaths()) {
+        if (std::find(r.begin(), r.end(), path) == r.end()) {
+          r.push_back(path);
+        }
+      }
       for (const auto& path : o.include_paths) {
         if (std::find(r.begin(), r.end(), path) == r.end()) {
           r.push_back(path);

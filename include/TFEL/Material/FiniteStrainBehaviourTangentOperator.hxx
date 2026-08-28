@@ -89,22 +89,22 @@ namespace tfel::material {
     FiniteStrainBehaviourTangentOperator(
         const FiniteStrainBehaviourTangentOperator& src)
         : GenType(src) {}  // end of FiniteStrainBehaviourTangentOperator
-    FiniteStrainBehaviourTangentOperator(
+    explicit(false) FiniteStrainBehaviourTangentOperator(
         const tfel::math::t2tot2<N, StressType>& D)
         : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
-    FiniteStrainBehaviourTangentOperator(
+    explicit(false) FiniteStrainBehaviourTangentOperator(
         tfel::math::t2tot2<N, StressType>* const D)
         : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
-    FiniteStrainBehaviourTangentOperator(
+    explicit(false) FiniteStrainBehaviourTangentOperator(
         const tfel::math::t2tost2<N, StressType>& D)
         : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
-    FiniteStrainBehaviourTangentOperator(
+    explicit(false) FiniteStrainBehaviourTangentOperator(
         tfel::math::t2tost2<N, StressType>* const D)
         : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
-    FiniteStrainBehaviourTangentOperator(
+    explicit(false) FiniteStrainBehaviourTangentOperator(
         const tfel::math::st2tost2<N, StressType>& D)
         : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
-    FiniteStrainBehaviourTangentOperator(
+    explicit(false) FiniteStrainBehaviourTangentOperator(
         tfel::math::st2tost2<N, StressType>* const D)
         : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
     FiniteStrainBehaviourTangentOperator& operator=(

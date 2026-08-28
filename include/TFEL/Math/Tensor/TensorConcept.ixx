@@ -467,7 +467,7 @@ namespace tfel::math {
              getSpaceDimension<StensorType>()),
         "invalid arguments");
     if constexpr (getSpaceDimension<TensorType>() == 1u) {
-      typedef numeric_type<TensorType2> T;
+      using T = numeric_type<TensorType2>;
       using real = base_type<T>;
       R = tensor<1u, real>::Id();
       for (unsigned short i = 0; i != 3u; ++i) {

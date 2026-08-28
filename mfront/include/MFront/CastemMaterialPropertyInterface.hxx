@@ -33,6 +33,17 @@ namespace mfront {
     [[nodiscard]] static std::string getName();
 
     CastemMaterialPropertyInterface();
+    //
+    void setOptions(const DataMap&) override;
+    void getTargetsDescription(
+        TargetsDescription&, const MaterialPropertyDescription&) const override;
+    void writeOutputFiles(const MaterialPropertyDescription&,
+                          const FileDescription&) const override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief append the generated material property to the given library
      * description. This method allows to choose to which library is attached
@@ -46,15 +57,6 @@ namespace mfront {
         TargetsDescription& d,
         LibraryDescription&,
         const MaterialPropertyDescription&) const;
-    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string&,
-        const std::vector<std::string>&,
-        tokens_iterator,
-        const tokens_iterator) override;
-    void getTargetsDescription(
-        TargetsDescription&, const MaterialPropertyDescription&) const override;
-    void writeOutputFiles(const MaterialPropertyDescription&,
-                          const FileDescription&) const override;
     /*!
      * \return the name of the generated function
      * \param[in] mpd : material property description

@@ -205,6 +205,7 @@ namespace tfel::material::homogenization::elasticity {
               polarisations,
           bool with_Chom_derivatives) {
     using real = tfel::types::real<StressType>;
+
     const auto np = micro.getNumberOfPhases();
     const auto f0 = micro.getMatrixFraction();
     const auto C0 = micro.getMatrixElasticity();

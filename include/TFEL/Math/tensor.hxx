@@ -102,8 +102,10 @@ namespace tfel::math {
     TFEL_HOST_DEVICE static constexpr tensor<N, ValueType>
     buildFromFortranMatrix(const base_type<ValueType>* const) noexcept;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tensor,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArray<
         tensor<N, ValueType>,

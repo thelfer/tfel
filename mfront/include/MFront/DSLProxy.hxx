@@ -35,12 +35,12 @@ namespace mfront {
      * \brief constructor
      * \param[in] a: alternative name for the DSL
      */
-    DSLProxy(const std::string&);
+    explicit DSLProxy(const std::string&);
     /*!
      * \brief constructor
      * \param[in] aliases: alternative names for the DSL
      */
-    DSLProxy(const std::vector<std::string>&);
+    explicit DSLProxy(const std::vector<std::string>&);
     /*!
      * \brief generate an intance of the DSL
      * \param[in] opts: options passed to the DSL constructor

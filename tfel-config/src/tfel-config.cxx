@@ -103,6 +103,8 @@ static bool oflags2 = false;
 static bool warning = false;
 static bool incs = false;
 static bool incspath = false;
+static bool incspaths = false;
+static bool tdls_incspath = false;
 static bool cppflags = false;
 static bool libsdeps = false;
 static bool libspath = false;
@@ -394,6 +396,14 @@ int main(const int argc, const char* const* const argv) {
     registerCallBack(
         "--include-path", [] { incspath = true; },
         "return the path to the `TFEL` headers.");
+#ifdef TFEL_MATH_TDLS_SUPPORT
+    registerCallBack(
+        "--tdls-include-path", [] { tdls_incspath = true; },
+        "return the path to the `TDLS` headers.");
+#endif
+    registerCallBack(
+        "--include-paths", [] { incspaths = true; },
+        "return the paths to the `TFEL` headers and its dependencies.");
     registerCallBack(
         "--library-path", [] { libspath = true; },
         "return the path to the `TFEL` library.");
@@ -626,10 +636,25 @@ int main(const int argc, const char* const* const argv) {
 
     if (incs) {
       std::cout << "-I" << includeDir() << " ";
+#ifdef TFEL_MATH_TDLS_SUPPORT
+      std::cout << "-I" << TFEL_TDLS_INCLUDEDIR << " ";
+#endif /* TFEL_MATH_TDLS_SUPPORT */
     }
     if (incspath) {
       std::cout << includeDir() << " ";
     }
+#ifdef TFEL_MATH_TDLS_SUPPORT
+    if (tdls_incspath) {
+      std::cout << TFEL_TDLS_INCLUDEDIR << " ";
+    }
+    if (incspaths) {
+      std::cout << includeDir() << ";" << TFEL_TDLS_INCLUDEDIR << " ";
+    }
+#else
+  if (incspaths) {
+    std::cout << includeDir() << " ";
+  }
+#endif /* TFEL_MATH_TDLS_SUPPORT */
 
 #ifdef HAVE_CASTEM
 #ifdef LOCAL_CASTEM_HEADER

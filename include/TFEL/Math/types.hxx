@@ -1,7 +1,9 @@
 /*!
  * \file   TFEL/Math/types.hxx
  * \brief  This file implements useful features for handling types, in
- * particular when quantity are involved. \author Thomas Helfer \date 11/11/2024
+ * particular when quantity are involved.
+ * \author Thomas Helfer
+ * \date 11/11/2024
  */
 
 #ifndef LIB_TFEL_MATH_TYPES_HXX
@@ -79,7 +81,7 @@ namespace tfel::math {
    * \tparam Unit: unit used for the test
    * \tparam T: tested type
    */
-  template <UnitConcept Unit, typename T>
+  template <unit::UnitConcept Unit, typename T>
   requires(ScalarConcept<T> || MathObjectConcept<T>)  //
       constexpr bool checkUnitCompatibility();
 

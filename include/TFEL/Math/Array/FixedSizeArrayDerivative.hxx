@@ -109,8 +109,10 @@ namespace tfel::math {
         FixedSizeArrayDerivativePolicy<typename Array1::array_policy,
                                        typename Array2::array_policy>>;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(FixedSizeArrayDerivative,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

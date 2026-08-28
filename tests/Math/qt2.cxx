@@ -43,6 +43,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     this->test7();
     this->test8();
     this->test9();
+    this->test10();
     return this->result;
   }  // end of execute
   void test1() {
@@ -150,6 +151,25 @@ struct QtRefTest final : public tfel::tests::TestCase {
     constexpr qt<unit::NoUnit> q(1.2);
     const auto cos_q = std::cos(q);
     TFEL_TESTS_ASSERT(std::abs(cos_q - std::cos(1.2)) < eps);
+  }
+  void test10() {
+    using namespace tfel::math;
+    using strain = qt<unit::NoUnit>;
+    constexpr auto eeps = strain{1e-14};
+    constexpr auto n1 = stensor<3u, strain>{
+        strain{1}, strain{-0.5}, strain{-0.5}, strain{0}, strain{0}, strain{0}};
+    constexpr auto n2 = stensor<3u, double>{
+        strain{1}, strain{-0.5}, strain{-0.5}, strain{0}, strain{0}, strain{0}};
+    const auto n = n1 + 2 * n2;
+    const auto v = tfel::math::abs(n);
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<typename ComputeObjectTag<strain>::type, ScalarTag>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<typename ComputeObjectTag<strain&&>::type, ScalarTag>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::same_as<BinaryOperationHandler<strain, strain, OpPlus>, strain>));
+    TFEL_TESTS_STATIC_ASSERT(StensorConcept<std::decay_t<decltype(n)>>);
+    TFEL_TESTS_ASSERT(abs(v - strain(6)) < eeps);
   }
 };
 

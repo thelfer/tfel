@@ -57,8 +57,8 @@ namespace tfel::math::internals {
                             numeric_type<ST2toST2Type>>())) {
       using namespace tfel::math;
       using namespace tfel::typetraits;
-      typedef typename ComputeBinaryResult<base_type<NumType>, NumType,
-                                           OpDiv>::Result InvNumType;
+      using InvNumType = typename ComputeBinaryResult<base_type<NumType>,
+                                                      NumType, OpDiv>::Result;
       dn0_ds = st2tost2<1u, InvNumType>(InvNumType(0));
       dn1_ds = dn0_ds;
       dn2_ds = dn0_ds;
@@ -82,8 +82,8 @@ namespace tfel::math::internals {
                                                          NumType,
                                                          OpDiv>::Result,
                             numeric_type<ST2toST2Type>>())) {
-      typedef base_type<NumType> base;
-      typedef BinaryOperationResult<base, NumType, OpDiv> InvNumType;
+      using base = base_type<NumType>;
+      using InvNumType = BinaryOperationResult<base, NumType, OpDiv>;
       constexpr auto icste = Cste<base>::isqrt2;
       const tvector<3u, base> v0 = m.template column_view<0u>();
       const tvector<3u, base> v1 = m.template column_view<1u>();
@@ -114,7 +114,7 @@ namespace tfel::math::internals {
                                                          OpDiv>::Result,
                             numeric_type<ST2toST2Type>>())) {
       using namespace tfel::math;
-      typedef base_type<NumType> base;
+      using base = base_type<NumType>;
       constexpr auto cste = Cste<base>::isqrt2;
       const tvector<3u, base> v0 = m.template column_view<0u>();
       const tvector<3u, base> v1 = m.template column_view<1u>();

@@ -29,8 +29,8 @@ namespace std {
 
 namespace abaqus {
 
-  AbaqusException::AbaqusException(const std::string& s)
-      : msg(s) {}  // end of AbaqusException::AbaqusException
+  AbaqusException::AbaqusException(std::string s)
+      : msg(std::move(s)) {}  // end of AbaqusException::AbaqusException
 
   AbaqusException::AbaqusException(AbaqusException&&) noexcept = default;
 

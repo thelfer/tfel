@@ -18,7 +18,7 @@
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/AbsType.hxx"
-#include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
+#include "TFEL/Math/Forward/General.hxx"
 
 namespace tfel::math {
 
@@ -26,32 +26,32 @@ namespace tfel::math {
    * \return the absolute value of a scalar
    * \param[in] s: value
    */
-  template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr auto abs(const NumericType& s) noexcept
-      requires(tfel::typetraits::isFundamentalNumericType<NumericType>()) {
+  template <ScalarConcept NumericType>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto abs(
+      const NumericType& s) noexcept {
     return (s < NumericType(0)) ? -s : s;
   }
   /*!
    * \return the norm of a complex
    * \param[in] s: value
    */
-  template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr auto abs(const Complex<NumericType>& s) requires(
-      tfel::typetraits::IsFundamentalNumericType<NumericType>::cond) {
+  template <ScalarConcept NumericType>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto abs(
+      const Complex<NumericType>& s) {
     return s.norm();
   }
 
   /*!
    * \brief a basic functor accumulating the absolute value of a container
    */
-  template <typename T>
+  template <ScalarConcept T>
   struct AbsSum {
     //! \brief a simple alias
     using argument_type = T;
     //! \brief a simple alias
     using result_type = void;
     //! \param [in] v : initial value
-    TFEL_HOST_DEVICE constexpr AbsSum(const T& v = T())
+    TFEL_HOST_DEVICE constexpr explicit AbsSum(const T& v = T())
         : result(v) {}  // end of AbsSum
     /*!
      * \brief add the absolute value of the argument to the result member

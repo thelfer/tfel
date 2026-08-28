@@ -28,15 +28,17 @@ namespace mfront {
       : public AbstractMaterialPropertyInterface {
     static std::string getName();
     //
-    std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string&,
-        const std::vector<std::string>&,
+    void setOptions(const DataMap &) override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string &,
+        const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
     void getTargetsDescription(
-        TargetsDescription&, const MaterialPropertyDescription&) const override;
-    void writeOutputFiles(const MaterialPropertyDescription&,
-                          const FileDescription&) const override;
+        TargetsDescription &,
+        const MaterialPropertyDescription &) const override;
+    void writeOutputFiles(const MaterialPropertyDescription &,
+                          const FileDescription &) const override;
     //! \brief destructor
     ~ExcelMaterialPropertyInterface() override;
   };  // end of MfrontExcelMaterialPropertyInterface

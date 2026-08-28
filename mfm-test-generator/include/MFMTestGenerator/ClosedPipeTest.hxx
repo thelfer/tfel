@@ -30,7 +30,7 @@ namespace mfmtg {
     //! type of elements
     enum ElementType { LINEAR, QUADRATIC };
     //! \brief default constructor
-    ClosedPipeTest(const TestCaseParameters&);
+    explicit ClosedPipeTest(const TestCaseParameters&);
     //! \brief inner radius
     const double inner_radius;
     //! \brief outer radius

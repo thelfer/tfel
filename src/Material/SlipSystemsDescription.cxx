@@ -712,7 +712,7 @@ namespace tfel::material {
         ims[i].push_back(std::move(ssi));
       }
     }
-    return {ims};
+    return SlipSystemsDescription::InteractionMatrixStructure{ims};
   }
 
   SlipSystemsDescription::InteractionMatrixStructure::

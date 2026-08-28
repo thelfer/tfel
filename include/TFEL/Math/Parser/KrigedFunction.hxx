@@ -41,8 +41,8 @@ namespace tfel::math::parser {
     typedef typename KrigingVariable<N, double>::type Variable;
     typedef std::pair<Variable, double> Point;
 
-    KrigedFunction(const std::vector<Point>&,  // data
-                   const double = 0.);         // nugget effect
+    explicit KrigedFunction(const std::vector<Point>&,  // data
+                            const double = 0.);         // nugget effect
     KrigedFunction(const KrigedFunction&);
     //
     KrigedFunction() = delete;

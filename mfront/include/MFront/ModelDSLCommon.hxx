@@ -40,7 +40,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    ModelDSLCommon(const DSLOptions&);
+    explicit ModelDSLCommon(const DSLOptions&);
     //
     [[nodiscard]] DSLTarget getTargetType() const final;
     void overrideByAParameter(const std::string&, const double) final;

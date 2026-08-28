@@ -31,7 +31,7 @@ namespace tfel::check {
      * \brief default constructor
      * \param[in] b: use terminal colors
      */
-    PCTextDriver(const bool);
+    explicit PCTextDriver(const bool);
     /*!
      * \brief default constructor
      * \param[in] os: external stream
@@ -39,13 +39,13 @@ namespace tfel::check {
      *
      * \note user is responsible of keeping the stream alive
      */
-    PCTextDriver(std::ostream&, const bool = false);
+    explicit PCTextDriver(std::ostream&, const bool = false);
     /*!
      * \brief default constructor
      * \param[in] f: output file
      * \param[in] b: use terminal colors
      */
-    PCTextDriver(const std::string&, const bool = false);
+    explicit PCTextDriver(const std::string&, const bool = false);
     //
     void addMessage(const std::string&) override;
     void reportSkippedTest(const std::string&) override;

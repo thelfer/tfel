@@ -18,6 +18,7 @@
 #include "Cyrano/OutputStatus.hxx"
 #include "Cyrano/OutOfBoundsPolicy.hxx"
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -32,5 +33,6 @@ typedef CyranoRealType(CYRANO_ADDCALL_PTR CyranoMaterialPropertyPtr)(
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_CYRANO_MATERIALPROPERTY_HXX */

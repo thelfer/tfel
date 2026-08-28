@@ -53,6 +53,10 @@ if(HAVE_DIANAFEA)
   add_subdirectory(dianafea)
 endif(HAVE_DIANAFEA)
 
+if(enable-tdls)
+  add_subdirectory(tdls)
+endif(enable-tdls)
+
 configure_file(PolyCrystals_DD_CC.mfront PolyCrystals_DD_CC.mfront.in @ONLY)
 
 install_mfront_data(tests/behaviours DigitSeparatorTest.mfront)

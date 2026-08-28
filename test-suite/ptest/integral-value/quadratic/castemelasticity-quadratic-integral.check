@@ -1,3 +1,5 @@
+@Requires{"mfront::behaviour::castem_interface"};
+
 @Command "@mfront@ --obuild --interface=castem OrthotropicElastic.mfront";
 @Command "@mtest@ castemelasticity-quadratic-integral.ptest";
 @TestType Absolute;

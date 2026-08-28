@@ -63,18 +63,20 @@ namespace tfel::utilities::internals {
       public GenTypeSpecializedAccessor<Child, typename List::Current>
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
   {
-    //! a simple alias.
-    typedef typename List::Current Current;
+    //! \brief a simple alias.
+    using Current = typename List::Current;
 
    public:
-    //! cast operator.
-    TFEL_INLINE operator Current&() {
+    // NOLINTBEGIN(google-explicit-constructor)
+    //! \brief cast operator.
+    TFEL_INLINE explicit(false) operator Current&() {
       return static_cast<Child*>(this)->template get<Current>();
     }
-    //! cast operator (const version).
-    TFEL_INLINE operator const Current&() const {
+    //! \brief cast operator (const version).
+    TFEL_INLINE explicit(false) operator const Current&() const {
       return static_cast<const Child*>(this)->template get<Current>();
     }
+    // NOLINTEND(google-explicit-constructor)
   };
 
   /*!
@@ -131,7 +133,7 @@ namespace tfel::utilities {
     GenTypeBase(const GenTypeBase&) = default;
     //! \brief constructor from a value
     template <typename T1>
-    GenTypeBase(T1&& value) requires(isValidType<T1>)
+    explicit(false) GenTypeBase(T1&& value) requires(isValidType<T1>)
         : variant(std::forward<T1>(value)) {}
     // \brief assignement operator
     GenTypeBase& operator=(GenTypeBase&&) = default;

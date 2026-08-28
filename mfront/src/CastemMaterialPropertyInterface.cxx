@@ -50,6 +50,13 @@ namespace mfront {
 
   CastemMaterialPropertyInterface::CastemMaterialPropertyInterface() = default;
 
+  void CastemMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, CastemMaterialPropertyInterface::tokens_iterator>
   CastemMaterialPropertyInterface::treatKeyword(
       const std::string& k,
@@ -379,8 +386,8 @@ namespace mfront {
         out, name + "_src",
         tfel::utilities::replace_all(
             tfel::utilities::tokenize(file, tfel::system::dirSeparator())
-                .back()),
-        "\\", "\\\\");
+                .back(),
+            "\\", "\\\\"));
 #else
     exportStringSymbol(
         out, name + "_src",

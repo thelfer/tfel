@@ -314,7 +314,7 @@ namespace mfront {
     //! \brief constructor
     BehaviourData();
     //! \brief copy constructor
-    explicit BehaviourData(const BehaviourData&);
+    BehaviourData(const BehaviourData&);
     //! \brief move constructor (disabled)
     BehaviourData(BehaviourData&&) = delete;
     //! \brief assignement operator (disabled)
@@ -1067,9 +1067,9 @@ namespace mfront {
      */
     struct CodeBlocksAggregator {
       //! \brief a simple alias
-      typedef BehaviourData::Position Position;
+      using Position = BehaviourData::Position;
       //! \brief a simple alias
-      typedef BehaviourData::Mode Mode;
+      using Model = BehaviourData::Mode;
       //! \brief constructor
       CodeBlocksAggregator();
       CodeBlocksAggregator(CodeBlocksAggregator&&) noexcept = default;

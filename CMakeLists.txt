@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0022 NEW)
 cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0074 NEW)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
   cmake_policy(SET CMP0167 NEW)  
 endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
@@ -120,12 +121,15 @@ option(enable-testing "enable tests" ON)
 option(enable-mfront-quantity-tests "enable tests of behaviours using quantities (such tests fails on old compilers)" ON)
 if(enable-testing)
   enable_testing()
+  add_custom_target(build-tests)
   if(CMAKE_CONFIGURATION_TYPES)
     add_custom_target(check COMMAND
-      ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
+      ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>
+      DEPENDS build-tests)
   else(CMAKE_CONFIGURATION_TYPES)
     add_custom_target(check COMMAND
-      ${CMAKE_CTEST_COMMAND} -T test )
+      ${CMAKE_CTEST_COMMAND} -T test
+      DEPENDS build-tests)
   endif(CMAKE_CONFIGURATION_TYPES)
 endif()
 
@@ -375,6 +379,18 @@ if(enable-java)
   tfel_add_c_cxx_definitions("TFEL_JAVA_INCLUDES=\"${JNI_INCLUDES_FLAGS}\"")
 endif(enable-java)
 
+# Add support for Tiny Device-callable Linear Solver library
+#
+# - https://trsxvz.github.io/TDLS/index.html
+# - https://github.com/trsxvz/TDLS
+
+option(enable-tdls "enable TDLS support" OFF)
+if(enable-tdls)
+  find_package(tdls REQUIRED)
+  option(enable-tdls-as-default-linear-system-solver-in-mfront
+         "use TDLS as the default linear system solver in MFront" OFF)
+endif(enable-tdls)
+
 # cadna
 include(cmake/modules/cadna.cmake)
 
@@ -578,17 +594,10 @@ else(TFEL_APPEND_SUFFIX)
 endif(TFEL_APPEND_SUFFIX)
 
 # install test-suite
-if(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY test-suite
-    DESTINATION share/tfel-${TFEL_SUFFIX}/
-    COMPONENT code
-    PATTERN ".svn" EXCLUDE)
-else(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY test-suite
-    DESTINATION share/tfel/
-    COMPONENT code
-    PATTERN ".svn" EXCLUDE)
-endif(TFEL_APPEND_SUFFIX)
+install(DIRECTORY test-suite
+  DESTINATION ${TFEL_DATAROOTDIR}
+  COMPONENT code
+  PATTERN ".svn" EXCLUDE)
 
 set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})

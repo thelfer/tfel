@@ -18,9 +18,11 @@ namespace tfel::math {
 
   template <typename UnaryOperator, typename FirstArgument>
   struct MultiIndicesUnaryOperatorFunctor {
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor(
         FirstArgument& a)
         : first_argument(a) {}  // end of MultiIndicesUnaryOperatorFunctor
+    // NOLINTEND(google-explicit-constructor)
     TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor(
         const UnaryOperator& o, FirstArgument& a)
         : unary_operator(o),

@@ -29,7 +29,7 @@ namespace tfel::check {
    * \brief class in charg of build XML report for JUnit.
    */
   struct TFELCHECK_VISIBILITY_EXPORT PCJUnitDriver : public PCILogDriver {
-    PCJUnitDriver(const std::string& f = "");
+    explicit PCJUnitDriver(const std::string& f = "");
     void addMessage(const std::string&) override;
     void addTestResult(const std::string&,
                        const std::string&,

@@ -27,7 +27,7 @@ namespace tfel::math {
 
   template <TensorConcept A>
   struct TFEL_VISIBILITY_LOCAL TensorTransposeExprBase : public ExprBase {
-    typedef EmptyRunTimeProperties RunTimeProperties;
+    using RunTimeProperties = EmptyRunTimeProperties;
     using IndexType = index_type<A>;
     using NumType = numeric_type<A>;
 
@@ -37,15 +37,15 @@ namespace tfel::math {
     }
 
    protected:
-    typedef NumType value_type;
-    typedef NumType* pointer;
-    typedef const NumType* const_pointer;
-    typedef NumType& reference;
-    typedef const NumType& const_reference;
-    typedef IndexType size_type;
-    typedef ptrdiff_t difference_type;
+    using value_type = NumType;
+    using pointer = NumType*;
+    using const_pointer = const NumType*;
+    using reference = NumType&;
+    using const_reference = const NumType&;
+    using size_type = IndexType;
+    using difference_type = ptrdiff_t;
 
-    TFEL_HOST_DEVICE constexpr TensorTransposeExprBase(A l) : a(l) {}
+    TFEL_HOST_DEVICE constexpr explicit TensorTransposeExprBase(A l) : a(l) {}
 
     ArgumentStorage<A> a;
   };
@@ -55,7 +55,7 @@ namespace tfel::math {
       : public TensorTransposeExprBase<A> {
     static_assert(getSpaceDimension<A>() == 1u);
 
-    TFEL_HOST_DEVICE constexpr TensorTransposeExpr1D(A l) noexcept
+    TFEL_HOST_DEVICE constexpr explicit TensorTransposeExpr1D(A l) noexcept
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}
 
     TFEL_HOST_DEVICE constexpr auto operator[](
@@ -75,7 +75,7 @@ namespace tfel::math {
       : public TensorTransposeExprBase<A> {
     static_assert(getSpaceDimension<A>() == 2u);
 
-    TFEL_HOST_DEVICE constexpr TensorTransposeExpr2D(A l) noexcept
+    TFEL_HOST_DEVICE constexpr explicit TensorTransposeExpr2D(A l) noexcept
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}
 
     TFEL_HOST_DEVICE constexpr auto operator[](
@@ -115,7 +115,7 @@ namespace tfel::math {
       : public TensorTransposeExprBase<A> {
     static_assert(getSpaceDimension<A>() == 3u);
 
-    TFEL_HOST_DEVICE constexpr TensorTransposeExpr3D(A l) noexcept
+    TFEL_HOST_DEVICE constexpr explicit TensorTransposeExpr3D(A l) noexcept
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}
 
     TFEL_HOST_DEVICE constexpr auto operator[](

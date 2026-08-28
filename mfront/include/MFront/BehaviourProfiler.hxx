@@ -106,8 +106,8 @@ namespace mfront {
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type COMPUTEFDF = 10;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type TINYMATRIXSOLVE =
-        11;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type
+        SOLVELINEARSYSTEM = 11;
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type
         COMPUTEFINALTHERMODYNAMICFORCES = 12;

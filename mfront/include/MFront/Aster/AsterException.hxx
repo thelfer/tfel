@@ -22,7 +22,7 @@
 namespace aster {
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterException : public std::exception {
-    AsterException(const std::string&);
+    explicit AsterException(std::string);
     AsterException(const AsterException&);
     //
     AsterException() = delete;
@@ -39,7 +39,7 @@ namespace aster {
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidNTENSValue final
       : public AsterException {
-    AsterInvalidNTENSValue(const unsigned short);
+    explicit AsterInvalidNTENSValue(const unsigned short);
     AsterInvalidNTENSValue(const AsterInvalidNTENSValue&);
     //
     AsterInvalidNTENSValue() = delete;

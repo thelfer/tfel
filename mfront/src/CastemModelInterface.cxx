@@ -77,7 +77,7 @@ namespace mfront {
     os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n"
        << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
+      os << "using " << a << " [[maybe_unused]] = typename "
          << "tfel::config::ScalarTypes<double, " << use_qt << ">::" << a
          << ";\n";
     }
@@ -125,6 +125,13 @@ namespace mfront {
   }  // end of writeUMATFunctionArguments
 
   CastemModelInterface::CastemModelInterface() = default;
+
+  void CastemModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::string CastemModelInterface::getLibraryName(
       const ModelDescription& md) const {

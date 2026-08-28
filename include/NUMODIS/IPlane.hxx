@@ -40,7 +40,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \param nindices number of indices used to store n      */
     //===========================================================
-    IPlane(const unsigned nindices = 3) : _index(nindices, 0) {}
+    explicit IPlane(const unsigned nindices = 3) : _index(nindices, 0) {}
 
     //===========================================================
     // IPlane::IPlane

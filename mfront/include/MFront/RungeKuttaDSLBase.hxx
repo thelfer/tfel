@@ -28,7 +28,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    RungeKuttaDSLBase(const DSLOptions&);
+    explicit RungeKuttaDSLBase(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

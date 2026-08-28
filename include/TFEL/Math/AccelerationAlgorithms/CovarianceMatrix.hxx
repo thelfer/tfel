@@ -31,7 +31,7 @@ namespace tfel::math::anderson {
     CovarianceMatrix();
     //! Constructor
     //! \param Nmax Matrix size
-    CovarianceMatrix(size_type Nmax);
+    explicit CovarianceMatrix(size_type Nmax);
     //! Destructor
     virtual ~CovarianceMatrix();
     //! Resize the matrix

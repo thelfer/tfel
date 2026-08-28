@@ -48,8 +48,8 @@ namespace tfel::math {
       return -(*ores);
     };
     auto is_nan = [](const real x) {
-      if constexpr (isQuantity<real>()) {
-        return ieee754::isnan(x.getValue());
+      if constexpr (ImmutableQuantityConcept<real>) {
+        return ieee754::isnan(base_type_cast(x));
       } else {
         return ieee754::isnan(x);
       }
@@ -58,8 +58,8 @@ namespace tfel::math {
       return {};
     }
     auto is_infinite = [](const real x) {
-      if constexpr (isQuantity<real>()) {
-        return (ieee754::fpclassify(x.getValue()) == FP_INFINITE) ||
+      if constexpr (ImmutableQuantityConcept<real>) {
+        return (ieee754::fpclassify(base_type_cast(x)) == FP_INFINITE) ||
                (x >= std::numeric_limits<base_type<real>>::max()) ||
                (x <= -std::numeric_limits<base_type<real>>::max());
       } else {
@@ -135,8 +135,8 @@ namespace tfel::math {
       return std::make_tuple(-std::get<0>(*ores), std::get<1>(*ores));
     };
     auto is_nan = [](const real x) {
-      if constexpr (isQuantity<real>()) {
-        return ieee754::isnan(x.getValue());
+      if constexpr (ImmutableQuantityConcept<real>) {
+        return ieee754::isnan(base_type_cast(x));
       } else {
         return ieee754::isnan(x);
       }
@@ -145,8 +145,8 @@ namespace tfel::math {
       return {};
     }
     auto is_infinite = [](const real x) {
-      if constexpr (isQuantity<real>()) {
-        return ieee754::fpclassify(x.getValue()) == FP_INFINITE;
+      if constexpr (ImmutableQuantityConcept<real>) {
+        return ieee754::fpclassify(base_type_cast(x)) == FP_INFINITE;
       } else {
         return ieee754::fpclassify(x) == FP_INFINITE;
       }

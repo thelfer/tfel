@@ -16,7 +16,7 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/StressCriterion.hxx"

@@ -93,7 +93,7 @@ namespace mfront {
        * \param[in] f: type flag
        * \param[in] e: type exponent
        */
-      TypeSize(const TypeFlag, const unsigned int = 1u);
+      explicit TypeSize(const TypeFlag, const unsigned int = 1u);
       /*!
        * \brief constructor
        * \param[in] a: array size

@@ -27,7 +27,7 @@ namespace ansys {
    */
   struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysException : public std::exception {
     //! \brief constructor
-    AnsysException(std::string);
+    explicit AnsysException(std::string);
     //! \brief move constructor
     AnsysException(AnsysException&&) noexcept;
     //! \brief copy constructor
@@ -55,7 +55,7 @@ namespace ansys {
     /*!
      * \param[in] b : behaviour name
      */
-    AnsysInvalidModellingHypothesis(const char*);
+    explicit AnsysInvalidModellingHypothesis(const char*);
     //! \brief move constructor
     AnsysInvalidModellingHypothesis(AnsysInvalidModellingHypothesis&&) noexcept;
     //! \brief copy constructor
@@ -72,7 +72,7 @@ namespace ansys {
    */
   struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidNTENSValue final
       : public AnsysException {
-    AnsysInvalidNTENSValue(const unsigned short);
+    explicit AnsysInvalidNTENSValue(const unsigned short);
     //! \brief move constructor
     AnsysInvalidNTENSValue(AnsysInvalidNTENSValue&&) noexcept;
     //! \brief copy constructor

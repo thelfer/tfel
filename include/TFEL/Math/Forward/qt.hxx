@@ -14,9 +14,17 @@
 #ifndef LIB_TFEL_MATH_FORWARD_QT_HXX
 #define LIB_TFEL_MATH_FORWARD_QT_HXX
 
+#include <array>
+#include <numeric>
+#include <concepts>
+#include <algorithm>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
+#include "TFEL/TypeTraits/BaseType.hxx"
+#include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
+#include "TFEL/Math/Forward/General.hxx"
+#include "TFEL/Math/Forward/Unit.hxx"
 
 namespace tfel::math::internals {
 
@@ -24,275 +32,18 @@ namespace tfel::math::internals {
    * \brief an helper structure which holds the value internally.
    * \param ValueType: the underlying numerical type.
    */
-  template <typename ValueType, bool AllowImplicitConversion>
+  template <StandardArithmeticTypeConcept ValueType,
+            bool AllowImplicitConversion>
   struct QuantityValueOwnershipPolicy;
   /*!
    * \brief an helper structure which wraps a reference to an external value.
    * \param ValueType: the underlying numerical type.
    */
-  template <typename ValueType, bool AllowImplicitConversion>
+  template <StandardArithmeticTypeConcept ValueType,
+            bool AllowImplicitConversion>
   struct QuantityReferenceOwnershipPolicy;
 
 }  // end of namespace tfel::math::internals
-
-namespace tfel::math {
-
-  /*!
-   * \brief structure describing an unit
-   */
-  template <typename N1,
-            typename N2,
-            typename N3,
-            typename N4,
-            typename N5,
-            typename N6,
-            typename N7,
-            typename D1,
-            typename D2,
-            typename D3,
-            typename D4,
-            typename D5,
-            typename D6,
-            typename D7>
-  struct Unit;
-
-  template <int N1,
-            int N2,
-            int N3,
-            int N4,
-            int N5,
-            int N6,
-            int N7,
-            unsigned int D1 = 1,
-            unsigned int D2 = 1,
-            unsigned int D3 = 1,
-            unsigned int D4 = 1,
-            unsigned int D5 = 1,
-            unsigned int D6 = 1,
-            unsigned int D7 = 1>
-  struct GenerateUnit {
-    //! \brief result of the metafunction
-    using type = Unit<std::integral_constant<int, N1>,
-                      std::integral_constant<int, N2>,
-                      std::integral_constant<int, N3>,
-                      std::integral_constant<int, N4>,
-                      std::integral_constant<int, N5>,
-                      std::integral_constant<int, N6>,
-                      std::integral_constant<int, N7>,
-                      std::integral_constant<unsigned int, D1>,
-                      std::integral_constant<unsigned int, D2>,
-                      std::integral_constant<unsigned int, D3>,
-                      std::integral_constant<unsigned int, D4>,
-                      std::integral_constant<unsigned int, D5>,
-                      std::integral_constant<unsigned int, D6>,
-                      std::integral_constant<unsigned int, D7>>;
-  };
-
-  namespace internal {
-
-    template <typename T>
-    struct UnitConceptImplementation : std::false_type {};
-
-    template <int N1,
-              int N2,
-              int N3,
-              int N4,
-              int N5,
-              int N6,
-              int N7,
-              unsigned int D1,
-              unsigned int D2,
-              unsigned int D3,
-              unsigned int D4,
-              unsigned int D5,
-              unsigned int D6,
-              unsigned int D7>
-    struct UnitConceptImplementation<
-        Unit<std::integral_constant<int, N1>,
-             std::integral_constant<int, N2>,
-             std::integral_constant<int, N3>,
-             std::integral_constant<int, N4>,
-             std::integral_constant<int, N5>,
-             std::integral_constant<int, N6>,
-             std::integral_constant<int, N7>,
-             std::integral_constant<unsigned int, D1>,
-             std::integral_constant<unsigned int, D2>,
-             std::integral_constant<unsigned int, D3>,
-             std::integral_constant<unsigned int, D4>,
-             std::integral_constant<unsigned int, D5>,
-             std::integral_constant<unsigned int, D6>,
-             std::integral_constant<unsigned int, D7>>> : std::true_type {};
-
-  }  // namespace internal
-
-  template <typename T>
-  concept UnitConcept = internal::UnitConceptImplementation<T>::value;
-
-}  // end of namespace tfel::math
-
-namespace tfel::math::unit {
-
-  //! \brief a simple alias
-  using NoUnit = Unit<std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<int, 0>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>,
-                      std::integral_constant<unsigned int, 1u>>;
-
-  /*!
-   * \brief Declares the Mass unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, 0, 0, 0, 0, 0, 0>::type Mass;
-  /*!
-   * \brief Declares the Length unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 1, 0, 0, 0, 0, 0>::type Length;
-  /*!
-   * \brief Declares the Time unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 0, 1, 0, 0, 0, 0>::type Time;
-  /*!
-   * \brief Declares the Ampere unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 0, 0, 1, 0, 0, 0>::type Ampere;
-  /*!
-   * \brief Declares the Temperature unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type Temperature;
-  /*!
-   * \brief Declares the Kelvin unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type Kelvin;
-  /*!
-   * \brief Declares the Candela unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 0, 0, 0, 0, 1, 0>::type Candela;
-  /*!
-   * \brief Declares the Mole unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 0, 0, 0, 0, 0, 1>::type Mole;
-
-  // Additional units
-
-  /*!
-   * \brief Declares the InvLength unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, -1, 0, 0, 0, 0, 0>::type InvLength;  // m-1
-
-  /*!
-   * \brief Declares the InvTemperature unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 0, 0, 0, -1, 0, 0>::type InvTemperature;
-
-  /*!
-   * \brief Declares the Frequency unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 0, -1, 0, 0, 0, 0>::type Frequency;  // s-1
-
-  /*!
-   * \brief Declares the Speed unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 1, -1, 0, 0, 0, 0>::type Speed;  // m.s-1
-
-  /*!
-   * \brief Declares the Acceleration unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<0, 1, -2, 0, 0, 0, 0>::type Acceleration;  // m.s-2
-
-  /*!
-   * \brief Declares the Momentum unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, 1, -1, 0, 0, 0, 0>::type Momentum;  // kg.m.s-1
-
-  /*!
-   * \brief Declares the Momentum unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, 1, -2, 0, 0, 0, 0>::type Force;  // kg.m.s-2
-
-  /*!
-   * \brief Declares the Newton unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, 1, -2, 0, 0, 0, 0>::type Newton;  // kg.m.s-2
-
-  /*!
-   * \brief Declares the Stress unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type Stress;  // kg.m-1.s-2
-
-  /*!
-   * \brief Declares the StressRate unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, -1, -3, 0, 0, 0, 0>::type StressRate;  // kg.m-1.s-3
-
-  /*!
-   * \brief Declares the Pressure unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type Pressure;  // kg.m-1.s-2
-
-  /*!
-   * \brief Declares the Energy unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, 2, -2, 0, 0, 0, 0>::type Energy;  // kg.m2.s-2
-
-  /*!
-   * \brief Declares the EnergyDensity unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, -1, -2, 0, 0, 0, 0>::type
-      EnergyDensity;  // kg.m-1.s-2
-  /*!
-   * \brief Declares the Density unit
-   * \see GenerateUnit
-   */
-  typedef GenerateUnit<1, -3, 0, 0, 0, 0, 0>::type Density;  // k.m-3
-
-  /*!
-   * \brief Declares the TemperatureGradient unit
-   */
-  using TemperatureGradient =
-      GenerateUnit<0, -1, 0, 0, 1, 0, 0>::type;  // K.m^{-1}
-  /*!
-   * \brief Declares the ThermalConductivity
-   * unit
-   */
-  typedef GenerateUnit<1, 1, -3, 0, -1, 0, 0>::type
-      ThermalConductivity;  // kg.m.s-3.K-1
-
-  /*!
-   * \brief Declares the HeatFluxDensity unit
-   */
-  typedef GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type HeatFluxDensity;  // kg.s-3
-
-}  // end of namespace tfel::math::unit
 
 namespace tfel::math {
 
@@ -309,7 +60,9 @@ namespace tfel::math {
    * \author Thomas Helfer
    * \date   06 Jun 2006
    */
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <unit::UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType,
+            typename OwnershipPolicy>
   struct [[nodiscard]] Quantity;
 
   /*!
@@ -325,8 +78,8 @@ namespace tfel::math {
   };
 
   //! \brief partial specialisation for quantities.
-  template <UnitConcept QuantityUnitType,
-            typename QuantityValueType,
+  template <unit::UnitConcept QuantityUnitType,
+            StandardArithmeticTypeConcept QuantityValueType,
             typename QuantityOwnershipPolicy>
   struct QuantityTraits<
       Quantity<QuantityUnitType, QuantityValueType, QuantityOwnershipPolicy>> {
@@ -337,28 +90,18 @@ namespace tfel::math {
   };
 
   //! \brief a simple alias
-  template <UnitConcept UnitType, typename ValueType = double>
-  using qt = Quantity<UnitType,
-                      ValueType,
-                      tfel::math::internals::QuantityValueOwnershipPolicy<
-                          ValueType,
-                          std::is_same_v<UnitType, unit::NoUnit>>>;
+  template <unit::UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType = double>
+  struct qt;
+
   //! \brief a simple alias
-  template <UnitConcept UnitType, typename ValueType = double>
-  using qt_ref =
-      Quantity<UnitType,
-               ValueType,
-               tfel::math::internals::QuantityReferenceOwnershipPolicy<
-                   ValueType,
-                   std::is_same_v<UnitType, unit::NoUnit>>>;
+  template <unit::UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType = double>
+  struct qt_ref;
   //! \brief a simple alias
-  template <UnitConcept UnitType, typename ValueType = double>
-  using const_qt_ref =
-      Quantity<UnitType,
-               ValueType,
-               tfel::math::internals::QuantityReferenceOwnershipPolicy<
-                   const ValueType,
-                   std::is_same_v<UnitType, unit::NoUnit>>>;
+  template <unit::UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType = double>
+  struct const_qt_ref;
   //! \brief an helper metafunction which transforms a quantity type into the a
   //! reference
   template <typename QuantityType>
@@ -367,30 +110,108 @@ namespace tfel::math {
     using type = tfel::meta::InvalidType;
   };
   //! \brief partial specialisation for quantities
-  template <UnitConcept UnitType, typename ValueType>
+  template <unit::UnitConcept UnitType, StandardArithmeticTypeConcept ValueType>
   struct MakeQuantityReferenceType<qt<UnitType, ValueType>> {
     //! \brief result
     using type = qt_ref<UnitType, ValueType>;
   };  // end of MakeQuantityReferenceType<qt<UnitType,ValueType>>
 
-  namespace internals {
+  //! \brief cast the value to the base type
+  template <unit::UnitConcept UnitType,
+            StandardArithmeticTypeConcept ValueType,
+            typename OwnershipPolicy>
+  TFEL_HOST_DEVICE constexpr decltype(auto) base_type_cast(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept;
+  //
+  template <typename T>
+  concept ImmutableQuantityConcept =
+      ((unit::UnitConcept<typename QuantityTraits<T>::UnitType>)&&  //
+       ((requires(const T& v) {
+          {
+            base_type_cast(v)
+            } -> std::same_as<const typename QuantityTraits<T>::ValueType&>;
+        }) ||
+        (requires(const T& v) {
+          {
+            base_type_cast(v)
+            } -> std::same_as<typename QuantityTraits<T>::ValueType>;
+        })));
+  //
+  template <typename T>
+  concept QuantityConcept =
+      ((ImmutableQuantityConcept<T>)&&  //
+       (requires(T & v) {
+         {
+           base_type_cast(v)
+           } -> std::same_as<typename QuantityTraits<T>::ValueType&>;
+       }));
+  //
+  template <typename T>
+  concept NoUnitImmutableQuantityConcept =
+      ((ImmutableQuantityConcept<T>)&&  //
+       (unit::areUnitsEqual<typename QuantityTraits<T>::UnitType,
+                            tfel::math::unit::NoUnit>));
+  //
+  template <typename T>
+  concept NoUnitQuantityConcept =
+      ((QuantityConcept<T>)&&  //
+       (unit::areUnitsEqual<typename QuantityTraits<T>::UnitType,
+                            tfel::math::unit::NoUnit>));
 
-    template <typename ValueType>
-    struct MakeQuantityValueType {
-      //! \brief result of the metafunction
-      using type = ValueType;
-    };  // end of struct MakeQuantityValueType
+  /*!
+   * \brief a function testing if a type is a quantity
+   *
+   * \note this function is kept for backward compatility with C++-17 when
+   * concepts were not yet available
+   */
+  template <typename T>
+  TFEL_HOST_DEVICE constexpr bool isQuantity() {
+    return QuantityConcept<std::decay_t<T>>;
+  }
 
-    template <typename ValueType>
-    struct MakeQuantityValueType<qt<unit::NoUnit, ValueType>> {
-      //! \brief result of the metafunction
-      using type = ValueType;
-    };  // end of struct MakeQuantityValueType
+}  // end of namespace tfel::math
 
-  }  // end of namespace internals
+namespace tfel::typetraits {
+
+  //! \brief partial specialisation for quantities
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
+  struct BaseType<QuantityType> {
+    //! \brief result of the metafunction
+    using type = typename tfel::math::QuantityTraits<QuantityType>::ValueType;
+  };
+
+  /*!
+   * \brief Partial specialisation for qt
+   * \see   IsFundamentalNumericType
+   */
+  template <tfel::math::NoUnitImmutableQuantityConcept QuantityType>
+  struct IsFundamentalNumericType<QuantityType> {
+    //! \brief result of the metafunction
+    static constexpr bool cond = true;
+  };
+
+  /*!
+   * \brief Partial specialisation for qt
+   * \see   IsFundamentalNumericType
+   */
+  template <tfel::math::NoUnitQuantityConcept QuantityType>
+  struct IsFundamentalNumericType<const QuantityType> {
+    //! \brief result of the metafunction
+    static constexpr bool cond = true;
+  };
+
+}  // end of namespace tfel::typetraits
+
+namespace tfel::math {
+
+  template <ImmutableQuantityConcept T>
+  using quantity_unit = typename QuantityTraits<T>::UnitType;
+
+  template <ImmutableQuantityConcept T>
+  using qt_rebind = qt<quantity_unit<T>, base_type<T>>;
 
   //! \brief a simple alias
-  template <typename ValueType,
+  template <FundamentalNumericTypeConcept ValueType,
             int N1 = 0,
             int N2 = 0,
             int N3 = 0,
@@ -405,26 +226,26 @@ namespace tfel::math {
             unsigned int D5 = 1,
             unsigned int D6 = 1,
             unsigned int D7 = 1>
-  using quantity = qt<
-      typename GenerateUnit<N1,
-                            N2,
-                            N3,
-                            N4,
-                            N5,
-                            N6,
-                            N7,
-                            D1,
-                            D2,
-                            D3,
-                            D4,
-                            D5,
-                            D6,
-                            D7>::type,
-      typename tfel::math::internals::MakeQuantityValueType<ValueType>::type>;
+  using quantity =
+      qt<typename unit::UnitRebind<unit::makeUnitExponents<N1,
+                                                           N2,
+                                                           N3,
+                                                           N4,
+                                                           N5,
+                                                           N6,
+                                                           N7,
+                                                           D1,
+                                                           D2,
+                                                           D3,
+                                                           D4,
+                                                           D5,
+                                                           D6,
+                                                           D7>()>::type,
+         base_type<ValueType>>;
 
   //! \brief a simple alias
   template <bool use_qt,
-            typename ValueType,
+            FundamentalNumericTypeConcept ValueType,
             int N1 = 0,
             int N2 = 0,
             int N3 = 0,
@@ -456,24 +277,6 @@ namespace tfel::math {
                                                             D6,
                                                             D7>,
                                                    ValueType>;
-
-  namespace internals {
-
-    template <typename T>
-    struct IsQuantity : std::false_type {};
-
-    template <UnitConcept UnitType,
-              typename ValueType,
-              typename OwnershipPolicy>
-    struct IsQuantity<Quantity<UnitType, ValueType, OwnershipPolicy>>
-        : std::true_type {};
-
-  }  // end of namespace internals
-
-  template <typename T>
-  TFEL_HOST_DEVICE constexpr auto isQuantity() {
-    return tfel::math::internals::IsQuantity<std::decay_t<T>>::value;
-  }
 
 }  // end of namespace tfel::math
 
