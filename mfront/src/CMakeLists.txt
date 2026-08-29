@@ -218,6 +218,7 @@ set(TFELMFront_SOURCES
     GenericParallel/MaterialProperty/ParallelSTLBackend.cxx
     GenericParallel/MaterialProperty/SYCLBackend.cxx
     GenericBehaviourInterface.cxx
+    CudaGenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx
     GenericModelInterface.cxx
     OptionDescription.cxx
