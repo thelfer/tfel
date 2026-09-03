@@ -88,10 +88,10 @@ namespace mfront {
       }
     }
     if (opts.contains("out_of_tile_search_threshold")) {
-      const auto v =
-          is<int>(opts, "out_of_tile_search_threshold")
-              ? static_cast<double>(get<int>(opts, "out_of_tile_search_threshold"))
-              : get<double>(opts, "out_of_tile_search_threshold");
+      const auto v = is<int>(opts, "out_of_tile_search_threshold")
+                         ? static_cast<double>(
+                               get<int>(opts, "out_of_tile_search_threshold"))
+                         : get<double>(opts, "out_of_tile_search_threshold");
       if ((v < 0) || (std::fpclassify(v) == FP_ZERO)) {
         tfel::raise(
             "TDLSLinearSystemSolver: invalid value for the "
@@ -101,9 +101,10 @@ namespace mfront {
       this->out_of_tile_search_threshold = v;
     }
     if (opts.contains("singular_pivot_threshold")) {
-      const auto v = is<int>(opts, "singular_pivot_threshold")
-                         ? static_cast<double>(get<int>(opts, "singular_pivot_threshold"))
-                         : get<double>(opts, "singular_pivot_threshold");
+      const auto v =
+          is<int>(opts, "singular_pivot_threshold")
+              ? static_cast<double>(get<int>(opts, "singular_pivot_threshold"))
+              : get<double>(opts, "singular_pivot_threshold");
       if ((v < 0) || (std::fpclassify(v) == FP_ZERO)) {
         tfel::raise(
             "TDLSLinearSystemSolver: invalid value for the "
