@@ -93,6 +93,23 @@
   } while (0)
 
 /*!
+ * \def TFEL_TESTS_CHECK
+ * \brief an helper macro to ease the use of TestCase::registerResult
+ * \param X: value to be tested
+ */
+#define TFEL_TESTS_CHECK(X)                                 \
+  do {                                                      \
+    try {                                                   \
+      TestCase::registerResult("check: '" #X "'", X);       \
+    } catch (std::exception & tfel_test_exception) {        \
+      TestCase::registerResult("check: '" #X "'", false,    \
+                               tfel_test_exception.what()); \
+    } catch (...) {                                         \
+      TestCase::registerResult("check: '" #X "'", false);   \
+    }                                                       \
+  } while (0)
+
+/*!
  * \def TFEL_TESTS_CHECK_EQUAL
  * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X: value to be tested
