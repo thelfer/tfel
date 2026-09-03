@@ -17,6 +17,8 @@
 #include <string>
 #include <string_view>
 #include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Raise.hxx"
+#include "TFEL/Macros.hxx"
 #include "TFEL/Tests/Test.hxx"
 #include "TFEL/Tests/TestResult.hxx"
 
@@ -36,16 +38,21 @@
  * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X: code to be evaluated
  */
-#define TFEL_TESTS_ASSERT(X)                                  \
-  do {                                                        \
-    try {                                                     \
-      TestCase::registerResult("assertion: '" #X "'", (X));   \
-    } catch (std::exception & tfel_test_exception) {          \
-      TestCase::registerResult("assertion: '" #X "'", false,  \
-                               tfel_test_exception.what());   \
-    } catch (...) {                                           \
-      TestCase::registerResult("assertion: '" #X "'", false); \
-    }                                                         \
+#define TFEL_TESTS_ASSERT(X)                                                \
+  do {                                                                      \
+    const auto TFEL_TEMPORARY_VARIABLE(TFEL_TESTS_ASSERT) = (X);            \
+    try {                                                                   \
+      TestCase::registerResult("assertion: '" #X "'",                       \
+                               TFEL_TEMPORARY_VARIABLE(TFEL_TESTS_ASSERT)); \
+    } catch (std::exception & tfel_test_exception) {                        \
+      TestCase::registerResult("assertion: '" #X "'", false,                \
+                               tfel_test_exception.what());                 \
+    } catch (...) {                                                         \
+      TestCase::registerResult("assertion: '" #X "'", false);               \
+    }                                                                       \
+    if (!(TFEL_TEMPORARY_VARIABLE(TFEL_TESTS_ASSERT))) {                    \
+      tfel::raise("assertion: '" #X "' failed");                            \
+    }                                                                       \
   } while (0)
 
 /*!

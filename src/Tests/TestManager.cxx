@@ -13,11 +13,41 @@
 
 #include <chrono>
 #include <stdexcept>
+#include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Tests/XMLTestOutput.hxx"
 #include "TFEL/Tests/StdStreamTestOutput.hxx"
 
 namespace tfel::tests {
+
+  //! \brief a class that reports the failure of the construction of a test
+  struct TestConstructionFailure : TestCase {
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the test whose construction failed
+     * \param[in] r: reason of the failure
+     */
+    TestConstructionFailure(const std::string& n, std::string_view r)
+        : TestCase("TestConstructionFailure", n), reason(r) {}
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the test whose construction failed
+     */
+    TestConstructionFailure(const std::string& n)
+        : TestCase("TestConstructionFailure", n), reason("unknown reason") {}
+    //
+    [[nodiscard]] TestResult execute() override {
+      this->registerResult("call to the constructor the test", false,
+                           this->reason);
+      return this->result;
+    }
+    //! \brief destructor
+    ~TestConstructionFailure() override = default;
+
+   private:
+    std::string test_name;
+    std::string reason;
+  };  // end of struct Test
 
   TestManager& TestManager::getTestManager() {
     static TestManager m;
@@ -70,6 +100,24 @@ namespace tfel::tests {
     }
     p->second->add(t);
   }  // end of TestManager::addTest
+
+  void TestManager::registerTestConstructionFailure(
+      const std::string& n, std::string_view msg) noexcept {
+    try {
+      auto ptr = std::make_shared<TestConstructionFailure>(n, msg);
+      this->addTest(n, ptr);
+    } catch (...) {
+    }
+  }  // end of registerTestConstructionFailure
+
+  void TestManager::registerTestConstructionFailure(
+      const std::string& n) noexcept {
+    try {
+      auto ptr = std::make_shared<TestConstructionFailure>(n);
+      this->addTest(n, ptr);
+    } catch (...) {
+    }
+  }  // end of registerTestConstructionFailure
 
   TestResult TestManager::execute() {
     using namespace std::chrono;
