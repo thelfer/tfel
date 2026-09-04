@@ -1,0 +1,60 @@
+@DSL Implicit;
+@Behaviour TDLSElasticity11;
+@LinearSystemSolver TDLS {
+  tile_size : 2,
+  out_of_tile_search_diagnostics : true
+};
+@Description{
+  "This behaviour tests the out_of_tile_search_diagnostics option. The "
+  "dummy unknowns u and v swap the first two rows of the jacobian with "
+  "the last two: the first tile offers no acceptable pivot for the "
+  "first two columns, so every linear solve performs exactly two "
+  "out-of-tile searches."
+}
+
+@Epsilon 1.e-14;
+
+@Parameter stress young = 78e9;
+young.setGlossaryName("YoungModulus");
+@Parameter nu    = 0.3;
+nu.setGlossaryName("PoissonRatio");
+
+@StateVariable real u;
+@StateVariable real v;
+@AuxiliaryStateVariable real oot;
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+}
+
+@ComputeStress{
+  sig = lambda * trace(eel) * Stensor::Id() + 2 * mu * eel;
+}
+
+@Integrator{
+  feel = deel - deto;
+  feel(0) = du;
+  feel(1) = dv;
+  fu = deel(0) - deto(0) + du;
+  fv = deel(1) - deto(1) + dv;
+  // jacobian
+  dfeel_ddeel(0, 0) = 0;
+  dfeel_ddeel(1, 1) = 0;
+  dfeel_ddu(0) = 1;
+  dfeel_ddv(1) = 1;
+  dfu_ddeel(0) = 1;
+  dfv_ddeel(1) = 1;
+}
+
+@UpdateAuxiliaryStateVariables{
+  oot = mfront_tdls_oot_count;
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  computeAlteredElasticStiffness<hypothesis, Type>::exe(Dt, lambda, mu);
+}
