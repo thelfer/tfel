@@ -1,0 +1,20 @@
+@Description{
+  "This test checks the out_of_tile_search_diagnostics option of the "
+  "TDLS solver: the jacobian of the TDLSElasticity11 behaviour forces "
+  "exactly two out-of-tile pivot searches per linear solve."
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'TDLSElasticity11';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStrain 'EXX' {0: 0, 1: 1.e-3};
+
+@Times {0, 1 in 4};
+
+@Test<function> 'oot' '2.' 1.e-12;
+@Test<function> {'u': '0.', 'v': '0.'} 1.e-12;
+@Test<function> 'SXX' '78e9*1.e-3*t' 1.e-2;
+@Test<function> {'SYY': '0.', 'SZZ': '0.'} 1.e-2;

@@ -30,7 +30,8 @@ namespace mfront {
             .addDataTypeValidator<std::string>("out_of_tile_search_strategy")
             .addDataTypeValidator<bool>("unroll_inner_loop")
             .addDataTypeValidator<int, double>("out_of_tile_search_threshold")
-            .addDataTypeValidator<int, double>("singular_pivot_threshold");
+            .addDataTypeValidator<int, double>("singular_pivot_threshold")
+            .addDataTypeValidator<bool>("out_of_tile_search_diagnostics");
     validator.validate(opts);
     if (opts.contains("tile_size")) {
       if (is<int>(opts, "tile_size")) {
@@ -47,6 +48,10 @@ namespace mfront {
     }
     if (opts.contains("unroll_inner_loop")) {
       this->unroll_inner = get<bool>(opts, "unroll_inner_loop");
+    }
+    if (opts.contains("out_of_tile_search_diagnostics")) {
+      this->out_of_tile_search_diagnostics =
+          get<bool>(opts, "out_of_tile_search_diagnostics");
     }
     if (opts.contains("schedule")) {
       const auto& s = get<std::string>(opts, "schedule");
@@ -139,6 +144,7 @@ namespace mfront {
   std::vector<std::string> TDLSLinearSystemSolver::getReservedNames() const {
     auto names = LinearSystemSolverBase::getReservedNames();
     names.push_back("MFrontTDLSLinearSystemConfiguration");
+    names.push_back("mfront_tdls_oot_count");
     return names;
   }  // end of getReservedNames
 
@@ -197,9 +203,9 @@ namespace mfront {
     if (this->schedule.has_value()) {
       os << "\n.schedule = ";
       if (*(this->schedule) == SchedulePolicy::LEFT_LOOKING) {
-        os << "tdls::TiledLUppSchedule::LeftLooking,";
+        os << "tdls::Schedule::LeftLooking,";
       } else {
-        os << "tdls::TiledLUppSchedule::RightLooking,";
+        os << "tdls::Schedule::RightLooking,";
       }
     }
     if (this->out_of_tile_search_threshold.has_value()) {
@@ -207,7 +213,7 @@ namespace mfront {
          << "},";
     }
     if (this->singular_pivot_threshold.has_value()) {
-      os << "\n.singular_eps = NumericType{"
+      os << "\n.singular_floor = NumericType{"
          << *(this->singular_pivot_threshold) << "},";
     }
     if (this->out_of_tile_search_strategy.has_value()) {
@@ -228,6 +234,9 @@ namespace mfront {
       }
     }
     os << "};\n\n";
+    if (this->out_of_tile_search_diagnostics) {
+      os << "mutable int mfront_tdls_oot_count = 0;\n\n";
+    }
   }  // end of writeSpecificMembers
 
   void TDLSLinearSystemSolver::writeLinearSystemResolution(
@@ -245,7 +254,11 @@ namespace mfront {
       os << *(s.returned_value) << " = ";
     }
     os << "::tdls::solve_inplace<MFrontTDLSLinearSystemConfiguration>("
-       << s.matrix << ", mfront_tdls_pivot, " << s.rhs << ");\n";
+       << s.matrix << ", mfront_tdls_pivot, " << s.rhs;
+    if (this->out_of_tile_search_diagnostics) {
+      os << ", this->mfront_tdls_oot_count";
+    }
+    os << ");\n";
   }  // end of writeLinearSystemResolution
 
   AbstractLinearSystemSolver::MatrixDecompositionResult
