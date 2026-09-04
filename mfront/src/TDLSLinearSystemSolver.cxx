@@ -197,9 +197,9 @@ namespace mfront {
     if (this->schedule.has_value()) {
       os << "\n.schedule = ";
       if (*(this->schedule) == SchedulePolicy::LEFT_LOOKING) {
-        os << "tdls::TiledLUppSchedule::LeftLooking,";
+        os << "tdls::Schedule::LeftLooking,";
       } else {
-        os << "tdls::TiledLUppSchedule::RightLooking,";
+        os << "tdls::Schedule::RightLooking,";
       }
     }
     if (this->out_of_tile_search_threshold.has_value()) {
@@ -207,7 +207,7 @@ namespace mfront {
          << "},";
     }
     if (this->singular_pivot_threshold.has_value()) {
-      os << "\n.singular_eps = NumericType{"
+      os << "\n.singular_floor = NumericType{"
          << *(this->singular_pivot_threshold) << "},";
     }
     if (this->out_of_tile_search_strategy.has_value()) {
