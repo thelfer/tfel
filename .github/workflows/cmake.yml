@@ -75,6 +75,7 @@ jobs:
     - name: Print tfel-check logs on failure
       if: ${{ failure() }}
       run: |
+        [ -d ${{github.workspace}}/install/share/tfel/test-suite ] || exit 0
         cd ${{github.workspace}}/install/share/tfel/test-suite
         for f in $(grep -rli 'failed' --include='*.checklog' .); do
           d=$(dirname "$f")
