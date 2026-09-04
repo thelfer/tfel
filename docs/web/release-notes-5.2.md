@@ -389,6 +389,11 @@ The following options are supported:
   when even the best candidate of the out-of-tile recovery stays below
   this threshold. This option must be set together with the
   `out_of_tile_search_threshold` option and must not exceed it.
+- `out_of_tile_search_diagnostics`: expected values are either `true`
+  or `false`. If `true`, an integer member `mfront_tdls_oot_count`,
+  readable in user code blocks, reports the number of out-of-tile
+  searches of the last linear solve. If `false` (the default), the
+  generated code is unchanged.
 
 If a parameter is not defined, the default values are inherited from the
 `TiledLUppConfig` class defined by the `TDLS` library. See the
