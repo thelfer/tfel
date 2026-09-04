@@ -16,6 +16,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            jobs_flag: '-j $(nproc)'
+          - os: macos-latest
+            jobs_flag: '-j $(sysctl -n hw.ncpu)'
 
     runs-on: ${{ matrix.os }}
 
@@ -33,22 +38,25 @@ jobs:
 
     - name: Build
       run: |
-        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j $(nproc)
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} ${{ matrix.jobs_flag }}
 
     - name: Test
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target build-tests ${{ matrix.jobs_flag }}
+        ctest --test-dir ${{github.workspace}}/build --build-config ${{env.BUILD_TYPE}} ${{ matrix.jobs_flag }}
+
+    - name: Collect test results
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target build-tests -j $(nproc)
-        ctest --test-dir ${{github.workspace}}/build --build-config ${{env.BUILD_TYPE}} -j $(nproc)
         mkdir ${{github.workspace}}/tests-results
         cp --parents $(find ${{github.workspace}}/build -path ${{github.workspace}}/build/Testing -prune -o -type f  -name "*.xml" -print) ${{github.workspace}}/tests-results
 
     - name: Install
       run: |
-        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -j $(nproc)
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install ${{ matrix.jobs_flag }}
 
     - name: Print test log on failure
-      if: ${{ matrix.os == 'ubuntu-latest' && failure() }}
+      if: ${{ failure() }}
       run: |
         cat ${{github.workspace}}/build/Testing/Temporary/*.log
 
@@ -62,4 +70,4 @@ jobs:
       run: |
         source ${{github.workspace}}/install/share/tfel/env/env.sh
         cd ${{github.workspace}}/install/share/tfel/test-suite
-        tfel-check  -j $(nproc)
+        tfel-check  ${{ matrix.jobs_flag }}
