@@ -71,3 +71,18 @@ jobs:
         source ${{github.workspace}}/install/share/tfel/env/env.sh
         cd ${{github.workspace}}/install/share/tfel/test-suite
         tfel-check  ${{ matrix.jobs_flag }}
+
+    - name: Print tfel-check logs on failure
+      if: ${{ failure() }}
+      run: |
+        cd ${{github.workspace}}/install/share/tfel/test-suite
+        for f in $(grep -rli 'failed' --include='*.checklog' .); do
+          d=$(dirname "$f")
+          echo "==== $f"
+          cat "$f"
+          for o in "$d"/*.out; do
+            [ -e "$o" ] || continue
+            echo "---- $o"
+            cat "$o"
+          done
+        done
