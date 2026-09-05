@@ -599,7 +599,7 @@ namespace mfront {
         m << "-shared -Wl,--add-stdcall-alias,--out-implib,cyg" << l.name
           << "_dll.a,-no-undefined ";
       } else if (o.sys == "apple") {
-        m << "-bundle ";
+        m << "-bundle -Wl,-headerpad_max_install_names ";
       } else {
         m << "-shared ";
       }
