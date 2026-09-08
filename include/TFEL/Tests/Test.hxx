@@ -31,7 +31,7 @@ namespace tfel::tests {
      * \return the results of the test
      */
     [[nodiscard]] virtual TestResult execute() = 0;
-    //! destructor
+    //! \brief destructor
     virtual ~Test();
   };  // end of struct Test
 

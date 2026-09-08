@@ -95,6 +95,22 @@ namespace tfel::tests {
      */
     void addTest(const std::string&, TestPtr);
     /*!
+     * \brief method indicating that the construction of a test failed for the
+     * given reason
+     *
+     * \param[in] n: name of the test
+     * \param[in] msg: error message
+     */
+    void registerTestConstructionFailure(const std::string&,
+                                         std::string_view) noexcept;
+    /*!
+     * \brief method indicating that the construction of a test failed for an
+     * unknown reason
+     *
+     * \param[in] n: name of the test
+     */
+    void registerTestConstructionFailure(const std::string&) noexcept;
+    /*!
      * \brief execute registred tests
      * \return the results of all tests
      */

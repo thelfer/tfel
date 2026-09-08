@@ -28,7 +28,7 @@
  * occur in TFEL_PP_DO_JOIN2 but does in TFEL_PP_DO_JOIN.
  *
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date   28/08/2006
  */
 #define TFEL_PP_JOIN(X, Y) TFEL_PP_DO_JOIN(X, Y)
 
@@ -37,7 +37,7 @@
  * \brief An helper macro for TFEL_PP_JOIN
  * \see TFEL_PP_JOIN
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date   28/08/2006
  */
 #define TFEL_PP_DO_JOIN(X, Y) TFEL_PP_DO_JOIN2(X, Y)
 
@@ -46,8 +46,17 @@
  * \brief An helper macro for TFEL_PP_JOIN
  * \see TFEL_PP_JOIN
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date   28/08/2006
  */
 #define TFEL_PP_DO_JOIN2(X, Y) X##Y
+
+/*!
+ * \brief macro defining a unique local variable name for a temporary variable
+ * that it not meant to be seen by the end-user
+ * \author Thomas Helfer
+ * \date   03/09/2026
+ */
+#define TFEL_TEMPORARY_VARIABLE(X) \
+  TFEL_PP_JOIN(TFEL_PP_JOIN(TFEL_PP_JOIN(tfel_temporary_, X), _), __LINE__)
 
 #endif /* LIB_TFEL_MACROS_HXX */
