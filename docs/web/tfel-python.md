@@ -173,7 +173,7 @@ Note that Lamé coefficient is `lamb` in `Python` and `lambda` in `C++`.
 
 The `tfel.material.homogenization` module mirrors the functionalities defined
 in the namespace `tfel::material::homogenization::elasticity`. Hence,
-the reader may be interested by the [details](tfel-material.html#homogenization)
+the reader may be interested by the [details](tfel-material-homogenization.html)
 of the documentation of this namespace.
 The `Python` modules can be imported as follows:
 
@@ -231,7 +231,7 @@ P=hm.computeAnisotropicHillTensor(C0,n_a,a,n_b,b,c,max_it)
 ~~~~
 
 Note that the integer `max_it` is related to the number of
-iterations in the integration process (see the [documentation](tfel-material.html#homogenization)
+iterations in the integration process (see the [documentation](tfel-material-homogenization.html)
 of the namespace).
 
 ### Localisation tensors
@@ -297,7 +297,7 @@ A_AN=hm.computeAnisotropicLocalisationTensor(C0_glob,Ci_loc,n_a,a,n_b,b,c,max_it
 Note that in this case, the elasticity of the inclusion
 is always passed as a `ST2toST2` object `C_i_loc`. Moreover, if this elasticity is not isotropic,
 `C_i_loc` is expressed in the same basis as the one defined by `n_a,n_b`
-(the local basis of the inclusion, see the [documentation](tfel-material.html#homogenization)
+(the local basis of the inclusion, see the [documentation](tfel-material-homogenization.html)
 of the namespace).
 
 ### Homogenization schemes in biphasic media
@@ -444,14 +444,14 @@ Note that Voigt and Reuss bounds work on `ST2toST2` objects, whereas
 Hashin-Shtrikman bounds work on bulk and shear moduli.
 The number of phases is arbitrary.
 
-### Homogenization of general microstructures
+### Polyphasic microstructures
 
 #### Construction of a `ParticulateMicrostructure`
 
 Some objects are defined that mirror the objects defined
 in the namespace `tfel::material::homogenization::elasticity`
 for the construction and homogenization of general microstructures.
-The reader may want to consult this documentation [here](tfel-material.html#homogenization-of-general-microstructures).
+The reader may want to consult this documentation [here](tfel-material-homogenization.html#polyphasic-microstructures).
 
 ![The `ParticulateMicrostructure` object is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}
 
@@ -539,7 +539,7 @@ it is the global basis.
 Another type of distribution can be defined: the `UserDefinedDistributionOfSpheroids`.
 This is a distribution of spheroids defined with two orientation tensors,
 that incorporate microstructural information about the orientations
-of the spheroids (see [here](tfel-material#homogenization-of-general-microstructures)
+of the spheroids (see [here](tfel-material-homogenization.html#polyphasic-microstructures)
 for the definition of orientation tensors).
 This kind of distribution can be constructed with `Spheroid` objects only.
 This is done as follows:

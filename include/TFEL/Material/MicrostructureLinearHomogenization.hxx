@@ -92,7 +92,7 @@ namespace tfel::material::homogenization::elasticity {
           bool with_Chom_derivatives=false);
 
   /*!
-   * Here is the Self-consistent scheme which returns an object of
+   * Here is the Asymmetric Self-consistent scheme which returns an object of
    * type HomogenizationScheme from a ParticulateMicrostructure.
    * \tparam unsigned short int: dimension
    * \tparam StressType: type of the elastic constants related to
@@ -103,7 +103,7 @@ namespace tfel::material::homogenization::elasticity {
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      HomogenizationScheme<N, StressType> computeSelfConsistent(
+      HomogenizationScheme<N, StressType> computeAsymmetricSelfConsistent(
           ParticulateMicrostructure<N, StressType>&,
           const tfel::types::real<StressType>&,
           bool isotropic,

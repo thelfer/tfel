@@ -90,6 +90,7 @@ pandoc_html(tfel-math-numerical-integration "--toc" "--toc-depth=2" "--number-se
 pandoc_html(tfel-math-data-interpolation "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(tfel-mfront-database "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(tfel-material "--toc" "--toc-depth=2")
+pandoc_html(tfel-material-homogenization "--toc" "--toc-depth=2")
 pandoc_html(tfel-check "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(mfront-python "--toc" "--toc-depth=3")
 pandoc_html(Taylor "--toc" "--toc-depth=2")

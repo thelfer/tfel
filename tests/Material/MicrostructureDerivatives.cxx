@@ -80,32 +80,18 @@ struct MicrostructureDerivativesTest final
     auto h_DS = computeDilute<3u, stress>(micro1,0,{},true);
 
     auto dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr;
-    std::cout<<dCDS_dkr[0](0,0)<<std::endl;
-    std::cout<<dCDS_dkr[1](0,0)<<std::endl;
-    std::cout<<dCDS_dkr[2](0,0)<<std::endl;
 
     auto dCDS_dmur = h_DS.derivative_of_homogenized_stiffness_wrt_mur;
-    std::cout<<dCDS_dmur[0](0,0)<<std::endl;
-    std::cout<<dCDS_dmur[1](0,0)<<std::endl;
-    std::cout<<dCDS_dmur[2](0,0)<<std::endl;
     
     
     auto h_MT = computeMoriTanaka<3u, stress>(micro1,0,{},true);
     auto dCMT_dkr = h_MT.derivative_of_homogenized_stiffness_wrt_kr;
-    std::cout<<dCMT_dkr[0](0,0)<<std::endl;
-    std::cout<<dCMT_dkr[1](0,0)<<std::endl;
-    std::cout<<dCMT_dkr[2](0,0)<<std::endl;
 
     auto dCMT_dmur = h_MT.derivative_of_homogenized_stiffness_wrt_mur;
-    std::cout<<dCMT_dmur[0](0,0)<<std::endl;
-    std::cout<<dCMT_dmur[1](0,0)<<std::endl;
-    std::cout<<dCMT_dmur[2](0,0)<<std::endl;
 
-    auto h_SC = computeSelfConsistent<3u, stress>(micro1,1e-5,true,0,{},true);
+    auto h_SC = computeAsymmetricSelfConsistent<3u, stress>(micro1,1e-5,true,0,{},true);
     auto dCSC_dkr = h_SC.derivative_of_homogenized_stiffness_wrt_kr;
-    //std::cout<<dCSC_dkr[0](0,0)<<std::endl;
     auto dCSC_dmur = h_SC.derivative_of_homogenized_stiffness_wrt_mur;
-    //std::cout<<dCSC_dmur[0](0,0)<<std::endl;
     
   }  
 

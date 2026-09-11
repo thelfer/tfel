@@ -68,7 +68,7 @@ template <unsigned short int N, tfel::math::ScalarConcept StressType>
 requires(
     tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, StressType>())
     tfel::material::homogenization::elasticity::
-        HomogenizationScheme<N, StressType> computeSelfConsistentScheme(
+        HomogenizationScheme<N, StressType> computeAsymmetricSelfConsistentScheme(
             tfel::material::homogenization::elasticity::
                 ParticulateMicrostructure<N, StressType>& micro,
             const tfel::types::real<StressType>& tolerance,
@@ -76,7 +76,7 @@ requires(
             int max_iter_anisotropic_integration,
             const std::vector<tfel::math::stensor<N, StressType>>&
                 polarisations) {
-  return tfel::material::homogenization::elasticity::computeSelfConsistent<
+  return tfel::material::homogenization::elasticity::computeAsymmetricSelfConsistent<
       N, StressType>(micro, polarisations, tolerance, isotropic,
                      max_iter_anisotropic_integration);
 }
@@ -97,7 +97,7 @@ void declareMicrostructureLinearHomogenization(pybind11::module_& m) {
         pybind11::arg("max_iter_anisotropic_integration") = 12,
         pybind11::arg("polarisations") = pola,
         pybind11::arg("with_Chom_derivatives") = false);
-  m.def("computeSelfConsistentScheme", &computeSelfConsistent<3, double>,
+  m.def("computeAsymmetricSelfConsistentScheme", &computeAsymmetricSelfConsistent<3, double>,
         pybind11::arg("micro"), pybind11::arg("tolerance"),
         pybind11::arg("isotropic"),
         pybind11::arg("max_iter_anisotropic_integration") = 12,
