@@ -659,7 +659,7 @@ Three schemes are currently available:
 
  - Dilute scheme
  - Mori-Tanaka scheme
- - Self-consistent scheme
+ - Asymmetric Self-consistent scheme
  
 Let us consider the previous `ParticulateMicrostructure` object `micro_1`.
 We already have seen that computing some average localisators
@@ -677,13 +677,13 @@ Afterwards,
 ~~~~{.py}
 hmDS=hm.computeDiluteScheme(micro_1)
 hmMT=hm.computeMoriTanakaScheme(micro_1)
-hmSC=hm.computeSelfConsistentScheme(micro_1,1e-6,True)
+hmSC=hm.computeAsymmetricSelfConsistentScheme(micro_1,1e-6,True)
 print("DS: ",hmDS.homogenized_stiffness)
 print("MT: ",hmMT.homogenized_stiffness)
 print("SC: ",hmSC.homogenized_stiffness)
 ~~~~
 
-We note that `computeSelfConsistentScheme` not only takes
+We note that `computeAsymmetricSelfConsistentScheme` not only takes
 the microstructure as an argument, but also takes one real (`1e-6`) as
 a parameter, which pilots the precision of the result. Indeed, at each iteration
 of the self-consistent iterative algorithm, the function computes the relative
@@ -702,8 +702,8 @@ default:
 
 ~~~~{.py}
 micro_2.addInclusionPhase(ellipsoid_dist_O)
-hmSC_iso=hm.computeSelfConsistentScheme(micro_2,10,True)
-hmSC_aniso=hm.computeSelfConsistentScheme(micro_2,10,False,10)
+hmSC_iso=hm.computeAsymmetricSelfConsistentScheme(micro_2,10,True)
+hmSC_aniso=hm.computeAsymmetricSelfConsistentScheme(micro_2,10,False,10)
 print("SC iso: ",hmSC_iso.homogenized_stiffness)
 print("SC aniso: ",hmSC_aniso.homogenized_stiffness)
 ~~~~
@@ -751,7 +751,7 @@ print("P_eff_DS: ",P_eff_DS)
 ~~~~
 
 In fact, the functions `computeDiluteScheme`, `computeMoriTanakaScheme`
-`computeSelfConsistentScheme`... return an object `HomogenizationScheme`
+`computeAsymmetricSelfConsistentScheme`... return an object `HomogenizationScheme`
 which possesses the following attributes:
 
  - `homogenized_stiffness`

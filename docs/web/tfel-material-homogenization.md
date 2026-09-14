@@ -480,82 +480,23 @@ The number of phases is arbitrary, and the dimension is 2 or 3.
  
 # Polyphasic microstructures
 
-A `ParticulateMicrostructure` object can be created for
-homogenization of general matrix-inclusion microstructures.
+In TFEL, 2 types of microstructures are defined:
+
+ - `ParticulateMicrostructure`
+ - `Polycrystal`
+
+A `ParticulateMicrostructure` object represents
+a very general matrix-inclusion microstructure.
+A `Polycrystal` is a microstructure composed of
+grains, in which there is no matrix phase.
+
 Note that the functionalities below are also available in
 the `Python` module (see the doc [here](tfel-python.html#polyphasic-microstructures)).
 
-## Description and construction of a microstructure
+## Description of the components of a microstructure
 
-### The `ParticulateMicrostructure class`
-
-The `ParticulateMicrostructure class` is available in 3d an 2d
-via 2 template parameters: `ParticulateMicrostructure<N,stress>`
-with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'
-which introduces the `class`.
-
-![The `ParticulateMicrostructure class` is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}
-
-A `ParticulateMicrostructure` consists of a matrix, in which are embedded
-several distributions of inclusions. The class has three (private) attributes:
-
- - `number_of_phases`
- - `matrix_phase`
- - `inclusion_phases`
-
-The `matrix_phase` is of type `Phase`, described below.
- 
-The `inclusion_phases` is a `std::vector` of pointers on
-`InclusionDistribution` objects (which represent the distributions of inclusions). This
-class is also described below. 
-
-We can instantiate a `ParticulateMicrostructure` as follows,
-passing the matrix elasticity as an argument:
-
-~~~~{.cpp}
-using namespace tfel::material::homogenization::elasticity;
-const auto IM0=tfel::material::KGModuli<stress>(1e7,1e7);
-const auto micro_1=ParticulateMicrostructure(IM0);
-
-const auto C0 = stress(1e9)*Stensor4<3u,real>::Id();
-const auto micro_2=ParticulateMicrostructure(C0);
-~~~~
-
-`ParticulateMicrostructure` has also some methods (see 'MicrostructureDescription.hxx'
-for details). The following ones allow to get some attributes of the class:
-
- - `getNumberOfPhases`
- - `getMatrixFraction` (attribute `fraction` of `matrix_phase`)
- - `getMatrixElasticity` (attribute `stiffness` of `matrix_phase`)
- - `isIsotropicMatrix` (private attribute `isotropic` of `matrix_phase`)
- 
-The last method returns a boolean which states if the matrix is considered isotropic
-or not. In fact, depending on how the `ParticulateMicrostructure` was instantiated,
-the matrix is considered isotropic or not. For example, by doing
-
-~~~~{.cpp}
-bool val_1=micro_1.isIsotropicMatrix();
-bool val_2=micro_2.isIsotropicMatrix();
-~~~~
-
-`val_1` will be `True` because `micro_1` was instantiated above with a `KGModuli`,
-whereas `val_2` will be `False`. Note that `False` does not mean
-that the matrix elasticity is not isotropic, but that it is CONSIDERED
-as not isotropic.
-
-Other methods allow to add/remove `InclusionDistribution` objects
-to the attribute `inclusion_phases`, and also to modify the properties of
-the phases:
-
- - `getInclusionPhase`
- - `addInclusionPhase`
- - `removeInclusionPhase`
- - `changeElasticityOfMatrixPhase`
- - `changeElasticityOfInclusionPhase`
- - `changeFractionOfInclusionPhase`
- 
-But we first describe `Phase`, `InclusionDistribution`
-and `Inclusion` classes.
+We here describe the main components of a microstructure: `Phase`, `Inclusion`, `Grain`, 
+and `InclusionDistribution` objects.
 
 ### The `Phase` class
 
@@ -617,20 +558,89 @@ Ellipsoid<length> ellipsoid1(a,b,c);
 Spheroid<length> spheroid1(a,b);
 Sphere<length> sphere1();
 ~~~~
- 
+
+### The `Grain class`
+
+The `Grain class` is a child of the `Phase class` and hence 
+has a volume fraction and a stiffness. It has also an attribute
+`inclusion` which is an `Inclusion` object. Also, this inclusion
+is oriented by two vectors `n_a` and `n_b`. This means that the
+first semi-axis of the inclusion is aligned with `n_a` whereas 
+the second is aligned with `n_b`. This two vectors are attributes
+of the `Grain`. We can instantiate a `Grain` as follows:
+
+~~~~{.cpp}
+const auto KGi=tfel::material::KGModuli<stress>(Ki,Gi);
+Ellipsoid<length> ellipsoid1(a, b, c);
+tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
+tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
+const auto frac = real(0.2);
+Grain<stress> grain1(ellipsoid1, frac, KGi,n_a,n_b);
+~~~~
+
+The `Grain` has also methods:
+
+ - `computeMeanLocalisator`
+ - `computeDerivativesOfMeanLocalisator`
+
+The `computeMeanLocalisator` method takes a reference stiffness as an argument
+and compute the localisation tensor of the `Grain` assuming
+that it is embedded in a reference medium with this stiffness:
+
+~~~~{.cpp}
+const auto KG0=tfel::material::KGModuli<stress>(K0,G0);
+const auto A_grain = grain1.computeMeanLocalisator(KG0);
+~~~~
+
+The `computeDerivativesOfMeanLocalisator` method takes a reference stiffness as
+an argument and a `std::array` of 4 reals. This array contains the
+derivatives of the material parameters `K0,G0,Ki,Gi` w.r.t. a parameter \(lambda\).
+The `computeDerivativesOfMeanLocalisator` method hence returns the derivative of
+the localisation tensor of the grain w.r.t. \(\lambda\). Hence,
+we can compute the derivatives of this localisation tensor as follows:
+
+~~~~{.cpp}
+const auto dA_dk0 = grain1.computeDerivativesOfMeanLocalisator(KG0,{1.,0.,0.,0.});
+const auto dA_dmu0 = grain1.computeDerivativesOfMeanLocalisator(KG0,{0.,1.,0.,0.});
+const auto dA_dki = grain1.computeDerivativesOfMeanLocalisator(KG0,{0.,0.,1.,0.});
+const auto dA_dmui = grain1.computeDerivativesOfMeanLocalisator(KG0,{0.,0.,0.,1.});
+~~~~
+
 ### The `InclusionDistribution class`
 
 The `InclusionDistribution class` is an abstract class which represents a distribution
 of inclusions. It is a child of the `Phase class`, and it is used
 to represent the distribution of inclusions in a `ParticulateMicrostructure`.
-There are 4 child `class` of the `InclusionDistribution class`:
+
+Each `InclusionDistribution` object has four attributes:
+ 
+ - `inclusion` (which is of type `Inclusion`, see above),
+ - `fraction` (attribute as a `Phase` object)
+ - `stiffness` (private attribute as a `Phase` object)
+ - `isotropic` (private attribute as a `Phase` object).
+
+It has also two methods:
+
+ - `computeMeanLocalisator`
+ - `computeDerivativesOfMeanLocalisator`
+ 
+(and also the attributes of a `Phase` object).
+The `computeMeanLocalisator` method computes
+the mean strain localisation (or concentration) tensor in the inclusions
+when they are embedded in a matrix. 
+The `computeDerivativesOfMeanLocalisator` method computes the derivative of
+the average localisation tensor of the inclusion distribution w.r.t. \(\lambda\).
+These methods are presented in the sequel for the 5 types of inclusion distributions.
+
+There are 5 child `class` of the `InclusionDistribution class`:
  
  - `SphereDistribution` (distribution of spheres)
  - `IsotropicDistribution` (isotropic distribution of ellipsoids)
  - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
  - `OrientedDistribution` (aligned distribution of ellipsoids)
  - `UserDefinedDistributionOfSpheroids` (distribution of spheroids defined with orientation tensors)
- 
+
+
 Here are some examples of instantiation:
 
 ~~~~{.cpp}
@@ -663,6 +673,29 @@ the `Stensor4` elasticity is defined is the local basis for the `OrientedDistrib
 that is, the basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
 it is the global basis.
 
+The `computeMeanLocalisator` method can be used as follows:
+
+~~~~{.cpp}
+Ai=ell_dist.computeMeanLocalisator(IM0);
+~~~~
+
+Note that in the latter case, passing `C0`, a `Stensor4` object
+as an argument of the method will return an error, because
+it will be considered that the matrix is not isotropic,
+so that computing an average localisator of a distribution
+of ellipsoids in an anisotropic matrix is impossible (too complicated).
+However, it can be done for other kinds of distributions, like
+sphere distributions or distributions of oriented inclusions:
+
+~~~~{.cpp}
+A1=distrib_sph.computeMeanLocalisator(C0,10);
+A2=distrib_O.computeMeanLocalisator(C0,10);
+~~~~
+
+Here, the integer `10` is the number of subdivisions in the integration
+process in the computation of the Hill tensor relative to the inclusions.
+It is `12` by default.
+
 The `UserDefinedDistributionOfSpheroids` is a distribution of `Spheroid` (3d-objects,
 with two equal axes, see above). It is defined with two tensors: a second-order
 tensor \(\tenseur A_2\) and a fourth-order tensor \(\tenseur A_4\):
@@ -686,7 +719,78 @@ const st2tost2<3u,real> A4 = 1./2*E2d+1./4*Fd;
 UserDefinedDistributionOfSpheroids<stress> distribution(spheroid1, f, KGi, A2, A4);
 ~~~~
 
-We can now construct our `ParticulateMicrostructure` by adding some
+Note that the 5 `InclusionDistribution` classes are currently available in 3d only.
+
+## Construction of a microstructure
+
+### The `ParticulateMicrostructure`
+
+The `ParticulateMicrostructure class` is available in 3d an 2d
+via 2 template parameters: `ParticulateMicrostructure<N,stress>`
+with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'
+which introduces the `class`.
+
+![The `ParticulateMicrostructure class` is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}
+
+A `ParticulateMicrostructure` consists of a matrix, in which are embedded
+several distributions of inclusions. The class has three (private) attributes:
+
+ - `number_of_phases`
+ - `matrix_phase`
+ - `inclusion_phases`
+
+The `matrix_phase` is of type `Phase`, described below.
+ 
+The `inclusion_phases` is a `std::vector` of pointers on
+`InclusionDistribution` objects (which represent the distributions of inclusions). This
+class is also described below. 
+
+We can instantiate a `ParticulateMicrostructure` as follows,
+passing the matrix elasticity as an argument:
+
+~~~~{.cpp}
+using namespace tfel::material::homogenization::elasticity;
+const auto IM0=tfel::material::KGModuli<stress>(1e7,1e7);
+micro_1=ParticulateMicrostructure(IM0);
+
+const auto C0 = stress(1e9)*Stensor4<3u,real>::Id();
+micro_2=ParticulateMicrostructure(C0);
+~~~~
+
+The `ParticulateMicrostructure` has also some methods (see 'MicrostructureDescription.hxx'
+for details). The following ones allow to get some attributes of the class:
+
+ - `getNumberOfPhases`
+ - `getMatrixFraction` (attribute `fraction` of `matrix_phase`)
+ - `getMatrixElasticity` (attribute `stiffness` of `matrix_phase`)
+ - `isIsotropicMatrix` (private attribute `isotropic` of `matrix_phase`)
+ 
+The last method returns a boolean which states if the matrix is considered isotropic
+or not. In fact, depending on how the `ParticulateMicrostructure` was instantiated,
+the matrix is considered isotropic or not. For example, by doing
+
+~~~~{.cpp}
+bool val_1=micro_1.isIsotropicMatrix();
+bool val_2=micro_2.isIsotropicMatrix();
+~~~~
+
+`val_1` will be `True` because `micro_1` was instantiated above with a `KGModuli`,
+whereas `val_2` will be `False`. Note that `False` does not mean
+that the matrix elasticity is not isotropic, but that it is CONSIDERED
+as not isotropic.
+
+Other methods allow to add/remove `InclusionDistribution` objects
+to the attribute `inclusion_phases`, and also to modify the properties of
+the phases:
+
+ - `getInclusionPhase`
+ - `addInclusionPhase`
+ - `removeInclusionPhase`
+ - `changeElasticityOfMatrixPhase`
+ - `changeElasticityOfInclusionPhase`
+ - `changeFractionOfInclusionPhase`
+
+We can construct our `ParticulateMicrostructure` by adding some
 `InclusionDistribution` objects:
 
 ~~~~{.cpp}
@@ -717,46 +821,6 @@ remains in the microstructure. We can get this distribution by doing:
 const auto ell_dist=micro_1.getInclusionPhase(0);
 ~~~~
 
-Each `InclusionDistribution` object has three attributes:
-`inclusion` (which is of type `Inclusion`, see above),
-`fraction` and `stiffness` (because they are attributes of `Phase` objects).
-It has also two methods. The first
-just states if the distribution was instantiated with an `IsotropicModuli`
-or with a `Stensor4` object. Here,
-it was instantiated with a `KGModuli`, so that it is considered isotropic.
-Hence,
-
-~~~~{.cpp}
-std::cout<< ell_dist.isIsotropic()<< std::endl;
-~~~~
-
-prints `1`.
-
-The second method of the distribution allows to compute
-the mean strain localisation (or concentration) tensor in the inclusions
-when they are embedded in a matrix:
-
-~~~~{.cpp}
-Ai=ell_dist.computeMeanLocalisator(IM0);
-~~~~
-
-Note that in the latter case, passing `C0`, a `Stensor4` object
-as an argument of the method will return an error, because
-it will be considered that the matrix is not isotropic,
-so that computing an average localisator of a distribution
-of ellipsoids in an anisotropic matrix is impossible (too complicated).
-However, it can be done for other kinds of distributions, like
-sphere distributions or distributions of oriented inclusions:
-
-~~~~{.cpp}
-A1=distrib_sph.computeMeanLocalisator(C0,10);
-A2=distrib_O.computeMeanLocalisator(C0,10);
-~~~~
-
-Here, the integer `10` is the number of subdivisions in the integration
-process in the computation of the Hill tensor relative to the inclusions.
-It is `12` by default.
-
 A last method of the `ParticulateMicrostructure` object allows to change the
 elasticity of the matrix phase:
 
@@ -769,27 +833,78 @@ std::cout<< micro_1.isIsotropicMatrix()<< std::endl;
 Here we see that the matrix is no more isotropic
 because it was replaced via a `Stensor4` object `C0`.
 
-Note that the 4 `InclusionDistribution` classes are currently available in 3d only.
+
+### The `Polycrystal`
+ 
+A `Polycrystal` consists of a collection of grains.
+The class has three (private) attributes:
+
+ - `number_of_grains`
+ - `total_fraction` (may be under 1 but never over 1)
+ - `grains`
+ 
+`grains` is a `std::vector` of pointers on
+`Grain` objects, a class which is described below. 
+
+We can instantiate a `Polycrystal` as follows:
+
+~~~~{.cpp}
+using namespace tfel::material::homogenization::elasticity;
+Polycrystal poly;
+~~~~
+
+We can add some grains to our polycrystal:
+
+~~~~{.cpp}
+poly.addGrain(grain1);
+poly.addGrain(grain2);
+~~~~
+
+and we can remove grains:
+
+~~~~{.cpp}
+poly.removeGrain(0);
+~~~~
+
+we can also get a grain, or change its elasticity or
+its volume fraction. Note that we cannot add
+a grain when its volume fraction is such that
+the polycrystal would have a volume fraction superior
+to 1. Similarly, we cannot change the fraction of a grain
+if the new fraction is such that the polycrystal
+would have a fraction superior to 1.
+
 
 ## Computation of homogenization schemes
 
-The file `MicrostructureLinearHomogenization.hxx` introduces a `HomogenizationScheme` object
-which has five attributes:
- 
+The file `MicrostructureLinearHomogenization.hxx` introduces 
+the homogenization schemes.
+
+The following homogenization schemes are available for
+`ParticulateMicrostructure` objects:
+
+ - `computeDilute` (dilute scheme)
+ - `computeMoriTanaka` (Mori-Tanaka scheme)
+ - `computeAsymmetricSelfConsistent` (Asymmetric Self-Consistent scheme)
+
+These functions take a `ParticulateMicrostructure` as an argument.
+For a `Polycrystal`, the available homogenization scheme
+is:
+
+ - `computeSelfConsistent` (Self-consistent scheme)
+
+This function takes a `Polycrystal`
+as an argument.
+
+All these functions return a `HomogenizationScheme` object.
+This object is a structure with the following attributes:
+
  - `homogenized_stiffness`
  - `effective_polarisation`
  - `mean_strain_localisation_tensors`
  - `derivative_of_homogenized_stiffness_wrt_kr`
  - `derivative_of_homogenized_stiffness_wrt_mur`
 
-This is the object that the functions listed below return:
-
- - `computeDilute` (dilute scheme)
- - `computeMoriTanaka` (Mori-Tanaka scheme)
- - `computeSelfConsistent` (Self-Consistent scheme)
-
-These functions take a `ParticulateMicrostructure`
-as an argument and returns a `HomogenizationScheme` object.
 
 ### Dilute scheme
 
@@ -899,12 +1014,12 @@ where \(\langle.\rangle_{\vec n_a,\vec n_b}\) stands for the average on all orie
 ~~~~{.cpp}
 auto epsilon = 1e-6;
 auto Cini=C0;
-auto hmSC=computeSelfConsistent<3u,stress>(micro_poly,epsilon,Cini,true);
+auto hmSC=computeSelfConsistent<3u,stress>(poly,epsilon,Cini,true);
 std::cout<< "CSC: "<< hmSC.homogenized_stiffness << std::endl;
 ~~~~
 
 We note that `computeSelfConsistent` takes
-the microstructure as an argument, but also `epsilon` as
+a `Polycrystal` as an argument, but also `epsilon` as
 the tolerance criterium, and `Cini` as the initial guess (a `st2tost2` object).
 Moreover, it must be precised, for the computation of the Hill tensor \(\tenseurq P_i^{\mathrm{SC},n}(\vec n_a,\vec n_b)\), if the reference elasticity \(\tenseurq C^{\mathrm{SC}}_{n}\) is
 considered isotropic or not. This is the role of the `bool` parameter (here, `true`).
@@ -913,7 +1028,7 @@ at each step of the iterative algorithm.
 Otherwise, he can put `false`, so that a numerical integration (resulting
 in a slower computation) will be performed to compute the Hill tensors.
 Moreover, the optional integer `max_iter_anisotropic_integration` can also be used
-as for the other schemes:
+as for the other schemes (its default value is here `8`):
 
 ~~~~{.cpp}
 OrientedDistribution<stress> distrib_O(ellipsoid1,f,KGi,n_a,n_b);

@@ -409,7 +409,7 @@ namespace tfel::material::homogenization::elasticity {
       HomogenizationScheme<N, StressType> computeSelfConsistent(
           Polycrystal<StressType>& poly,
           const tfel::types::real<StressType>& tolerance,
-          tfel::math::st2tost2<N, StressType>& Cini,
+          const tfel::math::st2tost2<N, StressType>& Cini,
           bool isotropic,
           int max_iter_anisotropic_integration,
           const std::vector<tfel::math::stensor<N, StressType>>& polarisations,

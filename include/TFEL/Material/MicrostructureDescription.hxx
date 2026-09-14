@@ -280,10 +280,24 @@ namespace tfel::material::homogenization::elasticity {
       }
     }
 
+    [[nodiscard]] int changeElasticityOfGrain(
+        unsigned int i, const tfel::math::st2tost2<3u,StressType>& C) {
+      if ((this->number_of_grains) == 0) {
+        return 0;
+      } else if ((this->number_of_grains) < i + 1) {
+        return 0;
+      } else {
+        (*((this->grains)[i])).changeElasticityOfPhase(C);
+        return 1;
+      }
+    }
+
     [[nodiscard]] int changeFractionOfGrain(unsigned int i, const real f) {
       if ((this->number_of_grains) == 0) {
         return 0;
       } else if ((this->number_of_grains) < i + 1) {
+        return 0;
+      } else if (this->total_fraction + f > real(1)) {
         return 0;
       } else {
         (this->total_fraction) -= (*(this->grains[i])).fraction;
@@ -293,7 +307,7 @@ namespace tfel::material::homogenization::elasticity {
       }
     }
 
-    [[nodiscard]] unsigned int getTotalFraction() {
+    [[nodiscard]] real getTotalFraction() {
       return (this->total_fraction);
     }
 

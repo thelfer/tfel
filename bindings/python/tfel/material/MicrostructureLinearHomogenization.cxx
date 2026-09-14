@@ -32,7 +32,11 @@ requires(
       .def_readonly("homogenized_stiffness", &HS::homogenized_stiffness)
       .def_readonly("effective_polarisation", &HS::effective_polarisation)
       .def_readonly("mean_strain_localisation_tensors",
-                    &HS::mean_strain_localisation_tensors);
+                    &HS::mean_strain_localisation_tensors)
+    .def_readonly("derivative_of_homogenized_stiffness_wrt_kr",
+                    &HS::derivative_of_homogenized_stiffness_wrt_kr)
+    .def_readonly("derivative_of_homogenized_stiffness_wrt_mur",
+                    &HS::derivative_of_homogenized_stiffness_wrt_mur);
 }
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
@@ -44,10 +48,11 @@ requires(
                 ParticulateMicrostructure<N, StressType>& micro,
             int max_iter_anisotropic_integration,
             const std::vector<tfel::math::stensor<N, StressType>>&
-                polarisations) {
+                polarisations,
+            bool with_Chom_derivatives) {
   return tfel::material::homogenization::elasticity::computeDilute<N,
                                                                    StressType>(
-      micro, polarisations, max_iter_anisotropic_integration);
+      micro, max_iter_anisotropic_integration,polarisations, with_Chom_derivatives);
 }
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
@@ -59,9 +64,10 @@ requires(
                 ParticulateMicrostructure<N, StressType>& micro,
             int max_iter_anisotropic_integration,
             const std::vector<tfel::math::stensor<N, StressType>>&
-                polarisations) {
+                polarisations,
+            bool with_Chom_derivatives) {
   return tfel::material::homogenization::elasticity::computeMoriTanaka<
-      N, StressType>(micro, polarisations, max_iter_anisotropic_integration);
+      N, StressType>(micro, max_iter_anisotropic_integration,polarisations, with_Chom_derivatives);
 }
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
@@ -75,10 +81,28 @@ requires(
             bool isotropic,
             int max_iter_anisotropic_integration,
             const std::vector<tfel::math::stensor<N, StressType>>&
-                polarisations) {
+                polarisations,
+            bool with_Chom_derivatives) {
   return tfel::material::homogenization::elasticity::computeAsymmetricSelfConsistent<
-      N, StressType>(micro, polarisations, tolerance, isotropic,
-                     max_iter_anisotropic_integration);
+      N, StressType>(micro, tolerance, isotropic, max_iter_anisotropic_integration,polarisations, with_Chom_derivatives);
+}
+
+template <unsigned short int N, tfel::math::ScalarConcept StressType>
+requires(
+    tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, StressType>())
+    tfel::material::homogenization::elasticity::
+        HomogenizationScheme<N, StressType> computeSelfConsistentScheme(
+            tfel::material::homogenization::elasticity::
+                Polycrystal<StressType>& poly,
+            const tfel::types::real<StressType>& tolerance,
+            const tfel::math::st2tost2<N,StressType>& Cini,
+            bool isotropic,
+            int max_iter_anisotropic_integration,
+            const std::vector<tfel::math::stensor<N, StressType>>&
+                polarisations,
+            bool with_Chom_derivatives) {
+  return tfel::material::homogenization::elasticity::computeSelfConsistent<
+      N, StressType>(poly, tolerance, Cini, isotropic, max_iter_anisotropic_integration,polarisations, with_Chom_derivatives);
 }
 
 void declareMicrostructureLinearHomogenization(pybind11::module_&);
@@ -100,7 +124,14 @@ void declareMicrostructureLinearHomogenization(pybind11::module_& m) {
   m.def("computeAsymmetricSelfConsistentScheme", &computeAsymmetricSelfConsistent<3, double>,
         pybind11::arg("micro"), pybind11::arg("tolerance"),
         pybind11::arg("isotropic"),
-        pybind11::arg("max_iter_anisotropic_integration") = 12,
+        pybind11::arg("max_iter_anisotropic_integration") = 8,
+        pybind11::arg("polarisations") = pola,
+        pybind11::arg("with_Chom_derivatives") = false);
+ m.def("computeSelfConsistentScheme", &computeSelfConsistent<3, double>,
+        pybind11::arg("polycrystal"), pybind11::arg("tolerance"),
+        pybind11::arg("C_initial"),
+        pybind11::arg("isotropic"),
+        pybind11::arg("max_iter_anisotropic_integration") = 8,
         pybind11::arg("polarisations") = pola,
         pybind11::arg("with_Chom_derivatives") = false);
 }

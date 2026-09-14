@@ -259,27 +259,35 @@ void test_poly() {
   TFEL_TESTS_ASSERT(tfel::material::relative_error(A_Or_1, A_Or_2) / young0 <
                     eps / stress(1));
 
-  Polycrystal<stress> poly1();
+  Polycrystal<stress> poly1;
   poly1.addGrain(grain1);
-  auto KGm=tfel::material::YoungNuModuli<stress>(10*young0,10*nu0);
-  poly1.changeElasticityOfGrain(0,KGm);
+  auto YNm=tfel::material::YoungNuModuli<stress>(10*young0,nu0);
+  poly1.changeElasticityOfGrain(0,YNm);
   auto phasei = poly1.getGrain(0);
   auto Ci = (*phasei).getElasticityOfPhase();
-  tfel::math::st2tost2<3u, stress> C = 10 * C_0;
+  tfel::math::st2tost2<3u, stress> C = 10. * C_0;
   TFEL_TESTS_ASSERT(tfel::material::relative_error(Ci, C) < eps);
   auto iso = (*phasei).isIsotropic();
   TFEL_TESTS_ASSERT(iso);
   poly1.changeElasticityOfGrain(0, KG0);
-  phasei = poly1.getInclusionPhase(0);
+  phasei = poly1.getGrain(0);
   Ci = (*phasei).getElasticityOfPhase();
   TFEL_TESTS_ASSERT(tfel::material::relative_error(Ci, C_0) < eps);
   iso = (*phasei).isIsotropic();
   TFEL_TESTS_ASSERT(iso);
   poly1.changeFractionOfGrain(0, real(0.2));
-  TFEL_TESTS_ASSERT(my_abs(poly1.getTotalFraction() - real(0.8)) < eps);
+  TFEL_TESTS_ASSERT(my_abs(poly1.getTotalFraction() - real(0.2)) < eps);
   phasei = poly1.getGrain(0);
   auto fr = (*phasei).fraction;
   TFEL_TESTS_ASSERT(my_abs(fr - real(0.2)) < eps);
+  poly1.addGrain(grain1);
+  poly1.addGrain(grain2);
+  TFEL_TESTS_ASSERT(my_abs(poly1.getTotalFraction() - real(0.7)) < eps);
+  grain2.fraction=0.3;
+  poly1.addGrain(grain2);
+  TFEL_TESTS_ASSERT(my_abs(poly1.getTotalFraction() - real(1.)) < eps);
+  poly1.removeGrain(2);
+  TFEL_TESTS_ASSERT(my_abs(poly1.getNumberOfGrains() - 2) < eps);
 }
 
 };  // end of struct MicrostructureDescriptionTest
