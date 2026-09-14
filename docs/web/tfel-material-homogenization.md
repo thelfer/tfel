@@ -874,7 +874,6 @@ to 1. Similarly, we cannot change the fraction of a grain
 if the new fraction is such that the polycrystal
 would have a fraction superior to 1.
 
-
 ## Computation of homogenization schemes
 
 The file `MicrostructureLinearHomogenization.hxx` introduces 
