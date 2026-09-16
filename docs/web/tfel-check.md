@@ -11,108 +11,87 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-`tfel-check` is a tool designed to launch unit-tests and provide tools
-to test the outputs. `tfel-check` mostly targets scientific applications
-which do not have in-house ability to compare their results to
-reference results.
+`tfel-check` is a tool designed to automate unit tests for scientific applications
+and provide utilities to compare their outputs against reference results. It is
+particularly useful for applications that lack built-in validation capabilities.
 
 # Overview
 
 ## Basic usage
 
-The basic usage of `tfel-check` is simply to call `tfel-check` without
-options:
+The simplest way to use `tfel-check` is to invoke it without arguments:
 
 ~~~~{.bash}
 $ tfel-check
 ~~~~
 
-`tfel-check` will then execute the tests and comparisons described in
-every file with the extension `.check` in the current directory and,
-recursively, in all the subdirectories. The syntax of of those files are
-described in Section @sec:tfel_check:input_files.
+This executes all `.check` files in the current directory and its subdirectories.
+The syntax of `.check` files is described in Section @sec:tfel_check:input_files.
 
-One may also specify only a set of files to be considered, as follows:
+To run specific test files, list them explicitly:
 
 ~~~~{.bash}
 $ tfel-check test1.check test2.check
 ~~~~
 
-One may also specify a configuration file using the `--config` command
-line option, as follows:
+A configuration file can be specified using the `--config` option:
 
 ~~~~{.bash}
 $ tfel-check --config=test.config
 ~~~~
 
-The configuration files are described in Section
-@sec:tfel_check:configuration_files.
+Configuration files are described in Section @sec:tfel_check:configuration_files.
 
-Substitution strings can be specified in configuration files or in the
-command line, as follows:
+Substitution strings can be defined in configuration files or via the command line:
 
 ~~~~{.bash}
 $ tfel-check --@python@=python3.5
 ~~~~
 
-With this option, every occurrence of `@python@` will be replaced by
-`python3.5`.
+This replaces all occurrences of `@python@` with `python3.5`.
 
 ## Parallelization
 
-The commands described in different `.check` files can now be run in
-distinct processes.
+Commands in different `.check` files can be executed in parallel processes.
+Commands within a single `.check` file are always run sequentially.
 
-Note that the command described in a `.check` are still run
-sequentially.
+By default, `tfel-check` uses a single process.
 
-By default, as in previous versions, only one process is used.
+### Controlling parallel execution
 
-### Specifying the number of jobs run simultaneously
+The `--jobs` (`-j`) option specifies the number of parallel jobs.
+If not provided, `tfel-check` uses the number of available CPU cores.
 
-The command line argument `--jobs` (`-j`) allow specifying the number
-of jobs run simultaneously.
+#### Job limit
 
-If no option is given to `--jobs`, the number of available cores
-is used, if the system provide this information.
-
-#### Limit on the number of jobs
-
-By default, this number must be lower than the number of cores
-available. This limit can be discarded by
-passing`--discard-jobs-limit=true` to `tfel-check`.
+By default, the number of jobs cannot exceed the available CPU cores.
+This restriction can be disabled with `--discard-jobs-limit=true`.
 
 ### Caution
 
-The user must take care that the commands described in `.check` files
-can be run in parallel.
+Ensure that parallel execution is safe for your test suite:
 
-- the jobs shall no exhaust memory.
-- the jobs shall not access concurrently to the same resources.
+- Jobs must not exhaust available memory.
+- Jobs must not concurrently access shared resources (e.g., files, directories).
 
-A typical example of conflict would be to have two `.check` files in the
-same directory that call `mfront` to build somes shared libraries: the
-two `MFront`'s processes may write concurrently files in the `src` and
-`include` directories, leading to an undefined behaviour.
+For example, running two `.check` files that invoke `mfront` to build shared
+libraries in the same directory may cause race conditions, as both processes
+could write to `src/` or `include/` simultaneously.
 
-Another example would be to use `@CleanDirectories` and `@CleanFiles`
-commands inappropriately and erase data used by commands of other
-`.check` files.
+Similarly, improper use of `@CleanDirectories` or `@CleanFiles` may delete
+data required by other `.check` files.
 
-### Synchronizing the output on the terminal
+### Terminal output synchronization
 
-By default, the output on the terminal are **not** synchronized, which
-means that the completion of every individual step (command execution,
-results comparisons, etc.) in a job is displayed immediately.
+By default, terminal output is **not synchronized**, meaning that individual
+steps (command execution, comparisons, etc.) are displayed immediately.
 
-Using the command line argument `--synchronize-terminal-output` (which
-expects a boolean option), this behaviour can be changed. If
-synchronized, the output of each job is stored in a buffer and then
-displayed at the end of the job completion.
+To synchronize output, use `--synchronize-terminal-output=true`.
+This buffers each job's output and displays it only after the job completes.
 
 ## A first example
 
-Let us consider this simple test file:
+Consider the following simple `.check` file:
 
 ~~~~{.cxx}
 @Requires {"tfel::madnex","mfront::python"};
@@ -122,25 +101,18 @@ Let us consider this simple test file:
 };
 ~~~~
 
-The first line, which begins with the `@Requires` keywords, provides a
-list of required components. In this case, the components `tfel::madnex`
-and `mfront::python` are required to execute the tests described in this
-file. The tests are skipped if those requirements are not met. The
-definition of components can be done in a configuration file, as
-detailed in Section @sec:tfel_check:configuration_files. The components
-defined by defaults by `tfel-check` is described in Section
-@sec:tfel_check:default_components.
+- The `@Requires` keyword lists required components (`tfel::madnex` and
+  `mfront::python`). If these are unavailable, tests are skipped.
+  Components can be defined in configuration files (see Section @sec:tfel_check:configuration_files).
+  Default components are listed in Section @sec:tfel_check:default_components.
 
-The second line specifies the first command to be run and begins with the
-`@Command` keyword. It is followed by the command to be launched. The
-`@python@` syntax designates that a substitution string must be provided
-to precise the `python` interpreter to be used.
+- The `@Command` keyword executes a command. The `@python@` syntax is a
+  substitution string that must be defined (e.g., via `--@python@=python3.5`).
 
-The third line specifies a second command which launches `mfront-query`
-and a first test which compares the command line output to an expected
-one.
+- The second `@Command` includes a test that validates the command's output
+  against the expected string `"John Mac Enroe"`.
 
-This file can can be launched as follows:
+To run this file:
 
 ~~~~{.bash}
 $ tfel-check --@python@=python3.5 madnex.check
@@ -153,24 +125,14 @@ entering directory '/tmp/madnex'
 ======
 ~~~~
 
-This command produces several files:
+This generates the following files:
 
-- `tfel-check.log`: this file contains the output of `tfel-check`. This
-  file is created in the directory where `tfel-check` has been invoked.
-- `madnex.checklog`: this file contains a summary of the execution of
-  the commands and test described in the `madnex.check` file. A similar
-  file is created for each file considered by `tfel-check`.
-- Three files `madnex-Exec-1.out`, `madnex-Exec-2.out` and
-  `madnex-Exec-3.out` associated to the three commands listed in the
-  `madnex.check` file. Those files contain the output of each command
-  and the execution time of the command.
-- `TEST-madnex.xml` is an `XML` file conforming the `JUnit` standard
-  that summarises the results and which is suitable for the integration
-  of the test case in the [`jenkins` automation
-  server](https://www.jenkins.io/).
+- `tfel-check.log`: Global log file in the invocation directory.
+- `madnex.checklog`: Summary of command executions and tests for `madnex.check`.
+- `madnex-Exec-1.out`, `madnex-Exec-2.out`, `madnex-Exec-3.out`: Output and execution time for each command.
+- `TEST-madnex.xml`: JUnit-compatible XML file for integration with [Jenkins](https://www.jenkins.io/).
 
-If the requirements are not met, the execution and the tests are
-marked as skipped:
+If requirements are unmet, tests are skipped:
 
 ~~~~{.bash}
 $ tfel-check
@@ -183,7 +145,7 @@ entering directory '/tmp/madnex'
 ======
 ~~~~
 
-If the execution of a command fails, this is reported as follows: 
+Command failures are reported as follows:
 
 ~~~~{.bash}
 $ tfel-check --@python@=python2.7
@@ -198,47 +160,37 @@ entering directory '/tmp/madnex'
 
 ## A more complex example
 
-For this second example, let us consider a tensile test simulated using
-the `Cast3M` finite element solver. The test case uses an `MFront` file
-to define the behaviour and generates a text file called
-`ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.res` containing
-the evolution of the stress along the tensile axis as a function of
-time.
+Consider a tensile test simulated with the `Cast3M` finite element solver.
+An `MFront` file defines the material behaviour, and the simulation generates
+a result file (`ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.res`)
+containing the stress evolution along the tensile axis over time.
 
-The `ImplicitSimoMieheElastoPlasticity.check` file has the following
-content:
+The `ImplicitSimoMieheElastoPlasticity.check` file:
 
 ~~~~{.cxx}
 @Requires {"Cast3M", "mfront::behaviour::castem_interface"};
 @Command "mfront --obuild --interface=castem ImplicitSimoMieheElastoPlasticity.mfront";
 @Command "@castem@ ImplicitSimoMieheElastoPlasticityUniaxialTesting.dgibi";
 
-@Precision 100; // criterion for the check, here a difference of 100Pa is allowed
+@Precision 100; // absolute tolerance: 100 Pa
 @Test "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.res"
       "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.ref" 2;
 ~~~~
 
-The first line specifies that the `Cast3M` component must be available
-and that the support of the `Cast3M` interface is available in `MFront`.
-The second line compiles the behaviour.
+- The `@Requires` keyword ensures `Cast3M` and its `MFront` interface are available.
+- The first `@Command` compiles the behaviour.
+- The second `@Command` runs the `Cast3M` simulation, using the `@castem@` substitution.
+- `@Precision 100` sets an absolute tolerance of 100 Pa for comparisons.
+- The `@Test` keyword compares the second column of the result and reference files.
 
-The third one launches the `Cast3M` simulation. This line assumes that a
-substitution string for the `@castem@` pattern has been defined.
-
-The fifth line specifies an absolute criterion to compare the current
-results to the reference ones. The last line defines the test to be
-performed: the values of the second column of the two specified files
-are compared using an absolute criteria.
-
-To trigger those tests, the following config file, called
-`castem.config` can be used:
+A configuration file (`castem.config`) defines the substitution:
 
 ~~~~{.cxx}
 components : {"Cast3M"};
 substitutions : {"castem": "castem2019_PLEIADES"};
 ~~~~
 
-The tests are run as follows:
+Run the test with:
 
 ~~~~{.bash}
 $ tfel-check --config=castem.config
@@ -250,17 +202,13 @@ entering directory '/tmp/tfel-check'
 * end of test './ImplicitSimoMieheElastoPlasticity.check'              [SUCCESS]
 ~~~~
 
-## Commands failure
+## Command failure handling
 
-By default, `tfel-check` discards a command failure if at least one test
-is defined. The rationale behind this choice is that some command may
-succeed in producing the expected results but may still fail to exit
-properly.
+By default, `tfel-check` ignores command failures if at least one test is defined.
+This accounts for cases where a command produces correct results but exits with a
+non-zero status.
 
-This behavior can be controlled by the `--discard-commands-failure`
-which takes `true` or `false` as argument.
-
-### Example of usage
+Use `--discard-commands-failure` to control this behaviour:
 
 ~~~~{.bash}
 $ tfel-check --discard-commands-failure=false
@@ -281,186 +229,455 @@ entering directory '/tmp/tests'
 
 # Description of the input files{#sec:tfel_check:input_files}
 
+`.check` files describe tests and comparisons using a set of keywords.
+
 ## List of available keywords
 
 ### The `@Requires` keyword
 
-The `@Requires` keyword specifies the components that are required to
-run the tests described in the considered input file.
+The `@Requires` keyword lists the components required to run the tests in the file.
+If any component is unavailable, all tests in the file are skipped.
 
 ### The `@Environment` keyword
 
-The `@Environment` keyword specifies a set of environment variables that
-will be defined accessible to the commands.
+The `@Environment` keyword defines environment variables for commands:
+
+~~~~{.cxx}
+@Environment {"VAR1": "value1", "VAR2": "value2"};
+~~~~
 
 ### The `@Command` keyword
 
-The `@Command` keyword specifies a command to be launched.
+The `@Command` keyword executes a command. It supports the following options:
 
-This keyword has the following options:
+- `expected_output`: Expected output as a string (single line) or an array of strings (multiline).
+  The test fails if the actual output differs.
+- `expected_numerical_output`: Tests numerical output. Requires a map with:
+  - `value`: Expected numerical value.
+  - `criterion_value`: Tolerance for the comparison.
+- `output_validation_regex`: Regular expression to validate the command output.
+  The output is concatenated into a single string for validation.
+- `shall_fail`: Boolean. If `true`, the command must fail for the test to pass.
 
-- `expected_output`: a string (single line output) or an array of
-  strings (multiline output) specifying the expected output. If the
-  actual output differs from the expected one, the tests is marked as
-  failed.
-- `expected_numerical_output`, which allows to test the numerical output
-  of a command. This option must be defined as a map with two entries:
-  - `value`: the expected value
-  - `criterion_value`: the criterion value used to test the output
-- `output_validation_regex`, which allows to specify a regular
-  expression which shall validate the output of the command. The output
-  of the command is concatenated in a single string for the test.
-- `shall_fail`: a boolean stating if the command shall succeed or fail.
+Example:
+
+~~~~{.cxx}
+@Command "echo 42" {
+  expected_output: "42"
+};
+@Command "./my_script" {
+  shall_fail: true
+};
+~~~~
 
 ### The `@Precision` keyword
 
-The `@Precision` keyword specifies the comparison criterion used to
-compare the current values and the reference ones.
+The `@Precision` keyword sets the tolerance(s) for value comparisons.
+
+- For `Absolute`, `Relative`, or `Area` comparisons: a single value.
+- For `RelativeAndAbsolute` or `Mixed` comparisons: two values (relative and absolute).
+
+Example:
 
 ~~~~{.cxx}
-@Precision 1.e-6;
+@Precision 1.e-6;       // single precision for Absolute/Relative
+@Precision 1.e-3 1.;    // relative and absolute precision for Mixed
 ~~~~
 
 ### The `@Test` keyword
 
-The `@Test` keyword specifies two files to compare which represents
-respectively the current simulated values and the reference ones.
+The `@Test` keyword compares two files (current results and reference).
+
+Syntax:
+
+~~~~{.cxx}
+@Test <results_file> <reference_file> [columns];
+~~~~
+
+- `results_file`: Path to the file containing current results.
+- `reference_file`: Path to the file containing reference values.
+- `columns`: Optional list of column indices or names to compare (default: all columns).
+
+Examples:
+
+~~~~{.cxx}
+@Test 'results.res' 'reference.res';           // compare all columns
+@Test 'results.res' 'reference.res' 2;        // compare column 2
+@Test 'results.res' 'reference.res' 'B';     // compare column named 'B'
+@Test 'results.res' 'reference.res' 1 3 5;   // compare columns 1, 3, and 5
+@Test 'results.res' 'reference.res' 'A' 'B'; // compare columns named 'A' and 'B'
+~~~~
 
 ### The `@TestType` keyword
 
-The `@TestType` keyword specifies how the comparison between the
-simulated values and the reference values shall be performed.
+The `@TestType` keyword defines the comparison method for values.
+Available types:
 
-The following kind of comparison are available:
+- `Absolute`: Absolute difference between values must be ≤ precision.
+- `Relative`: Relative difference between values must be ≤ precision.
+- `RelativeAndAbsolute`: Combines relative and absolute criteria. Requires two precision values.
+- `Mixed`: Mixed relative/absolute comparison. Requires two precision values.
+- `Area`: Compares the area under the curve. Requires a single precision value.
 
-- `Absolute`:
-- `Relative`:
-- `RelativeAndAbsolute`:
-- `Mixed`:
-- `Area`:
+Example:
+
+~~~~{.cxx}
+@TestType Absolute;
+@Precision 1.e-6;
+@Test 'results.res' 'reference.res' 1;
+
+@TestType RelativeAndAbsolute;
+@Precision 1.e-3 1.e-6; // relative and absolute tolerances
+@Test 'results.res' 'reference.res' 2;
+~~~~
 
 ### The `@Interpolation` keyword
 
-The `@Interpolation` keyword specifies how the reference values can be
-interpolated. The following interpolations are available:
+The `@Interpolation` keyword specifies how reference values are interpolated
+for comparison. This is useful when the reference and result files have different
+abscissa values (e.g., time steps).
 
-- `None`:
-- `Linear`:
-- `Spline`:
-- `LocalSpline`:
+Available interpolation methods:
+
+- `None`: No interpolation. Abscissa values must match exactly.
+- `Linear`: Linear interpolation between reference points.
+- `Spline`: Cubic spline interpolation.
+- `LocalSpline`: Local spline interpolation (avoids global smoothness constraints).
+
+The `using` clause specifies the column to use as the interpolation abscissa.
+The `AllowLessResults` option allows the result file to have fewer points than the reference.
+
+Examples:
+
+~~~~{.cxx}
+@Interpolation Linear using 'time';
+@Interpolation Spline using 'tps' AllowLessResults;
+          @Interpolation LocalSpline using 'x';
+~~~~
+
+#### Interpolation for integration
+
+For `Area` comparisons, an additional interpolation can be specified for integration:
+
+~~~~{.cxx}
+@TestType Area interpolation Spline using 'time';
+@Precision 0.1;
+@Test 'results.res' 'reference.res' 'y';
+~~~~
+
+# Comparing values between files
+
+`tfel-check` provides powerful tools to compare numerical results against reference data.
+This section details the available comparison types, interpolation methods, and precision settings.
+
+## Comparison types {#sec:tfel_check:comparison_types}
+
+The `@TestType` keyword defines how values are compared. Each type has specific use cases:
+
+### Absolute comparison
+
+Checks if the absolute difference between corresponding values is within the specified precision.
+
+~~~~{.cxx}
+@TestType Absolute;
+@Precision 1.e-6;
+@Test 'results.res' 'reference.res' 1;
+~~~~
+
+**Use case**: Suitable for quantities with a known absolute tolerance (e.g., stress in Pa).
+
+### Relative comparison
+
+Checks if the relative difference between corresponding values is within the specified precision.
+
+~~~~{.cxx}
+@TestType Relative;
+@Precision 1.e-3; // 0.1% tolerance
+@Test 'results.res' 'reference.res' 1;
+~~~~
+
+**Use case**: Ideal for quantities where relative accuracy matters (e.g., normalized values).
+
+### Relative and Absolute comparison
+
+Combines both criteria: the test passes if **either** the relative **or** the absolute difference is within tolerance.
+
+~~~~{.cxx}
+@TestType RelativeAndAbsolute;
+@Precision 1.e-3 1.e-6; // relative and absolute tolerances
+@Test 'results.res' 'reference.res' 1;
+~~~~
+
+**Use case**: Flexible comparison for quantities that may have small absolute values (where relative comparison fails) or large values (where absolute comparison is too strict).
+
+### Mixed comparison
+
+Combines both criteria: the test passes if **both** the relative **and** the absolute differences are within tolerance.
+
+~~~~{.cxx}
+@TestType Mixed;
+@Precision 1.e-3 1.e-6; // relative and absolute tolerances
+@Test 'results.res' 'reference.res' 1;
+~~~~
+
+**Use case**: Strict comparison where both relative and absolute accuracy must be satisfied.
+
+### Area comparison
+
+Compares the area under the curve (integral) of the specified columns.
+Requires an interpolation method for the reference data.
+
+~~~~{.cxx}
+@TestType Area interpolation Spline using 'time';
+@Precision 0.1; // 10% tolerance on the area
+@Test 'results.res' 'reference.res' 'stress';
+~~~~
+
+**Use case**: Useful for validating global quantities (e.g., total energy, work done) where pointwise differences may be less important.
+
+## Interpolation methods {#sec:tfel_check:interpolation_methods}
+
+Interpolation is required when the abscissa values (e.g., time, strain) in the result and reference files do not match.
+The `@Interpolation` keyword specifies how reference data is interpolated.
+
+### No interpolation
+
+No interpolation is performed. The abscissa values in both files must match exactly.
+
+~~~~{.cxx}
+@Interpolation None;
+@Test 'results.res' 'reference.res' 1;
+~~~~
+
+**Use case**: Fastest method when both files use identical abscissa values.
+
+### Linear interpolation
+
+Linear interpolation between reference points.
+
+~~~~{.cxx}
+@Interpolation Linear using 'time';
+@Test 'results.res' 'reference.res' 'stress';
+~~~~
+
+**Use case**: Simple and robust for most smooth data.
+
+### Spline interpolation
+
+Cubic spline interpolation for smooth curves.
+
+~~~~{.cxx}
+@Interpolation Spline using 'strain';
+@Test 'results.res' 'reference.res' 'stress';
+~~~~
+
+**Use case**: High-quality interpolation for smooth data with continuous second derivatives.
+
+### Local Spline interpolation
+
+Local spline interpolation avoids global smoothness constraints, making it more robust for noisy or non-smooth data.
+
+~~~~{.cxx}
+@Interpolation LocalSpline using 'time' AllowLessResults;
+@Test 'results.res' 'reference.res' 'stress';
+~~~~
+
+**Use case**: Preferred for data with sharp transitions or when the result file has fewer points than the reference.
+
+### Allowing fewer results
+
+The `AllowLessResults` option allows the result file to have fewer data points than the reference file.
+This is useful when the simulation uses adaptive time-stepping or when reference data is highly resolved.
+
+~~~~{.cxx}
+@Interpolation Linear using 'time' AllowLessResults;
+@Test 'results.res' 'reference.res' 1;
+~~~~
+
+## Multi-column comparisons
+
+Multiple columns can be compared in a single `@Test` directive by listing their indices or names.
+
+~~~~{.cxx}
+@TestType Absolute;
+@Precision 1.e-6;
+@Test 'results.res' 'reference.res' 1 2 3;       // compare columns 1, 2, and 3
+@Test 'results.res' 'reference.res' 'A' 'B';    // compare columns named 'A' and 'B'
+~~~~
+
+**Note**: All specified columns are compared using the same `@TestType` and `@Precision`.
+
+## Practical examples
+
+### Example 1: Simple absolute comparison
+
+Compare the second column of two files with an absolute tolerance of 1e-6:
+
+~~~~{.cxx}
+@TestType Absolute;
+@Precision 1.e-6;
+@Test 'results.res' 'reference.res' 2;
+~~~~
+
+### Example 2: Relative comparison with interpolation
+
+Compare stress-strain curves where the strain values (column 1) differ between files:
+
+~~~~{.cxx}
+@TestType Relative;
+@Precision 1.e-3;
+@Interpolation Spline using 1;
+@Test 'results.res' 'reference.res' 2;
+~~~~
+
+### Example 3: Mixed comparison with local spline
+
+Strict comparison of temperature evolution with local spline interpolation:
+
+~~~~{.cxx}
+@TestType Mixed;
+@Precision 1.e-4 1.e-6; // relative and absolute tolerances
+@Interpolation LocalSpline using 'time' AllowLessResults;
+@Test 'results.res' 'reference.res' 'temperature';
+~~~~
+
+### Example 4: Area comparison for energy validation
+
+Compare the total energy (area under the force-displacement curve):
+
+~~~~{.cxx}
+@TestType Area interpolation Linear using 'displacement';
+@Precision 0.5; // 0.5% tolerance on the area
+@Test 'results.res' 'reference.res' 'force';
+~~~~
+
+### Example 5: Multi-column comparison with different precisions
+
+Compare multiple columns with different precisions (requires separate `@Test` directives):
+
+~~~~{.cxx}
+@TestType Absolute;
+@Precision 1.e-3;
+@Test 'results.res' 'reference.res' 'stress';
+
+@TestType Relative;
+@Precision 1.e-4;
+@Test 'results.res' 'reference.res' 'strain';
+~~~~
 
 # Description of the configuration files{#sec:tfel_check:configuration_files}
 
-Configuration files can be used to define:
+Configuration files define:
 
-- substitution strings
-- available components
-- environment variables
+- Substitution strings (e.g., `@python@` → `python3.5`).
+- Available components (e.g., `Cast3M`, `tfel::madnex`).
+- Environment variables.
 
-The syntax of configuration file is loosely inspired by the `JSON`
-format and looks like:
+The syntax is JSON-inspired:
 
 ~~~~{.cxx}
-components : {"pleiades::python"};
-substitutions : {"python" : "python3.5"};
+components: {"Cast3M", "tfel::madnex"};
+substitutions: {"python": "python3.5", "castem": "castem2019"};
+environment_variables: {"CXXFLAGS": "-Wall", "OMP_NUM_THREADS": "4"};
 ~~~~
 
 ## Defining environment variables in configuration files
 
-The `environment_variables` section introduce a map defining a
-set of environment variables.
-
-### Example of usage
+The `environment_variables` section defines a map of environment variables:
 
 ~~~~{.cxx}
-environment_variables: {"CXXFLAGS": "-Wall"};
+environment_variables: {"CXXFLAGS": "-Wall", "MPI_ROOT": "/path/to/mpi"};
 ~~~~
 
 ### Caution
 
-- An environment variable can only be defined once in configuration
-  files
-- If an environment variable is defined in a configuration file and in a
-  test file (through the `@Environment` keyword), the latter definition
-  is used.
+- Environment variables can only be defined **once** across all configuration files.
+- If an environment variable is defined in both a configuration file and a test file
+  (via `@Environment`), the test file's definition takes precedence.
 
 # Default components {#sec:tfel_check:default_components}
 
-Some components are conditionally defined by `tfel-check`.
+`tfel-check` automatically defines components based on the enabled features:
 
-- If the `python` bindings of the `TFEL` project have been enabled, the
-  following components are declared: `tfel::python` and
-  `mfront::python`.
-- If the `madnex` support has been enabled, the component `tfel::madnex`
-  is declared.
+- If `TFEL`'s Python bindings are enabled: `tfel::python` and `mfront::python`.
+- If `madnex` support is enabled: `tfel::madnex`.
+- For each `MFront` material property interface: `mfront::material_property::<name>_interface`.
+- For each `MFront` behaviour interface: `mfront::behaviour::<name>_interface`.
+- For each `MFront` model interface: `mfront::model::<name>_interface`.
 
-For each `MFront`' interface for material properties, a component called
-`mfront::material_property::<name>_interface` is defined, where `<name>`
-shall be replaced by the name of the interface.
+To list all default components, use:
 
-For each behaviour interface, a component named
-`mfront::behaviour::<name>_interface` is declared, where `<name>` is the
-name of the interface.
-
-For each model interface, a component named
-`mfront::model::<name>_interface` is declared, where `<name>` is the
-name of the interface.
-
-Those default components can be listed using the
-`--list-default-components` command line options, as follows:
-
-~~~~{.cxx}
+~~~~{.bash}
 $ tfel-check --list-default-components
 - tfel::python
 - mfront::python
 - tfel::madnex
 - mfront::material_property::C++_interface
-- mfront::material_property::Cpp_interface
-- mfront::material_property::Cxx_interface
-- mfront::material_property::Python_interface
 - mfront::material_property::c_interface
-- mfront::material_property::c++_interface
-- mfront::material_property::cpp_interface
-- mfront::material_property::cpptest_interface
-- mfront::material_property::cxx_interface
-- mfront::material_property::excel_interface
-- mfront::material_property::excel-internal_interface
-- mfront::material_property::gnuplot_interface
-- mfront::material_property::mfront_interface
-- mfront::material_property::octave_interface
-- mfront::material_property::python_interface
 - mfront::behaviour::generic_interface
 - mfront::model::mfront_interface
+...
 ~~~~
 
-# Automatic declaration of substitutions for `TFEL` executables and `python` interpreter
+# Automatic declaration of substitutions
 
-The following substitutions are automatically declared: `@mfront@`,
-`@mfront-query@`, `@mtest@`, `@mfront-doc@`, `@mfm-test-generator@`.
+`tfel-check` automatically declares substitutions for `TFEL` executables:
 
-In `python` bindings are enabled, the `@python` substitution is also
-automatically declared.
+- `@mfront@`
+- `@mfront-query@`
+- `@mtest@`
+- `@mfront-doc@`
+- `@mfm-test-generator@`
 
-Those substitutions are declared after reading the configuration files
-and after parsing the command line arguments, so those default
-substitutions can be overridden by the user.
+If Python bindings are enabled, `@python` is also declared.
+
+These default substitutions are applied **after** reading configuration files
+and command-line arguments, so they can be overridden by the user.
 
 # Command line arguments
 
-A description of the available command line arguments is displayed by
-passing `--help` (`-h`) to `tfel-check`.
+For a full list of command-line options, run:
 
+~~~~{.bash}
+$ tfel-check --help
 ~~~~
-Usage: tfel-check [options] [files]
 
-Available options are : 
---config, -c                    : add a configuration file
---discard-commands-failure      : discard command's failure if comparisons are ok (default behaviour). If no comparisons is declared, command's failure is never ignored.
---discard-jobs-limit            : disable test on the number of jobs allowed to run simultaneously.
---help, -h                      : Display this message
---jobs, -j                      : specifies the number of jobs (commands) to run simultaneously
---list-default-components       : list all default components
---synchronize-terminal-output   : synchronize the terminal output in parallel (false by default). If synchronized, the results of each `.check` file is diplayed after its full completion.
---use-terminal-colors           : use terminal colors for terminal output (std::cout).
---version, -v                   : Display version information
+## Summary of options
+
+| Option | Description |
+|--------|-------------|
+| `--config, -c` | Add a configuration file. |
+| `--discard-commands-failure` | Ignore command failures if comparisons pass (default: `true`). If no comparisons are defined, failures are never ignored. |
+| `--discard-jobs-limit` | Disable the limit on parallel jobs (default: enforced). |
+| `--help, -h` | Display help message. |
+| `--jobs, -j` | Number of parallel jobs (default: number of CPU cores). |
+| `--list-default-components` | List all default components. |
+| `--synchronize-terminal-output` | Synchronize terminal output in parallel (default: `false`). |
+| `--use-terminal-colors` | Use terminal colors for output. |
+| `--version, -v` | Display version information. |
+
+## Usage examples
+
+Run all `.check` files in the current directory:
+
+~~~~{.bash}
+$ tfel-check
+~~~~
+
+Run specific files with 4 parallel jobs:
+
+~~~~{.bash}
+$ tfel-check -j 4 test1.check test2.check
+~~~~
+
+List default components:
+
+~~~~{.bash}
+$ tfel-check --list-default-components
+~~~~
+
+Override a substitution and enable terminal colors:
+
+~~~~{.bash}
+$ tfel-check --@python@=python3.10 --use-terminal-colors=true
 ~~~~
