@@ -74,15 +74,14 @@ namespace tfel::tests {
           success = false;
         }
       } catch (std::exception& e) {
-        r1 = TestResult(false, "test '" + t->name() +
-                                   "' has thrown an exception "
-                                   "(" +
-                                   std::string(e.what()) + ")");
+        r1 = TestResult(false,
+                        "test '" + t->name() + "' failed due to an exception");
+        r1.append(TestResult{false, "failure reason", std::string(e.what())});
         success = false;
       } catch (...) {
-        r1 = TestResult(false, "test '" + t->name() +
-                                   "' has thrown an "
-                                   "unknown exception");
+        r1 = TestResult(false,
+                        "test '" + t->name() + "' failed due to an exception");
+        r1.append(TestResult{false, "failure reason", "unknown"});
         success = false;
       }
       const auto stop = high_resolution_clock::now();

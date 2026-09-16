@@ -37,7 +37,7 @@ namespace mfront {
       std::optional<std::string> returned_value;
       std::string matrix;
     };
-    //! \brief structure containing results of the
+    //! \brief structure containing the results of the matrix decomposition
     struct [[nodiscard]] MatrixDecompositionResult {
       struct VariableDescription {
         //
@@ -88,6 +88,7 @@ namespace mfront {
     /*!
      * \brief write the resolution of a linear system
      * \param[in] os: output stream
+     * \param[in] bd: behaviour description
      * \param[in] solver: nonlinear solver
      * \param[in] h: modelling hypothesis
      * \param[in] s: description of the linear system
@@ -99,14 +100,12 @@ namespace mfront {
         const Hypothesis,
         const LinearSystemVariables &) const = 0;
     /*!
-     * \brief write the decomposition of a matrix prior to a resolution
-     * of one or several linear systems (see write
-     * `writeLinearSystemSubstitution`)
-     *
+     * \brief return the description of the results of the matrix
+     * decomposition (see `writeMatrixDecomposition`)
      * \param[in] bd: behaviour description
      * \param[in] solver: nonlinear solver
      * \param[in] h: modelling hypothesis
-     * \param[in] s: description of the linear system
+     * \param[in] n: name of the decomposed matrix
      */
     virtual MatrixDecompositionResult getMatrixDecompositionResults(
         const BehaviourDescription &,
@@ -115,13 +114,13 @@ namespace mfront {
         const std::string &) const = 0;
     /*!
      * \brief write the decomposition of a matrix prior to a resolution
-     * of one or several linear systems (see write
+     * of one or several linear systems (see
      * `writeLinearSystemSubstitution`)
-     *
      * \param[in] os: output stream
+     * \param[in] bd: behaviour description
      * \param[in] solver: nonlinear solver
      * \param[in] h: modelling hypothesis
-     * \param[in] s: description of the linear system
+     * \param[in] s: variables of the matrix decomposition
      */
     virtual MatrixDecompositionResult writeMatrixDecomposition(
         std::ostream &,
@@ -135,7 +134,7 @@ namespace mfront {
      *
      * \param[in] os: output stream
      * \param[in] r: result of the matrix decomposition
-     * \param[in] rhs: name of the right hand sie
+     * \param[in] s: description of the substitution variables
      */
     virtual void writeLinearSystemSubstitution(
         std::ostream &,
@@ -145,7 +144,7 @@ namespace mfront {
      * \brief write the solver specific members
      * \param[in] out : output file
      * \param[in] md  : mechanical description
-     * \param[in] h   : modelling hypotheis
+     * \param[in] h   : modelling hypothesis
      */
     virtual void writeSpecificMembers(std::ostream &,
                                       const BehaviourDescription &,

@@ -50,4 +50,13 @@
  */
 #define TFEL_PP_DO_JOIN2(X, Y) X##Y
 
+/*!
+ * \brief macro defining a unique local variable name for a temporary variable
+ * that it not meant to be seen by the end-user
+ * \author Thomas Helfer
+ * \date   03/09/2026
+ */
+#define TFEL_TEMPORARY_VARIABLE(X) \
+  TFEL_PP_JOIN(TFEL_PP_JOIN(TFEL_PP_JOIN(tfel_temporary_, X), _), __LINE__)
+
 #endif /* LIB_TFEL_MACROS_HXX */

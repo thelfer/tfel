@@ -23,7 +23,13 @@ namespace tfel::tests {
   template <typename... Arguments>
   TestProxy<TestType>::TestProxy(const std::string& n, Arguments&&... a) {
     auto& tm = TestManager::getTestManager();
-    tm.addTest(n, std::make_shared<TestType>(std::forward<Arguments>(a)...));
+    try {
+      tm.addTest(n, std::make_shared<TestType>(std::forward<Arguments>(a)...));
+    } catch (std::exception& e) {
+      tm.registerTestConstructionFailure(n, e.what());
+    } catch (...) {
+      tm.registerTestConstructionFailure(n);
+    }
   }  // end of TestProxy<T>::TestProxy
 
 }  // end of namespace tfel::tests
