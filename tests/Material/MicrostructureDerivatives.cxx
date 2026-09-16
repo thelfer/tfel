@@ -48,6 +48,9 @@ struct MicrostructureDerivativesTest final
 
     this->template test_1<real, stress, length>();
     this->template test_1<real, real, real>();
+
+    this->template test_poly<real, stress, length>();
+this->template test_poly<real, real, real>();
     
     return this->result;
   }
@@ -93,7 +96,45 @@ struct MicrostructureDerivativesTest final
     auto dCSC_dkr = h_SC.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCSC_dmur = h_SC.derivative_of_homogenized_stiffness_wrt_mur;
     
-  }  
+  }  //end of test_1
+
+  template <typename real, typename stress, typename length>
+void test_poly() {
+  static constexpr auto eps = std::numeric_limits<real>::epsilon();
+  using namespace tfel::material::homogenization::elasticity;
+  length a = length(10);
+  length b = length(1);
+  length c = length(1);
+  tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
+  tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
+  const auto young0 = stress{1e9};
+  const auto nu0 = real(0.2);
+  const auto youngi = stress{10e9};
+  const auto nui = real(0.3);
+  tfel::math::st2tost2<3u, stress> C_0;
+  static constexpr auto value =
+      tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
+  tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
+      C_0, young0, nu0);
+  tfel::math::st2tost2<3u, stress> C_i;
+  tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
+      C_i, youngi, nui);
+  const auto KG0 = tfel::material::computeKGModuli<stress>(C_0);
+  const auto KGi = tfel::material::computeKGModuli<stress>(C_i);
+  Ellipsoid<length> ellipsoid1(a, b, c);
+  Spheroid<length> spheroid1(a, b);
+  Grain<stress> grain1(ellipsoid1, real(0.5), KG0,n_a,n_b);
+  Grain<stress> grain2(spheroid1, real(0.5), KGi,n_a,n_b);
+  const auto sph = Sphere<length>();
+  Grain<stress> grain3(sph, real(0.5), KGi,n_a,n_b);
+  Polycrystal<stress> poly1;
+  poly1.addGrain(grain1);
+  poly1.addGrain(grain2);
+  auto h_s_1 = computeSelfConsistent<3u, stress>(poly1,1e-6,C_0,true,0,{},true);
+  auto Chom_DS_1 = h_s_1.homogenized_stiffness;
+  
+  
+    }//end of test_poly
 
 };  // end of struct MicrostructureDerivativesTest
 

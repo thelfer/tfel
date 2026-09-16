@@ -415,7 +415,11 @@ const auto KG = computeKGModuli<stress>(C);
 
 Note that `computeKGModuli` makes a projection on the fourth-order
 tensors \(\tenseurq{J}\) and \(\tenseurq{K}\) if \(\tenseurq{C}\)
-is not isotropic. It can be checked that \(\tenseurq{C}\) is isotropic
+is not isotropic. The projected moduli are given by
+
+\(k=\dfrac13\tenseurq C::\tenseurq J,\qquad\mu=\dfrac1{10}\tenseurq C::\tenseurq K\)
+
+It can be checked that \(\tenseurq{C}\) is isotropic
 by doing
 
 ~~~~{.cpp}

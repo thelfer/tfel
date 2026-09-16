@@ -6,6 +6,7 @@
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}
+\newcommand{\derivdr}[2]{\Frac{\mathrm{d}\, #1}{\mathrm{d}\, #2}}
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
@@ -922,7 +923,7 @@ relative to each ellipsoid. Note that above formula is equivalent to
 
 \(\tenseurq C^{\mathrm{DS}}=\sum_{i=0}^{N-1}f_i\,\tenseurq C_i:\tenseurq A_i^{\mathrm{DS}}\)
 
-where \(\tenseurq A_0^{\mathrm{DS}}=\tenseurq I\). Let us try:
+where \(\tenseurq A_0^{\mathrm{DS}}=\dfrac1{f_0}\left(\tenseurq I-\sum_{i=1}^{N-1} f_i\,\tenseurq A_i^{\mathrm{DS}}\right)\). Let us try:
 
 ~~~~{.cpp}
 auto hmDS=computeDilute<3u,stress>(micro_1);
@@ -954,7 +955,7 @@ The homogenized stiffness of the Mori-Tanaka scheme reads
 
 \(\tenseurq C^{\mathrm{MT}}=\tenseurq C_0+\sum_{i=1}^{N-1}f_i\,\left(\tenseurq C_i-\tenseurq C_0\right):\tenseurq A_i^{\mathrm{MT}}\)
 
-where \(\tenseurq A_i^{\mathrm{MT}}=\tenseurq A_i^{\mathrm{DS}}:\left(\sum_{i=0}^{N-1}f_i\,\tenseurq A_i^{\mathrm{DS}}\right)^{-1}\). Note that we have also:
+where \(\tenseurq A_i^{\mathrm{MT}}=\tenseurq A_i^{\mathrm{DS}}:\left(\sum_{j=0}^{N-1}f_j\,\tenseurq A_j^{\mathrm{DS}}\right)^{-1}\), but with now \(\tenseurq A_0^{\mathrm{DS}}=\tenseurq I\). Note that we have also:
 
 \(\tenseurq C^{\mathrm{MT}}=\sum_{i=0}^{N-1}f_i\,\tenseurq C_i:\tenseurq A_i^{\mathrm{MT}}\).
 
@@ -978,6 +979,73 @@ auto hmMT_aniso=computeMoriTanaka<3u,stress>(micro_1,max_iter_anisotropic_integr
 Here again the numerical integration can be performed only for
 a spherical inclusion, or an oriented ellipsoidal inclusion.
 
+### Asymmetric self-consistent scheme (with matrix phase)
+
+We now consider a particulate microstructure in which
+the phase 0 plays the role of a matrix: it embeds the inclusions \((1\leq i\leq N-1)\).
+This case is different from the traditional self-consistent scheme
+and different variants of the self-consistent scheme are available
+to account for this difference. We use here the asymmetric self-consistent
+scheme proposed in [@saevik_2012]. This turns into a dilute scheme
+for which the localisation tensor in the inclusions is computed
+by considering the Hill tensor relative to a reference medium
+equal to the homogenized medium. We choose a criterium \(\epsilon\)
+and the initial elasticity is chosen as
+the elasticity \(\tenseurq C_0\) of the matrix. We hence have the
+following algorithm:
+
+1. Set \(\quad\tenseurq C^{\mathrm{ASC}}_{0}=\tenseurq C_{0},\quad\) \(n=0,\quad\) and \
+(\quad\xi=\epsilon+1\).
+
+2. While \(\quad\xi > \epsilon\quad\), do: \(\quad\tenseurq C^{\mathrm{ASC}}_{n+1}=\tenseurq C_0+\sum_
+{i=1}^{N-1}f_i\,\left(\tenseurq C_i-\tenseurq C_0\right):\tenseurq A_i^{\mathrm{ASC},n},\quad\)  
+increment \(n\) and compute the relative 
+difference \(\xi=\Frac{||\tenseurq C^{\mathrm{ASC}}_{n+1}-\tenseurq C^{\mathrm{ASC}}_{n}||}{||
+\tenseurq 
+C^{\mathrm{ASC}}_{n}||}\)
+
+where \(\tenseurq A_i^{\mathrm{ASC},n}\) is the
+average localisation tensor on phase i, assumed this phase is embedded in a matrix whose elasticity
+is the homogenized elasticity \(\tenseurq C^{\mathrm{ASC}}_{n}\) obtained at previous step \(n\).
+To be more precise, for a unique ellipsoid whose orientation is given by \((\vec n_a,\vec n_b)\),
+we have
+
+\(\tilde{\tenseurq A}_i^{\mathrm{ASC},n}=\tilde{\tenseurq A}_i^{\mathrm{ASC},n}(\vec n_a,\vec n_b)
+=\left
+[\tenseurq I + \tenseurq P_i^{\mathrm
+{ASC},n}(\vec n_a,\vec n_b):\left(\tenseurq C_i -\tenseurq C^{\mathrm{ASC}}_{n}\right)\right]^{-1}\)
+
+where \(\tenseurq P_i^{\mathrm{ASC},n}(\vec n_a,\vec n_b)\) is the Hill tensor
+related to the ellipsoid embedded in a homogeneous medium whose elasticity is
+\(\tenseurq C^{\mathrm{ASC}}_{n}\). And, for a collection of ellipsoids,
+we have
+
+\(\tenseurq A_i^{\mathrm{ASC},n}=\langle\tilde{\tenseurq A}_i^{\mathrm{ASC},n}(\vec n_a,\vec 
+n_b)\rangle_{\vec n_a,\vec n_b}\)
+
+where \(\langle.\rangle_{\vec n_a,\vec n_b}\) stands for the average on all orientations. Let us try:
+
+~~~~{.cpp}
+auto epsilon = 1e-6;
+auto hmASC=computeAsymmetricSelfConsistent<3u,stress>(micro_1,epsilon,true);
+std::cout<< "CASC: "<< hmASC.homogenized_stiffness << std::endl;
+~~~~
+
+Otherwise, he can put `false`, so that a numerical integration (resulting
+in a slower computation) will be performed to compute the Hill tensors.
+Moreover, the optional integer `max_iter_anisotropic_integration` can also be used
+as for the other schemes (its default value is here `8`):
+
+~~~~{.cpp}
+hmASC_aniso=computeAsymmetricSelfConsistent<3u,stress>(micro_1,epsilon,false,
+max_iter_anisotropic_integration);
+std::cout<< "CASC: "<< hmASC_aniso.homogenized_stiffness << std::endl;
+~~~~
+
+Note that the numerical integration is performed only when the
+`InclusionDistribution` objects are `SphereDistribution`
+or `OrientedDistribution`.
+
 ### Self-consistent scheme (without matrix phase)
 
 Here we consider a microstructure in which there is no phase
@@ -991,24 +1059,18 @@ elasticity guess. The algorithm is as follows:
 
 2. While \(\quad\xi > \epsilon\quad\), do: \(\quad\tenseurq C^{\mathrm{SC}}_{n+1}=\sum_{i=1}^{N}f_i\,\tenseurq C_i:\tenseurq A_i^{\mathrm{SC},n},\quad\)  increment \(n\) and compute the relative difference \(\xi=\Frac{||\tenseurq C^{\mathrm{SC}}_{n+1}-\tenseurq C^{\mathrm{SC}}_{n}||}{||\tenseurq C^{\mathrm{SC}}_{n}||}\)
 
-where \(\tenseurq A_i^{\mathrm{SC},n}=\tilde{\tenseurq A}_i^{\mathrm{SC},n}:\left(\sum_{i=0}^{N-1}f_i\,\tilde{\tenseurq A}_i^{\mathrm{SC},n}\right)^{-1}\) and \(\tilde{\tenseurq A}_i^{\mathrm{SC},n}\) is the
+where \(\tenseurq A_i^{\mathrm{SC},n}=\tenseurq A_i^{\mathrm{DSC},n}:\left(\sum_{i=1}^{N}f_i\,\tenseurq A_i^{\mathrm{DSC},n}\right)^{-1}\) and \(\tenseurq A_i^{\mathrm{DSC},n}\) is the
 average localisation tensor on phase i, assumed this phase is embedded in a matrix whose elasticity
 is the homogenized elasticity \(\tenseurq C^{\mathrm{SC}}_{n}\) obtained at previous step \(n\).
-To be more precise, for a unique ellipsoid whose orientation is given by \((\vec n_a,\vec n_b)\),
+To be more precise, for a unique `Grain` object whose orientation is given by \((\vec n_a,\vec n_b)\),
 we have
 
-\(\tilde{\tenseurq A}_i^{\mathrm{SC},n}=\tilde{\tenseurq A}_i^{\mathrm{SC},n}(\vec n_a,\vec n_b)=\left[\tenseurq I + \tenseurq P_i^{\mathrm
-{SC},n}(\vec n_a,\vec n_b):\left(\tenseurq C_i -\tenseurq C^{\mathrm{SC}}_{n}\right)\right]^{-1}\)
+\(\tenseurq A_i^{\mathrm{DSC},n}=\tenseurq A_i^{\mathrm{DSC},n}(\vec n_a,\vec n_b)=\left[\tenseurq I + \tenseurq P_i^{\mathrm{SC},n}(\vec n_a,\vec n_b):\left(\tenseurq C_i -\tenseurq C^{\mathrm{SC}}_{n}\right)\right]^{-1}\)
 
 where \(\tenseurq P_i^{\mathrm{SC},n}(\vec n_a,\vec n_b)\) is the Hill tensor
 related to the ellipsoid embedded in a homogeneous medium whose elasticity is
-\(\tenseurq C^{\mathrm{SC}}_{n}\). And, for a collection of ellipsoids,
-we have
-
-\(\tilde{\tenseurq A}_i^{\mathrm{SC},n}=\langle\tilde{\tenseurq A}_i^{\mathrm{SC},n}(\vec n_a,\vec 
-n_b)\rangle_{\vec n_a,\vec n_b}\)
-
-where \(\langle.\rangle_{\vec n_a,\vec n_b}\) stands for the average on all orientations. Let us try:
+\(\tenseurq C^{\mathrm{SC}}_{n}\).
+Let us try:
 
 ~~~~{.cpp}
 auto epsilon = 1e-6;
@@ -1024,10 +1086,8 @@ Moreover, it must be precised, for the computation of the Hill tensor \(\tenseur
 considered isotropic or not. This is the role of the `bool` parameter (here, `true`).
 If it is `true`, an isotropic projection is performed for \(\tenseurq C^{\mathrm{SC}}_{n}\)
 at each step of the iterative algorithm.
-Otherwise, he can put `false`, so that a numerical integration (resulting
-in a slower computation) will be performed to compute the Hill tensors.
-Moreover, the optional integer `max_iter_anisotropic_integration` can also be used
-as for the other schemes (its default value is here `8`):
+The anisotropic case is treated as above for the
+asymmetric self-consistent scheme.
 
 ~~~~{.cpp}
 OrientedDistribution<stress> distrib_O(ellipsoid1,f,KGi,n_a,n_b);
@@ -1038,65 +1098,12 @@ std::cout<< "SC iso: "<< hmSC_iso.homogenized_stiffness<< std::endl;
 std::cout<< "SC aniso: "<< hmSC_aniso.homogenized_stiffness<< std::endl;
 ~~~~
 
-Note again that the numerical integration can be performed only for
-a spherical inclusion, or an oriented ellipsoidal inclusion.
-
-### Asymmetric self-consistent scheme (with matrix phase)
-
-We now consider a particulate microstructure in which
-the phase 0 plays the role of a matrix: it embeds the inclusions \((1\leq i\leq N-1)\).
-This case is different from the traditional self-consistent scheme
-and different variants of the self-consistent scheme are available
-to account for this difference. We use here the asymmetric self-consistent
-scheme proposed in [@saevik_2012]. This turns into a dilute scheme
-for which the localisation tensor in the inclusions is computed
-by considering the Hill tensor relative to a reference medium
-equal to the homogenized medium. We choose a criterium \(\epsilon\)
-and the initial elasticity guess can be simply chosen as
-the elasticity \(\tenseurq C_0\) of the matrix. We hence have the
-following algorithm:
-
-1. Set \(\quad\tenseurq C^{\mathrm{ASC}}_{0}=\tenseurq C_{0},\quad\) \(n=0,\quad\) and \(\quad\xi=\epsilon+1\).
-
-2. While \(\quad\xi > \epsilon\quad\), do: \(\quad\tenseurq C^{\mathrm{ASC}}_{n+1}=\tenseurq C_0+\sum_{i=1}^{N-1}f_i\,\left(\tenseurq C_i-\tenseurq C_0\right):\tenseurq A_i^{\mathrm{ASC},n},\quad\)  increment \(n\) and compute the relative 
-difference \(\xi=\Frac{||\tenseurq C^{\mathrm{ASC}}_{n+1}-\tenseurq C^{\mathrm{ASC}}_{n}||}{||\tenseurq 
-C^{\mathrm{ASC}}_{n}||}\)
-
-where \(\tenseurq A_i^{\mathrm{ASC},n}\) is the
-average localisation tensor on phase i, assumed this phase is embedded in a matrix whose elasticity
-is the homogenized elasticity \(\tenseurq C^{\mathrm{ASC}}_{n}\) obtained at previous step \(n\).
-To be more precise, for a unique ellipsoid whose orientation is given by \((\vec n_a,\vec n_b)\),
-we have
-
-\(\tilde{\tenseurq A}_i^{\mathrm{ASC},n}=\tilde{\tenseurq A}_i^{\mathrm{ASC},n}(\vec n_a,\vec n_b)=\left
-[\tenseurq I + \tenseurq P_i^{\mathrm
-{ASC},n}(\vec n_a,\vec n_b):\left(\tenseurq C_i -\tenseurq C^{\mathrm{ASC}}_{n}\right)\right]^{-1}\)
-
-where \(\tenseurq P_i^{\mathrm{ASC},n}(\vec n_a,\vec n_b)\) is the Hill tensor
-related to the ellipsoid embedded in a homogeneous medium whose elasticity is
-\(\tenseurq C^{\mathrm{ASC}}_{n}\). And, for a collection of ellipsoids,
-we have
-
-\(\tilde{\tenseurq A}_i^{\mathrm{ASC},n}=\langle\tilde{\tenseurq A}_i^{\mathrm{ASC},n}(\vec n_a,\vec 
-n_b)\rangle_{\vec n_a,\vec n_b}\)
-
-where \(\langle.\rangle_{\vec n_a,\vec n_b}\) stands for the average on all orientations. Let us try:
-
-~~~~{.cpp}
-auto epsilon = 1e-6;
-auto hmASC=computeAsymmetricSelfConsistent<3u,stress>(micro_1,epsilon,true);
-std::cout<< "CASC: "<< hmASC.homogenized_stiffness << std::endl;
-~~~~
-
-Again, the boolean parameter `true` specifies the isotropic projection
-of the homogenized stiffness. The anisotropic case is treated as above for the
-traditional self-consistent scheme.
 
 ## Strain localisation tensors on each phase
 
 The localisation tensors correspond to the fourth-order
 tensors related to each phase. For previous schemes,
-these tensors are \(\tenseurq A_i^{\mathrm{DS}},\tenseurq A_i^{\mathrm{MT}},\tenseurq A_i^{\mathrm{SC},n}\). We can recover these tensors as follows:
+these tensors are \(\tenseurq A_i^{\mathrm{DS}},\tenseurq A_i^{\mathrm{MT}},\tenseurq A_i^{\mathrm{ASC}},\tenseurq A_i^{\mathrm{SC}}\). We can recover these tensors as follows:
 
 ~~~~{.cpp}
 A_i_DS=hmDS.mean_strain_localisation_tensors;
@@ -1111,7 +1118,7 @@ which contains `st2tost2` objects, as many as the number of phases.
 We can also add a polarisation \(\tenseur \tau_i\) on each phase \(i\). This leads to the
 following effective polarisation (see Eq. (5.14) from [@willis_mechanics_2001]):
 
-\(\tenseur \tau^{\mathrm{eff}}=\sum_{i=1}^{N}f_i\,{\tenseur A_i}^T:\tenseur \tau_i\)
+\(\tenseur \tau^{\mathrm{eff}}=\sum_{i=1}^{N}f_i\,{\tenseurq A_i}^T:\tenseur \tau_i\)
 
 The polarisations are prescribed with a `std::vector`
 of `stensor` objects. This vector must have the same number of phases
@@ -1140,6 +1147,8 @@ polarisation is null.
 
 ## Second-moments of the strains
 
+### How to obtain them
+
 The second-moments of the strains are classically obtained
 with the derivatives of the homogenized stiffness w.r.t. the
 elastic moduli. These derivatives are also provided by the
@@ -1164,6 +1173,153 @@ which contains as many tensors as the number of phases.
 The tensor number `i` is a `st2tost2` object corresponding to the
 derivative of the homogenized stiffness w.r.t. the bulk modulus
 of phase `i`. This is the same for the attribute `.derivative_of_homogenized_stiffness_wrt_mur`.
+
+### Analytical formulas (implemented in TFEL)
+
+We here give the analytical derivatives of the homogenized stiffnesses, implemented in TFEL.
+We assume that all phases are locally isotropic (but the homogenized stiffness may be anisotropic), and we perform the derivation
+of \(\tenseurq C^{\mathrm{hom}}\) w.r.t. the moduli \(k_i,\mu_i\) of the phases.
+The distribution of inclusions (for the particulate microstructures)
+can be of very general type (particularly, a `UserDefinedDistributionOfSpheroids` can
+be considered). However, the inclusions must be spheroidals, and the general ellipsoidal
+shape (with 3 different semi-axes) is not yet considered.
+
+#### Dilute scheme
+For the dilute scheme, we note with a dot \(\,\dot{}\,\) the derivation w.r.t. the desired parameter.
+We have:
+
+\(\dot{\tenseurq C}^{\mathrm{DS}}=\sum_{i=0}^{N-1}f_i\,\left[\dot{\tenseurq C}_i:\tenseurq A_i^{\mathrm{DS}}+\tenseurq C_i:\dot{\tenseurq A}_i^{\mathrm{DS}}\right]\)
+
+The derivation w.r.t \(k_i\) (or \(\mu_i\)) where \(i\geq 1\) is
+
+\(\derivdr{\tenseurq C^{\mathrm{DS}}}{k_i}=f_i\,\left[3\,\tenseurq J:\tenseurq A_i^
+{\mathrm{DS}}+\tenseurq C_i:\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_i}\right]\)
+
+And the derivation w.r.t. \(k_0\) (or \(\mu_0\)) is
+
+\(\derivdr{\tenseurq C^{\mathrm{DS}}}{k_0}=3\,f_0\,\tenseurq J:\tenseurq A_0^{\mathrm{DS}}+\sum_{i=0}^{N-1}f_i\,\tenseurq C_i:\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_0}=3\,f_0\,\tenseurq J:\tenseurq A_0^{\mathrm{DS}}+\sum_{i=1}^{N-1}f_i\,\left(\tenseurq C_i-\tenseurq C_0\right):\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_0}\)
+
+For \(i\geq 1\), \(\dot{\tenseurq A}_i^{\mathrm{DS}}\) is relative to the phase \(i\), and this phase may be
+a distribution of spheroids. We hence have
+
+\(\dot{\tenseurq A}_i^{\mathrm{DS}}=\langle\dot{\tenseurq A}_i^{\mathrm{DS}}(\vec n_i)\rangle\)
+
+where the average is performed on all the orientations \(\vec n_i\) related to the distribution \(i\).
+This average is peformed via the Walpole basis (see also [@martin_mean_2026] for more details):
+
+\(\langle\dot{\tenseurq A}_i^{\mathrm{DS}}(\vec n_i)\rangle=\dot{a}_1 \langle\tenseurq E_1(\vec n_i)\rangle + \dot{a}_2 \langle\tenseurq E_2(\vec n_i)\rangle+ \dot{a}_3 \langle\tenseurq E_3(\vec n_i)\rangle + \dot{a}_4 \langle\tenseurq E_4(\vec n_i)\rangle + \dot{a}_F \langle\tenseurq F(\vec n_i)\rangle+\dot{a}_G \langle\tenseurq G(\vec n_i)\rangle\)
+
+The averages \(\langle\tenseurq E_1(\vec n_i)\rangle,\langle\tenseurq E_2(\vec n_i)\rangle,\langle\tenseurq E_3(\vec n_i)\rangle,\langle\tenseurq E_4(\vec n_i)\rangle,\langle\tenseurq F(\vec n_i)\rangle,\langle\tenseurq G(\vec n_i)\rangle\) are given in [@martin_mean_2026], as well as the
+derivatives \(\dot{a}_1,\dot{a}_2,\dot{a}_3,\dot{a}_4,\dot{a}_F,\dot{a}_G\).
+
+#### Mori-Tanaka scheme
+We again note with a dot \(\,\dot{}\,\) the derivation w.r.t. the desired parameter.
+We have:
+
+\(\dot{\tenseurq C}^{\mathrm{MT}}=\sum_{i=0}^{N-1}f_i\,\left[\dot{\tenseurq 
+C}_i:\tenseurq A_i^{\mathrm{MT}}+\tenseurq C_i:\dot{\tenseurq A}_i^{\mathrm{MT}}\right]\)
+
+The derivation w.r.t \(k_i\) (or \(\mu_i\)) where \(i\geq 0\) is
+
+\(\derivdr{\tenseurq C^{\mathrm{MT}}}{k_i}=3\,f_i\,\tenseurq J:\tenseurq A_i^
+{\mathrm{MT}}+\sum_{j=0}^{N-1}\,f_j\,\tenseurq C_j:\derivdr{\tenseurq A_j^{\mathrm{MT}}}{k_i}=3\,f_i\,\tenseurq J:\tenseurq A_i^{\mathrm{MT}}+f_0\,\tenseurq C_0:\derivdr{\tenseurq A_0^{\mathrm{MT}}}{k_i}+\sum_{j=1}^{N-1}\,f_j\,\tenseurq C_j:\derivdr{\tenseurq A_j^{\mathrm{MT}}}{k_i}\)
+
+and because \(\tenseurq A_j^{\mathrm{MT}}=\tenseurq A_j^{\mathrm{DS}}:\left(\overline{\tenseurq A}^
+{\mathrm{DS}}\right)^{-1}\,\), with \(\quad\overline{\tenseurq A}^{\mathrm{DS}}=\sum_{k=0}^{N-1}f_k\,
+\tenseurq A_k^{\mathrm{DS}}\), we have
+
+\(\derivdr{\tenseurq A_j^{\mathrm{MT}}}{k_i}=\delta_{ij}\,\derivdr{\tenseurq A_j^{\mathrm{DS}}}{k_j}:\left(\overline{\tenseurq A}^{\mathrm{DS}}\right)^{-1}-f_i\,\tenseurq A_j^{\mathrm{DS}}:\left(\overline{\tenseurq A}^{\mathrm{DS}}\right)^{-1}:\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_i}:\left(\overline{\tenseurq A}^{\mathrm{DS}}\right)^{-1}\quad (i\geq 1)\)
+
+\(\derivdr{\tenseurq A_j^{\mathrm{MT}}}{k_0}=\derivdr{\tenseurq A_j^{\mathrm{DS}}}{k_0}:\left
+(\overline{\tenseurq A}^{\mathrm{DS}}\right)^{-1}-\tenseurq A_j^{\mathrm{DS}}:\sum_{k=1}^{N-1}f_k\,\left(\overline{\tenseurq A}^{\mathrm{DS}}\right)^{-1}:\derivdr{\tenseurq A_k^{\mathrm{DS}}}{k_0}:\left(\overline{\tenseurq A}^{\mathrm{DS}}\right)^{-1}\)
+
+(note that \(\tenseurq A_0^{\mathrm{DS}}=\tenseurq I\) so that \(\dot{\tenseurq A}_0^{\mathrm{DS}}
+=\tenseurq 0\)). And particularly, for \(j=0\) we have
+
+\(\derivdr{\tenseurq A_0^{\mathrm{MT}}}{k_i}=-f_i\,\left(\overline
+{\tenseurq A}^{\mathrm{DS}}\right)^{-1}:\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_i}:\left(\overline
+{\tenseurq A}^{\mathrm{DS}}\right)^{-1}\quad (i\geq 1)\)
+
+\(\derivdr{\tenseurq A_0^{\mathrm{MT}}}{k_0}=-\sum_{k=1}^{N-1}f_k\,
+\left(\overline{\tenseurq A}^{\mathrm{DS}}\right)^{-1}:\derivdr{\tenseurq A_k^{\mathrm{DS}}}{k_0}
+:\left(\overline{\tenseurq A}^{\mathrm{DS}}\right)^{-1}\)
+
+and the derivative \(\dot{\tenseurq A}_i^{\mathrm{DS}}\) when \(i\geq 1\)
+is the same as for the dilute scheme.
+
+
+#### Asymmetric self-consistent scheme
+For the asymmetric self-consistent scheme, the derivatives are available only
+when the isotropic projection is considered to compute the Hill tensors (however,
+this does not mean that the final homogenized stiffness is necessarily isotropic).
+Let us note \(p\) the final number of iterations
+used in the iterative algorithm. We have
+
+\(\dot{\tenseurq C}^{\mathrm{ASC}}_{p}=\dot{\tenseurq C}_0+\sum_
+{i=1}^{N-1}f_i\,\left[\left(\dot{\tenseurq C}_i-\dot{\tenseurq C}_0\right):\tenseurq A_i^{\mathrm{ASC},p-1}+\left(\tenseurq C_i-\tenseurq C_0\right):\dot{\tenseurq A}_i^{\mathrm{ASC},p-1}\right]\)  
+
+The derivative \(\dot{\tenseurq A}_i^{\mathrm{ASC},p-1}\) may be related to a distribution of spheroidal inclusions so that
+we use the Walpole basis, as explained above for the dilute scheme. This gives us partial derivatives
+of \(\tenseurq A_i^{\mathrm{ASC},p-1}\) w.r.t. \(k_i,\mu_i\quad(i\geq 1)\) and \(k^{\mathrm{ASC},p-1},\mu^{\mathrm{ASC},p-1}\)
+(the reference medium). All these partial derivatives are given in [@martin_mean_2026]. Then, we use the chain rule:
+
+\(\derivdr{\tenseurq A_i^{\mathrm{ASC},p-1}}{k_j}=\delta_{ij}\deriv{\tenseurq A_i^{\mathrm{ASC},p-1}}{k_i}+\deriv{\tenseurq A_i^{\mathrm{ASC},p-1}}{k^{\mathrm{ASC},p-1}}.\derivdr{k^{\mathrm{ASC},p-1}}{k_j}+\deriv{\tenseurq A_i^{\mathrm{ASC},p-1}}{\mu^{\mathrm{ASC},p-1}}.\derivdr{\mu^{\mathrm{ASC},p-1}}{k_j}\quad(j\geq 1)\)
+
+\(\derivdr{\tenseurq A_i^{\mathrm{ASC},p-1}}{k_0}=\deriv{\tenseurq A_i^{\mathrm{ASC},p-1}}{k^{\mathrm{ASC},p-1}}.\derivdr{k^{\mathrm{ASC},p-1}}{k_0}+\deriv{\tenseurq A_i^{\mathrm{ASC},p-1}}{\mu^{\mathrm{ASC},p-1}}.\derivdr{\mu^{\mathrm{ASC},p-1}}{k_0}\)
+
+The total derivatives of \(k^{\mathrm{ASC},p-1}\) and \(\mu^{\mathrm{ASC},p-1}\) are computed via the derivative of \(\tenseurq C^{\mathrm{ASC}}_{p-1}\) (given above):
+
+\(\derivdr{{\tenseurq C}^{\mathrm{ASC}}_{p-1}}{k_0}=3\,\tenseurq J+\sum_
+{i=1}^{N-1}f_i\,\left[-3\,\tenseurq J:\tenseurq A_i^{\mathrm
+{ASC},p-2}+\left(\tenseurq C_i-\tenseurq C_0\right):\derivdr{{\tenseurq A}_i^{\mathrm{ASC},p-2}}{k_0}\right]\)  
+
+\(\derivdr{{\tenseurq C}^{\mathrm{ASC}}_{p-1}}{\mu_0}=2\,\tenseurq K+\sum_{i=1}^{N-1}f_i\,\left[-2\,\tenseurq K:\tenseurq A_i^{\mathrm{ASC},p-2}+\left(\tenseurq C_i-\tenseurq C_0\right):\derivdr{{\tenseurq A}_i^{\mathrm{ASC},p-2}}{\mu_0}\right]\)  
+
+\(\derivdr{{\tenseurq C}^{\mathrm{ASC}}_{p-1}}{k_j}=3\,f_j\,\tenseurq J:\tenseurq A_j^{\mathrm{ASC},p-2}+\sum_{i=1}^{N-1}f_i\,\left[\left(\tenseurq C_i-\tenseurq C_0\right):\derivdr{{\tenseurq A}_i^{\mathrm{ASC},p-2}}{k_j}\right]\qquad(j\geq 1)\)  
+
+\(\derivdr{{\tenseurq C}^{\mathrm{ASC}}_{p-1}}{\mu_j}=2\,f_j\,\tenseurq K:\tenseurq A_j^{\mathrm{ASC},p-2}+\sum_{i=1}^{N-1}f_i\,\left[\left(\tenseurq C_i-\tenseurq C_0\right):\derivdr{{\tenseurq A}_i^{\mathrm{ASC},p-2}}{\mu_j}\right]\qquad(j\geq 1)\)  
+
+Note however that an isotropic projection is performed for \(\tenseurq C^{\mathrm{ASC}}_{p-1},...,
+\tenseurq C^{\mathrm{ASC}}_0\). Hence, we have
+
+\(\dot{k}^{\mathrm{ASC}}_{p-1}=\dfrac13\,\dot{\tenseurq C}^{\mathrm{ASC}}_{p-1}::\tenseurq J,
+\qquad\dot{\mu}^{\mathrm{ASC}}_{p-1}=\dfrac1{10}\,\dot{\tenseurq C}^{\mathrm{ASC}}_{p-1}::\tenseurq 
+K\)  
+
+#### Self-consistent scheme
+Again here, the derivatives are available only
+when the isotropic projection is considered.
+Let us note \(p\) the final number of iterations
+used in the iterative algorithm. We have
+
+\(\dot{\tenseurq C}^{\mathrm{SC}}_{p}=\sum_{i=1}^{N}f_i\,\left[\dot{\tenseurq C}_i:\tenseurq A_i^{\mathrm{SC},p-1}+\tenseurq C_i:\dot{\tenseurq A}_i^{\mathrm{SC},p-1}\right]\) 
+
+and we have \(\tenseurq A_i^{\mathrm{SC},p-1}=\tenseurq A_i^{\mathrm{DSC},p-1}:\left(\overline{\tenseurq A}^{\mathrm{DSC},p-1}\right)^{-1}\,\), with \(\quad\overline{\tenseurq A}^{\mathrm{DSC},p-1}=\sum_{k=1}^{N}f_k\,\tenseurq A_k^{\mathrm{DSC},p-1}\).
+
+We hence have
+
+\(\derivdr{\tenseurq A_i^{\mathrm{SC},p-1}}{k_j}=\derivdr{\tenseurq A_i^{\mathrm{DSC},p-1}}{k_j}:\left(\overline{\tenseurq A}^{\mathrm{DSC},p-1}\right)^{-1}-\tenseurq A_i^{\mathrm{DSC},p-1}:\sum_{k=1}^{N}f_k\,\left(\overline{\tenseurq A}^{\mathrm{DSC},p-1}\right)^{-1}:\derivdr{\tenseurq A_k^{\mathrm{DSC},p-1}}{k_j}:\left(\overline{\tenseurq A}^{\mathrm{DSC},p-1}\right)^{-1}\quad (i,j\geq 1)\)
+
+And the derivatives of \(\tenseurq A_i^{\mathrm{DSC},p-1}\) are obtained as for the asymmetric self-consistent scheme presented above:
+
+\(\derivdr{\tenseurq A_i^{\mathrm{DSC},p-1}}{k_j}=\delta_{ij}\deriv{\tenseurq A_i^{\mathrm{DSC},p-1}}
+{k_i}+\deriv{\tenseurq A_i^{\mathrm{DSC},p-1}}{k^{\mathrm{SC},p-1}}.\derivdr{k^{\mathrm{SC},p-1}}
+{k_j}+\deriv{\tenseurq A_i^{\mathrm{DSC},p-1}}{\mu^{\mathrm{SC},p-1}}.\derivdr{\mu^{\mathrm{SC},
+p-1}}{k_j}\quad(i,j\geq 1)\)
+
+The partial derivatives are given by [@martin_mean_2026]. The derivatives of \(k^{\mathrm{SC},p-1}\) and \(\mu^{\mathrm{SC},p-1}\) are deduced from the derivative of \(\tenseurq C^{\mathrm{SC}}_{p-1}\)
+and we have:
+
+\(\derivdr{\tenseurq C^{\mathrm{SC}}_{p-1}}{k_j}=3\,f_j\,\tenseurq J:\tenseurq A_j^{\mathrm{SC},p-2}+\sum_{i=1}^{N}f_i\,\tenseurq C_i:\derivdr{\tenseurq A_i^{\mathrm{SC},p-2}}{k_j}\quad(j\geq 1)\) 
+
+and we have again
+
+\(\dot{k}^{\mathrm{SC}}_{p-1}=\dfrac13\,\dot{\tenseurq C}^{\mathrm{SC}}_{p-1}::\tenseurq J,
+\qquad\dot{\mu}^{\mathrm{SC}}_{p-1}=\dfrac1{10}\,\dot{\tenseurq C}^{\mathrm{SC}}_{p-1}::\tenseurq 
+K\)  
+
+
+
 
 
 <!-- Local IspellDict: english -->
