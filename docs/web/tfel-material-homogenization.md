@@ -1188,16 +1188,16 @@ shape (with 3 different semi-axes) is not yet considered.
 For the dilute scheme, we note with a dot \(\,\dot{}\,\) the derivation w.r.t. the desired parameter.
 We have:
 
-\(\dot{\tenseurq C}^{\mathrm{DS}}=\sum_{i=0}^{N-1}f_i\,\left[\dot{\tenseurq C}_i:\tenseurq A_i^{\mathrm{DS}}+\tenseurq C_i:\dot{\tenseurq A}_i^{\mathrm{DS}}\right]\)
+\(\dot{\tenseurq C}^{\mathrm{DS}}=\dot{\tenseurq C}_0+\sum_{i=1}^{N-1}f_i\,\left[\left(\dot{\tenseurq C}_i-\dot{\tenseurq C}_0\right):\tenseurq A_i^{\mathrm{DS}}+\left(\tenseurq C_i-\tenseurq C_0\right):\dot{\tenseurq A}_i^{\mathrm{DS}}\right]\)
 
 The derivation w.r.t \(k_i\) (or \(\mu_i\)) where \(i\geq 1\) is
 
 \(\derivdr{\tenseurq C^{\mathrm{DS}}}{k_i}=f_i\,\left[3\,\tenseurq J:\tenseurq A_i^
-{\mathrm{DS}}+\tenseurq C_i:\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_i}\right]\)
+{\mathrm{DS}}+\left(\tenseurq C_i-\tenseurq C_0\right):\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_i}\right]\)
 
 And the derivation w.r.t. \(k_0\) (or \(\mu_0\)) is
 
-\(\derivdr{\tenseurq C^{\mathrm{DS}}}{k_0}=3\,f_0\,\tenseurq J:\tenseurq A_0^{\mathrm{DS}}+\sum_{i=0}^{N-1}f_i\,\tenseurq C_i:\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_0}=3\,f_0\,\tenseurq J:\tenseurq A_0^{\mathrm{DS}}+\sum_{i=1}^{N-1}f_i\,\left(\tenseurq C_i-\tenseurq C_0\right):\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_0}\)
+\(\derivdr{\tenseurq C^{\mathrm{DS}}}{k_0}=3\,f_0\,\tenseurq J:\tenseurq A_0^{\mathrm{DS}}+\sum_{i=1}^{N-1}f_i\,\left(\tenseurq C_i-\tenseurq C_0\right):\derivdr{\tenseurq A_i^{\mathrm{DS}}}{k_0}\)
 
 For \(i\geq 1\), \(\dot{\tenseurq A}_i^{\mathrm{DS}}\) is relative to the phase \(i\), and this phase may be
 a distribution of spheroids. We hence have

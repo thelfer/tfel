@@ -274,7 +274,7 @@ namespace tfel::material::homogenization::elasticity {
             (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
-      if (!(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
+      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
       if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {

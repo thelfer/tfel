@@ -83,6 +83,12 @@ namespace tfel::material::homogenization::elasticity {
 
     std::vector<tfel::math::st2tost2<N, real>> localisators = {
         tfel::math::st2tost2<N, real>::Id() / f0};
+    const auto u = real(1.);
+    const auto z = real(0.);
+    const std::array<real, 4> dk0 = {u, z, z, z};
+    const std::array<real, 4> dmu0 = {z, u, z, z};
+    const std::array<real, 4> dki = {z, z, u, z};
+    const std::array<real, 4> dmui = {z, z, z, u};
 
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.getInclusionPhase(i);
@@ -100,12 +106,6 @@ namespace tfel::material::homogenization::elasticity {
       if (micro.is_isotropic_matrix()) {
         Ai = (*phasei).computeMeanLocalisator(KG0);
         if ((with_Chom_derivatives) and (N == 3)) {
-          const auto u = real(1.);
-          const auto z = real(0.);
-          const std::array<real, 4> dk0 = {u, z, z, z};
-          const std::array<real, 4> dmu0 = {z, u, z, z};
-          const std::array<real, 4> dki = {z, z, u, z};
-          const std::array<real, 4> dmui = {z, z, z, u};
           const auto dAi_dk0 =
               (*phasei).computeDerivativesOfMeanLocalisator(KG0, dk0);
           const auto dAi_dmu0 =
@@ -118,8 +118,8 @@ namespace tfel::material::homogenization::elasticity {
           const auto cdAm = (Ci - C0) * dAi_dmu0;
           dChom_dkr[0] += fi * cdAk;
           dChom_dmur[0] += fi * cdAm;
-          auto dChom_dki = fi * (Ci * dAi_dki + 3 * J * Ai);
-          auto dChom_dmui = fi * (Ci * dAi_dmui + 2 * K * Ai);
+          auto dChom_dki = fi * ((Ci - C0) * dAi_dki + 3 * J * Ai);
+          auto dChom_dmui = fi * ((Ci - C0) * dAi_dmui + 2 * K * Ai);
           dChom_dkr.push_back(dChom_dki);
           dChom_dmur.push_back(dChom_dmui);
         }

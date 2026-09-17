@@ -461,15 +461,24 @@ namespace tfel::material::homogenization::elasticity {
       if (tfel::math::ieee754::fpclassify(semiL[1] - semiL[2]) == FP_ZERO) {
         const auto e = real(semiL[0] / semiL[1]);
         const auto nd = n;
-        const auto qd =
-            tfel::math::TransverseIsotropicWalpoleBasis<real>::q(nd);
-        const auto E2d =
-            tfel::math::TransverseIsotropicWalpoleBasis<real>::E2(nd);
-        const auto Fd =
-            tfel::math::TransverseIsotropicWalpoleBasis<real>::F(nd);
-        return DerivativesOfMeanLocalisator<3u, StressType>(
-            IM0, KGi, e, real(1. / 2.) * qd,
-            real(1. / 2.) * E2d + real(1. / 4.) * Fd, dKG);
+        if (this->index != 0) {
+          const auto qd =
+              tfel::math::TransverseIsotropicWalpoleBasis<real>::q(nd);
+          const auto E2d =
+              tfel::math::TransverseIsotropicWalpoleBasis<real>::E2(nd);
+          const auto Fd =
+              tfel::math::TransverseIsotropicWalpoleBasis<real>::F(nd);
+          return DerivativesOfMeanLocalisator<3u, StressType>(
+              IM0, KGi, e, real(1. / 2.) * qd,
+              real(1. / 2.) * E2d + real(1. / 4.) * Fd, dKG);
+        } else {
+          const tfel::math::stensor<3u, real> pd =
+              tfel::math::TransverseIsotropicWalpoleBasis<real>::p(nd);
+          const auto E1d =
+              tfel::math::TransverseIsotropicWalpoleBasis<real>::E1(nd);
+          return DerivativesOfMeanLocalisator<3u, StressType>(IM0, KGi, e, pd,
+                                                              E1d, dKG);
+        }
       } else {
         tfel::reportContractViolation(
             "I cannot compute the derivatives of the mean localisator "
@@ -506,7 +515,7 @@ namespace tfel::material::homogenization::elasticity {
         : InclusionDistribution<3u, StressType>(ell, frac, C),
           n_a(n_a_),
           n_b(n_b_) {
-      if (not(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
+      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
@@ -519,7 +528,7 @@ namespace tfel::material::homogenization::elasticity {
         : InclusionDistribution<3u, StressType>(ell, frac, IM),
           n_a(n_a_),
           n_b(n_b_) {
-      if (not(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
+      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
@@ -532,7 +541,7 @@ namespace tfel::material::homogenization::elasticity {
         : InclusionDistribution<3u, StressType>(sphero, frac, C),
           n_a(n_a_),
           n_b(n_b_) {
-      if (not(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
+      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
@@ -545,7 +554,7 @@ namespace tfel::material::homogenization::elasticity {
         : InclusionDistribution<3u, StressType>(sphero, frac, IM),
           n_a(n_a_),
           n_b(n_b_) {
-      if (not(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
+      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
@@ -702,7 +711,7 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, real>& n_a_,
           const tfel::math::tvector<3u, real>& n_b_)
         : Phase<3u, StressType>(frac, C), n_a(n_a_), n_b(n_b_), inclusion(ell) {
-      if (not(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
+      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
@@ -716,7 +725,7 @@ namespace tfel::material::homogenization::elasticity {
           n_a(n_a_),
           n_b(n_b_),
           inclusion(ell) {
-      if (not(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
+      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
@@ -751,9 +760,8 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     [[nodiscard]] tfel::math::st2tost2<3u, compliance>
-    computeDerivativesOfMeanLocalisator(
-        const IsotropicModuli<StressType>& IM0,
-        const std::array<real, 4>& dKG) {
+    computeDerivativesOfMeanLocalisator(const IsotropicModuli<StressType>& IM0,
+                                        const std::array<real, 4>& dKG) {
       auto Ci = this->getElasticityOfPhase();
       const auto KGi = computeKGModuli<StressType>(Ci);
       auto semiL = (this->inclusion).semiLengths;
