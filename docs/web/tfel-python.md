@@ -173,7 +173,7 @@ Note that Lamé coefficient is `lamb` in `Python` and `lambda` in `C++`.
 
 The `tfel.material.homogenization` module mirrors the functionalities defined
 in the namespace `tfel::material::homogenization::elasticity`. Hence,
-the reader may be interested by the [details](tfel-material.html#homogenization)
+the reader may be interested by the [details](tfel-material-homogenization.html)
 of the documentation of this namespace.
 The `Python` modules can be imported as follows:
 
@@ -231,7 +231,7 @@ P=hm.computeAnisotropicHillTensor(C0,n_a,a,n_b,b,c,max_it)
 ~~~~
 
 Note that the integer `max_it` is related to the number of
-iterations in the integration process (see the [documentation](tfel-material.html#homogenization)
+iterations in the integration process (see the [documentation](tfel-material-homogenization.html)
 of the namespace).
 
 ### Localisation tensors
@@ -297,7 +297,7 @@ A_AN=hm.computeAnisotropicLocalisationTensor(C0_glob,Ci_loc,n_a,a,n_b,b,c,max_it
 Note that in this case, the elasticity of the inclusion
 is always passed as a `ST2toST2` object `C_i_loc`. Moreover, if this elasticity is not isotropic,
 `C_i_loc` is expressed in the same basis as the one defined by `n_a,n_b`
-(the local basis of the inclusion, see the [documentation](tfel-material.html#homogenization)
+(the local basis of the inclusion, see the [documentation](tfel-material-homogenization.html)
 of the namespace).
 
 ### Homogenization schemes in biphasic media
@@ -444,14 +444,14 @@ Note that Voigt and Reuss bounds work on `ST2toST2` objects, whereas
 Hashin-Shtrikman bounds work on bulk and shear moduli.
 The number of phases is arbitrary.
 
-### Homogenization of general microstructures
+### Polyphasic microstructures
 
 #### Construction of a `ParticulateMicrostructure`
 
 Some objects are defined that mirror the objects defined
 in the namespace `tfel::material::homogenization::elasticity`
 for the construction and homogenization of general microstructures.
-The reader may want to consult this documentation [here](tfel-material.html#homogenization-of-general-microstructures).
+The reader may want to consult this documentation [here](tfel-material-homogenization.html#polyphasic-microstructures).
 
 ![The `ParticulateMicrostructure` object is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}
 
@@ -539,7 +539,7 @@ it is the global basis.
 Another type of distribution can be defined: the `UserDefinedDistributionOfSpheroids`.
 This is a distribution of spheroids defined with two orientation tensors,
 that incorporate microstructural information about the orientations
-of the spheroids (see [here](tfel-material#homogenization-of-general-microstructures)
+of the spheroids (see [here](tfel-material-homogenization.html#polyphasic-microstructures)
 for the definition of orientation tensors).
 This kind of distribution can be constructed with `Spheroid` objects only.
 This is done as follows:
@@ -659,7 +659,7 @@ Three schemes are currently available:
 
  - Dilute scheme
  - Mori-Tanaka scheme
- - Self-consistent scheme
+ - Asymmetric Self-consistent scheme
  
 Let us consider the previous `ParticulateMicrostructure` object `micro_1`.
 We already have seen that computing some average localisators
@@ -677,13 +677,13 @@ Afterwards,
 ~~~~{.py}
 hmDS=hm.computeDiluteScheme(micro_1)
 hmMT=hm.computeMoriTanakaScheme(micro_1)
-hmSC=hm.computeSelfConsistentScheme(micro_1,1e-6,True)
+hmSC=hm.computeAsymmetricSelfConsistentScheme(micro_1,1e-6,True)
 print("DS: ",hmDS.homogenized_stiffness)
 print("MT: ",hmMT.homogenized_stiffness)
 print("SC: ",hmSC.homogenized_stiffness)
 ~~~~
 
-We note that `computeSelfConsistentScheme` not only takes
+We note that `computeAsymmetricSelfConsistentScheme` not only takes
 the microstructure as an argument, but also takes one real (`1e-6`) as
 a parameter, which pilots the precision of the result. Indeed, at each iteration
 of the self-consistent iterative algorithm, the function computes the relative
@@ -702,8 +702,8 @@ default:
 
 ~~~~{.py}
 micro_2.addInclusionPhase(ellipsoid_dist_O)
-hmSC_iso=hm.computeSelfConsistentScheme(micro_2,10,True)
-hmSC_aniso=hm.computeSelfConsistentScheme(micro_2,10,False,10)
+hmSC_iso=hm.computeAsymmetricSelfConsistentScheme(micro_2,10,True)
+hmSC_aniso=hm.computeAsymmetricSelfConsistentScheme(micro_2,10,False,10)
 print("SC iso: ",hmSC_iso.homogenized_stiffness)
 print("SC aniso: ",hmSC_aniso.homogenized_stiffness)
 ~~~~
@@ -751,8 +751,39 @@ print("P_eff_DS: ",P_eff_DS)
 ~~~~
 
 In fact, the functions `computeDiluteScheme`, `computeMoriTanakaScheme`
-`computeSelfConsistentScheme`... return an object `HomogenizationScheme`
-which possesses the attributes `homogenized_stiffness`,`mean_strain_localisation_tensors`
-and `effective_polarisation`.
+`computeAsymmetricSelfConsistentScheme`... return an object `HomogenizationScheme`
+which possesses the following attributes:
+
+ - `homogenized_stiffness`
+ - `mean_strain_localisation_tensors`
+ - `effective_polarisation`
+ - `derivative_of_homogenized_stiffness_wrt_kr`
+ - `derivative_of_homogenized_stiffness_wrt_mur`
+
+#### Second-moments of the strains
+
+The second-moments of the strains are classically obtained
+with the derivatives of the homogenized stiffness w.r.t. the
+elastic moduli. These derivatives are provided by the
+`HomogenizationScheme`, in the case the phases are locally isotropic
+(and only in 3D). This can be done as follows:
+
+~~~~{.py}
+h_DS = hm.computeDiluteScheme(micro_1,polarisations=[],with_Chom_derivatives=True)
+dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr
+print("dCDS_dk0: ",dCDS_dkr[0])
+print("dCDS_dk1: ",dCDS_dkr[1])
+~~~~
+
+Here, the `boolean` `with_Chom_derivatives` is set equal to `True`
+to compute the derivatives of the homogenized stiffness
+If it is `False`, the attribute `.derivative_of_homogenized_stiffness_wrt_kr`
+is an empty list. If it is computed, this attribute is a list
+which contains as many tensors as the number of phases in the
+`ParticulateMicrostructure`. The tensor number `i` corresponds to the
+derivative of the homogenized stiffness w.r.t. the bulk modulus
+`ki` relative to phase `i`.
+
+
 
 <!-- Local IspellDict: english -->
