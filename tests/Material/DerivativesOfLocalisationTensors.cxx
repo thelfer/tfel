@@ -48,8 +48,11 @@ struct DerivativesOfLocalisationTensorsTest final
     this->template test_Hill_derivative<double, false>();
     this->template test_Hill_derivative<double, true>();
 
-    this->template test_loc_derivative<double, false>(1e-6, 1e-8);
-    this->template test_loc_derivative<double, true>(1e-6, 1e-8);
+    this->template test_loc_derivative<double, false>(1e-6, 1e-8, 10);
+    this->template test_loc_derivative<double, true>(1e-6, 1e-8, 10);
+
+    //this->template test_loc_derivative<double, false>(1e-6, 1e-8, 0.5);
+    //this->template test_loc_derivative<double, true>(1e-6, 1e-8, 0.5);
 
     return this->result;
   }
@@ -123,7 +126,9 @@ struct DerivativesOfLocalisationTensorsTest final
 
   // Test derivatives of localisation tensor with finite difference
   template <typename NumericType, bool use_qt>
-  void test_loc_derivative(const NumericType h, const NumericType eps) {
+  void test_loc_derivative(const NumericType h,
+                           const NumericType eps,
+                           const NumericType e) {
     using stress =
         typename tfel::config::Types<1u, NumericType, use_qt>::stress;
     using real = typename tfel::config::Types<1u, NumericType, use_qt>::real;
@@ -142,14 +147,12 @@ struct DerivativesOfLocalisationTensorsTest final
     const std::array<real, 4> dmu0 = {0., 1., 0., 0.};
     const std::array<real, 4> dki = {0., 0., 1., 0.};
     const std::array<real, 4> dmui = {0., 0., 0., 1.};
-    const real e =10;
     using namespace tfel::material::homogenization::elasticity;
 
     auto func = [&](const stress& k0_, const stress& mu0_, const stress& ki_,
                     const stress& mui_) {
       return computeAxisymmetricalEllipsoidLocalisationTensor<stress>(
-          KGModuli<stress>(k0_, mu0_), KGModuli<stress>(ki_, mui_), n_a,
-          e);
+          KGModuli<stress>(k0_, mu0_), KGModuli<stress>(ki_, mui_), n_a, e);
     };
 
     std::array<std::array<real, 4>, 4> dt_ = {dk0, dmu0, dki, dmui};
