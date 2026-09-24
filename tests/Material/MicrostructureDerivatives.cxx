@@ -80,12 +80,12 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     for (int r = 0; r < nr; r++) {
       std::array<stress, nr> kk_ = {k1, k2, k3, k4};
       std::array<stress, nr> mm_ = {mu1, mu2, mu3, mu4};
-      auto funck = [&](const stress& _k_) {
+      auto funck = [&kk_,&r,&mm_,&func](const stress& _k_) {
         kk_[r] = _k_;
         return func(kk_[0], mm_[0], kk_[1], mm_[1], kk_[2], mm_[2], kk_[3],
                     mm_[3]);
       };
-      auto funcm = [&](const stress& _m_) {
+      auto funcm = [&kk_,&r,&mm_,&func](const stress& _m_) {
         mm_[r] = _m_;
         return func(kk_[0], mm_[0], kk_[1], mm_[1], kk_[2], mm_[2], kk_[3],
                     mm_[3]);
@@ -140,7 +140,7 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     auto h_DS = computeDilute<3u, stress>(micro1, 0, {}, true);
     auto dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCDS_dmur = h_DS.derivative_of_homogenized_stiffness_wrt_mur;
-    auto funcDS = [&](const stress& k0_, const stress& mu0_, const stress& ki1_,
+    auto funcDS = [&micro1](const stress& k0_, const stress& mu0_, const stress& ki1_,
                       const stress& mui1_, const stress& ki2_,
                       const stress& mui2_, const stress& ki3_,
                       const stress& mui3_) {
@@ -164,7 +164,7 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     auto h_MT = computeMoriTanaka<3u, stress>(micro2, 0, {}, true);
     auto dCMT_dkr = h_MT.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCMT_dmur = h_MT.derivative_of_homogenized_stiffness_wrt_mur;
-    auto funcMT = [&](const stress& k0_, const stress& mu0_, const stress& ki1_,
+    auto funcMT = [&micro2](const stress& k0_, const stress& mu0_, const stress& ki1_,
                       const stress& mui1_, const stress& ki2_,
                       const stress& mui2_, const stress& ki3_,
                       const stress& mui3_) {
@@ -188,7 +188,7 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
                                                              0, {}, true);
     auto dCASC_dkr = h_ASC.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCASC_dmur = h_ASC.derivative_of_homogenized_stiffness_wrt_mur;
-    auto funcASC = [&](const stress& k0_, const stress& mu0_,
+    auto funcASC = [&micro3](const stress& k0_, const stress& mu0_,
                        const stress& ki1_, const stress& mui1_,
                        const stress& ki2_, const stress& mui2_,
                        const stress& ki3_, const stress& mui3_) {
@@ -252,7 +252,7 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     auto dCSC_dkr = h_SC.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCSC_dmur = h_SC.derivative_of_homogenized_stiffness_wrt_mur;
 
-    auto funcSC = [&](const stress& k0_, const stress& mu0_, const stress& ki1_,
+    auto funcSC = [&poly1,&C_0](const stress& k0_, const stress& mu0_, const stress& ki1_,
                       const stress& mui1_, const stress& ki2_,
                       const stress& mui2_, const stress& ki3_,
                       const stress& mui3_) {

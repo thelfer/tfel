@@ -149,7 +149,7 @@ struct DerivativesOfLocalisationTensorsTest final
     const std::array<real, 4> dmui = {0., 0., 0., 1.};
     using namespace tfel::material::homogenization::elasticity;
 
-    auto func = [&](const stress& k0_, const stress& mu0_, const stress& ki_,
+    auto func = [&n_a,&e](const stress& k0_, const stress& mu0_, const stress& ki_,
                     const stress& mui_) {
       return computeAxisymmetricalEllipsoidLocalisationTensor<stress>(
           KGModuli<stress>(k0_, mu0_), KGModuli<stress>(ki_, mui_), n_a, e);
@@ -162,7 +162,7 @@ struct DerivativesOfLocalisationTensorsTest final
           computeDerivativesOfAxisymmetricalLocalisationTensor<stress>(
               KG0, KGi, n_a, e, dt_[ind]);
       std::array<stress, 4> kk_ = {k0, mu0, ki, mui};
-      auto func2 = [&](const stress& _k_) {
+      auto func2 = [&kk_,&ind,&func](const stress& _k_) {
         kk_[ind] = _k_;
         return func(kk_[0], kk_[1], kk_[2], kk_[3]);
       };
