@@ -42,14 +42,17 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
   }  // end of DerivativesOfMeanLocalisatorsTest
 
   tfel::tests::TestResult execute() override {
-    this->template test_loc_A2A4_derivative<double, false>(1e-6, 1e-9);
-    this->template test_loc_A2A4_derivative<double, true>(1e-6, 1e-9);
+    this->template test_loc_A2A4_derivative<double, false>(1e-6, 1e-9,10);
+    this->template test_loc_A2A4_derivative<double, true>(1e-6, 1e-9,10);
+
+    this->template test_loc_A2A4_derivative<double, false>(1e-6, 1e-9,0.5);
+    this->template test_loc_A2A4_derivative<double, true>(1e-6, 1e-9,0.5);
 
     return this->result;
   }
 
   template <typename NumericType, bool use_qt>
-  void test_loc_A2A4_derivative(const NumericType h, const NumericType eps) {
+  void test_loc_A2A4_derivative(const NumericType h, const NumericType eps,const NumericType e) {
     using stress =
         typename tfel::config::Types<1u, NumericType, use_qt>::stress;
     using real = typename tfel::config::Types<1u, NumericType, use_qt>::real;
@@ -69,7 +72,6 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
     const std::array<real, 4> dmu0 = {0., 1., 0., 0.};
     const std::array<real, 4> dki = {0., 0., 1., 0.};
     const std::array<real, 4> dmui = {0., 0., 0., 1.};
-    const real e = 10.;
     const auto a = length(10.);
     const auto b = length(1.);
     tfel::math::tvector<3u, real> n_a = {std::sqrt(2) / 2., std::sqrt(2) / 2.,

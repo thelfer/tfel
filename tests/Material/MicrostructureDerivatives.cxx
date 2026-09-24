@@ -44,11 +44,17 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     using stress = typename tfel::config::Types<1u, real, true>::stress;
     using length = typename tfel::config::Types<1u, real, true>::length;
 
-    this->template test_particulate<real, stress, length>(1e-6, 1e-7);
-    this->template test_particulate<real, real, real>(1e-6, 1e-7);
+    this->template test_particulate<real, stress, length>(1e-6, 1e-7, 10);
+    this->template test_particulate<real, real, real>(1e-6, 1e-7, 10);
 
-    this->template test_poly<real, stress, length>(1e-6, 1e-7);
-    this->template test_poly<real, real, real>(1e-6, 1e-7);
+    this->template test_particulate<real, stress, length>(1e-6, 1e-7, 0.5);
+    this->template test_particulate<real, real, real>(1e-6, 1e-7, 0.5);
+
+    this->template test_poly<real, stress, length>(1e-6, 1e-7, 3);
+    this->template test_poly<real, real, real>(1e-6, 1e-7, 3);
+
+    this->template test_poly<real, stress, length>(1e-6, 1e-7, 1./3);
+    this->template test_poly<real, real, real>(1e-6, 1e-7, 1./3);
 
     return this->result;
   }
@@ -104,11 +110,11 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
 
  private:
   template <typename real, typename stress, typename length>
-  void test_particulate(const real h, const real eps) {
+  void test_particulate(const real h, const real eps,const real e) {
     using namespace tfel::material::homogenization::elasticity;
     using namespace tfel::material;
     length a = length(10);
-    length b = length(1);
+    length b = a/e;
     tfel::math::tvector<3u, real> n_a = {std::sqrt(2) / 2., std::sqrt(2) / 2.,
                                          0.};
     tfel::math::tvector<3u, real> n_b = {-std::sqrt(2) / 2., std::sqrt(2) / 2.,
@@ -201,11 +207,11 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
   }  // end of test_particulate
 
   template <typename real, typename stress, typename length>
-  void test_poly(const real h, const real eps) {
+  void test_poly(const real h, const real eps,const real e) {
     using namespace tfel::material;
     using namespace tfel::material::homogenization::elasticity;
     length a = length(3.);
-    length b = length(1.);
+    length b = a/e;
     tfel::math::tvector<3u, real> n_a = {std::sqrt(2) / 2., std::sqrt(2) / 2.,
                                          0.};
     tfel::math::tvector<3u, real> n_b = {-std::sqrt(2) / 2., std::sqrt(2) / 2.,

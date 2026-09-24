@@ -51,8 +51,8 @@ struct DerivativesOfLocalisationTensorsTest final
     this->template test_loc_derivative<double, false>(1e-6, 1e-8, 10);
     this->template test_loc_derivative<double, true>(1e-6, 1e-8, 10);
 
-    //this->template test_loc_derivative<double, false>(1e-6, 1e-8, 0.5);
-    //this->template test_loc_derivative<double, true>(1e-6, 1e-8, 0.5);
+    this->template test_loc_derivative<double, false>(1e-6, 1e-8, 0.5);
+    this->template test_loc_derivative<double, true>(1e-6, 1e-8, 0.5);
 
     return this->result;
   }
