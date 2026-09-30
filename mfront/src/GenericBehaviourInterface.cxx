@@ -1814,13 +1814,19 @@ namespace mfront {
 
   static void GenericBehaviourInterface_initializeVariable(
       std::ostream& os,
+      const BehaviourDescription& bd,
       const SupportedTypes::TypeSize& o,
       const VariableDescription& v,
       const std::string& n,
       const std::string& src) {
     if (v.arraySize == 1) {
       if (v.isScalar()) {
-        os << "this->" << n << " = " << src << "[" << o << "];\n";
+        if (bd.useQt()) {
+          os << "this-> " << n << " = "  //
+             << v.type << "(" << src << "[" << o << "]);\n";
+        } else {
+          os << "this->" << n << " = " << src << "[" << o << "];\n";
+        }
       } else {
         os << "this-> " << n << " = tfel::math::map<" << v.type << ">(";
         if (!o.isNull()) {
@@ -1834,8 +1840,13 @@ namespace mfront {
       auto odv = o;
       for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
         if (v.isScalar()) {
-          os << "this->" << n << "[" << idx << "] = " << src << "[" << odv
-             << "];\n";
+          if (bd.useQt()) {
+            os << "this-> " << n << " = " <<  //
+                v.type << "(" << src << "[" << odv << "]);\n";
+          } else {
+            os << "this->" << n << "[" << idx << "] = " << src << "[" << odv
+               << "];\n";
+          }
         } else {
           os << "this-> " << n << "[" << idx << "] = tfel::math::map<" << v.type
              << ">(";
@@ -1879,7 +1890,7 @@ namespace mfront {
       // driving variable
       const auto dvname =
           Gradient::isIncrementKnown(dv) ? dv.name : dv.name + "0";
-      GenericBehaviourInterface_initializeVariable(os, odv, dv, dvname,
+      GenericBehaviourInterface_initializeVariable(os, bd, odv, dv, dvname,
                                                    "mgb_d.s0.gradients");
       if (!Gradient::isIncrementKnown(dv)) {
         if (dv.isScalar()) {
@@ -2146,7 +2157,7 @@ namespace mfront {
     for (const auto& mv : bd.getMainVariables()) {
       const auto& th = mv.second;
       GenericBehaviourInterface_initializeVariable(
-          os, oth, th, th.name, "mgb_d.s0.thermodynamic_forces");
+          os, bd, oth, th, th.name, "mgb_d.s0.thermodynamic_forces");
       oth += SupportedTypes::getTypeSize(th.type, th.arraySize);
     }
     //
