@@ -2052,44 +2052,9 @@ namespace mfront {
       const auto& mvs = this->getMainVariables();
       if (this->hasTrivialTangentOperatorStructure()) {
         const auto& mv = mvs.front();
-        const auto gflags = mv.first.getTypeFlag();
-        const auto fflags = mv.second.getTypeFlag();
-        auto throw_unmatch = [&mv] {
-          tfel::raise(
-              "BehaviourDescription::getTangentOperatorType: "
-              "gradient '" +
-              mv.first.name + "' is not conjugated with flux '" +
-              mv.second.name + "'");
-        };
-        if (gflags == SupportedTypes::SCALAR) {
-          if (fflags != SupportedTypes::SCALAR) {
-            throw_unmatch();
-          }
-          return "real";
-        } else if (gflags == SupportedTypes::TVECTOR) {
-          if (fflags != SupportedTypes::TVECTOR) {
-            throw_unmatch();
-          }
-          return "tfel::math::tmatrix<N,N,real>";
-        } else if (gflags == SupportedTypes::STENSOR) {
-          if (fflags != SupportedTypes::STENSOR) {
-            throw_unmatch();
-          }
-          return "tfel::math::st2tost2<N,real>";
-        } else if (gflags == SupportedTypes::TENSOR) {
-          if (fflags == SupportedTypes::STENSOR) {
-            return "tfel::math::t2tost2<N,real>";
-          } else if (fflags == SupportedTypes::TENSOR) {
-            return "tfel::math::t2tot2<N,real>";
-          } else {
-            throw_unmatch();
-          }
-        } else {
-          tfel::raise(
-              "BehaviourDescription::getTangentOperatorType: "
-              "unsupported type for gradient '" +
-              mv.first.name + "'");
-        }
+        const auto& g = mv.first;
+        const auto& th = mv.second;
+        return "tfel::math::derivative_type<" + th.type + "," + g.type + ">";
       }
       return "tfel::math::tvector<" + this->computeTangentOperatorSize() +
              ",real>";
