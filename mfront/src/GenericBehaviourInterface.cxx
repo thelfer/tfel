@@ -1535,12 +1535,17 @@ namespace mfront {
       }
       return "TensorSize";
     };
-    auto init = [&os, this](SupportedTypes::TypeSize& o,
-                            const VariableDescription& v, const std::string& n,
-                            const std::string& src) {
+    auto init = [this, &os, &bd](SupportedTypes::TypeSize& o,
+                                 const VariableDescription& v,
+                                 const std::string& n, const std::string& src) {
       const auto f = this->getTypeFlag(v.type);
       if (f == SupportedTypes::SCALAR) {
-        os << "this->" << n << " = mgb_d." << src << "[" << o << "];\n";
+        if (bd.useQt()) {
+          os << "this-> " << n << " = "  //
+             << v.type << "(mgb_d." << src << "[" << o << "]);\n";
+        } else {
+          os << "this->" << n << " = mgb_d." << src << "[" << o << "];\n";
+        }
       } else {
         os << "this-> " << n << " = tfel::math::map<" << v.type << ">(";
         if (!o.isNull()) {
@@ -1588,9 +1593,15 @@ namespace mfront {
       } else {
         const auto f = this->getTypeFlag(dv.type);
         if (f == SupportedTypes::SCALAR) {
-          os << "this->d" << dv.name << " = "
-             << "mgb_d.s1.gradients[" << odv << "] - "
-             << "mgb_d.s0.gradients[" << odv << "];\n";
+          if (bd.useQt()) {
+            os << "this->d" << dv.name << " = "                        //
+               << dv.type << "(mgb_d.s1.gradients[" << odv << "]) - "  //
+               << dv.type << "(mgb_d.s0.gradients[" << odv << "]);\n";
+          } else {
+            os << "this->d" << dv.name << " = "
+               << "mgb_d.s1.gradients[" << odv << "] - "
+               << "mgb_d.s0.gradients[" << odv << "];\n";
+          }
         } else {
           const auto s = vsize(f);
           if (!odv.isNull()) {
