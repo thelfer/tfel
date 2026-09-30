@@ -4682,21 +4682,43 @@ namespace mfront {
              << "," << v2.type << ">> " << bn << ";\n";
         }
       } else if ((v1.arraySize == 1u) || (v2.arraySize == 1u)) {
+        auto ptr = std::string{"this->Dt.data() + "};
+        if (!o.isNull()) {
+          ptr += o.asString() + " + ";
+        }
+        ptr += "mfront_idx * " + block_size.asString();
         os << "/*!\n"
            << " * \\return the derivative of " << v1.name << " with respect "
            << v2.name << "\n"
            << " * \\param[in] mfront_idx: array index relative to " << v1.name
            << "\n"
            << " */\n"
-           << "auto " << bn << "(const ushort mfront_idx) noexcept {\n"
-           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
-           << ", " << v2.type << ">>(this->Dt.data() + ";
-        if (!o.isNull()) {
-          os << o << " + ";
+           << "decltype(auto) " << bn
+           << "(const ushort mfront_idx) noexcept {\n";
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          if (bd.useQt()) {
+            os << "return std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
+               << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">>(*(" + ptr + "));\n";
+          } else {
+            os << "return tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">>(*(" + ptr + "));\n";
+          }
+        } else {
+          os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+             << ", " << v2.type << ">>(" << ptr << ");\n";
         }
-        os << "mfront_idx * " << block_size << ");\n"
-           << "}\n";
+        os << "}\n";
       } else {
+        auto ptr = std::string{"this->Dt.data() + "};
+        if (!o.isNull()) {
+          ptr += o.asString() + " + ";
+        }
+        ptr += "(" + std::to_string(v2.arraySize) +
+               " * mfront_idx + mfront_idx2) * " + block_size.asString();
         os << "/*!\n"
            << " * \\return the derivative of " << v1.name << " with respect "
            << v2.name << "\n"
@@ -4707,15 +4729,24 @@ namespace mfront {
            << " */\n"
            << "decltype(auto) " << bn
            << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept "
-           << "{\n"
-           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
-           << ", " << v2.type << ">>(this->Dt.data() + ";
-        if (!o.isNull()) {
-          os << o << " + ";
+           << "{\n";
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          if (bd.useQt()) {
+            os << "return std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
+               << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">>(*(" + ptr + "));";
+          } else {
+            os << "return tfel::math::map<tfel::math::derivative_type<"
+               << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
+          }
+        } else {
+          os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+             << ", " << v2.type << ">>(" << ptr << ");\n";
         }
-        os << "(" << v2.arraySize << " * mfront_idx + mfront_idx2) * "
-           << block_size << ");\n"
-           << "}\n";
+        os << "}\n";
       }
       o += (v1.arraySize) * (v2.arraySize) * block_size;
     }
