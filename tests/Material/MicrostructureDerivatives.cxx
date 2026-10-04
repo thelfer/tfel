@@ -132,9 +132,9 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
                                                      n_a, index);
     OrientedDistribution<stress> distrib3(spheroid1, real(0.2), KGi, n_a, n_b);
     ParticulateMicrostructure<3u, stress> micro1(KG0);
-    micro1.addInclusionPhase(distrib1);
-    micro1.addInclusionPhase(distrib2);
-    micro1.addInclusionPhase(distrib3);
+    std::ignore=micro1.addInclusionPhase(distrib1);
+    std::ignore=micro1.addInclusionPhase(distrib2);
+    std::ignore=micro1.addInclusionPhase(distrib3);
 
     // Dilute scheme
     auto h_DS = computeDilute<3u, stress>(micro1, 0, {}, true);
@@ -145,9 +145,9 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
                       const stress& mui2_, const stress& ki3_,
                       const stress& mui3_) {
       micro1.changeElasticityOfMatrixPhase(KGModuli<stress>(k0_, mu0_));
-      micro1.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
-      micro1.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
-      micro1.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
+      std::ignore=micro1.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
+      std::ignore=micro1.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
+      std::ignore=micro1.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
       const auto hh = computeDilute<3u, stress>(micro1, 0, {}, false);
       return hh.homogenized_stiffness;
     };
@@ -157,9 +157,9 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
 
     // Mori-Tanaka scheme
     ParticulateMicrostructure<3u, stress> micro2(KG0);
-    micro2.addInclusionPhase(distrib1);
-    micro2.addInclusionPhase(distrib2);
-    micro2.addInclusionPhase(distrib3);
+    std::ignore=micro2.addInclusionPhase(distrib1);
+    std::ignore=micro2.addInclusionPhase(distrib2);
+    std::ignore=micro2.addInclusionPhase(distrib3);
 
     auto h_MT = computeMoriTanaka<3u, stress>(micro2, 0, {}, true);
     auto dCMT_dkr = h_MT.derivative_of_homogenized_stiffness_wrt_kr;
@@ -169,9 +169,9 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
                       const stress& mui2_, const stress& ki3_,
                       const stress& mui3_) {
       micro2.changeElasticityOfMatrixPhase(KGModuli<stress>(k0_, mu0_));
-      micro2.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
-      micro2.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
-      micro2.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
+      std::ignore=micro2.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
+      std::ignore=micro2.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
+      std::ignore=micro2.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
       const auto hh = computeMoriTanaka<3u, stress>(micro2, 0, {}, false);
       return hh.homogenized_stiffness;
     };
@@ -181,9 +181,9 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
 
     // Asymmetric Self-consistent scheme
     ParticulateMicrostructure<3u, stress> micro3(KG0);
-    micro3.addInclusionPhase(distrib1);
-    micro3.addInclusionPhase(distrib2);
-    micro3.addInclusionPhase(distrib3);
+    std::ignore=micro3.addInclusionPhase(distrib1);
+    std::ignore=micro3.addInclusionPhase(distrib2);
+    std::ignore=micro3.addInclusionPhase(distrib3);
     auto h_ASC = computeAsymmetricSelfConsistent<3u, stress>(micro3, 1e-5, true,
                                                              0, {}, true);
     auto dCASC_dkr = h_ASC.derivative_of_homogenized_stiffness_wrt_kr;
@@ -193,9 +193,9 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
                        const stress& ki2_, const stress& mui2_,
                        const stress& ki3_, const stress& mui3_) {
       micro3.changeElasticityOfMatrixPhase(KGModuli<stress>(k0_, mu0_));
-      micro3.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
-      micro3.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
-      micro3.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
+      std::ignore=micro3.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
+      std::ignore=micro3.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
+      std::ignore=micro3.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
       const auto hh = computeAsymmetricSelfConsistent<3u, stress>(
           micro3, 1e-5, true, 0, {}, false);
       return hh.homogenized_stiffness;
@@ -241,10 +241,10 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     Grain<stress> grain3(spheroid1, real(0.25), KGi3, n_a_2, n_b_2);
     Grain<stress> grain4(spheroid1, real(0.25), KGi4, n_a, n_b);
     Polycrystal<stress> poly1;
-    poly1.addGrain(grain1);
-    poly1.addGrain(grain2);
-    poly1.addGrain(grain3);
-    poly1.addGrain(grain4);
+    std::ignore=poly1.addGrain(grain1);
+    std::ignore=poly1.addGrain(grain2);
+    std::ignore=poly1.addGrain(grain3);
+    std::ignore=poly1.addGrain(grain4);
 
     // Self-consistent scheme
     auto h_SC =
@@ -256,10 +256,10 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
                       const stress& mui1_, const stress& ki2_,
                       const stress& mui2_, const stress& ki3_,
                       const stress& mui3_) {
-      poly1.changeElasticityOfGrain(0, KGModuli<stress>(k0_, mu0_));
-      poly1.changeElasticityOfGrain(1, KGModuli<stress>(ki1_, mui1_));
-      poly1.changeElasticityOfGrain(2, KGModuli<stress>(ki2_, mui2_));
-      poly1.changeElasticityOfGrain(3, KGModuli<stress>(ki3_, mui3_));
+      std::ignore=poly1.changeElasticityOfGrain(0, KGModuli<stress>(k0_, mu0_));
+      std::ignore=poly1.changeElasticityOfGrain(1, KGModuli<stress>(ki1_, mui1_));
+      std::ignore=poly1.changeElasticityOfGrain(2, KGModuli<stress>(ki2_, mui2_));
+      std::ignore=poly1.changeElasticityOfGrain(3, KGModuli<stress>(ki3_, mui3_));
       const auto hh = computeSelfConsistent<3u, stress>(poly1, 1e-6, C_0, true,
                                                         0, {}, false);
       return hh.homogenized_stiffness;

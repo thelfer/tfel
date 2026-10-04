@@ -300,7 +300,7 @@ is always passed as a `ST2toST2` object `C_i_loc`. Moreover, if this elasticity 
 (the local basis of the inclusion, see the [documentation](tfel-material-homogenization.html)
 of the namespace).
 
-### Homogenization schemes in biphasic media
+### Two-phase composites
 
 The following schemes are available for biphasic media with
 2 isotropic phases:
@@ -382,6 +382,18 @@ A bigger axis for `D` means that along this axis, the distribution of inclusions
 is more diluted. A short axis means that, on the contrary, the distribution is denser
 along this axis. The object `D` is defined above at line 12.
 
+### Second-moments of the strains (Hashin-Shtrikman two-phase composite)
+
+The second-moments of the strains for a Hahsin-Shtrikman type composite
+can be computed as follows:
+
+~~~~{.py .numberLines}
+eeq2r=computeMeanSquaredEquivalentStrain(KG0,f,KGi,Em2,Eeq2)
+print("average of eeq2 on matrix:",eeq2r[0],"average of eeq2 on inclusion:",eeq2r[1])
+em2r=computeMeanSquaredHydrostaticStrain(KG0,f,KGi,Em2,Eeq2)
+print("average of em2 on matrix:",em2r[0],"average of em2 on inclusion:",em2r[1])
+~~~~
+
 ### Homogenization bounds
 
 The available bounds are:
@@ -446,161 +458,122 @@ The number of phases is arbitrary.
 
 ### Polyphasic microstructures
 
-#### Construction of a `ParticulateMicrostructure`
+The two types of microstructures defined in TFEL are available:
 
-Some objects are defined that mirror the objects defined
-in the namespace `tfel::material::homogenization::elasticity`
-for the construction and homogenization of general microstructures.
-The reader may want to consult this documentation [here](tfel-material-homogenization.html#polyphasic-microstructures).
+ - `ParticulateMicrostructure`
+ - `Polycrystal`
 
-![The `ParticulateMicrostructure` object is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}
+A `ParticulateMicrostructure` object represents
+a very general matrix-inclusion microstructure.
+A `Polycrystal` is a microstructure composed of
+grains, in which there is no matrix phase.
+For more details, see [here](tfel-material-homogenization.html#polyphasic-microstructures).
 
-The `ParticulateMicrostructure` object is  defined and can be instantiated
-in various ways:
+#### `Inclusion` and `InclusionDistribution`
 
-~~~~{.py}
-IM0=tmat.KGModuli(1e7,1e7)
-micro_1=hm.ParticulateMicrostructure(IM0)
+Some particular objects are defined to construct a `ParticulateMicrostructure` (here in 3d):
 
-C0=tm.ST2toST23D(1e7*np.eye(6))
-micro_2=hm.ParticulateMicrostructure(C0)
+ - `Ellipsoid` (child of `Inclusion3D`)
+ - `Spheroid` (child of `Ellipsoid` with the last two semi-lengths identical)
+ - `Sphere` (child of `Spheroid` with 3 semi-lengths equal to unity)
 
-micro_3=hm.ParticulateMicrostructure(micro_2)
-~~~~
-
-where `C0` and `IM0` correspond to the elasticity
-of the matrix phase.
-The `ParticulateMicrostructure` has no public attribute. However,
-it has some methods that return the value of the
-private attributes:
-
-~~~~{.py}
-print(micro_1.getNumberOfPhases())
-print(micro_1.getMatrixFraction())
-print(micro_1.getMatrixElasticity())
-print(micro_1.isIsotropicMatrix())
-~~~~
-
-Note that last line returns `True` if `micro_1` was instantiated with
-objects like `KGModuli`, `YoungNuModuli`, `LambdaMuModuli`, and `False`
-when instantiated with a `ST2toST2` (like `micro_2` above).
-
-We can add a distribution of inclusions if we first
-instantiate such a distribution. We must instantiate
-an inclusion first:
+Let us try:
 
 ~~~~{.py}
 a=10
 b=2
 c=3
-sph=hm.Sphere()
-spheroid=hm.Spheroid(a,b)
+sphere=hm.Sphere()
+spheroid=hm.Spheroid(a,b)  # here, it gives a prolate spheroid
 ellipso=hm.Ellipsoid(a,b,c)
-print(spheroid.axis_length(),spheroid.transverse_length())
+print(sphere.semi_lengths) # the default lengths are 1 for a Sphere
+print(spheroid.semi_lengths) # the two last lengths correspond to b=2
 print(ellipso.semi_lengths)
+print(spheroid.axis_length(),spheroid.transverse_length()) # these methods are available for a spheroid
 ~~~~
 
-We can now instantiate a distribution of inclusions in various ways:
+However, to construct a `ParticulateMicrostructure` object,
+we have to instantiate a `InclusionDistribution` object. There are four kinds of such a distribution:
+
+ - `SphereDistribution` (distribution of spheres)
+ - `IsotropicDistribution` (isotropic distribution of ellipsoids)
+ - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
+ - `OrientedDistribution` (aligned distribution of ellipsoids)
+ - `UserDefinedDistributionOfSpheroids` (distribution of spheroids defined with orientation tensors)
+
+ We can instantiate these objects in various ways (see the `C++` documentation for other details):
 
 ~~~~{.py}
 IMi=tmat.KGModuli(1e9,1e9)
 f=0.1
-sph_dist=hm.SphereDistribution(sph,f,IMi)
+sph_dist=hm.SphereDistribution(sphere,f,IMi)
 ellipsoid_dist_iso=hm.IsotropicDistribution(ellipso,f,IMi)
-
 n_a=tm.TVector3D([0.,0.,1.])
 n_b=tm.TVector3D([0.,1.,0.])
 ellipsoid_dist_O=hm.OrientedDistribution(ellipso,f,IMi,n_a,n_b)
-Ci=tm.ST2toST23D(1e9*np.eye(6))
+~~~~
+
+Note that the `OrientedDistribution` can be instantiated with a `ST2toST2` object,
+here `Ci` (and it is also possible for a `SphereDistribution`):
+
+~~~~{.py}
+Ci=tm.ST2toST23D(1e9*np.eye(6)) # arbitrary definition of Ci
 Ci[0,1]=1e8
 Ci[1,0]=1e8
 ellipsoid_dist_O_2=hm.OrientedDistribution(ellipso,f,Ci,n_a,n_b)
 ~~~~
+
+This can be useful for considering anisotropic inclusions. However, the basis in which
+`Ci` is defined is the local basis for the `OrientedDistribution`, that is, the
+basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
+it is the global basis.
 
 The `TransverseDistribution` is a special case
 which requires to precise which axis of the ellipsoid (or spheroid)
 will remain fixed when the two other axes rotate:
 
 ~~~~{.py}
-index=0
+index=0 # here, the first axis (for example, a=10 defined above) is oriented along n_a
+# and the two other axes of the ellipsoid are uniformly distributed in the transverse plane
 ellipsoid_dist_TI=hm.TransverseIsotropicDistribution(ellipso,f,IMi,n_a,index)
 ~~~~
 
 The index can be 0,1 or 2. For a spheroid, giving `2` for the `index`
 is the same as giving `1`, because these 2 axes have the same length.
 
-Note that the `OrientedDistribution` can be instantiated with a `ST2toST2` object,
-here `Ci`. It is also possible for a `SphereDistribution`. It can be
-useful for considering anisotropic inclusions. However, the basis in which
-`Ci` is defined is the local basis for the `OrientedDistribution`, that is, the
-basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
-it is the global basis.
-
 Another type of distribution can be defined: the `UserDefinedDistributionOfSpheroids`.
 This is a distribution of spheroids defined with two orientation tensors,
 that incorporate microstructural information about the orientations
-of the spheroids (see [here](tfel-material-homogenization.html#polyphasic-microstructures)
+of the spheroids (see in the [C++ documentation](tfel-material-homogenization.html#polyphasic-microstructures)
 for the definition of orientation tensors).
 This kind of distribution can be constructed with `Spheroid` objects only.
 This is done as follows:
 
 ~~~~{.py}
-spheroid=Spheroid(10,1)
-KGi=KGModuli(300,200)
-A2=Stensor3D([1.,1.,1.,0.,0.,0.])
+spheroid=hm.Spheroid(10,1)
+KGi=tmat.KGModuli(300,200)
+A2=tm.Stensor3D([1.,1.,1.,0.,0.,0.]) # arbitrary definition of A2
 tenseur=np.zeros((6,6))
 tenseur[0,0]=0.1
-A4=ST2toST23D(np.eye(6)+tenseur)
-distrib=UserDefinedDistributionOfSpheroids(spheroid,frac,KGi,A2,A4)
+A4=tm.ST2toST23D(np.eye(6)+tenseur) # arbitrary definition of A4
+distrib=hm.UserDefinedDistributionOfSpheroids(spheroid,f,KGi,A2,A4)
 ~~~~
 
-Above, the tensor `A2` is the second-order orientation tensor,
-taken equal to \(\frac13\mathbf 1\), and `A4` is the fourth-order
-orientation tensor, which is, here, particular.
+Above, the tensor `A2` is the second-order orientation tensor, and
+`A4` is the fourth-order orientation tensor.
 
-We can now add these distributions to the microstructure:
+The inclusion distributions have an attribute `inclusion`:
 
 ~~~~{.py}
-micro_1.addInclusionPhase(sph_dist)
-print(micro_1.getNumberOfPhases())
-print(micro_1.getMatrixFraction())
-
-micro_1.addInclusionPhase(ellipsoid_dist_iso)
-print(micro_1.getNumberOfPhases())
-print(micro_1.getMatrixFraction())
+elli=ell_dist.inclusion
+print(elli.semi_lengths)
 ~~~~
 
-or remove them:
+Note that here, the `inclusion` object is in fact an `Inclusion3D` object,
+with the semi-lengths defined at the definition of the isotropic distribution
+of ellipsoids.
 
-~~~~{.py}
-micro_1.removeInclusionPhase(0)
-print(micro_1.getNumberOfPhases())
-print(micro_1.getMatrixFraction())
-~~~~
-
-At this stage, we have added the distribution of spheres `sph_dist`,
-and added the isotropic distribution of ellipsoids `ellipsoid_dist_iso`.
-Afterthat, we have removed the first inclusion distribution (number `0`), which is
-the distribution of spheres. Hence, only one `InclusionDistribution` object
-remains in the microstructure. We can get this distribution by doing:
-
-~~~~{.py}
-ell_dist=micro_1.getInclusionPhase(0)
-~~~~
-
-This distribution of ellipsoids was instantiated before with a `Ellipsoid`
-object, a fraction, and an isotropic elastic modulus (see above `ellipsoid_dist_iso`)
-In fact, the distribution has three attributes:
-
-~~~~{.py}
-print(ell_dist.inclusion)
-print(ell_dist.fraction)
-print(ell_dist.getElasticityOfPhase())
-~~~~
-
-like the other types of distributions of inclusions (`SphereDistribution`,
-`TransverseIsotropicDistribution` and `OrientedDistribution`).
-All these distributions have also two methods. The first
+All the inclusion distributions have also three methods. The first
 just states if the distribution was instantiated with isotropic
 elastic moduli or with a `ST2toST2` object. Here,
 it was instantiated with a `KGModuli`, so that it is considered isotropic.
@@ -639,27 +612,176 @@ Here, the integer `10` is the number of subdivisions in the integration
 process in the computation of the Hill tensor relative to the inclusions.
 It is `12` by default.
 
+The last method of the inclusion distributions is `computeDerivativesOfMeanLocalisator`
+which gives the derivative of the function `computeMeanLocalisator`
+w.r.t. the moduli of the phases (see the [C++ documentation](tfel-material-homogenization.html#description-of-the-components-of-a-microstructure) for details). Let us try:
+
+~~~~{.py}
+spheroid_dist_iso=hm.IsotropicDistribution(spheroid,f,IMi)
+dA_dk0 = spheroid_dist_iso.computeDerivativesOfMeanLocalisator(IM0,[1.,0.,0.,0.])
+dA_dmu0 = spheroid_dist_iso.computeDerivativesOfMeanLocalisator(IM0,[0.,1.,0.,0.])
+dA_dki = spheroid_dist_iso.computeDerivativesOfMeanLocalisator(IM0,[0.,0.,1.,0.])
+dA_dmui = spheroid_dist_iso.computeDerivativesOfMeanLocalisator(IM0,[0.,0.,0.,1.])
+print("dA_dk0: ",dA_dk0)
+print("dA_dmu0: ",dA_dmu0)
+print("dA_dki: ",dA_dki)
+print("dA_dmui: ",dA_dmui)
+~~~~
+
+#### Construction of a `ParticulateMicrostructure`
+
+![The `ParticulateMicrostructure` object is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}
+
+The `ParticulateMicrostructure` object is  defined and can be instantiated
+in various ways:
+
+~~~~{.py}
+IM0=tmat.KGModuli(1e7,1e7)
+micro_1=hm.ParticulateMicrostructure(IM0) # instantiation with an IsotropicModuli
+
+C0=tm.ST2toST23D(1e7*np.eye(6))
+micro_2=hm.ParticulateMicrostructure(C0) # instantiation with a ST2toST23D
+~~~~
+
+where `C0` and `IM0` correspond to the elasticity
+of the matrix phase.
+The `ParticulateMicrostructure` has no public attribute. However,
+it has some methods that return the value of the
+private attributes:
+
+~~~~{.py}
+print(micro_1.getNumberOfPhases()) # there is only one phase: the matrix phase
+print(micro_1.getMatrixFraction()) # the volume fraction of the matrix is 1
+print(micro_1.getMatrixElasticity()) # the elasticity of the matrix is a ST2toST23D
+print(micro_1.isIsotropicMatrix()) # micro_1 is isotropic because instantiated with an IsotropicModuli
+~~~~
+
+Note that last line returns `True` if `micro_1` was instantiated with
+objects like `KGModuli`, `YoungNuModuli`, `LambdaMuModuli`, and `False`
+when instantiated with a `ST2toST2` (like `micro_2` above).
+
+We can add a distribution of inclusions to the `ParticulateMicrostructure` (once such a distribution is instantiated):
+
+~~~~{.py}
+micro_1.addInclusionPhase(sph_dist) 
+print(micro_1.getNumberOfPhases()) # there is now 2 phases
+print(micro_1.getMatrixFraction()) # the sphere distribution that was added had a volume fraction
+# of 0.1 so that the volume fraction of the matrix is now 0.9
+
+micro_1.addInclusionPhase(ellipsoid_dist_iso)
+print(micro_1.getNumberOfPhases()) # there is now 3 phases
+print(micro_1.getMatrixFraction()) # the volume fraction of the matrix is now 0.8
+~~~~
+
+or remove them:
+
+~~~~{.py}
+micro_1.removeInclusionPhase(0) # the sphere distribution was removed
+print(micro_1.getNumberOfPhases()) # there is again 2 phases
+print(micro_1.getMatrixFraction()) # the fraction of the matrix is 0.9
+~~~~
+
+At the end, only one `InclusionDistribution` object
+remains in the microstructure. We can get this distribution by doing:
+
+~~~~{.py}
+ell_dist=micro_1.getInclusionPhase(0) # we get the isotropic distribution of ellipsoids
+print(ell_dist.fraction)
+print(ell_dist.getElasticityOfPhase())
+~~~~
+
 The last method of the `ParticulateMicrostructure` object allows to change
 the elasticity of the matrix phase:
 
 ~~~~{.py}
 micro_1.changeElasticityOfMatrixPhase(C0)
 print(micro_1.getMatrixElasticity())
-print(micro_1.isIsotropicMatrix())
+print(micro_1.isIsotropicMatrix()) # returns False
 ~~~~
 
 Here we see that the matrix is no more isotropic
 because it was replaced via a `ST2toST2` object.
 
-Now, let us do homogenization !
+#### `Grain` object
 
-#### Homogenization schemes
+The `Grain` object must be instantiated to construct the `Polycrystal`. This grain has 5 attributes: `inclusion`
+(which can be a `Sphere`, a `Spheroid` or an `Ellipsoid`),
+a `fraction` (the volume fraction), a `stiffness` (the stiffness of the `Grain`), and two vectors, `n_a` and `n_b` which define
+the orientation of the grain (the axes of the related `inclusion`). The `Grain` can be instantiated
+as follows:
 
-Three schemes are currently available:
+~~~~{.py}
+grain1=Grain(spheroid,frac,IMi,n_a,n_b)
+grain2=Grain(ellipso,frac,IMi,n_a,n_b)
+~~~~
 
- - Dilute scheme
- - Mori-Tanaka scheme
- - Asymmetric Self-consistent scheme
+The `Grain` has also methods: `getElasticityOfPhase` (get the elasticity of the grain),
+`changeElasticityOfPhase`, `isIsotropic`, `computeMeanLocalisator` and
+`computeDerivativesOfMeanLocalisator` (see the [C++ documentation](tfel-material-homogenization.html#description-of-the-components-of-a-microstructure) for details).
+
+#### Construction of a `Polycrystal`
+
+We can instantiate a `Polycrystal` as follows:
+
+~~~~{.py}
+poly=Polycrystal()
+~~~~
+
+We can add some grains to our polycrystal:
+
+~~~~{.py}
+poly.addGrain(grain1)
+poly.addGrain(grain2)
+~~~~
+
+and we can remove grains:
+
+~~~~{.py}
+poly.removeGrain(0)
+~~~~
+
+The other methods available for a `Polycrystal` are:
+
+ - `changeElasticityOfGrain`
+ - `changeFractionOfGrain`
+ - `getNumberOfGrains`
+ - `getTotalFraction`
+ - `getGrain`
+
+Note that we cannot add
+a grain when its volume fraction is such that
+the polycrystal would have a volume fraction superior
+to 1. Similarly, we cannot change the fraction of a grain
+if the new fraction is such that the polycrystal
+would have a fraction superior to 1.
+
+#### Computation of homogenization schemes
+
+The following homogenization schemes are available for
+`ParticulateMicrostructure` objects:
+
+ - `computeDiluteScheme` (Dilute scheme)
+ - `computeMoriTanakaScheme` (Mori-Tanaka scheme)
+ - `computeAsymmetricSelfConsistentScheme` (Asymmetric Self-consistent scheme)
+
+These functions take a `ParticulateMicrostructure` as an argument.
+For a `Polycrystal`, the available homogenization scheme
+is:
+
+ - `computeSelfConsistentScheme` (Self-consistent scheme)
+
+This function takes a `Polycrystal`
+as an argument.
+
+All these functions return a `HomogenizationScheme` object.
+This object is a structure with the following attributes:
+
+ - `homogenized_stiffness`
+ - `effective_polarisation`
+ - `mean_strain_localisation_tensors`
+ - `derivative_of_homogenized_stiffness_wrt_kr`
+ - `derivative_of_homogenized_stiffness_wrt_mur`
+
  
 Let us consider the previous `ParticulateMicrostructure` object `micro_1`.
 We already have seen that computing some average localisators
@@ -727,12 +849,16 @@ hmDS_aniso=hm.computeDiluteScheme(micro_1,10)
 hmMT_aniso=hm.computeMoriTanakaScheme(micro_1,10)
 ~~~~
 
+#### Strain localisation tensors on each phase
+
 We can also recover the strain localisation tensors:
 
 ~~~~{.py}
 A_i_DS=hmDS.mean_strain_localisation_tensors
 print("A_0_DS: ",A_i_DS[0],"A_1_DS: ",A_i_DS[1])
 ~~~~
+
+#### Prescribing a polarisation on each phase
 
 We can also add a polarization on each phase:
 
@@ -750,16 +876,6 @@ P_eff_DS=hmDS_pola.effective_polarisation
 print("P_eff_DS: ",P_eff_DS)
 ~~~~
 
-In fact, the functions `computeDiluteScheme`, `computeMoriTanakaScheme`
-`computeAsymmetricSelfConsistentScheme`... return an object `HomogenizationScheme`
-which possesses the following attributes:
-
- - `homogenized_stiffness`
- - `mean_strain_localisation_tensors`
- - `effective_polarisation`
- - `derivative_of_homogenized_stiffness_wrt_kr`
- - `derivative_of_homogenized_stiffness_wrt_mur`
-
 #### Second-moments of the strains
 
 The second-moments of the strains are classically obtained
@@ -769,10 +885,15 @@ elastic moduli. These derivatives are provided by the
 (and only in 3D). This can be done as follows:
 
 ~~~~{.py}
+micro_1.removeInclusionPhase(0)
+micro_1.addInclusionPhase(spheroid_dist_iso) # this distribution of spheroids is compatible with the derivation
 h_DS = hm.computeDiluteScheme(micro_1,polarisations=[],with_Chom_derivatives=True)
 dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr
+dCDS_dmur = h_DS.derivative_of_homogenized_stiffness_wrt_mur
 print("dCDS_dk0: ",dCDS_dkr[0])
 print("dCDS_dk1: ",dCDS_dkr[1])
+print("dCDS_dmu0: ",dCDS_dmur[0])
+print("dCDS_dmu1: ",dCDS_dmur[1])
 ~~~~
 
 Here, the `boolean` `with_Chom_derivatives` is set equal to `True`
@@ -783,6 +904,9 @@ which contains as many tensors as the number of phases in the
 `ParticulateMicrostructure`. The tensor number `i` corresponds to the
 derivative of the homogenized stiffness w.r.t. the bulk modulus
 `ki` relative to phase `i`.
+
+Note that these derivatives are available only when distributions of spheroids
+are considered (see the analytical computation [here](tfel-material-homogenization.html#second-moments-of-the-strains)).
 
 
 

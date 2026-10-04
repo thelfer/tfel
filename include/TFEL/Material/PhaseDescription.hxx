@@ -700,10 +700,10 @@ namespace tfel::material::homogenization::elasticity {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
     using LengthType = tfel::types::length<StressType>;
-
-    Inclusion<3u, LengthType> inclusion;
+    
     tfel::math::tvector<3u, real> n_a;
     tfel::math::tvector<3u, real> n_b;
+    Inclusion<3u, LengthType> inclusion;
 
     Grain(const Ellipsoid<LengthType>& ell,
           real frac,
@@ -762,7 +762,7 @@ namespace tfel::material::homogenization::elasticity {
     [[nodiscard]] tfel::math::st2tost2<3u, compliance>
     computeDerivativesOfMeanLocalisator(const IsotropicModuli<StressType>& IM0,
                                         const std::array<real, 4>& dKG) {
-      auto Ci = this->getElasticityOfPhase();
+      auto Ci = this->getElasticityOfPhase(); 
       const auto KGi = computeKGModuli<StressType>(Ci);
       auto semiL = (this->inclusion).semiLengths;
       if ((tfel::math::ieee754::fpclassify(semiL[1] - semiL[2]) == FP_ZERO) and

@@ -291,7 +291,7 @@ not isotropic, it must be provided in the local basis defined by `n_a,n_b`.
 # Two-phase composites
 
 Note that the functionalities below are also available in
-the `Python` module (see the doc [here](tfel-python.html#homogenization-schemes-in-biphasic-media)).
+the `Python` module (see the doc [here](tfel-python.html#two-phase-composites)).
 See also [here](BiphasicLinearHomogenization.html) a tutorial on the computation of homogenized schemes for two-phase particulate microstructures.
 
 Different classical mean-field homogenization tools are implemented
@@ -399,7 +399,7 @@ const auto C_PCW = computePCWScheme<stress>(E0,nu0,f,Ei,nui,A_av,D);
 
 Here, the three above schemes return `st2tost2` objects.
 
-## Second-moments of the strains (Hashin-Shtrikman two-phase microstructure)
+## Second-moments of the strains (Hashin-Shtrikman two-phase composite)
 
 Some functions (defined in the header HomogenizationSecondMoments.hxx)
 allow to compute the second moments of the strains
@@ -497,7 +497,7 @@ the `Python` module (see the doc [here](tfel-python.html#polyphasic-microstructu
 ## Description of the components of a microstructure
 
 We here describe the main components of a microstructure: `Phase`, `Inclusion`, `Grain`, 
-and `InclusionDistribution` objects.
+and `InclusionDistribution` objects. These objects are introduced in the header `PhaseDescription.hxx`.
 
 ### The `Phase` class
 
@@ -595,7 +595,7 @@ const auto A_grain = grain1.computeMeanLocalisator(KG0);
 
 The `computeDerivativesOfMeanLocalisator` method takes a reference stiffness as
 an argument and a `std::array` of 4 reals. This array contains the
-derivatives of the material parameters `K0,G0,Ki,Gi` w.r.t. a parameter \(lambda\).
+derivatives of the material parameters `K0,G0,Ki,Gi` w.r.t. a parameter \(\lambda\).
 The `computeDerivativesOfMeanLocalisator` method hence returns the derivative of
 the localisation tensor of the grain w.r.t. \(\lambda\). Hence,
 we can compute the derivatives of this localisation tensor as follows:
@@ -606,6 +606,9 @@ const auto dA_dmu0 = grain1.computeDerivativesOfMeanLocalisator(KG0,{0.,1.,0.,0.
 const auto dA_dki = grain1.computeDerivativesOfMeanLocalisator(KG0,{0.,0.,1.,0.});
 const auto dA_dmui = grain1.computeDerivativesOfMeanLocalisator(KG0,{0.,0.,0.,1.});
 ~~~~
+
+Note however that the derivation is available only for distributions
+of spheroidal inclusions, with a locally isotropic elasticity.
 
 ### The `InclusionDistribution class`
 
@@ -674,6 +677,29 @@ the `Stensor4` elasticity is defined is the local basis for the `OrientedDistrib
 that is, the basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
 it is the global basis.
 
+The `UserDefinedDistributionOfSpheroids` is a distribution of `Spheroid` (3d-objects,
+with two equal axes, see above). It is defined with two tensors: a second-order
+tensor \(\tenseur A_2\) and a fourth-order tensor \(\tenseur A_4\):
+
+\[
+\tenseur A_2=\langle\vec n\otimes\vec n\rangle\qquad\tenseur A_4=\langle\vec n\otimes\vec n\otimes\vec n\otimes\vec n\rangle
+\]
+
+This distribution can be instantiated as follows, with the help of the Walpole Basis (see [here](tfel-math.html#higher-order-objects-defined-as-derivatives) the documentation).
+
+~~~~{.cpp}
+using namespace tfel::math;
+tvector<3u, real> n_a = {1., 0., 0.};
+tvector<3u, real> n_b = {0., 1., 0.};
+const stensor<3u,real> A2 = 1./2*TransverseIsotropicWalpoleBasis<real>::q(n_b);
+
+const auto E2d=TransverseIsotropicWalpoleBasis<real>::E2(n_b);
+const auto Fd=TransverseIsotropicWalpoleBasis<real>::F(n_b);
+const st2tost2<3u,real> A4 = 1./2*E2d+1./4*Fd;
+
+UserDefinedDistributionOfSpheroids<stress> distribution(spheroid1, f, KGi, A2, A4);
+~~~~
+
 The `computeMeanLocalisator` method can be used as follows:
 
 ~~~~{.cpp}
@@ -697,28 +723,7 @@ Here, the integer `10` is the number of subdivisions in the integration
 process in the computation of the Hill tensor relative to the inclusions.
 It is `12` by default.
 
-The `UserDefinedDistributionOfSpheroids` is a distribution of `Spheroid` (3d-objects,
-with two equal axes, see above). It is defined with two tensors: a second-order
-tensor \(\tenseur A_2\) and a fourth-order tensor \(\tenseur A_4\):
-
-\[
-\tenseur A_2=\langle\vec n\otimes\vec n\rangle\qquad\tenseur A_4=\langle\vec n\otimes\vec n\otimes\vec n\otimes\vec n\rangle
-\]
-
-This distribution can be instantiated as follows, with the help of the Walpole Basis (see [here](tfel-math.html#higher-order-objects-defined-as-derivatives) the documentation).
-
-~~~~{.cpp}
-using namespace tfel::math;
-tvector<3u, real> n_a = {1., 0., 0.};
-tvector<3u, real> n_b = {0., 1., 0.};
-const stensor<3u,real> A2 = 1./2*TransverseIsotropicWalpoleBasis<real>::q(n_b);
-
-const auto E2d=TransverseIsotropicWalpoleBasis<real>::E2(n_b);
-const auto Fd=TransverseIsotropicWalpoleBasis<real>::F(n_b);
-const st2tost2<3u,real> A4 = 1./2*E2d+1./4*Fd;
-
-UserDefinedDistributionOfSpheroids<stress> distribution(spheroid1, f, KGi, A2, A4);
-~~~~
+The `computeDerivativesOfMeanLocalisator` method works as for the `Grain` object.
 
 Note that the 5 `InclusionDistribution` classes are currently available in 3d only.
 
@@ -867,8 +872,15 @@ and we can remove grains:
 poly.removeGrain(0);
 ~~~~
 
-we can also get a grain, or change its elasticity or
-its volume fraction. Note that we cannot add
+The other methods available for a `Polycrystal` are:
+
+ - `changeElasticityOfGrain`
+ - `changeFractionOfGrain`
+ - `getNumberOfGrains`
+ - `getTotalFraction`
+ - `getGrain`
+
+Note that we cannot add
 a grain when its volume fraction is such that
 the polycrystal would have a volume fraction superior
 to 1. Similarly, we cannot change the fraction of a grain

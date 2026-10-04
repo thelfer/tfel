@@ -22,22 +22,10 @@ requires(tfel::math::checkUnitCompatibility<
                                                      const char* const n) {
   using I =
       tfel::material::homogenization::elasticity::Inclusion<N, LengthType>;
-  pybind11::class_<I, std::shared_ptr<I>>(m, n, pybind11::buffer_protocol());
+  pybind11::class_<I, std::shared_ptr<I>>(m, n, pybind11::buffer_protocol())
+  .def_readwrite("semi_lengths",&I::semiLengths);
 }
 
-template <tfel::math::ScalarConcept LengthType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Length,
-         LengthType>()) static void declareDisk(pybind11::module_& m,
-                                                const char* const n) {
-  using I =
-      tfel::material::homogenization::elasticity::Inclusion<2u, LengthType>;
-  using Di = tfel::material::homogenization::elasticity::Disk<LengthType>;
-  pybind11::class_<Di, I, std::shared_ptr<Di>>(m, n,
-                                               pybind11::buffer_protocol())
-      .def(pybind11::init<const Di&>())
-      .def(pybind11::init<>());
-}
 
 template <tfel::math::ScalarConcept LengthType>
 requires(tfel::math::checkUnitCompatibility<
@@ -65,15 +53,30 @@ requires(tfel::math::checkUnitCompatibility<
 template <tfel::math::ScalarConcept LengthType>
 requires(tfel::math::checkUnitCompatibility<
          tfel::math::unit::Length,
-         LengthType>()) static void declareSphere(pybind11::module_& m,
-                                                  const char* const n) {
+         LengthType>()) static void declareDisk(pybind11::module_& m,
+                                                const char* const n) {
+  using Elli = tfel::material::homogenization::elasticity::Ellipse<LengthType>;
+  using Di = tfel::material::homogenization::elasticity::Disk<LengthType>;
+  pybind11::class_<Di, Elli, std::shared_ptr<Di>>(m, n,
+                                               pybind11::buffer_protocol())
+      .def(pybind11::init<const Di&>())
+      .def(pybind11::init<>());
+}
+
+
+template <tfel::math::ScalarConcept LengthType>
+requires(tfel::math::checkUnitCompatibility<
+         tfel::math::unit::Length,
+         LengthType>()) static void declareEllipsoid(pybind11::module_& m,
+                                                     const char* const n) {
   using I =
       tfel::material::homogenization::elasticity::Inclusion<3u, LengthType>;
-  using Sph = tfel::material::homogenization::elasticity::Sphere<LengthType>;
-  pybind11::class_<Sph, I, std::shared_ptr<Sph>>(m, n,
+  using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
+  pybind11::class_<Ell, I, std::shared_ptr<Ell>>(m, n,
                                                  pybind11::buffer_protocol())
-      .def(pybind11::init<const Sph&>())
-      .def(pybind11::init<>());
+      .def(pybind11::init<const Ell&>())
+      .def(pybind11::init<const LengthType&, const LengthType&,
+                          const LengthType&>());
 }
 
 template <tfel::math::ScalarConcept LengthType>
@@ -81,10 +84,10 @@ requires(tfel::math::checkUnitCompatibility<
          tfel::math::unit::Length,
          LengthType>()) static void declareSpheroid(pybind11::module_& m,
                                                     const char* const n) {
-  using I =
-      tfel::material::homogenization::elasticity::Inclusion<3u, LengthType>;
+  
+  using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
   using Sphe = tfel::material::homogenization::elasticity::Spheroid<LengthType>;
-  pybind11::class_<Sphe, I, std::shared_ptr<Sphe>>(m, n,
+  pybind11::class_<Sphe, Ell, std::shared_ptr<Sphe>>(m, n,
                                                    pybind11::buffer_protocol())
       .def(pybind11::init<const Sphe&>())
       .def(pybind11::init<const LengthType&, const LengthType&>())
@@ -102,18 +105,16 @@ requires(tfel::math::checkUnitCompatibility<
 template <tfel::math::ScalarConcept LengthType>
 requires(tfel::math::checkUnitCompatibility<
          tfel::math::unit::Length,
-         LengthType>()) static void declareEllipsoid(pybind11::module_& m,
-                                                     const char* const n) {
-  using I =
-      tfel::material::homogenization::elasticity::Inclusion<3u, LengthType>;
-  using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
-  pybind11::class_<Ell, I, std::shared_ptr<Ell>>(m, n,
+         LengthType>()) static void declareSphere(pybind11::module_& m,
+                                                  const char* const n) {
+  using Sphe = tfel::material::homogenization::elasticity::Spheroid<LengthType>;
+  using Sph = tfel::material::homogenization::elasticity::Sphere<LengthType>;
+  pybind11::class_<Sph, Sphe, std::shared_ptr<Sph>>(m, n,
                                                  pybind11::buffer_protocol())
-      .def(pybind11::init<const Ell&>())
-      .def(pybind11::init<const LengthType&, const LengthType&,
-                          const LengthType&>())
-      .def_readwrite("semi_lengths", &Ell::semiLengths);
+      .def(pybind11::init<const Sph&>())
+      .def(pybind11::init<>());
 }
+
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
 requires(
@@ -470,6 +471,8 @@ requires(
                           const tfel::math::tvector<3, real>&,
                           const tfel::math::tvector<3, real>&>())
       .def_readwrite("inclusion", &Gr::inclusion)
+      .def_readwrite("n_a", &Gr::n_a)
+      .def_readwrite("n_b", &Gr::n_b)
       .def_readwrite("fraction", &Gr::fraction)
       .def("getElasticityOfPhase", &Gr::getElasticityOfPhase)
       .def("changeElasticityOfPhase",
@@ -605,9 +608,9 @@ void declareMicrostructure(pybind11::module_& m) {
   declareInclusion<2u, double>(m, "Inclusion2D");
   declareEllipse<double>(m, "Ellipse");
   declareDisk<double>(m, "Disk");
-  declareSphere<double>(m, "Sphere");
-  declareSpheroid<double>(m, "Spheroid");
   declareEllipsoid<double>(m, "Ellipsoid");
+  declareSpheroid<double>(m, "Spheroid");
+  declareSphere<double>(m, "Sphere");
   declareInclusionDistribution<3u, double>(m, "InclusionDistribution");
   declareSphereDistribution<double>(m, "SphereDistribution");
   declareIsotropicDistribution<double>(m, "IsotropicDistribution");

@@ -241,4 +241,11 @@ void declareLinearHomogenizationSchemes(pybind11::module_& m) {
         pybind11::arg("IsotropicModuli_of_the_inclusion"),
         pybind11::arg("squared_of_hydrostatic_macro_strain"),
         pybind11::arg("squared_of_equivalent_macro_strain"));
+ m.def("computeMeanSquaredHydrostaticStrain",
+        &homogenization::elasticity::computeMeanSquaredHydrostaticStrain<double>,
+        pybind11::arg("IsotropicModuli_of_the_matrix"),
+        pybind11::arg("volume_fraction"),
+        pybind11::arg("IsotropicModuli_of_the_inclusion"),
+        pybind11::arg("squared_of_hydrostatic_macro_strain"),
+        pybind11::arg("squared_of_equivalent_macro_strain"));
 }

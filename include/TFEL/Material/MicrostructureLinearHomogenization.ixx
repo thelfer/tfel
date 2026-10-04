@@ -327,12 +327,15 @@ namespace tfel::material::homogenization::elasticity {
           "basis."
           "Try to use isotropic=true.");
     }
-
+    std::vector<real> dkhom_dkr = {};
+    std::vector<real> dkhom_dmur = {};
+    std::vector<real> dmuhom_dkr = {};
+    std::vector<real> dmuhom_dmur = {};
     if (with_Chom_derivatives && (N == 3)) {
-      std::vector<real> dkhom_dkr = {real(1)};
-      std::vector<real> dkhom_dmur = {real(0)};
-      std::vector<real> dmuhom_dkr = {real(0)};
-      std::vector<real> dmuhom_dmur = {real(1)};
+      dkhom_dkr.push_back(real(1));
+      dkhom_dmur.push_back(real(0));
+      dmuhom_dkr.push_back(real(0));
+      dmuhom_dmur.push_back(real(1));
       for (std::size_t i = 0; i < np - 1; i++) {
         dkhom_dkr.push_back(real(0));
         dkhom_dmur.push_back(real(0));
