@@ -20,6 +20,7 @@
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
 #include <stdexcept>
+#include <iostream>
 #include <memory>
 
 namespace tfel::material::homogenization::elasticity {
@@ -555,6 +556,7 @@ namespace tfel::material::homogenization::elasticity {
           n_a(n_a_),
           n_b(n_b_) {
       if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
+        std::cout<<std::abs(n_a | n_b)<<" "<<std::numeric_limits<real>::epsilon()<<std::endl;
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
