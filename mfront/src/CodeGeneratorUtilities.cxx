@@ -297,33 +297,27 @@ namespace mfront {
       const mfront::MaterialPropertyDescription& mpd) {
     const auto prec = out.precision();
     out.precision(14);
+    // the bounds and the physical bounds are independent
     for (const auto& v : mpd.inputs) {
       if (v.arraySize == 1u) {
-        if (!v.hasBounds()) {
-          continue;
+        if (v.hasBounds()) {
+          writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
         }
-        writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
-        if (!v.hasPhysicalBounds()) {
-          continue;
+        if (v.hasPhysicalBounds()) {
+          writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
+                            v.getPhysicalBounds());
         }
-        writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
-                          v.getPhysicalBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasBounds(idx)) {
-            continue;
+          const auto n = v.getExternalName() + "_mfront_index_" +
+                         std::to_string(idx) + "_";
+          if (v.hasBounds(idx)) {
+            writeBoundsSymbol(out, name, n, "", v.getBounds(idx));
           }
-          writeBoundsSymbol(out, name,
-                            v.getExternalName() + "_mfront_index_" +
-                                std::to_string(idx) + "_",
-                            "", v.getBounds(idx));
-          if (!v.hasPhysicalBounds(idx)) {
-            continue;
+          if (v.hasPhysicalBounds(idx)) {
+            writeBoundsSymbol(out, name, n, "Physical",
+                              v.getPhysicalBounds(idx));
           }
-          writeBoundsSymbol(out, name,
-                            v.getExternalName() + "_mfront_index_" +
-                                std::to_string(idx) + "_",
-                            "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
