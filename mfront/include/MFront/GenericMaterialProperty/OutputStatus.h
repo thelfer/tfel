@@ -62,12 +62,14 @@ typedef struct {
    * This status has the following meaning:
    * - zero means that no argument was outside its bounds or its physical
    * bounds.
-   * - a negative values means that one argument went beyond its physical
-   * bounds.
-   *   The absolute value gives the rank of this argument (here the rank starts
-   * at 1).
-   * - a positive value means that one argument went beyond its bounds.
-   *   The value gives the rank of this argument (here the rank starts at 1).
+   * - a negative value means that the evaluation failed because one
+   *   argument went beyond its physical bounds, or beyond its bounds with
+   *   the strict out of bounds policy. The absolute value gives the rank of
+   *   this argument (here the rank starts at 1).
+   * - a positive value means that one argument went beyond its bounds with
+   *   the warning out of bounds policy: the result must be used with
+   *   caution. The value gives the rank of this argument (here the rank
+   *   starts at 1).
    */
   int bounds_status;
   //! \brief error message
