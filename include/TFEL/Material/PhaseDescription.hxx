@@ -232,7 +232,7 @@ namespace tfel::material::homogenization::elasticity {
     [[nodiscard]] tfel::math::st2tost2<3u, real> computeMeanLocalisator(
         const IsotropicModuli<StressType>& IM0) override {
       auto Ci = this->getElasticityOfPhase();
-      if (not(this->isIsotropic())) {
+      if (!(this->isIsotropic())) {
         tfel::math::tvector<3u, real> n_x = {1., 0., 0.};
         tfel::math::tvector<3u, real> n_y = {0., 1., 0.};
         return computeEllipsoidLocalisationTensor<StressType>(
@@ -337,7 +337,7 @@ namespace tfel::material::homogenization::elasticity {
       return C1;
     }
 
-    virtual tfel::math::st2tost2<3u, compliance>
+    [[nodiscard]] tfel::math::st2tost2<3u, compliance>
     computeDerivativesOfMeanLocalisator(
         const IsotropicModuli<StressType>& IM0,
         const std::array<real, 4>& dKG) override {
@@ -516,7 +516,7 @@ namespace tfel::material::homogenization::elasticity {
         : InclusionDistribution<3u, StressType>(ell, frac, C),
           n_a(n_a_),
           n_b(n_b_) {
-      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
+      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
@@ -529,34 +529,7 @@ namespace tfel::material::homogenization::elasticity {
         : InclusionDistribution<3u, StressType>(ell, frac, IM),
           n_a(n_a_),
           n_b(n_b_) {
-      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
-    }
-
-    OrientedDistribution(const Spheroid<LengthType>& sphero,
-                         real frac,
-                         const tfel::math::st2tost2<3u, StressType>& C,
-                         const tfel::math::tvector<3u, real>& n_a_,
-                         const tfel::math::tvector<3u, real>& n_b_)
-        : InclusionDistribution<3u, StressType>(sphero, frac, C),
-          n_a(n_a_),
-          n_b(n_b_) {
-      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
-    }
-
-    OrientedDistribution(const Spheroid<LengthType>& sphero,
-                         real frac,
-                         const IsotropicModuli<StressType>& IM,
-                         const tfel::math::tvector<3u, real>& n_a_,
-                         const tfel::math::tvector<3u, real>& n_b_)
-        : InclusionDistribution<3u, StressType>(sphero, frac, IM),
-          n_a(n_a_),
-          n_b(n_b_) {
-      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        std::cout<<std::abs(n_a | n_b)<<" "<<std::numeric_limits<real>::epsilon()<<std::endl;
+      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
     }
@@ -594,7 +567,7 @@ namespace tfel::material::homogenization::elasticity {
       auto Ci = this->getElasticityOfPhase();
       const auto KGi = computeKGModuli<StressType>(Ci);
       auto semiL = (this->inclusion).semiLengths;
-      if ((tfel::math::ieee754::fpclassify(semiL[1] - semiL[2]) == FP_ZERO) and
+      if ((tfel::math::ieee754::fpclassify(semiL[1] - semiL[2]) == FP_ZERO) &&
           (this->isIsotropic())) {
         const auto e = real(semiL[0] / semiL[1]);
         const auto nd = this->n_a;
@@ -607,10 +580,10 @@ namespace tfel::material::homogenization::elasticity {
       } else {
         tfel::reportContractViolation(
             "I cannot compute the derivatives of the mean localisator "
-            "for a distribution of spheroids with an elasticity defined as "
-            "a st2tost2 object, or for a distribution of ellipsoids with "
+            "for a spheroid with an elasticity defined as "
+            "a st2tost2 object, or for an ellipsoid with "
             "3 different semi-axes. "
-            "Try to use spheroids with elasticities defined by a "
+            "Try to use a spheroid with an elasticity defined by a "
             "IsotropicModuli "
             "object instead.");
       }
@@ -690,103 +663,35 @@ namespace tfel::material::homogenization::elasticity {
 
   /*!
    * This struct represents a grain of a polycrystal,
-   * as a child of class Phase. It contains an inclusion and also the attributes
-   * of Phase. It also has a method, `computeMeanLocalisator`, which returns
-   * the mean localisator of the grain, for a given matrix
-   * elasticity in parameter.
+   * as a child of class OrientedDistribution.
    */
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) struct Grain
-      : Phase<3u, StressType> {
-    using real = tfel::types::real<StressType>;
-    using compliance = tfel::types::compliance<StressType>;
-    using LengthType = tfel::types::length<StressType>;
-    
-    tfel::math::tvector<3u, real> n_a;
-    tfel::math::tvector<3u, real> n_b;
-    Inclusion<3u, LengthType> inclusion;
+      : public OrientedDistribution<StressType> {
 
-    Grain(const Ellipsoid<LengthType>& ell,
-          real frac,
-          const tfel::math::st2tost2<3u, StressType>& C,
-          const tfel::math::tvector<3u, real>& n_a_,
-          const tfel::math::tvector<3u, real>& n_b_)
-        : Phase<3u, StressType>(frac, C), n_a(n_a_), n_b(n_b_), inclusion(ell) {
-      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
-    }
+      using real = tfel::types::real<StressType>;
+      using compliance = tfel::types::compliance<StressType>;
+      using LengthType = tfel::types::length<StressType>;
+      Grain(const Ellipsoid<LengthType>& ell,
+                         real frac,
+                         const tfel::math::st2tost2<3u, StressType>& C,
+                         const tfel::math::tvector<3u, real>& n_a_,
+                         const tfel::math::tvector<3u, real>& n_b_)
+        : OrientedDistribution<StressType>(ell, frac, C,n_a_,n_b_){}
 
-    Grain(const Ellipsoid<LengthType>& ell,
-          real frac,
-          const IsotropicModuli<StressType>& IM,
-          const tfel::math::tvector<3u, real>& n_a_,
-          const tfel::math::tvector<3u, real>& n_b_)
-        : Phase<3u, StressType>(frac, IM),
-          n_a(n_a_),
-          n_b(n_b_),
-          inclusion(ell) {
-      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
-    }
+      Grain(const Ellipsoid<LengthType>& ell,
+                         real frac,
+                         const IsotropicModuli<StressType>& IM,
+                         const tfel::math::tvector<3u, real>& n_a_,
+                         const tfel::math::tvector<3u, real>& n_b_)
+        : OrientedDistribution<StressType>(ell, frac, IM,n_a_,n_b_){}
 
-    Grain(const Grain<StressType>& G) = default;
-
-    [[nodiscard]] std::unique_ptr<Grain<StressType>> clone() const {
+      [[nodiscard]] std::unique_ptr<Grain<StressType>> clone_grain()
+        const {
       return std::make_unique<Grain<StressType>>(*this);
     }
 
-    using Phase<3u, StressType>::operator=;
-
-    [[nodiscard]] tfel::math::st2tost2<3u, real> computeMeanLocalisator(
-        const tfel::math::st2tost2<3u, StressType>& C0,
-        int max_iter_anisotropic_integration = 12) {
-      auto Ci = this->getElasticityOfPhase();
-      auto semiL = (this->inclusion).semiLengths;
-      auto n_a_i = this->n_a;
-      auto n_b_i = this->n_b;
-      return computeGeneralAnisotropicLocalisationTensor<3u, StressType>(
-          C0, Ci, n_a_i, n_b_i, semiL, max_iter_anisotropic_integration);
-    }
-
-    [[nodiscard]] tfel::math::st2tost2<3u, real> computeMeanLocalisator(
-        const IsotropicModuli<StressType>& IM0) {
-      auto Ci = this->getElasticityOfPhase();
-      auto semiL = (this->inclusion).semiLengths;
-      auto n_a_i = this->n_a;
-      auto n_b_i = this->n_b;
-      return computeIsotropicLocalisationTensor<3u, StressType>(IM0, Ci, n_a_i,
-                                                                n_b_i, semiL);
-    }
-
-    [[nodiscard]] tfel::math::st2tost2<3u, compliance>
-    computeDerivativesOfMeanLocalisator(const IsotropicModuli<StressType>& IM0,
-                                        const std::array<real, 4>& dKG) {
-      auto Ci = this->getElasticityOfPhase(); 
-      const auto KGi = computeKGModuli<StressType>(Ci);
-      auto semiL = (this->inclusion).semiLengths;
-      if ((tfel::math::ieee754::fpclassify(semiL[1] - semiL[2]) == FP_ZERO) and
-          (this->isIsotropic())) {
-        const auto e = real(semiL[0] / semiL[1]);
-        const auto nd = this->n_a;
-        const tfel::math::stensor<3u, real> pd =
-            tfel::math::TransverseIsotropicWalpoleBasis<real>::p(nd);
-        const auto E1d =
-            tfel::math::TransverseIsotropicWalpoleBasis<real>::E1(nd);
-        return DerivativesOfMeanLocalisator<3u, StressType>(IM0, KGi, e, pd,
-                                                            E1d, dKG);
-      } else {
-        tfel::reportContractViolation(
-            "I cannot compute the derivatives of the mean localisator "
-            "for a grain with an elasticity defined as "
-            "a st2tost2 object, or for an ellipsoidal grain"
-            "Try to use spheroidal grains with elasticities defined by a "
-            "IsotropicModuli "
-            "object instead.");
-      }
-    }
 
   };  // end of Grain
 

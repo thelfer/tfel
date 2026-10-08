@@ -59,42 +59,37 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     return this->result;
   }
 
-  template <typename real, typename stress, typename length>
+  template <int nr,typename real, typename stress, typename length>
   void test_func(auto func,
                  const real h,
                  const real eps,
                  auto dC_dkr,
                  auto dC_dmur,
-                 stress k1,
-                 stress mu1,
-                 stress k2,
-                 stress mu2,
-                 stress k3,
-                 stress mu3,
-                 stress k4,
-                 stress mu4) {
+                 std::array<stress, nr> k_,
+               std::array<stress, nr> m_) {
     using namespace tfel::material;
-    const auto nr = int(4);
-    std::array<stress, nr> k_ = {k1, k2, k3, k4};
-    std::array<stress, nr> m_ = {mu1, mu2, mu3, mu4};
     for (int r = 0; r < nr; r++) {
-      std::array<stress, nr> kk_ = {k1, k2, k3, k4};
-      std::array<stress, nr> mm_ = {mu1, mu2, mu3, mu4};
+      std::array<stress, nr> kk_{};
+      std::array<stress, nr> mm_{};
+      for (int rr = 0; rr < nr; rr++) {
+       kk_[rr]=k_[rr];
+       mm_[rr] = m_[rr];
+      }
       auto funck = [&kk_,&r,&mm_,&func](const stress& _k_) {
         kk_[r] = _k_;
-        return func(kk_[0], mm_[0], kk_[1], mm_[1], kk_[2], mm_[2], kk_[3],
-                    mm_[3]);
+        return func(kk_, mm_);
       };
       auto funcm = [&kk_,&r,&mm_,&func](const stress& _m_) {
         mm_[r] = _m_;
-        return func(kk_[0], mm_[0], kk_[1], mm_[1], kk_[2], mm_[2], kk_[3],
-                    mm_[3]);
+        return func(kk_,mm_);
       };
 
       auto dC_dkr_DF =
           tfel::math::computeNumericalDerivative(funck, k_[r], stress(h));
-      kk_ = {k1, k2, k3, k4};
-      mm_ = {mu1, mu2, mu3, mu4};
+      for (int rr = 0; rr < nr; rr++) {
+       kk_[rr]=k_[rr];
+       mm_[rr] = m_[rr];
+      }
       auto dC_dmur_DF =
           tfel::math::computeNumericalDerivative(funcm, m_[r], stress(h));
       for (int i : {0, 1, 2, 3, 4, 5}) {
@@ -140,20 +135,17 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     auto h_DS = computeDilute<3u, stress>(micro1, 0, {}, true);
     auto dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCDS_dmur = h_DS.derivative_of_homogenized_stiffness_wrt_mur;
-    auto funcDS = [&micro1](const stress& k0_, const stress& mu0_, const stress& ki1_,
-                      const stress& mui1_, const stress& ki2_,
-                      const stress& mui2_, const stress& ki3_,
-                      const stress& mui3_) {
-      micro1.changeElasticityOfMatrixPhase(KGModuli<stress>(k0_, mu0_));
-      std::ignore=micro1.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
-      std::ignore=micro1.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
-      std::ignore=micro1.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
+    auto funcDS = [&micro1](const std::array<stress,4>& k__, const std::array<stress,4>& mu__) {
+      micro1.changeElasticityOfMatrixPhase(KGModuli<stress>(k__[0], mu__[0]));
+      for (int j=1;j<4;j++){
+      std::ignore=micro1.changeElasticityOfInclusionPhase(j-1, KGModuli<stress>(k__[j], mu__[j]));
+      }
       const auto hh = computeDilute<3u, stress>(micro1, 0, {}, false);
       return hh.homogenized_stiffness;
     };
 
-    test_func<real, stress, length>(funcDS, h, eps, dCDS_dkr, dCDS_dmur, k0,
-                                    mu0, ki, mui, ki, mui, ki, mui);
+    test_func<4,real, stress, length>(funcDS, h, eps, dCDS_dkr, dCDS_dmur, {k0,ki,ki,ki},
+                                    {mu0,mui,mui,mui});
 
     // Mori-Tanaka scheme
     ParticulateMicrostructure<3u, stress> micro2(KG0);
@@ -164,46 +156,41 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     auto h_MT = computeMoriTanaka<3u, stress>(micro2, 0, {}, true);
     auto dCMT_dkr = h_MT.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCMT_dmur = h_MT.derivative_of_homogenized_stiffness_wrt_mur;
-    auto funcMT = [&micro2](const stress& k0_, const stress& mu0_, const stress& ki1_,
-                      const stress& mui1_, const stress& ki2_,
-                      const stress& mui2_, const stress& ki3_,
-                      const stress& mui3_) {
-      micro2.changeElasticityOfMatrixPhase(KGModuli<stress>(k0_, mu0_));
-      std::ignore=micro2.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
-      std::ignore=micro2.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
-      std::ignore=micro2.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
+    auto funcMT = [&micro2](const std::array<stress,4>& k__, const std::array<stress,4>& mu__) {
+      micro2.changeElasticityOfMatrixPhase(KGModuli<stress>(k__[0], mu__[0]));
+      for (int j=1;j<4;j++){
+      std::ignore=micro2.changeElasticityOfInclusionPhase(j-1, KGModuli<stress>(k__[j], mu__[j]));
+      }
       const auto hh = computeMoriTanaka<3u, stress>(micro2, 0, {}, false);
       return hh.homogenized_stiffness;
     };
 
-    test_func<real, stress, length>(funcMT, h, eps, dCMT_dkr, dCMT_dmur, k0,
-                                    mu0, ki, mui, ki, mui, ki, mui);
+    test_func<4,real, stress, length>(funcMT, h, eps, dCMT_dkr, dCMT_dmur, {k0,ki,ki,ki},
+                                    {mu0, mui, mui,mui});
 
     // Asymmetric Self-consistent scheme
     ParticulateMicrostructure<3u, stress> micro3(KG0);
     std::ignore=micro3.addInclusionPhase(distrib1);
     std::ignore=micro3.addInclusionPhase(distrib2);
     std::ignore=micro3.addInclusionPhase(distrib3);
+    
     auto h_ASC = computeAsymmetricSelfConsistent<3u, stress>(micro3, 1e-5, true,
                                                              0, {}, true);
     auto dCASC_dkr = h_ASC.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCASC_dmur = h_ASC.derivative_of_homogenized_stiffness_wrt_mur;
-    auto funcASC = [&micro3](const stress& k0_, const stress& mu0_,
-                       const stress& ki1_, const stress& mui1_,
-                       const stress& ki2_, const stress& mui2_,
-                       const stress& ki3_, const stress& mui3_) {
-      micro3.changeElasticityOfMatrixPhase(KGModuli<stress>(k0_, mu0_));
-      std::ignore=micro3.changeElasticityOfInclusionPhase(0, KGModuli<stress>(ki1_, mui1_));
-      std::ignore=micro3.changeElasticityOfInclusionPhase(1, KGModuli<stress>(ki2_, mui2_));
-      std::ignore=micro3.changeElasticityOfInclusionPhase(2, KGModuli<stress>(ki3_, mui3_));
+    auto funcASC = [&micro3](const std::array<stress,4>& k__, const std::array<stress,4>& mu__) {
+      micro3.changeElasticityOfMatrixPhase(KGModuli<stress>(k__[0], mu__[0]));
+      for (int j=1;j<4;j++){
+        std::ignore=micro3.changeElasticityOfInclusionPhase(j-1, KGModuli<stress>(k__[j], mu__[j]));
+      }
       const auto hh = computeAsymmetricSelfConsistent<3u, stress>(
           micro3, 1e-5, true, 0, {}, false);
       return hh.homogenized_stiffness;
     };
+   
 
-    test_func<real, stress, length>(funcASC, h, eps, dCASC_dkr, dCASC_dmur, k0,
-                                    mu0, ki, mui, ki, mui, ki, mui);
-
+    test_func<4,real, stress, length>(funcASC, h, eps, dCASC_dkr, dCASC_dmur, {k0,ki,ki,ki},
+                                    {mu0, mui, mui, mui});
   }  // end of test_particulate
 
   template <typename real, typename stress, typename length>
@@ -252,20 +239,16 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
     auto dCSC_dkr = h_SC.derivative_of_homogenized_stiffness_wrt_kr;
     auto dCSC_dmur = h_SC.derivative_of_homogenized_stiffness_wrt_mur;
 
-    auto funcSC = [&poly1,&C_0](const stress& k0_, const stress& mu0_, const stress& ki1_,
-                      const stress& mui1_, const stress& ki2_,
-                      const stress& mui2_, const stress& ki3_,
-                      const stress& mui3_) {
-      std::ignore=poly1.changeElasticityOfGrain(0, KGModuli<stress>(k0_, mu0_));
-      std::ignore=poly1.changeElasticityOfGrain(1, KGModuli<stress>(ki1_, mui1_));
-      std::ignore=poly1.changeElasticityOfGrain(2, KGModuli<stress>(ki2_, mui2_));
-      std::ignore=poly1.changeElasticityOfGrain(3, KGModuli<stress>(ki3_, mui3_));
+    auto funcSC = [&poly1,&C_0](const std::array<stress,4>& k__, const std::array<stress,4>& mu__) {
+      for (int j=0;j<4;j++){
+      std::ignore=poly1.changeElasticityOfGrain(j, KGModuli<stress>(k__[j], mu__[j]));
+      }
       const auto hh = computeSelfConsistent<3u, stress>(poly1, 1e-6, C_0, true,
                                                         0, {}, false);
       return hh.homogenized_stiffness;
     };
-    test_func<real, stress, length>(funcSC, h, eps, dCSC_dkr, dCSC_dmur, k0,
-                                    mu0, ki, mui, ki3, mui3, ki4, mui4);
+    test_func<4,real, stress, length>(funcSC, h, eps, dCSC_dkr, dCSC_dmur, {k0,ki,ki3,ki4},
+                                    {mu0,  mui,  mui3,  mui4});
 
   }  // end of test_poly
 };   // end of struct MicrostructureDerivativesTest

@@ -26,15 +26,9 @@ namespace tfel::material::homogenization::elasticity {
     template <tfel::math::ScalarConcept StressType>
     requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                                 StressType>())
-            TFEL_HOST_DEVICE std::array < types::compliance<StressType>,
-    6 > computeHillTensorComponents(const KGModuli<StressType>& kg0,
-                                    const types::real<StressType>& e) {
-      using real = types::real<StressType>;
-      const auto k0 = kg0.kappa;
-      const auto mu0 = kg0.mu;
-      const auto alpha0 = 1 / mu0;
-      const auto beta0 = (6 * k0 + 2 * mu0) / (3 * k0 * mu0 + 4 * mu0 * mu0);
-      auto ace = real(0.);
+            TFEL_HOST_DEVICE std::array < types::real<StressType>,4>
+    get_psi(const types::real<StressType>& e){
+       auto ace = types::real<StressType>(0.);
       if (e > 1) {
         ace = std::acosh(e);
       } else if (e < 1) {
@@ -47,13 +41,29 @@ namespace tfel::material::homogenization::elasticity {
       const auto psi1 = (3 * gamma - 1) / 2 / (1 - e * e);
       const auto psi2 = (e * e * (4 * gamma - 1) - gamma) / 4 / (1 - e * e);
       const auto psi3 = (e * e * (1 - 2 * gamma) - gamma) / 4 / (1 - e * e);
+      return {gamma,psi1,psi2,psi3};
+    };
 
-      const auto p1 = alpha0 * (1 - 2 * gamma) + beta0 * psi1;
-      const auto p2 = alpha0 * gamma + beta0 * psi2;
-      const auto p3 = beta0 * psi3 * sqrt(2);
-      const auto p4 = beta0 * psi3 * sqrt(2);
-      const auto pF = alpha0 * gamma + beta0 * psi2 / 2;
-      const auto pG = alpha0 * (1 - gamma) / 2 + beta0 * 2 * psi3;
+    template <tfel::math::ScalarConcept StressType>
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+            TFEL_HOST_DEVICE std::array < types::compliance<StressType>,
+    6 > computeHillTensorComponents(const KGModuli<StressType>& kg0,
+                                    const types::real<StressType>& e) {
+
+      const auto k0 = kg0.kappa;
+      const auto mu0 = kg0.mu;
+      const auto alpha0 = 1 / mu0;
+      const auto beta0 = (6 * k0 + 2 * mu0) / (3 * k0 * mu0 + 4 * mu0 * mu0);
+      
+      const auto psi= get_psi<StressType>(e);
+    
+      const auto p1 = alpha0 * (1 - 2 * psi[0]) + beta0 * psi[1];
+      const auto p2 = alpha0 * psi[0] + beta0 * psi[2];
+      const auto p3 = beta0 * psi[3] * sqrt(2);
+      const auto p4 = beta0 * psi[3] * sqrt(2);
+      const auto pF = alpha0 * psi[0] + beta0 * psi[2] / 2;
+      const auto pG = alpha0 * (1 - psi[0]) / 2 + beta0 * 2 * psi[3];
 
       return {p1, p2, p3, p4, pF, pG};
     }
@@ -66,7 +76,7 @@ namespace tfel::material::homogenization::elasticity {
             const KGModuli<StressType>& kg0,
             const types::real<StressType>& e,
             const std::array<types::real<StressType>, 2>& dkg0) {
-      using real = types::real<StressType>;
+
       const auto k0 = kg0.kappa;
       const auto mu0 = kg0.mu;
       const auto dk0 = dkg0[0];
@@ -77,26 +87,14 @@ namespace tfel::material::homogenization::elasticity {
                            (6 * k0 + 2 * mu0) * (3 * k0 * dmu0 + 3 * dk0 * mu0 +
                                                  8 * mu0 * dmu0)) /
                           den / den;
-      auto ace = real(0.);
-      if (e > 1) {
-        ace = std::acosh(e);
-      } else if (e < 1) {
-        ace = std::acos(e);
-      }
-      const auto gammae = 1 / (1 - e * e) - e / (1 - e * e) /
-                                                std::sqrt(std::abs(e * e - 1)) *
-                                                ace;
-      const auto gamma = 0.5 * (1 - gammae);
-      const auto psi1 = (3 * gamma - 1) / 2 / (1 - e * e);
-      const auto psi2 = (e * e * (4 * gamma - 1) - gamma) / 4 / (1 - e * e);
-      const auto psi3 = (e * e * (1 - 2 * gamma) - gamma) / 4 / (1 - e * e);
+      const auto psi= get_psi<StressType>(e);
 
-      const auto dp1 = dalpha0 * (1 - 2 * gamma) + dbeta0 * psi1;
-      const auto dp2 = dalpha0 * gamma + dbeta0 * psi2;
-      const auto dp3 = dbeta0 * psi3 * sqrt(2);
-      const auto dp4 = dbeta0 * psi3 * sqrt(2);
-      const auto dpF = dalpha0 * gamma + dbeta0 * psi2 / 2;
-      const auto dpG = dalpha0 * (1 - gamma) / 2 + dbeta0 * 2 * psi3;
+      const auto dp1 = dalpha0 * (1 - 2 * psi[0]) + dbeta0 * psi[1];
+      const auto dp2 = dalpha0 * psi[0] + dbeta0 * psi[2];
+      const auto dp3 = dbeta0 * psi[3] * sqrt(2);
+      const auto dp4 = dbeta0 * psi[3] * sqrt(2);
+      const auto dpF = dalpha0 * psi[0] + dbeta0 * psi[2] / 2;
+      const auto dpG = dalpha0 * (1 - psi[0]) / 2 + dbeta0 * 2 * psi[3];
 
       return {dp1, dp2, dp3, dp4, dpF, dpG};
     }

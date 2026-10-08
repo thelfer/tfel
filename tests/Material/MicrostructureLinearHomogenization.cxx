@@ -75,7 +75,6 @@ struct MicrostructureLinearHomogenizationTest final
     const auto KG0 = tfel::material::KGModuli(k0,mu0);
     const auto KGi = tfel::material::KGModuli(ki,mui);
 
-    tfel::math::st2tost2<3u, stress> C_0 = 3*k0*tfel::math::st2tost2<3u,real>::J()+2*mu0*tfel::math::st2tost2<3u,real>::K(); 
     tfel::math::st2tost2<3u, stress> C_i = 3*ki*tfel::math::st2tost2<3u,real>::J()+2*mui*tfel::math::st2tost2<3u,real>::K();
 
     Ellipsoid<length> ellipsoid1(a, b, c);
@@ -147,7 +146,7 @@ struct MicrostructureLinearHomogenizationTest final
         computeAsymmetricSelfConsistent<3u, stress>(micro1, real(1e-6), isotropic);
     auto Chom_SC_1 = h_s_SC1.homogenized_stiffness;
     auto h_s_SC2 = computeAsymmetricSelfConsistent<3u, stress>(micro1, real(1e-6),
-                                                     not(isotropic),12);
+                                                     !isotropic,12);
     auto Chom_SC_2 = h_s_SC2.homogenized_stiffness;
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_SC_1, Chom_SC_2) <
                       1 / stress(1) * k0 * eps);
@@ -266,7 +265,6 @@ struct MicrostructureLinearHomogenizationTest final
     const auto KGi = tfel::material::KGModuli(ki,mui);
 
     tfel::math::st2tost2<3u, stress> C_0 = 3*k0*tfel::math::st2tost2<3u,real>::J()+2*mu0*tfel::math::st2tost2<3u,real>::K(); 
-    tfel::math::st2tost2<3u, stress> C_i = 3*ki*tfel::math::st2tost2<3u,real>::J()+2*mui*tfel::math::st2tost2<3u,real>::K();
    
     Ellipsoid<length> ellipsoid1(a, b, c);
     Spheroid<length> spheroid1(a, b);

@@ -297,7 +297,7 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& c,
           const std::size_t max_it) {
     using real = types::real<StressType>;
-    if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
+    if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
       tfel::reportContractViolation("n_a and n_b not normals");
     }
     if (norm(n_a) < std::numeric_limits<real>::epsilon()) {

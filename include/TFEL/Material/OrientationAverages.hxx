@@ -274,7 +274,7 @@ namespace tfel::material::homogenization::elasticity {
             (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
-      if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
+      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
       if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
@@ -375,7 +375,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>())
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u,types::compliance<StressType>> DerivativesOfMeanLocalisator(
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u,types::compliance<StressType>> DerivativesOfMeanLocalisator(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IMi,
         const types::real<StressType>& e,
@@ -386,7 +386,7 @@ namespace tfel::material::homogenization::elasticity {
       using real = types::real<StressType>;
       using compliance =types::compliance<StressType>;
       
-      if (not(e > real(0))) {
+      if (!(e > real(0))) {
        tfel::reportContractViolation("e<=0");
       }
 

@@ -58,22 +58,22 @@ namespace tfel::material::homogenization::elasticity {
         internals::initialize_polarisation<N, StressType>(polarisations, np);
 
     const auto C0 = micro.getMatrixElasticity();
-    KGModuli<StressType> KG0(StressType(0), StressType(0));
-    if (micro.isIsotropicMatrix()) {
-      KG0 = computeKGModuli<StressType>(C0);
-    }
 
     auto Chom = C0;
+
     auto tau_eff = tfel::math::stensor<N, StressType>::zero();
+
     const auto f0 = micro.getMatrixFraction();
 
     std::vector<tfel::math::st2tost2<N, real>> dChom_dkr = {
         tfel::math::st2tost2<N, real>::zero()};
     std::vector<tfel::math::st2tost2<N, real>> dChom_dmur{
         tfel::math::st2tost2<N, real>::zero()};
+
     const auto J = tfel::math::st2tost2<3u, real>::J();
     const auto K = tfel::math::st2tost2<3u, real>::K();
-    if (with_Chom_derivatives && (not(micro.is_isotropic_matrix()))) {
+
+    if (with_Chom_derivatives && (!(micro.is_isotropic_matrix()))) {
       tfel::reportContractViolation(
           "I cannot compute the derivatives of the homogenized stiffness "
           "when the matrix elasticity is a st2tost2 object."
@@ -93,7 +93,7 @@ namespace tfel::material::homogenization::elasticity {
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.getInclusionPhase(i);
       auto Ci = (*phasei).getElasticityOfPhase();
-      if (not((*phasei).isIsotropic()) && with_Chom_derivatives) {
+      if (!((*phasei).isIsotropic()) && with_Chom_derivatives) {
         tfel::reportContractViolation(
             "I cannot compute the derivatives of the homogenized stiffness "
             "when the elasticity of a phase is a st2tost2 object."
@@ -103,7 +103,8 @@ namespace tfel::material::homogenization::elasticity {
       auto taui = polarisations_[i + 1];
       tfel::math::st2tost2<N, real> Ai;
 
-      if (micro.is_isotropic_matrix()) {
+      if (micro.isIsotropicMatrix()) {
+        auto KG0 = computeKGModuli<StressType>(C0);
         Ai = (*phasei).computeMeanLocalisator(KG0);
         if (with_Chom_derivatives && (N == 3)) {
           const auto dAi_dk0 =
@@ -162,10 +163,6 @@ namespace tfel::material::homogenization::elasticity {
         internals::initialize_polarisation<N, StressType>(polarisations, np);
 
     const auto C0 = micro.getMatrixElasticity();
-    KGModuli<StressType> KG0(StressType(0), StressType(0));
-    if (micro.isIsotropicMatrix()) {
-      KG0 = computeKGModuli<StressType>(C0);
-    }
 
     const auto tau0 = polarisations_[0];
     const auto f0 = micro.getMatrixFraction();
@@ -183,6 +180,7 @@ namespace tfel::material::homogenization::elasticity {
       auto fi = (*phasei).fraction;
       tfel::math::st2tost2<N, real> Ai;
       if (micro.isIsotropicMatrix()) {
+        auto KG0 = computeKGModuli<StressType>(C0);
         Ai = (*phasei).computeMeanLocalisator(KG0);
       } else {
         Ai = (*phasei).computeMeanLocalisator(C0,
@@ -194,7 +192,7 @@ namespace tfel::material::homogenization::elasticity {
     A0 = invert(A0);
     localisators.insert(localisators.begin(), A0);
 
-    if (with_Chom_derivatives && (not(micro.is_isotropic_matrix()))) {
+    if (with_Chom_derivatives && (!(micro.is_isotropic_matrix()))) {
       tfel::reportContractViolation(
           "I cannot compute the derivatives of the homogenized stiffness "
           "when the matrix elasticity is a st2tost2 object."
@@ -202,8 +200,10 @@ namespace tfel::material::homogenization::elasticity {
           "elasticity.");
     }
     using compliance = tfel::types::compliance<StressType>;
+
     auto sum_dAi_dk0 = tfel::math::st2tost2<N, compliance>::zero();
     auto sum_dAi_dmu0 = tfel::math::st2tost2<N, compliance>::zero();
+
     if (with_Chom_derivatives && (N == 3)) {
       dChom_dkr.push_back(3 * f0 * J * A0);
       dChom_dmur.push_back(2 * f0 * K * A0);
@@ -228,12 +228,13 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     if (with_Chom_derivatives && (N == 3)) {
+      auto KG0 = computeKGModuli<StressType>(C0);
       for (std::size_t i = 0; i < np - 1; i++) {
         auto phasei = micro.getInclusionPhase(i);
         auto Ci = (*phasei).getElasticityOfPhase();
         auto fi = (*phasei).fraction;
         auto Ai = localisators[i + 1];
-        if (not((*phasei).isIsotropic())) {
+        if (!((*phasei).isIsotropic())) {
           tfel::reportContractViolation(
               "I cannot compute the derivatives of the homogenized stiffness "
               "when the elasticity of a phase is a st2tost2 object."
@@ -305,14 +306,18 @@ namespace tfel::material::homogenization::elasticity {
 
     const auto polarisations_ =
         internals::initialize_polarisation<N, StressType>(polarisations, np);
+
     auto tau_eff = tfel::math::stensor<N, StressType>::zero();
+
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
+
     const auto J = tfel::math::st2tost2<3u, real>::J();
     const auto K = tfel::math::st2tost2<3u, real>::K();
+    
     std::vector<tfel::math::st2tost2<N, real>> dChom_dkr = {};
     std::vector<tfel::math::st2tost2<N, real>> dChom_dmur = {};
 
-    if (with_Chom_derivatives && (not(micro.is_isotropic_matrix()))) {
+    if (with_Chom_derivatives && (!(micro.is_isotropic_matrix()))) {
       tfel::reportContractViolation(
           "I cannot compute the derivatives of the homogenized stiffness "
           "when the matrix elasticity is a st2tost2 object."
@@ -320,28 +325,21 @@ namespace tfel::material::homogenization::elasticity {
           "elasticity.");
     }
 
-    if (with_Chom_derivatives && (not(isotropic))) {
+    if (with_Chom_derivatives && !(isotropic)) {
       tfel::reportContractViolation(
           "I cannot compute the derivatives of the homogenized stiffness "
           "when the homogenized stiffness is not projected on the isotropic "
           "basis."
           "Try to use isotropic=true.");
     }
-    std::vector<real> dkhom_dkr = {};
-    std::vector<real> dkhom_dmur = {};
-    std::vector<real> dmuhom_dkr = {};
-    std::vector<real> dmuhom_dmur = {};
+    
+    std::vector<real> dkhom_dkr(np,0);
+    std::vector<real> dkhom_dmur(np,0);
+    std::vector<real> dmuhom_dkr(np,0);
+    std::vector<real> dmuhom_dmur(np,0);
     if (with_Chom_derivatives && (N == 3)) {
-      dkhom_dkr.push_back(real(1));
-      dkhom_dmur.push_back(real(0));
-      dmuhom_dkr.push_back(real(0));
-      dmuhom_dmur.push_back(real(1));
-      for (std::size_t i = 0; i < np - 1; i++) {
-        dkhom_dkr.push_back(real(0));
-        dkhom_dmur.push_back(real(0));
-        dmuhom_dkr.push_back(real(0));
-        dmuhom_dmur.push_back(real(0));
-      }
+      dkhom_dkr[0]=real(1);
+      dmuhom_dmur[0]=real(1);
     }
 
     const auto u = real(1.);
@@ -395,7 +393,7 @@ namespace tfel::material::homogenization::elasticity {
         Ch += fi * (Ci - C0) * Ai;
 
         if (with_Chom_derivatives && (N == 3)) {
-          if (not((*phasei).isIsotropic())) {
+          if (!((*phasei).isIsotropic())) {
             tfel::reportContractViolation(
                 "I cannot compute the derivatives of the homogenized stiffness "
                 "when the elasticity of a phase is a st2tost2 object."
@@ -514,30 +512,23 @@ namespace tfel::material::homogenization::elasticity {
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
     std::vector<tfel::math::st2tost2<N, real>> dChom_dkr = {};
     std::vector<tfel::math::st2tost2<N, real>> dChom_dmur = {};
+
     const auto J = tfel::math::st2tost2<3u, real>::J();
     const auto K = tfel::math::st2tost2<3u, real>::K();
 
-    std::vector<real> dkhom_dkr = {};
-    std::vector<real> dkhom_dmur = {};
-    std::vector<real> dmuhom_dkr = {};
-    std::vector<real> dmuhom_dmur = {};
+    std::vector<real> dkhom_dkr(ng,0);
+    std::vector<real> dkhom_dmur(ng,0);
+    std::vector<real> dmuhom_dkr(ng,0);
+    std::vector<real> dmuhom_dmur(ng,0);
 
-    if (with_Chom_derivatives && (not(isotropic))) {
+    if (with_Chom_derivatives && !(isotropic)) {
       tfel::reportContractViolation(
           "I cannot compute the derivatives of the homogenized stiffness "
           "when the homogenized stiffness is not projected on the isotropic "
           "basis."
           "Try to use isotropic=true.");
     }
-    if (with_Chom_derivatives && (N == 3)) {
-      for (std::size_t i = 0; i < ng; i++) {
-        dkhom_dkr.push_back(real(0));
-        dkhom_dmur.push_back(real(0));
-        dmuhom_dkr.push_back(real(0));
-        dmuhom_dmur.push_back(real(0));
-      }
-    }
-
+  
     const auto u = real(1.);
     const auto z = real(0.);
     const std::array<real, 4> dk0 = {u, z, z, z};
@@ -612,7 +603,7 @@ namespace tfel::material::homogenization::elasticity {
           auto Ck = (*graink).getElasticityOfPhase();
           auto fk = (*graink).fraction;
 
-          if (not((*graink).isIsotropic())) {
+          if (!((*graink).isIsotropic())) {
             tfel::reportContractViolation(
                 "I cannot compute the derivatives of the homogenized stiffness "
                 "when the elasticity of a grain is a st2tost2 object."

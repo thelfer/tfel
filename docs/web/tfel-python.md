@@ -711,8 +711,8 @@ the orientation of the grain (the axes of the related `inclusion`). The `Grain` 
 as follows:
 
 ~~~~{.py}
-grain1=Grain(spheroid,frac,IMi,n_a,n_b)
-grain2=Grain(ellipso,frac,IMi,n_a,n_b)
+grain1=Grain(ellipso,frac,IMi,n_a,n_b)
+grain2=Grain(spheroid,frac,IMi,n_a,n_b)
 ~~~~
 
 The `Grain` has also methods: `getElasticityOfPhase` (get the elasticity of the grain),
@@ -824,11 +824,25 @@ default:
 
 ~~~~{.py}
 micro_2.addInclusionPhase(ellipsoid_dist_O)
-hmSC_iso=hm.computeAsymmetricSelfConsistentScheme(micro_2,10,True)
-hmSC_aniso=hm.computeAsymmetricSelfConsistentScheme(micro_2,10,False,10)
+hmASC_iso=hm.computeAsymmetricSelfConsistentScheme(micro_2,1e-6,True)
+hmASC_aniso=hm.computeAsymmetricSelfConsistentScheme(micro_2,1e-2,False,10)
+print("ASC iso: ",hmASC_iso.homogenized_stiffness)
+print("ASC aniso: ",hmASC_aniso.homogenized_stiffness)
+~~~~
+
+For the `Polycrystal`, we can do
+
+~~~~{.py}
+Cini=C0
+hmSC_iso=hm.computeSelfConsistentScheme(poly,1e-6,Cini,True)
 print("SC iso: ",hmSC_iso.homogenized_stiffness)
+hmSC_aniso=hm.computeSelfConsistentScheme(poly,1e-2,Cini,False,10)
 print("SC aniso: ",hmSC_aniso.homogenized_stiffness)
 ~~~~
+
+Here, there is an additional argument `Cini`, compared to `computeAsymmetricSelfConsistentScheme`,
+which is the initialization of the homogenized stiffness,
+in the Self-Consistent algorithm. 
 
 For the oter schemes, the isotropic character of the matrix
 when computing the strain localisators will depend
@@ -905,9 +919,17 @@ which contains as many tensors as the number of phases in the
 derivative of the homogenized stiffness w.r.t. the bulk modulus
 `ki` relative to phase `i`.
 
+For the `Polycrystal`, we can for example use `computeSelfConsistentScheme`
+like that:
+
+~~~~{.py}
+h_SC = hm.computeSelfConsistentScheme(poly,1e-6,Cini,isotropic=True,polarisations=[],with_Chom_derivatives=True)
+dCSC_dkr = h_SC.derivative_of_homogenized_stiffness_wrt_kr
+dCSC_dmur = h_SC.derivative_of_homogenized_stiffness_wrt_mur
+~~~~
+
 Note that these derivatives are available only when distributions of spheroids
 are considered (see the analytical computation [here](tfel-material-homogenization.html#second-moments-of-the-strains)).
-
 
 
 <!-- Local IspellDict: english -->

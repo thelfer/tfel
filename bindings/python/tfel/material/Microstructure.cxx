@@ -456,10 +456,10 @@ requires(
   using LengthType = tfel::types::length<StressType>;
   using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
 
-  using Ph = tfel::material::homogenization::elasticity::Phase<3u,StressType>;
+  using OD = tfel::material::homogenization::elasticity::OrientedDistribution<StressType>;
   using Gr = tfel::material::homogenization::elasticity::Grain<StressType>;
 
-  pybind11::class_<Gr, Ph, std::shared_ptr<Gr>>(m, n,
+  pybind11::class_<Gr, OD, std::shared_ptr<Gr>>(m, n,
                                                     pybind11::buffer_protocol())
       .def(pybind11::init<const Gr&>())
       .def(pybind11::init<const Ell&, real,

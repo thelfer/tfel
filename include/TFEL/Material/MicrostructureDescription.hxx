@@ -53,23 +53,25 @@ namespace tfel::material::homogenization::elasticity {
            tfel::math::unit::Stress,
            StressType>()) struct ParticulateMicrostructure
       : public Microstructure<N, StressType> {
-    // attributes below
+    
     using real = tfel::types::real<StressType>;
     using LengthType = tfel::types::length<StressType>;
+    
+    private:
+      unsigned int number_of_phases = 1;
+      std::vector<std::unique_ptr<InclusionDistribution<N, StressType>>>
+          inclusion_phases = {};
+      Phase<N, StressType> matrix_phase;
 
-    ParticulateMicrostructure() = default;
+    public:
 
     explicit ParticulateMicrostructure(
         const tfel::math::st2tost2<N, StressType>& C0)
         : Microstructure<N, StressType>(),
-          number_of_phases(1),
-          inclusion_phases{},
           matrix_phase(Phase<N, StressType>(real(1), C0)) {}
 
     explicit ParticulateMicrostructure(const IsotropicModuli<StressType>& IM0)
         : Microstructure<N, StressType>(),
-          number_of_phases(1),
-          inclusion_phases{},
           matrix_phase(Phase<N, StressType>(real(1), IM0)) {}
 
     void changeElasticityOfMatrixPhase(
@@ -211,12 +213,6 @@ namespace tfel::material::homogenization::elasticity {
       return (this->number_of_phases);
     }
 
-   private:
-    unsigned int number_of_phases;
-    std::vector<std::unique_ptr<InclusionDistribution<N, StressType>>>
-        inclusion_phases;
-    Phase<N, StressType> matrix_phase;
-
   };  // end of ParticulateMicrostructure
 
   /*!
@@ -230,11 +226,17 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) struct Polycrystal
       : public Microstructure<3u, StressType> {
-    // attributes below
     using real = tfel::types::real<StressType>;
 
+    private:
+      unsigned int number_of_grains = 0;
+      real total_fraction = 0;
+      std::vector<std::unique_ptr<Grain<StressType>>> grains = {};
+
+    public:
+
     Polycrystal()
-        : Microstructure<3u, StressType>(), number_of_grains(0), total_fraction(0), grains{} {}
+        : Microstructure<3u, StressType>() {}
 
     [[nodiscard]] int addGrain(Grain<StressType>& grain) {
       if (this->total_fraction + grain.fraction > real(1)) {
@@ -242,7 +244,7 @@ namespace tfel::material::homogenization::elasticity {
       } else {
         (this->number_of_grains)++;
         (this->total_fraction) += grain.fraction;
-        (this->grains).push_back(grain.clone());
+        (this->grains).push_back(grain.clone_grain());
         return 1;
       }
     }
@@ -252,7 +254,7 @@ namespace tfel::material::homogenization::elasticity {
         tfel::reportContractViolation(
             "there are less grains than what you think !");
       }
-      return ((this->grains)[i])->clone();
+      return ((this->grains)[i])->clone_grain();
     }
 
     [[nodiscard]] int removeGrain(unsigned int i) {
@@ -315,10 +317,6 @@ namespace tfel::material::homogenization::elasticity {
       return (this->number_of_grains);
     }
 
-   private:
-    unsigned int number_of_grains;
-    real total_fraction;
-    std::vector<std::unique_ptr<Grain<StressType>>> grains;
   };  // end of Polycrystal
 
 }  // end of namespace tfel::material::homogenization::elasticity
