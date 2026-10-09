@@ -1038,25 +1038,30 @@ n_b)\rangle_{\vec n_a,\vec n_b}\)
 where \(\langle.\rangle_{\vec n_a,\vec n_b}\) stands for the average on all orientations. Let us try:
 
 ~~~~{.cpp}
-auto epsilon = 1e-6;
-auto hmASC=computeAsymmetricSelfConsistent<3u,stress>(micro_1,epsilon,true);
+auto epsilon = 1e-6; # the epsilon which terminates the algorithm
+auto isotropic = true; # to compute the Hill tensors with an isotropic reference medium
+auto hmASC=computeAsymmetricSelfConsistent<3u,stress>(micro_1,epsilon,isotropic);
 std::cout<< "CASC: "<< hmASC.homogenized_stiffness << std::endl;
 ~~~~
 
-Otherwise, he can put `false`, so that a numerical integration (resulting
-in a slower computation) will be performed to compute the Hill tensors.
-Moreover, the optional integer `max_iter_anisotropic_integration` can also be used
+Here a boolean `isotropic` is passed as an argument to specify if the
+reference medium \(\tenseurq C^{\mathrm{ASC}}_{n}\) is considered isotropic
+when computing the Hill tensor \(\tenseurq P_i^{\mathrm{ASC},n}(\vec n_a,\vec n_b)\).
+If `isotropic` is `true`, an isotropic projection is performed for \(\tenseurq C^{\mathrm{SC}}_{n}\)
+at each step of the iterative algorithm.
+Otherwise, we can put `false`, so that a numerical integration (resulting
+in a slower computation) will be performed to compute the Hill tensor at each
+iteration of the algorithm. Moreover, the optional integer `max_iter_anisotropic_integration` can also be used
 as for the other schemes (its default value is here `8`):
 
 ~~~~{.cpp}
-hmASC_aniso=computeAsymmetricSelfConsistent<3u,stress>(micro_1,epsilon,false,
-max_iter_anisotropic_integration);
+hmASC_aniso=computeAsymmetricSelfConsistent<3u,stress>(micro_1,epsilon,not(isotropic),max_iter_anisotropic_integration);
 std::cout<< "CASC: "<< hmASC_aniso.homogenized_stiffness << std::endl;
 ~~~~
 
 Note that the numerical integration is performed only when the
 `InclusionDistribution` objects are `SphereDistribution`
-or `OrientedDistribution`.
+or `OrientedDistribution` only.
 
 ### Self-consistent scheme (without matrix phase)
 
@@ -1085,27 +1090,22 @@ related to the ellipsoid embedded in a homogeneous medium whose elasticity is
 Let us try:
 
 ~~~~{.cpp}
-auto epsilon = 1e-6;
-auto Cini=C0;
-auto hmSC=computeSelfConsistent<3u,stress>(poly,epsilon,Cini,true);
+auto Cini=C0; # initial guess
+auto hmSC=computeSelfConsistent<3u,stress>(poly,epsilon,Cini,isotropic);
 std::cout<< "CSC: "<< hmSC.homogenized_stiffness << std::endl;
 ~~~~
 
 We note that `computeSelfConsistent` takes
 a `Polycrystal` as an argument, but also `epsilon` as
 the tolerance criterium, and `Cini` as the initial guess (a `st2tost2` object).
-Moreover, it must be precised, for the computation of the Hill tensor \(\tenseurq P_i^{\mathrm{SC},n}(\vec n_a,\vec n_b)\), if the reference elasticity \(\tenseurq C^{\mathrm{SC}}_{n}\) is
-considered isotropic or not. This is the role of the `bool` parameter (here, `true`).
-If it is `true`, an isotropic projection is performed for \(\tenseurq C^{\mathrm{SC}}_{n}\)
-at each step of the iterative algorithm.
-The anisotropic case is treated as above for the
+Here again, for the computation of the Hill tensor \(\tenseurq P_i^{\mathrm{SC},n}(\vec n_a,\vec n_b)\),
+we specify with the boolean `isotropic`, if the reference elasticity \(\tenseurq C^{\mathrm{SC}}_{n}\) is
+considered isotropic or not. The anisotropic case is treated as above for the
 asymmetric self-consistent scheme.
 
 ~~~~{.cpp}
-OrientedDistribution<stress> distrib_O(ellipsoid1,f,KGi,n_a,n_b);
-micro_2.addInclusionPhase(distrib_O);
-hmSC_iso=computeSelfConsistent<3u,stress>(micro_2,epsilon,Cini,true);
-hmSC_aniso=computeSelfConsistent<3u,stress>(micro_2,epsilon,Cini,false,max_iter_anisotropic_integration);
+hmSC_iso=computeSelfConsistent<3u,stress>(poly,epsilon,Cini,true);
+hmSC_aniso=computeSelfConsistent<3u,stress>(poly,epsilon,Cini,false,max_iter_anisotropic_integration);
 std::cout<< "SC iso: "<< hmSC_iso.homogenized_stiffness<< std::endl;
 std::cout<< "SC aniso: "<< hmSC_aniso.homogenized_stiffness<< std::endl;
 ~~~~
@@ -1168,10 +1168,15 @@ elastic moduli. These derivatives are also provided by the
 (and only in 3D). This can be done as follows:
 
 ~~~~{.cpp}
-auto compute_derivatives = true;
-auto h_DS = computeDilute<3u, stress>(micro_1,0,{},compute_derivatives);
+auto compute_derivatives = true; # to enable the computation of derivatives
+auto h_DS = computeDilute<3u, stress>(micro_1,0,{},compute_derivatives); # here the 0 and {} correspond to unused parameters
 auto dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr;
+auto dCDS_dmur = h_DS.derivative_of_homogenized_stiffness_wrt_mur;
 std::cout << dCDS_dkr[0](0,0) << std::endl;
+
+auto h_MT = computeMoriTanaka<3u, stress>(micro_1, 0, {}, compute_derivatives); # here the 0 and {} correspond to unused parameters
+auto dCMT_dkr = h_MT.derivative_of_homogenized_stiffness_wrt_kr;
+auto dCMT_dmur = h_MT.derivative_of_homogenized_stiffness_wrt_mur;
 ~~~~
 
 Here, a boolean `compute_derivatives` is passed as the last argument of the function
@@ -1185,6 +1190,21 @@ which contains as many tensors as the number of phases.
 The tensor number `i` is a `st2tost2` object corresponding to the
 derivative of the homogenized stiffness w.r.t. the bulk modulus
 of phase `i`. This is the same for the attribute `.derivative_of_homogenized_stiffness_wrt_mur`.
+
+For the other schemes, we can do:
+
+~~~~{.cpp}
+auto compute_derivatives = true; # to enable the computation of derivatives
+auto isotropic = true; # to enable the isotropic projection for computing the Hill tensors
+auto epsilon = real(1e-5); # which terminates the self-consistent algorithm
+auto h_ASC = computeAsymmetricSelfConsistent<3u, stress>(micro_1, epsilon, isotropic, 0, {}, compute_derivatives); # 0 and {} are unused parameters
+auto dCASC_dkr = h_ASC.derivative_of_homogenized_stiffness_wrt_kr;
+auto dCASC_dmur = h_ASC.derivative_of_homogenized_stiffness_wrt_mur;
+
+auto h_SC = computeSelfConsistent<3u, stress>(poly, epsilon, Cini, isotropic, 0, {}, compute_derivatives); # 0 and {} are unused parameters
+auto dCSC_dkr = h_SC.derivative_of_homogenized_stiffness_wrt_kr;
+auto dCSC_dmur = h_SC.derivative_of_homogenized_stiffness_wrt_mur;
+~~~~
 
 ### Analytical formulas (implemented in TFEL)
 
