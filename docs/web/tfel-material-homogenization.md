@@ -1038,8 +1038,8 @@ n_b)\rangle_{\vec n_a,\vec n_b}\)
 where \(\langle.\rangle_{\vec n_a,\vec n_b}\) stands for the average on all orientations. Let us try:
 
 ~~~~{.cpp}
-auto epsilon = 1e-6; # the epsilon which terminates the algorithm
-auto isotropic = true; # to compute the Hill tensors with an isotropic reference medium
+auto epsilon = 1e-6; // the epsilon which terminates the algorithm
+auto isotropic = true; // to compute the Hill tensors with an isotropic reference medium
 auto hmASC=computeAsymmetricSelfConsistent<3u,stress>(micro_1,epsilon,isotropic);
 std::cout<< "CASC: "<< hmASC.homogenized_stiffness << std::endl;
 ~~~~
@@ -1090,7 +1090,7 @@ related to the ellipsoid embedded in a homogeneous medium whose elasticity is
 Let us try:
 
 ~~~~{.cpp}
-auto Cini=C0; # initial guess
+auto Cini=C0; // initial guess
 auto hmSC=computeSelfConsistent<3u,stress>(poly,epsilon,Cini,isotropic);
 std::cout<< "CSC: "<< hmSC.homogenized_stiffness << std::endl;
 ~~~~
@@ -1168,13 +1168,13 @@ elastic moduli. These derivatives are also provided by the
 (and only in 3D). This can be done as follows:
 
 ~~~~{.cpp}
-auto compute_derivatives = true; # to enable the computation of derivatives
-auto h_DS = computeDilute<3u, stress>(micro_1,0,{},compute_derivatives); # here the 0 and {} correspond to unused parameters
+auto compute_derivatives = true; // to enable the computation of derivatives
+auto h_DS = computeDilute<3u, stress>(micro_1,0,{},compute_derivatives); // here the 0 and {} correspond to unused parameters
 auto dCDS_dkr = h_DS.derivative_of_homogenized_stiffness_wrt_kr;
 auto dCDS_dmur = h_DS.derivative_of_homogenized_stiffness_wrt_mur;
 std::cout << dCDS_dkr[0](0,0) << std::endl;
 
-auto h_MT = computeMoriTanaka<3u, stress>(micro_1, 0, {}, compute_derivatives); # here the 0 and {} correspond to unused parameters
+auto h_MT = computeMoriTanaka<3u, stress>(micro_1, 0, {}, compute_derivatives); // here the 0 and {} correspond to unused parameters
 auto dCMT_dkr = h_MT.derivative_of_homogenized_stiffness_wrt_kr;
 auto dCMT_dmur = h_MT.derivative_of_homogenized_stiffness_wrt_mur;
 ~~~~
@@ -1194,14 +1194,14 @@ of phase `i`. This is the same for the attribute `.derivative_of_homogenized_sti
 For the other schemes, we can do:
 
 ~~~~{.cpp}
-auto compute_derivatives = true; # to enable the computation of derivatives
-auto isotropic = true; # to enable the isotropic projection for computing the Hill tensors
-auto epsilon = real(1e-5); # which terminates the self-consistent algorithm
-auto h_ASC = computeAsymmetricSelfConsistent<3u, stress>(micro_1, epsilon, isotropic, 0, {}, compute_derivatives); # 0 and {} are unused parameters
+auto compute_derivatives = true; // to enable the computation of derivatives
+auto isotropic = true; // to enable the isotropic projection for computing the Hill tensors
+auto epsilon = real(1e-5); // which terminates the self-consistent algorithm
+auto h_ASC = computeAsymmetricSelfConsistent<3u, stress>(micro_1, epsilon, isotropic, 0, {}, compute_derivatives); // 0 and {} are unused parameters
 auto dCASC_dkr = h_ASC.derivative_of_homogenized_stiffness_wrt_kr;
 auto dCASC_dmur = h_ASC.derivative_of_homogenized_stiffness_wrt_mur;
 
-auto h_SC = computeSelfConsistent<3u, stress>(poly, epsilon, Cini, isotropic, 0, {}, compute_derivatives); # 0 and {} are unused parameters
+auto h_SC = computeSelfConsistent<3u, stress>(poly, epsilon, Cini, isotropic, 0, {}, compute_derivatives); // 0 and {} are unused parameters
 auto dCSC_dkr = h_SC.derivative_of_homogenized_stiffness_wrt_kr;
 auto dCSC_dmur = h_SC.derivative_of_homogenized_stiffness_wrt_mur;
 ~~~~
