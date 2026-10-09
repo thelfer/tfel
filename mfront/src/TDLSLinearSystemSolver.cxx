@@ -226,7 +226,7 @@ namespace mfront {
       }
     }
     if (this->unroll_inner.has_value()) {
-      os << "\n.unroll_inner = ";
+      os << "\n.unroll_loops = ";
       if (*(this->unroll_inner)) {
         os << "true,";
       } else {
