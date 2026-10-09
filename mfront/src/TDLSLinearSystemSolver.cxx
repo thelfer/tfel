@@ -212,10 +212,6 @@ namespace mfront {
       os << "\n.oot_pivot_threshold = NumericType{"
          << *out_of_tile_search_threshold << "},";
     }
-    if (this->singular_pivot_threshold.has_value()) {
-      os << "\n.singular_floor = NumericType{"
-         << *(this->singular_pivot_threshold) << "},";
-    }
     if (this->out_of_tile_search_strategy.has_value()) {
       os << "\n.oot_first_acceptable = ";
       if (*(this->out_of_tile_search_strategy) ==
@@ -224,6 +220,10 @@ namespace mfront {
       } else {
         os << "false,";
       }
+    }
+    if (this->singular_pivot_threshold.has_value()) {
+      os << "\n.singular_floor = NumericType{"
+         << *(this->singular_pivot_threshold) << "},";
     }
     if (this->unroll_inner.has_value()) {
       os << "\n.unroll_loops = ";
