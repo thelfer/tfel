@@ -16,22 +16,19 @@
 #include "TFEL/Material/MicrostructureDescription.hxx"
 
 template <unsigned short int N, tfel::math::ScalarConcept LengthType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Length,
-         LengthType>()) static void declareInclusion(pybind11::module_& m,
-                                                     const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                              LengthType>())
+static void declareInclusion(pybind11::module_& m, const char* const n) {
   using I =
       tfel::material::homogenization::elasticity::Inclusion<N, LengthType>;
   pybind11::class_<I, std::shared_ptr<I>>(m, n, pybind11::buffer_protocol())
-  .def_readwrite("semi_lengths",&I::semiLengths);
+      .def_readwrite("semi_lengths", &I::semiLengths);
 }
 
-
 template <tfel::math::ScalarConcept LengthType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Length,
-         LengthType>()) static void declareEllipse(pybind11::module_& m,
-                                                   const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                              LengthType>())
+static void declareEllipse(pybind11::module_& m, const char* const n) {
   using I =
       tfel::material::homogenization::elasticity::Inclusion<2u, LengthType>;
   using Elli = tfel::material::homogenization::elasticity::Ellipse<LengthType>;
@@ -51,24 +48,21 @@ requires(tfel::math::checkUnitCompatibility<
 }
 
 template <tfel::math::ScalarConcept LengthType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Length,
-         LengthType>()) static void declareDisk(pybind11::module_& m,
-                                                const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                              LengthType>())
+static void declareDisk(pybind11::module_& m, const char* const n) {
   using Elli = tfel::material::homogenization::elasticity::Ellipse<LengthType>;
   using Di = tfel::material::homogenization::elasticity::Disk<LengthType>;
   pybind11::class_<Di, Elli, std::shared_ptr<Di>>(m, n,
-                                               pybind11::buffer_protocol())
+                                                  pybind11::buffer_protocol())
       .def(pybind11::init<const Di&>())
       .def(pybind11::init<>());
 }
 
-
 template <tfel::math::ScalarConcept LengthType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Length,
-         LengthType>()) static void declareEllipsoid(pybind11::module_& m,
-                                                     const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                              LengthType>())
+static void declareEllipsoid(pybind11::module_& m, const char* const n) {
   using I =
       tfel::material::homogenization::elasticity::Inclusion<3u, LengthType>;
   using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
@@ -80,15 +74,13 @@ requires(tfel::math::checkUnitCompatibility<
 }
 
 template <tfel::math::ScalarConcept LengthType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Length,
-         LengthType>()) static void declareSpheroid(pybind11::module_& m,
-                                                    const char* const n) {
-  
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                              LengthType>())
+static void declareSpheroid(pybind11::module_& m, const char* const n) {
   using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
   using Sphe = tfel::material::homogenization::elasticity::Spheroid<LengthType>;
-  pybind11::class_<Sphe, Ell, std::shared_ptr<Sphe>>(m, n,
-                                                   pybind11::buffer_protocol())
+  pybind11::class_<Sphe, Ell, std::shared_ptr<Sphe>>(
+      m, n, pybind11::buffer_protocol())
       .def(pybind11::init<const Sphe&>())
       .def(pybind11::init<const LengthType&, const LengthType&>())
       .def("axis_length",
@@ -103,52 +95,40 @@ requires(tfel::math::checkUnitCompatibility<
 }
 
 template <tfel::math::ScalarConcept LengthType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Length,
-         LengthType>()) static void declareSphere(pybind11::module_& m,
-                                                  const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                              LengthType>())
+static void declareSphere(pybind11::module_& m, const char* const n) {
   using Sphe = tfel::material::homogenization::elasticity::Spheroid<LengthType>;
   using Sph = tfel::material::homogenization::elasticity::Sphere<LengthType>;
   pybind11::class_<Sph, Sphe, std::shared_ptr<Sph>>(m, n,
-                                                 pybind11::buffer_protocol())
+                                                    pybind11::buffer_protocol())
       .def(pybind11::init<const Sph&>())
       .def(pybind11::init<>());
 }
 
-
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareInclusionDistribution(pybind11::
-                                                                    module_& m,
-                                                                const char* const
-                                                                    n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareInclusionDistribution(pybind11::module_& m,
+                                         const char* const n) {
   using ID = tfel::material::homogenization::elasticity::InclusionDistribution<
       N, StressType>;
   pybind11::class_<ID, std::shared_ptr<ID>>(m, n, pybind11::buffer_protocol());
 }
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declarePhase(pybind11::
-                                                                    module_& m,
-                                                                const char* const
-                                                                    n) {
-  using Ph = tfel::material::homogenization::elasticity::Phase<
-      N, StressType>;
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declarePhase(pybind11::module_& m, const char* const n) {
+  using Ph = tfel::material::homogenization::elasticity::Phase<N, StressType>;
   pybind11::class_<Ph, std::shared_ptr<Ph>>(m, n, pybind11::buffer_protocol());
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Stress,
-         StressType>()) static void declareSphereDistribution(pybind11::module_&
-                                                                  m,
-                                                              const char* const
-                                                                  n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareSphereDistribution(pybind11::module_& m,
+                                      const char* const n) {
   using real = tfel::types::real<StressType>;
   using LengthType = tfel::types::length<StressType>;
   using Sph = tfel::material::homogenization::elasticity::Sphere<LengthType>;
@@ -181,9 +161,10 @@ requires(tfel::math::checkUnitCompatibility<
            [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM0) {
              return sd.computeMeanLocalisator(IM0);
            })
-        .def("computeDerivativesOfMeanLocalisator",
-           [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM0,const std::array<real, 4>& dkg) {
-             return sd.computeDerivativesOfMeanLocalisator(IM0,dkg);
+      .def("computeDerivativesOfMeanLocalisator",
+           [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM0,
+              const std::array<real, 4>& dkg) {
+             return sd.computeDerivativesOfMeanLocalisator(IM0, dkg);
            })
       .def(
           "computeMeanLocalisator",
@@ -197,13 +178,10 @@ requires(tfel::math::checkUnitCompatibility<
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareIsotropicDistribution(pybind11::
-                                                                    module_& m,
-                                                                const char* const
-                                                                    n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareIsotropicDistribution(pybind11::module_& m,
+                                         const char* const n) {
   using real = tfel::types::real<StressType>;
   using LengthType = tfel::types::length<StressType>;
   using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
@@ -240,10 +218,12 @@ requires(
               const tfel::material::IsotropicModuli<StressType>& IM0) {
              return isod.computeMeanLocalisator(IM0);
            })
-        .def("computeDerivativesOfMeanLocalisator",
-           [](IsoD& isod, const tfel::material::IsotropicModuli<StressType>& IM0,const std::array<real, 4>& dkg) {
-             return isod.computeDerivativesOfMeanLocalisator(IM0,dkg);
-           })
+      .def(
+          "computeDerivativesOfMeanLocalisator",
+          [](IsoD& isod, const tfel::material::IsotropicModuli<StressType>& IM0,
+             const std::array<real, 4>& dkg) {
+            return isod.computeDerivativesOfMeanLocalisator(IM0, dkg);
+          })
       .def(
           "computeMeanLocalisator",
           [](IsoD& isod, const tfel::math::st2tost2<3u, StressType>& C0,
@@ -256,14 +236,10 @@ requires(
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareTransverseIsotropicDistribution(pybind11::
-                                                                              module_&
-                                                                                  m,
-                                                                          const char* const
-                                                                              n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareTransverseIsotropicDistribution(pybind11::module_& m,
+                                                   const char* const n) {
   using real = tfel::types::real<StressType>;
   using LengthType = tfel::types::length<StressType>;
   using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
@@ -302,9 +278,10 @@ requires(
           [](TID& tid, const tfel::material::IsotropicModuli<StressType>& IM0) {
             return tid.computeMeanLocalisator(IM0);
           })
-        .def("computeDerivativesOfMeanLocalisator",
-           [](TID& tid, const tfel::material::IsotropicModuli<StressType>& IM0,const std::array<real, 4>& dkg) {
-             return tid.computeDerivativesOfMeanLocalisator(IM0,dkg);
+      .def("computeDerivativesOfMeanLocalisator",
+           [](TID& tid, const tfel::material::IsotropicModuli<StressType>& IM0,
+              const std::array<real, 4>& dkg) {
+             return tid.computeDerivativesOfMeanLocalisator(IM0, dkg);
            })
       .def(
           "computeMeanLocalisator",
@@ -318,13 +295,10 @@ requires(
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareOrientedDistribution(pybind11::
-                                                                   module_& m,
-                                                               const char* const
-                                                                   n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareOrientedDistribution(pybind11::module_& m,
+                                        const char* const n) {
   using real = tfel::types::real<StressType>;
   using LengthType = tfel::types::length<StressType>;
   using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
@@ -370,9 +344,10 @@ requires(
            [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM0) {
              return od.computeMeanLocalisator(IM0);
            })
-         .def("computeDerivativesOfMeanLocalisator",
-           [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM0,const std::array<real, 4>& dkg) {
-             return od.computeDerivativesOfMeanLocalisator(IM0,dkg);
+      .def("computeDerivativesOfMeanLocalisator",
+           [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM0,
+              const std::array<real, 4>& dkg) {
+             return od.computeDerivativesOfMeanLocalisator(IM0, dkg);
            })
       .def(
           "computeMeanLocalisator",
@@ -386,14 +361,10 @@ requires(
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareUserDefinedDistributionOfSpheroids(pybind11::
-                                                                                 module_&
-                                                                                     m,
-                                                                             const char* const
-                                                                                 n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareUserDefinedDistributionOfSpheroids(pybind11::module_& m,
+                                                      const char* const n) {
   using real = tfel::types::real<StressType>;
   using LengthType = tfel::types::length<StressType>;
   using Sphe = tfel::material::homogenization::elasticity::Spheroid<LengthType>;
@@ -428,10 +399,12 @@ requires(
               const tfel::material::IsotropicModuli<StressType>& IM0) {
              return udds.computeMeanLocalisator(IM0);
            })
-        .def("computeDerivativesOfMeanLocalisator",
-           [](UDDS& udds, const tfel::material::IsotropicModuli<StressType>& IM0,const std::array<real, 4>& dkg) {
-             return udds.computeDerivativesOfMeanLocalisator(IM0,dkg);
-           })
+      .def(
+          "computeDerivativesOfMeanLocalisator",
+          [](UDDS& udds, const tfel::material::IsotropicModuli<StressType>& IM0,
+             const std::array<real, 4>& dkg) {
+            return udds.computeDerivativesOfMeanLocalisator(IM0, dkg);
+          })
       .def(
           "computeMeanLocalisator",
           [](UDDS& udds, const tfel::math::st2tost2<3u, StressType>& C0,
@@ -444,30 +417,26 @@ requires(
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareGrain(pybind11::
-                                                                                 module_&
-                                                                                     m,
-                                                                             const char* const
-                                                                                 n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareGrain(pybind11::module_& m, const char* const n) {
   using real = tfel::types::real<StressType>;
   using LengthType = tfel::types::length<StressType>;
   using Ell = tfel::material::homogenization::elasticity::Ellipsoid<LengthType>;
 
-  using OD = tfel::material::homogenization::elasticity::OrientedDistribution<StressType>;
+  using OD = tfel::material::homogenization::elasticity::OrientedDistribution<
+      StressType>;
   using Gr = tfel::material::homogenization::elasticity::Grain<StressType>;
 
   pybind11::class_<Gr, OD, std::shared_ptr<Gr>>(m, n,
-                                                    pybind11::buffer_protocol())
+                                                pybind11::buffer_protocol())
       .def(pybind11::init<const Gr&>())
       .def(pybind11::init<const Ell&, real,
                           const tfel::material::IsotropicModuli<StressType>&,
                           const tfel::math::tvector<3, real>&,
                           const tfel::math::tvector<3, real>&>())
       .def(pybind11::init<const Ell&, real,
-                          const tfel::math::st2tost2<3u,StressType>&,
+                          const tfel::math::st2tost2<3u, StressType>&,
                           const tfel::math::tvector<3, real>&,
                           const tfel::math::tvector<3, real>&>())
       .def_readwrite("inclusion", &Gr::inclusion)
@@ -480,40 +449,35 @@ requires(
              return gr.changeElasticityOfPhase(C0);
            })
       .def("changeElasticityOfPhase",
-           [](Gr& gr,
-              const tfel::material::IsotropicModuli<StressType>& IM0) {
+           [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM0) {
              return gr.changeElasticityOfPhase(IM0);
            })
       .def("isIsotropic", &Gr::isIsotropic)
       .def("computeMeanLocalisator",
-           [](Gr& gr,
-              const tfel::material::IsotropicModuli<StressType>& IM0) {
+           [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM0) {
              return gr.computeMeanLocalisator(IM0);
            })
-        .def("computeDerivativesOfMeanLocalisator",
-           [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM0,const std::array<real, 4>& dkg) {
-             return gr.computeDerivativesOfMeanLocalisator(IM0,dkg);
+      .def("computeDerivativesOfMeanLocalisator",
+           [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM0,
+              const std::array<real, 4>& dkg) {
+             return gr.computeDerivativesOfMeanLocalisator(IM0, dkg);
            })
       .def(
           "computeMeanLocalisator",
           [](Gr& gr, const tfel::math::st2tost2<3u, StressType>& C0,
              int max_iter_anisotropic_integration) {
-            return gr.computeMeanLocalisator(
-                C0, max_iter_anisotropic_integration);
+            return gr.computeMeanLocalisator(C0,
+                                             max_iter_anisotropic_integration);
           },
           pybind11::arg("C0"),
           pybind11::arg("max_iter_anisotropic_integration") = 12);
 }
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareParticulateMicrostructure(pybind11::
-                                                                        module_&
-                                                                            m,
-                                                                    const char* const
-                                                                        n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareParticulateMicrostructure(pybind11::module_& m,
+                                             const char* const n) {
   using ID = tfel::material::homogenization::elasticity::InclusionDistribution<
       N, StressType>;
 
@@ -564,16 +528,10 @@ requires(
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declarePolycrystal(pybind11::
-                                                                        module_&
-                                                                            m,
-                                                                    const char* const
-                                                                        n) {
-  using Gr = tfel::material::homogenization::elasticity::Grain<
-      StressType>;
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declarePolycrystal(pybind11::module_& m, const char* const n) {
+  using Gr = tfel::material::homogenization::elasticity::Grain<StressType>;
 
   using Po =
       tfel::material::homogenization::elasticity::Polycrystal<StressType>;
@@ -581,7 +539,7 @@ requires(
   pybind11::class_<Po>(m, n, pybind11::buffer_protocol())
       .def(pybind11::init<>())
       .def("addGrain", &Po::addGrain)
-      .def("removeGrain", &Po::removeGrain)  
+      .def("removeGrain", &Po::removeGrain)
       .def("changeElasticityOfGrain",
            [](Po& po, unsigned int i,
               const tfel::math::st2tost2<3u, StressType>& C0) {
@@ -592,8 +550,7 @@ requires(
               const tfel::material::IsotropicModuli<StressType>& IM0) {
              return po.changeElasticityOfGrain(i, IM0);
            })
-      .def("changeFractionOfGrain",
-           &Po::changeFractionOfGrain)
+      .def("changeFractionOfGrain", &Po::changeFractionOfGrain)
       .def("getNumberOfGrains", &Po::getNumberOfGrains)
       .def("getTotalFraction", &Po::getTotalFraction)
       .def("getGrain", [](Po& po, unsigned int i) {
@@ -620,8 +577,7 @@ void declareMicrostructure(pybind11::module_& m) {
   declareUserDefinedDistributionOfSpheroids<double>(
       m, "UserDefinedDistributionOfSpheroids");
   declarePhase<3u, double>(m, "Phase");
-  declareGrain<double>(
-      m, "Grain");
+  declareGrain<double>(m, "Grain");
   declareParticulateMicrostructure<3, double>(m, "ParticulateMicrostructure");
   declarePolycrystal<double>(m, "Polycrystal");
 }

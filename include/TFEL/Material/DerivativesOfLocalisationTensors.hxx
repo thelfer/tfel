@@ -24,11 +24,11 @@ namespace tfel::material::homogenization::elasticity {
   namespace internals {
 
     template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-            TFEL_HOST_DEVICE std::array < types::real<StressType>,4>
-    get_psi(const types::real<StressType>& e){
-       auto ace = types::real<StressType>(0.);
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                  StressType>())
+    TFEL_HOST_DEVICE std::array<types::real<StressType>, 4> get_psi(
+        const types::real<StressType>& e) {
+      auto ace = types::real<StressType>(0.);
       if (e > 1) {
         ace = std::acosh(e);
       } else if (e < 1) {
@@ -41,23 +41,22 @@ namespace tfel::material::homogenization::elasticity {
       const auto psi1 = (3 * gamma - 1) / 2 / (1 - e * e);
       const auto psi2 = (e * e * (4 * gamma - 1) - gamma) / 4 / (1 - e * e);
       const auto psi3 = (e * e * (1 - 2 * gamma) - gamma) / 4 / (1 - e * e);
-      return {gamma,psi1,psi2,psi3};
+      return {gamma, psi1, psi2, psi3};
     };
 
     template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-            TFEL_HOST_DEVICE std::array < types::compliance<StressType>,
-    6 > computeHillTensorComponents(const KGModuli<StressType>& kg0,
-                                    const types::real<StressType>& e) {
-
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                  StressType>())
+    TFEL_HOST_DEVICE std::array<types::compliance<StressType>, 6>
+    computeHillTensorComponents(const KGModuli<StressType>& kg0,
+                                const types::real<StressType>& e) {
       const auto k0 = kg0.kappa;
       const auto mu0 = kg0.mu;
       const auto alpha0 = 1 / mu0;
       const auto beta0 = (6 * k0 + 2 * mu0) / (3 * k0 * mu0 + 4 * mu0 * mu0);
-      
-      const auto psi= get_psi<StressType>(e);
-    
+
+      const auto psi = get_psi<StressType>(e);
+
       const auto p1 = alpha0 * (1 - 2 * psi[0]) + beta0 * psi[1];
       const auto p2 = alpha0 * psi[0] + beta0 * psi[2];
       const auto p3 = beta0 * psi[3] * sqrt(2);
@@ -69,14 +68,13 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-            TFEL_HOST_DEVICE std::array < types::squared_compliance<StressType>,
-    6 > computeDerivativesOfHillTensorComponents(
-            const KGModuli<StressType>& kg0,
-            const types::real<StressType>& e,
-            const std::array<types::real<StressType>, 2>& dkg0) {
-
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                  StressType>())
+    TFEL_HOST_DEVICE std::array<types::squared_compliance<StressType>, 6>
+    computeDerivativesOfHillTensorComponents(
+        const KGModuli<StressType>& kg0,
+        const types::real<StressType>& e,
+        const std::array<types::real<StressType>, 2>& dkg0) {
       const auto k0 = kg0.kappa;
       const auto mu0 = kg0.mu;
       const auto dk0 = dkg0[0];
@@ -87,7 +85,7 @@ namespace tfel::material::homogenization::elasticity {
                            (6 * k0 + 2 * mu0) * (3 * k0 * dmu0 + 3 * dk0 * mu0 +
                                                  8 * mu0 * dmu0)) /
                           den / den;
-      const auto psi= get_psi<StressType>(e);
+      const auto psi = get_psi<StressType>(e);
 
       const auto dp1 = dalpha0 * (1 - 2 * psi[0]) + dbeta0 * psi[1];
       const auto dp2 = dalpha0 * psi[0] + dbeta0 * psi[2];
@@ -100,14 +98,14 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-            TFEL_HOST_DEVICE std::array < types::compliance<StressType>,
-    6 > computeDerivativesOfLocalisationTensorComponents(
-            const KGModuli<StressType>& kg0,
-            const KGModuli<StressType>& kgi,
-            const types::real<StressType>& e,
-            const std::array<types::real<StressType>, 4>& dkg) {
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                  StressType>())
+    TFEL_HOST_DEVICE std::array<types::compliance<StressType>, 6>
+    computeDerivativesOfLocalisationTensorComponents(
+        const KGModuli<StressType>& kg0,
+        const KGModuli<StressType>& kgi,
+        const types::real<StressType>& e,
+        const std::array<types::real<StressType>, 4>& dkg) {
       using real = types::real<StressType>;
       using compliance = types::compliance<StressType>;
       using sq_compliance = types::squared_compliance<StressType>;
@@ -180,10 +178,11 @@ namespace tfel::material::homogenization::elasticity {
    * shear modulus.
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::squared_compliance<StressType>> computeDerivativesOfAxisymmetricalHillTensor(
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE
+      tfel::math::st2tost2<3u, types::squared_compliance<StressType>>
+      computeDerivativesOfAxisymmetricalHillTensor(
           const KGModuli<StressType>& kg0,
           const tfel::math::tvector<3u, types::real<StressType>>& n_,
           const types::real<StressType>& e,
@@ -238,17 +237,17 @@ namespace tfel::material::homogenization::elasticity {
    * shear modulus, it must be {0,1,0,0}, etc...
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::compliance<StressType>> computeDerivativesOfAxisymmetricalLocalisationTensor(
-          const KGModuli<StressType>& kg0,
-          const KGModuli<StressType>& kgi,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_,
-          const types::real<StressType>& e,
-          const std::array<types::real<StressType>, 4>& dkg,
-          const tfel::math::base_type<StressType> precision = tfel::material::
-              EshelbyTolerances::get<tfel::math::base_type<StressType>>()) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeDerivativesOfAxisymmetricalLocalisationTensor(
+      const KGModuli<StressType>& kg0,
+      const KGModuli<StressType>& kgi,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_,
+      const types::real<StressType>& e,
+      const std::array<types::real<StressType>, 4>& dkg,
+      const tfel::math::base_type<StressType> precision = tfel::material::
+          EshelbyTolerances::get<tfel::math::base_type<StressType>>()) {
     using real = types::real<StressType>;
     if (std::abs(e - 1) < precision) {
       const auto k0 = kg0.kappa;

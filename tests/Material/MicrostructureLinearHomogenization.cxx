@@ -62,16 +62,16 @@ struct MicrostructureLinearHomogenizationTest final
   void test_particulate() {
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
     using namespace tfel::material::homogenization::elasticity;
-    length a = length(10);
-    length b = length(1);
-    length c = length(1);
+    const auto a = length(10);
+    const auto b = length(1);
+    const auto c = length(1);
     tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
     tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
 
-    const stress k0=stress(1e9);
-    const stress mu0=stress(0.5e9);
-    const stress ki=stress(1e10);
-    const stress mui=stress(0.5e10);
+    const auto k0=stress(1e9);
+    const auto mu0=stress(0.5e9);
+    const auto ki=stress(1e10);
+    const auto mui=stress(0.5e10);
     const auto KG0 = tfel::material::KGModuli(k0,mu0);
     const auto KGi = tfel::material::KGModuli(ki,mui);
 
@@ -251,16 +251,16 @@ struct MicrostructureLinearHomogenizationTest final
   void test_poly() {
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
     using namespace tfel::material::homogenization::elasticity;
-    length a = length(10);
-    length b = length(1);
-    length c = length(1);
+    const auto a = length(10);
+    const auto b = length(1);
+    const auto c = length(1);
     tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
     tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
 
-    const stress k0=stress(1e9);
-    const stress mu0=stress(0.5e9);
-    const stress ki=stress(1e10);
-    const stress mui=stress(0.5e10);
+    const auto k0=stress(1e9);
+    const auto mu0=stress(0.5e9);
+    const auto ki=stress(1e10);
+    const auto mui=stress(0.5e10);
     const auto KG0 = tfel::material::KGModuli(k0,mu0);
     const auto KGi = tfel::material::KGModuli(ki,mui);
 

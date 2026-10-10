@@ -34,9 +34,9 @@ namespace tfel::material::homogenization::elasticity {
    * inclusion
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(
-      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                         StressType>()) struct Microstructure {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct Microstructure {
     Microstructure() = default;
   };
 
@@ -49,22 +49,19 @@ namespace tfel::material::homogenization::elasticity {
    * inclusion
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct ParticulateMicrostructure
-      : public Microstructure<N, StressType> {
-    
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct ParticulateMicrostructure : public Microstructure<N, StressType> {
     using real = tfel::types::real<StressType>;
     using LengthType = tfel::types::length<StressType>;
-    
-    private:
-      unsigned int number_of_phases = 1;
-      std::vector<std::unique_ptr<InclusionDistribution<N, StressType>>>
-          inclusion_phases = {};
-      Phase<N, StressType> matrix_phase;
 
-    public:
+   private:
+    unsigned int number_of_phases = 1;
+    std::vector<std::unique_ptr<InclusionDistribution<N, StressType>>>
+        inclusion_phases = {};
+    Phase<N, StressType> matrix_phase;
 
+   public:
     explicit ParticulateMicrostructure(
         const tfel::math::st2tost2<N, StressType>& C0)
         : Microstructure<N, StressType>(),
@@ -223,20 +220,18 @@ namespace tfel::material::homogenization::elasticity {
    * grains
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>()) struct Polycrystal
-      : public Microstructure<3u, StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct Polycrystal : public Microstructure<3u, StressType> {
     using real = tfel::types::real<StressType>;
 
-    private:
-      unsigned int number_of_grains = 0;
-      real total_fraction = 0;
-      std::vector<std::unique_ptr<Grain<StressType>>> grains = {};
+   private:
+    unsigned int number_of_grains = 0;
+    real total_fraction = 0;
+    std::vector<std::unique_ptr<Grain<StressType>>> grains = {};
 
-    public:
-
-    Polycrystal()
-        : Microstructure<3u, StressType>() {}
+   public:
+    Polycrystal() : Microstructure<3u, StressType>() {}
 
     [[nodiscard]] int addGrain(Grain<StressType>& grain) {
       if (this->total_fraction + grain.fraction > real(1)) {
@@ -283,7 +278,7 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     [[nodiscard]] int changeElasticityOfGrain(
-        unsigned int i, const tfel::math::st2tost2<3u,StressType>& C) {
+        unsigned int i, const tfel::math::st2tost2<3u, StressType>& C) {
       if ((this->number_of_grains) == 0) {
         return 0;
       } else if ((this->number_of_grains) < i + 1) {
@@ -309,9 +304,7 @@ namespace tfel::material::homogenization::elasticity {
       }
     }
 
-    [[nodiscard]] real getTotalFraction() {
-      return (this->total_fraction);
-    }
+    [[nodiscard]] real getTotalFraction() { return (this->total_fraction); }
 
     [[nodiscard]] unsigned int getNumberOfGrains() {
       return (this->number_of_grains);

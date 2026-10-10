@@ -21,12 +21,11 @@ namespace tfel::material::homogenization::elasticity {
 
   namespace internals {
     template <unsigned short int N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-        std::vector<tfel::math::stensor<N, StressType>> initialize_polarisation(
-            const std::vector<tfel::math::stensor<N, StressType>>&
-                polarisations,
-            const std::size_t np) {
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                  StressType>())
+    std::vector<tfel::math::stensor<N, StressType>> initialize_polarisation(
+        const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
+        const std::size_t np) {
       std::vector<tfel::math::stensor<N, StressType>> polarisations_;
       if (polarisations.size() == 0) {
         const auto zero = tfel::math::stensor<N, StressType>::zero();
@@ -45,13 +44,13 @@ namespace tfel::material::homogenization::elasticity {
   }  // namespace internals
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      HomogenizationScheme<N, StressType> computeDilute(
-          ParticulateMicrostructure<N, StressType>& micro,
-          int max_iter_anisotropic_integration,
-          const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
-          bool with_Chom_derivatives) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  HomogenizationScheme<N, StressType> computeDilute(
+      ParticulateMicrostructure<N, StressType>& micro,
+      int max_iter_anisotropic_integration,
+      const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
+      bool with_Chom_derivatives) {
     using real = tfel::types::real<StressType>;
     const auto np = micro.getNumberOfPhases();
     const auto polarisations_ =
@@ -149,13 +148,13 @@ namespace tfel::material::homogenization::elasticity {
   };
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      HomogenizationScheme<N, StressType> computeMoriTanaka(
-          ParticulateMicrostructure<N, StressType>& micro,
-          int max_iter_anisotropic_integration,
-          const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
-          bool with_Chom_derivatives) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  HomogenizationScheme<N, StressType> computeMoriTanaka(
+      ParticulateMicrostructure<N, StressType>& micro,
+      int max_iter_anisotropic_integration,
+      const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
+      bool with_Chom_derivatives) {
     using real = tfel::types::real<StressType>;
 
     const auto np = micro.getNumberOfPhases();
@@ -288,15 +287,15 @@ namespace tfel::material::homogenization::elasticity {
   };  // end of computeMoriTanaka
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      HomogenizationScheme<N, StressType> computeAsymmetricSelfConsistent(
-          ParticulateMicrostructure<N, StressType>& micro,
-          const tfel::types::real<StressType>& tolerance,
-          bool isotropic,
-          int max_iter_anisotropic_integration,
-          const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
-          bool with_Chom_derivatives) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  HomogenizationScheme<N, StressType> computeAsymmetricSelfConsistent(
+      ParticulateMicrostructure<N, StressType>& micro,
+      const tfel::types::real<StressType>& tolerance,
+      bool isotropic,
+      int max_iter_anisotropic_integration,
+      const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
+      bool with_Chom_derivatives) {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
 
@@ -313,7 +312,7 @@ namespace tfel::material::homogenization::elasticity {
 
     const auto J = tfel::math::st2tost2<3u, real>::J();
     const auto K = tfel::math::st2tost2<3u, real>::K();
-    
+
     std::vector<tfel::math::st2tost2<N, real>> dChom_dkr = {};
     std::vector<tfel::math::st2tost2<N, real>> dChom_dmur = {};
 
@@ -332,14 +331,14 @@ namespace tfel::material::homogenization::elasticity {
           "basis."
           "Try to use isotropic=true.");
     }
-    
-    std::vector<real> dkhom_dkr(np,0);
-    std::vector<real> dkhom_dmur(np,0);
-    std::vector<real> dmuhom_dkr(np,0);
-    std::vector<real> dmuhom_dmur(np,0);
+
+    std::vector<real> dkhom_dkr(np, 0);
+    std::vector<real> dkhom_dmur(np, 0);
+    std::vector<real> dmuhom_dkr(np, 0);
+    std::vector<real> dmuhom_dmur(np, 0);
     if (with_Chom_derivatives && (N == 3)) {
-      dkhom_dkr[0]=real(1);
-      dmuhom_dmur[0]=real(1);
+      dkhom_dkr[0] = real(1);
+      dmuhom_dmur[0] = real(1);
     }
 
     const auto u = real(1.);
@@ -352,7 +351,7 @@ namespace tfel::material::homogenization::elasticity {
     auto Chom = C0;
     real rel_err = tolerance + 1;
 
-    //beginning of while loop
+    // beginning of while loop
     while (rel_err > tolerance) {
       std::vector<tfel::math::st2tost2<N, real>> localisators_ = {
           tfel::math::st2tost2<N, real>::Id()};
@@ -491,16 +490,16 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeAsymmetricSelfConsistent
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      HomogenizationScheme<N, StressType> computeSelfConsistent(
-          Polycrystal<StressType>& poly,
-          const tfel::types::real<StressType>& tolerance,
-          const tfel::math::st2tost2<N, StressType>& Cini,
-          bool isotropic,
-          int max_iter_anisotropic_integration,
-          const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
-          bool with_Chom_derivatives) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  HomogenizationScheme<N, StressType> computeSelfConsistent(
+      Polycrystal<StressType>& poly,
+      const tfel::types::real<StressType>& tolerance,
+      const tfel::math::st2tost2<N, StressType>& Cini,
+      bool isotropic,
+      int max_iter_anisotropic_integration,
+      const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
+      bool with_Chom_derivatives) {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
 
@@ -516,10 +515,10 @@ namespace tfel::material::homogenization::elasticity {
     const auto J = tfel::math::st2tost2<3u, real>::J();
     const auto K = tfel::math::st2tost2<3u, real>::K();
 
-    std::vector<real> dkhom_dkr(ng,0);
-    std::vector<real> dkhom_dmur(ng,0);
-    std::vector<real> dmuhom_dkr(ng,0);
-    std::vector<real> dmuhom_dmur(ng,0);
+    std::vector<real> dkhom_dkr(ng, 0);
+    std::vector<real> dkhom_dmur(ng, 0);
+    std::vector<real> dmuhom_dkr(ng, 0);
+    std::vector<real> dmuhom_dmur(ng, 0);
 
     if (with_Chom_derivatives && !(isotropic)) {
       tfel::reportContractViolation(
@@ -528,7 +527,7 @@ namespace tfel::material::homogenization::elasticity {
           "basis."
           "Try to use isotropic=true.");
     }
-  
+
     const auto u = real(1.);
     const auto z = real(0.);
     const std::array<real, 4> dk0 = {u, z, z, z};

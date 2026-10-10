@@ -33,8 +33,9 @@ namespace tfel::material::homogenization::elasticity {
    * disks...)
    */
   template <unsigned short int N, tfel::math::ScalarConcept LengthType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
-                                              LengthType>()) struct Inclusion {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                                LengthType>())
+  struct Inclusion {
     std::array<LengthType, N> semiLengths;
     explicit Inclusion(std::array<LengthType, N> semiL) : semiLengths(semiL) {}
   };
@@ -45,9 +46,9 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam LengthType: type of the lengths
    */
   template <tfel::math::ScalarConcept LengthType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
-                                              LengthType>()) struct Ellipsoid
-      : public Inclusion<3u, LengthType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                                LengthType>())
+  struct Ellipsoid : public Inclusion<3u, LengthType> {
     Ellipsoid(LengthType a, LengthType b, LengthType c)
         : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, c})) {}
   };
@@ -58,9 +59,9 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam LengthType: type of the lengths
    */
   template <tfel::math::ScalarConcept LengthType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
-                                              LengthType>()) struct Spheroid
-      : public Ellipsoid<LengthType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                                LengthType>())
+  struct Spheroid : public Ellipsoid<LengthType> {
     Spheroid(LengthType a, LengthType b) : Ellipsoid<LengthType>(a, b, b) {}
   };
 
@@ -68,9 +69,9 @@ namespace tfel::material::homogenization::elasticity {
    * This struct represents a 3d sphere as a child of Spheroid
    */
   template <tfel::math::ScalarConcept LengthType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
-                                              LengthType>()) struct Sphere
-      : public Spheroid<LengthType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                                LengthType>())
+  struct Sphere : public Spheroid<LengthType> {
     Sphere() : Spheroid<LengthType>(LengthType(1), LengthType(1)) {}
   };
 
@@ -80,9 +81,9 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam LengthType: type of the lengths
    */
   template <tfel::math::ScalarConcept LengthType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
-                                              LengthType>()) struct Ellipse
-      : public Inclusion<2u, LengthType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                                LengthType>())
+  struct Ellipse : public Inclusion<2u, LengthType> {
     Ellipse(LengthType a, LengthType b)
         : Inclusion<2u, LengthType>(std::array<LengthType, 2u>({a, b})) {}
   };
@@ -92,9 +93,9 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam LengthType: type of the radius
    */
   template <tfel::math::ScalarConcept LengthType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
-                                              LengthType>()) struct Disk
-      : public Ellipse<LengthType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
+                                                LengthType>())
+  struct Disk : public Ellipse<LengthType> {
     Disk() : Ellipse<LengthType>(LengthType(1), LengthType(1)) {}
   };
 
@@ -106,8 +107,9 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam StressType: type of the elastic constants
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>()) struct Phase {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct Phase {
     using real = tfel::types::real<StressType>;
     real fraction;
     Phase(real f, const tfel::math::st2tost2<N, StressType>& C)
@@ -150,9 +152,9 @@ namespace tfel::material::homogenization::elasticity {
    * distribution of inclusions, for a given matrix elasticity in parameter.
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct InclusionDistribution : Phase<N, StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct InclusionDistribution : Phase<N, StressType> {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
     using LengthType = tfel::types::length<StressType>;
@@ -195,10 +197,9 @@ namespace tfel::material::homogenization::elasticity {
    * Sphere.
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct SphereDistribution
-      : public InclusionDistribution<3u, StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct SphereDistribution : public InclusionDistribution<3u, StressType> {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
     using LengthType = tfel::types::length<StressType>;
@@ -295,10 +296,9 @@ namespace tfel::material::homogenization::elasticity {
    * InclusionDistribution<N>
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct IsotropicDistribution
-      : public InclusionDistribution<3u, StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct IsotropicDistribution : public InclusionDistribution<3u, StressType> {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
     using LengthType = tfel::types::length<StressType>;
@@ -368,9 +368,9 @@ namespace tfel::material::homogenization::elasticity {
    * (axis which does not rotate). This index can hence be 0, 1 or 2.
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct TransverseIsotropicDistribution
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct TransverseIsotropicDistribution
       : public InclusionDistribution<3u, StressType> {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
@@ -497,10 +497,9 @@ namespace tfel::material::homogenization::elasticity {
    * second semi-length corresponds to \f$n_b\f$.
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct OrientedDistribution
-      : public InclusionDistribution<3u, StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct OrientedDistribution : public InclusionDistribution<3u, StressType> {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
     using LengthType = tfel::types::length<StressType>;
@@ -596,9 +595,9 @@ namespace tfel::material::homogenization::elasticity {
    * A2 is the average of n^n and A4 the average of n^n^n^n.
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct UserDefinedDistributionOfSpheroids
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct UserDefinedDistributionOfSpheroids
       : public InclusionDistribution<3u, StressType> {
     using real = tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
@@ -666,32 +665,29 @@ namespace tfel::material::homogenization::elasticity {
    * as a child of class OrientedDistribution.
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>()) struct Grain
-      : public OrientedDistribution<StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct Grain : public OrientedDistribution<StressType> {
+    using real = tfel::types::real<StressType>;
+    using compliance = tfel::types::compliance<StressType>;
+    using LengthType = tfel::types::length<StressType>;
+    Grain(const Ellipsoid<LengthType>& ell,
+          real frac,
+          const tfel::math::st2tost2<3u, StressType>& C,
+          const tfel::math::tvector<3u, real>& n_a_,
+          const tfel::math::tvector<3u, real>& n_b_)
+        : OrientedDistribution<StressType>(ell, frac, C, n_a_, n_b_) {}
 
-      using real = tfel::types::real<StressType>;
-      using compliance = tfel::types::compliance<StressType>;
-      using LengthType = tfel::types::length<StressType>;
-      Grain(const Ellipsoid<LengthType>& ell,
-                         real frac,
-                         const tfel::math::st2tost2<3u, StressType>& C,
-                         const tfel::math::tvector<3u, real>& n_a_,
-                         const tfel::math::tvector<3u, real>& n_b_)
-        : OrientedDistribution<StressType>(ell, frac, C,n_a_,n_b_){}
+    Grain(const Ellipsoid<LengthType>& ell,
+          real frac,
+          const IsotropicModuli<StressType>& IM,
+          const tfel::math::tvector<3u, real>& n_a_,
+          const tfel::math::tvector<3u, real>& n_b_)
+        : OrientedDistribution<StressType>(ell, frac, IM, n_a_, n_b_) {}
 
-      Grain(const Ellipsoid<LengthType>& ell,
-                         real frac,
-                         const IsotropicModuli<StressType>& IM,
-                         const tfel::math::tvector<3u, real>& n_a_,
-                         const tfel::math::tvector<3u, real>& n_b_)
-        : OrientedDistribution<StressType>(ell, frac, IM,n_a_,n_b_){}
-
-      [[nodiscard]] std::unique_ptr<Grain<StressType>> clone_grain()
-        const {
+    [[nodiscard]] std::unique_ptr<Grain<StressType>> clone_grain() const {
       return std::make_unique<Grain<StressType>>(*this);
     }
-
 
   };  // end of Grain
 
