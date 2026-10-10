@@ -39,106 +39,100 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Material", "MicrostructureDescription") {
   }  // end of MicrostructureDescriptionTest
 
+  
   tfel::tests::TestResult execute() override {
     using real = double;
-
     using stress = typename tfel::config::Types<1u, real, true>::stress;
     using length = typename tfel::config::Types<1u, real, true>::length;
+    const length a = length(10);
+    const length b = length(1);
+    const length c = length(1);
+    const stress k0=stress(1e9);
+    const stress mu0=stress(0.5e9);
+    const stress ki=stress(1e10);
+    const stress mui=stress(0.5e10);
+    using namespace tfel::material::homogenization::elasticity;
+    const Ellipsoid<length> ellipsoid1(a,b,c);
+    const Spheroid<length> spheroid1(a,b);
 
-    this->template test_particulate<real, stress, length>();
-    this->template test_particulate<real, real, real>();
+    this->template test_particulate<real, stress, length>(k0,mu0,ki,mui,ellipsoid1,spheroid1);
     this->template user_defined_distribution<real, stress, length>();
-    this->template user_defined_distribution<real, real, real>();
-
+    this->template test_poly<real, stress, length>(k0,mu0,ki,mui,ellipsoid1,spheroid1);
+  
     return this->result;
   }
 
  private:
   template <typename real, typename stress, typename length>
-  void test_particulate() {
+  void test_particulate(const stress& k0,const stress& mu0,const stress& ki,const stress& mui,const tfel::material::homogenization::elasticity::Ellipsoid<length>& ellipsoid1,const tfel::material::homogenization::elasticity::Spheroid<length>& spheroid1) {
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
     using namespace tfel::material::homogenization::elasticity;
-    length a = length(10);
-    length b = length(1);
-    length c = length(1);
     tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
     tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
 
-    const auto young0 = stress{1e9};
-    const auto nu0 = real(0.2);
-    const auto youngi = stress{10e9};
-    const auto nui = real(0.3);
+    const auto KG0 = tfel::material::KGModuli(k0,mu0);
+    const auto KGi = tfel::material::KGModuli(ki,mui);
 
-    tfel::math::st2tost2<3u, stress> C_0;
-    static constexpr auto value =
-        tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
-    tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
-        C_0, young0, nu0);
-    tfel::math::st2tost2<3u, stress> C_i;
-    tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
-        C_i, youngi, nui);
-    const auto Enui = tfel::material::YoungNuModuli<stress>(youngi, nui);
-    const auto KG0 = tfel::material::computeKGModuli<stress>(C_0);
+    tfel::math::st2tost2<3u, stress> C_0 = 3*k0*tfel::math::st2tost2<3u,real>::J()+2*mu0*tfel::math::st2tost2<3u,real>::K(); 
+    tfel::math::st2tost2<3u, stress> C_i = 3*ki*tfel::math::st2tost2<3u,real>::J()+2*mui*tfel::math::st2tost2<3u,real>::K();
 
-    Ellipsoid<length> ellipsoid1(a, b, c);
-    Spheroid<length> spheroid1(a, b);
-    IsotropicDistribution<stress> distrib1(ellipsoid1, real(0.5), Enui);
-    IsotropicDistribution<stress> distrib2(spheroid1, real(0.5), Enui);
+    IsotropicDistribution<stress> distrib1(ellipsoid1, real(0.5), KGi);
+    IsotropicDistribution<stress> distrib2(spheroid1, real(0.5), KGi);
     const auto sph = Sphere<length>();
-    SphereDistribution<stress> distrib21(sph, real(0.5), Enui);
+    SphereDistribution<stress> distrib21(sph, real(0.5), KGi);
     const auto A_iso21 = distrib21.computeMeanLocalisator(C_0);
     const auto A_iso22 = distrib21.computeMeanLocalisator(KG0);
 
     TFEL_TESTS_ASSERT(tfel::material::relative_error(A_iso21, A_iso22) /
-                          young0 <
+                          k0 <
                       10 * eps / stress(1));
 
     const auto A_iso1 = distrib1.computeMeanLocalisator(KG0);
     const auto A_iso2 = distrib2.computeMeanLocalisator(KG0);
 
-    TFEL_TESTS_ASSERT(tfel::material::relative_error(A_iso1, A_iso2) / young0 <
+    TFEL_TESTS_ASSERT(tfel::material::relative_error(A_iso1, A_iso2) / k0 <
                       eps / stress(1));
 
     unsigned short int index = 0;
-    TransverseIsotropicDistribution<stress> distrib3(spheroid1, real(0.5), Enui,
+    TransverseIsotropicDistribution<stress> distrib3(spheroid1, real(0.5), KGi,
                                                      n_b, index);
     OrientedDistribution<stress> distrib4(ellipsoid1, real(0.5), C_i, n_b, n_a);
     const auto A_Or_1 = distrib3.computeMeanLocalisator(KG0);
     const auto A_Or_2 = distrib4.computeMeanLocalisator(KG0);
 
-    TFEL_TESTS_ASSERT(tfel::material::relative_error(A_Or_1, A_Or_2) / young0 <
+    TFEL_TESTS_ASSERT(tfel::material::relative_error(A_Or_1, A_Or_2) / k0 <
                       eps / stress(1));
 
     unsigned short int index2 = 1;
     TransverseIsotropicDistribution<stress> distrib5(ellipsoid1, real(0.5),
-                                                     Enui, n_a, index2);
-    TransverseIsotropicDistribution<stress> distrib6(spheroid1, real(0.5), Enui,
+                                                     KGi, n_a, index2);
+    TransverseIsotropicDistribution<stress> distrib6(spheroid1, real(0.5), KGi,
                                                      n_a, index2);
     const auto A_TI_1 = distrib5.computeMeanLocalisator(KG0);
     const auto A_TI_2 = distrib6.computeMeanLocalisator(KG0);
 
-    TFEL_TESTS_ASSERT(tfel::material::relative_error(A_TI_1, A_TI_2) / young0 <
+    TFEL_TESTS_ASSERT(tfel::material::relative_error(A_TI_1, A_TI_2) / k0 <
                       eps / stress(1));
 
     ParticulateMicrostructure<3u, stress> micro1(C_0);
-    micro1.addInclusionPhase(distrib1);
+    std::ignore=micro1.addInclusionPhase(distrib1);
     TFEL_TESTS_ASSERT(not(micro1.isIsotropicMatrix()));
     micro1.changeElasticityOfMatrixPhase(KG0);
     TFEL_TESTS_ASSERT(micro1.isIsotropicMatrix());
-    micro1.changeElasticityOfInclusionPhase(0, 10 * C_0);
+    std::ignore=micro1.changeElasticityOfInclusionPhase(0, 10 * C_0);
     auto phasei = micro1.getInclusionPhase(0);
     auto Ci = (*phasei).getElasticityOfPhase();
     tfel::math::st2tost2<3u, stress> C = 10 * C_0;
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Ci, C) < eps);
     auto iso = (*phasei).isIsotropic();
     TFEL_TESTS_ASSERT(not(iso));
-    micro1.changeElasticityOfInclusionPhase(0, KG0);
+    std::ignore=micro1.changeElasticityOfInclusionPhase(0, KG0);
     phasei = micro1.getInclusionPhase(0);
     Ci = (*phasei).getElasticityOfPhase();
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Ci, C_0) < eps);
     iso = (*phasei).isIsotropic();
     TFEL_TESTS_ASSERT(iso);
-    micro1.changeFractionOfInclusionPhase(0, real(0.2));
+    std::ignore=micro1.changeFractionOfInclusionPhase(0, real(0.2));
     TFEL_TESTS_ASSERT(my_abs(micro1.getMatrixFraction() - real(0.8)) < eps);
     phasei = micro1.getInclusionPhase(0);
     auto fr = (*phasei).fraction;
@@ -188,7 +182,6 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
 
     const auto Aref_iso = distrib2.computeMeanLocalisator(KG0);
     const auto A_iso = distrib3.computeMeanLocalisator(KG0);
-
     TFEL_TESTS_ASSERT(tfel::material::relative_error(A_iso, Aref_iso) / mu0 <
                       10 * eps / stress(1));
 
@@ -209,6 +202,71 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(tfel::material::relative_error(A_TI, A_TI_ref) / mu0 <
                       10 * eps / stress(1));
   }
+
+  template <typename real, typename stress, typename length>
+void test_poly(const stress& k0,const stress& mu0,const stress& ki,const stress& mui,const tfel::material::homogenization::elasticity::Ellipsoid<length>& ellipsoid1,const tfel::material::homogenization::elasticity::Spheroid<length>& spheroid1) {
+  static constexpr auto eps = std::numeric_limits<real>::epsilon();
+  using namespace tfel::material::homogenization::elasticity;
+  tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
+  tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
+  
+  const auto KG0 = tfel::material::KGModuli(k0,mu0);
+  const auto KGi = tfel::material::KGModuli(ki,mui);
+
+  tfel::math::st2tost2<3u, stress> C_0 = 3*k0*tfel::math::st2tost2<3u,real>::J()+2*mu0*tfel::math::st2tost2<3u,real>::K(); 
+  tfel::math::st2tost2<3u, stress> C_i = 3*ki*tfel::math::st2tost2<3u,real>::J()+2*mui*tfel::math::st2tost2<3u,real>::K();
+
+  Grain<stress> grain1(ellipsoid1, real(0.5), KGi,n_a,n_b);
+  Grain<stress> grain2(spheroid1, real(0.5), KGi,n_a,n_b);
+  const auto A_iso1 = grain1.computeMeanLocalisator(KG0);
+  const auto A_iso2 = grain2.computeMeanLocalisator(KG0);
+  TFEL_TESTS_ASSERT(tfel::material::relative_error(A_iso1, A_iso2) / k0 <
+                  eps / stress(1));
+
+  const auto sph = Sphere<length>();
+  Grain<stress> grain21(sph, real(0.5), KGi,n_a,n_b);
+  const auto A_iso21 = grain21.computeMeanLocalisator(C_0);
+  const auto A_iso22 = grain21.computeMeanLocalisator(KG0);
+  TFEL_TESTS_ASSERT(tfel::material::relative_error(A_iso21, A_iso22) /
+                        k0 <
+                    10 * eps / stress(1));
+  
+  OrientedDistribution<stress> distrib1(ellipsoid1, real(0.5), C_i, n_a, n_b);
+  const auto A_Or_1 = distrib1.computeMeanLocalisator(KG0);
+  const auto A_Or_2 = grain1.computeMeanLocalisator(KG0);
+  TFEL_TESTS_ASSERT(tfel::material::relative_error(A_Or_1, A_Or_2) / k0 <
+                    eps / stress(1));
+
+  Polycrystal<stress> poly1;
+  std::ignore=poly1.addGrain(grain1);
+  auto KGm=tfel::material::KGModuli<stress>(10*k0,10*mu0);
+  std::ignore=poly1.changeElasticityOfGrain(0,KGm);
+  auto phasei = poly1.getGrain(0);
+  auto Ci = (*phasei).getElasticityOfPhase();
+  tfel::math::st2tost2<3u, stress> C = 10. * C_0;
+  TFEL_TESTS_ASSERT(tfel::material::relative_error(Ci, C) < eps);
+  auto iso = (*phasei).isIsotropic();
+  TFEL_TESTS_ASSERT(iso);
+  std::ignore=poly1.changeElasticityOfGrain(0, KG0);
+  phasei = poly1.getGrain(0);
+  Ci = (*phasei).getElasticityOfPhase();
+  TFEL_TESTS_ASSERT(tfel::material::relative_error(Ci, C_0) < eps);
+  iso = (*phasei).isIsotropic();
+  TFEL_TESTS_ASSERT(iso);
+  std::ignore=poly1.changeFractionOfGrain(0, real(0.2));
+  TFEL_TESTS_ASSERT(my_abs(poly1.getTotalFraction() - real(0.2)) < eps);
+  phasei = poly1.getGrain(0);
+  auto fr = (*phasei).fraction;
+  TFEL_TESTS_ASSERT(my_abs(fr - real(0.2)) < eps);
+  std::ignore=poly1.addGrain(grain1);
+  std::ignore=poly1.addGrain(grain2);
+  TFEL_TESTS_ASSERT(my_abs(poly1.getTotalFraction() - real(0.7)) < eps);
+  grain2.fraction=0.3;
+  std::ignore=poly1.addGrain(grain2);
+  TFEL_TESTS_ASSERT(my_abs(poly1.getTotalFraction() - real(1.)) < eps);
+  std::ignore=poly1.removeGrain(2);
+  TFEL_TESTS_ASSERT(my_abs(poly1.getNumberOfGrains() - 2) < eps);
+}
 
 };  // end of struct MicrostructureDescriptionTest
 

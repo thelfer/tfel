@@ -51,6 +51,8 @@ struct MicrostructureLinearHomogenizationTest final
 
     this->template user_defined_distribution<real, stress, length>();
     this->template user_defined_distribution<real, real, real>();
+    this->template test_poly<real, stress, length>();
+    this->template test_poly<real, real, real>();
 
     return this->result;
   }
@@ -66,21 +68,14 @@ struct MicrostructureLinearHomogenizationTest final
     tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
     tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
 
-    const auto young0 = stress{1e9};
-    const auto nu0 = real(0.2);
-    const auto youngi = stress{10e9};
-    const auto nui = real(0.3);
+    const stress k0=stress(1e9);
+    const stress mu0=stress(0.5e9);
+    const stress ki=stress(1e10);
+    const stress mui=stress(0.5e10);
+    const auto KG0 = tfel::material::KGModuli(k0,mu0);
+    const auto KGi = tfel::material::KGModuli(ki,mui);
 
-    tfel::math::st2tost2<3u, stress> C_0;
-    static constexpr auto value =
-        tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
-    tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
-        C_0, young0, nu0);
-    tfel::math::st2tost2<3u, stress> C_i;
-    tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
-        C_i, youngi, nui);
-    const auto KG0 = tfel::material::computeKGModuli<stress>(C_0);
-    const auto KGi = tfel::material::computeKGModuli<stress>(C_i);
+    tfel::math::st2tost2<3u, stress> C_i = 3*ki*tfel::math::st2tost2<3u,real>::J()+2*mui*tfel::math::st2tost2<3u,real>::K();
 
     Ellipsoid<length> ellipsoid1(a, b, c);
     Spheroid<length> spheroid1(a, b);
@@ -99,12 +94,12 @@ struct MicrostructureLinearHomogenizationTest final
                                                      n_a, index2);
 
     ParticulateMicrostructure<3u, stress> micro1(KG0);
-    micro1.addInclusionPhase(distrib1);
-    micro1.addInclusionPhase(distrib3);
+    std::ignore=micro1.addInclusionPhase(distrib1);
+    std::ignore=micro1.addInclusionPhase(distrib3);
 
     ParticulateMicrostructure<3u, stress> micro2(KG0);
-    micro2.addInclusionPhase(distrib2);
-    micro2.addInclusionPhase(distrib4);
+    std::ignore=micro2.addInclusionPhase(distrib2);
+    std::ignore=micro2.addInclusionPhase(distrib4);
 
     auto h_s_1 = computeDilute<3u, stress>(micro1);
     auto Chom_DS_1 = h_s_1.homogenized_stiffness;
@@ -117,10 +112,10 @@ struct MicrostructureLinearHomogenizationTest final
                                  tfel::math::norm(Chom_DS_1)) < eps);
       }
 
-    micro1.removeInclusionPhase(0);
-    micro1.addInclusionPhase(distrib5);
-    micro2.removeInclusionPhase(0);
-    micro2.addInclusionPhase(distrib6);
+    std::ignore=micro1.removeInclusionPhase(0);
+    std::ignore=micro1.addInclusionPhase(distrib5);
+    std::ignore=micro2.removeInclusionPhase(0);
+    std::ignore=micro2.addInclusionPhase(distrib6);
 
     HomogenizationScheme<3u, stress> h_s_MT1 =
         computeMoriTanaka<3u, stress>(micro1);
@@ -135,35 +130,35 @@ struct MicrostructureLinearHomogenizationTest final
         // std::cout<<Chom_MT_1(i,j)-Chom_MT_2(i,j)<<" "<<std::endl;
       }
 
-    micro2.removeInclusionPhase(0);
-    micro2.removeInclusionPhase(0);
+    std::ignore=micro2.removeInclusionPhase(0);
+    std::ignore=micro2.removeInclusionPhase(0);
     IsotropicDistribution<stress> distrib20(spheroid1, real(0.0001), KGi);
-    micro2.addInclusionPhase(distrib20);
+    std::ignore=micro2.addInclusionPhase(distrib20);
 
     Sphere<length> sphere;
     SphereDistribution<stress> distrib_o(sphere, real(0.2), KGi);
-    micro1.removeInclusionPhase(0);
-    micro1.removeInclusionPhase(0);
-    micro1.addInclusionPhase(distrib_o);
+    std::ignore=micro1.removeInclusionPhase(0);
+    std::ignore=micro1.removeInclusionPhase(0);
+    std::ignore=micro1.addInclusionPhase(distrib_o);
 
     bool isotropic = true;
     auto h_s_SC1 =
-        computeSelfConsistent<3u, stress>(micro1, real(1e-6), isotropic);
+        computeAsymmetricSelfConsistent<3u, stress>(micro1, real(1e-6), isotropic);
     auto Chom_SC_1 = h_s_SC1.homogenized_stiffness;
-    auto h_s_SC2 = computeSelfConsistent<3u, stress>(micro1, real(1e-6),
-                                                     not(isotropic), 10);
+    auto h_s_SC2 = computeAsymmetricSelfConsistent<3u, stress>(micro1, real(1e-6),
+                                                     !isotropic,12);
     auto Chom_SC_2 = h_s_SC2.homogenized_stiffness;
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_SC_1, Chom_SC_2) <
-                      10 / stress(1) * young0 * eps);
+                      1 / stress(1) * k0 * eps);
 
     auto h_s_SC3 =
-        computeSelfConsistent<3u, stress>(micro2, real(1e-6), isotropic);
+        computeAsymmetricSelfConsistent<3u, stress>(micro2, real(1e-6), isotropic);
     auto Chom_SC_3 = h_s_SC3.homogenized_stiffness;
     auto h_s_MT3 = computeMoriTanaka<3u, stress>(micro2);
     auto Chom_MT_3 = h_s_MT3.homogenized_stiffness;
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_SC_3, Chom_MT_3) <
                       1e-3);
-  }
+  }//end of test_particulate
 
   template <typename real, typename stress, typename length>
   void user_defined_distribution() {
@@ -190,10 +185,10 @@ struct MicrostructureLinearHomogenizationTest final
     OrientedDistribution<stress> distrib2(spheroid1, real(0.5), KGi, n_a, n_b);
 
     ParticulateMicrostructure<3u, stress> micro1(KG0);
-    micro1.addInclusionPhase(distrib1);
+    std::ignore=micro1.addInclusionPhase(distrib1);
 
     ParticulateMicrostructure<3u, stress> micro2(KG0);
-    micro2.addInclusionPhase(distrib2);
+    std::ignore=micro2.addInclusionPhase(distrib2);
 
     auto h_s_1 = computeDilute<3u, stress>(micro1);
     auto Chom_Or_1 = h_s_1.homogenized_stiffness;
@@ -203,8 +198,8 @@ struct MicrostructureLinearHomogenizationTest final
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_Or_1, Chom_Or_2) <
                       10 * eps);
 
-    micro1.removeInclusionPhase(0);
-    micro2.removeInclusionPhase(0);
+    std::ignore=micro1.removeInclusionPhase(0);
+    std::ignore=micro2.removeInclusionPhase(0);
 
     const tfel::math::stensor<3u, real> A2iso =
         1. / 3 * tfel::math::stensor<3u, real>::Id();
@@ -214,8 +209,8 @@ struct MicrostructureLinearHomogenizationTest final
 
     IsotropicDistribution<stress> distrib4(spheroid1, real(0.5), KGi);
 
-    micro1.addInclusionPhase(distrib3);
-    micro2.addInclusionPhase(distrib4);
+    std::ignore=micro1.addInclusionPhase(distrib3);
+    std::ignore=micro2.addInclusionPhase(distrib4);
 
     h_s_1 = computeDilute<3u, stress>(micro1);
     auto Chom_iso_1 = h_s_1.homogenized_stiffness;
@@ -225,8 +220,8 @@ struct MicrostructureLinearHomogenizationTest final
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_iso_1, Chom_iso_2) <
                       10 * eps);
 
-    micro1.removeInclusionPhase(0);
-    micro2.removeInclusionPhase(0);
+    std::ignore=micro1.removeInclusionPhase(0);
+    std::ignore=micro2.removeInclusionPhase(0);
 
     const tfel::math::stensor<3u, real> A2TI =
         1. / 2 * tfel::math::TransverseIsotropicWalpoleBasis<real>::q(n_b);
@@ -240,8 +235,8 @@ struct MicrostructureLinearHomogenizationTest final
     TransverseIsotropicDistribution<stress> distrib6(spheroid1, real(0.5), KGi,
                                                      n_b, index);
 
-    micro1.addInclusionPhase(distrib5);
-    micro2.addInclusionPhase(distrib6);
+    std::ignore=micro1.addInclusionPhase(distrib5);
+    std::ignore=micro2.addInclusionPhase(distrib6);
 
     h_s_1 = computeMoriTanaka<3u, stress>(micro1);
     auto Chom_tiso_1 = h_s_1.homogenized_stiffness;
@@ -250,7 +245,46 @@ struct MicrostructureLinearHomogenizationTest final
 
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_tiso_1, Chom_tiso_2) <
                       10 * eps);
-  }
+  }//end of user_defined_distribution
+
+  template <typename real, typename stress, typename length>
+  void test_poly() {
+    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    using namespace tfel::material::homogenization::elasticity;
+    length a = length(10);
+    length b = length(1);
+    length c = length(1);
+    tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
+    tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
+
+    const stress k0=stress(1e9);
+    const stress mu0=stress(0.5e9);
+    const stress ki=stress(1e10);
+    const stress mui=stress(0.5e10);
+    const auto KG0 = tfel::material::KGModuli(k0,mu0);
+    const auto KGi = tfel::material::KGModuli(ki,mui);
+
+    tfel::math::st2tost2<3u, stress> C_0 = 3*k0*tfel::math::st2tost2<3u,real>::J()+2*mu0*tfel::math::st2tost2<3u,real>::K(); 
+   
+    Ellipsoid<length> ellipsoid1(a, b, c);
+    Spheroid<length> spheroid1(a, b);
+    Grain<stress> grain1(ellipsoid1, real(0.5), KG0,n_a,n_b);
+    Grain<stress> grain2(spheroid1, real(0.5), KGi,n_a,n_b);
+
+    const auto sph = Sphere<length>();
+    Grain<stress> grain3(sph, real(0.5), KGi,n_a,n_b);
+
+    Polycrystal<stress> poly1;
+    std::ignore=poly1.addGrain(grain1);
+    std::ignore=poly1.addGrain(grain2);
+
+
+    auto h_s_1 = computeSelfConsistent<3u, stress>(poly1,1e-6,C_0,true);
+    auto Chom_DS_1 = h_s_1.homogenized_stiffness;
+    
+  
+
+      }//end of test_poly
 
 };  // end of struct MicrostructureLinearHomogenizationTest
 

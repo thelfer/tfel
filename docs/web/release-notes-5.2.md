@@ -230,7 +230,7 @@ Quantities were deeply refactored to:
 
 ## Homogenization
 
-The following methods of the ParticulateMicrostructure objects are able
+The following methods of the `ParticulateMicrostructure` objects are able
 to modify the microstructure:
  
  - `changeElasticityOfMatrixPhase`
@@ -242,6 +242,24 @@ a distribution of spheroids defined by two orientation
 tensors. This distribution can be used in a `ParticulateMicrostructure`
 and the associated homogenization schemes can be used with
 these microstructures.
+
+The `Polycrystal` object has been added to deal with
+homogenization schemes which do not assume that there is a matrix phase.
+An object `Grain` was created for this class of microstructures.
+
+The `computeSelfConsistentScheme` has been modified in order to be
+more consistent with the literature. Now, This scheme takes a `Polycrystal`
+in which no matrix phase exists. For the `ParticulateMicrostructure`,
+the function `computeAsymmetricSelfConsistentScheme` has been introduced,
+which corresponds to a variant of the Self-Consistent scheme for which
+the matrix phase plays a particular role.
+
+In the homogenization schemes relative to the `ParticulateMicrostructure`,
+the computation of the derivatives of the homogenized stiffness tensor
+w.r.t. the isotropic moduli is available. It can be obtained
+by using the attributes `.derivative_of_homogenized_stiffness_wrt_kr`
+and `.derivative_of_homogenized_stiffness_wrt_mur` of the
+`HomogenizationScheme` object (only for isotropic phases).
 
 # New features in `tfel-check`
 
