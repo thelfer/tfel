@@ -67,6 +67,7 @@ namespace mfront {
     std::optional<SchedulePolicy> schedule;
     std::optional<OutOfTileSearchStrategy> out_of_tile_search_strategy;
     std::optional<double> out_of_tile_search_threshold;
+    std::optional<double> relative_pivot_threshold;
     std::optional<double> singular_pivot_threshold;
     bool out_of_tile_search_diagnostics = false;
   };  // end of struct TDLSLinearSystemSolver
