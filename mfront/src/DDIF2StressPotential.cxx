@@ -343,7 +343,7 @@ namespace mfront::bbrick {
     if (!this->sr[0].empty()) {
       if (!this->sr[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
         std::ostringstream ssigr;
-        if (this->sr[1].empty()) {
+        if (!this->sr[1].empty()) {
           for (unsigned short i = 0; i != 3; ++i) {
             ssigr << "this->sigr[" << i << "] = ";
             dsl.writeMaterialPropertyEvaluation(ssigr, this->sr[i], ets);
@@ -383,7 +383,7 @@ namespace mfront::bbrick {
       if (!this->gc[1].empty()) {
         for (unsigned short i = 0; i != 3; ++i) {
           sgc << "this->Gc[" << i << "] = ";
-          dsl.writeMaterialPropertyEvaluation(sgc, this->gc[0], ets);
+          dsl.writeMaterialPropertyEvaluation(sgc, this->gc[i], ets);
           sgc << ";\n";
         }
       } else {
