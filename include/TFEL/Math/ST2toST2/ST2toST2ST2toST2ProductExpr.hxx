@@ -50,8 +50,8 @@ namespace tfel::math {
      * \param[in] b : second term of the product
      */
     template <ST2toST2Concept ST2toST2Type, ST2toST2Concept ST2toST2Type2>
-    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
-                                    const ST2toST2Type2& b)
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE constexpr Expr(const ST2toST2Type& a,
+                                                     const ST2toST2Type2& b)
         : array_holder<StensorDimeToSize<
                            getSpaceDimension<ST2toST2ResultType>()>::value *
                            StensorDimeToSize<
@@ -110,8 +110,8 @@ namespace tfel::math {
      * \param[in] b : second term of the product
      */
     template <ST2toST2Concept ST2toST2Type, ST2toST2Concept ST2toST2Type2>
-    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
-                                    const ST2toST2Type2& b)
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE constexpr Expr(const ST2toST2Type& a,
+                                                     const ST2toST2Type2& b)
         : array_holder<StensorDimeToSize<
                            getSpaceDimension<ST2toST2ResultType>()>::value *
                            StensorDimeToSize<
@@ -193,8 +193,8 @@ namespace tfel::math {
      * \param[in] b : second term of the product
      */
     template <ST2toST2Concept ST2toST2Type, ST2toST2Concept ST2toST2Type2>
-    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
-                                    const ST2toST2Type2& b)
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE constexpr Expr(const ST2toST2Type& a,
+                                                     const ST2toST2Type2& b)
         : array_holder<StensorDimeToSize<
                            getSpaceDimension<ST2toST2ResultType>()>::value *
                            StensorDimeToSize<
