@@ -232,7 +232,7 @@ namespace mfront {
         }
         if (!this->bd.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
           this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], bts);
-          os << "const auto mfront_nu_bts = stress(";
+          os << "const auto mfront_nu_bts = real(";
           this->writeMaterialPropertyEvaluation(os, emps[1], bts);
           os << ");\n";
         } else {
