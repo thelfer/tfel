@@ -1,7 +1,11 @@
 @DSL IsotropicPlasticMisesFlow{use_stress_update_algorithm : true};
 @Behaviour Plasticity8;
-@Author Thomas Helfer;
-@Date 15 / 02 / 2025;
+@Description {
+  Test of the stress update algorithm with elastic material properties
+  depending on the temperature, using quantities: the Young modulus and
+  the Poisson ratio are evaluated at the beginning of the time step to
+  compute the elastic strain.
+}
 
 @Epsilon 1e-15;
 @UseQt true;
@@ -10,10 +14,7 @@
 @Parameter stress s0 = 1e9;
 s0.setGlossaryName("YieldStrength");
 
-// the Poisson ratio depends formally on the temperature, so that it is
-// evaluated at the beginning of the time step by the stress update
-// algorithm, but is constant: the results are the ones of Plasticity6
-@ElasticMaterialProperties{"150e9*(1-T/Ta)", "0.3+0*T/Ta"};
+@ElasticMaterialProperties{"150e9*(1-T/Ta)", "0.3+0.1*T/Ta"};
 
 @FlowRule {
   f = seq - s0;

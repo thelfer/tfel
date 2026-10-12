@@ -1,13 +1,21 @@
-@Author HELFER Thomas;
-@Date   15/02/2025;
+@Description {
+  Uniaxial strain loading in the elastic domain, the Young modulus and
+  the Poisson ratio depending on the temperature: the stresses depend on
+  the Poisson ratio evaluated at the beginning of each time step.
+};
 
 @ModellingHypothesis 'Tridimensional';
 @Behaviour<generic> @library@ 'Plasticity8';
 @ExternalStateVariable<function> 'Temperature' '400 + 50 * sin(t)';
 @Real 'Ta' 2e3;
 @Evolution<function> 'E' '150e9 * (1 - Temperature / Ta)';
+@Evolution<function> 'nu' '0.3 + 0.1 * Temperature / Ta';
 
 @ImposedStrain 'EXX' {0 : 0, 1 : 1e-3};
+@ImposedStrain 'EYY' 0;
+@ImposedStrain 'EZZ' 0;
 @Times {0, 1 in 10};
 
-@Test<function> 'SXX' 'E * EXX' 1e-2;
+@Test<function> 'SXX' 'E * (1 - nu) / ((1 + nu) * (1 - 2 * nu)) * EXX' 1e-2;
+@Test<function> 'SYY' 'E * nu / ((1 + nu) * (1 - 2 * nu)) * EXX' 1e-2;
+@Test<function> 'SZZ' 'E * nu / ((1 + nu) * (1 - 2 * nu)) * EXX' 1e-2;

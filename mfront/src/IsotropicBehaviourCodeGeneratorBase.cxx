@@ -228,7 +228,7 @@ namespace mfront {
           this->writeMaterialPropertyEvaluation(os, emps[0], bts);
           os << ");\n";
         } else {
-          os << "const auto mfront_young_bts = this->young;";
+          os << "const auto mfront_young_bts = this->young;\n";
         }
         if (!this->bd.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
           this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], bts);
@@ -236,7 +236,7 @@ namespace mfront {
           this->writeMaterialPropertyEvaluation(os, emps[1], bts);
           os << ");\n";
         } else {
-          os << "const auto mfront_nu_bts = this->nu;";
+          os << "const auto mfront_nu_bts = this->nu;\n";
         }
         os << "const auto mfront_eel_bts = eval("
            << "-mfront_nu_bts / mfront_young_bts * trace(this->sig) * "
