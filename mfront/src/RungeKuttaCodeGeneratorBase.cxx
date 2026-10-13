@@ -1111,9 +1111,11 @@ namespace mfront {
                                            const std::string& k,
                                            const std::string& n,
                                            const std::string& e) {
+      // `second` is true if the variable is defined for at least one
+      // modelling hypothesis, `first` if it is defined for all of them
       const auto exists = bd.checkVariableExistence(n, k, false);
-      if (exists.first) {
-        if (!exists.second) {
+      if (exists.second) {
+        if (!exists.first) {
           tfel::raise("findStressErrorNormalizationFactor: the `" + n +
                       "` variable is not "
                       "defined for all modelling hypotheses as a '" +
