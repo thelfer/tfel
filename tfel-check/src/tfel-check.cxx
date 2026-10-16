@@ -166,11 +166,6 @@ namespace tfel::check {
     //! \brief number of parallel jobs
     tfel::system::ThreadPool::size_type njobs = 1;
     /*!
-     * \brief boolean stating if the generated files and directories listed by
-     * the @CleanFiles and @CleanDirectories keywords must be removed
-     */
-    bool clean_up = true;
-    /*!
      * \brief boolean stating if the number of jobs allowed shall be lesser
      * than the number of cores
      */
@@ -289,7 +284,8 @@ namespace tfel::check {
                           "clean generated files and directories listed by "
                           "the @CleanFiles and @CleanDirectories keywords.",
                           [this, read_boolean_value] {
-                            this->clean_up = read_boolean_value("--clean-up");
+                            const auto b = read_boolean_value("--clean-up");
+                            this->configurations.setCleanUp(b);
                           },
                           true));
     this->registerCallBack(

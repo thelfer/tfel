@@ -34,9 +34,9 @@ namespace tfel::material::homogenization::elasticity {
    * inclusion
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  struct Microstructure {
+  requires(
+      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                         StressType>()) struct Microstructure {
     Microstructure() = default;
   };
 
@@ -49,9 +49,10 @@ namespace tfel::material::homogenization::elasticity {
    * inclusion
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  struct ParticulateMicrostructure : public Microstructure<N, StressType> {
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) struct ParticulateMicrostructure
+      : public Microstructure<N, StressType> {
     using real = tfel::types::real<StressType>;
     using LengthType = tfel::types::length<StressType>;
 
@@ -220,9 +221,9 @@ namespace tfel::material::homogenization::elasticity {
    * grains
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  struct Polycrystal : public Microstructure<3u, StressType> {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) struct Polycrystal
+      : public Microstructure<3u, StressType> {
     using real = tfel::types::real<StressType>;
 
    private:

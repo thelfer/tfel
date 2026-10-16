@@ -94,6 +94,12 @@ namespace tfel::check {
      * \param[in] b: boolean
      */
     void setDiscardCommandsFailure(const bool);
+    /*!
+     * \brief set if the the generated files and directories listed by
+     * the @CleanFiles and @CleanDirectories keywords must be removed
+     * \param[in] b: boolean
+     */
+    void setCleanUp(const bool);
 
    private:
     /*!
