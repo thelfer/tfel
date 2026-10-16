@@ -70,7 +70,7 @@ of mechanical behaviours:
   depends of the current modelling hypothesis. The concrete type for
   `real` depends on the interface used.
 - `StrainStensor` is an alias to `stensor<N,strain>`.
-- `StressStensor` is an alias to `stensor<N,stess>`.
+- `StressStensor` is an alias to `stensor<N,stress>`.
 
 ## Vector notations for symmetric tensors
 
@@ -523,7 +523,7 @@ const auto rt = t2tot2<N,real>::fromRotationMatrix(r);
 
 > **Note**
 > 
-> In pratice, the `fromRotationMatrix` static methods can be used to
+> In practice, the `fromRotationMatrix` static methods can be used to
 > compute the rotation of any second and fourth order tensors (including
 > the ones of the `t2tost2` and `st2tot2` types). They are used internally
 > in the implementation of the `change_basis` functions provided for the
@@ -697,7 +697,7 @@ The derivative of the invariants are classically given by:
 \right.
 \]
 
-Those expressions are simplier for symmetric tensors:
+Those expressions are simpler for symmetric tensors:
 \[
 \left\{
 \begin{aligned}
@@ -736,7 +736,7 @@ const auto id = tensor<N,real>::Id();
 const auto d2I2_dA2 = (id^id)-t2tot2<N,real>::transpose_derivative();
 ~~~~
 
-For symmetric tensors, this computation is much simplier:
+For symmetric tensors, this computation is much simpler:
 
 ~~~~{.cpp}
 const auto id = stensor<N,real>::Id();
@@ -816,7 +816,7 @@ of a tensor (see Section&nbsp;@sec:invariants:derivatives):
 \deriv{J_{2}}{\tsigma}= \deriv{J_{2}}{\tenseur{s}}\,\cdot\,\deriv{\tenseur{s}}{\tsigma}= \tenseur{s}
 \]
 
-In pratice, this can be implemented as follows:
+In practice, this can be implemented as follows:
 
 ~~~~{.cpp}
 const auto dJ2 = deviator(sig);

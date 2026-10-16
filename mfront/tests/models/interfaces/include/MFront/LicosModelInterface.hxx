@@ -2,7 +2,7 @@
  * \file   mfront/tests/models/interfaces/include/MFront/LicosModelInterface.hxx
  * \brief  This file declares the MFrontModelInterface class
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

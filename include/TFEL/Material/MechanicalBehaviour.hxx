@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/MechanicalBehaviour.hxx
  * \brief  This file declares the MechanicalBehaviour class
  * \author Thomas Helfer
- * \date   22 Sep 2006
+ * \date 22/09/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,7 +25,7 @@ namespace tfel::material {
    * \class MechanicalBehaviourBase
    * \brief This class declares enums for mechanical behaviours.
    * \author Thomas Helfer
-   * \date   30 Juillet 2013
+   * \date 30/07/2013
    */
   struct MechanicalBehaviourBase {
     /*!
@@ -154,7 +154,7 @@ namespace tfel::material {
    * \param NumType, numerical type.
    * \param bool use_qt, says if one shall use quantities.
    * \author Thomas Helfer
-   * \date   28 Jul 2006
+   * \date 28/07/2006
    */
   template <MechanicalBehaviourBase::BehaviourType btype,
             ModellingHypothesis::Hypothesis H,

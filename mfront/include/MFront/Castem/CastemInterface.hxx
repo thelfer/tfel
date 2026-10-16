@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/Castem/CastemInterface.hxx
  * \brief  This file implements the CastemInterface class.
  * \author Thomas Helfer
- * \date   28 Jul 2006
+ * \date 28/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -39,7 +39,7 @@ namespace castem {
    * reduce both compile-time and library size).
    *
    * \author Thomas Helfer
-   * \date   28 Jul 2006
+   * \date 28/07/2006
    */
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,

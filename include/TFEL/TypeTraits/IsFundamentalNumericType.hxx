@@ -3,7 +3,7 @@
  * \brief  This file declares the IsFundamentalNumericType traits
  * class and specialises it for standard numerical types.
  * \author Thomas Helfer
- * \date   05 jui 2006
+ * \date 05/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -35,7 +35,7 @@ namespace tfel::typetraits {
    * \see IsReal, IsComplex
    *
    * \author Thomas Helfer
-   * \date   04 Jul 2006
+   * \date 04/07/2006
    */
   template <typename T>
   struct IsFundamentalNumericType {

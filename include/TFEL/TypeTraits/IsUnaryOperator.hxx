@@ -2,7 +2,7 @@
  * \file   include/TFEL/TypeTraits/IsUnaryOperator.hxx
  * \brief  This file declares the IsUnaryOperator traits class.
  * \author Thomas Helfer
- * \date   07 Jun 2006
+ * \date 07/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,7 +28,7 @@ namespace tfel::typetraits {
    * otherwise.
    *
    * \author Thomas Helfer
-   * \date   08/01/07
+   * \date 08/01/2007
    */
   template <typename T>
   struct IsUnaryOperator {

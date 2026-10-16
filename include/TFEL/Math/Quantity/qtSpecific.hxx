@@ -2,7 +2,7 @@
  *\file   qtSpecific.hxx
  *\brief  This file pecialises some class traits for quantities.
  *\author Thomas Helfer
- *\date   06 Jun 2006
+ *\date 06/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

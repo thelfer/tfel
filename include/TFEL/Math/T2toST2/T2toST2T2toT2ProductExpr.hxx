@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx
  * \brief
  * \author Thomas Helfer
- * \date   16 juin 2014
+ * \date 16/06/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

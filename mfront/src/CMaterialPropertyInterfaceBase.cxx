@@ -2,7 +2,7 @@
  * \file   mfront/src/CMaterialPropertyInterfaceBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -121,7 +121,7 @@ namespace mfront {
       os << "* \\author " << fd.authorName << "\n";
     }
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << "\n";
+      os << "* \\date " << fd.date << "\n";
     }
     if (!fd.description.empty()) {
       os << fd.description << "\n";
@@ -439,7 +439,7 @@ namespace mfront {
       os << "* \\fd.author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << '\n';
+      os << "* \\date " << fd.date << '\n';
     }
     os << " */\n\n"
        << "#include<cmath>\n"

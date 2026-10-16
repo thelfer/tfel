@@ -1,6 +1,15 @@
-% The `ElmerFEM` interface
-% Fernando Oleo Blanco
-% 26/04/2026
+---
+title: The ElmerFEM interface
+author: Fernando Oleo Blanco
+date: 26/04/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
 \newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}

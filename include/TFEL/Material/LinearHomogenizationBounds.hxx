@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/LinearHomogenizationBounds.hxx
  * \author Antoine Martin
- * \date   23 January 2025
+ * \date 23/01/2025
  * \brief  This file declares some well-known homogenization bounds.
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All
  * rights reserved. This project is publicly released under either the GNU GPL

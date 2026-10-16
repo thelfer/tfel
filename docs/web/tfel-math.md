@@ -1,5 +1,5 @@
 ---
-title:  Overview of some features of the `TFEL/Math` library
+title: Overview of some features of the TFEL/Math library
 author: Thomas Helfer
 date: 21/11/2017
 lang: en-EN
@@ -171,8 +171,8 @@ mathematical objects from a raw memory area, as described in Section
 ### The `Quantity` class
 
 For the sake of simplicity, the `qt`, `qt_ref` and `const_qt_ref` were
-described as classes. This is not actually the case in the current
-implementation which defines them through type aliases to a more general
+described as independent classes. This is not actually the case in the current
+implementation which defines them through inheritance to a more general
 `Quantity` class which is parametrized by three template arguments: the
 unit, the basic numeric type and a third argument describing how the
 value associated with the quantity is handled.
@@ -758,7 +758,7 @@ auto eel = map<stensor<3u, double>>(Y);
 auto& p = Y[6];
 ~~~~
 
-!["Exemple of decomposition by blocks of a memory area using views"](img/tfel-math/view.svg){#fig:tfel_4.0:view width=75%}
+!["Example of decomposition by blocks of a memory area using views"](img/tfel-math/view.svg){#fig:tfel_4.0:view width=75%}
 
 The `map` function allows to define offset at compile-time: this allows
 to checks at compile-time that the memory area is large enough to store

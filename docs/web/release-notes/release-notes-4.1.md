@@ -751,7 +751,7 @@ $ mfront --list-dsl-options=RungeKutta
 
 The `@InitializeFunction` keyword introduces a code block that can be
 used to initialize internal state variables at the very beginning of the
-computation. Initalize functions may have user so-called
+computation. Initialize functions may have user so-called
 *initialize funtion variables*.
 
 In this version, only the `generic` interface generates functions
@@ -804,7 +804,7 @@ variables, etc.), initialize function variables can be defined after the
 first code block. However, care must be taken to declare initialize
 function variables **before** their use in an initialize function.
 
-Note that an initialize function variable can be used in differents
+Note that an initialize function variable can be used in different
 initialize function.
 
 ## Post-processings of behaviours {#sec:tfel_4.1:mfront:postprocessings}
@@ -879,7 +879,7 @@ variables, etc.), post-processing variables can be defined after the
 first code block. However, care must be taken to declare post-processing
 variables **before** their use in a post-processing.
 
-Note that a post-processing variable can be used in differents
+Note that a post-processing variable can be used in different
 post-processings. Typically, one may compute the principal strains in a
 dedicated post-processing and in a post-processing computing the
 principal strains and the strain eigen vectors.
@@ -993,7 +993,7 @@ be such a variable. The `UserDefined` isotropic hardening rule will look
 if an option named `A` has been given:
 
 - If this option exists, it will be interpreted as a material
-  coefficient as usal and this option can be a number, a formula or the
+  coefficient as usual and this option can be a number, a formula or the
   name of an external `MFront` file.
 - If this option does not exist, a suitable variable will be search in
   the variables defined in the behaviour (static variables, parameters,
@@ -1047,7 +1047,7 @@ named `A` has been given to the flow:
 
 
 - If this option exists, it will be interpreted as a material
-  coefficient as usal and this option can be a number, a formula or the
+  coefficient as usual and this option can be a number, a formula or the
   name of an external `MFront` file.
 - If this option does not exist, a suitable variable will be search in
   the variables defined in the behaviour (static variables, parameters,
@@ -1092,7 +1092,7 @@ equivalent strain and equivalent stress.
 
 This isotropic hardening rule can be parametrised using three entries:
 
-- `values`: which must a dictionnary giving the value of the yield
+- `values`: which must a dictionary giving the value of the yield
   surface radius as a function of the equivalent plastic strain.
 - `interpolation`: which allows to select the interpolation type.
   Possible values are `linear` (default choice) and `cubic_spline`.
@@ -1162,7 +1162,7 @@ be normalised. In previous versions, the existence of a variable named
 `young` was assumed.
 
 The `@StressErrorNormalizationFactor` allows to specify this
-normalization factor more explicitely and consistenly.
+normalization factor more explicitly and consistenly.
 
 For backward compatibility with previous versions, the `young` variable
 will be used, if an appropriate variable is defined and if the
@@ -1238,7 +1238,7 @@ be modified using the `ExternalLibraryManager` class (See Section @???).
 > **Note: link with the `cyrano` interface for material properties**
 >
 > The `generic` interface for material properties is very similar to the
-> `cyrano` interface. In pratice, both interfaces shares a common base
+> `cyrano` interface. In practice, both interfaces shares a common base
 > class (called `GenericMaterialPropertyInterfaceBase`).
 
 ### The `mfront_gmp_OutputStatus` structure
@@ -1274,7 +1274,7 @@ typedef struct {
    *   was a child of `std::exception`, the content of the string returned by
    *   the `what` method is copyied in the `message` field. Otherwise, the
    *   message field contains the "unknown exception" string.
-   * - If the exit status is -3, an error occured in the `C` library, i.e. the
+   * - If the exit status is -3, an error occurred in the `C` library, i.e. the
    *   `errno` value was set to a non zero value during the computation.
    *   The value of `errno` corresponding to the error is stored to in the
    *   `c_error_number` field of this structure. The string returned by
@@ -2509,11 +2509,11 @@ For more details, see <https://github.com/thelfer/tfel/issues/298>
 
 For more details, see <https://github.com/thelfer/tfel/issues/297>
 
-## Issue 296: [mfront] Allow bidirectional convertion between the IntegrationResult enumeration and boolean values
+## Issue 296: [mfront] Allow bidirectional conversion between the IntegrationResult enumeration and boolean values
 
 Some code blocks return boolean values and others return instances of
 the IntegrationResult enumeration. This is inconsistent from the user
-point of view. Allowing bidirectional convertion between the
+point of view. Allowing bidirectional conversion between the
 IntegrationResult enumeration and boolean values mitigates this issue.
 
 For more details, see <https://github.com/thelfer/tfel/issues/296>

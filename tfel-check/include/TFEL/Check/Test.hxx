@@ -1,7 +1,7 @@
 /*!
  * \file  tfel-check/include/TFEL/Check/Test.hxx
  * \brief Represents a single test between two columns
- * \date 29 mai 2013
+ * \date 29/05/2013
  * \author Remy Petkantchin
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.

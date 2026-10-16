@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/IsotropicLinearFourierLaw.hxx
  * \brief  This file declares the IsotropicLinearFourierLaw class
  * \author Thomas Helfer
- * \date   25 Sep 2006
+ * \date 25/09/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,7 +25,7 @@ namespace tfel::material {
    * \param N, space dimension.
    * \param T, numerical type.
    * \author Thomas Helfer
-   * \date   28 Jul 2006
+   * \date 28/07/2006
    */
   template <unsigned short N, typename T, bool use_qt>
   class IsotropicLinearFourierLaw : public ThermalBehaviour<N, T, use_qt> {

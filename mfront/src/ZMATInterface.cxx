@@ -885,7 +885,7 @@ namespace mfront {
         << "* \\brief  This file declares the ZMAT interface for the "
         << mb.getClassName() << " behaviour law\n"
         << "* \\author " << fd.authorName << '\n'
-        << "* \\date   " << fd.date << '\n'
+        << "* \\date " << fd.date << '\n'
         << "*/\n\n"
         << "#ifndef MFRONT_ZMAT_" << makeUpperCase(mb.getClassName())
         << "_HXX\n"
@@ -1046,7 +1046,7 @@ namespace mfront {
         << "* \\brief  This file declares the ZMAT interface for the "
         << mb.getClassName() << " behaviour law\n"
         << "* \\author " << fd.authorName << '\n'
-        << "* \\date   " << fd.date << '\n'
+        << "* \\date " << fd.date << '\n'
         << "*/\n\n"
         << '\n'
         << "#include<string>\n"

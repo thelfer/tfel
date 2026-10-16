@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/ThermalBehaviourData.hxx
  * \brief  This file implements the ThermalBehaviourData Class
  * \author Thomas Helfer
- * \date   09 Aug 2006
+ * \date 09/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,7 +27,7 @@ namespace tfel::material {
    * \param typename NumType, numerical type
    * \param bool use_qt, says if one uses quantities
    * \author Thomas Helfer
-   * \date   09 Aug 2006
+   * \date 09/08/2006
    */
   template <unsigned short N, typename NumType, bool use_qt>
   class ThermalBehaviourData {

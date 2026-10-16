@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/CppMaterialPropertyInterface.hxx
  * \brief  This file declares the CppMaterialPropertyInterface class
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

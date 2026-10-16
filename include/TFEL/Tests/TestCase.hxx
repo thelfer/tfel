@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Tests/TestCase.hxx
  * \author Thomas Helfer
- * \date   11 Apr 10
+ * \date 11/04/2010
  * \brief
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.

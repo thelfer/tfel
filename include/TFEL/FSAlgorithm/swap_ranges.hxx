@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/swap_ranges.hxx
  * \brief  This file implements the swap_ranges class.
  * \author Thomas Helfer
- * \date   30 jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,7 +31,7 @@ namespace tfel::fsalgo {
    * http://www.sgi.com/tech/stl/swap_ranges.html
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct swap_ranges {
@@ -48,7 +48,7 @@ namespace tfel::fsalgo {
      * convertible to each other.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator1, typename ForwardIterator2>
     static TFEL_FSALGORITHM_INLINE ForwardIterator2 exe(ForwardIterator1 p,

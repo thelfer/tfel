@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/equal.hxx
  * \brief  this file implements the equal class.
  * \author Thomas Helfer
- * \date   30 Jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -30,7 +30,7 @@ namespace tfel::fsalgo {
    * \see transform.cxx for some elementary tests.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct equal {

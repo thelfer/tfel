@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/IsotropicModuli.hxx
  * \brief  This file defines various functions dealing with elastic
- * coefficients. \author Antoine MARTIN \date   15 May 2025 \copyright Copyright
+ * coefficients. \author Antoine MARTIN \date 15/05/2025 \copyright Copyright
  * (C) 2006-2025 CEA/DEN, EDF R&D. All rights reserved. This project is publicly
  * released under either the GNU GPL Licence with linking exception or the
  * CECILL-A licence. A copy of thoses licences are delivered with the sources of

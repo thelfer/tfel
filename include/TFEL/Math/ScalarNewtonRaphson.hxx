@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/ScalarNewtonRaphson.hxx
  * \brief
  * \author Thomas Helfer
- * \date   31/03/2020
+ * \date 31/03/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

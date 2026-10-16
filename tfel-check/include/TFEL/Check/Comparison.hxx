@@ -1,7 +1,7 @@
 /*!
  * \file Comparison.hxx
  *
- *  \date 27 mai 2013
+ *  \date 27/05/2013
  *  \author Remy Petkantchin
  *
  *  \class Comparison

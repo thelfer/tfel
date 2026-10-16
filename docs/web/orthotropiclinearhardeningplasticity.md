@@ -1,6 +1,15 @@
-% How to implement an orthotropic plastic behaviour with isotropic linear hardening in MFront
-% Thomas Helfer, Lorenzo Riparbelli, Ioannis Christovasilis
-% 27/01/2017
+---
+title: How to implement an orthotropic plastic behaviour with isotropic linear hardening in MFront
+author: Thomas Helfer, Lorenzo Riparbelli, Ioannis Christovasilis
+date: 27/01/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
@@ -218,7 +227,7 @@ brick which provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 

@@ -2,7 +2,7 @@
  * \file   src/System/ExternalMaterialPropertyDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15 June 2015
+ * \date 15/06/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file  mfront/include/MFront/Cyrano/CyranoInterfaceExceptions.hxx
  * \brief
  * \author Thomas Helfer
- * \date   21 fév 2014
+ * \date 21/02/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -57,7 +57,7 @@ namespace cyrano {
    * \class  CyranoInterfaceExceptions
    * \brief  Base class for cyrano interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInterfaceExceptions {
     /*!

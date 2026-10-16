@@ -1,6 +1,15 @@
-% The `MFront` interface to the `ANSYS Mechanical APDL` finite element solver
-% Thomas Helfer
-% 09/02/2017
+---
+title: The MFront interface to the ANSYS Mechanical APDL finite element solver
+author: Thomas Helfer
+date: 09/02/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
 \newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}

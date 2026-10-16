@@ -2,7 +2,7 @@
  * \file   HarariEigenSolver.hxx
  * \brief
  * \author Maxence Wangermez/Thomas Helfer
- * \date   13/02/2024
+ * \date 13/02/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  *

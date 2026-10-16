@@ -2,7 +2,7 @@
  * \file   CxxProgrammingModelBackendBase.cxx
  * \brief  This file implements the `CxxProgrammingModelBackendBase` class
  * \author Thomas Helfer
- * \date   18/05/2026
+ * \date 18/05/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

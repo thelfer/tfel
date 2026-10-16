@@ -21,7 +21,7 @@ ImposedDrivingVariable:
 
 - The sign is wrong (Thus the lagrange multipliers can't be identified
   to the stress).
-- The residual is not updated appropriatly.
+- The residual is not updated appropriately.
 
 For the second point, one must do this
 

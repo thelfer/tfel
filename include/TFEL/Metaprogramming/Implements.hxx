@@ -2,7 +2,7 @@
  * \file   include/TFEL/Metaprogramming/Implements.hxx
  * \brief  This file describes the Implements metafunction
  * \author Thomas Helfer
- * \date   28/08/2006
+ * \date 28/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,7 +31,7 @@ namespace tfel::meta {
    * \brief the Implements metafunction returns true if the
    * class T is a subclass of Concept<T>.
    * \author Thomas Helfer
-   * \date   28/08/2006
+   * \date 28/08/2006
    */
   template <typename T, template <typename> class Concept>
   struct TFEL_VISIBILITY_LOCAL Implements {

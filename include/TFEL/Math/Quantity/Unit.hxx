@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Math/Quantity/Unit.hxx
  * \brief  This file declares the classes Unit, GenerateUnit, AddUnit_,
- * SubUnit_, PowUnit_ and RootUnit_. \author Thomas Helfer \date   07 Jun 2006
+ * SubUnit_, PowUnit_ and RootUnit_. \author Thomas Helfer \date 07/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

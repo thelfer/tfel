@@ -1,6 +1,15 @@
-% The TFEL/Material library
-% Thomas Helfer
-% 19/12/2017
+---
+title: The TFEL/Material library
+author: Thomas Helfer
+date: 19/12/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}

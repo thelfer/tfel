@@ -2,7 +2,7 @@
  * \file   TFEL/Math/NumericalIntegration/GaussKronrodQuadrature.hxx
  * \brief
  * \author Thomas Helfer
- * \date   08/10/2025
+ * \date 08/10/2025
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

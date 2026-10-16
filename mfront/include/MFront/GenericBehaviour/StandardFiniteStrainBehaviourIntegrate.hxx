@@ -3,7 +3,7 @@
  * mfront/include/MFront/GenericBehaviour/StandardFiniteStrainIntegrate.hxx
  * \brief
  * \author Thomas Helfer
- * \date   31/01/2022
+ * \date 31/01/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

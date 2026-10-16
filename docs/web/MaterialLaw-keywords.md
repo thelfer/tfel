@@ -1,3 +1,17 @@
+---
+title: MaterialLaw keywords
+author: TFEL Team
+date: 25/08/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "877665i877665"
+tblPrefixTemplate: "877665i877665"
+secPrefixTemplate: "877665i877665"
+eqnPrefixTemplate: "(877665i877665)"
+---
+
+
 % `MaterialLaw` keywords
 
 
@@ -387,7 +401,7 @@ except the first:
 
 ## Name of the generated functions or classes
 
-The names of the generated functions or classes depend on the law name
+The names of the generated functions or class depend on the law name
 as specified with the `@Law` keyword but may also include the
 material name, as specified by the `@MaterialLaw` keyword.
 
@@ -437,7 +451,7 @@ variable.
 
 ~~~~{.cpp}
 // explicit link with libm.so
-// (not necessary in pratice)
+// (not necessary in practice)
 @Link "-lm";
 ~~~~
 
@@ -550,7 +564,7 @@ fc.setDefaultValue(1.e-2);
 
 # The `@Parser` keyword
 
-The `@Paser` keyword is a deprecated synonymous of `@DSL`.
+The `@Parser` keyword is a deprecated synonymous of `@DSL`.
 
 # The `@PhysicalBounds` keyword
 

@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/Quantity/qtOperations.hxx
  * \brief  This file declares usual operations on quantities.
  * \author Thomas Helfer
- * \date   07 Jun 2006
+ * \date 07/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

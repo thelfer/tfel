@@ -1,7 +1,7 @@
 /*!
  * \file Interpolation.hxx
  *
- *  \date 7 mai 2013
+ *  \date 07/05/2013
  *  \author Remy Petkantchin
  *
  *  \class Interpolation

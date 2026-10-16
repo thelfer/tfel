@@ -6,6 +6,22 @@ lang: en-EN
 numbersections: true
 keywords: Porous plasticity. Ductile failure. Constitutive equations. MFront. StandardElastoViscoPlasticty brick.
 abstract: |
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+geometry:
+- paper=a4paper
+- margin=2cm
+link-citations: true
+colorlinks: true
+bibliography: bibliography.bib
+csl: iso690-numeric-en.csl
+header-includes:
+- \usepackage{tcolorbox}
+- \newtcolorbox{myquote}{colframe=gray}
+- \renewenvironment{quote}{\begin{myquote}}{\end{myquote}}
+abstract: |
   This report describes the implementation of porous (visco-)plastic
   behaviours that may be used to describe ductile failure of metals
   or the viscoplasticity of nuclear fuels.
@@ -17,22 +33,6 @@ abstract: |
   Two porous stress criteria - Gurson-Tvergaard-Needleman and Rousselier-Tanguy-Besson -
   are implemented, along with several nucleation models. The implementations are applied
   to a set of representative simulations using the `Cast3M` solver.
-
-geometry:
-- paper=a4paper
-- margin=2cm
-link-citations: true
-colorlinks: true
-figPrefixTemplate: "$$i$$"
-tblPrefixTemplate: "$$i$$"
-secPrefixTemplate: "$$i$$"
-eqnPrefixTemplate: "($$i$$)"
-bibliography: bibliography.bib
-csl: iso690-numeric-en.csl
-header-includes:
-- \usepackage{tcolorbox}
-- \newtcolorbox{myquote}{colframe=gray}
-- \renewenvironment{quote}{\begin{myquote}}{\end{myquote}}
 ---
 
 \newcommand{\tsigma}{\underline{\sigma}}
@@ -199,7 +199,7 @@ explicitly on the stress tensor \(\tsigma\) and the porosity \(f\):
 
 This stress criterion is used to define the yield surface or the intensity of the viscoplastic flow.
 
-Concerning the flow rule, two main classes of models are classically
+Concerning the flow rule, two main class of models are classically
 found in the literature. In the first class of model, the porosity does not change the expression of the flow rule:
 
 \[
@@ -406,7 +406,7 @@ The first and second order derivatives of $\sstar$ are:
     \end{aligned}
 \]
 
-> **Note** Many models developped for porous materials and accounting for anisotropy and void shape effects can be recasted into such generic form of the stress criterion, such as [@benzergabesson2001], [@madou2012a], [@morin2015], [@paux2018]
+> **Note** Many models developed for porous materials and accounting for anisotropy and void shape effects can be recasted into such generic form of the stress criterion, such as [@benzergabesson2001], [@madou2012a], [@morin2015], [@paux2018]
 
 -->
 <!--
@@ -568,7 +568,7 @@ formulas currently implemented into the brick in Appendixes
 ### Taking the elastic contribution to the porosity growth into account {#sec:mfront:porous_plasticity:elastic_contribution_to_porosity_growth}
 
 Adding the elastic contribution to the porosity growth is trivially
-performed by substracting the following term to the implicit equation
+performed by subtracting the following term to the implicit equation
 associated with the porosity evolution:
 
 \[
@@ -1241,7 +1241,7 @@ ss.setGlossaryName("SolidSwelling");
 
 @AdditionalConvergenceChecks {
   // adding the contribution of the solid swelling
-  // the porosity increase to the next extimate of the porosity by
+  // the porosity increase to the next estimate of the porosity by
   // the staggered scheme.
   // This shall only been done after the convergence of the
   // staggered scheme has converged.
@@ -1780,7 +1780,7 @@ $$ f (f ( f (f (a f + b) + c) + d) + e) + g$$
 ## On the use of porous constitutive equations with `Cast3M` {#sec:mfront:porous_plasticity:castem}
 
 
-The staggered approach improves robustness of the numerical integration of the porous constitutive equations, especially if sub-stepping is allowed. However, integration may still fail due to too severe input parameters. As integration failure is not handled in the finite element code `Cast3M`, additional stategies are required at the structural scale to avoid such problems. An efficient stategy is to adjust the time-step based on the maximal increase of porosity such as:
+The staggered approach improves robustness of the numerical integration of the porous constitutive equations, especially if sub-stepping is allowed. However, integration may still fail due to too severe input parameters. As integration failure is not handled in the finite element code `Cast3M`, additional strategies are required at the structural scale to avoid such problems. An efficient strategy is to adjust the time-step based on the maximal increase of porosity such as:
 \[
 \Delta t_{i+1} = \min{\left(   \frac{\Delta f_{max}}{\Delta f_{i}} \Delta t_i , \Delta t_{ref} \right)}
 \]

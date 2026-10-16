@@ -2,7 +2,13 @@
  * \file   include/MFront/BehaviourBrick/StressCriterionFactory.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_STRESSCRITERIONFACTORY_HXX

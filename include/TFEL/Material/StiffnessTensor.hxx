@@ -2,7 +2,7 @@
  * \file   StiffnessTensor.hxx
  * \brief
  * \author Thomas Helfer
- * \date   23 oct. 2014
+ * \date 23/10/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

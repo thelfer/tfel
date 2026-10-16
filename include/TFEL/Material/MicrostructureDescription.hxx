@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/MicrostructureDescription.hxx
  * \author Antoine Martin
- * \date   25 January 2025
+ * \date 25/01/2025
  * \brief  This file defines some objects to describe a microstructure.
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All
  * rights reserved. This project is publicly released under either the GNU GPL

@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/transform.hxx
  * \brief  This file implements the transform algorithm.
  * \author Thomas Helfer
- * \date   30 Jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,7 +29,7 @@ namespace tfel::fsalgo {
    * \see transform.cxx for some elementary tests.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct transform {
@@ -55,7 +55,7 @@ namespace tfel::fsalgo {
      * OutputIterator's set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator,
               typename OutputIterator,
@@ -93,7 +93,7 @@ namespace tfel::fsalgo {
      * OutputIterator's set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator1,
               typename InputIterator2,
@@ -113,7 +113,7 @@ namespace tfel::fsalgo {
    * transform algorithm.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct transform<0u> {
@@ -122,7 +122,7 @@ namespace tfel::fsalgo {
      * \sa transform<N>::exe()
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator,
               typename OutputIterator,
@@ -138,7 +138,7 @@ namespace tfel::fsalgo {
      * \sa transform<N>::exe()
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator,
               typename InputIterator2,

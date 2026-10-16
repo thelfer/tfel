@@ -2,7 +2,7 @@
  * \file   tests/Material/MicrostructureLinearHomogenization.cxx
  * \brief
  * \author Antoine Martin
- * \date   23 January 2025
+ * \date 23/01/2025
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file tfel-check/src/PCILogDriver.cxx
  * \brief Implementation of PCLogger Drivers class.
  * \author sb152252
- * \date 31 août 2009
+ * \date 31/08/2009
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

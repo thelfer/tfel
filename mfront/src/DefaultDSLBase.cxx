@@ -2,7 +2,7 @@
  * \file   mfront/src/DefaultDSLBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   22 jullet 2013
+ * \date 22/07/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -1,5 +1,15 @@
-% Behaviour bricks
-% Thomas Helfer
+---
+title: Behaviour bricks
+author: Thomas Helfer
+date: 25/08/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 # Introduction
 

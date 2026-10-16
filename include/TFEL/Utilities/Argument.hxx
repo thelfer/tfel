@@ -2,7 +2,7 @@
  * \file   Argument.hxx
  * \brief
  * \author Thomas Helfer
- * \date   09 juin 2016
+ * \date 09/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

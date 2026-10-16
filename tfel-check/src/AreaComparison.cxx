@@ -1,7 +1,7 @@
 /*
  * \file tfel-check/src/AreaComparison.cxx
  *
- * \date 12 juin 2013
+ * \date 12/06/2013
  * \author Remy Petkantchin
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.

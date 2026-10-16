@@ -2,7 +2,7 @@
  * \file   mfront/src/CastemModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03/07/2022
+ * \date 03/07/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -191,7 +191,7 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n";
 
     const auto hg = getHeaderGuard(md);
@@ -275,7 +275,7 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
        << "#include <locale>\n"

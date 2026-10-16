@@ -2,7 +2,7 @@
  * \file   PleiadesModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -179,7 +179,7 @@ namespace mfront {
       out << "* \\author " << fdata.authorName << endl;
     }
     if (!fdata.date.empty()) {
-      out << "* \\date   " << fdata.date << endl;
+      out << "* \\date " << fdata.date << endl;
     }
     if (!fdata.description.empty()) {
       out << fdata.description << endl;

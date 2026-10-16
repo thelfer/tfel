@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/VariableDescriptionBase.hxx
  * \brief  This file declares the VariableDescriptionBase class
  * \author Thomas Helfer
- * \date   17 Jan 2007
+ * \date 17/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

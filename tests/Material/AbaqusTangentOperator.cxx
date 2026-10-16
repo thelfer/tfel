@@ -5,7 +5,7 @@
  *        is correctly computed by comparing its value to
  *        an numerical perturbation
  * \author Thomas Helfer
- * \date   13 août 2016
+ * \date 13/08/2016
  *
  * Numerical Approximation of Tangent Moduli for Finite Element
  * Implementations of Nonlinear Hyperelastic Material Models

@@ -2,7 +2,7 @@
  * \file   mfront/src/CastemMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -274,7 +274,7 @@ namespace mfront {
       out << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      out << "* \\date   " << fd.date << '\n';
+      out << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       out << fd.description << '\n';
@@ -334,7 +334,7 @@ namespace mfront {
       out << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      out << "* \\date   " << date << '\n';
+      out << "* \\date " << date << '\n';
     }
     out << " */\n\n"
         << "#include<algorithm>\n"

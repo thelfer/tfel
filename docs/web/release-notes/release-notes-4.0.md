@@ -237,7 +237,7 @@ built-in support of concepts.
 >
 >
 > With `C++-20`, the declaration of the `sigmaeq` will probably be
-> much simplier and is expected to look as follows:
+> much simpler and is expected to look as follows:
 >
 > ~~~~{.cxx}
 > auto sigmaeq(const StensorConcept auto&);
@@ -1048,7 +1048,7 @@ auto eel = map<stensor<3u, double>>(Y);
 auto& p = Y[6];
 ~~~~
 
-!["Exemple of decomposition by blocks of a memory area using views"](img/tfel-math/view.svg){#fig:tfel_4.0:view width=75%}
+!["Example of decomposition by blocks of a memory area using views"](img/tfel-math/view.svg){#fig:tfel_4.0:view width=75%}
 
 The `map` function allows to define offset at compile-time: this allows
 to checks at compile-time that the memory area is large enough to store
@@ -1193,7 +1193,7 @@ which provides two main methods `solveNonLinearSystem` and
 `solveNonLinearSystem2` for the end users and many methods that can be
 overloaded to customize the behaviour of the algorithm.
 
-In pratice, the `NewtonRaphsonSolver` class presented in the previous
+In practice, the `NewtonRaphsonSolver` class presented in the previous
 example inherits from `TinyNewtonRaphson` `Solver<2u, double,
 NewtonRaphsonSolver>` which itself inherits from
 `TinyNonLinearSolverBase<2u, double, NewtonRaphsonSolver>`.
@@ -1410,7 +1410,7 @@ method to describe multi-surface plasticity. The active-set method makes
 *a priori* assumptions on which plastic mechanisms are active and solve
   the non-linear equations with those assumptions. After convergence,
   those assumptions are checked and some mechanisms may be activated or
-  desactivated and the non linear solver is restarted. The activation of
+  deactivated and the non linear solver is restarted. The activation of
   a plastic mechanism can lead the `computeResidual` method to fail (as
   described earlier, rejecting steps leading to a prediction well beyond
   the current plastic limit is generally a good strategy). The trouble

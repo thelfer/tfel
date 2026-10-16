@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   15/01/2025
+ * \date 15/01/2025
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

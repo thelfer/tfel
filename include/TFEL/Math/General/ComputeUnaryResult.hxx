@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/ComputeUnaryResult.hxx
  * \brief  This file declares the ComputeUnaryResult metafunction
  * \author Thomas Helfer
- * \date   13 Oct 2006
+ * \date 13/10/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

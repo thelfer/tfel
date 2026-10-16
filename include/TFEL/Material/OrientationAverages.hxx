@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/OrientationAverages.hxx
  * \author Antoine Martin
- * \date   13 May 2026
+ * \date 13/05/2026
  * \brief  This file makes the averages of orthotropic and transverse
  * isotropic tensors on different orientations.
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All

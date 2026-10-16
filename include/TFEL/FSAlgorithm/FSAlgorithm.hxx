@@ -3,7 +3,7 @@
  * \brief  This helper header file includes all headers defined in the
  * directory FSAlgorithm
  * \author Thomas Helfer
- * \date   30 jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -55,7 +55,7 @@ namespace aster {
    * \class  AsterInterfaceExceptions
    * \brief  Exceptions class for Aster interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInterfaceExceptions {
     /*!

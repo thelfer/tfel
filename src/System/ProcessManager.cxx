@@ -2,7 +2,7 @@
  * \file   src/System/ProcessManager.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03 nov 2007
+ * \date 03/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

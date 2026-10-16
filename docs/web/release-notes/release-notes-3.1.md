@@ -126,7 +126,7 @@ stages of the computations.
 Although very crude with respect to advanced approaches such as the
 `CADNA` library (see
 [@lamotte_cadna_c:_2010,@universite_pierre_et_marie_curie_cadna:_])
-or the `verrou` software, developped by `EDF` on top of `valgrind`
+or the `verrou` software, developed by `EDF` on top of `valgrind`
 (see @fevotte_verrou:_2016), those checks, combined with demanding
 convergence criteria, have proven to be helpful and led to several
 developments: see for example the section @sec:eigensolvers which
@@ -1471,7 +1471,7 @@ This method takes two named arguments:
 - `--has-bounds`: return `true` if a variable has bounds, `false`
   otherwise.
 - `--bounds-type`: return the bounds type associated to a
-  variable. The returned value has the follwing meaning:
+  variable. The returned value has the following meaning:
     - `None`
     - `Lower`
     - `Upper`
@@ -1480,7 +1480,7 @@ This method takes two named arguments:
 - `--has-physical-bounds`: return `true` if a variable has physical
   bounds, `false` otherwise.
 - `--physical-bounds-type`: return the physical bounds type associated
-  to a variable. The returned value has the follwing meaning:
+  to a variable. The returned value has the following meaning:
     - `None`
     - `Lower`
     - `Upper`
@@ -1867,7 +1867,7 @@ The following queries are now available:
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/50/>
 
-## Ticket #55: New functionnalities for multi-yield-surfaces plasticity
+## Ticket #55: New functionalities for multi-yield-surfaces plasticity
 
 The `@AdditionalConvergenceChecks` keyword is meant to introduce a
 code block returning stating if convergence has been reached. More

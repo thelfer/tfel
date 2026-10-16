@@ -3,7 +3,7 @@
  * \brief  This file implements the GenTypeCastError class
  * \see    GenTypeBase
  * \author Thomas Helfer
- * \date   29 Jan. 2009
+ * \date 29/01/2009
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

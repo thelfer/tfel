@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/for_each.hxx
  * \brief  This file implements the for_each class.
  * \author Thomas Helfer
- * \date   30 Jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -33,7 +33,7 @@ namespace tfel::fsalgo {
    * \see for_each.cxx for some elementary tests.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct for_each {
@@ -52,7 +52,7 @@ namespace tfel::fsalgo {
      * type.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename UnaryFunction>
     static void exe(InputIterator p, UnaryFunction& f) {

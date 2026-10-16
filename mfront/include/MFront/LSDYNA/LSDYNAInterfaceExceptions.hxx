@@ -56,7 +56,7 @@ namespace lsdyna {
    * \class  LSDYNAInterfaceExceptions
    * \brief  Exceptions class for LSDYNA interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_LSDYNA_VISIBILITY_EXPORT LSDYNAInterfaceExceptions {
     /*!

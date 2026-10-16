@@ -3,7 +3,7 @@
  * \brief  This file enables some operations in different Walpole
  * bases relative to different cases of symmetry for st2tost2.
  * \author Antoine Martin
- * \date   15 may 2026
+ * \date 15/05/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

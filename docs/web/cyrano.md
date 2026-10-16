@@ -1,6 +1,15 @@
-% Description of the `Cyrano3` interface
-% Thomas Helfer
-% 9/03/2018
+---
+title: Description of the Cyrano3 interface
+author: Thomas Helfer
+date: 09/03/2018
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underset{=}{\mathbf{#1}}}

@@ -1,6 +1,15 @@
-% Implementation of a multi-surface, compressible and perfect plastic behaviour using the Drucker-Prager yield criterion and a cap
-% Thomas Helfer
-% 21/11/2017
+---
+title: Implementation of a multi-surface, compressible and perfect plastic behaviour using the Drucker-Prager yield criterion and a cap
+author: Thomas Helfer
+date: 21/11/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\paren}[1]{{\left(#1\right)}}

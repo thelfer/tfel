@@ -2,7 +2,7 @@
  * \file   MFrontUtilities.hxx
  * \brief This header declares a few general functions
  * \author Thomas Helfer
- * \date   15/08/2015
+ * \date 15/08/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

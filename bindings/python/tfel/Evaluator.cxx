@@ -2,7 +2,7 @@
  * \file   Evaluator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   26/12/2017
+ * \date 26/12/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

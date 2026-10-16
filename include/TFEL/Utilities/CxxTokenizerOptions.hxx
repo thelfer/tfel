@@ -2,7 +2,7 @@
  * \file   CxxTokenizerOptions.hxx
  * \brief
  * \author Thomas Helfer
- * \date   6/02/018
+ * \date 06/02/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

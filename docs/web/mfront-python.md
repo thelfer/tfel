@@ -108,7 +108,7 @@ results of the output file generation, the name of the generated
 libraries and the name of the entry points. See the *Retrieving
 information about the (potential) outputs of the analysis of a
 `MFront` file: the `TargetsDescription` and the `LibraryDescription`
-classes* section below.
+class* section below.
 
 ### Analysing a file
 

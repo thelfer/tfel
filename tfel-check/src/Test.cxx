@@ -1,6 +1,6 @@
 /*!
  * \file tfel-check/src/Test.cxx
- * \date 29 mai 2013
+ * \date 29/05/2013
  * \author Remy Petkantchin
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.

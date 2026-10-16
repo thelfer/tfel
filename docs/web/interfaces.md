@@ -1,7 +1,15 @@
-% Interfaces
-% Thomas Helfer
-% November 26, 2014
-
+---
+title: Interfaces
+author: Thomas Helfer
+date: 26/11/2014
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 ![Interfaces allows the creation of a source code which is specific to the targeted language or solver](img/Interfaces.svg
  "Interfaces allow the creation of a source code which is specific to

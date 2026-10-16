@@ -1,6 +1,15 @@
-% Nonlinear mechanical behaviours of materials
-% Thomas Helfer
-% 2017
+---
+title: Nonlinear mechanical behaviours of materials
+author: Thomas Helfer
+date: 2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underset{=}{\mathbf{#1}}}
@@ -450,7 +459,7 @@ theory to finite rotation*
 - For pure dilatations:
     - \(\tepsilonto_{\mathrm{log}}=\displaystyle\int_{0}^{t}\tenseur{D}\,\dtot\,t\)
   - \(\tenseur{T}_{\mathrm{log}}\) is equal to the Kirchhoff
-    stress \(\tenseur{\tau}\), which is egal to the Cauchy stress
+    stress \(\tenseur{\tau}\), which is equal to the Cauchy stress
     \(\tsigma\) for isochoric deformation
   - However, the Hencky strain and its dual are costly to compute
   (see Miehe et al., 2005);

@@ -1,8 +1,14 @@
 ---
 title: Creating packages for TFEL/MFront
 author: Thomas Helfer
-date: October 31, 2014
+date: 31/10/2014
 lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
 ---
 
 The latest version of this document is always available at

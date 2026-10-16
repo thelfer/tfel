@@ -2,7 +2,7 @@
  * \file   mfront/src/JavaMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -310,7 +310,7 @@ namespace mfront {
       srcFile << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      srcFile << "* \\date   " << fd.date << '\n';
+      srcFile << "* \\date " << fd.date << '\n';
     }
     srcFile << " */\n\n";
     // headers

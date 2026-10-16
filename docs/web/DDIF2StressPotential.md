@@ -1,6 +1,15 @@
-% The `DDIF2` stress potential
-% Bruno Michel, Thomas Helfer
-% 12/2017
+---
+title: The DDIF2 stress potential
+author: Bruno Michel, Thomas Helfer
+date: 12/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 This page describes the `DDIF2` stress potential which describes a
 damaging law used in CEA's fuel performance codes. See

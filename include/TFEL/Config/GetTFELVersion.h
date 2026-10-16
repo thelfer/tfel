@@ -2,7 +2,7 @@
  * \file   GetTFELVersion.hxx
  * \brief    
  * \author HELFER Thomas 202608
- * \date   16 janv. 2018
+ * \date 16/01/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence with linking exception 

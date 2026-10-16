@@ -1,7 +1,7 @@
 /*!
  * \file Column.hxx
  *
- *  \date 23 mai 2013
+ *  \date 23/05/2013
  *  \author Remy Petkantchin
  *
  *  \class Column

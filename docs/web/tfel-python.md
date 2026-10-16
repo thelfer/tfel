@@ -1,5 +1,5 @@
 ---
-title:  Overview of the `TFEL` modules
+title: Overview of the TFEL modules
 author: Thomas Helfer
 date: 19/12/2017
 lang: en-EN
@@ -69,9 +69,8 @@ The following functions are available:
 ## Bindings related to the `st2tost2` class
 
 Three classes standing for fourth-order tensors with minor symmetries
-are available:
-`ST2toST21D`, `ST2toST22D`, `ST2toST23D`.
-These `class` can be initialized/modified as follows:
+are available: `ST2toST21D`, `ST2toST22D`, `ST2toST23D`.
+These classes can be initialized/modified as follows:
 
 ~~~~{.py}
 import tfel.math as tm

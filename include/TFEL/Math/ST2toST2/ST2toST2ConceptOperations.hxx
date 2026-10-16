@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx
  * \brief  This file implements operations that can be applied to st2tost2.
  * \author Thomas Helfer
- * \date   01/07/2006
+ * \date 01/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

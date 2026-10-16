@@ -1,6 +1,15 @@
-% How to implement a hyperelastic behaviour in MFront
-% Thomas Helfer
-% 15/12/2016
+---
+title: How to implement a hyperelastic behaviour in MFront
+author: Thomas Helfer
+date: 15/12/2016
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
  <!-- pandoc -f markdown-markdown_in_html_blocks+tex_math_single_backslash --mathjax -s  hyperelasticity.md  -o hyperelasticity.pdf -->
 

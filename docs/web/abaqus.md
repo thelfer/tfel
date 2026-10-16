@@ -1,6 +1,15 @@
-% The `Abaqus/Standard` and `Abaqus/Explicit` interfaces
-% Thomas Helfer
-% 12/08/2016
+---
+title: The Abaqus/Standard and Abaqus/Explicit interfaces
+author: Thomas Helfer
+date: 12/08/2016
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
 \newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}
@@ -41,7 +50,7 @@
     </video>
   </li>
   <li><img src="img/AbaqusFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li>
-  <li><img src="img/abaqus-isotropichardening1.png" width="620" height="320" alt="Notched beam under a cyclic loading with an isotropic hardening plastic beahviour" /></li>
+  <li><img src="img/abaqus-isotropichardening1.png" width="620" height="320" alt="Notched beam under a cyclic loading with an isotropic hardening plastic behaviour" /></li>
   </ul>
   <span class="arrow previous"></span>
   <span class="arrow next"></span>

@@ -2,7 +2,7 @@
  * \file   include/TFEL/TypeTraits/BaseType.hxx
  * \brief  This file declares the BaseType traits class.
  * \author Thomas Helfer
- * \date   26 Jul 2006
+ * \date 26/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,7 +22,7 @@
  * \brief An helper macro used to define BaseType for the standard
  * types.
  * \author Thomas Helfer
- * \date   26 Jul 2006
+ * \date 26/07/2006
  */
 #define TFEL_MATH_BASETYPE(X)            \
   /*!                                    \
@@ -46,7 +46,7 @@ namespace tfel::typetraits {
    * \return type, the fundamental numeric type upon which T is build.
    *
    * \author Thomas Helfer
-   * \date   26/07/2006
+   * \date 26/07/2006
    */
   template <typename T>
   struct BaseType {

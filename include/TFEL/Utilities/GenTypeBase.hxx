@@ -4,7 +4,7 @@
  * internal classes used by the GenType class.
  * \see    TL
  * \author Thomas Helfer
- * \date   19 Apr. 2007
+ * \date 19/04/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -38,7 +38,7 @@ namespace tfel::utilities::internals {
    * \see GenTypeSpecialisation.ixx for examples.
    * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
    * \author Thomas Helfer.
-   * \date   20 Apr. 2007.
+   * \date 20/04/2007.
    */
   template <typename Child, typename T>
   struct GenTypeSpecializedAccessor {};
@@ -52,7 +52,7 @@ namespace tfel::utilities::internals {
    * \see GenTypeSpecialisation.ixx for examples.
    * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
    * \author Thomas Helfer.
-   * \date   20 Apr. 2007.
+   * \date 20/04/2007.
    */
   template <typename Child, typename List>
   class GenTypeSpecializedMethods
@@ -82,7 +82,7 @@ namespace tfel::utilities::internals {
   /*!
    * \brief a partial specialisation to end the recursion.
    * \author Thomas Helfer.
-   * \date   20 Apr. 2007.
+   * \date 20/04/2007.
    */
   template <typename Child>
   class GenTypeSpecializedMethods<Child, tfel::meta::TLE> {};
@@ -109,7 +109,7 @@ namespace tfel::utilities {
    * \brief the base class of GenType.
    * \param  typename List, the list of types contained in the GenType.
    * \author Thomas Helfer.
-   * \date   20 Apr. 2007.
+   * \date 20/04/2007.
    */
   template <typename List>
   struct GenTypeBase

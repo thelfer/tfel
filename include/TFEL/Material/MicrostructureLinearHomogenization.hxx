@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/MicrostructureLinearHomogenization.hxx
  * \author Antoine Martin
- * \date   25 January 2025
+ * \date 25/01/2025
  * \brief  This file implements some homogenization schemes for generic
  * microstructures. \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All
  * rights reserved. This project is publicly released under either the GNU GPL

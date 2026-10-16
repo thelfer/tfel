@@ -1,7 +1,14 @@
 ---
-title: Installing `TFEL/MFront` on `FreeBSD`
+title: Installing TFEL/MFront on FreeBSD
 author: Thomas Helfer
 date: 20/12/2024
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
 ---
 
 <div id="slideshow">

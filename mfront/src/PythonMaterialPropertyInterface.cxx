@@ -2,7 +2,7 @@
  * \file   mfront/src/PythonMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -290,7 +290,7 @@ namespace mfront {
       out << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      out << "* \\date   " << date << '\n';
+      out << "* \\date " << date << '\n';
     }
     if (!description.empty()) {
       out << description << '\n';
@@ -323,7 +323,7 @@ namespace mfront {
       srcFile << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      srcFile << "* \\date   " << date << '\n';
+      srcFile << "* \\date " << date << '\n';
     }
     srcFile << " */\n\n"
             << "#include <Python.h>\n\n"
@@ -565,7 +565,7 @@ namespace mfront {
       wrapper << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      wrapper << "* \\date   " << date << '\n';
+      wrapper << "* \\date " << date << '\n';
     }
     if (!description.empty()) {
       wrapper << description << '\n';

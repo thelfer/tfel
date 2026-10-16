@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/Eshelby.hxx
  * \author Antoine Martin
- * \date   15 October 2024
+ * \date 15/10/2024
  * \brief  This file includes IsotropicEshelbyTensor.hxx
  * \copyright Copyright (C) 2006-2018 CEA/DEN,
  * EDF R&D. All rights reserved. This project is publicly released under either

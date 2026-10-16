@@ -355,7 +355,7 @@ Tmax.setEntryName("MaximalValueOfTheTemperature");
   const auto dpp = [&eeps](const real x) { return std::abs(x) < eeps ? 0.5 : ((x < 0) ? 0 : 1); };
   // square of the posititve part
   auto square_ppos = [](const strain& v) { return v > 0 ? v * v : 0; };
-  // elastic strain at the midle of the time step
+  // elastic strain at the middle of the time step
   const auto e = eval(eel + deel);
   // eigen values and eigen tensors of the elastic strain
   auto e_vp = tvector<3u, strain>{};

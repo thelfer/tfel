@@ -81,7 +81,7 @@ variables, etc.), post-processing variables can be defined after the
 first code block. However, care must be taken to declare post-processing
 variables **before** their use in a post-processing.
 
-Note that a post-processing variable can be used in differents
+Note that a post-processing variable can be used in different
 post-processings. Typically, one may compute the principal strains in a
 dedicated post-processing and in a post-processing computing the
 principal strains and the strain eigen vectors.

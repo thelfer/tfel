@@ -355,7 +355,7 @@ Note that the Mandel stress is not symmetric.
 > \end{aligned}
 > \]
 >
-> where we re-used Equation @eq:mfront:FeFpImplicitPlasticity:trace:similarity_invariance.
+> where we reused Equation @eq:mfront:FeFpImplicitPlasticity:trace:similarity_invariance.
 
 ## Clausius-Duhem inequality
 
