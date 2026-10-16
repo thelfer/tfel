@@ -166,6 +166,11 @@ namespace tfel::check {
     //! \brief number of parallel jobs
     tfel::system::ThreadPool::size_type njobs = 1;
     /*!
+     * \brief boolean stating if the generated files and directories listed by
+     * the @CleanFiles and @CleanDirectories keywords must be removed
+     */
+    bool clean_up = true;
+    /*!
      * \brief boolean stating if the number of jobs allowed shall be lesser
      * than the number of cores
      */
@@ -280,6 +285,14 @@ namespace tfel::check {
                  },
                  true));
     this->registerCallBack(
+        "--clean-up", CallBack(
+                          "clean generated files and directories listed by "
+                          "the @CleanFiles and @CleanDirectories keywords.",
+                          [this, read_boolean_value] {
+                            this->clean_up = read_boolean_value("--clean-up");
+                          },
+                          true));
+    this->registerCallBack(
         "--synchronize-terminal-output",
         CallBack(
             "synchronize the terminal output in parallel (false by default). "
@@ -393,10 +406,12 @@ namespace tfel::check {
       // store the output of the given process that will be saved in
       // tfel-check.log
       std::ostringstream output;
-      auto log = PCLogger(std::make_shared<PCTextDriver>(output, true));
+      auto log = PCLogger(
+          std::make_shared<PCTextDriver>(output, this->use_terminal_colors));
       // this adds unsynchronized output to std::cout
       if (!this->synchronize_terminal_output) {
-        log.addDriver(std::make_shared<PCTextDriver>());
+        log.addDriver(
+            std::make_shared<PCTextDriver>(this->use_terminal_colors));
       }
       log.addMessage("entering directory '" + path + "'");
       log.addMessage("* beginning of test '" + d + '/' + f + "'");
