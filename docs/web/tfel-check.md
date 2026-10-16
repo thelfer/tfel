@@ -80,7 +80,7 @@ is used, if the system provide this information.
 
 By default, this number must be lower than the number of cores
 available. This limit can be discarded by
-passing`--discard-jobs-limit=true` to `tfel-check`.
+passing `--discard-jobs-limit=true` to `tfel-check`.
 
 ### Caution
 
@@ -454,6 +454,7 @@ passing `--help` (`-h`) to `tfel-check`.
 Usage: tfel-check [options] [files]
 
 Available options are : 
+--clean-up                      : clean generated files and directories listed by the @CleanFiles and @CleanDirectories keywords.
 --config, -c                    : add a configuration file
 --discard-commands-failure      : discard command's failure if comparisons are ok (default behaviour). If no comparisons is declared, command's failure is never ignored.
 --discard-jobs-limit            : disable test on the number of jobs allowed to run simultaneously.

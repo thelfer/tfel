@@ -259,7 +259,7 @@ struct MicrostructureDerivativesTest final : public tfel::tests::TestCase {
                                        {mu0, mui, mui3, mui4});
 
   }  // end of test_poly
-};  // end of struct MicrostructureDerivativesTest
+};   // end of struct MicrostructureDerivativesTest
 
 TFEL_TESTS_GENERATE_PROXY(MicrostructureDerivativesTest,
                           "MicrostructureDerivatives");

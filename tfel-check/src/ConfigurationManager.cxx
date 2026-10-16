@@ -129,6 +129,12 @@ namespace tfel::check {
     });
   }
 
+  void ConfigurationManager::setCleanUp(const bool b) {
+    this->modify([&b](Configuration& cf) noexcept {  //
+      cf.clean_up = b;
+    });
+  }
+
   const Configuration& ConfigurationManager::getConfiguration() const {
     return this->configuration;
   }  // end of getConfiguration

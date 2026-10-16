@@ -4961,7 +4961,7 @@ namespace mfront {
       } else if ((v1.arraySize == 1u) || (v2.arraySize == 1u)) {
         auto ptr = std::string{"this->Dt.data() + "};
         if (!o.isNull()) {
-          ptr += o.asString()+ " + ";
+          ptr += o.asString() + " + ";
         }
         ptr += "mfront_idx * " + block_size.asString();
         os << "/*!\n"
@@ -4970,7 +4970,8 @@ namespace mfront {
            << " * \\param[in] mfront_idx: array index relative to " << v1.name
            << "\n"
            << " */\n"
-           << "decltype(auto) " << bn << "(const ushort mfront_idx) noexcept {\n";
+           << "decltype(auto) " << bn
+           << "(const ushort mfront_idx) noexcept {\n";
         if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
             (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
           if (bd.useQt()) {

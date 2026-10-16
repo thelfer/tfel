@@ -24,9 +24,9 @@
 namespace tfel::material::homogenization::elasticity {
 
   template <unsigned short N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  struct EllipsoidMeanLocalisator {
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) struct EllipsoidMeanLocalisator {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
     static constexpr auto eps =
@@ -371,17 +371,16 @@ namespace tfel::material::homogenization::elasticity {
   };  // end of struct EllipsoidMeanLocalisator ;
 
   template <unsigned short N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE static tfel::math::st2tost2<3u,
-                                               types::compliance<StressType>>
-  DerivativesOfMeanLocalisator(
-      const IsotropicModuli<StressType>& IM0,
-      const IsotropicModuli<StressType>& IMi,
-      const types::real<StressType>& e,
-      const tfel::math::stensor<3u, types::real<StressType>>& A2,
-      const tfel::math::st2tost2<3u, types::real<StressType>>& A4,
-      const std::array<types::real<StressType>, 4>& dkg) {
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE static tfel::math::
+      st2tost2<3u, types::compliance<StressType>> DerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType>& IM0,
+          const IsotropicModuli<StressType>& IMi,
+          const types::real<StressType>& e,
+          const tfel::math::stensor<3u, types::real<StressType>>& A2,
+          const tfel::math::st2tost2<3u, types::real<StressType>>& A4,
+          const std::array<types::real<StressType>, 4>& dkg) {
     using real = types::real<StressType>;
     using compliance = types::compliance<StressType>;
 

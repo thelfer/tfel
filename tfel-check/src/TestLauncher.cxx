@@ -841,24 +841,26 @@ namespace tfel::check {
           success);
     }
     // files and directories clean-up
-    for (const auto& f : this->cleanfiles) {
-      try {
-        tfel::system::systemCall::unlink(f);
-      } catch (std::exception& e) {
-        this->glog.addMessage("cleaning file '" + f +
-                              "' failed: " + std::string{e.what()});
-      } catch (...) {
-        this->glog.addMessage("cleaning file '" + f + "' failed");
+    if (configuration.clean_up) {
+      for (const auto& f : this->cleanfiles) {
+        try {
+          tfel::system::systemCall::unlink(f);
+        } catch (std::exception& e) {
+          this->glog.addMessage("cleaning file '" + f +
+                                "' failed: " + std::string{e.what()});
+        } catch (...) {
+          this->glog.addMessage("cleaning file '" + f + "' failed");
+        }
       }
-    }
-    for (const auto& d : this->cleandirectories) {
-      try {
-        tfel::system::systemCall::rmdir(d);
-      } catch (std::exception& e) {
-        this->glog.addMessage("cleaning directory '" + d +
-                              "' failed: " + std::string{e.what()});
-      } catch (...) {
-        this->glog.addMessage("cleaning directory '" + d + "' failed");
+      for (const auto& d : this->cleandirectories) {
+        try {
+          tfel::system::systemCall::rmdir(d);
+        } catch (std::exception& e) {
+          this->glog.addMessage("cleaning directory '" + d +
+                                "' failed: " + std::string{e.what()});
+        } catch (...) {
+          this->glog.addMessage("cleaning directory '" + d + "' failed");
+        }
       }
     }
     return gsuccess;

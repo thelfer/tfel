@@ -42,17 +42,19 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
   }  // end of DerivativesOfMeanLocalisatorsTest
 
   tfel::tests::TestResult execute() override {
-    this->template test_loc_A2A4_derivative<double, false>(1e-6, 1e-9,10);
-    this->template test_loc_A2A4_derivative<double, true>(1e-6, 1e-9,10);
+    this->template test_loc_A2A4_derivative<double, false>(1e-6, 1e-9, 10);
+    this->template test_loc_A2A4_derivative<double, true>(1e-6, 1e-9, 10);
 
-    this->template test_loc_A2A4_derivative<double, false>(1e-6, 1e-9,0.5);
-    this->template test_loc_A2A4_derivative<double, true>(1e-6, 1e-9,0.5);
+    this->template test_loc_A2A4_derivative<double, false>(1e-6, 1e-9, 0.5);
+    this->template test_loc_A2A4_derivative<double, true>(1e-6, 1e-9, 0.5);
 
     return this->result;
   }
 
   template <typename NumericType, bool use_qt>
-  void test_loc_A2A4_derivative(const NumericType h, const NumericType eps,const NumericType e) {
+  void test_loc_A2A4_derivative(const NumericType h,
+                                const NumericType eps,
+                                const NumericType e) {
     using stress =
         typename tfel::config::Types<1u, NumericType, use_qt>::stress;
     using real = typename tfel::config::Types<1u, NumericType, use_qt>::real;
@@ -77,7 +79,7 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
     tfel::math::tvector<3u, real> n_b = {-std::sqrt(2) / 2., std::sqrt(2) / 2.,
                                          0.};
     const length a = length(1.);
-    const length b = a/e;
+    const length b = a / e;
     using namespace tfel::material::homogenization::elasticity;
 
     tfel::math::stensor<3u, real> A2 = tfel::math::stensor<3u, real>::Id();
@@ -89,8 +91,8 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
     A4(0, 0) = real(0.1);
     A4(1, 1) = real(0.1);
 
-    auto func = [&e,&A2,&A4](const stress& k0_, const stress& mu0_, const stress& ki_,
-                    const stress& mui_) {
+    auto func = [&e, &A2, &A4](const stress& k0_, const stress& mu0_,
+                               const stress& ki_, const stress& mui_) {
       return EllipsoidMeanLocalisator<3u, stress>::
           UserDefinedDistributionOfSpheroids(KGModuli<stress>(k0_, mu0_),
                                              KGModuli<stress>(ki_, mui_),
@@ -105,7 +107,7 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
           DerivativesOfMeanLocalisator<3u, stress>(KG0, KGi, e, A2, A4, dt_[i]);
 
       std::array<stress, 4> kk_ = {k0, mu0, ki, mui};
-      auto func2 = [&func,&kk_,&i](const stress& _k_) {
+      auto func2 = [&func, &kk_, &i](const stress& _k_) {
         kk_[i] = _k_;
         return func(kk_[0], kk_[1], kk_[2], kk_[3]);
       };
@@ -124,8 +126,8 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
       const auto dAvIso_dt =
           isod.computeDerivativesOfMeanLocalisator(KG0, dt_[i]);
 
-      auto funcIso = [&a,&b](const stress& k0_, const stress& mu0_,
-                         const stress& ki_, const stress& mui_) {
+      auto funcIso = [&a, &b](const stress& k0_, const stress& mu0_,
+                              const stress& ki_, const stress& mui_) {
         auto A = EllipsoidMeanLocalisator<3u, stress>::Isotropic(
             KGModuli<stress>(k0_, mu0_), KGModuli<stress>(ki_, mui_),
             {a, b, b});
@@ -133,7 +135,7 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
       };
 
       kk_ = {k0, mu0, ki, mui};
-      auto funcIso2 = [&funcIso,&kk_,&i](const stress& _k_) {
+      auto funcIso2 = [&funcIso, &kk_, &i](const stress& _k_) {
         kk_[i] = _k_;
         return funcIso(kk_[0], kk_[1], kk_[2], kk_[3]);
       };
@@ -153,15 +155,15 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
       const auto dAvTiso_dt =
           tisod.computeDerivativesOfMeanLocalisator(KG0, dt_[i]);
 
-      auto funcTiso = [&n_a,&a,&b](const stress& k0_, const stress& mu0_,
-                          const stress& ki_, const stress& mui_) {
+      auto funcTiso = [&n_a, &a, &b](const stress& k0_, const stress& mu0_,
+                                     const stress& ki_, const stress& mui_) {
         auto A = EllipsoidMeanLocalisator<3u, stress>::TransverseIsotropic(
             KGModuli<stress>(k0_, mu0_), KGModuli<stress>(ki_, mui_), n_a, a, b,
             b);
         return A;
       };
       kk_ = {k0, mu0, ki, mui};
-      auto funcTiso2 = [&funcTiso,&kk_,&i](const stress& _k_) {
+      auto funcTiso2 = [&funcTiso, &kk_, &i](const stress& _k_) {
         kk_[i] = _k_;
         return funcTiso(kk_[0], kk_[1], kk_[2], kk_[3]);
       };
@@ -178,15 +180,16 @@ struct DerivativesOfMeanLocalisatorsTest final : public tfel::tests::TestCase {
       auto od =
           OrientedDistribution<stress>(Ellipsoid(a, b, b), 0.1, KGi, n_b, n_a);
       const auto dAvOr_dt = od.computeDerivativesOfMeanLocalisator(KG0, dt_[i]);
-      auto funcOr = [&n_a,&n_b,&a,&b](const stress& k0_, const stress& mu0_,
-                        const stress& ki_, const stress& mui_) {
+      auto funcOr = [&n_a, &n_b, &a, &b](const stress& k0_, const stress& mu0_,
+                                         const stress& ki_,
+                                         const stress& mui_) {
         auto A = EllipsoidMeanLocalisator<3u, stress>::Oriented(
             KGModuli<stress>(k0_, mu0_), KGModuli<stress>(ki_, mui_), n_b, a,
             n_a, b, b);
         return A;
       };
       kk_ = {k0, mu0, ki, mui};
-      auto funcOr2 = [&funcOr,&kk_,&i](const stress& _k_) {
+      auto funcOr2 = [&funcOr, &kk_, &i](const stress& _k_) {
         kk_[i] = _k_;
         return funcOr(kk_[0], kk_[1], kk_[2], kk_[3]);
       };
