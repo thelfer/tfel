@@ -38,7 +38,14 @@ namespace tfel::check {
     Configuration& operator=(const Configuration&);
     /*!
      * \brief boolean stating if the generated files and directories listed by
-     * the @CleanFiles and @CleanDirectories keywords must be removed
+     * the @CleanFiles and @CleanDirectories keywords shall not be removed in
+     * case of the failure
+     */
+    bool discard_clean_up_on_failure = true;
+    /*!
+     * \brief boolean stating if the generated files and directories listed by
+     * the @CleanFiles and @CleanDirectories keywords must be removed.
+     * This option is only considered in case of success.
      */
     bool clean_up = true;
     /*!

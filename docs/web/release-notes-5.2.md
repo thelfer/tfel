@@ -327,8 +327,17 @@ environment_variables: {"CXXFLAGS": "-Wall"};
 
 The `--clean-up` command line argument allows to choose whether the
 generated files and directories listed by the `@CleanFiles` and
-`@CleanDirectories` keywords will be cleaned or not (this is the case by
-default).
+`@CleanDirectories` keywords will be cleaned (this is the case by
+default) or not in case of success.
+
+~~~~{.bash}
+$ tfel-check --clean-up
+~~~~
+
+The `--discard-clean-up-on-failure` command line argument allows to
+choose whether the generated files and directories listed by the
+`@CleanFiles` and `@CleanDirectories` keywords will be cleaned or not
+(this is the case by default) in case of failure.
 
 ~~~~{.bash}
 $ tfel-check --clean-up
@@ -594,7 +603,11 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
-## Issue 1037: [tfel-check] add a --clean option to select whether or not cleaning is done
+## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
+
+For more details, see <https://github.com/thelfer/tfel/issues/1038>
+
+## Issue 1037: [tfel-check] add a `--clean` option to select whether or not cleaning is done
 
 For more details, see <https://github.com/thelfer/tfel/issues/1037>
 
