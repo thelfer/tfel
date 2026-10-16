@@ -47,15 +47,7 @@ to `MFront` and `Salome-MECA`", which is available
 
 # MFront documentation
 
-## References
-
-- General introduction. Material properties and Models: [mfront.pdf](documents/mfront/mfront.pdf)
-- Writing mechanical behaviours: [behaviours.pdf](documents/mfront/behaviours.pdf)
-- How to handle plane stress in implicit schemes: [planestress.pdf](documents/mfront/planestress.pdf)
-- Finite strain behaviours [finitestrain.pdf](documents/mfront/finitestrain.pdf)
-- `MTest` user guide: [mtest.pdf](documents/mtest/mtest.pdf)
-
-## 🛠 Tutorials & Examples
+## Tutorials & Examples
 
 Learn by doing with hands-on examples.
 
@@ -126,7 +118,7 @@ MFront Users are available there:
 | [Post-Processings](post-processings.html) | How to extract and analyze results. |
 | [Parameters](parameters.html) | Material parameters and their usage. |
 
-## 🔌 Interfaces
+## Interfaces
 
 ### Interfaces dedicated to material properties
 
@@ -152,7 +144,7 @@ TFEL/MFront supports multiple finite element solvers. Each interface has its own
 | **AMITEX_FFTP** | FFT-based solver. | [AMITEX Interface](amitex.html) |
 | **Generic interface** | For use with the [MGIS project](https://thelfer.github.io/mgis/web/index.html). | [Generic Interface](generic-behaviours-interface.html) |
 
-## 📖 Advanced topics ⭐⭐/⭐⭐⭐
+## Advanced topics ⭐⭐/⭐⭐⭐
 
 | Resource | Description |
 |----------|-------------|
@@ -183,7 +175,7 @@ documentation associated with a keyword.
 | Runge-Kutta | Explicit integration for ODE-based behaviours. | [Runge-Kutta Keywords](RungeKutta-keywords.html) |
 | IsotropicPlasticMisesFlow | DSL for isotropic J₂ plasticity. | [Keywords](IsotropicPlasticMisesFlow-keywords.html) |
 
-# 🧪 Testing & Validation ⭐⭐
+# Testing & Validation ⭐⭐
 
 Tools and guides for testing your implementations.
 
@@ -203,7 +195,7 @@ Tools and guides for testing your implementations.
 | [MFront Python](mfront-python.html) | Python bindings for MFront. |
 | [MTest Python](mtest-python.html) | Python bindings for MTest. |
 
-# 📊 Advanced Topics ⭐⭐/⭐⭐⭐
+# Advanced Topics ⭐⭐/⭐⭐⭐
 
 For experienced users.
 
@@ -232,11 +224,24 @@ Usage of the TFEL libraries in `C++` is described in [this page](libraries_usage
 
 The `Doxygen` documentation is available [here](https://thelfer.github.io/tfel/doxygen/index.html).
 
-# 📌 Legend
+# Legend
 
 - ⭐: Beginner
 - ⭐⭐: Intermediate
 - ⭐⭐⭐: Advanced
+
+# External Resources
+
+Additional materials (mostly outdated) and references.
+
+| Resource | Description |
+|----------|-------------|
+| [TFEL/MFront Reference Manual (PDF)](documents/mfront/mfront.pdf) | Complete reference manual (French). |
+| [Behaviours Manual (PDF)](documents/mfront/behaviours.pdf) | Guide to writing mechanical behaviours (French). |
+| [planestress.pdf](documents/mfront/planestress.pdf) | How to handle plane stress in implicit schemes. |
+| [finitestrain.pdf](documents/mfront/finitestrain.pdf) |  Finite strain behaviours. |
+| [MTest User Guide (PDF)](documents/mtest/mtest.pdf) | MTest documentation. |
+| [TFEL Doc Repository](https://github.com/thelfer/tfel-doc) | Additional talks, tutorials, and documents. |
 
 # Bibliography
 

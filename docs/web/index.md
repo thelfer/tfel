@@ -98,7 +98,7 @@ A set of interfaces are provided for various solvers:
 For material properties, various interfaces are also provided and
 cover the following languages: `C`, `C++`, `python`, `fortran`, etc.
 
-# 🏁 Getting Started
+# Getting Started
 
 New to TFEL/MFront? Start here!
 
@@ -109,7 +109,11 @@ New to TFEL/MFront? Start here!
 | [Documentation](documentations.html) | List of all available documentation. | ⭐/⭐⭐/⭐⭐⭐ |
 | [FAQ](faq.html) | Frequently asked questions and troubleshooting. | ⭐ |
 
-# 🔧 Development & Contribution
+- ⭐: Beginner
+- ⭐⭐: Intermediate
+- ⭐⭐⭐: Advanced
+
+# Development & Contribution
 
 For developers and contributors.
 
@@ -122,7 +126,7 @@ For developers and contributors.
 | [Packages](packages.html) | Creating binary packages for TFEL. |
 | [TFEL System](TFELSystem.html) | Overview of TFEL's architecture. |
 
-# 📜 Release Notes & History
+# Release Notes & History
 
 Stay up-to-date with the latest changes.
 
@@ -137,7 +141,7 @@ Stay up-to-date with the latest changes.
 
 > **Note**: For a consolidated changelog, see [CHANGELOG.md](CHANGELOG.md).
 
-# 🌍 Community & Support
+# Community & Support
 
 Get help and connect with the TFEL/MFront community.
 
@@ -149,26 +153,6 @@ Get help and connect with the TFEL/MFront community.
 | [Associated Projects](associated-projects.html) | Projects using or extending TFEL/MFront. |
 | [Publications](publications.html) | Scientific papers and references. |
 | [News](news.html) | Latest news and announcements. |
-
-# 📚 External Resources
-
-Additional materials and references.
-
-| Resource | Description |
-|----------|-------------|
-| [TFEL/MFront Reference Manual (PDF)](documents/mfront/mfront.pdf) | Complete reference manual (French). |
-| [Behaviours Manual (PDF)](documents/mfront/behaviours.pdf) | Guide to writing mechanical behaviours (French). |
-| [MTest User Guide (PDF)](documents/mtest/mtest.pdf) | MTest documentation. |
-| [TFEL Doc Repository](https://github.com/thelfer/tfel-doc) | Additional talks, tutorials, and documents. |
-| [Bibliography](bibliography.bib) | References cited in the documentation. |
-
----
-
-## 📌 Legend
-
-- ⭐: Beginner
-- ⭐⭐: Intermediate
-- ⭐⭐⭐: Advanced
 
 > **Note**: This documentation is a **work in progress**. Contributions are welcome! See [Contributing](contributing.html) for details.
 
