@@ -166,7 +166,10 @@ set(mfront_tests_SOURCES
   ArrayOfScalarGradients
   ArrayOfStensorGradients
   PoroElasticity
-  PoroPlasticity)
+  PoroPlasticity
+  BarBehaviour
+  BarBehaviour3
+)
 
 if(enable-mfront-quantity-tests)
   list(APPEND mfront_tests_SOURCES
@@ -194,7 +197,10 @@ if(enable-mfront-quantity-tests)
        TensorialExternalStateVariableTest
        ode_default
        ode_rk54
-       ode_implicit)
+       ode_implicit
+       BarBehaviour2
+       BarBehaviour4
+)
 endif(enable-mfront-quantity-tests)
 
 mfront_dependencies(MFrontGenericBehaviours
@@ -614,6 +620,12 @@ test_generic_fs(saintvenantkirchhoffelasticity-shear-5-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-shear-6-3D)
 
 test_generic(saintvenantkirchhoffelasticity4-uniaxialloading-1-3D)
+test_generic(bar)
+test_generic(bar3)
+if(enable-mfront-quantity-tests)
+  test_generic(bar2)
+  test_generic(bar4)
+endif(enable-mfront-quantity-tests)
 
 # test_generic(elasticity_frst-uniaxialloading-1-1D)
 # test_generic(elasticity_frst-uniaxialloading-2-1D)

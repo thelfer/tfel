@@ -53,6 +53,14 @@ The following options are supported:
   this value is accepted without looking outside the tile; below it, the
   search extends to the rows under the tile (out-of-tile pivoting) and
   the best candidate wins.
+- `relative_pivot_threshold`: relative threshold of the pivot choice
+  inside the diagonal tile, in `]0, 1]`. The row in place keeps the
+  pivot when its magnitude reaches both this fraction of the largest
+  in-tile candidate and the out-of-tile search threshold; otherwise the
+  largest in-tile candidate wins. This threshold governs the in-tile
+  choice only: the out-of-tile search keeps its absolute threshold. A
+  value of `1` takes the largest in-tile candidate. This option requires
+  a version of `TDLS` later than 0.2.0.
 - `singular_pivot_threshold`: the factorization is declared singular
   when even the best candidate of the out-of-tile recovery stays below
   this threshold. This option must be set together with the
@@ -75,6 +83,8 @@ are:
 - `true` for `unroll_inner_loop`
 - `1e-10` for `out_of_tile_search_threshold` (or `1e-4` for single
   precision)
+- `0.1` for `relative_pivot_threshold` (`TDLS` 0.2.0 takes the largest
+  in-tile candidate, as a threshold of `1`)
 - `std::numeric_limits<double>::min()` for `singular_pivot_threshold`
   (or `std::numeric_limits<float>::min()` for single precision)
 

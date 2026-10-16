@@ -50,6 +50,8 @@ namespace tfel::config {
                        T>;
     using viscouscompliance =
         tfel::math::qt<tfel::math::unit::StandardUnit<-1, 1, 1, 0, 0, 0, 0>, T>;
+    using squared_compliance =
+        tfel::math::qt<tfel::math::unit::StandardUnit<-2, 2, 4, 0, 0, 0, 0>, T>;
     using stressrate = tfel::math::qt<tfel::math::unit::StressRate, T>;
     using temperature = tfel::math::qt<tfel::math::unit::Temperature, T>;
     using thermalexpansion =
@@ -80,6 +82,7 @@ namespace tfel::config {
     using force = T;
     using stress = T;
     using compliance = T;
+    using squared_compliance = T;
     using viscosity = T;
     using viscouscompliance = T;
     using stressrate = T;

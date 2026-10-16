@@ -771,9 +771,12 @@ namespace tfel::check {
 
   bool TestLauncher::execute(const Configuration& configuration) {
     using namespace tfel::utilities;
-    bool gsuccess = true; /* global success indicator : false only
-                             if comparison fails or when command
-                             fails if no comparison are given*/
+    /* global success indicator:
+     * - false if a comparison failed
+     * - false if a command failed and no comparison is given
+     * - false if a command failed and command failure is not discarded
+     */
+    bool gsuccess = true; 
     // checking that the requirements are met
     const auto& components = configuration.available_components;
     for (const auto& r : this->requirements) {
@@ -841,24 +844,32 @@ namespace tfel::check {
           success);
     }
     // files and directories clean-up
-    for (const auto& f : this->cleanfiles) {
-      try {
-        tfel::system::systemCall::unlink(f);
-      } catch (std::exception& e) {
-        this->glog.addMessage("cleaning file '" + f +
-                              "' failed: " + std::string{e.what()});
-      } catch (...) {
-        this->glog.addMessage("cleaning file '" + f + "' failed");
+    const auto do_clean_up = [&configuration, &gsuccess] {
+      if (!gsuccess) {
+        return !configuration.discard_clean_up_on_failure;
       }
-    }
-    for (const auto& d : this->cleandirectories) {
-      try {
-        tfel::system::systemCall::rmdir(d);
-      } catch (std::exception& e) {
-        this->glog.addMessage("cleaning directory '" + d +
-                              "' failed: " + std::string{e.what()});
-      } catch (...) {
-        this->glog.addMessage("cleaning directory '" + d + "' failed");
+      return configuration.clean_up;
+    }();
+    if (do_clean_up) {
+      for (const auto& f : this->cleanfiles) {
+        try {
+          tfel::system::systemCall::unlink(f);
+        } catch (std::exception& e) {
+          this->glog.addMessage("cleaning file '" + f +
+                                "' failed: " + std::string{e.what()});
+        } catch (...) {
+          this->glog.addMessage("cleaning file '" + f + "' failed");
+        }
+      }
+      for (const auto& d : this->cleandirectories) {
+        try {
+          tfel::system::systemCall::rmdir(d);
+        } catch (std::exception& e) {
+          this->glog.addMessage("cleaning directory '" + d +
+                                "' failed: " + std::string{e.what()});
+        } catch (...) {
+          this->glog.addMessage("cleaning directory '" + d + "' failed");
+        }
       }
     }
     return gsuccess;

@@ -280,6 +280,27 @@ namespace tfel::check {
                  },
                  true));
     this->registerCallBack(
+        "--clean-up", CallBack(
+                          "clean generated files and directories listed by "
+                          "the @CleanFiles and @CleanDirectories keywords in "
+                          "case of success (true by default).",
+                          [this, read_boolean_value] {
+                            const auto b = read_boolean_value("--clean-up");
+                            this->configurations.setCleanUp(b);
+                          },
+                          true));
+    this->registerCallBack(
+        "--discard-clean-up-on-failure",
+        CallBack(
+            "don't clean generated files and directories listed by "
+            "the @CleanFiles and @CleanDirectories keywords in case of "
+            "failure (true by default).",
+            [this, read_boolean_value] {
+              const auto b = read_boolean_value("--discard-clean-up-on-failure");
+              this->configurations.discardCleanUpOnFailure(b);
+            },
+            true));
+    this->registerCallBack(
         "--synchronize-terminal-output",
         CallBack(
             "synchronize the terminal output in parallel (false by default). "
@@ -393,10 +414,12 @@ namespace tfel::check {
       // store the output of the given process that will be saved in
       // tfel-check.log
       std::ostringstream output;
-      auto log = PCLogger(std::make_shared<PCTextDriver>(output, true));
+      auto log = PCLogger(
+          std::make_shared<PCTextDriver>(output, this->use_terminal_colors));
       // this adds unsynchronized output to std::cout
       if (!this->synchronize_terminal_output) {
-        log.addDriver(std::make_shared<PCTextDriver>());
+        log.addDriver(
+            std::make_shared<PCTextDriver>(this->use_terminal_colors));
       }
       log.addMessage("entering directory '" + path + "'");
       log.addMessage("* beginning of test '" + d + '/' + f + "'");

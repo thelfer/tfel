@@ -6,6 +6,7 @@
   out_of_tile_search_strategy : "first_acceptable",
   unroll_inner_loop : true,
   out_of_tile_search_threshold : 1e-10,
+  relative_pivot_threshold : 0.1,
   singular_pivot_threshold : 1e-100
 };
 @Import "TDLSElasticity-common.mfront";

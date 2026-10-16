@@ -64,8 +64,14 @@ If not provided, `tfel-check` uses the number of available CPU cores.
 
 #### Job limit
 
-By default, the number of jobs cannot exceed the available CPU cores.
-This restriction can be disabled with `--discard-jobs-limit=true`.
+If no option is given to `--jobs`, the number of available cores
+is used, if the system provide this information.
+
+#### Limit on the number of jobs
+
+By default, this number must be lower than the number of cores
+available. This limit can be discarded by
+passing `--discard-jobs-limit=true` to `tfel-check`.
 
 ### Caution
 
@@ -646,6 +652,8 @@ $ tfel-check --help
 
 | Option | Description |
 |--------|-------------|
+| `--clean-up` | clean generated files and directories listed by the @CleanFiles and @CleanDirectories keywords in case of success. |
+| `--discard-clean-up-on-failure` | don't clean generated files and directories listed by the @CleanFiles and @CleanDirectories keywords in case of failure (true by default). |
 | `--config, -c` | Add a configuration file. |
 | `--discard-commands-failure` | Ignore command failures if comparisons pass (default: `true`). If no comparisons are defined, failures are never ignored. |
 | `--discard-jobs-limit` | Disable the limit on parallel jobs (default: enforced). |
@@ -680,4 +688,16 @@ Override a substitution and enable terminal colors:
 
 ~~~~{.bash}
 $ tfel-check --@python@=python3.10 --use-terminal-colors=true
+=======
+Available options are : 
+--config, -c                    : add a configuration file
+--discard-commands-failure      : discard command's failure if comparisons are ok (default behaviour). If no comparisons is declared, command's failure is never ignored.
+--discard-jobs-limit            : disable test on the number of jobs allowed to run simultaneously.
+--help, -h                      : Display this message
+--jobs, -j                      : specifies the number of jobs (commands) to run simultaneously
+--list-default-components       : list all default components
+--synchronize-terminal-output   : synchronize the terminal output in parallel (false by default). If synchronized, the results of each `.check` file is diplayed after its full completion.
+--use-terminal-colors           : use terminal colors for terminal output (std::cout).
+--version, -v                   : Display version information
+>>>>>>> master
 ~~~~

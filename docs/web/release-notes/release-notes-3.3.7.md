@@ -33,4 +33,4 @@ and inherits from all fixes from those releases.
 
 ## Issue 718: [mfront] register tangent operator blocks as members
 
-For more details, see <https://github.com/thelfer/tfel/issues/718.
+For more details, see <https://github.com/thelfer/tfel/issues/718>.

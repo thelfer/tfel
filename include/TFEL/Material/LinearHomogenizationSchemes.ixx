@@ -466,10 +466,7 @@ namespace tfel::material::homogenization::elasticity {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
-    if (not(tfel::math::ieee754::fpclassify(
-                tfel::math::VectorVectorDotProduct::exe<
-                    real, tfel::math::tvector<3u, real>,
-                    tfel::math::tvector<3u, real>>(D.n_a, D.n_b)) == FP_ZERO)) {
+    if (not(std::abs(D.n_a | D.n_b) < std::numeric_limits<real>::epsilon())) {
       tfel::reportContractViolation(
           "n_a and n_b of the distribution are not normals");
     }

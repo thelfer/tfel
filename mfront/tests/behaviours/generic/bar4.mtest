@@ -1,0 +1,27 @@
+@Author HELFER Thomas;
+@Date   29/09/2026;
+@Description{
+  "simple test on a generic behaviour with scalar arrays of gradients"
+};
+
+@ModellingHypothesis 'Tridimensional';
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'BarBehaviour4';
+
+// material properties
+@MaterialProperty<constant> 'YoungModulus[0]' 1.5e+11;
+@MaterialProperty<constant> 'YoungModulus[3]' 2e+11;
+@MaterialProperty<constant> 'YoungModulus[1]' 0.;
+@MaterialProperty<constant> 'YoungModulus[2]' 0.;
+
+// external state variable
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedGradient 'UniaxialStrain[0]' {0:0, 1:1e-2};
+@ImposedGradient 'UniaxialStrain[1]' {0:0, 1:3e-2};
+
+@Times{0,1 in 10};
+
+@Test<function> 'UniaxialTension[0]' 'YoungModulus[0] * UniaxialStrain[0]' 1.e-3;
+@Test<function> 'UniaxialTension[1]' 'YoungModulus[3] * UniaxialStrain[1]' 1.e-3;

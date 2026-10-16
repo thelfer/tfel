@@ -42,6 +42,27 @@ std::mutex processesAccess;
 
 namespace tfel::system {
 
+  namespace {
+
+    /*!
+     * \brief blocks all signals in the calling thread during its lifetime.
+     * A thread holding processesAccess must not handle SIGCHLD, since
+     * sigChildHandler also locks it.
+     */
+    struct SignalsBlocker {
+      SignalsBlocker() {
+        sigset_t nSigSet;
+        sigfillset(&nSigSet);
+        sigprocmask(SIG_BLOCK, &nSigSet, &(this->oSigSet));
+      }
+      ~SignalsBlocker() { sigprocmask(SIG_SETMASK, &(this->oSigSet), nullptr); }
+
+     private:
+      sigset_t oSigSet;
+    };
+
+  }  // end of namespace
+
   ProcessManager::Command::~Command() = default;
 
   ProcessManager::ProcessManager() {
@@ -572,8 +593,15 @@ namespace tfel::system {
       return;
     }
     int status;
-    ::waitpid(pid, &status, 0);
-    this->setProcessExitStatus(*p, status);
+    auto r = ::waitpid(pid, &status, 0);
+    while ((r == -1) && (errno == EINTR)) {
+      r = ::waitpid(pid, &status, 0);
+    }
+    // otherwise, sigChildHandler reaped the child: it has already set
+    // its exit status and closed its files
+    if (r == pid) {
+      this->setProcessExitStatus(*p, status);
+    }
   }  // end of ProcessManager::wait
 
   void ProcessManager::sendSignal(const ProcessId pid, const int signal) {
@@ -667,6 +695,8 @@ namespace tfel::system {
     // removing the handle
     sm.removeHandler(this->sHandler);
     if (this->shallStopOnSignals) {
+      sm.removeHandler(this->sHandlerSIGBUS);
+      sm.removeHandler(this->sHandlerSIGTERM);
       sm.removeHandler(this->sHandlerSIGSEGV);
       sm.removeHandler(this->sHandlerSIGFPE);
       sm.removeHandler(this->sHandlerSIGABRT);
@@ -745,6 +775,7 @@ namespace tfel::system {
 
   std::shared_ptr<ProcessManager::Process> ProcessManager::findProcess(
       const ProcessId pid) {
+    const SignalsBlocker blocker;
     std::lock_guard<std::mutex> guard(processesAccess);
     auto p = this->processes.rbegin();
     const auto pe = this->processes.rend();
@@ -761,6 +792,7 @@ namespace tfel::system {
 
   std::shared_ptr<const ProcessManager::Process> ProcessManager::findProcess(
       const ProcessId pid) const {
+    const SignalsBlocker blocker;
     std::lock_guard<std::mutex> guard(processesAccess);
     auto p = this->processes.rbegin();
     const auto pe = this->processes.rend();

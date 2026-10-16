@@ -1,0 +1,6 @@
+@DSL Implicit;
+@Behaviour TDLSElasticity13;
+@LinearSystemSolver TDLS {
+  relative_pivot_threshold : 1.5
+};
+@Import "TDLSElasticity-common.mfront";

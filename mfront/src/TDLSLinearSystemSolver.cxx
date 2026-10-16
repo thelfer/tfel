@@ -30,6 +30,7 @@ namespace mfront {
             .addDataTypeValidator<std::string>("out_of_tile_search_strategy")
             .addDataTypeValidator<bool>("unroll_inner_loop")
             .addDataTypeValidator<int, double>("out_of_tile_search_threshold")
+            .addDataTypeValidator<int, double>("relative_pivot_threshold")
             .addDataTypeValidator<int, double>("singular_pivot_threshold")
             .addDataTypeValidator<bool>("out_of_tile_search_diagnostics");
     validator.validate(opts);
@@ -104,6 +105,18 @@ namespace mfront {
             "positive value");
       }
       this->out_of_tile_search_threshold = v;
+    }
+    if (opts.contains("relative_pivot_threshold")) {
+      const auto v =
+          is<int>(opts, "relative_pivot_threshold")
+              ? static_cast<double>(get<int>(opts, "relative_pivot_threshold"))
+              : get<double>(opts, "relative_pivot_threshold");
+      if (!((v > 0) && (v <= 1))) {
+        tfel::raise(
+            "TDLSLinearSystemSolver: invalid value for the "
+            "'relative_pivot_threshold' option, expecting a value in ]0, 1]");
+      }
+      this->relative_pivot_threshold = v;
     }
     if (opts.contains("singular_pivot_threshold")) {
       const auto v =
@@ -209,12 +222,8 @@ namespace mfront {
       }
     }
     if (this->out_of_tile_search_threshold.has_value()) {
-      os << "\n.oot_threshold = NumericType{" << *out_of_tile_search_threshold
-         << "},";
-    }
-    if (this->singular_pivot_threshold.has_value()) {
-      os << "\n.singular_floor = NumericType{"
-         << *(this->singular_pivot_threshold) << "},";
+      os << "\n.oot_pivot_threshold = NumericType{"
+         << *out_of_tile_search_threshold << "},";
     }
     if (this->out_of_tile_search_strategy.has_value()) {
       os << "\n.oot_first_acceptable = ";
@@ -225,8 +234,16 @@ namespace mfront {
         os << "false,";
       }
     }
+    if (this->relative_pivot_threshold.has_value()) {
+      os << "\n.relative_pivot_threshold = NumericType{"
+         << *(this->relative_pivot_threshold) << "},";
+    }
+    if (this->singular_pivot_threshold.has_value()) {
+      os << "\n.singular_floor = NumericType{"
+         << *(this->singular_pivot_threshold) << "},";
+    }
     if (this->unroll_inner.has_value()) {
-      os << "\n.unroll_inner = ";
+      os << "\n.unroll_loops = ";
       if (*(this->unroll_inner)) {
         os << "true,";
       } else {

@@ -29,12 +29,11 @@
 #include <cstring>
 #include <csignal>
 #include <sstream>
-#include <optional>
 #include <iostream>
 #include "TFEL/System/SystemError.hxx"
 #include "TFEL/System/SignalManager.hxx"
 
-std::mutex callbacksAccess;
+std::recursive_mutex callbacksAccess;
 
 namespace tfel::system {
 
@@ -176,7 +175,7 @@ namespace tfel::system {
   SignalManager::SignalManager() : handlerNbr(0u) {}
 
   void SignalManager::eraseHandlers() {
-    std::lock_guard<std::mutex> guard(callbacksAccess);
+    std::lock_guard<std::recursive_mutex> guard(callbacksAccess);
     for (auto& c : SignalManager::callBacks) {
       for (auto& ptr : c.second) {
         delete ptr.second;
@@ -192,12 +191,22 @@ namespace tfel::system {
   std::size_t SignalManager::registerHandler(const int sig,
                                              SignalHandler* const f,
                                              struct sigaction& action) {
-    std::lock_guard<std::mutex> guard(callbacksAccess);
-    action.sa_handler = &SignalManager::treatAction;
-    auto handler = SignalManager::handlerNbr;
-    SignalManager::callBacks[sig].insert({handler, f});
-    ++SignalManager::handlerNbr;
-    sigaction(sig, &action, nullptr);
+    // treatAction locks callbacksAccess: no signal may be handled by
+    // this thread while the handlers are being modified
+    sigset_t nSigSet;
+    sigset_t oSigSet;
+    sigfillset(&nSigSet);
+    sigprocmask(SIG_BLOCK, &nSigSet, &oSigSet);
+    auto handler = std::size_t{};
+    {
+      std::lock_guard<std::recursive_mutex> guard(callbacksAccess);
+      action.sa_handler = &SignalManager::treatAction;
+      handler = SignalManager::handlerNbr;
+      SignalManager::callBacks[sig].insert({handler, f});
+      ++SignalManager::handlerNbr;
+      sigaction(sig, &action, nullptr);
+    }
+    sigprocmask(SIG_SETMASK, &oSigSet, nullptr);
     return handler;
   }  // end of SignalManager::registerHandler
 
@@ -230,7 +239,7 @@ namespace tfel::system {
     bool found = false;
     // removing the handle
     {
-      std::lock_guard<std::mutex> guard(callbacksAccess);
+      std::lock_guard<std::recursive_mutex> guard(callbacksAccess);
       for (auto p = SignalManager::callBacks.begin();
            (p != SignalManager::callBacks.end()) && (!found); ++p) {
         auto p2 = p->second.begin();
@@ -260,20 +269,16 @@ namespace tfel::system {
   }  // end of SignalManager::removeHandler
 
   void SignalManager::treatAction(int sig) {
-    const auto ocallbacks =
-        [sig]() -> std::optional<std::map<std::size_t, SignalHandler*>> {
-      auto& sm = SignalManager::getSignalManager();
-      std::lock_guard<std::mutex> guard(callbacksAccess);
-      const auto p = sm.callBacks.find(sig);
-      if (p == sm.callBacks.end()) {
-        return {};
-      }
-      return p->second;
-    }();
-    if (!ocallbacks.has_value()) {
+    // the handlers are called while holding callbacksAccess, so that
+    // removeHandler can't delete one of them during its execution. The
+    // mutex is recursive because a handler may remove handlers.
+    auto& sm = SignalManager::getSignalManager();
+    std::lock_guard<std::recursive_mutex> guard(callbacksAccess);
+    const auto p = sm.callBacks.find(sig);
+    if (p == sm.callBacks.end()) {
       return;
     }
-    for (const auto& c : *(ocallbacks)) {
+    for (const auto& c : p->second) {
       c.second->execute(sig);
     }
   }  // end of SignalManager::treatAction
