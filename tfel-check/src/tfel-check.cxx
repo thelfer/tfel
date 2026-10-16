@@ -282,12 +282,24 @@ namespace tfel::check {
     this->registerCallBack(
         "--clean-up", CallBack(
                           "clean generated files and directories listed by "
-                          "the @CleanFiles and @CleanDirectories keywords.",
+                          "the @CleanFiles and @CleanDirectories keywords in "
+                          "case of success (true by default).",
                           [this, read_boolean_value] {
                             const auto b = read_boolean_value("--clean-up");
                             this->configurations.setCleanUp(b);
                           },
                           true));
+    this->registerCallBack(
+        "--discard-clean-up-on-failure",
+        CallBack(
+            "don't clean generated files and directories listed by "
+            "the @CleanFiles and @CleanDirectories keywords in case of "
+            "failure (true by default).",
+            [this, read_boolean_value] {
+              const auto b = read_boolean_value("--discard-clean-up-on-failure");
+              this->configurations.discardCleanUpOnFailure(b);
+            },
+            true));
     this->registerCallBack(
         "--synchronize-terminal-output",
         CallBack(

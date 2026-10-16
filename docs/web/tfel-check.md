@@ -454,8 +454,9 @@ passing `--help` (`-h`) to `tfel-check`.
 Usage: tfel-check [options] [files]
 
 Available options are : 
---clean-up                      : clean generated files and directories listed by the @CleanFiles and @CleanDirectories keywords.
+--clean-up                      : clean generated files and directories listed by the @CleanFiles and @CleanDirectories keywords in case of success.
 --config, -c                    : add a configuration file
+--discard-clean-up-on-failure   : don't clean generated files and directories listed by the @CleanFiles and @CleanDirectories keywords in case of failure (true by default).
 --discard-commands-failure      : discard command's failure if comparisons are ok (default behaviour). If no comparisons is declared, command's failure is never ignored.
 --discard-jobs-limit            : disable test on the number of jobs allowed to run simultaneously.
 --help, -h                      : Display this message
