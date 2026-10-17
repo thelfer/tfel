@@ -72,20 +72,30 @@ jobs:
           run: >
             cmake ${{github.workspace}}/tfel -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON -Denable-comsol=OFF -Denable-diana-fea=ON -Denable-lsdyna=OFF -Denable-portable-build=ON -Denable-reference-doc=OFF -Denable-testing=OFF -Denable-python-bindings=ON -Denable-numpy-support=ON -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -A x64
 
-        - name: Build (Linux/macOS)
-          if: runner.os != 'Windows'
+        - name: Build Linux
+          if: runner.os == 'Linux'
           run: |
             cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j $(nproc)
+
+        - name: Build macOS
+          if: runner.os == 'macOS'
+          run: |
+            cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j $(sysctl -n hw.ncpu)
 
         - name: Build (Windows)
           if: runner.os == 'Windows'
           run: |
             cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /m
 
-        - name: Install (Linux/macOS)
-          if: runner.os != 'Windows'
+        - name: Install Linux
+          if: runner.os == 'Linux'
           run: |
             cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -j $(nproc)
+
+        - name: Install macOS
+          if: runner.os == 'macOS'
+          run: |
+            cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -j $(sysctl -n hw.ncpu)
 
         - name: Install (Windows)
           if: runner.os == 'Windows'
