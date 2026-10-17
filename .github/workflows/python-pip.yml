@@ -112,7 +112,7 @@ jobs:
             
             # Copy the Python bindings to the pip package directory
             PYTHON_VERSION=$(python3 -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
-            PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${PYTHON_VERSION}/dist-packages"
+            PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${PYTHON_VERSION}/site-packages"
             if [ -d "$PYTHON_SITE_PACKAGES" ]; then
               cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
             else
