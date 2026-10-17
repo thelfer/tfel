@@ -36,8 +36,8 @@ jobs:
           if: runner.os == 'Linux'
           run: |
             sudo apt update
-            sudo apt install -y python3 libpython3-dev python3-numpy python3-pybind11
-            python -m pip install --upgrade pip setuptools wheel
+            sudo apt install -y python3 libpython3-dev python3-numpy pybind11-dev python3-pybind11
+            python3 -m pip install --upgrade pip setuptools wheel
 
         - name: Install Dependencies (macOS)
           if: runner.os == 'macOS'
