@@ -396,6 +396,7 @@ namespace tfel::check {
      *   compares the command output to the expected value.
      * - `shall_fail`: if specified and set to true, the command shall return an
      *   invalid exit status.
+     * - `timeout`: the maximum duration allowed for a test.
      */
     auto parseCommandOptions = [&c](const tfel::utilities::DataMap& options) {
       auto is_output_check_defined = [&c] {
@@ -425,6 +426,19 @@ namespace tfel::check {
                 "for option 'shall_fail'");
           }
           c.shall_fail = o.second.get<bool>();
+        } else if (o.first == "timeout") {
+          if (!o.second.is<int>()) {
+            tfel::raise(
+                "TestLaucher::treatCommand: invalid type "
+                "for option 'timeout'");
+          }
+          const auto d = o.second.get<int>();
+          if (d <= 0) {
+            tfel::raise(
+                "TestLaucher::treatCommand: invalid value for the "
+                "'timeout', expecting a strictly positive integer");
+          }
+          c.timeout = d;
         } else {
           tfel::raise(
               "TestLaucher::treatCommand: "
@@ -740,7 +754,13 @@ namespace tfel::check {
                                "the test file");
         }
       }
-      manager.execute(this->directory, c.command, "", output_file, envs);
+      if (c.timeout.has_value()) {
+        const auto tc =
+            "timeout -v -k 1 " + std::to_string(*(c.timeout)) + " " + c.command;
+        manager.execute(this->directory, tc, "", output_file, envs);
+      } else {
+        manager.execute(this->directory, c.command, "", output_file, envs);
+      }
       this->ClockAction(STOP);
       if (c.output_check) {
         const auto output = getFileContent(output_file);
@@ -776,7 +796,7 @@ namespace tfel::check {
      * - false if a command failed and no comparison is given
      * - false if a command failed and command failure is not discarded
      */
-    bool gsuccess = true; 
+    bool gsuccess = true;
     // checking that the requirements are met
     const auto& components = configuration.available_components;
     for (const auto& r : this->requirements) {

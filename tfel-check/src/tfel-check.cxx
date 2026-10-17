@@ -296,7 +296,8 @@ namespace tfel::check {
             "the @CleanFiles and @CleanDirectories keywords in case of "
             "failure (true by default).",
             [this, read_boolean_value] {
-              const auto b = read_boolean_value("--discard-clean-up-on-failure");
+              const auto b =
+                  read_boolean_value("--discard-clean-up-on-failure");
               this->configurations.discardCleanUpOnFailure(b);
             },
             true));

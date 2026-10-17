@@ -83,6 +83,8 @@ namespace tfel::check {
       ~Command();
       //! \brief command to be executed
       std::string command;
+      //! \brief maximum duration in seconds
+      std::optional<int> timeout;
       //! \brief function testing the output of the command
       std::function<std::tuple<bool, std::string>(
           const std::vector<std::string>&)>

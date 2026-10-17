@@ -264,6 +264,7 @@ The `@Command` keyword executes a command. It supports the following options:
 - `output_validation_regex`: Regular expression to validate the command output.
   The output is concatenated into a single string for validation.
 - `shall_fail`: Boolean. If `true`, the command must fail for the test to pass.
+- `timeout`: Integer. Maximum allowed duration in seconds.
 
 Example:
 
@@ -273,6 +274,9 @@ Example:
 };
 @Command "./my_script" {
   shall_fail: true
+};
+@Command "sleep 10"{
+ timeout: 1
 };
 ~~~~
 
