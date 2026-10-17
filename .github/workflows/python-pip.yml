@@ -39,8 +39,6 @@ jobs:
             sudo apt update
             sudo apt upgrade
             sudo apt install -y python3 libpython3-dev python3-numpy pybind11-dev python3-pybind11
-            python3 -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))"
-            python3 -c "import numpy; print(numpy.__version__)"
 
         - name: Install Dependencies (macOS)
           if: runner.os == 'macOS'
@@ -113,13 +111,29 @@ jobs:
             mkdir -p ${{github.workspace}}/pip-package/tfel
             
             # Copy the Python bindings to the pip package directory
-            PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python3/dist-packages"
+            PYTHON_VERSION=$(python3 -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
+            PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${PYTHON_VERSION}/dist-packages"
             if [ -d "$PYTHON_SITE_PACKAGES" ]; then
               cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
             else
               echo "Python site-packages not found at $PYTHON_SITE_PACKAGES"
               exit 1
             fi
+            
+            # Copy all libraries, executables, and headers
+            mkdir -p ${{github.workspace}}/pip-package/tfel/lib
+            mkdir -p ${{github.workspace}}/pip-package/tfel/bin
+            mkdir -p ${{github.workspace}}/pip-package/tfel/include
+            
+            # Copy libraries
+            cp -r ${{github.workspace}}/install/lib/*.so* ${{github.workspace}}/pip-package/tfel/lib/ 2>/dev/null || true
+            cp -r ${{github.workspace}}/install/lib/*.dylib* ${{github.workspace}}/pip-package/tfel/lib/ 2>/dev/null || true
+            
+            # Copy executables
+            cp -r ${{github.workspace}}/install/bin/* ${{github.workspace}}/pip-package/tfel/bin/ 2>/dev/null || true
+            
+            # Copy headers
+            cp -r ${{github.workspace}}/install/include/* ${{github.workspace}}/pip-package/tfel/include/ 2>/dev/null || true
             
             # Create __init__.py if it doesn't exist
             touch ${{github.workspace}}/pip-package/tfel/__init__.py
@@ -132,13 +146,18 @@ jobs:
             setup(
                 name="tfel-mfront",
                 version="5.2.0",
-                description="Python bindings for TFEL/MFront",
-                long_description="TFEL is a collaborative development of CEA and EDF. This package provides Python bindings for TFEL and MFront.",
+                description="TFEL/MFront with Python bindings",
+                long_description="TFEL is a collaborative development of CEA and EDF. This package provides TFEL/MFront libraries, executables, headers, and Python bindings.",
                 author="Thomas Helfer",
                 author_email="tfel-contact@cea.fr",
                 url="https://github.com/thelfer/tfel",
                 packages=find_packages(),
-                package_data={"tfel": ["*.so", "*.pyd"]},
+                package_data={
+                    "tfel": ["*.so", "*.pyd"],
+                    "tfel.lib": ["*.so", "*.dylib", "*.dll"],
+                    "tfel.bin": ["*"],
+                    "tfel.include": ["*", "*/*.h", "*/*.hpp"]
+                },
                 include_package_data=True,
                 install_requires=["numpy"],
                 classifiers=[
@@ -183,6 +202,21 @@ jobs:
               }
             }
             
+            # Copy all libraries, executables, and headers
+            New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/lib" -Force
+            New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/bin" -Force
+            New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/include" -Force
+            
+            # Copy libraries
+            Copy-Item -Path "${{github.workspace}}/install/lib/*.dll" -Destination "${{github.workspace}}/pip-package/tfel/lib/" -Force 2>$null
+            Copy-Item -Path "${{github.workspace}}/install/lib/*.lib" -Destination "${{github.workspace}}/pip-package/tfel/lib/" -Force 2>$null
+            
+            # Copy executables
+            Copy-Item -Path "${{github.workspace}}/install/bin/*" -Destination "${{github.workspace}}/pip-package/tfel/bin/" -Force 2>$null
+            
+            # Copy headers
+            Copy-Item -Path "${{github.workspace}}/install/include/*" -Destination "${{github.workspace}}/pip-package/tfel/include/" -Recurse -Force 2>$null
+            
             # Create __init__.py if it doesn't exist
             New-Item -ItemType File -Path "${{github.workspace}}/pip-package/tfel/__init__.py" -Force
             
@@ -194,13 +228,18 @@ jobs:
             setup(
                 name="tfel-mfront",
                 version="5.2.0",
-                description="Python bindings for TFEL/MFront",
-                long_description="TFEL is a collaborative development of CEA and EDF. This package provides Python bindings for TFEL and MFront.",
+                description="TFEL/MFront with Python bindings",
+                long_description="TFEL is a collaborative development of CEA and EDF. This package provides TFEL/MFront libraries, executables, headers, and Python bindings.",
                 author="Thomas Helfer",
                 author_email="tfel-contact@cea.fr",
                 url="https://github.com/thelfer/tfel",
                 packages=find_packages(),
-                package_data={"tfel": ["*.so", "*.pyd"]},
+                package_data={
+                    "tfel": ["*.pyd"],
+                    "tfel.lib": ["*.dll", "*.lib"],
+                    "tfel.bin": ["*"],
+                    "tfel.include": ["*", "*/*.h", "*/*.hpp"]
+                },
                 include_package_data=True,
                 install_requires=["numpy"],
                 classifiers=[
