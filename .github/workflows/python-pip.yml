@@ -63,7 +63,6 @@ jobs:
                   -Denable-portable-build=ON -Denable-reference-doc=OFF                \
                   -Denable-testing=OFF                                                 \
                   -Denable-python-bindings=ON                                          \
-                  -Denable-numpy-support=ON                                            \
                   -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
         - name: Configure CMake (Windows)
