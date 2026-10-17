@@ -17,20 +17,20 @@ jobs:
    build-python-bindings:
      name: Build Python Bindings
      runs-on: ${{ matrix.os }}
-     strategy:
-       matrix:
-         os: [ubuntu-latest]
-         python-version: ['3.12']
+      strategy:
+        matrix:
+          os: [ubuntu-latest]
+          python-version: ['3.12']
 
      steps:
-      - uses: actions/checkout@v7
-        with:
-          path: tfel
+       - uses: actions/checkout@v7
+         with:
+           path: tfel
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
+       - name: Set up Python ${{ matrix.python-version }}
+         uses: actions/setup-python@v5
+         with:
+           python-version: ${{ matrix.python-version }}
 
        - name: Install Dependencies (Linux)
          if: runner.os == 'Linux'
@@ -39,7 +39,7 @@ jobs:
            sudo apt install -y libpython3-dev python3-numpy python3-pybind11
            python -m pip install --upgrade pip setuptools wheel
 
-      - name: Install Dependencies (macOS)
+       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
           brew update
