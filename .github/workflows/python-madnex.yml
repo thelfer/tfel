@@ -25,7 +25,7 @@ jobs:
       with:
         path: tfel
 
-    - name: Install HDF5
+    - name: Install HDF5 and NumPy
       run: |
         sudo apt update
         sudo apt upgrade
