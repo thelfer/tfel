@@ -19,7 +19,7 @@ jobs:
       runs-on: ${{ matrix.os }}
       strategy:
         matrix:
-          os: [ubuntu-latest]
+          os: [ubuntu-latest, macos-latest, windows-latest]
           python-version: ['3.12']
 
       steps:
@@ -28,24 +28,23 @@ jobs:
             path: tfel
 
         - name: Set up Python ${{ matrix.python-version }}
-          if: runner.os != 'Linux'
           uses: actions/setup-python@v5
           with:
             python-version: ${{ matrix.python-version }}
- 
+
         - name: Install Dependencies (Linux)
           if: runner.os == 'Linux'
           run: |
             sudo apt update
-            sudo apt upgrade
-            sudo apt install -y python3 libpython3-dev python3-numpy pybind11-dev python3-pybind11
+            sudo apt install -y libpython3-dev python3-numpy python3-pybind11
+            python -m pip install --upgrade pip setuptools wheel
 
         - name: Install Dependencies (macOS)
           if: runner.os == 'macOS'
           run: |
             brew update
-            brew install pybind11 numpy
-            python -m pip install --upgrade pip setuptools wheel
+            brew install python pybind11 numpy
+            python3 -m pip install --upgrade pip setuptools wheel
 
         - name: Install Dependencies (Windows)
           if: runner.os == 'Windows'
@@ -104,8 +103,8 @@ jobs:
           run: |
             cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -- /m
 
-        - name: Prepare Pip Package (Linux/macOS)
-          if: runner.os != 'Windows'
+        - name: Prepare Pip Package (Linux)
+          if: runner.os == 'Linux'
           run: |
             # Create a temporary directory for the pip package
             mkdir -p ${{github.workspace}}/pip-package/tfel
@@ -127,6 +126,81 @@ jobs:
             
             # Copy libraries
             cp -r ${{github.workspace}}/install/lib/*.so* ${{github.workspace}}/pip-package/tfel/lib/ 2>/dev/null || true
+            
+            # Copy executables
+            cp -r ${{github.workspace}}/install/bin/* ${{github.workspace}}/pip-package/tfel/bin/ 2>/dev/null || true
+            
+            # Copy headers
+            cp -r ${{github.workspace}}/install/include/* ${{github.workspace}}/pip-package/tfel/include/ 2>/dev/null || true
+            
+            # Create __init__.py if it doesn't exist
+            touch ${{github.workspace}}/pip-package/tfel/__init__.py
+            
+            # Create setup.py for the pip package
+            cat > ${{github.workspace}}/pip-package/setup.py << 'EOF'
+            from setuptools import setup, find_packages
+            import os
+            
+            setup(
+                name="tfel-mfront",
+                version="5.2.0",
+                description="TFEL/MFront with Python bindings",
+                long_description="TFEL is a collaborative development of CEA and EDF. This package provides TFEL/MFront libraries, executables, headers, and Python bindings.",
+                author="Thomas Helfer",
+                author_email="tfel-contact@cea.fr",
+                url="https://github.com/thelfer/tfel",
+                packages=find_packages(),
+                package_data={
+                    "tfel": ["*.so", "*.pyd"],
+                    "tfel.lib": ["*.so", "*.dylib", "*.dll"],
+                    "tfel.bin": ["*"],
+                    "tfel.include": ["*", "*/*.h", "*/*.hpp"]
+                },
+                include_package_data=True,
+                install_requires=["numpy"],
+                classifiers=[
+                    "Development Status :: 5 - Production/Stable",
+                    "Intended Audience :: Developers",
+                    "Intended Audience :: Science/Research",
+                    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+                    "Programming Language :: Python :: 3",
+                    "Programming Language :: Python :: 3.8",
+                    "Programming Language :: Python :: 3.9",
+                    "Programming Language :: Python :: 3.10",
+                    "Programming Language :: Python :: 3.11",
+                    "Programming Language :: Python :: 3.12",
+                    "Programming Language :: Python :: 3.13",
+                    "Programming Language :: Python :: 3.14",
+                    "Programming Language :: Python :: 3.15",
+    
+                    "Topic :: Scientific/Engineering",
+                ],
+                python_requires=">=3.8",
+            )
+            EOF
+
+        - name: Prepare Pip Package (macOS)
+          if: runner.os == 'macOS'
+          run: |
+            # Create a temporary directory for the pip package
+            mkdir -p ${{github.workspace}}/pip-package/tfel
+            
+            # Copy the Python bindings to the pip package directory
+            PYTHON_VERSION=$(python3 -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
+            PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${PYTHON_VERSION}/site-packages"
+            if [ -d "$PYTHON_SITE_PACKAGES" ]; then
+              cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
+            else
+              echo "Python site-packages not found at $PYTHON_SITE_PACKAGES"
+              exit 1
+            fi
+            
+            # Copy all libraries, executables, and headers
+            mkdir -p ${{github.workspace}}/pip-package/tfel/lib
+            mkdir -p ${{github.workspace}}/pip-package/tfel/bin
+            mkdir -p ${{github.workspace}}/pip-package/tfel/include
+            
+            # Copy libraries
             cp -r ${{github.workspace}}/install/lib/*.dylib* ${{github.workspace}}/pip-package/tfel/lib/ 2>/dev/null || true
             
             # Copy executables
@@ -263,8 +337,14 @@ jobs:
             )
             '@ | Out-File -FilePath "${{github.workspace}}/pip-package/setup.py" -Encoding utf8
 
-        - name: Build Pip Wheel (Linux/macOS)
-          if: runner.os != 'Windows'
+        - name: Build Pip Wheel (Linux)
+          if: runner.os == 'Linux'
+          run: |
+            cd ${{github.workspace}}/pip-package
+            python setup.py bdist_wheel
+
+        - name: Build Pip Wheel (macOS)
+          if: runner.os == 'macOS'
           run: |
             cd ${{github.workspace}}/pip-package
             python setup.py bdist_wheel
