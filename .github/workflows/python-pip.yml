@@ -70,19 +70,7 @@ jobs:
         - name: Configure CMake (Windows)
           if: runner.os == 'Windows'
           run: >
-            cmake ${{github.workspace}}/tfel
-                  -B ${{github.workspace}}/build
-                  -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-                  -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON
-                  -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON
-                  -Denable-comsol=OFF -Denable-diana-fea=ON -Denable-lsdyna=OFF
-                  -Denable-portable-build=ON -Denable-reference-doc=OFF
-                  -Denable-testing=OFF
-                  -Denable-python-bindings=ON
-                  -Denable-numpy-support=ON
-                  -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
-                  -G "Visual Studio 17 2022"
-                  -A x64
+            cmake ${{github.workspace}}/tfel -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON -Denable-comsol=OFF -Denable-diana-fea=ON -Denable-lsdyna=OFF -Denable-portable-build=ON -Denable-reference-doc=OFF -Denable-testing=OFF -Denable-python-bindings=ON -Denable-numpy-support=ON -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -G "Visual Studio 17 2022" -A x64
 
         - name: Build (Linux/macOS)
           if: runner.os != 'Windows'
