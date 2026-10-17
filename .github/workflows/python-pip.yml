@@ -54,6 +54,7 @@ jobs:
         - name: Configure CMake (Linux/macOS)
           if: runner.os != 'Windows'
           run: |
+            python3 -c "import numpy; print(numpy.__version__)"                        \
             cmake ${{github.workspace}}/tfel                                           \
                   -B ${{github.workspace}}/build                                       \
                   -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
@@ -63,6 +64,7 @@ jobs:
                   -Denable-portable-build=ON -Denable-reference-doc=OFF                \
                   -Denable-testing=OFF                                                 \
                   -Denable-python-bindings=ON                                          \
+                  -Denable-numpy-support=ON                                            \
                   -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
         - name: Configure CMake (Windows)
