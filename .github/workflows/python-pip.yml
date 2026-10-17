@@ -14,14 +14,15 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build-python-bindings:
-    name: Build Python Bindings
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+   build-python-bindings:
+     name: Build Python Bindings
+     runs-on: ${{ matrix.os }}
+     strategy:
+       matrix:
+         os: [ubuntu-latest]
+         python-version: ['3.12']
 
-    steps:
+     steps:
       - uses: actions/checkout@v7
         with:
           path: tfel
@@ -31,12 +32,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt update
-          sudo apt install -y libpython3-dev python3-numpy pybind11-dev
-          python -m pip install --upgrade pip setuptools wheel
+       - name: Install Dependencies (Linux)
+         if: runner.os == 'Linux'
+         run: |
+           sudo apt update
+           sudo apt install -y libpython3-dev python3-numpy python3-pybind11
+           python -m pip install --upgrade pip setuptools wheel
 
       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
@@ -56,8 +57,13 @@ jobs:
           cmake ${{github.workspace}}/tfel                                           \
                 -B ${{github.workspace}}/build                                       \
                 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
-                -Denable-python-bindings=ON                                           \
-                -Denable-numpy-support=ON                                             \
+                -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON               \
+                -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON            \
+                -Denable-comsol=OFF -Denable-diana-fea=ON -Denable-lsdyna=OFF        \
+                -Denable-portable-build=ON -Denable-reference-doc=OFF                \
+                -Denable-testing=OFF                                                 \
+                -Denable-python-bindings=ON                                          \
+                -Denable-numpy-support=ON                                            \
                 -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
       - name: Configure CMake (Windows)
@@ -66,10 +72,15 @@ jobs:
           cmake ${{github.workspace}}/tfel                                           \
                 -B ${{github.workspace}}/build                                       \
                 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
-                -Denable-python-bindings=ON                                           \
-                -Denable-numpy-support=ON                                             \
+                -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON               \
+                -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON            \
+                -Denable-comsol=OFF -Denable-diana-fea=ON -Denable-lsdyna=OFF        \
+                -Denable-portable-build=ON -Denable-reference-doc=OFF                \
+                -Denable-testing=OFF                                                 \
+                -Denable-python-bindings=ON                                          \
+                -Denable-numpy-support=ON                                            \
                 -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install                 \
-                -G "Visual Studio 17 2022"                                             \
+                -G "Visual Studio 17 2022"                                           \
                 -A x64
 
       - name: Build (Linux/macOS)
@@ -98,14 +109,14 @@ jobs:
           # Create a temporary directory for the pip package
           mkdir -p ${{github.workspace}}/pip-package/tfel
           
-          # Copy the Python bindings to the pip package directory
-          PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${{ matrix.python-version }}/site-packages"
-          if [ -d "$PYTHON_SITE_PACKAGES" ]; then
-            cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
-          else
-            echo "Python site-packages not found at $PYTHON_SITE_PACKAGES"
-            exit 1
-          fi
+           # Copy the Python bindings to the pip package directory
+           PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python3/dist-packages"
+           if [ -d "$PYTHON_SITE_PACKAGES" ]; then
+             cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
+           else
+             echo "Python site-packages not found at $PYTHON_SITE_PACKAGES"
+             exit 1
+           fi
           
           # Create __init__.py if it doesn't exist
           touch ${{github.workspace}}/pip-package/tfel/__init__.py
@@ -136,6 +147,11 @@ jobs:
                   "Programming Language :: Python :: 3.8",
                   "Programming Language :: Python :: 3.9",
                   "Programming Language :: Python :: 3.10",
+                  "Programming Language :: Python :: 3.11",
+                  "Programming Language :: Python :: 3.12",
+                  "Programming Language :: Python :: 3.13",
+                  "Programming Language :: Python :: 3.14",
+                  "Programming Language :: Python :: 3.15",
  
                   "Topic :: Scientific/Engineering",
               ],
@@ -150,19 +166,19 @@ jobs:
           # Create a temporary directory for the pip package
           New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel" -Force
           
-          # Copy the Python bindings to the pip package directory
-          $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/bin/python${{ matrix.python-version }}/site-packages"
-          if (Test-Path $PYTHON_SITE_PACKAGES) {
-            Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
-          } else {
-            $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/lib/python${{ matrix.python-version }}/site-packages"
-            if (Test-Path $PYTHON_SITE_PACKAGES) {
-              Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
-            } else {
-              Write-Error "Python site-packages not found at $PYTHON_SITE_PACKAGES"
-              exit 1
-            }
-          }
+           # Copy the Python bindings to the pip package directory
+           $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/lib/python3/site-packages"
+           if (Test-Path $PYTHON_SITE_PACKAGES) {
+             Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
+           } else {
+             $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/bin/python/site-packages"
+             if (Test-Path $PYTHON_SITE_PACKAGES) {
+               Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
+             } else {
+               Write-Error "Python site-packages not found at $PYTHON_SITE_PACKAGES"
+               exit 1
+             }
+           }
           
           # Create __init__.py if it doesn't exist
           New-Item -ItemType File -Path "${{github.workspace}}/pip-package/tfel/__init__.py" -Force
@@ -193,6 +209,11 @@ jobs:
                   "Programming Language :: Python :: 3.8",
                   "Programming Language :: Python :: 3.9",
                   "Programming Language :: Python :: 3.10",
+                  "Programming Language :: Python :: 3.11",
+                  "Programming Language :: Python :: 3.12",
+                  "Programming Language :: Python :: 3.13",
+                  "Programming Language :: Python :: 3.14",
+                  "Programming Language :: Python :: 3.15",
  
                   "Topic :: Scientific/Engineering",
               ],
