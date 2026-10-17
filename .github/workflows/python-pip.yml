@@ -38,6 +38,7 @@ jobs:
             sudo apt update
             sudo apt install -y python3 libpython3-dev python3-numpy pybind11-dev python3-pybind11
             python3 -m pip install --upgrade pip setuptools wheel
+            python3 -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))"
             python3 -c "import numpy; print(numpy.__version__)"
 
         - name: Install Dependencies (macOS)
@@ -55,7 +56,6 @@ jobs:
         - name: Configure CMake (Linux/macOS)
           if: runner.os != 'Windows'
           run: |
-            python3 -c "import numpy; print(numpy.__version__)"                        \
             cmake ${{github.workspace}}/tfel                                           \
                   -B ${{github.workspace}}/build                                       \
                   -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
@@ -66,6 +66,7 @@ jobs:
                   -Denable-testing=OFF                                                 \
                   -Denable-python-bindings=ON                                          \
                   -Denable-numpy-support=ON                                            \
+                  -DPython_ADDITIONAL_VERSIONS=  
                   -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
         - name: Configure CMake (Windows)
