@@ -1,0 +1,272 @@
+name: Build and Publish Python Pip Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-python-bindings:
+    name: Build Python Bindings
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        exclude:
+          - os: macos-latest
+            python-version: '3.8'
+          - os: windows-latest
+            python-version: '3.8'
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: tfel
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y libpython${{ matrix.python-version }}-dev python${{ matrix.python-version }}-numpy pybind11-dev
+          python -m pip install --upgrade pip setuptools wheel
+
+      - name: Install Dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install pybind11 numpy
+          python -m pip install --upgrade pip setuptools wheel
+
+      - name: Install Dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          python -m pip install --upgrade pip setuptools wheel pybind11 numpy
+
+      - name: Configure CMake (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cmake ${{github.workspace}}/tfel                                           \
+                -B ${{github.workspace}}/build                                       \
+                -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
+                -Denable-python-bindings=ON                                           \
+                -Denable-numpy-support=ON                                             \
+                -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
+
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cmake ${{github.workspace}}/tfel                                           \
+                -B ${{github.workspace}}/build                                       \
+                -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
+                -Denable-python-bindings=ON                                           \
+                -Denable-numpy-support=ON                                             \
+                -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install                 \
+                -G "Visual Studio 17 2022"                                             \
+                -A x64
+
+      - name: Build (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j $(nproc)
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -- /m
+
+      - name: Install (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -j $(nproc)
+
+      - name: Install (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install -- /m
+
+      - name: Prepare Pip Package (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          # Create a temporary directory for the pip package
+          mkdir -p ${{github.workspace}}/pip-package/tfel
+          
+          # Copy the Python bindings to the pip package directory
+          PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${{ matrix.python-version }}/site-packages"
+          if [ -d "$PYTHON_SITE_PACKAGES" ]; then
+            cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
+          else
+            echo "Python site-packages not found at $PYTHON_SITE_PACKAGES"
+            exit 1
+          fi
+          
+          # Create __init__.py if it doesn't exist
+          touch ${{github.workspace}}/pip-package/tfel/__init__.py
+          
+          # Create setup.py for the pip package
+          cat > ${{github.workspace}}/pip-package/setup.py << 'EOF'
+          from setuptools import setup, find_packages
+          import os
+          
+          setup(
+              name="tfel-mfront",
+              version="5.2.0",
+              description="Python bindings for TFEL/MFront",
+              long_description="TFEL is a collaborative development of CEA and EDF. This package provides Python bindings for TFEL and MFront.",
+              author="Thomas Helfer",
+              author_email="tfel-contact@cea.fr",
+              url="https://github.com/thelfer/tfel",
+              packages=find_packages(),
+              package_data={"tfel": ["*.so", "*.pyd"]},
+              include_package_data=True,
+              install_requires=["numpy"],
+              classifiers=[
+                  "Development Status :: 5 - Production/Stable",
+                  "Intended Audience :: Developers",
+                  "Intended Audience :: Science/Research",
+                  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+                  "Programming Language :: Python :: 3",
+                  "Programming Language :: Python :: 3.8",
+                  "Programming Language :: Python :: 3.9",
+                  "Programming Language :: Python :: 3.10",
+                  "Programming Language :: Python :: 3.11",
+                  "Topic :: Scientific/Engineering",
+              ],
+              python_requires=">=3.8",
+          )
+          EOF
+
+      - name: Prepare Pip Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Create a temporary directory for the pip package
+          New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel" -Force
+          
+          # Copy the Python bindings to the pip package directory
+          $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/bin/python${{ matrix.python-version }}/site-packages"
+          if (Test-Path $PYTHON_SITE_PACKAGES) {
+            Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
+          } else {
+            $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/lib/python${{ matrix.python-version }}/site-packages"
+            if (Test-Path $PYTHON_SITE_PACKAGES) {
+              Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
+            } else {
+              Write-Error "Python site-packages not found at $PYTHON_SITE_PACKAGES"
+              exit 1
+            }
+          }
+          
+          # Create __init__.py if it doesn't exist
+          New-Item -ItemType File -Path "${{github.workspace}}/pip-package/tfel/__init__.py" -Force
+          
+          # Create setup.py for the pip package
+          @'
+          from setuptools import setup, find_packages
+          import os
+          
+          setup(
+              name="tfel-mfront",
+              version="5.2.0",
+              description="Python bindings for TFEL/MFront",
+              long_description="TFEL is a collaborative development of CEA and EDF. This package provides Python bindings for TFEL and MFront.",
+              author="Thomas Helfer",
+              author_email="tfel-contact@cea.fr",
+              url="https://github.com/thelfer/tfel",
+              packages=find_packages(),
+              package_data={"tfel": ["*.so", "*.pyd"]},
+              include_package_data=True,
+              install_requires=["numpy"],
+              classifiers=[
+                  "Development Status :: 5 - Production/Stable",
+                  "Intended Audience :: Developers",
+                  "Intended Audience :: Science/Research",
+                  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+                  "Programming Language :: Python :: 3",
+                  "Programming Language :: Python :: 3.8",
+                  "Programming Language :: Python :: 3.9",
+                  "Programming Language :: Python :: 3.10",
+                  "Programming Language :: Python :: 3.11",
+                  "Topic :: Scientific/Engineering",
+              ],
+              python_requires=">=3.8",
+          )
+          '@ | Out-File -FilePath "${{github.workspace}}/pip-package/setup.py" -Encoding utf8
+
+      - name: Build Pip Wheel (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cd ${{github.workspace}}/pip-package
+          python setup.py bdist_wheel
+
+      - name: Build Pip Wheel (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd ${{github.workspace}}/pip-package
+          python setup.py bdist_wheel
+
+      - name: Upload Pip Wheel as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfel-mfront-wheel-py${{ matrix.python-version }}
+          path: ${{github.workspace}}/pip-package/dist/
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build-python-bindings
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{github.workspace}}/artifacts
+          pattern: tfel-mfront-wheel-*
+          merge-multiple: true
+
+      - name: List Downloaded Artifacts
+        run: |
+          ls -R ${{github.workspace}}/artifacts
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: ${{github.workspace}}/artifacts/
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          verbose: true
+
+  publish-github-release:
+    name: Publish to GitHub Release
+    needs: build-python-bindings
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{github.workspace}}/release-artifacts
+          pattern: tfel-mfront-wheel-*
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{github.workspace}}/release-artifacts/**/*.whl
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
