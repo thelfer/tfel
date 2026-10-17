@@ -239,49 +239,49 @@ jobs:
             name: tfel-mfront-wheel-py${{ matrix.python-version }}
             path: ${{github.workspace}}/pip-package/dist/
 
-   publish-pypi:
-     name: Publish to PyPI
-     needs: build-python-bindings
-     runs-on: ubuntu-latest
-     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    publish-pypi:
+      name: Publish to PyPI
+      needs: build-python-bindings
+      runs-on: ubuntu-latest
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
 
-     steps:
-       - name: Download All Artifacts
-         uses: actions/download-artifact@v4
-         with:
-           path: ${{github.workspace}}/artifacts
-           pattern: tfel-mfront-wheel-*
-           merge-multiple: true
+      steps:
+        - name: Download All Artifacts
+          uses: actions/download-artifact@v4
+          with:
+            path: ${{github.workspace}}/artifacts
+            pattern: tfel-mfront-wheel-*
+            merge-multiple: true
 
-       - name: List Downloaded Artifacts
-         run: |
-           ls -R ${{github.workspace}}/artifacts
+        - name: List Downloaded Artifacts
+          run: |
+            ls -R ${{github.workspace}}/artifacts
 
-       - name: Publish to PyPI
-         uses: pypa/gh-action-pypi-publish@release/v1
-         with:
-           packages-dir: ${{github.workspace}}/artifacts/
-           password: ${{ secrets.PYPI_API_TOKEN }}
-           verbose: true
+        - name: Publish to PyPI
+          uses: pypa/gh-action-pypi-publish@release/v1
+          with:
+            packages-dir: ${{github.workspace}}/artifacts/
+            password: ${{ secrets.PYPI_API_TOKEN }}
+            verbose: true
 
-   publish-github-release:
-     name: Publish to GitHub Release
-     needs: build-python-bindings
-     runs-on: ubuntu-latest
-     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    publish-github-release:
+      name: Publish to GitHub Release
+      needs: build-python-bindings
+      runs-on: ubuntu-latest
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
 
-     steps:
-       - name: Download All Artifacts
-         uses: actions/download-artifact@v4
-         with:
-           path: ${{github.workspace}}/release-artifacts
-           pattern: tfel-mfront-wheel-*
-           merge-multiple: true
+      steps:
+        - name: Download All Artifacts
+          uses: actions/download-artifact@v4
+          with:
+            path: ${{github.workspace}}/release-artifacts
+            pattern: tfel-mfront-wheel-*
+            merge-multiple: true
 
-       - name: Create GitHub Release
-         uses: softprops/action-gh-release@v2
-         with:
-           files: ${{github.workspace}}/release-artifacts/**/*.whl
-           generate_release_notes: true
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: Create GitHub Release
+          uses: softprops/action-gh-release@v2
+          with:
+            files: ${{github.workspace}}/release-artifacts/**/*.whl
+            generate_release_notes: true
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
