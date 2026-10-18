@@ -610,7 +610,7 @@ int main(const int argc, const char* const* const argv) {
 #endif /* defined _WIN32 || defined _WIN64 */
 
     if (tfel_home) {
-      std::cout << getTFELHOMEWithVersionEnvironmentVariable() << " ";
+      std::cout << getTFELHOME() << " ";
     }
 
     if (cppflags) {
