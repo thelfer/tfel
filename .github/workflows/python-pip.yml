@@ -45,7 +45,7 @@ jobs:
           run: |
             brew update
             brew install python pybind11 numpy
-            python3 -m pip install --upgrade pip setuptools wheel
+            python -m pip install --upgrade pip setuptools wheel
 
         - name: Install Dependencies (Windows)
           if: runner.os == 'Windows'
@@ -69,7 +69,7 @@ jobs:
 
         - name: Configure CMake (Windows)
           if: runner.os == 'Windows'
-          run: >
+          run: |
             cmake ${{github.workspace}}/tfel -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON -Denable-comsol=OFF -Denable-diana-fea=ON -Denable-lsdyna=OFF -Denable-portable-build=ON -Denable-reference-doc=OFF -Denable-testing=OFF -Denable-python-bindings=ON -Denable-numpy-support=ON -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -A x64
 
         - name: Build Linux
@@ -118,10 +118,11 @@ jobs:
               exit 1
             fi
             
-            # Copy all libraries, executables, and headers
+            # Copy all libraries, executables, headers and shared data
             mkdir -p ${{github.workspace}}/pip-package/tfel/lib
             mkdir -p ${{github.workspace}}/pip-package/tfel/bin
             mkdir -p ${{github.workspace}}/pip-package/tfel/include
+            mkdir -p ${{github.workspace}}/pip-package/tfel/share
             
             # Copy libraries
             cp -r ${{github.workspace}}/install/lib/*.so* ${{github.workspace}}/pip-package/tfel/lib/ 2>/dev/null || true
@@ -131,6 +132,9 @@ jobs:
             
             # Copy headers
             cp -r ${{github.workspace}}/install/include/* ${{github.workspace}}/pip-package/tfel/include/ 2>/dev/null || true
+
+            # shared data
+            cp -r ${{github.workspace}}/install/share/* ${{github.workspace}}/pip-package/tfel/shared/ 2>/dev/null || true
             
             # Create __init__.py if it doesn't exist
             touch ${{github.workspace}}/pip-package/tfel/__init__.py
@@ -185,7 +189,7 @@ jobs:
             mkdir -p ${{github.workspace}}/pip-package/tfel
             
             # Copy the Python bindings to the pip package directory
-            PYTHON_VERSION=$(python3 -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
+            PYTHON_VERSION=$(python -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
             PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${PYTHON_VERSION}/site-packages"
             if [ -d "$PYTHON_SITE_PACKAGES" ]; then
               cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
@@ -194,10 +198,11 @@ jobs:
               exit 1
             fi
             
-            # Copy all libraries, executables, and headers
+            # Copy all libraries, executables, headers and shared data
             mkdir -p ${{github.workspace}}/pip-package/tfel/lib
             mkdir -p ${{github.workspace}}/pip-package/tfel/bin
             mkdir -p ${{github.workspace}}/pip-package/tfel/include
+            mkdir -p ${{github.workspace}}/pip-package/tfel/share
             
             # Copy libraries
             cp -r ${{github.workspace}}/install/lib/*.dylib* ${{github.workspace}}/pip-package/tfel/lib/ 2>/dev/null || true
@@ -207,6 +212,9 @@ jobs:
             
             # Copy headers
             cp -r ${{github.workspace}}/install/include/* ${{github.workspace}}/pip-package/tfel/include/ 2>/dev/null || true
+
+            # Copy shared data
+            cp -r ${{github.workspace}}/install/share/* ${{github.workspace}}/pip-package/tfel/share/ 2>/dev/null || true
             
             # Create __init__.py if it doesn't exist
             touch ${{github.workspace}}/pip-package/tfel/__init__.py
@@ -262,7 +270,7 @@ jobs:
             New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel" -Force
             
             # Copy the Python bindings to the pip package directory
-            $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/lib/python3/site-packages"
+            $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/bin/python3/site-packages"
             if (Test-Path $PYTHON_SITE_PACKAGES) {
               Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
             } else {
@@ -279,16 +287,16 @@ jobs:
             New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/lib" -Force
             New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/bin" -Force
             New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/include" -Force
+            New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/share -Force
             
-            # Copy libraries
-            Copy-Item -Path "${{github.workspace}}/install/lib/*.dll" -Destination "${{github.workspace}}/pip-package/tfel/lib/" -Force 2>$null
-            Copy-Item -Path "${{github.workspace}}/install/lib/*.lib" -Destination "${{github.workspace}}/pip-package/tfel/lib/" -Force 2>$null
-            
-            # Copy executables
+            # Copy libraries and executables
             Copy-Item -Path "${{github.workspace}}/install/bin/*" -Destination "${{github.workspace}}/pip-package/tfel/bin/" -Force 2>$null
             
             # Copy headers
             Copy-Item -Path "${{github.workspace}}/install/include/*" -Destination "${{github.workspace}}/pip-package/tfel/include/" -Recurse -Force 2>$null
+
+            # Copy headers
+            Copy-Item -Path "${{github.workspace}}/install/share/*" -Destination "${{github.workspace}}/pip-package/tfel/share/" -Recurse -Force 2>$null
             
             # Create __init__.py if it doesn't exist
             New-Item -ItemType File -Path "${{github.workspace}}/pip-package/tfel/__init__.py" -Force
