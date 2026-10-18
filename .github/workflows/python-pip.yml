@@ -55,6 +55,7 @@ jobs:
         - name: Configure CMake (Linux/macOS)
           if: runner.os != 'Windows'
           run: |
+            PYTHON_VERSION=$(python -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
             cmake ${{github.workspace}}/tfel                                           \
                   -B ${{github.workspace}}/build                                       \
                   -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
@@ -65,6 +66,8 @@ jobs:
                   -Denable-testing=OFF                                                 \
                   -Denable-python-bindings=ON                                          \
                   -Denable-numpy-support=ON                                            \
+                  -DPython_ADDITIONAL_VERSIONS=${PYTHON_VERSION}                       \
+                  -DPython_EXECUTABLE=python                                           \
                   -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
         - name: Configure CMake (Windows)
