@@ -475,6 +475,12 @@ namespace mfront {
     writeSecondOrderTensorsRotation(args, "tensor", "TensorView");
   }  // end of writeTensorRotation
 
+  static void writeVectorRotation(WriteRotationFunctionArgument& args) {
+    // the code rotating vectors by `change_basis` is the one of second
+    // order tensors
+    writeSecondOrderTensorsRotation(args, "tvector", "TVectorView");
+  }  // end of writeVectorRotation
+
   static void writeFourthOrderTensorsRotation(
       WriteRotationFunctionArgument& args,
       const char* const type,
@@ -564,8 +570,7 @@ namespace mfront {
     if (f == SupportedTypes::SCALAR) {
       writeScalarCopy(args);
     } else if (f == SupportedTypes::TVECTOR) {
-      os << "std::cerr << \"rotation of vector is unsupported\";\n"
-         << "std::exit(-1);\n";
+      writeVectorRotation(args);
     } else if (f == SupportedTypes::STENSOR) {
       writeStensorRotation(args);
     } else if (f == SupportedTypes::TENSOR) {
@@ -768,9 +773,7 @@ namespace mfront {
           if (f2 == SupportedTypes::SCALAR) {
             writeScalarCopy(args);
           } else if (f2 == SupportedTypes::TVECTOR) {
-            os << "std::cerr << \"" << f << ": \"\n"
-               << "          << \"unsupported tangent operator type\";\n"
-               << "std::exit(-1);\n";
+            writeVectorRotation(args);
           } else if (f2 == SupportedTypes::STENSOR) {
             writeStensorRotation(args);
           } else if (f2 == SupportedTypes::TENSOR) {
@@ -781,9 +784,13 @@ namespace mfront {
                << "std::exit(-1);\n";
           }
         } else if (f1 == SupportedTypes::TVECTOR) {
-          os << "std::cerr << \"" << f << ": \"\n"
-             << "          << \"unsupported tangent operator type\";\n"
-             << "std::exit(-1);\n";
+          if (f2 == SupportedTypes::SCALAR) {
+            writeVectorRotation(args);
+          } else {
+            os << "std::cerr << \"" << f << ": \"\n"
+               << "          << \"unsupported tangent operator type\";\n"
+               << "std::exit(-1);\n";
+          }
         } else if (f1 == SupportedTypes::STENSOR) {
           if (f2 == SupportedTypes::SCALAR) {
             writeStensorRotation(args);
