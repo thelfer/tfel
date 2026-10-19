@@ -212,9 +212,11 @@ namespace mfront::gb {
                                 mfront_gb_BehaviourData& d,
                                 const typename Behaviour::SMFlag f) {
     const auto smt = [&d] {
-      if (-1.5 < d.K[0]) {
+      // the offset used to request the speed of sound is removed
+      const auto Ke = d.K[0] > 50 ? d.K[0] - 100 : d.K[0];
+      if (-1.5 < Ke) {
         return Behaviour::ELASTIC;
-      } else if ((-2.5 < d.K[0]) && (d.K[0] < -1.5)) {
+      } else if ((-2.5 < Ke) && (Ke < -1.5)) {
         return Behaviour::SECANTOPERATOR;
       }
       return Behaviour::TANGENTOPERATOR;

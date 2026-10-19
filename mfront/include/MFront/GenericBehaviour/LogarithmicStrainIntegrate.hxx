@@ -222,8 +222,10 @@ namespace mfront::gb::logarithmic_strain {
     d.s0.thermodynamic_forces = T0.begin();
     d.s1.thermodynamic_forces = T1.begin();
     d.K = K.begin();
-    const auto bp = K(0, 0) < -0.5;
-    const auto bk = K(0, 0) > 0.5;
+    // the offset used to request the speed of sound is removed
+    const auto Ke = K(0, 0) > 50 ? K(0, 0) - 100 : K(0, 0);
+    const auto bp = Ke < -0.5;
+    const auto bk = Ke > 0.5;
     const auto r = mfront::gb::integrate<Behaviour>(
         d, Behaviour::STANDARDTANGENTOPERATOR, p);
     d.s0.gradients = gradients0_old;
