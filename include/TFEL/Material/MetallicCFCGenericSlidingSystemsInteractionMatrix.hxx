@@ -22,9 +22,7 @@ namespace tfel::material {
 
   /*!
    * \brief Given six interaction coefficients, this class builds
-   * only once a generic interaction matrix. This class shall not be
-   * called if the interaction coefficients may evolve with time~:
-   * the matrix is only compute at the first call.
+   * a generic interaction matrix. The matrix is computed at each call.
    */
   template <typename NumType>
   struct MetallicCFCGenericSlidingSystemsInteractionMatrix {
@@ -41,7 +39,7 @@ namespace tfel::material {
      * The interaction matrix is the following :
      *
      */
-    static const tfel::math::tmatrix<12, 12, real>& getInteractionMatrix(
+    static tfel::math::tmatrix<12, 12, real> getInteractionMatrix(
         const real, const real, const real, const real, const real, const real);
     /*!
      * \return the interaction matrix
@@ -54,7 +52,7 @@ namespace tfel::material {
      * The interaction matrix is the following :
      *
      */
-    static const tfel::math::tmatrix<12, 12, real>& getSecondInteractionMatrix(
+    static tfel::math::tmatrix<12, 12, real> getSecondInteractionMatrix(
         const real, const real, const real, const real, const real, const real);
 
    private:
