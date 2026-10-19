@@ -7,4 +7,7 @@ install_mfront_data(tests/behaviours/DDIF2 DDIF2_3.mfront)
 install_mfront_data(tests/behaviours/DDIF2 DDIF2_4.mfront)
 install_mfront_data(tests/behaviours/DDIF2 DDIF2_5.mfront)
 install_mfront_data(tests/behaviours/DDIF2 DDIF2_6.mfront)
+install_mfront_data(tests/behaviours/DDIF2 DDIF2_7.mfront)
+install_mfront_data(tests/behaviours/DDIF2 DDIF2_8.mfront)
+install_mfront_data(tests/behaviours/DDIF2 DDIF2_9.mfront)
 
