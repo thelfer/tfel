@@ -1,0 +1,25 @@
+@DSL Default;
+@Behaviour HenckyInitializeFunctionTest;
+@Description {
+  "Test of the initialize functions of the generic interface for "
+  "behaviours based on the Hencky strain measure: the stress computed "
+  "by the initialize function must be returned in the stress measure "
+  "of the caller."
+}
+
+@ModellingHypothesis Tridimensional;
+@StrainMeasure Hencky;
+
+@ProvidesSymmetricTangentOperator;
+@Integrator {
+  sig = 150e9 * (eto + deto);
+  if (computeTangentOperator_) {
+    Dt = 150e9 * Stensor4::Id();
+  }
+}
+
+@InitializeFunctionVariable stress pr;
+//! \brief initialize the stress dual of the Hencky strain from a pressure
+@InitializeFunction StressFromPressure {
+  sig = pr * Stensor::Id();
+}

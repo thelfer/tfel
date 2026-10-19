@@ -93,6 +93,7 @@ namespace mfront::gb::logarithmic_strain {
       reportError(d, "invalid choice for the stress measure");
       return -1;
     }
+    auto T1 = T0;
     auto* const gradients0_old = d.s0.gradients;
     auto* const gradients1_old = d.s1.gradients;
     auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
@@ -100,13 +101,30 @@ namespace mfront::gb::logarithmic_strain {
     d.s0.gradients = e0.begin();
     d.s1.gradients = e0.begin();
     d.s0.thermodynamic_forces = T0.begin();
-    d.s1.thermodynamic_forces = T0.begin();
+    d.s1.thermodynamic_forces = T1.begin();
     const auto r = mfront::gb::executeInitializeFunction<Behaviour, m>(
         d, initialize_variables, p);
     d.s0.gradients = gradients0_old;
     d.s1.gradients = gradients1_old;
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
     d.s1.thermodynamic_forces = thermodynamic_forces1_old;
+    if (r == -1) {
+      return r;
+    }
+    // the initialize function uses the state at the beginning of the time
+    // step: the stress it computes is converted with the logarithmic strain
+    // handler and the deformation gradient at the beginning of the time step
+    const auto s1 = lgh0.convertToCauchyStress(T1);
+    if (sm == StressMeasure::CAUCHY) {
+      tfel::fsalgo::copy<StensorSize>::exe(s1.begin(),
+                                           d.s1.thermodynamic_forces);
+    } else if (sm == StressMeasure::PK1) {
+      tfel::math::TensorView<N, real> pk1(d.s1.thermodynamic_forces);
+      pk1 = tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(s1, F0);
+    } else if (sm == StressMeasure::PK2) {
+      tfel::math::StensorView<N, real> S1(d.s1.thermodynamic_forces);
+      S1 = tfel::math::convertCauchyStressToSecondPiolaKirchhoffStress(s1, F0);
+    }
     return r;
   }  // end of executeInitializeFunction
 

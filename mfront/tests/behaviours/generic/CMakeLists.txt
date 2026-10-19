@@ -270,7 +270,10 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
 # can't be checked by MTest
 mfront_behaviour_check_library(MFrontGenericBehaviours4 generic
   HenckyTimeStepScalingFactorTest
-  InternalStateVariablePostProcessingTest)
+  InternalStateVariablePostProcessingTest
+  FiniteStrainInitializeFunctionTest
+  GreenLagrangeInitializeFunctionTest
+  HenckyInitializeFunctionTest)
 
 add_executable(generic-IntegrationDriversTest EXCLUDE_FROM_ALL
   IntegrationDriversTest.cxx)

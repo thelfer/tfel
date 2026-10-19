@@ -50,11 +50,12 @@ namespace mfront::gb::finite_strain {
       reportError(d, "invalid choice for the stress measure");
       return -1;
     }
+    tfel::math::tensor<N, real> F0;
     tfel::math::stensor<N, real> s0;
+    tfel::math::stensor<N, real> s1;
     auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
     auto* const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
     if (sm != StressMeasure::CAUCHY) {
-      tfel::math::tensor<N, real> F0;
       tfel::fsalgo::copy<TensorSize>::exe(d.s0.gradients, F0.begin());
       if constexpr ((hypothesis == ModellingHypothesis::PLANESTRESS) ||
                     (hypothesis == ModellingHypothesis::
@@ -86,13 +87,27 @@ namespace mfront::gb::finite_strain {
         reportError(d, "invalid choice for the stress measure");
         return -1;
       }
+      s1 = s0;
       d.s0.thermodynamic_forces = s0.begin();
-      d.s1.thermodynamic_forces = s0.begin();
+      d.s1.thermodynamic_forces = s1.begin();
     }
     const auto r = mfront::gb::executeInitializeFunction<Behaviour, m>(
         d, initialize_variables, p);
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
     d.s1.thermodynamic_forces = thermodynamic_forces1_old;
+    if (r == -1) {
+      return r;
+    }
+    // the initialize function uses the state at the beginning of the time
+    // step: the Cauchy stress it computes is converted with the deformation
+    // gradient at the beginning of the time step
+    if (sm == StressMeasure::PK1) {
+      tfel::math::TensorView<N, real> pk1(d.s1.thermodynamic_forces);
+      pk1 = tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(s1, F0);
+    } else if (sm == StressMeasure::PK2) {
+      tfel::math::StensorView<N, real> S1(d.s1.thermodynamic_forces);
+      S1 = tfel::math::convertCauchyStressToSecondPiolaKirchhoffStress(s1, F0);
+    }
     return r;
   }  // end of executeInitializeFunction
 
