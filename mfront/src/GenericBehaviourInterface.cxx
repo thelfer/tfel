@@ -448,7 +448,8 @@ namespace mfront {
               << args.variable_offset << "};\n"
               << "auto " << args.variable_name
               << "_view = tfel::math::" << view_type << "<" << d
-              << ",mfront::gb::real>(dest + " << args.variable_offset << ");\n"
+              << ",mfront::gb::real>(dest + " << args.array_offset << " + "
+              << args.variable_offset << ");\n"
               << args.variable_name << "_view = tfel::math::change_basis("
               << args.variable_name << ", r);\n";
     }
