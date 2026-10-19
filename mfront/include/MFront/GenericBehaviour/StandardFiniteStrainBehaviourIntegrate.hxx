@@ -173,7 +173,8 @@ namespace mfront::gb::finite_strain {
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
     d.s1.thermodynamic_forces = thermodynamic_forces1_old;
     if (Ke > -0.25) {  // not a prediction
-      if ((r) && (sm != StressMeasure::CAUCHY)) {
+      // r is 0 if the integration succeeded but a smaller time step is proposed
+      if ((r != -1) && (sm != StressMeasure::CAUCHY)) {
         tfel::math::tensor<N, real> F1;
         tfel::fsalgo::copy<TensorSize>::exe(d.s1.gradients, F1.begin());
         if constexpr ((hypothesis == ModellingHypothesis::PLANESTRESS) ||

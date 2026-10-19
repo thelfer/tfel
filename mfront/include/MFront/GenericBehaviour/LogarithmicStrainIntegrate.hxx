@@ -213,7 +213,8 @@ namespace mfront::gb::logarithmic_strain {
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
     d.s1.thermodynamic_forces = thermodynamic_forces1_old;
     d.K = K_old;
-    if (r) {
+    // r is 0 if the integration succeeded but a smaller time step is proposed
+    if (r != -1) {
       if (bp) {
         if (smf == FiniteStrainTangentOperator::DSIG_DF) {
           const auto Cs = lgh0.convertToSpatialTangentModuli(K, T0);
