@@ -66,7 +66,7 @@ namespace mfront::gb::green_lagrange_strain {
         }
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }
@@ -180,7 +180,7 @@ namespace mfront::gb::green_lagrange_strain {
         }
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }
@@ -270,7 +270,7 @@ namespace mfront::gb::green_lagrange_strain {
             }
           } else {
             reportError(d,
-                        "The behaviour does not declare the axial strain"
+                        "The behaviour does not declare the axial strain "
                         "as an internal state variable");
             return -1;
           }
@@ -382,7 +382,7 @@ namespace mfront::gb::green_lagrange_strain {
         }
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }

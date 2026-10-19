@@ -65,7 +65,7 @@ namespace mfront::gb::logarithmic_strain {
             d.s0.internal_state_variables[Traits::axial_strain_offset]));
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }
@@ -184,7 +184,7 @@ namespace mfront::gb::logarithmic_strain {
             d.s0.internal_state_variables[Traits::axial_strain_offset]));
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }
@@ -274,7 +274,7 @@ namespace mfront::gb::logarithmic_strain {
                 d.s1.internal_state_variables[Traits::axial_strain_offset]));
           } else {
             reportError(d,
-                        "The behaviour does not declare the axial strain"
+                        "The behaviour does not declare the axial strain "
                         "as an internal state variable");
             return -1;
           }
@@ -394,7 +394,7 @@ namespace mfront::gb::logarithmic_strain {
             d.s1.internal_state_variables[Traits::axial_strain_offset]));
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }
