@@ -132,11 +132,11 @@ namespace mfront {
    * the time step
    */
   static std::function<
-      std::string(const BehaviourDescription::MaterialPropertyInput&)>&
+      std::string(const BehaviourDescription::MaterialPropertyInput&)>
   modifyVariableForStiffnessTensorComputation(const std::string& cn) {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    static Modifier m =
+    const Modifier m =
         [cn](const BehaviourDescription::MaterialPropertyInput& i) {
           if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
               (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
@@ -167,11 +167,11 @@ namespace mfront {
    * the time step.
    */
   static std::function<
-      std::string(const BehaviourDescription::MaterialPropertyInput&)>&
+      std::string(const BehaviourDescription::MaterialPropertyInput&)>
   modifyVariableForStiffnessTensorComputation2(const std::string& cn) {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    static Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
+    const Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
                                  i) {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category ==
@@ -1661,7 +1661,7 @@ namespace mfront {
     if (getDebugMode()) {
       os << "cout << \"" << this->bd.getClassName()
          << "::integrate() : multiplying time step by a factor \" << 1/("
-         << this->bd.getClassName() << "::rkcastem_fac) << endl;\n";
+         << this->bd.getClassName() << "::rkcastem_div) << endl;\n";
     }
     os << "}\n"
        << "if(dt_<dtprec){\n"
