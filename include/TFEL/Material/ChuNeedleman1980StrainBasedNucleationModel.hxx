@@ -16,6 +16,7 @@
 
 #include <tuple>
 #include <ostream>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::material {
 
@@ -113,12 +114,16 @@ namespace tfel::material {
    * \tparam real: numeric type
    *
    * \param[in] params: parameters
-   * \param[in] p: equivalent plastic strain
+   * \param[in] p: equivalent plastic strain at the beginning of the time step.
+   * \param[in] dp: increment of the equivalent plastic strain.
+   * \param[in] theta: parameter of the theta method (unused).
    */
   template <typename real>
   TFEL_HOST_DEVICE real
   computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
+      const real,
+      const real,
       const real);
 
   /*!
@@ -133,12 +138,16 @@ namespace tfel::material {
    * \tparam real: numeric type
    *
    * \param[in] params: parameters
-   * \param[in] p: equivalent plastic strain
+   * \param[in] p: equivalent plastic strain at the beginning of the time step.
+   * \param[in] dp: increment of the equivalent plastic strain.
+   * \param[in] theta: parameter of the theta method (unused).
    */
   template <typename real>
   TFEL_HOST_DEVICE std::tuple<real, real>
   computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrementAndDerivative(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
+      const real,
+      const real,
       const real);
 
 }  // end of namespace tfel::material

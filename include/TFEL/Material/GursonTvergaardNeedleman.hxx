@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATERIAL_GURSONTVERGAARDNEEDLEMAN_HXX
 #define LIB_TFEL_MATERIAL_GURSONTVERGAARDNEEDLEMAN_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
 #include <cmath>
 
 namespace tfel::material {

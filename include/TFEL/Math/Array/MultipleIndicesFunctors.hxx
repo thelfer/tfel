@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_ARRAY_MULTIPLEINDICESFUNCTORS_HXX
 #define LIB_TFEL_MATH_ARRAY_MULTIPLEINDICESFUNCTORS_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
+
 namespace tfel::math {
 
   template <typename UnaryOperator, typename FirstArgument>

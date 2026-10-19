@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_ARRAY_INDEXINGPOLICIES_HXX
 #define LIB_TFEL_MATH_ARRAY_INDEXINGPOLICIES_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
 #include <tuple>
 #include <utility>
 #include <type_traits>

@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_BISSECTIONALGORITHMBASE_HXX
 #define LIB_TFEL_MATH_BISSECTIONALGORITHMBASE_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
 #include <limits>
 #include <ostream>
 

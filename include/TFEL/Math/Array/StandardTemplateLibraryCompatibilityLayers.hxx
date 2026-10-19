@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_ARRAY_STANDARDTEMPLATELIBRARYCOMPATIBILITYLAYERS_HXX
 #define LIB_TFEL_MATH_ARRAY_STANDARDTEMPLATELIBRARYCOMPATIBILITYLAYERS_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
