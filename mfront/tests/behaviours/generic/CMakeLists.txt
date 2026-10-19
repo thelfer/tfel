@@ -266,6 +266,26 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
   RungeKuttaElasticityParametersAsStaticVariables
   ImplicitElasticityParametersAsStaticVariables)
 
+mfront_behaviour_check_library(MFrontGenericBehaviours4 generic
+  OrthotropicRotationFunctionsTest)
+
+add_executable(GenericBehaviourRotationFunctionsTest EXCLUDE_FROM_ALL
+  GenericBehaviourRotationFunctionsTest.cxx)
+target_link_libraries(GenericBehaviourRotationFunctionsTest
+  TFELSystem TFELUtilities TFELTests TFELException)
+add_dependencies(GenericBehaviourRotationFunctionsTest
+  MFrontGenericBehaviours4)
+add_dependencies(build-tests GenericBehaviourRotationFunctionsTest)
+add_test(NAME GenericBehaviourRotationFunctionsTest
+  COMMAND GenericBehaviourRotationFunctionsTest)
+set_property(TEST GenericBehaviourRotationFunctionsTest
+  PROPERTY ENVIRONMENT
+  MFrontGenericBehaviours4BuildPath=$<TARGET_FILE:MFrontGenericBehaviours4>)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST GenericBehaviourRotationFunctionsTest
+    APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontProfiling>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELException>\;$ENV{PATH}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontGenericBehaviours
