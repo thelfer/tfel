@@ -45,10 +45,13 @@ if(_tfel-enable-generic-parallel-sycl-default-icpx-configuration)
   install_configuration_file(config-sycl-default-icpx.json)
 endif(_tfel-enable-generic-parallel-sycl-default-icpx-configuration)
 
-if(_tfel-enable-generic-parallel-sycl-default-acpp-configuration)
+# the tests of the sycl-gpu-acpp configuration use the configuration files
+# of the sycl-default-acpp configuration
+if((_tfel-enable-generic-parallel-sycl-default-acpp-configuration) OR
+   (_tfel-enable-generic-parallel-sycl-gpu-acpp-configuration))
   install_configuration_file(config-sycl-default-acpp.json)
   install_configuration_file(config-sycl-default-acpp-2.json)
-endif(_tfel-enable-generic-parallel-sycl-default-acpp-configuration)
+endif()
 
 # if(_tfel-enable-generic-parallel-stlpar-parunseq-acpp-generic-configuration)
 #   install_configuration_file(config-stlpar-parunseq-acpp-generic.json)

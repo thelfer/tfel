@@ -300,13 +300,15 @@ namespace mfront {
   }  // end of resetPaths
 
   SearchPathsHandler::SearchPathsHandler() {
-    // adding path to configuration files generated automatically
+    // adding path to configuration files generated automatically, installed
+    // in the `mfront/configuration-files` subdirectory of the data directory
+    // of TFEL (`TFEL_DATAROOTDIR` in `cmake/modules/tfel.cmake`)
     const auto root = tfel::getInstallPath();
     const auto ds = tfel::system::dirSeparator();
 #ifdef TFEL_APPEND_SUFFIX
-    this->paths.push_back(root + ds + "share" + ds + "tfel" + ds +
-                          "mfront-" TFEL_SUFFIX + ds + "configuration-files");
-#else "+ds+" * TFEL_APPEND_SUFFIX * "+ds+"
+    this->paths.push_back(root + ds + "share" + ds + "tfel-" TFEL_SUFFIX + ds +
+                          "mfront" + ds + "configuration-files");
+#else  /* TFEL_APPEND_SUFFIX */
     this->paths.push_back(root + ds + "share" + ds + "tfel" + ds + "mfront" +
                           ds + "configuration-files");
 #endif /* TFEL_APPEND_SUFFIX */
