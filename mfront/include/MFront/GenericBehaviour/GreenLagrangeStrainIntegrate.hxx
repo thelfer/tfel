@@ -100,7 +100,7 @@ namespace mfront::gb::green_lagrange_strain {
     d.s0.thermodynamic_forces = S0.begin();
     d.s1.thermodynamic_forces = S0.begin();
     const auto r = mfront::gb::executeInitializeFunction<Behaviour, m>(
-        initialize_variables, d, p);
+        d, initialize_variables, p);
     d.s0.gradients = gradients0_old;
     d.s1.gradients = gradients1_old;
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;

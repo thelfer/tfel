@@ -75,11 +75,11 @@ namespace mfront::gb::finite_strain {
         }
       }
       if (sm == StressMeasure::PK1) {
-        tfel::math::TensorView<N, real> pk0(d.s0.thermodynamic_forces);
+        tfel::math::ConstTensorView<N, real> pk0(d.s0.thermodynamic_forces);
         s0 =
             tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk0, F0);
       } else if (sm == StressMeasure::PK2) {
-        tfel::math::StensorView<N, real> S0(d.s0.thermodynamic_forces);
+        tfel::math::ConstStensorView<N, real> S0(d.s0.thermodynamic_forces);
         s0 =
             tfel::math::convertSecondPiolaKirchhoffStressToCauchyStress(S0, F0);
       } else {
@@ -90,7 +90,7 @@ namespace mfront::gb::finite_strain {
       d.s1.thermodynamic_forces = s0.begin();
     }
     const auto r = mfront::gb::executeInitializeFunction<Behaviour, m>(
-        initialize_variables, d, p);
+        d, initialize_variables, p);
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
     d.s1.thermodynamic_forces = thermodynamic_forces1_old;
     return r;
@@ -277,14 +277,14 @@ namespace mfront::gb::finite_strain {
         }
       }
       if (sm == StressMeasure::PK1) {
-        tfel::math::TensorView<N, real> pk0(d.s0.thermodynamic_forces);
+        tfel::math::ConstTensorView<N, real> pk0(d.s0.thermodynamic_forces);
         tfel::math::TensorView<N, real> pk1(d.s1.thermodynamic_forces);
         s0 =
             tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk0, F0);
         s1 =
             tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk1, F1);
       } else if (sm == StressMeasure::PK2) {
-        tfel::math::StensorView<N, real> S0(d.s0.thermodynamic_forces);
+        tfel::math::ConstStensorView<N, real> S0(d.s0.thermodynamic_forces);
         tfel::math::StensorView<N, real> S1(d.s1.thermodynamic_forces);
         s0 =
             tfel::math::convertSecondPiolaKirchhoffStressToCauchyStress(S0, F0);
