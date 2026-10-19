@@ -294,7 +294,7 @@ namespace mfront::gb::logarithmic_strain {
                 convert<FiniteStrainTangentOperator::DPK1_DF,
                         FiniteStrainTangentOperator::DS_DEGL>(Cse, F0, F1, s1);
           } else if (smf == FiniteStrainTangentOperator::DTAU_DDF) {
-            const auto Cs = lgh0.convertToSpatialTangentModuli(K, T1);
+            const auto Cs = lgh1.convertToSpatialTangentModuli(K, T1);
             const auto Dt =
                 convert<FiniteStrainTangentOperator::DTAU_DF,
                         FiniteStrainTangentOperator::SPATIAL_MODULI>(Cs, F0, F1,
