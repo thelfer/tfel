@@ -409,6 +409,18 @@ namespace mfront {
     const std::string array_offset;
   };  // end of WriteRotationFunctionArgument
 
+  /*!
+   * \brief write the copy of a scalar, which is not changed by the rotation
+   * but must be copied if the destination is not the source
+   */
+  static void writeScalarCopy(WriteRotationFunctionArgument& args) {
+    const auto o = args.array_offset.empty()
+                       ? std::to_string(args.variable_offset)
+                       : args.array_offset + " + " +
+                             std::to_string(args.variable_offset);
+    args.os << "dest[" << o << "] = src[" << o << "];\n";
+  }  // end of writeScalarCopy
+
   static void writeSecondOrderTensorsRotation(
       WriteRotationFunctionArgument& args,
       const char* const type,
@@ -550,6 +562,7 @@ namespace mfront {
         WriteRotationFunctionArgument{os, h, v.name, variable_offset, ao};
     const auto f = SupportedTypes::getTypeFlag(v.type);
     if (f == SupportedTypes::SCALAR) {
+      writeScalarCopy(args);
     } else if (f == SupportedTypes::TVECTOR) {
       os << "std::cerr << \"rotation of vector is unsupported\";\n"
          << "std::exit(-1);\n";
@@ -753,6 +766,7 @@ namespace mfront {
         const auto f2 = SupportedTypes::getTypeFlag(v2.type);
         if (f1 == SupportedTypes::SCALAR) {
           if (f2 == SupportedTypes::SCALAR) {
+            writeScalarCopy(args);
           } else if (f2 == SupportedTypes::TVECTOR) {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported tangent operator type\";\n"
