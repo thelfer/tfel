@@ -11,4 +11,7 @@ compilation_options : {
     compiler: "@TFEL_CLANGXX_COMPILER@",
     compilation_flags: "-O2 -std=c++@TFEL_CXX_STANDARD@ -march=native" 
   }
+},
+linking_options : {
+  linker_flags : "-ltbb -Wl,-z,nodelete"
 }
