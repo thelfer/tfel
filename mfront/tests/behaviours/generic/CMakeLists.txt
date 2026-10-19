@@ -269,7 +269,8 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
 # behaviours used to test the integration drivers in cases which
 # can't be checked by MTest
 mfront_behaviour_check_library(MFrontGenericBehaviours4 generic
-  HenckyTimeStepScalingFactorTest)
+  HenckyTimeStepScalingFactorTest
+  InternalStateVariablePostProcessingTest)
 
 add_executable(generic-IntegrationDriversTest EXCLUDE_FROM_ALL
   IntegrationDriversTest.cxx)

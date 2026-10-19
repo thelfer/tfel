@@ -459,6 +459,7 @@ namespace mfront::gb {
       auto* const thermodynamic_forces_old = d.s0.thermodynamic_forces;
       auto* const internal_state_variables_old = d.s0.internal_state_variables;
       d.s0.thermodynamic_forces = d.s1.thermodynamic_forces;
+      d.s0.internal_state_variables = d.s1.internal_state_variables;
       //
       Behaviour b(d);
       b.setOutOfBoundsPolicy(p);
@@ -480,8 +481,8 @@ namespace mfront::gb {
         Behaviour initial_state(d);
         (b.*m)(post_processing_variables, initial_state);
       } else {
-        (b.*m)(post_processing_variables,
-               *(static_cast<const BehaviourData*>(nullptr)));
+        // the initial state is not used by the post-processing
+        (b.*m)(post_processing_variables, b);
       }
     } catch (...) {
       reportFailureByException(d);

@@ -100,6 +100,7 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
 
   tfel::tests::TestResult execute() override {
     this->checkTimeStepScalingFactor();
+    this->checkPostProcessing();
     return this->result;
   }  // end of execute
 
@@ -152,6 +153,33 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
       }
     }
   }  // end of checkTimeStepScalingFactor
+  /*!
+   * \brief a post-processing must see the internal state variables at the
+   * end of the time step.
+   */
+  void checkPostProcessing() {
+    auto& elm =
+        tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    const auto b = std::string{"InternalStateVariablePostProcessingTest"};
+    const auto f =
+        elm.getGenericBehaviourFunction(this->library, b + "_Tridimensional");
+    const auto pp = elm.getGenericBehaviourPostProcessingFunction(
+        this->library, b, "Tridimensional", "InternalStateVariable");
+    MaterialPoint m;
+    std::fill(m.g0.begin(), m.g0.end(), 0);
+    std::fill(m.g1.begin(), m.g1.end(), 0);
+    m.isvs0 = {0.25};
+    // integration without tangent operator: p is increased by one
+    m.K[0] = 0;
+    TFEL_TESTS_ASSERT(f(&(m.d)) == 1);
+    TFEL_TESTS_ASSERT(std::abs(m.isvs1[0] - 1.25) < 1e-14);
+    auto p_end = mfront_gb_real{-1};
+    TFEL_TESTS_ASSERT(pp(&p_end, &(m.d)) == 0);
+    this->registerResult(
+        "post-processing: value of p at the end of the "
+        "time step",
+        std::abs(p_end - 1.25) < 1e-14);
+  }  // end of checkPostProcessing
   //! \brief path to the library
   const std::string library;
 };  // end of struct IntegrationDriversTest
