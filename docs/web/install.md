@@ -63,7 +63,6 @@ is described in the following pages:
 - [Installation on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment](install-windows-msys.html).
 
 The creation of binary packages is detailed [here](packages.html). 
-Instructions for installing `TFEL` using `pip` are available [here](install-pip.html).
 
 A quick way of installing `TFEL` on `Ubuntu` systems is given in Section
 @sec:QuickUbuntu.

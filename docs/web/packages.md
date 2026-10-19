@@ -18,10 +18,6 @@ This document describes how to generate packages for `TFEL`. It relies
 on the instructions given [here](install.html) to build `TFEL` from
 the sources using the `cmake` build system.
 
-# Python pip packages
-
-Instructions for building a `pip` package are available [here](install-pip.html).
-
 # Building portable binaries
 
 The section is only meaningful if you wish to share the generated

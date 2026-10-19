@@ -19,7 +19,7 @@ jobs:
       runs-on: ${{ matrix.os }}
       strategy:
         matrix:
-          os: [ubuntu-latest, macos-latest, windows-lastest]
+          os: [ubuntu-latest, macos-latest, windows-latest]
           python-version: ['3.12']
 
       steps:
@@ -72,7 +72,9 @@ jobs:
         - name: Configure CMake (Windows)
           if: runner.os == 'Windows'
           run: |
-            cmake ${{github.workspace}}/tfel -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON -Denable-comsol=OFF -Denable-diana-fea=ON -Denable-lsdyna=OFF -Denable-portable-build=ON -Denable-reference-doc=OFF -Denable-testing=OFF -Denable-python-bindings=ON -Denable-numpy-support=ON -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -A x64
+            $PYTHON_EXECUTABLE = python -c "import sys; print(sys.executable)"
+            $PYBIND11_DIR = python -m pybind11 --cmakedir
+            cmake ${{github.workspace}}/tfel -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON -Denable-comsol=OFF -Denable-diana-fea=ON -Denable-lsdyna=OFF -Denable-portable-build=ON -Denable-reference-doc=OFF -Denable-testing=OFF -Denable-python-bindings=ON -Denable-numpy-support=ON "-DPython_EXECUTABLE=$PYTHON_EXECUTABLE" "-Dpybind11_DIR=$PYBIND11_DIR" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -A x64
 
         - name: Build Linux
           if: runner.os == 'Linux'
@@ -278,17 +280,13 @@ jobs:
             New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel" -Force
             
             # Copy the Python bindings to the pip package directory
-            $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/bin/python3/site-packages"
+            $PYTHON_VERSION = python -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))"
+            $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/bin/python$PYTHON_VERSION/site-packages"
             if (Test-Path $PYTHON_SITE_PACKAGES) {
-              Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
+              Copy-Item -Path "$PYTHON_SITE_PACKAGES/*" -Destination "${{github.workspace}}/pip-package/" -Recurse -Force
             } else {
-              $PYTHON_SITE_PACKAGES = "${{github.workspace}}/install/bin/python/site-packages"
-              if (Test-Path $PYTHON_SITE_PACKAGES) {
-                Copy-Item -Path "$PYTHON_SITE_PACKAGES/tfel*" -Destination "${{github.workspace}}/pip-package/tfel/" -Recurse -Force
-              } else {
-                Write-Error "Python site-packages not found at $PYTHON_SITE_PACKAGES"
-                exit 1
-              }
+              Write-Error "Python site-packages not found at $PYTHON_SITE_PACKAGES"
+              exit 1
             }
             
             # Copy all libraries, executables, and headers
@@ -307,12 +305,19 @@ jobs:
             Copy-Item -Path "${{github.workspace}}/install/share/*" -Destination "${{github.workspace}}/pip-package/tfel/share/" -Recurse -Force 2>$null
             
             # Create __init__.py if it doesn't exist
-            New-Item -ItemType File -Path "${{github.workspace}}/pip-package/tfel/__init__.py" -Force
+            if (-not (Test-Path "${{github.workspace}}/pip-package/tfel/__init__.py")) {
+              New-Item -ItemType File -Path "${{github.workspace}}/pip-package/tfel/__init__.py"
+            }
             
             # Create setup.py for the pip package
             @'
             from setuptools import setup, find_packages
-            import os
+            from setuptools.dist import Distribution
+            
+            class BinaryDistribution(Distribution):
+                # compiled modules inside: platform-specific wheel, not py3-none-any
+                def has_ext_modules(self):
+                    return True
             
             setup(
                 name="tfel-mfront",
@@ -324,12 +329,10 @@ jobs:
                 url="https://github.com/thelfer/tfel",
                 packages=find_packages(),
                 package_data={
-                    "tfel": ["*.pyd"],
-                    "tfel.lib": ["*.dll", "*.lib"],
-                    "tfel.bin": ["*"],
-                    "tfel.include": ["*", "*/*.h", "*/*.hpp"]
+                    "": ["*.pyd", "*.dll"],
+                    "tfel": ["lib/*", "bin/*", "include/**/*", "share/**/*"],
                 },
-                include_package_data=True,
+                distclass=BinaryDistribution,
                 install_requires=["numpy"],
                 classifiers=[
                     "Development Status :: 5 - Production/Stable",
