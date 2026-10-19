@@ -1140,9 +1140,11 @@ namespace mfront {
     };
     auto checkVariable = [bd, testInGivenVariableCategory,
                           checkVariableDefinition](const std::string& n) {
+      // `first` is true if the variable is defined for all the modelling
+      // hypotheses, `second` if it is defined for at least one of them
       const auto exists = bd.checkVariableExistence(n);
-      if (exists.first) {
-        if (!exists.second) {
+      if (exists.second) {
+        if (!exists.first) {
           tfel::raise(
               "findStressErrorNormalizationFactor: the `" + n +
               "` variable is not defined for all modelling hypotheses.");
@@ -1205,13 +1207,13 @@ namespace mfront {
     if (bd.isNameReserved("stress_error_normalization_factor")) {
       const auto senf_exists =
           bd.checkVariableExistence("stress_error_normalization_factor");
-      if (!senf_exists.first) {
+      if (!senf_exists.second) {
         tfel::raise(
             "findStressErrorNormalizationFactor: the "
             "`stress_error_normalization_factor` variable is not defined "
-            "as a paramter.");
+            "as a parameter.");
       }
-      if (!senf_exists.second) {
+      if (!senf_exists.first) {
         tfel::raise(
             "findStressErrorNormalizationFactor: the "
             "`stress_error_normalization_factor` variable is not defined "
