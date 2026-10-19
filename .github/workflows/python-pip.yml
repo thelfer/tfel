@@ -19,7 +19,7 @@ jobs:
       runs-on: ${{ matrix.os }}
       strategy:
         matrix:
-          os: [ubuntu-latest, macos-latest]
+          os: [ubuntu-latest, macos-latest, windows-lastest]
           python-version: ['3.12']
 
       steps:
@@ -44,8 +44,8 @@ jobs:
           if: runner.os == 'macOS'
           run: |
             brew update
-            brew install python pybind11 numpy
-            python -m pip install --upgrade pip setuptools wheel
+            brew install pybind11
+            python3 -m pip install --upgrade pip setuptools wheel numpy
 
         - name: Install Dependencies (Windows)
           if: runner.os == 'Windows'
@@ -55,9 +55,7 @@ jobs:
         - name: Configure CMake (Linux/macOS)
           if: runner.os != 'Windows'
           run: |
-            PYTHON_VERSION=$(python -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
-            echo $PYTHON_VERSION
-            PYTHON_ROOT_DIR=$(dirname $(dirname $(which python3)))
+            PYTHON_EXECUTABLE=$(python3 -c "import sys; print(sys.executable)")
             cmake ${{github.workspace}}/tfel                                           \
                   -B ${{github.workspace}}/build                                       \
                   -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
@@ -68,8 +66,7 @@ jobs:
                   -Denable-testing=OFF                                                 \
                   -Denable-python-bindings=ON                                          \
                   -Denable-numpy-support=ON                                            \
-                  -DPython_ROOT_DIR=${PYTHON_ROOT_DIR}                                 \
-                  -DPython_EXECUTABLE=python                                           \
+                  -DPython_EXECUTABLE=${PYTHON_EXECUTABLE}                             \
                   -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
         - name: Configure CMake (Windows)
@@ -117,7 +114,7 @@ jobs:
             PYTHON_VERSION=$(python3 -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
             PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${PYTHON_VERSION}/site-packages"
             if [ -d "$PYTHON_SITE_PACKAGES" ]; then
-              cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
+              cp -r $PYTHON_SITE_PACKAGES/* ${{github.workspace}}/pip-package/
             else
               echo "Python site-packages not found at $PYTHON_SITE_PACKAGES"
               exit 1
@@ -139,7 +136,7 @@ jobs:
             cp -r ${{github.workspace}}/install/include/* ${{github.workspace}}/pip-package/tfel/include/ 2>/dev/null || true
 
             # shared data
-            cp -r ${{github.workspace}}/install/share/* ${{github.workspace}}/pip-package/tfel/shared/ 2>/dev/null || true
+            cp -r ${{github.workspace}}/install/share/* ${{github.workspace}}/pip-package/tfel/share/ 2>/dev/null || true
             
             # Create __init__.py if it doesn't exist
             touch ${{github.workspace}}/pip-package/tfel/__init__.py
@@ -147,7 +144,12 @@ jobs:
             # Create setup.py for the pip package
             cat > ${{github.workspace}}/pip-package/setup.py << 'EOF'
             from setuptools import setup, find_packages
-            import os
+            from setuptools.dist import Distribution
+            
+            class BinaryDistribution(Distribution):
+                # compiled modules inside: platform-specific wheel, not py3-none-any
+                def has_ext_modules(self):
+                    return True
             
             setup(
                 name="tfel-mfront",
@@ -159,12 +161,10 @@ jobs:
                 url="https://github.com/thelfer/tfel",
                 packages=find_packages(),
                 package_data={
-                    "tfel": ["*.so", "*.pyd"],
-                    "tfel.lib": ["*.so", "*.dylib", "*.dll"],
-                    "tfel.bin": ["*"],
-                    "tfel.include": ["*", "*/*.h", "*/*.hpp"]
+                    "": ["*.so", "*.dylib"],
+                    "tfel": ["lib/*", "bin/*", "include/**/*", "share/**/*"],
                 },
-                include_package_data=True,
+                distclass=BinaryDistribution,
                 install_requires=["numpy"],
                 classifiers=[
                     "Development Status :: 5 - Production/Stable",
@@ -197,7 +197,7 @@ jobs:
             PYTHON_VERSION=$(python -c "import sys; print('{}.{}'.format(sys.version_info.major, sys.version_info.minor))")
             PYTHON_SITE_PACKAGES="${{github.workspace}}/install/lib/python${PYTHON_VERSION}/site-packages"
             if [ -d "$PYTHON_SITE_PACKAGES" ]; then
-              cp -r $PYTHON_SITE_PACKAGES/tfel* ${{github.workspace}}/pip-package/tfel/
+              cp -r $PYTHON_SITE_PACKAGES/* ${{github.workspace}}/pip-package/
             else
               echo "Python site-packages not found at $PYTHON_SITE_PACKAGES"
               exit 1
@@ -227,7 +227,12 @@ jobs:
             # Create setup.py for the pip package
             cat > ${{github.workspace}}/pip-package/setup.py << 'EOF'
             from setuptools import setup, find_packages
-            import os
+            from setuptools.dist import Distribution
+            
+            class BinaryDistribution(Distribution):
+                # compiled modules inside: platform-specific wheel, not py3-none-any
+                def has_ext_modules(self):
+                    return True
             
             setup(
                 name="tfel-mfront",
@@ -239,12 +244,10 @@ jobs:
                 url="https://github.com/thelfer/tfel",
                 packages=find_packages(),
                 package_data={
-                    "tfel": ["*.so", "*.pyd"],
-                    "tfel.lib": ["*.so", "*.dylib", "*.dll"],
-                    "tfel.bin": ["*"],
-                    "tfel.include": ["*", "*/*.h", "*/*.hpp"]
+                    "": ["*.so", "*.dylib"],
+                    "tfel": ["lib/*", "bin/*", "include/**/*", "share/**/*"],
                 },
-                include_package_data=True,
+                distclass=BinaryDistribution,
                 install_requires=["numpy"],
                 classifiers=[
                     "Development Status :: 5 - Production/Stable",
@@ -292,7 +295,7 @@ jobs:
             New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/lib" -Force
             New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/bin" -Force
             New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/include" -Force
-            New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/share -Force
+            New-Item -ItemType Directory -Path "${{github.workspace}}/pip-package/tfel/share" -Force
             
             # Copy libraries and executables
             Copy-Item -Path "${{github.workspace}}/install/bin/*" -Destination "${{github.workspace}}/pip-package/tfel/bin/" -Force 2>$null
@@ -370,7 +373,7 @@ jobs:
         - name: Upload Pip Wheel as Artifact
           uses: actions/upload-artifact@v4
           with:
-            name: tfel-mfront-wheel-py${{ matrix.python-version }}
+            name: tfel-mfront-wheel-${{ matrix.os }}-py${{ matrix.python-version }}
             path: ${{github.workspace}}/pip-package/dist/
 
     publish-pypi:
