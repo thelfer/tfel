@@ -88,7 +88,7 @@ namespace mfront::bbrick {
         std::vector<double> values(3u);
         for (unsigned short i = 0; i != 3; ++i) {
           tfel::raise_if(!mps[i].is<ConstantMaterialProperty>(),
-                         "if one  component of '" + an +
+                         "if the first component of '" + an +
                              "' is a constant value, all components must be "
                              "constant values");
           if (b) {
