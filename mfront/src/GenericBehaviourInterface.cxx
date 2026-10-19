@@ -579,16 +579,20 @@ namespace mfront {
       const SupportedTypes::TypeSize& o,
       const std::string& ao = "") {
     using size_type = size_t;
-    if (v.arraySize != 1u) {
-      tfel::raise(
-          "writeVariableRotation: "
-          "array of variables are not supported");
-    }
+    const auto f = SupportedTypes::getTypeFlag(v.type);
+    const auto s = static_cast<size_type>(
+        SupportedTypes::getTypeSize(v.type, 1u).getValueForModellingHypothesis(
+            h));
     auto variable_offset =
         static_cast<size_type>(o.getValueForModellingHypothesis(h));
-    auto args =
-        WriteRotationFunctionArgument{os, h, v.name, variable_offset, ao};
-    writeObjectRotation(args, SupportedTypes::getTypeFlag(v.type));
+    // the entries of an array of variables are stored contiguously
+    for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+      const auto n =
+          v.arraySize == 1u ? v.name : v.name + "_" + std::to_string(idx);
+      auto args = WriteRotationFunctionArgument{os, h, n, variable_offset, ao};
+      writeObjectRotation(args, f);
+      variable_offset += s;
+    }
   }  // end of writeVariableRotation
 
   static void writeGradientsRotationFunctionsImplementation(
@@ -813,7 +817,6 @@ namespace mfront {
 
   static void writeTangentOperatorRotationFunctionsImplementationBody(
       std::ostream& os,
-      const std::string& f,
       const BehaviourDescription& bd,
       const tfel::material::ModellingHypothesis::Hypothesis h,
       const std::string& array_offset = "") {
@@ -822,25 +825,31 @@ namespace mfront {
     for (const auto& b : bd.getTangentOperatorBlocks()) {
       const auto& v1 = b.first;
       const auto& v2 = b.second;
-      if ((v1.arraySize != 1) || (v2.arraySize != 1)) {
-        os << "std::cerr << \"" << f << ": \"\n"
-           << "          << \"array of gradients are not supported\";\n"
-           << "std::exit(-1);\n";
-      } else {
-        const auto to_name = "d" + v1.name + "_d" + v2.name;
-        auto args =
-            WriteRotationFunctionArgument{os, h, to_name, o, array_offset};
-        writeTangentOperatorBlockRotation(args,
-                                          SupportedTypes::getTypeFlag(v1.type),
-                                          SupportedTypes::getTypeFlag(v2.type));
-      }
+      const auto f1 = SupportedTypes::getTypeFlag(v1.type);
+      const auto f2 = SupportedTypes::getTypeFlag(v2.type);
       const auto s1 = static_cast<size_type>(
-          SupportedTypes::getTypeSize(v1.type, v1.arraySize)
+          SupportedTypes::getTypeSize(v1.type, 1u)
               .getValueForModellingHypothesis(h));
       const auto s2 = static_cast<size_type>(
-          SupportedTypes::getTypeSize(v2.type, v2.arraySize)
+          SupportedTypes::getTypeSize(v2.type, 1u)
               .getValueForModellingHypothesis(h));
-      o += static_cast<size_type>(s1 * s2);
+      // a block associated with arrays of variables is made of one
+      // sub-block for each pair of entries, stored contiguously
+      for (unsigned short idx1 = 0; idx1 != v1.arraySize; ++idx1) {
+        for (unsigned short idx2 = 0; idx2 != v2.arraySize; ++idx2) {
+          auto to_name = "d" + v1.name + "_d" + v2.name;
+          if (v1.arraySize != 1u) {
+            to_name += "_" + std::to_string(idx1);
+          }
+          if (v2.arraySize != 1u) {
+            to_name += "_" + std::to_string(idx2);
+          }
+          auto args =
+              WriteRotationFunctionArgument{os, h, to_name, o, array_offset};
+          writeTangentOperatorBlockRotation(args, f1, f2);
+          o += s1 * s2;
+        }
+      }
     }
   }  // end of writeTangentOperatorRotationFunctionsImplementationBody
 
@@ -957,8 +966,7 @@ namespace mfront {
          << "const mfront_gb_real* const src,"
          << "const mfront_gb_real* const rv){\n";
       writeRotationMatrixDefinition(os, true);
-      writeTangentOperatorRotationFunctionsImplementationBody(
-          os, f + "_rotateTangentOperatorBlocks", bd, h);
+      writeTangentOperatorRotationFunctionsImplementationBody(os, bd, h);
       os << "}\n\n";
       auto tob_size = size_type{};
       for (const auto& to : bd.getTangentOperatorBlocks()) {
@@ -978,8 +986,8 @@ namespace mfront {
          << "const mfront_gb_size_type s){\n";
       writeRotationMatrixDefinition(os, true);
       os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
-      writeTangentOperatorRotationFunctionsImplementationBody(
-          os, f + "_rotateArrayOfTangentOperatorBlocks", bd, h, tob_offset);
+      writeTangentOperatorRotationFunctionsImplementationBody(os, bd, h,
+                                                              tob_offset);
       os << "}\n";
       os << "}\n\n";
     }
