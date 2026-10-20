@@ -284,6 +284,9 @@ namespace mfront {
         "unable to open '" +
             fn + "'");
     os.exceptions(std::ios::badbit | std::ios::failbit);
+    // precision of the bounds and of the parameters treated as static
+    // variables, as in the exported symbols
+    os.precision(14);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
     const auto& date = fd.date;
