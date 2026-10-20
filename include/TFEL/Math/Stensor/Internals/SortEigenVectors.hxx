@@ -39,7 +39,7 @@ namespace tfel::math::internals {
                     tfel::math::tmatrix<3u, 3u, T>&,
                     const EigenValuesOrdering) {}  // end of exe
   };  // end of struct SortEigenVectors<1u>
-  //! \brief partial specialisation of the `SortEigenVectors` in 1D
+  //! \brief partial specialisation of the `SortEigenVectors` in 2D
   template <>
   struct SortEigenVectors<2u> {
     //! a simple alias

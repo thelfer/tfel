@@ -59,8 +59,8 @@ the stress measure and the tangent operator to be returned.
 The following stress measures are available:
 
 - the Cauchy stress
-- the first Piola-Kirchoff stress
-- the second Piola-Kirchoff stress
+- the first Piola-Kirchhoff stress
+- the second Piola-Kirchhoff stress
 
 The following tangent operators are available:
 
@@ -70,6 +70,8 @@ The following tangent operators are available:
   deformation gradient.
 - the derivative of the second Piola-Kirchhoff stress with respect to
   the Green-Lagrange strain.
+- the derivative of the Kirchhoff stress with respect to the spatial
+  increment of the deformation gradient.
 
 ## Support of orthotropic behaviours
 
@@ -140,6 +142,7 @@ Here is the list of the generated functions:
   `<behaviour_function_name>_<hypothesis>_rotateThermodynamicForces_PK2Stress`.
   This function assumes that its first argument is the second
   Piola-Kirchhoff stress in the material frame.
+-
   `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dsig_dF`.
   This function assumes that its first argument is the derivative of the
   Cauchy stress with respect to the deformation gradient in the material
@@ -150,7 +153,17 @@ Here is the list of the generated functions:
   first Piola-Kirchhoff stress with respect to the deformation gradient
   in the material frame.
 -
-  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_PK2Stress`.
+  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dPK2_dEGL`.
   This function assumes that its first argument is the derivative of the
   second Piola-Kirchhoff stress with respect to the Green-Lagrange
   strain in the material frame.
+-
+  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dtau_ddF`.
+  This function assumes that its first argument is the derivative of the
+  Kirchhoff stress with respect to the spatial increment of the
+  deformation gradient in the material frame.
+
+Each of those functions has a variant treating an array of integration
+points, whose name is obtained by replacing `rotate` by `rotateArrayOf`
+(for instance
+`<behaviour_function_name>_<hypothesis>_rotateArrayOfThermodynamicForces_CauchyStress`).

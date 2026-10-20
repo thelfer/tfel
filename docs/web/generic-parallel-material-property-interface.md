@@ -47,8 +47,8 @@ void (*)(mfront_gmp_OutputStatus* const,       // output status
          mfront_gmp_real* const,               // output values
          const mfront_gmp_size_type,           // output stride
          ...,                                  // extra arguments specific to the backend considered
-         const mfront_gmp_real* const,         // values of the arguments
-         const mfront_gmp_size_types* const,   // strides of the arguments
+         const mfront_gmp_real* const* const,  // values of the arguments
+         const mfront_gmp_size_type* const,    // strides of the arguments
          const mfront_gmp_size_type,           // number of arguments
          const mfront_gmp_size_type,           // number of points
          const mfront_gmp_OutOfBoundsPolicy);  // out of bounds policy
@@ -57,7 +57,7 @@ void (*)(mfront_gmp_OutputStatus* const,       // output status
 The `mfront_gmp_OutputStatus` structure and the
 `mfront_gmp_OutOfBoundsPolicy` enumeration type are described in the
 page dedicated to the [`generic` interface for material
-properties](generic-parallel-material-property-interface.html). The
+properties](generic-material-property-interface.html). The
 `mfront_gmp_real` type is by default an alias to double precision
 floating point numbers.
 
@@ -83,7 +83,7 @@ The second generated function matches the following prototype:
 void (*)(mfront_gmp_OutputStatus* const,       // output status
          mfront_gmp_real* const,               // output values
          ...,                                  // extra arguments specific to the backend considered
-         const mfront_gmp_real* const,         // values of the arguments
+         const mfront_gmp_real* const* const,  // values of the arguments
          const mfront_gmp_size_type,           // number of arguments
          const mfront_gmp_size_type,           // number of points
          const mfront_gmp_OutOfBoundsPolicy);  // out of bounds policy
@@ -91,7 +91,7 @@ void (*)(mfront_gmp_OutputStatus* const,       // output status
 
 This function assumes that the values of the arguments and the values of
 the output are stored contiguously in memory. In other words, this
-prototype is equivalent to the the first prototype when all strides are
+prototype is equivalent to the first prototype when all strides are
 equal to one.
 
 # Backends

@@ -5,10 +5,10 @@ date: 25/08/2026
 lang: en-EN
 link-citations: true
 colorlinks: true
-figPrefixTemplate: "877665i877665"
-tblPrefixTemplate: "877665i877665"
-secPrefixTemplate: "877665i877665"
-eqnPrefixTemplate: "(877665i877665)"
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
 ---
 
 
