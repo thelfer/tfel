@@ -57,6 +57,10 @@ namespace tfel::check {
                                  const bool ic_,
                                  const std::shared_ptr<Column> cii_,
                                  const std::shared_ptr<Interpolation> ii_) {
+    // the same comparison is used by all the tests following a
+    // `@TestType` keyword: the result of a previous test is discarded
+    this->success = true;
+    this->msgLog.clear();
     this->c1 = c1_;
     this->c2 = c2_;
     this->prec = prec_;

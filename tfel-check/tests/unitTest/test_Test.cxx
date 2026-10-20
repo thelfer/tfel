@@ -79,6 +79,34 @@ struct test_Test final : public tfel::tests::TestCase {
     // back to working file
     t.setFileA("test_Test.res");
     t.applyInterpolation();
+    // a comparison shared by two tests, as done by TestLauncher: the
+    // result of the first test must not change the one of the second
+    file.open("test_Test2.res");
+    tfel::raise_if(!file,
+                   "test_Test::execute: "
+                   "could not open file 'test_Test2.res'");
+    file << "tps B C \n"
+         << "1. 2. 2.\n"
+         << "2. 9. 1.\n";
+    file.close();
+    const auto c = std::make_shared<tfel::check::AbsoluteComparison>();
+    auto compare = [&c](const std::string& column) {
+      tfel::check::Test t2;
+      t2.setPrec(1.e-12);
+      t2.setInterpolation(std::make_shared<tfel::check::NoInterpolation>());
+      t2.setComparison(c);
+      t2.setColA(std::make_shared<tfel::check::Column>(column));
+      t2.setColB(std::make_shared<tfel::check::Column>(column));
+      t2.setFileA("test_Test.res");
+      t2.setFileB("test_Test2.res");
+      t2.applyInterpolation();
+      t2.compare();
+      return std::make_pair(t2.hasSucceed(), t2.getMsgLog());
+    };
+    TFEL_TESTS_ASSERT(!compare("B").first);
+    const auto [success, log] = compare("C");
+    TFEL_TESTS_ASSERT(success);
+    TFEL_TESTS_ASSERT(log.find("column 'B'") == std::string::npos);
     return this->result;
   }
 };
