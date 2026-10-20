@@ -22,7 +22,8 @@ namespace tfel::fsalgo {
    * \class fill
    * \brief Fill assigns the value value to every element in the range [first,
    * last). That is, for every iterator i in [first, first+N), it performs the
-   * assignment *i = value. \param N number of element to be filled.
+   * assignment *i = value.
+   * \tparam N: number of elements to be filled.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/fill.html
