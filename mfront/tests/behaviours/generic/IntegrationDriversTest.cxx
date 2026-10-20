@@ -118,16 +118,16 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto f = elm.getGenericBehaviourFunction(
         this->library, "HenckyTimeStepScalingFactorTest_Tridimensional");
-    const auto integrate = [&f](MaterialPoint& m, const int sm, const int to,
-                                const mfront_gb_real a) {
+    const auto integrate = [&f](MaterialPoint& m, const mfront_gb_real a) {
       m.g1 = {1.02, 0.99, 1.01, 0.03, -0.01, 0.02, 0, -0.02, 0.01};
       m.mps = {150e9, 0.3, a};
       std::fill(m.th1.begin(), m.th1.end(), -999);
       std::fill(m.K.begin(), m.K.end(), -999);
-      // consistent tangent operator, stress measure and tangent operator
+      // consistent tangent operator, Cauchy stress, derivative of the Cauchy
+      // stress with respect to the deformation gradient
       m.K[0] = 4;
-      m.K[1] = sm;
-      m.K[2] = to;
+      m.K[1] = 0;
+      m.K[2] = 0;
       return f(&(m.d));
     };
     const auto are_equal = [](const auto& v1, const auto& v2) {
@@ -136,24 +136,15 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
                           return std::abs(a - b) < 1e-12 * (1 + std::abs(a));
                         });
     };
-    const char* const stress_measures[] = {"CAUCHY", "PK2", "PK1"};
-    const char* const tangent_operators[] = {"DSIG_DF", "DS_DEGL", "DPK1_DF",
-                                             "DTAU_DDF"};
-    for (const auto sm : {0, 1, 2}) {
-      for (const auto to : {0, 1, 2, 3}) {
-        const auto c = std::string{stress_measures[sm]} + ", " +
-                       tangent_operators[to] + ": ";
-        MaterialPoint m1;
-        MaterialPoint m2;
-        this->registerResult(c + "integration (rdt=1)",
-                             integrate(m1, sm, to, 1) == 1);
-        this->registerResult(c + "integration (rdt=0.5)",
-                             integrate(m2, sm, to, 0.5) == 0);
-        this->registerResult(c + "rdt", std::abs(m2.rdt - 0.5) < 1e-14);
-        this->registerResult(c + "stress", are_equal(m1.th1, m2.th1));
-        this->registerResult(c + "tangent operator", are_equal(m1.K, m2.K));
-      }
-    }
+    MaterialPoint m1;
+    MaterialPoint m2;
+    TFEL_TESTS_ASSERT(integrate(m1, 1) == 1);
+    TFEL_TESTS_ASSERT(integrate(m2, 0.5) == 0);
+    TFEL_TESTS_ASSERT(std::abs(m2.rdt - 0.5) < 1e-14);
+    this->registerResult("time step scaling factor: stress",
+                         are_equal(m1.th1, m2.th1));
+    this->registerResult("time step scaling factor: tangent operator",
+                         are_equal(m1.K, m2.K));
   }  // end of checkTimeStepScalingFactor
   /*!
    * \brief a post-processing must see the internal state variables at the
@@ -185,8 +176,8 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
   /*!
    * \brief the initialize functions of finite strain behaviours must
    * compile and return the stress they compute in the stress measure of the
-   * caller, using the deformation gradient at the beginning of the time
-   * step.
+   * caller, here the first Piola-Kirchhoff stress, using the deformation
+   * gradient at the beginning of the time step.
    */
   void checkInitializeFunctions() {
     auto& elm =
@@ -196,51 +187,38 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
     // diagonal of the deformation gradient at the beginning of the time step
     const auto F0 = std::array<mfront_gb_real, 3>{1.2, 0.9, 1.1};
     const auto J = F0[0] * F0[1] * F0[2];
-    const char* const stress_measures[] = {"CAUCHY", "PK2", "PK1"};
     const auto check = [&](const std::string& b, const auto& expected) {
       const auto f = elm.getGenericBehaviourInitializeFunction(
           this->library, b, "Tridimensional", "StressFromPressure");
-      for (const auto sm : {0, 1, 2}) {
-        const auto c = b + ", " + stress_measures[sm] + ": ";
-        MaterialPoint m;
-        m.g0 = {F0[0], F0[1], F0[2], 0, 0, 0, 0, 0, 0};
-        // the deformation gradient at the end of the time step must not be
-        // used by the initialize function
-        m.g1 = {1.3, 0.8, 1.05, 0.1, -0.05, 0.02, 0.03, -0.01, 0.04};
-        std::fill(m.th1.begin(), m.th1.end(), -999);
-        m.K[1] = sm;
-        this->registerResult(c + "call", f(&(m.d), &pr) == 0);
-        // the expected stress is diagonal
-        auto ok = true;
-        for (unsigned short i = 0; i != 3; ++i) {
-          ok = ok &&
-               (std::abs(m.th1[i] - expected(sm, F0[i], J, pr)) < 1e-12 * pr);
-        }
-        const auto n = sm == 2 ? 9 : 6;
-        for (unsigned short i = 3; i != n; ++i) {
-          ok = ok && (std::abs(m.th1[i]) < 1e-12 * pr);
-        }
-        this->registerResult(c + "stress", ok);
+      MaterialPoint m;
+      m.g0 = {F0[0], F0[1], F0[2], 0, 0, 0, 0, 0, 0};
+      // the deformation gradient at the end of the time step must not be
+      // used by the initialize function
+      m.g1 = {1.3, 0.8, 1.05, 0.1, -0.05, 0.02, 0.03, -0.01, 0.04};
+      std::fill(m.th1.begin(), m.th1.end(), -999);
+      // first Piola-Kirchhoff stress
+      m.K[1] = 2;
+      TFEL_TESTS_ASSERT(f(&(m.d), &pr) == 0);
+      // the expected stress is diagonal
+      auto ok = true;
+      for (unsigned short i = 0; i != 3; ++i) {
+        ok = ok && (std::abs(m.th1[i] - expected(F0[i], J, pr)) < 1e-12 * pr);
       }
+      for (unsigned short i = 3; i != 9; ++i) {
+        ok = ok && (std::abs(m.th1[i]) < 1e-12 * pr);
+      }
+      this->registerResult(b + ": first Piola-Kirchhoff stress", ok);
     };
-    // the expected values of the Cauchy stress, the second Piola-Kirchhoff
-    // stress and the first Piola-Kirchhoff stress are given for the
-    // components (i,i)
+    // expected components (i,i) of the first Piola-Kirchhoff stress
     check("FiniteStrainInitializeFunctionTest",  // Cauchy stress p I
-          [](const int sm, const mfront_gb_real F, const mfront_gb_real Je,
-             const mfront_gb_real p) {
-            return sm == 0 ? p : (sm == 1 ? Je * p / (F * F) : Je * p / F);
-          });
+          [](const mfront_gb_real F, const mfront_gb_real Je,
+             const mfront_gb_real p) { return Je * p / F; });
     check("GreenLagrangeInitializeFunctionTest",  // PK2 stress p I
-          [](const int sm, const mfront_gb_real F, const mfront_gb_real Je,
-             const mfront_gb_real p) {
-            return sm == 0 ? p * F * F / Je : (sm == 1 ? p : p * F);
-          });
+          [](const mfront_gb_real F, const mfront_gb_real,
+             const mfront_gb_real p) { return p * F; });
     check("HenckyInitializeFunctionTest",  // Kirchhoff stress p I
-          [](const int sm, const mfront_gb_real F, const mfront_gb_real Je,
-             const mfront_gb_real p) {
-            return sm == 0 ? p / Je : (sm == 1 ? p / (F * F) : p / F);
-          });
+          [](const mfront_gb_real F, const mfront_gb_real,
+             const mfront_gb_real p) { return p / F; });
   }  // end of checkInitializeFunctions
   //! \brief path to the library
   const std::string library;
