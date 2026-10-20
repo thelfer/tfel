@@ -248,6 +248,7 @@ namespace mfront {
                        "' "
                        "for writing output file.");
     header.exceptions(std::ios::badbit | std::ios::failbit);
+    header.precision(14);
     header << "/*!\n"
            << "* \\file   " << getHeaderFileName(name) << '\n'
            << "* \\brief  "
@@ -357,6 +358,7 @@ namespace mfront {
     std::ofstream src(src_name);
     throw_if(!src, "unable to open '" + src_name + "'");
     src.exceptions(std::ios::badbit | std::ios::failbit);
+    src.precision(14);
     src << "/*!\n"
         << "* \\file   " << src_name << '\n'
         << "* \\brief  "

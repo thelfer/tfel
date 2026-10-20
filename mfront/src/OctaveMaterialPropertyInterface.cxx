@@ -271,6 +271,7 @@ namespace mfront {
                    "unable to open file '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     out << "/*!\n"
         << "* \\file   " << fn << '\n'
         << "* \\brief  "

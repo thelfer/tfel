@@ -272,12 +272,14 @@ namespace mfront {
     out.open(outName);
     throw_if(!out, "unable to open '" + outName + "' for writing output file.");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     const auto srcFileName = "src/" + name + "-python.cxx";
     std::ofstream srcFile;
     srcFile.open(srcFileName);
     throw_if(!srcFile,
              "unable to open '" + srcFileName + "' for writing output file.");
     srcFile.exceptions(std::ios::badbit | std::ios::failbit);
+    srcFile.precision(14);
     // writing header
     out << "/*!\n"
         << "* \\file   " << outName << '\n'
@@ -546,6 +548,7 @@ namespace mfront {
     }();
     std::ofstream wrapper(wn);
     wrapper.exceptions(std::ios::badbit | std::ios::failbit);
+    wrapper.precision(14);
     throw_if(!wrapper, "unable to open file '" + wn + "'");
     wrapper << "/*!\n";
     if (library.empty()) {
