@@ -23,6 +23,7 @@
 #include "TFEL/Check/AreaComparison.hxx"
 #include "TFEL/Check/NoInterpolation.hxx"
 #include "TFEL/Check/LinearInterpolation.hxx"
+#include "TFEL/Check/SplineInterpolation.hxx"
 
 struct test_AreaComparison final : public tfel::tests::TestCase {
   test_AreaComparison()
@@ -45,6 +46,18 @@ struct test_AreaComparison final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(check("test_AreaComparison_A.res",
                             "test_AreaComparison_C.res", 1.25 + 1.e-10,
                             linear));
+    // duplicated and unsorted abscissas
+    write("test_AreaComparison_D.res", "# t y\n2 2\n0 0\n4 4\n1 1\n4 4\n");
+    TFEL_TESTS_ASSERT(check("test_AreaComparison_D.res",
+                            "test_AreaComparison_B.res", 1.e-12, linear));
+    const auto spline = std::make_shared<tfel::check::SplineInterpolation>();
+    TFEL_TESTS_ASSERT(check("test_AreaComparison_D.res",
+                            "test_AreaComparison_B.res", 1.e-10, spline));
+    // without interpolation, the abscissas must be the same
+    const auto none = std::make_shared<tfel::check::NoInterpolation>();
+    TFEL_TESTS_CHECK_THROW(check("test_AreaComparison_A.res",
+                                 "test_AreaComparison_B.res", 1.e-12, none),
+                           std::runtime_error);
     return this->result;
   }
 

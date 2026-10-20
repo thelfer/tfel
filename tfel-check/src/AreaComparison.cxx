@@ -13,7 +13,10 @@
 
 #include <cmath>
 #include <vector>
+#include <numeric>
+#include <iterator>
 #include <algorithm>
+#include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/AreaComparison.hxx"
 
@@ -22,13 +25,89 @@ namespace tfel::check {
   static double trapezoidalIntegration(const std::vector<double>& abscissas,
                                        const std::vector<double>& ordinates) {
     double result = 0;
-    for (std::vector<double>::size_type i = 0; i < (abscissas.size() - 1);
-         ++i) {
-      double absInter = abscissas.at(i + 1) - abscissas.at(i);
-      double ordInter = ordinates.at(i + 1) + ordinates.at(i);
+    for (std::vector<double>::size_type i = 1; i < abscissas.size(); ++i) {
+      double absInter = abscissas.at(i) - abscissas.at(i - 1);
+      double ordInter = ordinates.at(i) + ordinates.at(i - 1);
       result += ((absInter * ordInter) / 2);
     }
     return result;
+  }
+
+  namespace {
+
+    /*!
+     * \brief a curve, i.e. a set of points sorted by increasing abscissa,
+     * with no duplicated abscissa.
+     */
+    struct Curve {
+      std::vector<double> abscissas;
+      std::vector<double> values;
+    };
+
+  }  // end of namespace
+
+  /*!
+   * \return the curve defined by the given abscissas and values
+   * \param[in] x: abscissas
+   * \param[in] y: values
+   *
+   * The points are sorted by increasing abscissa. If an abscissa
+   * appears more than once, only the first point is kept, as in the
+   * `Linearization` class.
+   */
+  static Curve buildCurve(const std::vector<double>& x,
+                          const std::vector<double>& y) {
+    raise_if(x.size() != y.size(),
+             "AreaComparison::compare: the abscissa and value "
+             "columns do not have the same size");
+    raise_if(x.empty(), "AreaComparison::compare: no values");
+    auto indexes = std::vector<std::vector<double>::size_type>(x.size());
+    std::iota(indexes.begin(), indexes.end(), 0);
+    std::stable_sort(indexes.begin(), indexes.end(),
+                     [&x](const auto i, const auto j) { return x[i] < x[j]; });
+    auto c = Curve{};
+    for (const auto i : indexes) {
+      // the abscissas are sorted, so this test is an exact equality
+      if ((!c.abscissas.empty()) && (!(c.abscissas.back() < x[i]))) {
+        continue;
+      }
+      c.abscissas.push_back(x[i]);
+      c.values.push_back(y[i]);
+    }
+    return c;
+  }
+
+  /*!
+   * \return the values of a curve at the given abscissas
+   * \param[in] i: interpolation
+   * \param[in] c: curve
+   * \param[in] x: abscissas, sorted by increasing values
+   *
+   * The values of the curve are used at its own abscissas. Between
+   * them, the given interpolation is used. Outside the range of the
+   * curve, the first or last value is used.
+   */
+  static std::vector<double> evaluateCurve(Interpolation& i,
+                                           const Curve& c,
+                                           const std::vector<double>& x) {
+    i.interpolate(c.abscissas, c.values);
+    auto r = std::vector<double>{};
+    r.reserve(x.size());
+    auto p = c.abscissas.begin();
+    for (const auto xv : x) {
+      p = std::lower_bound(p, c.abscissas.end(), xv);
+      if (p == c.abscissas.end()) {
+        r.push_back(c.values.back());
+      } else if (!(xv < *p)) {
+        // exact match, since *p is not lower than xv
+        r.push_back(c.values[p - c.abscissas.begin()]);
+      } else if (p == c.abscissas.begin()) {
+        r.push_back(c.values.front());
+      } else {
+        r.push_back(i.getValue(xv));
+      }
+    }
+    return r;
   }
 
   AreaComparison::AreaComparison() { this->name = "area"; }
@@ -37,91 +116,39 @@ namespace tfel::check {
 
   void AreaComparison::compare() {
     using size_type = std::vector<double>::size_type;
-    // interpolation before integration
-    auto colInterpolatedTmpA =
-        std::make_shared<Column>(*(this->colIntegralInterpolated));
-    auto colInterpolatedA(
-        colInterpolatedTmpA); /**!< abscissa column for .ref */
-
-    auto colInterpolatedTmpB =
-        std::make_shared<Column>(*(this->colIntegralInterpolated));
-    std::shared_ptr<Column> colInterpolatedB(
-        colInterpolatedTmpB); /**!< abscissa column for .res */
-
-    colInterpolatedA->setFilename(this->c1->getFilename());
-    colInterpolatedB->setFilename(this->c2->getFilename());
-
-    std::vector<double> valA(this->c1->getValues());
-    std::vector<double> valB(this->c2->getValues());
-    std::vector<double> timesA(colInterpolatedA->getValues());
-    std::vector<double> timesB(colInterpolatedB->getValues());
-
-    this->integralInterpolation->interpolate(timesB, valB);
-
-    // interpolation of the column B
-    for (size_type i = 0; i < timesA.size(); ++i) {
-      for (size_type j = 0;
-           (j < timesB.size()) && (timesA.at(i) != timesB.at(j)); ++j) {
-        if (timesA.at(i) < timesB.at(j)) {  // if time from c1 not found in c2
-          timesB.insert(timesB.begin() + j,
-                        timesA.at(i));  // insert this time in times of c2
-          valB.insert(
-              valB.begin() + j,
-              this->integralInterpolation->getValue(timesB.at(
-                  j)));  // and insert the interpolated value at this time
-          break;
-        } else if ((j == (timesB.size() - 1)) &&
-                   (timesA.at(i) >
-                    timesB.at(
-                        j))) {  // if value needs to be inserted at the end
-          timesB.insert(timesB.end(),
-                        timesA.at(i));  // insert this time in times of c2
-          valB.insert(
-              valB.end(),
-              this->integralInterpolation->getValue(timesB.at(
-                  j)));  // and insert the interpolated value at this time
-          break;
-        }
-      }
-    }
-
-    this->integralInterpolation->interpolate(timesA, valA);
-
-    // interpolation of the column A
-    for (size_type i = 0; i < timesB.size(); ++i) {
-      for (size_type j = 0;
-           (j < timesA.size()) && (timesB.at(i) != timesA.at(j)); ++j) {
-        if (timesB.at(i) < timesA.at(j)) {  // if time from c1 not found in c2
-          timesA.insert(timesA.begin() + j,
-                        timesB.at(i));  // insert this time in times of c2
-          valA.insert(
-              valA.begin() + j,
-              this->integralInterpolation->getValue(timesA.at(
-                  j)));  // and insert the interpolated value at this time
-          break;
-        } else if ((j == (timesA.size() - 1)) &&
-                   (timesB.at(i) >
-                    timesA.at(
-                        j))) {  // if value needs to be inserted at the end
-          timesA.insert(timesA.end(),
-                        timesB.at(i));  // insert this time in times of c2
-          valA.insert(
-              valA.end(),
-              this->integralInterpolation->getValue(timesA.at(
-                  j)));  // and insert the interpolated value at this time
-          break;
-        }
-      }
-    }
+    raise_if(this->colIntegralInterpolated == nullptr,
+             "AreaComparison::compare: no abscissa column defined");
+    raise_if(this->integralInterpolation == nullptr,
+             "AreaComparison::compare: no interpolation defined");
+    // reading the abscissas of both files
+    auto getAbscissas = [this](const std::shared_ptr<Column>& c) {
+      auto x = Column(*(this->colIntegralInterpolated));
+      x.setFilename(c->getFilename());
+      return x.getValues();
+    };
+    const auto ca = buildCurve(getAbscissas(this->c1), this->c1->getValues());
+    const auto cb = buildCurve(getAbscissas(this->c2), this->c2->getValues());
+    raise_if((!this->integralInterpolation->isConform()) &&
+                 (ca.abscissas != cb.abscissas),
+             "AreaComparison::compare: the abscissas of files '" +
+                 this->c1->getFilename() + "' and '" + this->c2->getFilename() +
+                 "' differ, an interpolation is required");
+    // union of the abscissas of both files
+    auto times = std::vector<double>{};
+    std::set_union(ca.abscissas.begin(), ca.abscissas.end(),
+                   cb.abscissas.begin(), cb.abscissas.end(),
+                   std::back_inserter(times));
+    const auto valA = evaluateCurve(*(this->integralInterpolation), ca, times);
+    const auto valB = evaluateCurve(*(this->integralInterpolation), cb, times);
     std::vector<double> valuesDifference;
     this->msgLog += '\n';
     bool s = true;
     for (size_type i = 0; i != valA.size(); ++i) {
       // make the difference between ref and res values
-      valuesDifference.push_back(std::abs(valA.at(i) - valB.at(i)));
+      valuesDifference.push_back(std::abs(valA[i] - valB[i]));
     }
     // getting the value of the integral
-    double areaValue = trapezoidalIntegration(timesA, valuesDifference);
+    double areaValue = trapezoidalIntegration(times, valuesDifference);
     double maxValueA = this->c1->getValues().at(0);
 
     for (size_type i = 0; i < this->c1->getValues().size(); ++i) {
