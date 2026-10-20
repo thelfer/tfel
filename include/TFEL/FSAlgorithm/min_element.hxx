@@ -21,7 +21,7 @@ namespace tfel::fsalgo {
   /*!
    * \class min_element
    * \brief min_element finds the smallest element in the range [first, first+N)
-   * \param N number of element to be transformed.
+   * \tparam N: number of elements of the range.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/min_element.html
@@ -33,7 +33,9 @@ namespace tfel::fsalgo {
   struct min_element {
     /*
      * Internal function member used by min_element<N>::exe
-     * \param ForwardIterator, iterator to the elements.
+     * \tparam ForwardIterator: iterator to the elements.
+     * \param[in] p: iterator to the next element to be compared
+     * \param[in] q: iterator to the smallest element found so far
      *
      * \return ForwardIterator to the minimum element
      *
@@ -59,8 +61,11 @@ namespace tfel::fsalgo {
     /*
      * Internal function member used by min_element<N>::exe
      *
-     * \param ForwardIterator, iterator to the elements.
-     * \param BinaryPredicate, comparison function
+     * \tparam ForwardIterator: iterator to the elements.
+     * \tparam BinaryPredicate: comparison function
+     * \param[in] p: iterator to the next element to be compared
+     * \param[in] q: iterator to the element selected so far
+     * \param[in] comp: comparison function
      *
      * \return ForwardIterator to the minimum element
      *
@@ -89,10 +94,11 @@ namespace tfel::fsalgo {
    public:
     /*!
      * It returns the first iterator i in [first, first+N) such that no other
-     * iterator in [first, last) points to a value greater than *i. The return
+     * iterator in [first, last) points to a value smaller than *i. The return
      * value is first+N if and only if [first, last) is an empty range.
      *
-     * \param ForwardIterator, iterator to the elements.
+     * \tparam ForwardIterator: iterator to the elements.
+     * \param[in] p: iterator to the first element
      *
      * \return ForwardIterator to the minimum element
      *
@@ -114,8 +120,10 @@ namespace tfel::fsalgo {
      * such that, for every iterator j in [first, first+N), comp(*i, *j) is
      * false, where comp is a binary predicate given in argument
      *
-     * \param ForwardIterator, iterator to the elements.
-     * \param BinaryPredicate, comparison function
+     * \tparam ForwardIterator: iterator to the elements.
+     * \tparam BinaryPredicate: comparison function
+     * \param[in] p: iterator to the first element
+     * \param[in] comp: comparison function
      *
      * \return ForwardIterator to the minimum element
      *

@@ -21,7 +21,7 @@ namespace tfel::fsalgo {
   /*!
    * \class transform
    * \brief transform performs an operation on objects
-   * \param N number of element to be transformed.
+   * \tparam N: number of elements to be transformed.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/transform.html
@@ -39,9 +39,12 @@ namespace tfel::fsalgo {
      * that operation to *o, where o is the corresponding output iterator. The
      * return value is result + N.
      *
-     * \param  InputIterator  iterator to the element to be transformed.
-     * \param  OutputIterator iterator to which result is placed.
-     * \param  UnaryFunction  function used to perform transformation.
+     * \tparam InputIterator: iterator to the elements to be transformed.
+     * \tparam OutputIterator: iterator to which the results are placed.
+     * \tparam UnaryFunction: function used to perform the transformation.
+     * \param[in] p: iterator to the first element to be transformed
+     * \param[in] q: iterator to which the first result is placed
+     * \param[in] op: function used to perform the transformation
      *
      * \return OutputIterator iterator after the last element transformed.
      *
@@ -76,10 +79,14 @@ namespace tfel::fsalgo {
      * is, for each n such that 0 <= i < N, it performs the assignment *(result
      * + i) = op(*(first1 + i), *(first2 + i). The return value is result + N.
      *
-     * \param  InputIterator1  iterator to the first  element to be transformed.
-     * \param  InputIterator2  iterator to the second element to be transformed.
-     * \param  OutputIterator iterator to which result is placed.
-     * \param  UnaryFunction  function used to perform transformation
+     * \tparam InputIterator1: iterator to the first input range.
+     * \tparam InputIterator2: iterator to the second input range.
+     * \tparam OutputIterator: iterator to which the results are placed.
+     * \tparam BinaryFunction: function used to perform the transformation
+     * \param[in] p: iterator to the first element of the first input range
+     * \param[in] q: iterator to the first element of the second input range
+     * \param[in] r: iterator to which the first result is placed
+     * \param[in] op: function used to perform the transformation
      *
      * \return OutputIterator iterator after the last element transformed.
      *
@@ -118,7 +125,7 @@ namespace tfel::fsalgo {
   template <>
   struct transform<0u> {
     /*!
-     * \return the ouptut iterator to the end the recursion
+     * \return the output iterator, to end the recursion
      * \sa transform<N>::exe()
      *
      * \author Thomas Helfer
@@ -134,7 +141,7 @@ namespace tfel::fsalgo {
     }
 
     /*!
-     * \return the ouptut iterator to the end the recursion
+     * \return the output iterator, to end the recursion
      * \sa transform<N>::exe()
      *
      * \author Thomas Helfer
