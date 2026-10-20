@@ -215,6 +215,18 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                           "@Precision 1.e-12;\n"
                           "@Test 'test_TestLauncher_A.ref' "
                           "'test_TestLauncher_P.res' 2;\n"));
+    // L2 comparison: the difference between y = t and y = t + 1 is 1 on
+    // [0:4], so the error is sqrt(4) / 4 = 0.5
+    for (const auto& [p, b] :
+         {std::pair{"0.49", false}, std::pair{"0.51", true}}) {
+      TFEL_TESTS_ASSERT(run("test_TestLauncher_l2",
+                            "@TestType L2 interpolation Linear using 1;\n"
+                            "@Precision " +
+                                std::string{p} +
+                                ";\n"
+                                "@Test 'test_TestLauncher_A.ref' "
+                                "'test_TestLauncher_D.res' 2;\n") == b);
+    }
     return this->result;
   }
 

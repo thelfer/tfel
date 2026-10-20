@@ -43,6 +43,7 @@
 #include "TFEL/Check/RelativeAndAbsoluteComparison.hxx"
 #include "TFEL/Check/MixedComparison.hxx"
 #include "TFEL/Check/AreaComparison.hxx"
+#include "TFEL/Check/L2Comparison.hxx"
 #include "TFEL/Check/TestLauncher.hxx"
 
 namespace tfel::check {
@@ -473,6 +474,8 @@ namespace tfel::check {
       this->comparison.reset(new MixedComparison());
     } else if (this->current->value == "Area") {
       this->comparison.reset(new AreaComparison());
+    } else if (this->current->value == "L2") {
+      this->comparison.reset(new L2Comparison());
     } else {
       this->throwRuntimeError("TestLauncher::treatTestType",
                               "unknown test type "
@@ -480,7 +483,10 @@ namespace tfel::check {
                                   this->current->value + "').");
     }
     ++(this->current);
-    if (this->comparison->getName() != "area") {
+    // the Area and L2 comparisons need an interpolation for the
+    // integration
+    if (dynamic_cast<const AreaComparison*>(this->comparison.get()) ==
+        nullptr) {
       this->readSpecifiedToken("TestLauncher::treatTestType", ";");
       return;
     }
@@ -490,7 +496,8 @@ namespace tfel::check {
                                 "missing argument after '" +
                                     std::prev(this->current)->value +
                                     "'\n"
-                                    "Usage : \"TestType Area interpolation "
+                                    "Usage : \"TestType <Area|L2> "
+                                    "interpolation "
                                     "<None|Linear|Spline|LocalSpline> "
                                     "using <columnName|columnNumber>\"");
       }

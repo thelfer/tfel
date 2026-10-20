@@ -10,6 +10,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cmath>
 #include <memory>
 #include <string>
 #include <fstream>
@@ -21,6 +22,7 @@
 #include "TFEL/Check/Column.hxx"
 #include "TFEL/Check/Test.hxx"
 #include "TFEL/Check/AreaComparison.hxx"
+#include "TFEL/Check/L2Comparison.hxx"
 #include "TFEL/Check/NoInterpolation.hxx"
 #include "TFEL/Check/LinearInterpolation.hxx"
 #include "TFEL/Check/SplineInterpolation.hxx"
@@ -103,6 +105,16 @@ struct test_AreaComparison final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_THROW(check("test_AreaComparison_S1.res",
                                  "test_AreaComparison_S2.res", 1.e10, linear),
                            std::runtime_error);
+    // L2 norm: on the abscissas 0, 1, 2 and 4, the differences between
+    // y = t and y = 1 are 1, 0, 1 and 3. The trapezoidal rule gives 11 for
+    // the integral of their squares, and the error is sqrt(11) / 4
+    const auto l2 = std::make_shared<tfel::check::L2Comparison>();
+    TFEL_TESTS_ASSERT(!check("test_AreaComparison_A.res",
+                             "test_AreaComparison_C.res",
+                             std::sqrt(11.) / 4 - 1.e-10, linear, l2));
+    TFEL_TESTS_ASSERT(check("test_AreaComparison_A.res",
+                            "test_AreaComparison_C.res",
+                            std::sqrt(11.) / 4 + 1.e-10, linear, l2));
     return this->result;
   }
 
@@ -121,13 +133,16 @@ struct test_AreaComparison final : public tfel::tests::TestCase {
    * \param[in] f2: second file
    * \param[in] prec: precision
    * \param[in] i: interpolation used for the integration
+   * \param[in] c: comparison
    */
   static bool check(const std::string& f1,
                     const std::string& f2,
                     const double prec,
-                    const std::shared_ptr<tfel::check::Interpolation>& i) {
+                    const std::shared_ptr<tfel::check::Interpolation>& i,
+                    const std::shared_ptr<tfel::check::Comparison>& c =
+                        std::make_shared<tfel::check::AreaComparison>()) {
     tfel::check::Test t;
-    t.setComparison(std::make_shared<tfel::check::AreaComparison>());
+    t.setComparison(c);
     t.setPrec(prec);
     t.setInterpolation(std::make_shared<tfel::check::NoInterpolation>());
     t.setIntegralInterpolation(i);

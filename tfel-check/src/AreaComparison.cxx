@@ -35,6 +35,10 @@ namespace tfel::check {
 
   AreaComparison::AreaComparison() { this->name = "area"; }
 
+  AreaComparison::AreaComparison(const std::string& n, const Norm t) : norm(t) {
+    this->name = n;
+  }
+
   AreaComparison::~AreaComparison() = default;
 
   void AreaComparison::compare() {
@@ -71,12 +75,17 @@ namespace tfel::check {
     std::vector<double> valuesDifference;
     this->msgLog += '\n';
     bool s = true;
+    const auto l2 = this->norm == Norm::L2;
     for (size_type i = 0; i != valA.size(); ++i) {
       // make the difference between ref and res values
-      valuesDifference.push_back(std::abs(valA[i] - valB[i]));
+      const auto d = valA[i] - valB[i];
+      valuesDifference.push_back(l2 ? d * d : std::abs(d));
     }
     // getting the value of the integral
     double areaValue = trapezoidalIntegration(times, valuesDifference);
+    if (l2) {
+      areaValue = std::sqrt(areaValue);
+    }
     // the area is normalized by the maximum absolute value of the
     // reference column. A signed maximum would be negative for a negative
     // curve, and the check would always succeed.
@@ -105,17 +114,21 @@ namespace tfel::check {
       this->msgLog += " using column ";
       this->msgLog += this->colIntegralInterpolated->getName();
     }
+    const auto error = l2 ? "L2 error" : "Area error";
+    const auto max = l2 ? "Max L2 error" : "Max area";
     if (!s) {
-      this->msgLog += " failed (" + this->name + " check).\n    Area error : ";
+      this->msgLog += " failed (" + this->name + " check).\n    " +
+                      std::string{error} + " : ";
       this->msgLog += tfel::utilities::convert(areaValue);
-      this->msgLog +=
-          " \n    Max area = " + tfel::utilities::convert(this->prec) + "\n";
+      this->msgLog += " \n    " + std::string{max} + " = " +
+                      tfel::utilities::convert(this->prec) + "\n";
       this->success = false;
     } else {
-      this->msgLog +=
-          " succeed (" + this->name +
-          " check).\n    Area error : " + tfel::utilities::convert(areaValue) +
-          "\n    Max area : " + tfel::utilities::convert(this->prec) + "\n";
+      this->msgLog += " succeed (" + this->name + " check).\n    " +
+                      std::string{error} + " : " +
+                      tfel::utilities::convert(areaValue) + "\n    " +
+                      std::string{max} + " : " +
+                      tfel::utilities::convert(this->prec) + "\n";
     }
   }
 

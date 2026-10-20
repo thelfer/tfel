@@ -18,9 +18,15 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/Curve.hxx"
+#include "TFEL/Check/AreaComparison.hxx"
 #include "TFEL/Check/Test.hxx"
 
 namespace tfel::check {
+
+  //! \return true if the comparison integrates the difference of the curves
+  static bool isIntegralComparison(const Comparison& c) {
+    return dynamic_cast<const AreaComparison*>(&c) != nullptr;
+  }
 
   Test::Test() = default;
   Test::Test(Test&&) noexcept = default;
@@ -123,7 +129,7 @@ namespace tfel::check {
       return x.getValues();
     };
     if (!(this->interpolation->isConform()) &&
-        this->comparison->getName() != "area") {
+        !isIntegralComparison(*(this->comparison))) {
       // tests if we can interpolate or not, based on columns' size and type
       // of interpolation
       if (this->c1->getValues().size() != this->c2->getValues().size()) {
@@ -165,7 +171,7 @@ namespace tfel::check {
         }
       }
     } else if (this->interpolation->isConform() &&
-               this->comparison->getName() != "area") {
+               !isIntegralComparison(*(this->comparison))) {
       raise_if(this->ci == nullptr,
                "Test::applyInterpolation: no abscissa column defined");
       auto setValues = [](Column& c, const std::vector<double>& v) {

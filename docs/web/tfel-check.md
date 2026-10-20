@@ -352,6 +352,9 @@ Available types:
 - `Area`: Integral of the absolute difference between the two curves,
   normalized by the maximum absolute value of the reference. Requires a
   single precision value. See Section @sec:tfel_check:area_comparison.
+- `L2`: Same as `Area`, with the L2 norm of the difference instead of
+  the integral of its absolute value. See Section
+  @sec:tfel_check:l2_comparison.
 
 For all types, a NaN value makes the test fail.
 
@@ -409,11 +412,11 @@ Examples:
 
 #### Interpolation for integration
 
-For `Area` comparisons, the interpolation and the abscissa column used
-for the integration are given by the `@TestType` keyword:
+For `Area` and `L2` comparisons, the interpolation and the abscissa
+column used for the integration are given by the `@TestType` keyword:
 
 ~~~~{.cxx}
-@TestType Area interpolation <None|Linear|Spline|LocalSpline> using <column>;
+@TestType <Area|L2> interpolation <None|Linear|Spline|LocalSpline> using <column>;
 ~~~~
 
 For example:
@@ -531,6 +534,28 @@ the reference.
 **Use case**: Global comparison of two curves, possibly sampled
 differently, when local differences (for instance a slight time shift
 of a sharp transition) are acceptable.
+
+### L2 comparison {#sec:tfel_check:l2_comparison}
+
+Same as the `Area` comparison, with the L2 norm of the difference
+between the two curves:
+
+\[
+e = \frac{1}{\max_{i}\left|y^{\mathrm{ref}}_{i}\right|}\sqrt{\int\left(y^{\mathrm{ref}}\left(x\right)-y^{\mathrm{res}}\left(x\right)\right)^{2}\,\mathrm{d}x}
+\]
+
+The integral is computed by the trapezoidal rule on the same points as
+for the `Area` comparison, with the same rules. The error \(e\) has the
+unit of the square root of the abscissa.
+
+~~~~{.cxx}
+@TestType L2 interpolation Linear using 'time';
+@Precision 1.e-2;
+@Test 'reference.res' 'results.res' 'stress';
+~~~~
+
+**Use case**: Same as the `Area` comparison, with more weight given to
+large local differences.
 
 ## Interpolation methods {#sec:tfel_check:interpolation_methods}
 
