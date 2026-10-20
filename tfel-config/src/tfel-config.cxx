@@ -642,7 +642,7 @@ int main(const int argc, const char* const* const argv) {
       const auto s = dirSeparator();
       std::cout << getTFELHOME() << s << "share" << s << "tfel";
 #ifdef TFEL_APPEND_SUFFIX
-      std::cout << "-" << #TFEL_SUFFIX;
+      std::cout << "-" << TFEL_SUFFIX;
 #endif /* TFEL_APPEND_SUFFIX */
       std::cout << s << "cmake";
     }
