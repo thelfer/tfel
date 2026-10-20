@@ -196,39 +196,39 @@ namespace mfront {
    *
    * This function:
    *
-   * - imports the namespace std (`use namespace std`)
+   * - imports the namespace std (`using namespace std`)
    * - declares TFEL scalar type aliases (see the `writeScalarStandardTypedefs`
    *   function).
    * - imports material laws used by the material property (see the
-   *   `writeStaticVariables` function).
-   * - declares the static variables declared by the material property (see the
    *   `writeMaterialLaws` function).
+   * - declares the static variables declared by the material property (see the
+   *   `writeStaticVariables` function).
    *
    * \param[in, out] os: output stream
    * \param[in] mpd: material property description
    * \param[in] fd: file description
    * \param[in] numeric_type: numeric type used by the interface
-   * \param[in] bool: allow quantities
+   * \param[in] areQuantitiesSupported: allow quantities
    */
   MFRONT_VISIBILITY_EXPORT void writeBeginningOfMaterialPropertyBody(
       std::ostream&,
       const MaterialPropertyDescription&,
       const FileDescription&,
       const std::string_view,
-      const bool);
+      const bool areQuantitiesSupported);
   /*!
    * \brief an helper function which writes the declaration of some `TFEL`
    * standard scalar alias. The `tfel::config::ScalarTypes` class for details.
    * \param[in, out] os: output stream
    * \param[in] mpd: material property description
    * \param[in] numeric_type: numeric type used by the interface
-   * \param[in] bool: allow quantities
+   * \param[in] areQuantitiesSupported: allow quantities
    */
   MFRONT_VISIBILITY_EXPORT void writeScalarStandardTypedefs(
       std::ostream&,
       const MaterialPropertyDescription&,
       const std::string_view,
-      const bool);
+      const bool areQuantitiesSupported);
   /*!
    * \return the name of a text file allowing the change the name of the
    * parameters of the given material property

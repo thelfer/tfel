@@ -21,8 +21,8 @@ namespace tfel::fsalgo {
   /*!
    * \class generate
    * \brief generate assigns the result of invoking gen, a function object that
-   * takes no arguments, to each element in the range [first, last). \param N
-   * number of element to be which generate is applied.
+   * takes no arguments, to each element in the range [first, first+N).
+   * \tparam N: number of elements to which generate is applied.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/generate.html
@@ -35,8 +35,10 @@ namespace tfel::fsalgo {
   template <unsigned int N>
   struct generate {
     /*!
-     * \param p: iterator to the elements
-     * \param g: generator type used
+     * \tparam ForwardIterator: iterator to the elements
+     * \tparam Generator: type of the generator
+     * \param[in] p: iterator to the first element
+     * \param[in] gen: generator
      */
     template <typename ForwardIterator, typename Generator>
     static void exe(ForwardIterator p, Generator gen) {

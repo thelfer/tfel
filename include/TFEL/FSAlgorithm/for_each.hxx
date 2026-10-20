@@ -23,9 +23,9 @@ namespace tfel::fsalgo {
    * \brief For_each applies the function object f to each element
    * in the range [first, first+N); f's return value, if any, is
    * ignored. Applications are performed in forward order, i.e. from
-   * first to last. For_each returns the function object after it
-   * has been applied to each element.
-   * \param N number of element to which f will be applied
+   * first to last. The function object is passed by reference: its
+   * state after the last application is available to the caller.
+   * \tparam N: number of elements to which f will be applied
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/for_each.html
@@ -38,10 +38,10 @@ namespace tfel::fsalgo {
   template <unsigned int N>
   struct for_each {
     /*!
-     * \param InputIterator input iterator
-     * \param UnaryFunction unary function which is applied to the elements
-     *
-     * \return UnaryFunction
+     * \tparam InputIterator: input iterator
+     * \tparam UnaryFunction: unary function which is applied to the elements
+     * \param[in] p: iterator to the first element
+     * \param[in,out] f: function applied to each element
      *
      * \pre
      * - InputIterator is a model of Input Iterator
