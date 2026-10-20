@@ -149,7 +149,6 @@ namespace mfront {
       LibraryDescription& l,
       const MaterialPropertyDescription& mpd) const {
     const auto name = this->getFunctionName(mpd);
-    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(l.sources, this->getSourceFileName(name));
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
@@ -200,7 +199,6 @@ namespace mfront {
   void GenericParallelMaterialPropertyInterface::writeHeaderFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     const auto iucname = this->getInterfaceNameInUpperCase();
-    const auto types = this->getTypesDescription();
     const auto name = this->getFunctionName(mpd);
     const auto fn = "include/" + this->getHeaderFileName(name);
     if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -276,8 +274,6 @@ namespace mfront {
       getLogStream() << "GenericParallelMaterialPropertyInterface::"
                         "writeSrcFile: begin\n";
     }
-    const auto types = this->getTypesDescription();
-    const auto iname = this->getInterfaceName();
     const auto nname = this->getInterfaceInternalNamespace();
     const auto name = this->getFunctionName(mpd);
     const auto fn = "src/" + this->getSourceFileName(name);

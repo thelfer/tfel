@@ -90,8 +90,6 @@ namespace mfront::generic_parallel::material_property {
     const auto nname = i.getInterfaceInternalNamespace();
     const auto types = i.getTypesDescription();
     const auto& params = mpd.parameters;
-    const auto iucname = i.getInterfaceNameInUpperCase();
-    const auto prefix = i.getOutOfBoundsPolicyEnumerationPrefix();
     os << "MFRONT_SHAREDOBJ void " << name;
     if (!treatStrides) {
       os << '2';
@@ -179,7 +177,7 @@ namespace mfront::generic_parallel::material_property {
       os << "if(!mfront_check_positive_or_null(mfront_npoints)){\n"
          << "mfront_output_status->status = -5;\n"
          << "mfront_report(\"invalid number of points "
-         << "(\"+std::to_string(mfront_npoints)+\" given\");\n"
+         << "(\"+std::to_string(mfront_npoints)+\" given)\");\n"
          << "errno = mfront_errno_old;\n"
          << "return;\n"
          << "}\n";
@@ -205,7 +203,7 @@ namespace mfront::generic_parallel::material_property {
         os << "if(!mfront_check_positive_or_null(mfront_output_stride)){\n"
            << "mfront_output_status->status = -5;\n"
            << "mfront_report(\"negative output stride "
-           << "(\"+std::to_string(mfront_output_stride)+\" given\");\n"
+           << "(\"+std::to_string(mfront_output_stride)+\" given)\");\n"
            << "errno = mfront_errno_old;\n"
            << "return;\n"
            << "}\n";
@@ -216,7 +214,7 @@ namespace mfront::generic_parallel::material_property {
              << "mfront_report(\"negative stride given for variable '"
              << mpd.inputs[idx].getExternalName()
              << "' (\"+std::to_string(mfront_args_strides[" << idx
-             << "])+\" given\");\n"
+             << "])+\" given)\");\n"
              << "errno = mfront_errno_old;\n"
              << "return;\n"
              << "}\n";
