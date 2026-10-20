@@ -174,6 +174,9 @@ namespace mfront::generic_parallel::material_property {
     if (treatStrides) {
       this->writeKernel(os, i, mpd, fd, true);
     }
+    // the asynchronous errors of the kernels and of the copies are passed
+    // to the asynchronous handler of the queue (wait_and_throw). The
+    // exceptions it throws are reported by the status -2
     auto write_kernel_call = [&os, this, &types](const std::string_view npoints,
                                                  const bool handleStrides) {
       os << "// loop over the points\n";
@@ -193,23 +196,23 @@ namespace mfront::generic_parallel::material_property {
           if (npoints == "1") {
             os << "mfront_queue->copy<" << types.real_type
                << ">(mfront_output_ptr.data(), mfront_output_host, " << 1
-               << ", mfront_sycl_kernel_event).wait();\n";
+               << ", mfront_sycl_kernel_event).wait_and_throw();\n";
           } else {
             os << "mfront_queue->copy<" << types.real_type
                << ">(mfront_output_ptr.data(), mfront_output_host, "  //
                << "(" << npoints << " - 1) * mfront_output_stride + 1, "
-               << "mfront_sycl_kernel_event).wait();\n";
+               << "mfront_sycl_kernel_event).wait_and_throw();\n";
           }
         } else {
           os << "mfront_queue->copy<" << types.real_type
              << ">(mfront_output_ptr.data(), mfront_output_host, " << npoints
-             << ", mfront_sycl_kernel_event).wait();\n";
+             << ", mfront_sycl_kernel_event).wait_and_throw();\n";
         }
         os << "} else {"
-           << "  mfront_sycl_kernel_event.wait();\n"
+           << "  mfront_sycl_kernel_event.wait_and_throw();\n"
            << "}\n";
       } else {
-        os << "mfront_sycl_kernel_event.wait();\n";
+        os << "mfront_sycl_kernel_event.wait_and_throw();\n";
       }
     };
     if (treatStrides) {
