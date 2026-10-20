@@ -65,7 +65,7 @@ namespace mfront::gb::logarithmic_strain {
             d.s0.internal_state_variables[Traits::axial_strain_offset]));
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }
@@ -93,6 +93,7 @@ namespace mfront::gb::logarithmic_strain {
       reportError(d, "invalid choice for the stress measure");
       return -1;
     }
+    auto T1 = T0;
     auto* const gradients0_old = d.s0.gradients;
     auto* const gradients1_old = d.s1.gradients;
     auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
@@ -100,13 +101,30 @@ namespace mfront::gb::logarithmic_strain {
     d.s0.gradients = e0.begin();
     d.s1.gradients = e0.begin();
     d.s0.thermodynamic_forces = T0.begin();
-    d.s1.thermodynamic_forces = T0.begin();
+    d.s1.thermodynamic_forces = T1.begin();
     const auto r = mfront::gb::executeInitializeFunction<Behaviour, m>(
-        initialize_variables, d, p);
+        d, initialize_variables, p);
     d.s0.gradients = gradients0_old;
     d.s1.gradients = gradients1_old;
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
     d.s1.thermodynamic_forces = thermodynamic_forces1_old;
+    if (r == -1) {
+      return r;
+    }
+    // the initialize function uses the state at the beginning of the time
+    // step: the stress it computes is converted with the logarithmic strain
+    // handler and the deformation gradient at the beginning of the time step
+    const auto s1 = lgh0.convertToCauchyStress(T1);
+    if (sm == StressMeasure::CAUCHY) {
+      tfel::fsalgo::copy<StensorSize>::exe(s1.begin(),
+                                           d.s1.thermodynamic_forces);
+    } else if (sm == StressMeasure::PK1) {
+      tfel::math::TensorView<N, real> pk1(d.s1.thermodynamic_forces);
+      pk1 = tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(s1, F0);
+    } else if (sm == StressMeasure::PK2) {
+      tfel::math::StensorView<N, real> S1(d.s1.thermodynamic_forces);
+      S1 = tfel::math::convertCauchyStressToSecondPiolaKirchhoffStress(s1, F0);
+    }
     return r;
   }  // end of executeInitializeFunction
 
@@ -166,7 +184,7 @@ namespace mfront::gb::logarithmic_strain {
             d.s0.internal_state_variables[Traits::axial_strain_offset]));
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }
@@ -204,8 +222,10 @@ namespace mfront::gb::logarithmic_strain {
     d.s0.thermodynamic_forces = T0.begin();
     d.s1.thermodynamic_forces = T1.begin();
     d.K = K.begin();
-    const auto bp = K(0, 0) < -0.5;
-    const auto bk = K(0, 0) > 0.5;
+    // the offset used to request the speed of sound is removed
+    const auto Ke = K(0, 0) > 50 ? K(0, 0) - 100 : K(0, 0);
+    const auto bp = Ke < -0.5;
+    const auto bk = Ke > 0.5;
     const auto r = mfront::gb::integrate<Behaviour>(
         d, Behaviour::STANDARDTANGENTOPERATOR, p);
     d.s0.gradients = gradients0_old;
@@ -213,7 +233,8 @@ namespace mfront::gb::logarithmic_strain {
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
     d.s1.thermodynamic_forces = thermodynamic_forces1_old;
     d.K = K_old;
-    if (r) {
+    // r is 0 if the integration succeeded but a smaller time step is proposed
+    if (r != -1) {
       if (bp) {
         if (smf == FiniteStrainTangentOperator::DSIG_DF) {
           const auto Cs = lgh0.convertToSpatialTangentModuli(K, T0);
@@ -253,7 +274,7 @@ namespace mfront::gb::logarithmic_strain {
                 d.s1.internal_state_variables[Traits::axial_strain_offset]));
           } else {
             reportError(d,
-                        "The behaviour does not declare the axial strain"
+                        "The behaviour does not declare the axial strain "
                         "as an internal state variable");
             return -1;
           }
@@ -293,7 +314,7 @@ namespace mfront::gb::logarithmic_strain {
                 convert<FiniteStrainTangentOperator::DPK1_DF,
                         FiniteStrainTangentOperator::DS_DEGL>(Cse, F0, F1, s1);
           } else if (smf == FiniteStrainTangentOperator::DTAU_DDF) {
-            const auto Cs = lgh0.convertToSpatialTangentModuli(K, T1);
+            const auto Cs = lgh1.convertToSpatialTangentModuli(K, T1);
             const auto Dt =
                 convert<FiniteStrainTangentOperator::DTAU_DF,
                         FiniteStrainTangentOperator::SPATIAL_MODULI>(Cs, F0, F1,
@@ -373,7 +394,7 @@ namespace mfront::gb::logarithmic_strain {
             d.s1.internal_state_variables[Traits::axial_strain_offset]));
       } else {
         reportError(d,
-                    "The behaviour does not declare the axial strain"
+                    "The behaviour does not declare the axial strain "
                     "as an internal state variable");
         return -1;
       }

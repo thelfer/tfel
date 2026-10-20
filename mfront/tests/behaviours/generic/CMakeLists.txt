@@ -266,6 +266,27 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
   RungeKuttaElasticityParametersAsStaticVariables
   ImplicitElasticityParametersAsStaticVariables)
 
+# behaviours used to test the integration drivers in cases which
+# can't be checked by MTest
+mfront_behaviour_check_library(MFrontGenericIntegrationDriversBehaviours generic
+  HenckyTimeStepScalingFactorTest
+  InternalStateVariablePostProcessingTest
+  FiniteStrainInitializeFunctionTest
+  GreenLagrangeInitializeFunctionTest
+  HenckyInitializeFunctionTest)
+
+add_executable(generic-IntegrationDriversTest EXCLUDE_FROM_ALL
+  IntegrationDriversTest.cxx)
+target_link_libraries(generic-IntegrationDriversTest
+  TFELSystem TFELUtilities TFELTests TFELException)
+add_dependencies(generic-IntegrationDriversTest MFrontGenericIntegrationDriversBehaviours)
+add_dependencies(build-tests generic-IntegrationDriversTest)
+add_test(NAME generic-IntegrationDriversTest
+  COMMAND generic-IntegrationDriversTest)
+set_property(TEST generic-IntegrationDriversTest
+  PROPERTY ENVIRONMENT
+  MFrontGenericIntegrationDriversBehavioursBuildPath=$<TARGET_FILE:MFrontGenericIntegrationDriversBehaviours>)
+
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontGenericBehaviours
