@@ -62,7 +62,7 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
              if ((r >= s.size(0)) && (c >= s.size(1))) {
                tfel::raise<std::range_error>(
                    "invalid index '(" + std::to_string(static_cast<int>(r)) +
-                   ", " + std::to_string(static_cast<int>(c)) + "'");
+                   ", " + std::to_string(static_cast<int>(c)) + "')");
              }
              return s(r, c);
            })
@@ -74,7 +74,7 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
              if ((r >= s.size(0)) && (c >= s.size(1))) {
                tfel::raise<std::range_error>(
                    "invalid index '(" + std::to_string(static_cast<int>(r)) +
-                   ", " + std::to_string(static_cast<int>(c)) + "'");
+                   ", " + std::to_string(static_cast<int>(c)) + "')");
              }
              s(r, c) = v;
            })

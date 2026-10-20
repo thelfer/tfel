@@ -57,10 +57,14 @@ void declareExternalBehaviourDescription(pybind11::module_& m) {
   using namespace tfel::system;
 
   pybind11::class_<ExternalBehaviourDescription,
-                   ExternalMaterialKnowledgeDescription>(
-      m, "ExternalBehaviourDescription")
+                    ExternalMaterialKnowledgeDescription>(
+      m, "ExternalBehaviourDescription",
+      "A structure containing the information that could be retrieved\n"
+      "by the ExternalLibraryManager class about a given behaviour for\n"
+      "a given hypothesis")
       .def(pybind11::init<>())
-      .def(pybind11::init<std::string, std::string, std::string>())
+      .def(pybind11::init<std::string, std::string, std::string>(),
+           pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("h"))
       .def_property_readonly("elastic_material_properties_epts", &get_emps_epts)
       .def_property_readonly("linear_thermal_expansion_coefficients_epts",
                              &get_themps_epts)

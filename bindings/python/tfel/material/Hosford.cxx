@@ -26,7 +26,13 @@ static double computeHosfordStress(const tfel::math::stensor<N, double>& s,
 void declareHosford(pybind11::module_&);
 
 void declareHosford(pybind11::module_& m) {
-  m.def("computeHosfordStress", &computeHosfordStress<1u>);
-  m.def("computeHosfordStress", &computeHosfordStress<2u>);
-  m.def("computeHosfordStress", &computeHosfordStress<3u>);
+  m.def("computeHosfordStress",
+        &computeHosfordStress<1u>,
+        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"));
+  m.def("computeHosfordStress",
+        &computeHosfordStress<2u>,
+        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"));
+  m.def("computeHosfordStress",
+        &computeHosfordStress<3u>,
+        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"));
 }

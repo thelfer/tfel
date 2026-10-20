@@ -54,8 +54,10 @@ void declareStudyCurrentState(pybind11::module_& m) {
       .def_readonly("subSteps", &StudyCurrentState::subSteps)
       .def_readonly("dt_1", &StudyCurrentState::dt_1)
       .def("makeDeepCopy", &StudyCurrentState::makeDeepCopy)
-      .def("getEvolutionValue", &StudyCurrentState_getEvolutionValue)
+      .def("getEvolutionValue", &StudyCurrentState_getEvolutionValue,
+           pybind11::arg("n"), pybind11::arg("t"))
       .def("getStructureCurrentState", getStructureCurrentState,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference)
       .def("getFailureStatus", &mtest::StudyCurrentState::getFailureStatus)
       .def("getFailureCriterionStatus",

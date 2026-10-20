@@ -19,17 +19,17 @@
 #include "MFront/BehaviourData.hxx"
 
 static std::string getStringAttribute(const mfront::BehaviourData& d,
-                                      const std::string& n) {
+                                       const std::string& n) {
   return d.getAttribute<std::string>(n);
 }
 
 static unsigned short getUnsignedShortAttribute(const mfront::BehaviourData& d,
-                                                const std::string& n) {
+                                                 const std::string& n) {
   return d.getAttribute<unsigned short>(n);
 }
 
 static bool getBooleanAttribute(const mfront::BehaviourData& d,
-                                const std::string& n) {
+                                 const std::string& n) {
   return d.getAttribute<bool>(n);
 }
 
@@ -58,7 +58,10 @@ void declareBehaviourData(pybind11::module_& m) {
   const VariableDescription& (BehaviourData::*ptr)(const std::string&) const =
       &BehaviourData::getVariableDescription;
 
-  pybind11::class_<BehaviourData>(m, "BehaviourData")
+  pybind11::class_<BehaviourData>(
+      m, "BehaviourData",
+      "This structure gathers various behaviour characteristic\n"
+      "for a given modelling hypothesis")
       .def("getMaterialProperties", &BehaviourData::getMaterialProperties,
            pybind11::return_value_policy::reference)
       .def("getPersistentVariables", &BehaviourData::getPersistentVariables,
@@ -107,9 +110,11 @@ void declareBehaviourData(pybind11::module_& m) {
       .def("isExternalStateVariableIncrementName",
            &BehaviourData::isExternalStateVariableIncrementName)
       .def("getVariableDescription", ptr,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference)
       .def("getVariableDescriptionByExternalName",
            &BehaviourData::getVariableDescriptionByExternalName,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference)
       .def("getPersistentVariableDescription",
            &BehaviourData::getPersistentVariableDescription,
@@ -156,28 +161,39 @@ void declareBehaviourData(pybind11::module_& m) {
       .def("isUsedAsEntryName", &BehaviourData::isUsedAsEntryName)
       .def("getVariableNameFromGlossaryNameOrEntryName",
            &BehaviourData::getVariableNameFromGlossaryNameOrEntryName)
-      .def("hasAttribute", &BehaviourData::hasAttribute)
-      .def("setAttribute", &BehaviourData::setAttribute)
-      .def("getUnsignedShortAttribute", getUnsignedShortAttribute)
-      .def("getStringAttribute", getStringAttribute)
-      .def("getBooleanAttribute", getBooleanAttribute)
+      .def("hasAttribute", &BehaviourData::hasAttribute,
+          pybind11::arg("n"))
+      .def("setAttribute", &BehaviourData::setAttribute,
+          pybind11::arg("n"), pybind11::arg("a"), pybind11::arg("b"))
+      .def("getUnsignedShortAttribute", getUnsignedShortAttribute,
+          pybind11::arg("n"))
+      .def("getStringAttribute", getStringAttribute,
+          pybind11::arg("n"))
+      .def("getBooleanAttribute", getBooleanAttribute,
+          pybind11::arg("n"))
       .def("getAttributes", &BehaviourData::getAttributes)
-      .def("reserveName", &BehaviourData::reserveName)
-      .def("registerMemberName", &BehaviourData::registerMemberName)
-      .def("registerStaticMemberName", &BehaviourData::registerStaticMemberName)
+      .def("reserveName", &BehaviourData::reserveName,
+          pybind11::arg("n"))
+      .def("registerMemberName", &BehaviourData::registerMemberName,
+          pybind11::arg("n"))
+      .def("registerStaticMemberName", &BehaviourData::registerStaticMemberName,
+          pybind11::arg("n"))
       .def("getRegistredMembersNames", getRegistredMembersNames)
       .def("getRegistredStaticMembersNames", getRegistredStaticMembersNames)
       .def("getVariablesNames", getVariablesNames)
-      .def("hasParameter", &BehaviourData::hasParameter)
+      .def("hasParameter", &BehaviourData::hasParameter,
+          pybind11::arg("n"))
       .def("hasParameters", &BehaviourData::hasParameters)
       .def("setFloatingPointParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&,
                                                const double)>(
-               &BehaviourData::setParameterDefaultValue))
+               &BehaviourData::setParameterDefaultValue),
+           pybind11::arg("n"), pybind11::arg("v"))
       .def("setFloatingPointParameterDefaultValue",
            static_cast<void (BehaviourData::*)(
                const std::string&, const unsigned short, const double)>(
-               &BehaviourData::setParameterDefaultValue))
+               &BehaviourData::setParameterDefaultValue),
+           pybind11::arg("n"), pybind11::arg("i"), pybind11::arg("v"))
       .def("setFloattingPointParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&,
                                                const double)>(
@@ -189,32 +205,42 @@ void declareBehaviourData(pybind11::module_& m) {
       .def("setUnsignedShortParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&,
                                                const unsigned short)>(
-               &BehaviourData::setParameterDefaultValue))
+               &BehaviourData::setParameterDefaultValue),
+           pybind11::arg("n"), pybind11::arg("v"))
       .def("setIntegerParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&, const int)>(
-               &BehaviourData::setParameterDefaultValue))
+               &BehaviourData::setParameterDefaultValue),
+           pybind11::arg("n"), pybind11::arg("v"))
       .def("getFloatingPointParameterDefaultValue",
            static_cast<double (BehaviourData::*)(const std::string&) const>(
-               &BehaviourData::getFloattingPointParameterDefaultValue))
+               &BehaviourData::getFloattingPointParameterDefaultValue),
+           pybind11::arg("n"))
       .def("getFloatingPointParameterDefaultValue",
            static_cast<double (BehaviourData::*)(const std::string&,
                                                  const unsigned short) const>(
-               &BehaviourData::getFloattingPointParameterDefaultValue))
+               &BehaviourData::getFloattingPointParameterDefaultValue),
+           pybind11::arg("n"), pybind11::arg("i"))
       .def("getFloattingPointParameterDefaultValue",
            static_cast<double (BehaviourData::*)(const std::string&) const>(
-               &BehaviourData::getFloattingPointParameterDefaultValue))
+               &BehaviourData::getFloattingPointParameterDefaultValue),
+           pybind11::arg("n"))
       .def("getFloattingPointParameterDefaultValue",
            static_cast<double (BehaviourData::*)(const std::string&,
                                                  const unsigned short) const>(
-               &BehaviourData::getFloattingPointParameterDefaultValue))
+               &BehaviourData::getFloattingPointParameterDefaultValue),
+           pybind11::arg("n"), pybind11::arg("i"))
       .def("getUnsignedShortParameterDefaultValue",
            static_cast<unsigned short (BehaviourData::*)(const std::string&)
                            const>(
-               &BehaviourData::getUnsignedShortParameterDefaultValue))
+               &BehaviourData::getUnsignedShortParameterDefaultValue),
+           pybind11::arg("n"))
       .def("getIntegerParameterDefaultValue",
            static_cast<int (BehaviourData::*)(const std::string&) const>(
-               &BehaviourData::getIntegerParameterDefaultValue))
+               &BehaviourData::getIntegerParameterDefaultValue),
+           pybind11::arg("n"))
       .def("getCodeBlockNames", &BehaviourData::getCodeBlockNames)
-      .def("getCode", &BehaviourData::getCode)
-      .def("hasCode", &BehaviourData::hasCode);
+      .def("getCode", &BehaviourData::getCode,
+          pybind11::arg("n"), pybind11::arg("cn"), pybind11::arg("b"))
+      .def("hasCode", &BehaviourData::hasCode,
+          pybind11::arg("n"));
 }

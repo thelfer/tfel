@@ -42,9 +42,13 @@ static void execute3(mtest::MTestParser& p,
 void declareMTestParser(pybind11::module_& m) {
   using namespace mtest;
   pybind11::class_<MTestParser>(m, "MTestParser")
-      .def("execute", execute)
-      .def("execute", execute2)
-      .def("execute", execute3)
+      .def("execute", execute,
+          pybind11::arg("m"), pybind11::arg("f"))
+      .def("execute", execute2,
+          pybind11::arg("m"), pybind11::arg("f"), pybind11::arg("e"))
+      .def("execute", execute3,
+          pybind11::arg("m"), pybind11::arg("f"), pybind11::arg("e"),
+          pybind11::arg("s"))
       .def("parseString", &MTestParser::parseString);
 
 }  // end of declareExternalLibraryManager

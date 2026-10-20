@@ -28,16 +28,10 @@ void declarePiPlane(pybind11::module_& m) {
   std::tuple<double, double> (*p1)(const double, const double, const double) =
       tfel::material::projectOnPiPlane;
   m.def("buildFromPiPlane", &tfel::material::buildFromPiPlane<double>,
-        "return a tuple containing the three eigenvalues "
-        "of the stress corresponding to the given "
-        "point in the pi-plane");
+        pybind11::arg("s0"), pybind11::arg("s1"));
   m.def("projectOnPiPlane", p1,
-        "project a stress state, defined its "
-        "three eigenvalues, on the pi-plane");
-  m.def("projectOnPiPlane", projectOnPiPlane<1u>,
-        "project a 1D stress tensor on the pi-plane");
-  m.def("projectOnPiPlane", projectOnPiPlane<2u>,
-        "project a 2D stress tensor on the pi-plane");
-  m.def("projectOnPiPlane", projectOnPiPlane<3u>,
-        "project a 3D stress tensor on the pi-plane");
+        pybind11::arg("s11"), pybind11::arg("s22"), pybind11::arg("s33"));
+  m.def("projectOnPiPlane", projectOnPiPlane<1u>, pybind11::arg("s"));
+  m.def("projectOnPiPlane", projectOnPiPlane<2u>, pybind11::arg("s"));
+  m.def("projectOnPiPlane", projectOnPiPlane<3u>, pybind11::arg("s"));
 }

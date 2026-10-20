@@ -30,8 +30,8 @@ static void declaretvector(pybind11::module_& m, const char* const n) {
             v.data(),       /* Pointer to buffer */
             sizeof(double), /* Size of one scalar */
             pybind11::format_descriptor<double>::format(), /* Python
-                                                       struct-style format
-                                                       descriptor */
+                                                        struct-style format
+                                                        descriptor */
             1,          /* Number of dimensions */
             {v.size()}, /* Buffer dimensions */
             {sizeof(double)});
@@ -48,7 +48,8 @@ static void declaretvector(pybind11::module_& m, const char* const n) {
               t(i) = u.unchecked<1>()(i);
             }
             return t;
-          }))
+          }),
+          pybind11::arg("u"))
       .def("__len__", [](const tvector& v) { return v.size(); })
       .def("__repr__",
            [](const tvector& v) {

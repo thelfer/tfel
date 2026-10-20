@@ -17,67 +17,37 @@
 #include "MFront/GeneratorOptions.hxx"
 #include "MFront/CMakeGenerator.hxx"
 
-/*!
- * \brief a wrapper structure created for the python bindings.
- */
 struct CMakeGenerator {
-  /*!
-   * \param[in] t: target description
-   */
   void exe0(const mfront::TargetsDescription&);
-  /*!
-   * \param[in] t: target description
-   * \param[in] o: generator options
-   */
   void exe1(const mfront::TargetsDescription&, const mfront::GeneratorOptions&);
-  /*!
-   * \param[in] t: target description
-   * \param[in] tn: target to be build
-   */
   void exe2(const mfront::TargetsDescription&, const std::string&);
-  /*!
-   * \param[in] t: target description
-   * \param[in] o: generator options
-   * \param[in] tn: target to be build
-   */
   void exe3(const mfront::TargetsDescription&,
-            const mfront::GeneratorOptions&,
-            const std::string&);
-  /*!
-   * \param[in] t: target description
-   */
+             const mfront::GeneratorOptions&,
+             const std::string&);
   void generate0(const mfront::TargetsDescription&);
-  /*!
-   * \param[in] t: target description
-   * \param[in] o: generator options
-   */
   void generate1(const mfront::TargetsDescription&,
-                 const mfront::GeneratorOptions&);
-  //!
+                  const mfront::GeneratorOptions&);
   void callCMake0();
-  /*!
-   * \param[in] tn: target to be build
-   */
   void callCMake1(const std::string&);
-};  // end of CMakeGenerator
+};
 
 void CMakeGenerator::exe0(const mfront::TargetsDescription& t) {
   this->exe3(t, mfront::GeneratorOptions(), "all");
 }
 
 void CMakeGenerator::exe1(const mfront::TargetsDescription& t,
-                          const mfront::GeneratorOptions& o) {
+                           const mfront::GeneratorOptions& o) {
   this->exe3(t, o, "all");
 }
 
 void CMakeGenerator::exe2(const mfront::TargetsDescription& t,
-                          const std::string& tn) {
+                           const std::string& tn) {
   this->exe3(t, mfront::GeneratorOptions(), tn);
 }
 
 void CMakeGenerator::exe3(const mfront::TargetsDescription& t,
-                          const mfront::GeneratorOptions& o,
-                          const std::string& tn) {
+                           const mfront::GeneratorOptions& o,
+                           const std::string& tn) {
   mfront::generateCMakeListsFile(t, o);
   mfront::callCMake(tn);
 }
@@ -87,7 +57,7 @@ void CMakeGenerator::generate0(const mfront::TargetsDescription& t) {
 }
 
 void CMakeGenerator::generate1(const mfront::TargetsDescription& t,
-                               const mfront::GeneratorOptions& o) {
+                                const mfront::GeneratorOptions& o) {
   mfront::generateCMakeListsFile(t, o);
 }
 
@@ -102,33 +72,17 @@ void declareCMakeGenerator(pybind11::module_&);
 void declareCMakeGenerator(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<CMakeGenerator>(m, "CMakeGenerator")
-      .def("generate", &CMakeGenerator::generate0,
-           "generate the `CMake.mfront` file")
+      .def("generate", &CMakeGenerator::generate0, pybind11::arg("t"))
       .def("generate", &CMakeGenerator::generate1,
-           "generate the `CMake.mfront` file "
-           "using the provided options")
-      .def("callCMake", &CMakeGenerator::callCMake0, "call the `make` utility")
-      .def("callCMake", &CMakeGenerator::callCMake1,
-           "call the `make` utility for the specified target")
-      .def("exe", &CMakeGenerator::exe0,
-           "This methods generates the `CMake.mfront` "
-           "file in the `src` subdirectory and "
-           "calls `make` to generate the target "
-           "named `all`.")
+          pybind11::arg("t"), pybind11::arg("o"))
+      .def("callCMake", &CMakeGenerator::callCMake0)
+      .def("callCMake", &CMakeGenerator::callCMake1, pybind11::arg("tn"))
+      .def("exe", &CMakeGenerator::exe0, pybind11::arg("t"))
       .def("exe", &CMakeGenerator::exe1,
-           "This methods generates the `CMake.mfront` "
-           "file in the `src` subdirectory "
-           "using the provided options and "
-           "calls `make` to generate the target "
-           "named `all`.")
+          pybind11::arg("t"), pybind11::arg("o"))
       .def("exe", &CMakeGenerator::exe2,
-           "This methods generates the `CMake.mfront` "
-           "file in the `src` subdirectory and "
-           "calls `make` to generate the given target.")
+          pybind11::arg("t"), pybind11::arg("tn"))
       .def("exe", &CMakeGenerator::exe3,
-           "This methods generates the `CMake.mfront` "
-           "file in the `src` subdirectory "
-           "using the provided options and "
-           "calls `make` to generate the given target.");
+          pybind11::arg("t"), pybind11::arg("o"), pybind11::arg("tn"));
 
-}  // end of declareCMakeGenerator
+}
