@@ -60,6 +60,71 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                           "@Precision 1.e-12;\n"
                           "@Test 'test_TestLauncher_A.ref' "
                           "'test_TestLauncher_C.res' 2;\n"));
+    // results stopping before the end of the reference. Extending the
+    // results by their last value would hide the difference.
+    write("test_TestLauncher_H.ref", "# t y\n0 0\n2 2\n4 2\n");
+    write("test_TestLauncher_E.res",
+          "# t y\n0 0\n0.5 0.5\n1 1\n1.5 1.5\n2 2\n2.5 2\n");
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher7",
+                           "@Interpolation Linear using 1;\n"
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_H.ref' "
+                           "'test_TestLauncher_E.res' 2;\n"));
+    // empty files
+    write("test_TestLauncher_F.res", "# t y\n");
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher8",
+                           "@Interpolation Linear using 1 AllowLessResults;\n"
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_A.ref' "
+                           "'test_TestLauncher_F.res' 2;\n"));
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher9",
+                           "@Interpolation Linear using 1;\n"
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_F.res' "
+                           "'test_TestLauncher_A.ref' 2;\n"));
+    // duplicated last line
+    write("test_TestLauncher_G.res", "# t y\n0 0\n2 2\n4 4\n4 4\n");
+    TFEL_TESTS_ASSERT(run("test_TestLauncher10",
+                          "@Interpolation Spline using 1;\n"
+                          "@Precision 1.e-12;\n"
+                          "@Test 'test_TestLauncher_G.res' "
+                          "'test_TestLauncher_G.res' 2;\n"));
+    // local splines on results with two lines
+    write("test_TestLauncher_I.ref", "# t y\n1 1\n3 3\n");
+    TFEL_TESTS_ASSERT(run("test_TestLauncher11",
+                          "@Interpolation LocalSpline using 1;\n"
+                          "@Precision 1.e-12;\n"
+                          "@Test 'test_TestLauncher_I.ref' "
+                          "'test_TestLauncher_C.res' 2;\n"));
+    // results stopping early, even with the AllowLessResults option
+    write("test_TestLauncher_J.res", "# t y\n0 0\n2 2\n");
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher14",
+                           "@Interpolation Linear using 1 AllowLessResults;\n"
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_B.res' "
+                           "'test_TestLauncher_J.res' 2;\n"));
+    // the number of values is the number of distinct abscissas
+    write("test_TestLauncher_K.ref", "# t y\n0 0\n2 2\n2 2\n4 4\n");
+    TFEL_TESTS_ASSERT(run("test_TestLauncher15",
+                          "@Interpolation Linear using 1;\n"
+                          "@Precision 1.e-12;\n"
+                          "@Test 'test_TestLauncher_K.ref' "
+                          "'test_TestLauncher_A.ref' 2;\n"));
+    // a new @Interpolation keyword resets the AllowLessResults option
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher12",
+                           "@Interpolation Linear using 1 AllowLessResults;\n"
+                           "@Interpolation Linear using 1;\n"
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_A.ref' "
+                           "'test_TestLauncher_C.res' 2;\n"));
+    // the interpolation of the Area comparison does not depend on the
+    // @Interpolation keyword
+    TFEL_TESTS_ASSERT(run("test_TestLauncher13",
+                          "@TestType Area interpolation Linear using 1;\n"
+                          "@Interpolation None;\n"
+                          "@Precision 1.e-12;\n"
+                          "@Test 'test_TestLauncher_A.ref' "
+                          "'test_TestLauncher_B.res' 2;\n"));
     return this->result;
   }
 
