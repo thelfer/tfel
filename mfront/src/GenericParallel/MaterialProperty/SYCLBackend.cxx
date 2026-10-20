@@ -68,7 +68,8 @@ namespace mfront::generic_parallel::material_property {
        << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n";
 
     if (this->handlesDataTransfer()) {
-      os << "namespace mfront::gpmp::sycl{\n\n"
+      os << "#include<stdexcept>\n\n"
+         << "namespace mfront::gpmp::sycl{\n\n"
          << "template<typename T>\n"
          << "struct [[nodiscard]] DataBuffer{\n"
          << "DataBuffer(::sycl::queue& q)\n"
@@ -91,6 +92,10 @@ namespace mfront::generic_parallel::material_property {
          << "if (may_require_device_allocation && is_queue_device) {\n"
          << "  this->device_ptr = "
          << "  ::sycl::malloc_device<std::remove_const_t<T>>(s, this->queue);\n"
+         << "  if (this->device_ptr == nullptr) {\n"
+         << "    throw(std::runtime_error(\"memory allocation on the device "
+         << "failed\"));\n"
+         << "  }\n"
          << "  this->ptr = this->device_ptr;\n"
          << "  if (do_copy) {\n"
          << "    this->copy_event = "
