@@ -45,7 +45,11 @@ namespace tfel::check {
          index != this->c1->getValues().size(); ++index) {
       const auto va = this->c1->getValues().at(index);
       const auto vb = this->c2->getValues().at(index);
-      mixedError = std::abs(va - vb) - (this->prec * vb) - this->precision2;
+      // the relative tolerance is scaled by the absolute value of vb:
+      // a negative value of vb would make the check fail for identical
+      // values
+      mixedError =
+          std::abs(va - vb) - (this->prec * std::abs(vb)) - this->precision2;
       if (maxMixedError < mixedError) {
         maxMixedError = mixedError;
         errorLineNumber = index + lineOffset;

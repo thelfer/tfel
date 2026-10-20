@@ -11,6 +11,7 @@
  */
 
 #include <string>
+#include <utility>
 #include <fstream>
 #include <stdexcept>
 
@@ -125,6 +126,18 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                           "@Precision 1.e-12;\n"
                           "@Test 'test_TestLauncher_A.ref' "
                           "'test_TestLauncher_B.res' 2;\n"));
+    // Mixed comparison of negative values: the relative tolerance is
+    // 1.e-3 * 100 = 0.1
+    write("test_TestLauncher_M1.ref", "# t y\n0 -100\n1 -100\n");
+    write("test_TestLauncher_M2.res", "# t y\n0 -100.05\n1 -100.05\n");
+    for (const auto f :
+         {"test_TestLauncher_M1.ref", "test_TestLauncher_M2.res"}) {
+      TFEL_TESTS_ASSERT(run("test_TestLauncher_mixed",
+                            "@TestType Mixed;\n"
+                            "@Precision 1.e-3 1.e-12;\n"
+                            "@Test 'test_TestLauncher_M1.ref' '" +
+                                std::string{f} + "' 2;\n"));
+    }
     // a NaN in the results makes all comparisons fail
     write("test_TestLauncher_N.res", "# t y\n0 0\n2 nan\n4 4\n");
     const char* const types[] = {
