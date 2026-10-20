@@ -43,12 +43,30 @@ void declareBarlat(pybind11::module_&);
 
 void declareBarlat(pybind11::module_& m) {
   m.def("makeBarlatLinearTransformation1D",
-        &makeBarlatLinearTransformation<1u>);
+        &makeBarlatLinearTransformation<1u>,
+        pybind11::arg("c12"), pybind11::arg("c21"), pybind11::arg("c13"),
+        pybind11::arg("c31"), pybind11::arg("c23"), pybind11::arg("c32"),
+        pybind11::arg("c44"), pybind11::arg("c55"), pybind11::arg("c66"));
   m.def("makeBarlatLinearTransformation2D",
-        &makeBarlatLinearTransformation<2u>);
+        &makeBarlatLinearTransformation<2u>,
+        pybind11::arg("c12"), pybind11::arg("c21"), pybind11::arg("c13"),
+        pybind11::arg("c31"), pybind11::arg("c23"), pybind11::arg("c32"),
+        pybind11::arg("c44"), pybind11::arg("c55"), pybind11::arg("c66"));
   m.def("makeBarlatLinearTransformation3D",
-        &makeBarlatLinearTransformation<3u>);
-  m.def("computeBarlatStress", &computeBarlatStress<1u>);
-  m.def("computeBarlatStress", &computeBarlatStress<2u>);
-  m.def("computeBarlatStress", &computeBarlatStress<3u>);
+        &makeBarlatLinearTransformation<3u>,
+        pybind11::arg("c12"), pybind11::arg("c21"), pybind11::arg("c13"),
+        pybind11::arg("c31"), pybind11::arg("c23"), pybind11::arg("c32"),
+        pybind11::arg("c44"), pybind11::arg("c55"), pybind11::arg("c66"));
+  m.def("computeBarlatStress",
+        &computeBarlatStress<1u>,
+        pybind11::arg("s"), pybind11::arg("l1"), pybind11::arg("l2"),
+        pybind11::arg("a"), pybind11::arg("e"));
+  m.def("computeBarlatStress",
+        &computeBarlatStress<2u>,
+        pybind11::arg("s"), pybind11::arg("l1"), pybind11::arg("l2"),
+        pybind11::arg("a"), pybind11::arg("e"));
+  m.def("computeBarlatStress",
+        &computeBarlatStress<3u>,
+        pybind11::arg("s"), pybind11::arg("l1"), pybind11::arg("l2"),
+        pybind11::arg("a"), pybind11::arg("e"));
 }

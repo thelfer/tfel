@@ -30,8 +30,8 @@ static void declarestensor(pybind11::module_& m, const char* const n) {
             s.data(),       /* Pointer to buffer */
             sizeof(double), /* Size of one scalar */
             pybind11::format_descriptor<double>::format(), /* Python
-                                                       struct-style format
-                                                       descriptor */
+                                                        struct-style format
+                                                        descriptor */
             1,          /* Number of dimensions */
             {s.size()}, /* Buffer dimensions */
             {sizeof(double)});

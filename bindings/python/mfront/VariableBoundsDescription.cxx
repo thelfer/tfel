@@ -25,7 +25,15 @@ void declareVariableBoundsDescription(pybind11::module_& m) {
       .value("UPPER", VariableBoundsDescription::UPPER)
       .value("LOWERANDUPPER", VariableBoundsDescription::LOWERANDUPPER);
 
-  pybind11::class_<VariableBoundsDescription>(m, "VariableBoundsDescription")
+  pybind11::class_<VariableBoundsDescription>(
+      m, "VariableBoundsDescription",
+      "A structure in charge of describing bounds on a variable.\n"
+      "Two kinds of bounds are considered:\n"
+      "- physical bounds: give the bounds out of which this variable is\n"
+      "  not physically defined. For example, a temperature must be\n"
+      "  positive.\n"
+      "- (standard) bounds: give the bounds out of which the correlation\n"
+      "  has not been identified.")
       .def_readwrite("boundsType", &VariableBoundsDescription::boundsType)
       .def_readwrite("lineNumber", &VariableBoundsDescription::lineNumber)
       .def_readwrite("component", &VariableBoundsDescription::component)

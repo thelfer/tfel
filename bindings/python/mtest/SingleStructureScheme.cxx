@@ -222,8 +222,12 @@ void declareSingleStructureScheme(pybind11::module_& m) {
       .def("getBehaviourType", &SingleStructureScheme_getBehaviourType)
       .def("getBehaviourKinematic",
            &SingleStructureScheme_getBehaviourKinematic)
-      .def("setBehaviour", ptr1)
-      .def("setBehaviour", ptr2)
+      .def("setBehaviour", ptr1,
+           pybind11::arg("i"), pybind11::arg("l"), pybind11::arg("f"),
+           pybind11::arg("p"))
+      .def("setBehaviour", ptr2,
+           pybind11::arg("w"), pybind11::arg("i"), pybind11::arg("l"),
+           pybind11::arg("f"), pybind11::arg("p"))
       .def("setBehaviour", SingleStructureScheme_setBehaviour,
            "This method declares the behaviour used for the "
            "test.\n"
@@ -257,6 +261,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "see the documentation of the setBehaviour method")
       .def("handleThermalExpansion",
            &SingleStructureScheme::setHandleThermalExpansion,
+           pybind11::arg("b"),
            "This method override the (de)activation of the thermal "
            "strain computation. It's activated by default if a "
            "material property named 'ThermalExpansion' is defined "
@@ -264,6 +269,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "* If the argument (bool) is 'true', the computation is "
            "activated. Otherwise, the computation is deactivated.")
       .def("setParameter", &SingleStructureScheme::setParameter,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This method specifies the value of a parameter's "
            "behaviour.\n"
            "* The first argument (string) is the name of the "
@@ -271,6 +277,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "* The second argument (double) is the value of that "
            "parameter's behaviour.")
       .def("setIntegerParameter", &SingleStructureScheme::setIntegerParameter,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This keyword specifies the value of an "
            "integer parameter of the behaviour.\n"
            "* The first argument (string) is the name of the "
@@ -279,6 +286,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "parameter's behaviour.")
       .def("setUnsignedIntegerParameter",
            &SingleStructureScheme::setUnsignedIntegerParameter,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This method specifies the value of an "
            "unsigned integer parameter of the behaviour.\n"
            "* The first argument (string) is the name of the "
@@ -286,6 +294,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "* The second argument (uint) is the value of that "
            "parameter's behaviour.")
       .def("setOutOfBoundsPolicy", &SingleStructureScheme::setOutOfBoundsPolicy,
+           pybind11::arg("p"),
            "This method let the user to precise the out "
            "of bounds policy.\n"
            "* The argument (OutOfBoundsPolicy) is the selected "
@@ -404,10 +413,12 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "function"_a, "b1"_a = true, "b2"_a = true)
       .def("setInternalStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue1,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This method allow to specify the initial  value of an "
            "internal state variable.")
       .def("setInternalStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue2,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This method allow to specify the initial  value of an "
            "internal state variable.")
       .def("setStateVariableInitialValue",

@@ -18,29 +18,17 @@
 void declarePhysicalConstants(pybind11::module_& m);
 
 struct TFEL_VISIBILITY_LOCAL PhysicalConstants {
-  //! Atomic mass constant (kg)
   static const double AtomicMassConstant;
-  //! Avogadro constant (mol-1)
   static const double AvogadroConstant;
-  //! Boltzmann constant (J.K-1)
   static const double BoltzmannConstant;
-  //! Conductance quantum (S)
   static const double ConductanceQuantum;
-  //! Electric constant (F.m-1)
   static const double ElectricConstant;
-  //! Electron mass (kg)
   static const double ElectronMass;
-  //! Electron volt (J)
   static const double ElectronVolt;
-  //! Elementary charge (C)
   static const double ElementaryCharge;
-  //! Faraday constant (C.mol-1)
   static const double FaradayConstant;
-  //! Fine-structure constant
   static const double FineStructureConstant;
-  //! Molar gas constant (J.mol-1.K-1)
   static const double MolarGasConstant;
-  //! Stefan-Boltzmann constant (W.m-2.K-4)
   static const double StefanBoltzmannConstant;
 };
 
@@ -58,40 +46,41 @@ const double PhysicalConstants::MolarGasConstant = double(8.31446);
 const double PhysicalConstants::StefanBoltzmannConstant = double(5.67037e-08);
 
 void declarePhysicalConstants(pybind11::module_& m) {
-  pybind11::class_<PhysicalConstants>(m, "PhysicalConstants")
-      .def_readonly_static("AtomicMassConstant",
-                           &PhysicalConstants::AtomicMassConstant)
+  pybind11::class_<PhysicalConstants> w(m, "PhysicalConstants",
+                                          "Physical constants");
+  w.def_readonly_static("AtomicMassConstant",
+                         &PhysicalConstants::AtomicMassConstant)
       .def_readonly_static("mu", &PhysicalConstants::AtomicMassConstant)
       .def_readonly_static("AvogadroConstant",
-                           &PhysicalConstants::AvogadroConstant)
+                            &PhysicalConstants::AvogadroConstant)
       .def_readonly_static("Na", &PhysicalConstants::AvogadroConstant)
       .def_readonly_static("BoltzmannConstant",
-                           &PhysicalConstants::BoltzmannConstant)
+                            &PhysicalConstants::BoltzmannConstant)
       .def_readonly_static("kb", &PhysicalConstants::BoltzmannConstant)
       .def_readonly_static("ConductanceQuantum",
-                           &PhysicalConstants::ConductanceQuantum)
+                            &PhysicalConstants::ConductanceQuantum)
       .def_readonly_static("G0", &PhysicalConstants::ConductanceQuantum)
       .def_readonly_static("ElectricConstant",
-                           &PhysicalConstants::ElectricConstant)
+                            &PhysicalConstants::ElectricConstant)
       .def_readonly_static("e0", &PhysicalConstants::ElectricConstant)
       .def_readonly_static("ElectronMass", &PhysicalConstants::ElectronMass)
       .def_readonly_static("me", &PhysicalConstants::ElectronMass)
       .def_readonly_static("ElectronVolt", &PhysicalConstants::ElectronVolt)
       .def_readonly_static("eV", &PhysicalConstants::ElectronVolt)
       .def_readonly_static("ElementaryCharge",
-                           &PhysicalConstants::ElementaryCharge)
+                            &PhysicalConstants::ElementaryCharge)
       .def_readonly_static("e", &PhysicalConstants::ElementaryCharge)
       .def_readonly_static("FaradayConstant",
-                           &PhysicalConstants::FaradayConstant)
+                            &PhysicalConstants::FaradayConstant)
       .def_readonly_static("F", &PhysicalConstants::FaradayConstant)
       .def_readonly_static("FineStructureConstant",
-                           &PhysicalConstants::FineStructureConstant)
+                            &PhysicalConstants::FineStructureConstant)
       .def_readonly_static("a", &PhysicalConstants::FineStructureConstant)
       .def_readonly_static("MolarGasConstant",
-                           &PhysicalConstants::MolarGasConstant)
+                            &PhysicalConstants::MolarGasConstant)
       .def_readonly_static("R", &PhysicalConstants::MolarGasConstant)
       .def_readonly_static("StefanBoltzmannConstant",
-                           &PhysicalConstants::StefanBoltzmannConstant)
+                            &PhysicalConstants::StefanBoltzmannConstant)
       .def_readonly_static("s", &PhysicalConstants::StefanBoltzmannConstant);
 
 }  // end of declarePhysicalConstants

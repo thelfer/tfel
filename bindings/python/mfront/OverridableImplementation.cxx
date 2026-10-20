@@ -20,42 +20,48 @@ void declareOverridableImplementation(pybind11::module_&);
 void declareOverridableImplementation(pybind11::module_& m) {
   auto write_ptr =
       static_cast<void (*)(const mfront::OverridableImplementation&,
-                           const std::string&)>(mfront::write);
+                            const std::string&)>(mfront::write);
   auto write_ptr2 =
       static_cast<void (*)(const mfront::OverridableImplementation&,
-                           const std::string&, const std::string&)>(
+                            const std::string&, const std::string&)>(
           mfront::write);
 
   pybind11::class_<mfront::OverridableImplementation>(
-      m, "OverridableImplementation")
-      .def(pybind11::init<std::string>())
+      m, "OverridableImplementation",
+      "A data structure representing the implementation of a material\n"
+      "knowledge based on MFront.\n"
+      "\n"
+      "This datastructure allows to take an MFront file, called the source file\n"
+      "and override:\n"
+      "\n"
+      "- some metadata, such as the author name, the date, the description\n"
+      "- the parameters\n"
+      "- the bounds of the variables")
+      .def(pybind11::init<std::string>(), pybind11::arg("f"))
       .def(
           "overrideAuthor",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             i.setOverridenValue<mfront::OverridableImplementation::AUTHOR_NAME>(
                 a);
           },
-          "override the name of the author")
+          pybind11::arg("a"))
       .def(
           "overrideDate",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             i.setOverridenValue<mfront::OverridableImplementation::DATE>(a);
-          },
-          "override the date at which the implementation was written")
+          })
       .def(
           "overrideDescription",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             i.setOverridenValue<mfront::OverridableImplementation::DESCRIPTION>(
                 a);
-          },
-          "override the description")
+          })
       .def(
           "overrideMaterial",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             i.setOverridenValue<
                 mfront::OverridableImplementation::MATERIAL_NAME>(a);
-          },
-          "override the name of the material")
+          })
       .def(
           "overrideMaterialPropertyName",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
@@ -66,67 +72,42 @@ void declareOverridableImplementation(pybind11::module_& m) {
             }
             i.setOverridenValue<mfront::OverridableImplementation::
                                     MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
-          },
-          "override the name of the material property  (fails if the source "
-          "file does not describe a material property)")
+          })
       .def(
           "overrideBehaviourName",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             if (i.getTargetType() != mfront::AbstractDSL::BEHAVIOURDSL) {
               tfel::raise(
-                  "overrideBehaviourName: invalid call (the DSL does not "
-                  "describe a behaviour)");
+                  "overrideBehaviourName: invalid call (the DSL does "
+                  "not describe a behaviour)");
             }
             i.setOverridenValue<mfront::OverridableImplementation::
                                     MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
-          },
-          "override the name of the behaviour  (fails if the source file does "
-          "not describe a behaviour)")
+          })
       .def(
           "overrideModelName",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             if (i.getTargetType() != mfront::AbstractDSL::MODELDSL) {
               tfel::raise(
-                  "overrideModelName: invalid call (the DSL does not describe "
-                  "a model");
+                  "overrideModelName: invalid call (the DSL does "
+                  "not describe a model)");
             }
             i.setOverridenValue<mfront::OverridableImplementation::
                                     MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
-          },
-          "override the name of the model (fails if the source file does not "
-          "describe a model)")
+          })
       .def("overrideByAParameter",
            &mfront::OverridableImplementation::overrideByAParameter,
-           "override a variable by the given parameter")
+           pybind11::arg("n"), pybind11::arg("v"))
       .def("getMaterialKnowledgeIdentifier",
-           &mfront::OverridableImplementation::getMaterialKnowledgeIdentifier,
-           "return the material knowledge identifier, i.e. the law name "
-           "or the behaviour name or the model name")
-      .def("getMaterial", &mfront::OverridableImplementation::getMaterial,
-           "return the name of the material. This name can be inherited "
-           "from the overriden implementation or overriden");
+           &mfront::OverridableImplementation::getMaterialKnowledgeIdentifier)
+      .def("getMaterial", &mfront::OverridableImplementation::getMaterial);
 
   m.def("getDestinationPathInMadnexFile",
         static_cast<std::string (*)(const mfront::OverridableImplementation&)>(
-            mfront::getDestinationPathInMadnexFile),
-        R"(
-      return the path where an overridable implementation will be written in a madnex file.
-      )");
+            mfront::getDestinationPathInMadnexFile));
 
-  m.def("write", write_ptr,
-        R"(
-        export an overridable implementation to a file
-        o: OverridableImplementation
-        f: generated file
-        )");
-  m.def("write", write_ptr2,
-        R"(
-        export an overridable implementation to a file using a template file
-        
-        
-        o: OverridableImplementation
-        t: template file
-        f: generated file
-        )");
+  m.def("write", write_ptr, pybind11::arg("i"), pybind11::arg("f"));
+  m.def("write", write_ptr2, pybind11::arg("i"), pybind11::arg("f"),
+        pybind11::arg("d"));
 
 }  // end of declareOverridableImplementation

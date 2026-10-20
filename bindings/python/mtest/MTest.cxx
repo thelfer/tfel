@@ -934,9 +934,10 @@ void declareMTest(pybind11::module_& m) {
 
   pybind11::class_<MTest, SingleStructureScheme>(m, "MTest")
       .def(pybind11::init<>())
-      .def("execute", pm)
+      .def("execute", pm, pybind11::arg("bInit"))
       .def("execute", pm2)
-      .def("execute", pm3)
+      .def("execute", pm3, pybind11::arg("s"), pybind11::arg("wk"),
+           pybind11::arg("t"), pybind11::arg("dt"))
       .def("completeInitialisation", &MTest::completeInitialisation)
       .def("initializeCurrentState", &MTest::initializeCurrentState)
       .def("initializeWorkSpace", &MTest::initializeWorkSpace)

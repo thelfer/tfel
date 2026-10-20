@@ -23,7 +23,7 @@ static std::vector<std::string> TargetsDescription_getHeaders(
 }
 
 static void TargetsDescription_setHeaders(mfront::TargetsDescription& t,
-                                          const std::vector<std::string>& h) {
+                                           const std::vector<std::string>& h) {
   t.headers = h;
 }
 
@@ -38,12 +38,17 @@ void declareTargetsDescription(pybind11::module_& m) {
   using namespace mfront;
   using LibraryAccess =
       LibraryDescription& (TargetsDescription::*)(const std::string&);
-  pybind11::class_<mfront::TargetsDescription>(m, "TargetsDescription")
+  pybind11::class_<mfront::TargetsDescription>(
+      m, "TargetsDescription",
+      "Structure containing the results of the analysis of a\n"
+      "MFront file. This structure is used to build the compilation\n"
+      "rules for the libraries and specific targets defined by MFront\n"
+      "interfaces")
       .def("getLibrary",
            static_cast<LibraryAccess>(&TargetsDescription::getLibrary),
-           pybind11::arg("library"))
+           pybind11::arg("n"))
       .def_property("headers", TargetsDescription_getHeaders,
-                    TargetsDescription_setHeaders)
+                     TargetsDescription_setHeaders)
       .def("getLibraries", TargetsDescription_getLibraries)
       .def_property_readonly("libraries", &TargetsDescription_getLibraries)
       .def_readwrite("specific_targets", &TargetsDescription::specific_targets)

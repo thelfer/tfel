@@ -21,9 +21,11 @@ void declareExternalMaterialKnowledgeDescription(pybind11::module_&);
 void declareExternalMaterialKnowledgeDescription(pybind11::module_& m) {
   using namespace tfel::system;
   pybind11::class_<ExternalMaterialKnowledgeDescription>(
-      m, "ExternalMaterialKnowledgeDescription")
+      m, "ExternalMaterialKnowledgeDescription",
+      "A structure containing the information about a given material knowledge")
       .def(pybind11::init<>())
-      .def(pybind11::init<std::string, std::string>())
+      .def(pybind11::init<std::string, std::string>(),
+           pybind11::arg("l"), pybind11::arg("f"))
       .def_readonly("library", &ExternalMaterialKnowledgeDescription::library)
       .def_readonly("entry_point",
                     &ExternalMaterialKnowledgeDescription::entry_point)
