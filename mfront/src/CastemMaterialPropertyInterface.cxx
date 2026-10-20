@@ -263,6 +263,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     out << "/*!\n"
         << "* \\file   " << fn << "\n"
         << "* \\brief  "
@@ -317,6 +318,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
     const auto& date = fd.date;

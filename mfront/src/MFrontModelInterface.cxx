@@ -148,6 +148,7 @@ namespace mfront {
     std::ofstream header("include/" + hname);
     throw_if(!header, "can't open file 'include/" + hname + "'");
     header.exceptions(std::ios::badbit | std::ios::failbit);
+    header.precision(14);
     header << "/*!\n"
            << " * \\file   " << hname << '\n'
            << " * \\brief  This file declares the mfront interface for the "
