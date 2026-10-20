@@ -24,6 +24,7 @@
 #include "TFEL/Check/NoInterpolation.hxx"
 #include "TFEL/Check/LinearInterpolation.hxx"
 #include "TFEL/Check/SplineInterpolation.hxx"
+#include "TFEL/Check/SplineLocalInterpolation.hxx"
 
 struct test_AreaComparison final : public tfel::tests::TestCase {
   test_AreaComparison()
@@ -58,6 +59,16 @@ struct test_AreaComparison final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_THROW(check("test_AreaComparison_A.res",
                                  "test_AreaComparison_B.res", 1.e-12, none),
                            std::runtime_error);
+    // y = t + 1 with other abscissas. Each curve must be evaluated with
+    // its own local splines
+    write("test_AreaComparison_F.res", "# t y\n0 0\n1 1\n2 2\n3 3\n4 4\n");
+    write("test_AreaComparison_G.res", "# t y\n0 1\n0.5 1.5\n2.5 3.5\n4 5\n");
+    TFEL_TESTS_ASSERT(!check(
+        "test_AreaComparison_F.res", "test_AreaComparison_G.res", 1 - 1.e-10,
+        std::make_shared<tfel::check::SplineLocalInterpolation>()));
+    TFEL_TESTS_ASSERT(check(
+        "test_AreaComparison_F.res", "test_AreaComparison_G.res", 1 + 1.e-10,
+        std::make_shared<tfel::check::SplineLocalInterpolation>()));
     return this->result;
   }
 
