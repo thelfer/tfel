@@ -166,9 +166,11 @@ namespace mfront::generic_parallel::material_property {
          << "}\n"
          << "}\n"
          << "return true;\n"
-         << "};\n"
-         << "const int mfront_errno_old = errno;\n";
+         << "};\n";
     }
+    // errno is restored before returning, even if the runtime checks are
+    // disabled (checks of a uniform output)
+    os << "[[maybe_unused]] const int mfront_errno_old = errno;\n";
     os << "mfront_output_status->status = 0;\n"
        << "mfront_output_status->bounds_status = 0;\n"
        << "mfront_output_status->c_error_number = 0;\n";
