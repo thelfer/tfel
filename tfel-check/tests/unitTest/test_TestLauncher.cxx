@@ -10,6 +10,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cstdio>
 #include <string>
 #include <utility>
 #include <fstream>
@@ -254,8 +255,16 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
   static bool run(const std::string& n, const std::string& c) {
     write(n + ".check", c);
     auto configuration = tfel::check::Configuration{};
-    tfel::check::TestLauncher l(configuration, n + ".check");
-    return l.execute(configuration);
+    auto r = false;
+    {
+      tfel::check::TestLauncher l(configuration, n + ".check");
+      r = l.execute(configuration);
+    }
+    // some tests are expected to fail: their JUnit report, written by the
+    // destructor of the launcher, is removed so that the CI does not
+    // report them
+    std::remove(("TEST-" + n + ".xml").c_str());
+    return r;
   }
 };
 
