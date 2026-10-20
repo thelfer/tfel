@@ -24,6 +24,37 @@ namespace tfel::math {
 
   namespace internals {
 
+    /*!
+     * \brief advance an iterator by the given number of positions.
+     *
+     * The `std::advance`, `std::next` and `std::prev` functions of
+     * libstdc++ can't be used in device code: they call the
+     * `__builtin_constant_p` built-in, which nvcc treats as a host function,
+     * and nvcc 13.0 silently compiles them as functions doing nothing.
+     */
+    template <typename Iterator>
+    constexpr void advance(
+        Iterator& i,
+        const typename std::iterator_traits<Iterator>::difference_type n) {
+      if constexpr (std::random_access_iterator<Iterator>) {
+        i += n;
+      } else {
+        for (auto k = n; k > 0; --k) {
+          ++i;
+        }
+        for (auto k = n; k < 0; ++k) {
+          --i;
+        }
+      }
+    }  // end of advance
+
+    //! \return the iterator preceding the given one (see `advance`)
+    template <typename Iterator>
+    constexpr Iterator previous(Iterator i) {
+      internals::advance(i, -1);
+      return i;
+    }  // end of previous
+
     template <typename ForwardIterator, typename Tp, typename Compare>
     constexpr ForwardIterator lower_bound(ForwardIterator first,
                                           ForwardIterator last,
@@ -35,7 +66,7 @@ namespace tfel::math {
       while (len > 0) {
         DistanceType half = len >> 1;
         ForwardIterator middle = first;
-        std::advance(middle, half);
+        internals::advance(middle, half);
         if (comp(*middle, val)) {
           first = middle;
           ++first;
@@ -404,7 +435,7 @@ namespace tfel::math {
         return in->y;
       }
     }
-    const auto ip = std::prev(in);
+    const auto ip = internals::previous(in);
     if (in == points.end()) {
       if constexpr (extrapolate) {
         return value_type{ip->y + (xv - ip->x) * ip->d};
@@ -450,7 +481,7 @@ namespace tfel::math {
                               derivative_type<value_type, abscissa_type>{});
       }
     }
-    const auto ip = std::prev(in);
+    const auto ip = internals::previous(in);
     if (in == points.end()) {
       if constexpr (extrapolate) {
         const auto df = ip->d;

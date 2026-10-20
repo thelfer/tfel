@@ -25,6 +25,27 @@ namespace mfront::generic_parallel::material_property {
     return false;
   }  // end of handlesDataTransfer
 
+  //! \return the index of the status reporting an invalid result
+  static std::size_t getInvalidResultStatusIndex(
+      const MaterialPropertyDescription& mpd) {
+    return 2 * (mpd.inputs.size() + 1);
+  }  // end of getInvalidResultStatusIndex
+
+  std::size_t BackendBase::getStatusesArraySize(
+      const MaterialPropertyDescription& mpd) {
+    return getInvalidResultStatusIndex(mpd) + 1;
+  }  // end of getStatusesArraySize
+
+  void BackendBase::writeInvalidResultCheck(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    const auto v =
+        useQuantities(mpd) ? mpd.output.name + ".getValue()" : mpd.output.name;
+    os << "if(!tfel::math::ieee754::isfinite(" << v << ")){\n"
+       << "mfront_bounds_statuses[" << getInvalidResultStatusIndex(mpd)
+       << "] = 1;\n"
+       << "}\n";
+  }  // end of writeInvalidResultCheck
+
   void BackendBase::writeCDeclarations(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
@@ -156,14 +177,11 @@ namespace mfront::generic_parallel::material_property {
   void BackendBase::writePhysicalBounds(std::ostream& os,
                                         const VariableDescription& v,
                                         const size_t i,
-                                        const bool useQuantities) const {
+                                        const bool) const {
     if (!v.hasPhysicalBounds()) {
       return;
     }
     const auto& b = v.getPhysicalBounds();
-    const auto to_string = useQuantities
-                               ? "std::to_string(" + v.name + ".getValue())"
-                               : "std::to_string(" + v.name + ")";
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
       os << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
@@ -184,13 +202,10 @@ namespace mfront::generic_parallel::material_property {
                                 const std::string& iucname,
                                 const VariableDescription& v,
                                 const size_t i,
-                                const bool useQuantities) const {
+                                const bool) const {
     if (!v.hasBounds()) {
       return;
     }
-    const auto to_string = useQuantities
-                               ? "std::to_string(" + v.name + ".getValue())"
-                               : "std::to_string(" + v.name + ")";
     const auto& b = v.getBounds();
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
@@ -218,6 +233,12 @@ namespace mfront::generic_parallel::material_property {
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
       const MaterialPropertyDescription& mpd) const {
+    os << "if(mfront_bounds_statuses[" << getInvalidResultStatusIndex(mpd)
+       << "] != 0){\n"
+       << "mfront_report(\"invalid result at at least one point\");\n"
+       << "mfront_output_status->status = -4;\n"
+       << "return;\n"
+       << "}\n";
     if (!((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs)) ||
           (mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds()))) {
       return;
@@ -260,24 +281,31 @@ namespace mfront::generic_parallel::material_property {
         os << "if(mfront_bounds_statuses[" << 2 * idx + 1 << "] > 0){\n"
            << "mfront_report(\"" << v.name
            << " is over its upper bound at at least one point\");\n"
-           << "mfront_output_status->bounds_status = " << idx + 1 << ";\n"
            << "if(mfront_out_of_bounds_policy==" << prefix
            << "_STRICT_POLICY){\n"
            << "mfront_output_status->status = -1;\n"
+           << "mfront_output_status->bounds_status = -" << idx + 1 << ";\n"
            << "return;\n"
            << "}\n"
+           << "mfront_output_status->status = 1;\n"
+           << "mfront_output_status->bounds_status = " << idx + 1 << ";\n"
            << "}\n";
         os << "if(mfront_bounds_statuses[" << 2 * idx + 1 << "] < 0){\n"
            << "mfront_report(\"" << v.name
            << " is below its lower bound at at least one point\");\n"
-           << "mfront_output_status->bounds_status = " << idx + 1 << ";\n"
            << "if(mfront_out_of_bounds_policy==" << prefix
            << "_STRICT_POLICY){\n"
            << "mfront_output_status->status = -1;\n"
+           << "mfront_output_status->bounds_status = -" << idx + 1 << ";\n"
            << "return;\n"
            << "}\n"
+           << "mfront_output_status->status = 1;\n"
+           << "mfront_output_status->bounds_status = " << idx + 1 << ";\n"
            << "}\n";
       };
+      // as with the `generic` interface, the result must be used with
+      // caution (status 1) if a bound is violated with the warning policy,
+      // and the bounds status is negative with the strict policy
       os << "if((mfront_out_of_bounds_policy==" << prefix
          << "_STRICT_POLICY)||\n"
          << "(mfront_out_of_bounds_policy==" << prefix

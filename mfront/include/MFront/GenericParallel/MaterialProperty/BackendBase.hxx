@@ -46,7 +46,7 @@ namespace mfront::generic_parallel::material_property {
 
    protected:
     /*!
-     * \brief structure decribing the extra arguments of the C functions
+     * \brief structure describing the extra arguments of the C functions
      */
     struct ExtraArgumentOfCFunctions {
       //! \brief type of the argument
@@ -74,7 +74,7 @@ namespace mfront::generic_parallel::material_property {
                              const size_t,
                              const bool) const;
     /*!
-     * \brief write the code analysying the array `mfront_bounds_statuses`
+     * \brief write the code analysing the array `mfront_bounds_statuses`
      *
      * \param[in] os: output stream
      * \param[in] i: interface
@@ -85,17 +85,38 @@ namespace mfront::generic_parallel::material_property {
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const;
     /*!
+     * \return the size of the array `mfront_bounds_statuses`
+     *
+     * This array contains the statuses of the physical bounds and of the
+     * standard bounds of the inputs and of the output, followed by a status
+     * reporting that the result is not finite at one point at least.
+     *
+     * \param[in] mpd: material property description
+     */
+    static std::size_t getStatusesArraySize(const MaterialPropertyDescription&);
+    /*!
+     * \brief write the code reporting, in the array
+     * `mfront_bounds_statuses`, that the result is not finite
+     *
+     * \param[in] os: output stream
+     * \param[in] mpd: material property description
+     */
+    void writeInvalidResultCheck(std::ostream&,
+                                 const MaterialPropertyDescription&) const;
+    /*!
      * \brief return if the backend shall handle the data transfer from a host
      * to a device
      *
-     * If this method return true, the argument of the C function
-     * implementations containing pointers to values of the state variables
+     * If this method returns true, the argument of the C function
+     * implementations containing pointers to values of the arguments
      * is named `mfront_args_host`. The backend shall
-     * then defined a pointer named `mfront_args` to the beginning of an
-     * internal array of pointers.
+     * then define a pointer named `mfront_args` to the beginning of an
+     * internal array of pointers. The output argument is then named
+     * `mfront_output_host`, and the backend shall define a pointer named
+     * `mfront_output`.
      *
-     * If this method returns false, this argument is directly named
-     * `mfront_args`.
+     * If this method returns false, those arguments are directly named
+     * `mfront_args` and `mfront_output`.
      *
      * \note by default, no data transfer is handled
      */
