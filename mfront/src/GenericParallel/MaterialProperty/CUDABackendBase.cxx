@@ -186,12 +186,12 @@ namespace mfront::generic_parallel::material_property {
         os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
         if (mpd.output.hasPhysicalBounds()) {
           os << "// treating physical bounds\n";
-          this->writePhysicalBounds(os, mpd.output, mpd.inputs.size() + 1,
+          this->writePhysicalBounds(os, mpd.output, mpd.inputs.size(),
                                     useQuantities(mpd));
         }
         if (mpd.output.hasBounds()) {
           os << "// treating bounds\n";
-          this->writeBounds(os, prefix, mpd.output, mpd.inputs.size() + 1,
+          this->writeBounds(os, prefix, mpd.output, mpd.inputs.size(),
                             useQuantities(mpd));
         }
         os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
