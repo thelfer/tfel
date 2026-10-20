@@ -111,10 +111,11 @@ namespace mfront::generic_parallel::material_property {
       os << ",\nconst " << types.real_type << "* const "  //
          << "mfront_" << v.name << "_values";
     }
-    os << ",\nconst int mfront_npoints){\n";
+    os << ",\nconst " << types.integer_type << " mfront_npoints){\n";
     writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", true);
     //
-    os << "auto mfront_idx = blockIdx.x * blockDim.x + threadIdx.x;\n"
+    os << "const auto mfront_idx = static_cast<" << types.integer_type
+       << ">(blockIdx.x) * blockDim.x + threadIdx.x;\n"
        << "if(mfront_idx >= mfront_npoints){\n"
        << "return;\n"
        << "}\n";
@@ -471,7 +472,7 @@ namespace mfront::generic_parallel::material_property {
       if (uniform) {
         os << "1";
       } else {
-        os << "static_cast<int>(mfront_npoints)";
+        os << "mfront_npoints";
       }
       os << ");\n"
          << "const auto mfront_" << pm << "_launch_error = " << pm
