@@ -58,6 +58,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     this->test10();
     this->test11();
     this->test12();
+    this->test13();
     return this->result;
   }  // end of execute
 
@@ -374,6 +375,30 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
     for (std::size_t i = 0; i != E.size(); ++i) {
       TFEL_TESTS_ASSERT(std::abs(E[i] - E_ref[i]) < eps);
+    }
+  }
+
+  // strided output: the values between two values of the output and the
+  // values after the last one are not modified
+  void test13() {
+    constexpr auto eps = double{1e-2};
+    constexpr auto v = double{-1};
+    auto output = mfront_gmp_OutputStatus{};
+    auto E = std::vector<double>(4 * 3, v);
+    const auto T = std::vector<double>{300, 500, 300, 800};
+    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+    const auto args = std::array<const double *, 1u>{T.data()};
+    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
+    Inconel600_YoungModulus(&output, E.data(), 3, &Q, args.data(),
+                            args_strides.data(), 1, 4, policy);
+    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
+    for (std::size_t i = 0; i != E.size(); ++i) {
+      if (i % 3 == 0) {
+        TFEL_TESTS_ASSERT(std::abs(E[i] - fct(T[i / 3])) < eps);
+      } else {
+        TFEL_TESTS_CHECK_EQUAL(E[i], v);
+      }
     }
   }
 };

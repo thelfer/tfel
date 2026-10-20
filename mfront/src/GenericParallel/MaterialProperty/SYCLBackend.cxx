@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 #include <ostream>
+#include "TFEL/Raise.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
@@ -18,6 +19,23 @@
 #include "MFront/GenericParallel/MaterialProperty/SYCLBackend.hxx"
 
 namespace mfront::generic_parallel::material_property {
+
+  /*!
+   * \brief write the code waiting for the end of the commands previously
+   * submitted to an out-of-order queue
+   *
+   * With an out-of-order queue, the commands submitted by the generated
+   * functions would not be ordered after the commands previously submitted
+   * by the calling code (for instance the kernels computing the arguments).
+   * An in-order queue orders them.
+   *
+   * \param[in] os: output stream
+   */
+  static void writeOutOfOrderQueueSynchronization(std::ostream& os) {
+    os << "if (!mfront_queue->is_in_order()) {\n"
+       << "mfront_queue->wait_and_throw();\n"
+       << "}\n";
+  }  // end of writeOutOfOrderQueueSynchronization
 
   SYCLBackend::SYCLBackend() {}  // end of SYCLBackend
 
@@ -68,7 +86,8 @@ namespace mfront::generic_parallel::material_property {
        << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n";
 
     if (this->handlesDataTransfer()) {
-      os << "namespace mfront::gpmp::sycl{\n\n"
+      os << "#include\"TFEL/Raise.hxx\"\n\n"
+         << "namespace mfront::gpmp::sycl{\n\n"
          << "template<typename T>\n"
          << "struct [[nodiscard]] DataBuffer{\n"
          << "DataBuffer(::sycl::queue& q)\n"
@@ -91,9 +110,15 @@ namespace mfront::generic_parallel::material_property {
          << "if (may_require_device_allocation && is_queue_device) {\n"
          << "  this->device_ptr = "
          << "  ::sycl::malloc_device<std::remove_const_t<T>>(s, this->queue);\n"
+         << "  if (this->device_ptr == nullptr) {\n"
+         << "    tfel::raise(\"memory allocation on the device "
+         << "failed\");\n"
+         << "  }\n"
          << "  this->ptr = this->device_ptr;\n"
          << "  if (do_copy) {\n"
-         << "    return this->queue.copy(src, this->device_ptr, s);\n"
+         << "    this->copy_event = "
+         << "this->queue.copy(src, this->device_ptr, s);\n"
+         << "    return this->copy_event;\n"
          << "  }\n"
          << "  return ::sycl::event{};\n"
          << "}\n"
@@ -109,9 +134,14 @@ namespace mfront::generic_parallel::material_property {
          << "  return this->device_ptr != nullptr;\n"
          << "}\n"
          << "~DataBuffer() noexcept{\n"
+         << "try{\n"
+         << "this->cleanup();\n"
+         << "} catch(...){}\n"
          << "}\n"
          << "void cleanup(){\n"
          << "if(this->device_ptr != nullptr) {\n"
+         << "// the copy may still be running if an exception was thrown\n"
+         << "this->copy_event.wait();\n"
          << "::sycl::free(this->device_ptr, this->queue);\n"
          << "}\n"
          << "this->host_ptr = nullptr;\n"
@@ -123,6 +153,7 @@ namespace mfront::generic_parallel::material_property {
          << "T* ptr = nullptr;\n"
          << "T* host_ptr = nullptr;\n"
          << "std::remove_const_t<T>* device_ptr = nullptr;\n"
+         << "::sycl::event copy_event;\n"
          << "};\n\n"
          << "} // end of namespace mfront::gpmp::sycl\n";
     }
@@ -146,6 +177,10 @@ namespace mfront::generic_parallel::material_property {
       const bool treatStrides) const {
     const auto types = i.getTypesDescription();
     const auto requiresBoundsCheck = this->isBoundsCheckingRequired(mpd);
+    if (!this->handlesDataTransfer()) {
+      // otherwise, done before the data transfers
+      writeOutOfOrderQueueSynchronization(os);
+    }
     if (requiresBoundsCheck) {
       os << "using mfront_shared_allocator_type = "
          << "sycl::usm_allocator<int, sycl::usm::alloc::shared>;\n"
@@ -161,6 +196,9 @@ namespace mfront::generic_parallel::material_property {
     if (treatStrides) {
       this->writeKernel(os, i, mpd, fd, true);
     }
+    // the asynchronous errors of the kernels and of the copies are passed
+    // to the asynchronous handler of the queue (wait_and_throw). The
+    // exceptions it throws are reported by the status -2
     auto write_kernel_call = [&os, this, &types](const std::string_view npoints,
                                                  const bool handleStrides) {
       os << "// loop over the points\n";
@@ -180,23 +218,23 @@ namespace mfront::generic_parallel::material_property {
           if (npoints == "1") {
             os << "mfront_queue->copy<" << types.real_type
                << ">(mfront_output_ptr.data(), mfront_output_host, " << 1
-               << ", mfront_sycl_kernel_event).wait();\n";
+               << ", mfront_sycl_kernel_event).wait_and_throw();\n";
           } else {
             os << "mfront_queue->copy<" << types.real_type
                << ">(mfront_output_ptr.data(), mfront_output_host, "  //
-               << npoints << " * mfront_output_stride, "
-               << "mfront_sycl_kernel_event).wait();\n";
+               << "(" << npoints << " - 1) * mfront_output_stride + 1, "
+               << "mfront_sycl_kernel_event).wait_and_throw();\n";
           }
         } else {
           os << "mfront_queue->copy<" << types.real_type
              << ">(mfront_output_ptr.data(), mfront_output_host, " << npoints
-             << ", mfront_sycl_kernel_event).wait();\n";
+             << ", mfront_sycl_kernel_event).wait_and_throw();\n";
         }
         os << "} else {"
-           << "  mfront_sycl_kernel_event.wait();\n"
+           << "  mfront_sycl_kernel_event.wait_and_throw();\n"
            << "}\n";
       } else {
-        os << "mfront_sycl_kernel_event.wait();\n";
+        os << "mfront_sycl_kernel_event.wait_and_throw();\n";
       }
     };
     if (treatStrides) {
@@ -245,6 +283,7 @@ namespace mfront::generic_parallel::material_property {
     if (!this->handlesDataTransfer()) {
       return;
     }
+    writeOutOfOrderQueueSynchronization(os);
     os << "auto mfront_sycl_copy_events = std::vector<::sycl::event>{};\n";
     if (mpd.inputs.empty()) {
       os << "mfront_sycl_copy_events.reserve(1);\n";
@@ -269,7 +308,8 @@ namespace mfront::generic_parallel::material_property {
              << "mfront_sycl_copy_events.push_back("
              << "mfront_arg" << idx << "_ptr.acquire("
              << "mfront_args_host[" << idx << "], "
-             << "mfront_npoints * mfront_args_strides[" << idx << "], true));\n"
+             << "(mfront_npoints - 1) * mfront_args_strides[" << idx
+             << "] + 1, true));\n"
              << "}\n";
         } else {
           os << "mfront_sycl_copy_events.push_back("
@@ -282,22 +322,25 @@ namespace mfront::generic_parallel::material_property {
       os << "const " << types.real_type << " * * mfront_args = "
          << "mfront_args_storage.data();\n";
     }
+    // the output is copied to the device, so that the values which are not
+    // computed (points where the evaluation fails, values between two
+    // values of a strided output) are kept when the output is copied back
     os << "auto mfront_output_ptr = "
        << "::mfront::gpmp::sycl::DataBuffer<" << types.real_type
        << ">{*mfront_queue};\n";
     if (treatStrides) {
       os << "if (mfront_output_stride == 0) {\n"
          << "mfront_sycl_copy_events.push_back("
-         << "mfront_output_ptr.acquire(mfront_output_host,  1, false));\n"
+         << "mfront_output_ptr.acquire(mfront_output_host,  1, true));\n"
          << "} else {\n"
          << "mfront_sycl_copy_events.push_back("
          << "mfront_output_ptr.acquire(mfront_output_host, "
-         << "mfront_npoints * mfront_output_stride, false));\n"
+         << "(mfront_npoints - 1) * mfront_output_stride + 1, true));\n"
          << "}\n";
     } else {
       os << "mfront_sycl_copy_events.push_back("
          << "mfront_output_ptr.acquire(mfront_output_host, "
-         << "mfront_npoints, false));\n";
+         << "mfront_npoints, true));\n";
     }
     os << "auto *mfront_output = mfront_output_ptr.data();\n";
   }
