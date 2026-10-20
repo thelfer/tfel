@@ -232,8 +232,12 @@ namespace mfront {
     }
     os << " */\n\n";
 
-    os << "#ifndef " << makeUpperCase(name) << "_" << iucname << "_HH\n"
-       << "#define " << makeUpperCase(name) << "_" << iucname << "_HH\n\n";
+    // the name of the backend is part of the header guard, so that the
+    // headers of several backends can be included in the same file
+    const auto guard = makeUpperCase(name) + "_" + iucname + "_" +
+                       makeUpperCase(this->backend->getName()) + "_HH";
+    os << "#ifndef " << guard << "\n"
+       << "#define " << guard << "\n\n";
     writeExportDirectives(os);
 
     for (const auto& header : this->getInterfaceHeaderFiles()) {
@@ -258,7 +262,7 @@ namespace mfront {
     os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n"
-       << "#endif /* " << makeUpperCase(name) << "_" << iucname << "_HH */\n";
+       << "#endif /* " << guard << " */\n";
     os.close();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "GenericParallelMaterialPropertyInterface::"
