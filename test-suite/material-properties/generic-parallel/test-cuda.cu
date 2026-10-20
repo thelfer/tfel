@@ -352,7 +352,10 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(nu[i] - 0.39991) < eps);
     }
     nu = thrust::host_vector<double>(1);
-    PoissonRatioTest(&output, nu.data(), 0, nullptr, nullptr, 0, 1, policy);
+    d_nu = thrust::device_vector<double>(nu.size());
+    PoissonRatioTest(&output, thrust::raw_pointer_cast(d_nu.data()), 0, nullptr,
+                     nullptr, 0, 1, policy);
+    nu = d_nu;
     TFEL_TESTS_ASSERT(std::abs(nu[0] - 0.39991) < eps);
   }
 

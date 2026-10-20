@@ -26,7 +26,7 @@
 [[nodiscard]] std::unique_ptr<double, void (*)(double *const) noexcept>
 createManagedData(const std::size_t s) {
   double *ptr;
-  const auto e = hipMallocManaged(&ptr, s);
+  const auto e = hipMallocManaged(&ptr, s * sizeof(double));
   if (e != hipSuccess) {
     std::cerr << hipGetErrorString(e) << '\n';
     std::exit(EXIT_FAILURE);
@@ -109,7 +109,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     auto output_qt = mfront_gmp_OutputStatus{};
     auto E = createManagedData(4);
     auto E_qt = createManagedData(4);
-    const auto T = createManagedData(300);
+    const auto T = createManagedData({300});
     //
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.get()};
