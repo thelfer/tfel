@@ -498,7 +498,8 @@ namespace tfel::check {
     check();
     this->readSpecifiedToken("TestLauncher::treatTestType", "interpolation");
     check();
-    this->setInterpolation("TestLauncher::treatTestType");
+    this->integralInterpolation =
+        this->readInterpolation("TestLauncher::treatTestType");
     this->readSpecifiedToken("TestLauncher::treatTestType", "using");
     check();
     if ((this->current->flag == tfel::utilities::Token::String) ||
@@ -604,16 +605,18 @@ namespace tfel::check {
     this->readSpecifiedToken("TestLauncher::treatPrecision", ";");
   }  // end of treatPrecision
 
-  void TestLauncher::setInterpolation(const std::string& m) {
+  std::shared_ptr<Interpolation> TestLauncher::readInterpolation(
+      const std::string& m) {
     this->checkNotEndOfFile(m);
+    auto i = std::shared_ptr<Interpolation>{};
     if (this->current->value == "Spline") {
-      this->integralInterpolation.reset(new SplineInterpolation());
+      i = std::make_shared<SplineInterpolation>();
     } else if (this->current->value == "Linear") {
-      this->integralInterpolation.reset(new LinearInterpolation());
+      i = std::make_shared<LinearInterpolation>();
     } else if (this->current->value == "LocalSpline") {
-      this->integralInterpolation.reset(new SplineLocalInterpolation());
+      i = std::make_shared<SplineLocalInterpolation>();
     } else if (this->current->value == "None") {
-      this->integralInterpolation.reset(new NoInterpolation());
+      i = std::make_shared<NoInterpolation>();
     } else {
       this->throwRuntimeError(m,
                               "unknown interpolation type "
@@ -621,10 +624,13 @@ namespace tfel::check {
                                   this->current->value + "')");
     }
     ++(this->current);
+    return i;
   }
 
   void TestLauncher::treatInterpolation() {
-    this->setInterpolation("TestLauncher::treatInterpolation");
+    this->interpolation =
+        this->readInterpolation("TestLauncher::treatInterpolation");
+    this->allowLessResults = false;
     this->checkNotEndOfFile("TestLauncher::treatInterpolation");
     if (this->current->value == ";") {
       if (this->interpolation->isConform()) {

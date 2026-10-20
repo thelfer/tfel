@@ -177,7 +177,7 @@ namespace tfel::check {
         this->msgLog.append(msg.str());
         //      beforeInterFile.close();
         //      afterInterFile.close();
-      } else if (this->c2->getValues() < this->c1->getValues() &&
+      } else if (this->c2->getValues().size() < this->c1->getValues().size() &&
                  this->allowLessResults) {
         //      if (beforeInterFile)		// stores the before
         //      interpolation values
@@ -212,7 +212,7 @@ namespace tfel::check {
         this->msgLog.append(msg.str());
         //      beforeInterFile.close();
         //      afterInterFile.close();
-      } else if (this->c2->getValues() < this->c1->getValues() &&
+      } else if (this->c2->getValues().size() < this->c1->getValues().size() &&
                  !(this->allowLessResults)) {
         msg << "\nResults have less values than reference.\n";
         this->msgLog.append(msg.str());
