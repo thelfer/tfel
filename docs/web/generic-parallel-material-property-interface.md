@@ -422,10 +422,13 @@ available:
 
 > ** Providing data on the device**
 > 
-> Data copy in `SYCL` are asynchronous operations. Thus, if the
-> data are provided on the device, the user is responsible for ensuring
-> that the data are effectively copied before calling `MFront`'s generated
-> functions.
+> Data copy in `SYCL` are asynchronous operations. The generated
+> functions submit their commands after the commands previously submitted
+> to the given queue: an in-order queue orders them, and the generated
+> functions wait for the end of the commands previously submitted to an
+> out-of-order queue. If the data are provided by commands submitted to
+> another queue, the user is responsible for ensuring that the data are
+> effectively copied before calling `MFront`'s generated functions.
 
 # Tests
 

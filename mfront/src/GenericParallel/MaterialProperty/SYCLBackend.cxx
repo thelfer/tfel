@@ -19,6 +19,23 @@
 
 namespace mfront::generic_parallel::material_property {
 
+  /*!
+   * \brief write the code waiting for the end of the commands previously
+   * submitted to an out-of-order queue
+   *
+   * With an out-of-order queue, the commands submitted by the generated
+   * functions would not be ordered after the commands previously submitted
+   * by the calling code (for instance the kernels computing the arguments).
+   * An in-order queue orders them.
+   *
+   * \param[in] os: output stream
+   */
+  static void writeOutOfOrderQueueSynchronization(std::ostream& os) {
+    os << "if (!mfront_queue->is_in_order()) {\n"
+       << "mfront_queue->wait_and_throw();\n"
+       << "}\n";
+  }  // end of writeOutOfOrderQueueSynchronization
+
   SYCLBackend::SYCLBackend() {}  // end of SYCLBackend
 
   SYCLBackend::SYCLBackend(const tfel::utilities::DataMap& opts) {
@@ -159,6 +176,10 @@ namespace mfront::generic_parallel::material_property {
       const bool treatStrides) const {
     const auto types = i.getTypesDescription();
     const auto requiresBoundsCheck = this->isBoundsCheckingRequired(mpd);
+    if (!this->handlesDataTransfer()) {
+      // otherwise, done before the data transfers
+      writeOutOfOrderQueueSynchronization(os);
+    }
     if (requiresBoundsCheck) {
       os << "using mfront_shared_allocator_type = "
          << "sycl::usm_allocator<int, sycl::usm::alloc::shared>;\n"
@@ -261,6 +282,7 @@ namespace mfront::generic_parallel::material_property {
     if (!this->handlesDataTransfer()) {
       return;
     }
+    writeOutOfOrderQueueSynchronization(os);
     os << "auto mfront_sycl_copy_events = std::vector<::sycl::event>{};\n";
     if (mpd.inputs.empty()) {
       os << "mfront_sycl_copy_events.reserve(1);\n";
