@@ -85,11 +85,11 @@ namespace tfel::check {
   void Test::setPrecision2(const double v) { this->precision2 = v; }
 
   const std::shared_ptr<Column>& Test::getColIntegralInterpolated() const {
-    return this->ci;
+    return this->colIntegralInterpolated;
   }
 
   void Test::setColIntegralInterpolated(const std::shared_ptr<Column>& c) {
-    this->ci = c;
+    this->colIntegralInterpolated = c;
   }
 
   const std::shared_ptr<Interpolation>& Test::getIntegralInterpolation() const {
