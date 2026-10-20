@@ -53,16 +53,15 @@ namespace tfel::math {
     typedef IndexType size_type;
     typedef ptrdiff_t difference_type;
     /*!
-     * \brief access operator
-     * \param[in] i: row number
-     * \param[in] j: colum number
+     * \brief constructor
+     * \param[in] l: transposed object
      */
     TFEL_HOST_DEVICE constexpr explicit ST2toST2TransposeExpr(A l) noexcept
         : a(l) {}
     /*!
      * \brief access operator
      * \param[in] i: row number
-     * \param[in] j: colum number
+     * \param[in] j: column number
      */
     TFEL_HOST_DEVICE [[nodiscard]] constexpr NumType operator()(
         const IndexType i, const IndexType j) const noexcept {

@@ -45,7 +45,7 @@ namespace tfel::math {
     typedef numeric_type<T2toST2Type> value_type;
     // NOLINTBEGIN(google-explicit-constructor)
     /*!
-     * \param[in] B : second tensor of the product
+     * \param[in] F: deformation gradient
      */
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {
@@ -95,7 +95,7 @@ namespace tfel::math {
     typedef numeric_type<T2toST2Type> value_type;
     // NOLINTBEGIN(google-explicit-constructor)
     /*!
-     * \param[in] B : second tensor of the product
+     * \param[in] F: deformation gradient
      */
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {
@@ -156,7 +156,7 @@ namespace tfel::math {
     typedef numeric_type<T2toST2Type> value_type;
     // NOLINTBEGIN(google-explicit-constructor)
     /*!
-     * \param[in] B : second tensor of the product
+     * \param[in] F: deformation gradient
      */
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {

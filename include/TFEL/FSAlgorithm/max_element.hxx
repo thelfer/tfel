@@ -21,7 +21,7 @@ namespace tfel::fsalgo {
   /*!
    * \class max_element
    * \brief max_element finds the largest element in the range [first, first+N)
-   * \param N number of element to be transformed.
+   * \tparam N: number of elements of the range.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/max_element.html
@@ -33,7 +33,9 @@ namespace tfel::fsalgo {
   struct max_element {
     /*
      * Internal function member used by max_element<N>::exe
-     * \param ForwardIterator, iterator to the elements.
+     * \tparam ForwardIterator: iterator to the elements.
+     * \param[in] p: iterator to the next element to be compared
+     * \param[in] q: iterator to the largest element found so far
      *
      * \return ForwardIterator to the maximum element
      *
@@ -54,8 +56,11 @@ namespace tfel::fsalgo {
     /*
      * Internal function member used by max_element<N>::exe
      *
-     * \param ForwardIterator, iterator to the elements.
-     * \param BinaryPredicate, comparison function
+     * \tparam ForwardIterator: iterator to the elements.
+     * \tparam BinaryPredicate: comparison function
+     * \param[in] p: iterator to the next element to be compared
+     * \param[in] q: iterator to the element selected so far
+     * \param[in] comp: comparison function
      *
      * \return ForwardIterator to the maximum element
      *
@@ -82,7 +87,8 @@ namespace tfel::fsalgo {
      * iterator in [first, last) points to a value greater than *i. The return
      * value is first+N if and only if [first, last) is an empty range.
      *
-     * \param ForwardIterator, iterator to the elements.
+     * \tparam ForwardIterator: iterator to the elements.
+     * \param[in] p: iterator to the first element
      *
      * \return ForwardIterator to the maximum element
      *
@@ -104,8 +110,10 @@ namespace tfel::fsalgo {
      * such that, for every iterator j in [first, first+N), comp(*i, *j) is
      * false, where comp is a binary predicate given in argument
      *
-     * \param ForwardIterator, iterator to the elements.
-     * \param BinaryPredicate, comparison function
+     * \tparam ForwardIterator: iterator to the elements.
+     * \tparam BinaryPredicate: comparison function
+     * \param[in] p: iterator to the first element
+     * \param[in] comp: comparison function
      *
      * \return ForwardIterator to the maximum element
      *
