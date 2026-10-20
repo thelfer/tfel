@@ -293,6 +293,7 @@ namespace mfront::generic_parallel::material_property {
            << "mfront_output_status->status = -1;\n"
            << "return;\n"
            << "}\n"
+           << "mfront_output_status->status = 1;\n"
            << "}\n";
         os << "if(mfront_bounds_statuses[" << 2 * idx + 1 << "] < 0){\n"
            << "mfront_report(\"" << v.name
@@ -303,8 +304,11 @@ namespace mfront::generic_parallel::material_property {
            << "mfront_output_status->status = -1;\n"
            << "return;\n"
            << "}\n"
+           << "mfront_output_status->status = 1;\n"
            << "}\n";
       };
+      // as with the `generic` interface, the result must be used with
+      // caution (status 1) if a bound is violated with the warning policy
       os << "if((mfront_out_of_bounds_policy==" << prefix
          << "_STRICT_POLICY)||\n"
          << "(mfront_out_of_bounds_policy==" << prefix

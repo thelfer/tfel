@@ -40,6 +40,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     this->test9();
     this->test10();
     this->test11();
+    this->test12();
     return this->result;
   }  // end of execute
 
@@ -419,6 +420,43 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
     for (std::size_t i = 0; i != E.size(); ++i) {
       TFEL_TESTS_ASSERT(std::abs(E[i] - young(T[i], f[i])) < eps);
+    }
+  }
+
+  // bound violated with the warning policy: the result is computed at all
+  // points and must be used with caution (status 1), as with the `generic`
+  // interface
+  void test12() {
+    constexpr auto eps = double{1e-2};
+    auto young = [](const double T, const double f) {
+      constexpr auto E0 = 2.2693e11;
+      constexpr auto dE_dT = -1.53994698e7;
+      constexpr auto d2E_dT2 = -1.9198278e4;
+      constexpr auto f0 = 0.4;
+      return (1 - f / f0) * (E0 + dE_dT * T + (d2E_dT2 / 2) * T * T);
+    };
+    auto output = mfront_gmp_OutputStatus{};
+    auto E = thrust::host_vector<double>(4);
+    const auto T = thrust::host_vector<double>{300, 3000, 300, 800};
+    const auto f = thrust::host_vector<double>{0, 0.1, 0.15, 0.12};
+    thrust::device_vector<double> d_T(T);
+    thrust::device_vector<double> d_f(f);
+    thrust::device_vector<double> d_E(E.size());
+    const auto policy = GENERIC_MATERIALPROPERTY_WARNING_POLICY;
+    const auto args =
+        std::array<const double *, 2u>{thrust::raw_pointer_cast(d_T.data()),
+                                       thrust::raw_pointer_cast(d_f.data())};
+    const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1, 1};
+    UO2_YoungModulus_Martin1989(&output, thrust::raw_pointer_cast(d_E.data()),
+                                1, args.data(), args_strides.data(),
+                                args.size(), 4, policy);
+    E = d_E;
+    TFEL_TESTS_CHECK_EQUAL(output.status, 1);
+    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 1);
+    for (std::size_t i = 0; i != E.size(); ++i) {
+      TFEL_TESTS_ASSERT(std::abs(E[i] - young(T[i], f[i])) <
+                        eps * std::abs(young(T[i], f[i])));
     }
   }
 };
