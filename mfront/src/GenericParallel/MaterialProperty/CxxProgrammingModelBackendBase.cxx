@@ -318,11 +318,14 @@ namespace mfront::generic_parallel::material_property {
     if (handleStrides) {
       os << ", mfront_output_stride";
     }
-    if (!mpd.inputs.empty()) {
-      os << ", mfront_args";
-      if (handleStrides) {
-        os << ", mfront_args_strides_tmp";
-      }
+    // the pointers to the values of the arguments are copied: the array of
+    // those pointers is generally not accessible by the device (for
+    // instance, an array on the stack of the calling code)
+    for (std::size_t idx = 0; idx != mpd.inputs.size(); ++idx) {
+      os << ", mfront_arg" << idx << " = mfront_args[" << idx << "]";
+    }
+    if ((handleStrides) && (!mpd.inputs.empty())) {
+      os << ", mfront_args_strides_tmp";
     }
     if (requiresBoundsCheck) {
       os << ", mfront_bounds_statuses = mfront_bounds_statuses.data()";
@@ -372,12 +375,12 @@ namespace mfront::generic_parallel::material_property {
         auto cast_end = useQuantities(mpd) ? ")" : "";
         if (handleStrides) {
           os << "const auto " << p3->name << " = " << cast_start;
-          os << "(mfront_args[" << idx << "])[mfront_args_strides_tmp[" << idx
+          os << "mfront_arg" << idx << "[mfront_args_strides_tmp[" << idx
              << "] * mfront_idx]";
           os << cast_end << ";\n";
         } else {
           os << "const auto " << p3->name << " = " << cast_start;
-          os << "(mfront_args[" << idx << "])[mfront_idx]";
+          os << "mfront_arg" << idx << "[mfront_idx]";
           os << cast_end << ";\n";
         }
       }
