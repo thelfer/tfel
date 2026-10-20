@@ -268,7 +268,7 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
 
 # behaviours used to test the integration drivers in cases which
 # can't be checked by MTest
-mfront_behaviour_check_library(MFrontGenericBehaviours4 generic
+mfront_behaviour_check_library(MFrontGenericIntegrationDriversBehaviours generic
   HenckyTimeStepScalingFactorTest
   InternalStateVariablePostProcessingTest
   FiniteStrainInitializeFunctionTest
@@ -279,13 +279,13 @@ add_executable(generic-IntegrationDriversTest EXCLUDE_FROM_ALL
   IntegrationDriversTest.cxx)
 target_link_libraries(generic-IntegrationDriversTest
   TFELSystem TFELUtilities TFELTests TFELException)
-add_dependencies(generic-IntegrationDriversTest MFrontGenericBehaviours4)
+add_dependencies(generic-IntegrationDriversTest MFrontGenericIntegrationDriversBehaviours)
 add_dependencies(build-tests generic-IntegrationDriversTest)
 add_test(NAME generic-IntegrationDriversTest
   COMMAND generic-IntegrationDriversTest)
 set_property(TEST generic-IntegrationDriversTest
   PROPERTY ENVIRONMENT
-  MFrontGenericBehaviours4BuildPath=$<TARGET_FILE:MFrontGenericBehaviours4>)
+  MFrontGenericIntegrationDriversBehavioursBuildPath=$<TARGET_FILE:MFrontGenericIntegrationDriversBehaviours>)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
