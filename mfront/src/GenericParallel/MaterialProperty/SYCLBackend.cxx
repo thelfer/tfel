@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 #include <ostream>
+#include "TFEL/Raise.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
@@ -85,7 +86,7 @@ namespace mfront::generic_parallel::material_property {
        << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n";
 
     if (this->handlesDataTransfer()) {
-      os << "#include<stdexcept>\n\n"
+      os << "#include\"TFEL/Raise.hxx\"\n\n"
          << "namespace mfront::gpmp::sycl{\n\n"
          << "template<typename T>\n"
          << "struct [[nodiscard]] DataBuffer{\n"
@@ -110,8 +111,8 @@ namespace mfront::generic_parallel::material_property {
          << "  this->device_ptr = "
          << "  ::sycl::malloc_device<std::remove_const_t<T>>(s, this->queue);\n"
          << "  if (this->device_ptr == nullptr) {\n"
-         << "    throw(std::runtime_error(\"memory allocation on the device "
-         << "failed\"));\n"
+         << "    tfel::raise(\"memory allocation on the device "
+         << "failed\");\n"
          << "  }\n"
          << "  this->ptr = this->device_ptr;\n"
          << "  if (do_copy) {\n"
