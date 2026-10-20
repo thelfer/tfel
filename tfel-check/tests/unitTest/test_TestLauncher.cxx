@@ -188,6 +188,33 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(
         contains("test_TestLauncher3.checklog",
                  "at line 2 of file 'test_TestLauncher_A.ref'\n"));
+    // without interpolation, the abscissas are checked if a column is
+    // given
+    write("test_TestLauncher_P.res", "# t y\n0 0\n1 2\n4 4\n");
+    TFEL_TESTS_ASSERT(run("test_TestLauncher_none1",
+                          "@Interpolation None using 1;\n"
+                          "@Precision 1.e-12;\n"
+                          "@Test 'test_TestLauncher_A.ref' "
+                          "'test_TestLauncher_L1.ref' 2;\n"));
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher_none2",
+                           "@Interpolation None using 1;\n"
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_A.ref' "
+                           "'test_TestLauncher_P.res' 2;\n"));
+    TFEL_TESTS_ASSERT(
+        contains("test_TestLauncher_none2.checklog", "the abscissas of files"));
+    TFEL_TESTS_ASSERT(run("test_TestLauncher_none3",
+                          "@Interpolation None;\n"
+                          "@Precision 1.e-12;\n"
+                          "@Test 'test_TestLauncher_A.ref' "
+                          "'test_TestLauncher_P.res' 2;\n"));
+    // the column of a previous @Interpolation keyword is not used
+    TFEL_TESTS_ASSERT(run("test_TestLauncher_none4",
+                          "@Interpolation Linear using 1;\n"
+                          "@Interpolation None;\n"
+                          "@Precision 1.e-12;\n"
+                          "@Test 'test_TestLauncher_A.ref' "
+                          "'test_TestLauncher_P.res' 2;\n"));
     return this->result;
   }
 

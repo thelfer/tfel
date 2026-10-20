@@ -16,6 +16,7 @@
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/Curve.hxx"
 #include "TFEL/Check/Test.hxx"
 
@@ -116,6 +117,11 @@ namespace tfel::check {
     std::ostringstream msg;
     msg.str("");  // wipe stream
 
+    auto getAbscissas = [this](const std::string& f) {
+      auto x = Column(*(this->ci));
+      x.setFilename(f);
+      return x.getValues();
+    };
     if (!(this->interpolation->isConform()) &&
         this->comparison->getName() != "area") {
       // tests if we can interpolate or not, based on columns' size and type
@@ -133,15 +139,35 @@ namespace tfel::check {
         this->msgLog.append(msg.str());
         raise(msg.str());
       }
+      // if an abscissa column is given, the abscissas of both files must
+      // be the same, up to a relative tolerance of 1e-10
+      if (this->ci != nullptr) {
+        const auto x1 = getAbscissas(this->f1);
+        const auto x2 = getAbscissas(this->f2);
+        raise_if(x1.size() != x2.size(),
+                 "Test::applyInterpolation: the abscissa columns of files '" +
+                     this->f1 + "' and '" + this->f2 +
+                     "' do not have the same size");
+        auto xmax = double{0};
+        for (const auto x : x1) {
+          xmax = std::max(xmax, std::abs(x));
+        }
+        const auto eps = 1.e-10 * xmax;
+        for (size_type i = 0; i != x1.size(); ++i) {
+          // written this way so that a NaN fails
+          raise_if(!(std::abs(x1[i] - x2[i]) <= eps),
+                   "Test::applyInterpolation: the abscissas of files '" +
+                       this->f1 + "' and '" + this->f2 + "' differ (" +
+                       tfel::utilities::convert(x1[i]) + " and " +
+                       tfel::utilities::convert(x2[i]) + " for the value " +
+                       std::to_string(i + 1) +
+                       "), an interpolation is required");
+        }
+      }
     } else if (this->interpolation->isConform() &&
                this->comparison->getName() != "area") {
       raise_if(this->ci == nullptr,
                "Test::applyInterpolation: no abscissa column defined");
-      auto getAbscissas = [this](const std::string& f) {
-        auto x = Column(*(this->ci));
-        x.setFilename(f);
-        return x.getValues();
-      };
       auto setValues = [](Column& c, const std::vector<double>& v) {
         c.clearValues();
         c.resizeValues(v.size());

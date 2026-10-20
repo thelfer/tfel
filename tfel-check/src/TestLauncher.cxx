@@ -539,10 +539,9 @@ namespace tfel::check {
       test->setPrecision2(this->precision2);
       test->setInterpolation(this->interpolation->clone());
       test->setIntegralInterpolation(this->integralInterpolation);
-      if (test->getInterpolation()->isConform()) {
-        // fetch the times if doing an interpolation
-        test->setColInterpolated(this->ci);
-      }
+      // abscissa column, used to interpolate or, without interpolation,
+      // to check that the abscissas of both files are the same
+      test->setColInterpolated(this->ci);
       // fetch the times for an integration
       test->setColIntegralInterpolated(this->colIntegralInterpolated);
       test->setAllowLessResults(this->allowLessResults);
@@ -631,6 +630,7 @@ namespace tfel::check {
     this->interpolation =
         this->readInterpolation("TestLauncher::treatInterpolation");
     this->allowLessResults = false;
+    this->ci.reset();
     this->checkNotEndOfFile("TestLauncher::treatInterpolation");
     if (this->current->value == ";") {
       if (this->interpolation->isConform()) {
