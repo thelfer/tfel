@@ -12,6 +12,8 @@
  */
 
 #include <cmath>
+#include <cstddef>
+#include <optional>
 #include <sstream>
 #include <iomanip>
 #include <vector>
@@ -34,9 +36,7 @@ namespace tfel::check {
         -std::numeric_limits<double>::max();  // smallest possible value
     unsigned int errorLinesCount = 0;
     float errorLinesPercent = 0.;
-    unsigned int errorLineNumber = 0;
-    unsigned int lineOffset =
-        (!this->c2->getData()->getLegends().empty()) ? 2u : 1u;
+    std::optional<std::size_t> errorLineNumber;
 
     this->msgLog += '\n';
 
@@ -54,7 +54,7 @@ namespace tfel::check {
       if ((!std::isnan(maxMixedError)) &&
           (std::isnan(mixedError) || (maxMixedError < mixedError))) {
         maxMixedError = mixedError;
-        errorLineNumber = index + lineOffset;
+        errorLineNumber = index;
       }
       // written this way so that a NaN fails
       if (!(mixedError <= 0)) {
@@ -81,7 +81,7 @@ namespace tfel::check {
                           " check).\n    Maximum mixed error : ");
       this->msgLog.append(tfel::utilities::convert(maxMixedError));
       this->msgLog +=
-          " at line " + std::to_string(errorLineNumber) +
+          this->getLocation(errorLineNumber) +
           "\n    Failed comparisons (for column) : " +
           std::to_string(errorLinesCount) + " / " +
           std::to_string(this->c1->getValues().size()) + " (" +

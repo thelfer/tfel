@@ -18,6 +18,8 @@
 
 #include <cmath>
 #include <string>
+#include <cstddef>
+#include <optional>
 
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Check/Column.hxx"
@@ -59,6 +61,14 @@ namespace tfel::check {
         const std::shared_ptr<Interpolation> integralInterpolation);
 
     [[nodiscard]] const std::string& getName() const;
+    /*!
+     * \return the location of the given row, i.e. " at line N of file
+     * 'f'" for each file from which the values of this row were read, or
+     * an empty string if no row is given
+     * \param[in] i: row index
+     */
+    [[nodiscard]] std::string getLocation(
+        const std::optional<std::size_t>&) const;
     //! destructor
     virtual ~Comparison();
 

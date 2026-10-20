@@ -155,13 +155,8 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
       ++n;
     }
     // the NaN is reported in the log
-    {
-      std::ifstream log{"test_TestLauncher_nan0.checklog"};
-      const auto content = std::string{std::istreambuf_iterator<char>{log},
-                                       std::istreambuf_iterator<char>{}};
-      TFEL_TESTS_ASSERT(content.find("Maximum absolute error : nan") !=
-                        std::string::npos);
-    }
+    TFEL_TESTS_ASSERT(contains("test_TestLauncher_nan0.checklog",
+                               "Maximum absolute error : nan"));
     // a NaN in a duplicated point makes the comparison fail
     write("test_TestLauncher_N2.res", "# t y\n0 0\n2 2\n2 nan\n4 4\n");
     TFEL_TESTS_ASSERT(!run("test_TestLauncher_nan_duplicated",
@@ -177,10 +172,33 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                            "@Precision 1.e-12;\n"
                            "@Test 'test_TestLauncher_A.ref' "
                            "'test_TestLauncher_N3.res' 2;\n"));
+    // the location of the maximum error is given by the lines of the
+    // files from which the values were read
+    write("test_TestLauncher_L1.ref", "# t y\n0 0\n2 2\n4 4\n");
+    write("test_TestLauncher_L2.res", "t y\n# comment\n0 0\n2 5\n4 4\n");
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher_lines",
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_L1.ref' "
+                           "'test_TestLauncher_L2.res' 2;\n"));
+    TFEL_TESTS_ASSERT(
+        contains("test_TestLauncher_lines.checklog",
+                 "at line 3 of file 'test_TestLauncher_L1.ref' "
+                 "and line 4 of file 'test_TestLauncher_L2.res'"));
+    // after an interpolation, only the line of the reference is known
+    TFEL_TESTS_ASSERT(
+        contains("test_TestLauncher3.checklog",
+                 "at line 2 of file 'test_TestLauncher_A.ref'\n"));
     return this->result;
   }
 
  private:
+  //! \return true if the given file contains the given text
+  static bool contains(const std::string& f, const std::string& t) {
+    std::ifstream file{f};
+    const auto content = std::string{std::istreambuf_iterator<char>{file},
+                                     std::istreambuf_iterator<char>{}};
+    return content.find(t) != std::string::npos;
+  }
   static void write(const std::string& f, const std::string& c) {
     std::ofstream file{f};
     tfel::raise_if(!file,
