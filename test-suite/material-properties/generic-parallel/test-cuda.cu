@@ -21,6 +21,7 @@
 #include "Inconel600_YoungModulus-generic-parallel-cuda.hxx"
 #include "Inconel600_YoungModulus_qt-generic-parallel-cuda.hxx"
 #include "UO2_YoungModulus_Martin1989-generic-parallel-cuda.hxx"
+#include "LinearDataInterpolationTest-generic-parallel-cuda.hxx"
 
 struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
   Iconel600YoungModulusTest()
@@ -41,6 +42,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     this->test10();
     this->test11();
     this->test12();
+    this->test13();
     return this->result;
   }  // end of execute
 
@@ -457,6 +459,32 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     for (std::size_t i = 0; i != E.size(); ++i) {
       TFEL_TESTS_ASSERT(std::abs(E[i] - young(T[i], f[i])) <
                         eps * std::abs(young(T[i], f[i])));
+    }
+  }
+
+  // material property defined by the linear interpolation of data
+  void test13() {
+    constexpr auto eps = double{1e-2};
+    auto output = mfront_gmp_OutputStatus{};
+    auto E = thrust::host_vector<double>(4);
+    const auto T =
+        thrust::host_vector<double>{293.15, 493.15, 793.15, 893.15};
+    const auto E_ref = std::array<double, 4u>{240e9, 210e9, 175e9, 170e9};
+    thrust::device_vector<double> d_T(T);
+    thrust::device_vector<double> d_E(E.size());
+    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+    const auto args =
+        std::array<const double *, 1u>{thrust::raw_pointer_cast(d_T.data())};
+    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
+    LinearDataInterpolationTest(&output, thrust::raw_pointer_cast(d_E.data()),
+                                1, args.data(), args_strides.data(),
+                                args.size(), 4, policy);
+    E = d_E;
+    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
+    for (std::size_t i = 0; i != E.size(); ++i) {
+      TFEL_TESTS_ASSERT(std::abs(E[i] - E_ref[i]) < eps);
     }
   }
 };
