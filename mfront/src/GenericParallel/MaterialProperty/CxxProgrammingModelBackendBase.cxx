@@ -237,6 +237,7 @@ namespace mfront::generic_parallel::material_property {
          << "}\n";
     }
     os << "if(mfront_npoints <= 0){\n"
+       << "errno = mfront_errno_old;\n"
        << "return;\n"
        << "}\n";
     if ((treatStrides) && (!mpd.inputs.empty())) {
@@ -268,12 +269,12 @@ namespace mfront::generic_parallel::material_property {
     os << "try{\n";
     this->writeKernelCall(os, i, mpd, fd, treatStrides);
     //
+    // errno can't be used to detect the errors of the kernels: it is
+    // thread-local, does not exist on GPUs, and may be modified by the
+    // runtime of the backend (for instance at the initialisation of TBB).
+    // Invalid results are detected by the kernels.
+    os << "errno = mfront_errno_old;\n";
     if (!areRuntimeChecksDisabled(mpd)) {
-      // errno can't be used to detect the errors of the kernels: it is
-      // thread-local, does not exist on GPUs, and may be modified by the
-      // runtime of the backend (for instance at the initialisation of TBB).
-      // Invalid results are detected by the kernels.
-      os << "errno = mfront_errno_old;\n";
       this->writeBoundsStatusesAnalysis(os, i, mpd);
     }
     if (this->handlesDataTransfer()) {
@@ -283,10 +284,12 @@ namespace mfront::generic_parallel::material_property {
     os << "} catch(std::exception& mfront_cxx_exception){\n"
        << "mfront_output_status->status = -2;\n"
        << "mfront_report(mfront_cxx_exception.what());\n"
+       << "errno = mfront_errno_old;\n"
        << "return;\n"
        << "} catch(...){\n"
        << "mfront_output_status->status = -2;\n"
        << "mfront_report(\"unknown exception\");\n"
+       << "errno = mfront_errno_old;\n"
        << "return;\n"
        << "}\n";
     os << "} // end of " << name << "\n\n";

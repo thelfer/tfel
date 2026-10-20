@@ -365,8 +365,10 @@ namespace mfront::generic_parallel::material_property {
       }
     }
     os << "if(mfront_npoints == 0){\n"
+       << "errno = mfront_errno_old;\n"
        << "return;\n"
        << "}\n";
+    os << "try{\n";
     if (requiresBoundsCheck(mpd)) {
       os << "int *mfront_bounds_statuses;\n"
          << "const auto mfront_" << pm << "_alloc_managed__error = " << pm
@@ -378,6 +380,7 @@ namespace mfront::generic_parallel::material_property {
          << "mfront_report(" << pm << "GetErrorString(mfront_" << pm
          << "_alloc_managed__error)"
          << ");\n"
+         << "errno = mfront_errno_old;\n"
          << "return;\n"
          << "}\n"
          << "std::unique_ptr<int, void (*)(int *const) noexcept> "
@@ -390,13 +393,24 @@ namespace mfront::generic_parallel::material_property {
     //
     this->writeKernelCall(os, i, mpd, treatStrides);
     //
+    // errno can't be used to detect the errors of the kernels: it does not
+    // exist on GPUs and it may be modified by the runtime (for instance at
+    // its initialisation). Invalid results are detected by the kernels.
+    os << "errno = mfront_errno_old;\n";
     if (!areRuntimeChecksDisabled(mpd)) {
-      // errno can't be used to detect the errors of the kernels: it does not
-      // exist on GPUs and it may be modified by the runtime (for instance at
-      // its initialisation). Invalid results are detected by the kernels.
-      os << "errno = mfront_errno_old;\n";
       this->writeBoundsStatusesAnalysis(os, i, mpd);
     }
+    os << "} catch(std::exception& mfront_cxx_exception){\n"
+       << "mfront_output_status->status = -2;\n"
+       << "mfront_report(mfront_cxx_exception.what());\n"
+       << "errno = mfront_errno_old;\n"
+       << "return;\n"
+       << "} catch(...){\n"
+       << "mfront_output_status->status = -2;\n"
+       << "mfront_report(\"unknown exception\");\n"
+       << "errno = mfront_errno_old;\n"
+       << "return;\n"
+       << "}\n";
     os << "} // end of " << name << "\n\n";
   }  // end of writeCImplementation2
 
@@ -462,6 +476,7 @@ namespace mfront::generic_parallel::material_property {
          << "mfront_output_status->status = -6;\n"
          << "mfront_report(" << pm << "GetErrorString(mfront_" << pm
          << "_launch_error));\n"
+         << "errno = mfront_errno_old;\n"
          << "return;\n"
          << "}\n"
          << "const auto mfront_" << pm << "_kernel_error = " << pm
@@ -470,6 +485,7 @@ namespace mfront::generic_parallel::material_property {
          << "mfront_output_status->status = -6;\n"
          << "mfront_report(" << pm << "GetErrorString(mfront_" << pm
          << "_kernel_error));\n"
+         << "errno = mfront_errno_old;\n"
          << "return;\n"
          << "}\n";
     };
@@ -505,6 +521,7 @@ namespace mfront::generic_parallel::material_property {
            << "mfront_report(\"if the output is uniform, "
            << "all the arguments must be uniform "
            << "(i.e. their strides must be null)\");\n"
+           << "errno = mfront_errno_old;\n"
            << "return;\n"
            << "}"
            << "const bool mfront_areAllArgumentsStridesOne = std::all_of("
