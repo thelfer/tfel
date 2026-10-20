@@ -10,7 +10,9 @@
  * project under specific licensing conditions.
  */
 
+#include <cmath>
 #include <sstream>
+#include <algorithm>
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
@@ -152,6 +154,15 @@ namespace tfel::check {
       // both files must have values
       const auto ca = buildCurve(this->f1, x1, this->c1->getValues());
       const auto cb = buildCurve(this->f2, x2, this->c2->getValues());
+      // a NaN shall make the test fail, even if it lies between two
+      // abscissas at which the curve is evaluated
+      auto checkNaN = [](const std::string& f, const std::vector<double>& v) {
+        raise_if(std::any_of(v.begin(), v.end(),
+                             [](const double y) { return std::isnan(y); }),
+                 "Test::applyInterpolation: NaN value in file '" + f + "'");
+      };
+      checkNaN(this->f1, this->c1->getValues());
+      checkNaN(this->f2, this->c2->getValues());
       // the choice is based on the number of distinct abscissas
       if (ca.abscissas.size() <= cb.abscissas.size()) {
         // the values of the second file are interpolated at the

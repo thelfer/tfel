@@ -125,6 +125,36 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                           "@Precision 1.e-12;\n"
                           "@Test 'test_TestLauncher_A.ref' "
                           "'test_TestLauncher_B.res' 2;\n"));
+    // a NaN in the results makes all comparisons fail
+    write("test_TestLauncher_N.res", "# t y\n0 0\n2 nan\n4 4\n");
+    const char* const types[] = {
+        "@TestType Absolute;\n@Precision 1.e-12;\n",
+        "@TestType Relative;\n@Precision 1.e-12;\n",
+        "@TestType RelativeAndAbsolute;\n@Precision 1.e-12 1.e-12;\n",
+        "@TestType Mixed;\n@Precision 1.e-12 1.e-12;\n"};
+    auto n = 0;
+    for (const auto t : types) {
+      TFEL_TESTS_ASSERT(!run("test_TestLauncher_nan" + std::to_string(n),
+                             std::string{t} +
+                                 "@Test 'test_TestLauncher_A.ref' "
+                                 "'test_TestLauncher_N.res' 2;\n"));
+      ++n;
+    }
+    // a NaN in a duplicated point makes the comparison fail
+    write("test_TestLauncher_N2.res", "# t y\n0 0\n2 2\n2 nan\n4 4\n");
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher_nan_duplicated",
+                           "@Interpolation Linear using 1;\n"
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_A.ref' "
+                           "'test_TestLauncher_N2.res' 2;\n"));
+    // a NaN between two abscissas of the reference makes the comparison
+    // fail
+    write("test_TestLauncher_N3.res", "# t y\n0 0\n1 nan\n2 2\n3 3\n4 4\n");
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher_nan_between",
+                           "@Interpolation Linear using 1;\n"
+                           "@Precision 1.e-12;\n"
+                           "@Test 'test_TestLauncher_A.ref' "
+                           "'test_TestLauncher_N3.res' 2;\n"));
     return this->result;
   }
 

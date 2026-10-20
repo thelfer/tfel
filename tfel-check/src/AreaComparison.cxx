@@ -63,6 +63,9 @@ namespace tfel::check {
     std::set_union(ca.abscissas.begin(), ca.abscissas.end(),
                    cb.abscissas.begin(), cb.abscissas.end(),
                    std::back_inserter(times));
+    raise_if(times.size() < 2,
+             "AreaComparison::compare: at least two distinct abscissas "
+             "are required");
     const auto valA = evaluateCurve(*(this->integralInterpolation), ca, times);
     const auto valB = evaluateCurve(*(this->integralInterpolation), cb, times);
     std::vector<double> valuesDifference;
@@ -86,7 +89,8 @@ namespace tfel::check {
       areaValue /= maxValueA;
     }
 
-    if (areaValue > this->prec) {
+    // written this way so that a NaN fails
+    if (!(areaValue <= this->prec)) {
       s = false;
     }
     if (!s) {

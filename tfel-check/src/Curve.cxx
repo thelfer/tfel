@@ -26,6 +26,9 @@ namespace tfel::check {
              "buildCurve: the abscissa and value columns of file '" + f +
                  "' do not have the same size");
     raise_if(x.empty(), "buildCurve: no values in file '" + f + "'");
+    raise_if(std::any_of(x.begin(), x.end(),
+                         [](const double v) { return std::isnan(v); }),
+             "buildCurve: invalid abscissa (NaN) in file '" + f + "'");
     auto indexes = std::vector<std::vector<double>::size_type>(x.size());
     std::iota(indexes.begin(), indexes.end(), 0);
     std::stable_sort(indexes.begin(), indexes.end(),
@@ -34,6 +37,11 @@ namespace tfel::check {
     for (const auto i : indexes) {
       // the abscissas are sorted, so this test is an exact equality
       if ((!c.abscissas.empty()) && (!(c.abscissas.back() < x[i]))) {
+        // a NaN in a duplicated point is kept, so that the comparison
+        // fails
+        if (std::isnan(y[i])) {
+          c.values.back() = y[i];
+        }
         continue;
       }
       c.abscissas.push_back(x[i]);

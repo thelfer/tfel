@@ -48,7 +48,8 @@ namespace tfel::check {
         maxRelativeError = relativeError;
         errorLineNumber = index + lineOffset;
       }
-      if (relativeError > (this->prec)) {
+      // written this way so that a NaN fails
+      if (!(relativeError <= this->prec)) {
         errorLinesCount++;
         s = false;
       }

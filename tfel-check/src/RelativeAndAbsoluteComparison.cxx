@@ -59,14 +59,15 @@ namespace tfel::check {
       }
 
       // only store maxAbsoluteError if relative check failed
-      if (relativeError > (this->prec)) {
+      if (!(relativeError <= this->prec)) {
         if (maxAbsoluteError < absoluteError) {
           maxAbsoluteError = absoluteError;
           errorAbsLineNumber = index + lineOffset;
         }
       }
-      if ((relativeError > (this->prec)) &&
-          (absoluteError > this->precision2)) {
+      // written this way so that a NaN fails
+      if (!((relativeError <= this->prec) ||
+            (absoluteError <= this->precision2))) {
         errorLinesCount++;
         s = false;
       }

@@ -50,7 +50,8 @@ namespace tfel::check {
         maxMixedError = mixedError;
         errorLineNumber = index + lineOffset;
       }
-      if (mixedError > 0) {
+      // written this way so that a NaN fails
+      if (!(mixedError <= 0)) {
         s = false;
         errorLinesCount++;
       }

@@ -84,6 +84,25 @@ struct test_AreaComparison final : public tfel::tests::TestCase {
                              "test_AreaComparison_C.res", 4 - 1.e-10, linear));
     TFEL_TESTS_ASSERT(check("test_AreaComparison_Z.res",
                             "test_AreaComparison_C.res", 4 + 1.e-10, linear));
+    // a NaN in the values makes the check fail
+    write("test_AreaComparison_NaN.res", "# t y\n0 0\n1 nan\n2 2\n4 4\n");
+    TFEL_TESTS_ASSERT(!check("test_AreaComparison_A.res",
+                             "test_AreaComparison_NaN.res", 1.e10, linear));
+    // a NaN in the abscissas is rejected
+    write("test_AreaComparison_NaN2.res", "# t y\nnan 0\n1 1\n2 2\n4 4\n");
+    TFEL_TESTS_CHECK_THROW(check("test_AreaComparison_A.res",
+                                 "test_AreaComparison_NaN2.res", 1.e10, linear),
+                           std::runtime_error);
+    // a NaN in a duplicated point makes the check fail
+    write("test_AreaComparison_NaN3.res", "# t y\n0 0\n1 1\n1 nan\n2 2\n4 4\n");
+    TFEL_TESTS_ASSERT(!check("test_AreaComparison_A.res",
+                             "test_AreaComparison_NaN3.res", 1.e10, linear));
+    // at least two distinct abscissas are required
+    write("test_AreaComparison_S1.res", "# t y\n1 5\n");
+    write("test_AreaComparison_S2.res", "# t y\n1 100\n");
+    TFEL_TESTS_CHECK_THROW(check("test_AreaComparison_S1.res",
+                                 "test_AreaComparison_S2.res", 1.e10, linear),
+                           std::runtime_error);
     return this->result;
   }
 
