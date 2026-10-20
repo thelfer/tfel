@@ -53,14 +53,18 @@ namespace tfel::check {
                                            abs(this->c2->getValues()[index])) +
                                        eps);
 
-      if (maxRelativeError < relativeError) {
+      // a NaN is reported as the maximum error
+      if ((!std::isnan(maxRelativeError)) &&
+          (std::isnan(relativeError) || (maxRelativeError < relativeError))) {
         maxRelativeError = relativeError;
         errorRelLineNumber = index + lineOffset;
       }
 
       // only store maxAbsoluteError if relative check failed
       if (!(relativeError <= this->prec)) {
-        if (maxAbsoluteError < absoluteError) {
+        // a NaN is reported as the maximum error
+        if ((!std::isnan(maxAbsoluteError)) &&
+            (std::isnan(absoluteError) || (maxAbsoluteError < absoluteError))) {
           maxAbsoluteError = absoluteError;
           errorAbsLineNumber = index + lineOffset;
         }

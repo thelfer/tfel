@@ -50,7 +50,9 @@ namespace tfel::check {
       // values
       mixedError =
           std::abs(va - vb) - (this->prec * std::abs(vb)) - this->precision2;
-      if (maxMixedError < mixedError) {
+      // a NaN is reported as the maximum error
+      if ((!std::isnan(maxMixedError)) &&
+          (std::isnan(mixedError) || (maxMixedError < mixedError))) {
         maxMixedError = mixedError;
         errorLineNumber = index + lineOffset;
       }

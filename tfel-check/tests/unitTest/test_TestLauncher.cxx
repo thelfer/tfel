@@ -13,6 +13,7 @@
 #include <string>
 #include <utility>
 #include <fstream>
+#include <iterator>
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
@@ -152,6 +153,14 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                                  "@Test 'test_TestLauncher_A.ref' "
                                  "'test_TestLauncher_N.res' 2;\n"));
       ++n;
+    }
+    // the NaN is reported in the log
+    {
+      std::ifstream log{"test_TestLauncher_nan0.checklog"};
+      const auto content = std::string{std::istreambuf_iterator<char>{log},
+                                       std::istreambuf_iterator<char>{}};
+      TFEL_TESTS_ASSERT(content.find("Maximum absolute error : nan") !=
+                        std::string::npos);
     }
     // a NaN in a duplicated point makes the comparison fail
     write("test_TestLauncher_N2.res", "# t y\n0 0\n2 2\n2 nan\n4 4\n");

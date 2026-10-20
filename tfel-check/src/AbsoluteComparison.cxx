@@ -39,7 +39,9 @@ namespace tfel::check {
          ++idx) {
       absoluteError =
           std::abs(this->c1->getValues()[idx] - this->c2->getValues()[idx]);
-      if (maxAbsoluteError < absoluteError) {
+      // a NaN is reported as the maximum error
+      if ((!std::isnan(maxAbsoluteError)) &&
+          (std::isnan(absoluteError) || (maxAbsoluteError < absoluteError))) {
         maxAbsoluteError = absoluteError;
         errorLineNumber = idx + lineOffset;
       }
