@@ -38,9 +38,10 @@ namespace mfront::bbrick {
 
   /*!
    * \brief extract a material property or an array of material properties
-   * \param[out] mps: array of material properties. If only one material
-   * property is defined in the options, then only the first entry of the
-   * array is defined.
+   * \param[out] mps: array of material properties. If only one non
+   * constant material property is defined in the options, then only the
+   * first entry of the array is defined. A single constant value is copied
+   * in the three entries.
    * \param[out] bd: behaviour description
    * \param[in] dsl: abstract behaviour dsl
    * \param[in] n: material property name
