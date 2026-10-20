@@ -69,6 +69,21 @@ struct test_AreaComparison final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(check(
         "test_AreaComparison_F.res", "test_AreaComparison_G.res", 1 + 1.e-10,
         std::make_shared<tfel::check::SplineLocalInterpolation>()));
+    // negative curves: the area between y = -4 and y = -1 on [0:4] is 12.
+    // It is divided by the maximum absolute value of the first column
+    write("test_AreaComparison_N1.res", "# t y\n0 -4\n4 -4\n");
+    write("test_AreaComparison_N2.res", "# t y\n0 -1\n2 -1\n4 -1\n");
+    TFEL_TESTS_ASSERT(!check("test_AreaComparison_N1.res",
+                             "test_AreaComparison_N2.res", 3 - 1.e-10, linear));
+    TFEL_TESTS_ASSERT(check("test_AreaComparison_N1.res",
+                            "test_AreaComparison_N2.res", 3 + 1.e-10, linear));
+    // null first column: the area between y = 0 and y = 1 on [0:4] is 4,
+    // and is not normalized
+    write("test_AreaComparison_Z.res", "# t y\n0 0\n2 0\n4 0\n");
+    TFEL_TESTS_ASSERT(!check("test_AreaComparison_Z.res",
+                             "test_AreaComparison_C.res", 4 - 1.e-10, linear));
+    TFEL_TESTS_ASSERT(check("test_AreaComparison_Z.res",
+                            "test_AreaComparison_C.res", 4 + 1.e-10, linear));
     return this->result;
   }
 

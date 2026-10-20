@@ -149,16 +149,17 @@ namespace tfel::check {
     }
     // getting the value of the integral
     double areaValue = trapezoidalIntegration(times, valuesDifference);
-    double maxValueA = this->c1->getValues().at(0);
-
-    for (size_type i = 0; i < this->c1->getValues().size(); ++i) {
-      // fetching the max value of the ref column
-      if (maxValueA < this->c1->getValues().at(i)) {
-        maxValueA = this->c1->getValues().at(i);
-      }
+    // the area is normalized by the maximum absolute value of the
+    // reference column. A signed maximum would be negative for a negative
+    // curve, and the check would always succeed.
+    auto maxValueA = double{0};
+    for (const auto v : this->c1->getValues()) {
+      maxValueA = std::max(maxValueA, std::abs(v));
     }
-    areaValue /= maxValueA;  // divide by the max value of ref, in order to
-                             // normalize the area
+    // no normalization if the reference column is null
+    if (maxValueA > 0) {
+      areaValue /= maxValueA;
+    }
 
     if (areaValue > this->prec) {
       s = false;
