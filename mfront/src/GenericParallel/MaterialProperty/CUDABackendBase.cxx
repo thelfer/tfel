@@ -322,6 +322,24 @@ namespace mfront::generic_parallel::material_property {
          << "errno = mfront_errno_old;\n"
          << "return;\n"
          << "}\n";
+      // check number of arguments
+      os << "if(mfront_nargs != " << mpd.inputs.size() << "){\n"
+         << "mfront_output_status->status = -5;\n"
+         << "mfront_report(\"invalid number of arguments "
+         << "(\"+std::to_string(mfront_nargs)+\" given, " << mpd.inputs.size()
+         << " expected)\");\n"
+         << "errno = mfront_errno_old;\n"
+         //         << "return std::nan(\"invalid number of arguments\");\n"
+         << "return;\n"
+         << "}\n";
+    }
+    // nothing is read if the set of points is empty (the strides may be
+    // given by a null pointer)
+    os << "if(mfront_npoints == 0){\n"
+       << "errno = mfront_errno_old;\n"
+       << "return;\n"
+       << "}\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
       if (treatStrides) {
         os << "if(!mfront_check_positive_or_null(mfront_output_stride)){\n"
            << "mfront_output_status->status = -5;\n"
@@ -342,16 +360,6 @@ namespace mfront::generic_parallel::material_property {
              << "}\n";
         }
       }
-      // check number of arguments
-      os << "if(mfront_nargs != " << mpd.inputs.size() << "){\n"
-         << "mfront_output_status->status = -5;\n"
-         << "mfront_report(\"invalid number of arguments "
-         << "(\"+std::to_string(mfront_nargs)+\" given, " << mpd.inputs.size()
-         << " expected)\");\n"
-         << "errno = mfront_errno_old;\n"
-         //         << "return std::nan(\"invalid number of arguments\");\n"
-         << "return;\n"
-         << "}\n";
       // parameters
       if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
         const auto hn = getMaterialPropertyParametersHandlerClassName(name);
@@ -364,10 +372,6 @@ namespace mfront::generic_parallel::material_property {
            << "}\n";
       }
     }
-    os << "if(mfront_npoints == 0){\n"
-       << "errno = mfront_errno_old;\n"
-       << "return;\n"
-       << "}\n";
     os << "try{\n";
     if (requiresBoundsCheck(mpd)) {
       os << "int *mfront_bounds_statuses;\n"

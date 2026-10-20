@@ -193,6 +193,14 @@ namespace mfront::generic_parallel::material_property {
          //         << "return std::nan(\"invalid number of arguments\");\n"
          << "return;\n"
          << "}\n";
+    }
+    // nothing is read if the set of points is empty (the strides may be
+    // given by a null pointer)
+    os << "if(mfront_npoints <= 0){\n"
+       << "errno = mfront_errno_old;\n"
+       << "return;\n"
+       << "}\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
       if (treatStrides) {
         os << "if(!mfront_check_positive_or_null(mfront_output_stride)){\n"
            << "mfront_output_status->status = -5;\n"
@@ -236,10 +244,6 @@ namespace mfront::generic_parallel::material_property {
          << "return;\n"
          << "}\n";
     }
-    os << "if(mfront_npoints <= 0){\n"
-       << "errno = mfront_errno_old;\n"
-       << "return;\n"
-       << "}\n";
     if ((treatStrides) && (!mpd.inputs.empty())) {
       os << "auto mfront_args_strides_tmp = std::array<" << types.integer_type
          << ", " << mpd.inputs.size() << ">{};\n"
