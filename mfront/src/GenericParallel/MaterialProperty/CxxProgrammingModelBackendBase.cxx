@@ -261,12 +261,12 @@ namespace mfront::generic_parallel::material_property {
          << "return;\n"
          << "}\n";
     }
-    //
+    // the data transfers may throw exceptions, which must not cross the
+    // boundary of the C function
+    os << "try{\n";
     if (this->handlesDataTransfer()) {
       this->writeDataTransfersToDevice(os, i, mpd, treatStrides);
     }
-    //
-    os << "try{\n";
     this->writeKernelCall(os, i, mpd, fd, treatStrides);
     //
     // errno can't be used to detect the errors of the kernels: it is
