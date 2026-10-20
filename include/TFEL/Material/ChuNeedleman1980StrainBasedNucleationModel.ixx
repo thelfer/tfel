@@ -57,8 +57,7 @@ namespace tfel::material {
   real computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>& params,
       const real p,
-      const real dp,
-      const real) {
+      const real dp) {
     if (dp < 0) {
       return 0;
     }
@@ -74,8 +73,7 @@ namespace tfel::material {
   computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrementAndDerivative(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>& params,
       const real p,
-      const real dp,
-      const real) {
+      const real dp) {
     if (dp < 0) {
       return std::make_tuple(real(0), real(0));
     }

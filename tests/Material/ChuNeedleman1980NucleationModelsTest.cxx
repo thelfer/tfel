@@ -70,13 +70,13 @@ struct ChuNeedleman1980NucleationModelsTest final
       for (const auto dp : {0.01, 0.05, 0.2}) {
         const auto [df, ddf_ddp] =
             computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrementAndDerivative(
-                params, p, dp, 1.);
+                params, p, dp);
         const auto dfp =
             computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
-                params, p, dp + h, 1.);
+                params, p, dp + h);
         const auto dfm =
             computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
-                params, p, dp - h, 1.);
+                params, p, dp - h);
         TFEL_TESTS_ASSERT(std::abs(df - (dfp + dfm) / 2) < 1e-10);
         TFEL_TESTS_ASSERT(std::abs(ddf_ddp - (dfp - dfm) / (2 * h)) <
                           eps * params.fn / params.sn);
@@ -135,13 +135,13 @@ struct ChuNeedleman1980NucleationModelsTest final
       for (const auto dp : {0.01, 0.1}) {
         const auto [df, ddf_ddp] =
             computePowerLawStrainBasedNucleationModelPorosityIncrementAndDerivative(
-                params, p, dp, 1.);
+                params, p, dp);
         const auto dfp =
             computePowerLawStrainBasedNucleationModelPorosityIncrement(
-                params, p, dp + h, 1.);
+                params, p, dp + h);
         const auto dfm =
             computePowerLawStrainBasedNucleationModelPorosityIncrement(
-                params, p, dp - h, 1.);
+                params, p, dp - h);
         TFEL_TESTS_ASSERT(std::abs(df - (dfp + dfm) / 2) < 1e-10);
         TFEL_TESTS_ASSERT(std::abs(ddf_ddp - (dfp - dfm) / (2 * h)) <
                           eps * params.fn);

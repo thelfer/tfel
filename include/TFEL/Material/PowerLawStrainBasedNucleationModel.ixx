@@ -56,8 +56,7 @@ namespace tfel::material {
   real computePowerLawStrainBasedNucleationModelPorosityIncrement(
       const PowerLawStrainBasedNucleationModelParameters<real>& params,
       const real p,
-      const real dp,
-      const real) {
+      const real dp) {
     if ((dp < 0) || (p + dp < params.en)) {
       return 0;
     }
@@ -74,8 +73,7 @@ namespace tfel::material {
   computePowerLawStrainBasedNucleationModelPorosityIncrementAndDerivative(
       const PowerLawStrainBasedNucleationModelParameters<real>& params,
       const real p,
-      const real dp,
-      const real) {
+      const real dp) {
     if ((dp < 0) || (p + dp < params.en)) {
       return std::make_tuple(real(0), real(0));
     }
