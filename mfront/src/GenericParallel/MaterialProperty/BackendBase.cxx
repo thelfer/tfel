@@ -287,28 +287,31 @@ namespace mfront::generic_parallel::material_property {
         os << "if(mfront_bounds_statuses[" << 2 * idx + 1 << "] > 0){\n"
            << "mfront_report(\"" << v.name
            << " is over its upper bound at at least one point\");\n"
-           << "mfront_output_status->bounds_status = " << idx + 1 << ";\n"
            << "if(mfront_out_of_bounds_policy==" << prefix
            << "_STRICT_POLICY){\n"
            << "mfront_output_status->status = -1;\n"
+           << "mfront_output_status->bounds_status = -" << idx + 1 << ";\n"
            << "return;\n"
            << "}\n"
            << "mfront_output_status->status = 1;\n"
+           << "mfront_output_status->bounds_status = " << idx + 1 << ";\n"
            << "}\n";
         os << "if(mfront_bounds_statuses[" << 2 * idx + 1 << "] < 0){\n"
            << "mfront_report(\"" << v.name
            << " is below its lower bound at at least one point\");\n"
-           << "mfront_output_status->bounds_status = " << idx + 1 << ";\n"
            << "if(mfront_out_of_bounds_policy==" << prefix
            << "_STRICT_POLICY){\n"
            << "mfront_output_status->status = -1;\n"
+           << "mfront_output_status->bounds_status = -" << idx + 1 << ";\n"
            << "return;\n"
            << "}\n"
            << "mfront_output_status->status = 1;\n"
+           << "mfront_output_status->bounds_status = " << idx + 1 << ";\n"
            << "}\n";
       };
       // as with the `generic` interface, the result must be used with
-      // caution (status 1) if a bound is violated with the warning policy
+      // caution (status 1) if a bound is violated with the warning policy,
+      // and the bounds status is negative with the strict policy
       os << "if((mfront_out_of_bounds_policy==" << prefix
          << "_STRICT_POLICY)||\n"
          << "(mfront_out_of_bounds_policy==" << prefix
