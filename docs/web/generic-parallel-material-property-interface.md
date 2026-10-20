@@ -414,7 +414,9 @@ available:
 
 - `automatic`: this policy may automatically trigger a copy of the data
   if needed. No copy is made if the data are already on the device or in
-  shared memory.
+  shared memory. The output is copied in both directions, so that the
+  values which are not computed (points where the evaluation fails,
+  values between two values of a strided output) are kept.
 - `none`: this policy assumes that the data are already on the device on
   in shared memory.
 

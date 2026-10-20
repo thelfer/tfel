@@ -291,22 +291,25 @@ namespace mfront::generic_parallel::material_property {
       os << "const " << types.real_type << " * * mfront_args = "
          << "mfront_args_storage.data();\n";
     }
+    // the output is copied to the device, so that the values which are not
+    // computed (points where the evaluation fails, values between two
+    // values of a strided output) are kept when the output is copied back
     os << "auto mfront_output_ptr = "
        << "::mfront::gpmp::sycl::DataBuffer<" << types.real_type
        << ">{*mfront_queue};\n";
     if (treatStrides) {
       os << "if (mfront_output_stride == 0) {\n"
          << "mfront_sycl_copy_events.push_back("
-         << "mfront_output_ptr.acquire(mfront_output_host,  1, false));\n"
+         << "mfront_output_ptr.acquire(mfront_output_host,  1, true));\n"
          << "} else {\n"
          << "mfront_sycl_copy_events.push_back("
          << "mfront_output_ptr.acquire(mfront_output_host, "
-         << "(mfront_npoints - 1) * mfront_output_stride + 1, false));\n"
+         << "(mfront_npoints - 1) * mfront_output_stride + 1, true));\n"
          << "}\n";
     } else {
       os << "mfront_sycl_copy_events.push_back("
          << "mfront_output_ptr.acquire(mfront_output_host, "
-         << "mfront_npoints, false));\n";
+         << "mfront_npoints, true));\n";
     }
     os << "auto *mfront_output = mfront_output_ptr.data();\n";
   }
