@@ -266,7 +266,14 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
   RungeKuttaElasticityParametersAsStaticVariables
   ImplicitElasticityParametersAsStaticVariables)
 
-mfront_behaviour_check_library(MFrontGenericBehaviours4 generic
+if(WIN32)
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    set_target_properties(MFrontGenericBehaviours
+      PROPERTIES LINK_FLAGS "-Wl,--kill-at -Wl,--no-undefined")
+  endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+endif(WIN32)
+
+mfront_behaviour_check_library(MFrontGenericRotationFunctionsBehaviours generic
   OrthotropicRotationFunctionsTest)
 
 add_executable(GenericBehaviourRotationFunctionsTest EXCLUDE_FROM_ALL
@@ -274,24 +281,17 @@ add_executable(GenericBehaviourRotationFunctionsTest EXCLUDE_FROM_ALL
 target_link_libraries(GenericBehaviourRotationFunctionsTest
   TFELSystem TFELUtilities TFELTests TFELException)
 add_dependencies(GenericBehaviourRotationFunctionsTest
-  MFrontGenericBehaviours4)
+  MFrontGenericRotationFunctionsBehaviours)
 add_dependencies(build-tests GenericBehaviourRotationFunctionsTest)
 add_test(NAME GenericBehaviourRotationFunctionsTest
   COMMAND GenericBehaviourRotationFunctionsTest)
 set_property(TEST GenericBehaviourRotationFunctionsTest
   PROPERTY ENVIRONMENT
-  MFrontGenericBehaviours4BuildPath=$<TARGET_FILE:MFrontGenericBehaviours4>)
+  MFrontGenericRotationFunctionsBehavioursBuildPath=$<TARGET_FILE:MFrontGenericRotationFunctionsBehaviours>)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST GenericBehaviourRotationFunctionsTest
     APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontProfiling>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELException>\;$ENV{PATH}")
 endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-
-if(WIN32)
-  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    set_target_properties(MFrontGenericBehaviours
-      PROPERTIES LINK_FLAGS "-Wl,--kill-at -Wl,--no-undefined")
-  endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-endif(WIN32)
 
 function(set_generic_test_properties test)
   foreach(rm ${IEEE754_ROUNDING_MODES})
