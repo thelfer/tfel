@@ -579,20 +579,16 @@ namespace mfront {
       const SupportedTypes::TypeSize& o,
       const std::string& ao = "") {
     using size_type = size_t;
-    const auto f = SupportedTypes::getTypeFlag(v.type);
-    const auto s = static_cast<size_type>(
-        SupportedTypes::getTypeSize(v.type, 1u).getValueForModellingHypothesis(
-            h));
+    if (v.arraySize != 1u) {
+      tfel::raise(
+          "writeVariableRotation: "
+          "array of variables are not supported");
+    }
     auto variable_offset =
         static_cast<size_type>(o.getValueForModellingHypothesis(h));
-    // the entries of an array of variables are stored contiguously
-    for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
-      const auto n =
-          v.arraySize == 1u ? v.name : v.name + "_" + std::to_string(idx);
-      auto args = WriteRotationFunctionArgument{os, h, n, variable_offset, ao};
-      writeObjectRotation(args, f);
-      variable_offset += s;
-    }
+    auto args =
+        WriteRotationFunctionArgument{os, h, v.name, variable_offset, ao};
+    writeObjectRotation(args, SupportedTypes::getTypeFlag(v.type));
   }  // end of writeVariableRotation
 
   static void writeGradientsRotationFunctionsImplementation(
