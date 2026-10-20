@@ -1172,8 +1172,8 @@ namespace mfront {
       // initialize function
       for (const auto& p : d.getInitializeFunctions()) {
         out << "/*!\n"
+            << " * \\param[in,out] d: material data\n"
             << " * \\param[in] values: inputs of the initialize function\n"
-            << " * \\param[in] d: material data\n"
             << " */\n"
             << "MFRONT_SHAREDOBJ int " << f << "_InitializeFunction_" << p.first
             << "(mfront_gb_BehaviourData* const,\n"
@@ -1802,7 +1802,7 @@ namespace mfront {
       const BehaviourDescription& bd,
       const Hypothesis,
       const std::string& initStateVarsIncrements) const {
-    os << "/*\n"
+    os << "/*!\n"
        << " * \\brief constructor for the " << this->getInterfaceName()
        << " interface\n"
        << " * \\param[in] mgb_d: behaviour data\n"
@@ -2065,7 +2065,7 @@ namespace mfront {
       }
     };  // end of wvci2
     const auto& d = bd.getBehaviourData(h);
-    os << "/*\n"
+    os << "/*!\n"
        << " * \\brief constructor for the " << this->getInterfaceName()
        << " interface\n"
        << " * \\param[in] mgb_d: behaviour data\n"
