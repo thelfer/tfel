@@ -154,7 +154,8 @@ namespace mfront::generic_parallel::material_property {
          << "auto mfront_bounds_statuses = "
          << "std::vector<int, "
             "mfront_shared_allocator_type>{mfront_shared_allocator};\n"
-         << "mfront_bounds_statuses.resize(2 * (mfront_nargs + 1), 0);\n";
+         << "mfront_bounds_statuses.resize(" << getStatusesArraySize(mpd)
+         << ", 0);\n";
     }
     this->writeKernel(os, i, mpd, fd, false);
     if (treatStrides) {

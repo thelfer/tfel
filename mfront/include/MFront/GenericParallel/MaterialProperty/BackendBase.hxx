@@ -85,6 +85,25 @@ namespace mfront::generic_parallel::material_property {
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const;
     /*!
+     * \return the size of the array `mfront_bounds_statuses`
+     *
+     * This array contains the statuses of the physical bounds and of the
+     * standard bounds of the inputs and of the output, followed by a status
+     * reporting that the result is not finite at one point at least.
+     *
+     * \param[in] mpd: material property description
+     */
+    static std::size_t getStatusesArraySize(const MaterialPropertyDescription&);
+    /*!
+     * \brief write the code reporting, in the array
+     * `mfront_bounds_statuses`, that the result is not finite
+     *
+     * \param[in] os: output stream
+     * \param[in] mpd: material property description
+     */
+    void writeInvalidResultCheck(std::ostream&,
+                                 const MaterialPropertyDescription&) const;
+    /*!
      * \brief return if the backend shall handle the data transfer from a host
      * to a device
      *

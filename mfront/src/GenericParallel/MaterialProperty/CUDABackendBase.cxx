@@ -22,10 +22,16 @@ namespace mfront::generic_parallel::material_property {
 
   [[nodiscard]] static bool requiresBoundsCheck(
       const MaterialPropertyDescription& mpd) {
-    return (!areRuntimeChecksDisabled(mpd)) &&
-           ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs)) ||
-            (mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds()));
+    // the array of statuses is also used to report invalid results
+    return !areRuntimeChecksDisabled(mpd);
   }  // end of requiresBoundsCheck
+
+  //! \return if the out of bounds policy is used by the kernels
+  [[nodiscard]] static bool requiresOutOfBoundsPolicy(
+      const MaterialPropertyDescription& mpd) {
+    return (!areRuntimeChecksDisabled(mpd)) &&
+           ((hasBounds(mpd.inputs)) || (hasBounds(mpd.output)));
+  }  // end of requiresOutOfBoundsPolicy
 
   CUDABackendBase::CUDABackendBase() = default;
 
@@ -87,8 +93,10 @@ namespace mfront::generic_parallel::material_property {
       os << ",\nconst " << types.integer_type << " mfront_output_stride";
     }
     if (requiresBoundsCheck(mpd)) {
-      os << ",\nint* const mfront_bounds_statuses"
-         << ",\nconst " << types.integer_type << " mfront_out_of_bounds_policy";
+      os << ",\nint* const mfront_bounds_statuses";
+    }
+    if (requiresOutOfBoundsPolicy(mpd)) {
+      os << ",\nconst " << types.integer_type << " mfront_out_of_bounds_policy";
     }
     if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto pcn = getMaterialPropertyParametersClassName(name);
@@ -197,12 +205,9 @@ namespace mfront::generic_parallel::material_property {
         os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
       }
     }
-    //     if (!areRuntimeChecksDisabled(mpd)) {
-    //       os << "if(!tfel::math::ieee754::isfinite(" << mpd.output.name <<
-    //       ")){\n"
-    //          << "mfront_output_status->status = -4;\n"
-    //          << "}\n";
-    //     }
+    if (!areRuntimeChecksDisabled(mpd)) {
+      this->writeInvalidResultCheck(os, mpd);
+    }
     if (treatStrides) {
       os << "mfront_output[mfront_output_stride * mfront_idx] = ";
     } else {
@@ -308,8 +313,6 @@ namespace mfront::generic_parallel::material_property {
        << "mfront_output_status->bounds_status = 0;\n"
        << "mfront_output_status->c_error_number = 0;\n";
     if (!areRuntimeChecksDisabled(mpd)) {
-      // C-error handling
-      os << "errno = 0;\n";
       os << "if(!mfront_check_positive_or_null(mfront_npoints)){\n"
          << "mfront_output_status->status = -5;\n"
          << "mfront_report(\"invalid number of points "
@@ -366,7 +369,7 @@ namespace mfront::generic_parallel::material_property {
       os << "int *mfront_bounds_statuses;\n"
          << "const auto mfront_" << pm << "_alloc_managed__error = " << pm
          << "MallocManaged(&mfront_bounds_statuses,\n"
-         << "(2 * (mfront_nargs + 1)) * sizeof(int));\n"
+         << getStatusesArraySize(mpd) << " * sizeof(int));\n"
          << "if (mfront_" << pm << "_alloc_managed__error != " << pm
          << "Success) {\n"
          << "mfront_output_status->status = -6;\n"
@@ -379,19 +382,17 @@ namespace mfront::generic_parallel::material_property {
          << "mfront_bounds_statuses_ptr(mfront_bounds_statuses, "
          << "+[](int *const mfront_ptr) noexcept {"
          << "std::ignore = " << pm << "Free(mfront_ptr);});"
-         << "tfel::fsalgo::fill<" << 2 * (mpd.inputs.size() + 1)
+         << "tfel::fsalgo::fill<" << getStatusesArraySize(mpd)
          << ">::exe(mfront_bounds_statuses, 0);\n";
     }
     //
     this->writeKernelCall(os, i, mpd, treatStrides);
     //
     if (!areRuntimeChecksDisabled(mpd)) {
-      os << "if (errno != 0) {\n"
-         << "mfront_output_status->status = -3;\n"
-         << "mfront_output_status->c_error_number = errno;\n"
-         << "mfront_report(strerror(errno));\n"
-         << "}\n"
-         << "errno = mfront_errno_old;\n";
+      // errno can't be used to detect the errors of the kernels: it does not
+      // exist on GPUs and it may be modified by the runtime (for instance at
+      // its initialisation). Invalid results are detected by the kernels.
+      os << "errno = mfront_errno_old;\n";
       this->writeBoundsStatusesAnalysis(os, i, mpd);
     }
     os << "} // end of " << name << "\n\n";
@@ -430,8 +431,10 @@ namespace mfront::generic_parallel::material_property {
         os << "mfront_output_stride, ";
       }
       if (requiresBoundsCheck(mpd)) {
-        os << "mfront_bounds_statuses, "
-           << "mfront_out_of_bounds_policy, ";
+        os << "mfront_bounds_statuses, ";
+      }
+      if (requiresOutOfBoundsPolicy(mpd)) {
+        os << "mfront_out_of_bounds_policy, ";
       }
       if ((!areParametersTreatedAsStaticVariables(mpd)) &&
           (!mpd.parameters.empty())) {

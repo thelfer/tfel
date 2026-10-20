@@ -76,9 +76,8 @@ namespace mfront::generic_parallel::material_property {
 
   bool CxxProgrammingModelBackendBase::isBoundsCheckingRequired(
       const MaterialPropertyDescription& mpd) const {
-    return (!areRuntimeChecksDisabled(mpd)) &&
-           ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs)) ||
-            (mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds()));
+    // the array of statuses is also used to report invalid results
+    return !areRuntimeChecksDisabled(mpd);
   }  // end of isBoundsCheckingRequired
 
   void CxxProgrammingModelBackendBase::writeCImplementations2(
@@ -174,8 +173,6 @@ namespace mfront::generic_parallel::material_property {
        << "mfront_output_status->bounds_status = 0;\n"
        << "mfront_output_status->c_error_number = 0;\n";
     if (!areRuntimeChecksDisabled(mpd)) {
-      // C-error handling
-      os << "errno = 0;\n";
       // check number of points
       os << "if(!mfront_check_positive_or_null(mfront_npoints)){\n"
          << "mfront_output_status->status = -5;\n"
@@ -270,12 +267,11 @@ namespace mfront::generic_parallel::material_property {
     this->writeKernelCall(os, i, mpd, fd, treatStrides);
     //
     if (!areRuntimeChecksDisabled(mpd)) {
-      os << "if (errno != 0) {\n"
-         << "mfront_output_status->status = -3;\n"
-         << "mfront_output_status->c_error_number = errno;\n"
-         << "mfront_report(strerror(errno));\n"
-         << "}\n"
-         << "errno = mfront_errno_old;\n";
+      // errno can't be used to detect the errors of the kernels: it is
+      // thread-local, does not exist on GPUs, and may be modified by the
+      // runtime of the backend (for instance at the initialisation of TBB).
+      // Invalid results are detected by the kernels.
+      os << "errno = mfront_errno_old;\n";
       this->writeBoundsStatusesAnalysis(os, i, mpd);
     }
     if (this->handlesDataTransfer()) {
@@ -324,8 +320,10 @@ namespace mfront::generic_parallel::material_property {
       }
     }
     if (requiresBoundsCheck) {
-      os << ", mfront_bounds_statuses = mfront_bounds_statuses.data(), "
-         << "mfront_out_of_bounds_policy";
+      os << ", mfront_bounds_statuses = mfront_bounds_statuses.data()";
+      if ((hasBounds(mpd.inputs)) || (hasBounds(mpd.output))) {
+        os << ", mfront_out_of_bounds_policy";
+      }
     }
     if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto pcn = getMaterialPropertyParametersClassName(name);
@@ -422,12 +420,9 @@ namespace mfront::generic_parallel::material_property {
         os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
       }
     }
-    //     if (!areRuntimeChecksDisabled(mpd)) {
-    //       os << "if(!tfel::math::ieee754::isfinite(" << mpd.output.name <<
-    //       ")){\n"
-    //          << "mfront_output_status->status = -4;\n"
-    //          << "}\n";
-    //     }
+    if (!areRuntimeChecksDisabled(mpd)) {
+      this->writeInvalidResultCheck(os, mpd);
+    }
     if (handleStrides) {
       os << "*(mfront_output + mfront_output_stride * mfront_idx) = ";
     } else {

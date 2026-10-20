@@ -25,6 +25,27 @@ namespace mfront::generic_parallel::material_property {
     return false;
   }  // end of handlesDataTransfer
 
+  //! \return the index of the status reporting an invalid result
+  static std::size_t getInvalidResultStatusIndex(
+      const MaterialPropertyDescription& mpd) {
+    return 2 * (mpd.inputs.size() + 1);
+  }  // end of getInvalidResultStatusIndex
+
+  std::size_t BackendBase::getStatusesArraySize(
+      const MaterialPropertyDescription& mpd) {
+    return getInvalidResultStatusIndex(mpd) + 1;
+  }  // end of getStatusesArraySize
+
+  void BackendBase::writeInvalidResultCheck(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    const auto v =
+        useQuantities(mpd) ? mpd.output.name + ".getValue()" : mpd.output.name;
+    os << "if(!tfel::math::ieee754::isfinite(" << v << ")){\n"
+       << "mfront_bounds_statuses[" << getInvalidResultStatusIndex(mpd)
+       << "] = 1;\n"
+       << "}\n";
+  }  // end of writeInvalidResultCheck
+
   void BackendBase::writeCDeclarations(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
@@ -218,6 +239,12 @@ namespace mfront::generic_parallel::material_property {
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
       const MaterialPropertyDescription& mpd) const {
+    os << "if(mfront_bounds_statuses[" << getInvalidResultStatusIndex(mpd)
+       << "] != 0){\n"
+       << "mfront_report(\"invalid result at at least one point\");\n"
+       << "mfront_output_status->status = -4;\n"
+       << "return;\n"
+       << "}\n";
     if (!((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs)) ||
           (mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds()))) {
       return;

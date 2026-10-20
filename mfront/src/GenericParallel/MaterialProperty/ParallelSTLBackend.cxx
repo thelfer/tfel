@@ -75,7 +75,8 @@ namespace mfront::generic_parallel::material_property {
       // we do need to use heap allocations as nvc++ would automatically use
       // managed memory
       os << "auto mfront_bounds_statuses = std::vector<int>{};\n"
-         << "mfront_bounds_statuses.resize(2 * (mfront_nargs + 1), 0);\n";
+         << "mfront_bounds_statuses.resize(" << getStatusesArraySize(mpd)
+         << ", 0);\n";
     }
     this->writeKernel(os, i, mpd, fd, false);
     if (treatStrides) {
