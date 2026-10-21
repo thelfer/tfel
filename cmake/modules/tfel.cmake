@@ -178,8 +178,10 @@ function(tfel_library_internal name component)
   if(TFEL_APPEND_SUFFIX)
     set_target_properties(${name} PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
   endif(TFEL_APPEND_SUFFIX)
-  set_target_properties(${name}
-    PROPERTIES VERSION ${TFEL_VERSION} SOVERSION ${TFEL_VERSION})
+  if(NOT unversioned-libraries)
+    set_target_properties(${name}
+      PROPERTIES VERSION ${TFEL_VERSION} SOVERSION ${TFEL_VERSION})
+  endif(NOT unversioned-libraries)
   if(enable-include-what-you-use)
     set_property(TARGET ${name}
       PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${TFEL_IWYU_PATH})

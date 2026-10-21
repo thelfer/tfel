@@ -273,6 +273,17 @@ invocation, will generate an executable called `mfront-dbg`.
 
 This option can be combined with the `TFEL_APPEND_VERSION` option.
 
+### Unversioned libraries
+
+By default, the libraries are versioned: on `LiNuX`, the
+`libTFELMaterial.so` library is a symbolic link to
+`libTFELMaterial.so.${TFEL_VERSION}`, which is the name recorded in
+the libraries and executables which depend on it.
+
+The `unversioned-libraries` option disables this mechanism: each
+library is a single file, named `libTFELMaterial.so`. This option is
+used to build the `pip` package, which can't store symbolic links.
+
 ### Selecting the `python` version
 
 A specific `python` version can be selected by setting the

@@ -15,6 +15,9 @@ set(TFEL_VERSION_FLAVOUR "" CACHE STRING
   "Append a flavour to the version number")
 option(TFEL_APPEND_VERSION
   "append TFEL version number to all libraries, executables and directories" OFF)
+option(unversioned-libraries
+  "if enabled, the VERSION and SOVERSION properties of the libraries are not set, \
+so that each library is a single file. This is used by the pip package" OFF)
 
 option(BUILD_SHARED_LIBS  "enable shared libraries" ON)
 if(NOT BUILD_SHARED_LIBS)
