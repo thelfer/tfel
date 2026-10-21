@@ -45,7 +45,7 @@ properties:
 	  are equal in each direction.
 	- otherwise, the `fracture_stresses` keyword can be used to
       describe the fracture stresses in each of the three directions.
-- the softening slopes stresses in each direction. Two options can be
+- the softening slopes in each direction. Two options can be
   used to describe them:
     - if the `softening_slope` option is used, the softening slopes
 	  are equal in each direction.

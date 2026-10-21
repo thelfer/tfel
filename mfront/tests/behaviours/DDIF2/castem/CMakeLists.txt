@@ -1,7 +1,8 @@
 if(HAVE_CASTEM)
   mfront_behaviour_brick_check_library(MFrontCastemDDIF2BrickBehaviours
     DDIF2 umat
-    DDIF2 DDIF2_2 DDIF2_3 DDIF2_4 DDIF2_5 DDIF2_6)
+    DDIF2 DDIF2_2 DDIF2_3 DDIF2_4 DDIF2_5 DDIF2_6
+    DDIF2_7 DDIF2_8 DDIF2_9)
   target_link_libraries(MFrontCastemDDIF2BrickBehaviours
     PRIVATE CastemInterface)
 endif(HAVE_CASTEM)
@@ -69,3 +70,7 @@ castemtest_ddif2brick(ddif2_3 umatddif2_3 ddif2-uniaxialtesting.ref)
 castemtest_ddif2brick(ddif2_4 umatddif2_4 ddif2-uniaxialtesting.ref)
 castemtest_ddif2brick(ddif2_5 umatddif2_5 ddif2-uniaxialtesting.ref)
 castemtest_ddif2brick(ddif2_6 umatddif2_6 ddif2-uniaxialtesting.ref)
+# non constant fracture stresses and energies
+castemtest_ddif2brick(ddif2_5_zz umatddif2_7 ddif2-uniaxialtesting.ref)
+castemtest_ddif2brick(ddif2_6_zz umatddif2_8 ddif2-uniaxialtesting.ref)
+castemtest_ddif2brick(ddif2_5 umatddif2_9 ddif2-uniaxialtesting.ref)
