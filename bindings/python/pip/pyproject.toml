@@ -75,3 +75,7 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "11.0" }
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
+# The DLLs of TFEL are in tfel/bin, where the python modules find them
+# (os.add_dll_directory). delvewheel would copy them under other names, so
+# a behaviour loaded in python would load a second copy of these DLLs.
+repair-wheel-command = ""
