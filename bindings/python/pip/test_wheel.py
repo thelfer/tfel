@@ -1,8 +1,8 @@
 """Test of an installed tfel-mfront wheel, run by cibuildwheel.
 
-On Linux and macOS, a behaviour is compiled with mfront and integrated
-with mtest, which checks that the executables, the headers and the
-libraries of the package are found. On Windows, building behaviours
+On Linux and macOS, a behaviour is compiled with mfront, integrated
+with mtest and loaded in python, which checks that the executables, the
+headers and the libraries of the package are found. On Windows, building behaviours
 requires Visual Studio and is not tested.
 """
 
@@ -56,6 +56,9 @@ with tempfile.TemporaryDirectory() as directory:
     subprocess.run([shutil.which("mfront"), "--obuild", "--interface=generic",
                     "Elasticity.mfront"], check=True)
     subprocess.run([shutil.which("mtest"), "elasticity.mtest"], check=True)
+    # loading the behaviour in python
+    m = mtest.MTest()
+    m.setBehaviour("generic", os.path.join("src", library), "Elasticity")
     with open("elasticity.res") as f:
         lines = f.readlines()
     column = next(int(line.split()[1]) for line in lines if "(SXX)" in line)

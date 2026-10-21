@@ -118,7 +118,12 @@ def set_relative_runtime_paths(package_directory):
 
     The installed binaries either have no runtime path (linux) or an
     absolute one (macOS). auditwheel and delocate keep the libraries
-    already in the wheel when the runtime paths point to them."""
+    already in the wheel when the runtime paths point to them.
+
+    On linux, DT_RPATH is used rather than DT_RUNPATH, since it is
+    searched before LD_LIBRARY_PATH: the binaries of the package use the
+    libraries of the package, even if LD_LIBRARY_PATH points to another
+    TFEL installation, whose libraries may have the same names."""
     library_directory = package_directory / "tfel" / "lib"
     if sys.platform.startswith("linux"):
         magic_numbers = (b"\x7fELF",)
@@ -134,7 +139,8 @@ def set_relative_runtime_paths(package_directory):
         relative_path = os.path.relpath(library_directory, path.parent)
         if sys.platform.startswith("linux"):
             rpath = "$ORIGIN" if relative_path == "." else "$ORIGIN/" + relative_path
-            subprocess.run(["patchelf", "--set-rpath", rpath, str(path)], check=True)
+            subprocess.run(["patchelf", "--force-rpath", "--set-rpath", rpath,
+                            str(path)], check=True)
         else:
             load_commands = subprocess.run(["otool", "-l", str(path)], check=True,
                                            capture_output=True,
