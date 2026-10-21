@@ -2,7 +2,7 @@
  * \file   MFrontModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03 juin 2016
+ * \date 03/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -141,12 +141,13 @@ namespace mfront {
     std::ofstream header("include/" + hname);
     throw_if(!header, "can't open file 'include/" + hname + "'");
     header.exceptions(std::ios::badbit | std::ios::failbit);
+    header.precision(14);
     header << "/*!\n"
            << " * \\file   " << hname << '\n'
            << " * \\brief  This file declares the mfront interface for the "
            << md.className << " model\n"
            << " * \\author " << fd.authorName << '\n'
-           << " * \\date   " << fd.date << '\n'
+           << " * \\date " << fd.date << '\n'
            << " */\n\n"
            << "#ifndef " << getHeaderGuard(md) << "\n"
            << "#define " << getHeaderGuard(md) << "\n\n"
@@ -239,23 +240,37 @@ namespace mfront {
         header << " * \\param[out] " << a << ": \n";
       }
       if (f.modifiedVariables.size() == 1) {
-        header << "\\return the value of " << *(f.modifiedVariables.begin())
-               << " at the end of the time step";
+        header << " * \\return the value of " << *(f.modifiedVariables.begin())
+               << " at the end of the time step\n";
       }
       header << " */\n";
       if (f.modifiedVariables.size() == 1) {
-        header << "real ";
+        const auto& output =
+            md.outputs.getVariable(*(f.modifiedVariables.begin()));
+        header << output.type << " ";
       } else {
         header << "void ";
       }
       header << f.name << "(";
       if (f.modifiedVariables.size() > 1) {
         for (const auto& mv : f.modifiedVariables) {
-          header << "real& " << mv << ",";
+          const auto& output = md.outputs.getVariable(mv);
+          header << output.type << "& " << mv << ",";
         }
       }
       for (auto pa = std::begin(args); pa != std::end(args);) {
-        header << "const real " << *pa;
+        if (*pa == "dt") {
+          header << "const time " << *pa;
+        } else {
+          const auto dv = md.decomposeVariableName(*pa);
+          const auto& v = [&md, &dv]() -> const VariableDescription& {
+            if (md.outputs.contains(dv.first)) {
+              return md.outputs.getVariable(dv.first);
+            }
+            return md.inputs.getVariable(dv.first);
+          }();
+          header << "const " << v.type << " " << *pa;
+        }
         if (++pa != std::end(args)) {
           header << ",";
         }
@@ -274,7 +289,9 @@ namespace mfront {
                << "tfel::PhysicalConstants<NumericType, false>;\n";
       }
       if (f.modifiedVariables.size() == 1) {
-        header << "real " << *(f.modifiedVariables.begin()) << ";\n";
+        const auto& vn = *(f.modifiedVariables.begin());
+        const auto& output = md.outputs.getVariable(vn);
+        header << output.type << " " << vn << ";\n";
       }
       for (const auto& vn : f.usedVariables) {
         const auto dv = md.decomposeVariableName(vn);
@@ -305,12 +322,13 @@ namespace mfront {
       if ((p.type == "double") || (p.isScalar())) {
         const auto v =
             p.getAttribute<double>(VariableDescription::defaultValue);
-        header << "real " << p.name << " = " << p.type << "{" << v << "};\n";
+        header << "const " << p.type << " " << p.name << " = " << p.type << "{"
+               << v << "};\n";
       } else if (p.type == "bool") {
         if (p.getAttribute<bool>(VariableDescription::defaultValue)) {
-          header << "bool " << p.name << " = true;\n";
+          header << "const bool " << p.name << " = true;\n";
         } else {
-          header << "bool " << p.name << " = false;\n";
+          header << "const bool " << p.name << " = false;\n";
         }
       } else {
         throw_if(true, "unsupported type (" + p.type + ") for  parameter '" +
