@@ -8,13 +8,20 @@ then laid out as follows:
 - the executables, libraries, headers and data are placed in the bin,
   lib, include and share directories of the tfel module, which is thus
   the TFELHOME directory.
+
+The headers of the TDLS library, used by MFront's TDLS linear system
+solver, are installed with TFEL.
 """
 
+import hashlib
+import io
 import os
 import re
 import shutil
 import subprocess
 import sys
+import tarfile
+import urllib.request
 from pathlib import Path
 
 from setuptools import setup
@@ -53,10 +60,34 @@ _os.environ["{variable}"] = _os.path.normpath(
 """
 
 
+# version of TDLS (https://github.com/trsxvz/TDLS) shipped with the package
+tdls_version = "0.3.0"
+tdls_archive_sha256 = "5b8f01d92b30a2dfaca906b5482954e9bae04492f88e1f71f563ac165a03a572"
+
+
 class BinaryDistribution(Distribution):
     # compiled modules inside: platform-specific wheel, not py3-none-any
     def has_ext_modules(self):
         return True
+
+
+def install_tdls(build_directory, install_directory):
+    """download TDLS and install its headers in the installation directory
+    of TFEL, where tfel-config looks for them (see TFELHOME)"""
+    url = f"https://github.com/trsxvz/TDLS/archive/refs/tags/v{tdls_version}.tar.gz"
+    with urllib.request.urlopen(url) as response:
+        archive = response.read()
+    if hashlib.sha256(archive).hexdigest() != tdls_archive_sha256:
+        raise RuntimeError("unexpected checksum of " + url)
+    with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
+        tar.extractall(build_directory)
+    subprocess.run(["cmake", "-S", str(build_directory / f"TDLS-{tdls_version}"),
+                    "-B", str(build_directory / "build"),
+                    "-DCMAKE_INSTALL_PREFIX=" + str(install_directory),
+                    "-DTDLS_BUILD_TESTS=OFF", "-DTDLS_BUILD_EXAMPLES=OFF"],
+                   check=True)
+    subprocess.run(["cmake", "--install", str(build_directory / "build")],
+                   check=True)
 
 
 def build_and_install_tfel(build_directory, install_directory):
@@ -83,6 +114,8 @@ def build_and_install_tfel(build_directory, install_directory):
         "-Denable-comsol=OFF",
         "-Denable-diana-fea=ON",
         "-Denable-lsdyna=OFF",
+        "-Denable-tdls=ON",
+        "-Dtdls_DIR=" + str(install_directory / "lib" / "cmake" / "tdls"),
     ]
     if os.name == "nt":
         cmake_options += ["-A", "x64"]
@@ -187,6 +220,7 @@ class build_tfel(build_ext):
     def run(self):
         build_temp = Path(self.build_temp).resolve()
         install_directory = build_temp / "install"
+        install_tdls(build_temp / "tdls", install_directory)
         build_and_install_tfel(build_temp / "build", install_directory)
         layout_package(install_directory, Path(self.build_lib))
 
