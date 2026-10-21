@@ -128,7 +128,13 @@ namespace mfront {
       insert_if(l.link_libraries, TFEL_PYTHON_LIBRARY);
     }
 #else
-    insert_if(l.ldflags, TFEL_PYTHON_LIBS);
+    // the python library was not found when TFEL was configured
+    if (python_library_path != nullptr) {
+      insert_if(l.link_directories, python_library_path);
+    }
+    if (python_library != nullptr) {
+      insert_if(l.link_libraries, python_library);
+    }
 #endif
     insert_if(l.sources, name + "-python.cxx");
     insert_if(l.sources, src);
