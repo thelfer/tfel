@@ -22,7 +22,7 @@ import mfm_test_generator
 tfelhome = os.path.dirname(os.path.abspath(tfel.__file__))
 
 includes = subprocess.run([shutil.which("tfel-config"), "--includes"],
-                          check=True, capture_output=True,
+                          check=True, stdout=subprocess.PIPE,
                           text=True).stdout.strip()
 print("tfel-config --includes:", includes)
 expected_includes = os.path.realpath(os.path.join(tfelhome, "include"))
