@@ -132,7 +132,7 @@ namespace mfront {
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       os << "if(" << v.name << " > " << v.type << "(" << b.upperBound << ")){\n"
          << "mfront_report(\"" << v.name
-         << " is below its physical upper bound (\" + " << to_string << " + \">"
+         << " is over its physical upper bound (\" + " << to_string << " + \">"
          << b.upperBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
@@ -175,7 +175,8 @@ namespace mfront {
       os << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
          << "if(mfront_out_of_bounds_policy==" << iucname
          << "_STRICT_POLICY){\n"
-         << "mfront_report(\"" << v.name << " is out of bounds.\");\n"
+         << "mfront_report(\"" << v.name << " is below its lower bound (\" + "
+         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
@@ -196,6 +197,7 @@ namespace mfront {
          << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
+         << "errno = mfront_errno_old;\n"
          << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"

@@ -135,7 +135,7 @@ namespace mfront {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
           << ")){\n"
           << "cerr << \"" << name << ": " << v.name
-          << " is below its physical upper bound (\"\n << " << v.name
+          << " is over its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
           << "return std::nan(\"\");\n"
           << "}\n";
