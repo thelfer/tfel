@@ -47,8 +47,8 @@ void (*)(mfront_gmp_OutputStatus* const,       // output status
          mfront_gmp_real* const,               // output values
          const mfront_gmp_size_type,           // output stride
          ...,                                  // extra arguments specific to the backend considered
-         const mfront_gmp_real* const,         // values of the arguments
-         const mfront_gmp_size_types* const,   // strides of the arguments
+         const mfront_gmp_real* const* const,  // values of the arguments
+         const mfront_gmp_size_type* const,    // strides of the arguments
          const mfront_gmp_size_type,           // number of arguments
          const mfront_gmp_size_type,           // number of points
          const mfront_gmp_OutOfBoundsPolicy);  // out of bounds policy
@@ -57,9 +57,14 @@ void (*)(mfront_gmp_OutputStatus* const,       // output status
 The `mfront_gmp_OutputStatus` structure and the
 `mfront_gmp_OutOfBoundsPolicy` enumeration type are described in the
 page dedicated to the [`generic` interface for material
-properties](generic-parallel-material-property-interface.html). The
+properties](generic-material-property-interface.html). The
 `mfront_gmp_real` type is by default an alias to double precision
 floating point numbers.
+
+Contrary to the `generic` interface, `errno` is not used to detect
+errors: it is thread-local and does not exist on GPUs. A result which is
+not finite (`nan` or infinite) at one point at least is reported by the
+status `-4`.
 
 If the number of points is null, no computation is made.
 
@@ -78,7 +83,7 @@ The second generated function matches the following prototype:
 void (*)(mfront_gmp_OutputStatus* const,       // output status
          mfront_gmp_real* const,               // output values
          ...,                                  // extra arguments specific to the backend considered
-         const mfront_gmp_real* const,         // values of the arguments
+         const mfront_gmp_real* const* const,  // values of the arguments
          const mfront_gmp_size_type,           // number of arguments
          const mfront_gmp_size_type,           // number of points
          const mfront_gmp_OutOfBoundsPolicy);  // out of bounds policy
@@ -86,7 +91,7 @@ void (*)(mfront_gmp_OutputStatus* const,       // output status
 
 This function assumes that the values of the arguments and the values of
 the output are stored contiguously in memory. In other words, this
-prototype is equivalent to the the first prototype when all strides are
+prototype is equivalent to the first prototype when all strides are
 equal to one.
 
 # Backends
@@ -409,16 +414,21 @@ available:
 
 - `automatic`: this policy may automatically trigger a copy of the data
   if needed. No copy is made if the data are already on the device or in
-  shared memory.
+  shared memory. The output is copied in both directions, so that the
+  values which are not computed (points where the evaluation fails,
+  values between two values of a strided output) are kept.
 - `none`: this policy assumes that the data are already on the device on
   in shared memory.
 
 > ** Providing data on the device**
 > 
-> Data copy in `SYCL` are asynchronous operations. Thus, if the
-> data are provided on the device, the user is responsible for ensuring
-> that the data are effectively copied before calling `MFront`'s generated
-> functions.
+> Data copy in `SYCL` are asynchronous operations. The generated
+> functions submit their commands after the commands previously submitted
+> to the given queue: an in-order queue orders them, and the generated
+> functions wait for the end of the commands previously submitted to an
+> out-of-order queue. If the data are provided by commands submitted to
+> another queue, the user is responsible for ensuring that the data are
+> effectively copied before calling `MFront`'s generated functions.
 
 # Tests
 

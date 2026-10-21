@@ -35,6 +35,14 @@
 #include <windows.h>
 #endif
 
+[[nodiscard]] static char dirSeparator() noexcept {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+  return '\\';
+#else
+  return '/';
+#endif
+}  // end of dirSeparator
+
 using FuncPtr = void (*)();
 using CallBacksContainer =
     std::map<std::string, std::pair<FuncPtr, std::string>>;
@@ -95,6 +103,7 @@ static bool registry_key = false;
 #endif /* defined _WIN32 || defined _WIN64 */
 
 static bool tfel_home = false;
+static bool cmake_prefix = false;
 static bool compilerflags = false;
 static bool debugflags = false;
 static bool oflags0 = false;
@@ -104,7 +113,9 @@ static bool warning = false;
 static bool incs = false;
 static bool incspath = false;
 static bool incspaths = false;
+#ifdef TFEL_MATH_TDLS_SUPPORT
 static bool tdls_incspath = false;
+#endif /* TFEL_MATH_TDLS_SUPPORT */
 static bool cppflags = false;
 static bool libsdeps = false;
 static bool libspath = false;
@@ -364,6 +375,10 @@ int main(const int argc, const char* const* const argv) {
         "returns the environment variable in which the TFEL's installation "
         "path shall be defined");
     registerCallBack(
+        "--cmake-prefix-path", [] { cmake_prefix = true; },
+        "returns the path to TFEL's cmake configuration files according to the "
+        "information on TFEL's installation path");
+    registerCallBack(
         "--compiler-flags", [] { compilerflags = true; },
         "return TFEL's recommended compiler flags.");
     registerCallBack(
@@ -620,7 +635,16 @@ int main(const int argc, const char* const* const argv) {
 #endif /* defined _WIN32 || defined _WIN64 */
 
     if (tfel_home) {
-      std::cout << getTFELHOMEWithVersionEnvironmentVariable() << " ";
+      std::cout << getTFELHOME() << " ";
+    }
+
+    if (cmake_prefix) {
+      const auto s = dirSeparator();
+      std::cout << getTFELHOME() << s << "share" << s << "tfel";
+#ifdef TFEL_APPEND_SUFFIX
+      std::cout << "-" << TFEL_SUFFIX;
+#endif /* TFEL_APPEND_SUFFIX */
+      std::cout << s << "cmake";
     }
 
     if (cppflags) {

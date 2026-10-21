@@ -69,7 +69,7 @@ substitutions used by `MFront` when reading configuration files and
   `cmake`,
   2. by using `nvhpc` as the main compiler to compile `TFEL`,
   3. by searching `nvhpc` using `cmake`'s `find_program` function.
-- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvhcp` as found by
+- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvcc` as found by
   `FindCUDAToolkit`.
 - `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value
   associated with this key is determined as follows, by order of
@@ -81,7 +81,7 @@ substitutions used by `MFront` when reading configuration files and
 
 ### Substitutions related to the `HIPCC` compiler
 
-- `TFEL_HIPCC_FLAGS: additional flags to be passed to the `hipcc`
+- `TFEL_HIPCC_FLAGS`: additional flags to be passed to the `hipcc`
   compiler.
 - `TFEL_HIP_INCLUDE_DIR`: paths to `HIP` headers
 

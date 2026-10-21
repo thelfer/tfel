@@ -13,6 +13,7 @@ eeqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @mohanan_accuracy_2026
     @bourceret_lattice_2026
     @chenaille_accelerating_2026
     @larsen_open-source_2026

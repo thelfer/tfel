@@ -109,6 +109,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "' for writing output file.");
     os.exceptions(std::ios::badbit | std::ios::failbit);
+    os.precision(14);
     const auto headerGard = transformHeaderName(header) + "_HH";
     os << "/*!\n"
        << "* \\file   " << fn << "\n"
@@ -428,6 +429,7 @@ namespace mfront {
                    "unable to open file '" +
                        fn + "' for writing output file.");
     os.exceptions(std::ios::badbit | std::ios::failbit);
+    os.precision(14);
     os << "/*!\n"
        << " * \\file   " << fn << '\n'
        << " * \\brief  "

@@ -13,5 +13,5 @@ compilation_options : {
   }
 },
 linking_options : {
-  linker_flags : "-ltbb"
+  linker_flags : "-ltbb -Wl,-z,nodelete"
 }

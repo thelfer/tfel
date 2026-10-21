@@ -21,7 +21,8 @@ namespace tfel::fsalgo {
   /*!
    * \class accumulate
    * \brief accumulate computes the sum (or some other binary operation) of N
-   * elements of a container. \param N number of element to be summed.
+   * elements of a container.
+   * \tparam N: number of elements to be summed.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/transform.html
@@ -34,8 +35,10 @@ namespace tfel::fsalgo {
   template <unsigned int N>
   struct accumulate {
     /*!
-     * \param InputIterator iterator of the sequence to be summed
-     * \param T  type of the result
+     * \tparam InputIterator: iterator of the sequence to be summed
+     * \tparam T: type of the result
+     * \param[in] p: iterator to the first element of the sequence
+     * \param[in] init: initial value
      *
      * \return result of the summation:
      * \f[\displaystyle\mathrm{init}+\sum_{i=0}^{N-1}*(p+i)\f]
@@ -60,9 +63,12 @@ namespace tfel::fsalgo {
 
     /*!
      *
-     * \param InputIterator  iterator of the sequence to be operated on
-     * \param T              type of the result
-     * \param BinaryFunction function doing the operation
+     * \tparam InputIterator: iterator of the sequence to be operated on
+     * \tparam T: type of the result
+     * \tparam BinaryFunction: function doing the operation
+     * \param[in] p: iterator to the first element of the sequence
+     * \param[in] init: initial value
+     * \param[in] binary_op: function doing the operation
      * \return result of the operation :
      *
      \f[\displaystyle\mathrm{Op}\left(*(p+N-1),\ldots,\mathrm{Op}\left(*p,\mathrm{init}\right)\ldots\right)\f]

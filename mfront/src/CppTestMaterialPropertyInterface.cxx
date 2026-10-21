@@ -133,6 +133,7 @@ namespace mfront {
                        "' "
                        "for writing output file.");
     srcFile.exceptions(std::ios::badbit | std::ios::failbit);
+    srcFile.precision(14);
     // on initialise avec bounds
     // nombre de point de calcul
     int numberOfLines = 100;

@@ -22,11 +22,12 @@
 #include "Inconel600_YoungModulus-generic-parallel-hip.hxx"
 #include "Inconel600_YoungModulus_qt-generic-parallel-hip.hxx"
 #include "UO2_YoungModulus_Martin1989-generic-parallel-hip.hxx"
+#include "LinearDataInterpolationTest-generic-parallel-hip.hxx"
 
 [[nodiscard]] std::unique_ptr<double, void (*)(double *const) noexcept>
 createManagedData(const std::size_t s) {
   double *ptr;
-  const auto e = hipMallocManaged(&ptr, s);
+  const auto e = hipMallocManaged(&ptr, s * sizeof(double));
   if (e != hipSuccess) {
     std::cerr << hipGetErrorString(e) << '\n';
     std::exit(EXIT_FAILURE);
@@ -65,6 +66,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     this->test9();
     this->test10();
     this->test11();
+    this->test12();
     return this->result;
   }  // end of execute
 
@@ -109,7 +111,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     auto output_qt = mfront_gmp_OutputStatus{};
     auto E = createManagedData(4);
     auto E_qt = createManagedData(4);
-    const auto T = createManagedData(300);
+    const auto T = createManagedData({300});
     //
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.get()};
@@ -371,6 +373,25 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     }
   }
 
+  // material property defined by the linear interpolation of data
+  void test12() {
+    constexpr auto eps = double{1e-2};
+    auto output = mfront_gmp_OutputStatus{};
+    auto E = createManagedData(4);
+    const auto T = createManagedData({293.15, 493.15, 793.15, 893.15});
+    const auto E_ref = std::array<double, 4u>{240e9, 210e9, 175e9, 170e9};
+    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+    const auto args = std::array<const double *, 1u>{T.get()};
+    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
+    LinearDataInterpolationTest(&output, E.get(), 1, args.data(),
+                                args_strides.data(), args.size(), 4, policy);
+    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
+    for (std::size_t i = 0; i != 4; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(getValue(E, i) - E_ref[i]) < eps);
+    }
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(Iconel600YoungModulusTest,

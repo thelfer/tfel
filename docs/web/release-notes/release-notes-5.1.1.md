@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.1.1 of the
 
 # Issues fixed
 
+## Issue 1048: [tfel-home] fix `--tfel-home`
+
+For more details, see <https://github.com/thelfer/tfel/issues/1048>
+
 ## Issue 963: Fix `CoalescedView` class and `map` function with `llvm-22.1.3`
 
 For more details, see <https://github.com/thelfer/tfel/issues/963>

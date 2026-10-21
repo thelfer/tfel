@@ -589,9 +589,6 @@ namespace mfront {
       } else {
         m << sb << cc << " ";
       }
-      if (!ldflags.empty()) {
-        m << "$(LDFLAGS) ";
-      }
       if (o.sys == "win32") {
         m << "-shared -Wl,--add-stdcall-alias,--out-implib,lib" << l.name
           << "_dll.a,-no-undefined ";
@@ -610,6 +607,12 @@ namespace mfront {
         // in the installation directory of TFEL
         m << "-Wl,-rpath,\"$(strip $(shell " << tfel_config
           << " --library-path))\" ";
+      }
+      // the linker flags may contain libraries (for instance `-ltbb`) which
+      // must be given after the object files, otherwise they are ignored by
+      // linkers using the `--as-needed` policy
+      if (!ldflags.empty()) {
+        m << " $(LDFLAGS)";
       }
       m << "\n";
       if (o.sys == "apple") {
