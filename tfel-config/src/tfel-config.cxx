@@ -83,6 +83,10 @@ static std::string libDir();
 
 static std::string includeDir();
 
+#ifdef TFEL_MATH_TDLS_SUPPORT
+static std::string tdlsIncludeDir();
+#endif /* TFEL_MATH_TDLS_SUPPORT */
+
 static void registerCallBack(const std::string&,
                              const FuncPtr&,
                              const std::string&);
@@ -264,6 +268,22 @@ static std::string includeDir() {
   }
   return inc;
 }  // end of libDir
+
+#ifdef TFEL_MATH_TDLS_SUPPORT
+static std::string tdlsIncludeDir() {
+#ifdef TFEL_TDLS_RELATIVE_INCLUDEDIR
+  // TDLS is installed with TFEL
+  const auto& th = getTFELHOME();
+  if (!th.empty()) {
+    return th + "/" TFEL_TDLS_RELATIVE_INCLUDEDIR;
+  }
+  return handleSpace(std::string(PREFIXDIR) +
+                     "/" TFEL_TDLS_RELATIVE_INCLUDEDIR);
+#else  /* TFEL_TDLS_RELATIVE_INCLUDEDIR */
+  return TFEL_TDLS_INCLUDEDIR;
+#endif /* TFEL_TDLS_RELATIVE_INCLUDEDIR */
+}  // end of tdlsIncludeDir
+#endif /* TFEL_MATH_TDLS_SUPPORT */
 
 static void registerCallBack(const std::string& key,
                              const FuncPtr& f,
@@ -661,7 +681,7 @@ int main(const int argc, const char* const* const argv) {
     if (incs) {
       std::cout << "-I" << includeDir() << " ";
 #ifdef TFEL_MATH_TDLS_SUPPORT
-      std::cout << "-I" << TFEL_TDLS_INCLUDEDIR << " ";
+      std::cout << "-I" << tdlsIncludeDir() << " ";
 #endif /* TFEL_MATH_TDLS_SUPPORT */
     }
     if (incspath) {
@@ -669,10 +689,10 @@ int main(const int argc, const char* const* const argv) {
     }
 #ifdef TFEL_MATH_TDLS_SUPPORT
     if (tdls_incspath) {
-      std::cout << TFEL_TDLS_INCLUDEDIR << " ";
+      std::cout << tdlsIncludeDir() << " ";
     }
     if (incspaths) {
-      std::cout << includeDir() << ";" << TFEL_TDLS_INCLUDEDIR << " ";
+      std::cout << includeDir() << ";" << tdlsIncludeDir() << " ";
     }
 #else
   if (incspaths) {
