@@ -18,7 +18,9 @@ jobs:
         fail-fast: false
         matrix:
           os: [ubuntu-latest, macos-latest, windows-latest]
-          python: [cp39, cp310, cp311, cp312, cp313, cp314, cp315]
+          # all the python versions on master and for the tags, only one
+          # for the pull requests (a Windows build takes about 20 minutes)
+          python: ${{ github.event_name == 'pull_request' && fromJSON('["cp312"]') || fromJSON('["cp39", "cp310", "cp311", "cp312", "cp313", "cp314", "cp315"]') }}
 
       steps:
         - uses: actions/checkout@v7

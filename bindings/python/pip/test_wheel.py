@@ -2,8 +2,8 @@
 
 On Linux and macOS, a behaviour is compiled with mfront, integrated
 with mtest and loaded in python, which checks that the executables, the
-headers and the libraries of the package are found. On Windows, building behaviours
-requires Visual Studio and is not tested.
+headers and the libraries of the package are found. On Windows, building
+behaviours requires Visual Studio and is not tested.
 """
 
 import os
