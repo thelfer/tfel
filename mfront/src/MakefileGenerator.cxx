@@ -605,6 +605,12 @@ namespace mfront {
       }
       m << "$^  -o $@ ";
       m << getLibraryLinkFlags(t, o, l.name);
+      if (o.sys == "default") {
+        // as on macOS (see below), the library looks for TFEL' libraries
+        // in the installation directory of TFEL
+        m << "-Wl,-rpath,\"$(strip $(shell " << tfel_config
+          << " --library-path))\" ";
+      }
       m << "\n";
       if (o.sys == "apple") {
         m << "\tinstall_name_tool -add_rpath  $(shell " << tfel_config
