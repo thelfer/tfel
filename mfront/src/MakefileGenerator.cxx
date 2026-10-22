@@ -604,9 +604,12 @@ namespace mfront {
       m << getLibraryLinkFlags(t, o, l.name);
       if (o.sys == "default") {
         // as on macOS (see below), the library looks for TFEL' libraries
-        // in the installation directory of TFEL
+        // in the installation directory of TFEL. `-Xlinker` is understood
+        // by all the compilers linking the libraries, including `nvcc` and
+        // `hipcc` (libraries with CUDA or HIP sources), which do not
+        // understand `-Wl`.
         if (o.setRPATH) {
-          m << "-Wl,-rpath,\"$(strip $(shell " << tfel_config
+          m << "-Xlinker -rpath -Xlinker \"$(strip $(shell " << tfel_config
             << " --library-path))\" ";
         }
       }
