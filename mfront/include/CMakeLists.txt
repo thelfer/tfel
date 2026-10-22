@@ -242,6 +242,7 @@ install_mfront_header(MFront/GenericBehaviour GreenLagrangeStrainIntegrate.hxx)
 install_mfront_header(MFront/GenericBehaviour LogarithmicStrainIntegrate.hxx)
 install_mfront_header(MFront/GenericBehaviour ComputeStiffnessTensor.hxx)
 install_mfront_header(MFront/GenericBehaviour ComputeStiffnessTensor.ixx)
+install_mfront_header(MFront/GenericBehaviour RotateTangentOperatorBlock.hxx)
 
 if(HAVE_CASTEM)
 install_mfront_header(MFront/Castem Castem.hxx)
