@@ -95,7 +95,8 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("MFront/GenericBehaviour",
                               "IntegrationDriversTest"),
         library([] {
-          const auto e = ::getenv("MFrontGenericIntegrationDriversBehavioursBuildPath");
+          const auto e =
+              ::getenv("MFrontGenericIntegrationDriversBehavioursBuildPath");
           return e == nullptr ? std::string{} : e;
         }()) {}  // end of IntegrationDriversTest
 
