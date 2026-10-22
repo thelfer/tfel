@@ -22,8 +22,11 @@ void declareCrystalStructure(pybind11::module_& m) {
   pybind11::enum_<CrystalStructure>(
       m, "CrystalStructure",
       "List of supported crystal structures")
-      .value("Cubic", CrystalStructure::Cubic)
-      .value("BCC", CrystalStructure::BCC)
-      .value("FCC", CrystalStructure::FCC)
-      .value("HCP", CrystalStructure::HCP);
+      .value("Cubic", CrystalStructure::Cubic, "Cubic structure")
+      .value("BCC", CrystalStructure::BCC,
+             "Body centered cubic structure")
+      .value("FCC", CrystalStructure::FCC,
+             "Face centered cubic structure")
+      .value("HCP", CrystalStructure::HCP,
+             "Hexagonal closed-packed structures");
 }

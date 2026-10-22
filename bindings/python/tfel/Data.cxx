@@ -89,7 +89,8 @@ void declareData(pybind11::module_& m) {
   w.def("get", convert_data_to_python_object,
         "Convert to a Python object");
   w.def(pybind11::init(&convert_python_object_to_data_ptr),
-        pybind11::arg("o"));
+        pybind11::arg("o"),
+        "Constructor from a value");
   data_add_def<int>(w, "Int");
   data_add_def<double>(w, "Double");
   data_add_def<std::string>(w, "String");

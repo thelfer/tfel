@@ -40,5 +40,6 @@ void declareProcessManagerCommand(pybind11::module_& m) {
   pybind11::class_<ProcessManager::Command, ProcessManagerCommandWrapper>(
       m, "ProcessManagerCommand",
       "Base class to pass commands to sub processes")
-      .def("execute", &ProcessManager::Command::execute, pybind11::arg("in"), pybind11::arg("out"));
+      .def("execute", &ProcessManager::Command::execute,
+           pybind11::arg("in"), pybind11::arg("out"));
 }  // end of declarestensor

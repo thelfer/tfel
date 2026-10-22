@@ -22,8 +22,8 @@ void declareTestResult(pybind11::module_& m) {
   pybind11::class_<TestResult>(
       m, "TestResult",
       "Structure describing the result of a test or a test suite")
-      .def(pybind11::init<>())
-      .def("success", &TestResult::success)
-      .def("duration", &TestResult::duration);
+      .def(pybind11::init<>(), "Default constructor")
+      .def("success", &TestResult::success, "Report success")
+      .def("duration", &TestResult::duration, "Return the test duration");
 
 }  // end of declareTestResult

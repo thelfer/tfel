@@ -148,11 +148,17 @@ void declareAccelerationAlgorithms(pybind11::module_&);
 void declareAccelerationAlgorithms(pybind11::module_& m) {
   using size_type = UAndersonAccelerationAlgorithm::size_type;
   pybind11::class_<UAndersonAccelerationAlgorithm>(m, "UAnderson")
-      .def(pybind11::init<size_type, size_type>())
-      .def("initialize", &UAndersonAccelerationAlgorithm::initialize)
-      .def("accelerate", &UAndersonAccelerationAlgorithm::accelerate);
+      .def(pybind11::init<size_type, size_type>(), pybind11::arg("n"),
+           pybind11::arg("p"))
+      .def("initialize", &UAndersonAccelerationAlgorithm::initialize,
+           pybind11::arg("u"))
+      .def("accelerate", &UAndersonAccelerationAlgorithm::accelerate,
+           pybind11::arg("u1"));
   pybind11::class_<FAndersonAccelerationAlgorithm>(m, "FAnderson")
-      .def(pybind11::init<size_type, size_type>())
-      .def("initialize", &FAndersonAccelerationAlgorithm::initialize)
-      .def("accelerate", &FAndersonAccelerationAlgorithm::accelerate);
+      .def(pybind11::init<size_type, size_type>(), pybind11::arg("n"),
+           pybind11::arg("p"))
+      .def("initialize", &FAndersonAccelerationAlgorithm::initialize,
+           pybind11::arg("u"))
+      .def("accelerate", &FAndersonAccelerationAlgorithm::accelerate,
+           pybind11::arg("u1"), pybind11::arg("r"));
 }
