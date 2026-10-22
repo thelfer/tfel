@@ -127,6 +127,7 @@ install_mfront_header(MFront/GenericParallel/MaterialProperty ParallelSTLBackend
 install_mfront_header(MFront/GenericParallel/MaterialProperty SYCLBackend.hxx)
 install_mfront_header(MFront GenericBehaviourInterface.hxx)
 install_mfront_header(MFront GenericBehaviourSymbolsGenerator.hxx)
+install_mfront_header(MFront CudaGenericBehaviourInterface.hxx)
 install_mfront_header(MFront GenericModelInterface.hxx)
 install_mfront_header(MFront CastemModelInterface.hxx)
 install_mfront_header(MFront Castem21ModelInterface.hxx)
