@@ -272,7 +272,7 @@ namespace mfront {
     tfel::raise_if(o.empty(),
                    "MFront::treatSilentBuild: "
                    "no argument given to the "
-                   "--silentBuild option");
+                   "--silent-build option");
     if ((o == "on") || (o == "true")) {
       this->opts.silentBuild = true;
     } else if ((o == "off") || (o == "false")) {
@@ -281,9 +281,27 @@ namespace mfront {
       tfel::raise(
           "MFront::treatSilentBuild: "
           "unsupported argument '" +
-          o + "' given to the --silentBuild option");
+          o + "' given to the --silent-build option");
     }
   }  // end of MFront::treatSilentBuild
+
+  void MFront::treatSetRPATH() {
+    const auto& o = this->currentArgument->getOption();
+    tfel::raise_if(o.empty(),
+                   "MFront::treatSetRAPTH: "
+                   "no argument given to the "
+                   "--silentBuild option");
+    if ((o == "on") || (o == "true")) {
+      this->opts.setRPATH = true;
+    } else if ((o == "off") || (o == "false")) {
+      this->opts.setRPATH = false;
+    } else {
+      tfel::raise(
+          "MFront::treatSetRAPTH: "
+          "unsupported argument '" +
+          o + "' given to the --set-path option");
+    }
+  }  // end of MFront::treatSetRPATH
 
   void MFront::treatTarget() {
     using tfel::utilities::tokenize;
@@ -473,6 +491,12 @@ namespace mfront {
 #endif
     this->registerNewCallBack("--silent-build", &MFront::treatSilentBuild,
                               "active or desactivate silent build", true);
+    this->registerNewCallBack(
+        "--set-rpath", &MFront::treatSetRPATH,
+        "option selecting if the rapth shall be set on generated libraries. "
+        "This option is only meaningful for the Makefile generator on standard "
+        "unices (Linux, FreeBSD)",
+        true);
     this->registerNewCallBack("--make", &MFront::treatMake,
                               "generate MakeFile (see also --build)");
     this->registerNewCallBack("--build", &MFront::treatBuild,

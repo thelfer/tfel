@@ -85,6 +85,10 @@ namespace mfront {
      * commands shall be displayed.
      */
     bool silentBuild = true;
+    /*!
+     * \brief boolean stating if rpath shall be set
+     */
+    bool setRPATH = true;
 #if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     bool nodeps = true;
 #else  /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */

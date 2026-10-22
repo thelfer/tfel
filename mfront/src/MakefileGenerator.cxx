@@ -605,8 +605,10 @@ namespace mfront {
       if (o.sys == "default") {
         // as on macOS (see below), the library looks for TFEL' libraries
         // in the installation directory of TFEL
-        m << "-Wl,-rpath,\"$(strip $(shell " << tfel_config
-          << " --library-path))\" ";
+        if (o.setRPATH) {
+          m << "-Wl,-rpath,\"$(strip $(shell " << tfel_config
+            << " --library-path))\" ";
+        }
       }
       // the linker flags may contain libraries (for instance `-ltbb`) which
       // must be given after the object files, otherwise they are ignored by
