@@ -196,6 +196,10 @@ Various other options can be passed to `cmake`:
   language, notably for the `MTest` tool, one may use the
   `-Denable-python-bindings=ON` option. This requires
   [pybind11](https://github.com/pybind/pybind11) to be available.
+  Stubs (`.pyi` files) of the python modules are generated and installed
+  if the [pybind11-stubgen](https://github.com/pybind/pybind11-stubgen)
+  tool is available. This behaviour can be turned off using the
+  `-Denable-pybind11-stubgen=OFF` option.
 
 Some default compiler settings are detected by `cmake`, depending on
 your system. To explicitly specify the compilers to be used, one may
