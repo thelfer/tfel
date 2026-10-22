@@ -106,7 +106,18 @@ void declareIsotropicModuli(pybind11::module_& m) {
   declareKGModuli<double>(m, "KGModuli");
   declareYoungNuModuli<double>(m, "YoungNuModuli");
   declareLambdaMuModuli<double>(m, "LambdaMuModuli");
-  m.def("computeKGModuli", &tfel::material::computeKGModuli<double>);
+  m.def("computeKGModuli", &tfel::material::computeKGModuli<double>,
+        pybind11::arg("A"),
+        "This function returns the isotropized moduli of a st2tost2\n"
+        "It uses computeKappaMu\n"
+        "The implementation goes for dimension 3 only.\n"
+        "A: `st2tost2`\n"
+        "Return a KGModuli");
   m.def("computeIsotropicStiffnessTensor",
-        &tfel::material::computeIsotropicStiffnessTensor<double>);
+        &tfel::material::computeIsotropicStiffnessTensor<double>,
+        pybind11::arg("IM"),
+        "This function takes a IsotropicModuli and\n"
+        "returns the corresponding st2tost2\n"
+        "IM: `IsotropicModuli`\n"
+        "Return a `st2tost2`");
 }

@@ -24,7 +24,9 @@ template <unsigned short N>
 static void declaretvector(pybind11::module_& m, const char* const n) {
   using tvector = tfel::math::tvector<N, double>;
   pybind11::class_<tvector>(m, n, pybind11::buffer_protocol())
-      .def_static("zero", &tvector::zero)
+      .def_static("zero", &tvector::zero,
+                  "Return a new instance of the Child class filled with null "
+                  "values")
       .def_buffer([](tvector& v) -> pybind11::buffer_info {
         return pybind11::buffer_info(
             v.data(),       /* Pointer to buffer */
@@ -36,7 +38,7 @@ static void declaretvector(pybind11::module_& m, const char* const n) {
             {v.size()}, /* Buffer dimensions */
             {sizeof(double)});
       })
-      .def(pybind11::init<>())
+      .def(pybind11::init<>(), "Default constructor")
       .def(pybind11::init<>(
           [](pybind11::array_t<double, pybind11::array::c_style |
                                            pybind11::array::forcecast>& u) {

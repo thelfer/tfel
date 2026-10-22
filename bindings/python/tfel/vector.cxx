@@ -36,8 +36,8 @@ void declareTFELMathVector(pybind11::module_& m) {
             {v.size()}, /* Buffer dimensions */
             {sizeof(double)});
       })
-      .def(pybind11::init<>())
-      .def(pybind11::init<double>(), pybind11::arg("s"))
+      .def(pybind11::init<>(), "Default constructor")
+      .def(pybind11::init<double>(), pybind11::arg("s"), "Constructor")
       .def("__len__", [](const vector& v) { return v.size(); })
       .def("__repr__",
            [](const vector& v) {

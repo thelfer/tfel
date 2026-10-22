@@ -56,7 +56,8 @@ void declareEvaluator(pybind11::module_& m) {
            "Return the result of the evaluation\n"
            "The values of the variables not given in argument shall\n"
            "have been set with the `setVariableValue` method")
-      .def("setVariableValue", ptr5, pybind11::arg("n"), pybind11::arg("v"))
+      .def("setVariableValue", ptr5,
+           pybind11::arg("vname"), pybind11::arg("value"))
       .def("getVariablesNames", &Evaluator::getVariablesNames)
       .def("removeDependencies", &Evaluator::removeDependencies);
 }
