@@ -28,15 +28,36 @@ void declareEvaluator(pybind11::module_& m) {
       &Evaluator::getValue;
   void (Evaluator::*ptr5)(const std::string&, const double) =
       &Evaluator::setVariableValue;
-  pybind11::class_<Evaluator>(m, "Evaluator")
-      .def(pybind11::init<std::string>())
-      .def("__call__", ptr1, "evaluates the formula")
-      .def("__call__", ptr2, "evaluates the formula")
-      .def("getValue", ptr3, "evaluates the formula")
-      .def("getValue", ptr4, "evaluates the formula")
-      .def("setVariableValue", ptr5, "set the value of a variable")
-      .def("getVariablesNames", &Evaluator::getVariablesNames,
-           "return the variable names")
-      .def("removeDependencies", &Evaluator::removeDependencies,
-           "resolves dependencies and removes them");
+  pybind11::class_<Evaluator>(m, "Evaluator",
+                              "Class in charge of handling a function defined by a\n"
+                              "string")
+      .def(pybind11::init<std::string>(), pybind11::arg("f"))
+      .def("__call__", ptr1,
+           "Evaluate the formula\n"
+           "Return the result of the evaluation\n"
+           "Variables values shall have been set with the\n"
+           "`setVariableValue` method")
+      .def("__call__", ptr2, pybind11::arg("vs"),
+           "Evaluate the formula\n"
+           "vs: a map giving the values of some of the\n"
+           "variables required to evaluate the formula\n"
+           "Return the result of the evaluation\n"
+           "The values of the variables not given in argument shall\n"
+           "have been set with the `setVariableValue` method")
+      .def("getValue", ptr3,
+           "Evaluate the formula\n"
+           "Return the result of the evaluation\n"
+           "Variables values shall have been set with the\n"
+           "`setVariableValue` method")
+      .def("getValue", ptr4, pybind11::arg("vs"),
+           "Evaluate the formula\n"
+           "vs: a map giving the values of some of the\n"
+           "variables required to evaluate the formula\n"
+           "Return the result of the evaluation\n"
+           "The values of the variables not given in argument shall\n"
+           "have been set with the `setVariableValue` method")
+      .def("setVariableValue", ptr5,
+           pybind11::arg("vname"), pybind11::arg("value"))
+      .def("getVariablesNames", &Evaluator::getVariablesNames)
+      .def("removeDependencies", &Evaluator::removeDependencies);
 }

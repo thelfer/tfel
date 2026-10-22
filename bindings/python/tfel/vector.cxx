@@ -21,20 +21,23 @@ void declareTFELMathVector(pybind11::module_&);
 
 void declareTFELMathVector(pybind11::module_& m) {
   using vector = tfel::math::vector<double>;
-  pybind11::class_<vector>(m, "Vector", pybind11::buffer_protocol())
+  pybind11::class_<vector>(m, "Vector", pybind11::buffer_protocol(),
+                             "This class declares the vector template class which is based\n"
+                             "on STL'vector storage class. This classe is suitable for\n"
+                             "describing medium sized vectors.")
       .def_buffer([](vector& v) -> pybind11::buffer_info {
         return pybind11::buffer_info(
             v.data(),       /* Pointer to buffer */
             sizeof(double), /* Size of one scalar */
             pybind11::format_descriptor<double>::format(), /* Python
-                                                       struct-style format
-                                                       descriptor */
+                                                        struct-style format
+                                                        descriptor */
             1,          /* Number of dimensions */
             {v.size()}, /* Buffer dimensions */
             {sizeof(double)});
       })
-      .def(pybind11::init<>())
-      .def(pybind11::init<double>())
+      .def(pybind11::init<>(), "Default constructor")
+      .def(pybind11::init<double>(), pybind11::arg("s"), "Constructor")
       .def("__len__", [](const vector& v) { return v.size(); })
       .def("__repr__",
            [](const vector& v) {

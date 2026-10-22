@@ -59,12 +59,22 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 void declareLinearHomogenizationBounds(pybind11::module_&);
 
 void declareLinearHomogenizationBounds(pybind11::module_& m) {
-  m.def("computeVoigtStiffness3D", &computeVoigtStiffness<double, 3>);
-  m.def("computeReussStiffness3D", &computeReussStiffness<double, 3>);
+  m.def("computeVoigtStiffness3D",
+        &computeVoigtStiffness<double, 3>,
+        pybind11::arg("f_i"), pybind11::arg("C_i"));
+  m.def("computeReussStiffness3D",
+        &computeReussStiffness<double, 3>,
+        pybind11::arg("f_i"), pybind11::arg("C_i"));
   m.def("computeIsotropicHashinShtrikmanBounds3D",
-        &computeIsotropicHashinShtrikmanBounds<double, 3>);
-  m.def("computeVoigtStiffness2D", &computeVoigtStiffness<double, 2>);
-  m.def("computeReussStiffness2D", &computeReussStiffness<double, 2>);
+        &computeIsotropicHashinShtrikmanBounds<double, 3>,
+        pybind11::arg("f_i"), pybind11::arg("K_i"), pybind11::arg("G_i"));
+  m.def("computeVoigtStiffness2D",
+        &computeVoigtStiffness<double, 2>,
+        pybind11::arg("f_i"), pybind11::arg("C_i"));
+  m.def("computeReussStiffness2D",
+        &computeReussStiffness<double, 2>,
+        pybind11::arg("f_i"), pybind11::arg("C_i"));
   m.def("computeIsotropicHashinShtrikmanBounds2D",
-        &computeIsotropicHashinShtrikmanBounds<double, 2>);
+        &computeIsotropicHashinShtrikmanBounds<double, 2>,
+        pybind11::arg("f_i"), pybind11::arg("K_i"), pybind11::arg("G_i"));
 }

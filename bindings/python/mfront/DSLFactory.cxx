@@ -23,11 +23,15 @@ void declareDSLFactory(pybind11::module_&);
 
 void declareDSLFactory(pybind11::module_& m) {
   using namespace mfront;
-  pybind11::class_<DSLFactory>(m, "DSLFactory")
+  pybind11::class_<DSLFactory>(
+      m, "DSLFactory",
+      "An abstract factory for the domain specific languages supported by\n"
+      "MFront implemented using the singleton pattern")
       .def_static("getDSLFactory", DSLFactory::getDSLFactory,
-                  pybind11::return_value_policy::reference)
-      .def("createNewParser", &createNewDSL)
-      .def("createNewDSL", &createNewDSL)
-      .def("createNewParser", &DSLFactory::createNewDSL)
+                   pybind11::return_value_policy::reference,
+                   "Return the unique instance of the DSLFactory class")
+      .def("createNewParser", &createNewDSL, pybind11::arg("n"))
+      .def("createNewDSL", &createNewDSL, pybind11::arg("n"))
+    .def("createNewParser", &DSLFactory::createNewDSL)
       .def("createNewDSL", &DSLFactory::createNewDSL);
 }

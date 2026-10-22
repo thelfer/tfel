@@ -47,8 +47,16 @@ void declareCompiledTargetDescriptionBase(pybind11::module_&);
 void declareCompiledTargetDescriptionBase(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<CompiledTargetDescriptionBase> w(
-      m, "CompiledTargetDescriptionBase");
-  w.def(pybind11::init<std::string, std::string, std::string>())
+      m, "CompiledTargetDescriptionBase",
+      "This structure is used to build the compilation\n"
+      "rules for an compiled target:\n"
+      "- the name\n"
+      "- the generated sources\n"
+      "- the required preprocessor flags\n"
+      "- the linker flags of the generated executable\n"
+      "- the generated entry points (function or class names)");
+  w.def(pybind11::init<std::string, std::string, std::string>(),
+        pybind11::arg("n"), pybind11::arg("p"), pybind11::arg("s"))
       .def_readonly("name", &CompiledTargetDescriptionBase::name)
       .def_readonly("prefix", &CompiledTargetDescriptionBase::prefix)
       .def_readonly("suffix", &CompiledTargetDescriptionBase::suffix);

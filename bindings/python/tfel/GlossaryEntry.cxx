@@ -20,16 +20,26 @@ void declareGlossaryEntry(pybind11::module_&);
 
 void declareGlossaryEntry(pybind11::module_& m) {
   using namespace tfel::glossary;
-  pybind11::class_<GlossaryEntry>(m, "GlossaryEntry")
+  pybind11::class_<GlossaryEntry>(
+      m, "GlossaryEntry",
+      "Structure describing an entry of the glossary")
       .def("__repr__",
-           [](const GlossaryEntry& e) { return e.getShortDescription(); })
-      .def_property_readonly("key", &GlossaryEntry::getKey)
-      .def_property_readonly("names", &GlossaryEntry::getNames)
-      .def_property_readonly("units", &GlossaryEntry::getUnits)
-      .def_property_readonly("type", &GlossaryEntry::getType)
+           [](const GlossaryEntry& e) { return e.getShortDescription(); },
+           "Return the short description")
+      .def_property_readonly("key", &GlossaryEntry::getKey,
+                             "Return the key")
+      .def_property_readonly("names", &GlossaryEntry::getNames,
+                             "Return names associated with this key")
+      .def_property_readonly("units", &GlossaryEntry::getUnits,
+                             "Return the units")
+      .def_property_readonly("type", &GlossaryEntry::getType,
+                             "Return the type")
       .def_property_readonly("short_description",
-                             &GlossaryEntry::getShortDescription)
-      .def_property_readonly("description", &GlossaryEntry::getDescription)
-      .def_property_readonly("notes", &GlossaryEntry::getNotes);
+                             &GlossaryEntry::getShortDescription,
+                             "Return the short description")
+      .def_property_readonly("description", &GlossaryEntry::getDescription,
+                             "Return the description")
+      .def_property_readonly("notes", &GlossaryEntry::getNotes,
+                             "Return the notes");
 
 }  // end of declareGlossaryEntry

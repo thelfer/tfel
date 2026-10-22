@@ -83,6 +83,6 @@ PYBIND11_MODULE(_mtest, m) {
 
   void (*ptr)(const std::string&) = mtest::setRoundingMode;
   void (*ptr2)() = mtest::setRoundingMode;
-  m.def("setRoundingMode", ptr);
+  m.def("setRoundingMode", ptr, pybind11::arg("m"));
   m.def("setRoundingMode", ptr2);
 }

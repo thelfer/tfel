@@ -34,7 +34,9 @@ void declareMFMTestGeneratorFileExport(pybind11::module_& m) {
       .def_readwrite("material", &mfmtg::TestDescription::material);
   //
   m.def("loadMFMTestGeneratorFileContent",
-        mfmtg_loadMFMTestGeneratorFileContent);
-  m.def("write", mfmtg_write);
+        mfmtg_loadMFMTestGeneratorFileContent,
+        pybind11::arg("d"), pybind11::arg("f"));
+  m.def("write", mfmtg_write,
+        pybind11::arg("m"), pybind11::arg("f"));
 
 }  // end of declareMFMTestGeneratorFileExport

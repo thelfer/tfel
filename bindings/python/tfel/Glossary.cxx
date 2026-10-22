@@ -19,12 +19,16 @@ void declareGlossary(pybind11::module_&);
 
 void declareGlossary(pybind11::module_& m) {
   using namespace tfel::glossary;
-  pybind11::class_<Glossary>(m, "Glossary")
+  pybind11::class_<Glossary>(m, "Glossary",
+                             "Structure in charge of handling the TFEL Glossary")
       .def_static("getGlossary", Glossary::getGlossary,
-                  pybind11::return_value_policy::reference)
-      .def("contains", &Glossary::contains)
+                   pybind11::return_value_policy::reference,
+                   "Return the unique instance of this class (singleton pattern)")
+      .def("contains", &Glossary::contains,
+           pybind11::arg("n"),
+           "Return true if the glossary contains the given name or key")
       .def_readonly_static("AxialDeformationGradient",
-                           &Glossary::AxialDeformationGradient)
+                            &Glossary::AxialDeformationGradient)
       .def_readonly_static("AxialGrowth", &Glossary::AxialGrowth)
       .def_readonly_static("AxialStrain", &Glossary::AxialStrain)
       .def_readonly_static("AxialStress", &Glossary::AxialStress)
@@ -35,64 +39,64 @@ void declareGlossary(pybind11::module_& m) {
       .def_readonly_static("BurnUp_MWJperTm", &Glossary::BurnUp_MWJperTm)
       .def_readonly_static("CohesiveForce", &Glossary::CohesiveForce)
       .def_readonly_static("ConvectiveHeatTransferCoefficient",
-                           &Glossary::ConvectiveHeatTransferCoefficient)
+                            &Glossary::ConvectiveHeatTransferCoefficient)
       .def_readonly_static("CrossSectionArea", &Glossary::CrossSectionArea)
       .def_readonly_static("CylindricalStress", &Glossary::CylindricalStress)
       .def_readonly_static("Damage", &Glossary::Damage)
       .def_readonly_static("DeformationGradient",
-                           &Glossary::DeformationGradient)
+                            &Glossary::DeformationGradient)
       .def_readonly_static("Displacement", &Glossary::Displacement)
       .def_readonly_static("DualStress", &Glossary::DualStress)
       .def_readonly_static("ElasticStrain", &Glossary::ElasticStrain)
       .def_readonly_static("Emissivity", &Glossary::Emissivity)
       .def_readonly_static("EquivalentPlasticStrain",
-                           &Glossary::EquivalentPlasticStrain)
+                            &Glossary::EquivalentPlasticStrain)
       .def_readonly_static("EquivalentStrain", &Glossary::EquivalentStrain)
       .def_readonly_static("EquivalentViscoplasticStrain",
-                           &Glossary::EquivalentViscoplasticStrain)
+                            &Glossary::EquivalentViscoplasticStrain)
       .def_readonly_static("FastNeutronFluence_01MeV",
-                           &Glossary::FastNeutronFluence_01MeV)
+                            &Glossary::FastNeutronFluence_01MeV)
       .def_readonly_static("FastNeutronFluence_1MeV",
-                           &Glossary::FastNeutronFluence_1MeV)
+                            &Glossary::FastNeutronFluence_1MeV)
       .def_readonly_static("FastNeutronFlux_01MeV",
-                           &Glossary::FastNeutronFlux_01MeV)
+                            &Glossary::FastNeutronFlux_01MeV)
       .def_readonly_static("FastNeutronFlux_1MeV",
-                           &Glossary::FastNeutronFlux_1MeV)
+                            &Glossary::FastNeutronFlux_1MeV)
       .def_readonly_static("FirstAxisSecondMomentArea",
-                           &Glossary::FirstAxisSecondMomentArea)
+                            &Glossary::FirstAxisSecondMomentArea)
       .def_readonly_static("FirstLameCoefficient",
-                           &Glossary::FirstLameCoefficient)
+                            &Glossary::FirstLameCoefficient)
       .def_readonly_static("FissionDensity", &Glossary::FissionDensity)
       .def_readonly_static("GaseousSwelling", &Glossary::GaseousSwelling)
       .def_readonly_static("GrainSize", &Glossary::GrainSize)
       .def_readonly_static("HeatFlux", &Glossary::HeatFlux)
       .def_readonly_static("HeatTransferCoefficient",
-                           &Glossary::HeatTransferCoefficient)
+                            &Glossary::HeatTransferCoefficient)
       .def_readonly_static("HillStress", &Glossary::HillStress)
       .def_readonly_static("HydrostaticPressure",
-                           &Glossary::HydrostaticPressure)
+                            &Glossary::HydrostaticPressure)
       .def_readonly_static("IrradiationDamage", &Glossary::IrradiationDamage)
       .def_readonly_static("IrradiationInducedSwelling",
-                           &Glossary::IrradiationInducedSwelling)
+                            &Glossary::IrradiationInducedSwelling)
       .def_readonly_static("IrradiationSwelling",
-                           &Glossary::IrradiationSwelling)
+                            &Glossary::IrradiationSwelling)
       .def_readonly_static("IrradiationTemperature",
-                           &Glossary::IrradiationTemperature)
+                            &Glossary::IrradiationTemperature)
       .def_readonly_static("KelvinTemperature", &Glossary::KelvinTemperature)
       .def_readonly_static("MassDensity", &Glossary::MassDensity)
       .def_readonly_static("MeanBurnUp_AtPercent",
-                           &Glossary::MeanBurnUp_AtPercent)
+                            &Glossary::MeanBurnUp_AtPercent)
       .def_readonly_static("MeanBurnUp_MWJperTm",
-                           &Glossary::MeanBurnUp_MWJperTm)
+                            &Glossary::MeanBurnUp_MWJperTm)
       .def_readonly_static("MeanIrradiationTemperature",
-                           &Glossary::MeanIrradiationTemperature)
+                            &Glossary::MeanIrradiationTemperature)
       .def_readonly_static("MeanTemperature", &Glossary::MeanTemperature)
       .def_readonly_static("NeutronFluence", &Glossary::NeutronFluence)
       .def_readonly_static("NeutronFlux", &Glossary::NeutronFlux)
       .def_readonly_static("NormalStiffness", &Glossary::NormalStiffness)
       .def_readonly_static("NumberOfMoles", &Glossary::NumberOfMoles)
       .def_readonly_static("OpeningDisplacement",
-                           &Glossary::OpeningDisplacement)
+                            &Glossary::OpeningDisplacement)
       .def_readonly_static("OrthotropicAxisX1", &Glossary::OrthotropicAxisX1)
       .def_readonly_static("OrthotropicAxisX2", &Glossary::OrthotropicAxisX2)
       .def_readonly_static("OrthotropicAxisY1", &Glossary::OrthotropicAxisY1)
@@ -107,16 +111,16 @@ void declareGlossary(pybind11::module_& m) {
       .def_readonly_static("PoissonRatio23", &Glossary::PoissonRatio23)
       .def_readonly_static("Porosity", &Glossary::Porosity)
       .def_readonly_static("PorosityIncreaseDueToInelasticFlow",
-                           &Glossary::PorosityIncreaseDueToInelasticFlow)
+                            &Glossary::PorosityIncreaseDueToInelasticFlow)
       .def_readonly_static("PorosityIncreaseDueToNucleation",
-                           &Glossary::PorosityIncreaseDueToNucleation)
+                            &Glossary::PorosityIncreaseDueToNucleation)
       .def_readonly_static("PowerDensity", &Glossary::PowerDensity)
       .def_readonly_static("Pressure", &Glossary::Pressure)
       .def_readonly_static("PrincipalStress1", &Glossary::PrincipalStress1)
       .def_readonly_static("PrincipalStress2", &Glossary::PrincipalStress2)
       .def_readonly_static("PrincipalStress3", &Glossary::PrincipalStress3)
       .def_readonly_static("SecondAxisSecondMomentArea",
-                           &Glossary::SecondAxisSecondMomentArea)
+                            &Glossary::SecondAxisSecondMomentArea)
       .def_readonly_static("ShearModulus", &Glossary::ShearModulus)
       .def_readonly_static("ShearModulus12", &Glossary::ShearModulus12)
       .def_readonly_static("ShearModulus13", &Glossary::ShearModulus13)
@@ -129,18 +133,18 @@ void declareGlossary(pybind11::module_& m) {
       .def_readonly_static("Stress", &Glossary::Stress)
       .def_readonly_static("Swelling", &Glossary::Swelling)
       .def_readonly_static("TangentialStiffness",
-                           &Glossary::TangentialStiffness)
+                            &Glossary::TangentialStiffness)
       .def_readonly_static("Temperature", &Glossary::Temperature)
       .def_readonly_static("TemperatureGradient",
-                           &Glossary::TemperatureGradient)
+                            &Glossary::TemperatureGradient)
       .def_readonly_static("ThermalConductivity",
-                           &Glossary::ThermalConductivity)
+                            &Glossary::ThermalConductivity)
       .def_readonly_static("ThermalConductivity1",
-                           &Glossary::ThermalConductivity1)
+                            &Glossary::ThermalConductivity1)
       .def_readonly_static("ThermalConductivity2",
-                           &Glossary::ThermalConductivity2)
+                            &Glossary::ThermalConductivity2)
       .def_readonly_static("ThermalConductivity3",
-                           &Glossary::ThermalConductivity3)
+                            &Glossary::ThermalConductivity3)
       .def_readonly_static("ThermalExpansion", &Glossary::ThermalExpansion)
       .def_readonly_static("ThermalExpansion1", &Glossary::ThermalExpansion1)
       .def_readonly_static("ThermalExpansion2", &Glossary::ThermalExpansion2)
@@ -148,7 +152,7 @@ void declareGlossary(pybind11::module_& m) {
       .def_readonly_static("TorsionConstant", &Glossary::TorsionConstant)
       .def_readonly_static("TrescaStress", &Glossary::TrescaStress)
       .def_readonly_static("UltimateTensileStrength",
-                           &Glossary::UltimateTensileStrength)
+                            &Glossary::UltimateTensileStrength)
       .def_readonly_static("ViscoplasticStrain", &Glossary::ViscoplasticStrain)
       .def_readonly_static("VolumetricStrain", &Glossary::VolumetricStrain)
       .def_readonly_static("VonMisesStress", &Glossary::VonMisesStress)

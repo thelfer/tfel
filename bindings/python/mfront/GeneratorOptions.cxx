@@ -21,12 +21,15 @@ void declareGeneratorOptions(pybind11::module_&);
 void declareGeneratorOptions(pybind11::module_& m) {
   using namespace mfront;
   pybind11::enum_<GeneratorOptions::OptimisationLevel>(
-      m, "GeneratorOptionsOptimisationLevel")
+      m, "GeneratorOptionsOptimisationLevel",
+      "A simple enumeration describing the optimisation level.\n"
+      "Note See the `tfel-config` utility for more details")
       .value("Level0", GeneratorOptions::OptimisationLevel::LEVEL0)
       .value("Level1", GeneratorOptions::OptimisationLevel::LEVEL1)
       .value("Level2", GeneratorOptions::OptimisationLevel::LEVEL2);
 
-  pybind11::class_<GeneratorOptions>(m, "GeneratorOptions")
-      .def_readwrite("olevel", &GeneratorOptions::olevel,
-                     "the optimisation level");
-}  // end of declareGeneratorOptions
+  pybind11::class_<GeneratorOptions>(
+      m, "GeneratorOptions",
+      "A data structure holding options passed to generators")
+      .def_readwrite("olevel", &GeneratorOptions::olevel);
+}

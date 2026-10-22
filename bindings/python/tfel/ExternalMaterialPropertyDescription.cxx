@@ -32,30 +32,70 @@ void declareExternalMaterialPropertyDescription(pybind11::module_&);
 void declareExternalMaterialPropertyDescription(pybind11::module_& m) {
   using namespace tfel::system;
   pybind11::class_<ExternalMaterialPropertyDescription,
-                   ExternalMaterialKnowledgeDescription>(
-      m, "ExternalMaterialPropertyDescription")
-      .def(pybind11::init<>())
-      .def(pybind11::init<std::string, std::string>())
-      .def_readonly("law", &ExternalMaterialPropertyDescription::law)
+                    ExternalMaterialKnowledgeDescription>(
+      m, "ExternalMaterialPropertyDescription",
+      "A structure containing the information about a given material property")
+      .def(pybind11::init<>(), "Default constructor")
+      .def(pybind11::init<std::string, std::string>(),
+           pybind11::arg("l"), pybind11::arg("m"),
+           "l: library\n"
+           "m: material property")
+      .def_readonly("law", &ExternalMaterialPropertyDescription::law,
+                    "Name of the law defining the material property")
       .def_readonly("material_property",
-                    &ExternalMaterialPropertyDescription::material_property)
-      .def_readonly("output", &ExternalMaterialPropertyDescription::output)
-      .def_property_readonly("arguments", &get_args)
-      .def_property_readonly("parameters", &get_parameters)
-      .def("hasBounds", &ExternalMaterialPropertyDescription::hasBounds)
-      .def("hasLowerBound", &ExternalMaterialPropertyDescription::hasLowerBound)
-      .def("hasUpperBound", &ExternalMaterialPropertyDescription::hasUpperBound)
-      .def("getLowerBound", &ExternalMaterialPropertyDescription::getLowerBound)
-      .def("getUpperBound", &ExternalMaterialPropertyDescription::getUpperBound)
+                    &ExternalMaterialPropertyDescription::material_property,
+                    "Name of the enty point associated with the material "
+                    "property")
+      .def_readonly("output", &ExternalMaterialPropertyDescription::output,
+                    "External name of the output")
+      .def_property_readonly("arguments", &get_args,
+                             "External names of the arguments/inputs")
+      .def_property_readonly("parameters", &get_parameters,
+                             "List of parameters")
+      .def("hasBounds", &ExternalMaterialPropertyDescription::hasBounds,
+           pybind11::arg("v"),
+           "Return true if the given variable has bounds\n"
+           "v: variable name")
+      .def("hasLowerBound", &ExternalMaterialPropertyDescription::hasLowerBound,
+           pybind11::arg("v"),
+           "Return true if the given variable has a lower bound\n"
+           "v: variable name")
+      .def("hasUpperBound", &ExternalMaterialPropertyDescription::hasUpperBound,
+           pybind11::arg("v"),
+           "Return true if the given variable has a upper bound\n"
+           "v: variable name")
+      .def("getLowerBound", &ExternalMaterialPropertyDescription::getLowerBound,
+           pybind11::arg("v"),
+           "Return the lower bound of the given variable\n"
+           "v: variable name")
+      .def("getUpperBound", &ExternalMaterialPropertyDescription::getUpperBound,
+           pybind11::arg("v"),
+           "Return the upper bound of the given variable\n"
+           "v: variable name")
       .def("hasPhysicalBounds",
-           &ExternalMaterialPropertyDescription::hasPhysicalBounds)
+           &ExternalMaterialPropertyDescription::hasPhysicalBounds,
+           pybind11::arg("v"),
+           "Return true if the given variable has bounds\n"
+           "v: variable name")
       .def("hasLowerPhysicalBound",
-           &ExternalMaterialPropertyDescription::hasLowerPhysicalBound)
+           &ExternalMaterialPropertyDescription::hasLowerPhysicalBound,
+           pybind11::arg("v"),
+           "Return true if the given variable has a lower physical bound\n"
+           "v: variable name")
       .def("hasUpperPhysicalBound",
-           &ExternalMaterialPropertyDescription::hasUpperPhysicalBound)
+           &ExternalMaterialPropertyDescription::hasUpperPhysicalBound,
+           pybind11::arg("v"),
+           "Return true if the given variable has a upper physical bound\n"
+           "v: variable name")
       .def("getLowerPhysicalBound",
-           &ExternalMaterialPropertyDescription::getLowerPhysicalBound)
+           &ExternalMaterialPropertyDescription::getLowerPhysicalBound,
+           pybind11::arg("v"),
+           "Return the lower bound of the given variable\n"
+           "v: variable name")
       .def("getUpperPhysicalBound",
-           &ExternalMaterialPropertyDescription::getUpperPhysicalBound);
+           &ExternalMaterialPropertyDescription::getUpperPhysicalBound,
+           pybind11::arg("v"),
+           "Return the upper bound of the given variable\n"
+           "v: variable name");
 
 }  // end of declareExternalMaterialPropertyDescription

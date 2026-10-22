@@ -37,11 +37,13 @@ static mtest::ConstraintOptions makeConstraintOptions(
 
 void declareConstraint(pybind11::module_&);
 void declareConstraint(pybind11::module_& m) {
-  pybind11::class_<mtest::ConstraintOptions>(m, "ConstraintOptions")
+  pybind11::class_<mtest::ConstraintOptions>(
+      m, "ConstraintOptions",
+      "A structure containing constraint' options")
       .def_readonly("active", &mtest::ConstraintOptions::active)
       .def_readonly("activating_events",
-                    &mtest::ConstraintOptions::activating_events)
+                     &mtest::ConstraintOptions::activating_events)
       .def_readonly("desactivating_events",
-                    &mtest::ConstraintOptions::desactivating_events);
+                     &mtest::ConstraintOptions::desactivating_events);
   m.def("makeConstraintOptions", makeConstraintOptions);
 }  // end of declareConstraints

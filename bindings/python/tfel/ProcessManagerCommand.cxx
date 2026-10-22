@@ -19,7 +19,7 @@
 struct ProcessManagerCommandWrapper final
     : tfel::system::ProcessManager::Command {
   bool execute(const tfel::system::ProcessManager::StreamId,
-               const tfel::system::ProcessManager::StreamId) final;
+                const tfel::system::ProcessManager::StreamId) final;
   ~ProcessManagerCommandWrapper() override;
 };  // end of struct Command
 
@@ -38,6 +38,8 @@ void declareProcessManagerCommand(pybind11::module_&);
 void declareProcessManagerCommand(pybind11::module_& m) {
   using namespace tfel::system;
   pybind11::class_<ProcessManager::Command, ProcessManagerCommandWrapper>(
-      m, "ProcessManagerCommand")
-      .def("execute", &ProcessManager::Command::execute);
+      m, "ProcessManagerCommand",
+      "Base class to pass commands to sub processes")
+      .def("execute", &ProcessManager::Command::execute,
+           pybind11::arg("in"), pybind11::arg("out"));
 }  // end of declarestensor

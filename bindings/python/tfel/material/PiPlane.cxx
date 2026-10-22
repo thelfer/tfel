@@ -24,20 +24,48 @@ static std::tuple<double, double> projectOnPiPlane(
 
 void declarePiPlane(pybind11::module_&);
 
+static const char project_on_pi_plane_scalar_doc[] =
+    "This function project a stress state defined by the the principal\n"
+    "stress axes $\\left(S_{0},S_{1},S_{2}\\right)$ on the $\\pi$-plane,\n"
+    "which is defined by: $S_{0}+S_{1}+S_{2}=0$\n"
+    "A basis of the $\\pi$-plane is defined by the vectors $n_{0}$ and\n"
+    "$n_{1}$\n"
+    "s0: first eigen value\n"
+    "s1: second eigen value\n"
+    "s2: third eigen value\n"
+    "Return the projection of the stresses on the $\\pi$-plane";
+
+static const char project_on_pi_plane_stensor_doc[] =
+    "This function project a stress state defined by the the principal\n"
+    "stress axes $\\left(S_{0},S_{1},S_{2}\\right)$ on the $\\pi$-plane,\n"
+    "which is defined by: $S_{0}+S_{1}+S_{2}=0$\n"
+    "A basis of the $\\pi$-plane is defined by the vectors $n_{0}$ and\n"
+    "$n_{1}$\n"
+    "s: stress tensor\n"
+    "Return the projection of the stresses on the $\\pi$-plane";
+
+static const char build_from_pi_plane_doc[] =
+    "This function returns the stress state\n"
+    "$s_{0}\\,\\vec{n}_{0}+s_{0}\\,\\vec{n}_{1}$, defined by three\n"
+    "eigenvalues, where $\\vec{n}_{0}$ and $\\vec{n}_{1}$ is the basis of\n"
+    "the $\\pi$-plane\n"
+    "s0: first position in the $\\pi$-plane.\n"
+    "s1: second position in the $\\pi$-plane.\n"
+    "Return a stress state corresponding to the point in the\n"
+    "$\\pi$-plane.";
+
 void declarePiPlane(pybind11::module_& m) {
   std::tuple<double, double> (*p1)(const double, const double, const double) =
       tfel::material::projectOnPiPlane;
   m.def("buildFromPiPlane", &tfel::material::buildFromPiPlane<double>,
-        "return a tuple containing the three eigenvalues "
-        "of the stress corresponding to the given "
-        "point in the pi-plane");
+        pybind11::arg("s0"), pybind11::arg("s1"), build_from_pi_plane_doc);
   m.def("projectOnPiPlane", p1,
-        "project a stress state, defined its "
-        "three eigenvalues, on the pi-plane");
-  m.def("projectOnPiPlane", projectOnPiPlane<1u>,
-        "project a 1D stress tensor on the pi-plane");
-  m.def("projectOnPiPlane", projectOnPiPlane<2u>,
-        "project a 2D stress tensor on the pi-plane");
-  m.def("projectOnPiPlane", projectOnPiPlane<3u>,
-        "project a 3D stress tensor on the pi-plane");
+        pybind11::arg("s0"), pybind11::arg("s1"), pybind11::arg("s2"),
+        project_on_pi_plane_scalar_doc);
+  m.def("projectOnPiPlane", projectOnPiPlane<1u>, pybind11::arg("s"),
+        project_on_pi_plane_stensor_doc);
+  m.def("projectOnPiPlane", projectOnPiPlane<2u>, pybind11::arg("s"),
+        project_on_pi_plane_stensor_doc);
+  m.def("projectOnPiPlane", projectOnPiPlane<3u>, pybind11::arg("s"),
+        project_on_pi_plane_stensor_doc);
 }

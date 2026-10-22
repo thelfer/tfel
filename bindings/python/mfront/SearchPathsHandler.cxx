@@ -19,13 +19,14 @@ void declareSearchPathsHandler(pybind11::module_&);
 
 void declareSearchPathsHandler(pybind11::module_& m) {
   using mfront::SearchPathsHandler;
-  pybind11 ::class_<SearchPathsHandler>(m, "SearchPathsHandler")
+  pybind11::class_<SearchPathsHandler>(
+      m, "SearchPathsHandler",
+      "Structure in charge of:\n"
+      "- storing search paths\n"
+      "- searching imported mfront file")
       .def_static("addSearchPaths", &SearchPathsHandler::addSearchPaths,
-                  "Add new search paths. Multiple paths are separated by "
-                  "commas under unices systems and by semicolons under "
-                  "Windows systems")
+                   pybind11::arg("p"))
       .def_static("search", &SearchPathsHandler::search,
-                  "search a file and return the path to it if found.")
-      .def_static("getSearchPaths", &SearchPathsHandler::getSearchPaths,
-                  "return all the registred search paths.");
-}  // end of declareSearchPathsHandler
+                   pybind11::arg("f"))
+      .def_static("getSearchPaths", &SearchPathsHandler::getSearchPaths);
+}

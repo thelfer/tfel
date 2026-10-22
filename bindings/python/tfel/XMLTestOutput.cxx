@@ -19,10 +19,27 @@ void declareXMLTestOutput(pybind11::module_&);
 
 void declareXMLTestOutput(pybind11::module_& m) {
   using namespace tfel::tests;
-  pybind11::class_<XMLTestOutput>(m, "XMLTestOutput")
-      .def(pybind11::init<std::string>())
-      .def("beginTestSuite", &XMLTestOutput::beginTestSuite)
-      .def("endTestSuite", &XMLTestOutput::endTestSuite)
-      .def("addTest", &XMLTestOutput::addTest);
+  pybind11::class_<XMLTestOutput>(
+      m, "XMLTestOutput",
+      "Instances of this class reports tests' outputs in an\n"
+      "XML file in the JUnit format")
+      .def(pybind11::init<std::string>(),
+           pybind11::arg("o"),
+           "Constructor\n"
+           "o: output file name")
+      .def("beginTestSuite", &XMLTestOutput::beginTestSuite,
+           pybind11::arg("n"),
+           "Begin a new test suite\n"
+           "n: name of the test suite")
+      .def("endTestSuite", &XMLTestOutput::endTestSuite,
+           pybind11::arg("r"),
+           "End a test suite\n"
+           "r: (global) result of the test suite")
+      .def("addTest", &XMLTestOutput::addTest,
+           pybind11::arg("g"), pybind11::arg("n"), pybind11::arg("r"),
+           "Add a new test\n"
+           "g: group of the test\n"
+           "n: name of the test\n"
+           "r: result of the test");
 
-}  // end of declareExternalLibraryManager
+}  // end of declareXMLTestOutput

@@ -19,8 +19,14 @@ void declareCrystalStructure(pybind11::module_&);
 
 void declareCrystalStructure(pybind11::module_& m) {
   using tfel::material::CrystalStructure;
-  pybind11::enum_<CrystalStructure>(m, "CrystalStructure")
-      .value("Cubic", CrystalStructure::Cubic)
-      .value("FCC", CrystalStructure::FCC)
-      .value("HCP", CrystalStructure::HCP);
+  pybind11::enum_<CrystalStructure>(
+      m, "CrystalStructure",
+      "List of supported crystal structures")
+      .value("Cubic", CrystalStructure::Cubic, "Cubic structure")
+      .value("BCC", CrystalStructure::BCC,
+             "Body centered cubic structure")
+      .value("FCC", CrystalStructure::FCC,
+             "Face centered cubic structure")
+      .value("HCP", CrystalStructure::HCP,
+             "Hexagonal closed-packed structures");
 }

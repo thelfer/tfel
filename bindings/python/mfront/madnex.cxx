@@ -48,7 +48,8 @@ void declareMadnexSupport(pybind11::module_& m) {
                      &madnex::MFrontImplementation::lower_bounds)
       .def_readwrite("upper_bounds",
                      &madnex::MFrontImplementation::upper_bounds);
-  m.def("write", +writeMFrontImplementation);
+  m.def("write", +writeMFrontImplementation,
+        pybind11::arg("fn"), pybind11::arg("gn"), pybind11::arg("i"));
 #else  /* MFRONT_HAVE_MADNEX */
   static_cast<void>(m);
 #endif /* MFRONT_HAVE_MADNEX */

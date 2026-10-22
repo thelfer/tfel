@@ -53,6 +53,6 @@ void declareMFrontLogStream(pybind11::module_& m) {
       .value("VERBOSE_DEBUG", VERBOSE_DEBUG)
       .value("VERBOSE_FULL", VERBOSE_FULL);
 
-  m.def("setVerboseMode", ptr);
-  m.def("setVerboseMode", pySetVerboseMode);
+  m.def("setVerboseMode", ptr, pybind11::arg("l"));
+  m.def("setVerboseMode", pySetVerboseMode, pybind11::arg("l"));
 }

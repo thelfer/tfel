@@ -22,9 +22,12 @@ requires(
     tfel::math::checkUnitCompatibility<
         tfel::math::unit::Stress,
         StressType>()) static void declareIsotropicModuli(pybind11::module_& m,
-                                                          const char* const n) {
+                                                           const char* const n) {
   using IM = tfel::material::IsotropicModuli<StressType>;
-  pybind11::class_<IM, std::shared_ptr<IM>>(m, n, pybind11::buffer_protocol());
+  pybind11::class_<IM, std::shared_ptr<IM>>(
+      m, n, pybind11::buffer_protocol(),
+      "This class is an abstract class which represents isotropic moduli.\n"
+      "3 formats are possible: (Young,Nu), (Lambda,Mu) and (K,Mu)");
 }
 
 template <tfel::math::ScalarConcept StressType>
@@ -35,10 +38,14 @@ requires(tfel::math::checkUnitCompatibility<
   using KG = tfel::material::KGModuli<StressType>;
   using IM = tfel::material::IsotropicModuli<StressType>;
 
-  pybind11::class_<KG, IM, std::shared_ptr<KG>>(m, n,
-                                                pybind11::buffer_protocol())
+  pybind11::class_<KG, IM, std::shared_ptr<KG>>(
+      m, n,
+      pybind11::buffer_protocol(),
+      "This class is relative to the format (K,Nu).\n"
+      "It can be converted to the other formats (Lambda,Mu) and (Young,Nu)")
       .def(pybind11::init<const KG&>())
-      .def(pybind11::init<const StressType&, const StressType&>())
+      .def(pybind11::init<const StressType&, const StressType&>(),
+           pybind11::arg("Kappa"), pybind11::arg("Mu"))
       .def_readwrite("kappa", &KG::kappa)
       .def_readwrite("mu", &KG::mu)
       .def("ToYoungNu", [](const KG& kg) { return kg.ToYoungNu(); })
@@ -50,15 +57,18 @@ template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<
          tfel::math::unit::Stress,
          StressType>()) static void declareYoungNuModuli(pybind11::module_& m,
-                                                         const char* const n) {
+                                                           const char* const n) {
   using YN = tfel::material::YoungNuModuli<StressType>;
   using IM = tfel::material::IsotropicModuli<StressType>;
 
-  pybind11::class_<YN, IM, std::shared_ptr<YN>>(m, n,
-                                                pybind11::buffer_protocol())
+  pybind11::class_<YN, IM, std::shared_ptr<YN>>(
+      m, n,
+      pybind11::buffer_protocol(),
+      "This class is relative to the format (Young,Nu).\n"
+      "It can be converted to the other formats (Lambda,Mu) and (K,Mu)")
       .def(pybind11::init<const YN&>())
-      .def(pybind11::init<const StressType&,
-                          const tfel::types::real<StressType>&>())
+      .def(pybind11::init<const StressType&, const tfel::types::real<StressType>&>(),
+           pybind11::arg("Young"), pybind11::arg("Nu"))
       .def_readwrite("young", &YN::young)
       .def_readwrite("nu", &YN::nu)
       .def("ToYoungNu", [](const YN& yn) { return yn.ToYoungNu(); })
@@ -70,14 +80,18 @@ template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<
          tfel::math::unit::Stress,
          StressType>()) static void declareLambdaMuModuli(pybind11::module_& m,
-                                                          const char* const n) {
+                                                            const char* const n) {
   using LM = tfel::material::LambdaMuModuli<StressType>;
   using IM = tfel::material::IsotropicModuli<StressType>;
 
-  pybind11::class_<LM, IM, std::shared_ptr<LM>>(m, n,
-                                                pybind11::buffer_protocol())
+  pybind11::class_<LM, IM, std::shared_ptr<LM>>(
+      m, n,
+      pybind11::buffer_protocol(),
+      "This class is relative to the format (Lambda,Mu).\n"
+      "It can be converted to the other formats (Young,Nu) and (K,Mu)")
       .def(pybind11::init<const LM&>())
-      .def(pybind11::init<const StressType&, const StressType&>())
+      .def(pybind11::init<const StressType&, const StressType&>(),
+           pybind11::arg("Lambda"), pybind11::arg("Mu"))
       .def_readwrite("lamb", &LM::lambda)
       .def_readwrite("mu", &LM::mu)
       .def("ToYoungNu", [](const LM& lm) { return lm.ToYoungNu(); })
@@ -92,7 +106,18 @@ void declareIsotropicModuli(pybind11::module_& m) {
   declareKGModuli<double>(m, "KGModuli");
   declareYoungNuModuli<double>(m, "YoungNuModuli");
   declareLambdaMuModuli<double>(m, "LambdaMuModuli");
-  m.def("computeKGModuli", &tfel::material::computeKGModuli<double>);
+  m.def("computeKGModuli", &tfel::material::computeKGModuli<double>,
+        pybind11::arg("A"),
+        "This function returns the isotropized moduli of a st2tost2\n"
+        "It uses computeKappaMu\n"
+        "The implementation goes for dimension 3 only.\n"
+        "A: `st2tost2`\n"
+        "Return a KGModuli");
   m.def("computeIsotropicStiffnessTensor",
-        &tfel::material::computeIsotropicStiffnessTensor<double>);
+        &tfel::material::computeIsotropicStiffnessTensor<double>,
+        pybind11::arg("IM"),
+        "This function takes a IsotropicModuli and\n"
+        "returns the corresponding st2tost2\n"
+        "IM: `IsotropicModuli`\n"
+        "Return a `st2tost2`");
 }

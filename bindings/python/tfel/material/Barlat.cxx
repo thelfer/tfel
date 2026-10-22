@@ -41,14 +41,69 @@ static double computeBarlatStress(const tfel::math::stensor<N, double>& s,
 
 void declareBarlat(pybind11::module_&);
 
+static const char make_barlat_linear_transformation_doc[] =
+    "Return a linear transformation of the stresses\n"
+    "c12: coefficient of the linear transformation\n"
+    "c21: coefficient of the linear transformation\n"
+    "c13: coefficient of the linear transformation\n"
+    "c31: coefficient of the linear transformation\n"
+    "c23: coefficient of the linear transformation\n"
+    "c32: coefficient of the linear transformation\n"
+    "c44: coefficient of the linear transformation\n"
+    "c55: coefficient of the linear transformation\n"
+    "c66: coefficient of the linear transformation\n"
+    "The linear transformation is defined as follows:\n"
+    "Note: Barlat uses the following convention for storing symmetric\n"
+    "tensors:\n"
+    "xx yy zz yz zx xy\n"
+    "which is not consistent with the TFEL/Cast3M/Abaqus/Ansys\n"
+    "conventions:\n"
+    "xx yy zz xy xz yz\n"
+    "Therefore, if one wants to uses coeficients c^B given by Barlat,\n"
+    "one shall call this function as follows:\n"
+    "const auto l1 =\n"
+    "makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,\n"
+    "cB_23,cB_32,cB_66,cBB_55,cBB_44);";
+
+static const char compute_barlat_stress_doc[] =
+    "This function computes the Barlat yield stress.\n"
+    "s: stress tensor\n"
+    "l1: first linear transformation\n"
+    "l2: second linear transformation\n"
+    "a: Barlat exponent\n"
+    "e: criterion used to check if the von Mises stress is null\n"
+    "Return the Barlat yield stress\n"
+    "See `makeBarlatLinearTransformation`";
+
 void declareBarlat(pybind11::module_& m) {
   m.def("makeBarlatLinearTransformation1D",
-        &makeBarlatLinearTransformation<1u>);
+        &makeBarlatLinearTransformation<1u>,
+        pybind11::arg("c12"), pybind11::arg("c21"), pybind11::arg("c13"),
+        pybind11::arg("c31"), pybind11::arg("c23"), pybind11::arg("c32"),
+        pybind11::arg("c44"), pybind11::arg("c55"), pybind11::arg("c66"),
+        make_barlat_linear_transformation_doc);
   m.def("makeBarlatLinearTransformation2D",
-        &makeBarlatLinearTransformation<2u>);
+        &makeBarlatLinearTransformation<2u>,
+        pybind11::arg("c12"), pybind11::arg("c21"), pybind11::arg("c13"),
+        pybind11::arg("c31"), pybind11::arg("c23"), pybind11::arg("c32"),
+        pybind11::arg("c44"), pybind11::arg("c55"), pybind11::arg("c66"),
+        make_barlat_linear_transformation_doc);
   m.def("makeBarlatLinearTransformation3D",
-        &makeBarlatLinearTransformation<3u>);
-  m.def("computeBarlatStress", &computeBarlatStress<1u>);
-  m.def("computeBarlatStress", &computeBarlatStress<2u>);
-  m.def("computeBarlatStress", &computeBarlatStress<3u>);
+        &makeBarlatLinearTransformation<3u>,
+        pybind11::arg("c12"), pybind11::arg("c21"), pybind11::arg("c13"),
+        pybind11::arg("c31"), pybind11::arg("c23"), pybind11::arg("c32"),
+        pybind11::arg("c44"), pybind11::arg("c55"), pybind11::arg("c66"),
+        make_barlat_linear_transformation_doc);
+  m.def("computeBarlatStress",
+        &computeBarlatStress<1u>,
+        pybind11::arg("s"), pybind11::arg("l1"), pybind11::arg("l2"),
+        pybind11::arg("a"), pybind11::arg("e"), compute_barlat_stress_doc);
+  m.def("computeBarlatStress",
+        &computeBarlatStress<2u>,
+        pybind11::arg("s"), pybind11::arg("l1"), pybind11::arg("l2"),
+        pybind11::arg("a"), pybind11::arg("e"), compute_barlat_stress_doc);
+  m.def("computeBarlatStress",
+        &computeBarlatStress<3u>,
+        pybind11::arg("s"), pybind11::arg("l1"), pybind11::arg("l2"),
+        pybind11::arg("a"), pybind11::arg("e"), compute_barlat_stress_doc);
 }
