@@ -14,9 +14,9 @@
 #ifndef LIB_TFEL_MATERIAL_POWERLAWSTRAINBASEDNUCLEATIONMODEL_HXX
 #define LIB_TFEL_MATERIAL_POWERLAWSTRAINBASEDNUCLEATIONMODEL_HXX
 
-#include "TFEL/Config/TFELConfig.hxx"
 #include <tuple>
 #include <ostream>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::material {
 

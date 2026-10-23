@@ -14,9 +14,9 @@
 #ifndef LIB_TFEL_MATH_SCALARNEWTONRAPHSON_HXX
 #define LIB_TFEL_MATH_SCALARNEWTONRAPHSON_HXX
 
-#include "TFEL/Config/TFELConfig.hxx"
 #include <tuple>
 #include <limits>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::math {
 

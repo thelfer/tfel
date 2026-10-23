@@ -12,9 +12,9 @@
 #ifndef LIB_TFEL_MATERIAL_ESHELBYTOLERANCES_HXX
 #define LIB_TFEL_MATERIAL_ESHELBYTOLERANCES_HXX
 
-#include "TFEL/Config/TFELConfig.hxx"
 #include <cmath>
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::material {
 

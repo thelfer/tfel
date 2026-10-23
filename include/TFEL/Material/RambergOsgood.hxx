@@ -14,8 +14,8 @@
 #ifndef LIB_TFEL_MATERIAL_RAMBERGOSGOOD_HXX
 #define LIB_TFEL_MATERIAL_RAMBERGOSGOOD_HXX
 
-#include "TFEL/Config/TFELConfig.hxx"
 #include <cmath>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::material {
 
