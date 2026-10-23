@@ -30,5 +30,6 @@ void declareAbstractBehaviourDSL(pybind11::module_& m) {
       "behaviours")
       .def("getBehaviourDescription",
            &AbstractBehaviourDSL::getBehaviourDescription,
-           pybind11::return_value_policy::reference);
+           pybind11::return_value_policy::reference,
+           "Return the behaviour description");
 }

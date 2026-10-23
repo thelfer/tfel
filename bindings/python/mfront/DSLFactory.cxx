@@ -30,8 +30,18 @@ void declareDSLFactory(pybind11::module_& m) {
       .def_static("getDSLFactory", DSLFactory::getDSLFactory,
                    pybind11::return_value_policy::reference,
                    "Return the unique instance of the DSLFactory class")
-      .def("createNewParser", &createNewDSL, pybind11::arg("n"))
-      .def("createNewDSL", &createNewDSL, pybind11::arg("n"))
-    .def("createNewParser", &DSLFactory::createNewDSL)
-      .def("createNewDSL", &DSLFactory::createNewDSL);
+      .def("createNewParser", &createNewDSL, pybind11::arg("n"),
+           "Return an instance of the DSL with the given name\n"
+           "n: name of the DSL to be generated")
+      .def("createNewDSL", &createNewDSL, pybind11::arg("n"),
+           "Return an instance of the DSL with the given name\n"
+           "n: name of the DSL to be generated")
+      .def("createNewParser", &DSLFactory::createNewDSL, pybind11::arg("n"),
+           pybind11::arg("opts"),
+           "Return an instance of the DSL with the given name\n"
+           "n: name of the DSL to be generated")
+      .def("createNewDSL", &DSLFactory::createNewDSL, pybind11::arg("n"),
+           pybind11::arg("opts"),
+           "Return an instance of the DSL with the given name\n"
+           "n: name of the DSL to be generated");
 }

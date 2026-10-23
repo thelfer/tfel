@@ -24,12 +24,20 @@ void declareGeneratorOptions(pybind11::module_& m) {
       m, "GeneratorOptionsOptimisationLevel",
       "A simple enumeration describing the optimisation level.\n"
       "Note See the `tfel-config` utility for more details")
-      .value("Level0", GeneratorOptions::OptimisationLevel::LEVEL0)
-      .value("Level1", GeneratorOptions::OptimisationLevel::LEVEL1)
-      .value("Level2", GeneratorOptions::OptimisationLevel::LEVEL2);
+      .value("Level0", GeneratorOptions::OptimisationLevel::LEVEL0,
+             "No architecture specific optimisations (i.e. no "
+             "`-march=native` under gcc). The options used are the ones "
+             "returned by `tfel-config --oflags0`.")
+      .value("Level1", GeneratorOptions::OptimisationLevel::LEVEL1,
+             "Standard optimisation level. The options used are the ones "
+             "returned by `tfel-config --oflags`.")
+      .value("Level2", GeneratorOptions::OptimisationLevel::LEVEL2,
+             "Add potentially unsafe math optmisations. The options used are "
+             "the ones returned by `tfel-config --oflags --oflags2`.");
 
   pybind11::class_<GeneratorOptions>(
       m, "GeneratorOptions",
       "A data structure holding options passed to generators")
-      .def_readwrite("olevel", &GeneratorOptions::olevel);
+      .def_readwrite("olevel", &GeneratorOptions::olevel,
+                     "Optimisation level");
 }

@@ -27,7 +27,12 @@ requires(
   using HS = tfel::material::homogenization::elasticity::HomogenizationScheme<
       N, StressType>;
 
-  pybind11::class_<HS>(m, n, pybind11::buffer_protocol())
+  pybind11::class_<HS>(
+      m, n, pybind11::buffer_protocol(),
+      "The struct HomogenizationScheme is a struct whose attributes are\n"
+      "various objects that are useful in homogenization theory, as\n"
+      "homogenized stiffness, mean strain localisation tensors, "
+      "effective_polarisation...")
       .def(pybind11::init<const HS&>())
       .def_readonly("homogenized_stiffness", &HS::homogenized_stiffness)
       .def_readonly("effective_polarisation", &HS::effective_polarisation)
@@ -112,6 +117,27 @@ requires(
 
 void declareMicrostructureLinearHomogenization(pybind11::module_&);
 
+static const char compute_dilute_scheme_doc[] =
+    "Here is the Dilute scheme which returns an object of\n"
+    "type HomogenizationScheme from a ParticulateMicrostructure.\n"
+    "Return an object of type HomogenizationScheme\n"
+    "micro: ParticulateMicrostructure";
+
+static const char compute_mori_tanaka_scheme_doc[] =
+    "Here is the MoriTanaka scheme which returns an object of\n"
+    "type HomogenizationScheme from a ParticulateMicrostructure.\n"
+    "Return an object of type HomogenizationScheme";
+
+static const char compute_asymmetric_self_consistent_scheme_doc[] =
+    "Here is the Asymmetric Self-consistent scheme which returns an object\n"
+    "of type HomogenizationScheme from a ParticulateMicrostructure.\n"
+    "Return an object of type HomogenizationScheme";
+
+static const char compute_self_consistent_scheme_doc[] =
+    "Here is the Self-consistent scheme which returns an object of\n"
+    "type HomogenizationScheme from a Polycrystal.\n"
+    "Return an object of type HomogenizationScheme";
+
 void declareMicrostructureLinearHomogenization(pybind11::module_& m) {
   using namespace tfel::material::homogenization::elasticity;
   const auto pola = std::vector<tfel::math::stensor<3u, double>>{};
@@ -120,22 +146,26 @@ void declareMicrostructureLinearHomogenization(pybind11::module_& m) {
         pybind11::arg("micro"),
         pybind11::arg("max_iter_anisotropic_integration") = 12,
         pybind11::arg("polarisations") = pola,
-        pybind11::arg("with_Chom_derivatives") = false);
+        pybind11::arg("with_Chom_derivatives") = false,
+        compute_mori_tanaka_scheme_doc);
   m.def("computeDiluteScheme", &computeDilute<3, double>,
         pybind11::arg("micro"),
         pybind11::arg("max_iter_anisotropic_integration") = 12,
         pybind11::arg("polarisations") = pola,
-        pybind11::arg("with_Chom_derivatives") = false);
+        pybind11::arg("with_Chom_derivatives") = false,
+        compute_dilute_scheme_doc);
   m.def("computeAsymmetricSelfConsistentScheme",
         &computeAsymmetricSelfConsistent<3, double>, pybind11::arg("micro"),
         pybind11::arg("tolerance"), pybind11::arg("isotropic"),
         pybind11::arg("max_iter_anisotropic_integration") = 8,
         pybind11::arg("polarisations") = pola,
-        pybind11::arg("with_Chom_derivatives") = false);
+        pybind11::arg("with_Chom_derivatives") = false,
+        compute_asymmetric_self_consistent_scheme_doc);
   m.def("computeSelfConsistentScheme", &computeSelfConsistent<3, double>,
-        pybind11::arg("polycrystal"), pybind11::arg("tolerance"),
-        pybind11::arg("C_initial"), pybind11::arg("isotropic"),
+        pybind11::arg("poly"), pybind11::arg("tolerance"),
+        pybind11::arg("Cini"), pybind11::arg("isotropic"),
         pybind11::arg("max_iter_anisotropic_integration") = 8,
         pybind11::arg("polarisations") = pola,
-        pybind11::arg("with_Chom_derivatives") = false);
+        pybind11::arg("with_Chom_derivatives") = false,
+        compute_self_consistent_scheme_doc);
 }
