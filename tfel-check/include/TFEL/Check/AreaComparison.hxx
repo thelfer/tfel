@@ -4,7 +4,8 @@
  *
  *  \class AreaComparison
  *  \brief Does an integration of the absolute difference of the two curves, and
- * compares it to the expected error \date 12/06/2013 \author Remy Petkantchin
+ * compares it to the expected error \date 12/06/2013
+ * \author Remy Petkantchin
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,6 +26,18 @@ namespace tfel::check {
     AreaComparison();
     void compare() override;
     ~AreaComparison() override;
+
+   protected:
+    //! \brief norm of the difference between both curves
+    enum struct Norm { L1, L2 };
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the comparison
+     * \param[in] t: norm of the difference between both curves
+     */
+    AreaComparison(const std::string&, const Norm);
+    //! \brief norm of the difference between both curves
+    Norm norm = Norm::L1;
   };
 
 }  // end of namespace tfel::check

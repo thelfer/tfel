@@ -86,6 +86,8 @@ namespace mfront {
     virtual void treatNoMelt();
     //! treat the --silent-build command line option
     virtual void treatSilentBuild();
+    //! treat the --set-rpath command line option
+    virtual void treatSetRPATH();
 
     virtual void treatNoDeps();
 

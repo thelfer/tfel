@@ -626,6 +626,14 @@ In Version 5.1, the variable name `KHRR` is declared twice. `Cast3M`
 does not generate an error although duplicated names leads to erroneous
 results. Version 5.2 avoids this pitfall.
 
+# Documentation
+
+## New coding guidelines page
+
+A new page describes the coding conventions of the `C` and `C++`
+sources of the project, for new developers as well as for coding
+agents: [coding guidelines](coding-guidelines.html).
+
 # Continuous integration
 
 ## Github actions

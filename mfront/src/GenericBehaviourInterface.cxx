@@ -409,6 +409,23 @@ namespace mfront {
     const std::string array_offset;
   };  // end of WriteRotationFunctionArgument
 
+  //! \return the offset of the variable, including the offset of the point
+  static std::string getOffset(const WriteRotationFunctionArgument& args) {
+    if (args.array_offset.empty()) {
+      return std::to_string(args.variable_offset);
+    }
+    return args.array_offset + " + " + std::to_string(args.variable_offset);
+  }  // end of getOffset
+
+  /*!
+   * \brief write the copy of a scalar, which is not changed by the rotation
+   * but must be copied if the destination is not the source
+   */
+  static void writeScalarCopy(WriteRotationFunctionArgument& args) {
+    const auto o = getOffset(args);
+    args.os << "dest[" << o << "] = src[" << o << "];\n";
+  }  // end of writeScalarCopy
+
   static void writeSecondOrderTensorsRotation(
       WriteRotationFunctionArgument& args,
       const char* const type,
@@ -448,7 +465,8 @@ namespace mfront {
               << args.variable_offset << "};\n"
               << "auto " << args.variable_name
               << "_view = tfel::math::" << view_type << "<" << d
-              << ",mfront::gb::real>(dest + " << args.variable_offset << ");\n"
+              << ",mfront::gb::real>(dest + " << args.array_offset << " + "
+              << args.variable_offset << ");\n"
               << args.variable_name << "_view = tfel::math::change_basis("
               << args.variable_name << ", r);\n";
     }
@@ -461,6 +479,12 @@ namespace mfront {
   static void writeTensorRotation(WriteRotationFunctionArgument& args) {
     writeSecondOrderTensorsRotation(args, "tensor", "TensorView");
   }  // end of writeTensorRotation
+
+  static void writeVectorRotation(WriteRotationFunctionArgument& args) {
+    // the code rotating vectors by `change_basis` is the one of second
+    // order tensors
+    writeSecondOrderTensorsRotation(args, "tvector", "TVectorView");
+  }  // end of writeVectorRotation
 
   static void writeFourthOrderTensorsRotation(
       WriteRotationFunctionArgument& args,
@@ -523,13 +547,30 @@ namespace mfront {
     writeFourthOrderTensorsRotation(args, "t2tost2", "T2toST2View");
   }  // end of writeT2toST2Rotation
 
-  static void writeST2toT2Rotation(WriteRotationFunctionArgument& args) {
-    writeFourthOrderTensorsRotation(args, "st2tot2", "ST2toT2View");
-  }  // end of writeST2toT2Rotation
-
   static void writeT2toT2Rotation(WriteRotationFunctionArgument& args) {
     writeFourthOrderTensorsRotation(args, "t2tot2", "T2toT2View");
   }  // end of writeT2toT2Rotation
+
+  /*!
+   * \brief write the rotation of a scalar, a vector, a symmetric tensor or a
+   * tensor
+   * \param[in] args: arguments
+   * \param[in] f: type of the object
+   */
+  static void writeObjectRotation(WriteRotationFunctionArgument& args,
+                                  const SupportedTypes::TypeFlag f) {
+    if (f == SupportedTypes::SCALAR) {
+      writeScalarCopy(args);
+    } else if (f == SupportedTypes::TVECTOR) {
+      writeVectorRotation(args);
+    } else if (f == SupportedTypes::STENSOR) {
+      writeStensorRotation(args);
+    } else if (f == SupportedTypes::TENSOR) {
+      writeTensorRotation(args);
+    } else {
+      tfel::raise("writeObjectRotation: unsupported type");
+    }
+  }  // end of writeObjectRotation
 
   static void writeVariableRotation(
       std::ostream& os,
@@ -547,18 +588,7 @@ namespace mfront {
         static_cast<size_type>(o.getValueForModellingHypothesis(h));
     auto args =
         WriteRotationFunctionArgument{os, h, v.name, variable_offset, ao};
-    const auto f = SupportedTypes::getTypeFlag(v.type);
-    if (f == SupportedTypes::SCALAR) {
-    } else if (f == SupportedTypes::TVECTOR) {
-      os << "std::cerr << \"rotation of vector is unsupported\";\n"
-         << "std::exit(-1);\n";
-    } else if (f == SupportedTypes::STENSOR) {
-      writeStensorRotation(args);
-    } else if (f == SupportedTypes::TENSOR) {
-      writeTensorRotation(args);
-    } else {
-      tfel::raise("writeVariableRotation: unsupported variable type");
-    }
+    writeObjectRotation(args, SupportedTypes::getTypeFlag(v.type));
   }  // end of writeVariableRotation
 
   static void writeGradientsRotationFunctionsImplementation(
@@ -729,9 +759,60 @@ namespace mfront {
     }
   }  // end of writeThermodynamicForcesRotationFunctionsImplementation
 
+  //! \return the type of TFEL associated with a vector or a tensorial object
+  static std::string getRotatedObjectType(const SupportedTypes::TypeFlag f,
+                                          const unsigned short d) {
+    const auto type = [f]() -> std::string {
+      if (f == SupportedTypes::TVECTOR) {
+        return "tvector";
+      } else if (f == SupportedTypes::STENSOR) {
+        return "stensor";
+      } else if (f == SupportedTypes::TENSOR) {
+        return "tensor";
+      }
+      tfel::raise("getRotatedObjectType: unsupported type");
+    }();
+    return "tfel::math::" + type + "<" + std::to_string(d) +
+           ",mfront::gb::real>";
+  }  // end of getRotatedObjectType
+
+  /*!
+   * \brief write the rotation of a tangent operator block
+   * \param[in] args: arguments
+   * \param[in] f1: type of the derivated variable
+   * \param[in] f2: type of the variable with respect to which the derivative
+   * is taken
+   */
+  static void writeTangentOperatorBlockRotation(
+      WriteRotationFunctionArgument& args,
+      const SupportedTypes::TypeFlag f1,
+      const SupportedTypes::TypeFlag f2) {
+    if (f2 == SupportedTypes::SCALAR) {
+      writeObjectRotation(args, f1);
+    } else if (f1 == SupportedTypes::SCALAR) {
+      writeObjectRotation(args, f2);
+    } else if ((f1 == SupportedTypes::STENSOR) &&
+               (f2 == SupportedTypes::STENSOR)) {
+      writeST2toST2Rotation(args);
+    } else if ((f1 == SupportedTypes::STENSOR) &&
+               (f2 == SupportedTypes::TENSOR)) {
+      writeT2toST2Rotation(args);
+    } else if ((f1 == SupportedTypes::TENSOR) &&
+               (f2 == SupportedTypes::TENSOR)) {
+      writeT2toT2Rotation(args);
+    } else {
+      // TFEL has no type with a `change_basis` function for this block
+      const auto d = tfel::material::getSpaceDimension(args.hypothesis);
+      const auto o = getOffset(args);
+      args.os << "mfront::gb::rotateTangentOperatorBlock<"
+              << getRotatedObjectType(f1, d) << ", "
+              << getRotatedObjectType(f2, d) << ">(dest + " << o
+              << ", src + " << o << ", r);\n";
+    }
+  }  // end of writeTangentOperatorBlockRotation
+
   static void writeTangentOperatorRotationFunctionsImplementationBody(
       std::ostream& os,
-      const std::string& f,
       const BehaviourDescription& bd,
       const tfel::material::ModellingHypothesis::Hypothesis h,
       const std::string& array_offset = "") {
@@ -740,80 +821,31 @@ namespace mfront {
     for (const auto& b : bd.getTangentOperatorBlocks()) {
       const auto& v1 = b.first;
       const auto& v2 = b.second;
-      if ((v1.arraySize != 1) || (v2.arraySize != 1)) {
-        os << "std::cerr << \"" << f << ": \"\n"
-           << "          << \"array of gradients are not supported\";\n"
-           << "std::exit(-1);\n";
-      } else {
-        const auto to_name = "d" + v1.name + "_d" + v2.name;
-        auto args =
-            WriteRotationFunctionArgument{os, h, to_name, o, array_offset};
-        const auto f1 = SupportedTypes::getTypeFlag(v1.type);
-        const auto f2 = SupportedTypes::getTypeFlag(v2.type);
-        if (f1 == SupportedTypes::SCALAR) {
-          if (f2 == SupportedTypes::SCALAR) {
-          } else if (f2 == SupportedTypes::TVECTOR) {
-            os << "std::cerr << \"" << f << ": \"\n"
-               << "          << \"unsupported tangent operator type\";\n"
-               << "std::exit(-1);\n";
-          } else if (f2 == SupportedTypes::STENSOR) {
-            writeStensorRotation(args);
-          } else if (f2 == SupportedTypes::TENSOR) {
-            writeTensorRotation(args);
-          } else {
-            os << "std::cerr << \"" << f << ": \"\n"
-               << "          << \"unsupported gradient type\";\n"
-               << "std::exit(-1);\n";
-          }
-        } else if (f1 == SupportedTypes::TVECTOR) {
-          os << "std::cerr << \"" << f << ": \"\n"
-             << "          << \"unsupported tangent operator type\";\n"
-             << "std::exit(-1);\n";
-        } else if (f1 == SupportedTypes::STENSOR) {
-          if (f2 == SupportedTypes::SCALAR) {
-            writeStensorRotation(args);
-          } else if (f2 == SupportedTypes::TVECTOR) {
-            os << "std::cerr << \"" << f << ": \"\n"
-               << "          << \"unsupported tangent operator type\";\n"
-               << "std::exit(-1);\n";
-          } else if (f2 == SupportedTypes::STENSOR) {
-            writeST2toST2Rotation(args);
-          } else if (f2 == SupportedTypes::TENSOR) {
-            writeT2toST2Rotation(args);
-          } else {
-            os << "std::cerr << \"" << f << ": \"\n"
-               << "          << \"unsupported gradient type\";\n"
-               << "std::exit(-1);\n";
-          }
-        } else if (f1 == SupportedTypes::TENSOR) {
-          if (f2 == SupportedTypes::SCALAR) {
-            writeTensorRotation(args);
-          } else if (f2 == SupportedTypes::TVECTOR) {
-            os << "std::cerr << \"" << f << ": \"\n"
-               << "          << \"unsupported tangent operator type\";\n"
-               << "std::exit(-1);\n";
-          } else if (f2 == SupportedTypes::STENSOR) {
-            writeST2toT2Rotation(args);
-          } else if (f2 == SupportedTypes::TENSOR) {
-            writeT2toT2Rotation(args);
-          } else {
-            os << "std::cerr << \"" << f << ": \"\n"
-               << "          << \"unsupported gradient type\";\n"
-               << "std::exit(-1);\n";
-          }
-        } else {
-          os << "std::cerr << \"" << f << ": \"\n"
-             << "          << \"unsupported gradient type\";\n"
-             << "std::exit(-1);\n";
-        }
-      }
+      const auto f1 = SupportedTypes::getTypeFlag(v1.type);
+      const auto f2 = SupportedTypes::getTypeFlag(v2.type);
       const auto s1 = static_cast<size_type>(
-          SupportedTypes::getTypeSize(v1.type, v1.arraySize)
+          SupportedTypes::getTypeSize(v1.type, 1u)
               .getValueForModellingHypothesis(h));
       const auto s2 = static_cast<size_type>(
-          SupportedTypes::getTypeSize(v2.type, v2.arraySize)
+          SupportedTypes::getTypeSize(v2.type, 1u)
               .getValueForModellingHypothesis(h));
-      o += static_cast<size_type>(s1 * s2);
+      // a block associated with arrays of variables is made of one
+      // sub-block for each pair of entries, stored contiguously
+      for (unsigned short idx1 = 0; idx1 != v1.arraySize; ++idx1) {
+        for (unsigned short idx2 = 0; idx2 != v2.arraySize; ++idx2) {
+          auto to_name = "d" + v1.name + "_d" + v2.name;
+          if (v1.arraySize != 1u) {
+            to_name += "_" + std::to_string(idx1);
+          }
+          if (v2.arraySize != 1u) {
+            to_name += "_" + std::to_string(idx2);
+          }
+          auto args =
+              WriteRotationFunctionArgument{os, h, to_name, o, array_offset};
+          writeTangentOperatorBlockRotation(args, f1, f2);
+          o += s1 * s2;
+        }
+      }
     }
   }  // end of writeTangentOperatorRotationFunctionsImplementationBody
 
@@ -930,8 +962,7 @@ namespace mfront {
          << "const mfront_gb_real* const src,"
          << "const mfront_gb_real* const rv){\n";
       writeRotationMatrixDefinition(os, true);
-      writeTangentOperatorRotationFunctionsImplementationBody(
-          os, f + "_rotateTangentOperatorBlocks", bd, h);
+      writeTangentOperatorRotationFunctionsImplementationBody(os, bd, h);
       os << "}\n\n";
       auto tob_size = size_type{};
       for (const auto& to : bd.getTangentOperatorBlocks()) {
@@ -951,8 +982,8 @@ namespace mfront {
          << "const mfront_gb_size_type s){\n";
       writeRotationMatrixDefinition(os, true);
       os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
-      writeTangentOperatorRotationFunctionsImplementationBody(
-          os, f + "_rotateArrayOfTangentOperatorBlocks", bd, h, tob_offset);
+      writeTangentOperatorRotationFunctionsImplementationBody(os, bd, h,
+                                                              tob_offset);
       os << "}\n";
       os << "}\n\n";
     }
@@ -1253,6 +1284,10 @@ namespace mfront {
       }
     }
     out << "#include\"MFront/GenericBehaviour/GenericBehaviourTraits.hxx\"\n";
+    if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+      out << "#include\"MFront/GenericBehaviour/"
+          << "RotateTangentOperatorBlock.hxx\"\n";
+    }
     // behaviour integration
     if ((type == BehaviourDescription::GENERALBEHAVIOUR) ||
         (type == BehaviourDescription::COHESIVEZONEMODEL)) {

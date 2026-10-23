@@ -28,5 +28,7 @@ void declareMaterialPropertyDSL(pybind11::module_& m) {
       "Domain specific language handling material properties")
       .def("getMaterialPropertyDescription",
            &MaterialPropertyDSL::getMaterialPropertyDescription,
-           pybind11::return_value_policy::reference);
+           pybind11::return_value_policy::reference,
+           "Return the description of the material property treated by the "
+           "DSL");
 }

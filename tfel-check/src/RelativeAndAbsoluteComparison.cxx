@@ -13,6 +13,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <optional>
 #include <sstream>
 #include <iomanip>
 #include <vector>
@@ -32,16 +34,14 @@ namespace tfel::check {
   void RelativeAndAbsoluteComparison::compare() {
     using namespace std;
     constexpr const double eps = 100. * numeric_limits<double>::min();
-    unsigned int errorAbsLineNumber = 0;
-    unsigned int errorRelLineNumber = 0;
+    std::optional<std::size_t> errorAbsLineNumber;
+    std::optional<std::size_t> errorRelLineNumber;
     unsigned int errorLinesCount = 0;
     float errorLinesPercent = 0.;
     double absoluteError;
     double relativeError;
     double maxAbsoluteError = 0.;
     double maxRelativeError = 0.;
-    unsigned int lineOffset =
-        (!this->c2->getData()->getLegends().empty()) ? 2u : 1u;
     this->msgLog += '\n';
 
     bool s = true;
@@ -53,20 +53,25 @@ namespace tfel::check {
                                            abs(this->c2->getValues()[index])) +
                                        eps);
 
-      if (maxRelativeError < relativeError) {
+      // a NaN is reported as the maximum error
+      if ((!std::isnan(maxRelativeError)) &&
+          (std::isnan(relativeError) || (maxRelativeError < relativeError))) {
         maxRelativeError = relativeError;
-        errorRelLineNumber = index + lineOffset;
+        errorRelLineNumber = index;
       }
 
       // only store maxAbsoluteError if relative check failed
-      if (relativeError > (this->prec)) {
-        if (maxAbsoluteError < absoluteError) {
+      if (!(relativeError <= this->prec)) {
+        // a NaN is reported as the maximum error
+        if ((!std::isnan(maxAbsoluteError)) &&
+            (std::isnan(absoluteError) || (maxAbsoluteError < absoluteError))) {
           maxAbsoluteError = absoluteError;
-          errorAbsLineNumber = index + lineOffset;
+          errorAbsLineNumber = index;
         }
       }
-      if ((relativeError > (this->prec)) &&
-          (absoluteError > this->precision2)) {
+      // written this way so that a NaN fails
+      if (!((relativeError <= this->prec) ||
+            (absoluteError <= this->precision2))) {
         errorLinesCount++;
         s = false;
       }
@@ -90,10 +95,10 @@ namespace tfel::check {
       this->msgLog.append(" failed (" + this->name +
                           " check).\n    Maximum relative error : ");
       this->msgLog.append(tfel::utilities::convert(maxRelativeError));
-      this->msgLog += " at line " + std::to_string(errorRelLineNumber) +
+      this->msgLog += this->getLocation(errorRelLineNumber) +
                       "\n    Maximum absolute error : " +
-                      tfel::utilities::convert(maxAbsoluteError) + " at line " +
-                      std::to_string(errorAbsLineNumber) +
+                      tfel::utilities::convert(maxAbsoluteError) +
+                      this->getLocation(errorAbsLineNumber) +
                       "\n    Failed comparisons count (for column) : " +
                       std::to_string(errorLinesCount) + " / " +
                       std::to_string(this->c1->getValues().size()) + " (" +
@@ -106,12 +111,12 @@ namespace tfel::check {
     } else {
       this->msgLog += " succeed (" + this->name +
                       " check).\n    Maximum relative error : " +
-                      tfel::utilities::convert(maxRelativeError) + " at line " +
-                      std::to_string(errorRelLineNumber) + "\n";
-      if (errorAbsLineNumber) {
+                      tfel::utilities::convert(maxRelativeError) +
+                      this->getLocation(errorRelLineNumber) + "\n";
+      if (errorAbsLineNumber.has_value()) {
         this->msgLog += "    Maximum absolute error : " +
                         tfel::utilities::convert(maxAbsoluteError) +
-                        " at line " + std::to_string(errorAbsLineNumber) + "\n";
+                        this->getLocation(errorAbsLineNumber) + "\n";
       } else {
         this->msgLog += "    Absolute comparison not used.\n";
       }

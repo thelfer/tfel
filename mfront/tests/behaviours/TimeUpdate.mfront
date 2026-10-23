@@ -1,0 +1,9 @@
+@DSL Model;
+@Model TimeUpdate;
+@UseQt true;
+@StateVariable time tv;
+tv.setEntryName("Time");
+tv.setDepth(1);
+@Function TimeUPdate {
+  tv = tv_1 + dt;
+}

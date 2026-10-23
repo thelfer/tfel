@@ -600,6 +600,22 @@ namespace tfel::math {
       const unsigned short,
       const unsigned short);
 
+  /*!
+   * \brief rotate a vector using a rotation matrix.
+   *
+   * The convention is the one of the other mathematical objects: the
+   * components of the rotated vector are \f$v'_{i}=r_{ki}\,v_{k}\f$. In 1D,
+   * the vector is unchanged. In 2D, only the in-plane block of the rotation
+   * matrix is used.
+   *
+   * \param[in] v: vector to be rotated
+   * \param[in] r: rotation matrix
+   * \return the rotated vector
+   */
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr tvector<N, T> change_basis(
+      const tvector<N, T>&, const rotation_matrix<T>&) noexcept;
+
 }  // end of namespace tfel::math
 
 namespace tfel::typetraits {

@@ -10,13 +10,23 @@
  * project under specific licensing conditions.
  */
 
+#include <cmath>
 #include <sstream>
+#include <algorithm>
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/Check/Curve.hxx"
+#include "TFEL/Check/AreaComparison.hxx"
 #include "TFEL/Check/Test.hxx"
 
 namespace tfel::check {
+
+  //! \return true if the comparison integrates the difference of the curves
+  static bool isIntegralComparison(const Comparison& c) {
+    return dynamic_cast<const AreaComparison*>(&c) != nullptr;
+  }
 
   Test::Test() = default;
   Test::Test(Test&&) noexcept = default;
@@ -85,11 +95,11 @@ namespace tfel::check {
   void Test::setPrecision2(const double v) { this->precision2 = v; }
 
   const std::shared_ptr<Column>& Test::getColIntegralInterpolated() const {
-    return this->ci;
+    return this->colIntegralInterpolated;
   }
 
   void Test::setColIntegralInterpolated(const std::shared_ptr<Column>& c) {
-    this->ci = c;
+    this->colIntegralInterpolated = c;
   }
 
   const std::shared_ptr<Interpolation>& Test::getIntegralInterpolation() const {
@@ -105,7 +115,6 @@ namespace tfel::check {
   const std::shared_ptr<Column>& Test::getColB() const { return this->c2; }
 
   void Test::applyInterpolation() {
-    using namespace std;
     using size_type = std::vector<double>::size_type;
 
     this->c1->setFilename(this->f1);
@@ -114,8 +123,13 @@ namespace tfel::check {
     std::ostringstream msg;
     msg.str("");  // wipe stream
 
+    auto getAbscissas = [this](const std::string& f) {
+      auto x = Column(*(this->ci));
+      x.setFilename(f);
+      return x.getValues();
+    };
     if (!(this->interpolation->isConform()) &&
-        this->comparison->getName() != "area") {
+        !isIntegralComparison(*(this->comparison))) {
       // tests if we can interpolate or not, based on columns' size and type
       // of interpolation
       if (this->c1->getValues().size() != this->c2->getValues().size()) {
@@ -131,89 +145,82 @@ namespace tfel::check {
         this->msgLog.append(msg.str());
         raise(msg.str());
       }
+      // if an abscissa column is given, the abscissas of both files must
+      // be the same, up to a relative tolerance of 1e-10
+      if (this->ci != nullptr) {
+        const auto x1 = getAbscissas(this->f1);
+        const auto x2 = getAbscissas(this->f2);
+        raise_if(x1.size() != x2.size(),
+                 "Test::applyInterpolation: the abscissa columns of files '" +
+                     this->f1 + "' and '" + this->f2 +
+                     "' do not have the same size");
+        auto xmax = double{0};
+        for (const auto x : x1) {
+          xmax = std::max(xmax, std::abs(x));
+        }
+        const auto eps = 1.e-10 * xmax;
+        for (size_type i = 0; i != x1.size(); ++i) {
+          // written this way so that a NaN fails
+          raise_if(!(std::abs(x1[i] - x2[i]) <= eps),
+                   "Test::applyInterpolation: the abscissas of files '" +
+                       this->f1 + "' and '" + this->f2 + "' differ (" +
+                       tfel::utilities::convert(x1[i]) + " and " +
+                       tfel::utilities::convert(x2[i]) + " for the value " +
+                       std::to_string(i + 1) +
+                       "), an interpolation is required");
+        }
+      }
     } else if (this->interpolation->isConform() &&
-               this->comparison->getName() != "area") {
-      auto colInterpolatedTmpA = std::make_shared<Column>(*(this->ci));
-      std::shared_ptr<Column> ci1(
-          colInterpolatedTmpA); /**!< abscissa column for .ref */
-
-      auto colInterpolatedTmpB = std::make_shared<Column>(*(this->ci));
-      std::shared_ptr<Column> ci2(
-          colInterpolatedTmpB); /**!< abscissa column for .res */
-
-      // Opening the files to get the times columns
-      ci1->setFilename(this->f1);
-      ci2->setFilename(this->f2);
-
-      if (this->c1->getValues().size() <= this->c2->getValues().size()) {
-        vector<double> cXBTmp = ci2->getValues();
-        vector<double> cbTmp = this->c2->getValues();
-        vector<double> cXATmp = ci1->getValues();
-
-        //      if (beforeInterFile)		// stores the before
-        //      interpolation values
-        //        for(size_type i = 0; i < ci2->getValues().size(); ++i)
-        //          beforeInterFile << ci2->getValues().at(i) << " "
-        //                          << this->c2->getValues().at(i) << endl;
-        //      else
-        //        msg << "\nProblem saving file\n";
-
-        this->interpolation->interpolate(cXBTmp,
-                                         cbTmp);  // interpolation of col B
-        this->c2->clearValues();
-        this->c2->resizeValues(this->c1->getValues().size());
-
-        for (size_type i = 0; i < ci1->getValues().size(); ++i) {
-          this->c2->setValue(
-              i, this->interpolation->getValue(ci1->getValues().at(i)));
+               !isIntegralComparison(*(this->comparison))) {
+      raise_if(this->ci == nullptr,
+               "Test::applyInterpolation: no abscissa column defined");
+      auto setValues = [](Column& c, const std::vector<double>& v) {
+        c.clearValues();
+        c.resizeValues(v.size());
+        for (size_type i = 0; i != v.size(); ++i) {
+          c.setValue(static_cast<unsigned>(i), v[i]);
         }
-        //      if (afterInterFile)		// stores the after
-        //      interpolation values
-        //        for(size_type i = 0; i < ci1->getValues().size(); ++i)
-        //          afterInterFile << ci1->getValues().at(i) << " "
-        //                         << this->c2->getValues().at(i) << endl;
-        //      else
-        //        msg << "\nProblem saving file\n";
-        this->msgLog.append(msg.str());
-        //      beforeInterFile.close();
-        //      afterInterFile.close();
-      } else if (this->c2->getValues() < this->c1->getValues() &&
-                 this->allowLessResults) {
-        //      if (beforeInterFile)		// stores the before
-        //      interpolation values
-        //        for(size_type i = 0; i < ci1->getValues().size(); ++i)
-        //          beforeInterFile << ci1->getValues().at(i) << " "
-        //                          << this->c1->getValues().at(i) << endl;
-        //
-        //      else
-        //        msg << "\nProblem saving file\n";
-
-        vector<double> cXATmp = ci1->getValues();
-        vector<double> caTmp = this->c1->getValues();
-        vector<double> cXBTmp = ci2->getValues();
-
-        this->interpolation->interpolate(cXATmp,
-                                         caTmp);  // interpolation of col A
-
-        this->c1->clearValues();
-        this->c1->resizeValues(this->c2->getValues().size());
-
-        for (size_type i = 0; i < ci2->getValues().size(); ++i) {
-          this->c1->setValue(
-              i, this->interpolation->getValue(ci2->getValues().at(i)));
-        }
-
-        //      if (afterInterFile)
-        //        for(size_type i = 0; i < ci2->getValues().size(); ++i)
-        //          afterInterFile << ci2->getValues().at(i) << " "
-        //                         << this->c1->getValues().at(i) << endl;
-        //      else
-        //        msg << "\nProblem saving file\n";
-        this->msgLog.append(msg.str());
-        //      beforeInterFile.close();
-        //      afterInterFile.close();
-      } else if (this->c2->getValues() < this->c1->getValues() &&
-                 !(this->allowLessResults)) {
+      };
+      const auto x1 = getAbscissas(this->f1);
+      const auto x2 = getAbscissas(this->f2);
+      // both files must have values
+      const auto ca = buildCurve(this->f1, x1, this->c1->getValues());
+      const auto cb = buildCurve(this->f2, x2, this->c2->getValues());
+      // a NaN shall make the test fail, even if it lies between two
+      // abscissas at which the curve is evaluated
+      auto checkNaN = [](const std::string& f, const std::vector<double>& v) {
+        raise_if(std::any_of(v.begin(), v.end(),
+                             [](const double y) { return std::isnan(y); }),
+                 "Test::applyInterpolation: NaN value in file '" + f + "'");
+      };
+      checkNaN(this->f1, this->c1->getValues());
+      checkNaN(this->f2, this->c2->getValues());
+      // the choice is based on the number of distinct abscissas
+      if (ca.abscissas.size() <= cb.abscissas.size()) {
+        // the values of the second file are interpolated at the
+        // abscissas of the first one, without extrapolation
+        raise_if(!covers(cb, x1),
+                 "Test::applyInterpolation: the abscissas of file '" +
+                     this->f2 + "' do not cover the ones of file '" + this->f1 +
+                     "'");
+        setValues(*(this->c2), evaluateCurve(*(this->interpolation), cb, x1));
+      } else if (this->allowLessResults) {
+        // the values of the first file are interpolated at the
+        // abscissas of the second one, without extrapolation. The second
+        // file must still reach the bounds of the first one: results
+        // stopping early shall not pass
+        raise_if(!covers(cb, {ca.abscissas.front(), ca.abscissas.back()}),
+                 "Test::applyInterpolation: the abscissas of file '" +
+                     this->f2 +
+                     "' do not reach the bounds of the ones of "
+                     "file '" +
+                     this->f1 + "'");
+        raise_if(!covers(ca, x2),
+                 "Test::applyInterpolation: the abscissas of file '" +
+                     this->f1 + "' do not cover the ones of file '" + this->f2 +
+                     "'");
+        setValues(*(this->c1), evaluateCurve(*(this->interpolation), ca, x2));
+      } else {
         msg << "\nResults have less values than reference.\n";
         this->msgLog.append(msg.str());
         raise(msg.str());

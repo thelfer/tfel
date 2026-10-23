@@ -118,6 +118,7 @@ set(mfront_tests_SOURCES
   ExternalModelCaller2
   ExternalModelCaller3
   ExternalModelCaller4
+  TimeDependantYoungModulus
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC
@@ -190,6 +191,7 @@ if(enable-mfront-quantity-tests)
        Plasticity5
        Plasticity6
        Plasticity7
+       Plasticity8
        PlasticityWithoutAutomaticTemperatureDeclaration
        StrainHardeningCreep3
        StrainHardeningCreep5
@@ -266,12 +268,53 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
   RungeKuttaElasticityParametersAsStaticVariables
   ImplicitElasticityParametersAsStaticVariables)
 
+# behaviours used to test the integration drivers in cases which
+# can't be checked by MTest
+mfront_behaviour_check_library(MFrontGenericIntegrationDriversBehaviours generic
+  HenckyTimeStepScalingFactorTest
+  InternalStateVariablePostProcessingTest
+  FiniteStrainInitializeFunctionTest
+  GreenLagrangeInitializeFunctionTest
+  HenckyInitializeFunctionTest)
+
+add_executable(generic-IntegrationDriversTest EXCLUDE_FROM_ALL
+  IntegrationDriversTest.cxx)
+target_link_libraries(generic-IntegrationDriversTest
+  TFELSystem TFELUtilities TFELTests TFELException)
+add_dependencies(generic-IntegrationDriversTest MFrontGenericIntegrationDriversBehaviours)
+add_dependencies(build-tests generic-IntegrationDriversTest)
+add_test(NAME generic-IntegrationDriversTest
+  COMMAND generic-IntegrationDriversTest)
+set_property(TEST generic-IntegrationDriversTest
+  PROPERTY ENVIRONMENT
+  MFrontGenericIntegrationDriversBehavioursBuildPath=$<TARGET_FILE:MFrontGenericIntegrationDriversBehaviours>)
+
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontGenericBehaviours
       PROPERTIES LINK_FLAGS "-Wl,--kill-at -Wl,--no-undefined")
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
+
+mfront_behaviour_check_library(MFrontGenericRotationFunctionsBehaviours generic
+  OrthotropicRotationFunctionsTest)
+
+add_executable(GenericBehaviourRotationFunctionsTest EXCLUDE_FROM_ALL
+  GenericBehaviourRotationFunctionsTest.cxx)
+target_link_libraries(GenericBehaviourRotationFunctionsTest
+  TFELSystem TFELUtilities TFELTests TFELException)
+add_dependencies(GenericBehaviourRotationFunctionsTest
+  MFrontGenericRotationFunctionsBehaviours)
+add_dependencies(build-tests GenericBehaviourRotationFunctionsTest)
+add_test(NAME GenericBehaviourRotationFunctionsTest
+  COMMAND GenericBehaviourRotationFunctionsTest)
+set_property(TEST GenericBehaviourRotationFunctionsTest
+  PROPERTY ENVIRONMENT
+  MFrontGenericRotationFunctionsBehavioursBuildPath=$<TARGET_FILE:MFrontGenericRotationFunctionsBehaviours>)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST GenericBehaviourRotationFunctionsTest
+    APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:MFrontProfiling>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELException>\;$ENV{PATH}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 
 function(set_generic_test_properties test)
   foreach(rm ${IEEE754_ROUNDING_MODES})
@@ -770,6 +813,7 @@ test_generic(externalmodelcaller3 ExternalModelCallerTest.ref)
 # test_generic(parametertest)
 # test_generic(parametertest2)
 test_generic(norton5)
+test_generic(TimeDependantYoungModulus)
 
 test_generic(PoroElasticity)
 test_generic(PoroPlasticity PoroPlasticity.ref)
@@ -819,6 +863,7 @@ if(enable-mfront-quantity-tests)
   test_generic(plasticity5 plasticity.ref)
   test_generic(plasticity6)
   test_generic(plasticity7 plasticity.ref)
+  test_generic(plasticity8)
   test_generic(plasticity_without_temperature_declaration plasticity.ref)
   test_generic(TensorialExternalStateVariableTest)
 endif(enable-mfront-quantity-tests)

@@ -152,10 +152,10 @@ namespace tfel::check {
      */
     std::string readString(const std::string&);
     /*!
-     * \brief read the current interpolation method
+     * \return the interpolation method read at the current position
      * \param[in] m: calling method
      */
-    void setInterpolation(const std::string&);
+    std::shared_ptr<Interpolation> readInterpolation(const std::string&);
 
     enum ClockEventType {
       START,

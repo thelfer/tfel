@@ -568,6 +568,23 @@ namespace tfel::math {
     }
   }  // end of map_derivative_strided
 
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr tvector<N, T> change_basis(
+      const tvector<N, T>& v, const rotation_matrix<T>& r) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    if constexpr (N == 1) {
+      return v;
+    } else {
+      auto rv = tvector<N, T>{T{0}};
+      for (unsigned short i = 0; i != N; ++i) {
+        for (unsigned short k = 0; k != N; ++k) {
+          rv(i) += r(k, i) * v(k);
+        }
+      }
+      return rv;
+    }
+  }  // end of change_basis
+
 }  // namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_TINY_MATRIX_IXX */

@@ -57,6 +57,10 @@ namespace tfel::check {
                                  const bool ic_,
                                  const std::shared_ptr<Column> cii_,
                                  const std::shared_ptr<Interpolation> ii_) {
+    // the same comparison is used by all the tests following a
+    // `@TestType` keyword: the result of a previous test is discarded
+    this->success = true;
+    this->msgLog.clear();
     this->c1 = c1_;
     this->c2 = c2_;
     this->prec = prec_;
@@ -69,6 +73,39 @@ namespace tfel::check {
   }
 
   const std::string& Comparison::getName() const { return this->name; }
+
+  std::string Comparison::getLocation(
+      const std::optional<std::size_t>& i) const {
+    if (!i.has_value()) {
+      return "";
+    }
+    auto getLine = [&i](Column& c) -> std::optional<std::size_t> {
+      const auto& l = c.getLineNumbers();
+      if ((l.size() != c.getValues().size()) || (*i >= l.size())) {
+        return {};
+      }
+      return l[*i];
+    };
+    const auto l1 = getLine(*(this->c1));
+    const auto l2 = getLine(*(this->c2));
+    const auto& f1 = this->c1->getFilename();
+    const auto& f2 = this->c2->getFilename();
+    if (l1.has_value() && l2.has_value()) {
+      if (*l1 == *l2) {
+        return " at line " + std::to_string(*l1) + " of files '" + f1 +
+               "' and '" + f2 + "'";
+      }
+      return " at line " + std::to_string(*l1) + " of file '" + f1 +
+             "' and line " + std::to_string(*l2) + " of file '" + f2 + "'";
+    }
+    if (l1.has_value()) {
+      return " at line " + std::to_string(*l1) + " of file '" + f1 + "'";
+    }
+    if (l2.has_value()) {
+      return " at line " + std::to_string(*l2) + " of file '" + f2 + "'";
+    }
+    return " at value " + std::to_string(*i + 1);
+  }  // end of getLocation
 
   Comparison::~Comparison() = default;
 

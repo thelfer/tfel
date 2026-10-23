@@ -43,6 +43,7 @@
 #include "TFEL/Check/RelativeAndAbsoluteComparison.hxx"
 #include "TFEL/Check/MixedComparison.hxx"
 #include "TFEL/Check/AreaComparison.hxx"
+#include "TFEL/Check/L2Comparison.hxx"
 #include "TFEL/Check/TestLauncher.hxx"
 
 namespace tfel::check {
@@ -473,6 +474,8 @@ namespace tfel::check {
       this->comparison.reset(new MixedComparison());
     } else if (this->current->value == "Area") {
       this->comparison.reset(new AreaComparison());
+    } else if (this->current->value == "L2") {
+      this->comparison.reset(new L2Comparison());
     } else {
       this->throwRuntimeError("TestLauncher::treatTestType",
                               "unknown test type "
@@ -480,7 +483,10 @@ namespace tfel::check {
                                   this->current->value + "').");
     }
     ++(this->current);
-    if (this->comparison->getName() != "area") {
+    // the Area and L2 comparisons need an interpolation for the
+    // integration
+    if (dynamic_cast<const AreaComparison*>(this->comparison.get()) ==
+        nullptr) {
       this->readSpecifiedToken("TestLauncher::treatTestType", ";");
       return;
     }
@@ -490,7 +496,8 @@ namespace tfel::check {
                                 "missing argument after '" +
                                     std::prev(this->current)->value +
                                     "'\n"
-                                    "Usage : \"TestType Area interpolation "
+                                    "Usage : \"TestType <Area|L2> "
+                                    "interpolation "
                                     "<None|Linear|Spline|LocalSpline> "
                                     "using <columnName|columnNumber>\"");
       }
@@ -498,7 +505,8 @@ namespace tfel::check {
     check();
     this->readSpecifiedToken("TestLauncher::treatTestType", "interpolation");
     check();
-    this->setInterpolation("TestLauncher::treatTestType");
+    this->integralInterpolation =
+        this->readInterpolation("TestLauncher::treatTestType");
     this->readSpecifiedToken("TestLauncher::treatTestType", "using");
     check();
     if ((this->current->flag == tfel::utilities::Token::String) ||
@@ -538,10 +546,9 @@ namespace tfel::check {
       test->setPrecision2(this->precision2);
       test->setInterpolation(this->interpolation->clone());
       test->setIntegralInterpolation(this->integralInterpolation);
-      if (test->getInterpolation()->isConform()) {
-        // fetch the times if doing an interpolation
-        test->setColInterpolated(this->ci);
-      }
+      // abscissa column, used to interpolate or, without interpolation,
+      // to check that the abscissas of both files are the same
+      test->setColInterpolated(this->ci);
       // fetch the times for an integration
       test->setColIntegralInterpolated(this->colIntegralInterpolated);
       test->setAllowLessResults(this->allowLessResults);
@@ -604,16 +611,18 @@ namespace tfel::check {
     this->readSpecifiedToken("TestLauncher::treatPrecision", ";");
   }  // end of treatPrecision
 
-  void TestLauncher::setInterpolation(const std::string& m) {
+  std::shared_ptr<Interpolation> TestLauncher::readInterpolation(
+      const std::string& m) {
     this->checkNotEndOfFile(m);
+    auto i = std::shared_ptr<Interpolation>{};
     if (this->current->value == "Spline") {
-      this->integralInterpolation.reset(new SplineInterpolation());
+      i = std::make_shared<SplineInterpolation>();
     } else if (this->current->value == "Linear") {
-      this->integralInterpolation.reset(new LinearInterpolation());
+      i = std::make_shared<LinearInterpolation>();
     } else if (this->current->value == "LocalSpline") {
-      this->integralInterpolation.reset(new SplineLocalInterpolation());
+      i = std::make_shared<SplineLocalInterpolation>();
     } else if (this->current->value == "None") {
-      this->integralInterpolation.reset(new NoInterpolation());
+      i = std::make_shared<NoInterpolation>();
     } else {
       this->throwRuntimeError(m,
                               "unknown interpolation type "
@@ -621,10 +630,14 @@ namespace tfel::check {
                                   this->current->value + "')");
     }
     ++(this->current);
+    return i;
   }
 
   void TestLauncher::treatInterpolation() {
-    this->setInterpolation("TestLauncher::treatInterpolation");
+    this->interpolation =
+        this->readInterpolation("TestLauncher::treatInterpolation");
+    this->allowLessResults = false;
+    this->ci.reset();
     this->checkNotEndOfFile("TestLauncher::treatInterpolation");
     if (this->current->value == ";") {
       if (this->interpolation->isConform()) {

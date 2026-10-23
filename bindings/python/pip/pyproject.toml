@@ -1,0 +1,81 @@
+# Build of the tfel-mfront pip package.
+#
+# setup.py configures, builds and installs TFEL with cmake, then lays out
+# the installation as a python package. The wheels are built for each
+# python version by cibuildwheel, see .github/workflows/python-pip.yml
+
+[build-system]
+requires = [
+  "setuptools>=64",
+  "cmake>=3.18",
+  "pybind11>=2.12",
+  "numpy>=2.0",
+  "patchelf; sys_platform == 'linux'",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tfel-mfront"
+dynamic = ["version"]
+description = "TFEL/MFront with Python bindings"
+readme = { text = "TFEL is a collaborative development of CEA and EDF. This package provides TFEL/MFront libraries, executables, headers, and Python bindings. A C++ compiler is required to build MFront implementations.", content-type = "text/plain" }
+authors = [{ name = "Thomas Helfer", email = "tfel-contact@cea.fr" }]
+requires-python = ">=3.9"
+dependencies = ["numpy"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+  "Topic :: Scientific/Engineering",
+]
+
+[project.urls]
+Homepage = "https://thelfer.github.io/tfel/web/index.html"
+Source = "https://github.com/thelfer/tfel"
+
+# The executables are installed in tfel/bin. These commands run them
+# after having set the TFELHOME variable, see tfel_mfront_launcher.py.in
+[project.scripts]
+mfm = "tfel_mfront_launcher:main"
+mfm-test-generator = "tfel_mfront_launcher:main"
+mfront = "tfel_mfront_launcher:main"
+mfront-doc = "tfel_mfront_launcher:main"
+mfront-query = "tfel_mfront_launcher:main"
+mtest = "tfel_mfront_launcher:main"
+tfel-check = "tfel_mfront_launcher:main"
+tfel-config = "tfel_mfront_launcher:main"
+tfel-doc = "tfel_mfront_launcher:main"
+tfel-unicode-filt = "tfel_mfront_launcher:main"
+
+# the content of the package is produced by setup.py
+[tool.setuptools]
+packages = []
+py-modules = []
+
+[tool.cibuildwheel]
+build-verbosity = 1
+skip = "*-musllinux_*"
+test-command = "python {package}/test_wheel.py"
+
+[tool.cibuildwheel.linux]
+archs = ["x86_64"]
+
+[tool.cibuildwheel.macos]
+archs = ["arm64"]
+environment = { MACOSX_DEPLOYMENT_TARGET = "11.0" }
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]
+# The DLLs of TFEL are in tfel/bin, where the python modules find them
+# (os.add_dll_directory). delvewheel would copy them under other names, so
+# a behaviour loaded in python would load a second copy of these DLLs.
+repair-wheel-command = ""

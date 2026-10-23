@@ -60,7 +60,8 @@ namespace mfront::generic_parallel::material_property {
        << "#include<concepts>\n"
        << "#include<execution>\n"
        << "#include<type_traits>\n"
-       << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n";
+       << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n"
+       << "#include\"MFront/GenericParallel/CountingIterator.hxx\"\n\n";
   }  // end of writeSpecificIncludesInSourceFile
 
   void ParallelSTLBackend::writeKernelCall(
@@ -75,25 +76,29 @@ namespace mfront::generic_parallel::material_property {
       // we do need to use heap allocations as nvc++ would automatically use
       // managed memory
       os << "auto mfront_bounds_statuses = std::vector<int>{};\n"
-         << "mfront_bounds_statuses.resize(2 * (mfront_nargs + 1), 0);\n";
+         << "mfront_bounds_statuses.resize(" << getStatusesArraySize(mpd)
+         << ", 0);\n";
     }
     this->writeKernel(os, i, mpd, fd, false);
     if (treatStrides) {
       this->writeKernel(os, i, mpd, fd, true);
     }
     auto write_kernel_call = [&os, this, &types](const bool handleStrides) {
+      // the iterators of std::views::iota can't be used: with libstdc++,
+      // the parallel algorithms run sequentially with them (see the
+      // documentation of mfront::generic_parallel::CountingIterator)
       os << "// loop over the points\n"
          << "#ifdef __ADAPTIVECPP__\n"
-         << "const auto mfront_index_range = "
-         << "std::views::iota(int{}, static_cast<int>(mfront_npoints));\n"
+         << "using mfront_index_type = int;\n"
          << "#else /* __ADAPTIVECPP__ */ \n"
-         << "const auto mfront_index_range = "
-         << "std::views::iota(" << types.integer_type
-         << "{}, mfront_npoints);\n"
+         << "using mfront_index_type = " << types.integer_type << ";\n"
          << "#endif /* __ADAPTIVECPP__ */ \n"
+         << "using mfront_index_iterator = "
+         << "mfront::generic_parallel::CountingIterator<mfront_index_type>;\n"
          << "std::for_each(" << this->execution_policy
-         << ", mfront_index_range.begin(), "
-         << "mfront_index_range.end(), "
+         << ", mfront_index_iterator{0}, "
+         << "mfront_index_iterator{"
+         << "static_cast<mfront_index_type>(mfront_npoints)}, "
          << "mfront_kernel";
       if (!handleStrides) {
         os << "_without_strides";

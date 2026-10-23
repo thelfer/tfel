@@ -61,6 +61,11 @@ properties](generic-material-property-interface.html). The
 `mfront_gmp_real` type is by default an alias to double precision
 floating point numbers.
 
+Contrary to the `generic` interface, `errno` is not used to detect
+errors: it is thread-local and does not exist on GPUs. A result which is
+not finite (`nan` or infinite) at one point at least is reported by the
+status `-4`.
+
 If the number of points is null, no computation is made.
 
 A null stride means that the associated argument is uniform. The stride
@@ -409,16 +414,21 @@ available:
 
 - `automatic`: this policy may automatically trigger a copy of the data
   if needed. No copy is made if the data are already on the device or in
-  shared memory.
+  shared memory. The output is copied in both directions, so that the
+  values which are not computed (points where the evaluation fails,
+  values between two values of a strided output) are kept.
 - `none`: this policy assumes that the data are already on the device on
   in shared memory.
 
 > ** Providing data on the device**
 > 
-> Data copy in `SYCL` are asynchronous operations. Thus, if the
-> data are provided on the device, the user is responsible for ensuring
-> that the data are effectively copied before calling `MFront`'s generated
-> functions.
+> Data copy in `SYCL` are asynchronous operations. The generated
+> functions submit their commands after the commands previously submitted
+> to the given queue: an in-order queue orders them, and the generated
+> functions wait for the end of the commands previously submitted to an
+> out-of-order queue. If the data are provided by commands submitted to
+> another queue, the user is responsible for ensuring that the data are
+> effectively copied before calling `MFront`'s generated functions.
 
 # Tests
 

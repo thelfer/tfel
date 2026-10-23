@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_ARRAY_ITERATEOVERMULTIPLEINDICES_HXX
 #define LIB_TFEL_MATH_ARRAY_ITERATEOVERMULTIPLEINDICES_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
+
 namespace tfel::math {
 
   template <typename TypeSize, TypeSize CurrentIndex, TypeSize FinalIndex>

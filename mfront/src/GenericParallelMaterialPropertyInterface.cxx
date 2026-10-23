@@ -149,7 +149,6 @@ namespace mfront {
       LibraryDescription& l,
       const MaterialPropertyDescription& mpd) const {
     const auto name = this->getFunctionName(mpd);
-    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(l.sources, this->getSourceFileName(name));
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
@@ -200,7 +199,6 @@ namespace mfront {
   void GenericParallelMaterialPropertyInterface::writeHeaderFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     const auto iucname = this->getInterfaceNameInUpperCase();
-    const auto types = this->getTypesDescription();
     const auto name = this->getFunctionName(mpd);
     const auto fn = "include/" + this->getHeaderFileName(name);
     if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -232,8 +230,12 @@ namespace mfront {
     }
     os << " */\n\n";
 
-    os << "#ifndef " << makeUpperCase(name) << "_" << iucname << "_HH\n"
-       << "#define " << makeUpperCase(name) << "_" << iucname << "_HH\n\n";
+    // the name of the backend is part of the header guard, so that the
+    // headers of several backends can be included in the same file
+    const auto guard = makeUpperCase(name) + "_" + iucname + "_" +
+                       makeUpperCase(this->backend->getName()) + "_HH";
+    os << "#ifndef " << guard << "\n"
+       << "#define " << guard << "\n\n";
     writeExportDirectives(os);
 
     for (const auto& header : this->getInterfaceHeaderFiles()) {
@@ -258,7 +260,7 @@ namespace mfront {
     os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n"
-       << "#endif /* " << makeUpperCase(name) << "_" << iucname << "_HH */\n";
+       << "#endif /* " << guard << " */\n";
     os.close();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "GenericParallelMaterialPropertyInterface::"
@@ -272,8 +274,6 @@ namespace mfront {
       getLogStream() << "GenericParallelMaterialPropertyInterface::"
                         "writeSrcFile: begin\n";
     }
-    const auto types = this->getTypesDescription();
-    const auto iname = this->getInterfaceName();
     const auto nname = this->getInterfaceInternalNamespace();
     const auto name = this->getFunctionName(mpd);
     const auto fn = "src/" + this->getSourceFileName(name);
@@ -284,6 +284,9 @@ namespace mfront {
         "unable to open '" +
             fn + "'");
     os.exceptions(std::ios::badbit | std::ios::failbit);
+    // precision of the bounds and of the parameters treated as static
+    // variables, as in the exported symbols
+    os.precision(14);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
     const auto& date = fd.date;

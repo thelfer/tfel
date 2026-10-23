@@ -1,0 +1,91 @@
+name: Build and Publish Python Pip Package
+
+on:
+  push:
+    tags:
+      - 'TFEL-[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+    build-wheels:
+      name: Build wheel (${{ matrix.os }}, ${{ matrix.python }})
+      runs-on: ${{ matrix.os }}
+      strategy:
+        fail-fast: false
+        matrix:
+          os: [ubuntu-latest, macos-latest, windows-latest]
+          # all the python versions on master and for the tags, only one
+          # for the pull requests (a Windows build takes about 20 minutes)
+          python: ${{ github.event_name == 'pull_request' && fromJSON('["cp312"]') || fromJSON('["cp39", "cp310", "cp311", "cp312", "cp313", "cp314", "cp315"]') }}
+
+      steps:
+        - uses: actions/checkout@v7
+
+        # see bindings/python/pip/pyproject.toml for the configuration
+        # of cibuildwheel and bindings/python/pip/setup.py for the build
+        - name: Build and test the wheel
+          uses: pypa/cibuildwheel@v4.3.2
+          with:
+            package-dir: bindings/python/pip
+            output-dir: wheelhouse
+          env:
+            CIBW_BUILD: ${{ matrix.python }}-*
+
+        - name: Upload Pip Wheel as Artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: tfel-mfront-wheel-${{ matrix.os }}-${{ matrix.python }}
+            path: wheelhouse/*.whl
+
+    publish-pypi:
+      name: Publish to PyPI
+      needs: build-wheels
+      runs-on: ubuntu-latest
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/TFEL-')
+
+      steps:
+        - name: Download All Artifacts
+          uses: actions/download-artifact@v4
+          with:
+            path: ${{github.workspace}}/artifacts
+            pattern: tfel-mfront-wheel-*
+            merge-multiple: true
+
+        - name: List Downloaded Artifacts
+          run: |
+            ls -R ${{github.workspace}}/artifacts
+
+        - name: Publish to PyPI
+          uses: pypa/gh-action-pypi-publish@release/v1
+          with:
+            packages-dir: ${{github.workspace}}/artifacts/
+            password: ${{ secrets.PYPI_API_TOKEN }}
+            verbose: true
+
+    publish-github-release:
+      name: Publish to GitHub Release
+      needs: build-wheels
+      runs-on: ubuntu-latest
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/TFEL-')
+      permissions:
+        contents: write
+
+      steps:
+        - name: Download All Artifacts
+          uses: actions/download-artifact@v4
+          with:
+            path: ${{github.workspace}}/release-artifacts
+            pattern: tfel-mfront-wheel-*
+            merge-multiple: true
+
+        - name: Create GitHub Release
+          uses: softprops/action-gh-release@v2
+          with:
+            files: ${{github.workspace}}/release-artifacts/**/*.whl
+            generate_release_notes: true
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
