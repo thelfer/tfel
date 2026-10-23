@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::material {
 

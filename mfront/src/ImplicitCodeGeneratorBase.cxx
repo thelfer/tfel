@@ -598,6 +598,10 @@ namespace mfront {
     const auto& cb = this->bd.getCodeBlock(h, n);
     auto decomposition_results =
         AbstractLinearSystemSolver::MatrixDecompositionResult{};
+    // function objects made available to the code block. Each of them owns
+    // a flag reporting a failure, which is gathered in `mfront_success`
+    // after the code block.
+    auto function_objects = std::vector<std::string>{};
     if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
       os << "auto mfront_jacobian_decomposition_success = true;\n";
       decomposition_results = this->linear_solver.writeMatrixDecomposition(
@@ -681,15 +685,14 @@ namespace mfront {
       for (const auto& v : decomposition_results.variables) {
         os << ",\nconst " << v.type << "& " << v.name << "_argument";
       }
-      os << ",\nbool& mfront_success_argument)\n"
+      os << ")\n"
          << ": mfront_get_partial_jacobian_invert_behaviour("
          << "mfront_behaviour_argument)";
       for (const auto& v : decomposition_results.variables) {
         os << ",\nmfront_get_partial_jacobian_invert_" << v.name << "("
            << v.name << "_argument)";
       }
-      os << ",\nmfront_success_reference(mfront_success_argument)"
-         << "{}\n";
+      os << "{}\n";
       for (std::size_t i = 0; i != isvs.size(); ++i) {
         os << "TFEL_HOST_DEVICE void operator()(";
         for (std::size_t i2 = 0; i2 <= i;) {
@@ -714,25 +717,27 @@ namespace mfront {
           }
         }
         os << ")){\n"
-           << "this->mfront_success_reference = false;\n"
+           << "this->mfront_success = false;\n"
            << "}\n"
            << "}\n";
       }
-      os << "private:\n"
+      os << "//! \\brief false if one of the calls failed\n"
+         << "bool mfront_success = true;\n"
+         << "private:\n"
          << this->bd.getClassName() << "& "
          << "mfront_get_partial_jacobian_invert_behaviour;\n";
       for (const auto& v : decomposition_results.variables) {
         os << "const " << v.type << "& mfront_get_partial_jacobian_invert_"
            << v.name << ";\n";
       }
-      os << "bool& mfront_success_reference;\n"
-         << "}; // end of struct GetPartialJacobianInvert\n"
+      os << "}; // end of struct GetPartialJacobianInvert\n"
          << "GetPartialJacobianInvert "
             "getPartialJacobianInvert(*this";
       for (const auto& v : decomposition_results.variables) {
         os << ", " << v.name;
       }
-      os << ", mfront_success);\n";
+      os << ");\n";
+      function_objects.push_back("getPartialJacobianInvert");
     }
     const auto attr = CodeBlock::
         used_implicit_equations_derivatives_with_respect_to_gradients_or_external_state_variables;
@@ -846,15 +851,13 @@ namespace mfront {
           os << ",\n const " << v.type << "& " << v.name << "_argument";
         }
         os << ",\n"
-           << rhs_type << "& mfront_rhs_argument"
-           << ",\nbool& mfront_success_argument)\n"
+           << rhs_type << "& mfront_rhs_argument)\n"
            << ": behaviour(b)";
         for (const auto& v : decomposition_results.variables) {
           os << ",\nmfront_get_integration_variables_derivatives_" << v.name
              << "(" << v.name << "_argument)";
         }
-        os << "\n,mfront_local_rhs(mfront_rhs_argument)"
-           << ",\nmfront_success_reference(mfront_success_argument)\n"
+        os << "\n,mfront_local_rhs(mfront_rhs_argument)\n"
            << "{}\n";
         for (std::size_t i = 0; i != isvs.size(); ++i) {
           os << "TFEL_HOST_DEVICE void operator()(";
@@ -868,7 +871,8 @@ namespace mfront {
             }
           }
           os << "){\n"
-             << rhs_type << " mfront_local_lhs(-(this->mfront_local_rhs));\n";
+             << rhs_type << " mfront_local_lhs(-(this->mfront_local_rhs));\n"
+             << "auto mfront_substitution_success = true;\n";
           auto local_decomposition_results = decomposition_results;
           local_decomposition_results.matrix = "this->behaviour.jacobian";
           local_decomposition_results.variables.clear();
@@ -880,9 +884,12 @@ namespace mfront {
           }
           this->linear_solver.writeLinearSystemSubstitution(
               os, local_decomposition_results,
-              {.returned_value = "this->mfront_success_reference",
+              {.returned_value = "mfront_substitution_success",
                .rhs = "mfront_local_lhs",
                .rhs_column_size = nc.asString()});
+          os << "if(!mfront_substitution_success){\n"
+             << "this->mfront_success = false;\n"
+             << "}\n";
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (std::size_t i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
@@ -919,26 +926,32 @@ namespace mfront {
           }
           os << "}\n";
         }
-        os << "private:\n" << this->bd.getClassName() << "& behaviour;\n";
+        os << "//! \\brief false if one of the calls failed\n"
+           << "bool mfront_success = true;\n"
+           << "private:\n" << this->bd.getClassName() << "& behaviour;\n";
         for (const auto& v : decomposition_results.variables) {
           os << "const " << v.type
              << "& mfront_get_integration_variables_derivatives_" << v.name
              << ";\n";
         }
         os << rhs_type << "& mfront_local_rhs;\n"
-           << "bool& mfront_success_reference;\n"
            << "};\n"
            << "GetIntegrationVariablesDerivatives_" << givd.name << " "
            << "getIntegrationVariablesDerivatives_" << givd.name << "(*this";
         for (const auto& v : decomposition_results.variables) {
           os << ", " << v.name;
         }
-        os << " ," << m << ", mfront_success);\n";
+        os << " ," << m << ");\n";
+        function_objects.push_back("getIntegrationVariablesDerivatives_" +
+                                   givd.name);
       }
     }
     //
     BehaviourCodeGeneratorBase::writeBehaviourComputeTangentOperatorBody(os, h,
                                                                          n);
+    for (const auto& f : function_objects) {
+      os << "mfront_success = mfront_success && " << f << ".mfront_success;\n";
+    }
   }  // end of writeBehaviourComputeTangentOperatorBody
 
   void ImplicitCodeGeneratorBase::writeComputePartialJacobianInvert(

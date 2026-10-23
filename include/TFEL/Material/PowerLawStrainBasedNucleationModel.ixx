@@ -47,7 +47,8 @@ namespace tfel::material {
     const auto rp = p / params.en - 1;
     const auto irp = std::max(rp, 1e-12);
     const auto An = (params.fn) * std::pow(rp, params.m);
-    const auto dAn_dp = (params.m / params.en) * An * irp;
+    // derivative of fn * rp^m: (m / en) * fn * rp^(m - 1)
+    const auto dAn_dp = (params.m / params.en) * An / irp;
     return std::make_tuple(An, dAn_dp);
   }  // end of computePowerLawStrainBasedNucleationModelPorosityRate
 
@@ -55,8 +56,7 @@ namespace tfel::material {
   real computePowerLawStrainBasedNucleationModelPorosityIncrement(
       const PowerLawStrainBasedNucleationModelParameters<real>& params,
       const real p,
-      const real dp,
-      const real) {
+      const real dp) {
     if ((dp < 0) || (p + dp < params.en)) {
       return 0;
     }
@@ -73,8 +73,7 @@ namespace tfel::material {
   computePowerLawStrainBasedNucleationModelPorosityIncrementAndDerivative(
       const PowerLawStrainBasedNucleationModelParameters<real>& params,
       const real p,
-      const real dp,
-      const real) {
+      const real dp) {
     if ((dp < 0) || (p + dp < params.en)) {
       return std::make_tuple(real(0), real(0));
     }

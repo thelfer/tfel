@@ -16,6 +16,7 @@
 
 #include <limits>
 #include <ostream>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::math {
 
