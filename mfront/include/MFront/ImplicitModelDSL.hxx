@@ -26,7 +26,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    ImplicitModelDSL(const DSLOptions&);
+    explicit ImplicitModelDSL(const DSLOptions&);
     //! \return the name of the DSL
     static std::string getName();
     //! \return a description of the DSL

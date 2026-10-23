@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/MechanicalBehaviour.hxx
  * \brief  This file declares the MechanicalBehaviour class
  * \author Thomas Helfer
- * \date   22 Sep 2006
+ * \date 22/09/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,7 +25,7 @@ namespace tfel::material {
    * \class MechanicalBehaviourBase
    * \brief This class declares enums for mechanical behaviours.
    * \author Thomas Helfer
-   * \date   30 Juillet 2013
+   * \date 30/07/2013
    */
   struct MechanicalBehaviourBase {
     /*!
@@ -73,7 +73,6 @@ namespace tfel::material {
       //! \brief default constructor
       TFEL_HOST_DEVICE constexpr IntegrationResult() noexcept
           : status(SUCCESS) {}
-#ifndef __clang__
       //! \brief move constructor
       constexpr IntegrationResult(IntegrationResult&&) noexcept = default;
       //! \brief default constructor
@@ -84,41 +83,26 @@ namespace tfel::material {
       //! \brief standard assignement
       constexpr IntegrationResult& operator=(
           const IntegrationResult&) noexcept = default;
-#else
-      //! \brief move constructor
-      TFEL_HOST_DEVICE IntegrationResult(IntegrationResult&& src) noexcept
-          : status(src.status) {}
-      //! \brief default constructor
-      TFEL_HOST_DEVICE IntegrationResult(const IntegrationResult& src) noexcept
-          : status(src.status) {}
-      //! \brief move assignement
-      TFEL_HOST_DEVICE IntegrationResult& operator=(
-          IntegrationResult&& src) noexcept {
-        this->status = src.status;
-        return *this;
-      }
-      //! \brief standard assignement
-      TFEL_HOST_DEVICE IntegrationResult& operator=(
-          const IntegrationResult& src) noexcept {
-        this->status = src.status;
-        return *this;
-      }
-#endif
+      // NOLINTBEGIN(google-explicit-constructor)
       /*!
        * \brief constructor from an ExitStatus
        */
-      TFEL_HOST_DEVICE constexpr IntegrationResult(const ExitStatus s) noexcept
+      TFEL_HOST_DEVICE constexpr explicit(false)
+          IntegrationResult(const ExitStatus s) noexcept
           : status(s) {}  // end of IntegrationResult
       /*!
        * \brief constructor from a boolean value
        */
-      TFEL_HOST_DEVICE constexpr IntegrationResult(const bool b) noexcept
+      TFEL_HOST_DEVICE constexpr explicit(false)
+          IntegrationResult(const bool b) noexcept
           : status(b ? SUCCESS : FAILURE) {}  // end of IntegrationResult
 
       //! \brief convertion operator to the ExistStatus enumeration
-      TFEL_HOST_DEVICE constexpr operator ExitStatus() const noexcept {
+      TFEL_HOST_DEVICE constexpr explicit(false) operator ExitStatus()
+          const noexcept {
         return this->status;
       }
+      // NOLINTEND(google-explicit-constructor)
       //! \brief destructor
       inline ~IntegrationResult() noexcept = default;
 
@@ -170,7 +154,7 @@ namespace tfel::material {
    * \param NumType, numerical type.
    * \param bool use_qt, says if one shall use quantities.
    * \author Thomas Helfer
-   * \date   28 Jul 2006
+   * \date 28/07/2006
    */
   template <MechanicalBehaviourBase::BehaviourType btype,
             ModellingHypothesis::Hypothesis H,

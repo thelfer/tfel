@@ -2,7 +2,7 @@
  * \file  MaterialPropertyDocumentationGenerator.cxx
  * \brief
  * \author Maxence Wangermez
- * \date   16 avril 2024
+ * \date 16/04/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -448,7 +448,7 @@ namespace mfront {
       VariableInformation(const VariableInformation&) = default;
   MaterialPropertyDocumentationGenerator::VariableInformation&
   MaterialPropertyDocumentationGenerator::VariableInformation::operator=(
-      VariableInformation&&) = default;
+      VariableInformation&&) noexcept = default;
   MaterialPropertyDocumentationGenerator::VariableInformation&
   MaterialPropertyDocumentationGenerator::VariableInformation::operator=(
       const VariableInformation&) = default;

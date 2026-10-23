@@ -3,7 +3,13 @@
  * \brief  This header declares a set of functions
  * useful to DSL dedicated to behaviours
  * \author Thomas Helfer
- * \date   24/04/2025
+ * \date 24/04/2025
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURDSLUTILITIES_HXX
@@ -28,9 +34,9 @@ namespace mfront {
    * \param[in] d: data
    */
   MFRONT_VISIBILITY_EXPORT BehaviourDescription::MaterialProperty
-  getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL &,
+  getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL&,
                                           const std::string_view,
-                                          const tfel::utilities::Data &);
+                                          const tfel::utilities::Data&);
   /*!
    * \brief extract the thermal expansion coefficients from the given options,
    * if they are defined.
@@ -41,11 +47,10 @@ namespace mfront {
    * `reference_temperature` option is allowed.
    */
   MFRONT_VISIBILITY_EXPORT
-  void addThermalExpansionCoefficientsIfDefined(
-      AbstractBehaviourDSL &,
-      BehaviourDescription &,
-      const tfel::utilities::DataMap &,
-      const bool = true);
+  void addThermalExpansionCoefficientsIfDefined(AbstractBehaviourDSL&,
+                                                BehaviourDescription&,
+                                                const tfel::utilities::DataMap&,
+                                                const bool = true);
 
 }  // end of namespace mfront
 

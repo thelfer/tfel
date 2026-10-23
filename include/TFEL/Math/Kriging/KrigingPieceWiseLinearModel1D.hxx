@@ -28,10 +28,9 @@ namespace tfel::math {
       return T(1);
     }
 
-    TFEL_MATH_INLINE T
+    [[nodiscard]] TFEL_MATH_INLINE T
     covariance(const typename KrigingVariable<1u, T>::type& v) const {
-      using namespace std;
-      return abs(v);
+      return std::abs(v);
     }  // end of covariance
 
     typedef T (*Drifts)(const typename KrigingVariable<1u, T>::type&);

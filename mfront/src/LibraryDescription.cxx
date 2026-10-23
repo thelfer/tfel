@@ -2,7 +2,7 @@
  * \file   mfront/src/LibraryDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 mai 2015
+ * \date 09/05/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -145,10 +145,15 @@ namespace mfront {
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");
     insert_if(this->include_directories,
               "$(shell " + tfel_config + " --include-path)");
+#ifdef TFEL_MATH_TDLS_SUPPORT
+    insert_if(this->include_directories,
+              "$(shell " + tfel_config + " --tdls-include-path)");
+#endif
   }  // end of LibraryDescription::LibraryDescription
 
   LibraryDescription::LibraryDescription(const LibraryDescription&) = default;
-  LibraryDescription::LibraryDescription(LibraryDescription&&) = default;
+  LibraryDescription::LibraryDescription(LibraryDescription&&) noexcept =
+      default;
   LibraryDescription::~LibraryDescription() = default;
 
   std::ostream& operator<<(std::ostream& os, const LibraryDescription& l) {

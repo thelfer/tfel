@@ -2,7 +2,7 @@
  * \file   mfront/src/StrainBasedPorosityNucleationModelBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   05/04/2020
+ * \date 05/04/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -15,7 +15,7 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/StandardElastoViscoPlasticityBrick.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
@@ -140,8 +140,7 @@ namespace mfront::bbrick {
       i.code += "){\n";
     }
     auto call = "compute" + mn + "PorosityIncrementAndDerivative" +  //
-                "(this->" + parameters + "," + p + ", " + dp + ", " +
-                bd.getClassName() + "::theta)";
+                "(this->" + parameters + "," + p + ", " + dp + ")";
     i.code += "const auto [" + dfn_n + ", " + dfn_ddp + "]  = ";
     i.code += call + ";\n";
     if (!requiresAnalyticalJacobian) {
@@ -219,14 +218,12 @@ namespace mfront::bbrick {
       const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
       c += "const auto " + dfn_n + " = ";
       c += "compute" + mn + "PorosityIncrement" +  //
-           "(this->" + parameters + "," + p + "," + dp + ", " +
-           bd.getClassName() + "::theta);\n";
+           "(this->" + parameters + "," + p + "," + dp + ");\n";
       c += "this->dfn" + id + " = ";
       c += "std::min(" + dfn_n + ", this->" + fmax_n + " - this->fn);\n";
     } else {
       c += "this->dfn" + id + " = compute" + mn + "PorosityIncrement" +  //
-           "(this->" + parameters + "," + p + "," + dp + ", " +
-           bd.getClassName() + "::theta);\n";
+           "(this->" + parameters + "," + p + "," + dp + ");\n";
     }
     c += mfront::StandardElastoViscoPlasticityBrick::
         nextEstimateOfThePorosityIncrement;

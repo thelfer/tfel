@@ -2,7 +2,7 @@
  * \file   OutOfBoundsPolicy.hxx
  * \brief
  * \author Thomas Helfer
- * \date   14/09/2019
+ * \date 14/09/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,6 +14,7 @@
 #ifndef LIB_CYRANO_OUTOFBOUNDSPOLICY_HXX
 #define LIB_CYRANO_OUTOFBOUNDSPOLICY_HXX
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -48,5 +49,6 @@ typedef enum {
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_CYRANO_OUTOFBOUNDSPOLICY_HXX */

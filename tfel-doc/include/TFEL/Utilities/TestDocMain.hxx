@@ -25,7 +25,7 @@
 namespace tfel::utilities {
 
   struct TestDocMain : public ArgumentParserBase<TestDocMain> {
-    TestDocMain(const int, const char *const *const);
+    TestDocMain(const int, const char* const* const);
 
     void treatUnknownArgument() override;
 
@@ -74,7 +74,7 @@ namespace tfel::utilities {
 
     std::ofstream output;
 
-    std::ostream *log;
+    std::ostream* log;
 
     std::shared_ptr<std::ostream> logptr;
 

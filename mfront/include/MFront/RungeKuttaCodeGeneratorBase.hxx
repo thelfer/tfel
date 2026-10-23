@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/RungeKuttaCodeGeneratorBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/08/2022
+ * \date 03/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -37,7 +37,7 @@ namespace mfront {
       ERRORSUMMATIONEVALUATION,
       MAXIMUMVALUEERROREVALUATION
     };  // end of ErrorEvaluation
-    bool usesStateVariableTimeDerivative() const override;
+    [[nodiscard]] bool usesStateVariableTimeDerivative() const override;
     void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
     void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
     void writeBehaviourParserSpecificMembers(std::ostream&,

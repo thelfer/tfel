@@ -2,7 +2,7 @@
  * \file   include/TFEL/PhysicalConstants.hxx
  * \brief
  * \author Thomas Helfer
- * \date   18 août 2017
+ * \date 18/08/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,7 +29,9 @@ namespace tfel {
     //! a simple alias
     template <int N1, int N2, int N3, int N4, int N5, int N6, int N7>
     using quantity = tfel::math::qt<
-        typename tfel::math::GenerateUnit<N1, N2, N3, N4, N5, N6, N7>::type,
+        typename tfel::math::unit::UnitRebind<
+            tfel::math::unit::makeUnitExponents<N1, N2, N3, N4, N5, N6, N7>()>::
+            type,
         NumericType>;
     //! Atomic mass constant (kg)
     static constexpr auto AtomicMassConstant =

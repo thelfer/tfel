@@ -2,7 +2,7 @@
  * \file   mfront/src/CastemMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -49,6 +49,13 @@ namespace mfront {
   std::string CastemMaterialPropertyInterface::getName() { return "castem"; }
 
   CastemMaterialPropertyInterface::CastemMaterialPropertyInterface() = default;
+
+  void CastemMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool, CastemMaterialPropertyInterface::tokens_iterator>
   CastemMaterialPropertyInterface::treatKeyword(
@@ -128,7 +135,7 @@ namespace mfront {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
           << ")){\n"
           << "cerr << \"" << name << ": " << v.name
-          << " is below its physical upper bound (\"\n << " << v.name
+          << " is over its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
           << "return std::nan(\"\");\n"
           << "}\n";
@@ -256,6 +263,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     out << "/*!\n"
         << "* \\file   " << fn << "\n"
         << "* \\brief  "
@@ -267,7 +275,7 @@ namespace mfront {
       out << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      out << "* \\date   " << fd.date << '\n';
+      out << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       out << fd.description << '\n';
@@ -310,6 +318,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
     const auto& date = fd.date;
@@ -327,7 +336,7 @@ namespace mfront {
       out << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      out << "* \\date   " << date << '\n';
+      out << "* \\date " << date << '\n';
     }
     out << " */\n\n"
         << "#include<algorithm>\n"
@@ -374,10 +383,18 @@ namespace mfront {
     writeMaterialKnowledgeTypeSymbol(out, name,
                                      MaterialKnowledgeType::MATERIALPROPERTY);
     writeParametersSymbols(out, name, mpd);
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    exportStringSymbol(
+        out, name + "_src",
+        tfel::utilities::replace_all(
+            tfel::utilities::tokenize(file, tfel::system::dirSeparator())
+                .back(),
+            "\\", "\\\\"));
+#else
     exportStringSymbol(
         out, name + "_src",
         tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back());
-
+#endif
     if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "MFRONT_SHAREDOBJ int\n"

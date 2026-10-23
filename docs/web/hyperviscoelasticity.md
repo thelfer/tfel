@@ -1,6 +1,15 @@
-% How to implement an hyperviscoelastic behaviour in MFront
-% Thomas Helfer
-% 15/12/2016
+---
+title: How to implement an hyperviscoelastic behaviour in MFront
+author: Thomas Helfer
+date: 15/12/2016
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}

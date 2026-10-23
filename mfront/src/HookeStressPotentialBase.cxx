@@ -2,7 +2,7 @@
  * \file   mfront/src/HookeStressPotentialBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,7 +18,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"
@@ -436,9 +436,11 @@ namespace mfront::bbrick {
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
     // elastic strain
+    // `second` is true if `eel` is declared for at least one specialisation
+    // of the behaviour, `first` if it is declared for all of them
     const auto b = bd.checkVariableExistence("eel");
-    if (b.first) {
-      throw_if(!b.second,
+    if (b.second) {
+      throw_if(!b.first,
                "'eel' is not declared for all specialisation of the behaviour");
       bd.checkVariableExistence("eel", "IntegrationVariable");
       bd.checkVariableGlossaryName("eel", Glossary::ElasticStrain);

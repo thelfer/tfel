@@ -2,7 +2,7 @@
  * \file   TestLauncher.hxx
  * \brief  This file declares the TestLauncher class
  * \author Thomas Helfer
- * \date   28 Jan 2008
+ * \date 28/01/2008
  *
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -72,17 +72,19 @@ namespace tfel::check {
       //! \brief default constructor
       Command();
       //! \brief move constructor
-      Command(Command&&);
+      Command(Command&&) noexcept;
       //! \brief copy constructor
       Command(const Command&);
       //! \brief move assignement
-      Command& operator=(Command&&);
+      Command& operator=(Command&&) noexcept;
       //! \brief default assignement
       Command& operator=(const Command&);
       //! \brief destructor
       ~Command();
       //! \brief command to be executed
       std::string command;
+      //! \brief maximum duration in seconds
+      std::optional<int> timeout;
       //! \brief function testing the output of the command
       std::function<std::tuple<bool, std::string>(
           const std::vector<std::string>&)>
@@ -92,16 +94,20 @@ namespace tfel::check {
     };  // end of struct Command
     /*!
      * \brief execute the given comment
+     * \param[in] configuration: global configuration
      * \param[in] c: command
      * \param[in] output_file: output file name
      * \param[in] step:
      */
-    bool execute(const Command&, const std::string&, const std::string&);
+    bool execute(const Configuration&,
+                 const Command&,
+                 const std::string&,
+                 const std::string&);
     /*!
      * \brief register a new callback
      */
     void registerCallBack(const std::string&, const CallBack&);
-    //! analyse the input file
+    //! \brief analyse the input file
     void analyseInputFile(const Configuration&);
     //! \brief treat the `@Test` keyword
     void treatTest();
@@ -146,10 +152,10 @@ namespace tfel::check {
      */
     std::string readString(const std::string&);
     /*!
-     * \brief read the current interpolation method
+     * \return the interpolation method read at the current position
      * \param[in] m: calling method
      */
-    void setInterpolation(const std::string&);
+    std::shared_ptr<Interpolation> readInterpolation(const std::string&);
 
     enum ClockEventType {
       START,
@@ -165,11 +171,11 @@ namespace tfel::check {
     std::vector<std::string> cleandirectories;
     //! \brief list of environment variables
     std::map<std::string, std::string> environments;
-    //! list of requirements
+    //! \brief list of requirements
     std::vector<std::string> requirements;
-    //! iterator to the current file token
+    //! \brief iterator to the current file token
     const_iterator current;
-    //! list of files comparison to be made
+    //! \brief list of files comparison to be made
     std::vector<Test> comparisons;
     std::map<std::string, CallBack> callBacks;
     std::string logfile;
@@ -182,18 +188,18 @@ namespace tfel::check {
                               formatted. */
     double prec = 1.e-8;
     double precision2 = 0.;
-    //! the type of comparison of the test (absolute, relative...)
+    //! \brief the type of comparison of the test (absolute, relative...)
     std::shared_ptr<Comparison> comparison;
     tms timeStart, timeStop; /**!< tms struct used by ClockAction */
-    //! the interpolation chosen
+    //! \brief the interpolation chosen
     std::shared_ptr<Interpolation> interpolation;
-    //! the column used for interpolation (abscissa)
+    //! \brief the column used for interpolation (abscissa)
     std::shared_ptr<Column> ci;
-    //! the interpolation chosen for the integration
+    //! \brief the interpolation chosen for the integration
     std::shared_ptr<Interpolation> integralInterpolation;
-    //! the column used for integration interpolation (abscissa)
+    //! \brief the column used for integration interpolation (abscissa)
     std::shared_ptr<Column> colIntegralInterpolated;
-    //! true if user allows to interpolate ref
+    //! \brief true if user allows to interpolate ref
     bool allowLessResults = false;
   };
 

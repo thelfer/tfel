@@ -34,11 +34,11 @@ explains why this project is not part of the `TFEL`.
 
 The generic behaviour interface supports:
 
-- strain based behaviours. The definition of the strain depends of the
+- strain based behaviours. The definition of the strain depends on the
   strain measure used (see the `MFront`'`@StrainMeasure` keyword).
 - finite strain behaviours.
 - cohesive zone models
-- general behaviours which relates a set of gradients to a set of
+- general behaviours which relate a set of gradients to a set of
   thermodynamic forces.
 
 ## Supported modelling hypotheses
@@ -59,8 +59,8 @@ the stress measure and the tangent operator to be returned.
 The following stress measures are available:
 
 - the Cauchy stress
-- the first Piola-Kirchoff stress
-- the second Piola-Kirchoff stress
+- the first Piola-Kirchhoff stress
+- the second Piola-Kirchhoff stress
 
 The following tangent operators are available:
 
@@ -70,15 +70,17 @@ The following tangent operators are available:
   deformation gradient.
 - the derivative of the second Piola-Kirchhoff stress with respect to
   the Green-Lagrange strain.
+- the derivative of the Kirchhoff stress with respect to the spatial
+  increment of the deformation gradient.
 
 ## Support of orthotropic behaviours
 
-Orthotropic behaviours requires to:
+Orthotropic behaviours require to:
 
-- rotate the gradients in the material frame in the global frame before
+- rotate the gradients in the material frame to the global frame before
   the behaviour integration.
 - rotate the thermodynamic forces and the tangent operator blocks from
-  the material frame in the global frame.
+  the material frame to the global frame.
 
 By design, the `generic` behaviour interface does not automatically
 perform those rotations as part of the behaviour integration but
@@ -104,17 +106,17 @@ They all take three arguments:
   internally to get the rotation matrix from the material frame to the
   global frame.
 
-In place rotations is explicitly allowed, i.e. the first and second
+In place rotations are explicitly allowed, i.e. the first and second
 arguments can be a pointer to the same location.
 
-The three previous functions works for an integration point. Three other
+The three previous functions work for an integration point. Three other
 functions are also generated:
 
 - `<behaviour_function_name>_<hypothesis>_rotateArrayOfGradients`
 - `<behaviour_function_name>_<hypothesis>_rotateArrayOfThermodynamicForces`
 - `<behaviour_function_name>_<hypothesis>_rotateArrayOfTangentOperatorBlocks`
 
-Those functions takes an additional arguments which is the number of
+Those functions take an additional argument which is the number of
 integration points to be treated.
 
 ### Finite strain behaviours
@@ -122,7 +124,7 @@ integration points to be treated.
 As devised in Section
 @sec:generic_behaviour_interface:finite_strain_behaviours, finite strain
 behaviours are a special case, because the returned stress measure and
-the returned tangent operator can be chosen at runtime time. A specific
+the returned tangent operator can be chosen at run time. A specific
 rotation function is generated for each supported stress measure and
 each supported tangent operator.
 
@@ -140,6 +142,7 @@ Here is the list of the generated functions:
   `<behaviour_function_name>_<hypothesis>_rotateThermodynamicForces_PK2Stress`.
   This function assumes that its first argument is the second
   Piola-Kirchhoff stress in the material frame.
+-
   `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dsig_dF`.
   This function assumes that its first argument is the derivative of the
   Cauchy stress with respect to the deformation gradient in the material
@@ -150,7 +153,17 @@ Here is the list of the generated functions:
   first Piola-Kirchhoff stress with respect to the deformation gradient
   in the material frame.
 -
-  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_PK2Stress`.
+  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dPK2_dEGL`.
   This function assumes that its first argument is the derivative of the
   second Piola-Kirchhoff stress with respect to the Green-Lagrange
   strain in the material frame.
+-
+  `<behaviour_function_name>_<hypothesis>_rotateTangentOperatorBlocks_dtau_ddF`.
+  This function assumes that its first argument is the derivative of the
+  Kirchhoff stress with respect to the spatial increment of the
+  deformation gradient in the material frame.
+
+Each of those functions has a variant treating an array of integration
+points, whose name is obtained by replacing `rotate` by `rotateArrayOf`
+(for instance
+`<behaviour_function_name>_<hypothesis>_rotateArrayOfThermodynamicForces_CauchyStress`).

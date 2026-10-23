@@ -2,7 +2,7 @@
  * \file  MFrontBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mars 2015
+ * \date 04/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -104,9 +104,9 @@ namespace mfront {
 
    protected:
     //! \return the current Argument
-    virtual const tfel::utilities::Argument& getCurrentCommandLineArgument()
-        const = 0;
-    virtual bool treatUnknownArgumentBase();
+    [[nodiscard]] virtual const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const = 0;
+    [[nodiscard]] virtual bool treatUnknownArgumentBase();
     /*!
      * \brief method that must be called once all the arguments have been
      * parsed.
@@ -142,6 +142,8 @@ namespace mfront {
      * option
      */
     virtual void treatInstallPath();
+    //! \brief treat the `--configuration-file` command line option
+    virtual void treatConfigurationFile();
     //! \brief treat the `--dsl-option` command line option
     virtual void treatDSLOption();
     //! \brief treat the `--material-property-dsl-option` command line option

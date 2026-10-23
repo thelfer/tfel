@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   17 Jan 2007
+ * \date 17/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -53,9 +53,10 @@ namespace mfront {
 
   VariableDescription::VariableDescription(const VariableDescription&) =
       default;
-  VariableDescription::VariableDescription(VariableDescription&&) = default;
-  VariableDescription& VariableDescription::operator=(VariableDescription&&) =
+  VariableDescription::VariableDescription(VariableDescription&&) noexcept =
       default;
+  VariableDescription& VariableDescription::operator=(
+      VariableDescription&&) noexcept = default;
   VariableDescription& VariableDescription::operator=(
       const VariableDescription&) = default;
 
@@ -547,11 +548,11 @@ namespace mfront {
       : std::vector<VariableDescription>(l) {}
 
   VariableDescriptionContainer::VariableDescriptionContainer(
-      VariableDescriptionContainer&&) = default;
+      VariableDescriptionContainer&&) noexcept = default;
   VariableDescriptionContainer::VariableDescriptionContainer(
       const VariableDescriptionContainer&) = default;
   VariableDescriptionContainer& VariableDescriptionContainer::operator=(
-      VariableDescriptionContainer&&) = default;
+      VariableDescriptionContainer&&) noexcept = default;
   VariableDescriptionContainer& VariableDescriptionContainer::operator=(
       const VariableDescriptionContainer&) = default;
 

@@ -11,6 +11,10 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+Welcome to the **official documentation** for TFEL and MFront. This
+section provides a **structured overview** of all available resources,
+organized by topic and difficulty level.
+
 This page provides several links to available documentations regarding
 `TFEL` and `MFront`, which are fairly detailed. Unfortunately, most of
 these materials are written in French. They also mostly refer to
@@ -19,7 +23,7 @@ versions `2.0.x`, and thus do not describe the latest available version.
 For a new (English speaking) user, we would highly recommend:
 
 - Read the **reference paper** @helfer_introducing_2015. Although this
-  paper covers versions `2.0.x`, it gives an good general overview of
+  paper covers versions `2.0.x`, it gives a good general overview of
   `TFEL` and `MFront`'s abilities.
 - Read the [`getting-started` page](getting-started.html).
 - Read the page dedicated to second and fourth order tensors,
@@ -37,34 +41,31 @@ For a new (English speaking) user, we would highly recommend:
 - Finally, you may want to have a look at the documentation of the
   interface of the solver that you plan to use (see below for links).
 
-For spanish users, Jordi Alberich have written "A spanish introduction
+For Spanish users, Jordi Alberich has written "A Spanish introduction
 to `MFront` and `Salome-MECA`", which is available
 [here](tutorial-spanish.html).
 
-# References
+# MFront documentation
 
-- General introduction. Material properties and Models: [mfront.pdf](documents/mfront/mfront.pdf)
-- Writing mechanical behaviours: [behaviours.pdf](documents/mfront/behaviours.pdf)
-- How to handle plane stress in implicit schemes: [planestress.pdf](documents/mfront/planestress.pdf)
-- Finite strain behaviours [finitestrain.pdf](documents/mfront/finitestrain.pdf)
-- `MTest` user guide: [mtest.pdf](documents/mtest/mtest.pdf)
+## Tutorials & Examples
 
-# Tutorials
+Learn by doing with hands-on examples.
 
-- A fairly complete tutorial is available
-  [here](documents/tutoriel/tutoriel.pdf) (in French).
-- For spanish users, Jordi Alberich have written "A spanish
-  introduction to `MFront` and `Salome-MECA`", which is available
-  [here](tutorial-spanish.html).
+| Resource | Description | Language | Difficulty |
+|----------|-------------|----------|------------|
+| [MFront Gallery](gallery.html) | Step-by-step implementations of classical behaviours. | English | ⭐⭐ |
+| [Tutorial (French)](tutorial.html) | Complete tutorial for beginners (Norton law example). | French | ⭐⭐ |
+| [Spanish Tutorial](tutorial-spanish.html) | Introduction to MFront and Salome-MECA. | Spanish | ⭐⭐ |
+| [Behaviour Examples](https://github.com/thelfer/tfel/tree/master/mfront/tests/behaviours) | Official test cases (GitHub). | Code | ⭐⭐⭐ |
 
-# Courses
+## Courses
 
 - General introduction: [mfront-presentation.pdf](documents/mfront-presentation/mfront-presentation.pdf)
 - Writing mechanical behaviours [mfront-behaviours.pdf](documents/mfront-behaviours/mfront-behaviours.pdf)
 - General introduction [mfront-formation.pdf](documents/mfront-formation/mfront-formation.pdf)
     - [tp.pdf](documents/tp/tp.pdf)
 
-# Talks
+## Talks
 
 - Finite strain: [mfront-finitestrain.pdf](documents/mfront-finitestrain/mfront-finitestrain.pdf)
 - [Writing portable behaviours](documents/portable-behaviour/portability.html)
@@ -75,30 +76,172 @@ MFront Users are available there:
 
 <https://github.com/thelfer/tfel-doc>
 
-# Solver interfaces
+## Material Knowledge Types
 
-- The description of the interface to the
-  [Cast3M](http://www-cast3m.cea.fr) finite element solver is
-  available [here](castem.html).
-- The description of the interface to the
-  [Code-Aster](http://www.code-aster.org) finite
-  element solver is available [here](aster.html).
-- The description of the interface to the
-  [Abaqus/Standard](https://www.3ds.com/fr/produits-et-services/simulia/produits/abaqus/abaqusstandard) and
-  [Abaqus/Explicit](https://www.3ds.com/products-services/simulia/products/abaqus/abaqusexplicit)
-  finite element solvers is available [here](abaqus.html).
-- The description of the interface to the
-  [ZeBuLoN](http://www.zset-software.com/products/zebulon) finite
-  element solver is available [here](zmat.html).
-- The description of the interface to the [CalculiX](calculix.de)
-  finite element solver is available [here](calculix.html).
+| Resource | Description |
+|----------|-------------|
+| [Material Properties](material-properties.html) | How to define material properties (e.g., Young's modulus, thermal conductivity). |
+| [Mechanical Behaviours](behaviours.html) | In-depth guide to implementing mechanical behaviours. |
+| [Models](models.html) | Simple point-wise models (e.g., swelling for fuel performance codes). |
 
-# Dedicated pages
+## Domain specific languages
 
-- Support for unicode symbols in `MFront` is described
-  [here](unicode.html).
-- The list of predefined type aliases in `MFront` is given
-  [here](mfront-types.html).
+| Resource | Description |
+|----------|-------------|
+| [Implicit](implicit-dsl.html) | Implicit integration for strain-based behaviours. |
+
+## Bricks and Extensions
+
+| Resource | Description |
+|----------|-------------|
+| [Behaviour Bricks](BehaviourBricks.html)          | Pre-defined bricks to simplify behaviour implementation. |
+| [`StandardElastoViscoplasticity` brick](StandardElastoViscoPlasticityBrick.html) | Brick allowing to implement a vast class of plastic and viscoplastic behaviours |
+| [`StandardElasticity`](HookeStressPotential.html) | Brick used by behaviours based on an elastic part described by Hooke's law|
+| [`FiniteStrainSingleCrystal`](finitestrainsinglecrystal.html) | Brick dedicated to finite strain behaviour describing single crystals |
+| [`DDIF2` brick](DDIF2Brick.html)                  | Brick based the `DDIF2` damage law used in various fuel performance code developed at CEA |
+
+## Homogenization
+
+| Resource | Description |
+|----------|-------------|
+| [Sachs Scheme](Sachs.html) | Lower bound for polycrystals. |
+| [Taylor Scheme](Taylor.html) | Upper bound for polycrystals. |
+| [Ponte Castaneda](PonteCastaneda1992.html) | Non-linear elastic composites. |
+| [Masson Affine Formulation](MassonAffineFormulation.html) | Affine formulation for viscoplastic polycrystals. |
+| [Biphasic Linear Homogenization](BiphasicLinearHomogenization.html) | Homogenization for biphasic media. |
+| [β-Rule](BetaRule.html) | Implementation of the β-rule for homogenization. |
+
+## Post-Processing & Outputs
+
+| Resource | Description |
+|----------|-------------|
+| [Post-Processings](post-processings.html) | How to extract and analyze results. |
+| [Parameters](parameters.html) | Material parameters and their usage. |
+
+## Interfaces
+
+### Interfaces dedicated to material properties
+
+| Interface| Description | Documentation |
+|--------|-------------|----------------|
+| **Generic interface** | For use with the [MGIS project](https://thelfer.github.io/mgis/web/index.html). | [Generic Interface]( generic-material-property-interface.md) |
+| **Generic parallel interface** | For use with the [MGIS project](https://thelfer.github.io/mgis/web/index.html). | [Generic Interface](generic-parallel-material-property-interface.md) |
+
+### Mechanical behaviours
+
+TFEL/MFront supports multiple finite element solvers. Each interface has its own documentation.
+
+| Interface | Description | Documentation |
+|--------|-------------|----------------|
+| **Abaqus** | Commercial FEA solver (Standard/Explicit). | [Abaqus Interface](abaqus.html) |
+| **Code_Aster** | Open-source FEA solver developped by EDF. | [Aster Interface](aster.html) |
+| **Cast3M** | CEA's finite element solver. | [Cast3M Interface](castem.html) |
+| **CalculiX** | Open-source FEA solver. | [CalculiX Interface](calculix.html) |
+| **ANSYS** | Commercial FEA solver (APDL). | [ANSYS Interface](ansys.html) |
+| **ZeBuLoN (Zmat)** | Zset's finite element solver. | [Zmat Interface](zmat.html) |
+| **Cyrano** | Fuel performance code (CEA). | [Cyrano Interface](cyrano.html) |
+| **ElmerFEM** | Open-source multiphysics solver. | [ElmerFEM Interface](elmerfem.html) |
+| **AMITEX_FFTP** | FFT-based solver. | [AMITEX Interface](amitex.html) |
+| **Generic interface** | For use with the [MGIS project](https://thelfer.github.io/mgis/web/index.html). | [Generic Interface](generic-behaviours-interface.html) |
+
+## Advanced topics ⭐⭐/⭐⭐⭐
+
+| Resource | Description |
+|----------|-------------|
+| [Theory](theory.html) | Theoretical background for material behaviours. |
+| [mfront types](mfront-types.html) | Predefined aliases in `MFront` |
+| [The `@BehaviourVariable` keyword](behaviour-variable.html) | Calling behaviours inside behaviours |
+| [Unicode](unicode.html) | Unicode support in `MFront` |
+| [Glossary](glossary.html) | Definitions of all TFEL/MFront terms. |
+| [madnex](madnex.html) | Support of `madnex` files in `MFront` |
+| [mfront-query](mfront-query.html) | Command line queries about MFront files |
+| [mfront-doc](mfront-doc.html) | A documentation generator from MFront files |
+| [The `mfm` tool](mfm.html) | A tool for querying entry points in `MFront` generated libraries |
+| [Compilation process](compiling-mfront-shared-libraries.html) | Compilation process used by `MFront`|
+| [Fisher-Burmeister complementary function](FischerBurmeister.html) | On the Fisher-Burmeister complementary function and its applications to multi-surface plasticity |
+| [Extending StandardElastoViscoPlasticity](ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.html) | How to extend standard bricks with custom criteria. |
+
+## Keywords associated with Domain-Specific Languages (DSL)
+
+Note the those pages may be outdated or can not apply to your particular
+installation of `TFEL/MFront`. We highly recommend using the command
+line to retrieve the list of keywords associated with a `DSL` or the
+documentation associated with a keyword.
+
+| DSL | Description | Keywords Reference |
+|-----|-------------|---------------------|
+| Implicit | Implicit integration for strain-based behaviours. | [Implicit Keywords](Implicit-keywords.html) |
+| Default | Generic DSL for custom integration algorithms. | [Default Keywords](Default-keywords.html) |
+| Runge-Kutta | Explicit integration for ODE-based behaviours. | [Runge-Kutta Keywords](RungeKutta-keywords.html) |
+| IsotropicPlasticMisesFlow | DSL for isotropic J₂ plasticity. | [Keywords](IsotropicPlasticMisesFlow-keywords.html) |
+
+# Testing & Validation ⭐⭐
+
+Tools and guides for testing your implementations.
+
+| Resource | Description |
+|----------|-------------|
+| [MTest](mtest.html) | TFEL's testing tool for material point simulations. |
+| [MTest Nonlinear Constraints](mtest-nonlinear-constraints.html) | Advanced constraints in MTest. |
+| [TFEL-Check](tfel-check.html) | Validation suite for TFEL. |
+| [MTest Keywords](MTest-keywords.html) | Keywords reference for MTest. |
+| [mfm-test-generator](mfm-test-generator.html) | Generation of integration tests for various solvers. |
+
+# Python modules ⭐⭐
+
+| Resource | Description |
+|----------|-------------|
+| [TFEL Python](tfel-python.html) | bindings for TFEL libraries. |
+| [MFront Python](mfront-python.html) | Python bindings for MFront. |
+| [MTest Python](mtest-python.html) | Python bindings for MTest. |
+
+# Advanced Topics ⭐⭐/⭐⭐⭐
+
+For experienced users.
+
+## TFEL libraries
+
+| Library | Description |
+|----------|-------------|
+| [TFEL/Math](tfel-math.html) | Overview of the TFEL/Math library. |
+| [TFEL/Material](tfel-material.html) | Overview of the TFEL/Material library. |
+| [TFEL/PhysicalConstants](physical-constants.html) | Pre-defined physical constants in TFEL. |
+| [TFEL/MFrontDataBase](tfel-mfront-database.html) | Utilities to handle MFront generated libraries. |
+| [TFEL/System](TFELSystem.html) | Overview of the TFEL/System library. |
+| [TFEL/Config](tfel-config.html) | Overview of the TFEL/Config library. |
+
+Usage of the TFEL libraries in `C++` is described in [this page](libraries_usage.html).
+
+## Mathematical Foundations
+
+| Resource | Description |
+|----------|-------------|
+| [Tensors](tensors.html) | Operations on 2nd and 4th order tensors (TFEL/Math). |
+| [Numerical Integration](tfel-math-numerical-integration.html) | Numerical integration methods in TFEL. |
+| [Data Interpolation](tfel-math-data-interpolation.html) | Interpolation techniques. |
+
+## Doxygen documentation
+
+The `Doxygen` documentation is available [here](https://thelfer.github.io/tfel/doxygen/index.html).
+
+# Legend
+
+- ⭐: Beginner
+- ⭐⭐: Intermediate
+- ⭐⭐⭐: Advanced
+
+# External Resources
+
+Additional materials (mostly outdated) and references.
+
+| Resource | Description |
+|----------|-------------|
+| [TFEL/MFront Reference Manual (PDF)](documents/mfront/mfront.pdf) | Complete reference manual (French). |
+| [Behaviours Manual (PDF)](documents/mfront/behaviours.pdf) | Guide to writing mechanical behaviours (French). |
+| [planestress.pdf](documents/mfront/planestress.pdf) | How to handle plane stress in implicit schemes. |
+| [finitestrain.pdf](documents/mfront/finitestrain.pdf) |  Finite strain behaviours. |
+| [MTest User Guide (PDF)](documents/mtest/mtest.pdf) | MTest documentation. |
+| [TFEL Doc Repository](https://github.com/thelfer/tfel-doc) | Additional talks, tutorials, and documents. |
 
 # Bibliography
 

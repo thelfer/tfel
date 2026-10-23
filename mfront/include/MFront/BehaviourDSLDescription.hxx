@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   29/08/2019
+ * \date 29/08/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -44,11 +44,11 @@ namespace mfront {
     //! \brief copy constructor
     BehaviourDSLDescription(const BehaviourDSLDescription&);
     //! \brief move constructor
-    BehaviourDSLDescription(BehaviourDSLDescription&&);
+    BehaviourDSLDescription(BehaviourDSLDescription&&) noexcept;
     //! \brief standard assignement
     BehaviourDSLDescription& operator=(const BehaviourDSLDescription&);
     //! \brief move assignement
-    BehaviourDSLDescription& operator=(BehaviourDSLDescription&&);
+    BehaviourDSLDescription& operator=(BehaviourDSLDescription&&) noexcept;
     //! \brief destructor
     ~BehaviourDSLDescription();
     //! \brief type of the behaviour handled
@@ -91,7 +91,6 @@ namespace mfront {
     bool allowStiffnessTensorDefinition = true;
     //! \brief require the definition stiffness tensor
     bool requireStiffnessTensorDefinition = false;
-
   };  // end of struct BehaviourDSLDescription
 
   /*!

@@ -28,7 +28,8 @@ namespace tfel::system {
       : result(args...) {}  // end of ThreadedTaskResult
 
   template <typename T>
-  ThreadedTaskResult<T>::ThreadedTaskResult(ThreadedTaskResult&&) = default;
+  ThreadedTaskResult<T>::ThreadedTaskResult(ThreadedTaskResult&&) noexcept =
+      default;
 
   template <typename T>
   ThreadedTaskResult<T>::ThreadedTaskResult(const ThreadedTaskResult&) =
@@ -36,7 +37,7 @@ namespace tfel::system {
 
   template <typename T>
   ThreadedTaskResult<T>& ThreadedTaskResult<T>::operator=(
-      ThreadedTaskResult&&) = default;
+      ThreadedTaskResult&&) noexcept = default;
 
   template <typename T>
   ThreadedTaskResult<T>& ThreadedTaskResult<T>::operator=(

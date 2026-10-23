@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.hxx
  * \brief
  * \author Thomas Helfer
- * \date   01/11/2020
+ * \date 01/11/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file   mfront/src/MaterialKnowledgeDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10/01/2022
+ * \date 10/01/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -35,13 +35,13 @@ namespace mfront {
 
   MaterialKnowledgeDescription::MaterialKnowledgeDescription() = default;
   MaterialKnowledgeDescription::MaterialKnowledgeDescription(
-      MaterialKnowledgeDescription&&) = default;
+      MaterialKnowledgeDescription&&) noexcept = default;
   MaterialKnowledgeDescription::MaterialKnowledgeDescription(
       const MaterialKnowledgeDescription&) = default;
   MaterialKnowledgeDescription& MaterialKnowledgeDescription::operator=(
       const MaterialKnowledgeDescription&) = default;
   MaterialKnowledgeDescription& MaterialKnowledgeDescription::operator=(
-      MaterialKnowledgeDescription&&) = default;
+      MaterialKnowledgeDescription&&) noexcept = default;
 
   void MaterialKnowledgeDescription::throwUndefinedAttribute(
       const std::string_view n) {

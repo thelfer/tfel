@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/Quantity/qtLimits.hxx
  * \brief  This file declares the numeric_limits classes for quantities.
  * \author Thomas Helfer
- * \date   26 Jul 2006
+ * \date 26/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,11 +22,11 @@ namespace std {
   /*!
    * \brief partial specialisation for quantities
    */
-  template <tfel::math::UnitConcept UnitType,
-            typename ValueType,
-            typename OwnershipPolicy>
-  struct numeric_limits<
-      tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <tfel::math::ImmutableQuantityConcept QuantityType>
+  struct numeric_limits<QuantityType> {
+    using ValueType = tfel::math::base_type<QuantityType>;
+    using UnitType = tfel::math::quantity_unit<QuantityType>;
+
     static constexpr bool is_specialized =
         numeric_limits<ValueType>::is_specialized;
 

@@ -2,7 +2,7 @@
  * \file  bindings/python/mfm_test_generator/MFMTestGeneratorFileExport.cxx
  * \brief
  * \author Thomas Helfer
- * \date   01/03/2022
+ * \date 01/03/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -34,7 +34,9 @@ void declareMFMTestGeneratorFileExport(pybind11::module_& m) {
       .def_readwrite("material", &mfmtg::TestDescription::material);
   //
   m.def("loadMFMTestGeneratorFileContent",
-        mfmtg_loadMFMTestGeneratorFileContent);
-  m.def("write", mfmtg_write);
+        mfmtg_loadMFMTestGeneratorFileContent,
+        pybind11::arg("d"), pybind11::arg("f"));
+  m.def("write", mfmtg_write,
+        pybind11::arg("m"), pybind11::arg("f"));
 
 }  // end of declareMFMTestGeneratorFileExport

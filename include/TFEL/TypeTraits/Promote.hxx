@@ -2,7 +2,7 @@
  * \file   include/TFEL/TypeTraits/Promote.hxx
  * \brief  This file declares the Promote traits class.
  * \author Thomas Helfer
- * \date   03 May 2006
+ * \date 03/05/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -33,7 +33,7 @@ namespace tfel::typetraits {
    * \see    IsFundamentalNumericType
    *
    * \author Thomas Helfer
-   * \date   03 May 2006
+   * \date 03/05/2006
    */
   template <typename A, typename B>
   struct Promote;

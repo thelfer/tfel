@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/ThermoMechanicalBehaviour.hxx
  * \brief  This file declares the ThermoMechanicalBehaviour class
  * \author Thomas Helfer
- * \date   27 Sep 2006
+ * \date 27/09/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,7 +26,7 @@ namespace tfel::material {
    * \param typename T, numerical type.
    * \param bool use_qt, says if one shall use quantities.
    * \author Thomas Helfer
-   * \date   28 Jul 2006
+   * \date 28/07/2006
    */
   template <unsigned short N, typename NumType, bool use_qt>
   class ThermoMechanicalBehaviour

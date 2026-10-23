@@ -70,7 +70,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto norm(const tvector<N, T>& vec) noexcept
       requires(isScalar<T>()) {
-    typedef result_type<T, T, OpMult> squareT;
+    using squareT = result_type<T, T, OpMult>;
     return power<1, 2>(
         real(dotProduct<N>::exe(vec.begin(), vec.begin(), squareT(0u))));
   }  // end of norm

@@ -23,7 +23,7 @@ namespace tfel::math {
    * \brief  A class representing dynamically allocated vector.
    * \tparam  T: the underlying numerical type.
    * \author Thomas Helfer
-   * \date   04/04/2007
+   * \date 04/04/2007
    */
   template <typename T>
   struct [[nodiscard]] vector;

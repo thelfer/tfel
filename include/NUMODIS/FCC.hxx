@@ -2,7 +2,7 @@
  * \file   include/NUMODIS/FCC.hxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -50,13 +50,11 @@ namespace numodis {
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT FCC : public Cubic {
     FCC();
-
-    FCC(FCC&&);
-
+    FCC(FCC&&) noexcept;
     FCC(const FCC&);
 
    private:
-    virtual void Init() override;
+    void Init() override;
   };
 
 }  // end of namespace numodis

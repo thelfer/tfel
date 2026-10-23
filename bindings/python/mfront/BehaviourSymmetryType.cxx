@@ -2,7 +2,7 @@
  * \file   BehaviourSymmetryType.cxx
  * \brief
  * \author Thomas Helfer
- * \date   29/03/2017
+ * \date 29/03/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,9 +18,9 @@
 void declareBehaviourSymmetryType(pybind11::module_&);
 
 void declareBehaviourSymmetryType(pybind11::module_& m) {
-  pybind11::enum_<mfront::BehaviourSymmetryType>(m,
-
-                                                 "BehaviourSymmetryType")
+  pybind11::enum_<mfront::BehaviourSymmetryType>(
+      m, "BehaviourSymmetryType",
+      "Symmetry of a behaviour")
       .value("ISOTROPIC", mfront::BehaviourSymmetryType::ISOTROPIC)
       .value("ORTHOTROPIC", mfront::BehaviourSymmetryType::ORTHOTROPIC);
-}  // end of declareBehaviourSymmetryType
+}

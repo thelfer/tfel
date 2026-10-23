@@ -27,11 +27,11 @@ namespace mfront {
     //! \brief default constructor
     FileDescription();
     //! \brief move constructor
-    FileDescription(FileDescription&&);
+    FileDescription(FileDescription&&) noexcept;
     //! \brief copy constructor
     FileDescription(const FileDescription&);
     //! \brief move assignement
-    FileDescription& operator=(FileDescription&&);
+    FileDescription& operator=(FileDescription&&) noexcept;
     //! \brief standard assignement
     FileDescription& operator=(const FileDescription&);
     //! \brief destructor

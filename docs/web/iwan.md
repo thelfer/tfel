@@ -1,6 +1,15 @@
-% Implementation of the Iwan behaviour
-% Thomas Helfer,  Vinicius Alves Fernandes
-% 2017
+---
+title: Implementation of the Iwan behaviour
+author: Thomas Helfer, Vinicius Alves Fernandes
+date: 2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}

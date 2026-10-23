@@ -137,22 +137,22 @@ namespace aster {
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler1D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const,
-        AsterReal *const DDSOE,
-        const AsterReal *const STRAN,
-        const AsterReal *const DSTRAN,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const,
+        AsterReal* const DDSOE,
+        const AsterReal* const STRAN,
+        const AsterReal* const DSTRAN,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
@@ -180,22 +180,22 @@ namespace aster {
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler2D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const DROT,
-        AsterReal *const DDSOE,
-        const AsterReal *const STRAN,
-        const AsterReal *const DSTRAN,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const DROT,
+        AsterReal* const DDSOE,
+        const AsterReal* const STRAN,
+        const AsterReal* const DSTRAN,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
@@ -238,22 +238,22 @@ namespace aster {
             tfel::material::ModellingHypothesis::PLANESTRESS,
             Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const DROT,
-        AsterReal *const DDSOE,
-        const AsterReal *const STRAN,
-        const AsterReal *const DSTRAN,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const DROT,
+        AsterReal* const DDSOE,
+        const AsterReal* const STRAN,
+        const AsterReal* const DSTRAN,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
@@ -295,22 +295,22 @@ namespace aster {
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler3D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const DROT,
-        AsterReal *const DDSOE,
-        const AsterReal *const STRAN,
-        const AsterReal *const DSTRAN,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const DROT,
+        AsterReal* const DDSOE,
+        const AsterReal* const STRAN,
+        const AsterReal* const DSTRAN,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
@@ -370,22 +370,22 @@ namespace aster {
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler1D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const,
-        AsterReal *const DDSOE,
-        const AsterReal *const F0,
-        const AsterReal *const F1,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const,
+        AsterReal* const DDSOE,
+        const AsterReal* const F0,
+        const AsterReal* const F1,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
@@ -413,22 +413,22 @@ namespace aster {
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler2D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const DROT,
-        AsterReal *const DDSOE,
-        const AsterReal *const F0,
-        const AsterReal *const F1,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const DROT,
+        AsterReal* const DDSOE,
+        const AsterReal* const F0,
+        const AsterReal* const F1,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
@@ -471,22 +471,22 @@ namespace aster {
             tfel::material::ModellingHypothesis::PLANESTRESS,
             Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const DROT,
-        AsterReal *const DDSOE,
-        const AsterReal *const F0,
-        const AsterReal *const F1,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const DROT,
+        AsterReal* const DDSOE,
+        const AsterReal* const F0,
+        const AsterReal* const F1,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
@@ -528,22 +528,22 @@ namespace aster {
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler3D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const DROT,
-        AsterReal *const DDSOE,
-        const AsterReal *const F0,
-        const AsterReal *const F1,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const DROT,
+        AsterReal* const DDSOE,
+        const AsterReal* const F0,
+        const AsterReal* const F1,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;

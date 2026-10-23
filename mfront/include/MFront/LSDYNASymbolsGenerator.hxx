@@ -2,7 +2,7 @@
  * \file   LSDYNASymbolsGenerator.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19/07/2018
+ * \date 19/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,7 +24,7 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT LSDYNASymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     LSDYNASymbolsGenerator();
 
     void writeBehaviourTypeSymbols(std::ostream&,
@@ -41,8 +41,8 @@ namespace mfront {
                                 const FileDescription&,
                                 const std::string&,
                                 const Hypothesis) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~LSDYNASymbolsGenerator() override;
   };  // end of struct LSDYNASymbolsGenerator
 

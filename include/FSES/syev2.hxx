@@ -2,7 +2,7 @@
  * \file   include/FSES/syev2.hxx
  * \brief
  * \author Joachim Kopp/Thomas Helfer
- * \date   02 janv. 2017
+ * \date 02/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -49,10 +49,10 @@ namespace fses {
   // in the LAPACK routine DLAEV2, where |rt1| >= |rt2|.
   // ----------------------------------------------------------------------------
   template <typename real>
-  inline void syev2(real &rt1,
-                    real &rt2,
-                    real &cs,
-                    real &sn,
+  inline void syev2(real& rt1,
+                    real& rt2,
+                    real& cs,
+                    real& sn,
                     const real A,
                     const real B,
                     const real C);

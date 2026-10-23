@@ -1,7 +1,14 @@
 ---
-title: Installing `TFEL/MFront` on `FreeBSD`
+title: Installing TFEL/MFront on FreeBSD
 author: Thomas Helfer
 date: 20/12/2024
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
 ---
 
 <div id="slideshow">
@@ -22,4 +29,4 @@ The recommended compiler on `FreeBSD` is `clang`.
 
 # `python` bindings
 
-The `python` bindings shall work as expected..
+The `python` bindings shall work as expected.

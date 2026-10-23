@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Tests/TestManager.hxx
  * \author Thomas Helfer
- * \date   10 Apr 10
+ * \date 10/04/2010
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -34,12 +34,20 @@ namespace tfel::tests {
    * \brief a singleton in charge of managing a collection of tests.
    */
   struct TFELTESTS_VISIBILITY_EXPORT TestManager {
-    //! a simple alias
+    //! \brief a simple alias
     using TestOutputPtr = std::shared_ptr<TestOutput>;
-    //! a simple alias
+    //! \brief a simple alias
     using TestPtr = std::shared_ptr<Test>;
     //! \return the unique instance of the class
     static TestManager& getTestManager();
+    //! \brief move constructor (disabled)
+    TestManager(TestManager&&) = delete;
+    //! \brief copy constructor (disabled)
+    TestManager(const TestManager&) = delete;
+    //! \brief move assignement operator (disabled)
+    TestManager& operator=(TestManager&&) = delete;
+    //! \brief assignement operator (disabled)
+    TestManager& operator=(const TestManager&) = delete;
     /*!
      * \brief add a test output
      * \param o: output to be added
@@ -87,34 +95,42 @@ namespace tfel::tests {
      */
     void addTest(const std::string&, TestPtr);
     /*!
+     * \brief method indicating that the construction of a test failed for the
+     * given reason
+     *
+     * \param[in] n: name of the test
+     * \param[in] msg: error message
+     */
+    void registerTestConstructionFailure(const std::string&,
+                                         std::string_view) noexcept;
+    /*!
+     * \brief method indicating that the construction of a test failed for an
+     * unknown reason
+     *
+     * \param[in] n: name of the test
+     */
+    void registerTestConstructionFailure(const std::string&) noexcept;
+    /*!
      * \brief execute registred tests
      * \return the results of all tests
      */
-    TestResult execute();
+    [[nodiscard]] TestResult execute();
 
    private:
-    //! a simple alias
+    //! \brief a simple alias
     using MultipleTestOutputsPtr = std::shared_ptr<MultipleTestOutputs>;
-    //! a simple alias
+    //! \brief a simple alias
     using TestSuitePtr = std::shared_ptr<TestSuite>;
     /*!
      * \brief default constructor declared private to implement the
      * singleton pattern.
      */
     TFEL_VISIBILITY_LOCAL TestManager();
-    //! \brief move constructor (disabled)
-    TestManager(TestManager&&) = delete;
-    //! \brief copy constructor (disabled)
-    TestManager(const TestManager&) = delete;
-    //! \brief move assignement operator (disabled)
-    TestManager& operator=(TestManager&&) = delete;
-    //! \brief assignement operator (disabled)
-    TestManager& operator=(const TestManager&) = delete;
-    //! outputs used by default
+    //! \brief outputs used by default
     MultipleTestOutputsPtr default_outputs;
-    //! "per test suite" outputs
+    //! \brief "per test suite" outputs
     std::map<std::string, MultipleTestOutputsPtr> outputs;
-    //! registred tests
+    //! \brief registred tests
     std::map<std::string, TestSuitePtr> tests;
   };  // end of struct TestManager
 

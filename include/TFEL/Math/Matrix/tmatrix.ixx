@@ -243,6 +243,22 @@ namespace tfel::math::internals {
     }  // end of exe
   };   // end of struct DerivativeViewFromTinyMatrixImplementation
 
+  /*!
+   * \brief return the number of components of a scalar (1) or of a tensorial
+   * object (the size of its array policy). Used to check that a strided
+   * derivative sub-block fits in its base matrix.
+   * \tparam MathObjectType: scalar or tensorial type.
+   */
+  template <typename MathObjectType>
+  constexpr unsigned short getStridedDerivativeSubBlockExtent() {
+    if constexpr (tfel::math::isScalar<MathObjectType>()) {
+      return 1;
+    } else {
+      return static_cast<unsigned short>(
+          getArrayPolicySize<typename MathObjectType::array_policy>());
+    }
+  }  // end of getStridedDerivativeSubBlockExtent
+
   template <MatrixConcept MatrixType>
   TFEL_HOST_DEVICE constexpr auto det2(const MatrixType& m) noexcept {
     return m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1);
@@ -503,6 +519,71 @@ namespace tfel::math {
             VariableType>;
     return Implementation::exe(m, i, j);
   }  // end of map_derivative
+
+  template <unsigned short I,
+            unsigned short J,
+            typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  constexpr strided_derivative_view_from_tiny_matrix<M,
+                                                     FunctionType,
+                                                     VariableType>
+  map_derivative_strided(
+      base_type<
+          numeric_type<derivative_type<FunctionType, VariableType>>>* const p,
+      const std::size_t stride) {
+    constexpr auto fextent =
+        tfel::math::internals::getStridedDerivativeSubBlockExtent<
+            FunctionType>();
+    constexpr auto vextent =
+        tfel::math::internals::getStridedDerivativeSubBlockExtent<
+            VariableType>();
+    static_assert(N >= I + fextent, "invalid row index");
+    static_assert(M >= J + vextent, "invalid column index");
+    return map_derivative_strided<FunctionType, VariableType, N, M>(p, stride,
+                                                                    I, J);
+  }  // end of map_derivative_strided
+
+  template <typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  constexpr strided_derivative_view_from_tiny_matrix<M,
+                                                     FunctionType,
+                                                     VariableType>
+  map_derivative_strided(
+      base_type<
+          numeric_type<derivative_type<FunctionType, VariableType>>>* const p,
+      const std::size_t stride,
+      const unsigned short i,
+      const unsigned short j) {
+    using view_type =
+        strided_derivative_view_from_tiny_matrix<M, FunctionType, VariableType>;
+    const auto o = (static_cast<std::size_t>(i) * M + j) * stride;
+    if constexpr (isScalar<FunctionType>() && isScalar<VariableType>()) {
+      return view_type(p[o]);
+    } else {
+      return view_type{p + o, stride};
+    }
+  }  // end of map_derivative_strided
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr tvector<N, T> change_basis(
+      const tvector<N, T>& v, const rotation_matrix<T>& r) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    if constexpr (N == 1) {
+      return v;
+    } else {
+      auto rv = tvector<N, T>{T{0}};
+      for (unsigned short i = 0; i != N; ++i) {
+        for (unsigned short k = 0; k != N; ++k) {
+          rv(i) += r(k, i) * v(k);
+        }
+      }
+      return rv;
+    }
+  }  // end of change_basis
 
 }  // namespace tfel::math
 

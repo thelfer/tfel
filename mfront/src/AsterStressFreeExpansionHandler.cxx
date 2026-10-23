@@ -18,10 +18,10 @@
 namespace aster {
 
   void AsterStandardSmallStrainStressFreeExpansionHandler(
-      AsterReal *const e,
-      AsterReal *const de,
-      const AsterReal *const s0,
-      const AsterReal *const s1,
+      AsterReal* const e,
+      AsterReal* const de,
+      const AsterReal* const s0,
+      const AsterReal* const s1,
       const AsterInt d) {
     constexpr auto icste = tfel::math::Cste<AsterReal>::isqrt2;
     e[0] -= s0[0];

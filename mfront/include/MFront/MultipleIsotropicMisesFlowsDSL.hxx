@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   31 jan 2008
+ * \date 31/01/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -33,7 +33,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    MultipleIsotropicMisesFlowsDSL(const DSLOptions&);
+    explicit MultipleIsotropicMisesFlowsDSL(const DSLOptions&);
     //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     void getSymbols(std::map<std::string, std::string>&,

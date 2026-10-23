@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/DefaultCZMCodeGenerator.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/08/2022
+ * \date 03/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -33,7 +33,8 @@ namespace mfront {
 
    protected:
     void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-    std::string getLocalVariablesInitializers(const Hypothesis) const override;
+    [[nodiscard]] std::string getLocalVariablesInitializers(
+        const Hypothesis) const override;
 
   };  // end of DefaultCZMCodeGenerator
 

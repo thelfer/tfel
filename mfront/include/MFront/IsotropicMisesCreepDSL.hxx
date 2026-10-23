@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/IsotropicMisesCreepDSL.hxx
  * \brief  This file declares the IsotropicMisesCreepDSL class
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,7 +28,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    IsotropicMisesCreepDSL(const DSLOptions&);
+    explicit IsotropicMisesCreepDSL(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

@@ -64,7 +64,7 @@ namespace fses {
     // Loop over all off-diagonal elements
     for (int l = 0; l < n - 1; l++) {
       nIter = 0;
-      while (1) {
+      while (true) {
         // Check for convergence and exit iteration loop if off-diagonal
         // element e(l) is zero
         for (m = l; m <= n - 2; m++) {

@@ -2,7 +2,7 @@
  * \file  DocumentationGeneratorBase.cxx
  * \brief
  * \author Maxence Wangermez
- * \date   16 avril 2024
+ * \date 16/04/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -194,7 +194,7 @@ namespace mfront {
       const VariableInformationBase&) = default;
   DocumentationGeneratorBase::VariableInformationBase&
   DocumentationGeneratorBase::VariableInformationBase::operator=(
-      VariableInformationBase&&) = default;
+      VariableInformationBase&&) noexcept = default;
   DocumentationGeneratorBase::VariableInformationBase&
   DocumentationGeneratorBase::VariableInformationBase::operator=(
       const VariableInformationBase&) = default;

@@ -50,10 +50,10 @@ namespace aster {
    * - fourth paramater : expansion value at the end of the time step
    * - third  parameter : spatial dimension
    */
-  typedef void (*StressFreeExpansionHandler)(AsterReal *const,
-                                             AsterReal *const,
-                                             const AsterReal *const,
-                                             const AsterReal *const,
+  typedef void (*StressFreeExpansionHandler)(AsterReal* const,
+                                             AsterReal* const,
+                                             const AsterReal* const,
+                                             const AsterReal* const,
                                              const AsterInt);
 
 }  // end of namespace aster

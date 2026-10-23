@@ -2,7 +2,7 @@
  * \file   MFront/BehaviourBrick/StandardStressCriterionBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   25/03/2020
+ * \date 25/03/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -43,11 +43,12 @@ namespace mfront::bbrick {
      * \brief constructor
      * \param[in] n: name of the stress criterion
      */
-    StandardStressCriterionBase(const std::string& n);
+    explicit StandardStressCriterionBase(const std::string& n);
 
-    std::string computeElasticPrediction(const std::string&,
-                                         const BehaviourDescription&,
-                                         const StressPotential&) const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -57,21 +58,23 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const Role) override;
-    std::string computeCriterion(const std::string&,
-                                 const BehaviourDescription&,
-                                 const StressPotential&) const override;
-    std::string computeNormal(const std::string&,
-                              const BehaviourDescription&,
-                              const StressPotential&,
-                              const Role) const override;
-    std::string computeNormalDerivative(const std::string&,
-                                        const BehaviourDescription&,
-                                        const StressPotential&,
-                                        const Role) const override;
-    bool isCoupledWithPorosityEvolution() const override final;
-    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const override final;
-    //! destructor
+    [[nodiscard]] std::string computeCriterion(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeNormal(const std::string&,
+                                            const BehaviourDescription&,
+                                            const StressPotential&,
+                                            const Role) const override;
+    [[nodiscard]] std::string computeNormalDerivative(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&,
+        const Role) const override;
+    [[nodiscard]] bool isCoupledWithPorosityEvolution() const final;
+    [[nodiscard]] PorosityEffectOnFlowRule
+    getPorosityEffectOnEquivalentPlasticStrain() const final;
+    //! \brief destructor
     ~StandardStressCriterionBase() override;
 
    private:

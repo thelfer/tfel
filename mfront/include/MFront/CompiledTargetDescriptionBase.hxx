@@ -2,7 +2,7 @@
  * \file  CompiledTargetDescriptionBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   17 mars 2015
+ * \date 17/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -56,13 +56,13 @@ namespace mfront {
     //! \brief copy constructor
     CompiledTargetDescriptionBase(const CompiledTargetDescriptionBase&);
     //! \brief move constructor
-    CompiledTargetDescriptionBase(CompiledTargetDescriptionBase&&);
+    CompiledTargetDescriptionBase(CompiledTargetDescriptionBase&&) noexcept;
     //! \brief standard assignement (deleted)
     CompiledTargetDescriptionBase& operator=(
         const CompiledTargetDescriptionBase&) = delete;
     //! \brief move assignement (deleted)
-    CompiledTargetDescriptionBase& operator=(CompiledTargetDescriptionBase&&) =
-        delete;
+    CompiledTargetDescriptionBase& operator=(
+        CompiledTargetDescriptionBase&&) noexcept = delete;
     //! \brief destructor
     ~CompiledTargetDescriptionBase();
     //! \brief name

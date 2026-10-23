@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   02 oct 2007
+ * \date 02/10/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -13,6 +13,7 @@
  */
 
 #include <cmath>
+#include <numbers>
 #include <sstream>
 #include <stdexcept>
 
@@ -148,7 +149,7 @@ namespace tfel::math::parser {
     if (!expr->dependsOnVariable(pos)) {
       return Number::zero();
     }
-    static double ln10 = std::log(10.);
+    static double ln10 = std::numbers::ln10_v<double>;
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto de_ = std::make_shared<BinaryOperation<OpMult>>(

@@ -74,6 +74,7 @@ endif(enable-static)
 set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
+    ConfigurationManager.cxx
     GlobalDomainSpecificLanguageOptionsManager.cxx
     MaterialKnowledgeDescription.cxx
     PathSpecifier.cxx
@@ -154,7 +155,10 @@ set(TFELMFront_SOURCES
     ImplicitGenericBehaviourDSL.cxx
     ImplicitModelDSL.cxx
     ImplicitCZMDSL.cxx
-    NonLinearSystemSolver.cxx
+    AbstractLinearSystemSolver.cxx
+    LinearSystemSolverBase.cxx
+    DefaultLinearSystemSolver.cxx
+    AbstractNonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
     NonLinearSystemSolverFactory.cxx
     UserDefinedNonLinearSystemSolver.cxx
@@ -203,6 +207,16 @@ set(TFELMFront_SOURCES
     UMATInterfaceBase.cxx
     GenericMaterialPropertyInterfaceBase.cxx
     GenericMaterialPropertyInterface.cxx
+    GenericParallelMaterialPropertyInterface.cxx
+    GenericParallel/MaterialProperty/AbstractBackend.cxx
+    GenericParallel/MaterialProperty/BackendFactory.cxx
+    GenericParallel/MaterialProperty/BackendBase.cxx
+    GenericParallel/MaterialProperty/CUDABackendBase.cxx
+    GenericParallel/MaterialProperty/CUDABackend.cxx
+    GenericParallel/MaterialProperty/HIPBackend.cxx
+    GenericParallel/MaterialProperty/CxxProgrammingModelBackendBase.cxx
+    GenericParallel/MaterialProperty/ParallelSTLBackend.cxx
+    GenericParallel/MaterialProperty/SYCLBackend.cxx
     GenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx
     GenericModelInterface.cxx
@@ -304,7 +318,9 @@ if(HAVE_CASTEM)
 	Castem21Interface.cxx
 	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
+	Castem21MaterialPropertyInterface.cxx
 	CastemModelInterface.cxx
+	Castem21ModelInterface.cxx
 	AmitexInterface.cxx
 	${TFELMFront_SOURCES})
     set(CastemInterface_SOURCES
@@ -490,7 +506,29 @@ if(HAVE_CYRANO)
     TFELException)
 endif(HAVE_CYRANO)
 
+if(enable-tdls)
+  set(TFELMFront_SOURCES
+      TDLSLinearSystemSolver.cxx
+      ${TFELMFront_SOURCES})
+endif(enable-tdls)
+
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
+if(enable-tdls)
+  target_compile_definitions(TFELMFront
+    PUBLIC TFEL_MATH_TDLS_SUPPORT)
+  if(enable-tdls-as-default-linear-system-solver-in-mfront)
+    target_compile_definitions(TFELMFront
+      PRIVATE MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER)
+  endif(enable-tdls-as-default-linear-system-solver-in-mfront)
+  if(enable-static)
+    target_compile_definitions(TFELMFront-static
+      PUBLIC TFEL_MATH_TDLS_SUPPORT)
+    if(enable-tdls-as-default-linear-system-solver-in-mfront)
+      target_compile_definitions(TFELMFront-static
+        PRIVATE MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER)
+    endif(enable-tdls-as-default-linear-system-solver-in-mfront)
+  endif(enable-static)
+endif(enable-tdls)
 target_include_directories(TFELMFront
    PUBLIC 
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -515,7 +553,6 @@ if(HAVE_CASTEM)
     endif(enable-static)
   endif(CASTEHOME)
 endif(HAVE_CASTEM)
-
 target_link_libraries(TFELMFront
   PUBLIC
   tfel::MFrontLogStream

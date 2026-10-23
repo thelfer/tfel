@@ -2,7 +2,7 @@
  * \file   VariableBoundsDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   12 avril 2017
+ * \date 12/04/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,7 +25,15 @@ void declareVariableBoundsDescription(pybind11::module_& m) {
       .value("UPPER", VariableBoundsDescription::UPPER)
       .value("LOWERANDUPPER", VariableBoundsDescription::LOWERANDUPPER);
 
-  pybind11::class_<VariableBoundsDescription>(m, "VariableBoundsDescription")
+  pybind11::class_<VariableBoundsDescription>(
+      m, "VariableBoundsDescription",
+      "A structure in charge of describing bounds on a variable.\n"
+      "Two kinds of bounds are considered:\n"
+      "- physical bounds: give the bounds out of which this variable is\n"
+      "  not physically defined. For example, a temperature must be\n"
+      "  positive.\n"
+      "- (standard) bounds: give the bounds out of which the correlation\n"
+      "  has not been identified.")
       .def_readwrite("boundsType", &VariableBoundsDescription::boundsType)
       .def_readwrite("lineNumber", &VariableBoundsDescription::lineNumber)
       .def_readwrite("component", &VariableBoundsDescription::component)

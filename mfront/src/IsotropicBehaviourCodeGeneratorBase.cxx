@@ -2,7 +2,7 @@
  * \file   mfront/src/IsotropicBehaviourCodeGeneratorBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/08/2022
+ * \date 04/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -143,7 +143,7 @@ namespace mfront {
     if (!this->bd.hasCode(h, BehaviourData::ComputePredictionOperator)) {
       os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag, const SMType smt) "
-         << "override final {\n";
+         << "final {\n";
       os << "using namespace std;\n";
       if (this->bd.useQt()) {
         os << "if(smflag!=MechanicalBehaviour<" << btype
@@ -228,15 +228,15 @@ namespace mfront {
           this->writeMaterialPropertyEvaluation(os, emps[0], bts);
           os << ");\n";
         } else {
-          os << "const auto mfront_young_bts = this->young;";
+          os << "const auto mfront_young_bts = this->young;\n";
         }
         if (!this->bd.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
           this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], bts);
-          os << "const auto mfront_nu_bts = stress(";
+          os << "const auto mfront_nu_bts = real(";
           this->writeMaterialPropertyEvaluation(os, emps[1], bts);
           os << ");\n";
         } else {
-          os << "const auto mfront_nu_bts = this->nu;";
+          os << "const auto mfront_nu_bts = this->nu;\n";
         }
         os << "const auto mfront_eel_bts = eval("
            << "-mfront_nu_bts / mfront_young_bts * trace(this->sig) * "

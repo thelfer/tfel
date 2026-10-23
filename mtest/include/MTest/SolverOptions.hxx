@@ -2,7 +2,7 @@
  * \file   SolverOptions.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 nov. 2015
+ * \date 04/11/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -81,9 +81,9 @@ namespace mtest {
    */
   struct SolverOptions {
     SolverOptions();
-    SolverOptions(SolverOptions&&);
+    SolverOptions(SolverOptions&&) noexcept;
     SolverOptions(const SolverOptions&);
-    SolverOptions& operator=(SolverOptions&&);
+    SolverOptions& operator=(SolverOptions&&) noexcept;
     SolverOptions& operator=(const SolverOptions&);
     ~SolverOptions();
     //! acceleration algorithm
@@ -99,9 +99,9 @@ namespace mtest {
     //! use a prediction matrix before beginning the resolution
     PredictionPolicy ppolicy = PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY;
     //! order of magnitude of the precision expected for the unknows
-    real eeps = -real(1);
+    real eeps = -real{1};
     //! order of magnitude of the precision expected for the forces
-    real seps = -real(1);
+    real seps = -real{1};
     //! maximal time step
     real maximal_time_step = -1;
     //! minimal time step

@@ -2,7 +2,7 @@
  * \file   SortEigenVectors.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 janv. 2017
+ * \date 04/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -39,7 +39,7 @@ namespace tfel::math::internals {
                     tfel::math::tmatrix<3u, 3u, T>&,
                     const EigenValuesOrdering) {}  // end of exe
   };  // end of struct SortEigenVectors<1u>
-  //! \brief partial specialisation of the `SortEigenVectors` in 1D
+  //! \brief partial specialisation of the `SortEigenVectors` in 2D
   template <>
   struct SortEigenVectors<2u> {
     //! a simple alias

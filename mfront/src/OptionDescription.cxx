@@ -2,7 +2,7 @@
  * \file   OptionDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23/03/2018
+ * \date 23/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -59,11 +59,11 @@ namespace mfront::bbrick {
 
   OptionDescription::OptionDescription() = default;
   OptionDescription::OptionDescription(const OptionDescription&) = default;
-  OptionDescription::OptionDescription(OptionDescription&&) = default;
+  OptionDescription::OptionDescription(OptionDescription&&) noexcept = default;
   OptionDescription& OptionDescription::operator=(const OptionDescription&) =
       default;
-  OptionDescription& OptionDescription::operator=(OptionDescription&&) =
-      default;
+  OptionDescription& OptionDescription::operator=(
+      OptionDescription&&) noexcept = default;
   OptionDescription::~OptionDescription() = default;
 
   void check(const tfel::utilities::DataMap& dv,

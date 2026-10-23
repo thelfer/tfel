@@ -1,6 +1,6 @@
 ---
 title: "MTest: unit testing of behaviours"
-author: Thomas Helfer
+author: Thomas Helfer, Jean-Michel Proix
 date: 08/02/2026
 lang: en-EN
 link-citations: true

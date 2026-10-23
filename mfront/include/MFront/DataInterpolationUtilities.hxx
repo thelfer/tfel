@@ -3,7 +3,7 @@
  * \brief This file declares a set of classes and methods useful
  * to handle data interpolation.
  * \author Thomas Helfer
- * \brief 17/06/2024
+ * \date 17/06/2024
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

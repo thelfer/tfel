@@ -2,7 +2,7 @@
  * \file   tests/Material/IsotropicModuli.cxx
  * \brief
  * \author Antoine MARTIN
- * \date   01/09/2025
+ * \date 01/09/2025
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -64,6 +64,21 @@ struct IsotropicModuliTest final : public tfel::tests::TestCase {
     const auto Enu = KG.ToYoungNu();
     const auto LG = KG.ToLambdaMu();
     const auto Enu_bis = LG.ToYoungNu();
+
+    tfel::material::LambdaMuModuli<stress> lg_ter;
+    tfel::material::LambdaMuModuli<stress> lg_quad(LG);
+    lg_quad = LG;
+    lg_ter = LG;
+
+    tfel::material::YoungNuModuli<stress> Enu_ter;
+    tfel::material::YoungNuModuli<stress> Enu_quad(Enu_bis);
+    Enu_quad = Enu_bis;
+    Enu_ter = Enu_bis;
+
+    tfel::material::KGModuli<stress> kg_ter;
+    tfel::material::KGModuli<stress> kg_quad(KG);
+    kg_quad = KG;
+    kg_ter = KG;
 
     const auto E = Enu.young;
     const auto nu = Enu.nu;

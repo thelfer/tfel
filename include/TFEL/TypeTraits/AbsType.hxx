@@ -3,7 +3,7 @@
  * \brief  This file declares the AbsType traits class
  * and specialises it for standard numeric types.
  * \author Thomas Helfer
- * \date   10 Sept. 2012
+ * \date 10/09/2012
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,7 +23,7 @@
  * \brief An helper macro to specialise AbsType for each standard
  * "real" numeric types.
  * \author Thomas Helfer
- * \date   10 Sept. 2012
+ * \date 10/09/2012
  */
 #define TFEL_TYPETRAITS_ABSTYPE(X)       \
   /*!                                    \
@@ -40,7 +40,7 @@
  * \brief  An helper macro to specialise AbsType for each
  * standard "complex" numeric types.
  * \author Thomas Helfer
- * \date   10 Sept. 2012
+ * \date 10/09/2012
  */
 #define TFEL_TYPETRAITS_ABSTYPEII(X)                      \
   /*!                                                     \
@@ -64,7 +64,7 @@ namespace tfel::typetraits {
    * \return type, type of abs() function
    *
    * \author Thomas Helfer
-   * \date   10 Sept. 2012
+   * \date 10/09/2012
    */
   template <typename T>
   struct AbsType {

@@ -2,7 +2,7 @@
  * \file   mfront/src/CalculiXInterfaceExceptions.cxx
  * \brief  This file implements the CalculiXInterfaceExceptions class.
  * \author Thomas Helfer
- * \date   12/12/2011
+ * \date 12/12/2011
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

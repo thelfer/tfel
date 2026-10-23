@@ -1,0 +1,24 @@
+@DSL DefaultGenericBehaviour;
+@Author Thomas Helfer;
+@Behaviour BarBehaviour3;
+
+@Gradient real x[2];
+x.setEntryName("UniaxialStrain");
+
+@ThermodynamicForce stress Tx[2];
+Tx.setEntryName("UniaxialTension");
+
+@MaterialProperty stress E[4];
+E.setGlossaryName("YoungModulus");
+
+@ProvidesTangentOperator;
+@Integrator{
+  Tx[0] = E[0] * (x[0] + dx[0]) + E[1] * (x[1] + dx[1]);
+  Tx[1] = E[2] * (x[0] + dx[0]) + E[3] * (x[1] + dx[1]);
+  if (computeTangentOperator_) {
+    dTx_ddx(0, 0) = E[0];
+    dTx_ddx(1, 1) = E[3];
+    dTx_ddx(0, 1) = E[1];
+    dTx_ddx(1, 0) = E[2];
+  }
+}

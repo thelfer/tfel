@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/Stensor/StensorConceptOperations.hxx
  * \brief  This file implements operations that can be applied to stensor.
  * \author Thomas Helfer
- * \date   01 jui 2006
+ * \date 01/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -102,8 +102,8 @@ namespace tfel::math {
     using StensorB = EvaluationResult<B>;
 
    public:
-    typedef result_type<StensorA, StensorB, OpDotProduct> Result;
-    typedef result_type<StensorA, StensorB, OpDotProduct> Handle;
+    using Result = result_type<StensorA, StensorB, OpDotProduct>;
+    using Handle = result_type<StensorA, StensorB, OpDotProduct>;
   };
 
   /*!

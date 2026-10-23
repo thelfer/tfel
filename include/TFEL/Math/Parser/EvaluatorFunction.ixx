@@ -678,8 +678,7 @@ namespace tfel::math::parser {
   }  // end of EvaluatorFunctionNV<N>::checkCyclicDependency
 
   template <unsigned short N>
-  EvaluatorFunctionNV<N>::~EvaluatorFunctionNV() {
-  }  // end of EvaluatorFunctionNV<N>::~EvaluatorFunctionNV()
+  EvaluatorFunctionNV<N>::~EvaluatorFunctionNV() = default;
 
   template <unsigned short N>
   EvaluatorFunction1PNV<N>::EvaluatorFunction1PNV(
@@ -787,8 +786,7 @@ namespace tfel::math::parser {
   }  // end of EvaluatorFunction1PNV<N>::checkCyclicDependency
 
   template <unsigned short N>
-  EvaluatorFunction1PNV<N>::~EvaluatorFunction1PNV() {
-  }  // end of EvaluatorFunction1PNV<N>::~EvaluatorFunction1PNV()
+  EvaluatorFunction1PNV<N>::~EvaluatorFunction1PNV() = default;
 
   template <unsigned short N>
   EvaluatorFunction2PNV<N>::EvaluatorFunction2PNV(
@@ -889,8 +887,7 @@ namespace tfel::math::parser {
   }  // end of EvaluatorFunction2PNV<N>::checkCyclicDependency
 
   template <unsigned short N>
-  EvaluatorFunction2PNV<N>::~EvaluatorFunction2PNV() {
-  }  // end of EvaluatorFunction2PNV<N>::~EvaluatorFunctionNV()
+  EvaluatorFunction2PNV<N>::~EvaluatorFunction2PNV() = default;
 
   template <unsigned short N>
   EvaluatorFunction1UPNV<N>::EvaluatorFunction1UPNV(
@@ -998,8 +995,7 @@ namespace tfel::math::parser {
   }  // end of EvaluatorFunction1UPNV<N>::checkCyclicDependency
 
   template <unsigned short N>
-  EvaluatorFunction1UPNV<N>::~EvaluatorFunction1UPNV() {
-  }  // end of EvaluatorFunction1UPNV<N>::~EvaluatorFunction1UPNV()
+  EvaluatorFunction1UPNV<N>::~EvaluatorFunction1UPNV() = default;
 
   template <unsigned short N>
   EvaluatorFunction2UPNV<N>::EvaluatorFunction2UPNV(

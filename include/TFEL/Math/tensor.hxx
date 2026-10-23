@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/tensor.hxx
  * \brief
  * \author Thomas Helfer
- * \date   01 Déc 2013
+ * \date 01/12/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -102,8 +102,10 @@ namespace tfel::math {
     TFEL_HOST_DEVICE static constexpr tensor<N, ValueType>
     buildFromFortranMatrix(const base_type<ValueType>* const) noexcept;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tensor,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArray<
         tensor<N, ValueType>,

@@ -55,6 +55,12 @@ namespace mfront {
   }  // end of
      // MFrontPleiadesModelInterfaceBase::MFrontPleiadesModelInterfaceBase
 
+  void MFrontPleiadesModelInterfaceBase::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface");
+    }
+  }  // end of setOptions
+
   void MFrontPleiadesModelInterfaceBase::declareReservedNames(
       std::set<std::string>& v) {
     v.insert({"msg", "oss", "mesh", "nodes", "mesh", "node_k", "gnode_k", "dt",
@@ -141,7 +147,7 @@ namespace mfront {
       this->headerFile << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      this->headerFile << "* \\date   " << fd.date << '\n';
+      this->headerFile << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       this->headerFile << fd.description << '\n';
@@ -379,7 +385,7 @@ namespace mfront {
       this->srcFile << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      this->srcFile << "* \\date   " << fd.date << '\n';
+      this->srcFile << "* \\date " << fd.date << '\n';
     }
     this->srcFile << " */\n\n"
                   << "#include<iostream>\n"

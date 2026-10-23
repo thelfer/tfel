@@ -1,0 +1,23 @@
+interfaces_options: {
+  generic-parallel: {
+    backend: {cuda : {
+        number_of_threads_per_block: 64
+      }
+    }
+  }
+},
+compilation_options : {
+  cxx : {
+    compiler: "@TFEL_CLANGXX_COMPILER@",
+    compilation_flags: "-std=c++@TFEL_CXX_STANDARD@ -O3 -march=native" 
+  },
+  cuda : {
+    compiler: "@TFEL_CLANGXX_COMPILER@",
+    compilation_flags: {"-O3 -std=c++@TFEL_CXX_STANDARD@ -march=native",
+      "-x cuda --cuda-compile-host-device --cuda-gpu-arch=native",
+      "--cuda-path=@TFEL_CUDA_PATH@ -fPIC -DPIC"}
+  }
+},
+linking_options: {
+  linker_flags: "-L@TFEL_CUDA_LIBRARY_DIR@ -lcudart -ldl -lrt -pthread"
+}

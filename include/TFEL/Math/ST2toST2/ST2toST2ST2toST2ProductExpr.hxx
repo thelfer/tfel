@@ -2,7 +2,7 @@
  * \file  include/TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx
  * \brief
  * \author Thomas Helfer
- * \date 16 juin 2014
+ * \date 16/06/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -74,15 +74,16 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 3 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const {
+      return {};
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>
 
@@ -156,15 +157,16 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 4 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const {
+      return {};
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>
 
@@ -278,15 +280,16 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 6 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const {
+      return {};
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>
 

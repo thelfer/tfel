@@ -1,0 +1,8 @@
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<@interface@> @library@ 'umatmodel1';
+@ExternalStateVariable<function> 'a' 'sin(3 * t)' ;
+@Times {0, 5 in 100};
+@Test<function> {
+  'b' : 'a'
+}
+1e-12;

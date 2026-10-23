@@ -24,7 +24,9 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
   using st2tost2 = tfel::math::st2tost2<N, double>;
   const auto S = tfel::math::StensorDimeToSize<N>::value;
   pybind11::class_<st2tost2>(m, n, pybind11::buffer_protocol())
-      .def_static("zero", &st2tost2::zero)
+      .def_static("zero", &st2tost2::zero,
+                  "Return a new instance of the Child class filled with null "
+                  "values")
       .def_buffer([](st2tost2& s) -> pybind11::buffer_info {
         return pybind11::buffer_info(
             s.data(),       /* Pointer to buffer */
@@ -36,7 +38,7 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
             {s.size(0), s.size(1)}, /* Buffer dimensions */
             {s.size(1) * sizeof(double), sizeof(double)});
       })
-      .def(pybind11::init<>())
+      .def(pybind11::init<>(), "Default constructor")
       .def(pybind11::init<>(
           [S](pybind11::array_t<double, pybind11::array::c_style |
                                             pybind11::array::forcecast>& u) {
@@ -49,7 +51,8 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
                 t(i, j) = u.unchecked<2>()(i, j);
               }
             return t;
-          }))
+          }),
+           pybind11::arg("u"))
       .def("__repr__",
            [](const st2tost2& s) {
              std::ostringstream os;
@@ -62,7 +65,7 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
              if ((r >= s.size(0)) && (c >= s.size(1))) {
                tfel::raise<std::range_error>(
                    "invalid index '(" + std::to_string(static_cast<int>(r)) +
-                   ", " + std::to_string(static_cast<int>(c)) + "'");
+                   ", " + std::to_string(static_cast<int>(c)) + "')");
              }
              return s(r, c);
            })
@@ -74,7 +77,7 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
              if ((r >= s.size(0)) && (c >= s.size(1))) {
                tfel::raise<std::range_error>(
                    "invalid index '(" + std::to_string(static_cast<int>(r)) +
-                   ", " + std::to_string(static_cast<int>(c)) + "'");
+                   ", " + std::to_string(static_cast<int>(c)) + "')");
              }
              s(r, c) = v;
            })

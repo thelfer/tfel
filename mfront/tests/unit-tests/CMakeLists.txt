@@ -9,7 +9,7 @@ macro(test_mfront test_arg)
     TFELSystem  TFELGlossary
     TFELUtilities TFELException TFELTests ${TFEL_DL_LIBRARY})
   add_test(NAME mfront-${test_arg} COMMAND mfront-${test_arg})
-  add_dependencies(check mfront-${test_arg})
+  add_dependencies(build-tests mfront-${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST mfront-${test_arg}
       PROPERTY DEPENDS "MFrontCastemBehaviours")
@@ -24,7 +24,7 @@ macro(test_mfront2 test_arg)
   add_executable(mfront-${test_arg} EXCLUDE_FROM_ALL
     "${PROJECT_BINARY_DIR}/mfront/tests/unit-tests/${test_arg}.cxx")
   add_test(NAME mfront-${test_arg} COMMAND mfront-${test_arg})
-  add_dependencies(check mfront-${test_arg})
+  add_dependencies(build-tests mfront-${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST mfront-${test_arg}
       PROPERTY DEPENDS "MFrontCastemBehaviours"
@@ -39,7 +39,7 @@ endmacro(test_mfront2)
 macro(test_mfront3 test_arg)
   add_executable(mfront-${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
   add_test(NAME mfront-${test_arg} COMMAND mfront-${test_arg})
-  add_dependencies(check mfront-${test_arg})
+  add_dependencies(build-tests mfront-${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST mfront-${test_arg}
       PROPERTY DEPENDS "MFrontCastemBehaviours"

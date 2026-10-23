@@ -26,7 +26,9 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/ModelDSLCommon.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/ModelInterfaceFactory.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
 #if defined __CYGWIN__ && (!defined _GLIBCXX_USE_C99)
@@ -263,10 +265,16 @@ namespace mfront {
   }  // end of treatModel
 
   void ModelDSLCommon::setInterfaces(const std::set<std::string>& inames) {
+    const auto& m = ConfigurationManager::get();
     auto& mbif = ModelInterfaceFactory::getModelInterfaceFactory();
     for (const auto& i : inames) {
       if (this->interfaces.count(i) == 0) {
-        this->interfaces.insert({i, mbif.getInterface(i)});
+        auto ptr = mbif.getInterface(i);
+        const auto opts = m.getModelInterfaceOptions(i);
+        if (!opts.empty()) {
+          ptr->setOptions(opts);
+        }
+        this->interfaces.insert({i, ptr});
       }
     }
   }  // end of setInterfaces
@@ -482,8 +490,7 @@ namespace mfront {
     auto newInstruction = true;
     auto newLine = true;
     if (!getDebugMode()) {
-      f.body += "#line " + std::to_string(currentLine) + " \"" +
-                this->fd.fileName + "\"\n";
+      f.body += printLinePragma(currentLine, this->fd.fileName);
     }
     for (; (this->current != this->tokens.end()) && (openedBrackets != 0);
          ++(this->current)) {
@@ -491,8 +498,7 @@ namespace mfront {
         currentLine = this->current->line;
         f.body += "\n";
         if (!getDebugMode()) {
-          f.body += "#line " + std::to_string(currentLine) + " \"" +
-                    this->fd.fileName + "\"\n";
+          f.body += printLinePragma(currentLine, this->fd.fileName);
         }
         newLine = true;
       }

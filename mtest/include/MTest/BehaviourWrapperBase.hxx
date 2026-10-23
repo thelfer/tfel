@@ -2,7 +2,7 @@
  * \file   BehaviourWrapperBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   08/11/2021
+ * \date 08/11/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -30,7 +30,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] wb : wrapped behaviour
      */
-    BehaviourWrapperBase(const std::shared_ptr<Behaviour>&);
+    explicit BehaviourWrapperBase(const std::shared_ptr<Behaviour>&);
     //
     void allocateCurrentState(CurrentState&) const override;
     std::string getBehaviourName() const override;

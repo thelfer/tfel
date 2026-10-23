@@ -1,0 +1,49 @@
+---
+title: Release notes of the 3.0.17 version of `TFEL`, `MFront` and `MTest`
+author: Thomas Helfer
+date: 2026
+lang: en-EN
+numbersections: true
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
+
+The page describes the new functionalities of Version 3.0.17 of the
+`TFEL` project.
+
+This version was released on June 22, 2026.
+
+# Issues fixed
+
+## Issue 983: [cmake] PYTHON_VERSION_MAJOR is deprecated in favour of Python_VERSION_MAJOR
+
+For more details, see <https://github.com/thelfer/tfel/issues/983>.￼
+
+## Issue 971: [mfront] Trying to read a parameter file shall no modify the value of errno when the file is not present 
+
+For more details, see <https://github.com/thelfer/tfel/issues/971>.￼
+
+## Issue 964: [tfel-utilities] The second parameter of `CxxTokenizer::isValidIdentifier` is not taken into account correctly
+
+For more details, see <https://github.com/thelfer/tfel/issues/964>.
+
+## Issue 953: Extending the precision of the default parameters value for material properties
+
+For more details, see <https://github.com/thelfer/tfel/issues/953>.
+
+## Issue 948: [tfel-system] fix dir separator on `window`
+
+For more details, see <https://github.com/thelfer/tfel/issues/948>.
+
+## Issue 892: [tfel-check] Specifying distinct columns for reference file and result file is broken
+
+For more details, see <https://github.com/thelfer/tfel/issues/892>.

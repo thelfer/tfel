@@ -1,7 +1,7 @@
 /*!
  * \file   Glossary.hxx
  * \author Thomas Helfer
- * \date   09/06/14
+ * \date 09/06/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -140,16 +140,15 @@ namespace tfel::glossary {
      * \return true if the glossary contains the given name or key
      * \param[in] n: name
      */
-    bool contains(const std::string&) const;
+    [[nodiscard]] bool contains(const std::string&) const;
     /*!
      * \return the glossary entry associated with the given name or key
      * \param[in] n: name
      */
-    const GlossaryEntry& getGlossaryEntry(const std::string&) const;
-    /*!
-     * \return all the registred keys
-     */
-    const std::vector<std::string>& getKeys() const;
+    [[nodiscard]] const GlossaryEntry& getGlossaryEntry(
+        const std::string&) const;
+    //! \return all the registred keys
+    [[nodiscard]] const std::vector<std::string>& getKeys() const;
 
    protected:
     //! all glossary names (to initialise glossary entries)
@@ -171,13 +170,13 @@ namespace tfel::glossary {
      * returned.
      * \param[in] n: name or key.
      */
-    std::set<GlossaryEntry>::const_iterator findGlossaryEntry(
+    [[nodiscard]] std::set<GlossaryEntry>::const_iterator findGlossaryEntry(
         const std::string&) const;
 
-    //! rief list of all registred entries
+    //! \brief list of all registred entries
     std::set<GlossaryEntry> entries;
 
-    //! rief list of all registred keys
+    //! \brief list of all registred keys
     std::vector<std::string> keys;
 
   };  // end of struct Glossary

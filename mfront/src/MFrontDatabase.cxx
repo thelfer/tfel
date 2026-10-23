@@ -2,7 +2,7 @@
  * \file   MFrontDatabase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   12/11/2025
+ * \date 12/11/2025
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -156,7 +156,13 @@ namespace mfront {
       const AnalyseDirectoryOptions& opts) {
     auto r = AnalyseDirectoryResults{};
     for (const auto& d : directories) {
-      this->analyseDirectory(d, opts);
+      const auto r2 = this->analyseDirectory(d, opts);
+      r.library_analysis_failures.insert(r.library_analysis_failures.end(),
+                                         r2.library_analysis_failures.begin(),
+                                         r2.library_analysis_failures.end());
+      r.invalid_directories.insert(r.invalid_directories.end(),
+                                   r2.invalid_directories.begin(),
+                                   r2.invalid_directories.end());
     }
     return r;
   }  // end of analyseDirectories
@@ -201,7 +207,7 @@ namespace mfront {
       auto expr =
           std::regex{*(q.interface_filter),
                      q.regular_expression_syntax | std::regex_constants::icase};
-      filters.push_back([&elm, &q, r = expr](const EntryPoint& e) noexcept {
+      filters.push_back([&elm, r = expr](const EntryPoint& e) noexcept {
         return std::regex_match(elm.getInterface(e.library, e.name), r);
       });
     }
@@ -209,14 +215,14 @@ namespace mfront {
       auto expr =
           std::regex{*(q.material_filter),
                      q.regular_expression_syntax | std::regex_constants::icase};
-      filters.push_back([&elm, &q, r = expr](const EntryPoint& e) noexcept {
+      filters.push_back([&elm, r = expr](const EntryPoint& e) noexcept {
         return std::regex_match(elm.getMaterial(e.library, e.name), r);
       });
     }
     if (q.name_filter.has_value()) {
       auto expr = std::regex{*(q.name_filter), q.regular_expression_syntax |
                                                    std::regex_constants::icase};
-      filters.push_back([&q, r = expr](const EntryPoint& e) noexcept {
+      filters.push_back([r = expr](const EntryPoint& e) noexcept {
         return std::regex_match(e.name, r);
       });
     }

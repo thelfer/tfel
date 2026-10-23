@@ -2,7 +2,7 @@
  * \file   include/TFEL/TypeTraits/IsRandomAccessIterator.hxx
  * \brief  This file declares the IsRandomAccessIterator class.
  * \author Thomas Helfer
- * \date   15/08/2006
+ * \date 15/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,7 +28,7 @@ namespace tfel::typetraits {
    * iterator, false otherwise.
    *
    * \author Thomas Helfer
-   * \date   04/07/2006
+   * \date 04/07/2006
    */
   template <typename T>
   struct IsRandomAccessIterator {

@@ -69,7 +69,7 @@ namespace tfel::math {
   template <typename Child, typename ArrayPolicy>
   GenericRuntimeArray<Child, ArrayPolicy>&
   GenericRuntimeArray<Child, ArrayPolicy>::operator=(
-      GenericRuntimeArray&& src) {
+      GenericRuntimeArray&& src) noexcept {
     //     checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
     //                                              src.getIndexingPolicy());
     if constexpr (ArrayPolicy::IndexingPolicy::areDataContiguous) {

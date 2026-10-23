@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   01 Aug 2006
+ * \date 01/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,7 +29,7 @@ namespace tfel::math {
     Permutation& operator=(const Permutation&) = delete;
     //! default constructor
     TFEL_MATH_INLINE
-    Permutation(const typename vector<T>::size_type);
+    explicit Permutation(const typename vector<T>::size_type);
     /*!
      * \brief set this permutation vector to be equal to the
      * identity
@@ -45,13 +45,13 @@ namespace tfel::math {
     TFEL_MATH_INLINE void swap(const typename vector<T>::size_type,
                                const typename vector<T>::size_type);
     //! \return true is the permutation is the identity
-    TFEL_MATH_INLINE bool isIdentity() const;
+    [[nodiscard]] TFEL_MATH_INLINE bool isIdentity() const;
     /*!
      * \brief resize the permutation
      * This automatically calls the reset method
      */
     void resize(const typename vector<T>::size_type);
-    //! destructor
+    //! \brief destructor
     ~Permutation();
 
    private:

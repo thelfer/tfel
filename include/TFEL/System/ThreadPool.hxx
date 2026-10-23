@@ -8,7 +8,7 @@
  * ThreadedTaskResult class.
  *
  * \author Thomas Helfer
- * \date   19 juin 2016
+ * \date 19/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -42,17 +42,18 @@ namespace tfel::system {
      * \brief constructor
      * \param[in] n: number of thread to be created
      */
-    ThreadPool(const size_type);
+    explicit ThreadPool(const size_type);
     /*!
      * \brief add a new task
      * \param[in] f: task
      * \param[in] a: arguments passed to the the task
      */
     template <typename F, typename... Args>
-    std::future<ThreadedTaskResult<std::invoke_result_t<F, Args...>>> addTask(
-        F&&, Args&&...);
+    [[nodiscard]] std::future<
+        ThreadedTaskResult<std::invoke_result_t<F, Args...>>>
+    addTask(F&&, Args&&...);
     //! \return the number of threads managed by the ppol
-    size_type getNumberOfThreads() const;
+    [[nodiscard]] size_type getNumberOfThreads() const;
     //! \brief wait for all tasks to be finished
     void wait();
     //! destructor

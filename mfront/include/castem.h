@@ -6,7 +6,7 @@
  * numerical type at compile time by defining cast_double
  *
  * \author Helfer Thomas
- * \date   31 Jul 2006
+ * \date 31/07/2006
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence with linking exception 

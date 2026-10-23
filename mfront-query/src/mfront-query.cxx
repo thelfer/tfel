@@ -2,7 +2,7 @@
  * \file  mfront-query/src/mfront-query.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mars 2015
+ * \date 04/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -576,7 +576,7 @@ int main(const int argc, const char* const* const argv) {
                   << "--list-behaviour-mtest-tests             : "
                   << "list all the mtest tests associated with a set of "
                   << "behaviours in a madnex file\n"
-                  << "--list-behaviour-mfm-test-genartor-tests : "
+                  << "--list-behaviour-mfm-test-generator-tests : "
                   << "list all the mtest tests associated with a set of "
                   << "behaviours in a madnex file\n"
                   << "--list-models                            : "

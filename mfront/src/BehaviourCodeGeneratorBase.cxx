@@ -2,7 +2,7 @@
  * \file   mfront/src/BehaviourCodeGeneratorBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03/08/2022
+ * \date 03/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -364,7 +364,7 @@ namespace mfront {
       out << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      out << "* \\date   " << this->fd.date << '\n';
+      out << "* \\date " << this->fd.date << '\n';
     }
     out << " */\n\n";
     this->writeHeaderGuardBegin(out, cn, true);
@@ -537,7 +537,7 @@ namespace mfront {
       out << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      out << "* \\date   " << this->fd.date << '\n';
+      out << "* \\date " << this->fd.date << '\n';
     }
     out << " */\n\n";
     this->writeHeaderGuardBegin(out, cn, false);
@@ -907,11 +907,9 @@ namespace mfront {
       const VariableDescriptionContainer& v,
       const std::string& prefix,
       const std::string& suffix,
-      const std::string& fileName,
       const bool useTimeDerivative) const {
     for (const auto& e : v) {
-      this->writeVariableDeclaration(f, e, prefix, suffix, fileName,
-                                     useTimeDerivative);
+      this->writeVariableDeclaration(f, e, prefix, suffix, useTimeDerivative);
     }
   }  // end of writeVariablesDeclarations
 
@@ -920,14 +918,13 @@ namespace mfront {
       const VariableDescription& v,
       const std::string& prefix,
       const std::string& suffix,
-      const std::string& fileName,
       const bool useTimeDerivative) const {
     const auto n = prefix + v.name + suffix;
     const auto t = (!useTimeDerivative)
                        ? v.type
                        : SupportedTypes::getTimeDerivativeType(v.type);
-    if ((!getDebugMode()) && (v.lineNumber != 0u)) {
-      f << "#line " << v.lineNumber << " \"" << fileName << "\"\n";
+    if (!getDebugMode()) {
+      printLinePragma(f, v.lineNumber, this->fd.fileName);
     }
     if (v.arraySize == 1u) {
       f << t << " " << n << ";\n";
@@ -1075,7 +1072,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << " */\n\n";
   }
@@ -1454,7 +1451,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << "*/\n";
   }
@@ -1575,7 +1572,7 @@ namespace mfront {
     this->checkBehaviourDataFile(os);
     this->writeVariablesDeclarations(
         os, this->bd.getBehaviourData(h).getMaterialProperties(), "", "",
-        this->fd.fileName, false);
+        false);
     os << '\n';
   }
 
@@ -1583,12 +1580,11 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     const auto& d = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, d.getStateVariables(), "", "",
-                                     this->fd.fileName, false);
+    this->writeVariablesDeclarations(os, d.getStateVariables(), "", "", false);
     this->writeVariablesDeclarations(os, d.getAuxiliaryStateVariables(), "", "",
-                                     this->fd.fileName, false);
+                                     false);
     this->writeVariablesDeclarations(os, d.getExternalStateVariables(), "", "",
-                                     this->fd.fileName, false);
+                                     false);
     os << '\n';
   }
 
@@ -1779,7 +1775,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     if (!this->fd.description.empty()) {
       os << this->fd.description << '\n';
@@ -1899,7 +1895,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << " */\n\n";
   }
@@ -2126,11 +2122,10 @@ namespace mfront {
        << "*/\n";
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag smflag, const SMType smt) override "
-            "final{\n";
+         << "integrate(const SMFlag smflag, const SMType smt) final{\n";
     } else {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag, const SMType) override final{\n";
+         << "integrate(const SMFlag, const SMType) final{\n";
     }
     os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -3549,8 +3544,7 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     const auto& md = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "",
-                                     this->fd.fileName, false);
+    this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "", false);
     os << '\n';
     auto write_wrapper = [this, &os](const BehaviourVariableDescription& b) {
       const auto wrapper = getBehaviourWrapperClassName(b);
@@ -3615,8 +3609,7 @@ namespace mfront {
     for (const auto& v : md.getIntegrationVariables()) {
       if (!md.isStateVariableName(v.name)) {
         if (md.isMemberUsedInCodeBlocks(v.name)) {
-          this->writeVariableDeclaration(os, v, "", "", this->fd.fileName,
-                                         false);
+          this->writeVariableDeclaration(os, v, "", "", false);
         }
       }
     }
@@ -3635,10 +3628,7 @@ namespace mfront {
         continue;
       }
       if (!getDebugMode()) {
-        if (p.lineNumber != 0u) {
-          os << "#line " << p.lineNumber << " \"" << this->fd.fileName
-             << "\"\n";
-        }
+        printLinePragma(os, p.lineNumber, this->fd.fileName);
       }
       if (use_static_variables) {
         os << "static constexpr ";
@@ -3708,10 +3698,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     for (const auto& v : md.getStaticVariables()) {
       if (!getDebugMode()) {
-        if (v.lineNumber != 0u) {
-          os << "#line " << v.lineNumber << " \"" << this->fd.fileName
-             << "\"\n";
-        }
+        printLinePragma(os, v.lineNumber, this->fd.fileName);
       }
       os << "static constexpr auto " << v.name << " = "  //
          << v.type << "{" << v.value << "};\n";
@@ -3724,7 +3711,6 @@ namespace mfront {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkBehaviourFile(os);
     this->writeVariablesDeclarations(os, md.getIntegrationVariables(), "d", "",
-                                     this->fd.fileName,
                                      this->usesStateVariableTimeDerivative());
     os << '\n';
   }
@@ -4529,7 +4515,7 @@ namespace mfront {
     }
     if (!hasUserDefinedPredictionOperatorCode(this->bd, h)) {
       os << "[[nodiscard]] IntegrationResult computePredictionOperator("
-         << "const SMFlag, const SMType) override final{\n"
+         << "const SMFlag, const SMType) final{\n"
          << "tfel::raise(\"" << this->bd.getClassName()
          << "::computePredictionOperator: \"\n"
          << "\"unsupported prediction operator flag\");\n"
@@ -4640,7 +4626,7 @@ namespace mfront {
         }
         os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
            << "computePredictionOperator(const SMFlag smflag, "
-           << "const SMType smt) override final{\n"
+           << "const SMType smt) final{\n"
            << "using namespace std;\n"
            << "switch(smflag){\n";
         for (const auto& t : tos) {
@@ -4659,7 +4645,7 @@ namespace mfront {
     } else {
       os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag,const SMType smt) "
-         << "override final{\n"
+         << "final{\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -4842,7 +4828,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE real getMinimalTimeStepScalingFactor() const "
-          "noexcept override final{\n"
+          "noexcept final{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -4853,7 +4839,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPrioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override final{\n"
+          "current_time_step_scaling_factor) const final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPrioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -4890,7 +4876,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPosterioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override final{\n"
+          "current_time_step_scaling_factor) const final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPosterioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -4959,9 +4945,11 @@ namespace mfront {
         if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
             (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
           if (this->bd.useQt()) {
-            os << "typename tfel::math::MakeQuantityReferenceType<"
+            os << "std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
-               << ">>::type " << bn << ";\n";
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">&>" << bn << ";\n";
           } else {
             os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">& " << bn << ";\n";
@@ -4971,21 +4959,43 @@ namespace mfront {
              << "," << v2.type << ">> " << bn << ";\n";
         }
       } else if ((v1.arraySize == 1u) || (v2.arraySize == 1u)) {
+        auto ptr = std::string{"this->Dt.data() + "};
+        if (!o.isNull()) {
+          ptr += o.asString() + " + ";
+        }
+        ptr += "mfront_idx * " + block_size.asString();
         os << "/*!\n"
            << " * \\return the derivative of " << v1.name << " with respect "
            << v2.name << "\n"
            << " * \\param[in] mfront_idx: array index relative to " << v1.name
            << "\n"
            << " */\n"
-           << "auto " << bn << "(const ushort mfront_idx) noexcept {\n"
-           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
-           << ", " << v2.type << ">>(this->Dt.data() + ";
-        if (!o.isNull()) {
-          os << o << " + ";
+           << "decltype(auto) " << bn
+           << "(const ushort mfront_idx) noexcept {\n";
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          if (bd.useQt()) {
+            os << "return std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
+               << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">>(*(" + ptr + "));\n";
+          } else {
+            os << "return tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">>(*(" + ptr + "));\n";
+          }
+        } else {
+          os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+             << ", " << v2.type << ">>(" << ptr << ");\n";
         }
-        os << "mfront_idx * " << block_size << ");\n"
-           << "}\n";
+        os << "}\n";
       } else {
+        auto ptr = std::string{"this->Dt.data() + "};
+        if (!o.isNull()) {
+          ptr += o.asString() + " + ";
+        }
+        ptr += "(" + std::to_string(v2.arraySize) +
+               " * mfront_idx + mfront_idx2) * " + block_size.asString();
         os << "/*!\n"
            << " * \\return the derivative of " << v1.name << " with respect "
            << v2.name << "\n"
@@ -4996,15 +5006,24 @@ namespace mfront {
            << " */\n"
            << "decltype(auto) " << bn
            << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept "
-           << "{\n"
-           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
-           << ", " << v2.type << ">>(this->Dt.data() + ";
-        if (!o.isNull()) {
-          os << o << " + ";
+           << "{\n";
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          if (bd.useQt()) {
+            os << "return std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
+               << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">>(*(" + ptr + "));";
+          } else {
+            os << "return tfel::math::map<tfel::math::derivative_type<"
+               << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
+          }
+        } else {
+          os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+             << ", " << v2.type << ">>(" << ptr << ");\n";
         }
-        os << "(" << v2.arraySize << " * mfront_idx + mfront_idx2) * "
-           << block_size << ");\n"
-           << "}\n";
+        os << "}\n";
       }
       o += (v1.arraySize) * (v2.arraySize) * block_size;
     }
@@ -5386,7 +5405,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << " */\n\n";
   }
@@ -5657,7 +5676,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << "*/\n";
   }
@@ -5845,7 +5864,7 @@ namespace mfront {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkIntegrationDataFile(os);
     this->writeVariablesDeclarations(os, md.getExternalStateVariables(), "d",
-                                     "", this->fd.fileName, false);
+                                     "", false);
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataFileBegin(
@@ -5908,7 +5927,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << " */\n\n";
     if (this->bd.hasParameters()) {

@@ -43,7 +43,7 @@ namespace tfel::math {
   template <typename T, typename T2, typename Op>
   struct IsTVectorScalarOperationValid {
     static constexpr bool cond =
-        isScalar<T2>() && std::is_same<result_type<T, T2, OpMult>, T>::value;
+        isScalar<T2>() && std::is_same_v<result_type<T, T2, OpMult>, T>;
   };  // end of struct IsTVectorScalarOperationValid
 
   /*!
@@ -88,6 +88,7 @@ namespace tfel::math {
         GenericFixedSizeArray<tvector<N, ValueType>,
                               FixedSizeVectorPolicy<N, ValueType>>;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tvector,
                                                GenericFixedSizeArrayBase);
     /*!
@@ -96,6 +97,7 @@ namespace tfel::math {
      * \param[in] src: object to be copied
      */
     TFEL_HOST_DEVICE tvector(const fsarray<N, ValueType>&) noexcept;
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

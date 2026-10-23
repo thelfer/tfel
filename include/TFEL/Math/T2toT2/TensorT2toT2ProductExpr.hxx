@@ -57,7 +57,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->operator()(i);
     }
@@ -65,14 +65,14 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
-        const noexcept {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const noexcept {
+      return {};
     }
   };  // end of struct Expr<TensorResultType,T2STensorT2toT2ProductExp>
 
@@ -115,7 +115,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->operator()(i);
     }
@@ -123,14 +123,14 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
-        const noexcept {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const noexcept {
+      return {};
     }
   };  // end of struct Expr<TensorResultType,T2STensorT2toT2ProductExp>
 
@@ -190,7 +190,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->operator()(i);
     }
@@ -198,13 +198,14 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const noexcept {
+      return {};
     }
   };  // end of struct Expr<TensorResultType,T2STensorT2toT2ProductExp>
 

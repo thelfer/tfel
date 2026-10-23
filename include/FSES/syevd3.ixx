@@ -47,7 +47,7 @@ namespace fses {
 
   template <typename MatrixType, typename VectorType, typename MatrixType2>
   int syevd3(MatrixType& Q, VectorType& w, const MatrixType2& A) {
-    using real = typename std::decay<decltype(at(A, 0, 0))>::type;
+    using real = std::decay_t<decltype(at(A, 0, 0))>;
     constexpr auto zero = real(0);
     constexpr auto one = real(1);
     constexpr auto eight = real(8);

@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   24 Aug 2006
+ * \date 24/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -30,7 +30,7 @@ namespace tfel::math {
     RuntimeCheckFailure(RuntimeCheckFailure&&) = default;
     RuntimeCheckFailure(const RuntimeCheckFailure&) = default;
     //! \return a string describing the error
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! destructor
     ~RuntimeCheckFailure() noexcept override;
   };  // end of struct RuntimeCheckFailure
@@ -55,9 +55,8 @@ namespace tfel::math {
      * \pre RunTimeProperties must be copy-able.
      * \throw MathRunTimeExpection, if test fails.
      */
-    TFEL_MATH_INLINE
-    static const RunTimeProperties& exe(const RunTimeProperties& a,
-                                        const RunTimeProperties& b) {
+    [[nodiscard]] TFEL_MATH_INLINE static const RunTimeProperties& exe(
+        const RunTimeProperties& a, const RunTimeProperties& b) {
       if (a != b) {
         throw(RuntimeCheckFailure());
       }
@@ -76,9 +75,8 @@ namespace tfel::math {
      * \pre RunTimeProperties must be copy-able.
      * \throw MathRunTimeExpection, if test fails.
      */
-    TFEL_MATH_INLINE
-    static RunTimeProperties exe(RunTimeProperties&& a,
-                                 const RunTimeProperties& b) {
+    [[nodiscard]] TFEL_MATH_INLINE static RunTimeProperties exe(
+        RunTimeProperties&& a, const RunTimeProperties& b) {
       if (a != b) {
         throw(RuntimeCheckFailure());
       }
@@ -93,13 +91,10 @@ namespace tfel::math {
    */
   template <>
   struct RunTimeCheck<EmptyRunTimeProperties> {
-    /*!
-     * A do nothing function.
-     */
-    TFEL_MATH_INLINE
-    static EmptyRunTimeProperties exe(const EmptyRunTimeProperties,
-                                      const EmptyRunTimeProperties) noexcept {
-      return EmptyRunTimeProperties();
+    //! \brief a do nothing function.
+    [[nodiscard]] static constexpr EmptyRunTimeProperties exe(
+        const EmptyRunTimeProperties, const EmptyRunTimeProperties) noexcept {
+      return {};
     }  // end of exe
   };   // end of RunTimeCheck<EmptyRunTimeProperties>
 

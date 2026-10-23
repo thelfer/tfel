@@ -2,7 +2,7 @@
  * \file   LSDYNAInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   16 mars 2016
+ * \date 16/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -324,7 +324,7 @@ namespace mfront {
     //            "the "
     //         << mb.getClassName() << " behaviour law\n"
     //         << "* \\author " << fd.authorName << '\n'
-    //         << "* \\date   " << fd.date << '\n'
+    //         << "* \\date " << fd.date << '\n'
     //         << "*/\n\n";
     //
     //     const auto header = this->getHeaderGuard(mb);
@@ -397,7 +397,7 @@ namespace mfront {
     //            "the "
     //         << mb.getClassName() << " behaviour law\n"
     //         << "* \\author " << fd.authorName << '\n'
-    //         << "* \\date   " << fd.date << '\n'
+    //         << "* \\date " << fd.date << '\n'
     //         << "*/\n\n";
     //
     //     out << "#include<cmath>\n"

@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   23 oct 2008
+ * \date 23/10/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -297,33 +297,27 @@ namespace mfront {
       const mfront::MaterialPropertyDescription& mpd) {
     const auto prec = out.precision();
     out.precision(14);
+    // the bounds and the physical bounds are independent
     for (const auto& v : mpd.inputs) {
       if (v.arraySize == 1u) {
-        if (!v.hasBounds()) {
-          continue;
+        if (v.hasBounds()) {
+          writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
         }
-        writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
-        if (!v.hasPhysicalBounds()) {
-          continue;
+        if (v.hasPhysicalBounds()) {
+          writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
+                            v.getPhysicalBounds());
         }
-        writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
-                          v.getPhysicalBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasBounds(idx)) {
-            continue;
+          const auto n = v.getExternalName() + "_mfront_index_" +
+                         std::to_string(idx) + "_";
+          if (v.hasBounds(idx)) {
+            writeBoundsSymbol(out, name, n, "", v.getBounds(idx));
           }
-          writeBoundsSymbol(out, name,
-                            v.getExternalName() + "_mfront_index_" +
-                                std::to_string(idx) + "_",
-                            "", v.getBounds(idx));
-          if (!v.hasPhysicalBounds(idx)) {
-            continue;
+          if (v.hasPhysicalBounds(idx)) {
+            writeBoundsSymbol(out, name, n, "Physical",
+                              v.getPhysicalBounds(idx));
           }
-          writeBoundsSymbol(out, name,
-                            v.getExternalName() + "_mfront_index_" +
-                                std::to_string(idx) + "_",
-                            "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
@@ -464,7 +458,7 @@ namespace mfront {
     }
     for (const auto& v : vc) {
       if (getDebugMode()) {
-        os << "#line " << v.lineNumber << " \"" << f << "\"\n";
+        printLinePragma(os, v.lineNumber, f);
       }
       if (v.type == "short") {
         os << "static " << constexpr_c << "  short " << v.name << " = "
@@ -680,5 +674,31 @@ namespace mfront {
     writeBoundsChecks(os, v, n, space_dimension, "", addThis,
                       checkEndOfTimeStepValue, true);
   }  // end of writePhysicalBoundsChecks
+
+  std::string printLinePragma(const std::size_t ln, std::string_view f) {
+    if (ln == 0) {
+      return {};
+    }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    return "#line " + std::to_string(ln) + " \"" +
+           tfel::utilities::replace_all(f, "\\", "\\\\") + "\"\n";
+#else
+    return "#line " + std::to_string(ln) + " \"" + std::string{f} + "\"\n";
+#endif
+  }
+
+  void printLinePragma(std::ostream& os,
+                       const std::size_t ln,
+                       std::string_view f) {
+    if (ln == 0) {
+      return;
+    }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    os << "#line " << ln << " \""
+       << tfel::utilities::replace_all(f, "\\", "\\\\") << "\"\n";
+#else
+    os << "#line " << ln << " \"" << f << "\"\n";
+#endif
+  }
 
 }  // end of namespace mfront

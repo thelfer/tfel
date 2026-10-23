@@ -140,6 +140,13 @@ namespace mfront {
 
   ZMATInterface::ZMATInterface() = default;
 
+  void ZMATInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" +
+                  this->getInterfaceName() + "'");
+    }
+  }  // end of setOptions
+
   std::string ZMATInterface::getInterfaceName() const { return "ZMAT"; }
 
   std::string ZMATInterface::getInterfaceVersion() const { return ""; }
@@ -878,7 +885,7 @@ namespace mfront {
         << "* \\brief  This file declares the ZMAT interface for the "
         << mb.getClassName() << " behaviour law\n"
         << "* \\author " << fd.authorName << '\n'
-        << "* \\date   " << fd.date << '\n'
+        << "* \\date " << fd.date << '\n'
         << "*/\n\n"
         << "#ifndef MFRONT_ZMAT_" << makeUpperCase(mb.getClassName())
         << "_HXX\n"
@@ -1039,7 +1046,7 @@ namespace mfront {
         << "* \\brief  This file declares the ZMAT interface for the "
         << mb.getClassName() << " behaviour law\n"
         << "* \\author " << fd.authorName << '\n'
-        << "* \\date   " << fd.date << '\n'
+        << "* \\date " << fd.date << '\n'
         << "*/\n\n"
         << '\n'
         << "#include<string>\n"

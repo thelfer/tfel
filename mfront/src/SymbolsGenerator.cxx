@@ -2,7 +2,7 @@
  * \file   mfront/src/SymbolsGenerator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08/07/2018
+ * \date 08/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -503,7 +503,7 @@ namespace mfront {
       const Hypothesis h) const {
     const auto& d = mb.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
-    const unsigned short nStateVariables = static_cast<unsigned short>(
+    const auto nStateVariables = static_cast<unsigned short>(
         persistentVarsHolder.getNumberOfVariables());
     out << "MFRONT_EXPORT_SYMBOL(unsigned short, "
         << this->getSymbolName(i, name, h) << "_nInternalStateVariables, "

@@ -121,7 +121,8 @@ namespace tfel::math {
             typename T,
             typename Model1,
             typename Model2>
-  FactorizedKriging<N, M, T, Model1, Model2>::~FactorizedKriging() noexcept {}
+  FactorizedKriging<N, M, T, Model1, Model2>::~FactorizedKriging() noexcept =
+      default;
 
 }  // end of namespace tfel::math
 

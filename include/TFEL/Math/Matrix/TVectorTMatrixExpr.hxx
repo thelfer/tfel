@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   06 avr 2008
+ * \date 06/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -46,14 +46,15 @@ namespace tfel::math {
     using const_reference = const NumType&;
     using size_type = IndexType;
     using difference_type = ptrdiff_t;
-
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    //
+    TVectorTMatrixExpr() = delete;
+    //
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
 
    protected:
-    TVectorTMatrixExpr() = delete;
-
     struct ColumnConstIterator {
       using MType = std::decay_t<B>;
       using NumType = numeric_type<MType>;
@@ -77,7 +78,8 @@ namespace tfel::math {
     struct VectorConstIterator {
       using VType = std::decay_t<A>;
       using NumType = numeric_type<VType>;
-      TFEL_HOST_DEVICE constexpr VectorConstIterator(const VType& v_) noexcept
+      TFEL_HOST_DEVICE constexpr explicit VectorConstIterator(
+          const VType& v_) noexcept
           : v(v_), i(0) {}
       TFEL_HOST_DEVICE constexpr VectorConstIterator& operator++() noexcept {
         ++i;

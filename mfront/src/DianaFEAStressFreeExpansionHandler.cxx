@@ -20,10 +20,10 @@ namespace dianafea {
 
   template <typename real>
   static void DianaFEAStandardSmallStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const DianaFEAInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0] -= s0[0];
@@ -47,10 +47,10 @@ namespace dianafea {
   }  // end of DianaFEAStandardSmallStrainStressFreeExpansionHandler
 
   void DianaFEAStandardSmallStrainStressFreeExpansionHandler(
-      double *const e,
-      double *const de,
-      const double *const s0,
-      const double *const s1,
+      double* const e,
+      double* const de,
+      const double* const s0,
+      const double* const s1,
       const DianaFEAInt d) {
     DianaFEAStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }

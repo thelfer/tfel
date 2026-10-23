@@ -27,8 +27,7 @@ namespace tfel::system {
   }  // end of MemberSignalHandler::execute
 
   template <typename Class>
-  MemberSignalHandler<Class>::~MemberSignalHandler() {
-  }  // end of MemberSignalHandler::~MemberSignalHandler
+  MemberSignalHandler<Class>::~MemberSignalHandler() = default;
 
   template <typename Class>
   MemberSignalHandler<Class>* sigMemFun(

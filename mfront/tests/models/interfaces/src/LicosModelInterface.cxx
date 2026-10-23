@@ -2,7 +2,7 @@
  * \file   mfront/tests/models/src/LicosModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -124,6 +124,12 @@ namespace mfront {
   MFrontModelInterface::MFrontModelInterface()
       : hasDefaultConstructor(false) {
   }  // end of MFrontModelInterface::MFrontModelInterface
+
+  void MFrontModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for model interface 'mfront'");
+    }
+  }  // end of setOptions
 
   void MFrontModelInterface::declareReservedNames(std::set<std::string>& v) {
     v.insert("first");
@@ -265,7 +271,7 @@ namespace mfront {
       this->headerFile << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      this->headerFile << "* \\date   " << fd.date << '\n';
+      this->headerFile << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       this->headerFile << fd.description << '\n';
@@ -552,7 +558,7 @@ namespace mfront {
       this->srcFile << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      this->srcFile << "* \\date   " << fd.date << '\n';
+      this->srcFile << "* \\date " << fd.date << '\n';
     }
     this->srcFile
         << " */\n\n"

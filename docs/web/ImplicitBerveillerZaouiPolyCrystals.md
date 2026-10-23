@@ -89,7 +89,7 @@ tutorial before is highly recommended.
 ## Notations
 
 - \(\tSigma\): the macroscopic stress.
-- \(\Sigmaeq\): the macroscropic von Mises stress.
+- \(\Sigmaeq\): the macroscopic von Mises stress.
 - \(\tEpsilonto\): the macroscopic strain.
 - \(\tEpsilonvp\): the macroscopic viscoplastic strain.
 - \(N_{g}\): number of grains/phases.
@@ -100,8 +100,8 @@ tutorial before is highly recommended.
   \[
   \kphase{\phi}=\dfrac{\kphase{V}}{\sum_{l=1}^{N_{g}}\lphase{V}}
   \]
-- \(M\): the macroscropic shear modulus.
-- \(\Nu\): the macroscropic Poisson ratio.
+- \(M\): the macroscopic shear modulus.
+- \(\Nu\): the macroscopic Poisson ratio.
 - \(P\): the equivalent macroscopic viscoplastic strain.
 - \(\kislip{g}\): average plastic slip along the
   i\(\mbox{}^{\text{th}}\) slip system of the k\(\mbox{}^{\text{th}}\)
@@ -164,15 +164,15 @@ relationship:
 
 where:
 
-- \(\Sigmaeq\) is the macroscropic von Mises stress.
-- \(P\) is the equivalent macroscropic viscoplastic strain defined in an
+- \(\Sigmaeq\) is the macroscopic von Mises stress.
+- \(P\) is the equivalent macroscopic viscoplastic strain defined in an
   incremental way as follows:
   \[
   \dot{P}=\sqrt{\dfrac{2}{3}\,\tdEpsilonvp\,\colon\,\tdEpsilonvp}
   \]
   with \(0\) as the initial value.
 
-> The \(\beta\paren{\Nu}\) factor is closed to
+> The \(\beta\paren{\Nu}\) factor is close to
 > \(\frac{1}{2}\) for a macroscopic Poisson ratio close to \(0.3\). In
 > this case, the Localisation Equation @eq:mfront:bz:sig may be simplified
 > as:
@@ -213,7 +213,7 @@ following form:
 \kphase{\tdepsilonvp}=\kphase{v}\paren{\kphase{\tsigma}}
 \]{#eq:mfront:bz:flow_rule}
 
-where the microscopic plastic strain may results from the slips along
+where the microscopic plastic strain may result from the slips along
 the slip systems of the crystal following:
 
 \[
@@ -226,7 +226,7 @@ Méric-Cailletaud behaviour [@meric_single_1991], is straightforward
 using an explicit scheme and feasible for the implicit scheme although
 more involved.
 
-For the example, we will follow the work of Onimus et al. with sightly
+For the example, we will follow the work of Onimus et al. with slightly
 modified material coefficients [@onimus_polycrystalline_2009].
 
 # Implicit integration scheme {#sec:mfront:bz:implicit_scheme}
@@ -401,9 +401,9 @@ It shall be emphasised that even for the simple localisation equation of
 the Berveiller-Zaoui homogeneization scheme, the computation of the
 derivatives \(\deriv{\kphase{\tsigma}}{\Delta\,\tEpsilonel}\) and
 \(\deriv{\kphase{\tsigma}}{\Delta\,\,\tEpsilonvp}\) are quite involved
-due to the accomodation function.
+due to the accommodation function.
 
-> **Derivatives of the accomodation function**
+> **Derivatives of the accommodation function**
 > 
 > \[
 > \deriv{\alpha}{\Sigmaeq}=\dfrac{6\,M\,P}{\paren{2\,\Sigmaeq+3\,M\,P}^{2}}
@@ -534,7 +534,7 @@ macroscopic elastic strain.
 ## Resolution algorithm
 
 1. Given an estimation of the \(\Delta\,\tEpsilonel\), \(\Delta\,\tEpsilonvp\)
-2. If the iteration number if greater than 1, loop over the phases
+2. If the iteration number is greater than 1, loop over the phases
    a. Update \(\Delta\,\kphase{\tepsilonvp}\) using Equation @eq:mfront:bz:static_condensation.
 3. Compute  \(f_{\kphase{\tEpsilonel}}\)
 4. Loop over the phases
@@ -746,7 +746,7 @@ follows:
   ∂fεᵉˡ∕∂Δεᵛᵖ = I₄;
 ~~~~
 
-The following lines of code computes the accomodation factor and the
+The following lines of code computes the accommodation factor and the
 associated derivatives:
 
 
@@ -1033,7 +1033,7 @@ advantage.
 # Conclusions
 
 The proposed implicit scheme is, to the best of our knowledge original
-and may be of significant importance for the use of such homogeneized
+and may be of significant importance for the use of such homogenized
 behaviours in structural applications.
 
 This implicit scheme will be extended in a straightforward manner to

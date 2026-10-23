@@ -2,7 +2,7 @@
  * \file   include/NUMODIS/TripleNode.hxx
  * \brief  compute the properties of a triple node
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,12 +26,13 @@ namespace numodis {
   //! Provide all the tools to compute the properties of a triple node
   //===================================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT TripleNode {
-    double computeInitialAngle(double tol = 0.00001, int Nmax = 20) const;
+    [[nodiscard]] double computeInitialAngle(double tol = 0.00001,
+                                             int Nmax = 20) const;
 
-    double computeCriticalStress(double phi0,
-                                 double step = 0.001,
-                                 double tol = 0.00001,
-                                 int Nmax = 20) const;
+    [[nodiscard]] double computeCriticalStress(double phi0,
+                                               double step = 0.001,
+                                               double tol = 0.00001,
+                                               int Nmax = 20) const;
 
     TripleNode(const FrankRead& lt0,
                const double alpha0,
@@ -47,11 +48,14 @@ namespace numodis {
           _alpha2(alpha2) {}
 
    private:
-    double computeFx(double phi0, double beta0, double ph1, double beta1) const;
+    [[nodiscard]] double computeFx(double phi0,
+                                   double beta0,
+                                   double ph1,
+                                   double beta1) const;
 
-    double computeEquilibriumBeta0(double phi,
-                                   double tol = 0.00001,
-                                   int Nmax = 20) const;
+    [[nodiscard]] double computeEquilibriumBeta0(double phi,
+                                                 double tol = 0.00001,
+                                                 int Nmax = 20) const;
 
     //! line tension properties of the first segment of the node
     const FrankRead& _lt0;

@@ -2,7 +2,7 @@
  * \file   ConfigurationManager.cxx
  * \brief
  * \author Thomas Helfer
- * \date   13 sept. 2017
+ * \date 13/09/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -44,7 +44,8 @@ namespace tfel::check {
   ConfigurationManager::ConfigurationManager(const Configuration& src)
       : configuration(src) {}  // end of ConfigurationManager
 
-  ConfigurationManager::ConfigurationManager(ConfigurationManager&&) = default;
+  ConfigurationManager::ConfigurationManager(ConfigurationManager&&) noexcept =
+      default;
 
   ConfigurationManager::ConfigurationManager(const ConfigurationManager&) =
       default;
@@ -64,7 +65,9 @@ namespace tfel::check {
     }
     auto p = this->subordinates.find(r.first);
     if (p == this->subordinates.end()) {
-      p = this->subordinates.insert({r.first, this->configuration}).first;
+      p = this->subordinates
+              .insert({r.first, ConfigurationManager{this->configuration}})
+              .first;
     }
     return p->second.getConfigurationManager(r.second);
   }  // end of getConfigurationManager
@@ -81,6 +84,19 @@ namespace tfel::check {
     }
     return p->second.getConfiguration(r.second);
   }  // end of getConfigurationManager
+
+  void ConfigurationManager::addEnvironmentVariable(const std::string& s1,
+                                                    const std::string& s2,
+                                                    const bool b) {
+    this->modify([&s1, &s2, b](Configuration& c) {
+      if ((!c.environments.insert({s1, s2}).second) && (b)) {
+        tfel::raise(
+            "ConfigurationManager::addSubstitution: "
+            "the environment variable '" +
+            s1 + "' has already been defined");
+      }
+    });
+  }  // end of addSubstitution
 
   void ConfigurationManager::addSubstitution(const std::string& s1,
                                              const std::string& s2,
@@ -113,12 +129,24 @@ namespace tfel::check {
     });
   }
 
+  void ConfigurationManager::setCleanUp(const bool b) {
+    this->modify([&b](Configuration& cf) noexcept {  //
+      cf.clean_up = b;
+    });
+  }
+
+  void ConfigurationManager::discardCleanUpOnFailure(const bool b) {
+    this->modify([&b](Configuration& cf) noexcept {  //
+      cf.discard_clean_up_on_failure = b;
+    });
+  }
+
   const Configuration& ConfigurationManager::getConfiguration() const {
     return this->configuration;
   }  // end of getConfiguration
 
   ConfigurationManager& ConfigurationManager::operator=(
-      ConfigurationManager&&) = default;
+      ConfigurationManager&&) noexcept = default;
 
   ConfigurationManager& ConfigurationManager::operator=(
       const ConfigurationManager&) = default;
@@ -154,6 +182,16 @@ namespace tfel::check {
             convert<std::map<std::string, std::string>>(Data::read(p, pe));
         for (const auto& v : variables) {
           c.addSubstitution("@" + v.first + "@", v.second);
+        }
+        CxxTokenizer::readSpecifiedToken("tfel::check::parse", ";", p, pe);
+      } else if (p->value == "environment_variables") {
+        ++p;
+        CxxTokenizer::readSpecifiedToken("tfel::check::parse", ":", p, pe);
+        CxxTokenizer::checkNotEndOfLine("tfel::check::parse", p, pe);
+        const auto variables =
+            convert<std::map<std::string, std::string>>(Data::read(p, pe));
+        for (const auto& v : variables) {
+          c.addEnvironmentVariable(v.first, v.second);
         }
         CxxTokenizer::readSpecifiedToken("tfel::check::parse", ";", p, pe);
       } else {

@@ -24,6 +24,7 @@
 #include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/StridedCoalescedView.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -166,6 +167,71 @@ namespace tfel::math::internals {
         VariableType>::type;
   };  // end of struct BuildDerivativeViewFromTinyMatrix
 
+  /*!
+   * \brief a metafunction returning a strided coalesced view type on a
+   * derivative in tiny matrix ordered of M columns.
+   * \tparam are_both_scalars: boolean stating if both the function and the
+   * variable types are scalars.
+   * \tparam M: number of columns of the tiny matrix
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   */
+  template <bool are_both_scalars,
+            unsigned short M,
+            typename FunctionType,
+            typename VariableType>
+  struct BuildStridedDerivativeViewFromTinyMatrixImplementation {
+    //! \brief result of the metafunction
+    using type = tfel::math::StridedCoalescedView<
+        tfel::math::derivative_type<FunctionType, VariableType>,
+        typename BuildDerivativeViewFromTinyMatrixImplementation<
+            tfel::math::isScalar<FunctionType>(),
+            tfel::math::isScalar<VariableType>(),
+            M,
+            FunctionType,
+            VariableType>::DerivativeViewIndexingPolicy>;
+  };  // end of BuildStridedDerivativeViewFromTinyMatrixImplementation
+
+  /*!
+   * \brief partial specialisation when both the function and the variable
+   * types are scalar types.
+   * \tparam M: number of columns of the tiny matrix
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   */
+  template <unsigned short M, typename FunctionType, typename VariableType>
+  struct BuildStridedDerivativeViewFromTinyMatrixImplementation<true,
+                                                                M,
+                                                                FunctionType,
+                                                                VariableType> {
+    //! \brief result of the metafunction
+    using type = typename BuildDerivativeViewFromTinyMatrixImplementation<
+        true,
+        true,
+        M,
+        FunctionType,
+        VariableType>::type;
+  };  // end of BuildStridedDerivativeViewFromTinyMatrixImplementation
+
+  /*!
+   * \brief a metafunction returning a strided coalesced view type on a
+   * derivative in tiny matrix ordered in row major format of M columns.
+   * \tparam M: number of columns of the tiny matrix
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   */
+  template <unsigned short M, typename FunctionType, typename VariableType>
+  struct BuildStridedDerivativeViewFromTinyMatrix {
+    //! \brief result
+    using type =
+        typename BuildStridedDerivativeViewFromTinyMatrixImplementation<
+            tfel::math::isScalar<FunctionType>() &&
+                tfel::math::isScalar<VariableType>(),
+            M,
+            FunctionType,
+            VariableType>::type;
+  };  // end of struct BuildStridedDerivativeViewFromTinyMatrix
+
 }  // end of namespace tfel::math::internals
 
 namespace tfel::math {
@@ -243,6 +309,7 @@ namespace tfel::math {
         GenericFixedSizeArray<tmatrix<N, M, ValueType>,
                               FixedSizeRowMajorMatrixPolicy<N, M, ValueType>>;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tmatrix,
                                                GenericFixedSizeArrayBase);
     /*!
@@ -253,21 +320,22 @@ namespace tfel::math {
     template <std::size_t... d>
     TFEL_HOST_DEVICE constexpr tmatrix(ValueType const (&... arrays)[d])  //
         requires((sizeof...(d) == N) && ((d == M) && ...));
+    // NOLINTEND(google-explicit-constructor)
     //! \return the identity matrix
     TFEL_HOST_DEVICE static constexpr auto Id();
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
     //! return the number of columns of the matrix
-    TFEL_HOST_DEVICE constexpr unsigned short getNbCols() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr unsigned short getNbCols() const;
     //! return the number of rows of the matrix
-    TFEL_HOST_DEVICE constexpr unsigned short getNbRows() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr unsigned short getNbRows() const;
     /*!
      * \return a view of a row of this matrix
      * \param[in] I : row index
      */
     template <unsigned short I>
-    TFEL_HOST_DEVICE constexpr auto row_view();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto row_view();
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -275,13 +343,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    TFEL_HOST_DEVICE constexpr auto row_view();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto row_view();
     /*!
      * \return a view of a row of this matrix
      * \param[in] I : row index
      */
     template <unsigned short I>
-    TFEL_HOST_DEVICE constexpr auto row_view() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto row_view() const;
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -289,13 +357,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    TFEL_HOST_DEVICE constexpr auto row_view() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto row_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-    TFEL_HOST_DEVICE constexpr auto column_view();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -303,7 +371,7 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    TFEL_HOST_DEVICE constexpr auto column_view();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -311,13 +379,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    TFEL_HOST_DEVICE constexpr auto column_view() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto column_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-    TFEL_HOST_DEVICE constexpr auto column_view() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto column_view() const;
     /*!
      * \return a view of a sub matrix of this matrix
      * \param[in] I : submatrix row    starting index
@@ -329,7 +397,7 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    TFEL_HOST_DEVICE constexpr auto submatrix_view();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto submatrix_view();
     /*!
      * \return a view of a sub matrix of this matrix
      * \param[in] I : submatrix row    starting index
@@ -341,11 +409,11 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    TFEL_HOST_DEVICE constexpr auto submatrix_view() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto submatrix_view() const;
 
-    TFEL_HOST_DEVICE constexpr auto max() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto max() const;
 
-    TFEL_HOST_DEVICE constexpr auto abs_max() const;
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto abs_max() const;
 
     TFEL_HOST_DEVICE constexpr void swap_rows(const unsigned short i,
                                               const unsigned short j);
@@ -416,6 +484,21 @@ namespace tfel::math {
       BuildDerivativeViewFromTinyMatrix<M, FunctionType, VariableType>::type;
 
   /*!
+   * \brief a simple alias to a strided coalesced view type on a derivative in
+   * tiny matrix of M columns.
+   * \tparam M: number of columns of the matrix.
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   */
+  //! \brief a simple alias
+  template <unsigned short M, typename FunctionType, typename VariableType>
+  using strided_derivative_view_from_tiny_matrix =
+      typename tfel::math::internals::BuildStridedDerivativeViewFromTinyMatrix<
+          M,
+          FunctionType,
+          VariableType>::type;
+
+  /*!
    * \brief an helper function to create a derivative view from a tiny matrix
    * \tparam I: row index.
    * \tparam J: column index.
@@ -462,6 +545,76 @@ namespace tfel::math {
                   numeric_type<derivative_type<FunctionType, VariableType>>>>&,
       const unsigned short,
       const unsigned short);
+
+  /*!
+   * \brief an helper function to create a strided coalesced derivative view
+   * from a structure of arrays memory area.
+   * \tparam I: row index.
+   * \tparam J: column index.
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   * \tparam N: number of rows of the matrix.
+   * \tparam M: number of columns of the matrix.
+   * \param[in] p: pointer to the (0, 0) component of the current matrix.
+   * \param[in] stride: stride between two successive components.
+   */
+  template <unsigned short I,
+            unsigned short J,
+            typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  TFEL_HOST_DEVICE constexpr strided_derivative_view_from_tiny_matrix<
+      M,
+      FunctionType,
+      VariableType>
+  map_derivative_strided(
+      base_type<
+          numeric_type<derivative_type<FunctionType, VariableType>>>* const,
+      const std::size_t);
+
+  /*!
+   * \brief an helper function to create a strided coalesced derivative view
+   * from a structure of arrays memory area.
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   * \tparam N: number of rows of the matrix.
+   * \tparam M: number of columns of the matrix.
+   * \param[in] p: pointer to the (0, 0) component of the current matrix.
+   * \param[in] stride: stride between two successive components.
+   * \param[in] I: row index.
+   * \param[in] J: column index.
+   */
+  template <typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  TFEL_HOST_DEVICE constexpr strided_derivative_view_from_tiny_matrix<
+      M,
+      FunctionType,
+      VariableType>
+  map_derivative_strided(
+      base_type<
+          numeric_type<derivative_type<FunctionType, VariableType>>>* const,
+      const std::size_t,
+      const unsigned short,
+      const unsigned short);
+
+  /*!
+   * \brief rotate a vector using a rotation matrix.
+   *
+   * The convention is the one of the other mathematical objects: the
+   * components of the rotated vector are \f$v'_{i}=r_{ki}\,v_{k}\f$. In 1D,
+   * the vector is unchanged. In 2D, only the in-plane block of the rotation
+   * matrix is used.
+   *
+   * \param[in] v: vector to be rotated
+   * \param[in] r: rotation matrix
+   * \return the rotated vector
+   */
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr tvector<N, T> change_basis(
+      const tvector<N, T>&, const rotation_matrix<T>&) noexcept;
 
 }  // end of namespace tfel::math
 

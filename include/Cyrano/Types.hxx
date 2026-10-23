@@ -2,7 +2,7 @@
  * \file   Types.hxx
  * \brief
  * \author Thomas Helfer
- * \date   14/09/2019
+ * \date 14/09/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,6 +31,7 @@
 #endif
 #endif
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -47,11 +48,12 @@ typedef int CyranoIntegerType;
 #error "cyrano : unsupported machine type"
 #endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
 
-//! a simple alias
+//! \brief a simple alias
 typedef double CyranoRealType;
 
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_CYRANO_TYPES_HXX */

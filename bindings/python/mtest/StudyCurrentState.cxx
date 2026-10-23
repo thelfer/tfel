@@ -2,7 +2,7 @@
  * \file   StudyCurrentState.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08 déc. 2015
+ * \date 08/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -54,8 +54,10 @@ void declareStudyCurrentState(pybind11::module_& m) {
       .def_readonly("subSteps", &StudyCurrentState::subSteps)
       .def_readonly("dt_1", &StudyCurrentState::dt_1)
       .def("makeDeepCopy", &StudyCurrentState::makeDeepCopy)
-      .def("getEvolutionValue", &StudyCurrentState_getEvolutionValue)
+      .def("getEvolutionValue", &StudyCurrentState_getEvolutionValue,
+           pybind11::arg("n"), pybind11::arg("t"))
       .def("getStructureCurrentState", getStructureCurrentState,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference)
       .def("getFailureStatus", &mtest::StudyCurrentState::getFailureStatus)
       .def("getFailureCriterionStatus",

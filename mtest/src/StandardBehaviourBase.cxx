@@ -42,11 +42,11 @@ namespace mtest {
 
   StandardBehaviourDescription::StandardBehaviourDescription() = default;
   StandardBehaviourDescription::StandardBehaviourDescription(
-      StandardBehaviourDescription&&) = default;
+      StandardBehaviourDescription&&) noexcept = default;
   StandardBehaviourDescription::StandardBehaviourDescription(
       const StandardBehaviourDescription&) = default;
   StandardBehaviourDescription& StandardBehaviourDescription::operator=(
-      StandardBehaviourDescription&&) = default;
+      StandardBehaviourDescription&&) noexcept = default;
   StandardBehaviourDescription& StandardBehaviourDescription::operator=(
       const StandardBehaviourDescription&) = default;
 

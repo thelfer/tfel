@@ -76,7 +76,7 @@ namespace mtest {
     wk.D.resize(nth, ndv);
     wk.kt.resize(nth, ndv);
     wk.k.resize(nth, ndv);
-    wk.ivs.resize(nstatev == 0 ? 1u : nstatev, real(0));
+    wk.ivs.resize(nstatev == 0 ? 1u : nstatev, real{0});
     wk.nk.resize(nth, ndv);
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
@@ -86,7 +86,7 @@ namespace mtest {
 
   void CastemCohesiveZoneModel::getGradientsDefaultInitialValues(
       tfel::math::vector<real>& v) const {
-    std::fill(v.begin(), v.end(), real(0));
+    std::fill(v.begin(), v.end(), real{0});
   }  // end of CastemCohesiveZoneModel::setGradientsDefaultInitialValue
 
   StiffnessMatrixType CastemCohesiveZoneModel::getDefaultStiffnessMatrixType()
@@ -120,8 +120,8 @@ namespace mtest {
     using tfel::math::vector;
     CastemInt ntens;
     CastemInt ndi;
-    CastemInt nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
+    auto nprops = static_cast<CastemInt>(s.mprops1.size());
     const auto h = this->getHypothesis();
     tfel::raise_if(
         (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
@@ -160,8 +160,8 @@ namespace mtest {
     // rotation matrix
     tmatrix<3u, 3u, real> drot = transpose(s.r);
     CastemInt kinc(1);
-    tvector<3u, real> ue0(real(0));
-    tvector<3u, real> ude(real(0));
+    tvector<3u, real> ue0(real{0});
+    tvector<3u, real> ude(real{0});
     if (ntens == 2) {
       ue0[0] = s.e0[1];
       ue0[1] = s.e0[0];
@@ -226,7 +226,7 @@ namespace mtest {
     using namespace tfel::math;
     if (this->stype == 0u) {
       const auto h = this->getHypothesis();
-      const auto zero = real(0);
+      const auto zero = real{0};
       if ((h == ModellingHypothesis::PLANESTRESS) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {

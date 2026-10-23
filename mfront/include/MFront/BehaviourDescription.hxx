@@ -1,4 +1,3 @@
-
 /*!
  * \file  mfront/include/MFront/BehaviourDescription.hxx
  * \brief
@@ -127,7 +126,7 @@ namespace mfront {
      */
     struct AnalyticMaterialProperty {
       //! \return the list of the variables
-      std::vector<std::string> getVariablesNames() const;
+      [[nodiscard]] std::vector<std::string> getVariablesNames() const;
       //! \brief description of a material property
       std::string f;
     };  // end of AnalyticMaterialProperty
@@ -223,7 +222,7 @@ namespace mfront {
      * \brief constructor
      * \param[in] opts: options
      */
-    BehaviourDescription(const tfel::utilities::DataMap&);
+    explicit BehaviourDescription(const tfel::utilities::DataMap&);
     //! \brief copy constructor
     BehaviourDescription(const BehaviourDescription&);
     //
@@ -1693,9 +1692,10 @@ namespace mfront {
     /*!
      * \brief check variable existence
      * \return a pair of booleans. The first part tells if the
-     * variable was found in a least one specialisation of the
-     * behaviour and the second tells if the variable is available
-     * for all distinct modelling hypothesis.
+     * variable is available for all the distinct modelling hypotheses
+     * and the second tells if the variable was found in at least one
+     * specialisation of the behaviour. The first part is false if the
+     * variable was not found.
      * The variable could be any sort of variable (local variable,
      * integration variable, static variable, ...)
      * \param[in] v : variable name
@@ -1704,13 +1704,14 @@ namespace mfront {
     /*!
      * \brief check variable existence for a particular sort of variable.
      * \return a pair of booleans. The first part tells if the
-     * variable was found in a least one specialisation of the
-     * behaviour and the second tells if the variable is available
-     * for all distinct modelling hypothesis.
+     * variable is available for all the distinct modelling hypotheses
+     * and the second tells if the variable was found in at least one
+     * specialisation of the behaviour. The first part is false if the
+     * variable was not found.
      * \param[in] v: variable name
      * \param[in] c: variable category
-     * \param[in] b: if true, an exception if thrown if the variable is not
-     * found
+     * \param[in] b: if true, an exception is thrown if the variable is not
+     * found for one of the distinct modelling hypotheses
      */
     std::pair<bool, bool> checkVariableExistence(const std::string&,
                                                  const std::string&,
@@ -1989,8 +1990,6 @@ namespace mfront {
      * \param[in] h: modelling hypothesis
      */
     void checkModellingHypothesis(const Hypothesis) const;
-    //! a simple alias
-    typedef std::shared_ptr<BehaviourData> MBDPtr;
     //! behaviour name
     std::string behaviour;
     //! dsl name
@@ -2023,7 +2022,7 @@ namespace mfront {
     //! default behaviour data
     BehaviourData d;
     //! specialisations
-    std::map<Hypothesis, MBDPtr> sd;
+    std::map<Hypothesis, std::shared_ptr<BehaviourData>> sd;
     /*!
      * \brief list of main variables, association of a gradient and a
      * thermodynamic force

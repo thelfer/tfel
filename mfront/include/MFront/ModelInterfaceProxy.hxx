@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/ModelInterfaceProxy.hxx
  * \brief
  * \author Thomas Helfer
- * \date   09 nov 2006
+ * \date 09/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,7 +26,7 @@ namespace mfront {
   struct ModelInterfaceProxy {
     ModelInterfaceProxy();
 
-    ModelInterfaceProxy(const std::string&);
+    explicit ModelInterfaceProxy(const std::string&);
 
     template <typename InputIterator>
     ModelInterfaceProxy(const InputIterator, const InputIterator);

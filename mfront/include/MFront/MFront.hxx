@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/MFront.hxx
  * \brief  This file declares the MFront class
  * \author Thomas Helfer
- * \date   22 Nov 2006
+ * \date 22/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -42,15 +42,15 @@ namespace mfront {
      * \param[in] argc : number of command line arguments
      * \param[in] argv : command line arguments
      */
-    MFront(const int, const char *const *const);
+    MFront(const int, const char* const* const);
     /*!
      * \brief treat a file (analyse and generate output files)
      * \param[in] f : file name
      * \param[in] dsl_options : options passed to the domain specific language
      * \return the target's description
      */
-    virtual TargetsDescription treatFile(
-        const std::string &, const tfel::utilities::DataMap & = {}) const;
+    [[nodiscard]] virtual TargetsDescription treatFile(
+        const std::string&, const tfel::utilities::DataMap& = {}) const;
     //! \brief execute MFront process
     virtual void exe();
     //! \brief destructor
@@ -60,16 +60,16 @@ namespace mfront {
     friend struct tfel::utilities::ArgumentParserBase<MFront>;
 
     //! treat an unknown argument
-    void treatUnknownArgument() override final;
+    void treatUnknownArgument() final;
     //! a do nothing callback
     virtual void doNothing() final;
     //! return the current argument
-    const tfel::utilities::Argument &getCurrentCommandLineArgument()
-        const override final;
+    [[nodiscard]] const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const final;
     //! get the version description
-    std::string getVersionDescription() const override final;
+    [[nodiscard]] std::string getVersionDescription() const final;
     //! get the usage description
-    std::string getUsageDescription() const override final;
+    [[nodiscard]] std::string getUsageDescription() const final;
     //! treat the -G command line option
     virtual void treatGenerator();
     //! treat the -D command line option
@@ -86,6 +86,8 @@ namespace mfront {
     virtual void treatNoMelt();
     //! treat the --silent-build command line option
     virtual void treatSilentBuild();
+    //! treat the --set-rpath command line option
+    virtual void treatSetRPATH();
 
     virtual void treatNoDeps();
 
@@ -113,7 +115,7 @@ namespace mfront {
 
     virtual void writeTargetsDescription() const;
 
-    virtual void buildLibraries(const std::string &);
+    virtual void buildLibraries(const std::string&);
 
     virtual void cleanLibraries();
 

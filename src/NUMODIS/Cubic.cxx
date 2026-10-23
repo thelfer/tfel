@@ -2,7 +2,7 @@
  * \file   src/NUMODIS/Cubic.cxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <tuple>
+#include <utility>
 #include <algorithm>
 
 #include "NUMODIS/Math/Utilities.hxx"
@@ -21,7 +23,7 @@
 
 namespace numodis {
 
-  Cubic::Cubic(Cubic&&) = default;
+  Cubic::Cubic(Cubic&&) noexcept = default;
 
   Cubic::Cubic(const Cubic&) = default;
 
@@ -143,7 +145,7 @@ namespace numodis {
     //--------------------------
     // convert to a unit vector
     //--------------------------
-    xdirection.Normalize();
+    std::ignore = xdirection.Normalize();
     return xdirection;
   }  // end of Cubic::direction
 
@@ -169,7 +171,7 @@ namespace numodis {
     //--------------------------
     // convert to a unit vector
     //--------------------------
-    xdirection.Normalize();
+    std::ignore = xdirection.Normalize();
     return xdirection;
   }
 

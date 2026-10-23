@@ -2,7 +2,7 @@
  * \file   mfront/src/DataIsotropicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
- * \date   25/07/2022
+ * \date 25/07/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -195,7 +195,7 @@ namespace mfront::bbrick {
       m += "return {};\n";
     }
     m += "} // end of " + m1 + "\n\n";
-    m += "std::pair<stress, stress> " + m2 + local_id +
+    m += "std::pair<stress, stress> " + m2 +
          "(const strain mfront_arg_p) const {\n";
     if (this->values.size() == 1) {
       const auto& v = *(this->values.begin());

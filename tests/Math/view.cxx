@@ -2,7 +2,7 @@
  * \file   view.cxx
  * \brief
  * \author Thomas Helfer
- * \date   12/05/2021
+ * \date 12/05/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -55,6 +55,16 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     tvector<12, int> buffer{0};
     auto* const data = buffer.data();
     auto s = map_array<tvector<2u, stensor<2u, int>>>(data);
+    s[0] = stensor<2u, int>::Id();
+    s[1] = s[0] * 2;
+    return s[1];
+  }
+  //! \brief create an array view from raw memory
+  static constexpr tfel::math::stensor<2u, int> get2() {
+    using namespace tfel::math;
+    tvector<12, int> buffer{0};
+    auto* const data = buffer.data();
+    auto s = map_array<fsarray<2u, stensor<2u, int>>>(data);
     s[0] = stensor<2u, int>::Id();
     s[1] = s[0] * 2;
     return s[1];
@@ -161,6 +171,13 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(s[1] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[3] == 0);
+#endif /* __INTEL_COMPILER */
+#ifndef __INTEL_COMPILER
+    constexpr auto s2 = StensorViewTest::get2();
+    TFEL_TESTS_STATIC_ASSERT(s2[0] == 2);
+    TFEL_TESTS_STATIC_ASSERT(s2[1] == 2);
+    TFEL_TESTS_STATIC_ASSERT(s2[2] == 2);
+    TFEL_TESTS_STATIC_ASSERT(s2[3] == 0);
 #endif /* __INTEL_COMPILER */
   }
   void constexpr_test2() {

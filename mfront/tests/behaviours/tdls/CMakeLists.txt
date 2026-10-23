@@ -1,0 +1,70 @@
+macro(mfront_tdls_unit_test file)
+  set(_WILL_FAIL )
+  set(_WARNING_ERROR )
+  foreach(_ARG ${ARGN})
+    if ( ${_ARG} MATCHES WILL_FAIL)
+      set ( _WILL_FAIL ON)
+    elseif ( ${_ARG} MATCHES WARNING_ERROR)
+      set ( _WARNING_ERROR ON)
+    else()
+      message(FATAL_ERROR "mfront_tdls_unit_test: unsupported option '${_ARG}'")
+    endif()
+  endforeach(_ARG ${ARGN})
+  set(_mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/tdls/${file}.mfront")
+  set(_mfront_executable "$<TARGET_FILE:mfront>")
+  set(_mfront_args)
+  list(APPEND _mfront_args "--no-gui")
+  list(APPEND _mfront_args "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/tdls/")
+  if(_WARNING_ERROR)
+    list(APPEND _mfront_args "-Werror")
+  endif(_WARNING_ERROR)
+  add_test(NAME mfront-tdls-unit-tests-${file}
+    COMMAND ${_mfront_executable} ${_mfront_args} ${_mfront_file})
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST mfront-tdls-unit-tests-${file}
+ 	         APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  if(_WILL_FAIL)
+    set_tests_properties(mfront-tdls-unit-tests-${file}
+      PROPERTIES WILL_FAIL true)
+  endif(_WILL_FAIL)
+endmacro(mfront_tdls_unit_test file)
+
+function(test_tdls test_arg)
+  set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
+  foreach(rm ${IEEE754_ROUNDING_MODES})
+    set(mtest_args )
+    list(APPEND mtest_args --rounding-direction-mode=${rm})
+    list(APPEND mtest_args --verbose=level0)
+    list(APPEND mtest_args --xml-output=true)
+    list(APPEND mtest_args --@library@="$<TARGET_FILE:MFrontTDLSBehaviours>")
+    list(APPEND mtest_args --@xml_output@="${test_arg}-${rm}.xml")
+    list(APPEND mtest_args ${file})
+    add_test(NAME tdls-${test_arg}_${rm}_mtest
+             COMMAND mtest ${mtest_args})
+    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_property(TEST tdls-${test_arg}_${rm}_mtest
+        PROPERTY DEPENDS MFrontTDLSBehaviours mtest
+        PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  endforeach(rm ${IEEE754_ROUNDING_MODES})
+endfunction(test_tdls)
+
+mfront_behaviour_brick_check_library(MFrontTDLSBehaviours
+    tdls generic
+    TDLSElasticity
+    TDLSElasticity2
+    TDLSElasticity3
+    TDLSElasticity4
+    TDLSElasticity11)
+
+test_tdls(TDLSElasticity11)
+
+mfront_tdls_unit_test(TDLSElasticity5 WILL_FAIL)
+mfront_tdls_unit_test(TDLSElasticity6 WILL_FAIL)
+mfront_tdls_unit_test(TDLSElasticity7 WILL_FAIL)
+mfront_tdls_unit_test(TDLSElasticity8 WILL_FAIL)
+mfront_tdls_unit_test(TDLSElasticity9 WILL_FAIL)
+mfront_tdls_unit_test(TDLSElasticity10 WILL_FAIL)
+mfront_tdls_unit_test(TDLSElasticity12 WILL_FAIL)
+mfront_tdls_unit_test(TDLSElasticity13 WILL_FAIL)

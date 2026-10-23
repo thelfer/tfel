@@ -61,7 +61,7 @@ namespace mfront {
      * \param[in] f : file name
      * \return the full path of the file
      */
-    static std::string search(const std::string&);
+    [[nodiscard]] static std::string search(const std::string&);
     /*!
      * \brief append a madnex search path
      *
@@ -98,14 +98,19 @@ namespace mfront {
     static void addSearchPathsFromImplementationPaths(
         const std::vector<std::string>&);
     //! \return the list of the search paths associated with directories
-    static std::vector<std::string> getSearchPaths();
+    [[nodiscard]] static std::vector<std::string> getSearchPaths();
     //! \return the registred paths
-    static std::vector<Path> getRegistredPaths();
+    [[nodiscard]] static std::vector<Path> getRegistredPaths();
     /*!
      * \brief reset the paths
      * \param[in] npaths: new paths
      */
     static void resetPaths(const std::vector<Path>&);
+    //
+    SearchPathsHandler(const SearchPathsHandler&) = delete;
+    SearchPathsHandler(SearchPathsHandler&&) = delete;
+    SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
+    SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
 
    private:
     //! \return the unique instance of the class
@@ -117,10 +122,6 @@ namespace mfront {
      * is used to fill the search paths.
      */
     SearchPathsHandler();
-    SearchPathsHandler(const SearchPathsHandler&) = delete;
-    SearchPathsHandler(SearchPathsHandler&&) = delete;
-    SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
-    SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
     //! \brief return the path to a madnex file
     TFEL_VISIBILITY_LOCAL static std::string searchMadnexFile(
         const std::string&);

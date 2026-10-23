@@ -2,7 +2,7 @@
  * \file   mfront/src/GenericModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28/04/2022
+ * \date 28/04/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -68,11 +68,12 @@ namespace mfront {
   static void writeScalarStandardTypedefs(std::ostream& os,
                                           const ModelDescription& md) {
     const auto use_qt = useQuantities(md) ? "true" : "false";
-    os << "using NumericType [[maybe_unused]] = double;\n";
+    os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n"
+       << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<double, " << use_qt
-         << ">::" << a << ";\n";
+      os << "using " << a << " [[maybe_unused]] = typename "
+         << "tfel::config::ScalarTypes<double, " << use_qt << ">::" << a
+         << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
 
@@ -93,6 +94,13 @@ namespace mfront {
   std::string GenericModelInterface::getName() {
     return "generic";
   }  // end of getName
+
+  void GenericModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool, GenericModelInterface::tokens_iterator>
   GenericModelInterface::treatKeyword(const std::string& k,
@@ -134,7 +142,7 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n";
 
     const auto hg = getHeaderGuard(md);
@@ -213,7 +221,7 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
        << "#include <cstring>\n"
@@ -250,7 +258,10 @@ namespace mfront {
     const auto has_constructor =
         (!md.constantMaterialProperties.empty()) || (hasRealParameters(md));
     //
-    os << "namespace mfront::gm{\n\n";
+    // the classes are local to the library: two libraries defining a
+    // model of the same name must not share their parameters
+    os << "namespace mfront::gm{\n\n"
+       << "namespace {\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
@@ -294,7 +305,8 @@ namespace mfront {
         first = false;
       }
       for (const auto& p : md.parameters) {
-        if (!isRealParameter(p)) {
+        // parameters treated as static variables are not members
+        if ((!isRealParameter(p)) || (!hasRealParameters(md))) {
           continue;
         }
         os << (first ? "" : ",\n");
@@ -440,14 +452,14 @@ namespace mfront {
     // material properties
     for (const auto& mp : md.constantMaterialProperties) {
       if (!getDebugMode()) {
-        os << "#line " << mp.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, mp.lineNumber, fd.fileName);
       }
       os << "const " << mp.type << " " << mp.name << ";\n";
     }
     // parameters
     for (const auto& p : md.parameters) {
       if (!getDebugMode()) {
-        os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, p.lineNumber, fd.fileName);
       }
       if ((isRealParameter(p)) &&
           (!areParametersTreatedAsStaticVariables(md))) {
@@ -471,10 +483,11 @@ namespace mfront {
     // static variables
     for (const auto& v : md.staticVars) {
       if (!getDebugMode()) {
-        os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, v.lineNumber, fd.fileName);
       }
-      os << "static constexpr " << v.type << " " << v.name << " = "  //
-         << v.value << ";\n";
+      // brace initialisation is required by quantities
+      os << "static constexpr auto " << v.name << " = " << v.type << "{"
+         << v.value << "};\n";
     }
     os << "}; // end of struct " << md.className << "\n\n";
     //
@@ -497,7 +510,8 @@ namespace mfront {
        << "}\n"
        << "return 1;\n"
        << "}\n\n";
-    os << "} // end of namespace mfront::gm\n\n";
+    os << "} // end of anonymous namespace\n\n"
+       << "} // end of namespace mfront::gm\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {

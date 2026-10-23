@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   03 jui 2006
+ * \date 03/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -252,7 +252,7 @@ namespace tfel::math {
         return;
       }
       auto x1 = x - f(x) / dfv;
-      auto iter = integer(0);
+      auto iter = integer{};
       while ((tfel::math::abs(x1 - x) > prec) && (iter < iter_max)) {
         x = x1;
         dfv = df(x);

@@ -2,7 +2,7 @@
  * \file PCLogger.cxx
  * \brief PCLogger implementation
  * \author sb152252
- * \date 31 août 2009
+ * \date 31/08/2009
  *
  * $Id$
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -23,9 +23,9 @@ std::mutex message_mutex;
 namespace tfel::check {
 
   PCLogger::PCLogger() = default;
-  PCLogger::PCLogger(PCLogger&&) = default;
+  PCLogger::PCLogger(PCLogger&&) noexcept = default;
   PCLogger::PCLogger(const PCLogger&) = default;
-  PCLogger& PCLogger::operator=(PCLogger&&) = default;
+  PCLogger& PCLogger::operator=(PCLogger&&) noexcept = default;
   PCLogger& PCLogger::operator=(const PCLogger&) = default;
   PCLogger::~PCLogger() = default;
 

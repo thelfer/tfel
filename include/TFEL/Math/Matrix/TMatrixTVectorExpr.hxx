@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   06 avr 2008
+ * \date 06/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -42,14 +42,17 @@ namespace tfel::math {
             MatrixConcept A,
             VectorConcept B>
   struct TMatrixTVectorExpr : public ExprBase {
-    //! a simple alias
-    typedef EmptyRunTimeProperties RunTimeProperties;
+    //! \brief a simple alias
+    using RunTimeProperties = EmptyRunTimeProperties;
     //! \brief return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const {
+      return {};
     }  // end of getRunTimeProperties
+    //
+    TMatrixTVectorExpr() = delete;
     /*!
-     * a pseudo iterator allowing to iterate over values in the same
+     * \brief a pseudo iterator allowing to iterate over values in the same
      * row
      */
     struct RowConstIterator {
@@ -79,7 +82,8 @@ namespace tfel::math {
     struct VectorConstIterator {
       using VType = std::decay_t<B>;
       using NumType = numeric_type<VType>;
-      TFEL_HOST_DEVICE constexpr VectorConstIterator(const VType& v_) : v(v_) {}
+      TFEL_HOST_DEVICE constexpr explicit VectorConstIterator(const VType& v_)
+          : v(v_) {}
       TFEL_HOST_DEVICE constexpr VectorConstIterator& operator++() {
         ++i;
         return *this;
@@ -108,8 +112,6 @@ namespace tfel::math {
     typedef const NumType& const_reference;
     typedef IndexType size_type;
     typedef ptrdiff_t difference_type;
-
-    TMatrixTVectorExpr() = delete;
 
     TFEL_HOST_DEVICE constexpr TMatrixTVectorExpr(A l, B r) : a(l), b(r) {}
 

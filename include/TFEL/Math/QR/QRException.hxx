@@ -25,7 +25,7 @@ namespace tfel::math {
    */
   struct TFELMATH_VISIBILITY_EXPORT QRException : public MathRunTimeException {
     QRException();
-    QRException(QRException&&);
+    QRException(QRException&&) noexcept;
     QRException(const QRException&);
     //! destructor
     ~QRException() noexcept override;
@@ -37,11 +37,11 @@ namespace tfel::math {
    */
   struct TFELMATH_VISIBILITY_EXPORT QRUnmatchedSize final : public QRException {
     QRUnmatchedSize();
-    QRUnmatchedSize(QRUnmatchedSize&&);
+    QRUnmatchedSize(QRUnmatchedSize&&) noexcept;
     QRUnmatchedSize(const QRUnmatchedSize&);
     //! \return a string describing the error
-    const char* what() const noexcept override final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~QRUnmatchedSize() noexcept override;
   };  // end of struct QRException
 
@@ -52,11 +52,11 @@ namespace tfel::math {
   struct TFELMATH_VISIBILITY_EXPORT QRInvalidMatrixSize final
       : public QRException {
     QRInvalidMatrixSize();
-    QRInvalidMatrixSize(QRInvalidMatrixSize&&);
+    QRInvalidMatrixSize(QRInvalidMatrixSize&&) noexcept;
     QRInvalidMatrixSize(const QRInvalidMatrixSize&);
     //! \return a string describing the error
-    const char* what() const noexcept override final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~QRInvalidMatrixSize() noexcept override;
   };  // end of struct QRException
 
@@ -66,11 +66,11 @@ namespace tfel::math {
    */
   struct TFELMATH_VISIBILITY_EXPORT QRNullPivot final : public QRException {
     QRNullPivot();
-    QRNullPivot(QRNullPivot&&);
+    QRNullPivot(QRNullPivot&&) noexcept;
     QRNullPivot(const QRNullPivot&);
     //! \return a string describing the error
-    const char* what() const noexcept override final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~QRNullPivot() noexcept override;
   };  // end of struct QRException
 

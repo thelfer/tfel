@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/for_each.hxx
  * \brief  This file implements the for_each class.
  * \author Thomas Helfer
- * \date   30 Jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,9 +23,9 @@ namespace tfel::fsalgo {
    * \brief For_each applies the function object f to each element
    * in the range [first, first+N); f's return value, if any, is
    * ignored. Applications are performed in forward order, i.e. from
-   * first to last. For_each returns the function object after it
-   * has been applied to each element.
-   * \param N number of element to which f will be applied
+   * first to last. The function object is passed by reference: its
+   * state after the last application is available to the caller.
+   * \tparam N: number of elements to which f will be applied
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/for_each.html
@@ -33,15 +33,15 @@ namespace tfel::fsalgo {
    * \see for_each.cxx for some elementary tests.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct for_each {
     /*!
-     * \param InputIterator input iterator
-     * \param UnaryFunction unary function which is applied to the elements
-     *
-     * \return UnaryFunction
+     * \tparam InputIterator: input iterator
+     * \tparam UnaryFunction: unary function which is applied to the elements
+     * \param[in] p: iterator to the first element
+     * \param[in,out] f: function applied to each element
      *
      * \pre
      * - InputIterator is a model of Input Iterator
@@ -52,7 +52,7 @@ namespace tfel::fsalgo {
      * type.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename UnaryFunction>
     static void exe(InputIterator p, UnaryFunction& f) {

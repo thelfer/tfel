@@ -3,7 +3,7 @@
  * \brief  This file declares the IsFundamentalNumericType traits
  * class and specialises it for standard numerical types.
  * \author Thomas Helfer
- * \date   05 jui 2006
+ * \date 05/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -21,6 +21,9 @@
 
 namespace tfel::typetraits {
 
+  template <typename T>
+  concept StandardArithmeticTypeConcept = std::is_arithmetic_v<T>;
+
   /*!
    * \brief Traits class which says if its argument is one of the
    * standard numerical types
@@ -32,26 +35,29 @@ namespace tfel::typetraits {
    * \see IsReal, IsComplex
    *
    * \author Thomas Helfer
-   * \date   04 Jul 2006
+   * \date 04/07/2006
    */
   template <typename T>
   struct IsFundamentalNumericType {
     //! \brief result
-    static constexpr bool cond = std::is_arithmetic_v<T>;
+    static constexpr bool cond = false;
   };
 
-  /*!
-   * \brief partial specialisation for `tfel::math::Complex`
-   */
+  //! \brief partial specialisation for standard arithmetic types
+  template <StandardArithmeticTypeConcept T>
+  struct IsFundamentalNumericType<T> {
+    //! \brief result
+    static constexpr bool cond = true;
+  };
+
+  //! \brief partial specialisation for `tfel::math::Complex`
   template <typename T>
   struct IsFundamentalNumericType<tfel::math::Complex<T>> {
     //! \brief result
     static constexpr bool cond = std::is_arithmetic_v<T>;
   };
 
-  /*!
-   * \brief partial specialisation for `const tfel::math::Complex`
-   */
+  //! \brief partial specialisation for `const tfel::math::Complex`
   template <typename T>
   struct IsFundamentalNumericType<const tfel::math::Complex<T>> {
     //! \brief result
@@ -66,6 +72,10 @@ namespace tfel::typetraits {
   TFEL_HOST_DEVICE constexpr bool isFundamentalNumericType() {
     return IsFundamentalNumericType<std::decay_t<T>>::cond;
   }
+
+  template <typename T>
+  concept FundamentalNumericTypeConcept =
+      IsFundamentalNumericType<std::decay_t<T>>::cond;
 
 }  // end of namespace tfel::typetraits
 

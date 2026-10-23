@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   07 avr 2008
+ * \date 07/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,9 +27,9 @@ namespace tfel::math {
 
   template <StensorConcept A, StensorConcept B>
   class TFEL_VISIBILITY_LOCAL StensorProductExprBase : public ExprBase {
-    typedef typename ComputeBinaryResult<std::decay_t<A>,
-                                         std::decay_t<B>,
-                                         OpMult>::Result Result;
+    using Result = typename ComputeBinaryResult<std::decay_t<A>,
+                                                std::decay_t<B>,
+                                                OpMult>::Result;
 
    public:
     typedef EmptyRunTimeProperties RunTimeProperties;
@@ -46,14 +46,16 @@ namespace tfel::math {
    protected:
     TFEL_MATH_INLINE StensorProductExprBase(A l, B r) : a(l), b(r) {}
 
-    StensorProductExprBase() = delete;
-
     ArgumentStorage<A> a;
     ArgumentStorage<B> b;
 
    public:
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
-      return EmptyRunTimeProperties();
+    //
+    StensorProductExprBase() = delete;
+    //
+    [[nodiscard]] TFEL_MATH_INLINE RunTimeProperties
+    getRunTimeProperties() const {
+      return {};
     }
   };
 
@@ -69,11 +71,11 @@ namespace tfel::math {
         : StensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {
     }
 
-    TFEL_MATH_INLINE
-    BinaryOperationResult<std::invoke_result_t<A, size_type>,
-                          std::invoke_result_t<B, size_type>,
-                          OpMult>
-    operator()(const size_type i) const {
+    [[nodiscard]] TFEL_MATH_INLINE
+        BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                              std::invoke_result_t<B, size_type>,
+                              OpMult>
+        operator()(const size_type i) const {
       return (this->a(i)) * (this->b(i));
     }  // end of operator()
   };
@@ -90,11 +92,11 @@ namespace tfel::math {
         : StensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {
     }
 
-    TFEL_MATH_INLINE
-    BinaryOperationResult<std::invoke_result_t<A, size_type>,
-                          std::invoke_result_t<B, size_type>,
-                          OpMult>
-    operator()(const size_type i) const {
+    [[nodiscard]] TFEL_MATH_INLINE
+        BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                              std::invoke_result_t<B, size_type>,
+                              OpMult>
+        operator()(const size_type i) const {
       typedef typename StensorProductExprBase<A, B>::NumType T;
       constexpr auto icste = Cste<T>::isqrt2;
       switch (i) {
@@ -127,11 +129,11 @@ namespace tfel::math {
         : StensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {
     }
 
-    TFEL_MATH_INLINE
-    BinaryOperationResult<std::invoke_result_t<A, size_type>,
-                          std::invoke_result_t<B, size_type>,
-                          OpMult>
-    operator()(const size_type i) const {
+    [[nodiscard]] TFEL_MATH_INLINE
+        BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                              std::invoke_result_t<B, size_type>,
+                              OpMult>
+        operator()(const size_type i) const {
       typedef typename StensorProductExprBase<A, B>::NumType T;
       constexpr auto icste = Cste<T>::isqrt2;
       switch (i) {

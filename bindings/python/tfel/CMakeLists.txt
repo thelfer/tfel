@@ -32,6 +32,7 @@ set(TFEL_PYTHON_MATH_MODULE_SOURCES
   tvector.cxx
   stensor.cxx
   st2tost2.cxx
+  WalpoleBasis.cxx
   Evaluator.cxx
   AccelerationAlgorithms.cxx)
 

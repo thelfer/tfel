@@ -2,7 +2,7 @@
  * \file   tfel-check/include/TFEL/Check/ConfigurationManager.hxx
  * \brief
  * \author Thomas Helfer
- * \date   13/09/2017
+ * \date 13/09/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -39,13 +39,13 @@ namespace tfel::check {
      * \brief constructor from a configuration.
      * \param[in] src: configuration
      */
-    ConfigurationManager(const Configuration&);
+    explicit ConfigurationManager(const Configuration&);
     //! \brief move constructor
-    ConfigurationManager(ConfigurationManager&&);
+    ConfigurationManager(ConfigurationManager&&) noexcept;
     //! \brief copy constructor
     ConfigurationManager(const ConfigurationManager&);
     //! \brief move assignement
-    ConfigurationManager& operator=(ConfigurationManager&&);
+    ConfigurationManager& operator=(ConfigurationManager&&) noexcept;
     //! \brief standard assignement
     ConfigurationManager& operator=(const ConfigurationManager&);
     /*!
@@ -53,15 +53,17 @@ namespace tfel::check {
      * directory.
      * \param[in] n: directory name
      */
-    ConfigurationManager& getConfigurationManager(const std::string&);
+    [[nodiscard]] ConfigurationManager& getConfigurationManager(
+        const std::string&);
     /*!
      * \return the configuration associated at the specified
      * location.
      * \param[in] d: relative directory
      */
-    const Configuration& getConfiguration(const std::string&) const;
+    [[nodiscard]] const Configuration& getConfiguration(
+        const std::string&) const;
     //! \return the configuration associated at the root of the tree
-    const Configuration& getConfiguration() const;
+    [[nodiscard]] const Configuration& getConfiguration() const;
     /*!
      * \brief add a new substitution
      * \param[in] s1: string to be substituted
@@ -73,6 +75,16 @@ namespace tfel::check {
                          const std::string&,
                          const bool = true);
     /*!
+     * \brief add a new environment variable
+     * \param[in] s1: name of the environment variable
+     * \param[in] s2: value of the environment variable
+     * \param[in] b: if true, throws if the environment variable already exists.
+     * Otherwise, nothing is done.
+     */
+    void addEnvironmentVariable(const std::string&,
+                                const std::string&,
+                                const bool = true);
+    /*!
      * \brief add a new component
      * \param[in] c: component
      */
@@ -82,6 +94,19 @@ namespace tfel::check {
      * \param[in] b: boolean
      */
     void setDiscardCommandsFailure(const bool);
+    /*!
+     * \brief set if the the generated files and directories listed by
+     * the @CleanFiles and @CleanDirectories keywords must be removed
+     * \param[in] b: boolean
+     */
+    void setCleanUp(const bool);
+    /*!
+     * \brief set if the the generated files and directories listed by
+     * the @CleanFiles and @CleanDirectories keywords must not be removed in
+     * case of failure.
+     * \param[in] b: boolean
+     */
+    void discardCleanUpOnFailure(const bool);
 
    private:
     /*!
@@ -90,7 +115,8 @@ namespace tfel::check {
      * \return a pair which contains the first level and the rest of the
      * location
      */
-    static std::pair<std::string, std::string> extract(const std::string&);
+    [[nodiscard]] static std::pair<std::string, std::string> extract(
+        const std::string&);
     /*!
      * \brief modify the current configuration and those of the subdirectories
      * \param[in] f: function applying the modification

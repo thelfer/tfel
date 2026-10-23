@@ -2,7 +2,7 @@
  * \file   CrystalStructure.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 juin 2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -19,8 +19,14 @@ void declareCrystalStructure(pybind11::module_&);
 
 void declareCrystalStructure(pybind11::module_& m) {
   using tfel::material::CrystalStructure;
-  pybind11::enum_<CrystalStructure>(m, "CrystalStructure")
-      .value("Cubic", CrystalStructure::Cubic)
-      .value("FCC", CrystalStructure::FCC)
-      .value("HCP", CrystalStructure::HCP);
+  pybind11::enum_<CrystalStructure>(
+      m, "CrystalStructure",
+      "List of supported crystal structures")
+      .value("Cubic", CrystalStructure::Cubic, "Cubic structure")
+      .value("BCC", CrystalStructure::BCC,
+             "Body centered cubic structure")
+      .value("FCC", CrystalStructure::FCC,
+             "Face centered cubic structure")
+      .value("HCP", CrystalStructure::HCP,
+             "Hexagonal closed-packed structures");
 }

@@ -2,7 +2,7 @@
  * \file   TestCaseBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   17/09/2019
+ * \date 17/09/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,7 +28,7 @@ namespace mfmtg {
      * \brief constructor
      * \param[in] p: parameters
      */
-    TestCaseBase(const TestCaseParameters&);
+    explicit TestCaseBase(const TestCaseParameters&);
     void addInputFileGenerator(const generator&) override;
     void generate() const override;
     //! \brief destructor

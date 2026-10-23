@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/MathConstants.hxx
  * \brief
  * \author Thomas Helfer
- * \date   06/10/2016
+ * \date 06/10/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -42,9 +42,9 @@ namespace tfel::math {
   };
 
   template <typename T>
-  struct Cste : std::conditional<tfel::typetraits::IsReal<T>::cond,
-                                 CsteBase<base_type<T>>,
-                                 tfel::meta::EmptyClass>::type {};
+  struct Cste : std::conditional_t<tfel::typetraits::IsReal<T>::cond,
+                                   CsteBase<base_type<T>>,
+                                   tfel::meta::EmptyClass> {};
 
 }  // end of namespace tfel::math
 

@@ -1,6 +1,15 @@
-% List of physical constants
-% Thomas Helfer
-% 2017
+---
+title: List of physical constants
+author: Thomas Helfer
+date: 2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\mol}{\mathrm{mol}}
 

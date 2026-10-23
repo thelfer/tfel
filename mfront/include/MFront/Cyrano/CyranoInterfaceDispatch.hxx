@@ -2,7 +2,7 @@
  * \file  mfront/include/MFront/Cyrano/CyranoInterfaceDispatch.hxx
  * \brief
  * \author Thomas Helfer
- * \date   21 fév 2014
+ * \date 21/02/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -35,7 +35,7 @@ namespace cyrano {
    * \class  CyranoInterfaceDispatch
    * \brief
    * \author Thomas Helfer
-   * \date   24 Jul 2013
+   * \date 24/07/2013
    */
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -43,20 +43,20 @@ namespace cyrano {
       class Behaviour>
   struct CyranoInterfaceDispatch : public CyranoInterfaceExceptions {
     TFEL_CYRANO_INLINE2 static void exe(
-        const CyranoReal *const DTIME,
-        const CyranoReal *const DROT,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const DROT,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
         const StressFreeExpansionHandler sfeh,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace std;

@@ -3,7 +3,7 @@
  * \file   bindings/python/mfront/LibraryDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mai 2016
+ * \date 04/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,7 +23,7 @@ static std::vector<std::string> LibraryDescription_get_epts(
 }
 
 static void LibraryDescription_set_epts(mfront::LibraryDescription& t,
-                                        const std::vector<std::string>& h) {
+                                         const std::vector<std::string>& h) {
   t.epts = h;
 }
 
@@ -36,17 +36,21 @@ void declareLibraryDescription(pybind11::module_& m) {
       .value("MODULE", LibraryDescription::MODULE);
 
   pybind11::class_<LibraryDescription, CompiledTargetDescriptionBase> w(
-      m, "LibraryDescription");
+      m, "LibraryDescription",
+      "This structure is used to build the compilation\n"
+      "rules for a shared library or a module");
+  
   w.def(pybind11::init<std::string, std::string, std::string,
-                       LibraryDescription::LibraryType>())
-      .def_readonly("type", &LibraryDescription::type)
-      .def("__repr__", [](const LibraryDescription& l) {
-        auto os = std::ostringstream{};
-        os << l;
-        return os.str();
-      });
+                          LibraryDescription::LibraryType>(),
+	 pybind11::arg("n"), pybind11::arg("p"), pybind11::arg("s"), pybind11::arg("t"))
+    .def_readonly("type", &LibraryDescription::type)
+    .def("__repr__", [](const LibraryDescription& l) {
+      auto os = std::ostringstream{};
+      os << l;
+      return os.str();
+    });
   w.def_property("epts", LibraryDescription_get_epts,
-                 LibraryDescription_set_epts);
+                  LibraryDescription_set_epts);
 
   m.def("convert", convert);
   m.def("mergeLibraryDescription", mergeLibraryDescription);

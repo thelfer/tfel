@@ -1,0 +1,20 @@
+dsl_options: {
+  disable_runtime_checks: false
+},
+interfaces_options: {
+  generic-parallel: {
+    backend: {stlpar: {
+        execution_policy: "parallel_unsequenced_policy"
+      }
+    }
+  }
+},
+compilation_options : {
+  cxx : {
+    compiler: "@TFEL_ACPP_COMPILER@",
+    compilation_flags: "-O2 -march=native --acpp-stdpar --acpp-targets=generic" 
+  }
+},
+linking_options : {
+  linker_flags: "--acpp-stdpar --acpp-targets=generic"
+}

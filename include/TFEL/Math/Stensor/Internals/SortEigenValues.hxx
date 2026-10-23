@@ -2,7 +2,7 @@
  * \file   SortEigenValues.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 janv. 2017
+ * \date 04/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -37,7 +37,7 @@ namespace tfel::math::internals {
     template <typename T>
     static void exe(T&, T&, T&, const EigenValuesOrdering) {}  // end of exe
   };  // end of struct SortEigenValues<1u>
-  //! \brief partial specialisation of the `SortEigenValues` in 1D
+  //! \brief partial specialisation of the `SortEigenValues` in 2D
   template <>
   struct SortEigenValues<2u> {
     //! a simple alias

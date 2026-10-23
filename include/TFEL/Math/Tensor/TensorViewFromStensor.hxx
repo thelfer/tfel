@@ -32,22 +32,24 @@ namespace tfel::math {
         public ExprBase {
     typedef EmptyRunTimeProperties RunTimeProperties;
 
-    constexpr auto getRunTimeProperties() const noexcept {
+    [[nodiscard]] constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
 
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_HOST_DEVICE constexpr Expr(T s_) noexcept : s(s_) {}  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
 
     TFEL_HOST_DEVICE constexpr Expr(const Expr&) = default;
     TFEL_HOST_DEVICE constexpr Expr(Expr&&) = default;
     TFEL_HOST_DEVICE constexpr Expr& operator=(const Expr&) = default;
     TFEL_HOST_DEVICE constexpr Expr& operator=(Expr&&) = default;
 
-    TFEL_HOST ValueType operator[](const unsigned short i) const {
+    TFEL_HOST [[nodiscard]] ValueType operator[](const unsigned short i) const {
       return this->operator()(i);
     }
 
-    TFEL_HOST ValueType operator()(const unsigned short i) const {
+    TFEL_HOST [[nodiscard]] ValueType operator()(const unsigned short i) const {
       constexpr auto icste = Cste<ValueType>::isqrt2;
       switch (i) {
         case 0:
@@ -90,7 +92,7 @@ namespace tfel::math {
 
     static_assert((N == 1u) || (N == 2u) || (N == 3u));
     static_assert(traits::dime == N);
-    static_assert(std::is_same<ValueType, typename traits::NumType>::value);
+    static_assert(std::is_same_v<ValueType, typename traits::NumType>);
   };  // end of struct Expr
 
   template <typename T>

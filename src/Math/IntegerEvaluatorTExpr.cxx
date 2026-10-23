@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   13 jan 2009
+ * \date 13/01/2009
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -63,7 +63,7 @@ namespace tfel::math {
   }  // end of IntegerEvaluator::TOperator::TOperator(const std::string& t_)
 
   IntegerEvaluator::TOperator::TOperator(const TOperator&) = default;
-  IntegerEvaluator::TOperator::TOperator(TOperator&&) = default;
+  IntegerEvaluator::TOperator::TOperator(TOperator&&) noexcept = default;
 
   std::string IntegerEvaluator::TOperator::getOperatorType() const {
     return this->type;

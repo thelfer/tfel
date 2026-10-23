@@ -33,10 +33,11 @@ namespace tfel::math {
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>>,
         public array_holder<9u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 1u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<ST2toST2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : t2tost2 to be converted
      */
@@ -49,6 +50,7 @@ namespace tfel::math {
                                    numeric_type<ST2toST2ResultType>>());
       copy<9u>::exe(&A(0, 0), this->v);
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index
@@ -74,12 +76,13 @@ namespace tfel::math {
       : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>>,
         public array_holder<16u, numeric_type<ST2toST2ResultType>> {
-    //! a simple check
+    //! \brief a simple check
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 2u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<ST2toST2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : t2tost2 to be converted
      */
@@ -108,6 +111,7 @@ namespace tfel::math {
       this->v[11] = (A(2, 3) + A(2, 4)) * icste2;
       this->v[15] = (A(3, 3) + A(3, 4)) * icste;
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index
@@ -134,10 +138,11 @@ namespace tfel::math {
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>>,
         public array_holder<36u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 3u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<ST2toST2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : t2tost2 to be converted
      */
@@ -186,6 +191,7 @@ namespace tfel::math {
       this->v[34] = (A(5, 5) + A(5, 6)) * icste;
       this->v[35] = (A(5, 7) + A(5, 8)) * icste;
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index

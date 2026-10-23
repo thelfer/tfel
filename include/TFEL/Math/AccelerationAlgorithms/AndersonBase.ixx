@@ -25,7 +25,7 @@ namespace tfel::math {
   // grid: Grid
   // flags: Plane construction method
   template <typename Field, typename real>
-  AndersonBase<Field, real>::AndersonBase(const Allocator a) : ma(a), n(0) {}
+  AndersonBase<Field, real>::AndersonBase(const Allocator a) : ma(a) {}
 
   template <typename Field, typename real>
   const std::vector<Field*>& AndersonBase<Field, real>::getU() const {

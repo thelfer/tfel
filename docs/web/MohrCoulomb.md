@@ -1,6 +1,15 @@
-% Invariant-based implementation of the Mohr-Coulomb elasto-plastic model in OpenGeoSys using MFront
-% Gentien Marois, Thomas Nagel, Dmitri Naumov, Thomas Helfer
-% 1/08/2019
+---
+title: Invariant-based implementation of the Mohr-Coulomb elasto-plastic model in OpenGeoSys using MFront
+author: Gentien Marois, Thomas Nagel, Dmitri Naumov, Thomas Helfer
+date: 01/08/2019
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 <!--
 pandoc --filter pandoc-crossref --filter pandoc-citeproc --bibliography=bibliography.bib -fmarkdown+tex_math_single_backslash MohrCoulomb.md -o MohrCoulomb.pdf --toc --number-sections  -V geometry:margin=1in
@@ -47,8 +56,8 @@ This page shows:
 
 - how to implement a plastic behaviour based on the third invariants of
   the stress tensor.
-- how to simply the implementation by moving the evoluation of the
-  stress criteria (and its first and second derivatives) in a seperate
+- how to simplify the implementation by moving the evaluation of the
+  stress criteria (and its first and second derivatives) in a separate
   header file.
 - how the implementation finally looks like once introduced in the
   [`StandardElastoViscoplasticity`
@@ -80,7 +89,7 @@ The plastic part of the behaviour is described by the following yield
 surface:
 \[ F = 0 \]
 
-F is defined as follow:
+F is defined as follows:
 
 \[
 	F = \frac{I_1}{3} \sin \phi + \sqrt{J_2 K(\theta)^2 + a^2 \sin^2 \phi} - c \cos \phi
@@ -205,7 +214,7 @@ In the following, the first
 (tensorial) equation is noted \(f_{\tepsilonel}\) and the second
 (scalar) equation is noted \(f_{p}\).
 
-In practice, it is physically sound to make satisfy exactly the yield
+In practice, it is physically sound to satisfy exactly the yield
 condition at the end of the time step (otherwise, stress extrapolation
 can lead to stress state outside the yield surface and spurious
 oscillations can also be observed). This leads to the choice
@@ -257,9 +266,9 @@ The jacobian associated with this system is the identity matrix.
 ## Choice of domain specific language
 
 While not mandatory (the `@DSL` keyword can be place anywhere in the
-file), its is convenient to start the implementation by declaring the
+file), it is convenient to start the implementation by declaring the
 domain specific language to be used. For an integration by a
-\(\theta\)-scheme, the `Implicit` domain specific language is choosen:
+\(\theta\)-scheme, the `Implicit` domain specific language is chosen:
 
 ~~~~{.cxx}
 @DSL Implicit;
@@ -305,7 +314,7 @@ The `StandardElasticity` brick which provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 The usage of the `StandardElasticity` is introduced as follows:
@@ -384,9 +393,9 @@ a.setEntryName("TensionCutOffParameter");
 ## Local variable
 
 In `MFront`, an integration variable is defined to store a variable and
-use it in various code block.
+use it in various code blocks.
 
-Here several local variables are declared such as the bolean variable F:
+Here several local variables are declared such as the boolean variable F:
 if true, plastic loading
 
 ~~~~{.cxx}
@@ -407,7 +416,7 @@ if true, plastic loading
 ~~~~
 
 
-## Initialisation a the local variable
+## Initialisation of the local variable
 
 The `@InitLocalVariables` code block is called before the behaviour
 integration. 
@@ -440,7 +449,7 @@ First, we define some variables :
   a_G = (psi != 0. && phi != 0.) ? (c / tan(psi) - c / tan(phi) + a) : a;
 ~~~~
 
-Then the  `computeElasticPrediction` method (introducted with the 
+Then the  `computeElasticPrediction` method (introduced with the 
 `StandardElasticity` brick) is used to compute \(\sigma^{el}\)
 
 
@@ -450,7 +459,7 @@ Then the  `computeElasticPrediction` method (introducted with the
 ~~~~
 
 
-The three invariant \(I_{1}^{el}\), \(J_{2}^{el}\) and \(J_{3}^{el}\) 
+The three invariants \(I_{1}^{el}\), \(J_{2}^{el}\) and \(J_{3}^{el}\) 
 corresponding to the elastic prediction are calculated:
 
 ~~~~{.cxx}
@@ -469,7 +478,7 @@ The \(\theta^{el}\) angle is defined:
   const auto lode_el = 1. / 3. * asin(arg);
 ~~~~
 
-K is initiliazed as \(K^{el}\) value:
+K is initialized as \(K^{el}\) value:
 
 ~~~~{.cxx} 
   auto K = 0.0;
@@ -721,7 +730,7 @@ Figure @fig:MC_stress_paths within the \(\pi\)-plane. This shows that
 a) yield is correctly detected, and b) the stress-state is correctly
 pulled back onto the yield surface.
 
-![Verification against analytical example. Description in @Nagel2016.](img/MohrCoulombAnalitical.svg "Verification against analytical example. Description in @Nagel2016"){#fig:MC_vis width=125%}
+![Verification against analytical example. Description in @Nagel2016.](img/MohrCoulombAnalytical.svg "Verification against analytical example. Description in @Nagel2016"){#fig:MC_vis width=125%}
 
 The second test (included as a benchmark) follows an analytical solution
 for a stress-free cavity in an infinite medium under a variable
@@ -733,20 +742,20 @@ partial extension towards non-associated flow).
 
 # Simplification of the MFront file : use of `TFEL/Material/MohrCoulombYieldCriterion.hxx` file
 
-Because F et G have an analogous structure, it's possible to simplify the MFront file
+Because F and G have an analogous structure, it's possible to simplify the MFront file
 and to do the calculation in the hxx `TFEL/Material/MohrCoulombYieldCriterion.hxx`
 instead of the MFront file.
 
-Severals simplifications are done:
+Several simplifications are done:
 
 - parameters and local variables such as `sin_phi`, `sin_psi`, ... are now defined in the hxx file
 - the calculation of \(F^{el}\) is done by `computeMohrCoulombStressCriterion` function
-- the calculation of \(F\) and this normal \(\tenseur{n}_{F}\) are done by 
+- the calculation of \(F\) and the normal \(\tenseur{n}_{F}\) are done by 
 `computeMohrCoulombStressCriterionNormal` function 
 - the calculation of  \(G\), \(\tenseur{n}_{G}\) and \( \dfrac{\partial \tenseur{n}_{G}}{\partial \tenseur{\sigma}} \) 
 are done by `computeMohrCoulombStressCriterionSecondDerivative` function
 
-Except for some name changes (for example p instead lam for the
+Except for some name changes (for example p instead of lam for the
 EquivalentPlasticStrain) and the functions previously introduced
 (`computeMohrCoulombStressCriterion`,`computeMohrCoulombStressCriterionNormal`
 and `computeMohrCoulombStressCriterionSecondDerivative`) the rest of the

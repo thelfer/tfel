@@ -63,7 +63,8 @@ namespace tfel::utilities {
   }  // end of basic_fcstring<N,CharT,Traits>::basic_fcstring
 
   template <std::size_t N, typename CharT, typename Traits>
-  basic_fcstring<N, CharT, Traits>::basic_fcstring(basic_fcstring&&) = default;
+  basic_fcstring<N, CharT, Traits>::basic_fcstring(basic_fcstring&&) noexcept =
+      default;
 
   template <std::size_t N, typename CharT, typename Traits>
   basic_fcstring<N, CharT, Traits>::basic_fcstring(const basic_fcstring&) =
@@ -71,7 +72,7 @@ namespace tfel::utilities {
 
   template <std::size_t N, typename CharT, typename Traits>
   basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::operator=(
-      basic_fcstring&&) = default;
+      basic_fcstring&&) noexcept = default;
 
   template <std::size_t N, typename CharT, typename Traits>
   basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::operator=(

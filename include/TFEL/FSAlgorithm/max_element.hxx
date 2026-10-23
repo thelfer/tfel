@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/max_element.hxx
  * \brief  This file implements the max_element class.
  * \author Thomas Helfer
- * \date   30 jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -21,19 +21,21 @@ namespace tfel::fsalgo {
   /*!
    * \class max_element
    * \brief max_element finds the largest element in the range [first, first+N)
-   * \param N number of element to be transformed.
+   * \tparam N: number of elements of the range.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/max_element.html
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct max_element {
     /*
      * Internal function member used by max_element<N>::exe
-     * \param ForwardIterator, iterator to the elements.
+     * \tparam ForwardIterator: iterator to the elements.
+     * \param[in] p: iterator to the next element to be compared
+     * \param[in] q: iterator to the largest element found so far
      *
      * \return ForwardIterator to the maximum element
      *
@@ -42,7 +44,7 @@ namespace tfel::fsalgo {
      * - ForwardIterator's value type is LessThan Comparable.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
@@ -54,8 +56,11 @@ namespace tfel::fsalgo {
     /*
      * Internal function member used by max_element<N>::exe
      *
-     * \param ForwardIterator, iterator to the elements.
-     * \param BinaryPredicate, comparison function
+     * \tparam ForwardIterator: iterator to the elements.
+     * \tparam BinaryPredicate: comparison function
+     * \param[in] p: iterator to the next element to be compared
+     * \param[in] q: iterator to the element selected so far
+     * \param[in] comp: comparison function
      *
      * \return ForwardIterator to the maximum element
      *
@@ -66,7 +71,7 @@ namespace tfel::fsalgo {
      * argument type and second argument type.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
@@ -82,7 +87,8 @@ namespace tfel::fsalgo {
      * iterator in [first, last) points to a value greater than *i. The return
      * value is first+N if and only if [first, last) is an empty range.
      *
-     * \param ForwardIterator, iterator to the elements.
+     * \tparam ForwardIterator: iterator to the elements.
+     * \param[in] p: iterator to the first element
      *
      * \return ForwardIterator to the maximum element
      *
@@ -91,7 +97,7 @@ namespace tfel::fsalgo {
      * - ForwardIterator's value type is LessThan Comparable.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
@@ -104,8 +110,10 @@ namespace tfel::fsalgo {
      * such that, for every iterator j in [first, first+N), comp(*i, *j) is
      * false, where comp is a binary predicate given in argument
      *
-     * \param ForwardIterator, iterator to the elements.
-     * \param BinaryPredicate, comparison function
+     * \tparam ForwardIterator: iterator to the elements.
+     * \tparam BinaryPredicate: comparison function
+     * \param[in] p: iterator to the first element
+     * \param[in] comp: comparison function
      *
      * \return ForwardIterator to the maximum element
      *
@@ -116,7 +124,7 @@ namespace tfel::fsalgo {
      * argument type and second argument type.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,
@@ -131,7 +139,7 @@ namespace tfel::fsalgo {
    * max_element algorithm.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct max_element<1u> {
@@ -140,7 +148,7 @@ namespace tfel::fsalgo {
      * \sa max_element<N>::exe_() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
@@ -156,7 +164,7 @@ namespace tfel::fsalgo {
      * \sa max_element<N>::exe_() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
@@ -174,7 +182,7 @@ namespace tfel::fsalgo {
      * \sa max_element<N>::exe() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
@@ -186,7 +194,7 @@ namespace tfel::fsalgo {
      * \sa max_element<N>::exe() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,
@@ -200,7 +208,7 @@ namespace tfel::fsalgo {
    * max_element algorithm.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct max_element<0u> {
@@ -209,7 +217,7 @@ namespace tfel::fsalgo {
      * \sa max_element<N>::exe() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
@@ -221,7 +229,7 @@ namespace tfel::fsalgo {
      * \sa max_element<N>::exe() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,

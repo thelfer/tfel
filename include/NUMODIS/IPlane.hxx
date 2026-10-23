@@ -2,7 +2,7 @@
  * \file   include/NUMODIS/IPlane.hxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,7 +25,7 @@ namespace numodis {
   //! IPlane handles the indices of a critallographic plane
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT IPlane {
-    IPlane(IPlane&&);
+    IPlane(IPlane&&) noexcept;
 
     IPlane(const IPlane&);
 
@@ -40,7 +40,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \param nindices number of indices used to store n      */
     //===========================================================
-    IPlane(const unsigned nindices = 3) : _index(nindices, 0) {}
+    explicit IPlane(const unsigned nindices = 3) : _index(nindices, 0) {}
 
     //===========================================================
     // IPlane::IPlane
@@ -87,7 +87,7 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return reference on the index of the plane              */
     //=============================================================
-    const std::vector<int>& getIndex() const { return _index; }
+    [[nodiscard]] const std::vector<int>& getIndex() const { return _index; }
 
     //=============================================================
     // IPlane::Operator[]
@@ -99,9 +99,11 @@ namespace numodis {
       \return iplane[i]
     */
     //=============================================================
-    int operator[](const size_type i) const { return this->_index[i]; }
+    [[nodiscard]] int operator[](const size_type i) const {
+      return this->_index[i];
+    }
 
-    int& operator[](const size_type i) { return this->_index[i]; }
+    [[nodiscard]] int& operator[](const size_type i) { return this->_index[i]; }
 
     //=============================================================
     // IPlane::getNindices
@@ -110,7 +112,9 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return number of indices                                */
     //=============================================================
-    long unsigned int getNindices() const { return _index.size(); }
+    [[nodiscard]] long unsigned int getNindices() const {
+      return _index.size();
+    }
 
     //=============================================================
     // IPlane::IsNull
@@ -119,7 +123,7 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return true if only zero                                */
     //=============================================================
-    bool IsNull() const {
+    [[nodiscard]] bool IsNull() const {
       for (unsigned i = 0; i < _index.size(); i++)
         if (_index[i] != 0) return false;
       return true;

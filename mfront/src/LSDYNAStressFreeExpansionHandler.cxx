@@ -20,10 +20,10 @@ namespace lsdyna {
 
   template <typename real>
   static void LSDYNAStandardSmallStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const LSDYNAInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0] -= s0[0];
@@ -47,29 +47,29 @@ namespace lsdyna {
   }  // end of LSDYNAStandardSmallStrainStressFreeExpansionHandler
 
   void LSDYNAStandardSmallStrainStressFreeExpansionHandler(
-      float *const e,
-      float *const de,
-      const float *const s0,
-      const float *const s1,
+      float* const e,
+      float* const de,
+      const float* const s0,
+      const float* const s1,
       const LSDYNAInt d) {
     LSDYNAStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   void LSDYNAStandardSmallStrainStressFreeExpansionHandler(
-      double *const e,
-      double *const de,
-      const double *const s0,
-      const double *const s1,
+      double* const e,
+      double* const de,
+      const double* const s0,
+      const double* const s1,
       const LSDYNAInt d) {
     LSDYNAStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   template <typename real>
   static void LSDYNALogarithmicStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const LSDYNAInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     if (d == 2) {
@@ -106,18 +106,18 @@ namespace lsdyna {
     }
   }  // end of LSDYNALogarithmicStrainStressFreeExpansionHandler
 
-  void LSDYNALogarithmicStrainStressFreeExpansionHandler(float *const e,
-                                                         float *const de,
-                                                         const float *const s0,
-                                                         const float *const s1,
+  void LSDYNALogarithmicStrainStressFreeExpansionHandler(float* const e,
+                                                         float* const de,
+                                                         const float* const s0,
+                                                         const float* const s1,
                                                          const LSDYNAInt d) {
     LSDYNALogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
-  void LSDYNALogarithmicStrainStressFreeExpansionHandler(double *const e,
-                                                         double *const de,
-                                                         const double *const s0,
-                                                         const double *const s1,
+  void LSDYNALogarithmicStrainStressFreeExpansionHandler(double* const e,
+                                                         double* const de,
+                                                         const double* const s0,
+                                                         const double* const s1,
                                                          const LSDYNAInt d) {
     LSDYNALogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }

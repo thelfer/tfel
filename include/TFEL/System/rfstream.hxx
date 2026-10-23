@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   14 nov 2007
+ * \date 14/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -43,24 +43,24 @@ namespace tfel::system {
   struct TFELSYSTEM_VISIBILITY_EXPORT rfstream
       : public basic_rstream<rfstream, stream_traits<rfstream>>,
         protected std::shared_ptr<int> {
-    //! default constructor
+    //! \brief default constructor
     rfstream();
 
-    //! copy constructor
+    //! \brief copy constructor
     rfstream(const rfstream&);
 
     // assignement operator
     rfstream& operator=(const rfstream&);
 
-    rfstream(const std::string&, const int = O_RDONLY);
+    explicit rfstream(const std::string&, const int = O_RDONLY);
 
     void open(const std::string&, const int = O_RDONLY);
 
     void close();
 
-    int getFileDescriptor() const;
+    [[nodiscard]] int getFileDescriptor() const;
 
-    //! \brief destructor
+    //! \brief \brief destructor
     ~rfstream();
 
   };  // end of struct basic_wstream

@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   14 nov 2007
+ * \date 14/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -39,16 +39,14 @@ namespace tfel::system {
         protected std::shared_ptr<int> {
     // default constructor
     wfstream();
-
     // copy constructor
     wfstream(const wfstream&);
-
     // assignement operator
     wfstream& operator=(const wfstream&);
 
-    wfstream(const std::string&,
-             const int = O_CREAT | O_TRUNC | O_WRONLY,
-             const mode_t = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    explicit wfstream(const std::string&,
+                      const int = O_CREAT | O_TRUNC | O_WRONLY,
+                      const mode_t = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
     void open(const std::string&,
               const int = O_CREAT | O_TRUNC | O_WRONLY,
@@ -56,11 +54,10 @@ namespace tfel::system {
 
     void close();
 
-    int getFileDescriptor() const;
+    [[nodiscard]] int getFileDescriptor() const;
 
     // destructor
     ~wfstream();
-
   };  // end of struct basic_wstream
 
 }  // end of namespace tfel::system

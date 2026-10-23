@@ -33,10 +33,10 @@ namespace ansys {
    * \param[in] d      : spatial dimension
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysStandardSmallStrainStressFreeExpansionHandler(float *const,
-                                                     float *const,
-                                                     const float *const,
-                                                     const float *const,
+  AnsysStandardSmallStrainStressFreeExpansionHandler(float* const,
+                                                     float* const,
+                                                     const float* const,
+                                                     const float* const,
                                                      const AnsysInt);
   /*!
    * standard handler of stress free expansion handler for small
@@ -52,10 +52,10 @@ namespace ansys {
    * \param[in] d      : spatial dimension
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysStandardSmallStrainStressFreeExpansionHandler(double *const,
-                                                     double *const,
-                                                     const double *const,
-                                                     const double *const,
+  AnsysStandardSmallStrainStressFreeExpansionHandler(double* const,
+                                                     double* const,
+                                                     const double* const,
+                                                     const double* const,
                                                      const AnsysInt);
   /*!
    * standard handler of stress free expansion handler for logarithmic
@@ -71,10 +71,10 @@ namespace ansys {
    * \param[in] d      : spatial dimension
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysLogarithmicStrainStressFreeExpansionHandler(float *const,
-                                                   float *const,
-                                                   const float *const,
-                                                   const float *const,
+  AnsysLogarithmicStrainStressFreeExpansionHandler(float* const,
+                                                   float* const,
+                                                   const float* const,
+                                                   const float* const,
                                                    const AnsysInt);
   /*!
    * standard handler of stress free expansion handler for logarithmic
@@ -90,10 +90,10 @@ namespace ansys {
    * \param[in] d      : spatial dimension
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysLogarithmicStrainStressFreeExpansionHandler(double *const,
-                                                   double *const,
-                                                   const double *const,
-                                                   const double *const,
+  AnsysLogarithmicStrainStressFreeExpansionHandler(double* const,
+                                                   double* const,
+                                                   const double* const,
+                                                   const double* const,
                                                    const AnsysInt);
 
 }  // end of namespace ansys

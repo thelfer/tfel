@@ -2,7 +2,7 @@
  * \file  Argument.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mars 2015
+ * \date 04/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -19,9 +19,9 @@ namespace tfel::utilities {
 
   Argument::Argument(const char* const s) : name(s) {}
 
-  Argument::Argument(Argument&&) = default;
+  Argument::Argument(Argument&&) noexcept = default;
   Argument::Argument(const Argument&) = default;
-  Argument& Argument::operator=(Argument&&) = default;
+  Argument& Argument::operator=(Argument&&) noexcept = default;
   Argument& Argument::operator=(const Argument&) = default;
 
   std::string& Argument::as_string() noexcept { return this->name; }

@@ -113,7 +113,7 @@ namespace tfel::material::homogenization::elasticity {
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
     }
-    if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
+    if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
 
@@ -151,9 +151,9 @@ namespace tfel::material::homogenization::elasticity {
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real> computeSphereEshelbyTensor(
       const real& nu) {
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
     const auto a = (1 + nu) / 3 / (1 - nu);
     const auto b = 2 * (4 - 5 * nu) / 15 / (1 - nu);
     using namespace tfel::math;
@@ -172,12 +172,12 @@ namespace tfel::material::homogenization::elasticity {
                                                                    StressType>&
                                                                    nu) {
     using real = types::real<StressType>;
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
-    if (not(young > StressType{0})) {
-      tfel::reportContractViolation("E<=0");
-    }
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
+    // if (not(young > StressType{0})) {
+    //   tfel::reportContractViolation("E<=0");
+    // }
     const auto a = (1 + nu) * (1 - 2 * nu) / 3 / young / (1 - nu);
     const auto b = 2 * (4 - 5 * nu) * (1 + nu) / 15 / young / (1 - nu);
     using namespace tfel::math;
@@ -200,9 +200,9 @@ namespace tfel::material::homogenization::elasticity {
       const real& nu,
       const real& e,
       const tfel::math::base_type<real> precision) {
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
     if (not(e > real(0))) {
       tfel::reportContractViolation("e<=0");
     }
@@ -271,7 +271,7 @@ namespace tfel::material::homogenization::elasticity {
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
     }
-    if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
+    if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
     const auto n_a_ = n_a / norm(n_a);
@@ -364,9 +364,9 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::base_type<StressType> precision) {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
     if (not((a > LengthType{0}) and (b > LengthType{0}) and
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
@@ -458,16 +458,13 @@ namespace tfel::material::homogenization::elasticity {
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
     }
-    if (not(tfel::math::ieee754::fpclassify(
-                tfel::math::VectorVectorDotProduct::exe<
-                    real, tfel::math::tvector<3u, real>,
-                    tfel::math::tvector<3u, real>>(n_a, n_b)) == FP_ZERO)) {
+    if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
       tfel::reportContractViolation("n_a and n_b not normals");
     }
-    if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
+    if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
-    if (tfel::math::ieee754::fpclassify(norm(n_b)) == FP_ZERO) {
+    if (norm(n_b) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_b is null");
     }
     const auto n_a_ = n_a / norm(n_a);

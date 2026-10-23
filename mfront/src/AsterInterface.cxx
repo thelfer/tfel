@@ -2,7 +2,7 @@
  * \file   mfront/src/AsterInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   17 Jan 2007
+ * \date 17/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -273,7 +273,7 @@ namespace mfront {
     out << "* \\brief  This file declares the aster interface for the "
         << mb.getClassName() << " behaviour law\n";
     out << "* \\author " << fd.authorName << '\n';
-    out << "* \\date   " << fd.date << '\n';
+    out << "* \\date " << fd.date << '\n';
     out << "*/\n\n";
 
     const auto headerGuard = this->getHeaderGuard(mb);
@@ -416,7 +416,7 @@ namespace mfront {
     out << "* \\brief  This file implements the aster interface for the "
         << mb.getClassName() << " behaviour law\n";
     out << "* \\author " << fd.authorName << '\n';
-    out << "* \\date   " << fd.date << '\n';
+    out << "* \\date " << fd.date << '\n';
     out << "*/\n\n";
 
     this->getExtraSrcIncludes(out, mb);

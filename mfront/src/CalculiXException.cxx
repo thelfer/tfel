@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   09 nov 2007
+ * \date 09/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,10 +29,10 @@ namespace std {
 
 namespace calculix {
 
-  CalculiXException::CalculiXException(const std::string& s)
-      : msg(s) {}  // end of CalculiXException::CalculiXException
+  CalculiXException::CalculiXException(std::string s)
+      : msg(std::move(s)) {}  // end of CalculiXException::CalculiXException
 
-  CalculiXException::CalculiXException(CalculiXException&&) = default;
+  CalculiXException::CalculiXException(CalculiXException&&) noexcept = default;
 
   CalculiXException::CalculiXException(const CalculiXException&) = default;
 
@@ -40,14 +40,14 @@ namespace calculix {
     return msg.c_str();
   }  // end of CalculiXException::what
 
-  std::string CalculiXException::getMsg() const noexcept {
+  const std::string& CalculiXException::getMsg() const noexcept {
     return msg;
   }  // end of CalculiXException::getMsg
 
   CalculiXException::~CalculiXException() noexcept = default;
 
   CalculiXInvalidModellingHypothesis::CalculiXInvalidModellingHypothesis(
-      CalculiXInvalidModellingHypothesis&&) = default;
+      CalculiXInvalidModellingHypothesis&&) noexcept = default;
 
   CalculiXInvalidModellingHypothesis::CalculiXInvalidModellingHypothesis(
       const CalculiXInvalidModellingHypothesis&) = default;
@@ -67,7 +67,7 @@ namespace calculix {
   }  // end of CalculiXInvalidNTENSValue::CalculiXInvalidNTENSValue
 
   CalculiXInvalidNTENSValue::CalculiXInvalidNTENSValue(
-      CalculiXInvalidNTENSValue&&) = default;
+      CalculiXInvalidNTENSValue&&) noexcept = default;
 
   CalculiXInvalidNTENSValue::CalculiXInvalidNTENSValue(
       const CalculiXInvalidNTENSValue&) = default;
@@ -84,7 +84,7 @@ namespace calculix {
       const CalculiXInvalidDimension&) = default;
 
   CalculiXInvalidDimension::CalculiXInvalidDimension(
-      CalculiXInvalidDimension&&) = default;
+      CalculiXInvalidDimension&&) noexcept = default;
 
   CalculiXInvalidDimension::~CalculiXInvalidDimension() noexcept = default;
 

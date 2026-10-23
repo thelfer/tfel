@@ -2,7 +2,7 @@
  * \file   BurletCailletaudKinematicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04/04/2018
+ * \date 04/04/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,7 +27,6 @@ namespace mfront::bbrick {
    * \f]
    */
   struct BurletCailletaudKinematicHardeningRule : KinematicHardeningRuleBase {
-    std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -37,7 +36,8 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const std::string&) const override;
-    std::string buildBackStrainImplicitEquations(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string buildBackStrainImplicitEquations(
         const BehaviourDescription&,
         const StressPotential&,
         const StressCriterion&,
@@ -45,7 +45,7 @@ namespace mfront::bbrick {
         const std::string&,
         const std::string&,
         const bool) const override;
-    //! destructor
+    //! \brief destructor
     ~BurletCailletaudKinematicHardeningRule() override;
 
    protected:

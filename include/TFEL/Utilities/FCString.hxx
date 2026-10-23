@@ -3,7 +3,7 @@
  * \brief This header declares the `FCString` class which provides a
  * description of a string with fixed capacity.
  * \author Thomas Helfer
- * \date   23 janv. 2017
+ * \date 23/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -76,11 +76,11 @@ namespace tfel::utilities {
     template <std::size_t N2>
     basic_fcstring(const CStringNarrowedView<N2, CharT>&);
     //! move constructor
-    basic_fcstring(basic_fcstring&&);
+    basic_fcstring(basic_fcstring&&) noexcept;
     //! copy constructor
     basic_fcstring(const basic_fcstring&);
     //! move constructor
-    basic_fcstring& operator=(basic_fcstring&&);
+    basic_fcstring& operator=(basic_fcstring&&) noexcept;
     //! copy constructor
     basic_fcstring& operator=(const basic_fcstring&);
     /*!

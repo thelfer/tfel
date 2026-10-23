@@ -2,7 +2,7 @@
  * \file   ViscoplasticFlowBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   28/03/2018
+ * \date 28/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -48,24 +48,26 @@ namespace mfront::bbrick {
     ~ViscoplasticFlowBase() override;
 
    protected:
-    std::string buildFlowImplicitEquations(const BehaviourDescription&,
-                                           const StressPotential&,
-                                           const std::string&,
-                                           const bool) const override;
+    [[nodiscard]] std::string buildFlowImplicitEquations(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const std::string&,
+        const bool) const override;
     /*!
      * \return if the viscoplastic strain rate \f$f\f$ depends explicitly on the
      * equivalent viscoplastic strain.
      */
-    virtual bool describesStrainHardeningExplicitly() const = 0;
+    [[nodiscard]] virtual bool describesStrainHardeningExplicitly() const = 0;
     /*!
      * \brief compute the strain rate "vp"+id
      * \param[in] bd: behaviour description
      * \param[in] sp: stress potential
      * \param[in] id: flow id
      */
-    virtual std::string computeFlowRate(const BehaviourDescription&,
-                                        const StressPotential&,
-                                        const std::string&) const = 0;
+    [[nodiscard]] virtual std::string computeFlowRate(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const std::string&) const = 0;
     /*!
      * \brief compute the strain rate "vp"+id and its derivative
      * "dvp"+id+"_dseqe"+id with respect to the effective
@@ -82,7 +84,7 @@ namespace mfront::bbrick {
      * \param[in] sp: stress potential
      * \param[in] id: flow id
      */
-    virtual std::string computeFlowRateAndDerivative(
+    [[nodiscard]] virtual std::string computeFlowRateAndDerivative(
         const BehaviourDescription&,
         const StressPotential&,
         const std::string&) const = 0;

@@ -107,7 +107,7 @@ namespace tfel::math::parser {
   }  // end of differentiateBinaryOperation
 
   template <typename Op>
-  BinaryOperation<Op>::~BinaryOperation() {}  // end of ~BinaryOperation()
+  BinaryOperation<Op>::~BinaryOperation() = default;
 
   template <>
   std::shared_ptr<Expr> differentiateBinaryOperation<OpPlus>(

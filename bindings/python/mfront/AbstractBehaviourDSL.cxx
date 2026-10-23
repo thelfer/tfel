@@ -3,7 +3,7 @@
  * \file   bindings/python/mfront/AbstractBehaviourDSL.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/05/2016
+ * \date 04/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,9 +24,12 @@ void declareAbstractBehaviourDSL(pybind11::module_&);
 void declareAbstractBehaviourDSL(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<AbstractBehaviourDSL, AbstractDSL,
-                   std::shared_ptr<AbstractBehaviourDSL>>(
-      m, "AbstractBehaviourDSL")
+                    std::shared_ptr<AbstractBehaviourDSL>>(
+      m, "AbstractBehaviourDSL",
+      "Interface class for all domain specific languages associated with\n"
+      "behaviours")
       .def("getBehaviourDescription",
            &AbstractBehaviourDSL::getBehaviourDescription,
-           pybind11::return_value_policy::reference);
+           pybind11::return_value_policy::reference,
+           "Return the behaviour description");
 }

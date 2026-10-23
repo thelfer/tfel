@@ -2,7 +2,7 @@
  * \file   LSDYNAData.hxx
  * \brief
  * \author Thomas Helfer
- * \date   22/03/2016
+ * \date 22/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,22 +23,22 @@ namespace lsdyna {
    * the umat interface
    */
   struct LSDYNAData {
-    LSDYNAReal *const STRESS;
-    LSDYNAReal *const PNEWDT;
-    LSDYNAReal *const DDSDDE;
-    LSDYNAReal *const STATEV;
+    LSDYNAReal* const STRESS;
+    LSDYNAReal* const PNEWDT;
+    LSDYNAReal* const DDSDDE;
+    LSDYNAReal* const STATEV;
     const LSDYNAInt NTENS;
     const LSDYNAInt NPROPS;
     const LSDYNAInt NSTATV;
     const LSDYNAReal DTIME;
-    const LSDYNAReal *const DROT;
-    const LSDYNAReal *const STRAN;
-    const LSDYNAReal *const DSTRAN;
-    const LSDYNAReal *const TEMP;
-    const LSDYNAReal *const DTEMP;
-    const LSDYNAReal *const PROPS;
-    const LSDYNAReal *const PREDEF;
-    const LSDYNAReal *const DPRED;
+    const LSDYNAReal* const DROT;
+    const LSDYNAReal* const STRAN;
+    const LSDYNAReal* const DSTRAN;
+    const LSDYNAReal* const TEMP;
+    const LSDYNAReal* const DTEMP;
+    const LSDYNAReal* const PROPS;
+    const LSDYNAReal* const PREDEF;
+    const LSDYNAReal* const DPRED;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler<LSDYNAReal> sfeh;
   };  // end of struct LSDYNAData

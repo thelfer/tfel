@@ -2,7 +2,7 @@
  * \file   mfront/src/Castem21Interface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   24/02/2021
+ * \date 24/02/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,7 +22,7 @@ namespace mfront {
     return "castem21";
   }  // end of getName
 
-  Castem21Interface::Castem21Interface() {}  // end of Castem21Interface
+  Castem21Interface::Castem21Interface() = default;
 
   std::string Castem21Interface::getInterfaceVersion() const {
     return "21";
@@ -55,6 +55,9 @@ namespace mfront {
 
   std::string Castem21Interface::getMaterialPropertiesOffsetForBehaviourTraits(
       const BehaviourDescription& md) const {
+    if (md.isModel()) {
+      return CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits(md);
+    }
     return CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits(md) +
            " + 2u";
   }  // end of getMaterialPropertiesOffsetForBehaviourTraits

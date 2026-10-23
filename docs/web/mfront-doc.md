@@ -1,6 +1,15 @@
-% mfront-doc: a documentation generator from `MFront` files
-% Helfer Thomas
-% August 19, 2015
+---
+title: "mfront-doc: a documentation generator from MFront files"
+author: Helfer Thomas
+date: 19/08/2015
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 # Description
 
@@ -8,7 +17,7 @@
 `MFront` files. `mfront-doc` generates files in `pandoc`
 [markdown format](http://pandoc.org/demo/example9/pandocs-markdown.html). These
 files can be processed using [`pandoc`](http://pandoc.org/) and be
-converted to one of the many file format supported by
+converted to one of the many file formats supported by
 [`pandoc`](http://pandoc.org/), including
 [`LaTeX`](www.latex-project.org), `html` or various Word processor
 formats: Microsoft Word

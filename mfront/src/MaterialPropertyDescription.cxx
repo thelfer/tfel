@@ -40,13 +40,9 @@ namespace mfront {
        << "using tfel::math::invert_type;\n"
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
-    if (use_qt) {
-      os << "using PhysicalConstants [[maybe_unused]] = "
-         << "tfel::PhysicalConstants<" << numeric_type << ", true>;\n";
-    } else {
-      os << "using PhysicalConstants [[maybe_unused]] = "
-         << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
-    }
+    os << "constexpr auto use_qt = " << (use_qt ? "true" : "false") << ";\n";
+    os << "using PhysicalConstants [[maybe_unused]] = "
+       << "tfel::PhysicalConstants<" << numeric_type << ", use_qt>;\n";
     os << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
        << "{ return a < b ? a : b; };\n"
        << "[[maybe_unused]] auto max = [](const auto a, const auto b) "
@@ -62,10 +58,11 @@ namespace mfront {
                                    const bool areQuantitiesSupported) {
     const auto use_qt =
         (areQuantitiesSupported && useQuantities(mpd)) ? "true" : "false";
+    os << "using NumericType [[maybe_unused]] = " << numeric_type << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<" << numeric_type << ", "
-         << use_qt << ">::" << a << ";\n";
+      os << "using " << a << " [[maybe_unused]] = typename "
+         << "tfel::config::ScalarTypes<" << numeric_type << ", " << use_qt
+         << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
 
@@ -73,11 +70,11 @@ namespace mfront {
   MaterialPropertyDescription::MaterialPropertyDescription(
       const MaterialPropertyDescription&) = default;
   MaterialPropertyDescription::MaterialPropertyDescription(
-      MaterialPropertyDescription&&) = default;
+      MaterialPropertyDescription&&) noexcept = default;
   MaterialPropertyDescription& MaterialPropertyDescription::operator=(
       const MaterialPropertyDescription&) = default;
   MaterialPropertyDescription& MaterialPropertyDescription::operator=(
-      MaterialPropertyDescription&&) = default;
+      MaterialPropertyDescription&&) noexcept = default;
 
   const VariableDescription&
   MaterialPropertyDescription::getVariableDescription(

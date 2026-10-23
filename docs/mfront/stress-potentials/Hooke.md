@@ -1,9 +1,9 @@
 The `Hooke` brick describes the linear elastic part of
-the behaviour of an isotropic or orthotropic material.
+the behavior of an isotropic or orthotropic material.
 
 ## Evolution of the elastic strain
 
-This bricks relies on the fact that the behaviour is based on the
+This bricks relies on the fact that the behavior is based on the
 strain split hypothesis. 
 
 The elastic strain must be defined as the first integration
@@ -11,7 +11,7 @@ variable. The associated variable must be called `eel` and its
 glossary name must be `ElasticStrain`. This is automatically the case
 with the `@Implicit` dsl.
 
-The total strain increment `deto` is automatically substracted to the
+The total strain increment `deto` is automatically subtracted to the
 equation associated with the elastic (`feel`), which is equivalent to
 the following statement:
 \[
@@ -20,9 +20,9 @@ feel -= deto
 
 ## Computation of the stress
 
-If the elastic behaviour is orthotropic, the stiffness tensor must be
+If the elastic behavior is orthotropic, the stiffness tensor must be
 available available (using the keyword `@RequireStiffnessTensor`) or
-computed by the behaviour (using the keyword
+computed by the behavior (using the keyword
 `@ComputeStiffnessTensor`). If those keywords are not explicitly
 used, the brick will automatically sets the attribute
 `requireStiffnessTensor` to `true` which has the same effect than the
@@ -31,9 +31,9 @@ used, the brick will automatically sets the attribute
 Thus, two cases arise:
 
 - the stiffness tensor is available (using keyword
-  `@RequireStiffnessTensor`) or computed by the behaviour
+  `@RequireStiffnessTensor`) or computed by the behavior
   (`@ComputeStiffnessTensor`).
-- the behaviour has is an isotropic elastic behaviour and the
+- the behavior has is an isotropic elastic behavior and the
   stiffness tensor is not available.
 
 ### First case: the stiffness tensor is available
@@ -48,7 +48,7 @@ At \(t+\theta\,dt\), the stress are computed using:
 
 #### Computation of the final stress at \(t+dt\)
 
-If the stiffness tensor is avaible using the
+If the stiffness tensor is available using the
 `@RequireStiffnessTensor`, the final stress \(\ets{\sigma}\) is
 computed using the following formula :
 
@@ -65,7 +65,7 @@ the final \(\ets{\sigma}\) stress is computed using:
 
 ### Second case: the stiffness tensor is not available
 
-In this case, the elastic behaviour of the material is isotropic. The
+In this case, the elastic behavior of the material is isotropic. The
 computation of the stress requires the definition of the first Lamé
 coefficient and the shear modulus (second Lamé coefficient).
 
@@ -116,8 +116,8 @@ formula :
 
 ## Enforcement of the plane stress conditions: computation of the axial strain
 
-If the user has explicitly specified that the axisymmetric generalised
-plane stress modelling hypothesis must be supported by the behaviour
+If the user has explicitly specified that the axisymmetric generalized
+plane stress modeling hypothesis must be supported by the behavior
 using the `@ModellingHypothesis` keyword or the `@ModellingHypotheses`
 keyword, this support is performed by automatically introducing an
 additional state variable: the axial strain. The associated variable
@@ -138,13 +138,13 @@ equation to the implicit system ensuring that:
 \ets{\sigma_{zz}}=0
 \]
 
-This equation is appropriately normalised using one of the elastic
+This equation is appropriately normalized using one of the elastic
 properties. The associated jacobian term are added if necessary.
 
-## Enforcement of the generalised plane stress conditions: computation of the axial strain
+## Enforcement of the generalized plane stress conditions: computation of the axial strain
 
-If the user has explicitly specified that the axisymmetric generalised
-plane stress modelling hypothesis must be supported by the behaviour
+If the user has explicitly specified that the axisymmetric generalized
+plane stress modeling hypothesis must be supported by the behavior
 using the `@ModellingHypothesis` keyword or the `@ModellingHypotheses`
 keyword, this support is performed by automatically introducing an
 additional state variable, the axial strain and an additional external
@@ -176,7 +176,7 @@ where \(\sigma^{zz}\) is the value of the axial stress at the
 beginning of the time step and \(d\sigma^{zz}\) is the value of the
 increment of the axial stress.
 
-This equation is appropriately normalised using one of the elastic
+This equation is appropriately normalized using one of the elastic
 properties. The associated jacobian terms are added if necessary.
 
 ## Generic computation of the tangent operator
@@ -194,12 +194,12 @@ MFront manuals.
 
 The `Hooke` brick supports the following options:
 
-- `Isotropic`: the elastic part of the behaviour will be assumed
+- `Isotropic`: the elastic part of the behavior will be assumed
   isotropic. This is the default for an isotropic material. This is
-  usefull if the material is declared orthotropic.
-- `Orthotropic`: the elastic part of the behaviour will be assumed
+  useful if the material is declared orthotropic.
+- `Orthotropic`: the elastic part of the behavior will be assumed
   isotropic. This is the default for an isotropic material.
-- `NoPlaneStressSupport`: plane stress and axisymmetrical generalised
+- `NoPlaneStressSupport`: plane stress and axisymmetrical generalized
   plane stress hypotheses support will not be added.
 - `NoGenericTangentOperator`: generic computation of the consistent
   tangent operator will not be added.

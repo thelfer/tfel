@@ -2,7 +2,7 @@
  * \file   AnsysData.hxx
  * \brief
  * \author Thomas Helfer
- * \date   22/03/2016
+ * \date 22/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,21 +24,21 @@ namespace ansys {
    */
   struct AnsysData {
     //! stress values
-    AnsysReal *const STRESS;
+    AnsysReal* const STRESS;
     //! tangent operator
-    AnsysReal *const DDSDDE;
+    AnsysReal* const DDSDDE;
     //! state variables
-    AnsysReal *const STATEV;
+    AnsysReal* const STATEV;
     //! internal energy
-    AnsysReal *const SEDEL;
+    AnsysReal* const SEDEL;
     //! dissipated energy (e.g. plastic work)
-    AnsysReal *const SEDPL;
+    AnsysReal* const SEDPL;
     //! equivalent plastic strain
-    AnsysReal *const EPSEQ;
+    AnsysReal* const EPSEQ;
     //! plastic strain
-    AnsysReal *const EPSPL;
+    AnsysReal* const EPSPL;
     //! axial strain
-    AnsysReal *const EPSZZ;
+    AnsysReal* const EPSZZ;
     //! number of components of symmetric tensors
     const AnsysInt NTENS;
     //! number of material properties
@@ -48,17 +48,17 @@ namespace ansys {
     //! time increment
     const AnsysReal DTIME;
     //! infinitesimal rotation matrix increment
-    const AnsysReal *const DROT;
+    const AnsysReal* const DROT;
     //! strain
-    const AnsysReal *const STRAN;
+    const AnsysReal* const STRAN;
     //! strain increment
-    const AnsysReal *const DSTRAN;
+    const AnsysReal* const DSTRAN;
     //! temperature
-    const AnsysReal *const TEMP;
+    const AnsysReal* const TEMP;
     //! temperature increment
-    const AnsysReal *const DTEMP;
+    const AnsysReal* const DTEMP;
     //! material properties
-    const AnsysReal *const PROPS;
+    const AnsysReal* const PROPS;
     //! out of bounds policy
     const tfel::material::OutOfBoundsPolicy op;
     //! stress free expansion handler

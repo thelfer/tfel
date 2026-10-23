@@ -2,7 +2,7 @@
  * \file   bindings/python/mfront/MaterialPropertyDSL.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09/08/2021
+ * \date 09/08/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,9 +23,12 @@ void declareMaterialPropertyDSL(pybind11::module_&);
 void declareMaterialPropertyDSL(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<MaterialPropertyDSL, AbstractDSL,
-                   std::shared_ptr<MaterialPropertyDSL>>(m,
-                                                         "MaterialPropertyDSL")
+                    std::shared_ptr<MaterialPropertyDSL>>(
+      m, "MaterialPropertyDSL",
+      "Domain specific language handling material properties")
       .def("getMaterialPropertyDescription",
            &MaterialPropertyDSL::getMaterialPropertyDescription,
-           pybind11::return_value_policy::reference);
+           pybind11::return_value_policy::reference,
+           "Return the description of the material property treated by the "
+           "DSL");
 }

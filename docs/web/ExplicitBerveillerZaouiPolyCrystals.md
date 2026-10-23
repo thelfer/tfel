@@ -16,7 +16,7 @@ contractualarrangement: EDF-CEA-Framatome
 clients:
 keywords: 
 abstract: |
-  This report shows how to integrate polycristal behaviours obtained by
+  This report shows how to integrate polycrystal behaviours obtained by
   the Berveiller-Zaoui homogeneisation scheme
   [@berveiller_extension_1978] using an explicit scheme.
   Such behaviours require special care as the number of internal state
@@ -25,7 +25,7 @@ abstract: |
   classically used.
 
   An application to zirconium alloys is used as an illustrative example
-  following the work of Onimus et al [@onimus_polycrystalline_2009].
+  following the work of Onimus et al. [@onimus_polycrystalline_2009].
 
 restrictedabstract: |
   This report is released publicly as part of the documentation of the
@@ -93,13 +93,13 @@ has been developed for microscopically isotropic elastic behaviour and
 macroscopically isotropic plastic behaviour.
 
 After a quick recall of the equations involved, an explicit
-implementation of a polycrystal behaviours based on this homogeneization
-scheme is presented in Sections @sec:mfront:bz:explicit_scheme. This
+implementation of a polycrystal behaviour based on this homogeneization
+scheme is presented in Section @sec:mfront:bz:explicit_scheme. This
 choice is justified by the huge number of state variables involved which
 is *a priori* incompatible with an implicit resolution. The main trouble
-with explicit scheme is the lack of consistent tangent operator which
+with explicit schemes is the lack of consistent tangent operator which
 degrades considerably the performance of most mechanical solvers at the
-structural scale, the `Cast3M` solver being a noticeable exception du to
+structural scale, the `Cast3M` solver being a noticeable exception due to
 its specific resolution scheme
 [@verpeaux_algorithmes_2014;@ramiere_iterative_2015].
 
@@ -138,14 +138,14 @@ model using a secant approximation for the linearization of the
 non-linear behavior of the material [@berveiller_extension_1978]. The
 grains of the polycrystal have equiaxed shape and the texture of the
 material is isotropic. The elasticity is assumed homogeneous and
-istropic In the case of monotonous radial loadings Berveiller and Zaoui
+isotropic. In the case of monotonous radial loadings, Berveiller and Zaoui
 have shown that the local stress \(\kphase{\tsigma}\) applied in a
 crystallographic phase \((i)\) (all the grains with nearly the same
 orientation) can be expressed explicitly as a function of the local
 plastic strain \(\kphase{\tepsilonvp}\), the macroscopic stress
 \(\tSigma\) and the macroscopic plastic strain \(\tEpsilonvp\).
 
-The macrosopic viscoplastic strain is linked to the microscopic local
+The macroscopic viscoplastic strain is linked to the microscopic local
 plastic strain \(\kphase{\tepsilonvp}\) by a simple mixing rule:
 
 \[
@@ -171,7 +171,7 @@ where:
   \dot{P}=\sqrt{\dfrac{2}{3}\,\tdEpsilonvp\,\colon\,\tdEpsilonvp}
   \]
 
-[^betafactor]: The \(\beta\paren{\nu}\) factor is closed to
+[^betafactor]: The \(\beta\paren{\nu}\) factor is close to
 \(\frac{1}{2}\) for a macroscopic Poisson ratio close to \(0.3\). In
 this case, the Localisation Equation @eq:mfront:bz:sig may be simplified
 as:
@@ -202,7 +202,7 @@ following form:
 \kphase{\tdepsilonvp}=\kphase{v}\paren{\kphase{\tsigma}}
 \]{#eq:mfront:bz:flow_rule}
 
-In this report, the microscopic plastic strain may results from the
+In this report, the microscopic plastic strain may result from the
 slips along the slip systems of the crystal following:
 
 \[
@@ -210,11 +210,11 @@ slips along the slip systems of the crystal following:
 \]
 
 This constitutive equation is very simple, but extensions of the
-proposed integration scheme to more complex ones , such as i.e. the
-Méric-Cailletaud behaviour [@meric_single_1991], is straightforward
+proposed integration scheme to more complex ones, such as the
+Méric-Cailletaud behaviour [@meric_single_1991], are straightforward
 using the proposed explicit scheme.
 
-For the example, we will follow the work of Onimus et al. with sightly
+For the example, we will follow the work of Onimus et al. with slightly
 modified material coefficients [@onimus_polycrystalline_2009].
 
 # Explicit integration scheme {#sec:mfront:bz:explicit_scheme}
@@ -236,8 +236,8 @@ polycrystalline model in `MFront` using an explicit scheme.
 
 ### Choice of the domain specific language
 
-Domain specific languages (DSL) are of the main concept of `MFront`. It
-specifies a kind of material knowledge and a kind of numerical scheme .
+Domain specific languages (DSL) are one of the main concepts of `MFront`. It
+specifies a kind of material knowledge and a kind of numerical scheme.
 It also introduces a specific syntax for the implementation to be both
 efficient and explicit.
 
@@ -265,9 +265,9 @@ follows:
 @Author F. Onimus, C. Gicquel, T. Helfer;
 @Date 05/2020;
 @Description{
-  Implementation of a polycrystal of behaviour  for
+  Implementation of a polycrystal of behaviour for
   zirconium alloys using the Berveiller-Zaoui
-  homegeneization scheme. The presented behaviour
+  homogeneization scheme. The presented behaviour
   is inspired from Onimus 2009 which modified
   material coefficients.
 
@@ -315,7 +315,7 @@ Runge-Kutta 5/4 algorithm (which is the default):
 
 ### Declaration of the slip systems{#sec:mfront:bz:slips_systems}
 
-The considered material as an hexagonal close packed crystallographic
+The considered material has a hexagonal close packed crystallographic
 structure and four families of slip systems:
 
 - the first slip system corresponds to         // systèmes prismatiques A
@@ -338,12 +338,12 @@ Those keywords are fully described on this page:
 <https://thelfer.github.io/tfel/web/singlecrystal.html>.
 
 They generate a class called `PolycrystalHCP_BZSlipSystems` which contains
-the orientation tensors of the all the slip systems.
+the orientation tensors of all the slip systems.
 
 ### Handling textures{#sec:mfront:bz:slips_systems2}
 
-Altough, the `PolycrystalHCP_BZSlipSystems` class contains all the
-information for a single crystal, a polycrystaline behaviour must handle
+Although the `PolycrystalHCP_BZSlipSystems` class contains all the
+information for a single crystal, a polycrystalline behaviour must handle
 the texture of the material, i.e. the orientation and the volume
 fraction of each phase. It is not relevant to hard-code such
 information, so we rely on an external text file. For efficiency
@@ -371,7 +371,7 @@ The description of the implementation of this class is out of the scope
 of the present report, so we will only focus on the main points of
 interest for the rest of this report.
 
-The `ExtendedPolyCrystalsSlidingSystems` class has tree template
+The `ExtendedPolyCrystalsSlidingSystems` class has three template
 arguments:
 
 - The number of phases.
@@ -381,15 +381,15 @@ arguments:
 
 This class provides the `getPolyCrystalsSlidingSystems` static method as
 the unique way to retrieve the unique instance of this class. This
-method takes the name of a external text file. Each line of this file
-describe a phase by three Euler angles (in degree) and a volume
+method takes the name of an external text file. Each line of this file
+describes a phase by three Euler angles (in degree) and a volume
 fraction.
 
 The unique instance of the `ExtendedPolyCrystalsSlidingSystems`
 has two data members of interest:
 
 - `mus`: the tensors of directional senses, sorted by phases. Those
-  orientation tensors are expressed in the material frame, not in frame
+  orientation tensors are expressed in the material frame, not in the frame
   associated with the given phase.
 - `volume_fractions`: the volume fractions per phases.
 
@@ -418,7 +418,7 @@ modulus and the macroscopic `Poisson` ratio:
 };
 ~~~~
 
-This keywords automatically declares and initializes a fourth order
+This keyword automatically declares and initializes a fourth order
 tensor named \(\tenseurq{D}\).
 
 ### Material coefficients {#sec:mfront:bz:parameters}
@@ -465,7 +465,7 @@ and the macroscopic stiffness tensor as follows:
 ~~~~~
 
 This code is used to compute the stress before each evaluation of the
-rate of the internal state variables and and the end of the time step to
+rate of the internal state variables and at the end of the time step to
 compute the final stress.
 
 ### Equations of the system
@@ -489,7 +489,7 @@ the use of the `ExtendedPolyCrystalsSlidingSystems` class:
 ~~~~
 
 The following line retrieves the unique instance of the
-`ExtendedPolyCrystalsSlidingSystems` class and give the name of the file
+`ExtendedPolyCrystalsSlidingSystems` class and gives the name of the file
 containing the description of the phases.
 
 ~~~~{.cxx}
@@ -623,8 +623,8 @@ simple tensile test is reported in Figure @fig:mfront:bz:tensile_test.
 
 # Conclusions
 
-Extensions to the proposed implicit scheme to other well-known
-homogeneizations schemes are straightforward, including the work of
+Extensions of the proposed implicit scheme to other well-known
+homogeneization schemes are straightforward, including the work of
 Taylor-Lin, Kröner, Cailletaud-Pilvin (\(\beta\)-model) and their
 extension by Besson et al.
 

@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   23 oct 2008
+ * \date 23/10/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -362,6 +362,24 @@ namespace mfront {
                                  const std::string_view,
                                  const bool,
                                  const bool);
+  /*!
+   * \brief print a `#line` pragma indicating a line number and a file name
+   *
+   * \param[os] os: output stream
+   * \param[in] ln: line number
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void printLinePragma(std::ostream&, const std::size_t, std::string_view);
+
+  /*!
+   * \brief print a `#line` pragma indicating a line number and a file name
+   *
+   * \param[in] ln: line number
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT std::string printLinePragma(const std::size_t,
+                                                       std::string_view);
 
 }  // end of namespace mfront
 

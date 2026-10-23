@@ -2,7 +2,7 @@
  * \file   DianaFEASymbolsGenerator.hxx
  * \brief
  * \author Thomas Helfer
- * \date   08/01/2019
+ * \date 08/01/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,24 +24,24 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT DianaFEASymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     DianaFEASymbolsGenerator();
-    void writeBehaviourTypeSymbols(std::ostream &,
-                                   const BehaviourInterfaceBase &,
-                                   const BehaviourDescription &,
-                                   const std::string &) const override;
-    void writeBehaviourKinematicSymbols(std::ostream &,
-                                        const BehaviourInterfaceBase &,
-                                        const BehaviourDescription &,
-                                        const std::string &) const override;
-    void writeAdditionalSymbols(std::ostream &,
-                                const BehaviourInterfaceBase &,
-                                const BehaviourDescription &,
-                                const FileDescription &,
-                                const std::string &,
+    void writeBehaviourTypeSymbols(std::ostream&,
+                                   const BehaviourInterfaceBase&,
+                                   const BehaviourDescription&,
+                                   const std::string&) const override;
+    void writeBehaviourKinematicSymbols(std::ostream&,
+                                        const BehaviourInterfaceBase&,
+                                        const BehaviourDescription&,
+                                        const std::string&) const override;
+    void writeAdditionalSymbols(std::ostream&,
+                                const BehaviourInterfaceBase&,
+                                const BehaviourDescription&,
+                                const FileDescription&,
+                                const std::string&,
                                 const Hypothesis) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~DianaFEASymbolsGenerator() override;
   };  // end of struct DianaFEASymbolsGenerator
 

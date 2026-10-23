@@ -2,7 +2,7 @@
  * \file   mfront-query/src/MaterialPropertyQuery.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08/06/2016
+ * \date 08/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

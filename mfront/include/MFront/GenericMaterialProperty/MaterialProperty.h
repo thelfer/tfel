@@ -2,7 +2,7 @@
  * \file   include/GenericMaterialProperty/MaterialProperty.h
  * \brief
  * \author Thomas/Helfer
- * \date   03/05/2022
+ * \date 03/05/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with linking exception
@@ -18,6 +18,7 @@
 #include "MFront/GenericMaterialProperty/OutputStatus.h"
 #include "MFront/GenericMaterialProperty/OutOfBoundsPolicy.h"
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -39,5 +40,6 @@ typedef mfront_gmp_real(
 #ifdef __cplusplus
 }  // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_GENERIC_MATERIALPROPERTY_MATERIALPROPERTY_H */

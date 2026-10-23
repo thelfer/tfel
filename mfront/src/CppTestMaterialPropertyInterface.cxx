@@ -2,7 +2,7 @@
  * \file   mfront/src/CppTestMaterialPropertyInterface.cxx
  * \brief
  * \author P. GOLDBRONN
- * \date   14 mai 2008
+ * \date 14/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -47,6 +47,13 @@ namespace mfront {
 
   CppTestMaterialPropertyInterface::~CppTestMaterialPropertyInterface() =
       default;
+
+  void CppTestMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool,
             tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
@@ -126,6 +133,7 @@ namespace mfront {
                        "' "
                        "for writing output file.");
     srcFile.exceptions(std::ios::badbit | std::ios::failbit);
+    srcFile.precision(14);
     // on initialise avec bounds
     // nombre de point de calcul
     int numberOfLines = 100;

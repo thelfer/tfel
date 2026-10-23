@@ -2,7 +2,7 @@
  * \file   CurrentState.hxx
  * \brief
  * \author Thomas Helfer
- * \date   23 oct. 2015
+ * \date 23/10/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -55,11 +55,11 @@ namespace mtest {
     //! \brief copy constructor
     CurrentState(const CurrentState&);
     //! \brief move constructor
-    CurrentState(CurrentState&&);
+    CurrentState(CurrentState&&) noexcept;
     //! \brief assignement
     CurrentState& operator=(const CurrentState&);
     //! \brief move assignement
-    CurrentState& operator=(CurrentState&&);
+    CurrentState& operator=(CurrentState&&) noexcept;
     //! \brief destructor
     ~CurrentState() noexcept;
     //! \brief behaviour

@@ -3,7 +3,7 @@
  * \file   Hosford.cxx
  * \brief
  * \author Thomas Helfer
- * \date   19/12/2017
+ * \date 19/12/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,8 +25,23 @@ static double computeHosfordStress(const tfel::math::stensor<N, double>& s,
 
 void declareHosford(pybind11::module_&);
 
+static const char compute_hosford_stress_doc[] =
+    "Compute the Hosford yield stress\n"
+    "s: stress tensor\n"
+    "a: Hosford exponent\n"
+    "e: criterion used to check if the stress are null";
+
 void declareHosford(pybind11::module_& m) {
-  m.def("computeHosfordStress", &computeHosfordStress<1u>);
-  m.def("computeHosfordStress", &computeHosfordStress<2u>);
-  m.def("computeHosfordStress", &computeHosfordStress<3u>);
+  m.def("computeHosfordStress",
+        &computeHosfordStress<1u>,
+        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"),
+        compute_hosford_stress_doc);
+  m.def("computeHosfordStress",
+        &computeHosfordStress<2u>,
+        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"),
+        compute_hosford_stress_doc);
+  m.def("computeHosfordStress",
+        &computeHosfordStress<3u>,
+        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"),
+        compute_hosford_stress_doc);
 }

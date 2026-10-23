@@ -1,6 +1,15 @@
-% Implementation of mean-field homogenization schemes for biphasic elastic media
-% Martin Antoine
-% February 24, 2025
+---
+title: Implementation of mean-field homogenization schemes for biphasic elastic media
+author: Martin Antoine
+date: 24/02/2025
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\D}{\mathrm{d}}
 \newcommand{\tenseur}[1]{\underline{#1}}
@@ -36,7 +45,7 @@ For dilute scheme, Mori-Tanaka scheme and PCW scheme, the following assumptions 
 
  - the microstructure is biphasic
  - the phases are locally isotropic
- - one phase is a matrix, the other is made by inclusions
+ - one phase is a matrix, the other is made of inclusions
  - the shape of inclusions can be spherical, spheroidal, ellipsoidal, otherwise the mean strain localisator (for a single inclusion problem) can be provided by the user
  - for non-spherical inclusions, we consider 3 possibilities of orientation distribution: isotropic, transverse isotropic and oriented
 
@@ -127,13 +136,13 @@ std::array<stress,2> tab_k={k0,ki};
 auto mu0=E0/2/(1+nu0);
 auto mui=Ei/2/(1+nui);
 std::array<stress,2> tab_mu={mu0,mui};
-auto pa2=computeIsotropicHashinShtrikmanBounds<3u,2u,stress>(tab_f,tab_k,tab_mu);
+auto pa2=computeIsotropicHashinShtrikmanBounds<3u,stress>(tab_f,tab_k,tab_mu);
 auto UB=std::get<1>(pa2);
 auto kh=std::get<0>(UB);
-auto muh=std::get<1>(UB)
-kg=KGModuli<stress>(kh,muh);
-auto Enu=kg.ToYoungNu();
+auto muh=std::get<1>(UB);
+kg=tfel::material::KGModuli<stress>(kh,muh);
 };
+auto Enu=kg.ToYoungNu();
 E=Enu.young;
 }
 ~~~~
@@ -142,8 +151,8 @@ Hence, `Enu` is a `YoungNuModuli` which contains the Young homogenized modulus
 and the homogenized Poisson ratio. The computation of dilute scheme
 and Mori-Tanaka scheme are straightforward.
 
-The function `computeIsotropicHashinShtrikmanBounds` necessitates
-to give the arrays of volume fractions `tab_f`, bulk moduli `tab_k`
+The function `computeIsotropicHashinShtrikmanBounds` requires
+giving the arrays of volume fractions `tab_f`, bulk moduli `tab_k`
 and shear moduli `tab_mu`. The function returns a `std::pair` of `std::pair`. The first
 pair is lower HS bound, the second is upper HS bound (that we want here).
 Each bound is `std::pair` whose first attribute is the bulk modulus, and whose second attribute
@@ -216,8 +225,8 @@ c.setEntryName("ThirdSemiLength");
 ~~~~
 
 Note that the orientation for the oriented case will be fixed in the `mfront` file,
-and it will be the same for the transverse isotropic case which necessitates to
-gives the direction of one of the axes of the ellipsoid. But those orientations
+and it will be the same for the transverse isotropic case which requires
+giving the direction of one of the axes of the ellipsoid. But those orientations
 could also be inputs of the law.
 
 Here is the `Function` block:

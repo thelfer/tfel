@@ -1,0 +1,19 @@
+@DSL DefaultModelDSL{
+  automatic_declaration_of_the_temperature_as_first_external_state_variable :
+      false
+};
+@Model model1;
+@Author Thomas Helfer;
+@Date 11 / 02 / 2026;
+@UseQt true;
+
+@StateVariable real x;
+@Parameter frequency A = 1.2;
+@Parameter real theta = 0.5;
+@ExternalStateVariable real a;
+@AuxiliaryStateVariable real b;
+
+@Integrator{
+  dx = -dt * A * x / (1 + A * theta * dt);
+  b = a + da;
+}

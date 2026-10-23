@@ -2,7 +2,7 @@
  * \file  mfront/include/MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx
  * \brief
  * \author Thomas Helfer
- * \date   21 fév 2014
+ * \date 21/02/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,15 +22,17 @@ namespace cyrano {
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoOutOfBoundsPolicy {
     static const CyranoOutOfBoundsPolicy& getCyranoOutOfBoundsPolicy();
-    std::optional<tfel::material::OutOfBoundsPolicy> getOutOfBoundsPolicy()
-        const;
-
-   private:
-    CyranoOutOfBoundsPolicy();
+    //
     CyranoOutOfBoundsPolicy(CyranoOutOfBoundsPolicy&&) = delete;
     CyranoOutOfBoundsPolicy(const CyranoOutOfBoundsPolicy&) = delete;
     CyranoOutOfBoundsPolicy& operator=(CyranoOutOfBoundsPolicy&&) = delete;
     CyranoOutOfBoundsPolicy& operator=(const CyranoOutOfBoundsPolicy&) = delete;
+    //
+    [[nodiscard]] std::optional<tfel::material::OutOfBoundsPolicy>
+    getOutOfBoundsPolicy() const;
+
+   private:
+    CyranoOutOfBoundsPolicy();
     std::optional<tfel::material::OutOfBoundsPolicy> policy;
   };  // end of struct CyranoOutOfBounds
 

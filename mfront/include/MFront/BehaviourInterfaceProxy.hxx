@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/BehaviourInterfaceProxy.hxx
  * \brief
  * \author Thomas Helfer
- * \date   09 nov 2006
+ * \date 09/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,7 +26,7 @@ namespace mfront {
   struct BehaviourInterfaceProxy {
     BehaviourInterfaceProxy();
 
-    BehaviourInterfaceProxy(const std::string&);
+    explicit BehaviourInterfaceProxy(const std::string&);
 
     template <typename InputIterator>
     BehaviourInterfaceProxy(const InputIterator, const InputIterator);

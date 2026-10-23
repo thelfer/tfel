@@ -1,1 +1,0 @@
-- mettre en oeuvre Google Analytics

@@ -2,7 +2,7 @@
  * \file   ThreadedTaskResult.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19 juin 2016
+ * \date 19/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -40,19 +40,19 @@ namespace tfel::system {
      * \param[in] args: arguments to T constructor
      */
     template <typename... Args>
-    ThreadedTaskResult(Args&&...);
+    explicit ThreadedTaskResult(Args&&...);
     /*!
      * \brief constructor of T
      */
-    ThreadedTaskResult(const T&);
+    explicit ThreadedTaskResult(const T&);
     //! \brief move constructor
-    ThreadedTaskResult(ThreadedTaskResult&&);
+    ThreadedTaskResult(ThreadedTaskResult&&) noexcept;
     //! \brief copy constructor
     ThreadedTaskResult(const ThreadedTaskResult&);
     //! \brief assignement
     ThreadedTaskResult& operator=(const ThreadedTaskResult&);
     //! \brief move assignement
-    ThreadedTaskResult& operator=(ThreadedTaskResult&&);
+    ThreadedTaskResult& operator=(ThreadedTaskResult&&) noexcept;
     //! \brief assignement
     ThreadedTaskResult& operator=(const T&);
     //! \brief move assignement
@@ -65,8 +65,10 @@ namespace tfel::system {
 #else  /* _MSC_VER */
     void rethrow();
 #endif /* _MSC_VER */
-       //! \brief conversion to bool
-    operator bool() const;
+    // NOLINTBEGIN(google-explicit-constructor)
+    //! \brief conversion to bool
+    explicit(false) operator bool() const;
+    // NOLINTEND(google-explicit-constructor)
     //! \brief conversion to underlying type
     T& operator*();
     //! \brief conversion to underlying type
@@ -92,19 +94,21 @@ namespace tfel::system {
     //! \brief default constructor
     ThreadedTaskResult();
     //! \brief move constructor
-    ThreadedTaskResult(ThreadedTaskResult&&);
+    ThreadedTaskResult(ThreadedTaskResult&&) noexcept;
     //! \brief copy constructor
     ThreadedTaskResult(const ThreadedTaskResult&);
     //! \brief assignement
     ThreadedTaskResult& operator=(const ThreadedTaskResult&);
     //! \brief move assignement
-    ThreadedTaskResult& operator=(ThreadedTaskResult&&);
+    ThreadedTaskResult& operator=(ThreadedTaskResult&&) noexcept;
     //! \brief set current exception
     void setException(const std::exception_ptr&);
     //! \brief throw the catched exception
     [[noreturn]] void rethrow();
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief conversion to bool
     operator bool() const;
+    // NOLINTEND(google-explicit-constructor)
     //! \brief destructor
     ~ThreadedTaskResult();
 

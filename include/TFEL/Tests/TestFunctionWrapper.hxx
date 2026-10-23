@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Tests/TestFunctionWrapper.hxx
  * \author Thomas Helfer
- * \date   10 Apr 10
+ * \date 10/04/2010
  * \brief
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -38,23 +38,23 @@ namespace tfel::tests {
      * \param[in] n: name of the function
      */
     TestFunctionWrapper(const char* const);
-    //! \return the name of the test function
-    std::string name() const override;
-    //! \return the name of the test function
-    std::string classname() const override;
-    /*!
-     * \brief execute test
-     * \return the results of the test
-     */
-    TestResult execute() override;
-    //! destructor
-    ~TestFunctionWrapper() override;
-
-   private:
     //! copy constructor (disabled)
     TestFunctionWrapper(const TestFunctionWrapper&) = delete;
     //! assignement operator (disabled)
     TestFunctionWrapper& operator=(const TestFunctionWrapper&) = delete;
+    //! \return the name of the test function
+    [[nodiscard]] std::string name() const override;
+    //! \return the name of the test function
+    [[nodiscard]] std::string classname() const override;
+    /*!
+     * \brief execute test
+     * \return the results of the test
+     */
+    [[nodiscard]] TestResult execute() override;
+    //! \brief destructor
+    ~TestFunctionWrapper() override;
+
+   private:
     //! name of test group
     const std::string gname;
     //! name of function

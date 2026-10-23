@@ -1,3 +1,4 @@
+
 /*!
  * \file  include/TFEL/Math/Array/View.hxx
  * \brief
@@ -35,8 +36,8 @@ namespace tfel::math::internals {
     using type = T&;
   };
 
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
-  struct MakeViewReference<Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <unit::UnitConcept UnitType, typename ValueType>
+  struct MakeViewReference<qt<UnitType, ValueType>> {
     //! \brief result of the metafunction
     using type = qt_ref<UnitType, ValueType>;
   };
@@ -47,9 +48,8 @@ namespace tfel::math::internals {
     using type = const T&;
   };
 
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
-  struct MakeConstViewReference<
-      Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <unit::UnitConcept UnitType, typename ValueType>
+  struct MakeConstViewReference<qt<UnitType, ValueType>> {
     //! \brief result of the metafunction
     using type = const_qt_ref<UnitType, ValueType>;
   };
@@ -207,13 +207,14 @@ namespace tfel::math {
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator[];
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr data_pointer_type data() noexcept
         requires(!is_const) {
       return this->data_pointer;
     }  // end of data
 
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr const_data_pointer_type data() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const_data_pointer_type data()
+        const noexcept {
       return this->data_pointer;
     }  // end of data
 

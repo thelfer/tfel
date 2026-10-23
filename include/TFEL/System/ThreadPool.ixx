@@ -21,13 +21,13 @@ namespace tfel::system {
 
   template <typename F>
   struct ThreadPool::Wrapper {
-    Wrapper(F&& f_) : f(f_) {}
+    explicit Wrapper(F&& f_) : f(f_) {}
     template <typename... Args>
     ThreadedTaskResult<std::invoke_result_t<F, Args...>> operator()(
         Args&&... args) {
       using result = std::invoke_result_t<F, Args...>;
-      using apply = typename std::conditional<std::is_same<result, void>::value,
-                                              GetVoid, Get<result>>::type;
+      using apply = std::conditional_t<std::is_same_v<result, void>, GetVoid,
+                                       Get<result>>;
       ThreadedTaskResult<result> r;
       apply::exe(r, f, std::forward<Args>(args)...);
       return r;

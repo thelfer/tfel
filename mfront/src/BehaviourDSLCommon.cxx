@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   05/05/2008
+ * \date 05/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -51,7 +51,7 @@
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/ModelDSL.hxx"
 #include "MFront/MFrontModelInterface.hxx"
-#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/AbstractBehaviourCodeGenerator.hxx"
 #include "MFront/BehaviourVariableDescription.hxx"
 #include "MFront/BehaviourDSLUtilities.hxx"
@@ -925,7 +925,8 @@ namespace mfront {
     }
     //
     const auto& global_options =
-        GlobalDomainSpecificLanguageOptionsManager::get();
+        static_cast<const GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     auto dsl = ModelDSL{tfel::utilities::merge(
         global_options.getModelDSLOptions(), this->buildDSLOptions(), true)};
     // getting informations the source files
@@ -3255,10 +3256,16 @@ namespace mfront {
   }  // end of treatInterface
 
   void BehaviourDSLCommon::setInterfaces(const std::set<std::string>& inames) {
+    const auto& m = ConfigurationManager::get();
     auto& mbif = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
     for (const auto& i : inames) {
       if (this->interfaces.count(i) == 0) {
-        this->interfaces.insert({i, mbif.getInterface(i)});
+        auto ptr = mbif.getInterface(i);
+        const auto opts = m.getBehaviourInterfaceOptions(i);
+        if (!opts.empty()) {
+          ptr->setOptions(opts);
+        }
+        this->interfaces.insert({i, ptr});
       }
     }
   }  // end of setInterfaces

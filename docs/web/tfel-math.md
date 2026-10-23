@@ -1,5 +1,5 @@
 ---
-title:  Overview of some features of the `TFEL/Math` library
+title: Overview of some features of the TFEL/Math library
 author: Thomas Helfer
 date: 21/11/2017
 lang: en-EN
@@ -31,6 +31,7 @@ csl: iso690-numeric-en.csl
 \newcommand{\paren}[1]{{\left(#1\right)}}
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
+\newcommand{\botimes}{\overline{\underline{\otimes}}}
 
 \newcommand{\ta}{\tns{a}}
 \newcommand{\ts}{\tenseur{s}}
@@ -170,8 +171,8 @@ mathematical objects from a raw memory area, as described in Section
 ### The `Quantity` class
 
 For the sake of simplicity, the `qt`, `qt_ref` and `const_qt_ref` were
-described as classes. This is not actually the case in the current
-implementation which defines them through type aliases to a more general
+described as independent classes. This is not actually the case in the current
+implementation which defines them through inheritance to a more general
 `Quantity` class which is parametrized by three template arguments: the
 unit, the basic numeric type and a third argument describing how the
 value associated with the quantity is handled.
@@ -503,6 +504,52 @@ respectively. Those classes have the following template arguments:
 - The space dimension (`1`, `2` or `3`).
 - The type used to perform the computation.
 
+#### Special bases for fourth-order tensors with symmetries
+
+The `st2tost2` objects which are transverse isotropic with a `tvector` 
+as the direction of isotropy can be expressed in the associated Walpole basis [@walpole_fourth-rank_1984].
+The 6 tensors \(\tenseurq E_1,\tenseurq E_2,\tenseurq E_3,\tenseurq E_4,\tenseurq F,\tenseurq G\) of this basis are defined with the `tvector` `n` by :
+
+\[
+\tenseur p(\vec n)=\vec n\otimes\vec n\qquad\tenseur q(\vec n)=\tenseur 1-\vec n\otimes\vec n
+\]
+\[
+\tenseurq E_1(\vec n)=\tenseur p\otimes\tenseur p\qquad\tenseurq E_2(\vec n)=\dfrac12\tenseur q\otimes\tenseur q
+\]
+\[
+\tenseurq E_3(\vec n)=\dfrac1{\sqrt2}\tenseur p\otimes\tenseur q\qquad\tenseurq E_4(\vec n)=\dfrac1{\sqrt2}\tenseur q\otimes\tenseur p
+\]
+\[
+\tenseurq F(\vec n)=\tenseur q\botimes\tenseur q-\dfrac12\tenseur q\otimes\tenseur q\qquad\tenseurq G(\vec n)=\tenseur p\botimes\tenseur q+\tenseur q\botimes\tenseur p
+\]
+
+with
+
+\[
+\left(\tenseur a \botimes \tenseur b\right)_{ijkl}=\dfrac12\left(a_{ik}b_{jl}+a_{il}b_{jk}\right)
+\]
+
+The tensors of the basis can be called with
+
+~~~~{.cxx}
+const auto n = tvector<3u,double>{0.,0.,1.};
+    
+const auto E1=TransverseIsotropicWalpoleBasis<double>::E1(n);
+const auto E2=TransverseIsotropicWalpoleBasis<double>::E2(n);
+const auto E3=TransverseIsotropicWalpoleBasis<double>::E3(n);
+const auto E4=TransverseIsotropicWalpoleBasis<double>::E4(n);
+const auto F=TransverseIsotropicWalpoleBasis<double>::F(n);
+const auto G=TransverseIsotropicWalpoleBasis<double>::G(n);
+~~~~
+
+and the components of a `st2tost2` object `A` are obtained by doing
+
+~~~~{.cxx}
+const auto c1=TransverseIsotropicWalpoleBasis<double>::components(n,A);
+~~~~
+
+The returned object is a `std::array<double,6>` in this case.
+
 ### The `tmatrix` case
 
 A fixed size matrix, implemented by the `tmatrix` class can be seen as
@@ -711,7 +758,7 @@ auto eel = map<stensor<3u, double>>(Y);
 auto& p = Y[6];
 ~~~~
 
-!["Exemple of decomposition by blocks of a memory area using views"](img/tfel-math/view.svg){#fig:tfel_4.0:view width=75%}
+!["Example of decomposition by blocks of a memory area using views"](img/tfel-math/view.svg){#fig:tfel_4.0:view width=75%}
 
 The `map` function allows to define offset at compile-time: this allows
 to checks at compile-time that the memory area is large enough to store
@@ -811,6 +858,30 @@ auto s2 = map_strided<stensor<2u, int>>(&values[1], 2);
 In this example, `s1` and `s2` are two symmetric tensors stored in SoA
 format with a stride of 2. The component `s1[i]` is located at address
 `&values[0] + i * 2`, while `s2[i]` is at `&values[1] + i * 2`.
+
+### Views of derivatives with strided coalescent memory access
+
+The `map_derivative_strided` function creates a view of a derivative
+sub-block of a base matrix whose components are stored in SoA layout. It is
+typically used on the GPU to assemble a Jacobian block by block with
+coalescent memory access, without materialising a `tmatrix`.
+
+Its template parameters are the block position `I, J`, the function and
+variable types, and the number of rows `N` and columns `M` of the base
+matrix; the base matrix is passed as a pointer to its \((0, 0)\) component
+and a stride. The following snippet views the derivative of a symmetric
+tensor with respect to another symmetric tensor, i.e. a \(4\times 4\)
+sub-block whose top-left corner is element \((4, 0)\) of an \(8\times 8\)
+base matrix stored in SoA layout:
+
+~~~~{.cxx}
+// base pointer `p` to element (0, 0), stride `s` between consecutive components
+map_derivative_strided<4, 0, stensor<2u, double>, stensor<2u, double>, 8, 8>(p, s) =
+    st2tost2<2u, double>::Id();
+~~~~
+
+Its component \((a, b)\) is element \((4 + a, b)\) of the base matrix,
+located at address `p + ((4 + a) * 8 + b) * s`.
 
 # Solvers for fixed size non-linear systems {#sec:tfel_math:non_linear_solvers}
 

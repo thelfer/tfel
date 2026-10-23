@@ -2,7 +2,7 @@
  * \file   BehaviourBrickDescription.hxx
  * \brief
  * \author Thomas Helfer
- * \date   06/09/2019
+ * \date 06/09/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -48,11 +48,11 @@ namespace mfront {
     //! \brief copy constructor
     BehaviourBrickDescription(const BehaviourBrickDescription&);
     //! \brief move constructor
-    BehaviourBrickDescription(BehaviourBrickDescription&&);
+    BehaviourBrickDescription(BehaviourBrickDescription&&) noexcept;
     //! \brief standard assignement
     BehaviourBrickDescription& operator=(const BehaviourBrickDescription&);
     //! \brief move assignement
-    BehaviourBrickDescription& operator=(BehaviourBrickDescription&&);
+    BehaviourBrickDescription& operator=(BehaviourBrickDescription&&) noexcept;
     //! \brief destructor
     ~BehaviourBrickDescription();
     //! \brief type of the behaviour handled

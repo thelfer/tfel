@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   02 oct 2007
+ * \date 02/10/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,8 +26,8 @@
 namespace tfel::math::parser {
 
   struct TFEL_VISIBILITY_LOCAL IntegerExpr {
-    virtual int getValue() const = 0;
-    virtual std::shared_ptr<IntegerExpr> clone(
+    [[nodiscard]] virtual int getValue() const = 0;
+    [[nodiscard]] virtual std::shared_ptr<IntegerExpr> clone(
         const std::vector<int>&) const = 0;
     virtual ~IntegerExpr();
   };  // end of struct IntegerExpr
@@ -84,9 +84,9 @@ namespace tfel::math {
      * \param const std::string&, function definition
      */
     void setFunction(const std::vector<std::string>&, const std::string&);
-    int getValue() const;
-    std::vector<std::string> getVariablesNames() const;
-    std::vector<int>::size_type getNumberOfVariables() const;
+    [[nodiscard]] int getValue() const;
+    [[nodiscard]] std::vector<std::string> getVariablesNames() const;
+    [[nodiscard]] std::vector<int>::size_type getNumberOfVariables() const;
     void setVariableValue(const std::vector<int>::size_type, const int);
     void setVariableValue(const std::string&, const int);
     ~IntegerEvaluator();

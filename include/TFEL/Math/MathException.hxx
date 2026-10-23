@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   24 Aug 2006
+ * \date 24/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,7 +23,7 @@ namespace tfel::math {
   struct TFELMATH_VISIBILITY_EXPORT MathException
       : public tfel::exception::TFELException {
     MathException() = default;
-    MathException(MathException&&) = default;
+    MathException(MathException&&) noexcept = default;
     MathException(const MathException&) = default;
     ~MathException() noexcept override;
   };  // end of struct MathException
@@ -31,7 +31,7 @@ namespace tfel::math {
   struct TFELMATH_VISIBILITY_EXPORT MathRunTimeException
       : public MathException {
     MathRunTimeException() = default;
-    MathRunTimeException(MathRunTimeException&&) = default;
+    MathRunTimeException(MathRunTimeException&&) noexcept = default;
     MathRunTimeException(const MathRunTimeException&) = default;
     ~MathRunTimeException() noexcept override;
   };  // end of struct MathRunTimeException
@@ -39,16 +39,16 @@ namespace tfel::math {
   struct TFELMATH_VISIBILITY_EXPORT InvalidTimeStepException
       : public MathRunTimeException {
     InvalidTimeStepException() = default;
-    InvalidTimeStepException(InvalidTimeStepException&&) = default;
+    InvalidTimeStepException(InvalidTimeStepException&&) noexcept = default;
     InvalidTimeStepException(const InvalidTimeStepException&) = default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~InvalidTimeStepException() noexcept override;
   };  // end of struct InvalidTimeStepException
 
   struct TFELMATH_VISIBILITY_EXPORT MathDivergenceException
       : public MathException {
     MathDivergenceException() = default;
-    MathDivergenceException(MathDivergenceException&&) = default;
+    MathDivergenceException(MathDivergenceException&&) noexcept = default;
     MathDivergenceException(const MathDivergenceException&) = default;
     ~MathDivergenceException() noexcept override;
   };  // end of struct MathDivergenceException
@@ -57,19 +57,19 @@ namespace tfel::math {
       : public MathDivergenceException {
     MaximumNumberOfIterationsReachedException() = default;
     MaximumNumberOfIterationsReachedException(
-        MaximumNumberOfIterationsReachedException&&) = default;
+        MaximumNumberOfIterationsReachedException&&) noexcept = default;
     MaximumNumberOfIterationsReachedException(
         const MaximumNumberOfIterationsReachedException&) = default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~MaximumNumberOfIterationsReachedException() noexcept override;
   };  // end of struct MaximumNumberOfIterationsReachedException
 
   struct TFELMATH_VISIBILITY_EXPORT SingularJacobianException
       : public MathDivergenceException {
     SingularJacobianException() = default;
-    SingularJacobianException(SingularJacobianException&&) = default;
+    SingularJacobianException(SingularJacobianException&&) noexcept = default;
     SingularJacobianException(const SingularJacobianException&) = default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~SingularJacobianException() noexcept override;
   };  // end of struct SingularJacobianException
 

@@ -37,7 +37,7 @@ namespace tfel::utilities {
     auto e = s.find_first_of(c, b);
     while (std::string::npos != e || std::string::npos != b) {
       // Found a token, add it to the vector.
-      res.push_back(std::string{s.substr(b, e - b)});
+      res.emplace_back(s.substr(b, e - b));
       if (keep_empty_strings) {
         b = e == std::string::npos ? e : e + 1;
       } else {
@@ -55,12 +55,12 @@ namespace tfel::utilities {
     auto b = std::string::size_type{};
     auto e = s.find(d, b);
     while (e != std::string::npos) {
-      res.push_back(std::string{s.substr(b, e - b)});
+      res.emplace_back(s.substr(b, e - b));
       b = e + dl;
       e = s.find(d, b);
     }
     if (b != sl) {
-      res.push_back(std::string{s.substr(b)});
+      res.emplace_back(s.substr(b));
     }
     return res;
   }  // end of tokenize

@@ -39,12 +39,13 @@ namespace tfel::math {
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 1u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toST2Type> value_type;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
-     * \param[in] B : second tensor of the product
+     * \param[in] F: deformation gradient
      */
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {
@@ -59,6 +60,7 @@ namespace tfel::math {
       this->v[5] = this->v[6] = this->v[7] = zero;
       this->v[8] = 2 * F[2];
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index
@@ -73,7 +75,7 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
     getRunTimeProperties() const noexcept {
-      return RunTimeProperties();
+      return {};
     }
   };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
@@ -87,12 +89,13 @@ namespace tfel::math {
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>>,
         public array_holder<20u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 2u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toST2Type> value_type;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
-     * \param[in] B : second tensor of the product
+     * \param[in] F: deformation gradient
      */
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {
@@ -118,6 +121,7 @@ namespace tfel::math {
       this->v[18] = cste * F[0];
       this->v[19] = cste * F[1];
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index
@@ -132,7 +136,7 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
     getRunTimeProperties() const noexcept {
-      return RunTimeProperties();
+      return {};
     }
   };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
@@ -146,12 +150,13 @@ namespace tfel::math {
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>>,
         public array_holder<54u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 3u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toST2Type> value_type;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
-     * \param[in] B : second tensor of the product
+     * \param[in] F: deformation gradient
      */
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {
@@ -207,6 +212,7 @@ namespace tfel::math {
       this->v[52] = cste * F[1];
       this->v[53] = cste * F[2];
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index
@@ -221,7 +227,7 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
     getRunTimeProperties() const noexcept {
-      return RunTimeProperties();
+      return {};
     }
   };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 

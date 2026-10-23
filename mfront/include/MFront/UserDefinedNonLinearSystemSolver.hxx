@@ -2,7 +2,7 @@
  * \file  mfront/include/MFront/UserDefinedNonLinearSystem.hxx
  * \brief
  * \author Thomas Helfer
- * \brief 09/09/2021
+ * \date 09/09/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,18 +23,17 @@ namespace mfront {
   struct UserDefinedNonLinearSystemSolver : public NonLinearSystemSolverBase {
     //! \brief
     using DataMap = tfel::utilities::DataMap;
-    /*!
-     * \brief constructor
-     */
-    UserDefinedNonLinearSystemSolver(const DataMap&);
-    bool usesJacobian() const override;
-    bool usesJacobianInvert() const override;
-    bool requiresNumericalJacobian() const override;
-    bool allowsJacobianInitialisation() const override;
-    bool allowsJacobianInvertInitialisation() const override;
-    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
+    //! \brief constructor
+    explicit UserDefinedNonLinearSystemSolver(const DataMap&);
+    [[nodiscard]] bool usesJacobian() const override;
+    [[nodiscard]] bool usesJacobianInvert() const override;
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
+    [[nodiscard]] bool allowsJacobianInitialisation() const override;
+    [[nodiscard]] bool allowsJacobianInvertInitialisation() const override;
+    [[nodiscard]] bool
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
         const override;
-    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatSpecificKeywords(
         BehaviourDescription&,
         const std::string&,
         const tokens_iterator,
@@ -46,9 +45,9 @@ namespace mfront {
     void writeSpecificMembers(std::ostream&,
                               const BehaviourDescription&,
                               const Hypothesis) const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
     //! \brief destructor
     ~UserDefinedNonLinearSystemSolver() override;
 

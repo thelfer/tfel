@@ -2,7 +2,7 @@
  * \file   CurrentState.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23 oct. 2015
+ * \date 23/10/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,11 +24,11 @@ namespace mtest {
 
   CurrentState::CurrentState(const CurrentState&) = default;
 
-  CurrentState::CurrentState(CurrentState&&) = default;
+  CurrentState::CurrentState(CurrentState&&) noexcept = default;
 
   CurrentState& CurrentState::operator=(const CurrentState&) = default;
 
-  CurrentState& CurrentState::operator=(CurrentState&&) = default;
+  CurrentState& CurrentState::operator=(CurrentState&&) noexcept = default;
 
   CurrentState::~CurrentState() noexcept = default;
 

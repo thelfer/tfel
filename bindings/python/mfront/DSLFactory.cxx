@@ -2,7 +2,7 @@
  * \file   bindings/python/mfront/DSLFactory.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03 mai 2016
+ * \date 03/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,11 +23,25 @@ void declareDSLFactory(pybind11::module_&);
 
 void declareDSLFactory(pybind11::module_& m) {
   using namespace mfront;
-  pybind11::class_<DSLFactory>(m, "DSLFactory")
+  pybind11::class_<DSLFactory>(
+      m, "DSLFactory",
+      "An abstract factory for the domain specific languages supported by\n"
+      "MFront implemented using the singleton pattern")
       .def_static("getDSLFactory", DSLFactory::getDSLFactory,
-                  pybind11::return_value_policy::reference)
-      .def("createNewParser", &createNewDSL)
-      .def("createNewDSL", &createNewDSL)
-      .def("createNewParser", &DSLFactory::createNewDSL)
-      .def("createNewDSL", &DSLFactory::createNewDSL);
+                   pybind11::return_value_policy::reference,
+                   "Return the unique instance of the DSLFactory class")
+      .def("createNewParser", &createNewDSL, pybind11::arg("n"),
+           "Return an instance of the DSL with the given name\n"
+           "n: name of the DSL to be generated")
+      .def("createNewDSL", &createNewDSL, pybind11::arg("n"),
+           "Return an instance of the DSL with the given name\n"
+           "n: name of the DSL to be generated")
+      .def("createNewParser", &DSLFactory::createNewDSL, pybind11::arg("n"),
+           pybind11::arg("opts"),
+           "Return an instance of the DSL with the given name\n"
+           "n: name of the DSL to be generated")
+      .def("createNewDSL", &DSLFactory::createNewDSL, pybind11::arg("n"),
+           pybind11::arg("opts"),
+           "Return an instance of the DSL with the given name\n"
+           "n: name of the DSL to be generated");
 }

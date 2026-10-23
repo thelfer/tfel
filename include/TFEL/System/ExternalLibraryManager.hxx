@@ -2,7 +2,7 @@
  * \file   include/TFEL/System/ExternalLibraryManager.hxx
  * \brief
  * \author Thomas Helfer
- * \date   31 Oct 2007
+ * \date 31/10/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -38,6 +38,11 @@ namespace tfel::system {
   struct TFELSYSTEM_VISIBILITY_EXPORT ExternalLibraryManager {
     //! \return the uniq instance of this class
     static ExternalLibraryManager& getExternalLibraryManager();
+    //
+    ExternalLibraryManager(ExternalLibraryManager&&) = delete;
+    ExternalLibraryManager(const ExternalLibraryManager&) = delete;
+    ExternalLibraryManager& operator=(ExternalLibraryManager&&) = delete;
+    ExternalLibraryManager& operator=(const ExternalLibraryManager&) = delete;
 /*!
  * \brief a wrapper around the ::dlopen system call
  * \param[in] name : name of the library
@@ -1417,10 +1422,6 @@ namespace tfel::system {
 
    private:
     ExternalLibraryManager();
-    ExternalLibraryManager(ExternalLibraryManager&&) = delete;
-    ExternalLibraryManager(const ExternalLibraryManager&) = delete;
-    ExternalLibraryManager& operator=(ExternalLibraryManager&&) = delete;
-    ExternalLibraryManager& operator=(const ExternalLibraryManager&) = delete;
 
     /*!
      * \return the string associated with the given symbol.

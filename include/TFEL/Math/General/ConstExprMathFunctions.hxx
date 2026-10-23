@@ -2,7 +2,7 @@
  * \file  ConstExprMathFunctions.hxx
  * \brief
  * \author Thomas Helfer
- * \date   18 janv. 2015
+ * \date 18/01/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_CONSTEXPRMATHFUNCTIONS_HXX
 
 #include <limits>
+#include "TFEL/Math/Forward/General.hxx"
 
 namespace tfel::math::constexpr_fct {
 
@@ -22,7 +23,7 @@ namespace tfel::math::constexpr_fct {
    * \brief compute the absolute value of a number using a TFEL_HOST_DEVICE
    * constexpr function.
    */
-  template <typename T>
+  template <StandardArithmeticTypeConcept T>
   TFEL_HOST_DEVICE constexpr T abs(const T v) {
     return (v < 0) ? -v : v;
   }

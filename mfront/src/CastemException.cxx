@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   09 nov 2007
+ * \date 09/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,8 +29,8 @@ namespace std {
 
 namespace castem {
 
-  CastemException::CastemException(const std::string& s)
-      : msg(s) {}  // end of CastemException::CastemException
+  CastemException::CastemException(std::string s)
+      : msg(std::move(s)) {}  // end of CastemException::CastemException
 
   const char* CastemException::what() const noexcept {
     return msg.c_str();

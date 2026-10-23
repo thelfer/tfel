@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   04 jun 2007
+ * \date 04/06/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -39,9 +39,10 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/StaticVariableDescription.hxx"
-#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -393,11 +394,7 @@ namespace mfront {
     }
     auto currentLine = this->current->line;
     if ((registerLine) && (!getDebugMode())) {
-      res = "#line ";
-      res += std::to_string(currentLine);
-      res += " \"";
-      res += this->fd.fileName;
-      res += "\"\n";
+      res = printLinePragma(currentLine, this->fd.fileName);
     }
     if (!this->current->comment.empty()) {
       if (!b.description.empty()) {
@@ -454,15 +451,9 @@ namespace mfront {
       currentValue = demangle(*(this->current));
       if (currentLine != this->current->line) {
         currentLine = this->current->line;
+        res += "\n";
         if ((registerLine) && (!getDebugMode())) {
-          res += "\n";
-          res += "#line ";
-          res += std::to_string(currentLine);
-          res += " \"";
-          res += this->fd.fileName;
-          res += "\"\n";
-        } else {
-          res += "\n";
+          res += printLinePragma(currentLine, this->fd.fileName);
         }
       }
       if ((currentValue == ";") && (!allowSemiColon)) {
@@ -1063,7 +1054,8 @@ namespace mfront {
   DSLBase::handleMaterialPropertyDescription(const std::string& f) {
     // getting informations the source file
     const auto& global_options =
-        GlobalDomainSpecificLanguageOptionsManager::get();
+        static_cast<const GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     auto mp = MaterialPropertyDSL{
         tfel::utilities::merge(global_options.getMaterialPropertyDSLOptions(),
                                this->buildDSLOptions(), true)};

@@ -1,6 +1,15 @@
-% Performance assessments
-% Helfer Thomas; Jean-Michel Proix
-% August 20, 2014
+---
+title: Performance assessments
+author: Helfer Thomas, Jean-Michel Proix
+date: 20/08/2014
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 # Benchmarks made in the `PLEIADES` platform 
 
@@ -32,7 +41,7 @@ The figure below compares the total computational times of a native
 implementation of a cladding behaviour to its equivalent `MFront`
 implementation: the last one appears to be competitive with the native
 implementation (the average computational time using the `MFront`
-implementation is sightly lower than the average computational time
+implementation is slightly lower than the average computational time
 using the native implementation).
 
 ![Comparing the total computational times of a native implementation of a cladding behaviour available in `Cyrano3` to its equivalent `MFront` implementation](img/cyrano-mfront.svg

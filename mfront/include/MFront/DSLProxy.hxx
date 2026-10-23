@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/DSLProxy.hxx
  * \brief
  * \author Thomas Helfer
- * \date   09 nov 2006
+ * \date 09/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -35,12 +35,12 @@ namespace mfront {
      * \brief constructor
      * \param[in] a: alternative name for the DSL
      */
-    DSLProxy(const std::string&);
+    explicit DSLProxy(const std::string&);
     /*!
      * \brief constructor
      * \param[in] aliases: alternative names for the DSL
      */
-    DSLProxy(const std::vector<std::string>&);
+    explicit DSLProxy(const std::vector<std::string>&);
     /*!
      * \brief generate an intance of the DSL
      * \param[in] opts: options passed to the DSL constructor

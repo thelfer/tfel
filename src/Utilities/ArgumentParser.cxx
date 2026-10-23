@@ -2,7 +2,7 @@
  * \file   ArgumentParser.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 juin 2016
+ * \date 09/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -30,7 +30,7 @@ namespace tfel::utilities {
         c(c_),
         hasOption(b) {}  // end of ArgumentParser::CallBack::CallBack
 
-  ArgumentParser::CallBack::CallBack(CallBack&&) = default;
+  ArgumentParser::CallBack::CallBack(CallBack&&) noexcept = default;
 
   ArgumentParser::CallBack::CallBack(const CallBack&) = default;
 

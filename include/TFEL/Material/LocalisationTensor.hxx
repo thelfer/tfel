@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/LocalisationTensor.hxx
  * \author Antoine Martin
- * \date   18 June 2025
+ * \date 18/06/2025
  * \brief  This file declares the localisation tensors for an ellipsoidal
  * inclusion embedded in an isotropic matrix. \copyright Copyright (C) 2006-2018
  * CEA/DEN, EDF R&D. All rights reserved. This project is publicly released

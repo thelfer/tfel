@@ -2,7 +2,7 @@
  * \file   OverridableImplementation.hxx
  * \brief
  * \author Thomas Helfer
- * \date   01/10/2020
+ * \date 01/10/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -52,7 +52,7 @@ namespace mfront {
      */
     void setOverridenValue(const std::string&);
     //! \return the overriden value
-    const std::string& getOverridenValue() const;
+    [[nodiscard]] const std::string& getOverridenValue() const;
 
    private:
     std::string overriden_value;
@@ -85,7 +85,7 @@ namespace mfront {
      * \brief default construtor
      * \param[in] f: file
      */
-    OverridableImplementation(const std::string&);
+    explicit OverridableImplementation(const std::string&);
     /*!
      * \brief override the information associated with the given tag
      * tparam Tag: tag to the information that shall be overriden
@@ -97,7 +97,7 @@ namespace mfront {
      * \return the string valuated  override associated the with given tag
      */
     template <Tags Tag>
-    const std::string& getOverridenValue() const;
+    [[nodiscard]] const std::string& getOverridenValue() const;
     /*!
      * \brief override a variable by a parameter
      * \param[in] n: external variable name
@@ -105,27 +105,28 @@ namespace mfront {
      */
     void overrideByAParameter(const std::string&, const double);
     //! \return the parameters'overrides
-    const std::map<std::string, double>& getOverridingParameters() const;
+    [[nodiscard]] const std::map<std::string, double>& getOverridingParameters()
+        const;
     //! \return the target of the dsl
-    AbstractDSL::DSLTarget getTargetType() const;
+    [[nodiscard]] AbstractDSL::DSLTarget getTargetType() const;
     /*!
      * \return the identifier (material property name, behaviour name, model
      * name) of the treated file
      */
-    std::string getSourceMaterialKnowledgeIdentifier() const;
+    [[nodiscard]] std::string getSourceMaterialKnowledgeIdentifier() const;
     //! \return the material described by the treated file
-    std::string getSourceMaterialName() const;
+    [[nodiscard]] std::string getSourceMaterialName() const;
     //! \return the file description associated with source file
-    const FileDescription& getSourceFileDescription() const;
+    [[nodiscard]] const FileDescription& getSourceFileDescription() const;
     //! \return the path to the source file
-    const std::string& getSourceFilePath() const;
+    [[nodiscard]] const std::string& getSourceFilePath() const;
     //! \return the material knowledge identifier (material property name,
     //! behaviour name or model name)
-    std::string getMaterialKnowledgeIdentifier() const;
+    [[nodiscard]] std::string getMaterialKnowledgeIdentifier() const;
     //! \return the material name
-    std::string getMaterial() const;
+    [[nodiscard]] std::string getMaterial() const;
     //! \return the external `MFront` files
-    const std::map<
+    [[nodiscard]] const std::map<
         std::string,  // file path
         std::tuple<std::vector<std::string>, tfel::utilities::DataMap>,
         std::less<>>&

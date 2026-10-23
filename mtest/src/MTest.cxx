@@ -470,7 +470,6 @@ namespace mtest {
                    "object not initialised");
     // getting the total number of unknowns
     size_t s = this->b->getGradientsSize();
-    ;
     for (const auto& pc : this->constraints) {
       s += pc->getNumberOfLagrangeMultipliers();
     }

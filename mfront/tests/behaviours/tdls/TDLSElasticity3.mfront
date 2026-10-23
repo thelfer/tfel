@@ -1,0 +1,6 @@
+@DSL Implicit;
+@Behaviour TDLSElasticity3;
+@LinearSystemSolver TDLS {
+  schedule : "LeftLooking"
+};
+@Import "TDLSElasticity-common.mfront";

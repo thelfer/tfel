@@ -2,7 +2,7 @@
  * \file   TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx
  * \brief
  * \author Thomas Helfer
- * \date   30 août 2016
+ * \date 30/08/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -39,7 +39,8 @@ namespace tfel::math {
     //! a simple alias
     using NumType = numeric_type<A>;
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return EmptyRunTimeProperties();
     }
 
@@ -52,21 +53,21 @@ namespace tfel::math {
     typedef IndexType size_type;
     typedef ptrdiff_t difference_type;
     /*!
-     * \brief access operator
-     * \param[in] i: row number
-     * \param[in] j: colum number
+     * \brief constructor
+     * \param[in] l: transposed object
      */
-    TFEL_HOST_DEVICE constexpr ST2toST2TransposeExpr(A l) noexcept : a(l) {}
+    TFEL_HOST_DEVICE constexpr explicit ST2toST2TransposeExpr(A l) noexcept
+        : a(l) {}
     /*!
      * \brief access operator
      * \param[in] i: row number
-     * \param[in] j: colum number
+     * \param[in] j: column number
      */
-    TFEL_HOST_DEVICE constexpr NumType operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr NumType operator()(
         const IndexType i, const IndexType j) const noexcept {
       return this->a(j, i);
     }  // end of operator()
-    //! storage for the object
+    //! \brief storage for the object
     ArgumentStorage<A> a;
   };
 

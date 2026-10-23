@@ -2,7 +2,13 @@
  * \file   mfront/include/MFront/BehaviourBrick/HookeStressPotentialBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIALBASE_HXX
@@ -35,7 +41,8 @@ namespace mfront::bbrick {
      * - `poisson_ratio`
      * - `thermal_expansion`
      */
-    static std::vector<OptionDescription> getIsotropicBehaviourOptions();
+    [[nodiscard]] static std::vector<OptionDescription>
+    getIsotropicBehaviourOptions();
     /*!
      * \return the options associated with material properties which are only
      * valid for an orthotropic behaviour.
@@ -47,7 +54,7 @@ namespace mfront::bbrick {
      * - `poisson_ratio23`
      * - `poisson_ratio13`
      */
-    static std::vector<OptionDescription>
+    [[nodiscard]] static std::vector<OptionDescription>
     getOrthotropicBehaviourElasticMaterialPropertiesOptions();
     /*!
      * \return the options associated with material properties which are only
@@ -63,28 +70,30 @@ namespace mfront::bbrick {
      * - `thermal_expansion2`
      * - `thermal_expansion3`
      */
-    static std::vector<OptionDescription> getOrthotropicBehaviourOptions();
-    //! get options only valid for all behaviours
-    static std::vector<OptionDescription> getGeneralOptions();
+    [[nodiscard]] static std::vector<OptionDescription>
+    getOrthotropicBehaviourOptions();
+    //! \brief get options only valid for all behaviours
+    [[nodiscard]] static std::vector<OptionDescription> getGeneralOptions();
     //! \brief constructor
     HookeStressPotentialBase();
-    std::string getName() const override;
-    std::vector<OptionDescription> getOptions(const BehaviourDescription&,
-                                              const bool) const override;
+    //
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const DataMap&) override;
-    std::vector<Hypothesis> getSupportedModellingHypotheses(
-        const BehaviourDescription&,
-        const AbstractBehaviourDSL&) const override;
     void completeVariableDeclaration(
         BehaviourDescription&, const AbstractBehaviourDSL&) const override;
     void endTreatment(BehaviourDescription&,
                       const AbstractBehaviourDSL&) const override;
     void computeElasticPrediction(BehaviourDescription&) const override;
-    std::string getStressNormalisationFactor(
+    [[nodiscard]] std::string getName() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions(
+        const BehaviourDescription&, const bool) const override;
+    [[nodiscard]] std::vector<Hypothesis> getSupportedModellingHypotheses(
+        const BehaviourDescription&,
+        const AbstractBehaviourDSL&) const override;
+    [[nodiscard]] std::string getStressNormalisationFactor(
         const BehaviourDescription&) const override;
-    std::string getEquivalentStressLowerBound(
+    [[nodiscard]] std::string getEquivalentStressLowerBound(
         const BehaviourDescription&) const override;
     //! \brief destructor
     ~HookeStressPotentialBase() override;
@@ -177,12 +186,11 @@ namespace mfront::bbrick {
      */
     virtual void declareComputeElasticPredictionMethod(
         BehaviourDescription&) const = 0;
-
-    //! plane stress support;
+    //! \brief plane stress support;
     bool pss = true;
-    //! generic prediction operator support
+    //! \brief generic prediction operator support
     bool gto = true;
-    //! generic tangent operator support
+    //! \brief generic tangent operator support
     bool gpo = true;
   };  // end of struct HookeStressPotentialBase
 

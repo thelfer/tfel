@@ -68,11 +68,11 @@ namespace mfront {
     //! \brief default contructor
     CodeBlock();
     //! \brief move contructor
-    CodeBlock(CodeBlock&&);
+    CodeBlock(CodeBlock&&) noexcept;
     //! \brief copy contructor
     CodeBlock(const CodeBlock&);
     //! \brief move assignement
-    CodeBlock& operator=(CodeBlock&&);
+    CodeBlock& operator=(CodeBlock&&) noexcept;
     //! \brief standard assignement
     CodeBlock& operator=(const CodeBlock&);
     //! \brief destructor

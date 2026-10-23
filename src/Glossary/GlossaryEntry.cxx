@@ -77,7 +77,7 @@ namespace tfel::glossary {
   }
 
   GlossaryEntry::GlossaryEntry(const GlossaryEntry&) = default;
-  GlossaryEntry::GlossaryEntry(GlossaryEntry&&) = default;
+  GlossaryEntry::GlossaryEntry(GlossaryEntry&&) noexcept = default;
 
   void GlossaryEntry::check() const {
     auto convert = [this](const std::string& s) {

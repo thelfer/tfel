@@ -2,7 +2,7 @@
  * \file   UniaxialTensileTest.hxx
  * \brief
  * \author Thomas Helfer
- * \date   17/09/2019
+ * \date 17/09/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,7 +29,7 @@ namespace mfmtg {
   struct MFMTG_VISIBILITY_EXPORT UniaxialTensileTest : TestCaseBase,
                                                        BehaviourData {
     //! \brief default constructor
-    UniaxialTensileTest(const TestCaseParameters&);
+    explicit UniaxialTensileTest(const TestCaseParameters&);
     //! \brief imposed strain
     const Evolution imposed_strain;
     //! \brief destructor

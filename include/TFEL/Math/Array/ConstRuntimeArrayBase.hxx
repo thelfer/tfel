@@ -32,8 +32,10 @@ namespace tfel::math {
      * \brief contructor using the indexing policy
      * \param[in] i: indexing policy
      */
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_HOST_DEVICE constexpr ConstRuntimeArrayBase(
         const typename ArrayPolicyType::IndexingPolicy&);
+    // NOLINTEND(google-explicit-constructor)
     //! \brief move constructor
     constexpr ConstRuntimeArrayBase(ConstRuntimeArrayBase&&) = default;
     //! \brief copy constructor

@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/stensor.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 May 2006
+ * \date 04/05/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -117,8 +117,10 @@ namespace tfel::math {
         stensor<N, ValueType>,
         FixedSizeVectorPolicy<StensorDimeToSize<N>::value, ValueType>>;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(stensor,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
@@ -178,7 +180,7 @@ namespace tfel::math {
      * \return eigen values
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 tvector<3u, ValueType>
+    TFEL_HOST_DEVICE [[nodiscard]] TFEL_MATH_INLINE2 tvector<3u, ValueType>
     computeEigenValues(const bool = false) const;
     /*!
      * compute eigenvalues
@@ -231,7 +233,7 @@ namespace tfel::math {
      * sorted.
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 tvector<3u, ValueType>
+    TFEL_HOST_DEVICE [[nodiscard]] TFEL_MATH_INLINE2 tvector<3u, ValueType>
     computeEigenValues(const EigenValuesOrdering, const bool = false) const;
     /*!
      * compute eigenvectors and eigenvalues
@@ -239,7 +241,7 @@ namespace tfel::math {
      * \param[in] b:  refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2
+    TFEL_HOST_DEVICE [[nodiscard]] TFEL_MATH_INLINE2
         std::tuple<tvector<3u, ValueType>, rotation_matrix<ValueType>>
         computeEigenVectors(const bool = false) const;
     /*!
@@ -266,7 +268,7 @@ namespace tfel::math {
      * sorted.
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2
+    TFEL_HOST_DEVICE [[nodiscard]] TFEL_MATH_INLINE2
         std::tuple<tvector<3u, ValueType>, rotation_matrix<ValueType>>
         computeEigenVectors(const EigenValuesOrdering,
                             const bool = false) const;
@@ -301,7 +303,7 @@ namespace tfel::math {
      * \param[in]  vp : eigenvalue
      */
     template <typename VectorType>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 bool computeEigenVector(
+    TFEL_HOST_DEVICE [[nodiscard]] TFEL_MATH_INLINE2 bool computeEigenVector(
         VectorType&, const ValueType) const;
     /*!
      * \brief change basis
@@ -310,7 +312,8 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr void changeBasis(
         const rotation_matrix<base_type<ValueType>>&) noexcept;
     //! \return the identity
-    TFEL_HOST_DEVICE static constexpr stensor<N, base_type<ValueType>>
+    TFEL_HOST_DEVICE
+    [[nodiscard]] static constexpr stensor<N, base_type<ValueType>>
     Id() noexcept;
 
     /*!
@@ -338,9 +341,8 @@ namespace tfel::math {
      * \param[in] A: `stensor`
      * \param[in] i,j: `unsigned short`
      */
-    TFEL_HOST_DEVICE constexpr auto getComponent(const StensorConcept auto&,
-                                                 unsigned short,
-                                                 unsigned short);
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getComponent(
+        const StensorConcept auto&, unsigned short, unsigned short);
 
     /*!
      * copy the value from a container
@@ -352,7 +354,7 @@ namespace tfel::math {
      * \param[in] m : matrix
      */
     template <MatrixConcept MatrixType>
-    TFEL_HOST_DEVICE static constexpr auto buildFromMatrix(
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto buildFromMatrix(
         const MatrixType&) noexcept
         requires(isAssignableTo<numeric_type<MatrixType>, ValueType>());
 
@@ -362,12 +364,11 @@ namespace tfel::math {
      * \param[in] v : vector
      */
     template <VectorConcept VectorType>
-    TFEL_HOST_DEVICE static constexpr auto buildFromVectorDiadicProduct(
-        const VectorType&) noexcept
-        requires(
-            isAssignableTo<typename ComputeUnaryResult<numeric_type<VectorType>,
-                                                       Power<2>>::Result,
-                           ValueType>());
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
+    buildFromVectorDiadicProduct(const VectorType&) noexcept requires(
+        isAssignableTo<typename ComputeUnaryResult<numeric_type<VectorType>,
+                                                   Power<2>>::Result,
+                       ValueType>());
 
     /*!
      * build a symmetric tensor from the symmetric diadic product of two
@@ -376,7 +377,7 @@ namespace tfel::math {
      * \param[in] v1 : second vector
      */
     template <VectorConcept VectorType, VectorConcept VectorType2>
-    TFEL_HOST_DEVICE static constexpr auto
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
     buildFromVectorsSymmetricDiadicProduct(const VectorType&,
                                            const VectorType2&) noexcept
         requires(isAssignableTo<BinaryOperationResult<numeric_type<VectorType>,
@@ -391,20 +392,20 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static constexpr auto buildFromEigenValuesAndVectors(
-        const ValueType&,
-        const ValueType&,
-        const ValueType&,
-        const rotation_matrix<ValueType>&) noexcept;
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
+    buildFromEigenValuesAndVectors(const ValueType&,
+                                   const ValueType&,
+                                   const ValueType&,
+                                   const rotation_matrix<ValueType>&) noexcept;
 
     /*!
      * build a symmetric tensor from its eigen values and vectors
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static constexpr auto buildFromEigenValuesAndVectors(
-        const tvector<3u, ValueType>&,
-        const rotation_matrix<ValueType>&) noexcept;
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
+    buildFromEigenValuesAndVectors(const tvector<3u, ValueType>&,
+                                   const rotation_matrix<ValueType>&) noexcept;
 
     /*!
      * build the logarithm of a symmetric tensor given through its eigen
@@ -414,7 +415,8 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static auto buildLogarithmFromEigenValuesAndVectors(
+    TFEL_HOST_DEVICE [[nodiscard]] static auto
+    buildLogarithmFromEigenValuesAndVectors(
         const ValueType&,
         const ValueType&,
         const ValueType&,
@@ -426,7 +428,8 @@ namespace tfel::math {
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static auto buildLogarithmFromEigenValuesAndVectors(
+    TFEL_HOST_DEVICE [[nodiscard]] static auto
+    buildLogarithmFromEigenValuesAndVectors(
         const tvector<3u, ValueType>&,
         const rotation_matrix<ValueType>&) noexcept;
 
@@ -438,7 +441,7 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static constexpr auto
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
     buildAbsoluteValueFromEigenValuesAndVectors(
         const ValueType&,
         const ValueType&,
@@ -450,7 +453,7 @@ namespace tfel::math {
      * eigen values and vectors \param[in] vp : eigen values \param[in] m  :
      * matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static constexpr auto
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
     buildAbsoluteValueFromEigenValuesAndVectors(
         const tvector<3u, ValueType>&,
         const rotation_matrix<ValueType>&) noexcept;
@@ -463,7 +466,7 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static constexpr auto
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
     buildPositivePartFromEigenValuesAndVectors(
         const ValueType&,
         const ValueType&,
@@ -475,7 +478,7 @@ namespace tfel::math {
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static constexpr auto
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
     buildPositivePartFromEigenValuesAndVectors(
         const tvector<3u, ValueType>&,
         const rotation_matrix<ValueType>&) noexcept;
@@ -487,7 +490,7 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static constexpr auto
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
     buildNegativePartFromEigenValuesAndVectors(
         const ValueType&,
         const ValueType&,
@@ -499,7 +502,7 @@ namespace tfel::math {
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static constexpr auto
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
     buildNegativePartFromEigenValuesAndVectors(
         const tvector<3u, ValueType>&,
         const rotation_matrix<ValueType>&) noexcept;
@@ -516,8 +519,8 @@ namespace tfel::math {
      * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given
      * tensor.
      */
-    TFEL_HOST_DEVICE static constexpr auto computeEigenValuesDerivatives(
-        const rotation_matrix<ValueType>&) noexcept;
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
+    computeEigenValuesDerivatives(const rotation_matrix<ValueType>&) noexcept;
     /*!
      * compute the eigenvalues derivatives with respect with this tensor
      * \param[out] n0 : derivative of the first eigenvalue
@@ -545,7 +548,7 @@ namespace tfel::math {
      * \return the eigentensors
      * \param[in]  m: eigenvectors
      */
-    TFEL_HOST_DEVICE static constexpr auto computeEigenTensors(
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto computeEigenTensors(
         const rotation_matrix<ValueType>&) noexcept;
     /*!
      * \brief compute the eigentensors
@@ -592,7 +595,7 @@ namespace tfel::math {
      * \param[in]  m:   eigenvectors
      */
     template <typename Function>
-    TFEL_HOST_DEVICE static auto computeIsotropicFunction(
+    TFEL_HOST_DEVICE [[nodiscard]] static auto computeIsotropicFunction(
         const Function&,
         const tvector<3u, ValueType>&,
         const rotation_matrix<ValueType>&);
@@ -602,8 +605,9 @@ namespace tfel::math {
      * \param[in]  m: eigenvectors
      */
     template <typename T2>
-    TFEL_HOST_DEVICE static constexpr auto computeIsotropicFunction(
-        const tvector<3u, T2>&, const rotation_matrix<ValueType>&) noexcept;
+    TFEL_HOST_DEVICE [[nodiscard]] static constexpr auto
+    computeIsotropicFunction(const tvector<3u, T2>&,
+                             const rotation_matrix<ValueType>&) noexcept;
     /*!
      * \return the derivative of an isotropic function
      * \param[in]  f:   function values
@@ -614,12 +618,12 @@ namespace tfel::math {
      * equals
      */
     template <typename T1, typename T2>
-    TFEL_HOST_DEVICE static auto computeIsotropicFunctionDerivative(
-        const tvector<3u, T1>&,
-        const tvector<3u, T2>&,
-        const tvector<3u, ValueType>&,
-        const rotation_matrix<ValueType>&,
-        const ValueType);
+    TFEL_HOST_DEVICE [[nodiscard]] static auto
+    computeIsotropicFunctionDerivative(const tvector<3u, T1>&,
+                                       const tvector<3u, T2>&,
+                                       const tvector<3u, ValueType>&,
+                                       const rotation_matrix<ValueType>&,
+                                       const ValueType);
     /*!
      * compute the derivative of an isotropic function
      * \param[out] d:   result
@@ -655,12 +659,12 @@ namespace tfel::math {
      * equals
      */
     template <typename Function, typename FunctionDerivative>
-    TFEL_HOST_DEVICE static auto computeIsotropicFunctionDerivative(
-        const Function&,
-        const FunctionDerivative&,
-        const tvector<3u, ValueType>&,
-        const rotation_matrix<ValueType>&,
-        const ValueType);
+    TFEL_HOST_DEVICE [[nodiscard]] static auto
+    computeIsotropicFunctionDerivative(const Function&,
+                                       const FunctionDerivative&,
+                                       const tvector<3u, ValueType>&,
+                                       const rotation_matrix<ValueType>&,
+                                       const ValueType);
     /*!
      * compute the derivative of an isotropic function
      * \param[out] d:   result
@@ -693,8 +697,8 @@ namespace tfel::math {
      * \param[in] b:   if true, refinement of eigen values is performed
      */
     template <EigenSolver = TFELEIGENSOLVER, typename Function>
-    TFEL_HOST_DEVICE auto computeIsotropicFunction(const Function&,
-                                                   const bool = false) const;
+    TFEL_HOST_DEVICE [[nodiscard]] auto computeIsotropicFunction(
+        const Function&, const bool = false) const;
     /*!
      * \return the derivative of an isotropic function
      * \param[in] f:   function
@@ -706,7 +710,7 @@ namespace tfel::math {
     template <EigenSolver = TFELEIGENSOLVER,
               typename Function,
               typename FunctionDerivative>
-    TFEL_HOST_DEVICE auto computeIsotropicFunctionDerivative(
+    TFEL_HOST_DEVICE [[nodiscard]] auto computeIsotropicFunctionDerivative(
         const Function&,
         const FunctionDerivative&,
         const ValueType,
@@ -722,7 +726,7 @@ namespace tfel::math {
     template <EigenSolver = TFELEIGENSOLVER,
               typename Function,
               typename FunctionDerivative>
-    TFEL_HOST_DEVICE auto computeIsotropicFunctionAndDerivative(
+    TFEL_HOST_DEVICE [[nodiscard]] auto computeIsotropicFunctionAndDerivative(
         const Function&,
         const FunctionDerivative&,
         const ValueType,

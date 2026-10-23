@@ -815,7 +815,7 @@ namespace mfront {
                        "categories in two distinct modelling hypotheses. "
                        "This is not supported.");
         }
-        return {v, en, t};
+        return {.name = v, .ename = en, .category = t};
       }
     }
   }  // end of getMaterialPropertyInput
@@ -1492,7 +1492,7 @@ namespace mfront {
                                  this->getTangentOperatorBlockName({thf2, g}));
       }
     }
-    this->mvariables.push_back({g, f});
+    this->mvariables.emplace_back(g, f);
   }  // end of addMainVariables
 
   const std::vector<std::pair<Gradient, ThermodynamicForce>>&
@@ -1776,7 +1776,7 @@ namespace mfront {
     if (this->useDefaultTangentOperatorBlocks) {
       for (const auto& f : this->getMainVariables()) {
         for (const auto& g : this->getMainVariables()) {
-          blocks.push_back({f.second, g.first});
+          blocks.emplace_back(f.second, g.first);
         }
       }
     }
@@ -2052,44 +2052,9 @@ namespace mfront {
       const auto& mvs = this->getMainVariables();
       if (this->hasTrivialTangentOperatorStructure()) {
         const auto& mv = mvs.front();
-        const auto gflags = mv.first.getTypeFlag();
-        const auto fflags = mv.second.getTypeFlag();
-        auto throw_unmatch = [&mv] {
-          tfel::raise(
-              "BehaviourDescription::getTangentOperatorType: "
-              "gradient '" +
-              mv.first.name + "' is not conjugated with flux '" +
-              mv.second.name + "'");
-        };
-        if (gflags == SupportedTypes::SCALAR) {
-          if (fflags != SupportedTypes::SCALAR) {
-            throw_unmatch();
-          }
-          return "real";
-        } else if (gflags == SupportedTypes::TVECTOR) {
-          if (fflags != SupportedTypes::TVECTOR) {
-            throw_unmatch();
-          }
-          return "tfel::math::tmatrix<N,N,real>";
-        } else if (gflags == SupportedTypes::STENSOR) {
-          if (fflags != SupportedTypes::STENSOR) {
-            throw_unmatch();
-          }
-          return "tfel::math::st2tost2<N,real>";
-        } else if (gflags == SupportedTypes::TENSOR) {
-          if (fflags == SupportedTypes::STENSOR) {
-            return "tfel::math::t2tost2<N,real>";
-          } else if (fflags == SupportedTypes::TENSOR) {
-            return "tfel::math::t2tot2<N,real>";
-          } else {
-            throw_unmatch();
-          }
-        } else {
-          tfel::raise(
-              "BehaviourDescription::getTangentOperatorType: "
-              "unsupported type for gradient '" +
-              mv.first.name + "'");
-        }
+        const auto& g = mv.first;
+        const auto& th = mv.second;
+        return "tfel::math::derivative_type<" + th.type + "," + g.type + ">";
       }
       return "tfel::math::tvector<" + this->computeTangentOperatorSize() +
              ",real>";
@@ -2332,7 +2297,7 @@ namespace mfront {
       const BehaviourVariableDescription& md) {
     const auto fname = getBehaviourVariableFactoryClassName(md);
     this->addBehaviourVariableFactory(md, false, true);
-    this->auxiliaryModels.push_back(
+    this->auxiliaryModels.emplace_back(
         ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addAuxiliaryModelDescription
 
@@ -2672,8 +2637,8 @@ namespace mfront {
             << "' is delayed up to when the modelling hypotheses "
             << "are defined'\n";
       }
-      this->behaviourVariableFactoriesCandidates.push_back(
-          {v, isExternalModel, isAuxiliaryModel});
+      this->behaviourVariableFactoriesCandidates.emplace_back(
+          v, isExternalModel, isAuxiliaryModel);
     }
   }  // end of addBehaviourVariableFactory
 
@@ -2787,7 +2752,7 @@ namespace mfront {
                                             bv) {
         auto checkVariable = [this, &bdata, &bv](const VariableDescription& v,
                                                  const bool materialProperty) {
-          const auto& osource = [this, &bdata, &bv,
+          const auto& osource = [this, &bdata,
                                  &v]() -> std::optional<VariableDescription> {
             if (this->isGradientExternalName(v.getExternalName())) {
               return this->getGradientByExternalName(v.getExternalName());
@@ -2864,7 +2829,7 @@ namespace mfront {
                   "variable ");
             }
           }
-          auto report = [&v, &osource, &bv](const std::string_view& reason) {
+          auto report = [&osource, &bv](const std::string_view& reason) {
             tfel::raise("The sourve variable '" + osource->name +
                         "' declared by behaviour variable '" + bv.name +
                         "' is not compatible with the variable declared by the "

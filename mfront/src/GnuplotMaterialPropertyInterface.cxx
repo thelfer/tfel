@@ -2,7 +2,7 @@
  * \file   mfront/src/GnuplotMaterialPropertyInterface.cxx
  * \brief
  * \author P. GOLDBRONN
- * \date   14 mai 2008
+ * \date 14/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -44,13 +44,13 @@ namespace mfront {
   GnuplotMaterialPropertyInterface::dataFile::dataFile(
       const GnuplotMaterialPropertyInterface::dataFile&) = default;
   GnuplotMaterialPropertyInterface::dataFile::dataFile(
-      GnuplotMaterialPropertyInterface::dataFile&&) = default;
+      GnuplotMaterialPropertyInterface::dataFile&&) noexcept = default;
   GnuplotMaterialPropertyInterface::dataFile&
   GnuplotMaterialPropertyInterface::dataFile::operator=(
       const GnuplotMaterialPropertyInterface::dataFile&) = default;
   GnuplotMaterialPropertyInterface::dataFile&
   GnuplotMaterialPropertyInterface::dataFile::operator=(
-      GnuplotMaterialPropertyInterface::dataFile&&) = default;
+      GnuplotMaterialPropertyInterface::dataFile&&) noexcept = default;
   GnuplotMaterialPropertyInterface::dataFile::~dataFile() = default;
 
   GnuplotMaterialPropertyInterface::tokens_iterator
@@ -72,6 +72,13 @@ namespace mfront {
 
   GnuplotMaterialPropertyInterface::~GnuplotMaterialPropertyInterface() =
       default;
+
+  void GnuplotMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::string GnuplotMaterialPropertyInterface::eraseQuote(
       const std::string& in) {

@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/IsotropicEshelbyTensor.hxx
  * \author Antoine Martin
- * \date   15 October 2024
+ * \date 15/10/2024
  * \brief  This file declares the Eshelby tensor for an ellipsoidal inclusion
  * embedded in an isotropic matrix. \copyright Copyright (C) 2006-2018 CEA/DEN,
  * EDF R&D. All rights reserved. This project is publicly released under either

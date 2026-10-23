@@ -58,13 +58,21 @@ target_include_directories(TFELMath
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMath
 	PUBLIC TFELException)
+if(enable-tdls)
+  target_link_libraries(TFELMath
+    PUBLIC tdls::tdls)
+endif(enable-tdls)
 if(enable-static)
   target_include_directories(TFELMath-static
       PUBLIC 
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:include>)
+  target_link_libraries(TFELMath-static
+     PUBLIC TFELException-static)
+  if(enable-tdls)
     target_link_libraries(TFELMath-static
-        PUBLIC TFELException-static)
+        PUBLIC tdls::tdls)
+  endif(enable-tdls)
 endif(enable-static)
 
 tfel_library(TFELMathCubicSpline ${TFELMathCubicSpline_SOURCES})

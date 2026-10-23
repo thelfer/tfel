@@ -2,7 +2,7 @@
  * \file   PathSpecifier.hxx
  * \brief
  * \author Thomas Helfer
- * \date   06/10/2020
+ * \date 06/10/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,11 +28,11 @@ namespace mfront {
     //! \brief default constructor
     PathSpecifier();
     //! \brief move constructor
-    PathSpecifier(PathSpecifier&&);
+    PathSpecifier(PathSpecifier&&) noexcept;
     //! \brief copy constructor
     PathSpecifier(const PathSpecifier&);
     //! \brief move assignement
-    PathSpecifier& operator=(PathSpecifier&&);
+    PathSpecifier& operator=(PathSpecifier&&) noexcept;
     //! \brief standard assignement
     PathSpecifier& operator=(const PathSpecifier&);
     //! \brief destructor

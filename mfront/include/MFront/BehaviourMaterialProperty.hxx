@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/BehaviourMaterialProperty.hxx
  * \brief
  * \author Thomas Helfer
- * \date   08/07/2018
+ * \date 08/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -55,12 +55,12 @@ namespace mfront {
                               const SupportedTypes::TypeSize,
                               const bool);
     BehaviourMaterialProperty(const BehaviourMaterialProperty&);
-    BehaviourMaterialProperty(BehaviourMaterialProperty&&);
+    BehaviourMaterialProperty(BehaviourMaterialProperty&&) noexcept;
     BehaviourMaterialProperty& operator=(const BehaviourMaterialProperty&);
-    BehaviourMaterialProperty& operator=(BehaviourMaterialProperty&&);
+    BehaviourMaterialProperty& operator=(BehaviourMaterialProperty&&) noexcept;
     ~BehaviourMaterialProperty();
     //! \return if the material property is scalar
-    bool isScalar() const;
+    [[nodiscard]] bool isScalar() const;
     /*!
      * offset of the variable in the indirection map
      */

@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/ImplicitCodeGeneratorBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/08/2022
+ * \date 03/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,8 +18,9 @@
 
 namespace mfront {
 
-  // forward declaration
-  struct NonLinearSystemSolver;
+  // forward declarations
+  struct AbstractLinearSystemSolver;
+  struct AbstractNonLinearSystemSolver;
 
   struct ImplicitCodeGeneratorBase : BehaviourCodeGeneratorBase {
     /*!
@@ -27,21 +28,21 @@ namespace mfront {
      * \param[in] f: file description
      * \param[in] d: behaviour description
      * \param[in] bim: behaviour interfaces
-     * \param[in] s: non linear system
+     * \param[in] ls: linear system solver
+     * \param[in] s: non linear system solver
      */
     ImplicitCodeGeneratorBase(const FileDescription&,
                               const BehaviourDescription&,
                               const BehaviourInterfaceMap&,
-                              const NonLinearSystemSolver&,
+                              const AbstractLinearSystemSolver&,
+                              const AbstractNonLinearSystemSolver&,
                               const std::set<std::string>&,
                               const std::set<std::string>&);
     //! \brief destructor
     ~ImplicitCodeGeneratorBase() override;
 
    protected:
-    /*!
-     * \brief a structure describing a view of a derivative in a tiny matrix.
-     */
+    //! \brief a structure describing a view of a derivative in a tiny matrix.
     struct DerivativeViewDescription {
       //! \brief name of the view to be created
       std::string derivative_name;
@@ -60,6 +61,28 @@ namespace mfront {
       //! \brief column at which the view starts
       SupportedTypes::TypeSize derivative_column_position;
     };  // end of struct DerivativeViewDescription
+    //
+    [[nodiscard]] std::string getLocalVariablesInitializers(
+        const Hypothesis) const override;
+    [[nodiscard]] std::string getIntegrationVariablesIncrementsInitializers(
+        const Hypothesis) const override;
+    void writeBehaviourFriends(std::ostream&, const Hypothesis) const override;
+    void writeBehaviourLocalVariablesInitialisation(
+        std::ostream&, const Hypothesis) const override;
+    void writeBehaviourIntegrator(std::ostream&,
+                                  const Hypothesis) const override;
+    void writeBehaviourParserSpecificInitializeMethodPart(
+        std::ostream&, const Hypothesis) const override;
+    void writeBehaviourParserSpecificInheritanceRelationship(
+        std::ostream&, const Hypothesis) const override;
+    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
+    void writeBehaviourParserSpecificMembers(std::ostream&,
+                                             const Hypothesis) const override;
+    void writeBehaviourIntegrationVariablesIncrements(
+        std::ostream&, const Hypothesis) const override;
+    void writeBehaviourComputeTangentOperatorBody(
+        std::ostream&, const Hypothesis, const std::string&) const override;
     /*!
      * \brief write the declaration and initialisation of the view of a
      * derivative in a matrix
@@ -68,43 +91,9 @@ namespace mfront {
      */
     virtual void writeDerivativeView(std::ostream&,
                                      const DerivativeViewDescription&) const;
-
-    void writeBehaviourFriends(std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourLocalVariablesInitialisation(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourIntegrator(std::ostream&,
-                                  const Hypothesis) const override;
-
     virtual void writeComputeFdF(std::ostream&, const Hypothesis) const;
-
-    void writeBehaviourParserSpecificInheritanceRelationship(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-
-    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
-
-    void writeBehaviourParserSpecificMembers(std::ostream&,
-                                             const Hypothesis) const override;
-
-    void writeBehaviourIntegrationVariablesIncrements(
-        std::ostream&, const Hypothesis) const override;
-
-    std::string getLocalVariablesInitializers(const Hypothesis) const override;
-
-    std::string getIntegrationVariablesIncrementsInitializers(
-        const Hypothesis) const override;
-
-    void writeBehaviourParserSpecificInitializeMethodPart(
-        std::ostream&, const Hypothesis) const override;
-
     virtual void writeComputeNumericalJacobian(std::ostream&,
                                                const Hypothesis) const;
-
-    void writeBehaviourComputeTangentOperatorBody(
-        std::ostream&, const Hypothesis, const std::string&) const override;
     /*!
      * \brief write the `computePartialJacobianInvert` methods. Those methods
      * may be
@@ -114,8 +103,10 @@ namespace mfront {
      */
     virtual void writeComputePartialJacobianInvert(std::ostream&,
                                                    const Hypothesis) const;
+    //! \brief linear solver
+    const AbstractLinearSystemSolver& linear_solver;
     //! \brief non linear solver
-    const NonLinearSystemSolver& solver;
+    const AbstractNonLinearSystemSolver& solver;
 
 #pragma message("shall be removed, this is ugly !")
     const std::set<std::string>& jacobianPartsUsedInIntegrator;

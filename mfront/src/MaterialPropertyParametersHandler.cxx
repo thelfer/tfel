@@ -2,7 +2,7 @@
  * \file   MaterialPropertyParametersHandler.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10 janv. 2016
+ * \date 10/01/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,51 +22,64 @@ namespace mfront {
   void writeMaterialPropertyParametersHandler(
       std::ostream& os,
       const MaterialPropertyDescription& mpd,
-      const std::string& n,
-      const std::string& t,
-      const std::string& i) {
+      const WriteMaterialPropertyParametersHandlerArguments& args) {
     if ((areParametersTreatedAsStaticVariables(mpd)) ||
         (mpd.parameters.empty())) {
       return;
     }
-    os << "namespace " << i << "{\n\n"
-       << "/*!\n"
-       << " * \\brief an auxiliary class handling parameters of the\n "
-       << " * " << n << " material propety in the " << i << " interface\n"
+    os << "namespace " << args.interface_namespace << "{\n\n";
+    //
+    os << "/*!\n"
+       << " * \\brief a class containing the parameters of the\n "
+       << " * " << args.material_property_name << " material property\n"
        << " */\n"
-       << "struct " << n << "MaterialPropertyHandler\n{\n"
+       << "struct " << args.material_property_name
+       << "MaterialPropertyParameters\n{\n";
+    for (const auto& p : mpd.parameters) {
+      os << args.floating_point_type << " " << p.name << " = "
+         << args.floating_point_type << "{";
+      tfel::raise_if(!p.hasAttribute(VariableDescription::defaultValue),
+                     "writeAssignMaterialPropertyParameters: "
+                     "no default value for parameter "
+                     "'" +
+                         p.name + "'");
+      const auto pv = p.getAttribute<double>(VariableDescription::defaultValue);
+      const auto prec = os.precision();
+      os.precision(14);
+      os << pv;
+      os.precision(prec);
+      os << "};\n";
+    }
+    os << "}; // end of struct " << args.material_property_name
+       << "MaterialPropertyParameters\n\n";
+    //
+    os << "/*!\n"
+       << " * \\brief an auxiliary class handling parameters of the\n "
+       << " * " << args.material_property_name << " material property\n"
+       << " * using the Singleton pattern and optionaly overrides the values"
+       << " * of the parameters from a text file\n"
+       << " */\n"
+       << "struct " << args.material_property_name
+       << "MaterialPropertyParametersHandler\n"
+       << ": " << args.material_property_name << "MaterialPropertyParameters\n"
+       << "{\n"
        << "//! return the unique instance of this class\n"
-       << "static " << n << "MaterialPropertyHandler&\n"
-       << "get" << n << "MaterialPropertyHandler(){\n"
-       << "static " << n << "MaterialPropertyHandler i;\n"
+       << "static " << args.material_property_name
+       << "MaterialPropertyParametersHandler&\n"
+       << "get" << args.material_property_name
+       << "MaterialPropertyParametersHandler(){\n"
+       << "static " << args.material_property_name
+       << "MaterialPropertyParametersHandler i;\n"
        << "return i;\n"
        << "}\n";
-    for (const auto& p : mpd.parameters) {
-      os << t << " " << p.name << ";\n";
-    }
     os << "std::string msg;\n"
        << "bool ok = false;\n"
        << "private:\n"
-       << n << "MaterialPropertyHandler()";
-    if (!mpd.parameters.empty()) {
-      os << "\n: ";
-      for (auto p = mpd.parameters.begin(); p != mpd.parameters.end();) {
-        tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
-                       "writeAssignMaterialPropertyParameters: "
-                       "no default value for parameter "
-                       "'" +
-                           p->name + "'");
-        const auto pv =
-            p->getAttribute<double>(VariableDescription::defaultValue);
-        os << p->name << "(" << pv << ")";
-        if (++p != mpd.parameters.end()) {
-          os << ",\n";
-        }
-      }
-    }
-    os << "\n{\n";
+       << args.material_property_name << "MaterialPropertyParametersHandler()"
+       << "\n{\n";
     if (allowsParametersInitializationFromFile(mpd)) {
-      os << "auto tokenize = [](const std::string& line){\n"
+      os << "auto mfront_errno_old = errno;\n"
+         << "auto tokenize = [](const std::string& line){\n"
          << "  std::istringstream tokenizer(line);\n"
          << "  std::vector<std::string> tokens;\n"
          << "  std::copy(std::istream_iterator<std::string>(tokenizer),\n"
@@ -76,8 +89,9 @@ namespace mfront {
          << "};\n"
          << "std::ifstream pfile(\"" << getParametersFileName(mpd) << "\");\n"
          << "if(!pfile){\n"
-         << "this->ok=true;\n"
-         << "return;\n"
+         << "  this->ok=true;\n"
+         << "  errno = mfront_errno_old;\n"
+         << "  return;\n"
          << "}\n"
          << "size_t ln = 1u;\n"
          << "while(!pfile.eof()){\n"
@@ -85,11 +99,13 @@ namespace mfront {
          << "  std::getline(pfile,line);\n"
          << "  auto tokens = tokenize(line);\n"
          << "  auto set_msg = [this,ln,line](const std::string& m){\n"
-         << "    this->msg = \"" << n << "MaterialPropertyHandler::\"\n"
-         << "    \"" << n << "MaterialPropertyHandler: \"\n"
+         << "    this->msg = \"" << args.material_property_name
+         << "MaterialPropertyParametersHandler::\"\n"
+         << "    \"" << args.material_property_name
+         << "MaterialPropertyParametersHandler: \"\n"
          << "    \"error at line '\"+std::to_string(ln)+\"' \"\n"
-         << "    \"while reading parameter file '" << n
-         << "-parameters.txt'\"\n"
+         << "    \"while reading parameter file '"
+         << args.material_property_name << "-parameters.txt'\"\n"
          << "    \" (\"+m+\")\";\n"
          << "  };\n"
          << "  if(tokens.empty()){\n"
@@ -100,6 +116,7 @@ namespace mfront {
          << "  }\n"
          << "  if(tokens.size()!=2u){\n"
          << "    set_msg(\"invalid number of tokens\");\n"
+         << "    errno = mfront_errno_old;\n"
          << "    return;\n"
          << "  }\n"
          << "  double pvalue;\n"
@@ -109,6 +126,7 @@ namespace mfront {
          << "  if((!mfront_converter) || (!mfront_converter.eof())){\n"
          << "    set_msg(\"can't convert '\"+tokens[1]+"
          << "            \"' to floating point value\");\n"
+         << "    errno = mfront_errno_old;\n"
          << "    return;\n"
          << "  }\n";
       bool first = true;
@@ -140,18 +158,32 @@ namespace mfront {
     os << "this->ok=true;\n"
        << "}\n"
        << "#if __cplusplus > 199711L\n"
-       << n << "MaterialPropertyHandler(" << n
-       << "MaterialPropertyHandler&&) = delete;\n"
-       << n << "MaterialPropertyHandler(const " << n
-       << "MaterialPropertyHandler&) = delete;\n"
-       << n << "MaterialPropertyHandler&\n"
-       << "operator=(" << n << "MaterialPropertyHandler&&) = delete;\n"
-       << n << "MaterialPropertyHandler&\n"
-       << "operator=(const " << n << "MaterialPropertyHandler&) = delete;\n"
+       << args.material_property_name << "MaterialPropertyParametersHandler("
+       << args.material_property_name
+       << "MaterialPropertyParametersHandler&&) = delete;\n"
+       << args.material_property_name << "MaterialPropertyParametersHandler&\n"
+       << "operator=(" << args.material_property_name
+       << "MaterialPropertyParametersHandler&&) = delete;\n"
+       << args.material_property_name << "MaterialPropertyParametersHandler&\n"
+       << "operator=(const " << args.material_property_name
+       << "MaterialPropertyParametersHandler&) = delete;\n"
        << "#endif /* __cplusplus > 199711L */\n"
-       << "}; // end of struct " << n << "MaterialPropertyHandler\n"
-       << "} // end of namespace " << i << "\n\n";
-  }
+       << "}; // end of struct " << args.material_property_name
+       << "MaterialPropertyParametersHandler\n\n"
+       << "} // end of namespace " << args.interface_namespace << "\n\n";
+  }  // end of writeMaterialPropertyParametersHandler
+
+  void writeMaterialPropertyParametersHandler(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const std::string& n,
+      const std::string& t,
+      const std::string& i) {
+    writeMaterialPropertyParametersHandler(os, mpd,
+                                           {.material_property_name = n,
+                                            .floating_point_type = t,
+                                            .interface_namespace = i});
+  }  // end of writeMaterialPropertyParametersHandler
 
   void writeAssignMaterialPropertyParameters(
       std::ostream& os,
@@ -174,22 +206,86 @@ namespace mfront {
       if (useQuantities(mpd)) {
         for (const auto& p : mpd.parameters) {
           os << "const auto " << p.name << " = " << p.type << "(" << i
-             << "::" << n << "MaterialPropertyHandler::get" << n
-             << "MaterialPropertyHandler()." << p.name << ");\n";
+             << "::" << n << "MaterialPropertyParametersHandler::get" << n
+             << "MaterialPropertyParametersHandler()." << p.name << ");\n";
         }
       } else {
         for (const auto& p : mpd.parameters) {
           os << "const " << t << " " << p.name << " = " << i << "::" << n
-             << "MaterialPropertyHandler::get" << n
-             << "MaterialPropertyHandler()." << p.name << ";\n";
+             << "MaterialPropertyParametersHandler::get" << n
+             << "MaterialPropertyParametersHandler()." << p.name << ";\n";
         }
       }
     }
   }  // end of writeAssignMaterialPropertyParameters
 
+  void writeParametersSetterFunctionDeclaration(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const WriteMaterialPropertyParametersSetterFunctionArguments& args) {
+    const auto& params = mpd.parameters;
+    if ((areParametersTreatedAsStaticVariables(mpd)) || (params.empty())) {
+      return;
+    }
+    os << "/*!\n"
+       << " * \\brief set the value of the given parameter\n"
+       << " *\n"
+       << " * \\param[in] n: name of the parameter\n"
+       << " * \\param[in] v: new value of the parameter\n"
+       << " */\n"
+       << "MFRONT_SHAREDOBJ int\n"
+       << args.material_property_name << "_setParameter(const char *const,"
+       << "const double);\n\n";
+  }  // end of writeParametersSetterFunctionDeclaration
+
+  void writeParametersSetterFunctionImplementation(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const WriteMaterialPropertyParametersSetterFunctionArguments& args) {
+    const auto& params = mpd.parameters;
+    if ((areParametersTreatedAsStaticVariables(mpd)) || (params.empty())) {
+      return;
+    }
+    const auto hn = getMaterialPropertyParametersHandlerClassName(
+        args.material_property_name);
+    os << "MFRONT_SHAREDOBJ int\n"
+       << args.material_property_name << "_setParameter(const char *const p,"
+       << "const double v"
+       << "){\n";
+    for (const auto& p : params) {
+      if (p.getExternalName() != p.name) {
+        os << "if(strcmp(\"" << p.getExternalName() << "\",p) == 0){\n"
+           << args.interface_namespace << "::" << hn << "::get" << hn << "()."
+           << p.name << " = static_cast<" << args.floating_point_type
+           << ">(v);\n"
+           << "return 1;\n"
+           << "}\n";
+      }
+      if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
+        os << "if(strcmp(\"" << p.symbolic_form << "\",p) == 0){\n"
+           << args.interface_namespace << "::" << hn << "::get" << hn << "()."
+           << p.name << " = static_cast<" << args.floating_point_type
+           << ">(v);\n"
+           << "return 1;\n"
+           << "}\n";
+      }
+      os << "if(strcmp(\"" << p.name << "\",p) == 0){\n"
+         << args.interface_namespace << "::" << hn << "::get" << hn << "()."
+         << p.name << " = static_cast<" << args.floating_point_type << ">(v);\n"
+         << "return 1;\n"
+         << "}\n";
+    }
+    os << "return 0;\n"
+       << "}\n\n";
+  }  // end of writeParametersSetterFunctionImplementation
+
+  std::string getMaterialPropertyParametersClassName(const std::string& n) {
+    return n + "MaterialPropertyParameters";
+  }
+
   std::string getMaterialPropertyParametersHandlerClassName(
       const std::string& n) {
-    return n + "MaterialPropertyHandler";
+    return n + "MaterialPropertyParametersHandler";
   }
 
 }  // end of namespace mfront

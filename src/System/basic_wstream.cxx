@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   14 nov 2007
+ * \date 14/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,10 +22,10 @@
 namespace tfel::system {
 
   void BlockingStreamWriter::write(int fd,
-                                   const void *const buf,
+                                   const void* const buf,
                                    const size_t count) {
-    auto start = static_cast<const char *>(buf);  //< some strange
-                                                  //  warning of gcc
+    auto start = static_cast<const char*>(buf);  //< some strange
+                                                 //  warning of gcc
     size_t r = count;  //< remaining block to be written
     if (count > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) {
       tfel::raise<SystemError>(
@@ -55,7 +55,7 @@ namespace tfel::system {
   }  // end of BlockingStreamWriter::write
 
   void NonBlockingStreamWriter::write(int fd,
-                                      const void *const buf,
+                                      const void* const buf,
                                       const size_t count) {
     ssize_t rwrite;
     if (count > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) {

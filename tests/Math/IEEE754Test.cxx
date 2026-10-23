@@ -2,7 +2,7 @@
  * \file   tests/Math/IEEE754Test.cxx
  * \brief
  * \author Thomas Helfer
- * \date   13 mars 2017
+ * \date 13/03/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

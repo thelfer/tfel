@@ -43,9 +43,6 @@
     <!--[if lt IE 7]>
         <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    $for(include-before)$
-    $include-before$
-    $endfor$
     <header>
       <ul id="nav">
 	<li><a href="news.html">News</a></li>
@@ -94,6 +91,7 @@
 		    <li><a href="release-notes-3.0.15.html">Version 3.0.15</a></li>
 		    <li><a href="release-notes-3.0.16.html">Version 3.0.16</a></li>
 		    <li><a href="release-notes-3.0.17.html">Version 3.0.17</a></li>
+		    <li><a href="release-notes-3.0.18.html">Version 3.0.18</a></li>
 		  </ul>
 		</li>
 		<li><a>Versions 3.1.x</a>
@@ -115,6 +113,7 @@
 		    <li><a href="release-notes-3.1.14.html">Version 3.1.14</a></li>
 		    <li><a href="release-notes-3.1.15.html">Version 3.1.15</a></li>
 		    <li><a href="release-notes-3.1.16.html">Version 3.1.16</a></li>
+		    <li><a href="release-notes-3.1.17.html">Version 3.1.17</a></li>
 		  </ul>
 		</li>
 		<li><a>Versions 3.2.x</a>
@@ -147,7 +146,9 @@
 		    <li><a href="release-notes-3.3.5.html">Version 3.3.5</a></li>
 		    <li><a href="release-notes-3.3.6.html">Version 3.3.6</a></li>
 		    <li><a href="release-notes-3.3.7.html">Version 3.3.7</a></li>
-		    <li><a href="release-notes-3.3.7.html">Version 3.3.8</a></li>
+		    <li><a href="release-notes-3.3.8.html">Version 3.3.8</a></li>
+		    <li><a href="release-notes-3.3.9.html">Version 3.3.9</a></li>
+		    <li><a href="release-notes-3.3.10.html">Version 3.3.10</a></li>
 		  </ul>
 		</li>
 		<li><a>Versions 3.4.x</a>
@@ -162,6 +163,7 @@
 		    <li><a href="release-notes-3.4.7.html">Version 3.4.7</a></li>
 		    <li><a href="release-notes-3.4.8.html">Version 3.4.8</a></li>
 		    <li><a href="release-notes-3.4.9.html">Version 3.4.9</a></li>
+		    <li><a href="release-notes-3.4.10.html">Version 3.4.10</a></li>
 		  </ul>
 		</li>
 		<li><a>Versions 4.0.x</a>
@@ -174,6 +176,7 @@
 		    <li><a href="release-notes-4.0.5.html">Version 4.0.5</a></li>
 		    <li><a href="release-notes-4.0.6.html">Version 4.0.6</a></li>
 		    <li><a href="release-notes-4.0.7.html">Version 4.0.7</a></li>
+		    <li><a href="release-notes-4.0.8.html">Version 4.0.8</a></li>
 		  </ul>
 		</li>
 		<li><a>Versions 4.1.x</a>
@@ -185,6 +188,7 @@
 		    <li><a href="release-notes-4.1.4.html">Version 4.1.4</a></li>
 		    <li><a href="release-notes-4.1.5.html">Version 4.1.5</a></li>
 		    <li><a href="release-notes-4.1.6.html">Version 4.1.6</a></li>
+		    <li><a href="release-notes-4.1.7.html">Version 4.1.7</a></li>
 		  </ul>
 		</li>
 		<li><a>Versions 4.2.x</a>
@@ -214,7 +218,7 @@
 		</li>
 		<li><a>Versions 5.2.x</a>
 		  <ul>
-		    <li><a href="release-notes-5.1.html">Version 5.2.0</a></li>
+		    <li><a href="release-notes-5.2.html">Version 5.2.0</a></li>
 		  </ul>
 		</li>
 	      </ul>
@@ -235,7 +239,7 @@
 		<li><a href="benchmark.html">Benchmark</a></li>
 		<li><a href="parameters.html">Parameters</a></li>
 		<li><a href="BehaviourBricks.html">Behaviour bricks</a></li>
-                 <li><a href="behaviour-variable.html">behaviour variables</a></li>
+                 <li><a href="behaviour-variable.html">Behaviour variables</a></li>
 		<li><a href="interfaces.html">Solver interfaces</a>
 		  <ul>
 		    <li><a href="castem.html">Cast3M</a></li>
@@ -303,6 +307,7 @@
 		  <li><a href="tfel-math-data-interpolation.html">Data interpolation</a></li>
 	        </ul>
 		<li><a href="tfel-material.html">TFEL/Material</a></li>
+		<li><a href="tfel-material-homogenization.html">TFEL/Material homogenization</a></li>
                  <li><a href="glossary.html">Glossary</a></li>
                  <li><a href="physical-constants.html">Physical constants</a></li>
 		<li><a href="tfel-mfront-database.html">TFELMFrontDatabase</a></li>
@@ -324,6 +329,7 @@
 	  <ul>
 	    <li><a href="https://github.com/thelfer/tfel">Access to sources</a></li>
 	    <li><a href="contributing.html">Contributing guidelines</a></li>
+	    <li><a href="coding-guidelines.html">Coding guidelines</a></li>
 	    <li><a href="https://github.com/thelfer/tfel/issues">Report bugs</a></li>
 	  </ul>
 	</li>
@@ -352,6 +358,9 @@ $if(date)$
 $endif$
 </div>
 $endif$
+$for(include-before)$
+$include-before$
+$endfor$
 $if(toc)$
 <div id="$idprefix$TOC">
 $toc$

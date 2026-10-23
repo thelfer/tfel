@@ -59,7 +59,7 @@ project](https://github.com/thelfer/MFrontGallery):
 > The `Burger_EDF_CIWAP_2021` is shared on the MFront gallery in the
 > framework of the [European project
 > ACES](http://aces-h2020.eu/domains/aces-h2020.eu/) [@aces;@linkedin_aces_2021], in order to give
-> acces to the [VERCORS benchmark
+> access to the [VERCORS benchmark
 > 3rd participants](https://www.rilem.net/news/invitation-to-participate-in-edf-vercors-3rd-benchmark-405)
 > [@charpin_ageing_2021].
 
@@ -236,7 +236,7 @@ A standard Newton-Raphson algorithm will be used to find the solution of
 the implici system, which requires to compute the jacobian of the
 implicit system.
 
-## Choice of the state variables and auxilary state variables {#sec:burger_full:isvs}
+## Choice of the state variables and auxiliary state variables {#sec:burger_full:isvs}
 
 The role of the implicit scheme is to determine the following increments:
 
@@ -449,7 +449,7 @@ The derivatives of this equation are:
 ### An alternative implicit equation to determine the maximum value of the norm of the irreversible part of the basic creep {#sec:burger_full:fisherburmeister}
 
 Using Implicit Equation @eq:burger_full:feibcm may lead to spurious
-oscillations of the Newton algorithm, **although this is not observered in
+oscillations of the Newton algorithm, **although this is not observed in
 the test cases below**.
 
 This is due to the fact that the derivatives of this equation are not
@@ -552,7 +552,7 @@ f_{\tepsilonel}=\Delta\,\tepsilonel-\Delta\,\tepsilonto
 ## Choice of the domain specific language and the `StandardElasticity` brick
 
 The domain specific language (DSL) suitable for implementing an implicit
-scheme based on standard strain-based beahviour is called
+scheme based on standard strain-based behaviour is called
 [`Implicit`](implicit-dsl.html) [@ceaedf_implicit_2021]. The `@DSL`
 keyword allows specifying the domain specific language to be used:
 
@@ -563,7 +563,7 @@ keyword allows specifying the domain specific language to be used:
 The [standard elasticity
 brick](BehaviourBricks.html)
 [@ceaedf_behaviour_bricks_2020] is appropriate for this behaviour which
-provides additional functionnalities such as:
+provides additional functionalities such as:
 
 - Automatic computation of the stress tensor at various stages of the
   behaviour integration.
@@ -571,7 +571,7 @@ provides additional functionnalities such as:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 
@@ -581,7 +581,7 @@ The usage of the `StandardElasticity` is introduced as follows:
 @Brick StandardElasticity;
 ~~~~
 
-> **Automic declaration of the elastic strain**
+> **Atomic declaration of the elastic strain**
 >
 > The `Implicit` DSL automatically defines the elastic strain as the
 > first state variable.
@@ -857,7 +857,7 @@ Edess.setEntryName("DryingCreepStrain");
  * Shifted value of the historical minimale of relative humidity 
  *
  * This value has been shifted (value + 1) so the implicit initialization
- * to zero of this variable in most finite element solvers is meaningfull.
+ * to zero of this variable in most finite element solvers is meaningful.
  * So for initialization at value different to 1, please don't forget to
  * take into account this shift.
  */
@@ -901,7 +901,7 @@ rH.setEntryName("RelativeHumidity");
 
 ### Local variables
 
-Local variables are a powerfull feature of `MFront` which allows to
+Local variables are a powerful feature of `MFront` which allows to
 define variables which will be accessible in each code blocks.
 
 In this implementation, we will need local variables for two distinct
@@ -923,9 +923,9 @@ Equations @eq:burger_full:temperature_dependence and
 Those local variables are declared as follows:
 
 ~~~~{.cxx}
-//! first Lamé coeffient
+//! first Lamé coefficient
 @LocalVariable real lambda;
-//! second Lamé coeffient
+//! second Lamé coefficient
 @LocalVariable real mu;
 //! variable to compute effect of relative on drying creep
 @LocalVariable real VrH;
@@ -1025,7 +1025,7 @@ Finally, we compute the quantities relative the the drying strain:
 
 Note that this implementation uses a little trick to activate the drying
 strain base on the value of \(\eta_{\text{fd}}\). In the latter is
-negative or null, drying creep is desactivated.
+negative or null, drying creep is deactivated.
 
 ## Implicit system
 
@@ -1189,7 +1189,7 @@ In this section, we specifically dicu
 ## `MTest` non regression test cases
 
 `5` `MTest`' unit tests associated with the `Burger_EDF_CIWAP_2021`
-behaviour have been introduced in the `MFrontGallery` project. Thoses
+behaviour have been introduced in the `MFrontGallery` project. Those
 tests are automatically executed when `MFront` evolves as part of the
 its continuous integration strategy.
 
@@ -1197,8 +1197,8 @@ This ensures that the implementations of the `Burger_EDF_CIWAP_2021`
 behaviour compiles despite `MFront`' evolutions and that the `MTest`'
 tests gives the same results.
 
-It is also worth mentionning that each test is executed \(5\) times
-which differents roundings modes (including a so-called random rounding
+It is also worth mentioning that each test is executed \(5\) times
+which different roundings modes (including a so-called random rounding
 mode where the rounding mode is changed a various predefined steps by
 `MTest`), providing a basic and naive check of the numerical stability
 of the results.

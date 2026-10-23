@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Tests/TestCase.hxx
  * \author Thomas Helfer
- * \date   11 Apr 10
+ * \date 11/04/2010
  * \brief
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -17,6 +17,8 @@
 #include <string>
 #include <string_view>
 #include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Raise.hxx"
+#include "TFEL/Macros.hxx"
 #include "TFEL/Tests/Test.hxx"
 #include "TFEL/Tests/TestResult.hxx"
 
@@ -36,16 +38,21 @@
  * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X: code to be evaluated
  */
-#define TFEL_TESTS_ASSERT(X)                                  \
-  do {                                                        \
-    try {                                                     \
-      TestCase::registerResult("assertion: '" #X "'", (X));   \
-    } catch (std::exception & tfel_test_exception) {          \
-      TestCase::registerResult("assertion: '" #X "'", false,  \
-                               tfel_test_exception.what());   \
-    } catch (...) {                                           \
-      TestCase::registerResult("assertion: '" #X "'", false); \
-    }                                                         \
+#define TFEL_TESTS_ASSERT(X)                                                \
+  do {                                                                      \
+    const auto TFEL_TEMPORARY_VARIABLE(TFEL_TESTS_ASSERT) = (X);            \
+    try {                                                                   \
+      TestCase::registerResult("assertion: '" #X "'",                       \
+                               TFEL_TEMPORARY_VARIABLE(TFEL_TESTS_ASSERT)); \
+    } catch (std::exception & tfel_test_exception) {                        \
+      TestCase::registerResult("assertion: '" #X "'", false,                \
+                               tfel_test_exception.what());                 \
+    } catch (...) {                                                         \
+      TestCase::registerResult("assertion: '" #X "'", false);               \
+    }                                                                       \
+    if (!(TFEL_TEMPORARY_VARIABLE(TFEL_TESTS_ASSERT))) {                    \
+      tfel::raise("assertion: '" #X "' failed");                            \
+    }                                                                       \
   } while (0)
 
 /*!
@@ -60,7 +67,7 @@
     bool tfel_test_has_thrown = false;                                       \
     auto tfel_test_details = std::string{};                                  \
     try {                                                                    \
-      X;                                                                     \
+      static_cast<void>(X);                                                  \
     } catch (Y&) {                                                           \
       tfel_test_has_thrown = true;                                           \
     } catch (...) {                                                          \
@@ -83,6 +90,23 @@
     } catch (...) {                                          \
       TestCase::registerResult(#X "()", false);              \
     }                                                        \
+  } while (0)
+
+/*!
+ * \def TFEL_TESTS_CHECK
+ * \brief an helper macro to ease the use of TestCase::registerResult
+ * \param X: value to be tested
+ */
+#define TFEL_TESTS_CHECK(X)                                 \
+  do {                                                      \
+    try {                                                   \
+      TestCase::registerResult("check: '" #X "'", X);       \
+    } catch (std::exception & tfel_test_exception) {        \
+      TestCase::registerResult("check: '" #X "'", false,    \
+                               tfel_test_exception.what()); \
+    } catch (...) {                                         \
+      TestCase::registerResult("check: '" #X "'", false);   \
+    }                                                       \
   } while (0)
 
 /*!
@@ -179,17 +203,25 @@ namespace tfel::tests {
 
   //! \brief class used to describe an single test
   struct TFELTESTS_VISIBILITY_EXPORT TestCase : public Test {
+    //! \brief copy constructor (disabled)
+    TestCase(const TestCase&) = delete;
+    //! \brief move constructor (disabled)
+    TestCase(TestCase&&) = delete;
+    //! \brief assignement operator (disabled)
+    TestCase& operator=(const TestCase&) = delete;
+    //! \brief move assignement operator (disabled)
+    TestCase& operator=(TestCase&&) = delete;
     //! \return the name of the test
-    std::string name() const override;
+    [[nodiscard]] std::string name() const override;
     //! \return the group of the test
-    std::string classname() const override;
+    [[nodiscard]] std::string classname() const override;
 
    protected:
     /*!
      * \brief constructor
      * \param[in] n: name  of the test
      */
-    TestCase(const std::string&);
+    explicit TestCase(const std::string&);
     /*!
      * \brief constructor
      * \param[in] g: group of the test
@@ -204,20 +236,12 @@ namespace tfel::tests {
     virtual void registerResult(const std::string_view,
                                 const bool,
                                 const std::string_view = std::string_view{});
-    //! destructor
+    //! \brief destructor
     ~TestCase() override;
-    //! result of the test
+    //! \brief result of the test
     TestResult result;
 
    private:
-    //! copy constructor (disabled)
-    TestCase(const TestCase&) = delete;
-    //! move constructor (disabled)
-    TestCase(TestCase&&) = delete;
-    //! assignement operator (disabled)
-    TestCase& operator=(const TestCase&) = delete;
-    //! move assignement operator (disabled)
-    TestCase& operator=(TestCase&&) = delete;
     //! group of the test
     const std::string gname;
     //! name of the test

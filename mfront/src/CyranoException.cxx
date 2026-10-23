@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   21 fév 2014
+ * \date 21/02/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -39,7 +39,7 @@ namespace cyrano {
     return msg.c_str();
   }  // end of CyranoException::what
 
-  std::string CyranoException::getMsg() const noexcept {
+  const std::string& CyranoException::getMsg() const noexcept {
     return msg;
   }  // end of CyranoException::getMsg
 

@@ -1,7 +1,7 @@
 /*!
  * \file   src/Tests/XMLTestOutput.cxx
  * \author Thomas Helfer
- * \date   10 Apr 10
+ * \date 10/04/2010
  * \brief
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -42,7 +42,7 @@ namespace tfel::tests {
     replace_all(s, '\'', "&apos;");
   }
 
-  XMLTestOutput::XMLTestOutput(const std::string& o) : file(o), testsuite(0u) {
+  XMLTestOutput::XMLTestOutput(const std::string& o) : file(o) {
     if (this->file.size() >= 4) {
       if (this->file.substr(this->file.size() - 4) == ".xml") {
         this->file = this->file.substr(0u, this->file.size() - 4);

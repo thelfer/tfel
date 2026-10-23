@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/CMaterialPropertyInterface.hxx
  * \brief  This file declares the CMaterialPropertyInterface class
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -57,43 +57,43 @@ namespace mfront {
      * \return the name of the generated library
      * \param[in] mpd: material property description
      */
-    virtual std::string getGeneratedLibraryName(
+    [[nodiscard]] virtual std::string getGeneratedLibraryName(
         const MaterialPropertyDescription&) const;
 
-    virtual void writeBeginHeaderNamespace(std::ostream&) const override;
+    void writeBeginHeaderNamespace(std::ostream&) const override;
 
-    virtual void writeEndHeaderNamespace(std::ostream&) const override;
+    void writeEndHeaderNamespace(std::ostream&) const override;
 
-    virtual void writeBeginSrcNamespace(std::ostream&) const override;
+    void writeBeginSrcNamespace(std::ostream&) const override;
 
-    virtual void writeEndSrcNamespace(std::ostream&) const override;
+    void writeEndSrcNamespace(std::ostream&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    virtual std::string getHeaderFileName(const std::string&,
-                                          const std::string&) const override;
+    [[nodiscard]] std::string getHeaderFileName(
+        const std::string&, const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    virtual std::string getSrcFileName(const std::string&,
-                                       const std::string&) const override;
+    [[nodiscard]] std::string getSrcFileName(const std::string&,
+                                             const std::string&) const override;
     /*!
      * \param[in] mpd: material property description
      */
-    virtual std::string getFunctionName(
+    [[nodiscard]] std::string getFunctionName(
         const MaterialPropertyDescription&) const override;
 
     /*!
      * \param[in] mpd: material property description
      */
-    virtual std::string getCheckBoundsFunctionName(
+    [[nodiscard]] std::string getCheckBoundsFunctionName(
         const MaterialPropertyDescription&) const override;
     /*!
      * \return true if a check bounds function is required
      */
-    virtual bool requiresCheckBoundsFunction() const override;
+    [[nodiscard]] bool requiresCheckBoundsFunction() const override;
   };  // end of CMaterialPropertyInterface
 
 }  // end of namespace mfront

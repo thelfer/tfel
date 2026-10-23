@@ -27,7 +27,7 @@ namespace tfel::math::anderson {
   // Constructor
   // Nmax Matrix size
   template <typename real>
-  CovarianceMatrix<real>::CovarianceMatrix(const size_type n) : N(0) {
+  CovarianceMatrix<real>::CovarianceMatrix(const size_type n) {
     this->resize(n);
   }
 

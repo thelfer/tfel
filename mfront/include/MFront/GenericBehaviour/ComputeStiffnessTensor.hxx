@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/GenericBehaviour/ComputeStiffnessTensor.hxx
  * \brief  This file declares the CastemComputeStiffnessTensor class
  * \author Thomas Helfer
- * \date   25/07/2018
+ * \date 25/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

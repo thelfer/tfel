@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/UnaryResultType.hxx
  * \brief  This file declares the UnaryResultType class
  * \author Thomas Helfer
- * \date   13 Oct 2006
+ * \date 13/10/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -37,7 +37,7 @@ namespace tfel::math {
   template <typename TagA, typename TagOp, typename A, typename Op>
   struct ComputeUnaryOperationResult {
     //! result of the binary operation.
-    typedef tfel::meta::InvalidType type;
+    using type = tfel::meta::InvalidType;
   };  // end of ComputeUnaryOperationResult
 
   /*!

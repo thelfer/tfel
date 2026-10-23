@@ -27,19 +27,19 @@ namespace tfel::math {
             typename Model = KrigingDefaultModel<N, T>>
   struct TFEL_VISIBILITY_LOCAL Kriging : public Model {
     Kriging() = default;
+    Kriging(const Kriging&) = delete;
+    Kriging& operator=(const Kriging&) = delete;
 
     void addValue(const typename KrigingVariable<N, T>::type&, const T&);
 
     void buildInterpolation();
 
-    T operator()(const typename KrigingVariable<N, T>::type&) const;
+    [[nodiscard]] T operator()(
+        const typename KrigingVariable<N, T>::type&) const;
 
     ~Kriging() noexcept;
 
    private:
-    Kriging(const Kriging&) = delete;
-    Kriging& operator=(const Kriging&) = delete;
-
     tfel::math::vector<typename KrigingVariable<N, T>::type> x;
     tfel::math::vector<T> f;
     tfel::math::vector<T> a;

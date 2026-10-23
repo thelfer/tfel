@@ -2,7 +2,7 @@
  * \file   HyperbolicSineViscoplasticFlow.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28/03/2018
+ * \date 28/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,7 +14,6 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"

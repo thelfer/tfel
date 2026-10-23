@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0022 NEW)
 cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0074 NEW)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
   cmake_policy(SET CMP0167 NEW)  
 endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
@@ -14,6 +15,9 @@ set(TFEL_VERSION_FLAVOUR "" CACHE STRING
   "Append a flavour to the version number")
 option(TFEL_APPEND_VERSION
   "append TFEL version number to all libraries, executables and directories" OFF)
+option(unversioned-libraries
+  "if enabled, the VERSION and SOVERSION properties of the libraries are not set, \
+so that each library is a single file. This is used by the pip package" OFF)
 
 option(BUILD_SHARED_LIBS  "enable shared libraries" ON)
 if(NOT BUILD_SHARED_LIBS)
@@ -120,12 +124,15 @@ option(enable-testing "enable tests" ON)
 option(enable-mfront-quantity-tests "enable tests of behaviours using quantities (such tests fails on old compilers)" ON)
 if(enable-testing)
   enable_testing()
+  add_custom_target(build-tests)
   if(CMAKE_CONFIGURATION_TYPES)
     add_custom_target(check COMMAND
-      ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
+      ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>
+      DEPENDS build-tests)
   else(CMAKE_CONFIGURATION_TYPES)
     add_custom_target(check COMMAND
-      ${CMAKE_CTEST_COMMAND} -T test )
+      ${CMAKE_CTEST_COMMAND} -T test
+      DEPENDS build-tests)
   endif(CMAKE_CONFIGURATION_TYPES)
 endif()
 
@@ -294,24 +301,36 @@ option(enable-numpy-support
   "enable numpy support. This option has no effect if python bindings are disabled" ON)
  
 if(enable-python OR enable-python-bindings)
+  set(_tfel_python_components Interpreter)
+  if(CMAKE_VERSION VERSION_LESS 3.18)
+    list(APPEND _tfel_python_components Development)
+  else(CMAKE_VERSION VERSION_LESS 3.18)
+    # The python library is only used by MFront's python interface. It is
+    # optional as it is not always available (for instance in the
+    # manylinux images used to build the pip package)
+    list(APPEND _tfel_python_components Development.Module)
+    set(_tfel_python_optional_components OPTIONAL_COMPONENTS Development.Embed)
+  endif(CMAKE_VERSION VERSION_LESS 3.18)
   if(enable-numpy-support)
-    find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
-  else()
-    find_package(Python REQUIRED COMPONENTS Interpreter Development)
-  endif()
+    list(APPEND _tfel_python_components NumPy)
+  endif(enable-numpy-support)
+  find_package(Python REQUIRED COMPONENTS ${_tfel_python_components}
+               ${_tfel_python_optional_components})
   set(HAVE_PYTHON ON)
   tfel_add_c_cxx_definitions("HAVE_PYTHON=1")
   tfel_add_c_cxx_definitions("TFEL_PYTHON_INCLUDES=\"-I${Python_INCLUDE_DIRS}\"")
-  get_filename_component(PYTHON_LIBRARY_PATH ${Python_LIBRARIES} PATH)
-  get_filename_component(PYTHON_LIBRARY_FULL ${Python_LIBRARIES} NAME)
-  string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
-  tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY_PATH=\"${PYTHON_LIBRARY_PATH}\"")
-  tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY=\"${PYTHON_LIBRARY}\"")
-  if(MSVC)
-    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"")
-  else(MSVC)
-    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
-  endif(MSVC) 
+  if(Python_LIBRARIES)
+    get_filename_component(PYTHON_LIBRARY_PATH ${Python_LIBRARIES} PATH)
+    get_filename_component(PYTHON_LIBRARY_FULL ${Python_LIBRARIES} NAME)
+    string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
+    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY_PATH=\"${PYTHON_LIBRARY_PATH}\"")
+    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY=\"${PYTHON_LIBRARY}\"")
+    if(MSVC)
+      tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"")
+    else(MSVC)
+      tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
+    endif(MSVC)
+  endif(Python_LIBRARIES)
   message(STATUS "found python          ${Python_VERSION}")
   message(STATUS "python include path   ${Python_INCLUDE_DIRS}")
   message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
@@ -374,6 +393,18 @@ if(enable-java)
   endforeach(jni_include ${JNI_INCLUDE_DIRS})
   tfel_add_c_cxx_definitions("TFEL_JAVA_INCLUDES=\"${JNI_INCLUDES_FLAGS}\"")
 endif(enable-java)
+
+# Add support for Tiny Device-callable Linear Solver library
+#
+# - https://trsxvz.github.io/TDLS/index.html
+# - https://github.com/trsxvz/TDLS
+
+option(enable-tdls "enable TDLS support" OFF)
+if(enable-tdls)
+  find_package(tdls REQUIRED)
+  option(enable-tdls-as-default-linear-system-solver-in-mfront
+         "use TDLS as the default linear system solver in MFront" OFF)
+endif(enable-tdls)
 
 # cadna
 include(cmake/modules/cadna.cmake)
@@ -578,17 +609,10 @@ else(TFEL_APPEND_SUFFIX)
 endif(TFEL_APPEND_SUFFIX)
 
 # install test-suite
-if(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY test-suite
-    DESTINATION share/tfel-${TFEL_SUFFIX}/
-    COMPONENT code
-    PATTERN ".svn" EXCLUDE)
-else(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY test-suite
-    DESTINATION share/tfel/
-    COMPONENT code
-    PATTERN ".svn" EXCLUDE)
-endif(TFEL_APPEND_SUFFIX)
+install(DIRECTORY test-suite
+  DESTINATION ${TFEL_DATAROOTDIR}
+  COMPONENT code
+  PATTERN ".svn" EXCLUDE)
 
 set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})

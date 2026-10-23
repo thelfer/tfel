@@ -2,7 +2,7 @@
  * \file   mfront/src/RungeKuttaDSLBaseCodeGenerator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/08/2022
+ * \date 04/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -132,11 +132,11 @@ namespace mfront {
    * the time step
    */
   static std::function<
-      std::string(const BehaviourDescription::MaterialPropertyInput&)>&
+      std::string(const BehaviourDescription::MaterialPropertyInput&)>
   modifyVariableForStiffnessTensorComputation(const std::string& cn) {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    static Modifier m =
+    const Modifier m =
         [cn](const BehaviourDescription::MaterialPropertyInput& i) {
           if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
               (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
@@ -167,11 +167,11 @@ namespace mfront {
    * the time step.
    */
   static std::function<
-      std::string(const BehaviourDescription::MaterialPropertyInput&)>&
+      std::string(const BehaviourDescription::MaterialPropertyInput&)>
   modifyVariableForStiffnessTensorComputation2(const std::string& cn) {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    static Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
+    const Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
                                  i) {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category ==
@@ -1111,9 +1111,11 @@ namespace mfront {
                                            const std::string& k,
                                            const std::string& n,
                                            const std::string& e) {
+      // `second` is true if the variable is defined for at least one
+      // modelling hypothesis, `first` if it is defined for all of them
       const auto exists = bd.checkVariableExistence(n, k, false);
-      if (exists.first) {
-        if (!exists.second) {
+      if (exists.second) {
+        if (!exists.first) {
           tfel::raise("findStressErrorNormalizationFactor: the `" + n +
                       "` variable is not "
                       "defined for all modelling hypotheses as a '" +
@@ -1138,9 +1140,11 @@ namespace mfront {
     };
     auto checkVariable = [bd, testInGivenVariableCategory,
                           checkVariableDefinition](const std::string& n) {
+      // `first` is true if the variable is defined for all the modelling
+      // hypotheses, `second` if it is defined for at least one of them
       const auto exists = bd.checkVariableExistence(n);
-      if (exists.first) {
-        if (!exists.second) {
+      if (exists.second) {
+        if (!exists.first) {
           tfel::raise(
               "findStressErrorNormalizationFactor: the `" + n +
               "` variable is not defined for all modelling hypotheses.");
@@ -1203,13 +1207,13 @@ namespace mfront {
     if (bd.isNameReserved("stress_error_normalization_factor")) {
       const auto senf_exists =
           bd.checkVariableExistence("stress_error_normalization_factor");
-      if (!senf_exists.first) {
+      if (!senf_exists.second) {
         tfel::raise(
             "findStressErrorNormalizationFactor: the "
             "`stress_error_normalization_factor` variable is not defined "
-            "as a paramter.");
+            "as a parameter.");
       }
-      if (!senf_exists.second) {
+      if (!senf_exists.first) {
         tfel::raise(
             "findStressErrorNormalizationFactor: the "
             "`stress_error_normalization_factor` variable is not defined "
@@ -1657,7 +1661,7 @@ namespace mfront {
     if (getDebugMode()) {
       os << "cout << \"" << this->bd.getClassName()
          << "::integrate() : multiplying time step by a factor \" << 1/("
-         << this->bd.getClassName() << "::rkcastem_fac) << endl;\n";
+         << this->bd.getClassName() << "::rkcastem_div) << endl;\n";
     }
     os << "}\n"
        << "if(dt_<dtprec){\n"
@@ -2218,16 +2222,16 @@ namespace mfront {
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n";
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
-      os << "integrate(const SMFlag smflag,const SMType smt) override final{\n";
+      os << "integrate(const SMFlag smflag,const SMType smt) final{\n";
     } else {
       if ((this->bd.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->bd.getBehaviourType() ==
            BehaviourDescription::COHESIVEZONEMODEL)) {
         os << "integrate(const SMFlag smflag, const SMType smt) "
-           << "override final{\n";
+           << "final{\n";
       } else {
-        os << "integrate(const SMFlag, const SMType smt) override final{\n";
+        os << "integrate(const SMFlag, const SMType smt) final{\n";
       }
     }
     os << "using namespace std;\n"

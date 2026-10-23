@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   19 Jan 2007
+ * \date 19/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -36,11 +36,11 @@ namespace mfront {
         value(value_) {}
 
   StaticVariableDescription::StaticVariableDescription(
-      StaticVariableDescription&&) = default;
+      StaticVariableDescription&&) noexcept = default;
   StaticVariableDescription::StaticVariableDescription(
       const StaticVariableDescription&) = default;
   StaticVariableDescription& StaticVariableDescription::operator=(
-      StaticVariableDescription&&) = default;
+      StaticVariableDescription&&) noexcept = default;
   StaticVariableDescription& StaticVariableDescription::operator=(
       const StaticVariableDescription&) = default;
   StaticVariableDescription::~StaticVariableDescription() = default;

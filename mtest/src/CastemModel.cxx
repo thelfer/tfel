@@ -43,6 +43,16 @@ namespace mtest {
     this->mpnames.clear();
     const auto mps = elm.getUMATMaterialPropertiesNames(l, b, nh);
     this->mpnames.insert(this->mpnames.end(), mps.begin(), mps.end());
+    //
+    const bool isTemperatureAndExternalStateVariable =
+        std::find(this->evnames.begin(), this->evnames.end(), "Temperature") !=
+        this->evnames.end();
+    if (isTemperatureAndExternalStateVariable) {
+      if (this->evnames.at(0) != "Temperature") {
+        tfel::raise(
+            "the temperature must be the first external state variable");
+      }
+    }
   }
 
   tfel::math::tmatrix<3u, 3u, real> CastemModel::getRotationMatrix(
@@ -81,9 +91,9 @@ namespace mtest {
   }
 
   std::pair<bool, real> CastemModel::computePredictionOperator(
-      BehaviourWorkSpace& wk,
-      const CurrentState& s,
-      const StiffnessMatrixType ktype) const {
+      BehaviourWorkSpace&,
+      const CurrentState&,
+      const StiffnessMatrixType) const {
     tfel::raise(
         "CastemModel::computePredictionOperator: "
         "computation of the tangent operator "
@@ -94,14 +104,14 @@ namespace mtest {
       CurrentState& s,
       BehaviourWorkSpace& wk,
       const real dt,
-      const StiffnessMatrixType ktype) const {
+      const StiffnessMatrixType) const {
     using namespace tfel::math;
     using namespace castem;
     using tfel::math::vector;
     CastemInt ntens;
     CastemInt ndi;
-    CastemInt nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
+    auto nprops = static_cast<CastemInt>(s.mprops1.size());
     const auto h = this->getHypothesis();
     if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
       ndi = 14;
@@ -140,12 +150,29 @@ namespace mtest {
                                       0, 0, 1};
     auto kinc = CastemInt{1};
     auto k = CastemReal{0};
-    (this->fct)(&s.s1(0), &wk.ivs(0), &k, nullptr, nullptr, nullptr, nullptr,
-                nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dt,
-                &(s.esv0(0)), &(s.desv(0)), &(s.esv0(0)) + 1, &(s.desv(0)) + 1,
-                nullptr, &ndi, nullptr, &ntens, &nstatv, &(s.mprops1(0)),
-                &nprops, nullptr, &drot(0, 0), &ndt, nullptr, nullptr, nullptr,
-                nullptr, nullptr, nullptr, nullptr, nullptr, &kinc, 0);
+    const bool isTemperatureAndExternalStateVariable =
+        std::find(this->evnames.begin(), this->evnames.end(), "Temperature") !=
+        this->evnames.end();
+    if (isTemperatureAndExternalStateVariable) {
+      (this->fct)(&s.s1(0), &wk.ivs(0), &k, nullptr, nullptr, nullptr, nullptr,
+                  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dt,
+                  &(s.esv0(0)), &(s.desv(0)), &(s.esv0(0)) + 1,
+                  &(s.desv(0)) + 1, nullptr, &ndi, nullptr, &ntens, &nstatv,
+                  &(s.mprops1(0)), &nprops, nullptr, &drot(0, 0), &ndt, nullptr,
+                  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                  &kinc, 0);
+    } else {
+      auto T = real{};
+      auto dT = real{};
+      const auto* const predef = s.esv0.empty() ? nullptr : &(s.esv0(0));
+      const auto* const dpred = s.desv.empty() ? nullptr : &(s.desv(0));
+      (this->fct)(&s.s1(0), &wk.ivs(0), &k, nullptr, nullptr, nullptr, nullptr,
+                  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dt, &T,
+                  &dT, predef, dpred, nullptr, &ndi, nullptr, &ntens, &nstatv,
+                  &(s.mprops1(0)), &nprops, nullptr, &drot(0, 0), &ndt, nullptr,
+                  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                  &kinc, 0);
+    }
     if (kinc != 1) {
       return {false, ndt};
     }

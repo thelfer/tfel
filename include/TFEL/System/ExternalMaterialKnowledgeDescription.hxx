@@ -2,7 +2,7 @@
  * \file   include/TFEL/System/ExternalMaterialKnowledgeDescription.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15 June 2015
+ * \date 15/06/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -35,13 +35,13 @@ namespace tfel::system {
     ExternalMaterialKnowledgeDescription();
     //! \brief move constructor
     ExternalMaterialKnowledgeDescription(
-        ExternalMaterialKnowledgeDescription&&);
+        ExternalMaterialKnowledgeDescription&&) noexcept;
     //! \brief move constructor
     ExternalMaterialKnowledgeDescription(
         const ExternalMaterialKnowledgeDescription&);
     //! \brief move assignement
     ExternalMaterialKnowledgeDescription& operator=(
-        ExternalMaterialKnowledgeDescription&&);
+        ExternalMaterialKnowledgeDescription&&) noexcept;
     //! \brief standard assignement
     ExternalMaterialKnowledgeDescription& operator=(
         const ExternalMaterialKnowledgeDescription&);

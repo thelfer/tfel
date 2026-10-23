@@ -26,7 +26,7 @@ namespace tfel::utilities {
     /*!
      * \param f : file to be read
      */
-    TestDocParser(const std::string&);
+    explicit TestDocParser(const std::string&);
     /*!
      * add the documentation of the tests
      */

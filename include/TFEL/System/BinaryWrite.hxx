@@ -65,7 +65,7 @@ namespace tfel::system {
   template <typename T>
   struct EnumBinaryWriter {
     //! a simple alias
-    using integer = typename std::underlying_type<T>::type;
+    using integer = std::underlying_type_t<T>;
     static void exe(const int s, const T& v) {
       BinaryWriter<integer>::exe(s, static_cast<const integer&>(v));
     }
@@ -104,16 +104,15 @@ namespace tfel::system {
    */
   template <typename T>
   struct BinaryWriter
-      : std::conditional<std::is_enum<T>::value,
-                         EnumBinaryWriter<T>,
-                         typename std::conditional<
-                             std::is_pointer<T>::value,
-                             PointerBinaryWriter<T>,
-                             typename std::conditional<
-                                 std::is_empty<T>::value,
-                                 EmptyBinaryWriter<T>,
-                                 StandardBinaryWriter<T>>::type>::type>::type {
-  };
+      : std::conditional_t<
+            std::is_enum_v<T>,
+            EnumBinaryWriter<T>,
+            typename std::conditional_t<
+                std::is_pointer_v<T>,
+                PointerBinaryWriter<T>,
+                typename std::conditional_t<std::is_empty_v<T>,
+                                            EmptyBinaryWriter<T>,
+                                            StandardBinaryWriter<T>>>> {};
 
   /*!
    * partial specialisation for c-style string

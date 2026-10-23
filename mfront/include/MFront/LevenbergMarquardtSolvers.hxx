@@ -23,17 +23,18 @@ namespace mfront {
    * the Levenberg-Marquart algorithm.
    */
   struct LevenbergMarquardtSolverBase : public NonLinearSystemSolverBase {
-    std::vector<std::string> getReservedNames() const override;
-    std::vector<std::string> getSpecificHeaders() const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    bool usesJacobian() const override;
-    bool usesJacobianInvert() const override;
-    bool allowsJacobianInitialisation() const override;
-    bool allowsJacobianInvertInitialisation() const override;
-    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
+    [[nodiscard]] std::vector<std::string> getReservedNames() const override;
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] bool usesJacobian() const override;
+    [[nodiscard]] bool usesJacobianInvert() const override;
+    [[nodiscard]] bool allowsJacobianInitialisation() const override;
+    [[nodiscard]] bool allowsJacobianInvertInitialisation() const override;
+    [[nodiscard]] bool
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
         const override;
-    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatSpecificKeywords(
         BehaviourDescription&,
         const std::string&,
         const tokens_iterator,
@@ -50,14 +51,14 @@ namespace mfront {
                                        const Hypothesis) const override;
 
    protected:
-    //! destructor
+    //! \brief destructor
     ~LevenbergMarquardtSolverBase() override;
   };  // end of struct LevenbergMarquardtSolverBase
 
   //! \brief the standard Levenberg-Marquart algorithm
   struct LevenbergMarquardtSolver : public LevenbergMarquardtSolverBase {
-    bool requiresNumericalJacobian() const override;
-    //! destructor
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
+    //! \brief destructor
     ~LevenbergMarquardtSolver() override;
   };
 
@@ -67,8 +68,8 @@ namespace mfront {
    */
   struct LevenbergMarquardtNumericalJacobianSolver
       : public LevenbergMarquardtSolverBase {
-    bool requiresNumericalJacobian() const override;
-    //! destructor
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
+    //! \brief destructor
     ~LevenbergMarquardtNumericalJacobianSolver() override;
   };
 

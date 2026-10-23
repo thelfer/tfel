@@ -3,7 +3,7 @@
  * \brief compute the line energy of a straight dislocation within
  * isotropic elasticity.
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -50,7 +50,7 @@ namespace numodis {
       \return energy per unit length
     */
     //===============================================================
-    double E(double theta) const {
+    [[nodiscard]] double E(double theta) const {
       return _mu * _burgers * _burgers * (1.0 - _nu * pow(cos(theta), 2)) /
              (1.0 - _nu);
     }
@@ -65,7 +65,7 @@ namespace numodis {
       \return derivative of the energy per unit length
     */
     //================================================================
-    double dEdtheta(double theta) const {
+    [[nodiscard]] double dEdtheta(double theta) const {
       return _mu * _burgers * _burgers * _nu * sin(2.0 * theta) / (1.0 - _nu);
     }
 
@@ -76,7 +76,7 @@ namespace numodis {
     //----------------------------------------------------------------
     /*! \return Poisson coefficient                                 */
     //================================================================
-    double getNu() const { return _nu; }
+    [[nodiscard]] double getNu() const { return _nu; }
 
    private:
     //! shear modulus

@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   25/04/2022
+ * \date 25/04/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,26 +32,29 @@ namespace tfel::math::parser {
      * \brief constructor
      * \param[in] e: expression
      */
-    PowerFunction(const std::shared_ptr<Expr>) noexcept;
-    double getValue() const override;
-    std::string getCxxFormula(const std::vector<std::string>&) const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    explicit PowerFunction(const std::shared_ptr<Expr>) noexcept;
+    //
+    PowerFunction& operator=(const PowerFunction&) = delete;
+    PowerFunction& operator=(PowerFunction&&) = delete;
+    //
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::string getCxxFormula(
+        const std::vector<std::string>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
         const override;
     //! \brief destructor
     ~PowerFunction() override;
-
-   private:
-    PowerFunction& operator=(const PowerFunction&) = delete;
-    PowerFunction& operator=(PowerFunction&&) = delete;
   };  // end of struct PowerFunction
 
   /*!
@@ -65,15 +68,22 @@ namespace tfel::math::parser {
      * \param[in] n: exponent
      */
     GeneralPowerFunction(const std::shared_ptr<Expr>, const int) noexcept;
-    double getValue() const override;
-    std::string getCxxFormula(const std::vector<std::string>&) const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    //
+    GeneralPowerFunction& operator=(const GeneralPowerFunction&) = delete;
+    GeneralPowerFunction& operator=(GeneralPowerFunction&&) = delete;
+    //
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::string getCxxFormula(
+        const std::vector<std::string>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -82,8 +92,6 @@ namespace tfel::math::parser {
     ~GeneralPowerFunction() override;
 
    private:
-    GeneralPowerFunction& operator=(const GeneralPowerFunction&) = delete;
-    GeneralPowerFunction& operator=(GeneralPowerFunction&&) = delete;
     //! \brief exponent
     const int n;
   };  // end of struct GeneralPowerFunction

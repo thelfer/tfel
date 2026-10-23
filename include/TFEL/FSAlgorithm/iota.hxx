@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/iota.hxx
  * \brief  This file implements the iota class.
  * \author Thomas Helfer
- * \date   01 Aug 2006
+ * \date 01/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -30,7 +30,7 @@ namespace tfel::fsalgo {
    * \see iota.cxx for some elementary tests.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct iota {
@@ -60,7 +60,7 @@ namespace tfel::fsalgo {
    * algorithm.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct iota<0u> {
@@ -69,7 +69,7 @@ namespace tfel::fsalgo {
      * \sa iota<N>::exe() for details
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename T>
     TFEL_HOST_DEVICE constexpr static void exe(ForwardIterator, T) {}

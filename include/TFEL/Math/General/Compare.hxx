@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/Compare.hxx
  * \brief
  * \author Antoine Martin
- * \date   05/09/2025
+ * \date 05/09/2025
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -33,12 +33,13 @@ namespace tfel::math {
   /*
    * \brief compare two quantities with a precision
    */
-  template <std::floating_point ScalarType, UnitConcept UnitType>
+  template <QuantityConcept QuantityType>
   TFEL_HOST_DEVICE constexpr bool areAlmostEqual(
-      const ScalarType& eps,
-      const qt<UnitType, ScalarType>& a,
-      const qt<UnitType, ScalarType>& b) {
-    return std::abs(a.getValue() - b.getValue()) < eps;
+      const base_type<QuantityType>& eps,
+      const QuantityType& a,
+      const QuantityType&
+          b) requires(std::floating_point<base_type<QuantityType>>) {
+    return std::abs(base_type_cast(a) - base_type_cast(b)) < eps;
   }
 
 }  // end of namespace tfel::math

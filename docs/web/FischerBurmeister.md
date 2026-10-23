@@ -1,6 +1,15 @@
-% On the Fisher-Burmeister complementary function and its applications to multi-surface plasticity
-% Thomas Helfer
-% 17/01/2019
+---
+title: On the Fisher-Burmeister complementary function and its applications to multi-surface plasticity
+author: Thomas Helfer
+date: 17/01/2019
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\paren}[1]{{\left(#1\right)}}
 
@@ -45,21 +54,21 @@ f&\leq 0\\
 where:
 
 - \(\dot{\lambda}\) is the plastic multiplier.
-- \(f\) is a the yield function such that:
+- \(f\) is the yield function such that:
     - \(f< 0\) defines the elastic domain.
     - \(f= 0\) defines the yield surface.
 
 In other words, finding a plastic multiplier \(\dot{\lambda}\)
-satisfying Conditions @eq:KKK is equivalent to find the root of the
+satisfying Conditions @eq:KKK is equivalent to finding the root of the
 following equation:
 
 \[
 \Phi\paren{\dot{\lambda},-f}=0
 \]{#eq:FBp}
 
-If several plastic surfaces are involved, each plastic multipliers must
+If several plastic surfaces are involved, each plastic multiplier must
 satisfy an equation similar to @eq:FBp. In an implicit formulation, this
-remove the need of using a status method to determine which mechanisms
+removes the need of using a status method to determine which mechanisms
 are active or inactive.
 
 
@@ -95,4 +104,4 @@ y&\geq 0\\
 
 The authors are grateful to Y. Chemisky, main developer of the `Simcoon`
 library, for introducing them to the use of the Fisher-Burmeister
-complementary function in multi-surfaces plasticity.
+complementary function in multi-surface plasticity.

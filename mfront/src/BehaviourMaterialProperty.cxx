@@ -2,7 +2,7 @@
  * \file   BehaviourMaterialProperty.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08/07/2018
+ * \date 08/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,11 +32,11 @@ namespace mfront {
   BehaviourMaterialProperty::BehaviourMaterialProperty(
       const BehaviourMaterialProperty&) = default;
   BehaviourMaterialProperty::BehaviourMaterialProperty(
-      BehaviourMaterialProperty&&) = default;
+      BehaviourMaterialProperty&&) noexcept = default;
   BehaviourMaterialProperty& BehaviourMaterialProperty::operator=(
       const BehaviourMaterialProperty&) = default;
   BehaviourMaterialProperty& BehaviourMaterialProperty::operator=(
-      BehaviourMaterialProperty&&) = default;
+      BehaviourMaterialProperty&&) noexcept = default;
 
   bool BehaviourMaterialProperty::isScalar() const {
     return SupportedTypes::isScalarType(this->type);

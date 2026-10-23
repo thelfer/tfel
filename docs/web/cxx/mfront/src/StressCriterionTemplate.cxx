@@ -2,7 +2,7 @@
  * \file   mfront/src/__StressCriterionName__StressCriterion.cxx
  * \brief
  * \author __Author__
- * \date   __Date__
+ * \date __Date__
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -56,7 +56,7 @@ namespace mfront {
 
     struct __StressCriterionName__StressCriterionProxy {
       __StressCriterionName__StressCriterionProxy() {
-        auto &f = StressCriterionFactory::getFactory();
+        auto& f = StressCriterionFactory::getFactory();
         f.addGenerator("__StressCriterionName__", [] {
           return std::make_shared<__StressCriterionName__StressCriterion>();
         });

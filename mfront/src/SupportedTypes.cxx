@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   12/01/2007
+ * \date 12/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * re served.
  * This project is publicly released under either the GNU GPL Licence with
@@ -84,12 +84,13 @@ namespace mfront {
   }  // end of isSupportedConstexprIntegerVariables
 
   SupportedTypes::TypeParsingOptions::TypeParsingOptions() = default;
-  SupportedTypes::TypeParsingOptions::TypeParsingOptions(TypeParsingOptions&&) =
-      default;
+  SupportedTypes::TypeParsingOptions::TypeParsingOptions(
+      TypeParsingOptions&&) noexcept = default;
   SupportedTypes::TypeParsingOptions::TypeParsingOptions(
       const TypeParsingOptions&) = default;
   SupportedTypes::TypeParsingOptions&
-  SupportedTypes::TypeParsingOptions::operator=(TypeParsingOptions&&) = default;
+  SupportedTypes::TypeParsingOptions::operator=(TypeParsingOptions&&) noexcept =
+      default;
   SupportedTypes::TypeParsingOptions&
   SupportedTypes::TypeParsingOptions::operator=(const TypeParsingOptions&) =
       default;
@@ -149,7 +150,7 @@ namespace mfront {
 
   SupportedTypes::TypeSize::TypeSize() = default;
 
-  SupportedTypes::TypeSize::TypeSize(TypeSize&&) = default;
+  SupportedTypes::TypeSize::TypeSize(TypeSize&&) noexcept = default;
 
   SupportedTypes::TypeSize::TypeSize(const TypeSize&) = default;
 
@@ -192,8 +193,8 @@ namespace mfront {
     }
   }  // end of TypeSize
 
-  SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(TypeSize&&) =
-      default;
+  SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(
+      TypeSize&&) noexcept = default;
 
   SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(
       const TypeSize&) = default;
@@ -509,7 +510,8 @@ namespace mfront {
       const auto types = mfront::getST2toST2TypeAliases();
       return std::find(types.begin(), types.end(), type) != types.end();
     };
-    if (t.type == "tfel::math::quantity") {
+    if ((t.type == "tfel::math::quantity") ||
+        (t.type == "tfel::math::quantity_or_base_type")) {
       return {0, 3};
     } else if (t.type == "tfel::math::fsarray") {
       return treatArray1D();
@@ -599,7 +601,8 @@ namespace mfront {
       SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
       return p->second;
     }
-    if (t.type == "tfel::math::quantity") {
+    if ((t.type == "tfel::math::quantity") ||
+        (t.type == "tfel::math::quantity_or_base_type")) {
       return SupportedTypes::SCALAR;
     } else if (t.type == "tfel::math::tvector") {
       return SupportedTypes::TVECTOR;
@@ -713,7 +716,7 @@ namespace mfront {
                                           const TypeFlag& f2) {
       auto N = getTensorialObjectSpaceDimension(t);
       if (N == 0) {
-        return TypeSize::getDerivativeSize(a, f1, f2);
+        return TypeSize::getDerivativeSize(a, TypeSize{f1}, TypeSize{f2});
       }
       const auto s1 = TypeSize(f1).getValueForDimension(N);
       const auto s2 = TypeSize(f2).getValueForDimension(N);
@@ -724,8 +727,8 @@ namespace mfront {
     if (std::find(st2tost2_alias.begin(), st2tost2_alias.end(), t.type) !=
         st2tost2_alias.end()) {
       SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
-      return TypeSize::getDerivativeSize(a, SupportedTypes::STENSOR,
-                                         SupportedTypes::STENSOR);
+      return TypeSize::getDerivativeSize(a, TypeSize{SupportedTypes::STENSOR},
+                                         TypeSize{SupportedTypes::STENSOR});
     }
     //
     if (t.type == "tfel::math::st2tost2") {
@@ -1037,7 +1040,8 @@ namespace mfront {
       for (decltype(args.size()) i = args.size(); i != 8u; ++i) {
         args.push_back(0);
       }
-      t.type = "tfel::math::quantity";
+      args.insert(args.begin(), {"use_qt"});
+      t.type = "tfel::math::quantity_or_base_type";
     } else {
       t.template_arguments.reset();
       t.type = "real";
@@ -1369,7 +1373,7 @@ namespace mfront {
     auto type = TypeInformation{};
     if (current->value != "::") {
       type.type = current->value;
-      throw_if(!CxxTokenizer::isValidIdentifier(type.type, false),
+      throw_if(!CxxTokenizer::isValidIdentifier(type.type, true),
                "SupportedTypes::parseType: given type '" + type.type +
                    "' is not valid.");
       ++(current);

@@ -1,0 +1,13 @@
+interfaces_options: {
+  generic-parallel: {
+    backend: sycl {
+     data_transfer_policy: "none"
+    }
+  }
+},
+compilation_options : {
+  cxx : {
+    compiler: "@TFEL_ACPP_COMPILER@",
+    compilation_flags: "-O2 -march=native" 
+  }
+}

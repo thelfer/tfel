@@ -2,7 +2,7 @@
  * \file   src/System/ExternalMaterialKnowledgeDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   11/05/2022
+ * \date 11/05/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -40,7 +40,7 @@ namespace tfel::system {
   ExternalMaterialKnowledgeDescription::ExternalMaterialKnowledgeDescription() =
       default;
   ExternalMaterialKnowledgeDescription::ExternalMaterialKnowledgeDescription(
-      ExternalMaterialKnowledgeDescription&&) = default;
+      ExternalMaterialKnowledgeDescription&&) noexcept = default;
   ExternalMaterialKnowledgeDescription::ExternalMaterialKnowledgeDescription(
       const ExternalMaterialKnowledgeDescription&) = default;
   ExternalMaterialKnowledgeDescription&
@@ -48,7 +48,7 @@ namespace tfel::system {
       const ExternalMaterialKnowledgeDescription&) = default;
   ExternalMaterialKnowledgeDescription&
   ExternalMaterialKnowledgeDescription::operator=(
-      ExternalMaterialKnowledgeDescription&&) = default;
+      ExternalMaterialKnowledgeDescription&&) noexcept = default;
   ExternalMaterialKnowledgeDescription::
       ~ExternalMaterialKnowledgeDescription() = default;
 

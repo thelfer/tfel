@@ -3,7 +3,7 @@
  * mfront/include/MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx
  * \brief
  * \author Thomas Helfer, Jérémy Hure, Mohamed Shokeir
- * \date   20/07/2020
+ * \date 20/07/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,19 +25,14 @@ namespace mfront::bbrick {
    */
   struct MichelAndSuquet1992HollowSphereStressCriterion
       : StandardPorousStressCriterionBase {
-    /*!
-     * \brief constructor
-     */
+    //! \brief constructor
     MichelAndSuquet1992HollowSphereStressCriterion();
-
-    std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-        const override;
-
-    std::vector<OptionDescription> getOptions() const override;
-
-    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const override;
-
+    //
+    [[nodiscard]] std::vector<BehaviourSymmetry>
+    getSupportedBehaviourSymmetries() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] PorosityEffectOnFlowRule
+    getPorosityEffectOnEquivalentPlasticStrain() const override;
     //! \brief destructor
     ~MichelAndSuquet1992HollowSphereStressCriterion() override;
   };  // end of struct MichelAndSuquet1992HollowSphereStressCriterion

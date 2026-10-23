@@ -33,12 +33,20 @@ namespace mtest {
     /*!
      * \return the uniq instance of the acceleration algorithm
      */
-    static AccelerationAlgorithmFactory& getAccelerationAlgorithmFactory();
+    [[nodiscard]] static AccelerationAlgorithmFactory&
+    getAccelerationAlgorithmFactory();
+    //
+    AccelerationAlgorithmFactory(AccelerationAlgorithmFactory&&) = delete;
+    AccelerationAlgorithmFactory(const AccelerationAlgorithmFactory&) = delete;
+    AccelerationAlgorithmFactory& operator=(
+        const AccelerationAlgorithmFactory&) = delete;
+    AccelerationAlgorithmFactory& operator=(AccelerationAlgorithmFactory&&) =
+        delete;
     /*!
      * \return the requested algorithm
      * \param[in] a : algorithm name
      */
-    std::shared_ptr<AccelerationAlgorithm> getAlgorithm(
+    [[nodiscard]] std::shared_ptr<AccelerationAlgorithm> getAlgorithm(
         const std::string&) const;
     /*!
      * \param[in] a : algorithm name
@@ -47,20 +55,9 @@ namespace mtest {
     void registerAlgorithm(const std::string&, const constructor);
 
    private:
-    /*!
-     * default constructor
-     */
+    //! \brief default constructor
     AccelerationAlgorithmFactory();
-    /*!
-     * copy constructor (disabled)
-     */
-    AccelerationAlgorithmFactory(const AccelerationAlgorithmFactory&);
-    /*!
-     * assignement operator (disabled)
-     */
-    AccelerationAlgorithmFactory& operator=(
-        const AccelerationAlgorithmFactory&);
-    //! all registred constructors
+    //! \brief all registred constructors
     std::map<std::string, constructor> constructors;
   };
 

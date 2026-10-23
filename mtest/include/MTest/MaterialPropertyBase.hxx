@@ -2,9 +2,15 @@
  * \file   include/MTest/MaterialPropertyBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   10/08/2021
+ * \date 10/08/2021
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
@@ -37,10 +43,10 @@ namespace mtest {
      */
     MaterialPropertyBase(const std::string&, const std::string&);
     //
-    std::size_t getNumberOfVariables() const override;
-    std::vector<std::string> getVariablesNames() const override;
-    std::vector<std::string> getParametersNames() const override;
-    std::string getOutputName() const override;
+    [[nodiscard]] std::size_t getNumberOfVariables() const override;
+    [[nodiscard]] std::vector<std::string> getVariablesNames() const override;
+    [[nodiscard]] std::vector<std::string> getParametersNames() const override;
+    [[nodiscard]] std::string getOutputName() const override;
     void setVariableValue(const std::string&, const real) override;
     void setVariableValue(const std::size_t, const real) override;
     void setParameter(const std::string&, const real) override;

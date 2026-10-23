@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/T2toT2/T2toT2T2toT2ProductExpr.hxx
  * \brief
  * \author Thomas Helfer
- * \date   16 juin 2014
+ * \date 16/06/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -67,12 +67,12 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 3 + j];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties() const {
       return RunTimeProperties();
     }
   };  // end of struct Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>
@@ -159,12 +159,13 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 5 + j];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>
@@ -444,12 +445,13 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 9 + j];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<T2toT2ResultType,T2toT2T2toT2ProductExpr>

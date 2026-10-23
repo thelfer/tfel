@@ -2,7 +2,7 @@
  * \file   src/NUMODIS/Crystallo.cxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,10 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#include <stdexcept>
-#include <sstream>
+#include <tuple>
 #include <vector>
 #include <string>
+#include <utility>
+#include <sstream>
+#include <stdexcept>
 
 #include "TFEL/Raise.hxx"
 #include "NUMODIS/Math/Utilities.hxx"
@@ -25,7 +27,7 @@ namespace numodis {
 
   Crystallo::Crystallo() = default;
 
-  Crystallo::Crystallo(Crystallo&&) = default;
+  Crystallo::Crystallo(Crystallo&&) noexcept = default;
 
   Crystallo::Crystallo(const Crystallo&) = default;
 
@@ -59,7 +61,7 @@ namespace numodis {
           static_cast<double>(idirection.getIndex()[i]) * _alattice[i];
     }
     // convert to a unit vector
-    xdirection.Normalize();
+    std::ignore = xdirection.Normalize();
     return xdirection;
   }
 
@@ -69,7 +71,7 @@ namespace numodis {
     for (unsigned i = 0; i < this->_alattice.size(); i++)
       xdirection += static_cast<double>(iplane[i]) * (this->_plattice[i]);
     // convert to a unit vector
-    xdirection.Normalize();
+    std::ignore = xdirection.Normalize();
     return xdirection;
   }
 

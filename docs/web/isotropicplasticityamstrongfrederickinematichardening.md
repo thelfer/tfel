@@ -1,6 +1,15 @@
-% How to implement an isotropic viscoplastic behaviour combining isotropic hardening and  multiple kinematic hardenings following an Armstrong-Frederic evolution of the back stress
-% Thomas Helfer, Jérémy Hure
-% 27/01/2017
+---
+title: How to implement an isotropic viscoplastic behaviour combining isotropic hardening and multiple kinematic hardenings following an Armstrong-Frederic evolution of the back stress
+author: Thomas Helfer, Jérémy Hure
+date: 27/01/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
@@ -275,7 +284,7 @@ brick which provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (definitions of the axial strain as an
   additional state variables and the associated equation enforcing the
-  plane stess condition).
+  plane stress condition).
 - Automatic addition of the "standard" terms (see below) associated
   with the elastic strain state variable.
 

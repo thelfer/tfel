@@ -2,7 +2,7 @@
  * \file   src/System/ExternalLibraryManager.cxx
  * \brief
  * \author Thomas Helfer
- * \date   31 Oct 2007
+ * \date 31/10/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -62,7 +62,7 @@ namespace tfel::system {
 #else
     const auto e = ::dlerror();
     if (e != nullptr) {
-      return std::string(e);
+      return {e};
     }
     return "";
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -1528,7 +1528,7 @@ namespace tfel::system {
              "variables names could not be read "
              "(" +
                  getErrorMessage() + ")");
-    return std::vector<std::string>(res, res + nb);
+    return {res, res + nb};
   }  // end of getArrayOfStrings
 
   void ExternalLibraryManager::getUMATNames(std::vector<std::string>& vars,

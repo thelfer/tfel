@@ -18,7 +18,7 @@
 #include <string>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/SupportedTypes.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 
 namespace mfront {
 
@@ -32,7 +32,7 @@ namespace mfront {
    * base class for non linear system solver providing some helpfull
    * common methods
    */
-  struct NonLinearSystemSolverBase : public NonLinearSystemSolver {
+  struct NonLinearSystemSolverBase : public AbstractNonLinearSystemSolver {
     /*!
      * \brief brief build a suitable specialisation of the class implementing
      * the algorithm.
@@ -40,7 +40,7 @@ namespace mfront {
      * \param[in] h: hypothesis
      * \param[in] n: class name
      */
-    static std::string buildExternalAlgorithmClassName(
+    [[nodiscard]] static std::string buildExternalAlgorithmClassName(
         const BehaviourDescription&, const Hypothesis, const std::string&);
     /*!
      * \return the part of the jacobian where the partial derivative
@@ -49,12 +49,13 @@ namespace mfront {
      * \param[in] v1  : first  variable description
      * \param[in] v2  : second variable description
      */
-    static std::string getJacobianPart(const VariableDescription&,
-                                       const VariableDescription&,
-                                       const SupportedTypes::TypeSize&,
-                                       const SupportedTypes::TypeSize&,
-                                       const std::string& = "this->jacobian",
-                                       const std::string& = "");
+    [[nodiscard]] static std::string getJacobianPart(
+        const VariableDescription&,
+        const VariableDescription&,
+        const SupportedTypes::TypeSize&,
+        const SupportedTypes::TypeSize&,
+        const std::string& = "this->jacobian",
+        const std::string& = "");
     /*!
      * \return write the code comparing the jacobian to a numerical one
      * \param[in] out : output file
@@ -106,14 +107,14 @@ namespace mfront {
     static void
     writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(
         std::ostream&, const BehaviourDescription&, const Hypothesis);
-    std::vector<std::string> getReservedNames() const override;
-    std::vector<std::string> getMemberNames() const override;
+    [[nodiscard]] std::vector<std::string> getReservedNames() const override;
+    [[nodiscard]] std::vector<std::string> getMemberNames() const override;
     void initializeNumericalParameters(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;
 
    protected:
-    //! destructor
+    //! \brief destructor
     ~NonLinearSystemSolverBase() override;
   };  // end of struct NonLinearSystemSolverBase
 

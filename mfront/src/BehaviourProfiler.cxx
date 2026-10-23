@@ -131,8 +131,8 @@ namespace mfront {
       case BehaviourProfiler::COMPUTEFDF:
         n = "Integrator::ComputeFdF";
         break;
-      case BehaviourProfiler::TINYMATRIXSOLVE:
-        n = "Integrator::TinyMatrixSolve";
+      case BehaviourProfiler::SOLVELINEARSYSTEM:
+        n = "Integrator::solveLinearSystem";
         break;
       case BehaviourProfiler::COMPUTEFINALTHERMODYNAMICFORCES:
         n = "ComputeFinalThermodynamicForces";

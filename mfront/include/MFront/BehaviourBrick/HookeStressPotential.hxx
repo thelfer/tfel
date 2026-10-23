@@ -2,7 +2,13 @@
  * \file   mfront/include/MFront/BehaviourBrick/HookeStressPotential.hxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIAL_HXX
@@ -19,14 +25,16 @@ namespace mfront::bbrick {
   struct HookeStressPotential : HookeStressPotentialBase {
     //! \brief default constructor
     HookeStressPotential();
-    std::vector<
+    //
+    [[nodiscard]] std::vector<
         std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
     getStressDerivatives(const BehaviourDescription&) const override;
-    std::string generateImplicitEquationDerivatives(const BehaviourDescription&,
-                                                    const std::string&,
-                                                    const std::string&,
-                                                    const std::string&,
-                                                    const bool) const override;
+    [[nodiscard]] std::string generateImplicitEquationDerivatives(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const bool) const override;
     //! \brief destructor
     ~HookeStressPotential() override;
 

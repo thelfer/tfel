@@ -31,8 +31,10 @@ namespace tfel::math {
         public MutableArraySTLCompatibilityLayer<Child, ArrayPolicy> {
     //! \brief default constructor
     MutableRuntimeArrayBase() = default;
+    // NOLINTBEGIN(google-explicit-constructor)
     //! \brief constructor from an indexing policy
     MutableRuntimeArrayBase(const typename ArrayPolicy::IndexingPolicy&);
+    // NOLINTEND(google-explicit-constructor)
     //! \brief copy constructor
     MutableRuntimeArrayBase(const MutableRuntimeArrayBase&) = default;
     //! \brief move constructor
@@ -45,7 +47,8 @@ namespace tfel::math {
     // exposing MutableArrayCommonMethods assignement operators
     using MutableArrayCommonMethods<Child, ArrayPolicy>::operator=;
     //! \return the current indexing policy
-    TFEL_HOST_DEVICE constexpr const typename ArrayPolicy::IndexingPolicy&
+    TFEL_HOST_DEVICE
+    [[nodiscard]] constexpr const typename ArrayPolicy::IndexingPolicy&
     getIndexingPolicy() const noexcept;
     /*!
      * \brief apply a multi-indices functor

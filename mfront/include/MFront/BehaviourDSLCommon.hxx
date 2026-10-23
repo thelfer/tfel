@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   05 mai 2008
+ * \date 05/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -56,7 +56,7 @@ namespace mfront {
     //! a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
     //
-    const BehaviourDescription& getBehaviourDescription() const override final;
+    const BehaviourDescription& getBehaviourDescription() const final;
     std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
     getBehaviourInterfaces() const override;
     std::shared_ptr<MaterialPropertyDescription>
@@ -183,7 +183,7 @@ namespace mfront {
      * \brief constructor
      * \param[in] opts: options passed to the DSL
      */
-    BehaviourDSLCommon(const DSLOptions&);
+    explicit BehaviourDSLCommon(const DSLOptions&);
     //
     void writeMaterialPropertyEvaluation(
         std::ostream&,
@@ -490,23 +490,13 @@ namespace mfront {
                                      const Hypothesis,
                                      const VariableDescriptionContainer&,
                                      const BehaviourData::RegistrationStatus));
-
-    /*!
-     * set the interfaces to be used
-     */
-    void setInterfaces(const std::set<std::string>&) override;
-    /*!
-     * \brief register a name.
-     * \param[in] n : name
-     */
-    void reserveName(const std::string&) override;
-    /*!
-     * \brief look if a name is reserved
-     * \param[in] n : name
-     */
-    bool isNameReserved(const std::string&) const override;
+    // this method is declared final to be called safely in constructors
+    void reserveName(const std::string&) final;
     //! \brief register the default variable names
-    virtual void registerDefaultVarNames();
+    void registerDefaultVarNames();
+    //
+    void setInterfaces(const std::set<std::string>&) override;
+    bool isNameReserved(const std::string&) const override;
     void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;

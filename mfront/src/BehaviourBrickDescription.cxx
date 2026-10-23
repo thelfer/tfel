@@ -2,7 +2,7 @@
  * \file   BehaviourBrickDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   29/08/2019
+ * \date 29/08/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,13 +24,13 @@ namespace mfront {
       const BehaviourBrickDescription&) = default;
 
   BehaviourBrickDescription::BehaviourBrickDescription(
-      BehaviourBrickDescription&&) = default;
+      BehaviourBrickDescription&&) noexcept = default;
 
   BehaviourBrickDescription& BehaviourBrickDescription::operator=(
       const BehaviourBrickDescription&) = default;
 
   BehaviourBrickDescription& BehaviourBrickDescription::operator=(
-      BehaviourBrickDescription&&) = default;
+      BehaviourBrickDescription&&) noexcept = default;
 
   BehaviourBrickDescription::~BehaviourBrickDescription() = default;
 

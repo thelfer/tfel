@@ -2,7 +2,7 @@
  * \file   mfm.cxx
  * \brief
  * \author Thomas Helfer
- * \date   13 avril 2017
+ * \date 13/04/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -157,7 +157,8 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
             [this]() noexcept { this->show_sources = true; }, false));
   }  // end of registerCommandLineCallBacks
 
-  const tfel::utilities::Argument& getCurrentCommandLineArgument() const {
+  [[nodiscard]] const tfel::utilities::Argument& getCurrentCommandLineArgument()
+      const {
     return *(this->currentArgument);
   }
 
@@ -206,9 +207,11 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     }
   }  // end of treatUnknownArgument
 
-  std::string getVersionDescription() const override { return "1.0"; }
+  [[nodiscard]] std::string getVersionDescription() const override {
+    return "1.0";
+  }
 
-  std::string getUsageDescription() const override {
+  [[nodiscard]] std::string getUsageDescription() const override {
     return "Usage: " + this->programName + " [options] [files]";
   }
 

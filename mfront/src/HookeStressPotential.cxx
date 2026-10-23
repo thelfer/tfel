@@ -2,7 +2,7 @@
  * \file   mfront/src/HookeStressPotential.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,7 +18,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotential.hxx"

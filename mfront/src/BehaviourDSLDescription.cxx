@@ -2,7 +2,7 @@
  * \file   BehaviourDSLDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   29/08/2019
+ * \date 29/08/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -20,14 +20,14 @@ namespace mfront {
   BehaviourDSLDescription::BehaviourDSLDescription(
       const BehaviourDSLDescription&) = default;
 
-  BehaviourDSLDescription::BehaviourDSLDescription(BehaviourDSLDescription&&) =
-      default;
+  BehaviourDSLDescription::BehaviourDSLDescription(
+      BehaviourDSLDescription&&) noexcept = default;
 
   BehaviourDSLDescription& BehaviourDSLDescription::operator=(
       const BehaviourDSLDescription&) = default;
 
   BehaviourDSLDescription& BehaviourDSLDescription::operator=(
-      BehaviourDSLDescription&&) = default;
+      BehaviourDSLDescription&&) noexcept = default;
 
   BehaviourDSLDescription::~BehaviourDSLDescription() = default;
 

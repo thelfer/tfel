@@ -2,7 +2,7 @@
  * \file   mfront/src/PythonMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -54,6 +54,13 @@ namespace mfront {
   std::string PythonMaterialPropertyInterface::getName() { return "python"; }
 
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface() = default;
+
+  void PythonMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool, PythonMaterialPropertyInterface::tokens_iterator>
   PythonMaterialPropertyInterface::treatKeyword(
@@ -121,7 +128,13 @@ namespace mfront {
       insert_if(l.link_libraries, TFEL_PYTHON_LIBRARY);
     }
 #else
-    insert_if(l.ldflags, TFEL_PYTHON_LIBS);
+    // the python library was not found when TFEL was configured
+    if (python_library_path != nullptr) {
+      insert_if(l.link_directories, python_library_path);
+    }
+    if (python_library != nullptr) {
+      insert_if(l.link_libraries, python_library);
+    }
 #endif
     insert_if(l.sources, name + "-python.cxx");
     insert_if(l.sources, src);
@@ -265,12 +278,14 @@ namespace mfront {
     out.open(outName);
     throw_if(!out, "unable to open '" + outName + "' for writing output file.");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     const auto srcFileName = "src/" + name + "-python.cxx";
     std::ofstream srcFile;
     srcFile.open(srcFileName);
     throw_if(!srcFile,
              "unable to open '" + srcFileName + "' for writing output file.");
     srcFile.exceptions(std::ios::badbit | std::ios::failbit);
+    srcFile.precision(14);
     // writing header
     out << "/*!\n"
         << "* \\file   " << outName << '\n'
@@ -283,7 +298,7 @@ namespace mfront {
       out << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      out << "* \\date   " << date << '\n';
+      out << "* \\date " << date << '\n';
     }
     if (!description.empty()) {
       out << description << '\n';
@@ -316,7 +331,7 @@ namespace mfront {
       srcFile << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      srcFile << "* \\date   " << date << '\n';
+      srcFile << "* \\date " << date << '\n';
     }
     srcFile << " */\n\n"
             << "#include <Python.h>\n\n"
@@ -419,9 +434,8 @@ namespace mfront {
         (!mpd.parameters.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       srcFile << "if(!python::" << hn << "::get" << hn << "().ok){\n"
-              << "return throwPythonRuntimeException(python::" << name
-              << "MaterialPropertyHandler::get" << name
-              << "MaterialPropertyHandler().msg);\n"
+              << "return throwPythonRuntimeException(python::" << hn << "::get"
+              << hn << "().msg);\n"
               << "}\n";
     }
     writeAssignMaterialPropertyParameters(srcFile, mpd, name, "real", "python");
@@ -540,6 +554,7 @@ namespace mfront {
     }();
     std::ofstream wrapper(wn);
     wrapper.exceptions(std::ios::badbit | std::ios::failbit);
+    wrapper.precision(14);
     throw_if(!wrapper, "unable to open file '" + wn + "'");
     wrapper << "/*!\n";
     if (library.empty()) {
@@ -559,7 +574,7 @@ namespace mfront {
       wrapper << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      wrapper << "* \\date   " << date << '\n';
+      wrapper << "* \\date " << date << '\n';
     }
     if (!description.empty()) {
       wrapper << description << '\n';

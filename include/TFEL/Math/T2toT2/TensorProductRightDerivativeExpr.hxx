@@ -35,10 +35,11 @@ namespace tfel::math {
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 1u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : second tensor of the product
      */
@@ -55,6 +56,7 @@ namespace tfel::math {
       this->v[3] = this->v[5] = value_type(0);
       this->v[6] = this->v[7] = value_type(0);
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the second tensor
@@ -86,7 +88,7 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];
     }  // end of operator()
@@ -95,7 +97,8 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct
@@ -110,10 +113,11 @@ namespace tfel::math {
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<2u>>>,
         public array_holder<25u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 2u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : second tensor of the product
      */
@@ -138,6 +142,7 @@ namespace tfel::math {
       this->v[24] = A[1];
       this->v[21] = this->v[22] = this->v[23] = value_type(0);
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the second tensor
@@ -185,7 +190,7 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 5 + j];
     }  // end of operator()
@@ -194,7 +199,8 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct
@@ -209,10 +215,11 @@ namespace tfel::math {
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<3u>>>,
         public array_holder<81u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 3u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : second tensor of the product
      */
@@ -268,6 +275,7 @@ namespace tfel::math {
       this->v[72] = this->v[74] = this->v[76] = this->v[77] = this->v[78] =
           this->v[79] = value_type(0);
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the second tensor
@@ -371,7 +379,7 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 9 + j];
     }  // end of operator()
@@ -380,7 +388,8 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct

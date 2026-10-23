@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/SpecificTargetDescription.hxx
  * \brief
  * \author Thomas Helfer
- * \date   13/06/2019
+ * \date 13/06/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -36,11 +36,11 @@ namespace mfront {
     //! \brief copy constructor
     SpecificTargetDescription(const SpecificTargetDescription&);
     //! \brief move constructor
-    SpecificTargetDescription(SpecificTargetDescription&&);
+    SpecificTargetDescription(SpecificTargetDescription&&) noexcept;
     //! \brief standard assignement (deleted)
     SpecificTargetDescription& operator=(const SpecificTargetDescription&);
     //! \brief move assignement (deleted)
-    SpecificTargetDescription& operator=(SpecificTargetDescription&&);
+    SpecificTargetDescription& operator=(SpecificTargetDescription&&) noexcept;
     //! \brief destructor
     ~SpecificTargetDescription();
     //! \brief sources

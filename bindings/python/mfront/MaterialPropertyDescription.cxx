@@ -3,7 +3,7 @@
  * \file   bindings/python/mfront/MaterialPropertyDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   9/08/2021
+ * \date 09/08/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -55,22 +55,16 @@ void declareMaterialPropertyDescription(pybind11::module_&);
 
 void declareMaterialPropertyDescription(pybind11::module_& m) {
   using namespace mfront;
-  pybind11::class_<MaterialPropertyDescription>(m,
-                                                "MaterialPropertyDescription")
+  pybind11::class_<MaterialPropertyDescription>(
+      m, "MaterialPropertyDescription",
+      "Structure describing a material property")
       .def("getInputs", MaterialPropertyDescription_getInputs,
-           pybind11::return_value_policy::reference,
-           "returns the inputs of the material property")
+           pybind11::return_value_policy::reference)
       .def("getParameters", MaterialPropertyDescription_getParameters,
-           pybind11::return_value_policy::reference,
-           "returns the parameters of the material property")
+           pybind11::return_value_policy::reference)
       .def("getOutput", MaterialPropertyDescription_getOutput,
-           pybind11::return_value_policy::reference,
-           "returns the output of the material property")
-      .def("getLawName", MaterialPropertyDescription_getLawName,
-           "returns the name of material property")
-      .def("getMaterialName", MaterialPropertyDescription_getMaterialName,
-           "returns the name of material described by this material property")
-      .def("getClassName", MaterialPropertyDescription_getClassName,
-           "returns a class name combining the name of the material property "
-           "and the name of the material");
+           pybind11::return_value_policy::reference)
+      .def("getLawName", MaterialPropertyDescription_getLawName)
+      .def("getMaterialName", MaterialPropertyDescription_getMaterialName)
+      .def("getClassName", MaterialPropertyDescription_getClassName);
 }

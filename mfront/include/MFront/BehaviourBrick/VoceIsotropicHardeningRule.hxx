@@ -2,7 +2,7 @@
  * \file   include/MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -34,21 +34,23 @@ namespace mfront::bbrick {
                     const std::string&,
                     const std::string&,
                     const DataMap&) override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::string computeElasticPrediction(const BehaviourDescription&,
-                                         const std::string&,
-                                         const std::string&) const override;
-    std::string computeElasticLimit(const BehaviourDescription&,
-                                    const std::string&,
-                                    const std::string&) const override;
-    std::string computeElasticLimitAndDerivative(
-        const BehaviourDescription&,
-        const std::string&,
-        const std::string&) const override;
     void endTreatment(BehaviourDescription&,
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const std::string&) const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeElasticLimit(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeElasticLimitAndDerivative(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
     //! \brief destructor
     ~VoceIsotropicHardeningRule() override;
 

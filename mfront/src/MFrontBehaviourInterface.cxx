@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   15/01/2025
+ * \date 15/01/2025
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -27,10 +27,17 @@ namespace mfront {
     return "";
   }  // end of getInterfaceVersion
 
+  void MFrontBehaviourInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" +
+                  this->getInterfaceName() + "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, MFrontBehaviourInterface::tokens_iterator>
-  MFrontBehaviourInterface::treatKeyword(BehaviourDescription &,
-                                         const std::string &k,
-                                         const std::vector<std::string> &i,
+  MFrontBehaviourInterface::treatKeyword(BehaviourDescription&,
+                                         const std::string& k,
+                                         const std::vector<std::string>& i,
                                          tokens_iterator current,
                                          const tokens_iterator) {
     tfel::raise_if(std::find(i.begin(), i.end(), "mfront") != i.end(),
@@ -41,19 +48,19 @@ namespace mfront {
   }  // end of treatKeyword
 
   bool MFrontBehaviourInterface::isBehaviourConstructorRequired(
-      const Hypothesis, const BehaviourDescription &) const {
+      const Hypothesis, const BehaviourDescription&) const {
     return false;
   }  // end of isBehaviourConstructorRequired
 
   std::set<MFrontBehaviourInterface::Hypothesis>
   MFrontBehaviourInterface::getModellingHypothesesToBeTreated(
-      const BehaviourDescription &bd) const {
+      const BehaviourDescription& bd) const {
     return bd.getModellingHypotheses();
   }  // end of getModellingHypothesesToBeTreated
 
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   MFrontBehaviourInterface::buildMaterialPropertiesList(
-      const BehaviourDescription &bd, const Hypothesis h) const {
+      const BehaviourDescription& bd, const Hypothesis h) const {
     const auto opts = BuildMaterialPropertiesListOptions{
         .useMaterialPropertiesToBuildStiffnessTensor = true,
         .useMaterialPropertiesToBuildThermalExpansionCoefficientTensor = true};
@@ -65,53 +72,53 @@ namespace mfront {
   }  // end of buildMaterialPropertiesList
 
   void MFrontBehaviourInterface::writeInterfaceSpecificIncludes(
-      std::ostream &, const BehaviourDescription &) const {
+      std::ostream&, const BehaviourDescription&) const {
   }  // end of writeInterfaceSpecificIncludes
 
   void MFrontBehaviourInterface::exportMechanicalData(
-      std::ostream &, const Hypothesis, const BehaviourDescription &) const {
+      std::ostream&, const Hypothesis, const BehaviourDescription&) const {
   }  // end of exportMechanicalData
 
   void MFrontBehaviourInterface::writeBehaviourConstructorHeader(
-      std::ostream &,
-      const BehaviourDescription &,
+      std::ostream&,
+      const BehaviourDescription&,
       const Hypothesis,
-      const std::string &) const {}  // end of writeBehaviourConstructorHeader
+      const std::string&) const {}  // end of writeBehaviourConstructorHeader
 
   void MFrontBehaviourInterface::writeBehaviourConstructorBody(
-      std::ostream &, const BehaviourDescription &, const Hypothesis) const {
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeBehaviourConstructorBody
 
   void MFrontBehaviourInterface::writeBehaviourDataConstructor(
-      std::ostream &, const Hypothesis, const BehaviourDescription &) const {
+      std::ostream&, const Hypothesis, const BehaviourDescription&) const {
   }  // end of writeBehaviourDataConstructor
 
   void MFrontBehaviourInterface::writeBehaviourDataMainVariablesSetters(
-      std::ostream &, const BehaviourDescription &) const {
+      std::ostream&, const BehaviourDescription&) const {
   }  // end of writeBehaviourDataMainVariablesSetters
 
   void MFrontBehaviourInterface::writeIntegrationDataConstructor(
-      std::ostream &, const Hypothesis, const BehaviourDescription &) const {
+      std::ostream&, const Hypothesis, const BehaviourDescription&) const {
   }  // end of writeIntegrationDataConstructor
 
   void MFrontBehaviourInterface::writeIntegrationDataMainVariablesSetters(
-      std::ostream &, const BehaviourDescription &) const {
+      std::ostream&, const BehaviourDescription&) const {
   }  // end of writeIntegrationDataMainVariablesSetters
 
   void MFrontBehaviourInterface::writeBehaviourInitializeFunctions(
-      std::ostream &, const BehaviourDescription &, const Hypothesis) const {
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeBehaviourInitializeFunctions
 
   void MFrontBehaviourInterface::writeBehaviourPostProcessings(
-      std::ostream &, const BehaviourDescription &, const Hypothesis) const {
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeBehaviourPostProcessings
 
-  void MFrontBehaviourInterface::endTreatment(const BehaviourDescription &,
-                                              const FileDescription &) const {
+  void MFrontBehaviourInterface::endTreatment(const BehaviourDescription&,
+                                              const FileDescription&) const {
   }  // end of endTreatment
 
   void MFrontBehaviourInterface::getTargetsDescription(
-      TargetsDescription &, const BehaviourDescription &) {
+      TargetsDescription&, const BehaviourDescription&) {
   }  // end of getTargetsDescription
 
   MFrontBehaviourInterface::~MFrontBehaviourInterface() = default;

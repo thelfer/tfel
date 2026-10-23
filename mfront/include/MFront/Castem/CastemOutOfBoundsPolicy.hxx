@@ -25,18 +25,19 @@ namespace castem {
      * \brief return the unique instance of the `CastemOutOfBoundsPolicy` policy
      * class.
      */
-    static const CastemOutOfBoundsPolicy& getCastemOutOfBoundsPolicy();
-    //! \return the out of bounds policy
-    std::optional<tfel::material::OutOfBoundsPolicy>  //
-    getOutOfBoundsPolicy() const;
-
-   private:
-    CastemOutOfBoundsPolicy();
-    //!
+    [[nodiscard]] static const CastemOutOfBoundsPolicy&
+    getCastemOutOfBoundsPolicy();
+    //
     CastemOutOfBoundsPolicy(CastemOutOfBoundsPolicy&&) = delete;
     CastemOutOfBoundsPolicy(const CastemOutOfBoundsPolicy&) = delete;
     CastemOutOfBoundsPolicy& operator=(CastemOutOfBoundsPolicy&&) = delete;
     CastemOutOfBoundsPolicy& operator=(const CastemOutOfBoundsPolicy&) = delete;
+    //! \return the out of bounds policy
+    [[nodiscard]] std::optional<tfel::material::OutOfBoundsPolicy>  //
+    getOutOfBoundsPolicy() const;
+
+   private:
+    CastemOutOfBoundsPolicy();
     //! \brief out of bounds policy
     std::optional<tfel::material::OutOfBoundsPolicy> policy;
   };  // end of struct CastemOutOfBounds

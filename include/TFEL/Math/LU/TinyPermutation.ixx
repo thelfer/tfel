@@ -20,7 +20,7 @@
 namespace tfel::math {
 
   template <unsigned short N>
-  constexpr TinyPermutation<N>::TinyPermutation() : is_identity(true) {
+  constexpr TinyPermutation<N>::TinyPermutation() {
     typename tvector<N, unsigned short>::value_type s{0u};
     tfel::fsalgo::iota<N>::exe(this->begin(), s);
   }

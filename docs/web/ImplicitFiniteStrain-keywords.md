@@ -1,3 +1,17 @@
+---
+title: ImplicitFiniteStrain keywords
+author: TFEL Team
+date: 25/08/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
+
+
 % `ImplicitFiniteStrain` keywords
 
 
@@ -16,7 +30,7 @@ The keyword `@APrioriTimeStepScalingFactor` is not documented yet
 # The `@AdditionalConvergenceChecks` keyword
 
 The `@AdditionalConvergenceChecks` keyword is meant to introduce a
-code block returning stating if convergence has been reached. More
+code block stating if convergence has been reached. More
 precisely, this code block is meant to modify a boolean variable
 called `converged`. This boolean is `true` if the standard convergence
 criterion has been reached, `false` otherwise.
@@ -128,8 +142,8 @@ expansion:
 
 - along the second direction of orthotropy if the default orthotropic axes
   convention has been selected.
-- along the 'z' direction if the pipe orthotropic axes has been
-  defined is defined. The 'z' direction is the second direction of
+- along the 'z' direction if the pipe orthotropic axes convention has
+  been defined. The 'z' direction is the second direction of
   orthotropy for all hypotheses except Generalised Plane Strain, Plane
   Strain and Plane Stress hypotheses.
 
@@ -292,7 +306,7 @@ The `ComputeStiffnessTensor` keyword is used to define the elastic
 stiffness tensor based on the elastic material properties given as an
 array of entries. After this array, a semicolon is expected.
 
-This array is used to automatically used to declare the elastic
+This array is automatically used to declare the elastic
 material properties of the behaviour (see the
 `@ElasticMaterialProperties` keyword for details).
 
@@ -326,7 +340,7 @@ order:
 - three Poisson ratio \((nu_{12},nu_{23},nu_{13})\)
 - three shear modulus \((G_{12},G_{23},G_{13})\)
 
-In the orthoropic case, computation of the stiffness tensor rely on the
+In the orthotropic case, computation of the stiffness tensor relies on the
 definition of an orthotropic convention. For example, the `Pipe`
 orthotropic convention will lead to automatically exchange the second
 and first axes when computing the stiffness tensor for the plane strain,
@@ -368,9 +382,9 @@ This keyword interprets the code block to generate two methods:
 
 ## Note
 
-If the user provide a way of computing the stress at the end of the
+If the user provides a way of computing the stress at the end of the
 time step through the `@ComputeFinalStress` keyword, we consider that
-the use of `@ComputeStress` is meaningless and advice the user to
+the use of `@ComputeStress` is meaningless and advise the user to
 rather compute explicitly the stress as part of the integration step.
 
 ## Example
@@ -424,7 +438,7 @@ The `ComputeThermalExansion` keyword is followed either by a material
 property description or an array of material descriptions (othotropic
 behaviours) giving the mean linear thermal expansion coefficient.
 
-A material decription is either a floating point number, a formula or
+A material description is either a floating point number, a formula or
 the name of an external MFront file.
 
 The thermal expansion is computed as follows:
@@ -1190,7 +1204,7 @@ The `@Interface` keyword let the user specify interfaces to be
 used. The keyword is followed by a list of interface name, separated
 by commas.
 
-Using this keyword is considered a bad pratice. The user shall use the
+Using this keyword is considered a bad practice. The user shall use the
 `--interface` command line argument to specify which interface shall
 be used.
 
@@ -1335,7 +1349,7 @@ variable.
 
 ~~~~{.cpp}
 // explicit link with libm.so
-// (not necessary in pratice)
+// (not necessary in practice)
 @Link "-lm";
 ~~~~
 
@@ -1646,7 +1660,7 @@ fc.setDefaultValue(1.e-2);
 
 # The `@Parser` keyword
 
-The `@Paser` keyword is a deprecated synonymous of `@DSL`.
+The `@Parser` keyword is a deprecated synonymous of `@DSL`.
 
 # The `@PerturbationValueForNumericalJacobianComputation` keyword
 
@@ -1777,7 +1791,7 @@ post-processing. Typically, one may compute the principal strains in a
 dedicated post-processing and in a post-processing computing the
 principal strains and the strain eigen vectors.
 
-## Exemple of usage
+## Example of usage
 
 ~~~~{.cxx}
 //! principal strains
@@ -2279,7 +2293,7 @@ material frame.
 
 ## Note
 
-1. The computation of the strain measure and its dual and the convertion
+1. The computation of the strain measure and its dual and the conversion
   of the tangent operator is delegated to the interface, because several
   finite element solver already provides those operations natively
   (`Code_Aster`, `ZebuloN`, etc...)

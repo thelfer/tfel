@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   09 nov 2007
+ * \date 09/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,8 +29,8 @@ namespace std {
 
 namespace aster {
 
-  AsterException::AsterException(const std::string& s)
-      : msg(s) {}  // end of AsterException::AsterException
+  AsterException::AsterException(std::string s)
+      : msg(std::move(s)) {}  // end of AsterException::AsterException
 
   AsterException::AsterException(const AsterException& e)
       : msg(e.msg) {}  // end of AsterException::AsterException
@@ -39,7 +39,7 @@ namespace aster {
     return msg.c_str();
   }  // end of AsterException::what
 
-  std::string AsterException::getMsg() const noexcept {
+  const std::string& AsterException::getMsg() const noexcept {
     return msg;
   }  // end of AsterException::getMsg
 
@@ -51,9 +51,7 @@ namespace aster {
   }  // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
 
   AsterInvalidNTENSValue::AsterInvalidNTENSValue(
-      const AsterInvalidNTENSValue& e)
-      : AsterException(e) {
-  }  // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
+      const AsterInvalidNTENSValue&) = default;
 
   AsterInvalidNTENSValue::~AsterInvalidNTENSValue() noexcept = default;
 

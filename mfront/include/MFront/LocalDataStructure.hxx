@@ -2,7 +2,7 @@
  * \file   LocalDataStructure.hxx
  * \brief
  * \author Thomas Helfer
- * \date   02 mai 2016
+ * \date 02/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -34,9 +34,9 @@ namespace mfront {
       Variable();
       Variable(const std::string&, const std::string&);
       Variable(const std::string&, const std::string&, unsigned short);
-      Variable(Variable&&);
+      Variable(Variable&&) noexcept;
       Variable(const Variable&);
-      Variable& operator=(Variable&&);
+      Variable& operator=(Variable&&) noexcept;
       Variable& operator=(const Variable&);
       //! type of the variable
       std::string type;
@@ -54,19 +54,19 @@ namespace mfront {
      */
     LocalDataStructure& addVariable(const Hypothesis, const Variable&);
     //! \brief return the list of specialised hypotheses
-    std::vector<Hypothesis> getSpecialisedHypotheses() const;
+    [[nodiscard]] std::vector<Hypothesis> getSpecialisedHypotheses() const;
     /*!
      * \brief return the list of variables of variables of the given
      * hypothesis
      * \param[in] h: modelling hypothesis
      */
-    const std::vector<Variable>& get(const Hypothesis) const;
+    [[nodiscard]] const std::vector<Variable>& get(const Hypothesis) const;
     /*!
      * \brief return true if a variable has been defined
      * \param[in] h: modelling hypothesis
      * \param[in] n: variable name
      */
-    bool contains(const Hypothesis, const std::string&) const;
+    [[nodiscard]] bool contains(const Hypothesis, const std::string&) const;
 
    private:
     //! variable for the undefined hypothesis

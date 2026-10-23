@@ -59,6 +59,13 @@ namespace mfront {
 
   BehaviourInterfaceBase::BehaviourInterfaceBase() = default;
 
+  void BehaviourInterfaceBase::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" +
+                  this->getInterfaceName() + "'");
+    }
+  }  // end of setOptions
+
   std::string BehaviourInterfaceBase::getInterfaceVersion() const {
     return "";
   }  // end of getInterfaceVersion
@@ -344,11 +351,9 @@ namespace mfront {
     const auto b = [&current, &throw_if]() -> bool {
       if (current->value == "true") {
         return true;
-      } else if (current->value == "false") {
-        return false;
-      } else {
-        throw_if(true, "expected 'true' or 'false'");
       }
+      throw_if(current->value != "false", "expected 'true' or 'false'");
+      return false;
     }();
     ++(current);
     throw_if(current == end, "unexpected end of file");

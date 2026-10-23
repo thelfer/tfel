@@ -2,7 +2,7 @@
  * \file   mfront/src/JavaMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -73,7 +73,7 @@ namespace mfront {
 
   std::string JavaMaterialPropertyInterface::getName() { return "java"; }
 
-  JavaMaterialPropertyInterface::JavaMaterialPropertyInterface() {}
+  JavaMaterialPropertyInterface::JavaMaterialPropertyInterface() = default;
 
   std::pair<bool, JavaMaterialPropertyInterface::tokens_iterator>
   JavaMaterialPropertyInterface::treatKeyword(const std::string& key,
@@ -118,6 +118,13 @@ namespace mfront {
   }  // end of treatKeyword
 
   JavaMaterialPropertyInterface::~JavaMaterialPropertyInterface() = default;
+
+  void JavaMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   void JavaMaterialPropertyInterface::getTargetsDescription(
       TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
@@ -290,6 +297,7 @@ namespace mfront {
     throw_if(!srcFile,
              "unable to open '" + srcFileName + "' for writing output file.");
     srcFile.exceptions(std::ios::badbit | std::ios::failbit);
+    srcFile.precision(14);
     // writing source
     srcFile << "/*!\n"
             << "* \\file   " << srcFileName << '\n'
@@ -303,7 +311,7 @@ namespace mfront {
       srcFile << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      srcFile << "* \\date   " << fd.date << '\n';
+      srcFile << "* \\date " << fd.date << '\n';
     }
     srcFile << " */\n\n";
     // headers
@@ -471,6 +479,7 @@ namespace mfront {
       while (std::getline(f, line)) {
         std::istringstream iss{line};
         iss.exceptions(std::ios::badbit | std::ios::failbit);
+        iss.precision(14);
         auto m = std::string{};  // method name
         auto n = int{};          // number of arguments
         iss >> m >> n;
@@ -482,6 +491,7 @@ namespace mfront {
     std::ofstream mf{jcmlst};
     throw_if(!mf, "unable to open '" + jcmlst + "'");
     mf.exceptions(std::ios::badbit | std::ios::failbit);
+    mf.precision(14);
     mf << this->package << '\n';
     for (const auto& m : methods) {
       mf << m.first << " " << m.second << "\n";
@@ -491,6 +501,7 @@ namespace mfront {
                      ".java"};
     throw_if(!jc, "unable to open '" + jcname + ".java'");
     jc.exceptions(std::ios::badbit | std::ios::failbit);
+    jc.precision(14);
     if (!this->package.empty()) {
       jc << "package " << this->package << ";\n\n";
     }

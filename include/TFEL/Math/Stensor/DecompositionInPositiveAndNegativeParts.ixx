@@ -49,8 +49,8 @@ namespace tfel::math {
           isAssignableTo<base_type<numeric_type<StensorType>>,
                          numeric_type<DPPType>>()) {
     using tfel::math::abs;
-    typedef numeric_type<StensorType> NumType;
-    typedef base_type<NumType> real;
+    using NumType = numeric_type<StensorType>;
+    using real = base_type<NumType>;
     constexpr const auto one_half = real(1) / (real(2));
     dpp(0, 1) = dpp(0, 2) = dpp(1, 0) = dpp(1, 2) = dpp(2, 0) = dpp(2, 1) =
         real(0);
@@ -104,8 +104,8 @@ namespace tfel::math {
     using tfel::math::abs;
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
-    typedef numeric_type<StensorType> NumType;
-    typedef base_type<NumType> real;
+    using NumType = numeric_type<StensorType>;
+    using real = base_type<NumType>;
     constexpr auto cste = Cste<real>::sqrt2;
     constexpr const auto one_half = real(1) / (real(2));
     stensor<2u, NumType> ls(s);  // local copy of s
@@ -178,8 +178,8 @@ namespace tfel::math {
                          numeric_type<DPPType>>()) {
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
-    typedef numeric_type<StensorType> NumType;
-    typedef base_type<NumType> real;
+    using NumType = numeric_type<StensorType>;
+    using real = base_type<NumType>;
     constexpr auto cste = Cste<real>::sqrt2;
     constexpr const auto one_half = real(1) / (real(2));
     stensor<3u, NumType> ls(s);  // local copy of s
@@ -337,8 +337,8 @@ namespace tfel::math {
           isAssignableTo<base_type<numeric_type<StensorType>>,
                          numeric_type<DNPType>>()) {
     using tfel::math::abs;
-    typedef numeric_type<StensorType> NumType;
-    typedef base_type<NumType> real;
+    using NumType = numeric_type<StensorType>;
+    using real = base_type<NumType>;
     const real one_half = real(1) / (real(2));
     dpp(0, 1) = dpp(0, 2) = dpp(1, 0) = dpp(1, 2) = dpp(2, 0) = dpp(2, 1) =
         real(0);
@@ -418,8 +418,8 @@ namespace tfel::math {
     using tfel::math::abs;
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
-    typedef numeric_type<StensorType> NumType;
-    typedef base_type<NumType> real;
+    using NumType = numeric_type<StensorType>;
+    using real = base_type<NumType>;
     constexpr auto cste = Cste<real>::sqrt2;
     constexpr const auto one_half = real(1) / (real(2));
     stensor<2u, NumType> ls(s);  // local copy of s
@@ -519,8 +519,8 @@ namespace tfel::math {
                          numeric_type<DNPType>>()) {
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
-    typedef numeric_type<StensorType> NumType;
-    typedef base_type<NumType> real;
+    using NumType = numeric_type<StensorType>;
+    using real = base_type<NumType>;
     constexpr auto cste = Cste<real>::sqrt2;
     constexpr const auto one_half = real(1) / (real(2));
     stensor<3u, NumType> ls(s);  // local copy of s

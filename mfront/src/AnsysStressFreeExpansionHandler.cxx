@@ -20,10 +20,10 @@ namespace ansys {
 
   template <typename real>
   static void AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const AnsysInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0] -= s0[0];
@@ -46,29 +46,29 @@ namespace ansys {
     }
   }  // end of AnsysStandardSmallStrainStressFreeExpansionHandler
 
-  void AnsysStandardSmallStrainStressFreeExpansionHandler(float *const e,
-                                                          float *const de,
-                                                          const float *const s0,
-                                                          const float *const s1,
+  void AnsysStandardSmallStrainStressFreeExpansionHandler(float* const e,
+                                                          float* const de,
+                                                          const float* const s0,
+                                                          const float* const s1,
                                                           const AnsysInt d) {
     AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   void AnsysStandardSmallStrainStressFreeExpansionHandler(
-      double *const e,
-      double *const de,
-      const double *const s0,
-      const double *const s1,
+      double* const e,
+      double* const de,
+      const double* const s0,
+      const double* const s1,
       const AnsysInt d) {
     AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   template <typename real>
   static void AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const AnsysInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     if (d == 2) {
@@ -105,18 +105,18 @@ namespace ansys {
     }
   }  // end of AnsysLogarithmicStrainStressFreeExpansionHandler
 
-  void AnsysLogarithmicStrainStressFreeExpansionHandler(float *const e,
-                                                        float *const de,
-                                                        const float *const s0,
-                                                        const float *const s1,
+  void AnsysLogarithmicStrainStressFreeExpansionHandler(float* const e,
+                                                        float* const de,
+                                                        const float* const s0,
+                                                        const float* const s1,
                                                         const AnsysInt d) {
     AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
-  void AnsysLogarithmicStrainStressFreeExpansionHandler(double *const e,
-                                                        double *const de,
-                                                        const double *const s0,
-                                                        const double *const s1,
+  void AnsysLogarithmicStrainStressFreeExpansionHandler(double* const e,
+                                                        double* const de,
+                                                        const double* const s0,
+                                                        const double* const s1,
                                                         const AnsysInt d) {
     AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }

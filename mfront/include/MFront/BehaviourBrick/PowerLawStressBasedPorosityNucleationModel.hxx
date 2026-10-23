@@ -3,7 +3,7 @@
  * include/MFront/BehaviourBrick/PowerLawStressBasedPorosityNucleationModel.hxx
  * \brief
  * \author Thomas Helfer
- * \date   05/04/2020
+ * \date 05/04/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,9 +28,9 @@ namespace mfront::bbrick {
     ~PowerLawStressBasedPorosityNucleationModel() override;
 
    protected:
-    std::string getModelName() const override final;
-    std::vector<MaterialCoefficientDescription>
-    getMaterialCoefficientDescriptions() const override final;
+    [[nodiscard]] std::string getModelName() const final;
+    [[nodiscard]] std::vector<MaterialCoefficientDescription>
+    getMaterialCoefficientDescriptions() const final;
   };  // end of struct PowerLawStressBasedPorosityNucleationModel
 
 }  // end of namespace mfront::bbrick
