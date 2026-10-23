@@ -11,6 +11,7 @@
  */
 
 #include <cmath>
+#include <stdexcept>
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Check/SplineLocalInterpolation.hxx"
@@ -25,6 +26,21 @@ struct test_SplineLocalInterpolation : public tfel::tests::TestCase {
     i.interpolate({1., 2., 3.}, {3., 5., 7.});
     TFEL_TESTS_ASSERT(std::abs(4. - i.getValue(1.5)) < eps);
     TFEL_TESTS_ASSERT(std::abs(10. - i.getValue(1.5)) > eps);
+    // a second call replaces the splines of the first one
+    i.interpolate({0., 2., 4., 6.}, {0., 2., 4., 6.});
+    i.interpolate({1., 3., 5.}, {7., 7., 7.});
+    TFEL_TESTS_ASSERT(std::abs(7. - i.getValue(1.5)) < eps);
+    TFEL_TESTS_ASSERT(std::abs(7. - i.getValue(4.5)) < eps);
+    // before the first point, the first spline is used
+    i.interpolate({0., 1., 2., 3.}, {1., 1., 1., 1.});
+    TFEL_TESTS_ASSERT(std::abs(1. - i.getValue(-1.)) < eps);
+    // with two points, the interpolation is linear
+    i.interpolate({0., 1.}, {0., 2.});
+    TFEL_TESTS_ASSERT(std::abs(1. - i.getValue(0.5)) < eps);
+    // with one point, the interpolation is constant
+    i.interpolate({1.}, {3.});
+    TFEL_TESTS_ASSERT(std::abs(3. - i.getValue(0.5)) < eps);
+    TFEL_TESTS_CHECK_THROW(i.interpolate({}, {}), std::runtime_error);
     return this->result;
   }  // end of execute
 };

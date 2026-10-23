@@ -25,6 +25,18 @@ namespace tfel::check {
     AreaComparison();
     void compare() override;
     ~AreaComparison() override;
+
+   protected:
+    //! \brief norm of the difference between both curves
+    enum struct Norm { L1, L2 };
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the comparison
+     * \param[in] t: norm of the difference between both curves
+     */
+    AreaComparison(const std::string&, const Norm);
+    //! \brief norm of the difference between both curves
+    Norm norm = Norm::L1;
   };
 
 }  // end of namespace tfel::check

@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cstddef>
 
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
@@ -62,6 +63,12 @@ namespace tfel::check {
     void setFilename(std::string);
     //! \return the filename
     [[nodiscard]] const std::string& getFilename() const;
+    /*!
+     * \return the numbers of the lines of the file from which the values
+     * were read. This vector is empty if the values were not read in the
+     * file, for instance after an interpolation.
+     */
+    [[nodiscard]] const std::vector<std::size_t>& getLineNumbers() const;
     //! \return the TextData used to create column
     [[nodiscard]] std::shared_ptr<const tfel::utilities::TextData> getData()
         const;
@@ -73,6 +80,8 @@ namespace tfel::check {
     std::shared_ptr<tfel::utilities::TextData> data;
     //! the values contained in the column
     std::vector<double> values;
+    //! the numbers of the lines of the file from which the values were read
+    std::vector<std::size_t> lines;
     //! the name of the file which the column was built with
     std::string f;
     /*!

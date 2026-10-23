@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include "TFEL/Raise.hxx"
 #include "TFEL/Check/SplineLocalInterpolation.hxx"
 
 namespace tfel::check {
@@ -28,6 +29,21 @@ namespace tfel::check {
 
   void SplineLocalInterpolation::interpolate(
       const std::vector<double>& times, const std::vector<double>& values) {
+    raise_if(times.size() != values.size(),
+             "SplineLocalInterpolation::interpolate: "
+             "the number of times does not match the number of values");
+    raise_if(times.empty(), "SplineLocalInterpolation::interpolate: no values");
+    // removes the splines of a previous call
+    this->splines.clear();
+    this->timesBefore.clear();
+    // with less than three points, only one spline is built
+    if (times.size() < 3) {
+      tfel::math::CubicSpline<double> spline;
+      spline.setCollocationPoints(times, values);
+      this->splines[times.front()] = spline;
+      this->timesBefore.push_back(times.front());
+      return;
+    }
     // starts at second element, and stops before the last to prevent
     // duplicated splines
     for (unsigned i = 1; i < (times.size() - 1); ++i) {
@@ -56,8 +72,9 @@ namespace tfel::check {
     // else, we search the right spline
     for (unsigned i = 0; i < this->timesBefore.size(); ++i) {
       if (this->timesBefore.at(i) > x) {
-        return (this->splines.find(this->timesBefore.at(i - 1)))
-            ->second.getValue(x);
+        // before the first spline, the first one is used
+        const auto t = this->timesBefore.at(i == 0 ? 0 : i - 1);
+        return (this->splines.find(t))->second.getValue(x);
       }
     }
     return this->splines.find(this->timesBefore.back())->second.getValue(x);

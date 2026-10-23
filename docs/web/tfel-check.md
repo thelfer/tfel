@@ -179,15 +179,15 @@ The `ImplicitSimoMieheElastoPlasticity.check` file:
 @Command "@castem@ ImplicitSimoMieheElastoPlasticityUniaxialTesting.dgibi";
 
 @Precision 100; // absolute tolerance: 100 Pa
-@Test "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.res"
-      "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.ref" 2;
+@Test "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.ref"
+      "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.res" 2;
 ~~~~
 
 - The `@Requires` keyword ensures `Cast3M` and its `MFront` interface are available.
 - The first `@Command` compiles the behaviour.
 - The second `@Command` runs the `Cast3M` simulation, using the `@castem@` substitution.
 - `@Precision 100` sets an absolute tolerance of 100 Pa for comparisons.
-- The `@Test` keyword compares the second column of the result and reference files.
+- The `@Test` keyword compares the second column of the reference and result files.
 
 A configuration file (`castem.config`) defines the substitution:
 
@@ -296,26 +296,48 @@ Example:
 
 ### The `@Test` keyword
 
-The `@Test` keyword compares two files (current results and reference).
+The `@Test` keyword compares two files (reference and current results).
 
 Syntax:
 
 ~~~~{.cxx}
-@Test <results_file> <reference_file> [columns];
+@Test <reference_file> <results_file> <columns>;
 ~~~~
 
-- `results_file`: Path to the file containing current results.
 - `reference_file`: Path to the file containing reference values.
-- `columns`: Optional list of column indices or names to compare (default: all columns).
+- `results_file`: Path to the file containing current results.
+- `columns`: List of column numbers or names to compare. At least one
+  column is required. Each column defines a separate test.
+
+The order of the files matters:
+
+- with an interpolation (see the `@Interpolation` keyword), the values
+  of the second file are interpolated at the abscissas of the first one,
+- the `AllowLessResults` option allows the second file to have fewer
+  values than the first one,
+- the `Area` comparison is normalized by the values of the first file,
+- the relative tolerance of the `Mixed` comparison is scaled by the
+  values of the second file.
+
+Columns can be designated by their names only if the first line of the
+file gives the names of the columns. This line must not start with `#`:
+a line starting with `#` is a comment. A column can also be given by a
+formula of column numbers, such as `'$2*1.e-6'`.
 
 Examples:
 
 ~~~~{.cxx}
-@Test 'results.res' 'reference.res';           // compare all columns
-@Test 'results.res' 'reference.res' 2;        // compare column 2
-@Test 'results.res' 'reference.res' 'B';     // compare column named 'B'
-@Test 'results.res' 'reference.res' 1 3 5;   // compare columns 1, 3, and 5
-@Test 'results.res' 'reference.res' 'A' 'B'; // compare columns named 'A' and 'B'
+@Test 'reference.res' 'results.res' 2;        // compare column 2
+@Test 'reference.res' 'results.res' 'B';     // compare column named 'B'
+@Test 'reference.res' 'results.res' 1 3 5;   // compare columns 1, 3, and 5
+@Test 'reference.res' 'results.res' 'A' 'B'; // compare columns named 'A' and 'B'
+~~~~
+
+Different columns can be compared with the following syntax:
+
+~~~~{.cxx}
+// compare column 2 of 'reference.res' with column 3 of 'results.res'
+@Test {'reference.res' : 2} {'results.res' : 3};
 ~~~~
 
 ### The `@TestType` keyword
@@ -327,53 +349,86 @@ Available types:
 - `Relative`: Relative difference between values must be ≤ precision.
 - `RelativeAndAbsolute`: Combines relative and absolute criteria. Requires two precision values.
 - `Mixed`: Mixed relative/absolute comparison. Requires two precision values.
-- `Area`: Compares the area under the curve. Requires a single precision value.
+- `Area`: Integral of the absolute difference between the two curves,
+  normalized by the maximum absolute value of the reference. Requires a
+  single precision value. See Section @sec:tfel_check:area_comparison.
+- `L2`: Same as `Area`, with the L2 norm of the difference instead of
+  the integral of its absolute value. See Section
+  @sec:tfel_check:l2_comparison.
+
+For all types, a NaN value makes the test fail.
 
 Example:
 
 ~~~~{.cxx}
 @TestType Absolute;
 @Precision 1.e-6;
-@Test 'results.res' 'reference.res' 1;
+@Test 'reference.res' 'results.res' 1;
 
 @TestType RelativeAndAbsolute;
 @Precision 1.e-3 1.e-6; // relative and absolute tolerances
-@Test 'results.res' 'reference.res' 2;
+@Test 'reference.res' 'results.res' 2;
 ~~~~
 
 ### The `@Interpolation` keyword
 
-The `@Interpolation` keyword specifies how reference values are interpolated
-for comparison. This is useful when the reference and result files have different
-abscissa values (e.g., time steps).
+The `@Interpolation` keyword specifies how the values of the results are
+interpolated at the abscissas of the reference. This is useful when the
+reference and result files have different abscissa values (e.g., time
+steps).
 
 Available interpolation methods:
 
-- `None`: No interpolation. Abscissa values must match exactly.
+- `None`: No interpolation. The values are compared line by line: both
+  files must have the same number of values. If a column is given with
+  `using`, the abscissas of both files must be the same. Otherwise, they
+  are not checked.
 - `Linear`: Linear interpolation between reference points.
 - `Spline`: Cubic spline interpolation.
 - `LocalSpline`: Local spline interpolation (avoids global smoothness constraints).
 
 The `using` clause specifies the column to use as the interpolation abscissa.
-The `AllowLessResults` option allows the result file to have fewer points than the reference.
+
+If the results have at least as many distinct abscissas as the
+reference, they are interpolated at the abscissas of the reference.
+Otherwise, the `AllowLessResults` option is required, and the values of
+the reference are interpolated at the abscissas of the results. In both
+cases, the results must reach the bounds of the abscissas of the
+reference: results stopping early make the test fail.
+
+No extrapolation is made: the abscissas of the interpolated file must
+cover the abscissas at which it is evaluated, otherwise the test fails.
+Both files must have values. The abscissas are sorted and, if an
+abscissa appears more than once in a file, only its first point is
+used.
 
 Examples:
 
 ~~~~{.cxx}
 @Interpolation Linear using 'time';
 @Interpolation Spline using 'tps' AllowLessResults;
-          @Interpolation LocalSpline using 'x';
+@Interpolation LocalSpline using 'x';
 ~~~~
 
 #### Interpolation for integration
 
-For `Area` comparisons, an additional interpolation can be specified for integration:
+For `Area` and `L2` comparisons, the interpolation and the abscissa
+column used for the integration are given by the `@TestType` keyword:
 
 ~~~~{.cxx}
-@TestType Area interpolation Spline using 'time';
-@Precision 0.1;
-@Test 'results.res' 'reference.res' 'y';
+@TestType <Area|L2> interpolation <None|Linear|Spline|LocalSpline> using <column>;
 ~~~~
+
+For example:
+
+~~~~{.cxx}
+@TestType Area interpolation Linear using 'time';
+@Precision 1.e-2;
+@Test 'reference.res' 'results.res' 'y';
+~~~~
+
+This interpolation is independent of the one given by the
+`@Interpolation` keyword. See Section @sec:tfel_check:area_comparison.
 
 # Comparing values between files
 
@@ -391,7 +446,7 @@ Checks if the absolute difference between corresponding values is within the spe
 ~~~~{.cxx}
 @TestType Absolute;
 @Precision 1.e-6;
-@Test 'results.res' 'reference.res' 1;
+@Test 'reference.res' 'results.res' 1;
 ~~~~
 
 **Use case**: Suitable for quantities with a known absolute tolerance (e.g., stress in Pa).
@@ -403,7 +458,7 @@ Checks if the relative difference between corresponding values is within the spe
 ~~~~{.cxx}
 @TestType Relative;
 @Precision 1.e-3; // 0.1% tolerance
-@Test 'results.res' 'reference.res' 1;
+@Test 'reference.res' 'results.res' 1;
 ~~~~
 
 **Use case**: Ideal for quantities where relative accuracy matters (e.g., normalized values).
@@ -415,48 +470,110 @@ Combines both criteria: the test passes if **either** the relative **or** the ab
 ~~~~{.cxx}
 @TestType RelativeAndAbsolute;
 @Precision 1.e-3 1.e-6; // relative and absolute tolerances
-@Test 'results.res' 'reference.res' 1;
+@Test 'reference.res' 'results.res' 1;
 ~~~~
 
 **Use case**: Flexible comparison for quantities that may have small absolute values (where relative comparison fails) or large values (where absolute comparison is too strict).
 
 ### Mixed comparison
 
-Combines both criteria: the test passes if **both** the relative **and** the absolute differences are within tolerance.
+Combines both tolerances: the test passes if
+\(\left|a-b\right| \leq p_{r}\,\left|b\right| + p_{a}\), where \(a\)
+and \(b\) are the values of the first and second files, and \(p_{r}\)
+and \(p_{a}\) the relative and absolute precisions.
 
 ~~~~{.cxx}
 @TestType Mixed;
 @Precision 1.e-3 1.e-6; // relative and absolute tolerances
-@Test 'results.res' 'reference.res' 1;
+@Test 'reference.res' 'results.res' 1;
 ~~~~
 
-**Use case**: Strict comparison where both relative and absolute accuracy must be satisfied.
+**Use case**: Tolerance with a relative part and an absolute part, the
+latter being useful for values close to zero.
 
-### Area comparison
+### Area comparison {#sec:tfel_check:area_comparison}
 
-Compares the area under the curve (integral) of the specified columns.
-Requires an interpolation method for the reference data.
+Computes the area between the two curves, i.e. the integral of the
+absolute value of their difference, normalized by the maximum absolute
+value of the reference:
+
+\[
+e = \frac{1}{\max_{i}\left|y^{\mathrm{ref}}_{i}\right|}\int\left|y^{\mathrm{ref}}\left(x\right)-y^{\mathrm{res}}\left(x\right)\right|\,\mathrm{d}x
+\]
+
+where \(x\) is the abscissa column given after the `using` keyword.
+The test succeeds if \(e\) is lower than the precision. This error is
+a normalized \(L^{1}\) norm of the difference.
+
+The integral is computed by the trapezoidal rule on the union of the
+abscissas of both files. Each curve is evaluated:
+
+- at its own abscissas, with its own values,
+- between them, with the chosen interpolation,
+- outside its range, with its first or last value.
+
+Abscissas are sorted. If an abscissa appears more than once in a file,
+only its first point is used. At least two distinct abscissas are
+required. With the `None` interpolation, both files must have the same
+abscissas.
+
+If all the values of the reference are null, the area is not normalized.
+
+The error \(e\) has the unit of the abscissa: it is the product of the
+length of the range of the abscissas and the mean deviation relative to
+the maximum of the reference. For example, for a test lasting 100 s, a
+precision of 1 corresponds to a mean deviation of 1 % of the maximum of
+the reference.
 
 ~~~~{.cxx}
-@TestType Area interpolation Spline using 'time';
-@Precision 0.1; // 10% tolerance on the area
-@Test 'results.res' 'reference.res' 'stress';
+@TestType Area interpolation Linear using 'time';
+@Precision 1; // time range of 100 s: mean deviation of 1 %
+@Test 'reference.res' 'results.res' 'stress';
 ~~~~
 
-**Use case**: Useful for validating global quantities (e.g., total energy, work done) where pointwise differences may be less important.
+**Use case**: Global comparison of two curves, possibly sampled
+differently, when local differences (for instance a slight time shift
+of a sharp transition) are acceptable.
+
+### L2 comparison {#sec:tfel_check:l2_comparison}
+
+Same as the `Area` comparison, with the L2 norm of the difference
+between the two curves:
+
+\[
+e = \frac{1}{\max_{i}\left|y^{\mathrm{ref}}_{i}\right|}\sqrt{\int\left(y^{\mathrm{ref}}\left(x\right)-y^{\mathrm{res}}\left(x\right)\right)^{2}\,\mathrm{d}x}
+\]
+
+The integral is computed by the trapezoidal rule on the same points as
+for the `Area` comparison, with the same rules. The error \(e\) has the
+unit of the square root of the abscissa.
+
+~~~~{.cxx}
+@TestType L2 interpolation Linear using 'time';
+@Precision 1.e-2;
+@Test 'reference.res' 'results.res' 'stress';
+~~~~
+
+**Use case**: Same as the `Area` comparison, with more weight given to
+large local differences.
 
 ## Interpolation methods {#sec:tfel_check:interpolation_methods}
 
 Interpolation is required when the abscissa values (e.g., time, strain) in the result and reference files do not match.
-The `@Interpolation` keyword specifies how reference data is interpolated.
+The `@Interpolation` keyword specifies how the values of one file are
+interpolated at the abscissas of the other one.
 
 ### No interpolation
 
-No interpolation is performed. The abscissa values in both files must match exactly.
+No interpolation is performed. The values are compared line by line, so
+both files must have the same number of values. If a column is given
+with `using`, the abscissas of both files must be the same, up to a
+relative tolerance of \(10^{-10}\). Otherwise, the abscissas are not
+checked.
 
 ~~~~{.cxx}
-@Interpolation None;
-@Test 'results.res' 'reference.res' 1;
+@Interpolation None using 'time'; // the times must be the same
+@Test 'reference.res' 'results.res' 'stress';
 ~~~~
 
 **Use case**: Fastest method when both files use identical abscissa values.
@@ -467,7 +584,7 @@ Linear interpolation between reference points.
 
 ~~~~{.cxx}
 @Interpolation Linear using 'time';
-@Test 'results.res' 'reference.res' 'stress';
+@Test 'reference.res' 'results.res' 'stress';
 ~~~~
 
 **Use case**: Simple and robust for most smooth data.
@@ -478,7 +595,7 @@ Cubic spline interpolation for smooth curves.
 
 ~~~~{.cxx}
 @Interpolation Spline using 'strain';
-@Test 'results.res' 'reference.res' 'stress';
+@Test 'reference.res' 'results.res' 'stress';
 ~~~~
 
 **Use case**: High-quality interpolation for smooth data with continuous second derivatives.
@@ -489,7 +606,7 @@ Local spline interpolation avoids global smoothness constraints, making it more 
 
 ~~~~{.cxx}
 @Interpolation LocalSpline using 'time' AllowLessResults;
-@Test 'results.res' 'reference.res' 'stress';
+@Test 'reference.res' 'results.res' 'stress';
 ~~~~
 
 **Use case**: Preferred for data with sharp transitions or when the result file has fewer points than the reference.
@@ -498,10 +615,11 @@ Local spline interpolation avoids global smoothness constraints, making it more 
 
 The `AllowLessResults` option allows the result file to have fewer data points than the reference file.
 This is useful when the simulation uses adaptive time-stepping or when reference data is highly resolved.
+The results must still reach the bounds of the abscissas of the reference.
 
 ~~~~{.cxx}
 @Interpolation Linear using 'time' AllowLessResults;
-@Test 'results.res' 'reference.res' 1;
+@Test 'reference.res' 'results.res' 1;
 ~~~~
 
 ## Multi-column comparisons
@@ -511,8 +629,8 @@ Multiple columns can be compared in a single `@Test` directive by listing their 
 ~~~~{.cxx}
 @TestType Absolute;
 @Precision 1.e-6;
-@Test 'results.res' 'reference.res' 1 2 3;       // compare columns 1, 2, and 3
-@Test 'results.res' 'reference.res' 'A' 'B';    // compare columns named 'A' and 'B'
+@Test 'reference.res' 'results.res' 1 2 3;       // compare columns 1, 2, and 3
+@Test 'reference.res' 'results.res' 'A' 'B';    // compare columns named 'A' and 'B'
 ~~~~
 
 **Note**: All specified columns are compared using the same `@TestType` and `@Precision`.
@@ -526,7 +644,7 @@ Compare the second column of two files with an absolute tolerance of 1e-6:
 ~~~~{.cxx}
 @TestType Absolute;
 @Precision 1.e-6;
-@Test 'results.res' 'reference.res' 2;
+@Test 'reference.res' 'results.res' 2;
 ~~~~
 
 ### Example 2: Relative comparison with interpolation
@@ -537,7 +655,7 @@ Compare stress-strain curves where the strain values (column 1) differ between f
 @TestType Relative;
 @Precision 1.e-3;
 @Interpolation Spline using 1;
-@Test 'results.res' 'reference.res' 2;
+@Test 'reference.res' 'results.res' 2;
 ~~~~
 
 ### Example 3: Mixed comparison with local spline
@@ -548,17 +666,19 @@ Strict comparison of temperature evolution with local spline interpolation:
 @TestType Mixed;
 @Precision 1.e-4 1.e-6; // relative and absolute tolerances
 @Interpolation LocalSpline using 'time' AllowLessResults;
-@Test 'results.res' 'reference.res' 'temperature';
+@Test 'reference.res' 'results.res' 'temperature';
 ~~~~
 
-### Example 4: Area comparison for energy validation
+### Example 4: Area comparison of force-displacement curves
 
-Compare the total energy (area under the force-displacement curve):
+Compare two force-displacement curves sampled differently:
 
 ~~~~{.cxx}
 @TestType Area interpolation Linear using 'displacement';
-@Precision 0.5; // 0.5% tolerance on the area
-@Test 'results.res' 'reference.res' 'force';
+// displacement in mm, range of 2 mm: mean deviation of 0.5 % of the
+// maximum force
+@Precision 1.e-2;
+@Test 'reference.res' 'results.res' 'force';
 ~~~~
 
 ### Example 5: Multi-column comparison with different precisions
@@ -568,11 +688,11 @@ Compare multiple columns with different precisions (requires separate `@Test` di
 ~~~~{.cxx}
 @TestType Absolute;
 @Precision 1.e-3;
-@Test 'results.res' 'reference.res' 'stress';
+@Test 'reference.res' 'results.res' 'stress';
 
 @TestType Relative;
 @Precision 1.e-4;
-@Test 'results.res' 'reference.res' 'strain';
+@Test 'reference.res' 'results.res' 'strain';
 ~~~~
 
 # Description of the configuration files{#sec:tfel_check:configuration_files}
