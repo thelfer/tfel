@@ -89,14 +89,14 @@ namespace mfront {
     types.real_type = "mfront_gmp_real";
     types.integer_type = "mfront_gmp_size_type";
     types.out_of_bounds_policy_type = "mfront_gmp_OutOfBoundsPolicy";
-    types.output_status_type = "mfront_gmp_OutputStatus";
+    types.output_status_type = "mfront_gpmp_OutputStatus";
     return types;
   }  // end of getTypesDescription
 
   std::vector<std::string>
   GenericParallelMaterialPropertyInterface::getInterfaceHeaderFiles() const {
     return {"MFront/GenericMaterialProperty/Types.h",
-            "MFront/GenericMaterialProperty/MaterialProperty.h"};
+            "MFront/GenericParallelMaterialProperty/MaterialProperty.h"};
   }  // end of getInterfaceHeaderFiles
 
   std::string GenericParallelMaterialPropertyInterface::getInterfaceName()
@@ -153,8 +153,7 @@ namespace mfront {
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
-    insert_if(l.epts, name);
-    insert_if(l.epts, name + '2');
+    insert_if(l.epts, name + "_generic_parallel");
     d.headers.push_back(this->getHeaderFileName(name));
   }  // end of getLibraryDescription
 
@@ -170,10 +169,14 @@ namespace mfront {
       const MaterialPropertyDescription& mpd) const {
     const auto& material = mpd.material;
     const auto& className = mpd.className;
-    if (material.empty()) {
-      return className;
-    }
-    return material + "_" + className;
+    const auto name = material.empty() ? className : material + "_" + className;
+    // the names of the batch functions and of their metadata end with
+    // `_generic_parallel`
+    tfel::raise_if(name.find("_generic_parallel") != std::string::npos,
+                   "GenericParallelMaterialPropertyInterface::getFunctionName: "
+                   "the name of the material property ('" +
+                       name + "') must not contain '_generic_parallel'");
+    return name;
   }
 
   std::string GenericParallelMaterialPropertyInterface::getHeaderFileName(
@@ -284,8 +287,7 @@ namespace mfront {
         "unable to open '" +
             fn + "'");
     os.exceptions(std::ios::badbit | std::ios::failbit);
-    // precision of the bounds and of the parameters treated as static
-    // variables, as in the exported symbols
+    // precision of the bounds and of the default values of the parameters
     os.precision(14);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
@@ -304,8 +306,8 @@ namespace mfront {
     if (!date.empty()) {
       os << "* \\date " << date << '\n';
     }
-    os << " */\n\n"
-       << "#include<algorithm>\n"
+    os << " */\n\n";
+    os << "#include<algorithm>\n"
        << "#include<iterator>\n"
        << "#include<iostream>\n"
        << "#include<sstream>\n"
@@ -316,11 +318,17 @@ namespace mfront {
        << "#include<string>\n"
        << "#include<vector>\n"
        << "#include<locale>\n"
-       << "#include<cmath>\n";
+       << "#include<cmath>\n"
+       << "#include<limits>\n"
+       << "#include<optional>\n";
     os << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
-       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n"
+       << "#include\"MFront/GenericParallel/StatusBlockPool.hxx\"\n"
+       << "#include\"MFront/GenericParallel/MemorySpace.hxx\"\n"
+       << "#include\"MFront/GenericParallelMaterialProperty/"
+          "PointStatus.hxx\"\n";
     if (useQuantities(mpd)) {
       os << "#include\"TFEL/Math/qt.hxx\"\n"
          << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
@@ -330,11 +338,18 @@ namespace mfront {
       os << includes << "\n\n";
     }
     this->backend->writeSpecificIncludesInSourceFile(os, *this, mpd);
+    // the execution policy of the backend, after the specific includes (the
+    // HIP runtime must be included first)
+    os << "#include\"" << this->backend->getExecutionPolicyHeader() << "\"\n\n";
 
+    // the parameters handler has a hidden visibility: libraries of several
+    // backends for the same material property, loaded in the same process,
+    // have their own parameters
     writeMaterialPropertyParametersHandler(os, mpd,
                                            {.material_property_name = name,
                                             .floating_point_type = "double",
-                                            .interface_namespace = nname});
+                                            .interface_namespace = nname,
+                                            .hidden_visibility = true});
 
     this->backend->writeGlobalFunctions(os, *this, mpd, fd);
 
@@ -353,6 +368,19 @@ namespace mfront {
     writeTFELVersionSymbol(os, name);
     writeUnitSystemSymbol(os, name, mpd);
     writeInterfaceSymbol(os, name, this->getInterfaceNameInCamelCase());
+    // backend and version of the generated functions
+    exportStringSymbol(os, name + "_generic_parallel_backend",
+                       this->backend->getName());
+    exportSymbol(os, "unsigned short", name + "_generic_parallel_api_version",
+                 "MFRONT_GPMP_API_VERSION");
+    exportSymbol(os, "const char*", name + "_generic_parallel_memory_space",
+                 this->backend->getMemorySpace());
+    // identifier of the execution policy expected by the generated function
+    // (the parentheses protect the commas of the type of the policy in the
+    // arguments of the macro exporting the symbol)
+    exportSymbol(
+        os, "const char*", name + "_generic_parallel_execution_policy",
+        "(" + this->backend->getExecutionPolicyType() + "::identifier())");
     writeLawSymbol(os, name, mpd.law);
     writeMaterialSymbol(os, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(os, name,
@@ -368,6 +396,7 @@ namespace mfront {
          .floating_point_type = "double",
          .interface_namespace = nname});
 
+    this->backend->writeReportFunction(os, *this, mpd);
     this->backend->writeCImplementations(os, *this, mpd, fd);
 
     os << "#ifdef __cplusplus\n"

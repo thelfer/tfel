@@ -18,6 +18,7 @@
 
 #include <iosfwd>
 #include <string>
+#include <cstddef>
 #include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
@@ -75,6 +76,33 @@ namespace mfront::generic_parallel::material_property {
         const MaterialPropertyDescription&) const = 0;
     //! \brief return the extension of the source file
     [[nodiscard]] virtual std::string getSourceFileExtension() const = 0;
+    /*!
+     * \return an expression, evaluated when the generated library is
+     * compiled, giving the memory space in which the arguments and the
+     * outputs must be located (see `MFront/GenericParallel/MemorySpace.hxx`):
+     * `host`, `device` or `any`
+     */
+    [[nodiscard]] virtual std::string getMemorySpace() const = 0;
+    /*!
+     * \return the type of the execution policy of the backend (see
+     * `MFront/GenericParallel/AbstractBackendExecutionPolicy.hxx`), checked
+     * by the generated functions
+     */
+    [[nodiscard]] virtual std::string getExecutionPolicyType() const = 0;
+    //! \return the header declaring the execution policy of the backend
+    [[nodiscard]] virtual std::string getExecutionPolicyHeader() const = 0;
+    /*!
+     * \brief write the `<name>_generic_parallel_report` function, which
+     * analyses the statistics of an evaluation and fills an output status
+     *
+     * \param[in] os: output stream
+     * \param[in] i: interface
+     * \param[in] mpd: material property description
+     */
+    virtual void writeReportFunction(
+        std::ostream&,
+        const GenericParallelMaterialPropertyInterface&,
+        const MaterialPropertyDescription&) const = 0;
     /*!
      * \brief write additional headers in the source file
      *

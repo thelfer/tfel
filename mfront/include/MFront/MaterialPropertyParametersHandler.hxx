@@ -30,6 +30,13 @@ namespace mfront {
     const std::string floating_point_type;
     //!\brief interface associated with the interface
     const std::string interface_namespace;
+    /*!
+     * \brief if true, the class has a hidden visibility
+     * (`TFEL_VISIBILITY_LOCAL`): its unique instance is shared by the
+     * sources of a library, but not by different libraries loaded in the
+     * same process
+     */
+    const bool hidden_visibility = false;
   };
 
   /*!

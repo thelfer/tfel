@@ -2,12 +2,24 @@
 
 @Environment {"LD_LIBRARY_PATH": "src"};
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-hipcc.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-hipcc.json ../BoundsOrderTest.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-hipcc.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-hipcc.json ../Inconel600_YoungModulus-qt.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-hipcc.json ../UO2_YoungModulus_Martin1989.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-hipcc.json ../LinearDataInterpolationTest.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-hip-hipcc.json";
-@Command "@TFEL_HIPCC_COMPILER@ @TFEL_HIPCC_FLAGS@ -O3 --std=c++@TFEL_CXX_STANDARD@ -I @TFEL_INCLUDE_DIR@ -I include ../test-hip.hip -o test-hip -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelUO2-hip -lGenericParallelInconel600-hip -lGenericParallelMaterialLaw-hip";
+@Command "@TFEL_HIPCC_COMPILER@ @TFEL_HIPCC_FLAGS@ -O3 --std=c++@TFEL_CXX_STANDARD@ -I @TFEL_INCLUDE_DIR@ -I include ../test-hip.hip -o test-hip -L @TFEL_LIBRARY_DIR@ -lTFELTests -lMFrontGenericParallelRuntime -L src -lGenericParallelUO2-hip -lGenericParallelInconel600-hip -lGenericParallelMaterialLaw-hip";
 @Command "./test-hip test-hip-hipcc";
 
+// comparison with the `generic` interface (see compare.cxx)
+@Command "sh ../build-libraries.sh @mfront@ config-hip-hipcc.json";
+@Command "@TFEL_HIPCC_COMPILER@ @TFEL_HIPCC_FLAGS@ -O2 --std=c++@TFEL_CXX_STANDARD@ -DMFRONT_GPMP_COMPARE_USE_HIP -I @TFEL_INCLUDE_DIR@ ../compare.cxx -o compare -L@TFEL_LIBRARY_DIR@ -lMFrontGenericParallelRuntime -ldl";
+@Command "sh ../compare-all.sh ./compare hip --tolerance=1e-13";
+
+// compilation with the runtime checks disabled
+@Command "sh ../build-no-runtime-checks.sh @mfront@ config-hip-hipcc.json";
+@Command "@TFEL_HIPCC_COMPILER@ @TFEL_HIPCC_FLAGS@ -O3 --std=c++@TFEL_CXX_STANDARD@ -DMFRONT_GPMP_COMPARE_USE_HIP -DMFRONT_GPMP_TEST_BACKEND=hip -I @TFEL_INCLUDE_DIR@ -I include ../test-no-runtime-checks.cxx -o test-no-runtime-checks -L @TFEL_LIBRARY_DIR@ -lTFELTests -lMFrontGenericParallelRuntime -L src -lGenericParallelInconel600-hip -ldl";
+@Command "./test-no-runtime-checks test-no-runtime-checks-hip-hipcc";
+
+@CleanFiles {"compare", "test-no-runtime-checks", "no-runtime-checks.json"};
 @CleanDirectories {"include", "src"};

@@ -23,6 +23,15 @@ namespace mfront::generic_parallel::material_property {
 
   /*!
    * \brief This class implements a backend for the parallel STL algorithms
+   *
+   * Options:
+   *
+   * - `execution_policy`: `sequenced_policy` (or `seq`),
+   *   `unsequenced_policy` (or `unseq`), `parallel_policy` (or `par`) or
+   *   `parallel_unsequenced_policy` (or `par_unseq`, default).
+   * - `device_stack_size`: minimal stack size, in bytes, of the threads of
+   *   the device when the parallel algorithms are offloaded to a GPU by
+   *   `nvc++ -stdpar=gpu` (ignored otherwise).
    */
   struct MFRONT_VISIBILITY_EXPORT ParallelSTLBackend
       : CxxProgrammingModelBackendBase {
@@ -40,6 +49,9 @@ namespace mfront::generic_parallel::material_property {
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const override;
+    [[nodiscard]] std::string getMemorySpace() const override;
+    [[nodiscard]] std::string getExecutionPolicyType() const override;
+    [[nodiscard]] std::string getExecutionPolicyHeader() const override;
     //! \brief destructor
     ~ParallelSTLBackend() noexcept override;
 
@@ -48,10 +60,14 @@ namespace mfront::generic_parallel::material_property {
     void writeKernelCall(std::ostream&,
                          const GenericParallelMaterialPropertyInterface&,
                          const MaterialPropertyDescription&,
-                         const FileDescription&,
-                         const bool) const override;
+                         const FileDescription&) const override;
     //! \brief execution policy
     std::string execution_policy;
+    /*!
+     * \brief minimal stack size of the threads of the device when the
+     * parallel algorithms are offloaded to an NVIDIA GPU (0 if not specified)
+     */
+    int device_stack_size = 0;
   };  // end of ParallelSTLBackend
 
 }  // end of namespace mfront::generic_parallel::material_property

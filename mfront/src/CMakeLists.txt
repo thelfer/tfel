@@ -17,6 +17,24 @@ if(enable-static)
     $<INSTALL_INTERFACE:include>)
 endif(enable-static)
 
+# MFrontGenericParallelRuntime: base class of the execution policies of the
+# generic-parallel interfaces, linked by the codes creating policies (the
+# generated libraries do not need it)
+mfront_library(MFrontGenericParallelRuntime
+  GenericParallel/AbstractBackendExecutionPolicy.cxx)
+target_include_directories(MFrontGenericParallelRuntime
+   PUBLIC
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
+if(enable-static)
+  target_include_directories(MFrontGenericParallelRuntime-static
+    PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+endif(enable-static)
+
 # MFrontLogProfiling
 mfront_library(MFrontProfiling
   BehaviourProfiler.cxx)
@@ -208,6 +226,7 @@ set(TFELMFront_SOURCES
     GenericMaterialPropertyInterfaceBase.cxx
     GenericMaterialPropertyInterface.cxx
     GenericParallelMaterialPropertyInterface.cxx
+    GenericParallel/BackendOptions.cxx
     GenericParallel/MaterialProperty/AbstractBackend.cxx
     GenericParallel/MaterialProperty/BackendFactory.cxx
     GenericParallel/MaterialProperty/BackendBase.cxx

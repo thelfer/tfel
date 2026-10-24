@@ -1,0 +1,22 @@
+@DSL MaterialProperty;
+@Law BoundsOrderTest;
+@Description {
+  "A material property with bounds and physical bounds on two arguments and "
+  "on its output, which checks the order of the checks: the first check "
+  "making the evaluation fail is retained, otherwise the last bound violated "
+  "with the warning policy."
+}
+
+@Input x, y;
+@Output z;
+
+@PhysicalBounds x in [-1:*[;
+@PhysicalBounds y in [-1:*[;
+@Bounds x in [0:1];
+@Bounds y in [0:1];
+@PhysicalBounds z in [-2:2];
+@Bounds z in [-1:1];
+
+@Function {
+  z = x - y;
+}
