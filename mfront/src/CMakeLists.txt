@@ -226,6 +226,7 @@ set(TFELMFront_SOURCES
     GenericMaterialPropertyInterfaceBase.cxx
     GenericMaterialPropertyInterface.cxx
     GenericParallelMaterialPropertyInterface.cxx
+    GenericParallel/BackendOptions.cxx
     GenericParallel/MaterialProperty/AbstractBackend.cxx
     GenericParallel/MaterialProperty/BackendFactory.cxx
     GenericParallel/MaterialProperty/BackendBase.cxx
