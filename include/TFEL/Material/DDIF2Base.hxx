@@ -154,7 +154,7 @@ namespace tfel::material {
      * matrix.
      */
     template <typename Stensor2Type1, typename Stensor, typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void treatFracture(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void treatFracture(
         Stensor2Type1&,
         real&,
         real&,
@@ -174,7 +174,7 @@ namespace tfel::material {
      * in explicit integration.
      */
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void rk(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void rk(
         tfel::math::tmatrix<3, 3, real>&,
         tfel::math::tvector<3, real>&,
         real&,
@@ -190,31 +190,31 @@ namespace tfel::material {
         const unsigned short);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cart2cyl(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cart2cyl(
         tfel::math::stensor<1u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cart2cyl(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cart2cyl(
         tfel::math::stensor<2u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cart2cyl(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cart2cyl(
         tfel::math::stensor<3u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cyl2cart(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
         tfel::math::stensor<1u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cyl2cart(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
         tfel::math::stensor<2u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cyl2cart(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
         tfel::math::stensor<3u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void invmat(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void invmat(
         tfel::math::tmatrix<3, 3, real>&,
         tfel::math::tmatrix<3, 3, real>&,
         tfel::math::tvector<3, real>&);

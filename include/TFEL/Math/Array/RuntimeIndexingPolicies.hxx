@@ -62,33 +62,33 @@ namespace tfel::math {
     constexpr RuntimeVectorIndexingPolicy& operator=(
         const RuntimeVectorIndexingPolicy&) = default;
     //! \return the minimal data size
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type
     getUnderlyingArrayMinimalSize() const noexcept {
       return this->size();
     }
     //!
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type getIndex(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type getIndex(
         const size_type i) const noexcept {
       return i;
     }
     //!
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type getIndex(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type getIndex(
         const std::array<size_type, 1u>& i) const noexcept {
       return this->getIndex(i[0]);
     }
     // \brief return if the array is empty
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr bool empty() const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr bool empty() const noexcept {
       return this->data_size == 0;
     }
     //! \return the logical size of the array
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type size() const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type size() const noexcept {
       return this->data_size;
     }
     /*!
      * \return the logical size of the array for the given dimension
      * \param[in] i: dimension
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type size(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type size(
         const size_type i) const noexcept {
       if (i != 0) {
         tfel::reportContractViolation(
@@ -98,7 +98,7 @@ namespace tfel::math {
     }
 
     //!
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr RuntimeVectorIndexingPolicy
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr RuntimeVectorIndexingPolicy
     getRowMajorIndexingPolicy() const {
       return {this->data_size};
     }
@@ -164,39 +164,39 @@ namespace tfel::math {
     constexpr RuntimeRowMajorMatrixIndexingPolicy& operator=(
         const RuntimeRowMajorMatrixIndexingPolicy&) = default;
     //!
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type getIndex(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type getIndex(
         const size_type i, const size_type j) const noexcept {
       return i * this->n_columns + j;
     }
     //!
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type getIndex(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type getIndex(
         const std::array<size_type, 2u> indices) const noexcept {
       return this->getIndex(indices[0], indices[1]);
     }
     //! \return the minimal data size
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type
     getUnderlyingArrayMinimalSize() const noexcept {
       return this->size();
     }
     //!
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr RuntimeRowMajorMatrixIndexingPolicy
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr RuntimeRowMajorMatrixIndexingPolicy
     getRowMajorIndexingPolicy() {
       return {*this};
     }  // end of getRowMajorIndexingPolicy
        //! \return if the matrix is empty
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr bool empty() const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr bool empty() const noexcept {
       return (this->getNumberOfRows() == 0) ||
              (this->getNumberOfColumns() == 0);
     }
     //!
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type size() const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type size() const noexcept {
       return this->getNumberOfRows() * this->getNumberOfColumns();
     }
     /*!
      * \return the logical size of the array for the given dimension
      * \param[in] i: dimension
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type size(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type size(
         const size_type i) const noexcept {
       if (i > 1) {
         tfel::reportContractViolation(
@@ -206,12 +206,12 @@ namespace tfel::math {
       return i == 0 ? this->getNumberOfRows() : this->getNumberOfColumns();
     }
     //! \return the number of rows
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type getNumberOfRows()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type getNumberOfRows()
         const noexcept {
       return this->n_rows;
     }
     //! \return the number of cols
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type getNumberOfColumns()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr size_type getNumberOfColumns()
         const noexcept {
       return this->n_columns;
     }

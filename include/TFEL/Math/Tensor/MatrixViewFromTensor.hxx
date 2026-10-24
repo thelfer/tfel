@@ -41,7 +41,7 @@ namespace tfel::math {
     typedef unsigned short IndexType;
     typedef EmptyRunTimeProperties RunTimeProperties;
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return RunTimeProperties();
     }

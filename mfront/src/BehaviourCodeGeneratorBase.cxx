@@ -1972,7 +1972,7 @@ namespace mfront {
     os << "/*!\n"
        << " * \\brief Update auxiliary state variables at end of integration\n"
        << " */\n"
-       << "TFEL_HOST_DEVICE [[nodiscard]] bool updateAuxiliaryStateVariables()"
+       << "[[nodiscard]] TFEL_HOST_DEVICE bool updateAuxiliaryStateVariables()"
        << "{\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";

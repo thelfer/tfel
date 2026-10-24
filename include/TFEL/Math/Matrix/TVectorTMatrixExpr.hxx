@@ -49,7 +49,7 @@ namespace tfel::math {
     //
     TVectorTMatrixExpr() = delete;
     //
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return RunTimeProperties();
     }

@@ -58,7 +58,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->operator()(i);
     }
@@ -66,12 +66,12 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return RunTimeProperties();
     }
@@ -112,7 +112,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->operator()(i);
     }
@@ -120,12 +120,12 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return RunTimeProperties();
     }
@@ -170,7 +170,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->operator()(i);
     }
@@ -178,12 +178,12 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return RunTimeProperties();
     }

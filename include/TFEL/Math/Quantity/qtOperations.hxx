@@ -49,38 +49,38 @@
       !NoUnitImmutableQuantityConcept<QuantityType>) =                       \
       delete /*("invalid operation (unmatched unit)") */
 
-#define TFEL_MATH_QT_SCALAR_OPERATIONS(Op)                               \
-  template <ImmutableQuantityConcept QuantityType,                       \
-            StandardArithmeticTypeConcept ScalarType>                    \
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                          \
-  operator Op(const QuantityType&, const ScalarType&) noexcept requires( \
-      NoUnitImmutableQuantityConcept<QuantityType>);                     \
-  template <ImmutableQuantityConcept QuantityType,                       \
-            StandardArithmeticTypeConcept ScalarType>                    \
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                          \
-  operator Op(const QuantityType&, const ScalarType&) noexcept requires( \
-      !NoUnitImmutableQuantityConcept<QuantityType>) =                   \
-      delete /* ("invalid operation (unmatched unit)") */;               \
-  template <StandardArithmeticTypeConcept ScalarType,                    \
-            ImmutableQuantityConcept QuantityType>                       \
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                          \
-  operator Op(const ScalarType&, const QuantityType&) noexcept requires( \
-      NoUnitImmutableQuantityConcept<QuantityType>);                     \
-  template <StandardArithmeticTypeConcept ScalarType,                    \
-            ImmutableQuantityConcept QuantityType>                       \
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                          \
-  operator Op(const ScalarType&, const QuantityType&) noexcept requires( \
-      !NoUnitImmutableQuantityConcept<QuantityType>) =                   \
-      delete /* ("invalid operation (unmatched unit)") */
+#define TFEL_MATH_QT_SCALAR_OPERATIONS(Op)                   \
+  template <ImmutableQuantityConcept QuantityType,           \
+            StandardArithmeticTypeConcept ScalarType>        \
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator Op( \
+      const QuantityType&, const ScalarType&) noexcept       \
+    requires(NoUnitImmutableQuantityConcept<QuantityType>);  \
+  template <ImmutableQuantityConcept QuantityType,           \
+            StandardArithmeticTypeConcept ScalarType>        \
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator Op( \
+      const QuantityType&, const ScalarType&) noexcept       \
+    requires(!NoUnitImmutableQuantityConcept<QuantityType>)  \
+  = delete /* ("invalid operation (unmatched unit)") */;     \
+  template <StandardArithmeticTypeConcept ScalarType,        \
+            ImmutableQuantityConcept QuantityType>           \
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator Op( \
+      const ScalarType&, const QuantityType&) noexcept       \
+    requires(NoUnitImmutableQuantityConcept<QuantityType>);  \
+  template <StandardArithmeticTypeConcept ScalarType,        \
+            ImmutableQuantityConcept QuantityType>           \
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator Op( \
+      const ScalarType&, const QuantityType&) noexcept       \
+    requires(!NoUnitImmutableQuantityConcept<QuantityType>)  \
+  = delete /* ("invalid operation (unmatched unit)") */
 
 #define TFEL_MATH_QT_SCALAR_OPERATIONS2(Op)                  \
   template <ImmutableQuantityConcept QuantityType,           \
             StandardArithmeticTypeConcept ScalarType>        \
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator Op( \
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator Op( \
       const QuantityType&, const ScalarType&) noexcept;      \
   template <StandardArithmeticTypeConcept ScalarType,        \
             ImmutableQuantityConcept QuantityType>           \
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator Op( \
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator Op( \
       const ScalarType&, const QuantityType&) noexcept
 
 namespace tfel::math {
@@ -94,7 +94,7 @@ namespace tfel::math {
 
   //! \brief negation operator
   template <ImmutableQuantityConcept QuantityType>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator-(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator-(
       const QuantityType& q) noexcept {
     return qt_rebind<QuantityType>{-base_type_cast(q)};
   }  // end of operator-
