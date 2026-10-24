@@ -174,7 +174,7 @@ namespace tfel::check {
      * \brief boolean stating that terminal colors shall be used for the
      * terminal output (std::cout)
      */
-    bool use_terminal_colors = false;
+    bool use_terminal_colors = true;
     /*!
      * \brief boolean stating that the terminal output (std::cout) shall be
      * synchronized
