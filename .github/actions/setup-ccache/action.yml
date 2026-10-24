@@ -1,0 +1,69 @@
+name: Set up ccache
+description: >
+  Install ccache and restore the compilations cached by the previous runs under the given
+  key. save-ccache saves them at the end of the job. The compilations shall not use
+  -march=native (enable-portable-build option), as the runners have different processors.
+  On Windows, ccache is also copied as cl.exe in the directory given by the CCACHE_CL_DIR
+  environment variable, for the Visual Studio generator (see msvc.cmake), and its path is
+  given by the CCACHE_EXE environment variable.
+inputs:
+  key:
+    description: name of the cache, e.g. the workflow and the operating system
+    required: true
+  version:
+    description: version of ccache
+    default: "4.14.2"
+runs:
+  using: composite
+  steps:
+  - name: Install ccache
+    if: runner.os != 'Windows'
+    shell: bash
+    env:
+      VERSION: ${{ inputs.version }}
+    run: |
+      if [ "$RUNNER_OS" = Linux ]; then
+        archive=ccache-$VERSION-linux-x86_64-musl-static
+      else
+        archive=ccache-$VERSION-darwin
+      fi
+      mkdir -p "$RUNNER_TEMP/ccache-bin"
+      curl -sSfL "https://github.com/ccache/ccache/releases/download/v$VERSION/$archive.tar.gz" |
+        tar xz --strip-components=1 -C "$RUNNER_TEMP/ccache-bin" "$archive/ccache"
+      echo "$RUNNER_TEMP/ccache-bin" >> "$GITHUB_PATH"
+  - name: Install ccache
+    if: runner.os == 'Windows'
+    shell: pwsh
+    env:
+      VERSION: ${{ inputs.version }}
+    run: |
+      $archive = "ccache-$env:VERSION-windows-x86_64"
+      Invoke-WebRequest "https://github.com/ccache/ccache/releases/download/v$env:VERSION/$archive.zip" -OutFile "$env:RUNNER_TEMP\ccache.zip"
+      Expand-Archive "$env:RUNNER_TEMP\ccache.zip" -DestinationPath "$env:RUNNER_TEMP"
+      $bin = "$env:RUNNER_TEMP\$archive"
+      New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\ccache-cl" | Out-Null
+      Copy-Item "$bin\ccache.exe" "$env:RUNNER_TEMP\ccache-cl\cl.exe"
+      Add-Content $env:GITHUB_PATH $bin
+      Add-Content $env:GITHUB_ENV "CCACHE_EXE=$bin\ccache.exe"
+      Add-Content $env:GITHUB_ENV "CCACHE_CL_DIR=$env:RUNNER_TEMP\ccache-cl"
+      # the date of cl.exe differs from one image of the runners to another, even for
+      # the same compiler
+      Add-Content $env:GITHUB_ENV "CCACHE_COMPILERCHECK=content"
+  - name: Configure ccache
+    shell: bash
+    run: |
+      echo "CCACHE_DIR=$RUNNER_TEMP/ccache" >> "$GITHUB_ENV"
+      # an upper bound, in addition to the removal of the unused files by save-ccache
+      echo "CCACHE_MAXSIZE=1G" >> "$GITHUB_ENV"
+      # start of the job and name of the cache, see save-ccache
+      echo "CCACHE_START=$(date +%s)" >> "$GITHUB_ENV"
+      echo "CCACHE_KEY=ccache-${{ inputs.key }}" >> "$GITHUB_ENV"
+  - uses: actions/cache/restore@v6
+    with:
+      path: ${{ runner.temp }}/ccache
+      key: ccache-${{ inputs.key }}-${{ github.run_id }}-${{ github.run_attempt }}
+      restore-keys: ccache-${{ inputs.key }}-
+  # restored with the cache, then shown by save-ccache for this job only
+  - name: Reset the statistics
+    shell: bash
+    run: ccache --zero-stats

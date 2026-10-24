@@ -30,6 +30,12 @@ jobs:
       with:
         path: tfel
 
+    - name: Set up ccache
+      id: ccache
+      uses: ./tfel/.github/actions/setup-ccache
+      with:
+        key: tdls-${{ matrix.os }}
+
     - name: Checkout TDLS
       uses: actions/checkout@v7
       with:
@@ -50,6 +56,9 @@ jobs:
         cmake ${{github.workspace}}/tfel                                   \
               -B ${{github.workspace}}/build                               \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                       \
+              -Denable-portable-build=ON                                   \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache                           \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache                         \
               -Denable-tdls=ON                                             \
               -Denable-tdls-as-default-linear-system-solver-in-mfront=ON   \
               -Dtdls_DIR=${{github.workspace}}/install-tdls/lib/cmake/tdls \
@@ -106,3 +115,8 @@ jobs:
             cat "$o"
           done
         done
+
+    # even when a test fails, so that the next run does not compile everything again
+    - name: Save ccache
+      if: ${{ !cancelled() && steps.ccache.outcome == 'success' }}
+      uses: ./tfel/.github/actions/save-ccache
