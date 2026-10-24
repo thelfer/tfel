@@ -149,6 +149,8 @@ does not show up there).
 
 ## Going further
 
+- The `Run sanitizers` workflow runs this sequence automatically on
+  `GitHub` Actions: see the [release howto](release-howto.html).
 - The `gcc` and `clang` documentations describe many more sanitizers: they
   can be declared in `cmake/modules/gcc.cmake` and
   `cmake/modules/clang.cmake` in the same way as the already declared ones.

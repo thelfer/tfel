@@ -125,6 +125,7 @@ For developers and contributors.
 | [Coverity Scan](coverity-scan.html) | Static analysis for TFEL. |
 | [Running Sanitized Tests](sanitizers.html) | Building and testing TFEL/MFront with sanitizers. |
 | [Packages](packages.html) | Creating binary packages for TFEL. |
+| [Release How-To](release-howto.html) | Running the sanitized tests before a release. |
 | [TFEL System](TFELSystem.html) | Overview of TFEL's architecture. |
 
 # Release Notes & History
