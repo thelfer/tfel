@@ -22,14 +22,17 @@ option or by enabling its dedicated option, `enable-<name>-sanitizer`:
 
 ~~~~ {#sanitize-address .bash}
 $ cmake <srcdir> -B build -DCMAKE_BUILD_TYPE=Debug \
-      -Denable-sanitize-options="address,undefined"
+      -Denable-sanitize-options="address;undefined"
 ~~~~
 
-A comma may be used as a separator instead of a semicolon. The available
-sanitizers depend on the compiler and on its version: the dedicated option
-of an unavailable sanitizer is simply ignored with a warning, so that the
-same options can be used whatever the compiler is. The `address`, `thread`
-and `memory` sanitizers cannot be used simultaneously.
+As for any `cmake` list, the sanitizer names are separated by semicolons,
+which shall be quoted not to be interpreted by the shell. As a convenience,
+commas may also be used as separators, so that no quoting is needed:
+`-Denable-sanitize-options=address,undefined`. The available sanitizers
+depend on the compiler and on its version: the dedicated option of an
+unavailable sanitizer is simply ignored with a warning, so that the same
+options can be used whatever the compiler is. The `address`, `thread` and
+`memory` sanitizers cannot be used simultaneously.
 
 The combination which gives the best return for `TFEL/MFront` is the address
 sanitizer combined with the undefined behaviour sanitizer and its subsets:
@@ -41,7 +44,7 @@ sanitizer combined with the undefined behaviour sanitizer and its subsets:
 
   ~~~~ {#sanitize-gcc .bash}
   $ cmake <srcdir> -B build -DCMAKE_BUILD_TYPE=Debug \
-        -Denable-sanitize-options="address,alignment,bool,bounds,bounds-strict,builtin,enum,float-cast-overflow,float-divide-by-zero,null,object-size,return,shift,shift-base,shift-exponent,signed-integer-overflow" \
+        -Denable-sanitize-options="address;alignment;bool;bounds;bounds-strict;builtin;enum;float-cast-overflow;float-divide-by-zero;null;object-size;return;shift;shift-base;shift-exponent;signed-integer-overflow" \
         -Denable-glibcxx-debug=ON
   ~~~~
 
@@ -49,7 +52,7 @@ sanitizer combined with the undefined behaviour sanitizer and its subsets:
 
   ~~~~ {#sanitize-clang .bash}
   $ CC=clang CXX=clang++ cmake <srcdir> -B build -DCMAKE_BUILD_TYPE=Debug \
-        -Denable-sanitize-options="address,undefined" \
+        -Denable-sanitize-options="address;undefined" \
         -Denable-glibcxx-debug=ON
   ~~~~
 

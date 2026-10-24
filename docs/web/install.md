@@ -222,9 +222,16 @@ enable, for instance:
 $ cmake <srcdir> -Denable-sanitize-options="address;undefined"
 ~~~~
 
-A comma may be used as a separator instead of a semicolon. The available
-sanitizers depend on the compiler and on its version. The `address`,
-`thread` and `memory` sanitizers cannot be used simultaneously.
+As for any `cmake` list, the sanitizers are separated by semicolons. As a
+convenience, commas may also be used as separators, which avoids to quote
+the separator on some shells:
+
+~~~~ {#sanitizers-comma .bash}
+$ cmake <srcdir> -Denable-sanitize-options=address,undefined
+~~~~
+
+The available sanitizers depend on the compiler and on its version. The
+`address`, `thread` and `memory` sanitizers cannot be used simultaneously.
 
 Each sanitizer can also be enabled individually using the dedicated option
 whose name is obtained from the sanitizer name:

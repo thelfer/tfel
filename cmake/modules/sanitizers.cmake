@@ -10,8 +10,9 @@
 #
 # - listing it in the `enable-sanitize-options` option, which takes the
 #   list of the sanitizers to enable, e.g.
-#   `-Denable-sanitize-options="address;undefined"` (a comma may be used
-#   as a separator instead of a semicolon).
+#   `-Denable-sanitize-options="address;undefined"`. As for any cmake list,
+#   the sanitizers are separated by semicolons. As a convenience, commas may
+#   also be used as separators, which avoids quoting the value.
 #   Passing a boolean to this option is no longer supported since
 #   enabling all the sanitizers at once is meaningless: most sanitizers
 #   cannot be combined (for instance `address`, `thread` and `memory`).
