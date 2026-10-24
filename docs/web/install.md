@@ -213,6 +213,53 @@ For example, we can use the following command to select the
 $ CXX=icpc CC=icc FC=ifort F77=ifort cmake <srcdir> -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=<install_prefix>
 ~~~~
 
+### Sanitizers and hardening options
+
+The `enable-sanitize-options` option takes the list of the sanitizers to
+enable, for instance:
+
+~~~~ {#sanitizers .bash}
+$ cmake <srcdir> -Denable-sanitize-options="address;undefined"
+~~~~
+
+As for any `cmake` list, the sanitizers are separated by semicolons. As a
+convenience, commas may also be used as separators, which avoids to quote
+the separator on some shells:
+
+~~~~ {#sanitizers-comma .bash}
+$ cmake <srcdir> -Denable-sanitize-options=address,undefined
+~~~~
+
+The available sanitizers depend on the compiler and on its version. The
+`address`, `thread` and `memory` sanitizers cannot be used simultaneously.
+
+Each sanitizer can also be enabled individually using the dedicated option
+whose name is obtained from the sanitizer name:
+`enable-<name>-sanitizer`, for instance:
+
+~~~~ {#address-sanitizer .bash}
+$ cmake <srcdir> -Denable-sanitize-options="undefined" -Denable-bounds-strict-sanitizer=ON
+~~~~
+
+Such options can be combined with the `enable-sanitize-options` option: the
+enabled sanitizers are the sanitizers listed in the `enable-sanitize-options`
+option and the sanitizers whose dedicated option is enabled.
+
+Some sanitizers require specific settings to be fully effective (the link
+time optimization for `cfi`, instrumentation of all the linked code for
+`memory`, etc.), as described in the `gcc` and `clang` documentations.
+
+Note that passing a boolean value to the `enable-sanitize-options` option is
+no longer supported: this option used to enable a set of sanitizers at once,
+which is meaningless as most sanitizers cannot be combined.
+
+Standard library hardening can be combined with the sanitizers: the
+`enable-glibcxx-debug` option enables the debug mode of the standard library
+of the GNU C++ library in debug builds and the `enable-libcxx-hardening-mode`
+option enables the hardening mode of `libc++`. How to build and run the tests
+with the sanitizers is described in
+[a dedicated page](sanitizers.html).
+
 ### Controlling the generation of the documentation
 
 Generation of the documentation can be controlled by the following
