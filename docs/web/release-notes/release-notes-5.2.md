@@ -47,6 +47,14 @@ library, see below.
 
 # Known incompatibilities
 
+- The `enable-sanitize-options` option is no longer a boolean option: it
+  now takes the list of the sanitizers to enable, e.g.
+  `-Denable-sanitize-options="address;undefined"`. Enabling all the
+  sanitizers at once was indeed meaningless as most sanitizers cannot be
+  combined (for instance `address`, `thread` and `memory`). Each
+  sanitizer can also be enabled individually using its dedicated
+  `enable-<name>-sanitizer` option, see below.
+
 - `MFront`' interfaces have to implement a method named `setOptions`.
 
 # Improvements to the build system
@@ -58,6 +66,67 @@ library, see below.
 - `enable-tdls-as-default-linear-system-solver-in-mfront`: use `TDLS`
   as the default linear solver. Requires `enable-tdls` to be `ON`.
   `OFF` by default.
+
+## Sanitizers and hardening options
+
+The support for sanitizers has been modularised: the `enable-sanitize-options`
+option takes the list of the sanitizers to enable (a comma may be used as a
+separator instead of a semicolon), for instance:
+
+~~~~{.bash}
+$ cmake <srcdir> -Denable-sanitize-options="address;undefined"
+~~~~
+
+The available sanitizers depend on the compiler and on its version. The
+`address`, `thread` and `memory` sanitizers cannot be used simultaneously.
+
+Each sanitizer also has a dedicated option, whose name is obtained from the
+sanitizer name: `enable-<name>-sanitizer`, e.g.
+`-Denable-bounds-strict-sanitizer=ON`. Such options can be combined with the
+`enable-sanitize-options` option: the enabled sanitizers are the sanitizers
+listed in the `enable-sanitize-options` option and the sanitizers whose
+dedicated option is enabled. Dedicated options are also defined for the
+sanitizers which are not supported by the current compiler (enabling them
+issues a warning and they are ignored), so that the same options can be
+used whatever the compiler is.
+
+The following sanitizers are declared for `gcc` (the sanitizers corresponding
+to a subset of the undefined behaviour sanitizer can be enabled
+individually):
+
+- `address`, `thread`, `leak`, `hwaddress`,
+- `undefined` and its subsets: `alignment`, `bool`, `bounds`,
+  `bounds-strict`, `builtin`, `enum`, `float-cast-overflow`,
+  `float-divide-by-zero`, `null`, `object-size`, `return`, `shift`,
+  `shift-base`, `shift-exponent`, `signed-integer-overflow`, `vptr`,
+- `pointer-compare`, `pointer-subtract` (the address sanitizer and the link
+  time optimization are required and added automatically),
+- hardening flags, which can be combined with the sanitizers above:
+  `fstack-check`, `fstack-protector-all`, `fno-omit-frame-pointer`.
+
+The following sanitizers are declared for `clang`:
+
+- `address`, `thread`, `memory` (the memory sanitizer also enables
+  `-fsanitize-memory-track-origins=2`), `leak`, `hwaddress`,
+- `cfi`, `cfi-icall`, `safe-stack`, `shadow-call-stack`, `dataflow`,
+- `undefined` and its subsets: `alignment`, `bool`, `bounds`, `builtin`,
+  `enum`, `float-cast-overflow`, `float-divide-by-zero`, `integer`,
+  `unsigned-integer-overflow`, `null`, `object-size`, `return`, `shift`,
+  `shift-base`, `shift-exponent`, `signed-integer-overflow`, `vptr`,
+- `pointer-compare`, `pointer-subtract` (the address sanitizer and the link
+  time optimization are required and added automatically),
+- hardening flags, which can be combined with the sanitizers above:
+  `address-use-after-scope` (`-fsanitize-address-use-after-scope`),
+  `fstack-check`, `fstack-protector-all`, `fno-omit-frame-pointer`.
+
+Some sanitizers require specific settings to be fully effective (the link
+time optimization for `cfi` and `shadow-call-stack`, instrumentation of all
+the linked code for `memory` and `safe-stack`, etc.), as described in the
+`gcc` and `clang` documentations.
+
+When at least one sanitizer is enabled, the `-fno-omit-frame-pointer` flag is
+added automatically to ease the interpretation of the reports emitted by the
+sanitizers.
 
 ## User-defined `cmake` variables
 
@@ -632,6 +701,12 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1089: Add debug mode + hardening in the test matrix
+
+The sanitizers options have been modularised to allow the continuous
+integration to enable sanitizers individually. For more details, see
+<https://github.com/thelfer/tfel/issues/1089>
 
 ## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
 

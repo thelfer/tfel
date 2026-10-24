@@ -41,7 +41,6 @@ else(enable-fast-math)
 endif(enable-fast-math)
 
 option(enable-static-analysis  "enable gcc static analysis" OFF)
-option(enable-sanitize-options "enable various gcc sanitize options (undefined, address,...)" OFF)
 
 option(enable-glibcxx-debug "use the debug version of the C++ standard as implemented by the glib C++ library" OFF)
 if(enable-glibcxx-debug)
@@ -92,27 +91,51 @@ set(TFEL_CMAKE_C_FLAGS_PROFILING "-pg" CACHE STRING
 mark_as_advanced(TFEL_CMAKE_CXX_FLAGS_PROFILING
                  TFEL_CMAKE_C_FLAGS_PROFILING)
 
-# tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fanalyzer")
-
-if(enable-sanitize-options)
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=bounds-strict")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=undefined")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=float-divide-by-zero")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=float-cast-overflow")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=bounds")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=alignment")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=object-size")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=vpt")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=address")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=null")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=return")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=signed-integer-overflow")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=bool")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=enum")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fstack-check")
-  #  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=leak")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fno-omit-frame-pointer")
-endif(enable-sanitize-options)
+# sanitizers, handled by cmake/modules/sanitizers.cmake
+# note: the sanitizers available in the generic gcc documentation can be
+# used: the sanitizers below are only the sanitizers supported by the
+# versions of gcc tested by the CI.
+# - pointer-compare and pointer-subtract require the address sanitizer
+#   and the link time optimization, which are added automatically
+# - hwaddress (HWASan) requires a target with memory tagging support
+include(cmake/modules/sanitizers.cmake)
+tfel_declare_sanitizer(address)
+tfel_declare_sanitizer(thread)
+tfel_declare_sanitizer(leak)
+tfel_declare_sanitizer(undefined)
+# sanitizers corresponding to a subset of the undefined behaviour sanitizer
+# (undefined), which can be enabled individually
+tfel_declare_sanitizer(alignment)
+tfel_declare_sanitizer(bool)
+tfel_declare_sanitizer(bounds)
+tfel_declare_sanitizer(bounds-strict)
+tfel_declare_sanitizer(builtin)
+tfel_declare_sanitizer(enum)
+tfel_declare_sanitizer(float-cast-overflow)
+tfel_declare_sanitizer(float-divide-by-zero)
+tfel_declare_sanitizer(null)
+tfel_declare_sanitizer(object-size)
+tfel_declare_sanitizer(return)
+tfel_declare_sanitizer(shift)
+tfel_declare_sanitizer(shift-base)
+tfel_declare_sanitizer(shift-exponent)
+tfel_declare_sanitizer(signed-integer-overflow)
+tfel_declare_sanitizer(vptr)
+# sanitizers requiring the address sanitizer and the link time optimization
+tfel_declare_sanitizer(pointer-compare fsanitize=pointer-compare fsanitize=address flto)
+tfel_declare_sanitizer(pointer-subtract fsanitize=pointer-subtract fsanitize=address flto)
+# sanitizers requiring a target with memory tagging support
+tfel_declare_sanitizer(hwaddress)
+# sanitizers which are not supported by the current version of gcc: the
+# dedicated options are still defined (and ignored) so that the same
+# options can be used whatever the version of gcc is
+tfel_declare_unavailable_sanitizer(integer)
+tfel_declare_unavailable_sanitizer(vpt)
+# hardening flags, which can be combined with the sanitizers above
+tfel_declare_sanitizer(fstack-check fstack-check)
+tfel_declare_sanitizer(fstack-protector-all fstack-protector-all)
+tfel_declare_sanitizer(fno-omit-frame-pointer fno-omit-frame-pointer)
+tfel_setup_sanitize_options()
 
 # unsable flag
 # set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -D_GLIBCXX_CONCEPT_CHECKS")
