@@ -246,6 +246,13 @@ Note that passing a boolean value to the `enable-sanitize-options` option is
 no longer supported: this option used to enable a set of sanitizers at once,
 which is meaningless as most sanitizers cannot be combined.
 
+Standard library hardening can be combined with the sanitizers: the
+`enable-glibcxx-debug` option enables the debug mode of the standard library
+of the GNU C++ library in debug builds and the `enable-libcxx-hardening-mode`
+option enables the hardening mode of `libc++`. How to build and run the tests
+with the sanitizers is described in
+[a dedicated page](sanitizers.html).
+
 ### Controlling the generation of the documentation
 
 Generation of the documentation can be controlled by the following
