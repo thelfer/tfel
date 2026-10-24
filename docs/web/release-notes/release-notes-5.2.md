@@ -124,6 +124,17 @@ time optimization for `cfi` and `shadow-call-stack`, instrumentation of all
 the linked code for `memory` and `safe-stack`, etc.), as described in the
 `gcc` and `clang` documentations.
 
+Note that the `vptr` check, which is part of the `undefined` sanitizer,
+may lead to pathologically long compilation times with `gcc` for some
+files of `MFront`, which implement heavy template code: it takes more
+than ninety minutes to compile
+`mfront/src/GenericMaterialPropertyInterfaceBase.cxx` with
+`-fsanitize=undefined` (`-O2`), whereas a few minutes are needed when the
+`vptr` check is disabled. This check can be excluded by listing
+individually the sanitizers of interest, using the corresponding
+dedicated options (`alignment`, `bool`, `bounds`, `builtin`, `enum`,
+etc.) instead of the `undefined` sanitizer.
+
 When at least one sanitizer is enabled, the `-fno-omit-frame-pointer` flag is
 added automatically to ease the interpretation of the reports emitted by the
 sanitizers.
