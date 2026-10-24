@@ -11,12 +11,16 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-This page describes how to run the checks which are recommended before a
-release, in particular the sanitized tests, using the `Run sanitizers`
-continuous integration workflow. The sanitizer options themselves are
+This page gathers the tasks to be performed when preparing a release.
+
+## Running the sanitized tests
+
+Before a release, the tests shall be run with the sanitizers and the
+standard library hardening, using the `Run sanitizers` continuous
+integration workflow, described below. The sanitizer options themselves are
 described in [Running sanitized tests](sanitizers.html).
 
-## The `Run sanitizers` workflow
+### The `Run sanitizers` workflow
 
 The workflow is defined in `.github/workflows/run-sanitizers.yml`. It is a
 manual workflow: it is never triggered automatically by a `push` or a pull
@@ -37,7 +41,7 @@ Running the workflow requires write access to the repository. Note that a
 manual workflow is only proposed for the branches or tags on which the
 workflow file exists: the file must be present on the selected `ref`.
 
-## Running the workflow from the web interface
+### Running the workflow from the web interface
 
 - Open the `Actions` tab of the repository.
 - Select `Run sanitizers` in the list of workflows, on the left.
@@ -48,7 +52,7 @@ workflow file exists: the file must be present on the selected `ref`.
 The progress of the run is displayed in the `Actions` tab and the failures
 are reported as usual in the annotations and in the logs of the failed job.
 
-## Running the workflow from the command line
+### Running the workflow from the command line
 
 The same workflow can be started with the `GitHub` CLI
 ([`gh`](https://cli.github.com/)), which is convenient to script the checks
@@ -71,7 +75,7 @@ $ gh run watch <run identifier>                    # follow the progress
 $ gh run view --log-failed <run identifier>        # logs of the failed steps
 ~~~~
 
-## Recommended configurations
+### Recommended configurations
 
 The following two configurations have been validated on a full build with
 all the tests, including the installation and `tfel-check`:
