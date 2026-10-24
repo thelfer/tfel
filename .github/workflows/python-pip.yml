@@ -25,6 +25,27 @@ jobs:
       steps:
         - uses: actions/checkout@v7
 
+        # one cache per system, shared by the versions of python and saved by the
+        # job of the version also built for the pull requests
+        - name: Set up ccache
+          id: ccache
+          uses: ./.github/actions/setup-ccache
+          with:
+            key: wheel-${{ matrix.os }}
+
+        # on Linux, the wheels are built in a container which mounts the file
+        # system of the runner on /host. The Visual Studio generator uses ccache
+        # through the MSBuild properties of msvc.cmake
+        - name: Use ccache in the builds
+          shell: bash
+          run: |
+            if [ "$RUNNER_OS" = Windows ]; then
+              echo "CMAKE_TOOLCHAIN_FILE=$(cygpath -m "$GITHUB_WORKSPACE")/.github/actions/setup-ccache/msvc.cmake" >> "$GITHUB_ENV"
+            else
+              echo "CMAKE_C_COMPILER_LAUNCHER=ccache" >> "$GITHUB_ENV"
+              echo "CMAKE_CXX_COMPILER_LAUNCHER=ccache" >> "$GITHUB_ENV"
+            fi
+
         # see bindings/python/pip/pyproject.toml for the configuration
         # of cibuildwheel and bindings/python/pip/setup.py for the build
         - name: Build and test the wheel
@@ -34,6 +55,17 @@ jobs:
             output-dir: wheelhouse
           env:
             CIBW_BUILD: ${{ matrix.python }}-*
+            CIBW_BEFORE_ALL_LINUX: >-
+              curl -sSfL https://github.com/ccache/ccache/releases/download/v4.14.2/ccache-4.14.2-linux-x86_64-musl-static.tar.gz
+              | tar xz --strip-components=1 -C /usr/local/bin ccache-4.14.2-linux-x86_64-musl-static/ccache
+            # files writable by the runner, which removes the unused ones (save-ccache)
+            CIBW_ENVIRONMENT_LINUX: >-
+              CCACHE_DIR=/host${{ runner.temp }}/ccache CCACHE_MAXSIZE=1G CCACHE_UMASK=000
+              CMAKE_C_COMPILER_LAUNCHER=ccache CMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+        - name: Save ccache
+          if: ${{ !cancelled() && steps.ccache.outcome == 'success' && matrix.python == 'cp312' }}
+          uses: ./.github/actions/save-ccache
 
         - name: Upload Pip Wheel as Artifact
           uses: actions/upload-artifact@v4
