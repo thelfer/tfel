@@ -62,12 +62,19 @@ class BinaryDistribution(Distribution):
 def build_and_install_tfel(build_directory, install_directory):
     import pybind11
 
+    # copy of pybind11 at a fixed path: the isolated builds install it in a
+    # directory whose name changes at each build, which prevents ccache from
+    # reusing the compilations of the bindings
+    pybind11_directory = Path(build_directory).parent / "pybind11"
+    shutil.rmtree(pybind11_directory, ignore_errors=True)
+    shutil.copytree(Path(pybind11.__file__).parent, pybind11_directory)
+
     cmake_options = [
         "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_INSTALL_PREFIX=" + str(install_directory),
         "-DTFEL_PYTHON_SITE_PACKAGES_DIR=site-packages",
         "-DPython_EXECUTABLE=" + sys.executable,
-        "-Dpybind11_DIR=" + pybind11.get_cmake_dir(),
+        "-Dpybind11_DIR=" + str(pybind11_directory / "share" / "cmake" / "pybind11"),
         "-Dunversioned-libraries=ON",
         "-Denable-python-bindings=ON",
         "-Denable-numpy-support=ON",
