@@ -28,7 +28,7 @@ namespace tfel::math {
     //
     TensorProductExprBase() = delete;
     //
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return EmptyRunTimeProperties();
     }
@@ -62,14 +62,14 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr TensorProductExpr1D(A l, B r) noexcept
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr
         typename TensorProductExprBase<A, B>::NumType
         operator()(const typename TensorProductExprBase<A, B>::IndexType i)
             const noexcept {
       return (this->a(i)) * (this->b(i));
     }  // end of operator()
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator[](
         const typename TensorProductExprBase<A, B>::IndexType i)
         const noexcept {
       return this->operator()(i);
@@ -106,7 +106,7 @@ namespace tfel::math {
       return T(0);
     }  // end of operator()
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator[](
         const typename TensorProductExprBase<A, B>::IndexType i)
         const noexcept {
       return this->operator()(i);
@@ -119,7 +119,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr TensorProductExpr3D(A l, B r) noexcept
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr
         typename TensorProductExprBase<A, B>::NumType
         operator()(const typename TensorProductExprBase<A, B>::IndexType i)
             const noexcept {
@@ -159,7 +159,7 @@ namespace tfel::math {
       return T(0);
     }  // end of operator()
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator[](
         const typename TensorProductExprBase<A, B>::IndexType i)
         const noexcept {
       return this->operator()(i);

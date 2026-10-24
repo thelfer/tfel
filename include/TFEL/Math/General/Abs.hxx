@@ -27,7 +27,7 @@ namespace tfel::math {
    * \param[in] s: value
    */
   template <ScalarConcept NumericType>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto abs(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto abs(
       const NumericType& s) noexcept {
     return (s < NumericType(0)) ? -s : s;
   }
@@ -36,7 +36,7 @@ namespace tfel::math {
    * \param[in] s: value
    */
   template <ScalarConcept NumericType>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto abs(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto abs(
       const Complex<NumericType>& s) {
     return s.norm();
   }

@@ -40,7 +40,7 @@ namespace tfel ::math {
    * the deformation gradient.
    */
   template <unsigned short N, typename stress, typename real>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr t2tost2<N, stress>
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr t2tost2<N, stress>
   convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
       const t2tot2<N, stress>&,
       const tensor<N, real>&,

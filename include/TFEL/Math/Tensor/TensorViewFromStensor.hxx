@@ -45,11 +45,11 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr Expr& operator=(const Expr&) = default;
     TFEL_HOST_DEVICE constexpr Expr& operator=(Expr&&) = default;
 
-    TFEL_HOST [[nodiscard]] ValueType operator[](const unsigned short i) const {
+    [[nodiscard]] TFEL_HOST ValueType operator[](const unsigned short i) const {
       return this->operator()(i);
     }
 
-    TFEL_HOST [[nodiscard]] ValueType operator()(const unsigned short i) const {
+    [[nodiscard]] TFEL_HOST ValueType operator()(const unsigned short i) const {
       constexpr auto icste = Cste<ValueType>::isqrt2;
       switch (i) {
         case 0:

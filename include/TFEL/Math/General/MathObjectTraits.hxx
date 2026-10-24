@@ -88,12 +88,12 @@ namespace tfel::math {
 
   //! \brief cast the value to the base type
   template <StandardArithmeticTypeConcept T>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr T& base_type_cast(T& v) noexcept {
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr T& base_type_cast(T& v) noexcept {
     return v;
   }
   //! \brief cast the value to the base type
   template <StandardArithmeticTypeConcept T>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr const T& base_type_cast(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr const T& base_type_cast(
       const T& v) noexcept {
     return v;
   }
@@ -132,7 +132,7 @@ namespace tfel::math {
    */
   template <MathObjectConcept MathObjectType1,
             MathObjectConcept... MathObjectTypes>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr bool
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr bool
   checkThatAllSpaceDimensionsAreEqual() noexcept {
     constexpr auto N = space_dimension<MathObjectType1>;
     return (true && ... && (space_dimension<MathObjectTypes> == N));

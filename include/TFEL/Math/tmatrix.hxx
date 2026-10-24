@@ -327,15 +327,15 @@ namespace tfel::math {
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
     //! return the number of columns of the matrix
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr unsigned short getNbCols() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr unsigned short getNbCols() const;
     //! return the number of rows of the matrix
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr unsigned short getNbRows() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr unsigned short getNbRows() const;
     /*!
      * \return a view of a row of this matrix
      * \param[in] I : row index
      */
     template <unsigned short I>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto row_view();
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto row_view();
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -343,13 +343,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto row_view();
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto row_view();
     /*!
      * \return a view of a row of this matrix
      * \param[in] I : row index
      */
     template <unsigned short I>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto row_view() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto row_view() const;
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -357,13 +357,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto row_view() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto row_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto column_view();
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -371,7 +371,7 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto column_view();
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -379,13 +379,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto column_view() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto column_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto column_view() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto column_view() const;
     /*!
      * \return a view of a sub matrix of this matrix
      * \param[in] I : submatrix row    starting index
@@ -397,7 +397,7 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto submatrix_view();
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto submatrix_view();
     /*!
      * \return a view of a sub matrix of this matrix
      * \param[in] I : submatrix row    starting index
@@ -409,11 +409,11 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto submatrix_view() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto submatrix_view() const;
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto max() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto max() const;
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto abs_max() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto abs_max() const;
 
     TFEL_HOST_DEVICE constexpr void swap_rows(const unsigned short i,
                                               const unsigned short j);

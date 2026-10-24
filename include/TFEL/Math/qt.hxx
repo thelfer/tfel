@@ -75,11 +75,11 @@ namespace tfel::math::internals {
         : value(src) {}
     // NOLINTEND(google-explicit-constructor)
     //! \brief return the value
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr ValueType& getValue() noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr ValueType& getValue() noexcept {
       return this->value;
     }
     //! \brief return the value
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const ValueType& getValue()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const ValueType& getValue()
         const noexcept {
       return this->value;
     }
@@ -541,21 +541,23 @@ namespace tfel::math {
   };
 
   template <int N, ImmutableQuantityConcept T>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto power(const T& x) requires(
-      std::is_floating_point_v<base_type<T>>) {
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto power(const T& x)
+    requires(std::is_floating_point_v<base_type<T>>)
+  {
     using Result = typename UnaryResultType<T, Power<N, 1u>>::type;
     return Result{power<N>(base_type_cast(x))};
   }
 
   template <int N, unsigned int D, ImmutableQuantityConcept T>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto power(const T& x) requires(
-      std::is_floating_point_v<base_type<T>>) {
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto power(const T& x)
+    requires(std::is_floating_point_v<base_type<T>>)
+  {
     using Result = typename UnaryResultType<T, Power<N, D>>::type;
     return Result{power<N, D>(base_type_cast(x))};
   }
 
   template <ImmutableQuantityConcept T>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto square_root(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto square_root(
       const T& q) noexcept {
     return power<1, 2>(base_type_cast(q));
   }
@@ -575,7 +577,7 @@ namespace tfel::math::ieee754 {
    * \param[in] q: value to be tested
    */
   template <QuantityConcept QuantityType>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr int fpclassify(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr int fpclassify(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,
                   "base type must a floating point value");
@@ -587,7 +589,7 @@ namespace tfel::math::ieee754 {
    * \param[in] q: value to be tested
    */
   template <QuantityConcept QuantityType>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr bool isnan(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr bool isnan(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,
                   "base type must a floating point value");
@@ -599,7 +601,7 @@ namespace tfel::math::ieee754 {
    * \param[in] q: value to be tested
    */
   template <QuantityConcept QuantityType>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr bool isfinite(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr bool isfinite(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,
                   "base type must a floating point value");
