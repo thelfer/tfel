@@ -27,7 +27,7 @@ namespace tfel::material {
     constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
     const auto J2O = computeJ2O(sig, a);
     const auto J3O = computeJ3O(sig, b);
-    return sqrt3 * pow(J2O * J2O * J2O - c * J3O * J3O, e);
+    return sqrt3 * std::pow(J2O * J2O * J2O - c * J3O * J3O, e);
   }  // end of computeCazacu2001StressCriterion
 
   template <typename StressStensor>
@@ -52,7 +52,7 @@ namespace tfel::material {
       const auto dJ2O = computeJ2ODerivative(sig, a);
       const auto dJ3O = computeJ3ODerivative(sig, b);
       const auto s6 = J2O_3 - c * J3O_2;
-      const auto seq = sqrt3 * pow(s6, e);
+      const auto seq = sqrt3 * std::pow(s6, e);
       const auto dseq_dJ2O = J2O_2 / (2 * s6) * seq;
       const auto dseq_dJ3O = -c * J3O / (3 * s6) * seq;
       const auto n = dseq_dJ2O * dJ2O + dseq_dJ3O * dJ3O;
@@ -89,7 +89,7 @@ namespace tfel::material {
       const auto dJ3O = computeJ3ODerivative(sig, b);
       const auto d2J3O = computeJ3OSecondDerivative(sig, b);
       const auto s6 = J2O_3 - c * J3O_2;
-      const auto seq = sqrt3 * pow(s6, e);
+      const auto seq = sqrt3 * std::pow(s6, e);
       const auto dseq_dJ2O = J2O_2 / (2 * s6) * seq;
       const auto dseq_dJ3O = -c * J3O / (3 * s6) * seq;
       const auto n = dseq_dJ2O * dJ2O + dseq_dJ3O * dJ3O;

@@ -94,8 +94,9 @@ namespace tfel::material {
       if ((d < 0) || (tfel::math::ieee754::fpclassify(a) == FP_ZERO)) {
         return std::min(-c / b, iseq);
       }
-      return std::min(
-          std::max((-b + sqrt(d)) / (2 * a), (-b - sqrt(d)) / (2 * a)), iseq);
+      return std::min(std::max((-b + std::sqrt(d)) / (2 * a),
+                               (-b - std::sqrt(d)) / (2 * a)),
+                      iseq);
     }();
     // const auto lf = std::log(3 / (2 * f * p.DR));
     // const auto ilf = 1 / std::max(lf, seps);
@@ -251,7 +252,7 @@ namespace tfel::material {
     const auto d2S_dssdf =
         -seq * iomf2 * iss2 -                  //
         p.DR * p.qR * sm * iomf2 * iss2 * e -  //
-        (1.5 * fDq) * p.qR * iomf * iomf2 * iss2 * iss * sm * sm * e;
+        (3 * fDq / 2) * p.qR * iomf * iomf2 * iss2 * iss * sm * sm * e;
     const auto d2S_dss2 =
         2 * seq * iomf * iss * iss2 +           //
         2 * fDq * sm * iomf * iss * iss2 * e +  //

@@ -25,7 +25,7 @@ namespace tfel::material {
       const Cazacu2004BaseType<StressStensor> c) {
     const auto J2O = computeJ2O(sig, a);
     const auto J3O = computeJ3O(sig, b);
-    return std::cbrt(tfel::math::power<3>(sqrt(J2O)) - c * J3O);
+    return std::cbrt(tfel::math::power<3>(std::sqrt(J2O)) - c * J3O);
   }  // end of computeCazacu2004OrthotropicStressCriterion
 
   template <typename StressStensor>
@@ -39,7 +39,7 @@ namespace tfel::material {
       const Cazacu2004StressType<StressStensor> seps) {
     const auto J2O = computeJ2O(sig, a);
     const auto J3O = computeJ3O(sig, b);
-    const auto seq = std::cbrt(tfel::math::power<3>(sqrt(J2O)) - c * J3O);
+    const auto seq = std::cbrt(tfel::math::power<3>(std::sqrt(J2O)) - c * J3O);
     const auto iseq = 1 / std::max(seq, seps);
     const auto dJ2O = computeJ2ODerivative(sig, a);
     const auto dJ3O = computeJ3ODerivative(sig, b);
@@ -60,7 +60,7 @@ namespace tfel::material {
       const Cazacu2004StressType<StressStensor> seps) {
     const auto J2O = computeJ2O(sig, a);
     const auto J3O = computeJ3O(sig, b);
-    const auto seq = std::cbrt(tfel::math::power<3>(sqrt(J2O)) - c * J3O);
+    const auto seq = std::cbrt(tfel::math::power<3>(std::sqrt(J2O)) - c * J3O);
     const auto iseq = 1 / std::max(seq, seps);
     const auto dJ2O = computeJ2ODerivative(sig, a);
     const auto d2J2O = computeJ2OSecondDerivative(sig, a);
