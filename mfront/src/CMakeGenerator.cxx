@@ -86,6 +86,28 @@ namespace mfront {
       getLogStream() << "generating 'src/CMakeList.txt'\n";
     }
     auto& cm = ConfigurationManager::get();
+    // compilers and flags defined in configuration files are only supported
+    // by the make generator
+    for (const auto l :
+         {ConfigurationManager::CXX, ConfigurationManager::C,
+          ConfigurationManager::CUDA, ConfigurationManager::HIP}) {
+      throw_if(cm.getCompiler(l).has_value(),
+               "compilers defined in configuration files are not supported "
+               "by the cmake generator, use the make generator "
+               "(--generator=make)");
+      for (const auto c : {ConfigurationManager::PREPROCESSOR_FLAGS,
+                           ConfigurationManager::COMPILATION_FLAGS}) {
+        throw_if(cm.getCompilationOptions(l, c).has_value(),
+                 "compilation options defined in configuration files are not "
+                 "supported by the cmake generator, use the make generator "
+                 "(--generator=make)");
+      }
+    }
+    throw_if(
+        cm.getLinkerOptions(ConfigurationManager::LINKER_FLAGS).has_value(),
+        "linker flags defined in configuration files are not supported "
+        "by the cmake generator, use the make generator "
+        "(--generator=make)");
     MFrontLockGuard lock;
     std::ofstream m("src/CMakeLists.txt");
     m.exceptions(std::ios::badbit | std::ios::failbit);
