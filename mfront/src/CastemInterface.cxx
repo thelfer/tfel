@@ -460,7 +460,7 @@ namespace mfront {
         {{"YoungModulus", "YOUN"},
          {"PoissonRatio", "NU"},
          {"MassDensity", "RHO"},
-         {"ThermalExpansion", "ALP"},
+         {"ThermalExpansion", "ALPH"},
          {"ReferenceTemperatureForThermalExpansionCoefficient", "TALP"},
          {"ReferenceTemperatureForThermalExpansion", "TREF"},
          {"PlateWidth", "DIM3"},
