@@ -27,6 +27,7 @@ Three classes standing for vectors are available: `TVector1D`, `TVector2D` and `
 These `class` can be initialized/modified as follows:
 
 ~~~~{.py}
+import numpy as np
 import tfel.math as tm
 n1=tm.TVector3D([1.,0.,0.])
 n2=tm.TVector3D()
@@ -41,6 +42,7 @@ Three classes standing for symmetric tensors are available: `Stensor1D`, `Stenso
 These `class` can be initialized/modified as follows:
 
 ~~~~{.py}
+import numpy as np
 import tfel.math as tm
 s1=tm.Stensor3D([1.,0.,0.,0.,0.,0.])
 s2=tm.Stensor2D([1.,0.,0.,0.])
@@ -73,6 +75,7 @@ are available: `ST2toST21D`, `ST2toST22D`, `ST2toST23D`.
 These classes can be initialized/modified as follows:
 
 ~~~~{.py}
+import numpy as np
 import tfel.math as tm
 s1=tm.ST2toST22D([[1.,0.,0.,0.],[0.,1.,0.,0.],[0.,0.,1.,0.],[0.,0.,0.,1.]])
 C=tm.ST2toST23D()
@@ -276,6 +279,7 @@ is not isotropic, an anisotropic elasticity `C_i` can be provided, assuming that
 is expressed in the same basis as the one defined by `n_a,n_b` (the local basis of the inclusion):
 
 ~~~~{.py}
+C_i=tm.ST2toST23D(1e9*np.eye(6)) # arbitrary definition of C_i
 A_aniso = hm.computeLocalisationTensor(IM0,C_i,n_a,a,n_b,b,c)
 ~~~~
 
@@ -387,9 +391,13 @@ The second-moments of the strains for a Hahsin-Shtrikman type composite
 can be computed as follows:
 
 ~~~~{.py .numberLines}
-eeq2r=computeMeanSquaredEquivalentStrain(KG0,f,KGi,Em2,Eeq2)
+KG0=tmat.KGModuli(1e9,1e9)
+KGi=tmat.KGModuli(1e10,1e10)
+Em2=1e-6 # square of the hydrostatic part of the macroscopic strain
+Eeq2=1e-6 # square of the equivalent macroscopic strain
+eeq2r=hm.computeMeanSquaredEquivalentStrain(KG0,f,KGi,Em2,Eeq2)
 print("average of eeq2 on matrix:",eeq2r[0],"average of eeq2 on inclusion:",eeq2r[1])
-em2r=computeMeanSquaredHydrostaticStrain(KG0,f,KGi,Em2,Eeq2)
+em2r=hm.computeMeanSquaredHydrostaticStrain(KG0,f,KGi,Em2,Eeq2)
 print("average of em2 on matrix:",em2r[0],"average of em2 on inclusion:",em2r[1])
 ~~~~
 
@@ -564,7 +572,7 @@ Above, the tensor `A2` is the second-order orientation tensor, and
 The inclusion distributions have an attribute `inclusion`:
 
 ~~~~{.py}
-elli=ell_dist.inclusion
+elli=ellipsoid_dist_iso.inclusion
 print(elli.semi_lengths)
 ~~~~
 
@@ -579,7 +587,7 @@ it was instantiated with a `KGModuli`, so that it is considered isotropic.
 Hence,
 
 ~~~~{.py}
-print(ell_dist.isIsotropic())
+print(ellipsoid_dist_iso.isIsotropic())
 ~~~~
 
 returns `True`.
@@ -589,7 +597,7 @@ the mean strain localisation (or concentration) tensor in the inclusions
 when they are embedded in a matrix:
 
 ~~~~{.py}
-Ai=ell_dist.computeMeanLocalisator(IM0)
+Ai=ellipsoid_dist_iso.computeMeanLocalisator(IM0)
 print(Ai)
 ~~~~
 
@@ -703,15 +711,16 @@ because it was replaced via a `ST2toST2` object.
 
 #### `Grain` object
 
-The `Grain` object must be instantiated to construct the `Polycrystal`. This grain has 5 attributes: `inclusion`
+The `Grain` object must be instantiated to construct the `Polycrystal`. This grain has 4 attributes: `inclusion`
 (which can be a `Sphere`, a `Spheroid` or an `Ellipsoid`),
-a `fraction` (the volume fraction), a `stiffness` (the stiffness of the `Grain`), and two vectors, `n_a` and `n_b` which define
+a `fraction` (the volume fraction), and two vectors, `n_a` and `n_b` which define
 the orientation of the grain (the axes of the related `inclusion`). The `Grain` can be instantiated
 as follows:
 
 ~~~~{.py}
-grain1=Grain(ellipso,frac,IMi,n_a,n_b)
-grain2=Grain(spheroid,frac,IMi,n_a,n_b)
+frac=0.5
+grain1=hm.Grain(ellipso,frac,IMi,n_a,n_b)
+grain2=hm.Grain(spheroid,frac,IMi,n_a,n_b)
 ~~~~
 
 The `Grain` has also methods: `getElasticityOfPhase` (get the elasticity of the grain),
@@ -723,7 +732,7 @@ The `Grain` has also methods: `getElasticityOfPhase` (get the elasticity of the 
 We can instantiate a `Polycrystal` as follows:
 
 ~~~~{.py}
-poly=Polycrystal()
+poly=hm.Polycrystal()
 ~~~~
 
 We can add some grains to our polycrystal:
