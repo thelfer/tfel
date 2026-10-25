@@ -114,7 +114,6 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 message("Abbreviated commit hash: ${TFEL_GIT_HASH}")
 endif(NOT TFEL_GIT_HASH)
-tfel_add_c_cxx_definitions("TFEL_GIT_HASH=\"${TFEL_GIT_HASH}\"")
 tfel_add_c_cxx_definitions("TFEL_CMAKE_GENERATOR=\"${CMAKE_GENERATOR}\"")
 
 # testing

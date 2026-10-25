@@ -176,13 +176,6 @@ else(HAVE_NORETURN_ATTRIBUTE)
   MESSAGE(STATUS "disabling [[ noreturn ]] attribute")
 endif(HAVE_NORETURN_ATTRIBUTE)
 			  
-tfel_add_c_cxx_definitions("OPTIMISATION_FLAGS0=\"${VISIBILITY_FLAGS} ${OPTIMISATION_FLAGS}\"")
-tfel_add_c_cxx_definitions("OPTIMISATION_FLAGS=\"${OPTIMISATION_FLAGS_MARCH}\"")
-tfel_add_c_cxx_definitions("OPTIMISATION_FLAGS2=\"${OPTIMISATION_FLAGS2}\"")
-tfel_add_c_cxx_definitions("COMPILER_WARNINGS=\"${COMPILER_WARNINGS}\"")
-tfel_add_c_cxx_definitions("COMPILER_FLAGS=\"${COMPILER_FLAGS}\"")
-tfel_add_c_cxx_definitions("COMPILER_CXXFLAGS=\"${COMPILER_CXXFLAGS}\"")
-
 # export variables defining compilation options as cmake lists
 set(TFEL_COMPILER_FLAGS      "${COMPILER_FLAGS}")
 set(TFEL_COMPILER_CXXFLAGS   "${COMPILER_CXXFLAGS}")

@@ -17,9 +17,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
+    - name: Set up ccache
+      id: ccache
+      uses: ./.github/actions/setup-ccache
+      with:
+        key: msvc-${{ matrix.os }}
+    # ccache replaces the compiler through the MSBuild properties of msvc.cmake
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Denable-portable-build=ON -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/.github/actions/setup-ccache/msvc.cmake
     - name: Build
       run: cmake --build ${{github.workspace}}/build --target=ALL_BUILD --config ${{env.BUILD_TYPE}} -j $(nproc)
     # - name: Check
     #   run: cmake --build ${{github.workspace}}/build --target=check --config ${{env.BUILD_TYPE}} -j $(nproc)
+
+    # even when a test fails, so that the next run does not compile everything again
+    - name: Save ccache
+      if: ${{ !cancelled() && steps.ccache.outcome == 'success' }}
+      uses: ./.github/actions/save-ccache

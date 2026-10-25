@@ -25,6 +25,12 @@ jobs:
       with:
         path: tfel
 
+    - name: Set up ccache
+      id: ccache
+      uses: ./tfel/.github/actions/setup-ccache
+      with:
+        key: madnex-${{ matrix.os }}
+
     - name: Install HDF5 and NumPy
       run: |
         sudo apt update
@@ -51,6 +57,9 @@ jobs:
         cmake ${{github.workspace}}/tfel                                           \
               -B ${{github.workspace}}/build                                       \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}                               \
+              -Denable-portable-build=ON                                           \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache                                   \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache                                 \
               -Denable-madnex=ON                                                   \
               -Denable-python=ON -Denable-python-bindings=ON                       \
               -DMadnex_DIR=${{github.workspace}}/install-madnex/share/madnex/cmake \
@@ -89,3 +98,8 @@ jobs:
         source ${{github.workspace}}/install/share/tfel/env/env.sh
         cd ${{github.workspace}}/install/share/tfel/test-suite
         tfel-check  -j $(nproc)
+
+    # even when a test fails, so that the next run does not compile everything again
+    - name: Save ccache
+      if: ${{ !cancelled() && steps.ccache.outcome == 'success' }}
+      uses: ./tfel/.github/actions/save-ccache
