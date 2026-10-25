@@ -38,6 +38,7 @@ struct ParserTest10 final : public tfel::tests::TestCase {
     this->check("x< 2 && x>-2 ? 3 : 1", {{0, 3}, {-3, 1}, {3, 1}});
     this->check("x> 2 || x<-2 ? 3 : 1", {{0, 1}, {-3, 3}, {3, 3}});
     this->check("x==0 ? 2 : 1", {{0, 2}, {-1, 1}, {1, 1}});
+    this->check("x+-1", {{3, 2}});
     TFEL_TESTS_CHECK_THROW(tfel::math::Evaluator("x>"), std::runtime_error);
     return this->result;
   }  // end of execute
