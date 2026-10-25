@@ -70,7 +70,7 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
   1. by passing the variable `TFEL_NVHPC_COMPILER` during the invocation of
   `cmake`,
   2. by using `nvhpc` as the main compiler to compile `TFEL`,
-  3. by searching `nvhpc` using `cmake`'s `find_program` function.
+  3. by searching `nvc++` using `cmake`'s `find_program` function.
 - `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvcc` as found by
   `FindCUDAToolkit`.
 - `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value

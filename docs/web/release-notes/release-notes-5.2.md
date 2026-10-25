@@ -102,6 +102,10 @@ The following configurations are supported for parallel computations:
   policy and NVIDIA's `nvhpc` compiler with offloading on the GPU.
 - `sycl-default-icpx`: configuration associated with `SYCL` programming
   model INTEL's `icpx` compiler.
+- `sycl-default-acpp`: configuration associated with `SYCL` programming
+  model and AdaptativeCpp's `acpp` compiler.
+- `sycl-gpu-acpp`: configuration associated with `SYCL` programming
+  model and AdaptativeCpp's `acpp` compiler, with offloading on the GPU.
 
 ## Add a `build-tests` target
 
@@ -172,7 +176,7 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
   1. by passing the variable `TFEL_NVHPC_COMPILER` during the invocation of
   `cmake`,
   2. by using `nvhpc` as the main compiler to compile `TFEL`,
-  3. by searching `nvhpc` using `cmake`'s `find_program` function.
+  3. by searching `nvc++` using `cmake`'s `find_program` function.
 - `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvcc` as found by
   `FindCUDAToolkit`.
 - `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value
@@ -549,7 +553,18 @@ interfaces_options: {
 
 ### The `interfaces_options` section
 
+The `interfaces_options` section associates to the name of an interface
+a dictionary of options passed to this interface, as in the previous
+example. The `material_property_interfaces_options`,
+`behaviour_interfaces_options` and `model_interfaces_options` sections
+have the same syntax, but their options are only passed to the
+interfaces dedicated to material properties, behaviours and models
+respectively.
+
 ### The `compilation_options` section
+
+The `compilation_options` section associates to a language (`c`,
+`cxx`, `cuda`, `hip`, etc.) a dictionary of options, as follows:
 
 ~~~~{.json}
 compilation_options : {
@@ -562,11 +577,26 @@ compilation_options : {
 
 #### The `compiler` option
 
+The `compiler` option specifies the compiler used for the given
+language. The environment variables `CC`, `CXX`, `CUDA_COMPILER` and
+`HIP_COMPILER` take precedence over this option.
+
 #### The `compilation_flags` option
+
+The `compilation_flags` option specifies the compilation flags used for
+the given language, as a string or as an array of strings. The
+environment variables `CFLAGS`, `CXXFLAGS`, `CUDAFLAGS` and `HIPFLAGS`
+take precedence over this option.
 
 ### The `linking_options` section
 
+The `linking_options` section defines the options passed to the linker.
+
 #### The `linker_flags` option
+
+The `linker_flags` option specifies the flags passed to the linker, as a
+string or as an array of strings. The environment variable `LDFLAGS`
+takes precedence over this option.
 
 ## Passing options to interfaces on the command line
 
@@ -670,18 +700,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/1014>
 ## Issue 1013: [tfel-math] Refine `QuantityConcept` to take mutability into account
 
 For more details, see <https://github.com/thelfer/tfel/issues/1013>
-￼
 
 ## Issue 1012: [github-actions] Add testing of `TFEL` with `madnex`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1012>
-￼
 
 ## Issue 1010: [clang-tidy] fix warnings related to the google-explicit-constructor check
 
 For more details, see <https://github.com/thelfer/tfel/issues/1010>
 
-￼
 ## Issue 1007: [github-actions] Add continuous integration for the generic-parallel interface with CUDA backend
 
 For more details, see <https://github.com/thelfer/tfel/issues/1007>
@@ -694,7 +721,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/1006>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1004>
 
-￼
 ## Issue 1003:[tfel-math] Improve error messages when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/1003>
@@ -720,7 +746,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/926>
 For more details, see <https://github.com/thelfer/tfel/issues/925>
 
 ## Issue 922: [tfel-math] two functions have no GPU device support
-￼
 
 For more details, see <https://github.com/thelfer/tfel/issues/922>
 
