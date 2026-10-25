@@ -56,7 +56,7 @@ jobs:
           env:
             CIBW_BUILD: ${{ matrix.python }}-*
             CIBW_BEFORE_ALL_LINUX: >-
-              curl -sSfL https://github.com/ccache/ccache/releases/download/v4.14.2/ccache-4.14.2-linux-x86_64-musl-static.tar.gz
+              curl --proto '=https' -sSfL https://github.com/ccache/ccache/releases/download/v4.14.2/ccache-4.14.2-linux-x86_64-musl-static.tar.gz
               | tar xz --strip-components=1 -C /usr/local/bin ccache-4.14.2-linux-x86_64-musl-static/ccache
             # files writable by the runner, which removes the unused ones (save-ccache)
             CIBW_ENVIRONMENT_LINUX: >-

@@ -28,7 +28,7 @@ runs:
         archive=ccache-$VERSION-darwin
       fi
       mkdir -p "$RUNNER_TEMP/ccache-bin"
-      curl -sSfL "https://github.com/ccache/ccache/releases/download/v$VERSION/$archive.tar.gz" |
+      curl --proto '=https' -sSfL "https://github.com/ccache/ccache/releases/download/v$VERSION/$archive.tar.gz" |
         tar xz --strip-components=1 -C "$RUNNER_TEMP/ccache-bin" "$archive/ccache"
       echo "$RUNNER_TEMP/ccache-bin" >> "$GITHUB_PATH"
   - name: Install ccache
