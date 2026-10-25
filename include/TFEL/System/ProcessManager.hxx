@@ -125,8 +125,8 @@ namespace tfel::system {
      */
     virtual void execute(const std::string&,
                          const std::string&,
-                         const std::string& = "",
-                         const std::string& = "",
+                         const std::string&,
+                         const std::string&,
                          const std::map<std::string, std::string>& = {});
     /*!
      * execute the command and wait until its end
