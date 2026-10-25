@@ -151,7 +151,7 @@ namespace tfel::utilities {
     auto is_integer = [&throw_if](const std::string& s) {
       auto ps = s.cbegin();
       const auto pse = s.cend();
-      if (*ps == '-') {
+      if ((*ps == '-') || (*ps == '+')) {
         ++ps;
       }
       throw_if(ps == pse, "invalid number '" + s + "'");
@@ -183,7 +183,7 @@ namespace tfel::utilities {
     } else if (p->flag == Token::String) {
       const auto name = CxxTokenizer::readString(p, pe);
       return readDataStructureOrString(name);
-    } else if ((o.allowRawStrings) &&
+    } else if ((o.allowRawStrings) && (p->flag != Token::Number) &&
                (CxxTokenizer::isValidIdentifier(p->value,
                                                 o.rawStringParsingOptions))) {
       const auto name = p->value;
