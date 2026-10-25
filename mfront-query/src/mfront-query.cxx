@@ -41,6 +41,7 @@
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontBase.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/MaterialPropertyQuery.hxx"
 #include "MFront/BehaviourQuery.hxx"
 #include "MFront/ModelQuery.hxx"
@@ -625,6 +626,9 @@ int main(const int argc, const char* const* const argv) {
       } else if (tfel::utilities::starts_with(a, "--model-dsl-options-file=")) {
         MFrontBase::parseModelDSLOptionsFile(
             a.substr(std::strlen("--model-dsl-options-file=")));
+      } else if (tfel::utilities::starts_with(a, "--configuration-file=")) {
+        mfront::parseConfigurationFile(
+            a.substr(std::strlen("--configuration-file=")));
       } else if (tfel::utilities::starts_with(
                      a, "--has-material-property-query")) {
         const char* args[1] = {argv[0]};

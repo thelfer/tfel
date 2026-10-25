@@ -147,6 +147,9 @@ namespace mfront {
             "related to models thanks to an external file in a JSON-like "
             "format",
             []() noexcept {}, true));
+    this->registerCallBack(
+        "--configuration-file",
+        CallBack("define a configuration file", []() noexcept {}, true));
     this->registerNewCallBack(
         "--include", "-I", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
