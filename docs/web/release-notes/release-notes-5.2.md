@@ -52,6 +52,12 @@ library, see below.
   as documented, if `C++` keywords are allowed (see Issue #964): its
   meaning has been inverted. With the default value (`true`), `C++`
   keywords are now considered as valid identifiers.
+- The static method `get` of the
+  `GlobalDomainSpecificLanguageOptionsManager` class has been removed.
+  The global options passed to domain specific languages are now handled
+  by the `ConfigurationManager` class, which derives from the
+  `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
+  instance is returned by `ConfigurationManager::get()`.
 
 # Improvements to the build system
 
