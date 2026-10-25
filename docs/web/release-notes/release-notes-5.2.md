@@ -588,6 +588,12 @@ the given language, as a string or as an array of strings. The
 environment variables `CFLAGS`, `CXXFLAGS`, `CUDAFLAGS` and `HIPFLAGS`
 take precedence over this option.
 
+#### The `preprocessor_flags` option
+
+The `preprocessor_flags` option specifies the preprocessor flags used
+for the given language, as a string or as an array of strings. Those
+flags are written before the compilation flags.
+
 ### The `linking_options` section
 
 The `linking_options` section defines the options passed to the linker.
