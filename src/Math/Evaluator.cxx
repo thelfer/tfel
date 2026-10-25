@@ -743,10 +743,10 @@ namespace tfel::math {
     auto pb = p;
     auto pbe = pe;
     checkNotEndOfExpression("Evaluator::treatLogicalExpression", pb, pbe);
-    const auto pa = this->search(pb, pbe, "&&", "");
     const auto po = this->search(pb, pbe, "||", "");
-    if ((pa.second != pe) || (po.second != pe)) {
-      auto pt = pa.first ? pa.second : po.second;
+    const auto pa = this->search(pb, pbe, "&&", "");
+    if (po.first || pa.first) {
+      auto pt = po.first ? po.second : pa.second;
       throw_if(pt == pb, "no left logical expression");
       throw_if(pt + 1 == pbe, "no right logical expression");
       auto lo = this->treatLogicalExpression(pb, pt, b);
