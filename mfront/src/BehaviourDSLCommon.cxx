@@ -3245,14 +3245,9 @@ namespace mfront {
   }  // end of treatLocalVar
 
   void BehaviourDSLCommon::treatInterface() {
-    auto& mbif = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
     auto inames = std::vector<std::string>{};
     this->readStringList(inames);
-    for (const auto& i : inames) {
-      if (this->interfaces.count(i) == 0) {
-        this->interfaces.insert({i, mbif.getInterface(i)});
-      }
-    }
+    this->setInterfaces(std::set<std::string>(inames.begin(), inames.end()));
   }  // end of treatInterface
 
   void BehaviourDSLCommon::setInterfaces(const std::set<std::string>& inames) {
