@@ -965,7 +965,7 @@ namespace tfel::math {
   /*!
    * \brief return the symmetric product of two stensors as a symmetric tensor:
    * \f[
-   * s1 * s2 + s2 * s1
+   * \frac{1}{2}\left(s1 * s2 + s2 * s1\right)
    * \f]
    * \param[in] s1: first  tensor
    * \param[in] s2: second tensor
