@@ -99,6 +99,7 @@ struct ParserTest12 final : public tfel::tests::TestCase {
     check("power<1>(x)", "1");
     check("power<2>(x)", "(2)*(x)");
     check("power<-2>(x)", "(-2)*(tfel::math::power<-3>(x))");
+    check("log10(x)", "(1)/((log(10))*(x))");
   }  // end of test2
   void test3() {
     auto check = [this](const std::string& f, const std::string& df_dx,
