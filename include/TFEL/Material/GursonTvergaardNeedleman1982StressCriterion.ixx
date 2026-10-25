@@ -70,7 +70,7 @@ namespace tfel::material {
      */
     const auto seq = sigmaeq(sig);
     const auto pr = trace(sig) / 3;
-    const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+    const auto fult = (p.q_1 - std::sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
     const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
     const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
     // square of the positive value
@@ -87,7 +87,7 @@ namespace tfel::material {
       const auto argach = (1 + p.q_3 * fstar * fstar) /
                           std::max(2 * p.q_1 * fstar, real(1.e-12));
       const auto den = 2 * std::acosh(argach);
-      return (3 * p.q_2 * pr) / den;
+      return (3 * p.q_2 * tfel::math::abs(pr)) / den;
     }
     // Second order approximation (development of the hyperbolic cosine to the
     // second order)
@@ -138,6 +138,7 @@ namespace tfel::material {
       const GursonTvergaardNeedleman1982StressCriterionParameters<
           StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
+    using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
     using result = std::tuple<
         GursonTvergaardNeedleman1982StressType<StressStensor>,
@@ -150,10 +151,10 @@ namespace tfel::material {
     const auto iss = 1 / std::max(ss, seps);
     const auto seq = sigmaeq(sig);
     const auto pr = trace(sig) / 3;
-    const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+    const auto fult = (p.q_1 - std::sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
     const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
     const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
-    const auto dfstar = (f < p.f_c) ? 1. : delta;
+    const auto dfstar = (f < p.f_c) ? real(1) : delta;
     const auto e = std::exp(3 * p.q_2 * pr * iss / 2);
     const auto ch = (e + 1 / e) / 2;
     const auto sh = (e - 1 / e) / 2;
@@ -193,6 +194,7 @@ namespace tfel::material {
           StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
     using namespace tfel::math;
+    using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
     using result = std::tuple<
         GursonTvergaardNeedleman1982StressType<StressStensor>,
@@ -203,7 +205,7 @@ namespace tfel::material {
         GursonTvergaardNeedleman1982NormalDerivativeWithRespectToPorosityType<
             StressStensor>>;
     constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
-    const auto M = tfel::math::st2tost2<N, double>::M();
+    const auto M = tfel::math::st2tost2<N, real>::M();
     const auto id = normal::Id();
     const auto s = deviator(sig);
     const auto ss = computeGursonTvergaardNeedleman1982Stress(sig, f, p, seps);
@@ -211,10 +213,10 @@ namespace tfel::material {
     const auto seq = sigmaeq(sig);
     const auto seq2 = seq * seq;
     const auto pr = trace(sig) / 3;
-    const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+    const auto fult = (p.q_1 - std::sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
     const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
     const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
-    const auto dfstar = (f < p.f_c) ? 1. : delta;
+    const auto dfstar = (f < p.f_c) ? real(1) : delta;
     const auto e = std::exp(3 * p.q_2 * pr * iss / 2);
     const auto ch = (e + 1 / e) / 2;
     const auto sh = (e - 1 / e) / 2;
@@ -233,10 +235,9 @@ namespace tfel::material {
 
     // second derivative of the normal
     const auto d2S_dsig2 =
-        (2. * M + (q1q2 * p.q_2 * (fstar / 2) * ch * (id ^ id))) *
-        power<2>(iss);
+        (2 * M + (q1q2 * p.q_2 * (fstar / 2) * ch * (id ^ id))) * power<2>(iss);
     const auto d2S_dsigdss =
-        (-6. * s * iss - q1q2 * fstar * sh * id -  //
+        (-6 * s * iss - q1q2 * fstar * sh * id -  //
          3 * q1q2 * p.q_2 * (fstar / 2) * pr * iss * ch * id) *
         power<2>(iss);
     const auto d2S_dss2 =
@@ -250,7 +251,7 @@ namespace tfel::material {
     // derivatives with respect to \(f\)
     const auto dS_df = (2 * p.q_1 * ch - 2 * p.q_3 * fstar) * dfstar;
     const auto dss_df = -dS_df * idS_dss;
-    const auto d2S_dssdf = (-3. * q1q2 * pr * power<2>(iss) * sh) * dfstar;
+    const auto d2S_dssdf = (-3 * q1q2 * pr * power<2>(iss) * sh) * dfstar;
     const auto d2S_dsigdf = (q1q2 * iss * sh * id) * dfstar;
     const auto dn_df =
         -idS_dss * (d2S_dsigdf + (d2S_dssdf * n)) +  //
