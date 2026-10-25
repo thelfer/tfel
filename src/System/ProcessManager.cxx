@@ -61,6 +61,27 @@ namespace tfel::system {
       sigset_t oSigSet;
     };
 
+    /*!
+     * \brief creates a pipe whose descriptors are closed on exec, so that
+     * they are not inherited by the processes created by other threads.
+     * Without pipe2, a short window remains between pipe and fcntl.
+     * \param[out] fd: descriptors of the pipe
+     * \return 0 on success, -1 on failure
+     */
+    int createPipe(int fd[2]) {
+#ifdef __linux__
+      return ::pipe2(fd, O_CLOEXEC);
+#else
+      // no pipe2 (macOS)
+      if (::pipe(fd) == -1) {
+        return -1;
+      }
+      ::fcntl(fd[0], F_SETFD, FD_CLOEXEC);
+      ::fcntl(fd[1], F_SETFD, FD_CLOEXEC);
+      return 0;
+#endif /* __linux__ */
+    }  // end of createPipe
+
   }  // end of namespace
 
   ProcessManager::Command::~Command() = default;
@@ -234,11 +255,11 @@ namespace tfel::system {
     sigset_t nSigSet;
     sigset_t oSigSet;
     // creating pipes
-    if (pipe(ffd) == -1) {
+    if (createPipe(ffd) == -1) {
       string msg("ProcessManager::createProcess : pipe creation failed");
       systemCall::throwSystemError(msg, errno);
     }
-    if (pipe(cfd) == -1) {
+    if (createPipe(cfd) == -1) {
       string msg("ProcessManager::createProcess : pipe creation failed");
       systemCall::throwSystemError(msg, errno);
     }
@@ -329,11 +350,11 @@ namespace tfel::system {
     copy(istream_iterator<string>(args), istream_iterator<string>(),
          back_inserter(tmp));
     // creating pipes
-    if (pipe(ffd) == -1) {
+    if (createPipe(ffd) == -1) {
       string msg("ProcessManager::createProcess : pipe creation failed");
       systemCall::throwSystemError(msg, errno);
     }
-    if (pipe(cfd) == -1) {
+    if (createPipe(cfd) == -1) {
       string msg("ProcessManager::createProcess : pipe creation failed");
       systemCall::throwSystemError(msg, errno);
     }
@@ -483,7 +504,7 @@ namespace tfel::system {
     fdOut[1] = -1;
     pid_t pid;
     if (in) {
-      fdIn[0] = open(inputFile.c_str(), O_RDONLY);
+      fdIn[0] = open(inputFile.c_str(), O_RDONLY | O_CLOEXEC);
       if (fdIn[0] == -1) {
         string msg("ProcessManager::createProcess : can't open file ");
         msg += inputFile;
@@ -492,9 +513,10 @@ namespace tfel::system {
       fdIn[1] = fdIn[0];
     }
     if (out) {
-      fdOut[0] = open(outputFile.c_str(),
-                      O_WRONLY | O_CREAT | O_TRUNC,  //< file open in write mode
-                      S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);  //< 0644
+      fdOut[0] = open(
+          outputFile.c_str(),
+          O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC,  //< file open in write mode
+          S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);    //< 0644
       if (fdOut[0] == -1) {
         if (in) {
           close(fdIn[0]);
@@ -534,14 +556,14 @@ namespace tfel::system {
     pid_t pid = -1;
     if ((flag == StdIn) || (flag == StdInAndOut)) {
       // creating the pipe
-      if (pipe(fdIn) == -1) {
+      if (createPipe(fdIn) == -1) {
         string msg("ProcessManager::createProcess : pipe failed");
         systemCall::throwSystemError(msg, errno);
       }
     }
     if ((flag == StdOut) || (flag == StdInAndOut)) {
       // creating the pipe
-      if (pipe(fdOut) == -1) {
+      if (createPipe(fdOut) == -1) {
         // cleaning up a bit
         if ((flag == StdIn) || (flag == StdInAndOut)) {
           close(fdIn[0]);
