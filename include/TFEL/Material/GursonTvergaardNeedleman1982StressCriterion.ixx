@@ -87,7 +87,7 @@ namespace tfel::material {
       const auto argach = (1 + p.q_3 * fstar * fstar) /
                           std::max(2 * p.q_1 * fstar, real(1.e-12));
       const auto den = 2 * std::acosh(argach);
-      return (3 * p.q_2 * pr) / den;
+      return (3 * p.q_2 * tfel::math::abs(pr)) / den;
     }
     // Second order approximation (development of the hyperbolic cosine to the
     // second order)
