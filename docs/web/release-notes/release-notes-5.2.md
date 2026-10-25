@@ -633,6 +633,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1097: [tfel-math] `x /= 2` sets every component of arrays and views to zero
+
+For more details, see <https://github.com/thelfer/tfel/issues/1097>
+
 ## Issue 1095: [mfront] `rk54` and `rk4` compute the final stress with the stiffness tensor of the middle of the time step
 
 For more details, see <https://github.com/thelfer/tfel/issues/1095>
