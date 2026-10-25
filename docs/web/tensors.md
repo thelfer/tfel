@@ -440,10 +440,12 @@ This can be computed by the `symmetric_product` function.
 
 ### Derivative
 
-The derivative of the symmetric product
-\(\tenseur{a}\,\cdot_{s}\,\tenseur{b}\) with respect to
-\(\tenseur{a}\) can be computed using the `st2tost2::stpd` static
-method with takes \(\tenseur{b}\) as argument.
+The `st2tost2::stpd` static method, which takes \(\tenseur{b}\) as
+argument, computes the derivative of
+\(\tenseur{a}\,\cdot\tenseur{b}+\tenseur{b}\,\cdot\tenseur{a}\)
+with respect to \(\tenseur{a}\). The derivative of the symmetric
+product \(\tenseur{a}\,\cdot_{s}\,\tenseur{b}\) with respect to
+\(\tenseur{a}\) is thus `st2tost2::stpd(b) / 2`.
 
 ## Second symmetric product of two symmetric second order tensors \(\tenseur{a}\,\cdot\,\tenseur{b}\,\cdot\,\tenseur{a}\)
 

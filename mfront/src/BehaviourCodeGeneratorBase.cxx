@@ -71,7 +71,7 @@ namespace mfront {
       std::vector<std::string>& tmpnames,
       const BehaviourDescription& bd,
       const std::string& p) {
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(p)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false)) {
       tfel::raise(
           "getTemporaryVariableName: "
           "invalid variable prefix '" +

@@ -26,10 +26,12 @@
 #include <iostream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontBase.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
@@ -66,6 +68,9 @@ int main(const int argc, const char* const* const argv) {
       } else if (a == "--usage") {
         std::cout << "Usage : " << argv[0] << " [options] [files]" << std::endl;
         exit(EXIT_SUCCESS);
+      } else if (tfel::utilities::starts_with(a, "--configuration-file=")) {
+        mfront::parseConfigurationFile(
+            a.substr(std::strlen("--configuration-file=")));
       } else {
         untreated_arguments.push_back(*pa);
       }

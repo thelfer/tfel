@@ -82,7 +82,7 @@ namespace mfront {
       throw_if(!this->module.empty(), "module name already defined");
       throw_if(current == end, "unexpected end of file");
       const auto p = current->value;
-      throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, true),
+      throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false),
                "invalid module name '" + p + "'");
       throw_if(++current == end, "unexpected end of file");
       throw_if(current->value != ";",

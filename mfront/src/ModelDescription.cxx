@@ -189,7 +189,7 @@ namespace mfront {
   void ModelDescription::setEntryName(const std::string& v,
                                       const std::string& e) {
     this->checkVariableExistence(v);
-    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, false),
+    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, true),
                    "ModelDescription::setEntryName: "
                    "'" +
                        e + "' is a not a valid entry name");

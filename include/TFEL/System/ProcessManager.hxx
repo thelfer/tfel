@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cstddef>
 #include <csignal>
 #include <sys/types.h>
 #include "TFEL/Config/TFELConfig.hxx"
@@ -124,8 +125,8 @@ namespace tfel::system {
      */
     virtual void execute(const std::string&,
                          const std::string&,
-                         const std::string& = "",
-                         const std::string& = "",
+                         const std::string&,
+                         const std::string&,
                          const std::map<std::string, std::string>& = {});
     /*!
      * execute the command and wait until its end
@@ -217,16 +218,16 @@ namespace tfel::system {
     StreamMap outputs;
     StreamMap inputFiles;
     StreamMap outputFiles;
-    unsigned short sHandler;
-    unsigned short sHandlerSIGBUS;
-    unsigned short sHandlerSIGSEGV;
-    unsigned short sHandlerSIGFPE;
-    unsigned short sHandlerSIGABRT;
-    unsigned short sHandlerSIGHUP;
-    unsigned short sHandlerSIGILL;
-    unsigned short sHandlerSIGINT;
-    unsigned short sHandlerSIGTERM;
-    unsigned short sHandlerSIGQUIT;
+    std::size_t sHandler;
+    std::size_t sHandlerSIGBUS;
+    std::size_t sHandlerSIGSEGV;
+    std::size_t sHandlerSIGFPE;
+    std::size_t sHandlerSIGABRT;
+    std::size_t sHandlerSIGHUP;
+    std::size_t sHandlerSIGILL;
+    std::size_t sHandlerSIGINT;
+    std::size_t sHandlerSIGTERM;
+    std::size_t sHandlerSIGQUIT;
     bool shallStopOnSignals = false;
 
   };  // end of struct ProcessManager

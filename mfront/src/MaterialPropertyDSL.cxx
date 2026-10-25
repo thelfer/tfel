@@ -57,7 +57,7 @@ namespace std {
 namespace mfront {
 
   bool isValidMaterialPropertyName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
   MaterialPropertyDSL::MaterialPropertyDSL(const DSLOptions& opts)
@@ -366,7 +366,7 @@ namespace mfront {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatConstant",
                             "Cannot read variable name.");
     const auto name = this->current->value;
-    if (!isValidIdentifier(name)) {
+    if (!isValidIdentifier(name, false)) {
       this->throwRuntimeError("DSLBase::treatConstant",
                               "constant name '" + name + "' is not valid.");
     }
@@ -399,7 +399,7 @@ namespace mfront {
     //
     const auto sname = this->current->value;
     const auto name = tfel::unicode::getMangledString(sname);
-    if (!this->isValidIdentifier(name)) {
+    if (!this->isValidIdentifier(name, false)) {
       this->throwRuntimeError("DSLBase::treatParameter",
                               "parameter name '" + name + "' is not valid.");
     }
@@ -825,7 +825,7 @@ namespace mfront {
                                                 glossary.getGlossaryEntry(en));
         this->throwRuntimeError("MaterialPropertyDSL::treatMethod", msg.str());
       }
-      throw_if(!CxxTokenizer::isValidIdentifier(en),
+      throw_if(!CxxTokenizer::isValidIdentifier(en, false),
                "invalid entry name '" + en + "'");
       this->md.setEntryName(this->currentVar, en);
     } else if (methodName == "setDefaultValue") {
@@ -1039,7 +1039,7 @@ namespace mfront {
                               "output type'" + type + "' is not valid.");
     }
     const auto n = tfel::unicode::getMangledString(s);
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(n, false)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
                               "invalid output name.");
     }

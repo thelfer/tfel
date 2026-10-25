@@ -213,10 +213,10 @@ namespace mfront {
     auto get_compilation_flags =
         [&cm](const char* const env, const ConfigurationManager::Language l,
               const ConfigurationManager::LanguageOptionCategory c)
-        -> std::set<std::string> {
+        -> std::vector<std::string> {
       const auto* const opts = std::getenv(env);
       if (opts != nullptr) {
-        return std::set<std::string>{{std::string{opts}}};
+        return std::vector<std::string>{std::string{opts}};
       }
       const auto opts2 = cm.getCompilationOptions(l, c);
       if (opts2.has_value()) {
@@ -224,13 +224,22 @@ namespace mfront {
       }
       return {};
     };
+    auto get_preprocessor_flags = [&cm](const ConfigurationManager::Language l)
+        -> std::vector<std::string> {
+      const auto opts =
+          cm.getCompilationOptions(l, ConfigurationManager::PREPROCESSOR_FLAGS);
+      if (opts.has_value()) {
+        return *opts;
+      }
+      return {};
+    };
     auto get_linker_flags =
         [&cm](const char* const env,
               const ConfigurationManager::LinkerOptionCategory c)
-        -> std::set<std::string> {
+        -> std::vector<std::string> {
       const auto* const opts = std::getenv(env);
       if (opts != nullptr) {
-        return std::set<std::string>{{std::string{opts}}};
+        return std::vector<std::string>{std::string{opts}};
       }
       const auto opts2 = cm.getLinkerOptions(c);
       if (opts2.has_value()) {
@@ -254,15 +263,23 @@ namespace mfront {
         get_compiler("HIP_COMPILER", ConfigurationManager::HIP);
     const auto inc = ::getenv("INCLUDES");
     const auto include_paths = cm.getIncludePaths();
+    const auto cxx_preprocessor_flags =
+        get_preprocessor_flags(ConfigurationManager::CXX);
     const auto cxxflags =
         get_compilation_flags("CXXFLAGS", ConfigurationManager::CXX,
                               ConfigurationManager::COMPILATION_FLAGS);
+    const auto c_preprocessor_flags =
+        get_preprocessor_flags(ConfigurationManager::C);
     const auto cflags =
         get_compilation_flags("CFLAGS", ConfigurationManager::C,
                               ConfigurationManager::COMPILATION_FLAGS);
+    const auto cuda_preprocessor_flags =
+        get_preprocessor_flags(ConfigurationManager::CUDA);
     const auto cuda_flags =
         get_compilation_flags("CUDAFLAGS", ConfigurationManager::CUDA,
                               ConfigurationManager::COMPILATION_FLAGS);
+    const auto hip_preprocessor_flags =
+        get_preprocessor_flags(ConfigurationManager::HIP);
     const auto hip_flags =
         get_compilation_flags("HIPFLAGS", ConfigurationManager::HIP,
                               ConfigurationManager::COMPILATION_FLAGS);
@@ -367,7 +384,7 @@ namespace mfront {
           m << "\\\n";
           first = false;
         }
-        m << "\t     -I" << dir;
+        m << "\t     -I\"" << dir << '"';
       }
     }
     //
@@ -399,6 +416,9 @@ namespace mfront {
     // CXXFLAGS
     if (!cppSources.empty()) {
       m << "CXXFLAGS := ";
+      for (const auto& flag : cxx_preprocessor_flags) {
+        m << transform_flag(flag) << " ";
+      }
       if (!cxxflags.empty()) {
         for (const auto& flag : cxxflags) {
           m << transform_flag(flag) << " ";
@@ -419,6 +439,9 @@ namespace mfront {
     // CFLAGS
     if (!cSources.empty()) {
       m << "CFLAGS := ";
+      for (const auto& flag : c_preprocessor_flags) {
+        m << transform_flag(flag) << " ";
+      }
       if (!cflags.empty()) {
         for (const auto& flag : cflags) {
           m << transform_flag(flag) << " ";
@@ -438,6 +461,9 @@ namespace mfront {
     }
     if (!cudaSources.empty()) {
       m << "CUDAFLAGS := ";
+      for (const auto& flag : cuda_preprocessor_flags) {
+        m << transform_flag(flag) << " ";
+      }
       if (!cuda_flags.empty()) {
         for (const auto& flag : cuda_flags) {
           m << transform_flag(flag) << " ";
@@ -447,6 +473,9 @@ namespace mfront {
     }
     if (!hipSources.empty()) {
       m << "HIPFLAGS := ";
+      for (const auto& flag : hip_preprocessor_flags) {
+        m << transform_flag(flag) << " ";
+      }
       if (!hip_flags.empty()) {
         for (const auto& flag : hip_flags) {
           m << transform_flag(flag) << " ";
@@ -507,12 +536,24 @@ namespace mfront {
       if (!cSources.empty()) {
         m << "makefiles3 = $(SRC:.c=.d)\n";
       }
+      if (!cudaSources.empty()) {
+        m << "makefiles4 = $(SRCCUDA:.cu=.d)\n";
+      }
+      if (!hipSources.empty()) {
+        m << "makefiles5 = $(SRCHIP:.hip=.d)\n";
+      }
       m << "makefiles  =";
       if (!cppSources.empty()) {
         m << " $(makefiles2)";
       }
       if (!cSources.empty()) {
         m << " $(makefiles3)";
+      }
+      if (!cudaSources.empty()) {
+        m << " $(makefiles4)";
+      }
+      if (!hipSources.empty()) {
+        m << " $(makefiles5)";
       }
     }
     m << "\n\n";
@@ -707,7 +748,7 @@ namespace mfront {
       if (!cudaSources.empty()) {
         m << "%.d:%.cu\n";
         m << "\t" << sb << "set -e; rm -f $@;	    \\\n";
-        m << "\t$(CUDA) -M $(CUDAFLAGS) $< > $@.$$$$; \\\n";
+        m << "\t" << cuda << " -M $(CUDAFLAGS) $< > $@.$$$$; \\\n";
         m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
              "\\\n";
         m << "\trm -f $@.$$$$\n\n";
@@ -715,7 +756,7 @@ namespace mfront {
       if (!hipSources.empty()) {
         m << "%.d:%.hip\n";
         m << "\t" << sb << "set -e; rm -f $@;	    \\\n";
-        m << "\t$(HIP) -M $(HIPFLAGS) $< > $@.$$$$; \\\n";
+        m << "\t" << hip << " -M $(HIPFLAGS) $< > $@.$$$$; \\\n";
         m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
              "\\\n";
         m << "\trm -f $@.$$$$\n\n";

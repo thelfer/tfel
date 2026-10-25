@@ -576,7 +576,7 @@ namespace tfel::math::ieee754 {
    * - FP_INFINITE: +Inf or -Inf value
    * \param[in] q: value to be tested
    */
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr int fpclassify(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,
@@ -588,7 +588,7 @@ namespace tfel::math::ieee754 {
    * \return true if the given quantity is a not-a-number (NaN) value.
    * \param[in] q: value to be tested
    */
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr bool isnan(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,
@@ -600,7 +600,7 @@ namespace tfel::math::ieee754 {
    * \return true if the given quantity is finite.
    * \param[in] q: value to be tested
    */
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr bool isfinite(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,

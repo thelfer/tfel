@@ -540,6 +540,9 @@ namespace mfront {
           "linear solver has already been set");
     }
     this->linear_solver = s;
+    for (const auto& rn : this->linear_solver->getReservedNames()) {
+      this->reserveName(rn);
+    }
   }  // end of setLinearSystemSolver
 
   void ImplicitDSLBase::setLinearSystemSolver(

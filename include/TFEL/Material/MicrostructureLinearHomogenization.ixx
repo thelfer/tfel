@@ -355,7 +355,7 @@ namespace tfel::material::homogenization::elasticity {
     // beginning of while loop
     while (rel_err > tolerance) {
       std::vector<tfel::math::st2tost2<N, real>> localisators_ = {
-          tfel::math::st2tost2<N, real>::Id()};
+          tfel::math::st2tost2<N, real>::Id() / f0};
 
       for (std::size_t i = 0; i < np - 1; i++) {
         auto phasei = micro.getInclusionPhase(i);
@@ -368,6 +368,7 @@ namespace tfel::material::homogenization::elasticity {
               Chom, max_iter_anisotropic_integration);
         }
         localisators_.push_back(Ai);
+        localisators_[0] -= (*phasei).fraction * Ai / f0;
       }
 
       tfel::math::st2tost2<N, StressType> Ch = C0;

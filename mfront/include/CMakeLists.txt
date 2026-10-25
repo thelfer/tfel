@@ -1,5 +1,6 @@
 install_mfront_header(MFront MFront.hxx)
 install_mfront_header(MFront GlobalDomainSpecificLanguageOptionsManager.hxx)
+install_mfront_header(MFront ConfigurationManager.hxx)
 install_mfront_header(MFront SearchPathsHandler.hxx)
 install_mfront_header(MFront MaterialKnowledgeType.hxx)
 install_mfront_header(MFront MFrontBase.hxx)

@@ -48,6 +48,16 @@ library, see below.
 # Known incompatibilities
 
 - `MFront`' interfaces have to implement a method named `setOptions`.
+- The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
+  as documented, if `C++` keywords are allowed (see Issue #964): its
+  meaning has been inverted. With the default value (`true`), `C++`
+  keywords are now considered as valid identifiers.
+- The static method `get` of the
+  `GlobalDomainSpecificLanguageOptionsManager` class has been removed.
+  The global options passed to domain specific languages are now handled
+  by the `ConfigurationManager` class, which derives from the
+  `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
+  instance is returned by `ConfigurationManager::get()`.
 
 # Improvements to the build system
 
@@ -98,6 +108,10 @@ The following configurations are supported for parallel computations:
   policy and NVIDIA's `nvhpc` compiler with offloading on the GPU.
 - `sycl-default-icpx`: configuration associated with `SYCL` programming
   model INTEL's `icpx` compiler.
+- `sycl-default-acpp`: configuration associated with `SYCL` programming
+  model and AdaptativeCpp's `acpp` compiler.
+- `sycl-gpu-acpp`: configuration associated with `SYCL` programming
+  model and AdaptativeCpp's `acpp` compiler, with offloading on the GPU.
 
 ## Add a `build-tests` target
 
@@ -119,9 +133,11 @@ page](tfel-config.html).
 
 ## TFEL's default substitutions
 
-The `getDefaultSubstitutions` function returns some default
+The `getTFELDefaultSubstitutions` function returns some default
 substitutions used by `MFront` when reading configuration files and
-`tfel-check` when analysing `.check` files.
+`tfel-check` when analysing `.check` files. The keys listed below are
+delimited by the `@` character in those files and in the map returned
+by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 ### General substitutions
 
@@ -166,8 +182,8 @@ substitutions used by `MFront` when reading configuration files and
   1. by passing the variable `TFEL_NVHPC_COMPILER` during the invocation of
   `cmake`,
   2. by using `nvhpc` as the main compiler to compile `TFEL`,
-  3. by searching `nvhpc` using `cmake`'s `find_program` function.
-- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvhcp` as found by
+  3. by searching `nvc++` using `cmake`'s `find_program` function.
+- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvcc` as found by
   `FindCUDAToolkit`.
 - `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value
   associated with this key is determined as follows, by order of
@@ -179,7 +195,7 @@ substitutions used by `MFront` when reading configuration files and
 
 ### Substitutions related to the `HIPCC` compiler
 
-- `TFEL_HIPCC_FLAGS: additional flags to be passed to the `hipcc`
+- `TFEL_HIPCC_FLAGS`: additional flags to be passed to the `hipcc`
   compiler.
 - `TFEL_HIP_INCLUDE_DIR`: paths to `HIP` headers
 
@@ -341,7 +357,7 @@ generated files and directories listed by the `@CleanFiles` and
 default) or not in case of success.
 
 ~~~~{.bash}
-$ tfel-check --clean-up
+$ tfel-check --clean-up=false
 ~~~~
 
 The `--discard-clean-up-on-failure` command line argument allows to
@@ -350,7 +366,7 @@ choose whether the generated files and directories listed by the
 (this is the case by default) in case of failure.
 
 ~~~~{.bash}
-$ tfel-check --clean-up
+$ tfel-check --discard-clean-up-on-failure=false
 ~~~~
 
 ## Timeout for commands
@@ -512,7 +528,11 @@ the following sections:
 - `behaviour_dsl_options`
 - `model_dsl_options`
 - `interfaces_options`
+- `material_property_interfaces_options`
+- `behaviour_interfaces_options`
+- `model_interfaces_options`
 - `compilation_options`
+- `linking_options`
 
 None of those sections is required. All those sections must introduce a
 dictionary.
@@ -532,14 +552,25 @@ dictionary.
 ~~~~{.json}
 interfaces_options: {
   generic-parallel: {
-    backend: {"stlpar", execution_policy: "par_unseq"}
+    backend: {stlpar: {execution_policy: "par_unseq"}}
   }
 }
 ~~~~
 
 ### The `interfaces_options` section
 
+The `interfaces_options` section associates to the name of an interface
+a dictionary of options passed to this interface, as in the previous
+example. The `material_property_interfaces_options`,
+`behaviour_interfaces_options` and `model_interfaces_options` sections
+have the same syntax, but their options are only passed to the
+interfaces dedicated to material properties, behaviours and models
+respectively.
+
 ### The `compilation_options` section
+
+The `compilation_options` section associates to a language (`c`,
+`cxx`, `cuda`, `hip`, etc.) a dictionary of options, as follows:
 
 ~~~~{.json}
 compilation_options : {
@@ -552,11 +583,32 @@ compilation_options : {
 
 #### The `compiler` option
 
+The `compiler` option specifies the compiler used for the given
+language. The environment variables `CC`, `CXX`, `CUDA_COMPILER` and
+`HIP_COMPILER` take precedence over this option.
+
 #### The `compilation_flags` option
+
+The `compilation_flags` option specifies the compilation flags used for
+the given language, as a string or as an array of strings. The
+environment variables `CFLAGS`, `CXXFLAGS`, `CUDAFLAGS` and `HIPFLAGS`
+take precedence over this option.
+
+#### The `preprocessor_flags` option
+
+The `preprocessor_flags` option specifies the preprocessor flags used
+for the given language, as a string or as an array of strings. Those
+flags are written before the compilation flags.
 
 ### The `linking_options` section
 
+The `linking_options` section defines the options passed to the linker.
+
 #### The `linker_flags` option
+
+The `linker_flags` option specifies the flags passed to the linker, as a
+string or as an array of strings. The environment variable `LDFLAGS`
+takes precedence over this option.
 
 ## Passing options to interfaces on the command line
 
@@ -619,7 +671,7 @@ agents: [coding guidelines](coding-guidelines.html).
 ## Github actions
 
 Github actions have been updated to supported a wider range of
-configurations, including testing based on `Visual Studio 2024` and
+configurations, including testing based on `Visual Studio 2022` and
 `Visual Studio 2026`.
 
 # Acknowledgements
@@ -640,6 +692,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1097>
 ## Issue 1095: [mfront] `rk54` and `rk4` compute the final stress with the stiffness tensor of the middle of the time step
 
 For more details, see <https://github.com/thelfer/tfel/issues/1095>
+
+## Issue 1093: [5.2] Regressions since TFEL 5.1
+
+For more details, see <https://github.com/thelfer/tfel/issues/1093>
 
 ## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
 
@@ -668,18 +724,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/1014>
 ## Issue 1013: [tfel-math] Refine `QuantityConcept` to take mutability into account
 
 For more details, see <https://github.com/thelfer/tfel/issues/1013>
-￼
 
 ## Issue 1012: [github-actions] Add testing of `TFEL` with `madnex`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1012>
-￼
 
 ## Issue 1010: [clang-tidy] fix warnings related to the google-explicit-constructor check
 
 For more details, see <https://github.com/thelfer/tfel/issues/1010>
 
-￼
 ## Issue 1007: [github-actions] Add continuous integration for the generic-parallel interface with CUDA backend
 
 For more details, see <https://github.com/thelfer/tfel/issues/1007>
@@ -692,7 +745,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/1006>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1004>
 
-￼
 ## Issue 1003:[tfel-math] Improve error messages when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/1003>
@@ -718,7 +770,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/926>
 For more details, see <https://github.com/thelfer/tfel/issues/925>
 
 ## Issue 922: [tfel-math] two functions have no GPU device support
-￼
 
 For more details, see <https://github.com/thelfer/tfel/issues/922>
 

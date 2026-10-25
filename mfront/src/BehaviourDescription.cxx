@@ -504,7 +504,7 @@ namespace mfront {
             std::string{BehaviourDescription::internalNamespace} + "'");
       }
       const auto& ns = ns_opt.get<std::string>();
-      if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+      if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns, false)) {
         tfel::raise(
             "BehaviourDescription::BehaviourDescription: "
             "invalid namespace space '" +
@@ -557,7 +557,7 @@ namespace mfront {
     }
     const auto& ns = this->getAttribute<std::string>(
         BehaviourDescription::internalNamespace);
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns, false)) {
       tfel::raise(
           "BehaviourDescription::getInternalNamespace: "
           "invalid namespace space '" +
@@ -1397,7 +1397,7 @@ namespace mfront {
       return r;
     };
     tfel::raise_if(
-        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, true),
+        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, false),
         "BehaviourDSLCommon::addLocalDataStructure: "
         "invalid local structure name '" +
             lds.name + "'");

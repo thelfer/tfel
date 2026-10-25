@@ -32,6 +32,7 @@ struct DataTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
     return this->result;
   }
 
@@ -109,6 +110,35 @@ struct DataTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(m.at("isotropic_hardening").is<std::vector<Data>>());
     TFEL_TESTS_ASSERT(m.at("kinematic_hardening").is<std::vector<Data>>());
   }  // end of test2
+
+  //! \brief signed numbers and raw strings containing signs
+  void test3() {
+    using namespace tfel::utilities;
+    auto to = CxxTokenizerOptions{};
+    to.dotAsSeparator = false;
+    to.plusAsSeparator = false;
+    to.minusAsSeparator = false;
+    CxxTokenizer t(to);
+    t.parseString("{a: -1, b: +2, c: c++, d: x-y}");
+    auto o = DataParsingOptions{};
+    o.rawStringParsingOptions = {.allowPlusSign = true, .allowMinusSign = true};
+    auto p = t.begin();
+    const auto m = Data::read(p, t.end(), o).get<DataMap>();
+    TFEL_TESTS_ASSERT(m.at("a").is<int>());
+    TFEL_TESTS_ASSERT(m.at("a").get<int>() == -1);
+    TFEL_TESTS_ASSERT(m.at("b").is<int>());
+    TFEL_TESTS_ASSERT(m.at("b").get<int>() == 2);
+    TFEL_TESTS_ASSERT(m.at("c").is<std::string>());
+    TFEL_TESTS_ASSERT(m.at("c").get<std::string>() == "c++");
+    TFEL_TESTS_ASSERT(m.at("d").is<std::string>());
+    TFEL_TESTS_ASSERT(m.at("d").get<std::string>() == "x-y");
+    CxxTokenizer t2;
+    t2.parseString("{a: +2}");
+    auto p2 = t2.begin();
+    const auto m2 = Data::read(p2, t2.end()).get<DataMap>();
+    TFEL_TESTS_ASSERT(m2.at("a").is<int>());
+    TFEL_TESTS_ASSERT(m2.at("a").get<int>() == 2);
+  }  // end of test3
 };
 
 TFEL_TESTS_GENERATE_PROXY(DataTest, "CxxTokenizer");

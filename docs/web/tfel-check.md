@@ -759,7 +759,7 @@ $ tfel-check --list-default-components
 - `@mfront-doc@`
 - `@mfm-test-generator@`
 
-If Python bindings are enabled, `@python` is also declared.
+If Python bindings are enabled, `@python@` is also declared.
 
 These default substitutions are applied **after** reading configuration files
 and command-line arguments, so they can be overridden by the user.
@@ -782,7 +782,7 @@ $ tfel-check --help
 | `--discard-commands-failure` | Ignore command failures if comparisons pass (default: `true`). If no comparisons are defined, failures are never ignored. |
 | `--discard-jobs-limit` | Disable the limit on parallel jobs (default: enforced). |
 | `--help, -h` | Display help message. |
-| `--jobs, -j` | Number of parallel jobs (default: number of CPU cores). |
+| `--jobs, -j` | Number of parallel jobs (default: 1; number of CPU cores if no value is given). |
 | `--list-default-components` | List all default components. |
 | `--synchronize-terminal-output` | Synchronize terminal output in parallel (default: `false`). |
 | `--use-terminal-colors` | Use terminal colors for output. |
