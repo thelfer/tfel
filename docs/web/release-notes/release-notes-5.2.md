@@ -633,6 +633,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1095: [mfront] `rk54` and `rk4` compute the final stress with the stiffness tensor of the middle of the time step
+
+For more details, see <https://github.com/thelfer/tfel/issues/1095>
+
 ## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
 
 For more details, see <https://github.com/thelfer/tfel/issues/1038>
