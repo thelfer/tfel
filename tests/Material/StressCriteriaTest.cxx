@@ -26,6 +26,8 @@
 #include "TFEL/Material/Cazacu2001YieldCriterion.hxx"
 #include "TFEL/Material/Cazacu2004IsotropicYieldCriterion.hxx"
 #include "TFEL/Material/Cazacu2004OrthotropicYieldCriterion.hxx"
+#include "TFEL/Material/IsotropicPlasticity.hxx"
+#include "TFEL/Material/Drucker1949YieldCriterion.hxx"
 
 struct StressCriteriaTest final : public tfel::tests::TestCase {
   StressCriteriaTest()
@@ -35,6 +37,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     this->testGursonTvergaardNeedleman1982();
     this->testCazacu2001();
     this->testCazacu2004();
+    this->testDrucker1949();
     return this->result;
   }  // end of execute
  private:
@@ -88,6 +91,13 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
       }
     }
   }  // end of testCazacu2004
+  //! \brief derivative of the normal of the Drucker 1949 criterion for c != 1
+  void testDrucker1949() {
+    using namespace tfel::material;
+    this->checkNormalDerivative([](const Stensor& s) {
+      return computeDrucker1949StressCriterionSecondDerivative(s, 1.285, 1e-12);
+    });
+  }  // end of testDrucker1949
   /*!
    * \brief compare the derivative of the normal to its finite difference
    * approximation

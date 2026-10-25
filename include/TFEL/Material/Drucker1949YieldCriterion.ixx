@@ -81,10 +81,8 @@ namespace tfel::material {
       const auto J2_2 = J2 * J2;
       const auto J2_3 = J2_2 * J2;
       const auto J2_4 = J2_2 * J2_2;
-      const auto J2_6 = J2_4 * J2_2;
       const auto J3 = det(s);
       const auto J3_2 = J3 * J3;
-      const auto J3_4 = J3_2 * J3_2;
       const auto& dJ2 = s;
       const auto d2J2 = tfel::math::st2tost2<N, real>::K();
       const auto dJ3 = computeJ3Derivative(sig);
@@ -94,14 +92,11 @@ namespace tfel::material {
       const auto dseq_dJ2 = J2_2 / (2 * s6) * seq;
       const auto dseq_dJ3 = -c * J3 / (3 * s6) * seq;
       const auto n = eval(dseq_dJ2 * dJ2 + dseq_dJ3 * dJ3);
-      const auto d2seq_dJ2dJ2 = seq * (-4 * J2 * J3_2 * c - J2_4) /
-                                (4 * J3_4 * c * c - 8 * J2_3 * J3_2 + 4 * J2_6);
+      const auto s6_2 = s6 * s6;
+      const auto d2seq_dJ2dJ2 = seq * (-4 * J2 * J3_2 * c - J2_4) / (4 * s6_2);
       const auto d2seq_dJ3dJ3 =
-          seq * (-2 * J3_2 * c * c - 3 * J2_3 * c) /
-          (9 * J3_4 * c * c - 18 * J2_3 * J3_2 + 9 * J2_6);
-      const auto d2seq_dJ2dJ3 =
-          seq * (5 * J2_2 * J3 * c) /
-          (6 * J3_4 * c * c - 12 * J2_3 * J3_2 + 6 * J2_6);
+          seq * (-2 * J3_2 * c * c - 3 * J2_3 * c) / (9 * s6_2);
+      const auto d2seq_dJ2dJ3 = seq * (5 * J2_2 * J3 * c) / (6 * s6_2);
       // d2f=f*d(df/f)+df*df/f
       const auto dn = eval(d2seq_dJ2dJ2 * (dJ2 ^ dJ2) + dseq_dJ2 * d2J2 +
                            d2seq_dJ2dJ3 * ((dJ2 ^ dJ3) + (dJ3 ^ dJ2)) +
