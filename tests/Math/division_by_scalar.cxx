@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <array>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -56,23 +57,23 @@ struct DivisionByScalarTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(v[i] - (i + 1)) < eps);
     }
     // view
-    double values[6] = {2, 4, 6, 8, 10, 12};
-    auto m = map<stensor<3u, double>>(values);
+    auto values = std::array<double, 6>{2, 4, 6, 8, 10, 12};
+    auto m = map<stensor<3u, double>>(values.data());
     m /= 2;
     for (unsigned short i = 0; i != 6; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values[i] - (i + 1)) < eps);
     }
     // array of views
-    double values2[3] = {2, 4, 6};
-    auto a = ViewsFixedSizeVector<double, unsigned short, 3>(values2);
+    auto values2 = std::array<double, 3>{2, 4, 6};
+    auto a = ViewsFixedSizeVector<double, unsigned short, 3>(values2.data());
     a /= 2;
     for (unsigned short i = 0; i != 3; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values2[i] - (i + 1)) < eps);
     }
     // array of strided coalesced views
-    double values3[3] = {2, 4, 6};
-    auto a2 =
-        StridedCoalescedViewsFixedSizeVector<double, unsigned int, 3>(values3);
+    auto values3 = std::array<double, 3>{2, 4, 6};
+    auto a2 = StridedCoalescedViewsFixedSizeVector<double, unsigned int, 3>(
+        values3.data());
     a2 /= 2;
     for (unsigned short i = 0; i != 3; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values3[i] - (i + 1)) < eps);
