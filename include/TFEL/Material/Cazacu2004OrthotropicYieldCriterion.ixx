@@ -68,7 +68,7 @@ namespace tfel::material {
     const auto d2J3O = computeJ3OSecondDerivative(sig, b);
     // the normal is written n = nb/(seq*seq)
     const auto nb = (std::sqrt(J2O) / 2) * dJ2O - (c / 3) * dJ3O;
-    const auto dnb = 1 / (4 * std::sqrt(J2O)) * (dJ2O ^ dJ2O) +
+    const auto dnb = 1 / (4 * std::max(std::sqrt(J2O), seps)) * (dJ2O ^ dJ2O) +
                      (std::sqrt(J2O) / 2) * d2J2O - (c / 3) * d2J3O;
     const auto n = tfel::math::eval(iseq * iseq * nb);
     return std::make_tuple(

@@ -24,6 +24,8 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.hxx"
 #include "TFEL/Material/Cazacu2001YieldCriterion.hxx"
+#include "TFEL/Material/Cazacu2004IsotropicYieldCriterion.hxx"
+#include "TFEL/Material/Cazacu2004OrthotropicYieldCriterion.hxx"
 
 struct StressCriteriaTest final : public tfel::tests::TestCase {
   StressCriteriaTest()
@@ -32,6 +34,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->testGursonTvergaardNeedleman1982();
     this->testCazacu2001();
+    this->testCazacu2004();
     return this->result;
   }  // end of execute
  private:
@@ -63,6 +66,28 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
                                                               1e-12);
     });
   }  // end of testCazacu2001
+  //! \brief derivatives of the normals of the Cazacu 2004 criteria for a
+  //! zero deviatoric stress
+  void testCazacu2004() {
+    using namespace tfel::material;
+    const J2OCoefficients<Stensor> a = {0.586, 1.05, 0.823, 0.96, 1, 1};
+    const J3OCoefficients<Stensor> b = {1.44, 0.061, -1.302, -0.281, -0.375, 1,
+                                        1,    1,     1,      0.445,  1};
+    for (const auto& sig : {Stensor(0.), Stensor{100, 100, 100, 0, 0, 0}}) {
+      const auto dn1 =
+          std::get<2>(computeCazacu2004IsotropicStressCriterionSecondDerivative(
+              sig, -1.056, 1e-8));
+      const auto dn2 = std::get<2>(
+          computeCazacu2004OrthotropicStressCriterionSecondDerivative(
+              sig, a, b, -1.056, 1e-8));
+      for (unsigned short i = 0; i != 6; ++i) {
+        for (unsigned short j = 0; j != 6; ++j) {
+          TFEL_TESTS_ASSERT(std::isfinite(dn1(i, j)));
+          TFEL_TESTS_ASSERT(std::isfinite(dn2(i, j)));
+        }
+      }
+    }
+  }  // end of testCazacu2004
   /*!
    * \brief compare the derivative of the normal to its finite difference
    * approximation
