@@ -625,7 +625,6 @@ namespace tfel::system {
           << "to process " << pid << " failed";
       systemCall::throwSystemError(msg.str(), errno);
     }
-    p->isRunning = false;
   }  // end of ProcessManager::sendSignal
 
   ProcessManager::~ProcessManager() {
