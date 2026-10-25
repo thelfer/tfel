@@ -261,7 +261,7 @@ namespace tfel::math {
         (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
                         MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
-      return this->operator*=(1 / s);
+      return this->operator*=(base_type<numeric_type<MappedType>>{1} / s);
     }  // end of operator/=
     //! \brief destructor
     ~StridedCoalescedViewsArray() noexcept = default;
