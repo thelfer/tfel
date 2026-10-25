@@ -507,12 +507,24 @@ namespace mfront {
       if (!cSources.empty()) {
         m << "makefiles3 = $(SRC:.c=.d)\n";
       }
+      if (!cudaSources.empty()) {
+        m << "makefiles4 = $(SRCCUDA:.cu=.d)\n";
+      }
+      if (!hipSources.empty()) {
+        m << "makefiles5 = $(SRCHIP:.hip=.d)\n";
+      }
       m << "makefiles  =";
       if (!cppSources.empty()) {
         m << " $(makefiles2)";
       }
       if (!cSources.empty()) {
         m << " $(makefiles3)";
+      }
+      if (!cudaSources.empty()) {
+        m << " $(makefiles4)";
+      }
+      if (!hipSources.empty()) {
+        m << " $(makefiles5)";
       }
     }
     m << "\n\n";
@@ -707,7 +719,7 @@ namespace mfront {
       if (!cudaSources.empty()) {
         m << "%.d:%.cu\n";
         m << "\t" << sb << "set -e; rm -f $@;	    \\\n";
-        m << "\t$(CUDA) -M $(CUDAFLAGS) $< > $@.$$$$; \\\n";
+        m << "\t" << cuda << " -M $(CUDAFLAGS) $< > $@.$$$$; \\\n";
         m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
              "\\\n";
         m << "\trm -f $@.$$$$\n\n";
@@ -715,7 +727,7 @@ namespace mfront {
       if (!hipSources.empty()) {
         m << "%.d:%.hip\n";
         m << "\t" << sb << "set -e; rm -f $@;	    \\\n";
-        m << "\t$(HIP) -M $(HIPFLAGS) $< > $@.$$$$; \\\n";
+        m << "\t" << hip << " -M $(HIPFLAGS) $< > $@.$$$$; \\\n";
         m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
              "\\\n";
         m << "\trm -f $@.$$$$\n\n";
