@@ -261,11 +261,12 @@ namespace tfel::check {
               auto pos = std::size_t{};
               try {
                 this->njobs = std::stoul(o, &pos);
-              } catch (std::invalid_argument& e) {
+              } catch (std::exception&) {
                 std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
                 std::exit(EXIT_FAILURE);
               }
-              if ((pos != o.size()) || (this->njobs == 0)) {
+              // std::stoul accepts negative values
+              if ((o[0] == '-') || (pos != o.size()) || (this->njobs == 0)) {
                 std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
                 std::exit(EXIT_FAILURE);
               }
@@ -338,7 +339,7 @@ namespace tfel::check {
             "disable test on the number of jobs allowed to run simultaneously.",
             [this, read_boolean_value] {
               this->discard_jobs_limit =
-                  read_boolean_value("--discard-commands-failure");
+                  read_boolean_value("--discard-jobs-limit");
             },
             true));
     this->registerCallBack(
@@ -380,6 +381,15 @@ namespace tfel::check {
     declareTFELComponents(this->configurations);
     declareTFELSubstitutions(this->configurations);
     this->setArguments(argc, argv);
+    // '-j' without value is treated as '--jobs' without value, since the
+    // argument parser requires a value after an alias
+    for (auto p = this->args.begin(); p != this->args.end(); ++p) {
+      const auto next = std::next(p);
+      if ((p->as_string() == "-j") &&
+          ((next == this->args.end()) || (next->as_string()[0] == '-'))) {
+        p->as_string() = "--jobs";
+      }
+    }
     this->registerArgumentCallBacks();
     this->parseArguments();
     //
