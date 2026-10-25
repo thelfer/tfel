@@ -693,6 +693,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1097>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1095>
 
+## Issue 1093: [5.2] Regressions since TFEL 5.1
+
+For more details, see <https://github.com/thelfer/tfel/issues/1093>
+
 ## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
 
 For more details, see <https://github.com/thelfer/tfel/issues/1038>
