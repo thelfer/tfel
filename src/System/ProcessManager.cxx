@@ -176,7 +176,8 @@ namespace tfel::system {
         continue;
       }
       if (p->isRunning) {
-        this->sendSignal(p->id);
+        // not sendSignal: processesAccess is already locked
+        ::kill(p->id, SIGTERM);
         ::waitpid(p->id, nullptr, 0);
         this->closeProcessFiles(p->id);
       }
