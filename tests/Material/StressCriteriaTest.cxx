@@ -23,6 +23,7 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.hxx"
+#include "TFEL/Material/Cazacu2001YieldCriterion.hxx"
 
 struct StressCriteriaTest final : public tfel::tests::TestCase {
   StressCriteriaTest()
@@ -30,6 +31,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
   }  // end of StressCriteriaTest
   tfel::tests::TestResult execute() override {
     this->testGursonTvergaardNeedleman1982();
+    this->testCazacu2001();
     return this->result;
   }  // end of execute
  private:
@@ -50,6 +52,41 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(n2[0] + n1[0]) < 1e-12);
     TFEL_TESTS_ASSERT(std::abs(ds2_df - ds1_df) < 1e-12 * ds1_df);
   }  // end of testGursonTvergaardNeedleman1982
+  //! \brief derivative of the normal of the Cazacu 2001 criterion for c != 1
+  void testCazacu2001() {
+    using namespace tfel::material;
+    const J2OCoefficients<Stensor> a = {0.586, 1.05, 0.823, 0.96, 1, 1};
+    const J3OCoefficients<Stensor> b = {1.44, 0.061, -1.302, -0.281, -0.375, 1,
+                                        1,    1,     1,      0.445,  1};
+    this->checkNormalDerivative([&a, &b](const Stensor& s) {
+      return computeCazacu2001StressCriterionSecondDerivative(s, a, b, 1.285,
+                                                              1e-12);
+    });
+  }  // end of testCazacu2001
+  /*!
+   * \brief compare the derivative of the normal to its finite difference
+   * approximation
+   * \param[in] f: function returning the equivalent stress, the normal and
+   * its derivative
+   */
+  template <typename Function>
+  void checkNormalDerivative(const Function& f) {
+    const auto sig = Stensor{150, -40, 25, 30, -12, 18};
+    const auto dn = std::get<2>(f(sig));
+    constexpr auto h = 1e-4;
+    for (unsigned short j = 0; j != 6; ++j) {
+      auto sigp = sig;
+      auto sigm = sig;
+      sigp[j] += h;
+      sigm[j] -= h;
+      const auto np = std::get<1>(f(sigp));
+      const auto nm = std::get<1>(f(sigm));
+      for (unsigned short i = 0; i != 6; ++i) {
+        TFEL_TESTS_ASSERT(std::abs(dn(i, j) - (np[i] - nm[i]) / (2 * h)) <
+                          1e-8);
+      }
+    }
+  }  // end of checkNormalDerivative
 };
 
 TFEL_TESTS_GENERATE_PROXY(StressCriteriaTest, "StressCriteriaTest");

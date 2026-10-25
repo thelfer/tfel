@@ -82,10 +82,8 @@ namespace tfel::material {
       const auto J2O_2 = J2O * J2O;
       const auto J2O_3 = J2O_2 * J2O;
       const auto J2O_4 = J2O_2 * J2O_2;
-      const auto J2O_6 = J2O_4 * J2O_2;
       const auto J3O = computeJ3O(sig, b);
       const auto J3O_2 = J3O * J3O;
-      const auto J3O_4 = J3O_2 * J3O_2;
       const auto dJ2O = computeJ2ODerivative(sig, a);
       const auto d2J2O = computeJ2OSecondDerivative(sig, a);
       const auto dJ3O = computeJ3ODerivative(sig, b);
@@ -95,15 +93,12 @@ namespace tfel::material {
       const auto dseq_dJ2O = J2O_2 / (2 * s6) * seq;
       const auto dseq_dJ3O = -c * J3O / (3 * s6) * seq;
       const auto n = dseq_dJ2O * dJ2O + dseq_dJ3O * dJ3O;
+      const auto s6_2 = s6 * s6;
       const auto d2seq_dJ2OdJ2O =
-          seq * (-4 * J2O * J3O_2 * c - J2O_4) /
-          (4 * J3O_4 * c * c - 8 * J2O_3 * J3O_2 + 4 * J2O_6);
+          seq * (-4 * J2O * J3O_2 * c - J2O_4) / (4 * s6_2);
       const auto d2seq_dJ3OdJ3O =
-          seq * (-2 * J3O_2 * c * c - 3 * J2O_3 * c) /
-          (9 * J3O_4 * c * c - 18 * J2O_3 * J3O_2 + 9 * J2O_6);
-      const auto d2seq_dJ2OdJ3O =
-          seq * (5 * J2O_2 * J3O * c) /
-          (6 * J3O_4 * c * c - 12 * J2O_3 * J3O_2 + 6 * J2O_6);
+          seq * (-2 * J3O_2 * c * c - 3 * J2O_3 * c) / (9 * s6_2);
+      const auto d2seq_dJ2OdJ3O = seq * (5 * J2O_2 * J3O * c) / (6 * s6_2);
       // d2f=f*d(df/f)+df*df/f
       const auto dn = eval(d2seq_dJ2OdJ2O * (dJ2O ^ dJ2O) + dseq_dJ2O * d2J2O +
                            d2seq_dJ2OdJ3O * ((dJ2O ^ dJ3O) + (dJ3O ^ dJ2O)) +
