@@ -48,6 +48,10 @@ library, see below.
 # Known incompatibilities
 
 - `MFront`' interfaces have to implement a method named `setOptions`.
+- The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
+  as documented, if `C++` keywords are allowed (see Issue #964): its
+  meaning has been inverted. With the default value (`true`), `C++`
+  keywords are now considered as valid identifiers.
 
 # Improvements to the build system
 

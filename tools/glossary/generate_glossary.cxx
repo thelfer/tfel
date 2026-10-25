@@ -153,7 +153,7 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
       GlossaryEntryData d;
       std::string name;
       d.key = CxxTokenizer::readString(p, pe);
-      tfel::raise_if(!this->isValidIdentifier(d.key, false),
+      tfel::raise_if(!this->isValidIdentifier(d.key, true),
                      "GlossaryTokenizer: invalid glossary key '" + d.key + "'");
       tfel::raise_if(!keys.insert(d.key).second,
                      "GlossaryTokenizer::execute: "

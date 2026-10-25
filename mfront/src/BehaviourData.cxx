@@ -1713,7 +1713,7 @@ namespace mfront {
                                               glossary.getGlossaryEntry(e));
       tfel::raise(msg.str());
     }
-    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, false),
+    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, true),
                    "BehaviourData::setEntryName: "
                    "'" +
                        e + "' is a not a valid entry name");

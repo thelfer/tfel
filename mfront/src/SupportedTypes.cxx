@@ -1386,7 +1386,7 @@ namespace mfront {
       SupportedTypes::checkIteratorValidity(current, end);
       const auto t = current->value;
       throw_if(
-          !CxxTokenizer::isValidIdentifier(t, false),
+          !CxxTokenizer::isValidIdentifier(t, true),
           "SupportedTypes::parseType: given token '" + t + "' is not valid.");
       type.type += "::" + t;
       ++(current);
@@ -1431,7 +1431,7 @@ namespace mfront {
           if (i) {
             f += std::to_string(*i);
           } else {
-            throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+            throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                      "SupportedTypes::parseType: invalid token '" +
                          current->value + "'");
             const auto pic = opts.integer_constants.find(current->value);
@@ -1452,7 +1452,7 @@ namespace mfront {
           if ((current->value != ">") && (current->value != ">>") &&
               (current->value != ",")) {
             if (!isOperation(current->value)) {
-              throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+              throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                        "SupportedTypes::parseType: invalid token '" +
                            current->value + "'");
             }
@@ -1460,7 +1460,7 @@ namespace mfront {
             ++(current);
             SupportedTypes::checkIteratorValidity(current, end);
             if ((current->value == ">") || ((current->value == ","))) {
-              throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+              throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                        "SupportedTypes::parseType: unexpected token '" +
                            current->value + "'");
             }

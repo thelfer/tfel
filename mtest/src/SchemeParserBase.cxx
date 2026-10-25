@@ -206,7 +206,7 @@ namespace mtest {
   void SchemeParserBase::handleReal(SchemeBase& t, tokens_iterator& p) {
     const auto& v = this->readString(p, this->tokens.end());
     tfel::raise_if(
-        !this->isValidIdentifier(tfel::unicode::getMangledString(v)),
+        !this->isValidIdentifier(tfel::unicode::getMangledString(v), false),
         "SchemeParserBase::handleReal : '" + v + "' is not a valid identifier");
     const real value = this->readDouble(t, p);
     auto mpev = std::make_shared<ConstantEvolution>(value);
@@ -577,9 +577,10 @@ namespace mtest {
   void SchemeParserBase::handleEvolution(SchemeBase& t, tokens_iterator& p) {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p, this->tokens.end());
-    tfel::raise_if(!this->isValidIdentifier(tfel::unicode::getMangledString(n)),
-                   "SchemeParserBase::handleEvolution: '" + n +
-                       "' is not a valid identifier");
+    tfel::raise_if(
+        !this->isValidIdentifier(tfel::unicode::getMangledString(n), false),
+        "SchemeParserBase::handleEvolution: '" + n +
+            "' is not a valid identifier");
     const auto ev = this->parseEvolution(t, evt, p);
     if (ev->isConstant()) {
       const auto cste =
