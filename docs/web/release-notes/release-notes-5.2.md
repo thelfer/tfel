@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1101: [tfel-material] Wrong second derivatives, NaN and single precision build errors of several stress criteria
+
+For more details, see <https://github.com/thelfer/tfel/issues/1101>
+
 ## Issue 1099: [mfront] Wrong shear components of stress-free expansions in several behaviour interfaces
 
 For more details, see <https://github.com/thelfer/tfel/issues/1099>
