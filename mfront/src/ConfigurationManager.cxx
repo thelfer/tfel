@@ -334,6 +334,9 @@ namespace mfront {
         .addDataTypeValidator<DataMap>("behaviour_dsl_options")
         .addDataTypeValidator<DataMap>("model_dsl_options")
         .addDataTypeValidator<DataMap>("interfaces_options")
+        .addDataTypeValidator<DataMap>("material_property_interfaces_options")
+        .addDataTypeValidator<DataMap>("behaviour_interfaces_options")
+        .addDataTypeValidator<DataMap>("model_interfaces_options")
         .addDataTypeValidator<DataMap>("compilation_options")
         .addDataTypeValidator<DataMap>("linking_options");
     validator.validate(data);

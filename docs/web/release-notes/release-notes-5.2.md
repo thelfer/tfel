@@ -516,7 +516,11 @@ the following sections:
 - `behaviour_dsl_options`
 - `model_dsl_options`
 - `interfaces_options`
+- `material_property_interfaces_options`
+- `behaviour_interfaces_options`
+- `model_interfaces_options`
 - `compilation_options`
+- `linking_options`
 
 None of those sections is required. All those sections must introduce a
 dictionary.
