@@ -19,11 +19,13 @@ csl: iso690-numeric-en.csl
 The `TFEL/Config` library is mostly used internally by `TFEL` and
 provides some information related to the project.
 
-# `getDefaultSubstitutions`: TFEL's default substitutions
+# `getTFELDefaultSubstitutions`: TFEL's default substitutions
 
-The `getDefaultSubstitutions` function returns some default
+The `getTFELDefaultSubstitutions` function returns some default
 substitutions used by `MFront` when reading configuration files and
-`tfel-check` when analysing `.check` files.
+`tfel-check` when analysing `.check` files. The keys listed below are
+delimited by the `@` character in those files and in the map returned
+by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 ### General substitutions
 

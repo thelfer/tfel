@@ -123,9 +123,11 @@ page](tfel-config.html).
 
 ## TFEL's default substitutions
 
-The `getDefaultSubstitutions` function returns some default
+The `getTFELDefaultSubstitutions` function returns some default
 substitutions used by `MFront` when reading configuration files and
-`tfel-check` when analysing `.check` files.
+`tfel-check` when analysing `.check` files. The keys listed below are
+delimited by the `@` character in those files and in the map returned
+by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 ### General substitutions
 
@@ -171,7 +173,7 @@ substitutions used by `MFront` when reading configuration files and
   `cmake`,
   2. by using `nvhpc` as the main compiler to compile `TFEL`,
   3. by searching `nvhpc` using `cmake`'s `find_program` function.
-- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvhcp` as found by
+- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvcc` as found by
   `FindCUDAToolkit`.
 - `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value
   associated with this key is determined as follows, by order of
@@ -183,7 +185,7 @@ substitutions used by `MFront` when reading configuration files and
 
 ### Substitutions related to the `HIPCC` compiler
 
-- `TFEL_HIPCC_FLAGS: additional flags to be passed to the `hipcc`
+- `TFEL_HIPCC_FLAGS`: additional flags to be passed to the `hipcc`
   compiler.
 - `TFEL_HIP_INCLUDE_DIR`: paths to `HIP` headers
 
@@ -345,7 +347,7 @@ generated files and directories listed by the `@CleanFiles` and
 default) or not in case of success.
 
 ~~~~{.bash}
-$ tfel-check --clean-up
+$ tfel-check --clean-up=false
 ~~~~
 
 The `--discard-clean-up-on-failure` command line argument allows to
@@ -354,7 +356,7 @@ choose whether the generated files and directories listed by the
 (this is the case by default) in case of failure.
 
 ~~~~{.bash}
-$ tfel-check --clean-up
+$ tfel-check --discard-clean-up-on-failure=false
 ~~~~
 
 ## Timeout for commands
@@ -540,7 +542,7 @@ dictionary.
 ~~~~{.json}
 interfaces_options: {
   generic-parallel: {
-    backend: {"stlpar", execution_policy: "par_unseq"}
+    backend: {stlpar: {execution_policy: "par_unseq"}}
   }
 }
 ~~~~
@@ -627,7 +629,7 @@ agents: [coding guidelines](coding-guidelines.html).
 ## Github actions
 
 Github actions have been updated to supported a wider range of
-configurations, including testing based on `Visual Studio 2024` and
+configurations, including testing based on `Visual Studio 2022` and
 `Visual Studio 2026`.
 
 # Acknowledgements
