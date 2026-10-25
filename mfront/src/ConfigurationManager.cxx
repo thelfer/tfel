@@ -239,7 +239,7 @@ namespace mfront {
   void ConfigurationManager::addCompilationOption(
       const Language l, const LanguageOptionCategory c, const std::string& o) {
     auto& options = this->compilation_options[l][c];
-    options.insert(o);
+    options.push_back(o);
   }  // end of addCompilationOptions
 
   void ConfigurationManager::addCompilationOptions(
@@ -247,10 +247,10 @@ namespace mfront {
       const LanguageOptionCategory c,
       const std::vector<std::string>& opts) {
     auto& options = this->compilation_options[l][c];
-    options.insert(opts.begin(), opts.end());
+    options.insert(options.end(), opts.begin(), opts.end());
   }  // end of addCompilationOptions
 
-  std::optional<std::set<std::string>>
+  std::optional<std::vector<std::string>>
   ConfigurationManager::getCompilationOptions(
       const Language l, const LanguageOptionCategory c) const {
     const auto p = this->compilation_options.find(l);
@@ -267,17 +267,17 @@ namespace mfront {
   void ConfigurationManager::addLinkerOption(const LinkerOptionCategory c,
                                              const std::string& o) {
     auto& options = this->linker_options[c];
-    options.insert(o);
+    options.push_back(o);
   }  // end of addLinkerOptions
 
   void ConfigurationManager::addLinkerOptions(
       const LinkerOptionCategory c, const std::vector<std::string>& opts) {
     auto& options = this->linker_options[c];
-    options.insert(opts.begin(), opts.end());
+    options.insert(options.end(), opts.begin(), opts.end());
   }  // end of addLinkerOptions
 
-  std::optional<std::set<std::string>> ConfigurationManager::getLinkerOptions(
-      const LinkerOptionCategory c) const {
+  std::optional<std::vector<std::string>>
+  ConfigurationManager::getLinkerOptions(const LinkerOptionCategory c) const {
     const auto p = this->linker_options.find(c);
     if (p == this->linker_options.end()) {
       return {};

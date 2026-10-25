@@ -213,10 +213,10 @@ namespace mfront {
     auto get_compilation_flags =
         [&cm](const char* const env, const ConfigurationManager::Language l,
               const ConfigurationManager::LanguageOptionCategory c)
-        -> std::set<std::string> {
+        -> std::vector<std::string> {
       const auto* const opts = std::getenv(env);
       if (opts != nullptr) {
-        return std::set<std::string>{{std::string{opts}}};
+        return std::vector<std::string>{std::string{opts}};
       }
       const auto opts2 = cm.getCompilationOptions(l, c);
       if (opts2.has_value()) {
@@ -227,10 +227,10 @@ namespace mfront {
     auto get_linker_flags =
         [&cm](const char* const env,
               const ConfigurationManager::LinkerOptionCategory c)
-        -> std::set<std::string> {
+        -> std::vector<std::string> {
       const auto* const opts = std::getenv(env);
       if (opts != nullptr) {
-        return std::set<std::string>{{std::string{opts}}};
+        return std::vector<std::string>{std::string{opts}};
       }
       const auto opts2 = cm.getLinkerOptions(c);
       if (opts2.has_value()) {
