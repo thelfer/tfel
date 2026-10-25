@@ -15,10 +15,12 @@
 #endif
 
 #include <cmath>
+#include <limits>
 #include <cstdlib>
 #include <iostream>
 #include <type_traits>
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Tests/TestCase.hxx"
@@ -30,6 +32,7 @@ struct QtReferenceTest final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "qt5") {}  // end of QtReferenceTest
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }  // end of execute
  private:
@@ -62,6 +65,21 @@ struct QtReferenceTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(a4.getValue() - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(abs(s(1)).getValue() - 2) < eps);
   }  // end of test1
+  //! \brief IEEE754 functions on read-only references to quantities
+  void test2() {
+    using namespace tfel::math;
+    using stress = qt<unit::Stress, double>;
+    const double values[2] = {1, std::numeric_limits<double>::quiet_NaN()};
+    const auto s = map<const tvector<2u, stress>>(values);
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<decltype(s(0)), const_qt_ref<unit::Stress, double>>));
+    TFEL_TESTS_ASSERT(ieee754::isfinite(s(0)));
+    TFEL_TESTS_ASSERT(!ieee754::isnan(s(0)));
+    TFEL_TESTS_ASSERT(ieee754::fpclassify(s(0)) == FP_NORMAL);
+    TFEL_TESTS_ASSERT(!ieee754::isfinite(s(1)));
+    TFEL_TESTS_ASSERT(ieee754::isnan(s(1)));
+    TFEL_TESTS_ASSERT(ieee754::fpclassify(s(1)) == FP_NAN);
+  }  // end of test2
 };
 
 TFEL_TESTS_GENERATE_PROXY(QtReferenceTest, "QtReferenceTest");
