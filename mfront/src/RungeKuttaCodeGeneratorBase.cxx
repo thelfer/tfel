@@ -1006,7 +1006,7 @@ namespace mfront {
             BehaviourDescription::computesStiffnessTensor, false)) &&
         (!this->bd.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
       auto m =
-          modifyVariableForStiffnessTensorComputation(this->bd.getClassName());
+          modifyVariableForStiffnessTensorComputation2(this->bd.getClassName());
       os << "// updating stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
@@ -2197,6 +2197,14 @@ namespace mfront {
       os << "this->" << v.name << " += "
          << "(this->d" << v.name << "_K1+this->d" << v.name << "_K4)/6+\n";
       os << "(this->d" << v.name << "_K2+this->d" << v.name << "_K3)/3;\n";
+    }
+    if ((this->bd.getAttribute<bool>(
+            BehaviourDescription::computesStiffnessTensor, false)) &&
+        (!this->bd.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
+      os << "// updating stiffness tensor at the end of the time step\n";
+      auto m =
+          modifyVariableForStiffnessTensorComputation2(this->bd.getClassName());
+      this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (!this->bd.getMainVariables().empty()) {
       os << "// update the thermodynamic forces\n"
