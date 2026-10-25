@@ -20,7 +20,7 @@ if(enable-static)
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 endif(enable-static)
 
-get_property(tfel-substitutions CACHE tfel-substitutions PROPERTY STRINGS)
+get_property(tfel-substitutions GLOBAL PROPERTY TFEL_SUBSTITUTIONS)
 string(REPLACE ";" "@" TFEL_SUBSTITUTIONS_VALUE "${tfel-substitutions}")
 target_compile_definitions(TFELConfig
   PRIVATE "TFEL_SUBSTITUTIONS=\"${TFEL_SUBSTITUTIONS_VALUE}\"")
