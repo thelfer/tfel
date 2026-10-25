@@ -265,7 +265,7 @@ namespace tfel::check {
                 std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
                 std::exit(EXIT_FAILURE);
               }
-              if (pos != o.size()) {
+              if ((pos != o.size()) || (this->njobs == 0)) {
                 std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
                 std::exit(EXIT_FAILURE);
               }
