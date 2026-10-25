@@ -413,12 +413,16 @@ namespace tfel::check {
       const auto cpath = systemCall::getCurrentWorkingDirectory();
       const auto path = systemCall::getAbsolutePath(d);
       // store the output of the given process that will be saved in
-      // tfel-check.log
+      // tfel-check.log, without terminal colors
       std::ostringstream output;
-      auto log = PCLogger(
-          std::make_shared<PCTextDriver>(output, this->use_terminal_colors));
-      // this adds unsynchronized output to std::cout
-      if (!this->synchronize_terminal_output) {
+      // store the synchronized terminal output
+      std::ostringstream terminal_output;
+      auto log = PCLogger(std::make_shared<PCTextDriver>(output, false));
+      if (this->synchronize_terminal_output) {
+        log.addDriver(std::make_shared<PCTextDriver>(
+            terminal_output, this->use_terminal_colors));
+      } else {
+        // this adds unsynchronized output to std::cout
         log.addDriver(
             std::make_shared<PCTextDriver>(this->use_terminal_colors));
       }
@@ -443,7 +447,7 @@ namespace tfel::check {
         std::lock_guard<std::mutex> guard(log_synchronization);
         log_file << output.str();
         if (this->synchronize_terminal_output) {
-          std::cout << output.str();
+          std::cout << terminal_output.str();
         }
       }
       return success;
