@@ -192,7 +192,9 @@ class build_tfel(build_ext):
     distribution without python packages declared to setuptools"""
 
     def run(self):
-        build_temp = Path(self.build_temp).resolve()
+        # with python 3.9 on Windows, resolve keeps relative the paths which
+        # do not exist yet
+        build_temp = Path(self.build_temp).absolute().resolve()
         install_directory = build_temp / "install"
         build_and_install_tfel(build_temp / "build", install_directory)
         layout_package(install_directory, Path(self.build_lib))

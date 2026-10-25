@@ -317,17 +317,21 @@ if(enable-python OR enable-python-bindings)
                ${_tfel_python_optional_components})
   set(HAVE_PYTHON ON)
   tfel_add_c_cxx_definitions("HAVE_PYTHON=1")
-  tfel_add_c_cxx_definitions("TFEL_PYTHON_INCLUDES=\"-I${Python_INCLUDE_DIRS}\"")
+  # paths of python, only defined for PythonMaterialPropertyInterface.cxx (see
+  # mfront/src/CMakeLists.txt), so that the version of python does not change
+  # the compilation of the other sources
+  set(TFEL_PYTHON_DEFINITIONS "TFEL_PYTHON_INCLUDES=\"-I${Python_INCLUDE_DIRS}\"")
   if(Python_LIBRARIES)
     get_filename_component(PYTHON_LIBRARY_PATH ${Python_LIBRARIES} PATH)
     get_filename_component(PYTHON_LIBRARY_FULL ${Python_LIBRARIES} NAME)
     string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
-    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY_PATH=\"${PYTHON_LIBRARY_PATH}\"")
-    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY=\"${PYTHON_LIBRARY}\"")
+    list(APPEND TFEL_PYTHON_DEFINITIONS
+      "TFEL_PYTHON_LIBRARY_PATH=\"${PYTHON_LIBRARY_PATH}\""
+      "TFEL_PYTHON_LIBRARY=\"${PYTHON_LIBRARY}\"")
     if(MSVC)
-      tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"")
+      list(APPEND TFEL_PYTHON_DEFINITIONS "TFEL_PYTHON_LIBS=\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"")
     else(MSVC)
-      tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
+      list(APPEND TFEL_PYTHON_DEFINITIONS "TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
     endif(MSVC)
   endif(Python_LIBRARIES)
   message(STATUS "found python          ${Python_VERSION}")
