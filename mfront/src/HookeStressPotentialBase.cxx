@@ -908,10 +908,10 @@ namespace mfront::bbrick {
             "dfetozz_ddetozz   = real(0);\n"
             "dfetozz_ddeel(2)  = 1;\n"
             "dfetozz_ddeel(0)  = (this->" +
-            D + "(1,0))/(this->" + D +
-            "(1,1));\n"
+            D + "(2,0))/(this->" + D +
+            "(2,2));\n"
             "dfetozz_ddeel(1)  = (this->" +
-            D + "(2,0))/(this->" + D + "(1,1));\n";
+            D + "(2,1))/(this->" + D + "(2,2));\n";
       }
     } else {
       if (bd.areElasticMaterialPropertiesDefined()) {
