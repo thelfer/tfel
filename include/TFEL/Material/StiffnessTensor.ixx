@@ -534,6 +534,26 @@ namespace tfel::material::internals {
       COST::exe(C, E1, E3, E2, n13, n23 * E3 / E2, n12, G13, G23, G12);
     }
   };
+  /*!
+   * \brief partial specialisation for the
+   * `OrthotropicAxesConvention::PLATE` orthotropic axes
+   * convention.
+   * \tparam H: modelling hypothesis
+   * \tparam smt: stiffness matrix alteration choice
+   */
+  template <ModellingHypothesis::Hypothesis H,
+            StiffnessTensorAlterationCharacteristic smt>
+  struct ComputeOrthotropicStiffnessTensor<H,
+                                           smt,
+                                           OrthotropicAxesConvention::PLATE>
+      : public ComputeOrthotropicStiffnessTensorII<H, smt> {
+    static_assert((H == ModellingHypothesis::TRIDIMENSIONAL) ||
+                      (H == ModellingHypothesis::PLANESTRESS) ||
+                      (H == ModellingHypothesis::PLANESTRAIN) ||
+                      (H == ModellingHypothesis::GENERALISEDPLANESTRAIN),
+                  "the PLATE orthotropic axes convention is not supported "
+                  "by this modelling hypothesis");
+  };
 
 }  // end of namespace tfel::material::internals
 
