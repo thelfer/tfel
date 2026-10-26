@@ -1,15 +1,12 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 cmake_policy(SET CMP0022 NEW)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0074 NEW)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
   cmake_policy(SET CMP0167 NEW)  
 endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
-if(CMAKE_VERSION VERSION_GREATER 3.14.0)
-  cmake_policy(SET CMP0083 NEW)  
-  include(CheckPIESupported)
-  check_pie_supported()
-endif(CMAKE_VERSION VERSION_GREATER 3.14.0)
+include(CheckPIESupported)
+check_pie_supported()
 
 set(TFEL_VERSION_FLAVOUR "" CACHE STRING
   "Append a flavour to the version number")
@@ -295,15 +292,11 @@ option(enable-numpy-support
  
 if(enable-python OR enable-python-bindings)
   set(_tfel_python_components Interpreter)
-  if(CMAKE_VERSION VERSION_LESS 3.18)
-    list(APPEND _tfel_python_components Development)
-  else(CMAKE_VERSION VERSION_LESS 3.18)
-    # The python library is only used by MFront's python interface. It is
-    # optional as it is not always available (for instance in the
-    # manylinux images used to build the pip package)
-    list(APPEND _tfel_python_components Development.Module)
-    set(_tfel_python_optional_components OPTIONAL_COMPONENTS Development.Embed)
-  endif(CMAKE_VERSION VERSION_LESS 3.18)
+  # The python library is only used by MFront's python interface. It is
+  # optional as it is not always available (for instance in the
+  # manylinux images used to build the pip package)
+  list(APPEND _tfel_python_components Development.Module)
+  set(_tfel_python_optional_components OPTIONAL_COMPONENTS Development.Embed)
   if(enable-numpy-support)
     list(APPEND _tfel_python_components NumPy)
   endif(enable-numpy-support)

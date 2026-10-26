@@ -47,6 +47,7 @@ library, see below.
 
 # Known incompatibilities
 
+- `cmake` \(3.20\) or later is now required to build `TFEL`.
 - `MFront`' interfaces have to implement a method named `setOptions`.
 - The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
   as documented, if `C++` keywords are allowed (see Issue #964): its
