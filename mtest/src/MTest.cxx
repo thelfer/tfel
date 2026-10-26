@@ -816,6 +816,9 @@ namespace mtest {
     using size_type = tfel::math::vector<real>::size_type;
     auto n = real(0);
     for (size_type i = 0; i != s; ++i) {
+      if (!tfel::math::ieee754::isfinite(v(i))) {
+        return v(i);
+      }
       n = std::max(n, std::abs(v(i)));
     }
     return n;
