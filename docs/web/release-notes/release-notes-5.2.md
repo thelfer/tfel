@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1111: [mtest] Crash without behaviour, time step at the end of a period, events, NaN results and cubic pipe elements
+
+For more details, see <https://github.com/thelfer/tfel/issues/1111>
+
 ## Issue 1109: [mfront] Runge-Kutta DSLs and solvers: rk4 last stage, external models, error estimates and final time
 
 For more details, see <https://github.com/thelfer/tfel/issues/1109>
