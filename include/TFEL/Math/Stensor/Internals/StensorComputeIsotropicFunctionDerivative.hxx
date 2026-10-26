@@ -35,13 +35,14 @@ namespace tfel::math::internals {
               typename Function,
               typename FunctionDerivative,
               typename T>
-    static void exe2(ST2toST2Type& d,
-                     const Function&,
-                     const FunctionDerivative& df,
-                     const tvector<3u, T>& vp,
-                     const rotation_matrix<T>&,
-                     const T)  //
-        requires(getSpaceDimension<ST2toST2Type>() == 1u) {
+    TFEL_HOST_DEVICE static void exe2(ST2toST2Type& d,
+                                      const Function&,
+                                      const FunctionDerivative& df,
+                                      const tvector<3u, T>& vp,
+                                      const rotation_matrix<T>&,
+                                      const T)  //
+      requires(getSpaceDimension<ST2toST2Type>() == 1u)
+    {
       using real = numeric_type<ST2toST2Type>;
       constexpr auto zero = real(0);
       d(0, 0) = df(vp[0]);
@@ -65,13 +66,14 @@ namespace tfel::math::internals {
               typename T1,
               typename T2,
               typename T3>
-    static void exe(ST2toST2Type& d,
-                    const tvector<3u, T1>&,
-                    const tvector<3u, T2>& df,
-                    const tvector<3u, T3>&,
-                    const tmatrix<3u, 3u, base_type<T3>>&,
-                    const T3)  //
-        requires(getSpaceDimension<ST2toST2Type>() == 1u) {
+    TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
+                                     const tvector<3u, T1>&,
+                                     const tvector<3u, T2>& df,
+                                     const tvector<3u, T3>&,
+                                     const tmatrix<3u, 3u, base_type<T3>>&,
+                                     const T3)  //
+      requires(getSpaceDimension<ST2toST2Type>() == 1u)
+    {
       using real = numeric_type<ST2toST2Type>;
       constexpr auto zero = real(0);
       d(0, 0) = df[0];
@@ -99,13 +101,14 @@ namespace tfel::math::internals {
               typename T1,
               typename T2,
               typename T3>
-    static void exe(ST2toST2Type& d,
-                    const tvector<3u, T1>& f,
-                    const tvector<3u, T2>& df,
-                    const tvector<3u, T3>& vp,
-                    const tmatrix<3u, 3u, base_type<T3>>& m,
-                    const T3 eps)  //
-        requires(getSpaceDimension<ST2toST2Type>() == 2u) {
+    TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
+                                     const tvector<3u, T1>& f,
+                                     const tvector<3u, T2>& df,
+                                     const tvector<3u, T3>& vp,
+                                     const tmatrix<3u, 3u, base_type<T3>>& m,
+                                     const T3 eps)  //
+      requires(getSpaceDimension<ST2toST2Type>() == 2u)
+    {
       using real = numeric_type<ST2toST2Type>;
       using base = base_type<real>;
       using tvector = tfel::math::tvector<3u, real>;
@@ -139,13 +142,14 @@ namespace tfel::math::internals {
               typename T,
               typename Function,
               typename FunctionDerivative>
-    static void exe2(ST2toST2Type& d,
-                     const Function& f,
-                     const FunctionDerivative& df,
-                     const tvector<3u, T>& vp,
-                     const rotation_matrix<T>& m,
-                     const T eps)  //
-        requires(getSpaceDimension<ST2toST2Type>() == 2u) {
+    TFEL_HOST_DEVICE static void exe2(ST2toST2Type& d,
+                                      const Function& f,
+                                      const FunctionDerivative& df,
+                                      const tvector<3u, T>& vp,
+                                      const rotation_matrix<T>& m,
+                                      const T eps)  //
+      requires(getSpaceDimension<ST2toST2Type>() == 2u)
+    {
       const auto fv = map(f, vp);
       const auto dfv = map(df, vp);
       StensorComputeIsotropicFunctionDerivative::exe(d, fv, dfv, vp, m, eps);
@@ -168,13 +172,14 @@ namespace tfel::math::internals {
               typename T1,
               typename T2,
               typename T3>
-    static void exe(ST2toST2Type& d,
-                    const tvector<3u, T1>& f,
-                    const tvector<3u, T2>& df,
-                    const tvector<3u, T3>& vp,
-                    const tmatrix<3u, 3u, base_type<T3>>& m,
-                    const T3 eps)  //
-        requires(getSpaceDimension<ST2toST2Type>() == 3u) {
+    TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
+                                     const tvector<3u, T1>& f,
+                                     const tvector<3u, T2>& df,
+                                     const tvector<3u, T3>& vp,
+                                     const tmatrix<3u, 3u, base_type<T3>>& m,
+                                     const T3 eps)  //
+      requires(getSpaceDimension<ST2toST2Type>() == 3u)
+    {
       using real = numeric_type<ST2toST2Type>;
       using base = base_type<real>;
       using tvector = tfel::math::tvector<3u, real>;
@@ -256,13 +261,14 @@ namespace tfel::math::internals {
               typename T,
               typename Function,
               typename FunctionDerivative>
-    static void exe2(ST2toST2Type& d,
-                     const Function& f,
-                     const FunctionDerivative& df,
-                     const tvector<3u, T>& vp,
-                     const rotation_matrix<T>& m,
-                     const T eps)  //
-        requires(getSpaceDimension<ST2toST2Type>() == 3u) {
+    TFEL_HOST_DEVICE static void exe2(ST2toST2Type& d,
+                                      const Function& f,
+                                      const FunctionDerivative& df,
+                                      const tvector<3u, T>& vp,
+                                      const rotation_matrix<T>& m,
+                                      const T eps)  //
+      requires(getSpaceDimension<ST2toST2Type>() == 3u)
+    {
       const auto fv = map(f, vp);
       const auto dfv = map(df, vp);
       StensorComputeIsotropicFunctionDerivative::exe(d, fv, dfv, vp, m, eps);

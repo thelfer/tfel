@@ -76,11 +76,12 @@ namespace tfel::math::internals {
      * \param[in]  v:   stensor values
      * \param[in]  b:   refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenValues(NumType& vp0,
-                                                    NumType& vp1,
-                                                    NumType& vp2,
-                                                    const NumType* const v,
-                                                    const bool b) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenValues(
+        NumType& vp0,
+        NumType& vp1,
+        NumType& vp2,
+        const NumType* const v,
+        const bool b) {
       real values[StensorDimeToSize<N>::value];
       real eigen_values[3];
       tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
@@ -97,10 +98,11 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
-                                                     tmatrix<3u, 3u, real>& vec,
-                                                     const NumType* const v,
-                                                     const bool b) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenVectors(
+        tvector<3u, NumType>& vp,
+        tmatrix<3u, 3u, real>& vec,
+        const NumType* const v,
+        const bool b) {
       real values[StensorDimeToSize<N>::value];
       tvector<3u, real> eigen_values;
       tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
@@ -129,11 +131,12 @@ namespace tfel::math::internals {
      * \param[in]  v:   stensor values
      * \param[in]  b:   refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenValues(NumType& vp0,
-                                                    NumType& vp1,
-                                                    NumType& vp2,
-                                                    const NumType* const v,
-                                                    const bool) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenValues(
+        NumType& vp0,
+        NumType& vp1,
+        NumType& vp2,
+        const NumType* const v,
+        const bool) {
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp = tvector<3u, real>{};
       HarariEigensolver3x3<real>::computeEigenValues(
@@ -148,10 +151,11 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
-                                                     tmatrix<3u, 3u, real>& m,
-                                                     const NumType* const v,
-                                                     const bool) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenVectors(
+        tvector<3u, NumType>& vp,
+        tmatrix<3u, 3u, real>& m,
+        const NumType* const v,
+        const bool) {
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp2 = tvector<3u, real>{};
       HarariEigensolver3x3<real>::computeEigenVectors(
@@ -179,11 +183,12 @@ namespace tfel::math::internals {
      * \param[in]  v:   stensor values
      * \param[in]  b:   refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenValues(NumType& vp0,
-                                                    NumType& vp1,
-                                                    NumType& vp2,
-                                                    const NumType* const v,
-                                                    const bool b) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenValues(
+        NumType& vp0,
+        NumType& vp1,
+        NumType& vp2,
+        const NumType* const v,
+        const bool b) {
       constexpr auto icste = Cste<real>::isqrt2;
       auto vp = tvector<3u, real>{};
       auto m = tmatrix<3u, 3u, real>{};
@@ -201,10 +206,11 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
-                                                     tmatrix<3u, 3u, real>& m,
-                                                     const NumType* const v,
-                                                     const bool b) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenVectors(
+        tvector<3u, NumType>& vp,
+        tmatrix<3u, 3u, real>& m,
+        const NumType* const v,
+        const bool b) {
       constexpr auto icste = Cste<real>::isqrt2;
       auto vp2 = tvector<3u, real>{};
       GteSymmetricEigensolver3x3<real>::exe(
@@ -214,6 +220,10 @@ namespace tfel::math::internals {
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
+
+  // The following specialisations rely on the `FSES` library, whose
+  // routines are only available on the host: they are not declared
+  // `TFEL_HOST_DEVICE`.
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
