@@ -106,7 +106,7 @@ namespace mfront::bbrick {
           v += " + ";
         }
         v += "this->p" + flow.first + " + ";
-        v += theta + " * std::max(this->dp" + flow.first + ", real(0))";
+        v += theta + " * std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;
@@ -119,7 +119,7 @@ namespace mfront::bbrick {
         if (!first) {
           v += " + ";
         }
-        v += "std::max(this->dp" + flow.first + ", real(0))";
+        v += "std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;
@@ -204,7 +204,7 @@ namespace mfront::bbrick {
           v += " + ";
         }
         v += "this->p" + flow.first + " + ";
-        v += theta + " * std::max(this->dp" + flow.first + ", real(0))";
+        v += theta + " * std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;
@@ -217,7 +217,7 @@ namespace mfront::bbrick {
         if (!first) {
           v += " + ";
         }
-        v += "std::max(this->dp" + flow.first + ", real(0))";
+        v += "std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;

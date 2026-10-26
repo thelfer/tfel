@@ -55,11 +55,15 @@ namespace tfel::material {
     using real = PowerLawStressBasedNucleationModelRealType<StressStensorType>;
     using stress =
         PowerLawStressBasedNucleationModelStressType<StressStensorType>;
+    using inverse_stress =
+        PowerLawStressBasedNucleationModelInverseStressType<StressStensorType>;
+    using DerivativeType =
+        PowerLawStressBasedNucleationModeDerivativeType<StressStensorType>;
     constexpr auto N = tfel::math::getSpaceDimension<StressStensorType>();
     using Stensor = tfel::math::stensor<N, real>;
     //
     if (p < params.pmin) {
-      return std::make_tuple(real(0), Stensor(real(0)));
+      return std::make_tuple(real(0), DerivativeType(inverse_stress(0)));
     }
     //
     auto vp = tfel::math::tvector<3u, stress>{};
@@ -74,9 +78,9 @@ namespace tfel::material {
     //
     const auto rs1 = s1 / params.sn - 1;
     if (rs1 < 0) {
-      return std::make_tuple(real(0), Stensor(real(0)));
+      return std::make_tuple(real(0), DerivativeType(inverse_stress(0)));
     }
-    const auto irs1 = std::max(rs1, real(1e-12));
+    const auto irs1 = std::max(real(rs1), real(1e-12));
     const auto An = (params.fn) * std::pow(rs1, params.m);
     // derivative of fn * rs1^m: (m / sn) * fn * rs1^(m - 1)
     const auto dAn_ds1 = (params.m / params.sn) * An / irs1;
