@@ -1777,7 +1777,8 @@ namespace mfront {
           os << "auto name =  \"" << ivname
              << "[\" + std::to_string(i)+ \"]\";\n";
           os << "mg.addInternalStateVariable(name," << as_string(flag)
-             << ",&d->s0.internal_state_variables[" << ivoffset << "]+i);\n";
+             << ",&d->s0.internal_state_variables[" << ivoffset << "]+i*("
+             << SupportedTypes::TypeSize(flag) << "));\n";
           os << "}\n";
           ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
         } else {
@@ -1808,8 +1809,10 @@ namespace mfront {
              << "[\" +std::to_string(i)+\"]\";\n";
           os << "mg.addExternalStateVariable(name, "  //
              << as_string(flag) << ", "
-             << "0,d->s0.external_state_variables + " << evoffset << " + i, "
-             << "dt, d->s1.external_state_variables + " << evoffset << " + i, "
+             << "0,d->s0.external_state_variables + " << evoffset << " + i*("
+             << SupportedTypes::TypeSize(flag) << "), "
+             << "dt, d->s1.external_state_variables + " << evoffset << " + i*("
+             << SupportedTypes::TypeSize(flag) << "), "
              << "false);\n";
           os << "}\n";
           evoffset += SupportedTypes::TypeSize(ev.arraySize, flag);
