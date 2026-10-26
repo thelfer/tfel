@@ -1068,38 +1068,38 @@ namespace tfel::math {
       const tvector<3u, ValueType>& vp,
       stensor_common::EigenValuesOrdering o) noexcept {
     if (o == stensor_common::DESCENDING) {
-      if ((vp[0] > vp[1]) && (vp[0] > vp[2])) {
-        if (vp[1] > vp[2]) {
+      if ((vp[0] >= vp[1]) && (vp[0] >= vp[2])) {
+        if (vp[1] >= vp[2]) {
           return {vp[0], vp[1], vp[2]};
         } else {
           return {vp[0], vp[2], vp[1]};
         }
-      } else if ((vp[1] > vp[0]) && (vp[1] > vp[2])) {
-        if (vp[0] > vp[2]) {
+      } else if ((vp[1] >= vp[0]) && (vp[1] >= vp[2])) {
+        if (vp[0] >= vp[2]) {
           return {vp[1], vp[0], vp[2]};
         } else {
           return {vp[1], vp[2], vp[0]};
         }
       }
-      if (vp[0] > vp[1]) {
+      if (vp[0] >= vp[1]) {
         return {vp[2], vp[0], vp[1]};
       }
       return {vp[2], vp[1], vp[0]};
     } else if (o == stensor_common::ASCENDING) {
-      if ((vp[0] < vp[1]) && (vp[0] < vp[2])) {
-        if (vp[1] < vp[2]) {
+      if ((vp[0] <= vp[1]) && (vp[0] <= vp[2])) {
+        if (vp[1] <= vp[2]) {
           return {vp[0], vp[1], vp[2]};
         } else {
           return {vp[0], vp[2], vp[1]};
         }
-      } else if ((vp[1] < vp[0]) && (vp[1] < vp[2])) {
-        if (vp[0] < vp[2]) {
+      } else if ((vp[1] <= vp[0]) && (vp[1] <= vp[2])) {
+        if (vp[0] <= vp[2]) {
           return {vp[1], vp[0], vp[2]};
         } else {
           return {vp[1], vp[2], vp[0]};
         }
       }
-      if (vp[0] < vp[1]) {
+      if (vp[0] <= vp[1]) {
         return {vp[2], vp[0], vp[1]};
       }
       return {vp[2], vp[1], vp[0]};

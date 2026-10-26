@@ -124,6 +124,15 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(vp3[0] == 1);
     TFEL_TESTS_STATIC_ASSERT(vp3[1] == 0);
     TFEL_TESTS_STATIC_ASSERT(vp3[2] == -1);
+    // double eigenvalue
+    constexpr auto vp4 =
+        tfel::math::sortEigenValues(tfel::math::tvector<3u, int>{0, 0, 1},
+                                    tfel::math::stensor_common::ASCENDING);
+    constexpr auto vp5 =
+        tfel::math::sortEigenValues(tfel::math::tvector<3u, int>{1, 1, 0},
+                                    tfel::math::stensor_common::DESCENDING);
+    TFEL_TESTS_STATIC_ASSERT(vp4[2] == 1);
+    TFEL_TESTS_STATIC_ASSERT(vp5[2] == 0);
   }
 };
 
