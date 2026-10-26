@@ -9,6 +9,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
+@AccelerationAlgorithm 'FAnderson';
 @Behaviour<umat> @library@ 'umatimplicitmonocrystal';
 @MaximumNumberOfSubSteps 1;
 

@@ -9,6 +9,7 @@
 @Real 'nu'    0.3;
 @Real 'G'     'young/2.6';
 
+@AccelerationAlgorithm 'UAnderson';
 @Behaviour<umat> @library@ 'umatpolycrystals';
 
 @StiffnessMatrixType 'Elastic' ;
