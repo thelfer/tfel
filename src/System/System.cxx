@@ -471,6 +471,25 @@ namespace tfel::system {
       b += w;
     }
   }    // end of systemCall::write
+
+  void systemCall::read(const int f, void* const v, size_t s) {
+    auto b = static_cast<unsigned char*>(v);
+    size_t r = s;
+    raise_if<SystemError>(s >= SSIZE_MAX,
+                          "systemCall::read: "
+                          "invalid size (s>=SSIZE_MAX)");
+    while (r > 0) {
+      ssize_t n;
+      while ((n = ::read(f, b, r)) == -1) {
+        if (errno != EINTR) {
+          systemCall::throwSystemError("systemCall::read failed", errno);
+        }
+      }
+      raise_if<SystemError>(n == 0, "systemCall::read: unexpected end of file");
+      r = static_cast<size_t>(r - n);
+      b += n;
+    }
+  }  // end of systemCall::read
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
 
   std::string systemCall::fileType(const mode_t mode) {
