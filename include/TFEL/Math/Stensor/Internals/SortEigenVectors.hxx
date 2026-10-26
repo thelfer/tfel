@@ -92,33 +92,33 @@ namespace tfel::math::internals {
       auto vp2 = vp;
       tfel::math::tvector<3u, decltype(vp.size())> idx = {zero, one, two};
       if (o == EigenValuesOrdering::ASCENDING) {
-        if ((vp(0) < vp(1)) && (vp(1) < vp(2))) {
+        if ((vp(0) <= vp(1)) && (vp(1) <= vp(2))) {
           idx = {zero, one, two};
-        } else if ((vp(0) < vp(2)) && (vp(2) < vp(1))) {
+        } else if ((vp(0) <= vp(2)) && (vp(2) <= vp(1))) {
           idx = {zero, two, one};
-        } else if ((vp(1) < vp(0)) && (vp(0) < vp(2))) {
+        } else if ((vp(1) <= vp(0)) && (vp(0) <= vp(2))) {
           idx = {one, zero, two};
-        } else if ((vp(1) < vp(2)) && (vp(2) < vp(0))) {
+        } else if ((vp(1) <= vp(2)) && (vp(2) <= vp(0))) {
           idx = {one, two, zero};
-        } else if ((vp(2) < vp(0)) && (vp(0) < vp(1))) {
+        } else if ((vp(2) <= vp(0)) && (vp(0) <= vp(1))) {
           idx = {two, zero, one};
         } else {
-          // ((vp(2)<vp(1))&&(vp(1)<vp(0))){
+          // ((vp(2)<=vp(1))&&(vp(1)<=vp(0))){
           idx = {two, one, zero};
         }
       } else if (o == EigenValuesOrdering::DESCENDING) {
-        if ((vp(0) > vp(1)) && (vp(1) > vp(2))) {
+        if ((vp(0) >= vp(1)) && (vp(1) >= vp(2))) {
           idx = {zero, one, two};
-        } else if ((vp(0) > vp(2)) && (vp(2) > vp(1))) {
+        } else if ((vp(0) >= vp(2)) && (vp(2) >= vp(1))) {
           idx = {zero, two, one};
-        } else if ((vp(1) > vp(0)) && (vp(0) > vp(2))) {
+        } else if ((vp(1) >= vp(0)) && (vp(0) >= vp(2))) {
           idx = {one, zero, two};
-        } else if ((vp(1) > vp(2)) && (vp(2) > vp(0))) {
+        } else if ((vp(1) >= vp(2)) && (vp(2) >= vp(0))) {
           idx = {one, two, zero};
-        } else if ((vp(2) > vp(0)) && (vp(0) > vp(1))) {
+        } else if ((vp(2) >= vp(0)) && (vp(0) >= vp(1))) {
           idx = {two, zero, one};
         } else {
-          // ((vp(2)>vp(1))&&(vp(1)>vp(0))){
+          // ((vp(2)>=vp(1))&&(vp(1)>=vp(0))){
           idx = {two, one, zero};
         }
       }
