@@ -630,6 +630,9 @@ static void MTest_setRotationMatrix1(
     mtest::MTest& t,
     const std::vector<std::vector<mtest::real>>& m,
     const bool b) {
+  tfel::raise_if((m.size() != 3) || (m[0].size() != 3) || (m[1].size() != 3) ||
+                     (m[2].size() != 3),
+                 "MTest::setRotationMatrix: a 3x3 matrix is expected");
   tfel::math::tmatrix<3u, 3u, mtest::real> r;
   for (decltype(r.size()) i = 0; i != 3; ++i) {
     for (decltype(r.size()) j = 0; j != 3; ++j) {
