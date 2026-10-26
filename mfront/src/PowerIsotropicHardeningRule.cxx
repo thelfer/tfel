@@ -120,7 +120,7 @@ namespace mfront::bbrick {
       c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn +
            "),strain(0))+this->" + p0n + ", this->" + nn + ");\n";
       c += "const auto " + dR + " = ";
-      c += "(this->theta)*(this->" + nn + ")*" + R + "/(std::max(this->" + pn +
+      c += "(this->" + nn + ")*" + R + "/(std::max(this->" + pn +
            "+(this->theta)*(this->d" + pn + ")+this->" + p0n + ",this->" + p0n +
            "));\n";
     } else {

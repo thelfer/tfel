@@ -198,7 +198,8 @@ namespace mtest {
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       // normalizing
       AnsysNormaliseTangentOperator::exe(&Kt(0, 0), wk.D, 3u);
-    } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
+    } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+               (h == ModellingHypothesis::PLANESTRAIN)) {
       AnsysNormaliseTangentOperator::exe(&Kt(0, 0), wk.D, 2u);
     } else if (h == ModellingHypothesis::PLANESTRESS) {
       constexpr auto zero = AnsysReal{0};

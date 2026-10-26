@@ -142,7 +142,7 @@ namespace mfront::bbrick {
       code += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
     }
     if (r == FLOWCRITERION) {
-      code += "const auto [seqf" + id + ",dseq" + id + "_ds" + id + "] = ";
+      code += "const auto [seqf" + id + ", n" + id + "] = ";
       code += "computeMohrCoulombStressCriterionNormal(this->" + pn + ", s" +
               id + ");\n";
     }

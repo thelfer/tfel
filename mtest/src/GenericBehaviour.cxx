@@ -564,13 +564,6 @@ namespace mtest {
         log << '\n';
       }
     }
-    // turn back the gradients in the global frame
-    if (stype == 1u) {
-      // here we use the fact that d.s1.gradients is a pointer to
-      // &(wk.e0[0])
-      this->rg_fct(&(wk.e0[0]), &(wk.e0[0]), ir.begin());
-      this->rg_fct(&(wk.e1[0]), &(wk.e1[0]), ir.begin());
-    }
     if (b) {
       std::copy(wk.ivs.begin(), wk.ivs.end(), s.iv1.begin());
       if (this->btype == 2u) {

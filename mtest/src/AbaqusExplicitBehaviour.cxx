@@ -208,18 +208,7 @@ namespace mtest {
                   ModellingHypothesis::toString(h) + ")");
     }
     const AbaqusInt nblock = 1;
-    const AbaqusInt ndir = [&h] {
-      switch (h) {
-        case ModellingHypothesis::PLANESTRESS:
-          return 2;
-        case ModellingHypothesis::AXISYMMETRICAL:
-        case ModellingHypothesis::PLANESTRAIN:
-        case ModellingHypothesis::TRIDIMENSIONAL:
-          return 3;
-      }
-      tfel::raise("unsupported hypothesis (" +
-                  ModellingHypothesis::toString(h) + ")");
-    }();
+    const AbaqusInt ndir = 3;
     const AbaqusInt nshr = [&h] {
       switch (h) {
         case ModellingHypothesis::PLANESTRESS:
@@ -287,11 +276,10 @@ namespace mtest {
                   wk.evs.size() == 1 ? nullptr : &(wk.evs[0]) + 1, stressNew,
                   nstatv == 0 ? nullptr : &(s.iv1[0]), &s.se1, &s.de1, 0);
       if (h == ModellingHypothesis::PLANESTRESS) {
-        const auto idx = (i == 2) ? 3 : i;
-        K(0, idx) = stressNew[0];
-        K(1, idx) = stressNew[1];
-        K(2, idx) = 0;
-        K(3, idx) = stressNew[3];
+        K(0, i) = stressNew[0];
+        K(1, i) = stressNew[1];
+        K(2, i) = 0;
+        K(3, i) = stressNew[3];
       } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
                  (h == ModellingHypothesis::PLANESTRAIN)) {
         K(0, i) = stressNew[0];

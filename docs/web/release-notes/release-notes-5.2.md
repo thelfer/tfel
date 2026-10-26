@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1129: [mtest] Wrappers of the generic, aster, castem, ansys, abaqusexplicit and castem_umat behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/1129>
+
 ## Issue 1127: [tfel-system] rmdir following symbolic links, mkdir, binary_read, ThreadPool, ThreadedTaskResult, pipes and ELF symbols
 
 For more details, see <https://github.com/thelfer/tfel/issues/1127>
@@ -692,6 +696,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1127>
 ## Issue 1125: [mfront] Tangent operators of cohesive zone models (castem, aster, MTest) and calculix interface
 
 For more details, see <https://github.com/thelfer/tfel/issues/1125>
+
+## Issue 1123: [mfront] StandardElastoViscoPlasticity brick: flow identifiers, flow criteria coefficients, theta factors and hardening rules
+
+For more details, see <https://github.com/thelfer/tfel/issues/1123>
 
 ## Issue 1121: [tfel-material] Hill tensors, orientation averages, Plate convention and altered stiffness tensors in axisymmetrical generalised plane stress
 
