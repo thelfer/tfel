@@ -292,7 +292,7 @@ namespace mfront {
         }
         fm << "f_args" << i;
       }
-      fm << ") BIND (C,NAME='" << m.second.name << "_checkBounds')\n"
+      fm << ") BIND (C,NAME='" << m.second.name << "checkBounds_')\n"
          << "      Use iso_c_binding, only: c_double,c_int\n"
          << "      Integer(kind=c_int) :: " << m.first << "_checkBounds\n";
       for (decltype(m.second.n_args) i = 0; i != m.second.n_args; ++i) {
