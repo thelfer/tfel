@@ -394,7 +394,7 @@ namespace mfront {
       this->throwRuntimeError(
           "RungeKuttaDSLBase::treatStressErrorNormalizationFactor",
           "defining the normalization factor for the stress error is only "
-          "meaningful if the Runge-Kutta algorithm has not been set.");
+          "meaningful for the rkCastem algorithm.");
     }
     if (this->mb.hasParameter(h, "stress_error_normalization_factor")) {
       this->throwRuntimeError(
@@ -527,9 +527,9 @@ namespace mfront {
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::treatAlgorithm",
                               this->current->value +
-                                  " is not a valid algorithm name"
+                                  " is not a valid algorithm name. "
                                   "Supported algorithms are : 'euler', 'rk2',"
-                                  " 'rk4', 'rk42' , 'rk54' and 'rkCastem'");
+                                  " 'rk4', 'rk42', 'rk54' and 'rkCastem'");
     }
     ++this->current;
     this->readSpecifiedToken("RungeKuttaDSLBase::treatAlgorithm", ";");
