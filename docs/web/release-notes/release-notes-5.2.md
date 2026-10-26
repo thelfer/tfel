@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1125: [mfront] Tangent operators of cohesive zone models (castem, aster, MTest) and calculix interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/1125>
+
 ## Issue 1121: [tfel-material] Hill tensors, orientation averages, Plate convention and altered stiffness tensors in axisymmetrical generalised plane stress
 
 For more details, see <https://github.com/thelfer/tfel/issues/1121>
