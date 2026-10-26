@@ -16,6 +16,7 @@ if os.name == 'nt':
 
 import tfel.tests
 import tfel.math
+import tfel.utilities
 from ._mtest import *
 
 def generateMaterialPropertyReferenceFile(library,

@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1139: [python] Bindings: evtypes, ST2toST2 subscripts, homogenisation bounds, setRotationMatrix, setStrainMeasure, umatxx, Anderson algorithms and Data
+
+For more details, see <https://github.com/thelfer/tfel/issues/1139>
+
 ## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, @Relocation, rotation functions and MTest files on failure
 
 For more details, see <https://github.com/thelfer/tfel/issues/1137>
