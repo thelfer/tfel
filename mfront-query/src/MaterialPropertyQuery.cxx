@@ -190,10 +190,10 @@ namespace mfront {
            }
            const auto& p = findByExternalName(mpd.parameters, pn);
            if (p == mpd.parameters.end()) {
-             tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
-                            "no parameter named "
-                            "'" +
-                                pn + "'");
+             tfel::raise(
+                 "no parameter named "
+                 "'" +
+                 pn + "'");
            }
            tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
                           "no default value for parameter "
