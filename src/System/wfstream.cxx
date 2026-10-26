@@ -77,6 +77,11 @@ namespace tfel::system {
     return *(this->get());
   }  // end of wfstream::getFileDescriptor
 
-  wfstream::~wfstream() { this->close(); }  // end of wfstream::~wfstream
+  wfstream::~wfstream() {
+    try {
+      this->close();
+    } catch (...) {
+    }
+  }  // end of wfstream::~wfstream
 
 }  // end of namespace tfel::system

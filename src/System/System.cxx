@@ -312,16 +312,11 @@ namespace tfel::system {
       // destination don't exist, trying to copy to it
       systemCall::copyFile(src, dest);
       return;
-#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    }
-#else
-    } else if (S_ISCHR(destInfos.st_mode) || S_ISBLK(destInfos.st_mode) ||
-               S_ISFIFO(destInfos.st_mode)) {
+    } else {
       tfel::raise<SystemError>("systemCall::copy: can't copy object of type " +
-                               systemCall::fileType(destInfos.st_mode));
+                               systemCall::fileType(srcInfos.st_mode));
     }
-#endif /* defined _WIN32 || _WIN64 */
-  }    // end of systemCall::copy
+  }  // end of systemCall::copy
 
 #if defined _WIN32 || defined _WIN64
   void systemCall::mkdir(const std::string& dir)
