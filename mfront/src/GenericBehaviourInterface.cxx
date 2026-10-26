@@ -1986,9 +1986,15 @@ namespace mfront {
       } else {
         if (dv.arraySize == 1) {
           if (dv.isScalar()) {
-            os << "this->d" << dv.name << " = "
-               << "mgb_d.s1.gradients[" << odv << "] - "
-               << "mgb_d.s0.gradients[" << odv << "];\n";
+            if (bd.useQt()) {
+              os << "this->d" << dv.name << " = " << dv.type
+                 << "(mgb_d.s1.gradients[" << odv << "] - "
+                 << "mgb_d.s0.gradients[" << odv << "]);\n";
+            } else {
+              os << "this->d" << dv.name << " = "
+                 << "mgb_d.s1.gradients[" << odv << "] - "
+                 << "mgb_d.s0.gradients[" << odv << "];\n";
+            }
           } else {
             if (!odv.isNull()) {
               os << "tfel::fsalgo::transform<" << s << ">::exe("
@@ -2007,9 +2013,15 @@ namespace mfront {
           const auto ls = SupportedTypes::getTypeSize(dv.type, 1);
           for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
             if (dv.isScalar()) {
-              os << "this->d" << dv.name << "[" << idx << "] = "
-                 << "mgb_d.s1.gradients[" << idx << "] - "
-                 << "mgb_d.s0.gradients[" << idx << "];\n";
+              if (bd.useQt()) {
+                os << "this->d" << dv.name << "[" << idx << "] = " << dv.type
+                   << "(mgb_d.s1.gradients[" << lodv << "] - "
+                   << "mgb_d.s0.gradients[" << lodv << "]);\n";
+              } else {
+                os << "this->d" << dv.name << "[" << idx << "] = "
+                   << "mgb_d.s1.gradients[" << lodv << "] - "
+                   << "mgb_d.s0.gradients[" << lodv << "];\n";
+              }
             } else {
               if (!lodv.isNull()) {
                 os << "tfel::fsalgo::transform<" << ls << ">::exe("
