@@ -404,7 +404,7 @@ namespace mtest {
     if ((this->scheme == MTEST) || (this->scheme == DEFAULT)) {
       MTestParser().displayKeyWordsHelp();
     } else if (this->scheme == PTEST) {
-      PipeTestParser().displayKeyWordsList();
+      PipeTestParser().displayKeyWordsHelp();
     }
     ::exit(EXIT_SUCCESS);
   }  // end of MTestMain::treatHelpCommands

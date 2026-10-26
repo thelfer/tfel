@@ -282,7 +282,7 @@ namespace mtest {
       SingleStructureScheme& t, tokens_iterator& p) {
     const std::string& s = this->readString(p, this->tokens.end());
     this->readSpecifiedToken(
-        "SingleStructureSchemeParser::handlePredictionPolicy", ";", p,
+        "SingleStructureSchemeParser::handleOutOfBoundsPolicy", ";", p,
         this->tokens.end());
     if (s == "None") {
       t.setOutOfBoundsPolicy(tfel::material::None);

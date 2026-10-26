@@ -34,7 +34,7 @@ function required by the Kronrod's quadrature.
 
 ### Treatment of unbouded intervals
 
-If any of the integration interval is finite, a change of variable is
+If any of the integration interval is infinite, a change of variable is
 automatically perform to perform an integration on the interval \([-1,
 1]\):
 
@@ -105,7 +105,7 @@ The following code computes an approximation of the integral
 
 ~~~~{.cxx}
 const auto or2 = tfel::math::gauss_kronrod_integrate(
-    f1, -std::numeric_limits<double>::max(), double{},
+    f2, -std::numeric_limits<double>::max(), double{},
     {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
 ~~~~
 
@@ -114,7 +114,7 @@ The following code computes an approximation of the integral
 
 ~~~~{.cxx}
 const auto or3 = tfel::math::gauss_kronrod_integrate(
-    f1, double{}, std::numeric_limits<double>::max(),
+    f2, double{}, std::numeric_limits<double>::max(),
     {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
 ~~~~
 
@@ -123,7 +123,7 @@ The following code computes an approximation of the integral
 
 ~~~~{.cxx}
 const auto or4 = tfel::math::gauss_kronrod_integrate(
-    f1, -std::numeric_limits<double>::max(),
+    f2, -std::numeric_limits<double>::max(),
     std::numeric_limits<double>::max(),
     {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
 ~~~~
@@ -145,7 +145,7 @@ The following code computes an approximation of the integral
 ~~~~{.cxx}
 constexpr auto a = double{};
 constexpr auto b = std::numbers::pi_v<double> / 4;
-const auto or = tfel::math::gauss_kronrod_integrate(
+const auto oi = tfel::math::gauss_kronrod_integrate(
     [](const double x) noexcept -> tfel::math::tvector<2u, double> {
       return {std::sin(x), std::cos(x)};
     },

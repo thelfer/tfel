@@ -1022,7 +1022,7 @@ namespace mfront {
       v.setAttribute(VariableDescription::defaultValue, values, false);
     } else if (v.type == "StringArray") {
       const auto values =
-          this->readArrayOfDouble("ModelDSLCommon::readDefaultValue");
+          this->readArrayOfString("ModelDSLCommon::readDefaultValue");
       v.setAttribute(VariableDescription::defaultValue, values, false);
     } else if ((v.type == "double") || (v.type == "real")) {
       const auto value = this->readDouble();

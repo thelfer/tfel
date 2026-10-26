@@ -217,7 +217,7 @@ namespace mfront {
           }
           d.description += pd->second;
         } else {
-          for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
+          for (pd2 = pd; pd2 != d.descriptions.end(); ++pd2) {
             if (!pd2->second.empty()) {
               if (!d.description.empty()) {
                 d.description += "\n";
