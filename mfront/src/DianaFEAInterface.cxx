@@ -167,8 +167,6 @@ namespace mfront {
     systemCall::mkdir("include/MFront/DianaFEA");
     systemCall::mkdir("dianafea");
 
-    //
-    systemCall::mkdir("abaqus");
     try {
       // copy umat.cpp locally
       MFrontLockGuard lock;
