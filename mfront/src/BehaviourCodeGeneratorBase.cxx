@@ -122,6 +122,18 @@ namespace mfront {
       const BehaviourInterfaceMap& bim)
       : fd(f), bd(d), interfaces(bim) {}  // end of BehaviourCodeGeneratorBase
 
+  void BehaviourCodeGeneratorBase::checkArraySizeOfMainVariables(
+      const std::string_view m,
+      const std::pair<Gradient, ThermodynamicForce>& mv) {
+    if (mv.first.arraySize != mv.second.arraySize) {
+      tfel::raise(std::string{m} + ": the array size of the gradient '" +
+                  mv.first.name +
+                  "' is "
+                  "different from the array size of the thermodynamic force '" +
+                  mv.second.name + "'");
+    }
+  }  // end of checkArraySizeOfMainVariables
+
   void BehaviourCodeGeneratorBase::throwRuntimeError(
       const std::string_view m, const std::string_view e) const {
     auto msg = std::string{m};
@@ -1227,15 +1239,8 @@ namespace mfront {
       os << "ThermalExpansionCoefficientTensor A;\n";
     }
     for (const auto& mv : this->bd.getMainVariables()) {
-      if (mv.first.arraySize != mv.second.arraySize) {
-        tfel::raise(
-            "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers: "
-            "the array size of the gradient '" +
-            mv.first.name +
-            "' is "
-            "different from the array size of the thermodynamic force '" +
-            mv.second.name + "'");
-      }
+      checkArraySizeOfMainVariables(
+          "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers", mv);
       if (mv.first.arraySize == 1) {
         if (Gradient::isIncrementKnown(mv.first)) {
           os << mv.first.type << " " << mv.first.name << ";\n\n";
@@ -5486,15 +5491,8 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     os << "protected: \n\n";
     for (const auto& v : this->bd.getMainVariables()) {
-      if (v.first.arraySize != v.second.arraySize) {
-        tfel::raise(
-            "BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers: "
-            "the array size of the gradient '" +
-            v.first.name +
-            "' is "
-            "different from the array size of the thermodynamic force '" +
-            v.second.name + "'");
-      }
+      checkArraySizeOfMainVariables(
+          "BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers", v);
       if (Gradient::isIncrementKnown(v.first)) {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " increment\n"
