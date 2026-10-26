@@ -75,8 +75,8 @@ namespace mfront {
       return p->second;
     }
     p = as1.find(n);
-    if (p != as2.end()) {
-      return p->second;
+    if (p == as1.end()) {
+      tfel::raise("no attribute named '" + n + "'");
     }
     return p->second;
   }

@@ -689,6 +689,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1183>
 
+## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
+
+For more details, see <https://github.com/thelfer/tfel/issues/1171>
+
 ## Issue 1169: [tfel-tests] tfel-doc output, log and colors, TFEL/Tests XML output and exports, copy-paste slips, JUnit report names, TextData::skipLines, FSAlgorithm loop and strided iterator assignment
 
 For more details, see <https://github.com/thelfer/tfel/issues/1169>
@@ -704,6 +708,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1165>
 ## Issue 1163: [python] Bindings: CurrentStateVector, tfel.math operators, versioned packages, CMakeGenerator, return value policies, Hill tensors, DSLFactory and mergeTargetsDescription
 
 For more details, see <https://github.com/thelfer/tfel/issues/1163>
+
+## Issue 1161: [mtest] MTest and PTest: ptest keywords help, array component names, orthotropic generic stress, mistral defaults, PTest output and jacobian, algorithm names, installed and exported classes
+
+For more details, see <https://github.com/thelfer/tfel/issues/1161>
 
 ## Issue 1159: [tfel-material] Finite strain tangent operators, logarithmic strain handler, Hosford/Barlat with quantities, bounds checks, Gauss-Kronrod, broyden, parser and LU messages
 

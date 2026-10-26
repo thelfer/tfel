@@ -324,7 +324,7 @@ namespace mfront {
   std::function<void()>
   QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery(
       const std::string& n) const {
-    if (!n.empty()) {
+    if (n.empty()) {
       tfel::raise(
           "QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery: "
           "no option given for command line argument "

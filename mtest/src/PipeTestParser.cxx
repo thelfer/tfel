@@ -194,7 +194,7 @@ namespace mtest {
       std::cout << "\n# The `" << k << "` keyword\n\n";
       if (!f.empty()) {
         std::ifstream desc{f};
-        if (!desc) {
+        if (desc) {
           std::cout << desc.rdbuf();
         } else {
           std::cout << "The keyword `" << k << "` is not documented yet\n";
