@@ -97,7 +97,7 @@ namespace mtest {
       try {
         const auto rv = this->reference_values_evaluator(s, t, dt, p);
         const real err = std::abs(uv - rv);
-        if (err > this->eps) {
+        if (!(err <= this->eps)) {
           std::ostringstream msg;
           msg << "IntegralTest::check : comparison for variable '" << this->name
               << "' failed for time '" << t + dt << "' "
@@ -201,7 +201,7 @@ namespace mtest {
           this->results.append(tfel::tests::TestResult(false, msg.str()));
         } else {
           const real err = std::abs(v - this->values[dp]);
-          if (err > this->eps) {
+          if (!(err <= this->eps)) {
             std::ostringstream msg;
             msg << "ProfileTest::check : comparison for variable '"
                 << this->name << "' failed for time '" << t + dt << "' "
@@ -1303,6 +1303,9 @@ namespace mtest {
     using size_type = tfel::math::vector<real>::size_type;
     auto n = real(0);
     for (size_type i = 0; i != s; ++i) {
+      if (!tfel::math::ieee754::isfinite(v(i))) {
+        return v(i);
+      }
       n = std::max(n, std::abs(v(i)));
     }
     return n;

@@ -343,7 +343,9 @@ namespace mtest {
           if (o.maximal_time_step > 0) {
             dt = std::min(dt, o.maximal_time_step);
           }
-          if (dt > te - t - o.minimal_time_step) {
+          // the minimal time step is negative if not set
+          const auto dtmin = std::max(o.minimal_time_step, real{0});
+          if (dt > te - t - dtmin) {
             dt = te - t;
           }
         }
