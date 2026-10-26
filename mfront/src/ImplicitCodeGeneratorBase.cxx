@@ -602,6 +602,36 @@ namespace mfront {
     // a flag reporting a failure, which is gathered in `mfront_success`
     // after the code block.
     auto function_objects = std::vector<std::string>{};
+    // scaling of the rows of the matrix `m`, having `nc` columns, associated
+    // with the normalised integration variables (`p` is empty) or with the
+    // normalised implicit equations (`p` is "f"). `b` gives access to the
+    // members of the behaviour used as normalisation factors.
+    auto write_rows_scaling = [this, &os, h, &isvs](
+                                  const std::string& m,
+                                  const SupportedTypes::TypeSize& nc,
+                                  const std::string& p, const std::string& op,
+                                  const std::string& b) {
+      auto cr = SupportedTypes::TypeSize{};  // current row
+      for (const auto& iv : isvs) {
+        auto nr = cr;  // next row
+        nr += mfront::getTypeSize(iv);
+        if (this->bd.hasAttribute(h, p + iv.name + "_normalisation_factor")) {
+          auto nf = this->bd.getAttribute<std::string>(
+              h, p + iv.name + "_normalisation_factor");
+          if (nf.starts_with("this->")) {
+            nf = b + nf.substr(6);
+          }
+          os << "for(ushort mfront_idx = " << cr << "; mfront_idx != " << nr
+             << "; ++mfront_idx){\n"
+             << "for(ushort mfront_idx2 = 0; mfront_idx2 != " << nc
+             << "; ++mfront_idx2){\n"
+             << m << "(mfront_idx, mfront_idx2) " << op << " " << nf << ";\n"
+             << "}\n"
+             << "}\n";
+        }
+        cr = nr;
+      }
+    };
     if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
       os << "auto mfront_jacobian_decomposition_success = true;\n";
       decomposition_results = this->linear_solver.writeMatrixDecomposition(
@@ -627,6 +657,7 @@ namespace mfront {
          << "; ++mfront_idx){\n"
          << "jacobian_invert(mfront_idx, mfront_idx) = NumericType(1);\n"
          << "}\n";
+      write_rows_scaling("jacobian_invert", nivs, "f", "/=", "this->");
       os << "auto mfront_jacobian_substitution_success = true;\n";
       this->linear_solver.writeLinearSystemSubstitution(
           os, decomposition_results,
@@ -636,6 +667,7 @@ namespace mfront {
       os << "if(!mfront_jacobian_substitution_success){\n"
          << "return false;\n"
          << "}\n";
+      write_rows_scaling("jacobian_invert", nivs, "", "*=", "this->");
       auto cr = SupportedTypes::TypeSize{};  // current row
       for (const auto& iv1 : isvs) {
         auto cc = SupportedTypes::TypeSize{};  // current column
@@ -873,6 +905,8 @@ namespace mfront {
           os << "){\n"
              << rhs_type << " mfront_local_lhs(-(this->mfront_local_rhs));\n"
              << "auto mfront_substitution_success = true;\n";
+          write_rows_scaling("mfront_local_lhs", nc, "f",
+                             "/=", "this->behaviour.");
           auto local_decomposition_results = decomposition_results;
           local_decomposition_results.matrix = "this->behaviour.jacobian";
           local_decomposition_results.variables.clear();
@@ -890,6 +924,8 @@ namespace mfront {
           os << "if(!mfront_substitution_success){\n"
              << "this->mfront_success = false;\n"
              << "}\n";
+          write_rows_scaling("mfront_local_lhs", nc, "",
+                             "*=", "this->behaviour.");
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (std::size_t i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
