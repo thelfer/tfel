@@ -34,5 +34,9 @@ int main() {
   for (std::vector<uishort>::size_type i = 0; i != 10; ++i) {
     assert(v2[i] == i);
   }
+  auto s = 0u;
+  auto f = [&s](const unsigned int i) { s += i; };
+  tfel::fsalgo::loop<4u>::exe(f);
+  assert(s == 6u);
   return EXIT_SUCCESS;
 }
