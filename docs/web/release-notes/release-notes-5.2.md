@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1179: [mfront] Wrong or misleading error messages and documentation of DSLs, tools, material property interfaces, stress criteria, MTest bindings and tfel-check
+
+For more details, see <https://github.com/thelfer/tfel/issues/1179>
+
 ## Issue 1169: [tfel-tests] tfel-doc output, log and colors, TFEL/Tests XML output and exports, copy-paste slips, JUnit report names, TextData::skipLines, FSAlgorithm loop and strided iterator assignment
 
 For more details, see <https://github.com/thelfer/tfel/issues/1169>
