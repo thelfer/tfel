@@ -23,6 +23,7 @@
 #include "TFEL/Material/StiffnessTensor.hxx"
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 #include "TFEL/Material/LocalisationTensor.hxx"
+#include "TFEL/Material/OrientationAverages.hxx"
 #endif /* _LIBCPP_VERSION */
 
 #include "TFEL/Math/qt.hxx"
@@ -150,6 +151,23 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       for (int i : {0, 1, 2, 3})
         for (int j : {0, 1, 2, 3}) {
           TFEL_TESTS_ASSERT(std::abs(A2d_1(i, j) - A2d_2(i, j)) < eps);
+        }
+    }
+    // isotropic averages of the localisation tensors of a disk and of an
+    // ellipse
+    {
+      const auto Enu_i = YoungNuModuli<stress>(young_i, nu_i);
+      const auto A2d_1 = computeDiskPlaneStrainLocalisationTensor(Enu, C_i);
+      const auto A2d_2 =
+          EllipsoidMeanLocalisator<2u, stress>::Isotropic(Enu, Enu_i, a, a);
+      const auto A2d_3 =
+          EllipsoidMeanLocalisator<2u, stress>::Isotropic(Enu, Enu_i, a, 2 * a);
+      const auto A2d_4 =
+          EllipsoidMeanLocalisator<2u, stress>::Isotropic(Enu, Enu_i, 2 * a, a);
+      for (int i : {0, 1, 2, 3})
+        for (int j : {0, 1, 2, 3}) {
+          TFEL_TESTS_ASSERT(std::abs(A2d_1(i, j) - A2d_2(i, j)) < eps);
+          TFEL_TESTS_ASSERT(std::abs(A2d_3(i, j) - A2d_4(i, j)) < eps);
         }
     }
 #endif /* _LIBCPP_VERSION */

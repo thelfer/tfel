@@ -117,7 +117,7 @@ namespace tfel::material::homogenization::elasticity {
       const auto young_i = Enui.young;
       const auto nu_i = Enui.nu;
       using namespace tfel::math;
-      st2tost2<3u, StressType> C_i;
+      st2tost2<2u, StressType> C_i;
       static constexpr auto value =
           StiffnessTensorAlterationCharacteristic::UNALTERED;
       computeIsotropicStiffnessTensorII<2u, value, StressType, real>(
@@ -127,12 +127,15 @@ namespace tfel::material::homogenization::elasticity {
           computePlaneStrainLocalisationTensor<StressType>(IM0, C_i, n_a, a, b);
 
       const auto zero = real(0);
-      const auto A11 = 3 * A_(0, 0) / 4 + A_(0, 1) / 4 + A_(3, 3) / 4;
-      const auto A12 = A_(0, 0) / 4 + 3 * A_(0, 1) / 4 - A_(3, 3) / 4;
-      const auto A13 = A_(0, 2);
-      const auto A31 = A_(2, 0);
+      const auto A11 = 3 * (A_(0, 0) + A_(1, 1)) / 8 +
+                       (A_(0, 1) + A_(1, 0)) / 8 + A_(3, 3) / 4;
+      const auto A12 = (A_(0, 0) + A_(1, 1)) / 8 +
+                       3 * (A_(0, 1) + A_(1, 0)) / 8 - A_(3, 3) / 4;
+      const auto A13 = (A_(0, 2) + A_(1, 2)) / 2;
+      const auto A31 = (A_(2, 0) + A_(2, 1)) / 2;
       const auto A33 = A_(2, 2);
-      const auto A44 = A_(3, 3) / 4 + A_(0, 0) / 4 - A_(0, 1) / 4;
+      const auto A44 =
+          (A_(0, 0) + A_(1, 1) - A_(0, 1) - A_(1, 0)) / 4 + A_(3, 3) / 2;
 
       const st2tost2<2u, real> A_moy = {A11,  A12,  A13,  zero, A12, A11,
                                         A13,  zero, A31,  A31,  A33, zero,
