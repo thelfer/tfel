@@ -291,8 +291,8 @@ namespace tfel::math {
       }
       std::istringstream converter(*p);
       converter >> diffNumber;
-      throw_if(diffNumber <= 1,
-               "order of differentiation must be greater or egal than 1");
+      throw_if(diffNumber < 1,
+               "order of differentiation must be greater or equal than 1");
       ++p;
       Evaluator::readSpecifiedToken("Evaluator::treatDiff", ">", p, pe);
       Evaluator::checkNotEndOfExpression("Evaluator::treatDiff", "expected ')'",
