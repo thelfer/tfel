@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1103: [tfel-math] Crash, operator precedence, derivative and integer literal errors of the formula parsers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1103>
+
 ## Issue 1101: [tfel-material] Wrong second derivatives, NaN and single precision build errors of several stress criteria
 
 For more details, see <https://github.com/thelfer/tfel/issues/1101>
