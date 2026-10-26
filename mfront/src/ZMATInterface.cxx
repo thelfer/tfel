@@ -1735,7 +1735,11 @@ namespace mfront {
       out << "zmat::ZMATInterface::convert(b.getStiffnessTensor(),this->get_"
              "elasticity_matrix(mdat,1.));\n";
     }
-    out << "b.initialize();\n"
+    out << "if(!b.initialize()){\n"
+        << "static INTEGRATION_RESULT bad_result;\n"
+        << "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
+        << "return &bad_result;\n"
+        << "}\n"
         << "if(b.integrate(smflag,smtype)!=" << mb.getClassName()
         << "::SUCCESS){\n"
         << "static INTEGRATION_RESULT bad_result;\n"
