@@ -1770,7 +1770,8 @@ namespace mfront {
     if (h == ModellingHypothesis::PLANESTRESS) {
       // les composantes axiales sont mises à l'identité pour pouvoir
       // réaliser le calcul de la rotation
-      out << "const stensor<2u," << t
+      out << "constexpr const " << t << " zero = " << t << "(0);\n"
+          << "const stensor<2u," << t
           << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
           << "                                    "
              "1,cste*(*(stretchNew+i+3*(*nblock)))};\n"
