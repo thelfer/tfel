@@ -693,6 +693,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1169>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1167>
 
+## Issue 1165: [tfel-math] Headers and parser: parenthesised conditions, stensor setComponent/getComponent, isqrt3 with MSVC, square_root of quantities, GPU attribute, ATLAS binding, HasRandomAccessIterator, self-contained material headers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1165>
+
 ## Issue 1163: [python] Bindings: CurrentStateVector, tfel.math operators, versioned packages, CMakeGenerator, return value policies, Hill tensors, DSLFactory and mergeTargetsDescription
 
 For more details, see <https://github.com/thelfer/tfel/issues/1163>
