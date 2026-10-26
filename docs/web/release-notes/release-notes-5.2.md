@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1119: [mfront] ansys and abaqusexplicit interfaces: finite strain strategies, plane stress, packaging and parallelisation
+
+For more details, see <https://github.com/thelfer/tfel/issues/1119>
+
 ## Issue 1117: [mfront] Interfaces of material properties and models: exports, one-line functions, bounds, temperature of castem models and comsol
 
 For more details, see <https://github.com/thelfer/tfel/issues/1117>
