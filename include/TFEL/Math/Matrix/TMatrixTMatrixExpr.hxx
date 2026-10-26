@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include <utility>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/FSAlgorithm/inner_product.hxx"
@@ -108,9 +109,8 @@ namespace tfel::math {
       const size_type j;
     };  // end of struct ColumnConstIterator
 
-    TFEL_HOST_DEVICE constexpr TMatrixTMatrixExpr(const A& l,
-                                                  const B& r) noexcept
-        : a(l), b(r) {}
+    TFEL_HOST_DEVICE constexpr TMatrixTMatrixExpr(A l, B r) noexcept
+        : a(std::forward<A>(l)), b(std::forward<B>(r)) {}
 
     [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator()(
         const IndexType i, const IndexType j) const noexcept {

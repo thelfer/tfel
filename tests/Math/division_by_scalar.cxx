@@ -78,6 +78,23 @@ struct DivisionByScalarTest final : public tfel::tests::TestCase {
     for (unsigned short i = 0; i != 3; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values3[i] - (i + 1)) < eps);
     }
+    // array of views of symmetric tensors
+    auto values4 = std::array<double, 8>{2, 4, 6, 8, 10, 12, 14, 16};
+    auto a3 = ViewsFixedSizeVector<stensor<2u, double>, unsigned short, 2>(
+        values4.data());
+    a3 /= 2;
+    for (unsigned short i = 0; i != 8; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(values4[i] - (i + 1)) < eps);
+    }
+    // array of strided coalesced views of symmetric tensors
+    auto values5 = std::array<double, 8>{2, 4, 6, 8, 10, 12, 14, 16};
+    auto a4 =
+        StridedCoalescedViewsFixedSizeVector<stensor<2u, double>, unsigned int,
+                                             2>(values5.data());
+    a4 /= 2;
+    for (unsigned short i = 0; i != 8; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(values5[i] - (i + 1)) < eps);
+    }
     return this->result;
   }  // end of execute
 };
