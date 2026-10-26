@@ -38,6 +38,11 @@ struct TMatrixProductTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(m3(0, 1) == 2);
     TFEL_TESTS_STATIC_ASSERT(m3(1, 0) == 23);
     TFEL_TESTS_STATIC_ASSERT(m3(1, 1) == 4);
+    auto m4 = tmatrix<2u, 2u, int>{};
+    m4.copy(m2.begin());
+    TFEL_TESTS_ASSERT(m4(1, 0) == 5);
+    TFEL_TESTS_ASSERT(m4.max() == 5);
+    TFEL_TESTS_ASSERT(m4.abs_max() == 5);
     return this->result;
   }
 };
