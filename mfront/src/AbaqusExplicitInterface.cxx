@@ -973,8 +973,8 @@ namespace mfront {
             << "*(stressNew+i+   *(nblock))  = *(sg+1);\n"
             << "*(stressNew+i+2*(*(nblock))) = *(sg+2);\n"
             << "*(stressNew+i+3*(*(nblock))) = *(sg+3);\n"
-            << "*(stressNew+i+4*(*(nblock))) = *(sg+4);\n"
-            << "*(stressNew+i+5*(*(nblock))) = *(sg+5);\n";
+            << "*(stressNew+i+4*(*(nblock))) = *(sg+5);\n"
+            << "*(stressNew+i+5*(*(nblock))) = *(sg+4);\n";
       } else {
         tfel::raise(
             "AbaqusExplicitInterface::writeComputeElasticPrediction: "
@@ -1010,11 +1010,11 @@ namespace mfront {
             << "*(stressNew+i+3*(*(nblock))) = D[3]*eto[0]+D[9]*eto[1] "
                "+D[15]*eto[2]+D[21]*eto[3]+D[27]*eto[4]+D[33]*eto[5];\n"
             << "*(stressNew+i+4*(*(nblock))) = "
-               "D[4]*eto[0]+D[10]*eto[1]+D[16]*eto[2]+D[22]*eto[3]+D[28]*eto[4]"
-               "+D[34]*eto[5];\n"
-            << "*(stressNew+i+5*(*(nblock))) = "
                "D[5]*eto[0]+D[11]*eto[1]+D[17]*eto[2]+D[23]*eto[3]+D[29]*eto[4]"
-               "+D[35]*eto[5];\n";
+               "+D[35]*eto[5];\n"
+            << "*(stressNew+i+5*(*(nblock))) = "
+               "D[4]*eto[0]+D[10]*eto[1]+D[16]*eto[2]+D[22]*eto[3]+D[28]*eto[4]"
+               "+D[34]*eto[5];\n";
       } else {
         tfel::raise(
             "AbaqusExplicitInterface::writeComputeElasticPrediction: "
@@ -1042,12 +1042,14 @@ namespace mfront {
           << "}\n"
           << "};\n"
           << "const auto nthreads = pool.getNumberOfThreads();\n"
-          << "const auto ntasks   = nthreads/(*nblock);\n"
+          << "const auto nb = "
+             "static_cast<tfel::system::ThreadPool::size_type>(*nblock);\n"
+          << "const auto ntasks   = nb/nthreads;\n"
           << "for(tfel::system::ThreadPool::size_type i=0;i!=nthreads;++i){\n"
           << "pool.addTask(integrate2,i*ntasks,(i+1)*ntasks);\n"
           << "}\n"
-          << "if(*nblock-ntasks*nthreads!=0){\n"
-          << "pool.addTask(integrate2,nthreads*ntasks,*nblock);\n"
+          << "if(nb-ntasks*nthreads!=0){\n"
+          << "pool.addTask(integrate2,nthreads*ntasks,nb);\n"
           << "}\n"
           << "pool.wait();\n";
     } else {
@@ -1294,7 +1296,7 @@ namespace mfront {
           << "                              "
              "zero,cste*(*(stretchNew+i+3*(*nblock)))};\n"
           << "stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t
-          << ">::Id)/2;\n"
+          << ">::Id())/2;\n"
           << "stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t
           << ">::Id())/2-eto;\n\n"
           << "stensor<2u," << t
@@ -1770,7 +1772,8 @@ namespace mfront {
     if (h == ModellingHypothesis::PLANESTRESS) {
       // les composantes axiales sont mises à l'identité pour pouvoir
       // réaliser le calcul de la rotation
-      out << "const stensor<2u," << t
+      out << "constexpr const " << t << " zero = " << t << "(0);\n"
+          << "const stensor<2u," << t
           << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
           << "                                    "
              "1,cste*(*(stretchNew+i+3*(*nblock)))};\n"
