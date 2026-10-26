@@ -2103,7 +2103,7 @@ orthotropic behaviour, the thermal expansion tensor is diagonal and
 expressed in the material frame.
 
 ~~~~{.cpp}
-@RequireThermalExpansionCoefficientTensor true;
+@RequireThermalExpansionCoefficientTensor;
 ~~~~
 
 # The `@SlidingSystem` keyword
