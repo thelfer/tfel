@@ -99,7 +99,8 @@ namespace tfel::tests {
     bool status = true;
   };  // end of struct
 
-  std::ostream& operator<<(std::ostream&, const TestResult&);
+  TFELTESTS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&,
+                                                       const TestResult&);
 
 }  // end of namespace tfel::tests
 

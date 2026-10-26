@@ -124,6 +124,11 @@ struct LogarithmicStrainHandlerTest final : public tfel::tests::TestCase {
           TFEL_TESTS_ASSERT(std::abs(D1(i, j) - D2(i, j)) < eps);
         }
       }
+      if constexpr (N != 1) {
+        const auto K1 = h1.convertToAbaqusTangentModuli(D, T);
+        const auto K2 = h2.convertToAbaqusTangentModuli(D, T);
+        TFEL_TESTS_ASSERT(abs(K1 - K2) < eps);
+      }
     }
   }
 };

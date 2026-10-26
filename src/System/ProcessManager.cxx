@@ -616,8 +616,7 @@ namespace tfel::system {
     auto p = this->findProcess(pid);
     if (p.get() == nullptr) {
       std::ostringstream msg;
-      msg << "ProcessManager::sendSignal : process " << pid
-          << " is not registred";
+      msg << "ProcessManager::wait : process " << pid << " is not registred";
       throw(SystemError(msg.str()));
     }
     if (!p->isRunning) {

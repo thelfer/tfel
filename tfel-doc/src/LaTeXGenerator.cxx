@@ -33,10 +33,10 @@ namespace tfel::utilities {
       return "Test de la catégorie \\og~" + getCategory(s, l) + "~\\fg{}";
     }
     if (l != "english") {
-      cerr << TerminalColors::Red;
+      cerr.write(TerminalColors::Red, sizeof(TerminalColors::Red));
       cerr << "getSectionHeaderTranslation : unsupported language'" + l
            << "', using default\n";
-      cerr << TerminalColors::Reset;
+      cerr.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
     }
     return s;
   }
@@ -181,10 +181,10 @@ namespace tfel::utilities {
   static std::string getBabelPackage(const std::string& l) {
     using namespace std;
     if (l != "french") {
-      cerr << TerminalColors::Red;
+      cerr.write(TerminalColors::Red, sizeof(TerminalColors::Red));
       cerr << "getBabelPackage : unsupported language '" << l
            << "', using default\n";
-      cerr << TerminalColors::Reset;
+      cerr.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
       return "";
     }
     return "\\usepackage[frenchb]{babel}";

@@ -429,7 +429,7 @@ namespace tfel::system {
      * \param[in] s: name of function or mechanical behaviour
      * This function looks for the symbol s+'_mfront_interface' in the library
      * and expect it to a pointer to characters.
-     * If the symbol is not found, an empty string is returned.
+     * An exception is thrown if the symbol is not found.
      */
     std::string getInterface(const std::string&, const std::string&);
     /*!
@@ -454,8 +454,8 @@ namespace tfel::system {
      * \param[in] l : name of the library
      * \param[in] s : name of function or mechanical behaviour
      * This function looks for the symbol s+'_ModellingHypotheses'
-     * in the library and expect it to a pointer to characters. If
-     * the symbol is not found, an empty vector is returned.
+     * in the library and expect it to a pointer to characters. An
+     * exception is thrown if the symbol is not found.
      */
     std::vector<std::string> getSupportedModellingHypotheses(
         const std::string&, const std::string&);

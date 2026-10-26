@@ -105,6 +105,7 @@ namespace mfront {
       check_interface_restriction();
       throw_if(bd.hasAttribute("AbaqusExplicit::ParallelizationPolicy"),
                "parallelization policy already defined");
+      throw_if(current == end, "unexpected end of file");
       throw_if((current->value != "None") && (current->value != "ThreadPool"),
                "invalid parallelization policy '" + current->value + "'");
       bd.setAttribute(AbaqusExplicitParallelizationPolicy, current->value,

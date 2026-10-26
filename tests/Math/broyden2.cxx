@@ -116,6 +116,8 @@ struct TinyBroyden2SolverTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(norm(vf) < 1.e-11);
     TFEL_TESTS_ASSERT(abs(x(0) - 2) < 1.e-11);
     TFEL_TESTS_ASSERT(abs(x(1)) < 1.e-11);
+    // convergence at the last allowed iteration
+    TFEL_TESTS_ASSERT((broyden2<2, double, f2>(x0, 1.e-11, 16).first));
   }
 
   void test4() {
