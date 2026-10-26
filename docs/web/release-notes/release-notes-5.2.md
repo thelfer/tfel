@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1209: [tfel-math] Variable positions of Evaluator in diff() and tfel-check, fses::sort, vector::copy, GenType output, GTN flow stress, Mohr-Coulomb second derivative, eigen solvers on GPUs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1209>
+
 ## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1189>
