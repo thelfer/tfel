@@ -53,6 +53,6 @@ TFEL_TESTS_GENERATE_PROXY(TMatrixProductTest, "TMatrixProductTest");
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("TMatrixSubMatrixView.xml");
+  m.addXMLTestOutput("TMatrix7.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

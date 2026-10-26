@@ -167,6 +167,6 @@ TFEL_TESTS_GENERATE_PROXY(BehaviourDescriptionBoundsHandlingTest,
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("BehaviourDescription.xml");
+  m.addXMLTestOutput("BehaviourDescriptionBoundsHandling.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main
