@@ -40,11 +40,11 @@ namespace tfel::system {
      * \param[in] args: arguments to T constructor
      */
     template <typename... Args>
-    explicit ThreadedTaskResult(Args&&...);
-    /*!
-     * \brief constructor of T
-     */
-    explicit ThreadedTaskResult(const T&);
+    explicit ThreadedTaskResult(Args&&...)
+      requires(
+          (sizeof...(Args) != 1) ||
+          (!std::is_same_v<std::remove_cvref_t<Args>, ThreadedTaskResult> &&
+           ...));
     //! \brief move constructor
     ThreadedTaskResult(ThreadedTaskResult&&) noexcept;
     //! \brief copy constructor

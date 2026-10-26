@@ -38,6 +38,10 @@ struct ThreadPoolTest final : public tfel::tests::TestCase {
     auto counter = [n = 0]() mutable { return ++n; };
     TFEL_TESTS_ASSERT(*(pool.addTask(counter).get()) == 1);
     TFEL_TESTS_ASSERT(counter() == 1);
+    // copy of a result from a non-const lvalue
+    auto tr = ThreadedTaskResult<int>{};
+    tr = 42;
+    TFEL_TESTS_ASSERT(*(ThreadedTaskResult<int>(tr)) == 42);
     return this->result;
   }  // end of execute
 };
