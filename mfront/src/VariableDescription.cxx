@@ -271,7 +271,8 @@ namespace mfront {
       tfel::raise_if(c, "VariableDescription::setBounds: " + m);
     };
     throw_if(this->arraySize == 1u, "invalid call on scalar variable");
-    throw_if(i > this->arraySize, "invalid index");
+    throw_if(i >= this->arraySize,
+             "invalid index for variable '" + this->name + "'");
     throw_if(this->hasBounds(),
              "bounds have already been set on variable "
              "'" +
@@ -282,12 +283,6 @@ namespace mfront {
                      "bounds have already been set on variable "
                      "'" +
                          this->name + "'");
-    }
-    for (unsigned short j = 0; j != this->arraySize; ++j) {
-      if (this->hasPhysicalBounds(j)) {
-        mfront::checkBoundsCompatibility(b, this->getPhysicalBounds(j),
-                                         this->name);
-      }
     }
     if (std::holds_alternative<std::monostate>(this->bounds)) {
       this->bounds = std::map<unsigned short, VariableBoundsDescription>();
@@ -382,7 +377,8 @@ namespace mfront {
       }
     };
     throw_if(this->arraySize == 1u, "invalid call on scalar variable");
-    throw_if(i > this->arraySize, "invalid index");
+    throw_if(i >= this->arraySize,
+             "invalid index for variable '" + this->name + "'");
     throw_if(
         std::holds_alternative<VariableBoundsDescription>(this->physicalBounds),
         "physical bounds have already been set on variable "
@@ -394,10 +390,8 @@ namespace mfront {
                    "'" +
                        this->name + "'");
     mfront::checkBoundsCompatibility(*this, b);
-    for (unsigned short j = 0; j != this->arraySize; ++j) {
-      if (this->hasBounds(j)) {
-        mfront::checkBoundsCompatibility(this->getBounds(j), b, this->name);
-      }
+    if (this->hasBounds(i)) {
+      mfront::checkBoundsCompatibility(this->getBounds(i), b, this->name);
     }
     if (std::holds_alternative<std::monostate>(this->physicalBounds)) {
       this->physicalBounds =
