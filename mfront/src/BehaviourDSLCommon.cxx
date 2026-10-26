@@ -4154,7 +4154,9 @@ namespace mfront {
         m = [this](const Hypothesis h, const std::string& sv, const bool bv) {
           return this->standardModifier(h, sv, bv);
         };
+    const auto beg = this->current;
     for (const auto h : o.hypotheses) {
+      this->current = beg;
       const auto& d = this->mb.getBehaviourData(h);
       const auto c = this->readNextBlock(h, n, m, true);
       for (const auto& mn : c.members) {
