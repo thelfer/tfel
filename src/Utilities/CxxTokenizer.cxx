@@ -40,6 +40,19 @@ namespace std {
 
 namespace tfel::utilities {
 
+  // the functions of <cctype> require values representable as unsigned char
+  static bool is_space(const char c) {
+    return std::isspace(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_space
+
+  static bool is_digit(const char c) {
+    return std::isdigit(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_digit
+
+  static bool is_alpha(const char c) {
+    return std::isalpha(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_alpha
+
   static std::pair<std::string::const_iterator, std::string> findSeparator(
       const std::string::const_iterator p,
       const std::string::const_iterator pe,
@@ -202,7 +215,7 @@ namespace tfel::utilities {
                                    const bool ba)
         : is_separator(bd, bp, bm, ba) {}
     bool operator()(const std::string::value_type& c) const {
-      return ((std::isspace(c)) || (is_separator::operator()(c)));
+      return ((is_space(c)) || (is_separator::operator()(c)));
     }
   };  // end of struct is_separator_or_space
 
@@ -224,7 +237,7 @@ namespace tfel::utilities {
                            std::string::const_iterator& p,
                            const std::string::const_iterator pe) {
     auto np = std::find_if_not(
-        p, pe, [](const std::string::value_type c) { return std::isspace(c); });
+        p, pe, [](const std::string::value_type c) { return is_space(c); });
     advance(o, p, np);
   }
 
@@ -364,12 +377,12 @@ namespace tfel::utilities {
       // reading decimal part
       throw_if(++p == pe, "invalid number");
     }
-    throw_if((!(std::isdigit(*p))) && (*p != '.'),
+    throw_if((!(is_digit(*p))) && (*p != '.'),
              std::string("expected digit, read '") + *p + '\'');
     if (*p == '.') {
       is_float = true;
       throw_if(++p == pe, "invalid number");
-      throw_if(!std::isdigit(*p),
+      throw_if(!is_digit(*p),
                std::string("expected digit, read '") + *p + '\'');
     } else if (*p == '0') {
       starts_with_zero = true;
@@ -379,7 +392,7 @@ namespace tfel::utilities {
           is_binary_integer = true;
           throw_if(++p == pe, "invalid binary integer");
           throw_if(!is_binary(*p), "invalid binary integer");
-          while ((p != pe) && (std::isdigit(*p))) {
+          while ((p != pe) && (is_digit(*p))) {
             throw_if(!is_binary(*p), "invalid binary integer");
             ++p;
           }
@@ -388,7 +401,7 @@ namespace tfel::utilities {
           is_hex_integer = true;
           throw_if(++p == pe, "invalid hexadecimal integer");
           throw_if(!is_hex(*p), "invalid hexadecimal integer");
-          while ((p != pe) && (std::isdigit(*p))) {
+          while ((p != pe) && (is_digit(*p))) {
             throw_if(!is_hex(*p), "invalid hexadecimal integer");
             ++p;
           }
@@ -397,10 +410,10 @@ namespace tfel::utilities {
         }
       }
     }
-    while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
+    while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
       if (*p == '\'') {
         throw_if(++p == pe, "invalid number");
-        throw_if(!std::isdigit(*p),
+        throw_if(!is_digit(*p),
                  std::string("expected digit, read '") + *p + '\'');
       }
       ++p;
@@ -412,11 +425,11 @@ namespace tfel::utilities {
       is_float = true;
       // the decimal part
       ++p;
-      while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
+      while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
         if (*p == '\'') {
           // C++14 digit separator
           throw_if(++p == pe, "invalid number");
-          throw_if(!std::isdigit(*p),
+          throw_if(!is_digit(*p),
                    std::string("expected digit, read '") + *p + '\'');
         }
         ++p;
@@ -435,12 +448,12 @@ namespace tfel::utilities {
           }
           throw_if(++p == pe, "invalid number");
         }
-        throw_if(!(std::isdigit(*p)), "invalid number");
+        throw_if(!(is_digit(*p)), "invalid number");
         ++p;
-        while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
+        while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
           if (*p == '\'') {
             throw_if(++p == pe, "invalid number");
-            throw_if(!std::isdigit(*p),
+            throw_if(!is_digit(*p),
                      std::string("expected digit, read '") + *p + '\'');
           }
           ++p;
@@ -514,7 +527,7 @@ namespace tfel::utilities {
     if ((p != pe) && (*p == '_')) {
       throw_if(++p == pe, "invalid user litteral");
       while (p != pe) {
-        if (!((isalpha(*p)) || std::isdigit(*p) || (*p == '_'))) {
+        if (!((is_alpha(*p)) || is_digit(*p) || (*p == '_'))) {
           break;
         }
         ++p;
@@ -587,7 +600,7 @@ namespace tfel::utilities {
     } else {
       if (p != e) {
         auto ps = std::prev(e);
-        while ((std::isspace(*ps)) && (ps != p)) {
+        while ((is_space(*ps)) && (ps != p)) {
           --ps;
         }
         ++ps;
@@ -748,9 +761,8 @@ namespace tfel::utilities {
           if (pn == pe) {
             throw_if(!this->allowStrayHashCharacter, "stray ‘#’");
           } else {
-            throw_if(
-                (!this->allowStrayHashCharacter) && (std::isalpha(*pn) == 0),
-                "stray ‘#’");
+            throw_if((!this->allowStrayHashCharacter) && (!is_alpha(*pn)),
+                     "stray ‘#’");
           }
           this->tokens.emplace_back("#", n, o, Token::Standard);
           advance(o, p, 1u);
@@ -760,7 +772,7 @@ namespace tfel::utilities {
                  "stray ‘\\’");
         this->tokens.emplace_back("\\", n, o, Token::Standard);
         advance(o, p, 1u);
-      } else if (std::isdigit(*p)) {
+      } else if (is_digit(*p)) {
         if (this->treatNumbers) {
           this->parseNumber(o, p, pe, n);
         } else {
@@ -827,7 +839,7 @@ namespace tfel::utilities {
                         this->dotAsSeparator, this->plusAsSeparator,
                         this->minusAsSeparator,
                         this->graveAccentAsSeparator)(*(std::prev(p))))) &&
-                   ((pn != pe) && ((*pn == '.') || (std::isdigit(*pn))))) {
+                   ((pn != pe) && ((*pn == '.') || (is_digit(*pn))))) {
           if (this->treatNumbers) {
             this->parseNumber(o, p, pe, n);
           } else {
@@ -853,7 +865,7 @@ namespace tfel::utilities {
         this->try_join(o, p, pe, n, '&');
       } else if (*p == '.') {
         auto pn = std::next(p);
-        if ((pn != pe) && (std::isdigit(*pn))) {
+        if ((pn != pe) && (is_digit(*pn))) {
           if (this->treatNumbers) {
             this->parseNumber(o, p, pe, n);
           } else {
@@ -1032,7 +1044,7 @@ namespace tfel::utilities {
       return false;
     }
     auto p = s.begin();
-    if (std::isdigit(*p)) {
+    if (is_digit(*p)) {
       return false;
     }
     for (; p != s.end(); ++p) {
@@ -1045,10 +1057,10 @@ namespace tfel::utilities {
       if ((*p == '.') && (opts.allowDotCharacter)) {
         continue;
       }
-      if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_')) {
+      if ((!is_alpha(*p)) && (!(is_digit(*p))) && (*p != '_')) {
         return false;
       }
-      if (isspace(*p)) {
+      if (is_space(*p)) {
         return false;
       }
     }
@@ -1066,15 +1078,14 @@ namespace tfel::utilities {
       return false;
     }
     auto p = s.begin();
-    if (std::isdigit(*p)) {
+    if (is_digit(*p)) {
       return false;
     }
     for (; p != s.end(); ++p) {
-      if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_') &&
-          (*p != ':')) {
+      if ((!is_alpha(*p)) && (!(is_digit(*p))) && (*p != '_') && (*p != ':')) {
         return false;
       }
-      if (isspace(*p)) {
+      if (is_space(*p)) {
         return false;
       }
       if (*p == ':') {
@@ -1087,7 +1098,7 @@ namespace tfel::utilities {
         if (++p == s.end()) {
           return false;
         }
-        if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_')) {
+        if ((!is_alpha(*p)) && (!(is_digit(*p))) && (*p != '_')) {
           return false;
         }
       }

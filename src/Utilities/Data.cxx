@@ -156,7 +156,7 @@ namespace tfel::utilities {
       }
       throw_if(ps == pse, "invalid number '" + s + "'");
       while (ps != pse) {
-        if (!::isdigit(*ps)) {
+        if (!::isdigit(static_cast<unsigned char>(*ps))) {
           return false;
         }
         ++ps;
