@@ -329,14 +329,17 @@ namespace tfel::system {
   void systemCall::mkdir(const std::string& dir, const mode_t mode)
 #endif /* defined _WIN32 || _WIN64 */
   {
-    std::string path;
+    // keep the root of absolute paths
+    auto path = std::string{((!dir.empty()) && (dir[0] == '/')) ? "/" : ""};
     const auto& paths = systemCall::tokenize(dir, '/');
     for (auto p = paths.begin(); p != paths.end(); ++p) {
-      if (!path.empty()) {
-        path += "/" + *p;
-      } else {
-        path = *p;
+      if (p->empty()) {
+        continue;
       }
+      if ((!path.empty()) && (path.back() != '/')) {
+        path += '/';
+      }
+      path += *p;
       struct stat infos;
       if (::stat(path.c_str(), &infos) == -1) {
         if (errno == ENOENT) {
