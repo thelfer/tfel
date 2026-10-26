@@ -697,6 +697,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1189>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1177>
 
+## Issue 1175: [installation] Doxygen deployment, keyword descriptions, installation pages, maintainer scripts, generic interface and math docs, quantity tests option, physical constants and glossary generators
+
+For more details, see <https://github.com/thelfer/tfel/issues/1175>
+
 ## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
 
 For more details, see <https://github.com/thelfer/tfel/issues/1171>
