@@ -113,6 +113,9 @@ namespace mfront {
       case BehaviourProfiler::INITIALIZEJACOBIAN:
         n = "Init::InitializeJacobian";
         break;
+      case BehaviourProfiler::INITIALIZEJACOBIANINVERT:
+        n = "Init::InitializeJacobianInvert";
+        break;
       case BehaviourProfiler::COMPUTEPREDICTIONOPERATOR:
         n = "ComputePredictionOperator";
         break;
@@ -139,6 +142,18 @@ namespace mfront {
         break;
       case BehaviourProfiler::COMPUTETANGENTOPERATOR:
         n = "ComputeTangentOperator";
+        break;
+      case BehaviourProfiler::COMPUTESTRESSFREEEXPANSION:
+        n = "ComputeStressFreeExpansion";
+        break;
+      case BehaviourProfiler::COMPUTEINTERNALENERGY:
+        n = "ComputeInternalEnergy";
+        break;
+      case BehaviourProfiler::COMPUTEDISSIPATEDENERGY:
+        n = "ComputeDissipatedEnergy";
+        break;
+      case BehaviourProfiler::COMPUTESPEEDOFSOUND:
+        n = "ComputeSpeedOfSound";
         break;
       case BehaviourProfiler::APRIORITIMESTEPSCALINGFACTOR:
         n = "APrioriTimeStepScalingFactor";
@@ -191,7 +206,7 @@ namespace mfront {
   }  // end of BehaviourProfiler::BehaviourProfiler
 
   BehaviourProfiler::~BehaviourProfiler() {
-    using size_type = std::array<std::atomic<std::intmax_t>, 23>::size_type;
+    using size_type = std::array<std::atomic<std::intmax_t>, 28>::size_type;
     std::cout << "\nResults of " << this->name << " profiling : ";
     print_time(std::cout, measures.back());
     std::cout << '\n';
