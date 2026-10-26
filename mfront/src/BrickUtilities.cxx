@@ -583,10 +583,10 @@ namespace mfront::bbrick {
     if (pev != esvs.end()) {
       const auto& name = pev->name;
       if (b) {
-        return "2 * (this->" + name + " + (this->d " + name + ")) > 1";
+        return "2 * (this->" + name + " + (this->d" + name + ")) > 1";
       } else {
         return "2 * (this->" + name + " + (" + bd.getClassName() +
-               "::theta) * (this->d " + name + ")) > 1";
+               "::theta) * (this->d" + name + ")) > 1";
       }
     }
     return "";
