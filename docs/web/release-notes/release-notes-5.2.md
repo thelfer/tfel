@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1153: [tfel-math] Quantities and views: qt_ref assignment, change_basis, positive parts, runtime matrix views, arrays of views, tmatrix products, FSES NaN, Hashin-Shtrikman shear bounds, Anderson weights
+
+For more details, see <https://github.com/thelfer/tfel/issues/1153>
+
 ## Issue 1149: [mtest] Initial elastic stiffness of Abaqus/Explicit behaviours: halved shear terms and 3D shear columns
 
 For more details, see <https://github.com/thelfer/tfel/issues/1149>
