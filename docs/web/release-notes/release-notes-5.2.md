@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1139: [python] Bindings: evtypes, ST2toST2 subscripts, homogenisation bounds, setRotationMatrix, setStrainMeasure, umatxx, Anderson algorithms and Data
+
+For more details, see <https://github.com/thelfer/tfel/issues/1139>
+
 ## Issue 1131: [mfront] Hooke stress potentials: plane stress jacobian, generic_prediction_operator option and broken state tests
 
 For more details, see <https://github.com/thelfer/tfel/issues/1131>
