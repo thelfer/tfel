@@ -34,4 +34,19 @@ namespace cyrano {
     tfel::raise<CyranoException>(msg.str());
   }
 
+  CyranoInt getModellingHypothesisIdentifier(
+      const tfel::material::ModellingHypothesis::Hypothesis& h) {
+    using namespace tfel::material;
+    switch (h) {
+      case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+        return 1;
+      case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS:
+        return 2;
+      default:;
+    }
+    tfel::raise<CyranoException>(
+        "cyrano::getModellingHypothesisIdentifier : "
+        "unsupported modelling hypothesis");
+  }
+
 }  // end of namespace cyrano
