@@ -180,7 +180,8 @@ namespace mfront::bbrick {
     const auto f_ = f.name + "_";
     auto c = std::string{};
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
-      c += "const auto [" + seq + ",d" + seq + "_d" + s + "] = ";
+      c += "const auto [" + seq + ",d" + seq + "_d" + s + ",d" + seq + "_d" +
+           f.name + "] = ";
       c += "compute" + this->name + "StressNormal(" + s + ", " + f_ +
            ", this->" + params + ", " + sp.getEquivalentStressLowerBound(bd) +
            ");\n";
@@ -190,7 +191,7 @@ namespace mfront::bbrick {
     }
     if (r == FLOWCRITERION) {
       c += "const auto [" + seqf +  //
-           ", " + n + ", " +        //
+           ", " + n +               //
            ", d" + seqf + "_d" + f.name + "] = ";
       c += "compute" + this->name + "StressNormal(" + s + ", " + f_ +
            ", this->" + params + ", " + sp.getEquivalentStressLowerBound(bd) +
