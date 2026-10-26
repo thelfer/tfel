@@ -106,24 +106,24 @@ The purpose of this work is twofold:
       poisson_ratio : 0.3
    },
    inelastic_flow : "Plastic" {
-      criterion : "GursonTvergaardNeedleman" {
-         q1 : 1.5,
-         q2 : 1.0,
-         q3 : 2.2,
-         fc : 0.01,
-         fr : 0.1
+      criterion : "GursonTvergaardNeedleman1982" {
+         q_1 : 1.5,
+         q_2 : 1.0,
+         q_3 : 2.2,
+         f_c : 0.01,
+         f_r : 0.1
       },
       isotropic_hardening : "Linear" {
          R0 : 150e6
       }
    },
    porosity_evolution : {
-      nucleation_model : "Chu_Needleman" {
-         An : 0.01,
-         pn : 0.1,
+      nucleation_model : "Chu-Needleman 1980 (strain)" {
+         fn : 0.01,
+         en : 0.1,
          sn : 0.1
-      },
-      growth_model : "StandardPlasticModel"
+      }
+   }
 };
 ~~~~
 
