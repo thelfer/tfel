@@ -141,7 +141,8 @@ namespace mfront {
     if (mpd.inputs.empty()) {
       const auto fptypes = this->getSupportedFloatingPointTypes();
       if (fptypes.size() == 1) {
-        os << fptypes[0] << " " << this->getCallingConvention() << '\n'
+        os << "MFRONT_SHAREDOBJ " << fptypes[0] << " "
+           << this->getCallingConvention() << '\n'
            << this->getFunctionName(mpd) << "();\n\n";
       } else {
         const auto default_fp_type = [&fptypes]() -> std::string {
@@ -169,13 +170,15 @@ namespace mfront {
         }
         for (const auto& fptype : fptypes) {
           os << "template <>\n";
-          os << fptype << " " << this->getCallingConvention() << '\n'
+          os << "MFRONT_SHAREDOBJ " << fptype << " "
+             << this->getCallingConvention() << '\n'
              << this->getFunctionName(mpd) << "<" << fptype << ">();\n\n";
           if ((useQuantities(mpd)) &&
               (this->shallGenerateOverloadedFunctionForQuantities())) {
             const auto output_type = getOutputType(mpd, fptype, true);
             os << "template <>\n";
-            os << output_type << " " << this->getCallingConvention() << '\n'
+            os << "MFRONT_SHAREDOBJ " << output_type << " "
+               << this->getCallingConvention() << '\n'
                << this->getFunctionName(mpd) << "<" << output_type
                << ">();\n\n";
           }

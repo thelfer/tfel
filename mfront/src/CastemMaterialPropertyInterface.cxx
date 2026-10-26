@@ -143,7 +143,8 @@ namespace mfront {
       out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
           << "))||"
           << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
-          << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\\n\";\n"
