@@ -144,10 +144,11 @@ namespace mfront {
     }
     if (key == "@AsterStrainPerturbationValue") {
       check_interface_restriction();
-      throw_if(!this->compareToNumericalTangentOperator,
-               "time stepping is not enabled at this stage.\n"
-               "Use the @AsterUseTimeSubStepping directive before "
-               "@AsterStrainPerturbationValue");
+      throw_if(
+          !this->compareToNumericalTangentOperator,
+          "comparison to tangent operator is not enabled at this stage.\n"
+          "Use the @AsterCompareToNumericalTangentOperator directive before "
+          "@AsterStrainPerturbationValue");
       throw_if(current == end, "unexpected end of file");
       this->strainPerturbationValue = CxxTokenizer::readDouble(current, end);
       throw_if(current == end, "unexpected end of file");
@@ -182,7 +183,7 @@ namespace mfront {
         bd.setAttribute(AsterInterface::finiteStrainFormulation,
                         std::string(AsterInterface::grot_gdep), false);
       } else {
-        throw_if(true, "invalid finite strain formuluation '" + s + "'");
+        throw_if(true, "invalid finite strain formulation '" + s + "'");
       }
       ++(current);
       throw_if(current == end, "unexpected end of file");

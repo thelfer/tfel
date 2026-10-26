@@ -757,10 +757,11 @@ namespace mfront {
       return {true, current};
     } else if (key == "@AnsysStrainPerturbationValue") {
       check_interface_restriction();
-      throw_if(!this->compareToNumericalTangentOperator,
-               "time stepping is not enabled at this stage.\n"
-               "Use the @AnsysUseTimeSubStepping directive before "
-               "@AnsysStrainPerturbationValue");
+      throw_if(
+          !this->compareToNumericalTangentOperator,
+          "comparison to tangent operator is not enabled at this stage.\n"
+          "Use the @AnsysCompareToNumericalTangentOperator directive before "
+          "@AnsysStrainPerturbationValue");
       throw_if(current == end, "unexpected end of file");
       this->strainPerturbationValue = CxxTokenizer::readDouble(current, end);
       throw_if(current == end, "unexpected end of file");

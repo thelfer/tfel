@@ -184,7 +184,7 @@ namespace mfront {
                "time sub stepping is not "
                "enabled at this stage.\n"
                "Use the @CyranoUseTimeSubStepping directive before "
-               "@CyranoMaximumSubStepping");
+               "@CyranoDoSubSteppingOnInvalidResults");
       this->doSubSteppingOnInvalidResults =
           this->readBooleanValue(key, current, end);
       return {true, current};
