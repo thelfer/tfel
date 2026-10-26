@@ -15,7 +15,6 @@
 #define LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX
 
 #include <vector>
-#include "MFront/StandardElastoViscoPlasticityBrick.hxx"
 #include "MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx"
 #include "MFront/BehaviourBrick/InelasticFlow.hxx"
 

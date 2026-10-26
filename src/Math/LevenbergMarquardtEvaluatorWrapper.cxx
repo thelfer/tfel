@@ -25,7 +25,7 @@ namespace tfel::math::parser {
       : ev(std::move(ev_)), dev(np_), nv(nv_), np(np_) {
     using tfel::math::vector;
     auto throw_if = [](const bool b, const std::string& m) {
-      raise_if(b, "EvaluatorBase::splitAtTokenSeperator: " + m);
+      raise_if(b, "LevenbergMarquardtEvaluatorWrapper: " + m);
     };
     throw_if(
         this->ev->getNumberOfVariables() !=
@@ -58,7 +58,7 @@ namespace tfel::math::parser {
       const tfel::math::vector<double>& variables,
       const tfel::math::vector<double>& params) {
     auto throw_if = [](const bool b, const std::string& m) {
-      raise_if(b, "EvaluatorBase::splitAtTokenSeperator: " + m);
+      raise_if(b, "LevenbergMarquardtEvaluatorWrapper: " + m);
     };
     throw_if(variables.size() != this->getNumberOfVariables(),
              "invalid number of variables");

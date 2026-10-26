@@ -711,6 +711,9 @@ namespace mfront {
         throw_if(openedParenthesis == 0, "unbalanced parenthesis");
         --openedParenthesis;
         this->md.f.body += ")";
+        // a variable directly following a closing parenthesis starts the
+        // body of an if, for or while statement
+        newInstruction = (openedParenthesis == 0);
       } else if (this->current->value == ";") {
         this->md.f.body += ";";
         newInstruction = true;
@@ -760,7 +763,7 @@ namespace mfront {
           this->md.f.body +=
               tfel::unicode::getMangledString(this->current->value);
         }
-        newInstruction = false;
+        newInstruction = (var == "else") || (var == "do");
       }
       newLine = false;
     }

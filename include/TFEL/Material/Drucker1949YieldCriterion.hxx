@@ -16,6 +16,7 @@
 
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Material/IsotropicPlasticity.hxx"
 
 namespace tfel::material {
 

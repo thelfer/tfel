@@ -38,7 +38,7 @@ namespace mfront {
     if (this->ps != nullptr) {
       this->ps->close();
     }
-    this->ps = std::make_shared<std::ofstream>();
+    this->ps.reset();
     this->s = &os;
   }  // end of
 

@@ -46,7 +46,7 @@ namespace mfront {
     throw_if(l.prefix != pr, "unmatched library prefix for library '" + n +
                                  "'"
                                  " ('" +
-                                 l.prefix + "' vs '" + s + "')");
+                                 l.prefix + "' vs '" + pr + "')");
     throw_if(l.suffix != s, "unmatched library suffix for library '" + n +
                                 "'"
                                 " ('" +

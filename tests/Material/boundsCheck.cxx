@@ -38,6 +38,7 @@ int main() {
     BoundsCheck<3>::upperBoundCheck("s", s, 13.);
     BoundsCheck<3>::lowerBoundCheck("s", s, 11.);
     BoundsCheck<3>::lowerAndUpperBoundsChecks("s", s, 11., 13.);
+    BoundsCheck<2>::lowerAndUpperBoundsChecks("m", mass(12.), 11., 13.);
   } catch (const OutOfBoundsException&) {
     catched = true;
   }

@@ -113,7 +113,7 @@ struct MTestParserTest final : public tfel::tests::TestCase {
 #endif
 #ifdef HAVE_ASTER
     this->check(this->aster_library, "aster");
-    this->check2(this->castem_library, "umat");
+    this->check2(this->aster_library, "aster");
 #endif
 #ifdef HAVE_CYRANO
     this->check(this->cyrano_library, "cyrano",
