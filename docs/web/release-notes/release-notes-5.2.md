@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1187: [mfront] castem logarithmic strain helpers, stensor absolute value, DSLBase helpers, FSES return codes, TestDescription constructor, exported constants precision, tfel-check columns and ABAQUSEXPLICIT_NTHREADS
+
+For more details, see <https://github.com/thelfer/tfel/issues/1187>
+
 ## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
 
 For more details, see <https://github.com/thelfer/tfel/issues/1171>
