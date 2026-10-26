@@ -14,10 +14,11 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Macros.hxx"
 #include "MFront/MFrontDatabase.hxx"
 
 #define MFRONT_DATABASE_MODULE_NAME \
-  TFEL_PP_JOIN(_mfront_database, TFEL_SUFFIX_FOR_PYTHON_MODULES)
+  TFEL_PP_JOIN(_mfront_database_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 static std::vector<mfront::MFrontDatabase::EntryPoint>
 MFrontDatabase_getEntryPoints(const mfront::MFrontDatabase& db,
