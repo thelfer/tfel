@@ -916,7 +916,8 @@ void declareMTest(pybind11::module_& m) {
            "step\n"
            "\n"
            "param[in]  n: variable name")
-      .def("getInternalStateVariableValue", ::getInternalStateVariableValue2,
+      .def("getInternalStateVariableValue", ::getInternalStateVariableValue1,
+           pybind11::arg("n"), pybind11::arg("d"),
            "get the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
