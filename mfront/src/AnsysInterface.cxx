@@ -1424,7 +1424,7 @@ namespace mfront {
     out << name << "_base" << this->getFunctionNameForHypothesis("", h)
         << "(matId,elemId,kDomIntPt,kLayer,kSectPt,ldsetp,isubst,keycut,\n"
         << " nDirect,nShear,NTENS,NSTATV,NPROPS,TIME,DTIME,TEMP,DTEMP,\n"
-        << " STRESS,STATEV,DDSDDE,SEDEL,SEDPL,EPSEQ,eto,deto,\n"
+        << " STRESS,STATEV,CSE,SEDEL,SEDPL,EPSEQ,eto,deto,\n"
         << " EPSPL,PROPS,coords,DROT,F0,F1,tsstif,EPSZZ,\n"
         << " var1,var2,var3,var4,var5,var6,var7,var8);\n"
         << "if(*keycut==0){\n";
