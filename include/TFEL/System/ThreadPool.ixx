@@ -21,7 +21,7 @@ namespace tfel::system {
 
   template <typename F>
   struct ThreadPool::Wrapper {
-    explicit Wrapper(F&& f_) : f(f_) {}
+    explicit Wrapper(F f_) : f(std::move(f_)) {}
     template <typename... Args>
     ThreadedTaskResult<std::invoke_result_t<F, Args...>> operator()(
         Args&&... args) {
@@ -65,7 +65,8 @@ namespace tfel::system {
     using return_type = ThreadedTaskResult<std::invoke_result_t<F, Args...>>;
     using task = std::packaged_task<return_type()>;
     auto t = std::make_shared<task>(
-        std::bind(Wrapper<F>(std::forward<F>(f)), std::forward<Args>(a)...));
+        std::bind(Wrapper<std::decay_t<F>>(std::forward<F>(f)),
+                  std::forward<Args>(a)...));
     auto res = t->get_future();
     {
       std::unique_lock<std::mutex> lock(this->m);

@@ -34,6 +34,10 @@ struct ThreadPoolTest final : public tfel::tests::TestCase {
       value += *(r.get());
     }
     TFEL_TESTS_ASSERT(value == 30);
+    // a callable passed as an lvalue is copied
+    auto counter = [n = 0]() mutable { return ++n; };
+    TFEL_TESTS_ASSERT(*(pool.addTask(counter).get()) == 1);
+    TFEL_TESTS_ASSERT(counter() == 1);
     return this->result;
   }  // end of execute
 };
