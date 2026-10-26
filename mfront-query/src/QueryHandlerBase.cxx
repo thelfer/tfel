@@ -103,19 +103,19 @@ namespace mfront {
             "allow to define options passed to domain specific languages",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-material-property-option",
+        "--material-property-dsl-option",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to material properties",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-behaviour-option",
+        "--behaviour-dsl-option",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to behaviours",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-model-option",
+        "--model-dsl-option",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to models",
@@ -127,26 +127,47 @@ namespace mfront {
             "thanks to an external file in a JSON-like format",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-material-property-options-file",
+        "--material-property-dsl-options-file",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to material properties thanks to an external file in "
             "a JSON-like format",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-behaviour-options-file",
+        "--behaviour-dsl-options-file",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to behaviours thanks to an external file in a "
             "JSON-like format",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-model-options-file",
+        "--model-dsl-options-file",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to models thanks to an external file in a JSON-like "
             "format",
             []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-material-property-option",
+        CallBack(
+            "same as --material-property-dsl-option", []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-behaviour-option",
+        CallBack("same as --behaviour-dsl-option", []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-model-option",
+        CallBack("same as --model-dsl-option", []() noexcept {}, true));
+    this->registerCallBack("--dsl-material-property-options-file",
+                           CallBack(
+                               "same as --material-property-dsl-options-file",
+                               []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-behaviour-options-file",
+        CallBack(
+            "same as --behaviour-dsl-options-file", []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-model-options-file",
+        CallBack("same as --model-dsl-options-file", []() noexcept {}, true));
     this->registerCallBack(
         "--configuration-file",
         CallBack("define a configuration file", []() noexcept {}, true));
