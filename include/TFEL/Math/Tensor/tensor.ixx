@@ -134,7 +134,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void tensor<N, T>::copy(const auto p) noexcept {
-    tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(p, *this);
+    tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(p, this->begin());
   }  // end of copy
 
   template <unsigned short N, typename T>

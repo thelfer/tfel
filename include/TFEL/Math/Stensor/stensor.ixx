@@ -446,7 +446,7 @@ namespace tfel::math {
   template <typename InputIterator>
   TFEL_HOST_DEVICE constexpr void stensor<N, T>::copy(
       const InputIterator src) noexcept {
-    tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src, *this);
+    tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src, this->begin());
   }
 
   template <unsigned short N, typename T, typename OutputIterator>
