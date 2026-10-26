@@ -1287,7 +1287,7 @@ namespace mfront {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     tfel::raise_if(o.empty(),
                    "BehaviourQuery::treatModellingHypothesis: "
-                   "no option given to --modelling-hypothesis"
+                   "no option given to --modelling-hypothesis "
                    "command line option");
     tfel::raise_if(this->hypothesis != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                    "BehaviourQuery::treatModellingHypothesis: "
