@@ -1613,35 +1613,43 @@ namespace mfront {
   static void writeBehaviourVariablesDeclarations(
       std::ostream& os, const BehaviourDescription& bd) {
     const auto mvs = bd.getMainVariables();
+    // arrays of gradients and thermodynamic forces are described entry by
+    // entry, with the names of the exported symbols
+    auto n = std::size_t{};
+    for (const auto& mv : mvs) {
+      n += mv.first.arraySize;
+    }
+    auto write = [&os](const VariableDescription& v, const bool first) {
+      for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+        if ((!first) || (idx != 0)) {
+          os << ", ";
+        }
+        os << "{\"" << v.getExternalName();
+        if (v.arraySize != 1u) {
+          os << '[' << idx << ']';
+        }
+        os << "\", " << as_string(v.getTypeFlag()) << "}";
+      }
+    };
     os << "using BehaviourVariablesDescription = "
        << "mfront::GenericBehaviourMTestFileGenerator::"
        << "BehaviourVariablesDescription;\n";
     os << "using VariableDescription = "
        << "BehaviourVariablesDescription::VariableDescription;\n";
     os << "const auto gradients = "
-       << "std::array<VariableDescription," << mvs.size() << ">{";
-    for (auto pmv = mvs.begin(); pmv != mvs.end();) {
-      const auto& g = pmv->first;
-      os << "{\"" << g.getExternalName() << "\", " << as_string(g.getTypeFlag())
-         << "}";
-      if (++pmv != mvs.end()) {
-        os << ", ";
-      }
+       << "std::array<VariableDescription," << n << ">{{";
+    for (auto pmv = mvs.begin(); pmv != mvs.end(); ++pmv) {
+      write(pmv->first, pmv == mvs.begin());
     }
-    os << "};\n";
+    os << "}};\n";
     os << "const auto thermodynamic_forces = "
-       << "std::array<VariableDescription," << mvs.size() << ">{";
-    for (auto pmv = mvs.begin(); pmv != mvs.end();) {
-      const auto& thf = pmv->second;
-      os << "{\"" << thf.getExternalName() << "\", "
-         << as_string(thf.getTypeFlag()) << "}";
-      if (++pmv != mvs.end()) {
-        os << ", ";
-      }
+       << "std::array<VariableDescription," << n << ">{{";
+    for (auto pmv = mvs.begin(); pmv != mvs.end(); ++pmv) {
+      write(pmv->second, pmv == mvs.begin());
     }
-    os << "};\n";
+    os << "}};\n";
     os << "const auto description = "
-       << "BehaviourVariablesDescription{" << mvs.size() << ", "
+       << "BehaviourVariablesDescription{" << n << ", "
        << "gradients.data(), "
        << "thermodynamic_forces.data()};\n\n";
   }  // end of writeBehaviourVariablesDeclarations
