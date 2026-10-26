@@ -498,8 +498,8 @@ namespace mtest {
       log << "SingleStructureSchemeParser::execute : treating keyword '"
           << p->value << "' at line '" << p->line << "'\n";
     }
+    const auto line = p->line;
     ++p;
-    auto line = p->line;
     try {
       (this->*(pc->second))(t, p);
     } catch (std::exception& e) {

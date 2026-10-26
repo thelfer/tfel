@@ -220,9 +220,6 @@ namespace mfront {
 
       //!  \brief list of monomials
       std::vector<Monomial> monomials;
-
-      //
-      friend std::ostream& operator<<(std::ostream&, const TypeSize&);
     };  // end of struct SupportedTypes::TypeSize
 
     /*!
@@ -483,6 +480,13 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize operator*(
       const unsigned int, const SupportedTypes::TypeSize&);
+  /*!
+   * \brief output operator
+   * \param[out] os: output stream
+   * \param[in] s: type size
+   */
+  MFRONT_VISIBILITY_EXPORT std::ostream& operator<<(
+      std::ostream&, const SupportedTypes::TypeSize&);
 
   /*!
    * \return a list of standard types defined in the `tfel::config::Type` type

@@ -245,7 +245,7 @@ namespace mfront::bbrick {
       c += Rid;
       first = false;
     }
-    c += ") * " + dRs + ";\n";
+    c += ") * " + dRs + " / (this->theta);\n";
     return c;
   }  // end of computeElasticLimitAndDerivative
 

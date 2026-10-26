@@ -290,15 +290,15 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CalculiXInterface::treatKeyword: " + m);
     };
-    auto check_interface_restriction = [&i, &k] {
+    auto check_interface_restriction = [this, &i, &k] {
       if (i.empty()) {
-        reportWarning(
-            "keyword '" + k +
-            "' is used without being restricted "
-            "to the `generic` interface, which could be a portability "
-            "issue. Please add [generic] after the "
-            "keyword (i.e. replace '" +
-            k + "' by '" + k + "[generic]')");
+        reportWarning("keyword '" + k +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      k + "' by '" + k + "[" + this->getName() + "]')");
       }
     };
     if (!i.empty()) {

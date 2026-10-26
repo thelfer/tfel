@@ -689,6 +689,30 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1195>
 
+## Issue 1193: [mtest] End of input in the MTest and PTest parsers, ansys input file example of orthotropic behaviours, misleading interface messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1193>
+
+## Issue 1191: [mfront-query] Names of the DSL options in the help, strain measure output, specific targets rules and help texts
+
+For more details, see <https://github.com/thelfer/tfel/issues/1191>
+
+## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1189>
+
+## Issue 1183: [cmake] Static library names, test dependencies, C++ standard, static MFront package, environment scripts, Doxygen install, installed MFront headers and exports
+
+For more details, see <https://github.com/thelfer/tfel/issues/1183>
+
+## Issue 1177: [mfront] ansys, comsol, dianafea, castem, aster and cyrano interfaces: material properties layout, tangent operator conventions, 2D sizes, plane stress checks, Gibiane examples and messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1177>
+
+## Issue 1175: [installation] Doxygen deployment, keyword descriptions, installation pages, maintainer scripts, generic interface and math docs, quantity tests option, physical constants and glossary generators
+
+For more details, see <https://github.com/thelfer/tfel/issues/1175>
+
 ## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
 
 For more details, see <https://github.com/thelfer/tfel/issues/1171>

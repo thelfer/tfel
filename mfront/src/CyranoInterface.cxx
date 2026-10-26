@@ -184,7 +184,7 @@ namespace mfront {
                "time sub stepping is not "
                "enabled at this stage.\n"
                "Use the @CyranoUseTimeSubStepping directive before "
-               "@CyranoMaximumSubStepping");
+               "@CyranoDoSubSteppingOnInvalidResults");
       this->doSubSteppingOnInvalidResults =
           this->readBooleanValue(key, current, end);
       return {true, current};
@@ -499,29 +499,7 @@ namespace mfront {
         << "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
         << "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
         << "      cyrano::CyranoInt *const);\n\n";
-    out << "MFRONT_SHAREDOBJ void\n"
-        << makeUpperCase(name) << "_F77"
-        << "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
-        << "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
-        << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
-        << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
-        << "const cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
-        << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
-        << "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
-        << "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
-        << "      cyrano::CyranoInt *const);\n\n";
     out << "MFRONT_SHAREDOBJ void\ncyrano" << makeLowerCase(name)
-        << "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
-        << "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
-        << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
-        << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
-        << "const cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
-        << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
-        << "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
-        << "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
-        << "      cyrano::CyranoInt *const);\n\n";
-    out << "MFRONT_SHAREDOBJ void\n"
-        << "cyrano" << makeUpperCase(name) << "_F77"
         << "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
         << "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
         << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"

@@ -70,14 +70,14 @@ namespace tfel {
     static constexpr auto eV = quantity<1, 2, -2, 0, 0, 0, 0>(1.60218e-19);
     //! Elementary charge (C)
     static constexpr auto ElementaryCharge =
-        quantity<0, 0, -1, 1, 0, 0, 0>(1.60218e-19);
+        quantity<0, 0, 1, 1, 0, 0, 0>(1.60218e-19);
     //! Elementary charge (C)
-    static constexpr auto e = quantity<0, 0, -1, 1, 0, 0, 0>(1.60218e-19);
+    static constexpr auto e = quantity<0, 0, 1, 1, 0, 0, 0>(1.60218e-19);
     //! Faraday constant (C.mol-1)
     static constexpr auto FaradayConstant =
-        quantity<0, 0, -1, 1, 0, 0, -1>(96485.3);
+        quantity<0, 0, 1, 1, 0, 0, -1>(96485.3);
     //! Faraday constant (C.mol-1)
-    static constexpr auto F = quantity<0, 0, -1, 1, 0, 0, -1>(96485.3);
+    static constexpr auto F = quantity<0, 0, 1, 1, 0, 0, -1>(96485.3);
     //! Fine-structure constant
     static constexpr auto FineStructureConstant = NumericType(0.00729735);
     //! Fine-structure constant
