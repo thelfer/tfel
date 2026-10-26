@@ -87,6 +87,8 @@ struct BehaviourDescriptionBoundsHandlingTest final
       }
     }
     TFEL_TESTS_CHECK_THROW(bd.setBounds(h, "C", 2, b2), std::exception);
+    // invalid index
+    TFEL_TESTS_CHECK_THROW(bd.setBounds(h, "C", 8, b1), std::exception);
   }
   // physical bounds checks
   void test2() {
@@ -134,6 +136,8 @@ struct BehaviourDescriptionBoundsHandlingTest final
       }
     }
     TFEL_TESTS_CHECK_THROW(bd.setPhysicalBounds(h, "C", 2, b2), std::exception);
+    // invalid index
+    TFEL_TESTS_CHECK_THROW(bd.setPhysicalBounds(h, "C", 8, b1), std::exception);
   }
   // bounds and physical bounds compatibility checks
   void test3() {

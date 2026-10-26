@@ -28,7 +28,7 @@ namespace tfel::math::parser {
   void ExternalCastemFunction::setVariableValue(
       const std::vector<double>::size_type pos, const double value) {
     raise_if(pos >= this->variables.size(),
-             "ExternalCFunctionBase::setVariableValue: "
+             "ExternalCastemFunction::setVariableValue: "
              "invalid index " +
                  std::to_string(pos) + " (function has only " +
                  std::to_string(this->variables.size()) + " variables).");

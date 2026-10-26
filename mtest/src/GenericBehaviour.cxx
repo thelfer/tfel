@@ -655,9 +655,9 @@ namespace mtest {
           to_offset += to_ro * to_co;
         }
       }
-      if (b && (this->stype == 1u)) {
-        this->rtf_fct(&s.s1[0], &s.s1[0], s.r.begin());
-      }
+    }
+    if (b && (this->stype == 1u)) {
+      this->rtf_fct(&s.s1[0], &s.s1[0], s.r.begin());
     }
     return {true, rdt};
   }  // end of call_behaviour
