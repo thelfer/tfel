@@ -21,6 +21,7 @@
 #include <functional>
 #include <string_view>
 #include "TFEL/Utilities/Data.hxx"
+#include "MFront/MFrontConfig.hxx"
 
 namespace mfront::generic_parallel::material_property {
 

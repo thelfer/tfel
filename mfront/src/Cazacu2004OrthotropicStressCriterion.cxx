@@ -148,9 +148,8 @@ namespace mfront::bbrick {
             "- AxisymmetricalGeneralisedPlaneStrain\n"
             "- AxisymmetricalGeneralisedPlaneStress.");
       }
-    }
-    if (bd.getOrthotropicAxesConvention() ==
-        tfel::material::OrthotropicAxesConvention::PLATE) {
+    } else if (bd.getOrthotropicAxesConvention() ==
+               tfel::material::OrthotropicAxesConvention::PLATE) {
       for (const auto mh : bd.getModellingHypotheses()) {
         tfel::raise_if(
             ((mh != ModellingHypothesis::TRIDIMENSIONAL) &&

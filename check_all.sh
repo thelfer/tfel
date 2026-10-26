@@ -15,7 +15,7 @@
 # - `-m` (short of march=native, requires an argument): specify if processor specific
 #        instructions must be used. Valid options are ON and OFF. The default value
 #        is ON.
-# - `-p` (short of python-bindings): if specified, builds in debug mode are skipped
+# - `-p` (short of python-bindings): if specified, builds the python bindings
 # - `-r` (short for random-tests, requires an argument): specify if
 #        tests where the rounding modes changes randomly shall be executed.
 #        Valid options are ON and OFF. The default value is ON.
@@ -124,7 +124,7 @@ fi
 pushd build-cmake
 cmake ${src} -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake
 $make_exec 
-if [ test "x$pbuild" == "xyes" ];
+if test "x$pbuild" == "xyes" ;
 then
     make check ARGS="-j $nbproc"
 else
@@ -137,7 +137,7 @@ then
     pushd build-cmake-release
     cmake ${src} -DCMAKE_BUILD_TYPE=Release -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
     $make_exec
-    if [ test "x$pbuild" == "xyes" ];
+    if test "x$pbuild" == "xyes" ;
     then
 	make check ARGS="-j $nbproc"
     else
@@ -148,7 +148,7 @@ then
     pushd build-cmake-debug
     cmake ${src} -DCMAKE_BUILD_TYPE=Debug -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
     $make_exec
-    if [ test "x$pbuild" == "xyes" ];
+    if test "x$pbuild" == "xyes" ;
     then
 	make check ARGS="-j $nbproc"
     else
@@ -159,7 +159,7 @@ then
     pushd build-cmake-release-static
     cmake ${src} -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release-static
     $make_exec
-    if [ test "x$pbuild" == "xyes" ];
+    if test "x$pbuild" == "xyes" ;
     then
 	make check ARGS="-j $nbproc"
     else
@@ -175,11 +175,11 @@ then
     then
 	mkdir build-cmake-i686-w64-mingw32
 	pushd build-cmake-i686-w64-mingw32
-	cmake ${src} -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=${src}cmake/ToolChain-i686-w64-mingw32.cmake
+	cmake ${src} -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=${src}/cmake/ToolChain-i686-w64-mingw32.cmake
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then
-	    if [ test "x$pbuild" == "xyes" ];
+	    if test "x$pbuild" == "xyes" ;
 	    then
 		make check ARGS="-j $nbproc"
 	    else
@@ -198,7 +198,7 @@ then
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then
-	    if [ test "x$pbuild" == "xyes" ];
+	    if test "x$pbuild" == "xyes" ;
 	    then
 		make check ARGS="-j $nbproc"
 	    else

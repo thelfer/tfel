@@ -675,7 +675,7 @@ namespace mfront {
           "the choosen default value for the convergence threshold could be "
           "too stringent (" +
           converter.str() +
-          "). You may want to consider a more stringent value (1e-14 "
+          "). You may want to consider a less stringent value (1e-14 "
           "is generally a good choice).");
     }
     if ((!safe) && (epsilon > 1e-12)) {
