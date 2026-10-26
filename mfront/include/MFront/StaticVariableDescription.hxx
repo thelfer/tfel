@@ -72,7 +72,7 @@ namespace mfront {
   typedef StaticVariableDescription StaticVarHandler;
 
   //! a simple wrapper around the std::vector class
-  struct StaticVariableDescriptionContainer
+  struct MFRONT_VISIBILITY_EXPORT StaticVariableDescriptionContainer
       : private std::vector<StaticVariableDescription> {
     using std::vector<StaticVariableDescription>::value_type;
     using std::vector<StaticVariableDescription>::reference;
