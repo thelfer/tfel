@@ -410,6 +410,21 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         }
       }
     }
+    // oblate spheroid described by its two equal largest semi-axes
+    {
+      const auto n_c = tfel::math::cross_product<real>(n_a, n_b);
+      const auto POblate_1 =
+          computeAxisymmetricalHillPolarisationTensor<stress>(
+              young, nu, n_c, static_cast<real>(0.5));
+      const auto POblate_2 = computeHillPolarisationTensor<stress>(
+          young, nu, n_a, lg{2}, n_b, lg{2}, lg{1});
+      for (int i : {0, 1, 2, 3, 4, 5}) {
+        for (int j : {0, 1, 2, 3, 4, 5}) {
+          TFEL_TESTS_ASSERT(my_abs(POblate_1(i, j) - POblate_2(i, j)) <
+                            compliance(eps));
+        }
+      }
+    }
 
     // this test checks that the rotation of the principal axis of the
     // axisymmetrical ellipsoid in the direction n_aa is ok :
