@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1145: [tfel-math] Headers: abs of t2tost2, st2tost2 conversion in 1D, eigen tensors of quantities, tmatrix, array derivatives, copy, strided maps and indexing policies
+
+For more details, see <https://github.com/thelfer/tfel/issues/1145>
+
 ## Issue 1143: [mfront] DSLs: bricks, behaviour variables, @TangentOperator, initialisation values, targets.lst, overriding increments and bounds
 
 For more details, see <https://github.com/thelfer/tfel/issues/1143>

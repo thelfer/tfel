@@ -192,7 +192,7 @@ namespace tfel::math {
       if constexpr (Stride == M) {
         return this->size();
       } else {
-        return (N - 1) * Stride + N;
+        return (N - 1) * Stride + M;
       }
     }
     //!

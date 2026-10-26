@@ -259,7 +259,8 @@ namespace tfel::math {
       requires(!std::is_const_v<MappedType>) {
     constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
-    static_assert(N >= offset + M * mstride, "invalid vector size");
+    static_assert(N >= offset + (M - 1) * stride + mstride,
+                  "invalid vector size");
     return ViewsFixedSizeVector<MappedType, unsigned short, M, stride>(
         v.data() + offset);
   }  // end of map
@@ -273,7 +274,8 @@ namespace tfel::math {
       const tvector<N, ViewsArrayNumericType<MappedType>>& v) {
     constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
-    static_assert(N >= offset + M * mstride, "invalid vector size");
+    static_assert(N >= offset + (M - 1) * stride + mstride,
+                  "invalid vector size");
     return ViewsFixedSizeVector<const MappedType, unsigned short, M, stride>(
         v.data() + offset);
   }  // end of map
