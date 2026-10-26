@@ -1394,7 +1394,7 @@ namespace mfront {
         } else {
           for (unsigned short i = 0; i != isv.arraySize; ++i) {
             out << "this->" << isv.name << "[" << i << "].initialize(this,\""
-                << name << std::to_string(i) << "\",this->uts(),1);\n";
+                << name << std::to_string(i) << "\",this->utsz(),1);\n";
           }
         }
       } else {
