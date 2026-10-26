@@ -20,6 +20,10 @@ int main() {
   test<float>();
   test<double>();
   test<long double>();
-
-  return EXIT_SUCCESS;
+  // the global error of this second order scheme is about t h^2 / 6 =
+  // 1.7e-4
+  const auto success = (computeHarmonicOscillatorError<float>() < 1.e-3f) &&
+                       (computeHarmonicOscillatorError<double>() < 1.e-3) &&
+                       (computeHarmonicOscillatorError<long double>() < 1.e-3L);
+  return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
