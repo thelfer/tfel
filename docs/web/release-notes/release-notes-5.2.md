@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1149: [mtest] Initial elastic stiffness of Abaqus/Explicit behaviours: halved shear terms and 3D shear columns
+
+For more details, see <https://github.com/thelfer/tfel/issues/1149>
+
 ## Issue 1147: [tfel-math] Formula parsers, kriging and LUSolve: copy and arguments of diff, Cast3M functions without argument, integer division by zero, rebuilt and empty kriging, work vector size
 
 For more details, see <https://github.com/thelfer/tfel/issues/1147>
