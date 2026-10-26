@@ -993,7 +993,7 @@ namespace mfront {
   std::string DSLBase::readSpecifiedValue(const std::string& file,
                                           const std::string& value) {
     std::vector<std::string> values(1, value);
-    return this->readSpecifiedValues(file, values)[1];
+    return this->readSpecifiedValues(file, values)[0];
   }  // end of readSpecifiedValue
 
   std::vector<std::string> DSLBase::readSpecifiedValues(
@@ -1031,18 +1031,18 @@ namespace mfront {
         }
         throw_if(
             std::next(pt) == pte,
-            "unexepected end of file '" + file + "' (expected " + *p + ").\n",
-            (--pt)->line);
+            "unexpected end of file '" + file + "' (expected " + *p + ").\n",
+            pt->line);
         ++pt;
         const auto value = pt->value;
-        throw_if(pt->value == ";",
-                 "unexepected token ';' (exepected " + *p + ")", pt->line);
+        throw_if(pt->value == ";", "unexpected token ';' (expected " + *p + ")",
+                 pt->line);
         throw_if(std::next(pt) == pte,
-                 "unexepected end of file '" + file + "' (expected ';').\n",
-                 (--pt)->line);
+                 "unexpected end of file '" + file + "' (expected ';').\n",
+                 pt->line);
         ++pt;
         throw_if(pt->value != ";",
-                 "unexepected token '" + pt->value + "' (exepected ';')",
+                 "unexpected token '" + pt->value + "' (expected ';')",
                  pt->line);
         res[static_cast<std::vector<std::string>::size_type>(
             p - values.begin())] = value;

@@ -57,6 +57,7 @@ namespace mfront {
     auto mpd = MaterialPropertyDescription{};
     mpd.output = VariableDescription{"real", "res", 1u, 0u};
     std::ostringstream body;
+    body.precision(14);
     body << "res = " << mp.value << ";\n";
     mpd.law = prefix + n;
     mpd.className = prefix + n;
