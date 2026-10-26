@@ -759,9 +759,16 @@ namespace mfront {
   void BehaviourDSLCommon::appendToHypothesesList(std::set<Hypothesis>& h,
                                                   const std::string& v) const {
     if (v == ".+") {
-      const auto& ash = ModellingHypothesis::getModellingHypotheses();
-      for (const auto& lh : ash) {
-        this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+      if (this->mb.areModellingHypothesesDefined()) {
+        // all the hypotheses supported by the behaviour
+        for (const auto& lh : this->mb.getModellingHypotheses()) {
+          this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+        }
+      } else {
+        const auto& ash = ModellingHypothesis::getModellingHypotheses();
+        for (const auto& lh : ash) {
+          this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+        }
       }
     } else {
       const auto nh = ModellingHypothesis::fromString(v);
@@ -877,9 +884,8 @@ namespace mfront {
         cposition = true;
         o.p = BehaviourData::AT_END;
       } else if ((t.flag == Token::String) &&
-                 (t.value.substr(1, t.value.size() - 2) == "+")) {
-        this->appendToHypothesesList(o.hypotheses,
-                                     t.value.substr(1, t.value.size() - 2));
+                 (t.value.substr(1, t.value.size() - 2) == ".+")) {
+        this->appendToHypothesesList(o.hypotheses, ".+");
       } else if (ModellingHypothesis::isModellingHypothesis(t.value)) {
         this->appendToHypothesesList(o.hypotheses, t.value);
       } else {
