@@ -135,8 +135,10 @@ static void setStrainMeasure(mfront::BehaviourDescription& d,
                               const std::string& s) {
   if (s == "Linearised") {
     d.setStrainMeasure(mfront::BehaviourDescription::LINEARISED);
+    return;
   } else if (s == "Green-Lagrange") {
     d.setStrainMeasure(mfront::BehaviourDescription::GREENLAGRANGE);
+    return;
   }
   tfel::raise_if(s != "Hencky",
                   "BehaviourDescription::setStrainMeasure: "
