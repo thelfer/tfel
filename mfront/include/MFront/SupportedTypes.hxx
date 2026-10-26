@@ -220,9 +220,6 @@ namespace mfront {
 
       //!  \brief list of monomials
       std::vector<Monomial> monomials;
-
-      //
-      friend std::ostream& operator<<(std::ostream&, const TypeSize&);
     };  // end of struct SupportedTypes::TypeSize
 
     /*!
