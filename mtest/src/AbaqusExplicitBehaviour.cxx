@@ -287,12 +287,14 @@ namespace mtest {
         K(2, i) = stressNew[2];
         K(3, i) = stressNew[3];
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        K(0, i) = stressNew[0];
-        K(1, i) = stressNew[1];
-        K(2, i) = stressNew[2];
-        K(3, i) = stressNew[3];
-        K(4, i) = stressNew[5];
-        K(5, i) = stressNew[4];
+        // column of the strain component i in the TFEL order
+        const auto c = (i == 4) ? 5 : ((i == 5) ? 4 : i);
+        K(0, c) = stressNew[0];
+        K(1, c) = stressNew[1];
+        K(2, c) = stressNew[2];
+        K(3, c) = stressNew[3];
+        K(4, c) = stressNew[5];
+        K(5, c) = stressNew[4];
       } else {
         tfel::raise("unsupported hypothesis (" +
                     ModellingHypothesis::toString(h) + ")");
@@ -320,14 +322,18 @@ namespace mtest {
         (h == ModellingHypothesis::PLANESTRAIN)) {
       m.resize(4u, 5u);
       for (unsigned short i = 0; i != 4; ++i) {
-        K(i, 3) /= 2 * cste;
+        K(i, 3) /= 2;
+        K(3, i) *= cste;
       }
     } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       m.resize(6u, 9u);
       for (unsigned short i = 0; i != 6; ++i) {
-        K(i, 3) /= 2 * cste;
-        K(i, 4) /= 2 * cste;
-        K(i, 5) /= 2 * cste;
+        K(i, 3) /= 2;
+        K(i, 4) /= 2;
+        K(i, 5) /= 2;
+        K(3, i) *= cste;
+        K(4, i) *= cste;
+        K(5, i) *= cste;
       }
     } else {
       tfel::raise(
