@@ -24,8 +24,8 @@
 
 @Test<function> {
   'StrainXY' : '0',
-  'StrainXY' : '0',
-  'StrainXY' : '0'
+  'StrainXZ' : '0',
+  'StrainYZ' : '0'
 }
 1e-12;
 @Test<file> @reference_file@ {
