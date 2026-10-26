@@ -1959,7 +1959,7 @@ namespace mfront {
          << "auto rk_update_error = [&error](const auto rk_error){\n"
          << "if(!ieee754::isfinite(error)){return;}\n"
          << "if(!ieee754::isfinite(rk_error)){\n"
-         << "error = rk_error;\n"
+         << "error = tfel::math::base_type_cast(rk_error);\n"
          << "return;\n"
          << "}\n"
          << "error = std::max(error, tfel::math::base_type_cast(rk_error));\n"
