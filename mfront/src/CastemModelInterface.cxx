@@ -323,7 +323,10 @@ namespace mfront {
     const auto has_constructor =
         (!md.constantMaterialProperties.empty()) || (hasRealParameters(md));
     //
-    os << "namespace castem{\n\n";
+    // the classes are local to the library: two libraries defining a
+    // model of the same name must not share their parameters
+    os << "namespace castem{\n\n"
+       << "namespace {\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
@@ -367,7 +370,8 @@ namespace mfront {
         first = false;
       }
       for (const auto& p : md.parameters) {
-        if (!isRealParameter(p)) {
+        // parameters treated as static variables are not members
+        if ((!isRealParameter(p)) || (!hasRealParameters(md))) {
           continue;
         }
         os << (first ? "" : ",\n");
@@ -595,8 +599,9 @@ namespace mfront {
       if (!getDebugMode()) {
         printLinePragma(os, v.lineNumber, fd.fileName);
       }
-      os << "static constexpr " << v.type << " " << v.name << " = "  //
-         << v.value << ";\n";
+      // brace initialisation is required by quantities
+      os << "static constexpr auto " << v.name << " = " << v.type << "{"
+         << v.value << "};\n";
     }
     os << "}; // end of struct " << md.className << "\n\n";
     //
@@ -631,7 +636,8 @@ namespace mfront {
        << "}\n"
        << "return 1;\n"
        << "}\n\n";
-    os << "} // end of namespace castem\n\n";
+    os << "} // end of anonymous namespace\n\n"
+       << "} // end of namespace castem\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
