@@ -83,7 +83,7 @@ namespace mfront {
       auto l = [o](const FileDescription&,
                    const MaterialPropertyDescription& mpd) {
         const auto& v = mpd.getVariableDescriptionByExternalName(o);
-        std::cout << (v.hasPhysicalBounds() ? "true" : "false") << '\n';
+        std::cout << (v.hasBounds() ? "true" : "false") << '\n';
       };
       this->queries.push_back({"has-bounds", l});
     };
@@ -97,7 +97,7 @@ namespace mfront {
       auto l = [o](const FileDescription&,
                    const MaterialPropertyDescription& mpd) {
         const auto& v = mpd.getVariableDescriptionByExternalName(o);
-        displayBounds(std::cout, v.getPhysicalBounds());
+        displayBounds(std::cout, v.getBounds());
       };
       this->queries.push_back({"bounds-type", l});
     };
@@ -116,7 +116,7 @@ namespace mfront {
       auto l = [o](const FileDescription&,
                    const MaterialPropertyDescription& mpd) {
         const auto& v = mpd.getVariableDescriptionByExternalName(o);
-        displayBoundsValue(std::cout, v.getPhysicalBounds());
+        displayBoundsValue(std::cout, v.getBounds());
       };
       this->queries.push_back({"bounds-value", l});
     };
