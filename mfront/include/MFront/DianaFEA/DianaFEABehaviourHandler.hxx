@@ -146,7 +146,7 @@ namespace dianafea {
                                            const DianaFEAReal* const props) {
         const unsigned short o = DianaFEATraits<BV>::elasticPropertiesOffset;
         DianaFEAComputeThermalExpansionCoefficientTensor<
-            DianaFEATraits<BV>::btype, H, DianaFEATraits<BV>::stype>::
+            DianaFEATraits<BV>::btype, H, DianaFEATraits<BV>::etype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer

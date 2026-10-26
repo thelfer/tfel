@@ -156,7 +156,7 @@ namespace ansys {
                                         const AnsysReal* const props) {
         const unsigned short o = AnsysTraits<BV>::elasticPropertiesOffset;
         AnsysComputeThermalExpansionCoefficientTensor<AnsysTraits<BV>::btype, H,
-                                                      AnsysTraits<BV>::stype>::
+                                                      AnsysTraits<BV>::etype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
