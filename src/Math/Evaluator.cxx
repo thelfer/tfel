@@ -762,12 +762,21 @@ namespace tfel::math {
       }
     }
     if (*pb == "(") {
-      --pbe;
-      Evaluator::checkNotEndOfExpression("Evaluator::treatLogicalExpression",
-                                         pb, pbe);
-      throw_if(*pbe != ")", "unmatched parenthesis");
-      ++pb;
-      return this->treatLogicalExpression(pb, pbe, b);
+      auto pc = pb;
+      unsigned short opened = 0;
+      for (; pc != pbe; ++pc) {
+        if (*pc == "(") {
+          ++opened;
+        } else if (*pc == ")") {
+          if (--opened == 0) {
+            break;
+          }
+        }
+      }
+      throw_if(pc == pbe, "unmatched parenthesis");
+      if (pc + 1 == pbe) {
+        return this->treatLogicalExpression(pb + 1, pc, b);
+      }
     }
     if (*pb == "!") {
       ++pb;
