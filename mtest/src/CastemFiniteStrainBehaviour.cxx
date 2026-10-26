@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <limits>
+#include <cstring>
 #include <algorithm>
 
 #include "TFEL/Raise.hxx"
@@ -28,6 +29,7 @@
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "MFront/Castem/Castem.hxx"
+#include "MFront/Castem/CastemComputeStiffnessTensor.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/BehaviourSymmetryType.hxx"
 #include "MTest/Evolution.hxx"
@@ -162,10 +164,32 @@ namespace mtest {
       using namespace tfel::material;
       using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
       auto D = tfel::math::change_basis(
-          Base::template getStiffnessTensor<STAC>(props),
-          tfel::math::transpose(r));
+          Base::template getStiffnessTensor<STAC>(props), r);
       const auto id = tfel::math::tensor<N, real>::Id();
       const auto s = tfel::math::stensor<N, real>(real(0));
+      C = convert<TangentOperator::DSIG_DF, TangentOperator::C_TRUESDELL>(
+          D, id, id, s);
+    }  // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
+  };
+
+  //! plane stress: the material properties follow the Cast3M layout
+  template <>
+  struct MTestCastemComputeFiniteStrainStiffnessTensor<
+      tfel::material::ModellingHypothesis::PLANESTRESS,
+      mfront::ORTHOTROPIC> {
+    static void exe(tfel::math::T2toST2View<2u, real>& C,
+                    const tfel::math::tmatrix<3u, 3u, real>& r,
+                    const real* const props) {
+      using namespace tfel::material;
+      using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
+      tfel::math::st2tost2<2u, real> De;
+      castem::CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
+                                           ModellingHypothesis::PLANESTRESS,
+                                           castem::ORTHOTROPIC,
+                                           false>::exe(De, props);
+      const auto D = tfel::math::change_basis(De, r);
+      const auto id = tfel::math::tensor<2u, real>::Id();
+      const auto s = tfel::math::stensor<2u, real>(real(0));
       C = convert<TangentOperator::DSIG_DF, TangentOperator::C_TRUESDELL>(
           D, id, id, s);
     }  // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
@@ -357,7 +381,7 @@ namespace mtest {
                 &(s.desv(0)) + 1, name, &ndi, nullptr, &ntens, &nstatv,
                 &(wk.mps(0)), &nprops, nullptr, &drot(0, 0), &ndt, nullptr,
                 &uu0(0, 0), &uu1(0, 0), nullptr, nullptr, nullptr, nullptr,
-                nullptr, &kinc, 0);
+                nullptr, &kinc, name == nullptr ? 0 : ::strlen(name));
     if (kinc != 1) {
       return {false, ndt};
     }

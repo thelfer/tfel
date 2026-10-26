@@ -120,7 +120,7 @@ namespace mfront::bbrick {
         }
         auto& rf = StrainRateSensitivityFactorFactory::getFactory();
         this->rsf = rf.generate(ds.name);
-        this->rsf->initialize(bd, dsl, id, "", ds.data);
+        this->rsf->initialize(bd, dsl, fid, id, ds.data);
       } else {
         raise("invalid option '" + e.first + "'");
       }
