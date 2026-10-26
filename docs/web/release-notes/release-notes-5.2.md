@@ -689,6 +689,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1139>
 
+## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, @Relocation, rotation functions and MTest files on failure
+
+For more details, see <https://github.com/thelfer/tfel/issues/1137>
+
 ## Issue 1131: [mfront] Hooke stress potentials: plane stress jacobian, generic_prediction_operator option and broken state tests
 
 For more details, see <https://github.com/thelfer/tfel/issues/1131>
