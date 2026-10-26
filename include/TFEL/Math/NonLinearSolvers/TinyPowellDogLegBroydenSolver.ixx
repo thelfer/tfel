@@ -55,7 +55,7 @@ namespace tfel::math {
     }
     this->delta_zeros = -tmp_fzeros;
     this->fzeros_1 = this->fzeros;
-    applyPowellDogLegAlgorithm(this->delta_zeros, tmp_jacobian, tmp_fzeros,
+    applyPowellDogLegAlgorithm(this->delta_zeros, this->jacobian, this->fzeros,
                                this->powell_dogleg_trust_region_size);
     return true;
   }  // end of computeNewCorrection
