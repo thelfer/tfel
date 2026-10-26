@@ -550,9 +550,9 @@ namespace mfront {
         const auto currentVarName = v.name + "_";
         this->mb.addLocalVariable(
             elem, VariableDescription(v.type, currentVarName, v.arraySize, 0u));
-        ib.code = "this->" + currentVarName + " = this->" + v.name + "+(" +
-                  this->mb.getClassName() + "::theta)*(this->d" + v.name +
-                  ");\n";
+        ib.code += "this->" + currentVarName + " = this->" + v.name + "+(" +
+                   this->mb.getClassName() + "::theta)*(this->d" + v.name +
+                   ");\n";
       }
       this->mb.setCode(elem, BehaviourData::BeforeInitializeLocalVariables, ib,
                        BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
@@ -700,18 +700,19 @@ namespace mfront {
       auto& d = this->mb.getBehaviourData(h);
       if (this->allowMultipleFlowRules()) {
         for (const auto& [id, lihrs] : this->ihrs) {
-          if (id + 1 > IsotropicBehaviourDSLBase::getNumberOfFlowRules()) {
+          if (id + 1 > this->getNumberOfFlowRules()) {
             this->throwRuntimeError(
                 "IsotropicBehaviourDSLBase::completeVariableDeclaration",
                 "no flow rule associated with flow id '" + std::to_string(id) +
                     "'");
           }
           if (lihrs.size() == 1) {
-            lihrs[0]->endTreatment(this->mb, *this, "", "");
+            lihrs[0]->endTreatment(this->mb, *this, std::to_string(id), "");
           } else {
             auto n = std::size_t{};
             for (auto& ihr : lihrs) {
-              ihr->endTreatment(this->mb, *this, "", std::to_string(n));
+              ihr->endTreatment(this->mb, *this, std::to_string(id),
+                                std::to_string(n));
               ++n;
             }
           }

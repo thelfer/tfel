@@ -83,8 +83,12 @@ namespace mfront {
             "100 * std::numeric_limits<NumericType>::epsilon();\n";
     }
     os << "tfel::math::tvector<" << this->flows.size()
-       << ", NumericType> vdp(NumericType(0));\n"
-       << "tfel::math::tvector<" << this->flows.size()
+       << ", NumericType> vdp;\n";
+    n = 0;
+    for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
+      os << "vdp(" << n << ") = this->dp" << n << ";\n";
+    }
+    os << "tfel::math::tvector<" << this->flows.size()
        << ", NumericType> newton_f;\n"
        << "tfel::math::tmatrix<" << this->flows.size() << ","
        << this->flows.size() << ", NumericType> newton_df;\n";
@@ -112,6 +116,7 @@ namespace mfront {
        << "(iter<(" << this->bd.getClassName() << "::iterMax))){\n";
     n = 0;
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
+      os << "{\n";
       os << "this->p_  = this->p" << n << " + (";
       if (p->hasSpecificTheta) {
         os << "real(" << p->theta << ")";
@@ -243,6 +248,7 @@ namespace mfront {
           }
         }
       }
+      os << "}\n";
     }
     os << "auto error = NumericType(0);\n";
     n = 0;
