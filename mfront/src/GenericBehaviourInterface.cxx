@@ -1986,43 +1986,53 @@ namespace mfront {
       } else {
         if (dv.arraySize == 1) {
           if (dv.isScalar()) {
-            os << "this->d" << dv.name << " = "
-               << "mgb_d.s1.gradients[" << odv << "] - "
-               << "mgb_d.s0.gradients[" << odv << "];\n";
+            if (bd.useQt()) {
+              os << "this->d" << dv.name << " = " << dv.type
+                 << "(mgb_d.s1.gradients[" << odv << "] - "
+                 << "mgb_d.s0.gradients[" << odv << "]);\n";
+            } else {
+              os << "this->d" << dv.name << " = "
+                 << "mgb_d.s1.gradients[" << odv << "] - "
+                 << "mgb_d.s0.gradients[" << odv << "];\n";
+            }
           } else {
             if (!odv.isNull()) {
-              os << "tfel::fsalgo::transform<" << s << ">::exe("
-                 << "mgb_d.s1.gradients+" << odv << ","
-                 << "mgb_d.s0.gradients+" << odv << ","
-                 << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+              os << "this->d" << dv.name << " = tfel::math::map<" << dv.type
+                 << ">(mgb_d.s1.gradients+" << odv << ") - "
+                 << "tfel::math::map<" << dv.type << ">(mgb_d.s0.gradients+"
+                 << odv << ");\n";
             } else {
-              os << "tfel::fsalgo::transform<" << s << ">::exe("
-                 << "mgb_d.s1.gradients,"
-                 << "mgb_d.s0.gradients,"
-                 << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+              os << "this->d" << dv.name << " = tfel::math::map<" << dv.type
+                 << ">(mgb_d.s1.gradients) - "
+                 << "tfel::math::map<" << dv.type << ">(mgb_d.s0.gradients);\n";
             }
           }
         } else {
           auto lodv = odv;  // local offset
-          const auto ls = SupportedTypes::getTypeSize(dv.type, 1);
           for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
             if (dv.isScalar()) {
-              os << "this->d" << dv.name << "[" << idx << "] = "
-                 << "mgb_d.s1.gradients[" << idx << "] - "
-                 << "mgb_d.s0.gradients[" << idx << "];\n";
+              if (bd.useQt()) {
+                os << "this->d" << dv.name << "[" << idx << "] = " << dv.type
+                   << "(mgb_d.s1.gradients[" << lodv << "] - "
+                   << "mgb_d.s0.gradients[" << lodv << "]);\n";
+              } else {
+                os << "this->d" << dv.name << "[" << idx << "] = "
+                   << "mgb_d.s1.gradients[" << lodv << "] - "
+                   << "mgb_d.s0.gradients[" << lodv << "];\n";
+              }
             } else {
               if (!lodv.isNull()) {
-                os << "tfel::fsalgo::transform<" << ls << ">::exe("
-                   << "mgb_d.s1.gradients+" << lodv << ","
-                   << "mgb_d.s0.gradients+" << lodv << ","
-                   << "this->d" << dv.name << "[" << idx
-                   << "].begin(),std::minus<real>());\n";
+                os << "this->d" << dv.name << "[" << idx
+                   << "] = tfel::math::map<" << dv.type
+                   << ">(mgb_d.s1.gradients+" << lodv << ") - "
+                   << "tfel::math::map<" << dv.type << ">(mgb_d.s0.gradients+"
+                   << lodv << ");\n";
               } else {
-                os << "tfel::fsalgo::transform<" << ls << ">::exe("
-                   << "mgb_d.s1.gradients,"
-                   << "mgb_d.s0.gradients,"
-                   << "this->d" << dv.name << "[" << idx
-                   << "].begin(),std::minus<real>());\n";
+                os << "this->d" << dv.name << "[" << idx
+                   << "] = tfel::math::map<" << dv.type
+                   << ">(mgb_d.s1.gradients) - "
+                   << "tfel::math::map<" << dv.type
+                   << ">(mgb_d.s0.gradients);\n";
               }
             }
             lodv += SupportedTypes::getTypeSize(dv.type, 1);

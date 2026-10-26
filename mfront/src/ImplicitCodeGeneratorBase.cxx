@@ -951,7 +951,7 @@ namespace mfront {
                  << v.name << "_dd" << givd.name << "_view;\n";
             } else {
               os << "for(typename " << rhs_type
-                 << "::size_type mfront_local_idx; mfront_local_idx !="
+                 << "::size_type mfront_local_idx = 0; mfront_local_idx !="
                  << v.arraySize << "; ++mfront_local_idx){\n"
                  << "integration_variable_derivative_d" << v.name << "_dd"
                  << givd.name
