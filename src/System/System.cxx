@@ -354,7 +354,7 @@ namespace tfel::system {
               // used in the same time
               if (::stat(path.c_str(), &infos) == 0) {
                 if (S_ISDIR(infos.st_mode)) {
-                  return;
+                  continue;
                 }
               } else {
                 systemCall::throwSystemError(
