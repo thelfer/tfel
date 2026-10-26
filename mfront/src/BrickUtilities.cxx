@@ -425,7 +425,10 @@ namespace mfront::bbrick {
                     const std::vector<double>& p) {
     using tfel::material::ModellingHypothesis;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    VariableDescription v("real", n, 1u, 0u);
+    tfel::raise_if(p.size() != s,
+                   "addParameter: "
+                   "invalid number of default parameters values");
+    VariableDescription v("real", n, s, 0u);
     bd.addParameter(h, v);
     bd.setGlossaryName(h, n, g);
     for (unsigned short i = 0; i != s; ++i) {
@@ -583,10 +586,10 @@ namespace mfront::bbrick {
     if (pev != esvs.end()) {
       const auto& name = pev->name;
       if (b) {
-        return "2 * (this->" + name + " + (this->d " + name + ")) > 1";
+        return "2 * (this->" + name + " + (this->d" + name + ")) > 1";
       } else {
         return "2 * (this->" + name + " + (" + bd.getClassName() +
-               "::theta) * (this->d " + name + ")) > 1";
+               "::theta) * (this->d" + name + ")) > 1";
       }
     }
     return "";

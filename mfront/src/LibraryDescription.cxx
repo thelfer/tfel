@@ -240,7 +240,7 @@ namespace mfront {
       v = read<std::vector<std::string>>(c, pe);
       CxxTokenizer::readSpecifiedToken(f, ";", c, pe);
     };
-    while (c->value != "}") {
+    while ((c != pe) && (c->value != "}")) {
       if (c->value == "name") {
         get_string(name, "library name");
       } else if (c->value == "prefix") {

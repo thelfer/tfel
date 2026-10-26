@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1143: [mfront] DSLs: bricks, behaviour variables, @TangentOperator, initialisation values, targets.lst, overriding increments and bounds
+
+For more details, see <https://github.com/thelfer/tfel/issues/1143>
+
 ## Issue 1141: [tfel-utilities] tfel-check shall_fail and directory configurations, rstream::getLine, CxxTokenizer, Data reading and comparison, ArgumentParser
 
 For more details, see <https://github.com/thelfer/tfel/issues/1141>

@@ -106,6 +106,13 @@ struct TargetsDescriptionTest final : public tfel::tests::TestCase {
     auto t2 = extract(ss.str());
     // testing the value read again
     this->check(t2);
+    // truncated target descriptions
+    TFEL_TESTS_CHECK_THROW(extract("{ headers : {\"a.hxx\"};"),
+                           std::runtime_error);
+    TFEL_TESTS_CHECK_THROW(extract("{ library : { name : \"libA\";"),
+                           std::runtime_error);
+    TFEL_TESTS_CHECK_THROW(extract("{ target : { name : \"t\";"),
+                           std::runtime_error);
     return this->result;
   }
 

@@ -1105,9 +1105,10 @@ namespace mfront {
 
   void DSLBase::treatLonelySeparator() {
     if (getPedanticMode()) {
+      const auto previous = std::prev(this->current);
       auto msg = std::ostringstream{};
-      msg << this->fd.fileName << ":" << this->current->line << ":"
-          << this->current->offset << ": warning: extra ‘;’ [-pedantic]\n";
+      msg << this->fd.fileName << ":" << previous->line << ":"
+          << previous->offset << ": warning: extra ‘;’ [-pedantic]\n";
       reportWarning(msg.str());
     }
   }  // end of treatLonelySperator
