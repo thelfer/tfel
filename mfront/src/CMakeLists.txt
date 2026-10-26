@@ -544,18 +544,6 @@ if(enable-static)
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
     $<INSTALL_INTERFACE:include>)
 endif(enable-static)
-if(HAVE_CASTEM)
-  if(CASTEHOME)
-    target_include_directories(TFELMFront 
-      PRIVATE "${CASTEMHOME}/include"
-      PRIVATE "${CASTEMHOME}/include/c")
-    if(enable-static)
-      target_include_directories(TFELMFront-static 
-        PRIVATE "${CASTEMHOME}/include"
-        PRIVATE "${CASTEMHOME}/include/c")
-    endif(enable-static)
-  endif(CASTEHOME)
-endif(HAVE_CASTEM)
 target_link_libraries(TFELMFront
   PUBLIC
   tfel::MFrontLogStream

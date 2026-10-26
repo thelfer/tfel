@@ -75,7 +75,7 @@ set(CPACK_COMPONENT_CORE_DESCRIPTION
   "Contains all the core libraries developped within TFEL")
 set(CPACK_COMPONENT_MFRONT_DESCRIPTION
   "Contains the MFront code generator and the associated libraries")
-set(CPACK_COMPONENT_MTESTS_DESCRIPTION
+set(CPACK_COMPONENT_MTEST_DESCRIPTION
   "Contains the MTest tool")
 
 set(CPACK_COMPONENT_MFRONT_DEPENDS core)
