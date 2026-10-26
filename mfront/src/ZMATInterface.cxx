@@ -803,7 +803,7 @@ namespace mfront {
               out << "for(unsigned short idx=0;idx!=" << ev.arraySize
                   << ";++idx){\n";
               out << "this->d" << ev.name
-                  << "[idx] = ZMATextvars_td-[ZMATevs_pos[" << o
+                  << "[idx] = ZMATextvars_tdt[ZMATevs_pos[" << o
                   << "+idx]]-ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];\n";
               out << "}\n";
               o += this->getTypeSize(ev.type, ev.arraySize);
