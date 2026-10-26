@@ -41,7 +41,7 @@ requires(tfel::math::checkUnitCompatibility<
   pybind11::class_<KG, IM, std::shared_ptr<KG>>(
       m, n,
       pybind11::buffer_protocol(),
-      "This class is relative to the format (K,Nu).\n"
+      "This class is relative to the format (K,Mu).\n"
       "It can be converted to the other formats (Lambda,Mu) and (Young,Nu)")
       .def(pybind11::init<const KG&>())
       .def(pybind11::init<const StressType&, const StressType&>(),
