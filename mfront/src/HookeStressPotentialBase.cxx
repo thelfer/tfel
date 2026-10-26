@@ -328,7 +328,7 @@ namespace mfront::bbrick {
     bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sebdata");
     update(this->pss, "plane_stress_support");
     update(this->gto, "generic_tangent_operator");
-    update(this->gpo, "generic_tangent_operator");
+    update(this->gpo, "generic_prediction_operator");
     if (this->pss) {
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "etozz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "detozz");

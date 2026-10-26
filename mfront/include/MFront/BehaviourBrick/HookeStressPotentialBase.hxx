@@ -188,9 +188,9 @@ namespace mfront::bbrick {
         BehaviourDescription&) const = 0;
     //! \brief plane stress support;
     bool pss = true;
-    //! \brief generic prediction operator support
-    bool gto = true;
     //! \brief generic tangent operator support
+    bool gto = true;
+    //! \brief generic prediction operator support
     bool gpo = true;
   };  // end of struct HookeStressPotentialBase
 
