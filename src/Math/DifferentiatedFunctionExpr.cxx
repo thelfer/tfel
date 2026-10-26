@@ -133,6 +133,7 @@ namespace tfel::math::parser {
     auto p = nargs.begin();
     for (const auto& a : this->args) {
       *p = a->clone(v);
+      ++p;
     }
     return std::make_shared<DifferentiatedFunctionExpr>(this->f, nargs,
                                                         this->pvar);

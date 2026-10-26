@@ -34,5 +34,7 @@ int main() {
   df->setVariableValue(0, 2.);
   assert(abs(df->getValue() + cos(2.)) < 1.e-14);
 #endif
+  const Evaluator g({"x", "y"}, "diff(x*y,x)");
+  assert(abs(Evaluator(g).getValue({{"x", 2.}, {"y", 3.}}) - 3.) < 1.e-14);
   return EXIT_SUCCESS;
 }
