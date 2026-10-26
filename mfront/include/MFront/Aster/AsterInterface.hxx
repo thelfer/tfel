@@ -292,14 +292,14 @@ namespace aster {
         copy<2u>::exe(STRAN, u0);
         copy<2u>::exe(DSTRAN, du);
         int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
-            emsg, &NTENS, DTIME, DROT, DDSOE, u0, du, TEMP, DTEMP, PROPS,
-            NPROPS, PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
+            emsg, &NTENS, DTIME, DROT, K, u0, du, TEMP, DTEMP, PROPS, NPROPS,
+            PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
         if (r == 0) {
           copy<2u>::exe(s, STRESS);
           DDSOE[0] = K[0];
           DDSOE[1] = K[1];
-          DDSOE[2] = K[4];
-          DDSOE[3] = K[5];
+          DDSOE[2] = K[3];
+          DDSOE[3] = K[4];
         }
         return r;
       }

@@ -583,7 +583,7 @@ namespace mfront {
         << "stensor<3u,real> pk2;\n"
         << "pk2.importTab(STRESS);\n"
         << "auto s = "
-           "convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);\n";
+           "convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F0);\n";
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       out << "const auto rF0 = change_basis(F0,r);\n"
           << "const auto rF1 = change_basis(F1,r);\n"
