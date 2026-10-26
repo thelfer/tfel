@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1237: [cmake] Compiler printed by mfront --version, installed headers of the isotropic DSLs and of TFELCheck, dependencies of the installed CMake packages, static TFELMFrontDatabase package, CPack components
+
+For more details, see <https://github.com/thelfer/tfel/issues/1237>
+
 ## Issue 1193: [mtest] End of input in the MTest and PTest parsers, ansys input file example of orthotropic behaviours, misleading interface messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1193>
