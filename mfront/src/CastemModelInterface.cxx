@@ -490,10 +490,9 @@ namespace mfront {
             raise("error while treating physical bounds of variable '" +
                   v.name + "' (only scalar variable are supported)");
           }
-          writePhysicalBoundsChecks(os, v, n, "1u", false, false);
-          if (vdepth == 1u) {
-            writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
-          }
+          // the variable is checked under the name it is declared with
+          const auto vn = (vdepth == 1u) ? n + "_1" : n;
+          writePhysicalBoundsChecks(os, v, vn, "1u", false, false);
         };
         for (const auto& mv : f.usedVariables) {
           const auto [n, vdepth] = md.decomposeVariableName(mv);
@@ -522,11 +521,9 @@ namespace mfront {
             raise("error while treating bounds of variable '" + v.name +
                   "' (only scalar variable are supported)");
           }
-          writeBoundsChecks(os, v, n, "1u", "policy", false, false);
-          if (vdepth == 1u) {
-            writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false,
-                              false);
-          }
+          // the variable is checked under the name it is declared with
+          const auto vn = (vdepth == 1u) ? n + "_1" : n;
+          writeBoundsChecks(os, v, vn, "1u", "policy", false, false);
         };
         for (const auto& mv : f.usedVariables) {
           const auto [n, vdepth] = md.decomposeVariableName(mv);
