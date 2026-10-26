@@ -630,7 +630,7 @@ namespace mfront {
       o2.modifier = std::make_shared<StandardVariableModifier>(h, m2);
       o2.member_names = md.getRegistredMembersNames();
       o2.static_member_names = md.getRegistredStaticMembersNames();
-      this->getSymbols(o2.symbols, h, n1);
+      this->getSymbols(o2.symbols, h, n2);
       this->readNextBlock(c1, c2, o1, o2);
       this->mb.setCode(h, n1, c1, o.m, o.p);
       this->mb.setCode(h, n2, c2, o.m, o.p);

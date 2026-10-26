@@ -518,6 +518,9 @@ namespace mfront {
         throw_if(openedParenthesis == 0, "unbalanced parenthesis");
         --openedParenthesis;
         f.body += ")";
+        // a variable directly following a closing parenthesis starts the
+        // body of an if, for or while statement
+        newInstruction = (openedParenthesis == 0);
       } else if (this->current->value == ";") {
         f.body += ";";
         newInstruction = true;
@@ -633,7 +636,7 @@ namespace mfront {
             f.body += c;
           }
         }
-        newInstruction = false;
+        newInstruction = (c == "else") || (c == "do");
       }
       newLine = false;
     }

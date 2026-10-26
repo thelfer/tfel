@@ -2175,9 +2175,6 @@ namespace mfront {
     // never ever trust a user
     throw_if(mhs.find(uh) != mhs.end(),
              "undefined modelling hypothesis specified");
-    // check that the user did not already set the modelling hypotheses
-    throw_if(!this->hypotheses.empty(),
-             "supported modelling hypotheses have already been declared");
     // check that if a specialised version of the behaviour
     // is defined, it is present in the set of hypotheses defined here
     for (const auto& ld : this->sd) {
@@ -2468,8 +2465,8 @@ namespace mfront {
           bd.addAuxiliaryStateVariable(applyNamesChanges(bv, th),
                                        BehaviourData::UNREGISTRED);
         } catch (std::exception& e) {
-          tfel::raise("Error while treating saved gradient '" + th.name +
-                      "' from behaviour '" + bv.name + "' of type '" +
+          tfel::raise("Error while treating saved thermodynamic force '" +
+                      th.name + "' from behaviour '" + bv.name + "' of type '" +
                       bv.behaviour.getClassName() + "'\n" +
                       std::string{e.what()});
         }

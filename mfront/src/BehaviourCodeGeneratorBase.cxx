@@ -3837,7 +3837,7 @@ namespace mfront {
     for (const auto& v : md.getLocalVariables()) {
 #pragma message( \
     "BehaviourCodeGeneratorBase: handle LocalDataStructure properly")
-      if ((v.type.size() >= 7) && (v.type.substr(0, 7) != "struct{")) {
+      if (!tfel::utilities::starts_with(v.type, "struct{")) {
         os << "os << \"" << displayName(v) << " : \" << b." << v.name
            << " << '\\n';\n";
       }
@@ -5850,8 +5850,6 @@ namespace mfront {
              << v.first.name << "1 << '\\n';\n";
         }
       }
-      os << "os << \"" << displayName(v.second) << " : \" << b."
-         << v.second.name << " << '\\n';\n";
     }
     if (getUnicodeOutputOption()) {
       os << "os << \"\u0394t : \" << b.dt << '\\n';\n";

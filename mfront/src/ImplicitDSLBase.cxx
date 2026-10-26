@@ -627,7 +627,7 @@ namespace mfront {
         }
         if (!opts.is<DataMap>()) {
           this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
-                                  "expected to read a string");
+                                  "expected to read a dictionary");
         }
         return opts.get<DataMap>();
       }();
@@ -784,13 +784,13 @@ namespace mfront {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }
@@ -814,13 +814,13 @@ namespace mfront {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }

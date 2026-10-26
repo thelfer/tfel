@@ -171,7 +171,7 @@ namespace tfel::utilities {
       return;
     }
     auto p = this->lines.begin();
-    while ((get_line(*p) <= n + 1) && (p != this->lines.end())) {
+    while ((p != this->lines.end()) && (get_line(*p) <= n)) {
       ++p;
     }
     lines.erase(lines.begin(), p);

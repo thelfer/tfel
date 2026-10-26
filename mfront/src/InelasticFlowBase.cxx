@@ -17,6 +17,7 @@
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 #include "MFront/AbstractNonLinearSystemSolver.hxx"
+#include "MFront/StandardElastoViscoPlasticityBrick.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/StressCriterion.hxx"

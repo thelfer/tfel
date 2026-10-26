@@ -13,6 +13,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <filesystem>
 
 #ifdef MTEST_HAVE_MADNEX
 #include "Madnex/Config.hxx"
@@ -100,11 +101,8 @@ namespace mtest {
 
   void write(const TestDescription& d, const std::string& f) {
     const auto ext = [&f]() -> std::string {
-      const auto p = f.find(".");
-      if (p != std::string::npos) {
-        return std::string{f.substr(p + 1)};
-      }
-      return {};
+      const auto e = std::filesystem::path{f}.extension().string();
+      return e.empty() ? e : e.substr(1);
     }();
 #ifdef MADNEX_MTEST_TEST_SUPPORT
     if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {

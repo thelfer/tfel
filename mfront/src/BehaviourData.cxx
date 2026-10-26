@@ -387,7 +387,7 @@ namespace mfront {
     for (const auto& v : this->staticVariables) {
       if (v.name == n) {
         tfel::raise_if(v.type != "int",
-                       "MaterialPropertyDSL::getIntegerConstant: "
+                       "BehaviourData::getIntegerConstant: "
                        "invalid type for variable '" +
                            n + "'");
         return v.value;
@@ -1012,7 +1012,7 @@ namespace mfront {
     tfel::raise_if(!treated,
                    "BehaviourData::setVariableAttribute: "
                    "no variable named '" +
-                       n +
+                       v +
                        "' found."
                        "This variable is *not*:\n"
                        "- a material property\n"
@@ -1268,7 +1268,7 @@ namespace mfront {
     const auto& glossary = Glossary::getGlossary();
     if (glossary.contains(n)) {
       std::ostringstream msg;
-      msg << "BehaviourData::registerEntryName: "
+      msg << "BehaviourData::registerGlossaryName: "
           << "the name '" << n << "' is a registred as a glossary name.\n";
       displayGlossaryEntryCompleteDescription(msg,
                                               glossary.getGlossaryEntry(n));
@@ -1314,9 +1314,9 @@ namespace mfront {
     }
     if (!this->isNameReserved(n)) {
       tfel::raise(
-          "BehaviourData::registerGlossaryName: "
+          "BehaviourData::registerEntryName: "
           "the variable name '" +
-          n + "' is registred");
+          n + "' is not registred");
     }
     /*
      * Special exceptions for glossary name which are also supported type name:
@@ -1512,7 +1512,7 @@ namespace mfront {
     };
     throw_if(!this->parameters.contains(n), "no parameter '" + n + "' defined");
     const auto& p = this->parameters.getVariable(n);
-    throw_if(p.type != "int", "parameter '" + n + "' is not a floatting point");
+    throw_if(p.type != "int", "parameter '" + n + "' is not an integer");
     throw_if(!this->iParametersDefaultValues.insert({n, v}).second,
              "default value for parameter '" + n + "' already defined");
   }
@@ -1525,7 +1525,7 @@ namespace mfront {
     throw_if(!this->parameters.contains(n), "no parameter '" + n + "' defined");
     const auto& p = this->parameters.getVariable(n);
     throw_if(p.type != "ushort",
-             "parameter '" + n + "' is not a floatting point");
+             "parameter '" + n + "' is not an unsigned short");
     throw_if(!this->uParametersDefaultValues.insert({n, v}).second,
              "default value for parameter '" + n + "' already defined");
   }
