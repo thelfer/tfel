@@ -60,8 +60,8 @@ namespace tfel::math {
     while ((!converged) && (i != p.im)) {
       b.updateBounds(x, fv);
       auto have_valid_increment_estimate = false;
-      if ((tfel::math::ieee754::isfinite(fv)) ||
-          (tfel::math::ieee754::fpclassify(dfv) == FP_ZERO)) {
+      if ((tfel::math::ieee754::isfinite(fv)) &&
+          (tfel::math::ieee754::fpclassify(dfv) != FP_ZERO)) {
         dx = -fv / dfv;
         have_valid_increment_estimate = true;
       } else {
@@ -81,11 +81,14 @@ namespace tfel::math {
             return std::make_tuple(false, p.x0, i);
           } else {
             // step back
-            x -= dx / 2;
+            dx /= 2;
+            x -= dx;
             b.iterate(x);
             const auto r = f(x);
             fv = std::get<0>(r);
             dfv = std::get<1>(r);
+            ++i;
+            continue;
           }
         }
       }

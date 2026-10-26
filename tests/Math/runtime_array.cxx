@@ -18,12 +18,14 @@
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
+#include <sstream>
 #include <iostream>
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/runtime_array.hxx"
 #include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/runtime_arrayIO.hxx"
 
 struct RuntimeArrayTest final : public tfel::tests::TestCase {
   RuntimeArrayTest()
@@ -122,6 +124,10 @@ struct RuntimeArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(i[0] == -8);
     TFEL_TESTS_ASSERT(i[1] == -11);
     TFEL_TESTS_ASSERT(i[2] == -4);
+    // output
+    std::ostringstream os;
+    os << a;
+    TFEL_TESTS_ASSERT(os.str() == "( 5 5 5 )");
     // end of the tests
     return this->result;
   }  // end of execute

@@ -701,6 +701,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1137>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1135>
 
+## Issue 1133: [tfel-math] Powell dog leg solvers, scalar Newton-Raphson, TinyMatrixSolve/Invert, CubicRoots, runtime_array output and Fischer-Burmeister derivatives
+
+For more details, see <https://github.com/thelfer/tfel/issues/1133>
+
 ## Issue 1131: [mfront] Hooke stress potentials: plane stress jacobian, generic_prediction_operator option and broken state tests
 
 For more details, see <https://github.com/thelfer/tfel/issues/1131>
