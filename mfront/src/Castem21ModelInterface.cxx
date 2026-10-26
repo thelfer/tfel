@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <algorithm>
+#include "TFEL/Raise.hxx"
 #include "MFront/Castem21ModelInterface.hxx"
 
 namespace mfront {
@@ -20,6 +22,20 @@ namespace mfront {
   }  // end of getName
 
   Castem21ModelInterface::Castem21ModelInterface() = default;
+
+  std::pair<bool, Castem21ModelInterface::tokens_iterator>
+  Castem21ModelInterface::treatKeyword(const std::string& k,
+                                       const std::vector<std::string>& i,
+                                       tokens_iterator current,
+                                       const tokens_iterator end) {
+    tfel::raise_if(
+        ((std::find(i.begin(), i.end(), this->getName()) != i.end()) ||
+         (std::find(i.begin(), i.end(), "Castem21") != i.end()) ||
+         (std::find(i.begin(), i.end(), "Cast3M21") != i.end())),
+        "Castem21ModelInterface::treatKeyword: unsupported keyword '" + k +
+            "'");
+    return CastemModelInterface::treatKeyword(k, i, current, end);
+  }  // end of treatKeyword
 
   Castem21ModelInterface::~Castem21ModelInterface() = default;
 

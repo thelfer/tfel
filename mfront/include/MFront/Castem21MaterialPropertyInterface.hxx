@@ -23,6 +23,12 @@ namespace mfront {
     static std::string getName();
     //! \brief default constructor
     Castem21MaterialPropertyInterface();
+    //
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     //! \brief destructor
     ~Castem21MaterialPropertyInterface() override;
   };  // end of MfrontCastemMaterialPropertyInterface
