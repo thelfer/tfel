@@ -57,7 +57,8 @@ namespace tfel::math {
       }
       const auto k1 = this->dt * child.computeF(t, this->y);
       auto t_ = t + (this->dt) / 4;
-      auto y_ = eval(this->y + k1 / 4);
+      auto y_ = typename TinyRungeKuttaSolverBase<N, Scalar>::SolutionType(
+          this->y + k1 / 4);
       const auto k2 = this->dt * child.computeF(t_, y_);
       t_ = t + 0.375 * (this->dt);
       y_ = this->y + 0.09375 * (k1 + 3 * k2);

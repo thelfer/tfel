@@ -27,6 +27,13 @@ struct Exponential : public RungeKutta<2, Exponential<RungeKutta>, double> {
   }
 };
 
+//! \brief y' = y with a scalar solution
+template <template <unsigned short, typename, typename> class RungeKutta>
+struct ScalarExponential
+    : public RungeKutta<1, ScalarExponential<RungeKutta>, double> {
+  double computeF(const double, const double y) const { return y; }
+};
+
 //! \brief integrate from 0 to 1
 template <typename Solver>
 static auto solve(const typename Solver::SolutionType& y0, const double dt0) {
@@ -47,6 +54,8 @@ static bool test() {
     const auto y = solve<Exponential<RungeKutta>>({0, 1}, dt0);
     success = success && (std::abs(y(0) - 1) < 1.e-12) &&
               (std::abs(y(1) - std::exp(1.)) < 1.e-7);
+    const auto ys = solve<ScalarExponential<RungeKutta>>(1, dt0);
+    success = success && (std::abs(ys - std::exp(1.)) < 1.e-7);
   }
   return success;
 }
