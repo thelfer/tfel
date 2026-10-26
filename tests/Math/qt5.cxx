@@ -64,6 +64,9 @@ struct QtReferenceTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT((std::is_same_v<decltype(a4), const real>));
     TFEL_TESTS_ASSERT(std::abs(a4.getValue() - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(abs(s(1)).getValue() - 2) < eps);
+    // assignment of an element of a view to another one
+    s(0) = s(1);
+    TFEL_TESTS_ASSERT(std::abs(values[0] - 2) < eps);
   }  // end of test1
   //! \brief IEEE754 functions on read-only references to quantities
   void test2() {
