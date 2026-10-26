@@ -960,7 +960,7 @@ namespace mfront {
           << "return;\n"
           << "}\n"
           << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
-          << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*"
+          << "nD[i*(*NTENS)+j] = (sigf[j]-sigb[j])/(2.*"
           << this->strainPerturbationValue << ");\n"
           << "}\n"
           << "}\n"

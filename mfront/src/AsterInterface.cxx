@@ -662,7 +662,7 @@ namespace mfront {
       out << "return;\n"
           << "}\n"
           << "for(j=0;j!=*NTENS;++j){\n"
-          << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*"
+          << "nD[i*(*NTENS)+j] = (sigf[j]-sigb[j])/(2.*"
           << this->strainPerturbationValue << ");\n"
           << "}\n"
           << "}\n"
