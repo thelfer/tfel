@@ -26,12 +26,6 @@ if(NOT BUILD_SHARED_LIBS)
   set(enable-static OFF CACHE BOOL "enable additional static libraries" FORCE)
 endif()
 
-if(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
-  include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(NO_OUTPUT_DIRS)
-  set(TFEL_USES_CONAN ON)
-endif(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
