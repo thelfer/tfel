@@ -302,7 +302,7 @@ computeGreen1972StressNormal(
 >
 > At this stage, the `MFront` implementation based on a numerical
 > jacobian could be fully functional if one modifies the
-> `@InitLocalVarialbes` block to initialize the parameters of
+> `@InitLocalVariables` block to initialize the parameters of
 > stress criterion.
 
 ### Implementing the `computeGreen1972StressSecondDerivative` function

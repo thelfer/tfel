@@ -137,7 +137,7 @@ Newton algorithm is low enough. By default, this value is equal to
 1.e-3, which is a convenient value if cohesive force are expressed in
 Newton.
 
-The `@CohesiveEpsilon` let the user specify the criterion value used
+The `@CohesiveForceEpsilon` let the user specify the criterion value used
 for the criterion on cohesive force.
 
 It is followed by the criterion value.
@@ -145,7 +145,7 @@ It is followed by the criterion value.
 ## Example
 
 ~~~~~ {.cpp}
-@CohesiveForce 1.e2;
+@CohesiveForceEpsilon 1.e-3;
 ~~~~~~~~~~
 
 # The `@CompareToNumericalTangentOperator` keyword
@@ -209,7 +209,7 @@ This criterion on the deformation gradient checks if two successive
 estimate of the strains are close enough.  By default, the criterion
 value used is 1.e-12;
 
-The `@SDeformationGradient` let the user specify the criterion value used
+The `@DeformationGradientEpsilon` let the user specify the criterion value used
 for the criterion on strains.
 
 It is followed by the criterion value.
@@ -217,7 +217,7 @@ It is followed by the criterion value.
 ## Example
 
 ~~~~ {.cpp}
-@DeformationGradient 1.e-12;
+@DeformationGradientEpsilon 1.e-12;
 ~~~~~~~~
 
 # The `@Description` keyword

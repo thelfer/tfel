@@ -423,7 +423,7 @@ tensor named \(\tenseurq{D}\).
 
 ### Material coefficients {#sec:mfront:bz:parameters}
 
-Using the keyword `@Parameters` one can then define some useful
+Using the keyword `@Parameter` one can then define some useful
 parameters such as the critical resolved shear stresses of the gliding
 systems or the other coefficients involved in the intra-granular
 constitutive laws:

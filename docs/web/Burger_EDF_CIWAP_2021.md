@@ -324,7 +324,7 @@ requires to determine their increments during the time step and does not
 require to know their values at the beginning of the time step. If such
 post-processing does not matter, a significant amount of memory can be
 saved by removing their declaration as auxiliary state variables and
-their update in the `@UpdateAuxiliaryStateVariable` code block.
+their update in the `@UpdateAuxiliaryStateVariables` code block.
 
 ## Computation of the stress
 

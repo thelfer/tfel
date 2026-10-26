@@ -439,7 +439,7 @@ que en el caso de `@MaterialLaw`.
 ### Instrucciones de compilación de librerías
 
 Hay tres instrucciones relacionadas con la compilación de fuentes. Las
-instrucciones `@Include` y `@Link` tienen una importancia particular
+instrucciones `@Includes` y `@Link` tienen una importancia particular
 debido a que permiten utilizar características definidas en librerías
 `C++` externas.
 
@@ -527,12 +527,12 @@ fc.setDefaultValue(1.e-2);
 ~~~~
 
 Para el analizador `Model` unas instrucciones específicas,
-`@GlobalParameter` para definir los parámetros del modelo que se
+`@Parameter` para definir los parámetros del modelo que se
 podrán usar en otros modelos, y `@LocalParameter` para definir
 parámetros especializados del modelo actual.
 
 ~~~~{.cpp}
-@GlobalParameter real a;
+@Parameter real a;
 a.setDefaultValue(1.23);
 @LocalParameter real b;
 b.setDefaultValue(1.23);
@@ -1288,7 +1288,7 @@ se reduce se da por el número máximo de sub-pasos.
 @MaximumNumberOsSubSteps 10;
 ~~~~
 
-`@ModellingHypotesis` permite al usuario elegir la hipótesis de
+`@ModellingHypothesis` permite al usuario elegir la hipótesis de
 modelado a utilizar. Se admiten los siguientes valores dados como una
 cadena:
 
