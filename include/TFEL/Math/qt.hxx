@@ -435,6 +435,11 @@ namespace tfel::math {
                        unit::areUnitsEqual<UnitType, unit::NoUnit>>>(src) {}
     constexpr qt_ref(qt_ref&&) noexcept = default;
     constexpr qt_ref(const qt_ref&) noexcept = default;
+    //! \brief copy assignement, writes through the reference
+    TFEL_HOST_DEVICE constexpr qt_ref& operator=(const qt_ref& src) noexcept {
+      this->getValue() = src.getValue();
+      return *this;
+    }
     using Quantity<UnitType,
                    ValueType,
                    tfel::math::internals::QuantityReferenceOwnershipPolicy<

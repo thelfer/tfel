@@ -47,6 +47,7 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     this->test3<float, EigenSolver::HARARIEIGENSOLVER>();
     this->test3<double, EigenSolver::HARARIEIGENSOLVER>();
     this->test4();
+    this->test5();
     return this->result;
   }  // end of execute
 
@@ -139,6 +140,22 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
                                     tfel::math::stensor_common::DESCENDING);
     TFEL_TESTS_STATIC_ASSERT(vp4[2] == 1);
     TFEL_TESTS_STATIC_ASSERT(vp5[2] == 0);
+  }
+  //! \brief zero tensor and pure shear with the FSESQLEIGENSOLVER solver
+  void test5() {
+    using stensor = tfel::math::stensor<3u, double>;
+    using EigenSolver = tfel::math::stensor_common::EigenSolver;
+    constexpr auto eps = 1e-14;
+    const auto vp =
+        stensor(0.).computeEigenValues<EigenSolver::FSESQLEIGENSOLVER>(
+            stensor::ASCENDING);
+    const auto vp2 = stensor{0., 0., 0., std::sqrt(2.), 0., 0.}
+                         .computeEigenValues<EigenSolver::FSESQLEIGENSOLVER>(
+                             stensor::ASCENDING);
+    for (unsigned short i = 0; i != 3; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(vp(i)) < eps);
+      TFEL_TESTS_ASSERT(std::abs(vp2(i) - (i - 1.)) < eps);
+    }
   }
 };
 
