@@ -314,8 +314,8 @@ namespace mfront::bbrick {
           "(this->sebdata.lambda)*trace(this->eel)*Stensor::Id()+"  //
           "2*(this->sebdata.mu)*this->eel;\n";
     }
-    addBrokenStateSupportToComputeStress(smts.code, bd, true);
-    addBrokenStateSupportToComputeStress(sets.code, bd, false);
+    addBrokenStateSupportToComputeStress(smts.code, bd, false);
+    addBrokenStateSupportToComputeStress(sets.code, bd, true);
     bd.setCode(uh, BehaviourData::ComputeThermodynamicForces, smts,
                BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
     bd.setCode(uh, BehaviourData::ComputeFinalThermodynamicForces, sets,
