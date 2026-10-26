@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1219: [mfront] Strain tolerance of the axisymmetric shear tests of orthotropic elasticity
+
+For more details, see <https://github.com/thelfer/tfel/issues/1219>
+
 ## Issue 1193: [mtest] End of input in the MTest and PTest parsers, ansys input file example of orthotropic behaviours, misleading interface messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1193>
