@@ -26,7 +26,7 @@ namespace mtest {
      // AlternateDelta2AccelerationAlgorithm::AlternateDelta2AccelerationAlgorithm
 
   std::string AlternateDelta2AccelerationAlgorithm::getName() const {
-    return "crossed secant";
+    return "AlternateDelta2";
   }
 
   void AlternateDelta2AccelerationAlgorithm::setParameter(
