@@ -173,6 +173,8 @@ namespace tfel::material::homogenization::elasticity {
                                               n_a_[1], n_b_[1], real(0),
                                               real(0), real(0), real(1)};
     const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
+    const auto C_loc =
+        change_basis(C / StressType(1), r_glob_loc) * StressType(1);
     const real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
     const real zero = real(0);
     using compliance = types::compliance<StressType>;
@@ -181,9 +183,9 @@ namespace tfel::material::homogenization::elasticity {
       for (int j = i; j < 2; j++)
         for (int k = 0; k < 2; k++)
           for (int l = k; l < 2; l++) {
-            const auto p_ = [C, a, b, i, j, k, l](const real& theta) {
+            const auto p_ = [C_loc, a, b, i, j, k, l](const real& theta) {
               return internals::p_ijkl_2D<real, StressType, LengthType>(
-                  C, a, b, theta, i, j, k, l);
+                  C_loc, a, b, theta, i, j, k, l);
             };
             const auto int_p = compliance(
                 internals::integrate1D<real>(p_, zero, 2 * pi, max_it));

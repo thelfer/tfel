@@ -153,6 +153,25 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         // << " "<< eps <<'\n';
       }
     }
+
+    // the same ellipse described with n_a = e_x and with n_a = e_y in an
+    // orthotropic matrix
+    tfel::math::st2tost2<2u, stress> C_1;
+    computeOrthotropicStiffnessTensorII<2u, value, stress, real>(
+        C_1, young, young / 3, young / 2, nu, real{0.2}, real{0.1}, young / 4,
+        young / 5, young / 6);
+    const tfel::math::tvector<2u, real> n_b = {0., 1.};
+    const auto P2DOrtho1 = computePlaneStrainAnisotropicHillTensor<stress>(
+        C_1, n_a, lg{3}, lg{2}, 14);
+    const auto P2DOrtho2 = computePlaneStrainAnisotropicHillTensor<stress>(
+        C_1, n_b, lg{2}, lg{3}, 14);
+
+    for (int i : {0, 1, 2, 3}) {
+      for (int j : {0, 1, 2, 3}) {
+        TFEL_TESTS_ASSERT(my_abs(P2DOrtho1(i, j) - P2DOrtho2(i, j)) <
+                          eps / young);
+      }
+    }
 #endif /* _LIBCPP_VERSION */
   }    // end of test_Eshelby2D
 
