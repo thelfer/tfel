@@ -907,7 +907,8 @@ namespace mfront::bbrick {
           const auto dX = khr->getBackStressDerivative(id, std::to_string(kid));
           ib.code += "df" + f.name + "_dd" + an + " += ";
           ib.code += "power<2>(1 - " + f_ + ") * (this->dp" + id + ") * ";
-          ib.code += "(Stensor::Id() | " + dX + ");\n";
+          ib.code +=
+              "(Stensor::Id() | (dn" + id + "_ds" + id + " * " + dX + "));\n";
           ++kid;
         }
         ib.code += "df" + f.name + "_ddp" + id;
@@ -941,7 +942,8 @@ namespace mfront::bbrick {
           const auto dX = khr->getBackStressDerivative(id, std::to_string(kid));
           ib.code += "df" + f.name + "_dd" + an + " += ";
           ib.code += "(1 - " + f_ + ") * (this->dp" + id + ") * ";
-          ib.code += "(Stensor::Id() | " + dX + ");\n";
+          ib.code +=
+              "(Stensor::Id() | (dn" + id + "_ds" + id + " * " + dX + "));\n";
           ++kid;
         }
         ib.code += "df" + f.name + "_ddp" + id;
