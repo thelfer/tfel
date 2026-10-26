@@ -309,6 +309,7 @@ reduces to the Gurson model [@gurson1977] which has no free parameter.
 
 Note that the physical meaning of \(q_3\) different from \(q_1^2\) is
 doubtful. Moreover, the current implementation is incorrect for \(q_3 > q_1^2\).
+If \(q_3\) is not given, \(q_3 = q_1^2\) is assumed.
 
 - **Rousselier-Tanguy-Besson** [@tanguybesson2002]
 
@@ -1189,7 +1190,7 @@ growth:
 >       a : 1e1       // tension cuff-off parameter
 >     },
 >     isotropic_hardening : "Linear" {R0 : "0"}
->   }
+>   },
 >   porosity_evolution: {}
 > };
 > ~~~~~~~~
