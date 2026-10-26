@@ -255,7 +255,7 @@ la suivante:
 @Input T,p,Bu; //< inputs of the law
 T.setGlossaryName("Temperature"); //< pleiades name
 p.setGlossaryName("Porosity"); //< pleiades name
-Bu.setGlossaryName("BurnUp"); //< pleiades name
+Bu.setGlossaryName("BurnUp (at.%)"); //< pleiades name
 @PhysicalBounds T in [0 :*[; //< temperature physical bounds
 @Bounds T in [0 :2573.15]; //< temperature bounds
 @PhysicalBounds p in [0 :1]; //< porosity physical bounds
