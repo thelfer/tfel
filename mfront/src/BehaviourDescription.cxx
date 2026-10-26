@@ -2829,38 +2829,43 @@ namespace mfront {
                   "variable ");
             }
           }
-          auto report = [&osource, &bv](const std::string_view& reason) {
-            tfel::raise("The sourve variable '" + osource->name +
-                        "' declared by behaviour variable '" + bv.name +
-                        "' is not compatible with the variable declared by the "
-                        "calling behaviour: " +
-                        std::string{reason});
+          auto report = [&bv, &v](const std::string_view& source,
+                                  const std::string_view& reason) {
+            tfel::raise(
+                "The variable '" + v.name + "' of behaviour variable '" +
+                bv.name + "' is not compatible with the variable '" +
+                std::string{source} +
+                "' declared by the calling behaviour: " + std::string{reason});
           };
           if (bdata.isStaticVariableName(v.getExternalName())) {
             const auto sv =
                 bdata.getStaticVariableDescription(v.getExternalName());
             if (v.getVariableTypeIdentifier() !=
                 sv.getVariableTypeIdentifier()) {
-              report("unmatched type ('" + v.type + "' vs '" + sv.type + "')");
+              report(sv.name,
+                     "unmatched type ('" + v.type + "' vs '" + sv.type + "')");
             }
             if (v.arraySize != sv.arraySize) {
-              report("unmatched array size (" + std::to_string(v.arraySize) +
-                     " vs " + std::to_string(sv.arraySize) + ")");
+              report(sv.name, "unmatched array size (" +
+                                  std::to_string(v.arraySize) + " vs " +
+                                  std::to_string(sv.arraySize) + ")");
             }
           } else {
             if (v.getVariableTypeIdentifier() !=
                 osource->getVariableTypeIdentifier()) {
-              report("unmatched type ('" + v.type + "' vs '" + osource->type +
-                     "')");
+              report(osource->name, "unmatched type ('" + v.type + "' vs '" +
+                                        osource->type + "')");
             }
             if (v.arraySize != osource->arraySize) {
-              report("unmatched array size (" + std::to_string(v.arraySize) +
-                     " vs " + std::to_string(osource->arraySize) + ")");
+              report(osource->name,
+                     "unmatched array size (" + std::to_string(v.arraySize) +
+                         " vs " + std::to_string(osource->arraySize) + ")");
             }
             if ((v.hasGlossaryName()) && (osource->hasGlossaryName())) {
               if (v.getExternalName() != osource->getExternalName()) {
-                report("unmatched external names ('" + v.getExternalName() +
-                       "' vs '" + osource->getExternalName() + "')");
+                report(osource->name, "unmatched external names ('" +
+                                          v.getExternalName() + "' vs '" +
+                                          osource->getExternalName() + "')");
               }
             }
           }
