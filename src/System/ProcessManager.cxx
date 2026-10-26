@@ -475,6 +475,14 @@ namespace tfel::system {
       throw(SystemError(msg));
     }
     // the pipe was broken, which means that exec succeed
+    // closing the ends of the pipes used by the child (for files, the
+    // descriptor is registered and closed with the process)
+    if ((in[0] != -1) && (in[0] != in[1])) {
+      close(in[0]);
+    }
+    if ((out[0] != -1) && (out[0] != out[1])) {
+      close(out[1]);
+    }
     sigprocmask(SIG_SETMASK, &oSigSet, nullptr);
     return pid;
   }  // end of ProcessManager::createProces
