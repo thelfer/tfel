@@ -689,6 +689,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
+## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
+
+For more details, see <https://github.com/thelfer/tfel/issues/1195>
+
 ## Issue 1193: [mtest] End of input in the MTest and PTest parsers, ansys input file example of orthotropic behaviours, misleading interface messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1193>
@@ -712,6 +716,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1177>
 ## Issue 1175: [installation] Doxygen deployment, keyword descriptions, installation pages, maintainer scripts, generic interface and math docs, quantity tests option, physical constants and glossary generators
 
 For more details, see <https://github.com/thelfer/tfel/issues/1175>
+
+## Issue 1173: [mfront] abaqus and amitex input examples, cyrano header, ansys/lsdyna/dianafea example files and zmat interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/1173>
 
 ## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
 

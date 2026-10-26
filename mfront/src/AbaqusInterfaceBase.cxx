@@ -519,14 +519,16 @@ namespace mfront {
         const auto& externalStateVarsHolder = d.getExternalStateVariables();
         out << "** Example for the '" << ModellingHypothesis::toString(h)
             << "' modelling hypothesis\n";
-        if (!externalStateVarsHolder.empty()) {
-          out << "** This behaviour requires " << externalStateVarsHolder.size()
+        if (externalStateVarsHolder.size() > 1) {
+          out << "** This behaviour requires "
+              << externalStateVarsHolder.size() - 1
               << " field variables to be defined:\n";
           int i = 1;
           for (auto pv = std::next(externalStateVarsHolder
                                        .begin());  // skipping the temperature
                pv != externalStateVarsHolder.end(); ++pv, ++i) {
-            out << "** " << i << ": " << mb.getExternalName(h, pv->name);
+            out << "** " << i << ": " << mb.getExternalName(h, pv->name)
+                << '\n';
           }
         }
         out << "*Material, name=" << this->getFunctionNameForHypothesis(mn, h)
