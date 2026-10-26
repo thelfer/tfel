@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1157: [mfront] castem, aster, abaqus, ansys and abaqusexplicit interfaces: LogarithmicStrain1D, sub-stepping, 2D finite strain fallbacks, tangent operator layouts and numerical comparison
+
+For more details, see <https://github.com/thelfer/tfel/issues/1157>
+
 ## Issue 1155: [mfront] DSLs and generated code: modelling hypotheses intersection, braceless assignments, output operators, brick symmetries, code blocks, error messages and debug comments
 
 For more details, see <https://github.com/thelfer/tfel/issues/1155>
