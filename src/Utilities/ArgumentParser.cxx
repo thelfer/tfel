@@ -166,7 +166,14 @@ namespace tfel::utilities {
   void ArgumentParser::stripArguments() {
     for (auto& a : this->args) {
       auto& an = a.as_string();
-      const auto pos = an.find('=');
+      // only options are split, not input files
+#ifdef _WIN32
+      const auto is_option =
+          (!an.empty()) && ((an[0] == '-') || (an[0] == '/'));
+#else
+      const auto is_option = (!an.empty()) && (an[0] == '-');
+#endif
+      const auto pos = is_option ? an.find('=') : std::string::npos;
       if (pos != std::string::npos) {
         const auto option = an.substr(pos + 1, std::string::npos);
         an.erase(pos, std::string::npos);
