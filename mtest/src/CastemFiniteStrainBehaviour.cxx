@@ -162,8 +162,7 @@ namespace mtest {
       using namespace tfel::material;
       using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
       auto D = tfel::math::change_basis(
-          Base::template getStiffnessTensor<STAC>(props),
-          tfel::math::transpose(r));
+          Base::template getStiffnessTensor<STAC>(props), r);
       const auto id = tfel::math::tensor<N, real>::Id();
       const auto s = tfel::math::stensor<N, real>(real(0));
       C = convert<TangentOperator::DSIG_DF, TangentOperator::C_TRUESDELL>(
