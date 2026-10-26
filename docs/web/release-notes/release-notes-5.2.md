@@ -709,6 +709,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1177>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1175>
 
+## Issue 1173: [mfront] abaqus and amitex input examples, cyrano header, ansys/lsdyna/dianafea example files and zmat interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/1173>
+
 ## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
 
 For more details, see <https://github.com/thelfer/tfel/issues/1171>
