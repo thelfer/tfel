@@ -97,6 +97,9 @@ namespace aster {
         const tfel::material::OutOfBoundsPolicy op,
         const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::material;
+      // the 2D wrappers call the 3D behaviour
+      using BV3D =
+          Behaviour<ModellingHypothesis::TRIDIMENSIONAL, AsterReal, false>;
       if (*NUMMOD == 2u) {
         /*!
          * L'hypothèse de déformations planes généralisées n'est pas
@@ -110,7 +113,7 @@ namespace aster {
         using Handler = std::conditional_t<
             is_defined,
             CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>,
-            Behaviour2DWrapper<AsterTraits<BV>::btype,
+            Behaviour2DWrapper<AsterTraits<BV3D>::btype,
                                ModellingHypothesis::GENERALISEDPLANESTRAIN>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
@@ -121,7 +124,7 @@ namespace aster {
         constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         using Handler = std::conditional_t<
             is_defined, CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>,
-            Behaviour2DWrapper<AsterTraits<BV>::btype,
+            Behaviour2DWrapper<AsterTraits<BV3D>::btype,
                                ModellingHypothesis::AXISYMMETRICAL>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
@@ -132,7 +135,7 @@ namespace aster {
         constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         using Handler = std::conditional_t<
             is_defined, CallBehaviour<ModellingHypothesis::PLANESTRESS>,
-            Behaviour2DWrapper<AsterTraits<BV>::btype,
+            Behaviour2DWrapper<AsterTraits<BV3D>::btype,
                                ModellingHypothesis::PLANESTRESS>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
@@ -143,7 +146,7 @@ namespace aster {
         constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         using Handler = std::conditional_t<
             is_defined, CallBehaviour<ModellingHypothesis::PLANESTRAIN>,
-            Behaviour2DWrapper<AsterTraits<BV>::btype,
+            Behaviour2DWrapper<AsterTraits<BV3D>::btype,
                                ModellingHypothesis::PLANESTRAIN>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
