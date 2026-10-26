@@ -22,6 +22,7 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/stensor.hxx"
+#include "TFEL/Material/GursonTvergaardNeedleman.hxx"
 #include "TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.hxx"
 #include "TFEL/Material/Cazacu2001YieldCriterion.hxx"
 #include "TFEL/Material/Cazacu2004IsotropicYieldCriterion.hxx"
@@ -35,6 +36,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
   }  // end of StressCriteriaTest
   tfel::tests::TestResult execute() override {
     this->testGursonTvergaardNeedleman1982();
+    this->testFlowStressGTN();
     this->testCazacu2001();
     this->testCazacu2004();
     this->testDrucker1949();
@@ -58,6 +60,21 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(n2[0] + n1[0]) < 1e-12);
     TFEL_TESTS_ASSERT(std::abs(ds2_df - ds1_df) < 1e-12 * ds1_df);
   }  // end of testGursonTvergaardNeedleman1982
+  //! \brief flow stress of the GTN model for a nearly hydrostatic stress
+  void testFlowStressGTN() {
+    using namespace tfel::material;
+    const auto params =
+        GursonTvergaardNeedleman1982StressCriterionParameters<Stensor>{
+            .f_c = 0.05, .f_r = 0.2, .q_1 = 1.5, .q_2 = 1, .q_3 = 2.25};
+    const auto sig = Stensor{100.1, 100, 99.9, 0, 0, 0};
+    const auto s1 = computeFlowStressGTN(tfel::math::sigmaeq(sig),
+                                         tfel::math::trace(sig), 0.01, 1.5, 1.);
+    const auto s2 =
+        computeGursonTvergaardNeedleman1982Stress(sig, 0.01, params, 1e-8);
+    TFEL_TESTS_ASSERT(std::abs(s1 - s2) < 1e-10 * s2);
+    TFEL_TESTS_ASSERT(
+        std::isfinite(computeFlowStressGTN(0.1f, 300.f, 0.01f, 1.5f, 1.f)));
+  }  // end of testFlowStressGTN
   //! \brief derivative of the normal of the Cazacu 2001 criterion for c != 1
   void testCazacu2001() {
     using namespace tfel::material;
