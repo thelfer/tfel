@@ -294,9 +294,9 @@ namespace numodis::math {
   //                 NON-INLINE FUNCTIONS
   //===============================================================
 
-  double dUnitVector(const Vect3& U, Vect3& V);
+  TFELNUMODIS_VISIBILITY_EXPORT double dUnitVector(const Vect3& U, Vect3& V);
 
-  double dUnitVector(Vect3& U);
+  TFELNUMODIS_VISIBILITY_EXPORT double dUnitVector(Vect3& U);
 
   bool dCollinear(const Vect3& U, const Vect3& V);
 
@@ -304,17 +304,21 @@ namespace numodis::math {
 
   bool dOrthogonal(const Vect3& U, const Vect3& V, double* res);
 
-  bool iCollinear(const std::vector<int>& U, const std::vector<int>& V);
+  TFELNUMODIS_VISIBILITY_EXPORT bool iCollinear(const std::vector<int>& U,
+                                                const std::vector<int>& V);
 
-  bool iCollinear(const std::vector<int>& U,
-                  const std::vector<int>& V,
-                  int* pdirection);
+  TFELNUMODIS_VISIBILITY_EXPORT bool iCollinear(const std::vector<int>& U,
+                                                const std::vector<int>& V,
+                                                int* pdirection);
 
-  void iSortVector(std::vector<int>& U);
+  TFELNUMODIS_VISIBILITY_EXPORT void iSortVector(std::vector<int>& U);
 
-  void iSortVector3FirstValue(std::vector<int>& U);
+  TFELNUMODIS_VISIBILITY_EXPORT void iSortVector3FirstValue(
+      std::vector<int>& U);
 
-  int Epsilon(const unsigned i, const unsigned j, const unsigned k);
+  TFELNUMODIS_VISIBILITY_EXPORT int Epsilon(const unsigned i,
+                                            const unsigned j,
+                                            const unsigned k);
 
 }  // end of namespace numodis::math
 
