@@ -2507,7 +2507,8 @@ namespace mfront {
       } else if (flag == SupportedTypes::TVECTOR) {
         if (pv.arraySize == 1) {
           tmp += "** - " + pv.getExternalName();
-          tmp += ": " + ids.treatTVector(h, pv.getExternalName(), pv.name);
+          tmp +=
+              ": " + ids.treatTVector(h, pv.getExternalName(), pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp +=
