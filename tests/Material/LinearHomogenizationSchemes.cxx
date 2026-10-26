@@ -324,6 +324,17 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto EI_DS_4 = Enu4.young;
       const auto nuI_DS_4 = Enu4.nu;
 
+      // relative differences close to the tolerance of the Eshelby tensors
+      const auto Enu5 = computeIsotropicDiluteScheme<stress>(
+          young, nu, f, young_i, nu_i, a, a + length{0.00004}, c);
+      const auto EI_DS_5 = Enu5.young;
+      const auto nuI_DS_5 = Enu5.nu;
+
+      const auto Enu6 = computeIsotropicDiluteScheme<stress>(
+          young, nu, f, young_i, nu_i, a, c, a + length{0.00004});
+      const auto EI_DS_6 = Enu6.young;
+      const auto nuI_DS_6 = Enu6.nu;
+
       TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_0) < stress{eps});
       // std::cout << (E0-E1).getValue() << " "<< E1.getValue() << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_0) < eps);
@@ -336,6 +347,10 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_4) < stress{eps});
       // std::cout << E3.getValue() << " "<< E4.getValue() << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_4) < eps);
+      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_5) < stress{eps});
+      TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_5) < eps);
+      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_6) < stress{eps});
+      TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_6) < eps);
     }
 #endif /* _LIBCPP_VERSION */
   }

@@ -60,10 +60,10 @@ namespace tfel::material::homogenization::elasticity {
                  areAlmostEqual(eps, a / c, real(1)) ||
                  areAlmostEqual(eps, b / c, real(1))) {
         st2tost2<3u, real> A_;
-        if (areAlmostEqual(eps, (b - a) / c, real(0))) {
+        if (areAlmostEqual(eps, b / a, real(1))) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_1, c / a);
-        } else if (areAlmostEqual(eps, (c - a) / b, real(0))) {
+        } else if (areAlmostEqual(eps, a / c, real(1))) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_1, b / a);
         } else {
