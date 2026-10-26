@@ -20,7 +20,7 @@
 namespace tfel::tests {
 
   //! \brief base class for tests' outputs
-  struct TestOutput {
+  struct TFELTESTS_VISIBILITY_EXPORT TestOutput {
     /*!
      * \brief begin a new test suite
      * \param[in] n: name of the test suite
