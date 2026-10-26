@@ -196,6 +196,9 @@ namespace mtest {
   }
 
   void MTest::setGradientsInitialValues(const std::vector<real>& v) {
+    tfel::raise_if(this->b == nullptr,
+                   "MTest::setGradientsInitialValues: "
+                   "no behaviour defined");
     tfel::raise_if(!this->e_t0.empty(),
                    "MTest::setGradientsInitialValues: "
                    "the initial values of the strains have "
@@ -209,6 +212,9 @@ namespace mtest {
   }
 
   void MTest::setThermodynamicForcesInitialValues(const std::vector<real>& v) {
+    tfel::raise_if(this->b == nullptr,
+                   "MTest::setThermodynamicForcesInitialValues: "
+                   "no behaviour defined");
     tfel::raise_if(!this->s_t0.empty(),
                    "MTest::setThermodynamicForcesInitialValues: "
                    "the initial values of the strains have "
@@ -227,6 +233,9 @@ namespace mtest {
 
   void MTest::completeInitialisation() {
     using namespace tfel::material;
+    tfel::raise_if(this->b == nullptr,
+                   "MTest::completeInitialisation: "
+                   "no behaviour defined");
     // additional constraints
     // must be set *before* `SingleStructureScheme::completeInitialisation`
     if (this->hypothesis == ModellingHypothesis::PLANESTRAIN) {
