@@ -11,3 +11,5 @@
   store_thermodynamic_forces: false,
   shared_external_state_variables: {".+"}
 };
+
+@Integrator{}

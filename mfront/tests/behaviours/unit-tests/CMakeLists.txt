@@ -55,9 +55,21 @@ mfront_unit_test(BehaviourVariable10      WILL_FAIL)
 mfront_unit_test(BehaviourVariable11      WILL_FAIL)
 mfront_unit_test(BehaviourVariable12      WILL_FAIL)
 mfront_unit_test(BehaviourVariable13      WILL_FAIL)
-mfront_unit_test(BehaviourVariable14      WILL_FAIL)
-mfront_unit_test(BehaviourVariable15      WILL_FAIL)
-mfront_unit_test(BehaviourVariable16      WILL_FAIL)
+mfront_unit_test(BehaviourVariable14)
+mfront_unit_test(BehaviourVariable15)
+mfront_unit_test(BehaviourVariable16)
+# the expected error starts a line: when analysing the external
+# behaviour, mfront may print the same text as a warning, after
+# '[warning]: '
+set_tests_properties(mfront-unit-tests-BehaviourVariable14 PROPERTIES
+  PASS_REGULAR_EXPRESSION
+  "\nthe code block 'InitializeLocalVariables' shall not use thermodynamic force 'sig'")
+set_tests_properties(mfront-unit-tests-BehaviourVariable15 PROPERTIES
+  PASS_REGULAR_EXPRESSION
+  "\nthe code block 'InitializeLocalVariables' shall not use gradient 'eto'")
+set_tests_properties(mfront-unit-tests-BehaviourVariable16 PROPERTIES
+  PASS_REGULAR_EXPRESSION
+  "\nthe code block 'InitializeLocalVariables' shall not use gradient increment 'deto'")
 mfront_unit_test(AuxiliaryModel1 WILL_FAIL)
 mfront_unit_test(WarningTest1             WARNING_ERROR WILL_FAIL)
 mfront_unit_test(WarningTest2             WARNING_ERROR WILL_FAIL)
