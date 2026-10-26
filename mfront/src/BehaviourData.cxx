@@ -2141,7 +2141,7 @@ namespace mfront {
           if (odp2 != oparameters.end()) {
             return odp2;
           }
-          if (v.symbolic_form.empty()) {
+          if (!v.symbolic_form.empty()) {
             const auto odp3 = oparameters.find("\u0394" + v.symbolic_form);
             if (odp3 != oparameters.end()) {
               return odp3;
@@ -2169,7 +2169,7 @@ namespace mfront {
         const auto vname = pp->first.substr(1);
         if (!vname.empty()) {
           const auto predicate = [&vname](const VariableDescription& v) {
-            return (v.name == vname);
+            return (v.name == vname) || (v.getExternalName() == vname);
           };
           if (std::find_if(this->externalStateVariables.begin(),
                            this->externalStateVariables.end(),
