@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1127: [tfel-system] rmdir following symbolic links, mkdir, binary_read, ThreadPool, ThreadedTaskResult, pipes and ELF symbols
+
+For more details, see <https://github.com/thelfer/tfel/issues/1127>
+
 ## Issue 1121: [tfel-material] Hill tensors, orientation averages, Plate convention and altered stiffness tensors in axisymmetrical generalised plane stress
 
 For more details, see <https://github.com/thelfer/tfel/issues/1121>
