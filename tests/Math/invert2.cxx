@@ -88,6 +88,10 @@ struct TinyMatrixInvertTest3D final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(m(2, 0)) < eps);
     TFEL_TESTS_ASSERT(std::abs(m(2, 1) + 3) < eps);
     TFEL_TESTS_ASSERT(std::abs(m(2, 2) - 1) < eps);
+    // first pivot below the given threshold
+    tmatrix<3, 3, T> m2 = {T(1e-8), 1, 2, 0, 1, 2, 0, 3, 1};
+    TFEL_TESTS_CHECK_THROW((TinyMatrixInvert<3, T>::exe(m2, T(1e-6))),
+                           LUException);
     return this->result;
   }  // end of execute
 
