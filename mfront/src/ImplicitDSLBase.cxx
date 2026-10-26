@@ -777,7 +777,7 @@ namespace mfront {
     if (d.isIntegrationVariableIncrementName(var)) {
       const auto v = var.substr(1);
       if (this->mb.hasAttribute(h, v + "_normalisation_factor")) {
-        const auto& s = d.getStateVariableDescription(v);
+        const auto& s = d.getIntegrationVariableDescription(v);
         const auto& nf =
             this->mb.getAttribute<std::string>(h, v + "_normalisation_factor");
         if (s.arraySize == 1u) {
@@ -807,7 +807,7 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     if (d.isIntegrationVariableIncrementName(var)) {
       if (this->mb.hasAttribute(h, var.substr(1) + "_normalisation_factor")) {
-        const auto& s = d.getStateVariableDescription(var.substr(1));
+        const auto& s = d.getIntegrationVariableDescription(var.substr(1));
         const auto& nf = this->mb.getAttribute<std::string>(
             h, var.substr(1) + "_normalisation_factor");
         if (s.arraySize == 1u) {
