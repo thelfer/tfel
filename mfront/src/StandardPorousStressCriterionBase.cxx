@@ -48,6 +48,7 @@ namespace mfront::bbrick {
       const auto n = StressCriterion::getVariableId(mp.name, id, r);
       if (d.count(mp.name) == 0) {
         this->initializeMissingMaterialProperty(mp.name);
+        continue;
       }
       auto mpd =
           getBehaviourDescriptionMaterialProperty(dsl, mp.name, d.at(mp.name));
