@@ -415,10 +415,12 @@ namespace tfel::system {
         o.emplace_back(p->d_name);
       }
     }
+    closedir(dir);
     for (const auto& fb : o) {
       struct stat pInfos;
       const auto f = d + "/" + fb;
-      if (::stat(f.c_str(), &pInfos) == -1) {
+      // a symbolic link is removed, never followed
+      if (::lstat(f.c_str(), &pInfos) == -1) {
         systemCall::throwSystemError(
             "systemCall::rmdir: "
             "can't stat '" +
@@ -431,8 +433,10 @@ namespace tfel::system {
         systemCall::unlink(f);
       }
     }
-    closedir(dir);
-    ::rmdir(d.c_str());
+    if (::rmdir(d.c_str()) != 0) {
+      systemCall::throwSystemError(
+          "systemCall::rmdir: can't remove directory " + d, errno);
+    }
 #endif
   }  // end of systemCall::rmdir
 
