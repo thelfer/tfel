@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1167: [tfel-utilities] CxxTokenizer, Data arrays, reserved keywords, systemCall::copy, wfstream, TFEL/System messages and tfel-check end of file and empty_output
+
+For more details, see <https://github.com/thelfer/tfel/issues/1167>
+
 ## Issue 1157: [mfront] castem, aster, abaqus, ansys and abaqusexplicit interfaces: LogarithmicStrain1D, sub-stepping, 2D finite strain fallbacks, tangent operator layouts and numerical comparison
 
 For more details, see <https://github.com/thelfer/tfel/issues/1157>
