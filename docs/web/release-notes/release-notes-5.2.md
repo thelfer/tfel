@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1159: [tfel-material] Finite strain tangent operators, logarithmic strain handler, Hosford/Barlat with quantities, bounds checks, Gauss-Kronrod, broyden, parser and LU messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1159>
+
 ## Issue 1151: [mfront] Generated code: integration variable derivatives, tangent operator blocks, generic gradients, relocation model, brick arrays, MultipleIsotropicMisesFlows, behaviour variables and ℝ₊ bounds
 
 For more details, see <https://github.com/thelfer/tfel/issues/1151>
