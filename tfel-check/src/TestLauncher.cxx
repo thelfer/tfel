@@ -464,6 +464,7 @@ namespace tfel::check {
   }  // end of treatCommand
 
   void TestLauncher::treatTestType() {
+    this->checkNotEndOfFile("TestLauncher::treatTestType");
     if (this->current->value == "Absolute") {
       this->comparison.reset(new AbsoluteComparison());
     } else if (this->current->value == "Relative") {
@@ -522,6 +523,7 @@ namespace tfel::check {
 
   void TestLauncher::treatTest() {
     auto getColumn = [this] {
+      this->checkNotEndOfFile("TestLauncher::treatTest");
       // fetching the column's name to compare
       if ((this->current->flag == tfel::utilities::Token::String) ||
           (this->current->flag == tfel::utilities::Token::Char)) {
@@ -596,6 +598,7 @@ namespace tfel::check {
         test->setFileA(f1);
         test->setFileB(f2);
         this->comparisons.push_back(*test);
+        this->checkNotEndOfFile("TestLauncher::treatTest");
       }
     }
     this->readSpecifiedToken("TestLauncher::treatTest", ";");
