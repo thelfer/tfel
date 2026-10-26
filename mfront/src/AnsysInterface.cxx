@@ -1559,11 +1559,13 @@ namespace mfront {
       out << "std::swap(STRESS[4],STRESS[5]);\n"
           << "tfel::math::ST2toST2View<3u,AnsysReal> Dt(DDSDDE);\n"
           << "Dt=D;\n"
-          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n"
+          << "AnsysTangentOperator<AnsysReal>::transpose(Dt);\n";
     } else {
       out << "tfel::math::ST2toST2View<2u,AnsysReal> Dt(DDSDDE);\n"
           << "Dt=D;\n"
-          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n"
+          << "AnsysTangentOperator<AnsysReal>::transpose(Dt);\n";
     }
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";
