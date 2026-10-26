@@ -440,13 +440,13 @@ exist to:
 - guarantee some desirable properties such as energetic consistency
   and objectivity.
 
-Through the `@ANSYSFiniteStrainStrategy`, the user can select one of
+Through the `@AnsysFiniteStrainStrategy`, the user can select one of
 various finite strain strategies supported by `MFront`, which are
 described in this paragraph.
 
 > **Note**
 >
-> The usage of the `@ANSYSFiniteStrainStrategy` keyword is mostly
+> The usage of the `@AnsysFiniteStrainStrategy` keyword is mostly
 > deprecated since `MFront 3.1`: see the `@StrainMeasure` keyword.
 
 ### The `Native` finite strain strategy
@@ -463,7 +463,7 @@ one code to another.
 ### Recommended finite strain strategies
 
 Two other finite strain strategies are available in `MFront` for the
-`ansys` interface (see the `@ANSYSFiniteStrainStrategy` keyword):
+`ansys` interface (see the `@AnsysFiniteStrainStrategy` keyword):
 
 - `FiniteRotationSmallStrain`: this finite strain strategy is fully
   described in @doghri_mechanics_2000,@edf_loi_2013

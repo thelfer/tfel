@@ -49,13 +49,13 @@ booleans called `statuses`.
 
 @LocalVariable bool statuses[2];
 
-@Prediction{
+@Predictor{
   // initial status based of the elastic prediction
   auto sigel = computeElasticPrediction();
   for(unsigned short i=0;i!=2;++i){
 	statuses[i] = ...
   }
-} // end of @Prediction
+} // end of @Predictor
 
 @Integrator{
   for(unsigned short i=0;i!=2;++i){
@@ -130,9 +130,9 @@ name(s) of the variable(s) declared, separated by commas.
 
 ~~~~{.cpp}
 // scalar auxiliary state variable
-@AuxiliaryStateVariables strain p;
+@AuxiliaryStateVariable strain p;
 // symmetric tensors auxiliary state variable
-@AuxiliaryStateVariables StrainStensor evp,evp2;
+@AuxiliaryStateVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@AxialGrowth` keyword
@@ -174,7 +174,7 @@ given by:
 
 ~~~~ {#AxialGrowth .cpp}
 // axial growth defined by an external model
-@AxialGrowth 'M5AxialGrowth.mfront';
+@AxialGrowth "M5AxialGrowth.mfront";
 ~~~~
 
 ~~~~ {#AxialGrowth2 .cpp}
@@ -1073,9 +1073,9 @@ size after the integration variable name.
 
 ~~~~{.cpp}
 // scalar integration variable
-@IntegrationVariables strain p;
+@IntegrationVariable strain p;
 // symmetric tensors integration variable
-@IntegrationVariables StrainStensor evp,evp2;
+@IntegrationVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@Integrator` keyword
@@ -1462,7 +1462,7 @@ integer.
 ## The iterMax parameter
 
 The `@MaximumNumberOfIterations` keyword defines the default value for
-the `itermax` parameter. This parameter can be changed at runtime.
+the `iterMax` parameter. This parameter can be changed at runtime.
 
 ## Example
 
@@ -1903,7 +1903,7 @@ third direction in \(2D\) hypotheses.
 
 ~~~~ {#Relocation .cpp}
 // relocation defined by an external model
-@Relocation 'UO2Relocation.mfront';
+@Relocation "UO2Relocation.mfront";
 ~~~~
 
 ~~~~ {#Relocation2 .cpp}
@@ -1930,7 +1930,7 @@ behaviour (see `@IsotropicElasticBehaviour` to change this in the case
 of an orthotropic behaviour).
 
 ~~~~{.cpp}
-@RequireStiffnessTensor true;
+@RequireStiffnessTensor;
 ~~~~
 
 
@@ -2192,9 +2192,9 @@ respectively.
 
 ~~~~{.cpp}
 // scalar state variable
-@StateVariables strain p;
+@StateVariable strain p;
 // symmetric tensors state variable
-@StateVariables StrainStensor evp,evp2;
+@StateVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@StaticVar` keyword
@@ -2261,7 +2261,7 @@ material frame.
 ~~~~
 
 ~~~~{#StrainMeasure2 .cpp}
-@StrainMeasure{
+@StrainMeasure Hencky{
   save_strain: true,
   save_stress: true
 };
@@ -2465,7 +2465,7 @@ context) which may result in some gain in time and memory space.
 ## Example
 
 ~~~~{.cpp}
-@UsableInPurelyImplicitResolution true;
+@UsableInPurelyImplicitResolution;
 ~~~~
 
 

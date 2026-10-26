@@ -588,7 +588,7 @@ follows:
 ~~~~
 
 The following lambda function (this function is local to the
-`@Integration` code block) will be useful later to computed some of the
+`@Integrator` code block) will be useful later to computed some of the
 derivatives efficiently:
 
 ~~~~{.cxx}

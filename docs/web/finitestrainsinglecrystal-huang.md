@@ -19,7 +19,7 @@ Such an example illustrates:
 
 - The usage of `FiniteStrainSingleCrystal` brick (see
   [this page](finitestrainsinglecrystal.html)).
-- The usage of the `@CristalStructure` and `@SlidingSystem`
+- The usage of the `@CrystalStructure` and `@SlidingSystem`
   keywords. See [this page](singlecrystal.html) for details.
 
 The whole implementation is available

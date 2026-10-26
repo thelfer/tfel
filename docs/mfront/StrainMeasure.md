@@ -40,7 +40,7 @@ material frame.
 ~~~~
 
 ~~~~{#StrainMeasure2 .cpp}
-@StrainMeasure{
+@StrainMeasure Hencky{
   save_strain: true,
   save_stress: true
 };

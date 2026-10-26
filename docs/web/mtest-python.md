@@ -206,7 +206,7 @@ m.setMaterialProperty('NormalStiffness',2.e16)
 m.setMaterialProperty('TangentialStiffness',2.e16)
 m.setMaterialProperty('MassDensity',0.)
 m.setMaterialProperty('NormalThermalExpansion',0.)
-m.setMaterialProperty('MaximumStress',200.e6)
+m.setMaterialProperty('UltimateTensileStrength',200.e6)
 m.setMaterialProperty('MaximumOpeningDisplacement',3.e-6)
 
 m.setExternalStateVariable("Temperature",293.15)
@@ -632,8 +632,8 @@ t.setAxialForceEvolution({0.:0.,1.e-6 :Fz,3600:Fz})
 t.setBehaviour('castem','../../src/libUmatBehaviour.so','umatnorton')
 t.setMaterialProperty('YoungModulus',150e9)
 t.setMaterialProperty('PoissonRatio',0.3)
-t.setMaterialProperty('A',8.e-67)
-t.setMaterialProperty('E',8.2)
+t.setMaterialProperty('NortonCoefficient',8.e-67)
+t.setMaterialProperty('NortonExponent',8.2)
 
 # temperature (mandatory)
 t.setExternalStateVariable('Temperature',293.15)
@@ -660,9 +660,9 @@ print(str(times[0])+" "+str(p))
 
 # loop over the time steps
 for i in range(0,len(times)-1):
-	# search the mechanical equilibrium at the end of the time step
-	t.execute(s,wk,times[i],times[i+1])
-	# write in the output file
+    # search the mechanical equilibrium at the end of the time step
+    t.execute(s,wk,times[i],times[i+1])
+    # write in the output file
     t.printOutput(times[i+1],s)
     # iterate of over the integration points
     p = max([cs.getInternalStateVariableValue("EquivalentViscoplasticStrain")

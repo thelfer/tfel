@@ -1310,7 +1310,7 @@ The following code can be added in a block defining an inelastic flow:
       C : 250e7,
       D : 100,
       m : 2,
-      w : 0.6,
+      w : 0.6
     }
 ~~~~
 
@@ -1335,6 +1335,9 @@ same structure as the Hill tensors and are defined by \(6\) components
 (see [this page](tensors.html) for details).
 
 The `f` and `a0` parameters are optional and defaults to \(1\).
+
+This kinematic hardening rule requires the behaviour to be orthotropic
+(see the `@OrthotropicBehaviour` keyword).
 
 #### Example
 
