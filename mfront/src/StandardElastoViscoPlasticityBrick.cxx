@@ -282,10 +282,10 @@ namespace mfront {
       }
       return ds.get<tfel::utilities::DataStructure>();
     };  // end of getDataStructure
-    if (!e.is<DataMap>()) {
+    if ((!e.empty()) && (!e.is<DataMap>())) {
       raise("invalid data type for entry 'porosity_evolution'");
     }
-    const auto ed = e.get<DataMap>();
+    const auto ed = e.empty() ? DataMap{} : e.get<DataMap>();
     if (ed.count("save_individual_porosity_increase") != 0) {
       const auto b = ed.at("save_individual_porosity_increase");
       if (!b.is<bool>()) {

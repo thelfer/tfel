@@ -1189,7 +1189,7 @@ growth:
 >       a : 1e1       // tension cuff-off parameter
 >     },
 >     isotropic_hardening : "Linear" {R0 : "0"}
->   }
+>   },
 >   porosity_evolution: {}
 > };
 > ~~~~~~~~

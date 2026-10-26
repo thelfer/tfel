@@ -30,6 +30,27 @@
 
 namespace mfront::bbrick {
 
+  static void declarePorosityGrowthVariables(
+      BehaviourDescription& bd,
+      const std::string& id,
+      const bool save_porosity_increase) {
+    constexpr auto uh =
+        tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    addLocalVariable(bd, "real", "trace_n" + id);
+    if (save_porosity_increase) {
+      addLocalVariable(bd, "real", "dfg" + id);
+      VariableDescription fg("real", "fg" + id, 1u, 0u);
+      const auto& g =
+          tfel::glossary::Glossary::PorosityIncreaseDueToInelasticFlow;
+      if (id.empty()) {
+        fg.setGlossaryName(g);
+      } else {
+        fg.setEntryName(g.getKey() + id);
+      }
+      bd.addAuxiliaryStateVariable(uh, fg);
+    }
+  }  // end of declarePorosityGrowthVariables
+
   std::vector<OptionDescription> InelasticFlowBase::getOptions() const {
     std::vector<OptionDescription> opts;
     opts.emplace_back(
@@ -387,19 +408,7 @@ namespace mfront::bbrick {
       }
     }
     if (this->contributesToPorosityGrowth()) {
-      addLocalVariable(bd, "real", "trace_n" + id);
-      if (this->save_porosity_increase) {
-        addLocalVariable(bd, "real", "dfg" + id);
-        VariableDescription fg("real", "fg" + id, 1u, 0u);
-        const auto& g =
-            tfel::glossary::Glossary::PorosityIncreaseDueToInelasticFlow;
-        if (id.empty()) {
-          fg.setGlossaryName(g);
-        } else {
-          fg.setEntryName(g.getKey() + id);
-        }
-        bd.addAuxiliaryStateVariable(uh, fg);
-      }
+      declarePorosityGrowthVariables(bd, id, this->save_porosity_increase);
     }
     if (this->save_stress_criterion) {
       const auto n = "mfront_" + this->stress_criterion_external_name;
@@ -462,9 +471,17 @@ namespace mfront::bbrick {
   }  // end of contributesToPorosityGrowth
 
   void InelasticFlowBase::completeVariableDeclaration(
-      BehaviourDescription&,
+      BehaviourDescription& bd,
       const AbstractBehaviourDSL&,
-      const std::string&) const {}  // end of completeVariableDeclaration
+      const std::string& id) const {
+    // the flows coupled with the porosity evolution are treated in
+    // `initialize`. The other flows contribute to the porosity growth if the
+    // porosity evolution is handled by the brick, which is not known there.
+    if ((this->contributesToPorosityGrowth()) &&
+        (!this->isCoupledWithPorosityEvolution())) {
+      declarePorosityGrowthVariables(bd, id, this->save_porosity_increase);
+    }
+  }  // end of completeVariableDeclaration
 
   bool InelasticFlowBase::requiresActivationState() const {
     return !this->ihrs.empty();
@@ -635,7 +652,7 @@ namespace mfront::bbrick {
       ib.code += "}\n";
       ib.code += "this->np" + id + " = n" + id + ";\n";
     }
-    if (this->isCoupledWithPorosityEvolution()) {
+    if (this->contributesToPorosityGrowth()) {
       ib.code += "this->trace_n" + id + " = trace(n" + id + ");\n";
     }
     // elasticity
@@ -883,8 +900,11 @@ namespace mfront::bbrick {
         ib.code += "df" + f.name + "_dd" + f.name;
         ib.code += " += 2 * theta * (1 - " + f_ + ") * (this->dp" + id +
                    ") * (this->trace_n" + id + ")";
-        ib.code += "  -     theta * power<2>(1 - " + f_ + ")* (this->dp" + id +
-                   ") * (Stensor::Id() | dn" + id + "_d" + f.name + ");\n";
+        if (this->isCoupledWithPorosityEvolution()) {
+          ib.code += "  -     theta * power<2>(1 - " + f_ + ")* (this->dp" +
+                     id + ") * (Stensor::Id() | dn" + id + "_d" + f.name + ")";
+        }
+        ib.code += ";\n";
         // derivatives with respect to stress
         for (const auto& dsig : sp.getStressDerivatives(bd)) {
           const auto& dsig_ddv = std::get<0>(dsig);
@@ -918,8 +938,11 @@ namespace mfront::bbrick {
         ib.code += "df" + f.name + "_dd" + f.name;
         ib.code +=
             " += theta *(this->dp" + id + ") * (this->trace_n" + id + ")";
-        ib.code += "  - theta * (1 - " + f_ + ")* (this->dp" + id +
-                   ") * (Stensor::Id() | dn" + id + "_d" + f.name + ");\n";
+        if (this->isCoupledWithPorosityEvolution()) {
+          ib.code += "  - theta * (1 - " + f_ + ")* (this->dp" + id +
+                     ") * (Stensor::Id() | dn" + id + "_d" + f.name + ")";
+        }
+        ib.code += ";\n";
         // derivatives with respect to stress
         for (const auto& dsig : sp.getStressDerivatives(bd)) {
           const auto& dsig_ddv = std::get<0>(dsig);
