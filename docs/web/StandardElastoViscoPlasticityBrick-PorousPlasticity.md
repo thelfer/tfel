@@ -1139,7 +1139,9 @@ growth:
     poisson_ratio : 0.3
   },
   inelastic_flow : "Plastic" {
-    criterion : "Gurson1975" {},
+    criterion : "GursonTvergaardNeedleman1982" {
+      f_c : 0.01, f_r : 0.1, q_1 : 2, q_2 : 1, q_3 : 4
+    },
     isotropic_hardening : "Linear" {R0 : "0"}
   }
 };
@@ -1223,7 +1225,9 @@ ss.setGlossaryName("SolidSwelling");
     poisson_ratio : 0.3
   },
   inelastic_flow : "Plastic" {
-    criterion : "Gurson1975" {},
+    criterion : "GursonTvergaardNeedleman1982" {
+      f_c : 0.01, f_r : 0.1, q_1 : 2, q_2 : 1, q_3 : 4
+    },
     isotropic_hardening : "Linear" {R0 : "0"}
   }
 };
@@ -1235,7 +1239,7 @@ ss.setGlossaryName("SolidSwelling");
   // This shall only been done after the convergence of the
   // staggered scheme has converged.
   if(compute_standard_system_of_implicit_equations){
-    ff -= ;
+    ff -= ...;
   }
 }
 
@@ -1317,14 +1321,17 @@ as follows:
 ~~~~
 
 However, this behaviour can be overloaded in every inelastic flow
-section and every nucleation model by setting the
-`save_porosity_increase` boolean variable.
+section by setting the `save_porosity_increase` boolean variable and in
+every nucleation model by setting the
+`save_individual_porosity_increase` boolean variable.
 
 For example, one may use the following declaration:
 
 ~~~~{.cxx}
-  inelastic_flow : "Plasticity" {
-    criterion : "Gurson1975",
+  inelastic_flow : "Plastic" {
+    criterion : "GursonTvergaardNeedleman1982" {
+      f_c : 0.01, f_r : 0.1, q_1 : 2, q_2 : 1, q_3 : 4
+    },
     isotropic_hardening : "Voce" {R0 : 200, Rinf : 100, b : 20},
     save_porosity_increase : true
   }
@@ -1453,16 +1460,18 @@ parameters, and $\sigma_I$ is the maximum positive principal stress.
 >    },
 >    isotropic_hardening : "Linear" {R0 : 274},
 >    isotropic_hardening : "Voce" {R0 : 0, Rinf : 85, b : 17},
->    isotropic_hardening : "Voce" {R0 : 0, Rinf : 17, b : 262},
->    nucleation_model : "Power-based" {
->      An0 : 2.92,
->      s1_n : 500,
->      p_n : 0.0321,
->      s1_max : 700,
->      fg_max : 0.0215,
->      ng : 2
+>    isotropic_hardening : "Voce" {R0 : 0, Rinf : 17, b : 262}
+>  },
+>  porosity_evolution : {
+>    nucleation_model : "PowerLaw (stress)" {
+>      fn : 2.92,
+>      sn : 500,
+>      m : 2,
+>      pmin : 0.0321,
+>      fmax : 0.0215
 >    }
 >  }
+> };
 > ~~~~
 
 The numerical response of NT specimens (notch radii are noted as : NT10,
@@ -1530,7 +1539,7 @@ equations is:
 >    nucleation_model : "PowerLaw (strain)" {
 >       fn : 0.038, en : 0.5, m : 0., fmax : 0.023}
 >  }
->}
+>};
 > ~~~~
 
 Simulations are performed with `Cast3M` finite element code, using
