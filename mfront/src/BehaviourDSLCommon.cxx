@@ -1934,6 +1934,7 @@ namespace mfront {
       while (po != poe) {
         const auto& opt = *po;
         if (opt.flag != Token::Standard) {
+          ++po;
           continue;
         }
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
@@ -1951,8 +1952,8 @@ namespace mfront {
       }
       if (ktype.empty()) {
         std::ostringstream msg;
-        msg << "Undefined tangent operator type '" + ktype +
-                   "'. Valid tangent operator type are :\n";
+        msg << "no valid tangent operator type given. "
+            << "Valid tangent operator types are:\n";
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
           msg << "- "
               << convertFiniteStrainBehaviourTangentOperatorFlagToString(to)
