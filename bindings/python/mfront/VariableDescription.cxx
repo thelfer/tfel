@@ -69,9 +69,11 @@ void declareVariableDescription(pybind11::module_& m) {
            pybind11::arg("i"),
            "Return true if bounds has been specified for this variable\n"
            "i: position")
-      .def("getBounds", getBounds_1, pybind11::return_value_policy::reference,
+      .def("getBounds", getBounds_1,
+           pybind11::return_value_policy::reference_internal,
            "Return the bounds of this variable")
-      .def("getBounds", getBounds_2, pybind11::return_value_policy::reference,
+      .def("getBounds", getBounds_2,
+           pybind11::return_value_policy::reference_internal,
            pybind11::arg("i"),
            "Return the bounds of this variable\n"
            "i: position")
@@ -91,10 +93,10 @@ void declareVariableDescription(pybind11::module_& m) {
            "Return true if physical bounds has been specified for this variable\n"
            "i: position")
       .def("getPhysicalBounds", getPhysicalBounds_1,
-           pybind11::return_value_policy::reference,
+           pybind11::return_value_policy::reference_internal,
            "Return the physical bounds of this variable")
       .def("getPhysicalBounds", getPhysicalBounds_2,
-           pybind11::return_value_policy::reference,
+           pybind11::return_value_policy::reference_internal,
            pybind11::arg("i"),
            "Return the physical bounds of this variable\n"
            "i: position")
