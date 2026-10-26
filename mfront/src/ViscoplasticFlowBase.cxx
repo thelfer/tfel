@@ -32,7 +32,7 @@ namespace mfront::bbrick {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     InelasticFlowBase::initialize(bd, dsl, id, d);
     if (!this->equivalent_strain_external_name.empty()) {
-      addStateVariable(bd, "strain", "p",
+      addStateVariable(bd, "strain", "p" + id,
                        this->equivalent_strain_external_name);
     } else {
       if (id.empty()) {
@@ -79,7 +79,7 @@ namespace mfront::bbrick {
       }
       if (this->describesStrainHardeningExplicitly()) {
         c += "dfp" + id + "_ddp" + id + " -= ";
-        c += "(this->dt) * dvp" + id + "_dp" + id + ";\n";
+        c += "(this->dt) * (this->theta) * dvp" + id + "_dp" + id + ";\n";
       }
       auto kid = decltype(khrs.size()){};
       for (const auto& khr : khrs) {
