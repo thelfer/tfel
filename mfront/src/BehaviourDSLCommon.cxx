@@ -2911,6 +2911,12 @@ namespace mfront {
   }  // end of treatRequireStiffnessTensor
 
   void BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor() {
+    if (this->mb.areThermalExpansionCoefficientsDefined()) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor",
+          "@RequireThermalExpansionCoefficientTensor can not be used along "
+          "with @ComputeThermalExpansion");
+    }
     this->readSpecifiedToken(
         "BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor",
         ";");
