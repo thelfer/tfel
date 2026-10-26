@@ -1433,7 +1433,7 @@ namespace mfront {
          << "::integrate() : convergence after \" "
          << "<< this->iter << \" iterations\\n\\n\";\n"
          << "}\n"
-         << "//! \brief method called when the resolution fails\n"
+         << "//! \\brief method called when the resolution fails\n"
          << "void reportFailure() const {\n"
          << "std::cout << \"" << this->bd.getClassName()
          << "::integrate() : no convergence after \" "
@@ -1451,7 +1451,8 @@ namespace mfront {
          << "two\\n\\n\";\n"
          << "}\n"
          << "/*!\n"
-         << " * \brief method called when the computation of a new correction\n"
+         << " * \\brief method called when the computation of a new "
+            "correction\n"
          << " * failed.\n"
          << " */\n"
          << "void reportNewCorrectionComputationFailure() const {\n"
