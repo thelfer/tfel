@@ -95,6 +95,12 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT((std::abs(vp3(0) - T(4.16709379934921)) < prec) ||
                       (std::abs(vp3(1) - T(4.16709379934921)) < prec) ||
                       (std::abs(vp3(2) - T(4.16709379934921)) < prec));
+    // the determinant of the deviator is null
+    const auto vp4 = stensor{T(1), T(2), T(3), T(0), T(0), T(0)}
+                         .template computeEigenValues<es>(stensor::ASCENDING);
+    TFEL_TESTS_ASSERT(std::abs(vp4(0) - T(1)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp4(1) - T(2)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp4(2) - T(3)) < prec);
   }
   template <typename T, tfel::math::stensor_common::EigenSolver es>
   void test3() {
@@ -124,6 +130,15 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(vp3[0] == 1);
     TFEL_TESTS_STATIC_ASSERT(vp3[1] == 0);
     TFEL_TESTS_STATIC_ASSERT(vp3[2] == -1);
+    // double eigenvalue
+    constexpr auto vp4 =
+        tfel::math::sortEigenValues(tfel::math::tvector<3u, int>{0, 0, 1},
+                                    tfel::math::stensor_common::ASCENDING);
+    constexpr auto vp5 =
+        tfel::math::sortEigenValues(tfel::math::tvector<3u, int>{1, 1, 0},
+                                    tfel::math::stensor_common::DESCENDING);
+    TFEL_TESTS_STATIC_ASSERT(vp4[2] == 1);
+    TFEL_TESTS_STATIC_ASSERT(vp5[2] == 0);
   }
 };
 

@@ -334,7 +334,8 @@ namespace tfel::math {
           (C(5, 4) * b(5) + C(4, 4) * b(4)) * one_half + C(2, 4) * b(2);
       this->v[17u] =
           (C(5, 5) * b(5) + C(4, 5) * b(4)) * one_half + C(2, 5) * b(2);
-      this->v[18u] = (C(4, 0) * b(5) + C(0, 0) * b(3) + C(3, 0) * b(1)) * icste;
+      this->v[18u] = (C(4, 0) * b(5)) * one_half +
+                     (C(0, 0) * b(3) + C(3, 0) * b(1)) * icste;
       this->v[19u] = (C(4, 1) * b(5)) * one_half +
                      (C(0, 1) * b(3) + C(3, 1) * b(1)) * icste;
       this->v[20u] = (C(4, 2) * b(5)) * one_half +

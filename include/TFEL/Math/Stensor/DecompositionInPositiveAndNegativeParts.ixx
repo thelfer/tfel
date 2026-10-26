@@ -697,7 +697,7 @@ namespace tfel::math {
           np += stensor<3u, NumType>(NumType(0));
         } else {
           dpp += st2tost2<3u, real>(real(0));
-          dnp += (n2 ^ n2) + vp(2) / (vp(2) - vp(1)) * (n02 ^ n02) +
+          dnp += (n2 ^ n2) + vp(2) / (vp(2) - vp(0)) * (n02 ^ n02) +
                  vp(2) / (vp(2) - vp(1)) * (n12 ^ n12);
           pp += stensor<3u, NumType>(NumType(0));
           np += vp(2) * n2;
