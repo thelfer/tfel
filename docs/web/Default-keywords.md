@@ -58,9 +58,9 @@ name(s) of the variable(s) declared, separated by commas.
 
 ~~~~{.cpp}
 // scalar auxiliary state variable
-@AuxiliaryStateVariables strain p;
+@AuxiliaryStateVariable strain p;
 // symmetric tensors auxiliary state variable
-@AuxiliaryStateVariables StrainStensor evp,evp2;
+@AuxiliaryStateVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@AxialGrowth` keyword
@@ -102,7 +102,7 @@ given by:
 
 ~~~~ {#AxialGrowth .cpp}
 // axial growth defined by an external model
-@AxialGrowth 'M5AxialGrowth.mfront';
+@AxialGrowth "M5AxialGrowth.mfront";
 ~~~~
 
 ~~~~ {#AxialGrowth2 .cpp}
@@ -1478,7 +1478,7 @@ third direction in \(2D\) hypotheses.
 
 ~~~~ {#Relocation .cpp}
 // relocation defined by an external model
-@Relocation 'UO2Relocation.mfront';
+@Relocation "UO2Relocation.mfront";
 ~~~~
 
 ~~~~ {#Relocation2 .cpp}
@@ -1505,7 +1505,7 @@ behaviour (see `@IsotropicElasticBehaviour` to change this in the case
 of an orthotropic behaviour).
 
 ~~~~{.cpp}
-@RequireStiffnessTensor true;
+@RequireStiffnessTensor;
 ~~~~
 
 
@@ -1767,9 +1767,9 @@ respectively.
 
 ~~~~{.cpp}
 // scalar state variable
-@StateVariables strain p;
+@StateVariable strain p;
 // symmetric tensors state variable
-@StateVariables StrainStensor evp,evp2;
+@StateVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@StaticVar` keyword
@@ -1836,7 +1836,7 @@ material frame.
 ~~~~
 
 ~~~~{#StrainMeasure2 .cpp}
-@StrainMeasure{
+@StrainMeasure Hencky{
   save_strain: true,
   save_stress: true
 };

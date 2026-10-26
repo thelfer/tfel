@@ -43,7 +43,7 @@ third direction in \(2D\) hypotheses.
 
 ~~~~ {#Relocation .cpp}
 // relocation defined by an external model
-@Relocation 'UO2Relocation.mfront';
+@Relocation "UO2Relocation.mfront";
 ~~~~
 
 ~~~~ {#Relocation2 .cpp}

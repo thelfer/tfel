@@ -620,7 +620,7 @@ constante. Esta instrucción es sinónima de la instrucción
 `@StaticVariable` para una variable real.
 
 ~~~~{.cpp}
-@Constant A 1.234e56;
+@Constant A = 1.234e56;
 ~~~~
 
 Modelos puntuales simples
@@ -744,7 +744,7 @@ propiedades de material extra y serán usadas por la interfaz antes de la
 integración del comportamiento.
 
 ~~~~{.cpp}
-@RequireStiffnessTensor true;
+@RequireStiffnessTensor;
 ~~~~
 
 `@RequireThermalExpansionCoefficientTensor` requiere que el código
