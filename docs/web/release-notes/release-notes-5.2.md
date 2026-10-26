@@ -705,6 +705,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1159>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1157>
 
+## Issue 1155: [mfront] DSLs and generated code: modelling hypotheses intersection, braceless assignments, output operators, brick symmetries, code blocks, error messages and debug comments
+
+For more details, see <https://github.com/thelfer/tfel/issues/1155>
+
 ## Issue 1153: [tfel-math] Quantities and views: qt_ref assignment, change_basis, positive parts, runtime matrix views, arrays of views, tmatrix products, FSES NaN, Hashin-Shtrikman shear bounds, Anderson weights
 
 For more details, see <https://github.com/thelfer/tfel/issues/1153>

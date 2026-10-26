@@ -339,6 +339,10 @@ namespace mfront {
         bd.setParameterDefaultValue(uh, p.name,
                                     md.overriding_parameters.at(p.name));
       } else {
+        tfel::raise_if(!p.hasAttribute(VariableDescription::defaultValue),
+                       "convertToBehaviourDescription: "
+                       "no default value for parameter '" +
+                           p.name + "'");
         const auto v =
             p.getAttribute<double>(VariableDescription::defaultValue);
         bd.setParameterDefaultValue(uh, p.name, v);

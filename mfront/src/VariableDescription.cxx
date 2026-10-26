@@ -210,7 +210,7 @@ namespace mfront {
     }
     throw_if((!b1.hasUpperBound()) && (b2.hasUpperBound()),
              "standard bounds for variable '" + n +
-                 "' has no lower bounds "
+                 "' has no upper bounds "
                  "whereas the physical bounds has. This is inconsistent.");
     if (b1.hasUpperBound()) {
       throw_if(b1.upperBound > b2.upperBound, "standard bounds for variable '" +
@@ -511,7 +511,7 @@ namespace mfront {
           auto& os = getLogStream();
           os << "checkAndCompletePhysicalBoundsDeclaration: "
              << "upper bound for variable '" << v.name
-             << "' is greater than the lower bound of the associated glossary "
+             << "' is greater than the upper bound of the associated glossary "
              << "entry (" << b1 << " > " << b2 << ")";
         }
       }
