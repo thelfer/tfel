@@ -155,6 +155,8 @@ namespace tfel::math {
       std::string msg("Evaluator::checkParameterNumber: ");
       if (p == 0) {
         msg += "no parameter given";
+      } else if (p < n) {
+        msg += "too few parameters given";
       } else {
         msg += "too many parameters given";
       }
@@ -167,9 +169,11 @@ namespace tfel::math {
     if (p != n) {
       std::string msg("Evaluator::checkVariableNumber: ");
       if (p == 0) {
-        msg += "no parameter given";
+        msg += "no argument given";
+      } else if (p < n) {
+        msg += "too few arguments given";
       } else {
-        msg += "too many parameters given";
+        msg += "too many arguments given";
       }
       raise(msg);
     }
@@ -717,7 +721,7 @@ namespace tfel::math {
       }
       if (*p == ")") {
         raise_if(openedParenthesis == 0,
-                 "Analyser::readNextGroup: "
+                 "Evaluator::search: "
                  "unbalanced parenthesis");
         --openedParenthesis;
       }
@@ -762,12 +766,21 @@ namespace tfel::math {
       }
     }
     if (*pb == "(") {
-      --pbe;
-      Evaluator::checkNotEndOfExpression("Evaluator::treatLogicalExpression",
-                                         pb, pbe);
-      throw_if(*pbe != ")", "unmatched parenthesis");
-      ++pb;
-      return this->treatLogicalExpression(pb, pbe, b);
+      auto pc = pb;
+      unsigned short opened = 0;
+      for (; pc != pbe; ++pc) {
+        if (*pc == "(") {
+          ++opened;
+        } else if (*pc == ")") {
+          if (--opened == 0) {
+            break;
+          }
+        }
+      }
+      throw_if(pc == pbe, "unmatched parenthesis");
+      if (pc + 1 == pbe) {
+        return this->treatLogicalExpression(pb + 1, pc, b);
+      }
     }
     if (*pb == "!") {
       ++pb;
@@ -791,7 +804,7 @@ namespace tfel::math {
       }
       if (*p == ")") {
         raise_if(openedParenthesis == 0,
-                 "Analyser::readNextGroup: "
+                 "Evaluator::searchComparisonOperator: "
                  "unbalanced parenthesis");
         --openedParenthesis;
       }
@@ -870,7 +883,7 @@ namespace tfel::math {
       std::ostringstream msg;
       msg << "Evaluator::treatLogicalExpression : "
           << "no left part to logical operator (error while parsing '";
-      std::copy(p, pe, std::ostream_iterator<std::string>(msg, " "));
+      std::copy(pb, pe, std::ostream_iterator<std::string>(msg, " "));
       msg << "')";
       raise(msg.str());
     }

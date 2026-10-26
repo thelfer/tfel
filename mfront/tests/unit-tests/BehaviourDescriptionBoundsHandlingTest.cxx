@@ -87,6 +87,8 @@ struct BehaviourDescriptionBoundsHandlingTest final
       }
     }
     TFEL_TESTS_CHECK_THROW(bd.setBounds(h, "C", 2, b2), std::exception);
+    // invalid index
+    TFEL_TESTS_CHECK_THROW(bd.setBounds(h, "C", 8, b1), std::exception);
   }
   // physical bounds checks
   void test2() {
@@ -134,6 +136,8 @@ struct BehaviourDescriptionBoundsHandlingTest final
       }
     }
     TFEL_TESTS_CHECK_THROW(bd.setPhysicalBounds(h, "C", 2, b2), std::exception);
+    // invalid index
+    TFEL_TESTS_CHECK_THROW(bd.setPhysicalBounds(h, "C", 8, b1), std::exception);
   }
   // bounds and physical bounds compatibility checks
   void test3() {
@@ -167,6 +171,6 @@ TFEL_TESTS_GENERATE_PROXY(BehaviourDescriptionBoundsHandlingTest,
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("BehaviourDescription.xml");
+  m.addXMLTestOutput("BehaviourDescriptionBoundsHandling.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

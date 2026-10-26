@@ -144,10 +144,11 @@ namespace mfront {
     }
     if (key == "@AsterStrainPerturbationValue") {
       check_interface_restriction();
-      throw_if(!this->compareToNumericalTangentOperator,
-               "time stepping is not enabled at this stage.\n"
-               "Use the @AsterUseTimeSubStepping directive before "
-               "@AsterStrainPerturbationValue");
+      throw_if(
+          !this->compareToNumericalTangentOperator,
+          "comparison to tangent operator is not enabled at this stage.\n"
+          "Use the @AsterCompareToNumericalTangentOperator directive before "
+          "@AsterStrainPerturbationValue");
       throw_if(current == end, "unexpected end of file");
       this->strainPerturbationValue = CxxTokenizer::readDouble(current, end);
       throw_if(current == end, "unexpected end of file");
@@ -182,7 +183,7 @@ namespace mfront {
         bd.setAttribute(AsterInterface::finiteStrainFormulation,
                         std::string(AsterInterface::grot_gdep), false);
       } else {
-        throw_if(true, "invalid finite strain formuluation '" + s + "'");
+        throw_if(true, "invalid finite strain formulation '" + s + "'");
       }
       ++(current);
       throw_if(current == end, "unexpected end of file");
@@ -530,11 +531,6 @@ namespace mfront {
     out << "{\n";
     out << "char * msg = " << this->getFunctionNameBasis(name)
         << "_getIntegrationErrorMessage();\n";
-    if (((getDebugMode()) || (this->compareToNumericalTangentOperator) ||
-         (mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false))) &&
-        (!this->shallGenerateMTestFileOnFailure(mb))) {
-      out << "using namespace std;\n";
-    }
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
@@ -547,12 +543,12 @@ namespace mfront {
       out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
     }
     if (this->compareToNumericalTangentOperator) {
-      out << "vector<aster::AsterReal> deto0(*NTENS);\n";
-      out << "vector<aster::AsterReal> sig0(*NTENS);\n";
-      out << "vector<aster::AsterReal> sv0(*NSTATV);\n";
-      out << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n";
-      out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
-      out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
+      out << "std::vector<aster::AsterReal> deto0(*NTENS);\n";
+      out << "std::vector<aster::AsterReal> sig0(*NTENS);\n";
+      out << "std::vector<aster::AsterReal> sv0(*NSTATV);\n";
+      out << "std::copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n";
+      out << "std::copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
+      out << "std::copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
     if (!mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
@@ -617,9 +613,9 @@ namespace mfront {
           << "aster::AsterReal mDt;\n"
           << "aster::AsterReal mnDt;\n"
           << "for(i=0;i!=*NTENS;++i){\n"
-          << "copy(deto0.begin(),deto0.end(),deto.begin());\n"
-          << "copy(sig0.begin(),sig0.end(),sigf.begin());\n"
-          << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
+          << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
+          << "std::copy(sig0.begin(),sig0.end(),sigf.begin());\n"
+          << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
           << "deto[i] += " << this->strainPerturbationValue << ";\n"
           << "D[0] = 0.;\n";
       if (!mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {

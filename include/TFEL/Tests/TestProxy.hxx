@@ -101,10 +101,12 @@
  * \author Thomas Helfer
  * \date 11/04/2010
  */
-#define TFEL_TESTS_FUNCTION(X, G, Y)                                  \
-  TFEL_VISIBILITY_LOCAL bool X();                                     \
-  TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<X>,     \
-                             TFEL_PP_JOIN(X, FunctionWrapper), G, Y); \
+#define TFEL_TESTS_FUNCTION(X, G, Y)                                        \
+  TFEL_VISIBILITY_LOCAL bool X();                                           \
+  extern tfel::tests::TestProxy<tfel::tests::TestFunctionWrapper<X>>        \
+      TFEL_PP_JOIN(testproxy, TFEL_PP_JOIN(X, FunctionWrapper));            \
+  tfel::tests::TestProxy<tfel::tests::TestFunctionWrapper<X>> TFEL_PP_JOIN( \
+      testproxy, TFEL_PP_JOIN(X, FunctionWrapper))(Y, G, #X);               \
   bool X()
 
 namespace tfel::tests {

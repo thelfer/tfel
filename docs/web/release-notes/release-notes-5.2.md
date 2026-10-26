@@ -685,21 +685,53 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1189>
+
+## Issue 1177: [mfront] ansys, comsol, dianafea, castem, aster and cyrano interfaces: material properties layout, tangent operator conventions, 2D sizes, plane stress checks, Gibiane examples and messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1177>
+
 ## Issue 1175: [installation] Doxygen deployment, keyword descriptions, installation pages, maintainer scripts, generic interface and math docs, quantity tests option, physical constants and glossary generators
 
 For more details, see <https://github.com/thelfer/tfel/issues/1175>
+
+## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
+
+For more details, see <https://github.com/thelfer/tfel/issues/1171>
+
+## Issue 1169: [tfel-tests] tfel-doc output, log and colors, TFEL/Tests XML output and exports, copy-paste slips, JUnit report names, TextData::skipLines, FSAlgorithm loop and strided iterator assignment
+
+For more details, see <https://github.com/thelfer/tfel/issues/1169>
 
 ## Issue 1167: [tfel-utilities] CxxTokenizer, Data arrays, reserved keywords, systemCall::copy, wfstream, TFEL/System messages and tfel-check end of file and empty_output
 
 For more details, see <https://github.com/thelfer/tfel/issues/1167>
 
+## Issue 1165: [tfel-math] Headers and parser: parenthesised conditions, stensor setComponent/getComponent, isqrt3 with MSVC, square_root of quantities, GPU attribute, ATLAS binding, HasRandomAccessIterator, self-contained material headers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1165>
+
 ## Issue 1163: [python] Bindings: CurrentStateVector, tfel.math operators, versioned packages, CMakeGenerator, return value policies, Hill tensors, DSLFactory and mergeTargetsDescription
 
 For more details, see <https://github.com/thelfer/tfel/issues/1163>
 
+## Issue 1161: [mtest] MTest and PTest: ptest keywords help, array component names, orthotropic generic stress, mistral defaults, PTest output and jacobian, algorithm names, installed and exported classes
+
+For more details, see <https://github.com/thelfer/tfel/issues/1161>
+
+## Issue 1159: [tfel-material] Finite strain tangent operators, logarithmic strain handler, Hosford/Barlat with quantities, bounds checks, Gauss-Kronrod, broyden, parser and LU messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1159>
+
 ## Issue 1157: [mfront] castem, aster, abaqus, ansys and abaqusexplicit interfaces: LogarithmicStrain1D, sub-stepping, 2D finite strain fallbacks, tangent operator layouts and numerical comparison
 
 For more details, see <https://github.com/thelfer/tfel/issues/1157>
+
+## Issue 1155: [mfront] DSLs and generated code: modelling hypotheses intersection, braceless assignments, output operators, brick symmetries, code blocks, error messages and debug comments
+
+For more details, see <https://github.com/thelfer/tfel/issues/1155>
 
 ## Issue 1153: [tfel-math] Quantities and views: qt_ref assignment, change_basis, positive parts, runtime matrix views, arrays of views, tmatrix products, FSES NaN, Hashin-Shtrikman shear bounds, Anderson weights
 
