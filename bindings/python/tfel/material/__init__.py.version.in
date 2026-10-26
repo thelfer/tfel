@@ -13,5 +13,5 @@ if os.name == 'nt':
         os.environ["TFELHOME"] = str(tfelhome)
     os.add_dll_directory(tfelhome)
 
-from ._tfel_@TFEL_SUFFIX_FOR_PYTHON_MODULES@ import *
+from ._material_@TFEL_SUFFIX_FOR_PYTHON_MODULES@ import *
 
