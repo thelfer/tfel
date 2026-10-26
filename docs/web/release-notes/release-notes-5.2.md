@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1147: [tfel-math] Formula parsers, kriging and LUSolve: copy and arguments of diff, Cast3M functions without argument, integer division by zero, rebuilt and empty kriging, work vector size
+
+For more details, see <https://github.com/thelfer/tfel/issues/1147>
+
 ## Issue 1143: [mfront] DSLs: bricks, behaviour variables, @TangentOperator, initialisation values, targets.lst, overriding increments and bounds
 
 For more details, see <https://github.com/thelfer/tfel/issues/1143>
