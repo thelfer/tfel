@@ -216,8 +216,8 @@ These localisation tensors can be computed as follows:
 
 ~~~~{.cpp}
 const auto A = computeSphereLocalisationTensor<stress>(E0,nu0,Ei,nui);
-const auto A_axi = computeAxisymmetricalLocalisationTensor<stress>(E0,nu0,Ei,nui,n_a,e);
-const auto A_ellipsoid = computeLocalisationTensor<stress>(E0,nu0,Ei,nui,n_a,a,n_b,b,c);
+const auto A_axi = computeAxisymmetricalEllipsoidLocalisationTensor<stress>(E0,nu0,Ei,nui,n_a,e);
+const auto A_ellipsoid = computeEllipsoidLocalisationTensor<stress>(E0,nu0,Ei,nui,n_a,a,n_b,b,c);
 ~~~~
 
 Here, the subscript `i` refers to the inclusion.
@@ -227,8 +227,8 @@ Here again, an `IsotropicModuli` can be passed for the elasticity, as follows:
 const auto IM0=YoungNuModuli<stress>(E0,nu0);
 const auto IMi=YoungNuModuli<stress>(Ei,nui);
 const auto A = computeSphereLocalisationTensor<stress>(IM0,IMi);
-const auto A_axi = computeAxisymmetricalLocalisationTensor<stress>(IM0,IMi,n_a,e);
-const auto A_ellipsoid = computeLocalisationTensor<stress>(IM0,IMi,n_a,a,n_b,b,c);
+const auto A_axi = computeAxisymmetricalEllipsoidLocalisationTensor<stress>(IM0,IMi,n_a,e);
+const auto A_ellipsoid = computeEllipsoidLocalisationTensor<stress>(IM0,IMi,n_a,a,n_b,b,c);
 ~~~~
 
 Note that if the elasticity of the inclusion
@@ -236,7 +236,7 @@ is not isotropic, an anisotropic elasticity `C_i` can be provided, assuming that
 is expressed in the same basis as the one defined by `n_a,n_b` (the local basis of the inclusion):
 
 ~~~~{.cpp}
-const auto A_aniso = computeLocalisationTensor<stress>(IM0,C_i,n_a,a,n_b,b,c);
+const auto A_aniso = computeEllipsoidLocalisationTensor<stress>(IM0,C_i,n_a,a,n_b,b,c);
 ~~~~
 
 In 2 dimensional framework, localisation tensors are computed as follows:
@@ -417,11 +417,11 @@ const auto kg0 = KGModuli<stress>(K0,G0);
 const auto kgr = KGModuli<stress>(K1,G1);
 using namespace tfel::material::homogenization::elasticity;
 const auto em2r = computeMeanSquaredHydrostaticStrain(kg0,fr,kgr,em2,eeq2);
-const auto em20=std::get<0>(em2);
-const auto em2i=std::get<1>(em2);
+const auto em20=std::get<0>(em2r);
+const auto em2i=std::get<1>(em2r);
 const auto eeq2r = computeMeanSquaredEquivalentStrain(kg0,fr,kgr,em2,eeq2);
-const auto eeq20=std::get<0>(eeq2);
-const auto eeq2i=std::get<1>(eeq2);
+const auto eeq20=std::get<0>(eeq2r);
+const auto eeq2i=std::get<1>(eeq2r);
 ~~~~
 
 Here the functions appearing at lines 4 and 7 need 5 arguments: isotropic modulus
@@ -454,13 +454,13 @@ const Stensor4<3u,real> CV = computeVoigtStiffness<3u, stress>(tab_f, tab_C);
 const Stensor4<3u,real> CR = computeReussStiffness<3u, stress>(tab_f, tab_C);
 
 //Hashin-Shtrikman bounds
-const auto K0=stress(1/3);
-const auto G0=stress(1/2);
-const auto K1=stress(2/3);
+const auto K0=stress(1./3);
+const auto G0=stress(1./2);
+const auto K1=stress(2./3);
 const auto G1=stress(1);
-const auto K2=stress(5/3);
-const auto G2=stress(5/2);
-std::vector<real> tab_f={real(0.1),real(0.8),real(0.1)};
+const auto K2=stress(5./3);
+const auto G2=stress(5./2);
+tab_f={real(0.1),real(0.8),real(0.1)};
 std::vector<stress> tab_K={K0,K1,K2};
 std::vector<stress> tab_mu={G0,G1,G2};
 
@@ -518,8 +518,8 @@ considered isotropic or not. Again, the value of this `bool` depends on the
 way the `Phase` was constructed. By doing
 
 ~~~~{.cpp}
-const auto C0=tfel::math::st2tost2<stress>::Id();
-Phase<stress> ph(f,C0);
+const auto C0=tfel::math::st2tost2<3u, stress>::Id();
+Phase<3u, stress> ph(f,C0);
 bool b = ph.isIsotropic();
 ~~~~
 
@@ -527,7 +527,7 @@ bool b = ph.isIsotropic();
 
 ~~~~{.cpp}
 const auto KG=tfel::material::KGModuli<stress>(k,g);
-Phase<stress> ph(f,KG);
+Phase<3u, stress> ph(f,KG);
 bool b = ph.isIsotropic();
 ~~~~
 
@@ -557,7 +557,7 @@ Let us try:
 ~~~~{.cpp}
 Ellipsoid<length> ellipsoid1(a,b,c);
 Spheroid<length> spheroid1(a,b);
-Sphere<length> sphere1();
+Sphere<length> sphere1;
 ~~~~
 
 ### The `Grain class`
@@ -640,7 +640,7 @@ There are 5 child `class` of the `InclusionDistribution class`:
  
  - `SphereDistribution` (distribution of spheres)
  - `IsotropicDistribution` (isotropic distribution of ellipsoids)
- - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
+ - `TransverseIsotropicDistribution` (transverse isotropic distribution of ellipsoids)
  - `OrientedDistribution` (aligned distribution of ellipsoids)
  - `UserDefinedDistributionOfSpheroids` (distribution of spheroids defined with orientation tensors)
 
@@ -657,7 +657,7 @@ tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
 OrientedDistribution<stress> distrib_O(ellipsoid1,f,KGi,n_a,n_b);
 ~~~~
 
-The `TransverseDistribution` is a special case
+The `TransverseIsotropicDistribution` is a special case
 which requires specifying which axis of the ellipsoid (or spheroid)
 will remain fixed when the two other axes rotate:
 
@@ -703,7 +703,7 @@ UserDefinedDistributionOfSpheroids<stress> distribution(spheroid1, f, KGi, A2, A
 The `computeMeanLocalisator` method can be used as follows:
 
 ~~~~{.cpp}
-Ai=ell_dist.computeMeanLocalisator(IM0);
+Ai=ell_dist->computeMeanLocalisator(IM0);
 ~~~~
 
 Note that in the latter case, passing `C0`, a `Stensor4` object
@@ -757,10 +757,10 @@ passing the matrix elasticity as an argument:
 ~~~~{.cpp}
 using namespace tfel::material::homogenization::elasticity;
 const auto IM0=tfel::material::KGModuli<stress>(1e7,1e7);
-micro_1=ParticulateMicrostructure(IM0);
+ParticulateMicrostructure<3u, stress> micro_1(IM0);
 
 const auto C0 = stress(1e9)*Stensor4<3u,real>::Id();
-micro_2=ParticulateMicrostructure(C0);
+ParticulateMicrostructure<3u, stress> micro_2(C0);
 ~~~~
 
 The `ParticulateMicrostructure` has also some methods (see 'MicrostructureDescription.hxx'
@@ -856,7 +856,7 @@ We can instantiate a `Polycrystal` as follows:
 
 ~~~~{.cpp}
 using namespace tfel::material::homogenization::elasticity;
-Polycrystal poly;
+Polycrystal<stress> poly;
 ~~~~
 
 We can add some grains to our polycrystal:

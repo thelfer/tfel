@@ -504,7 +504,7 @@ we have to instantiate a `InclusionDistribution` object. There are four kinds of
 
  - `SphereDistribution` (distribution of spheres)
  - `IsotropicDistribution` (isotropic distribution of ellipsoids)
- - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
+ - `TransverseIsotropicDistribution` (transverse isotropic distribution of ellipsoids)
  - `OrientedDistribution` (aligned distribution of ellipsoids)
  - `UserDefinedDistributionOfSpheroids` (distribution of spheroids defined with orientation tensors)
 
@@ -535,7 +535,7 @@ This can be useful for considering anisotropic inclusions. However, the basis in
 basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
 it is the global basis.
 
-The `TransverseDistribution` is a special case
+The `TransverseIsotropicDistribution` is a special case
 which requires to precise which axis of the ellipsoid (or spheroid)
 will remain fixed when the two other axes rotate:
 
