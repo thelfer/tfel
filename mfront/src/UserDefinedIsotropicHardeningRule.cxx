@@ -80,7 +80,7 @@ namespace mfront::bbrick {
       auto mp =
           getBehaviourDescriptionMaterialProperty(dsl, opt.first, opt.second);
       declareParameterOrLocalVariable(bd, mp, "real", opt_id);
-      this->mps.insert({opt.first + id, mp});
+      this->mps.insert({opt.first, mp});
     }
     //
     if (d.count("dR_dp") != 0) {
