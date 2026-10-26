@@ -72,7 +72,7 @@ namespace tfel::utilities {
   static std::string getOutputDirectory(const std::string& f) {
     const auto pos = f.rfind('/');
     if (pos == std::string::npos) {
-      return "";
+      return ".";
     }
     return f.substr(0, pos);
   }  // end of getOutputDirectory
