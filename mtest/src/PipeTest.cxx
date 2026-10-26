@@ -1194,7 +1194,8 @@ namespace mtest {
           if (this->al == ENDCAPEFFECT) {
             r(n) -= pi * Ri_ * Ri_ * Pi;
             if (mt != StiffnessMatrixType::NOSTIFFNESS) {
-              k(n, n) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, 0) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, n) -= pi * Ri_ * Ri_ * dP_dV * dV_dezz;
             }
           }
         }
