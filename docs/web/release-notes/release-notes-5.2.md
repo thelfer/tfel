@@ -697,6 +697,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1167>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1163>
 
+## Issue 1159: [tfel-material] Finite strain tangent operators, logarithmic strain handler, Hosford/Barlat with quantities, bounds checks, Gauss-Kronrod, broyden, parser and LU messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1159>
+
 ## Issue 1157: [mfront] castem, aster, abaqus, ansys and abaqusexplicit interfaces: LogarithmicStrain1D, sub-stepping, 2D finite strain fallbacks, tangent operator layouts and numerical comparison
 
 For more details, see <https://github.com/thelfer/tfel/issues/1157>
