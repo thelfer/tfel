@@ -298,12 +298,6 @@ namespace numodis::math {
 
   TFELNUMODIS_VISIBILITY_EXPORT double dUnitVector(Vect3& U);
 
-  bool dCollinear(const Vect3& U, const Vect3& V);
-
-  bool dCollinear(const Vect3& U, const Vect3& V, Vect3& W);
-
-  bool dOrthogonal(const Vect3& U, const Vect3& V, double* res);
-
   TFELNUMODIS_VISIBILITY_EXPORT bool iCollinear(const std::vector<int>& U,
                                                 const std::vector<int>& V);
 

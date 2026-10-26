@@ -32,8 +32,6 @@ namespace numodis {
   //! GSystem handles all the properties of a glide system
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT GSystem {
-    void PrintProperties(std::ostream& os, unsigned shift = 0) const;
-
     //=============================================================
     // GSystem::GSystem
     //-------------------------------------------------------------
