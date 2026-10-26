@@ -334,18 +334,18 @@ namespace tfel::material::homogenization::elasticity {
     template <typename LengthType>
     TFEL_HOST_DEVICE std::array<std::size_t, 3> sortEllipsoidLengths(
         const LengthType& a, const LengthType& b, const LengthType& c) {
-      if ((a > b) and (a > c)) {
-        if (b > c)
+      if ((a >= b) and (a >= c)) {
+        if (b >= c)
           return {0, 1, 2};
         else
           return {0, 2, 1};
-      } else if ((b > a) and (b > c)) {
-        if (a > c)
+      } else if ((b >= a) and (b >= c)) {
+        if (a >= c)
           return {1, 0, 2};
         else
           return {1, 2, 0};
       } else {
-        if (a > b)
+        if (a >= b)
           return {2, 0, 1};
         else
           return {2, 1, 0};
