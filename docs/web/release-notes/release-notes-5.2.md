@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1213: [mfront] @RequireThermalExpansionCoefficientTensor is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
+
+For more details, see <https://github.com/thelfer/tfel/issues/1213>
+
 ## Issue 1191: [mfront-query] Names of the DSL options in the help, strain measure output, specific targets rules and help texts
 
 For more details, see <https://github.com/thelfer/tfel/issues/1191>
