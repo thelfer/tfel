@@ -2258,8 +2258,11 @@ namespace mfront {
       mfront::writeBoundsChecks(os, v, v.name, "N", "policy", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writeBoundsChecks(os, v, v.name + '[' + std::to_string(i) + ']',
-                                  "N", "policy", true, b);
+        if (v.hasBounds(i)) {
+          mfront::writeBoundsChecks(os, v, v.getBounds(i),
+                                    v.name + '[' + std::to_string(i) + ']', "N",
+                                    "policy", true, b);
+        }
       }
     }
   }  // end of writeBoundsChecks
@@ -2270,8 +2273,11 @@ namespace mfront {
       mfront::writePhysicalBoundsChecks(os, v, v.name, "N", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writePhysicalBoundsChecks(
-            os, v, v.name + '[' + std::to_string(i) + ']', "N", true, b);
+        if (v.hasPhysicalBounds(i)) {
+          mfront::writePhysicalBoundsChecks(
+              os, v, v.getPhysicalBounds(i),
+              v.name + '[' + std::to_string(i) + ']', "N", true, b);
+        }
       }
     }
   }  // end of writePhysicalBoundsChecks
