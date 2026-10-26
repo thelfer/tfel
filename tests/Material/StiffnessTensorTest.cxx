@@ -14,11 +14,14 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include <cmath>
+#include <limits>
 #include <cstdlib>
 #include <iostream>
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Material/Lame.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
 
 struct StiffnessTensorTest final : public tfel::tests::TestCase {
@@ -30,6 +33,7 @@ struct StiffnessTensorTest final : public tfel::tests::TestCase {
     this->testPlate<ModellingHypothesis::PLANESTRAIN>();
     this->testPlate<ModellingHypothesis::GENERALISEDPLANESTRAIN>();
     this->testPlate<ModellingHypothesis::PLANESTRESS>();
+    this->testAxisymmetricalGeneralisedPlaneStress();
     return this->result;
   }  // end of execute
  private:
@@ -53,6 +57,51 @@ struct StiffnessTensorTest final : public tfel::tests::TestCase {
       }
     }
   }  // end of testPlate
+  /*!
+   * \brief the altered stiffness tensors of the axisymmetrical generalised
+   * plane stress hypothesis condense the axial component (index 1)
+   */
+  void testAxisymmetricalGeneralisedPlaneStress() {
+    using namespace tfel::material;
+    using StiffnessTensor = tfel::math::st2tost2<1u, double>;
+    constexpr auto H =
+        ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS;
+    constexpr auto altered = StiffnessTensorAlterationCharacteristic::ALTERED;
+    constexpr auto unaltered =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    constexpr auto nan = std::numeric_limits<double>::quiet_NaN();
+    const auto E = 150e9;
+    const auto nu = 0.3;
+    StiffnessTensor D, Da1(nan), Da2(nan), Da3(nan);
+    computeIsotropicStiffnessTensor<H, unaltered>(D, E, nu);
+    computeIsotropicStiffnessTensor<H, altered>(Da1, E, nu);
+    computeAlteredElasticStiffness<H, double>::exe(Da2, computeLambda(E, nu),
+                                                   computeMu(E, nu));
+    ComputeAlteredStiffnessTensor<H>::exe(Da3, D);
+    this->checkAxialCondensation(D, Da1);
+    this->checkAxialCondensation(D, Da2);
+    this->checkAxialCondensation(D, Da3);
+    StiffnessTensor Do, Dao1(nan), Dao2(nan);
+    computeOrthotropicStiffnessTensor<H, unaltered>(Do, 200e9, 100e9, 50e9, 0.3,
+                                                    0.2, 0.1, 70e9, 40e9, 20e9);
+    computeOrthotropicStiffnessTensor<H, altered>(Dao1, 200e9, 100e9, 50e9, 0.3,
+                                                  0.2, 0.1, 70e9, 40e9, 20e9);
+    ComputeAlteredStiffnessTensor<H>::exe(Dao2, Do);
+    this->checkAxialCondensation(Do, Dao1);
+    this->checkAxialCondensation(Do, Dao2);
+  }  // end of testAxisymmetricalGeneralisedPlaneStress
+  //! \brief check that Da is D condensed on the axial component
+  void checkAxialCondensation(const tfel::math::st2tost2<1u, double>& D,
+                              const tfel::math::st2tost2<1u, double>& Da) {
+    const auto eps = 1e-14 * D(0, 0);
+    for (unsigned short i = 0; i != 3; ++i) {
+      for (unsigned short j = 0; j != 3; ++j) {
+        const auto Da_ij =
+            ((i == 1) || (j == 1)) ? 0. : D(i, j) - D(i, 1) * D(1, j) / D(1, 1);
+        TFEL_TESTS_ASSERT(std::abs(Da(i, j) - Da_ij) < eps);
+      }
+    }
+  }  // end of checkAxialCondensation
 };
 
 TFEL_TESTS_GENERATE_PROXY(StiffnessTensorTest, "StiffnessTensorTest");

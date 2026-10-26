@@ -60,12 +60,12 @@ namespace tfel::material::internals {
       const StressType C1 = E / (1 - n * n);
       const StressType C2 = n * C1;
       C(0, 0) = C1;
-      C(0, 1) = C2;
-      C(0, 2) = C(0, 3) = zero;
-      C(1, 0) = C2;
-      C(1, 1) = C1;
-      C(1, 2) = C(1, 3) = zero;
-      C(2, 0) = C(2, 1) = zero;
+      C(0, 1) = zero;
+      C(0, 2) = C2;
+      C(1, 0) = C(1, 1) = C(1, 2) = zero;
+      C(2, 0) = C2;
+      C(2, 1) = zero;
+      C(2, 2) = C1;
     }  // end of struct computeIsotropicPlaneStressAlteredStiffnessTensor
   };
 
@@ -228,13 +228,13 @@ namespace tfel::material::internals {
       const auto C20 = (S12 * S23 - S13 * S22) * inv_detS;
       const auto C21 = (S12 * S13 - S11 * S23) * inv_detS;
       const auto C22 = (S11 * S22 - S12 * S12) * inv_detS;
-      const auto tmp20 = C20 / C22;
-      const auto tmp21 = C21 / C22;
+      const auto tmp10 = C10 / C11;
+      const auto tmp12 = C12 / C11;
       std::fill(C.begin(), C.end(), StressType(0.));
-      C(0, 0) = C00 - C02 * tmp20;
-      C(0, 1) = C01 - C02 * tmp21;
-      C(1, 0) = C10 - C12 * tmp20;
-      C(1, 1) = C11 - C12 * tmp21;
+      C(0, 0) = C00 - C01 * tmp10;
+      C(0, 2) = C02 - C01 * tmp12;
+      C(2, 0) = C20 - C21 * tmp10;
+      C(2, 2) = C22 - C21 * tmp12;
     }  // end of exe
   };
 
@@ -590,6 +590,22 @@ namespace tfel::material {
     Da(3, 1) = StressType(0);
     Da(3, 2) = StressType(0);
     Da(3, 3) = D(3, 3);
+  }  // end of ComputeAlteredStiffnessTensor
+
+  template <typename StressType>
+  TFEL_HOST_DEVICE constexpr void ComputeAlteredStiffnessTensor<
+      ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS>::
+      exe(tfel::math::st2tost2<1u, StressType>& Da,
+          const tfel::math::st2tost2<1u, StressType>& D) noexcept {
+    Da(0, 0) = D(0, 0) - D(1, 0) / D(1, 1) * D(0, 1);
+    Da(0, 2) = D(0, 2) - D(1, 2) / D(1, 1) * D(0, 1);
+    Da(2, 0) = D(2, 0) - D(1, 0) / D(1, 1) * D(2, 1);
+    Da(2, 2) = D(2, 2) - D(1, 2) / D(1, 1) * D(2, 1);
+    Da(0, 1) = StressType(0);
+    Da(1, 0) = StressType(0);
+    Da(1, 1) = StressType(0);
+    Da(1, 2) = StressType(0);
+    Da(2, 1) = StressType(0);
   }  // end of ComputeAlteredStiffnessTensor
 
   template <unsigned short N,
