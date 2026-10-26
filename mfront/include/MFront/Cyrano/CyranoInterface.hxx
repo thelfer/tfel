@@ -131,6 +131,5 @@ namespace cyrano {
 }  // end of namespace cyrano
 
 #include "MFront/Cyrano/CyranoBehaviourHandler.hxx"
-// #include"MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx"
 
 #endif /* LIB_MFRONT_CYRANO_CALL_HXX */
