@@ -21,8 +21,12 @@ namespace mtest {
       return std::find(v.begin(), v.end(), e) != v.end();
     };
     const auto cs = this->active;
-    this->active = contains(this->activating_events);
-    this->active = !contains(this->desactivating_events);
+    if (contains(this->activating_events)) {
+      this->active = true;
+    }
+    if (contains(this->desactivating_events)) {
+      this->active = false;
+    }
     return cs != this->active;
   }  // end of ConstraintBase::treatEvent
 
