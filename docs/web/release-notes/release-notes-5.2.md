@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1189>
+
 ## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
 
 For more details, see <https://github.com/thelfer/tfel/issues/1171>
