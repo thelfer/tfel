@@ -544,8 +544,6 @@ namespace mfront {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
       }
-      out << "static " << constexpr_c
-          << " unsigned short orthotropicAxesOffset = 0u;\n";
     } else if (mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
       out << "static " << constexpr_c
           << " AnsysSymmetryType etype = ansys::ORTHOTROPIC;\n";
@@ -567,15 +565,20 @@ namespace mfront {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
       }
-      out << "static " << constexpr_c
-          << " unsigned short orthotropicAxesOffset = "
-             "AnsysOrthotropicAxesOffset<N>::value;\n";
     } else {
       tfel::raise(
           "AnsysInterface::writeAnsysBehaviourTraits: "
           "unsupported behaviour type.\n"
           "The ansys interface only support isotropic or "
           "orthotropic behaviour at this time.");
+    }
+    if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
+      out << "static " << constexpr_c
+          << " unsigned short orthotropicAxesOffset = "
+             "AnsysOrthotropicAxesOffset<N>::value;\n";
+    } else {
+      out << "static " << constexpr_c
+          << " unsigned short orthotropicAxesOffset = 0u;\n";
     }
     out << "}; // end of class AnsysTraits\n\n";
   }
@@ -999,9 +1002,11 @@ namespace mfront {
         auto o = size_t{};
         if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                             false)) {
-          if ((h == ModellingHypothesis::PLANESTRESS) ||
-              (h == ModellingHypothesis::AXISYMMETRICAL) ||
-              (h == ModellingHypothesis::PLANESTRAIN)) {
+          if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
+            o += 2u;
+          } else if ((h == ModellingHypothesis::PLANESTRESS) ||
+                     (h == ModellingHypothesis::AXISYMMETRICAL) ||
+                     (h == ModellingHypothesis::PLANESTRAIN)) {
             o += ansys::AnsysOrthotropicElasticPropertiesOffset<2u>::value;
           } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
             o += ansys::AnsysOrthotropicElasticPropertiesOffset<3u>::value;
@@ -1010,11 +1015,9 @@ namespace mfront {
         if (mb.getAttribute(
                 BehaviourDescription::requiresThermalExpansionCoefficientTensor,
                 false)) {
-          if ((h == ModellingHypothesis::PLANESTRESS) ||
-              (h == ModellingHypothesis::AXISYMMETRICAL) ||
-              (h == ModellingHypothesis::PLANESTRAIN)) {
-            o += ansys::AnsysOrthotropicElasticPropertiesOffset<2u>::value;
-          } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+          if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
+            o += 1u;
+          } else {
             o += 3u;
           }
         }
@@ -1080,7 +1083,7 @@ namespace mfront {
                      "+6u)){\n"
               << "std::cerr << \"" << name
               << this->getFunctionNameForHypothesis("", h) << ": \"\n"
-              << "          << \"invalid number of state variables\\n\";\n"
+              << "          << \"invalid number of material properties\\n\";\n"
               << "*keycut = 1;\n"
               << "return;\n"
               << "}\n"
@@ -1124,7 +1127,7 @@ namespace mfront {
                      "+6u)){\n"
               << "std::cerr << \"" << name
               << this->getFunctionNameForHypothesis("", h) << ": \"\n"
-              << "          << \"invalid number of state variables\\n\";\n"
+              << "          << \"invalid number of material properties\\n\";\n"
               << "*keycut = 1;\n"
               << "return;\n"
               << "}\n"
