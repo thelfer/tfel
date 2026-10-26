@@ -266,7 +266,7 @@ namespace mfront {
     }
     mf.close();
     std::ofstream fm{"fortran/" + fmname + ".inc"};
-    throw_if(!mf, "unable to open 'fortran/" + fmname + ".inc'");
+    throw_if(!fm, "unable to open 'fortran/" + fmname + ".inc'");
     fm.exceptions(std::ios::badbit | std::ios::failbit);
     fm << "Module " << fmname << "\n"
        << "  Interface\n";
