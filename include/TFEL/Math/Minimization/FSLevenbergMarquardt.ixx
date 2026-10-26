@@ -97,7 +97,7 @@ namespace tfel::math {
     for (i = 0; i != M; ++i) {
       J(i, i) += lambda;
     }
-    this->factor = 2;
+    T nu = this->factor;
     success = false;
     for (iter = 0; (iter != this->iterMax) && (!success); ++iter) {
       tmatrix<M, M, T> Jn(J);
@@ -115,10 +115,10 @@ namespace tfel::math {
       T rho = (s - sn) / (0.5 * (h | (lambda * h - g)));
       if (rho > 0) {
         lambda *= max(T(0.3333), T(1) - power<3>(2 * rho - 1));
-        this->factor = 2;
+        nu = this->factor;
       } else {
-        lambda *= this->factor;
-        this->factor *= 2;
+        lambda *= nu;
+        nu *= 2;
       }
       for (i = 0; i != M; ++i) {
         Jn(i, i) += lambda;
