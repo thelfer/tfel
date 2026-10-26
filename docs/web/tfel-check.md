@@ -252,6 +252,10 @@ The `@Environment` keyword defines environment variables for commands:
 @Environment {"VAR1": "value1", "VAR2": "value2"};
 ~~~~
 
+If a variable is already defined, in the environment of `tfel-check`
+or earlier in the test file, the value is prepended to it, separated by
+`:`, as for search paths (`PATH`, `LD_LIBRARY_PATH`, etc.).
+
 ### The `@Command` keyword
 
 The `@Command` keyword executes a command. It supports the following options:
@@ -724,6 +728,9 @@ environment_variables: {"CXXFLAGS": "-Wall", "MPI_ROOT": "/path/to/mpi"};
 - Environment variables can only be defined **once** across all configuration files.
 - If an environment variable is defined in both a configuration file and a test file
   (via `@Environment`), the test file's definition takes precedence.
+- Unlike the `@Environment` keyword, the values given in configuration files are
+  used as given: they are not prepended to the value of the variable in the
+  environment of `tfel-check`.
 
 # Default components {#sec:tfel_check:default_components}
 
