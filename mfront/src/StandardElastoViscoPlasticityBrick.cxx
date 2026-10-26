@@ -516,6 +516,7 @@ namespace mfront {
     auto m = std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>{};
     for (const auto& f : this->flows) {
       m.insert({getId(i, this->flows.size()), f});
+      ++i;
     }
     return m;
   }  // end of StandardElastoViscoPlasticityBrick::buildInelasticFlowsMap()
