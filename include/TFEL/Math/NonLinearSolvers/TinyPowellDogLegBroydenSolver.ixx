@@ -12,9 +12,10 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYBROYDENSOLVER_IXX
-#define LIB_TFEL_MATH_TINYBROYDENSOLVER_IXX
+#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX
+#define LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX
 
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
 
 namespace tfel::math {
@@ -61,4 +62,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_TINYBROYDENSOLVER_IXX */
+#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX */
