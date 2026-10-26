@@ -884,7 +884,7 @@ namespace mfront::bbrick {
         ib.code += " += 2 * theta * (1 - " + f_ + ") * (this->dp" + id +
                    ") * (this->trace_n" + id + ")";
         ib.code += "  -     theta * power<2>(1 - " + f_ + ")* (this->dp" + id +
-                   ") * (Stensor::Id() | dn_d" + f.name + ");\n";
+                   ") * (Stensor::Id() | dn" + id + "_d" + f.name + ");\n";
         // derivatives with respect to stress
         for (const auto& dsig : sp.getStressDerivatives(bd)) {
           const auto& dsig_ddv = std::get<0>(dsig);
@@ -918,7 +918,7 @@ namespace mfront::bbrick {
         ib.code +=
             " += theta *(this->dp" + id + ") * (this->trace_n" + id + ")";
         ib.code += "  - theta * (1 - " + f_ + ")* (this->dp" + id +
-                   ") * (Stensor::Id() | dn_d" + f.name + ");\n";
+                   ") * (Stensor::Id() | dn" + id + "_d" + f.name + ");\n";
         // derivatives with respect to stress
         for (const auto& dsig : sp.getStressDerivatives(bd)) {
           const auto& dsig_ddv = std::get<0>(dsig);
