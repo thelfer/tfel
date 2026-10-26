@@ -85,6 +85,11 @@ struct DataTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(md.at("key1").get<int>() == 4);
     TFEL_TESTS_ASSERT(md.at("key2").is<int>());
     TFEL_TESTS_ASSERT(md.at("key2").get<int>() == -5);
+    // comparisons
+    TFEL_TESTS_ASSERT(Data() == Data());
+    TFEL_TESTS_ASSERT(Data(std::map<double, double>{{1., 2.}}) ==
+                      Data(std::map<double, double>{{1., 2.}}));
+    TFEL_TESTS_ASSERT(Data(DataStructure{}) == Data(DataStructure{}));
   }  // end of test1
 
   void test2() {
