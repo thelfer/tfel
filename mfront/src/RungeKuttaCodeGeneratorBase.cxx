@@ -1233,7 +1233,7 @@ namespace mfront {
     }
     //
     if (bd.isNameReserved("young")) {
-      checkVariable("young");
+      return checkVariable("young");
     }
     // look if the stiffness tensor shall be provided by the solver
     if (bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,
