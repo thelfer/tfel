@@ -27,7 +27,8 @@ namespace tfel::math {
    * \param[in] b: the second symmetric * tensor
    */
   template <StensorConcept StensorType1, StensorConcept StensorType2>
-  auto symmetric_product_aba(const StensorType1&, const StensorType2&)  //
+  TFEL_HOST_DEVICE constexpr auto symmetric_product_aba(const StensorType1&,
+                                                        const StensorType2&)  //
       requires(getSpaceDimension<StensorType1>() ==
                getSpaceDimension<StensorType2>());
 

@@ -44,7 +44,8 @@ namespace tfel::math {
     typedef ptrdiff_t difference_type;
 
    protected:
-    TFEL_MATH_INLINE StensorProductExprBase(A l, B r) : a(l), b(r) {}
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE StensorProductExprBase(A l, B r)
+        : a(l), b(r) {}
 
     ArgumentStorage<A> a;
     ArgumentStorage<B> b;
@@ -53,7 +54,7 @@ namespace tfel::math {
     //
     StensorProductExprBase() = delete;
     //
-    [[nodiscard]] TFEL_MATH_INLINE RunTimeProperties
+    [[nodiscard]] TFEL_HOST_DEVICE TFEL_MATH_INLINE RunTimeProperties
     getRunTimeProperties() const {
       return {};
     }
@@ -67,11 +68,11 @@ namespace tfel::math {
 
     using size_type = typename StensorProductExprBase<A, B>::size_type;
 
-    TFEL_MATH_INLINE StensorProductExpr1D(A l, B r)
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE StensorProductExpr1D(A l, B r)
         : StensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {
     }
 
-    [[nodiscard]] TFEL_MATH_INLINE
+    [[nodiscard]] TFEL_HOST_DEVICE TFEL_MATH_INLINE
         BinaryOperationResult<std::invoke_result_t<A, size_type>,
                               std::invoke_result_t<B, size_type>,
                               OpMult>
@@ -88,11 +89,11 @@ namespace tfel::math {
 
     using size_type = typename StensorProductExprBase<A, B>::size_type;
 
-    TFEL_MATH_INLINE StensorProductExpr2D(A l, B r)
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE StensorProductExpr2D(A l, B r)
         : StensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {
     }
 
-    [[nodiscard]] TFEL_MATH_INLINE
+    [[nodiscard]] TFEL_HOST_DEVICE TFEL_MATH_INLINE
         BinaryOperationResult<std::invoke_result_t<A, size_type>,
                               std::invoke_result_t<B, size_type>,
                               OpMult>
@@ -125,11 +126,11 @@ namespace tfel::math {
 
     using size_type = typename StensorProductExprBase<A, B>::size_type;
 
-    TFEL_MATH_INLINE StensorProductExpr3D(A l, B r)
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE StensorProductExpr3D(A l, B r)
         : StensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {
     }
 
-    [[nodiscard]] TFEL_MATH_INLINE
+    [[nodiscard]] TFEL_HOST_DEVICE TFEL_MATH_INLINE
         BinaryOperationResult<std::invoke_result_t<A, size_type>,
                               std::invoke_result_t<B, size_type>,
                               OpMult>
