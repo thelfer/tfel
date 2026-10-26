@@ -22,7 +22,7 @@ namespace tfel::math::parser {
       : variables(n), f(f_) {}  // end of ExternalCastemFunction
 
   double ExternalCastemFunction::getValue() const {
-    return (*f)(&(this->variables[0]));
+    return (*f)(this->variables.data());
   }  // end of getValue() const
 
   void ExternalCastemFunction::setVariableValue(
