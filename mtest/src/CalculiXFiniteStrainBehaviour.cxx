@@ -147,11 +147,7 @@ namespace mtest {
     const auto Cse = this->convertTangentOperator(&(wk.D(0, 0)));
     const auto K =
         convert<FSTOBase::DSIG_DF, FSTOBase::DS_DEGL>(Cse, F0, F1, us);
-    for (unsigned short i = 0; i != 6u; ++i) {
-      for (unsigned short j = 0; j != 6u; ++j) {
-        Kt(i, j) = K(i, j);
-      }
-    }
+    std::copy(K.begin(), K.end(), Kt.begin());
     if (b) {
       // treating internal state variables
       if (!s.iv0.empty()) {
