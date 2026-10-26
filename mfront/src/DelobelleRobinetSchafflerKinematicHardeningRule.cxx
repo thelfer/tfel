@@ -81,7 +81,7 @@ namespace mfront::bbrick {
       mp.value = 1;
       this->D = mp;
     }
-    declareParameterOrLocalVariable(bd, this->D, "stress", Dn);
+    declareParameterOrLocalVariable(bd, this->D, "real", Dn);
     //
     if (d.count("f") != 0) {
       this->f = getBehaviourDescriptionMaterialProperty(dsl, "f", d.at("f"));
@@ -90,7 +90,7 @@ namespace mfront::bbrick {
       mp.value = 1;
       this->f = mp;
     }
-    declareParameterOrLocalVariable(bd, this->f, "stress", fn);
+    declareParameterOrLocalVariable(bd, this->f, "strainrate", fn);
     //
     if (d.count("a0") != 0) {
       this->a0 = getBehaviourDescriptionMaterialProperty(dsl, "a0", d.at("a0"));
@@ -106,7 +106,7 @@ namespace mfront::bbrick {
         "DelobelleRobinetSchafflerKinematicHardeningRule::initialize: "
         "'m' material property undefined");
     this->m = getBehaviourDescriptionMaterialProperty(dsl, "m", d.at("m"));
-    declareParameterOrLocalVariable(bd, this->m, "stress", mn);
+    declareParameterOrLocalVariable(bd, this->m, "real", mn);
     //
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("aeq", fid, kid));
@@ -226,9 +226,8 @@ namespace mfront::bbrick {
                        "::theta * (this->d" + an + ")";
     auto c = std::string{};
     c += "const auto " + aeqn + " = ";
-    c += "std::sqrt(std::max((" + a_mts + ") | (" + Rsn + " * (" + a_mts +
-         ")), ";
-    c += "                   strain(0) * strain(0)));\n";
+    c += "power<1,2>(std::max((" + a_mts + ") | (" + Rsn + " * (" + a_mts +
+         ")), strain(0)));\n";
     c += "const auto " + iaeqn + " = ";
     c += "1/std::max(strain(1e-14)," + aeqn + ");\n";
     c += "const auto " + Ec_n + " = eval((" + Ecn + ")  * " + n + ");\n";
