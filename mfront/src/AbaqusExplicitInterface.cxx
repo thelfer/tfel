@@ -408,7 +408,15 @@ namespace mfront {
           << "if(nthreads==nullptr){\n"
           << "return 4;\n"
           << "}\n"
-          << "return std::stoi(nthreads);\n"
+          << "char* end = nullptr;\n"
+          << "const auto n = std::strtol(nthreads, &end, 10);\n"
+          << "if((end == nthreads) || (*end != '\\0') || (n <= 0)){\n"
+          << "std::cerr << \"" << mb.getClassName() << ":"
+          << " invalid value for ABAQUSEXPLICIT_NTHREADS, "
+          << "using 4 threads\\n\";\n"
+          << "return 4;\n"
+          << "}\n"
+          << "return static_cast<size_t>(n);\n"
           << "}\n\n";
     }
 
