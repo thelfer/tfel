@@ -111,9 +111,7 @@ namespace tfel::system {
   template <typename T>
   struct StandardBinaryReader {
     static void exe(const int s, T& v) {
-      if (::read(s, static_cast<T*>(&v), sizeof(T)) == -1) {
-        systemCall::throwSystemError("BinaryReader<T>::exe", errno);
-      }
+      systemCall::read(s, static_cast<void*>(&v), sizeof(T));
     }
   };
   /*!

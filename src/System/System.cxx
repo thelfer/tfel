@@ -329,14 +329,17 @@ namespace tfel::system {
   void systemCall::mkdir(const std::string& dir, const mode_t mode)
 #endif /* defined _WIN32 || _WIN64 */
   {
-    std::string path;
+    // keep the root of absolute paths
+    auto path = std::string{((!dir.empty()) && (dir[0] == '/')) ? "/" : ""};
     const auto& paths = systemCall::tokenize(dir, '/');
     for (auto p = paths.begin(); p != paths.end(); ++p) {
-      if (!path.empty()) {
-        path += "/" + *p;
-      } else {
-        path = *p;
+      if (p->empty()) {
+        continue;
       }
+      if ((!path.empty()) && (path.back() != '/')) {
+        path += '/';
+      }
+      path += *p;
       struct stat infos;
       if (::stat(path.c_str(), &infos) == -1) {
         if (errno == ENOENT) {
@@ -351,7 +354,7 @@ namespace tfel::system {
               // used in the same time
               if (::stat(path.c_str(), &infos) == 0) {
                 if (S_ISDIR(infos.st_mode)) {
-                  return;
+                  continue;
                 }
               } else {
                 systemCall::throwSystemError(
@@ -415,10 +418,12 @@ namespace tfel::system {
         o.emplace_back(p->d_name);
       }
     }
+    closedir(dir);
     for (const auto& fb : o) {
       struct stat pInfos;
       const auto f = d + "/" + fb;
-      if (::stat(f.c_str(), &pInfos) == -1) {
+      // a symbolic link is removed, never followed
+      if (::lstat(f.c_str(), &pInfos) == -1) {
         systemCall::throwSystemError(
             "systemCall::rmdir: "
             "can't stat '" +
@@ -431,8 +436,10 @@ namespace tfel::system {
         systemCall::unlink(f);
       }
     }
-    closedir(dir);
-    ::rmdir(d.c_str());
+    if (::rmdir(d.c_str()) != 0) {
+      systemCall::throwSystemError(
+          "systemCall::rmdir: can't remove directory " + d, errno);
+    }
 #endif
   }  // end of systemCall::rmdir
 
@@ -464,6 +471,25 @@ namespace tfel::system {
       b += w;
     }
   }    // end of systemCall::write
+
+  void systemCall::read(const int f, void* const v, size_t s) {
+    auto b = static_cast<unsigned char*>(v);
+    size_t r = s;
+    raise_if<SystemError>(s >= SSIZE_MAX,
+                          "systemCall::read: "
+                          "invalid size (s>=SSIZE_MAX)");
+    while (r > 0) {
+      ssize_t n;
+      while ((n = ::read(f, b, r)) == -1) {
+        if (errno != EINTR) {
+          systemCall::throwSystemError("systemCall::read failed", errno);
+        }
+      }
+      raise_if<SystemError>(n == 0, "systemCall::read: unexpected end of file");
+      r = static_cast<size_t>(r - n);
+      b += n;
+    }
+  }  // end of systemCall::read
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
 
   std::string systemCall::fileType(const mode_t mode) {

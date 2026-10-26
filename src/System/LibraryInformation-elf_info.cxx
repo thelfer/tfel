@@ -97,6 +97,7 @@ namespace tfel::system::details {
 
     static constexpr std::uint32_t SHT_SYMTAB_ = 2;
     static constexpr std::uint32_t SHT_STRTAB_ = 3;
+    static constexpr std::uint32_t SHT_DYNSYM_ = 11;
 
     static constexpr unsigned char STB_LOCAL_ = 0;  /* Local symbol */
     static constexpr unsigned char STB_GLOBAL_ = 1; /* Global symbol */
@@ -179,33 +180,70 @@ namespace tfel::system::details {
                static_cast<std::size_t>(section_names_section.sh_size));
     }
 
-    void symbols_text(std::vector<symbol_t>& s, std::vector<char>& t) {
+    void symbols_text(std::vector<symbol_t>& s,
+                      std::vector<char>& t,
+                      const std::vector<char>& names) {
       const header_t elf = header();
       this->f_->seekg(static_cast<std::streamoff>(elf.e_shoff));
+
+      // ".symtab" is preferred to ".dynsym", which only holds the dynamic
+      // symbols, but is removed when the library is stripped
+      AddressOffsetT symtab_size = 0;
+      AddressOffsetT symtab_offset = 0;
+      AddressOffsetT strtab_size = 0;
+      AddressOffsetT strtab_offset = 0;
+
+      AddressOffsetT dynsym_size = 0;
+      AddressOffsetT dynsym_offset = 0;
+      AddressOffsetT dynstr_size = 0;
+      AddressOffsetT dynstr_offset = 0;
 
       for (std::size_t i = 0; i < elf.e_shnum; ++i) {
         section_t section;
         read_raw(section);
+        if (section.sh_name >= names.size()) {
+          continue;
+        }
+        const char* name = &names[0] + section.sh_name;
 
-        if (section.sh_type == SHT_SYMTAB_) {
-          s.resize(
-              static_cast<std::size_t>(section.sh_size / sizeof(symbol_t)));
-
-          const std::ifstream::pos_type pos = this->f_->tellg();
-          this->f_->seekg(static_cast<std::streamoff>(section.sh_offset));
-          read_raw(s[0],
-                   static_cast<std::size_t>(
-                       section.sh_size - (section.sh_size % sizeof(symbol_t))));
-          this->f_->seekg(pos);
+        if (section.sh_type == SHT_SYMTAB_ && !std::strcmp(name, ".symtab")) {
+          symtab_size = section.sh_size;
+          symtab_offset = section.sh_offset;
         } else if (section.sh_type == SHT_STRTAB_) {
-          t.resize(static_cast<std::size_t>(section.sh_size));
-
-          const std::ifstream::pos_type pos = this->f_->tellg();
-          this->f_->seekg(static_cast<std::streamoff>(section.sh_offset));
-          read_raw(t[0], static_cast<std::size_t>(section.sh_size));
-          this->f_->seekg(pos);
+          if (!std::strcmp(name, ".dynstr")) {
+            dynstr_size = section.sh_size;
+            dynstr_offset = section.sh_offset;
+          } else if (!std::strcmp(name, ".strtab")) {
+            strtab_size = section.sh_size;
+            strtab_offset = section.sh_offset;
+          }
+        } else if (section.sh_type == SHT_DYNSYM_ &&
+                   !std::strcmp(name, ".dynsym")) {
+          dynsym_size = section.sh_size;
+          dynsym_offset = section.sh_offset;
         }
       }
+
+      if (!symtab_size || !strtab_size) {
+        // stripped library
+        symtab_size = dynsym_size;
+        symtab_offset = dynsym_offset;
+        strtab_size = dynstr_size;
+        strtab_offset = dynstr_offset;
+      }
+
+      if (!symtab_size || !strtab_size) {
+        return;
+      }
+
+      t.resize(static_cast<std::size_t>(strtab_size) + 1, '\0');
+      this->f_->seekg(static_cast<std::streamoff>(strtab_offset));
+      read_raw(t[0], static_cast<std::size_t>(strtab_size));
+
+      s.resize(static_cast<std::size_t>(symtab_size / sizeof(symbol_t)));
+      this->f_->seekg(static_cast<std::streamoff>(symtab_offset));
+      read_raw(s[0], static_cast<std::size_t>(
+                         symtab_size - (symtab_size % sizeof(symbol_t))));
     }
 
     static bool is_visible(const symbol_t& sym) noexcept {
@@ -220,13 +258,16 @@ namespace tfel::system::details {
     std::vector<std::string> symbols() override {
       std::vector<std::string> ret;
 
+      std::vector<char> names;
+      sections_names_raw(names);
+
       std::vector<symbol_t> s;
       std::vector<char> t;
-      symbols_text(s, t);
+      symbols_text(s, t, names);
 
       ret.reserve(s.size());
       for (std::size_t i = 0; i < s.size(); ++i) {
-        if (is_visible(s[i])) {
+        if (is_visible(s[i]) && s[i].st_name < t.size()) {
           ret.push_back(&t[0] + s[i].st_name);
           if (ret.back().empty()) {
             ret.pop_back();  // Do not show empty names
@@ -242,10 +283,9 @@ namespace tfel::system::details {
 
       std::size_t index = 0;
       std::size_t ptrs_in_section_count = 0;
+      std::vector<char> names;
+      sections_names_raw(names);
       {
-        std::vector<char> names;
-        sections_names_raw(names);
-
         const header_t elf = header();
 
         for (; index < elf.e_shnum; ++index) {
@@ -267,7 +307,7 @@ namespace tfel::system::details {
 
       std::vector<symbol_t> s;
       std::vector<char> t;
-      symbols_text(s, t);
+      symbols_text(s, t, names);
 
       if (ptrs_in_section_count < s.size()) {
         ret.reserve(ptrs_in_section_count);
@@ -276,7 +316,8 @@ namespace tfel::system::details {
       }
 
       for (std::size_t i = 0; i < s.size(); ++i) {
-        if (s[i].st_shndx == index && is_visible(s[i])) {
+        if (s[i].st_shndx == index && is_visible(s[i]) &&
+            s[i].st_name < t.size()) {
           ret.push_back(&t[0] + s[i].st_name);
           if (ret.back().empty()) {
             ret.pop_back();  // Do not show empty names
