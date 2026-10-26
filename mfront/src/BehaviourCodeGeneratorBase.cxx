@@ -3837,7 +3837,7 @@ namespace mfront {
     for (const auto& v : md.getLocalVariables()) {
 #pragma message( \
     "BehaviourCodeGeneratorBase: handle LocalDataStructure properly")
-      if ((v.type.size() >= 7) && (v.type.substr(0, 7) != "struct{")) {
+      if (!tfel::utilities::starts_with(v.type, "struct{")) {
         os << "os << \"" << displayName(v) << " : \" << b." << v.name
            << " << '\\n';\n";
       }
