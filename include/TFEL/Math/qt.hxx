@@ -564,7 +564,7 @@ namespace tfel::math {
   template <ImmutableQuantityConcept T>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr auto square_root(
       const T& q) noexcept {
-    return power<1, 2>(base_type_cast(q));
+    return power<1, 2>(q);
   }
 
 }  // namespace tfel::math
