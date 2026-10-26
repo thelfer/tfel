@@ -915,7 +915,7 @@ namespace mtest {
                                            std::vector{this->P0, this->P0}));
       }
     }
-    if ((this->al == IMPOSEDAXIALFORCE) ||
+    if ((this->al == IMPOSEDAXIALGROWTH) ||
         (this->mandrel_axial_growth_evolution != nullptr)) {
       if (!state.containsEvolution("AxialForce")) {
         // first call with this study state
