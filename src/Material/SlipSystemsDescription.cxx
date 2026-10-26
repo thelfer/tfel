@@ -577,9 +577,9 @@ namespace tfel::material {
                            d3d[2] * d3d[0], d3d[1] * d3d[2], d3d[2] * d3d[1]};
     for (size_type idx = 0; idx != ss.size(); ++idx) {
       const auto mn = tfel::material::getOrientationTensor(this->cs, ss[idx]);
-      r[i] = td[8] * mn[8] + td[7] * mn[7] + td[6] * mn[6] + td[5] * mn[5] +
-             td[4] * mn[4] + td[3] * mn[3] + td[2] * mn[2] + td[1] * mn[1] +
-             td[0] * mn[0];
+      r[idx] = td[8] * mn[8] + td[7] * mn[7] + td[6] * mn[6] + td[5] * mn[5] +
+               td[4] * mn[4] + td[3] * mn[3] + td[2] * mn[2] + td[1] * mn[1] +
+               td[0] * mn[0];
     }
     return r;
   }  // end of getSchmidFactors

@@ -689,6 +689,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1137>
 
+## Issue 1135: [tfel-material] NUMODIS and slip systems: Schmid factors, installed headers, exports, HCP families and symmetries
+
+For more details, see <https://github.com/thelfer/tfel/issues/1135>
+
 ## Issue 1133: [tfel-math] Powell dog leg solvers, scalar Newton-Raphson, TinyMatrixSolve/Invert, CubicRoots, runtime_array output and Fischer-Burmeister derivatives
 
 For more details, see <https://github.com/thelfer/tfel/issues/1133>

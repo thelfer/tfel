@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 
@@ -109,6 +110,13 @@ struct SlipSystemsDescriptionTest final : public tfel::tests::TestCase {
         im.getRank(system3d{make_vec(0, 1, -1), make_vec(1, 1, 1)},
                    system3d{make_vec(0, 1, -1), make_vec(1, 1, 1)}),
         0u);
+    /* Schmid factors: d.mu.d with d = (1, 0, 0) */
+    const auto sf = ssd.getSchmidFactors(make_vec(1, 0, 0), 0);
+    const auto mus = ssd.getOrientationTensors(0);
+    TFEL_TESTS_CHECK_EQUAL(sf.size(), 12u);
+    for (std::size_t idx = 0; idx != sf.size(); ++idx) {
+      TFEL_TESTS_ASSERT(std::abs(sf[idx] - mus[idx][0]) < 1e-14L);
+    }
   }
   //! \brief tests related to HCP systems
   void checkHCP() {
@@ -199,6 +207,13 @@ struct SlipSystemsDescriptionTest final : public tfel::tests::TestCase {
         contains(gs3, make_vec(-2, 1, 1, 3), make_vec(1, 0, -1, 1)));
     TFEL_TESTS_ASSERT(
         contains(gs3, make_vec(1, 1, -2, -3), make_vec(1, 0, -1, 1)));
+    // pyramidal II <c+a> slip systems
+    auto ssd2 = SlipSystemsDescription(CrystalStructure::HCP);
+    ssd2.addSlipSystemsFamily(make_vec(-1, -1, 2, 3), make_vec(1, 1, -2, 2));
+    const auto gs4 = ssd2.getSlipSystems(0);
+    TFEL_TESTS_CHECK_EQUAL(gs4.size(), 6u);
+    TFEL_TESTS_ASSERT(
+        contains(gs4, make_vec(-1, -1, 2, -3), make_vec(1, 1, -2, -2)));
   }
 };
 
