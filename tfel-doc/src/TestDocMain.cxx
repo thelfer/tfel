@@ -61,9 +61,9 @@ namespace tfel::utilities {
         try {
           Parser(name).addDocumentation(tests);
         } catch (std::exception& e) {
-          log << TerminalColors::Reset;
+          log.write(TerminalColors::Red, sizeof(TerminalColors::Red));
           log << "treatment of file '" + f + "' failed: " << e.what() << '\n';
-          log << TerminalColors::Reset;
+          log.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
         }
       }
     }
