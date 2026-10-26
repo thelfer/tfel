@@ -5850,8 +5850,6 @@ namespace mfront {
              << v.first.name << "1 << '\\n';\n";
         }
       }
-      os << "os << \"" << displayName(v.second) << " : \" << b."
-         << v.second.name << " << '\\n';\n";
     }
     if (getUnicodeOutputOption()) {
       os << "os << \"\u0394t : \" << b.dt << '\\n';\n";
