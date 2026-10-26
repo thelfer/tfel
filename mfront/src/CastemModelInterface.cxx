@@ -450,13 +450,13 @@ namespace mfront {
           const auto& v = md.inputs.getVariable(n);
           const auto pos = getVariablePosition(md.inputs, n, true);
           if (v.getExternalName() == Glossary::Temperature) {
+            // the temperature is the only value of TEMP and DTEMP
             if (vdepth == 1) {
               os << "const auto " << v.name << "_1 = " << v.type
-                 << "{mfront_TEMP[" << pos << "]};\n";
+                 << "{*mfront_TEMP};\n";
             } else {
               os << "const auto " << v.name << " = " << v.type
-                 << "{mfront_TEMP[" << pos << "] + "
-                 << "mfront_DTEMP[" << pos << "]};\n";
+                 << "{*mfront_TEMP + *mfront_DTEMP};\n";
             }
           } else {
             if (vdepth == 1) {
