@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1161: [mtest] MTest and PTest: ptest keywords help, array component names, orthotropic generic stress, mistral defaults, PTest output and jacobian, algorithm names, installed and exported classes
+
+For more details, see <https://github.com/thelfer/tfel/issues/1161>
+
 ## Issue 1153: [tfel-math] Quantities and views: qt_ref assignment, change_basis, positive parts, runtime matrix views, arrays of views, tmatrix products, FSES NaN, Hashin-Shtrikman shear bounds, Anderson weights
 
 For more details, see <https://github.com/thelfer/tfel/issues/1153>
