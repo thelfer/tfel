@@ -199,6 +199,8 @@ namespace mfront {
             {DSLBase::initializationFromFileOption,
              "boolean stating if the values of parameters can be changed from "
              "an external file"},
+            {DSLBase::validatorOption,
+             "string specifying the validator of the implementation"},
             {DSLBase::buildIdentifierOption,
              "string specifying a build identifier. This option shall only be "
              "specified on the command line"},
@@ -1161,7 +1163,7 @@ namespace mfront {
   void DSLBase::overrideUnitSystem(const std::string& d) {
     if (!this->overriden_unit_system.empty()) {
       this->throwRuntimeError("DSLBase::overrideUnitSystem",
-                              "the author is already overriden");
+                              "the unit system is already overriden");
     }
     this->overriden_unit_system = d;
     this->setUnitSystem(d);

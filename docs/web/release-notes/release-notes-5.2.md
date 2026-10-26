@@ -705,6 +705,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1189>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1183>
 
+## Issue 1179: [mfront] Wrong or misleading error messages and documentation of DSLs, tools, material property interfaces, stress criteria, MTest bindings and tfel-check
+
+For more details, see <https://github.com/thelfer/tfel/issues/1179>
+
 ## Issue 1177: [mfront] ansys, comsol, dianafea, castem, aster and cyrano interfaces: material properties layout, tangent operator conventions, 2D sizes, plane stress checks, Gibiane examples and messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1177>
