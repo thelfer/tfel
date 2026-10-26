@@ -95,6 +95,12 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT((std::abs(vp3(0) - T(4.16709379934921)) < prec) ||
                       (std::abs(vp3(1) - T(4.16709379934921)) < prec) ||
                       (std::abs(vp3(2) - T(4.16709379934921)) < prec));
+    // the determinant of the deviator is null
+    const auto vp4 = stensor{T(1), T(2), T(3), T(0), T(0), T(0)}
+                         .template computeEigenValues<es>(stensor::ASCENDING);
+    TFEL_TESTS_ASSERT(std::abs(vp4(0) - T(1)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp4(1) - T(2)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp4(2) - T(3)) < prec);
   }
   template <typename T, tfel::math::stensor_common::EigenSolver es>
   void test3() {

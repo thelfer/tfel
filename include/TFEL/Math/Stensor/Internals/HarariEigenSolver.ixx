@@ -85,8 +85,8 @@ namespace tfel::math::internals {
 
     if (sj * (1 - d) < eps) {
       vp[0] = sqrt3 * s + tr;
-      vp[1] = 0 + tr;
-      vp[2] = -vp[0] + tr;
+      vp[1] = tr;
+      vp[2] = -sqrt3 * s + tr;
       return;
     }
 
