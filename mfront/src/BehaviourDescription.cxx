@@ -2465,8 +2465,8 @@ namespace mfront {
           bd.addAuxiliaryStateVariable(applyNamesChanges(bv, th),
                                        BehaviourData::UNREGISTRED);
         } catch (std::exception& e) {
-          tfel::raise("Error while treating saved gradient '" + th.name +
-                      "' from behaviour '" + bv.name + "' of type '" +
+          tfel::raise("Error while treating saved thermodynamic force '" +
+                      th.name + "' from behaviour '" + bv.name + "' of type '" +
                       bv.behaviour.getClassName() + "'\n" +
                       std::string{e.what()});
         }
