@@ -252,9 +252,27 @@ namespace aster {
         copy<StensorDimeToSize<N>::value>::exe(STRESS, s);
         copy<9u>::exe(STRAN, F0);
         copy<9u>::exe(DSTRAN, F1);
-        int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
-            emsg, &NTENS, DTIME, DROT, DDSOE, F0, F1, TEMP, DTEMP, PROPS,
-            NPROPS, PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
+        using BV3D =
+            Behaviour<ModellingHypothesis::TRIDIMENSIONAL, AsterReal, false>;
+        int r = 0;
+        if constexpr (AsterTraits<BV3D>::afsf == aster::GROT_GDEP) {
+          // the 6x6 tangent operator of the 3D behaviour is reduced
+          AsterReal K[36u] = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                              0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                              0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
+          K[0u] = DDSOE[0];
+          r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
+              emsg, &NTENS, DTIME, DROT, K, F0, F1, TEMP, DTEMP, PROPS, NPROPS,
+              PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
+          if (r == 0) {
+            AsterReduceTangentOperator<N>::exe(DDSOE, K);
+          }
+        } else {
+          // SIMO_MIEHE: same 6x3x3 layout of the tangent operator in 2D and 3D
+          r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
+              emsg, &NTENS, DTIME, DROT, DDSOE, F0, F1, TEMP, DTEMP, PROPS,
+              NPROPS, PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
+        }
         if (r == 0) {
           copy<StensorDimeToSize<N>::value>::exe(s, STRESS);
         }
