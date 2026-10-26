@@ -705,6 +705,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1165>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1163>
 
+## Issue 1161: [mtest] MTest and PTest: ptest keywords help, array component names, orthotropic generic stress, mistral defaults, PTest output and jacobian, algorithm names, installed and exported classes
+
+For more details, see <https://github.com/thelfer/tfel/issues/1161>
+
 ## Issue 1159: [tfel-material] Finite strain tangent operators, logarithmic strain handler, Hosford/Barlat with quantities, bounds checks, Gauss-Kronrod, broyden, parser and LU messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1159>

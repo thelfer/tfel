@@ -8,11 +8,11 @@ if(HAVE_CASTEM)
                PROPERTY ENVIRONMENT "MFrontCastemBehavioursBuildPath=$<TARGET_FILE:MFrontCastemBehaviours>")
 endif(HAVE_CASTEM)
 if(HAVE_ASTER)
-  set_property(TEST MTestParserTest
+  set_property(TEST MTestParserTest APPEND
                PROPERTY ENVIRONMENT "MFrontAsterBehavioursBuildPath=$<TARGET_FILE:MFrontAsterBehaviours>")
 endif(HAVE_ASTER)
 if(HAVE_CYRANO)
-  set_property(TEST MTestParserTest
+  set_property(TEST MTestParserTest APPEND
                PROPERTY ENVIRONMENT "MFrontCyranoBehavioursBuildPath=$<TARGET_FILE:MFrontCyranoBehaviours>")
 endif(HAVE_CYRANO)
 

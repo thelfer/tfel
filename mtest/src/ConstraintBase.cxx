@@ -40,7 +40,7 @@ namespace mtest {
   void ConstraintBase::setDesactivatingEvents(
       const std::vector<std::string>& evs) {
     tfel::raise_if(!this->desactivating_events.empty(),
-                   "activating events already declared");
+                   "desactivating events already declared");
     this->desactivating_events = evs;
   }  // end of ConstraintBase::setDesactivatingEvents
 
