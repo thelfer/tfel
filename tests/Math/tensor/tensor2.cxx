@@ -82,7 +82,7 @@ int main() {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("Tensor.xml");
+  manager.addXMLTestOutput("Tensor2.xml");
   TestResult r = manager.execute();
   if (!r.success()) {
     return EXIT_FAILURE;
