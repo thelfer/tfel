@@ -71,7 +71,7 @@ namespace mfront {
                   }),
               bss.end());
     tfel::raise_if(
-        mhs.empty(),
+        bss.empty(),
         "complete: the behaviour DSL description and the brick description "
         "do not have a behaviour symmetry in common");
     tfel::raise_if((!d.allowCrystalStructureDefinition) &&
