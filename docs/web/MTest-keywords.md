@@ -161,7 +161,7 @@ approximation can be adjusted by the
 
 The value used for to compare the tangent operator given by the behaviour to a
 numerical approximation can be adjusted by the
-`@TangentOperatorComparisoncriterion`.
+`@TangentOperatorComparisonCriterion`.
 
 ## Example
 
@@ -850,9 +850,9 @@ It is followed by the criterion value.
 @StressEpsilon 1.e2;
 ~~~~~~~~
 
-# The `@TangentOperatorComparisoncriterion` keyword
+# The `@TangentOperatorComparisonCriterion` keyword
 
-The keyword `@TangentOperatorComparisoncriterion` is not documented yet
+The keyword `@TangentOperatorComparisonCriterion` is not documented yet
 
 # The `@Test` keyword
 

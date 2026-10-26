@@ -9,7 +9,7 @@ approximation can be adjusted by the
 
 The value used for to compare the tangent operator given by the behaviour to a
 numerical approximation can be adjusted by the
-`@TangentOperatorComparisonCriterium`.
+`@TangentOperatorComparisonCriterion`.
 
 ## Example
 
