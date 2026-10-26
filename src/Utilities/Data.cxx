@@ -222,6 +222,7 @@ namespace tfel::utilities {
     std::vector<Data> v;
     while (p->value != "}") {
       v.push_back(Data::read(p, pe, o));
+      CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
       if (p->value == ",") {
         CxxTokenizer::readSpecifiedToken("Data::read_vector", ",", p, pe);
         CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
@@ -251,6 +252,7 @@ namespace tfel::utilities {
         const auto a = convert<double>(p->value);
         ++p;
         CxxTokenizer::readSpecifiedToken("Data::read_map", ":", p, pe);
+        CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
         const auto o = convert<double>(p->value);
         ++p;
         values.insert({a, o});
