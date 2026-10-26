@@ -38,11 +38,9 @@ namespace mfront::bbrick {
                       "coefficients of the linear transformation of the "
                       "inelastic strain rate",
                       OptionDescription::ARRAYOFMATERIALPROPERTIES);
-    opts.emplace_back("Rs", "First linear transformation coefficients",
+    opts.emplace_back("Rs", "static recovery tensor",
                       OptionDescription::ARRAYOFMATERIALPROPERTIES);
-    opts.emplace_back("Rs", "First linear transformation coefficients",
-                      OptionDescription::ARRAYOFMATERIALPROPERTIES);
-    opts.emplace_back("Rd", "Second linear transformation coefficients",
+    opts.emplace_back("Rd", "dynamic recovery tensor",
                       OptionDescription::ARRAYOFMATERIALPROPERTIES);
     return opts;
   }  // end of getOptions()
@@ -163,7 +161,8 @@ namespace mfront::bbrick {
               mh != ModellingHypothesis::TRIDIMENSIONAL,
               "DelobelleRobinetSchafflerKinematicHardeningRule::endTreatment: "
               "an orthotropic axes convention must be choosen when "
-              "defining a stress free expansion in behaviours "
+              "using the DelobelleRobinetSchaffler kinematic hardening rule "
+              "in behaviours "
               "which shall be valid in other modelling hypothesis "
               "than 'Tridimensional'.\n"
               "Either restrict the validity of the behaviour to "

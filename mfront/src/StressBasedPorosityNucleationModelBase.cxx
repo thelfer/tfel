@@ -52,10 +52,9 @@ namespace mfront::bbrick {
     addLocalVariable(bd, "" + mn + "Parameters<StressStensor>", parameters);
     //
     const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
-    tfel::raise_if(
-        d.count("fmax") == 0,
-        "ChuNeedleman1980StressBasedPorosityNucleationModel::initialize: "
-        "material property 'fmax' is not defined");
+    tfel::raise_if(d.count("fmax") == 0,
+                   "StressBasedPorosityNucleationModelBase::initialize: "
+                   "material property 'fmax' is not defined");
     this->fmax =
         getBehaviourDescriptionMaterialProperty(dsl, "fmax", d.at("fmax"));
     declareParameterOrLocalVariable(bd, this->fmax, "real", fmax_n);

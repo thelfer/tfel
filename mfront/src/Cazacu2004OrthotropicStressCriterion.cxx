@@ -169,7 +169,8 @@ namespace mfront::bbrick {
         tfel::raise_if(mh != ModellingHypothesis::TRIDIMENSIONAL,
                        "Cazacu2004OrthotropicStressCriterion::endTreatment: "
                        "an orthotropic axes convention must be choosen when "
-                       "defining a stress free expansion in behaviours "
+                       "using the orthotropic Cazacu 2004 stress criterion in "
+                       "behaviours "
                        "which shall be valid in other modelling hypothesis "
                        "than 'Tridimensional'.\n"
                        "Either restrict the validity of the behaviour to "
