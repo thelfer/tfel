@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1201: [tfel-utilities] CxxTokenizer numbers and integers, string algorithms, TextData comments and infinities, ProcessManager and SignalManager children, tfel-doc --split
+
+For more details, see <https://github.com/thelfer/tfel/issues/1201>
+
 ## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1189>
