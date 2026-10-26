@@ -136,29 +136,26 @@ namespace mfront {
   modifyVariableForStiffnessTensorComputation(const std::string& cn) {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    const Modifier m =
-        [cn](const BehaviourDescription::MaterialPropertyInput& i) {
-          if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-              (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-            return "this->" + i.name + "_";
-          } else if (i.category ==
-                     MaterialPropertyInput::
-                         AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) {
-            return "(this->" + i.name + "+(t/(this->dt))*(this->d" + i.name +
-                   "))";
-          } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                     (i.category == MaterialPropertyInput::PARAMETER)) {
-            return "this->" + i.name;
-          } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-            return cn + "::" + i.name;
-          } else {
-            tfel::raise(
-                "modifyVariableForStiffnessTensorComputation: "
-                "unsupported input type for "
-                "variable '" +
-                i.name + "'");
-          }
-        };
+    const Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
+                                i) {
+      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+          (i.category ==
+           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
+        return "this->" + i.name + "_";
+      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
+                 (i.category == MaterialPropertyInput::PARAMETER)) {
+        return "this->" + i.name;
+      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
+        return cn + "::" + i.name;
+      } else {
+        tfel::raise(
+            "modifyVariableForStiffnessTensorComputation: "
+            "unsupported input type for "
+            "variable '" +
+            i.name + "'");
+      }
+    };
     return m;
   }  // end of modifyVariableForStiffnessTensorComputation
 
@@ -504,6 +501,12 @@ namespace mfront {
       for (const auto& mv : this->bd.getMainVariables()) {
         const auto& dv = mv.first;
         if (uvs.find(dv.name) != uvs.end()) {
+          return true;
+        }
+      }
+      for (const auto& v : d.getAuxiliaryStateVariables()) {
+        if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
+            (uvs.find(v.name) != uvs.end())) {
           return true;
         }
       }
@@ -861,7 +864,7 @@ namespace mfront {
              << "+cste1_50*(this->d" << v.name << "_K5)"
              << "+cste2_55*(this->d" << v.name << "_K6)))";
           if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
-            os << "))/(" << get_enf(v) << ")";
+            os << ")/(" << get_enf(v) << ")";
           }
           os << ";\n";
         } else {
@@ -897,7 +900,7 @@ namespace mfront {
                       VariableDescription::errorNormalisationFactor)) {
                 os << "(";
               }
-              os << "tfel::math::base_type_case(tfel::math::abs("
+              os << "tfel::math::base_type_cast(tfel::math::abs("
                  << "cste1_360*(this->d" << v.name << "_K1[" << i << "])"
                  << "-cste128_4275*(this->d" << v.name << "_K3[" << i << "])"
                  << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
@@ -1230,7 +1233,7 @@ namespace mfront {
     }
     //
     if (bd.isNameReserved("young")) {
-      checkVariable("young");
+      return checkVariable("young");
     }
     // look if the stiffness tensor shall be provided by the solver
     if (bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,
@@ -1956,7 +1959,7 @@ namespace mfront {
          << "auto rk_update_error = [&error](const auto rk_error){\n"
          << "if(!ieee754::isfinite(error)){return;}\n"
          << "if(!ieee754::isfinite(rk_error)){\n"
-         << "error = rk_error;\n"
+         << "error = tfel::math::base_type_cast(rk_error);\n"
          << "return;\n"
          << "}\n"
          << "error = std::max(error, tfel::math::base_type_cast(rk_error));\n"
@@ -2178,6 +2181,15 @@ namespace mfront {
            << "this->" << v.name << "+ (this->d" << v.name << "_K3);\n";
       }
     }
+    writeExternalVariablesCurrentValues2(os, this->bd, h, "1");
+    if ((this->bd.getAttribute<bool>(
+            BehaviourDescription::computesStiffnessTensor, false)) &&
+        (!this->bd.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
+      auto m =
+          modifyVariableForStiffnessTensorComputation(this->bd.getClassName());
+      os << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(os, "this->D", m);
+    }
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "// update the thermodynamic forces\n"
          << "if(!this->computeThermodynamicForces()){\n";
@@ -2197,14 +2209,6 @@ namespace mfront {
       os << "this->" << v.name << " += "
          << "(this->d" << v.name << "_K1+this->d" << v.name << "_K4)/6+\n";
       os << "(this->d" << v.name << "_K2+this->d" << v.name << "_K3)/3;\n";
-    }
-    if ((this->bd.getAttribute<bool>(
-            BehaviourDescription::computesStiffnessTensor, false)) &&
-        (!this->bd.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
-      os << "// updating stiffness tensor at the end of the time step\n";
-      auto m =
-          modifyVariableForStiffnessTensorComputation2(this->bd.getClassName());
-      this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (!this->bd.getMainVariables().empty()) {
       os << "// update the thermodynamic forces\n"

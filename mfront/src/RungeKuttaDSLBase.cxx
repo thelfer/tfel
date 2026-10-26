@@ -698,6 +698,7 @@ namespace mfront {
                       // initialisation
       // creating local variables
       const auto& ivs = d.getStateVariables();
+      const auto& aivs = d.getAuxiliaryStateVariables();
       const auto& evs = d.getExternalStateVariables();
       for (const auto& iv : ivs) {
         if (uvs.find(iv.name) != uvs.end()) {
@@ -720,6 +721,21 @@ namespace mfront {
           if (uvs.find(dv.name) != uvs.end()) {
             ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
           }
+        }
+      }
+      // auxiliary state variables computed by an external model
+      for (const auto& iv : aivs) {
+        if ((!iv.getAttribute<bool>("ComputedByExternalModel", false)) ||
+            (uvs.find(iv.name) == uvs.end())) {
+          continue;
+        }
+        const auto currentVarName = iv.name + "_";
+        if (this->mb.useDynamicallyAllocatedVector(iv.arraySize)) {
+          icb.code += "this->" + currentVarName + ".resize(" +
+                      std::to_string(iv.arraySize) + ");\n";
+        }
+        if ((algorithm != "RungeKutta4/2") && (algorithm != "RungeKutta5/4")) {
+          icb.code += "this->" + currentVarName + " = this->" + iv.name + ";\n";
         }
       }
       for (const auto& ev : evs) {
