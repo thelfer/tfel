@@ -136,29 +136,26 @@ namespace mfront {
   modifyVariableForStiffnessTensorComputation(const std::string& cn) {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    const Modifier m =
-        [cn](const BehaviourDescription::MaterialPropertyInput& i) {
-          if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-              (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-            return "this->" + i.name + "_";
-          } else if (i.category ==
-                     MaterialPropertyInput::
-                         AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) {
-            return "(this->" + i.name + "+(t/(this->dt))*(this->d" + i.name +
-                   "))";
-          } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                     (i.category == MaterialPropertyInput::PARAMETER)) {
-            return "this->" + i.name;
-          } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-            return cn + "::" + i.name;
-          } else {
-            tfel::raise(
-                "modifyVariableForStiffnessTensorComputation: "
-                "unsupported input type for "
-                "variable '" +
-                i.name + "'");
-          }
-        };
+    const Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
+                                i) {
+      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+          (i.category ==
+           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
+        return "this->" + i.name + "_";
+      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
+                 (i.category == MaterialPropertyInput::PARAMETER)) {
+        return "this->" + i.name;
+      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
+        return cn + "::" + i.name;
+      } else {
+        tfel::raise(
+            "modifyVariableForStiffnessTensorComputation: "
+            "unsupported input type for "
+            "variable '" +
+            i.name + "'");
+      }
+    };
     return m;
   }  // end of modifyVariableForStiffnessTensorComputation
 
