@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <limits>
 #include <utility>
 #include <sstream>
 #include "TFEL/Raise.hxx"
@@ -697,8 +698,10 @@ namespace mfront::bbrick {
         } else {
           const auto& cmp =
               mp.template get<BehaviourDescription::ConstantMaterialProperty>();
-          c += "this->" + vn + " = " + std::to_string(i) +
-               "] = " + std::to_string(cmp.value) + ";\n";
+          std::ostringstream os;
+          os.precision(std::numeric_limits<double>::max_digits10);
+          os << "this->" << vn << " = " << cmp.value << ";\n";
+          c += os.str();
         }
       }
     }

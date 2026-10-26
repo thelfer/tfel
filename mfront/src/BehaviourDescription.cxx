@@ -2537,7 +2537,8 @@ namespace mfront {
       }
       // check compatibility with the modelling hypotheses of the behaviour
       const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
-      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      const auto& v_distinct_hypotheses =
+          v.behaviour.getDistinctModellingHypotheses();
       for (const auto& h : this->hypotheses) {
         if (!v_hypotheses.contains(h)) {
           tfel::raise(
@@ -2600,7 +2601,8 @@ namespace mfront {
       }
       // check compatibility with the modelling hypotheses of the behaviour
       const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
-      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      const auto& v_distinct_hypotheses =
+          v.behaviour.getDistinctModellingHypotheses();
       for (const auto& h : this->hypotheses) {
         if (!v_hypotheses.contains(h)) {
           tfel::raise(

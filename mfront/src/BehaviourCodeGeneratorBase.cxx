@@ -3133,14 +3133,27 @@ namespace mfront {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "mfront_dl0_l0[2]+=(this->" << vs << ")/2;\n";
           }
-          this->writeModelCall(os, tmpnames, h, md,
-                               std::vector<std::string>(1u, vs),
-                               std::vector<std::string>(1u, vs), "sfeh");
           if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "mfront_dl0_l0[1]+=(this->" << vs << ")/2;\n";
+          }
+          this->writeModelCall(os, tmpnames, h, md,
+                               std::vector<std::string>(1u, vs),
+                               std::vector<std::string>(1u, vs), "sfeh");
+          if ((h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
+              (h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)) {
+            os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl1_l0[2]+=(this->" << vs << ")/2;\n";
+          }
+          if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRESS)) {
+            os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl1_l0[1]+=(this->" << vs << ")/2;\n";
           }
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
@@ -4985,10 +4998,10 @@ namespace mfront {
                << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">>::type, tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));\n";
+               << v2.type << ">&>(*(" + ptr + "));\n";
           } else {
-            os << "return tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));\n";
+            os << "return tfel::math::map<tfel::math::derivative_type<"
+               << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
           }
         } else {
           os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
@@ -5020,7 +5033,7 @@ namespace mfront {
                << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">>::type, tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));";
+               << v2.type << ">&>(*(" + ptr + "));";
           } else {
             os << "return tfel::math::map<tfel::math::derivative_type<"
                << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
