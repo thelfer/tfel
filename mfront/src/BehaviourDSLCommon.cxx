@@ -3436,10 +3436,15 @@ namespace mfront {
     auto b = current;
     for (const auto& h : hs) {
       this->current = b;
-      const auto bounds = this->readVariableBounds();
-      this->mb.setPhysicalBounds(h, bounds.first, bounds.second);
+      const auto r = this->readVariableBounds();
+      const auto v = extractVariableNameAndArrayPosition(r.first);
+      if (std::get<1>(v)) {
+        this->mb.setPhysicalBounds(h, std::get<0>(v), std::get<2>(v), r.second);
+      } else {
+        this->mb.setPhysicalBounds(h, std::get<0>(v), r.second);
+      }
     }
-    this->readSpecifiedToken("BehaviourDSLCommon::treatBounds", ";");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatPhysicalBounds", ";");
   }  // end of treatPhysicalBounds
 
   void BehaviourDSLCommon::registerDefaultVarNames() {
