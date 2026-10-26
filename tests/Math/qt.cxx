@@ -21,6 +21,7 @@
 #include <cassert>
 #include <iostream>
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/PhysicalConstants.hxx"
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
@@ -62,6 +63,16 @@ struct qtTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(
         (my_abs(std::cos(qt<unit::NoUnit>(12.)) - std::cos(12.)) < 1.e-14));
     TFEL_TESTS_ASSERT((my_abs(pow(value, 3.) - 27) < 1.e-14));
+    // units of the elementary charge and of the Faraday constant
+    using PhysicalConstants = tfel::PhysicalConstants<double, true>;
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_convertible_v<decltype(PhysicalConstants::e /
+                                        qt<unit::Time>(1.)),
+                               qt<unit::Ampere>>));
+    TFEL_TESTS_STATIC_ASSERT((
+        std::is_convertible_v<decltype(PhysicalConstants::F *
+                                       qt<unit::Mole>(1.) / qt<unit::Time>(1.)),
+                              qt<unit::Ampere>>));
   }  // end of test1
   void test2() {
     using namespace tfel::math;
@@ -69,6 +80,9 @@ struct qtTest final : public tfel::tests::TestCase {
     constexpr RootSquareMass v1(1.5);
     constexpr qt<unit::Mass> v2 = v1 * v1;
     TFEL_TESTS_STATIC_ASSERT(my_abs(v2.getValue() - 2.25) < 1.e-14);
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<decltype(square_root(v2)), RootSquareMass>));
+    TFEL_TESTS_ASSERT(my_abs(square_root(v2).getValue() - 1.5) < 1.e-14);
   }  // end of test2
   void test3() {
     using namespace tfel::math;

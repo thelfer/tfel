@@ -901,7 +901,7 @@ namespace mfront {
   void BehaviourDescription::setLibrary(const std::string& l) {
     tfel::raise_if(!this->library.empty(),
                    "BehaviourDescription::setLibrary: "
-                   "library alreay defined");
+                   "library already defined");
     this->library = l;
   }  // end of setLibrary
 
@@ -912,7 +912,7 @@ namespace mfront {
   void BehaviourDescription::setMaterialName(const std::string& m) {
     tfel::raise_if(!this->material.empty(),
                    "BehaviourDescription::setMaterialName: "
-                   "material name alreay defined");
+                   "material name already defined");
     this->material = m;
     this->updateClassName();
   }  // end of setMaterialName
@@ -924,7 +924,7 @@ namespace mfront {
   void BehaviourDescription::setClassName(const std::string& n) {
     tfel::raise_if(!this->className.empty(),
                    "BehaviourDescription::setClassName: "
-                   "class name alreay defined");
+                   "class name already defined");
     this->className = n;
   }  // end of setClassName
 

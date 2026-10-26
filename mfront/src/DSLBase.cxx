@@ -199,6 +199,8 @@ namespace mfront {
             {DSLBase::initializationFromFileOption,
              "boolean stating if the values of parameters can be changed from "
              "an external file"},
+            {DSLBase::validatorOption,
+             "string specifying the validator of the implementation"},
             {DSLBase::buildIdentifierOption,
              "string specifying a build identifier. This option shall only be "
              "specified on the command line"},
@@ -291,16 +293,16 @@ namespace mfront {
       }
     }
     // treating external commands
-    for (const auto& c : ecmds) {
+    for (auto pc = ecmds.rbegin(); pc != ecmds.rend(); ++pc) {
       CxxTokenizer t;
       try {
-        t.parseString(c);
+        t.parseString(*pc);
       } catch (std::exception& e) {
         tfel::raise(
             "DSLBase::openFile : "
             "error while parsing external command "
             "'" +
-            c + "'\n" + std::string(e.what()));
+            *pc + "'\n" + std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(), t.begin(), t.end());
     }
@@ -1161,7 +1163,7 @@ namespace mfront {
   void DSLBase::overrideUnitSystem(const std::string& d) {
     if (!this->overriden_unit_system.empty()) {
       this->throwRuntimeError("DSLBase::overrideUnitSystem",
-                              "the author is already overriden");
+                              "the unit system is already overriden");
     }
     this->overriden_unit_system = d;
     this->setUnitSystem(d);

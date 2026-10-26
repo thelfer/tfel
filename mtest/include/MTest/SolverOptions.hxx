@@ -16,6 +16,7 @@
 
 #include <memory>
 
+#include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
 
 namespace mtest {
@@ -79,7 +80,7 @@ namespace mtest {
   /*!
    * work space used by the solver
    */
-  struct SolverOptions {
+  struct MTEST_VISIBILITY_EXPORT SolverOptions {
     SolverOptions();
     SolverOptions(SolverOptions&&) noexcept;
     SolverOptions(const SolverOptions&);

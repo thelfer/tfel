@@ -1770,7 +1770,7 @@ namespace mfront {
     if (!this->isValidIdentifier(iname, false)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::treatInitializeFunction",
-          "invalid post-processing name (read '" + iname + "').");
+          "invalid initialize function name (read '" + iname + "').");
     }
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatInitializeFunction");
@@ -2023,7 +2023,7 @@ namespace mfront {
             false)) {
       tfel::raise(
           "BehaviourDSLCommon::treatComputeThermalExpansion: "
-          "@ComputeThermalExpansion can be used along with "
+          "@ComputeThermalExpansion can not be used along with "
           "@RequireThermalExpansionCoefficientTensor");
     }
     const auto new_syntax = [this] {
@@ -2125,7 +2125,7 @@ namespace mfront {
           if (getVerboseMode() != VERBOSE_QUIET) {
             auto& os = getLogStream();
             os << "no reference temperature in material property '";
-            if (mpd.material.empty()) {
+            if (!mpd.material.empty()) {
               os << mpd.material << '_';
             }
             os << mpd.law << "'\n";
@@ -2157,7 +2157,7 @@ namespace mfront {
       }
       if (!data.is<tfel::utilities::DataMap>()) {
         this->throwRuntimeError(
-            "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+            "BehaviourDSLCommon::treatComputeThermalExpansionSecondSyntax",
             "expected to read a map");
       }
       return data.get<tfel::utilities::DataMap>();
@@ -2316,9 +2316,10 @@ namespace mfront {
   void BehaviourDSLCommon::treatComputeStiffnessTensor() {
     if (this->mb.getAttribute<bool>(
             BehaviourDescription::requiresStiffnessTensor, false)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
-                              "@ComputeStiffnessTensor can be used along with "
-                              "@RequireStiffnessTensor");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatComputeStiffnessTensor",
+          "@ComputeStiffnessTensor can not be used along with "
+          "@RequireStiffnessTensor");
     }
     if (this->current->value == "<") {
       this->treatStiffnessTensorOption();
@@ -2896,9 +2897,10 @@ namespace mfront {
 
   void BehaviourDSLCommon::treatRequireStiffnessTensor() {
     if (this->mb.hasAttribute(BehaviourDescription::computesStiffnessTensor)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatRequireStiffnessTensor",
-                              "@RequireStiffnessTensor can be used along with "
-                              "@ComputeStiffnessTensor");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatRequireStiffnessTensor",
+          "@RequireStiffnessTensor can not be used along with "
+          "@ComputeStiffnessTensor");
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatRequireStiffnessTensor");
     if (this->current->value == "<") {
@@ -3809,7 +3811,7 @@ namespace mfront {
     using namespace tfel::material;
     using namespace tfel::utilities;
     if (this->mb.getTangentOperatorBlocks().empty()) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
+      this->throwRuntimeError("BehaviourDSLCommon::treatPredictionOperator",
                               "no thermodynamic force defined");
     }
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
@@ -4154,7 +4156,9 @@ namespace mfront {
         m = [this](const Hypothesis h, const std::string& sv, const bool bv) {
           return this->standardModifier(h, sv, bv);
         };
+    const auto beg = this->current;
     for (const auto h : o.hypotheses) {
+      this->current = beg;
       const auto& d = this->mb.getBehaviourData(h);
       const auto c = this->readNextBlock(h, n, m, true);
       for (const auto& mn : c.members) {

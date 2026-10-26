@@ -915,7 +915,7 @@ namespace mtest {
                                            std::vector{this->P0, this->P0}));
       }
     }
-    if ((this->al == IMPOSEDAXIALFORCE) ||
+    if ((this->al == IMPOSEDAXIALGROWTH) ||
         (this->mandrel_axial_growth_evolution != nullptr)) {
       if (!state.containsEvolution("AxialForce")) {
         // first call with this study state
@@ -1194,7 +1194,8 @@ namespace mtest {
           if (this->al == ENDCAPEFFECT) {
             r(n) -= pi * Ri_ * Ri_ * Pi;
             if (mt != StiffnessMatrixType::NOSTIFFNESS) {
-              k(n, n) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, 0) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, n) -= pi * Ri_ * Ri_ * dP_dV * dV_dezz;
             }
           }
         }
@@ -2180,11 +2181,13 @@ namespace mtest {
       ao.f(out, state);
     }
     if (this->inner_boundary_oxidation_model.model != nullptr) {
-      this->out << getOxidationLength(state,
+      this->out << " "
+                << getOxidationLength(state,
                                       this->inner_boundary_oxidation_model);
     }
     if (this->outer_boundary_oxidation_model.model != nullptr) {
-      this->out << getOxidationLength(state,
+      this->out << " "
+                << getOxidationLength(state,
                                       this->outer_boundary_oxidation_model);
     }
     for (std::size_t i = 0; i != this->failure_criteria.size(); ++i) {

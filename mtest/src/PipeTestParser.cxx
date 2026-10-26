@@ -138,8 +138,8 @@ namespace mtest {
       log << "PipeTestParser::execute : treating keyword '" << p->value
           << "' at line '" << p->line << "'\n";
     }
+    const auto line = p->line;
     ++p;
-    auto line = p->line;
     try {
       (this->*(pc->second))(t, p);
     } catch (std::exception& e) {
@@ -194,7 +194,7 @@ namespace mtest {
       std::cout << "\n# The `" << k << "` keyword\n\n";
       if (!f.empty()) {
         std::ifstream desc{f};
-        if (!desc) {
+        if (desc) {
           std::cout << desc.rdbuf();
         } else {
           std::cout << "The keyword `" << k << "` is not documented yet\n";
