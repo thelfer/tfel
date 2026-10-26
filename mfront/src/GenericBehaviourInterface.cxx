@@ -600,18 +600,30 @@ namespace mfront {
     if (bd.getSymmetryType() != mfront::ORTHOTROPIC) {
       return;
     }
+    // the gradient of a finite strain behaviour defined through a strain
+    // measure is the deformation gradient, not the strain
+    const auto is_finite_strain_through_strain_measure =
+        (bd.getBehaviourType() ==
+         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+        (bd.isStrainMeasureDefined()) &&
+        (bd.getStrainMeasure() != BehaviourDescription::LINEARISED);
     const auto f = i.getFunctionNameForHypothesis(name, h);
     os << "void " << f << "_rotateGradients("
        << "mfront_gb_real* const dest, "
        << "const mfront_gb_real* const src, "
           "const mfront_gb_real* const rv){\n";
     writeRotationMatrixDefinition(os, false);
-    // offset of gradient variable
-    auto og = SupportedTypes::TypeSize{};
-    for (const auto& mv : bd.getMainVariables()) {
-      const auto& g = mv.first;
-      writeVariableRotation(os, h, g, og);
-      og += SupportedTypes::getTypeSize(g.type, g.arraySize);
+    if (is_finite_strain_through_strain_measure) {
+      auto args_F = WriteRotationFunctionArgument{os, h, "F", 0, ""};
+      writeTensorRotation(args_F);
+    } else {
+      // offset of gradient variable
+      auto og = SupportedTypes::TypeSize{};
+      for (const auto& mv : bd.getMainVariables()) {
+        const auto& g = mv.first;
+        writeVariableRotation(os, h, g, og);
+        og += SupportedTypes::getTypeSize(g.type, g.arraySize);
+      }
     }
     os << "}\n\n";
     os << "void " << f << "_rotateArrayOfGradients("
@@ -621,18 +633,26 @@ namespace mfront {
        << "const mfront_gb_size_type s){\n";
     writeRotationMatrixDefinition(os, false);
     os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
-    auto gsize = SupportedTypes::TypeSize{};
-    for (const auto& mv : bd.getMainVariables()) {
-      const auto& g = mv.first;
-      gsize += SupportedTypes::getTypeSize(g.type, g.arraySize);
-    }
-    const auto goffset =
-        "idx * " + std::to_string(gsize.getValueForModellingHypothesis(h));
-    og = SupportedTypes::TypeSize{};
-    for (const auto& mv : bd.getMainVariables()) {
-      const auto& g = mv.first;
-      writeVariableRotation(os, h, g, og, goffset);
-      og += SupportedTypes::getTypeSize(g.type, g.arraySize);
+    if (is_finite_strain_through_strain_measure) {
+      const auto tensor_offset =
+          "idx * " + std::to_string(tfel::material::getTensorSize(h));
+      auto args_F_2 =
+          WriteRotationFunctionArgument{os, h, "F", 0, tensor_offset};
+      writeTensorRotation(args_F_2);
+    } else {
+      auto gsize = SupportedTypes::TypeSize{};
+      for (const auto& mv : bd.getMainVariables()) {
+        const auto& g = mv.first;
+        gsize += SupportedTypes::getTypeSize(g.type, g.arraySize);
+      }
+      const auto goffset =
+          "idx * " + std::to_string(gsize.getValueForModellingHypothesis(h));
+      auto og = SupportedTypes::TypeSize{};
+      for (const auto& mv : bd.getMainVariables()) {
+        const auto& g = mv.first;
+        writeVariableRotation(os, h, g, og, goffset);
+        og += SupportedTypes::getTypeSize(g.type, g.arraySize);
+      }
     }
     os << "}\n";
     os << "}\n\n";
@@ -1593,35 +1613,43 @@ namespace mfront {
   static void writeBehaviourVariablesDeclarations(
       std::ostream& os, const BehaviourDescription& bd) {
     const auto mvs = bd.getMainVariables();
+    // arrays of gradients and thermodynamic forces are described entry by
+    // entry, with the names of the exported symbols
+    auto n = std::size_t{};
+    for (const auto& mv : mvs) {
+      n += mv.first.arraySize;
+    }
+    auto write = [&os](const VariableDescription& v, const bool first) {
+      for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+        if ((!first) || (idx != 0)) {
+          os << ", ";
+        }
+        os << "{\"" << v.getExternalName();
+        if (v.arraySize != 1u) {
+          os << '[' << idx << ']';
+        }
+        os << "\", " << as_string(v.getTypeFlag()) << "}";
+      }
+    };
     os << "using BehaviourVariablesDescription = "
        << "mfront::GenericBehaviourMTestFileGenerator::"
        << "BehaviourVariablesDescription;\n";
     os << "using VariableDescription = "
        << "BehaviourVariablesDescription::VariableDescription;\n";
     os << "const auto gradients = "
-       << "std::array<VariableDescription," << mvs.size() << ">{";
-    for (auto pmv = mvs.begin(); pmv != mvs.end();) {
-      const auto& g = pmv->first;
-      os << "{\"" << g.getExternalName() << "\", " << as_string(g.getTypeFlag())
-         << "}";
-      if (++pmv != mvs.end()) {
-        os << ", ";
-      }
+       << "std::array<VariableDescription," << n << ">{{";
+    for (auto pmv = mvs.begin(); pmv != mvs.end(); ++pmv) {
+      write(pmv->first, pmv == mvs.begin());
     }
-    os << "};\n";
+    os << "}};\n";
     os << "const auto thermodynamic_forces = "
-       << "std::array<VariableDescription," << mvs.size() << ">{";
-    for (auto pmv = mvs.begin(); pmv != mvs.end();) {
-      const auto& thf = pmv->second;
-      os << "{\"" << thf.getExternalName() << "\", "
-         << as_string(thf.getTypeFlag()) << "}";
-      if (++pmv != mvs.end()) {
-        os << ", ";
-      }
+       << "std::array<VariableDescription," << n << ">{{";
+    for (auto pmv = mvs.begin(); pmv != mvs.end(); ++pmv) {
+      write(pmv->second, pmv == mvs.begin());
     }
-    os << "};\n";
+    os << "}};\n";
     os << "const auto description = "
-       << "BehaviourVariablesDescription{" << mvs.size() << ", "
+       << "BehaviourVariablesDescription{" << n << ", "
        << "gradients.data(), "
        << "thermodynamic_forces.data()};\n\n";
   }  // end of writeBehaviourVariablesDeclarations
@@ -1749,7 +1777,8 @@ namespace mfront {
           os << "auto name =  \"" << ivname
              << "[\" + std::to_string(i)+ \"]\";\n";
           os << "mg.addInternalStateVariable(name," << as_string(flag)
-             << ",&d->s0.internal_state_variables[" << ivoffset << "]+i);\n";
+             << ",&d->s0.internal_state_variables[" << ivoffset << "]+i*("
+             << SupportedTypes::TypeSize(flag) << "));\n";
           os << "}\n";
           ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
         } else {
@@ -1780,8 +1809,10 @@ namespace mfront {
              << "[\" +std::to_string(i)+\"]\";\n";
           os << "mg.addExternalStateVariable(name, "  //
              << as_string(flag) << ", "
-             << "0,d->s0.external_state_variables + " << evoffset << " + i, "
-             << "dt, d->s1.external_state_variables + " << evoffset << " + i, "
+             << "0,d->s0.external_state_variables + " << evoffset << " + i*("
+             << SupportedTypes::TypeSize(flag) << "), "
+             << "dt, d->s1.external_state_variables + " << evoffset << " + i*("
+             << SupportedTypes::TypeSize(flag) << "), "
              << "false);\n";
           os << "}\n";
           evoffset += SupportedTypes::TypeSize(ev.arraySize, flag);

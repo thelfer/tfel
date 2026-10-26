@@ -5483,8 +5483,8 @@ namespace mfront {
         if (v.first.arraySize == 1u) {
           os << v.first.type << " d" << v.first.name << ";\n\n";
         } else {
-          os << v.first.type << " d" << v.first.name << "[" << v.first.arraySize
-             << "];\n\n";
+          os << "tfel::math::fsarray<" << v.first.arraySize << ", "
+             << v.first.type << "> d" << v.first.name << ";\n\n";
         }
       } else {
         os << "/*!\n"
@@ -5493,8 +5493,8 @@ namespace mfront {
         if (v.first.arraySize == 1u) {
           os << v.first.type << " " << v.first.name << "1;\n\n";
         } else {
-          os << v.first.type << " " << v.first.name << "1[" << v.first.arraySize
-             << "];\n\n";
+          os << "tfel::math::fsarray<" << v.first.arraySize << ", "
+             << v.first.type << "> " << v.first.name << "1;\n\n";
         }
       }
     }

@@ -72,7 +72,10 @@ namespace mfront {
       writeMaterialLaws(os, this->bd.getMaterialLaws());
       const auto flow_id = std::to_string(n);
       if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule + flow_id)) {
-        os << this->bd.getCode(h, BehaviourData::BeforeFlowRule + flow_id);
+        // not profiled: the variables declared by this code block are used
+        // by the flow rule
+        os << this->bd.getCodeBlock(h, BehaviourData::BeforeFlowRule + flow_id)
+                  .code;
       }
       os << p->flowRule << '\n';
       os << "}\n\n";
