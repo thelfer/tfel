@@ -311,13 +311,13 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename T>
   TFEL_HOST_DEVICE constexpr auto tmatrix<N, M, T>::max() const {
-    return *tfel::fsalgo::max_element<this->size()>::exe(this->v);
+    return *tfel::fsalgo::max_element<N * M>::exe(this->v);
   }
 
   template <unsigned short N, unsigned short M, typename T>
   TFEL_HOST_DEVICE constexpr auto tmatrix<N, M, T>::abs_max() const {
-    return tfel::math::abs(*tfel::fsalgo::max_element<this->size()>::exe(
-        this->v, absCompare<T>()));
+    return tfel::math::abs(
+        *tfel::fsalgo::max_element<N * M>::exe(this->v, absCompare<T>()));
   }
 
   template <unsigned short N, unsigned short M, typename T>
@@ -340,7 +340,7 @@ namespace tfel::math {
   template <typename InputIterator>
   TFEL_HOST_DEVICE constexpr void tmatrix<N, M, T>::copy(
       const InputIterator src) {
-    tfel::fsalgo::copy<this->size()>::exe(src, this->v);
+    tfel::fsalgo::copy<N * M>::exe(src, this->v);
   }
 
   template <unsigned short N, unsigned short M, typename T>

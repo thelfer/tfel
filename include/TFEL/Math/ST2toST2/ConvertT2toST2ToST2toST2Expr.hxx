@@ -43,12 +43,15 @@ namespace tfel::math {
      */
     template <T2toST2Concept T2toST2Type>
     TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& A) noexcept {
-      using tfel::fsalgo::copy;
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
                                    numeric_type<ST2toST2ResultType>>());
-      copy<9u>::exe(&A(0, 0), this->v);
+      for (unsigned short i = 0; i != 3; ++i) {
+        for (unsigned short j = 0; j != 3; ++j) {
+          this->v[3 * i + j] = A(i, j);
+        }
+      }
     }  // end of Expr
     // NOLINTEND(google-explicit-constructor)
     /*!
