@@ -507,6 +507,12 @@ namespace mfront {
           return true;
         }
       }
+      for (const auto& v : d.getAuxiliaryStateVariables()) {
+        if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
+            (uvs.find(v.name) != uvs.end())) {
+          return true;
+        }
+      }
       for (const auto& v : d.getExternalStateVariables()) {
         if (uvs.find(v.name) != uvs.end()) {
           return true;
