@@ -173,6 +173,7 @@ namespace mfront {
                    BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
                "the '@AsterFiniteStrainFormulation' is only valid "
                "for finite strain behaviour");
+      throw_if(current == end, "unexpected end of file");
       const auto s = current->value;
       if (s == "SIMO_MIEHE") {
         bd.setAttribute(AsterInterface::finiteStrainFormulation,
