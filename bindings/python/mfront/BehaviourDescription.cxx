@@ -204,7 +204,7 @@ void declareBehaviourDescription(pybind11::module_& m) {
       .def("setModellingHypotheses", setModellingHypotheses2,
           pybind11::arg("mh"), pybind11::arg("b"))
       .def("getBehaviourData", &BehaviourDescription::getBehaviourData,
-           pybind11::return_value_policy::reference)
+           pybind11::return_value_policy::reference_internal)
       .def("hasAttribute", &BehaviourDescription_hasAttribute,
           pybind11::arg("s"))
       .def("getSymmetryType", &BehaviourDescription::getSymmetryType)
