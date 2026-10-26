@@ -197,7 +197,7 @@ template <typename real>
 [[nodiscard]] inline bool is_negligible(const real& x, const real& y) {
   static constexpr real e = std::numeric_limits<real>::epsilon();
   // y+x==y;
-  return std::abs(x) < std::abs(y) * e;
+  return std::abs(x) <= std::abs(y) * e;
 }
 
 template <typename MatrixType, typename VectorType>

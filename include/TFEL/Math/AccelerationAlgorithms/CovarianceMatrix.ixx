@@ -142,6 +142,13 @@ namespace tfel::math::anderson {
   void CovarianceMatrix<real>::weightsGSchmidtD(std::vector<real>& w) {
     this->GSFactorD();
     auto rw = w.rbegin() + (this->Nmax - this->N);
+    if (!(ne[0] > 0)) {
+      // the last residual is negligible: the last field is kept
+      for (size_type i = 0; i != this->N; ++i) {
+        rw[i] = (i == 0) ? real{1} : real{0};
+      }
+      return;
+    }
     for (size_type i = 0; i != this->N; ++i) {
       if (ne[i] > 0) {
         rw[i] = 1;

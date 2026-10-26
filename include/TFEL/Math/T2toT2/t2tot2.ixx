@@ -95,7 +95,7 @@ namespace tfel::math {
       const auto g = r(2, 0);
       const auto h = r(2, 1);
       const auto i = r(2, 2);
-      tfel::math::t2tot2<3u, T> rt;
+      tfel::math::t2tot2<3u, base> rt;
       // d*g*v[8]+d*g*v[7]+a*g*v[6]+a*g*v[5]+a*d*v[4]+a*d*v[3]+g*g*v[2]+d*d*v[1]+a*a*v[0];
       rt(0, 0) = a * a;
       rt(0, 1) = d * d;
