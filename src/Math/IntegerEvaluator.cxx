@@ -186,7 +186,7 @@ namespace tfel::math {
       }
       if (*p == ")") {
         raise_if(openedParenthesis == 0,
-                 "Analyser::readNextGroup: "
+                 "IntegerEvaluator::search: "
                  "unbalanced parenthesis");
         --openedParenthesis;
       }
