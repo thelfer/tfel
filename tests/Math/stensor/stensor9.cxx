@@ -25,6 +25,7 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 
@@ -49,6 +50,9 @@ struct STensorTest9_3D final : public tfel::tests::TestCase {
     tmatrix<3u, 3u, double> m;
     s.computeEigenVectors(vp, m);
     stensor<3u, double>::computeEigenTensors(n0, n1, n2, m);
+    const auto [q0, q1, q2] =
+        stensor<3u, qt<unit::Stress>>::computeEigenTensors(m);
+    TFEL_TESTS_ASSERT(abs(q2(5) - n2(5)) < 1.e-14);
     stensor<3u, double>::computeEigenTensorsDerivatives(dn0, dn1, dn2, vp, m,
                                                         1.e-7);
     stensor<3u, double> exp_s(s.buildFromEigenValuesAndVectors(

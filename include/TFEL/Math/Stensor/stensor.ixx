@@ -235,7 +235,8 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto stensor<N, T>::computeEigenTensors(
       const rotation_matrix<T>& m) noexcept {
-    std::tuple<stensor<N, T>, stensor<N, T>, stensor<N, T>> r;
+    using real = base_type<T>;
+    std::tuple<stensor<N, real>, stensor<N, real>, stensor<N, real>> r;
     tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(
         std::get<0>(r), std::get<1>(r), std::get<2>(r), m);
     return r;
