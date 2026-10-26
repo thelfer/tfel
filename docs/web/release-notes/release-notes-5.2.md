@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1183: [cmake] Static library names, test dependencies, C++ standard, static MFront package, environment scripts, Doxygen install, installed MFront headers and exports
+
+For more details, see <https://github.com/thelfer/tfel/issues/1183>
+
 ## Issue 1169: [tfel-tests] tfel-doc output, log and colors, TFEL/Tests XML output and exports, copy-paste slips, JUnit report names, TextData::skipLines, FSAlgorithm loop and strided iterator assignment
 
 For more details, see <https://github.com/thelfer/tfel/issues/1169>
