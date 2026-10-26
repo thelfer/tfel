@@ -313,8 +313,8 @@ namespace tfel::math {
     if constexpr (N == 1) {
       return Result{s};
     } else {
-      using st2tost2 =
-          tfel::math::st2tost2<N, tfel::math::numeric_type<ST2toST2Type>>;
+      using real = base_type<numeric_type<ST2toST2Type>>;
+      using st2tost2 = tfel::math::st2tost2<N, real>;
       const auto sr = st2tost2::fromRotationMatrix(r);
       const auto sir = st2tost2::fromRotationMatrix(transpose(r));
       return Result{sr * s * sir};
