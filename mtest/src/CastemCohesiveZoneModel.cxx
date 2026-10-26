@@ -101,7 +101,7 @@ namespace mtest {
     if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
       // rotation matrix
       const auto drot = transpose(s.r);
-      this->computeElasticStiffness(wk.k, s.mprops1, drot);
+      this->computeElasticStiffness(wk.kt, s.mprops1, drot);
       return {true, 1};
     }
     tfel::raise(

@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1129: [mtest] Wrappers of the generic, aster, castem, ansys, abaqusexplicit and castem_umat behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/1129>
+
 ## Issue 1125: [mfront] Tangent operators of cohesive zone models (castem, aster, MTest) and calculix interface
 
 For more details, see <https://github.com/thelfer/tfel/issues/1125>
