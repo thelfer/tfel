@@ -2180,11 +2180,13 @@ namespace mtest {
       ao.f(out, state);
     }
     if (this->inner_boundary_oxidation_model.model != nullptr) {
-      this->out << getOxidationLength(state,
+      this->out << " "
+                << getOxidationLength(state,
                                       this->inner_boundary_oxidation_model);
     }
     if (this->outer_boundary_oxidation_model.model != nullptr) {
-      this->out << getOxidationLength(state,
+      this->out << " "
+                << getOxidationLength(state,
                                       this->outer_boundary_oxidation_model);
     }
     for (std::size_t i = 0; i != this->failure_criteria.size(); ++i) {
