@@ -77,9 +77,9 @@ namespace tfel::fsalgo {
      * - InputIterator is a model of Input Iterator.
        - T is a model of Assignable.
        - BinaryFunction is a model of Binary Function.
-       - T is convertible to BinaryFunction's first argument type.
        - The value type of InputIterator is convertible to BinaryFunction's
-     second argument type.
+     first argument type.
+       - T is convertible to BinaryFunction's second argument type.
        - BinaryFunction's return type is convertible to T.
      *
      */
