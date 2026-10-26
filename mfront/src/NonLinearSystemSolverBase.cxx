@@ -242,8 +242,8 @@ namespace mfront {
                 << "// numerical derivative of variable f" << v.name
                 << " with respect to variable " << v2.name << "\n"
                 << getJacobianPart(v, v2, n, n2, nj, "n");
-            n2 += mb.getTypeSize(v2.type, v2.arraySize);
           }
+          n2 += mb.getTypeSize(v2.type, v2.arraySize);
         }
       }
       n += mb.getTypeSize(v.type, v.arraySize);
