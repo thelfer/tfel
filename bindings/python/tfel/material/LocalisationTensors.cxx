@@ -212,6 +212,6 @@ void declareLocalisationTensors(pybind11::module_& m) {
       },
       pybind11::arg("C_0_glob"), pybind11::arg("C_i_loc"),
       pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
-      pybind11::arg("b"), pybind11::arg("c"), pybind11::arg("max_it"),
+      pybind11::arg("b"), pybind11::arg("c"), pybind11::arg("max_it") = 12,
       compute_anisotropic_localisation_tensor_doc);
 }
