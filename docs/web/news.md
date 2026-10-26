@@ -1447,8 +1447,6 @@ phenomena involving structures and fluids in interaction.
   </video>
 </div>
 
-See the [dedicated page](epx.html) for more information.
-
 # `tfel-doc` `github` repository. Talks of the Second MFront Users Day (27 May 2016)
 
 A `github` repository has been set up to store various documents
@@ -1665,9 +1663,9 @@ New documentation pages were added to describe the `MTest` and
 `MFront` keywords:
 
 - `MFront` keywords, sorted by domain specific languages:
-    + [DefaultDSL](DefaultDSL-keywords.html) 
-    + [DefaultCZMDSL](DefaultCZMDSL-keywords.html) 
-    + [DefaultFiniteStrainDSL](DefaultFiniteStrainDSL-keywords.html) 
+    + [DefaultDSL](Default-keywords.html) 
+    + [DefaultCZMDSL](DefaultCZM-keywords.html) 
+    + [DefaultFiniteStrainDSL](DefaultFiniteStrain-keywords.html) 
     + [Implicit](Implicit-keywords.html) 
     + [ImplicitFiniteStrain](ImplicitFiniteStrain-keywords.html) 
     + [ImplicitII](ImplicitII-keywords.html) 
@@ -1928,9 +1926,6 @@ Installing this version requires a functional installation of
 libraries) and the `MSYS` shell (It is recommended not to install
 `mingw` compilers along with the `MSYS` shell as [`Cast3M`](http://www-cast3m.cea.fr) provides its
 own version of those compilers).
-
-Installation instructions of those requirements are available
-[here](install-windows.html).
 
 Any feedback would be gratefully acknowledge.
 

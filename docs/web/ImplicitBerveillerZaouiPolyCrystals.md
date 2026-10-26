@@ -82,7 +82,7 @@ models in large scale structural computations. Moreover, this scheme is
 easily adaptable for complex local behaviours of the phases and/or other
 homogeneization schemes.
 
-This tutorial follows [another tutorial](ExplicitBerveillerZaoui.html)
+This tutorial follows [another tutorial](ExplicitBerveillerZaouiPolyCrystals.html)
 which presented an explicit scheme for the same behaviour. Reading this
 tutorial before is highly recommended.
 

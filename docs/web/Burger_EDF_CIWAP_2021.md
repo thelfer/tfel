@@ -463,7 +463,7 @@ In this paragraph, we introduce an alternative treatment of this
 equation based on the regularised Fisher-Burmeister complementary
 function \(\Phi_{\varepsilon_{\text{FB}}}\), introduced in
 @liao-mcpherson_regularized_2019 and whose application to plasticity is
-described on a [dedicated web page](FisherBurmeister.html)
+described on a [dedicated web page](FischerBurmeister.html)
 [@ceaedf_fisher-burmeister_2021]:
 
 \[
