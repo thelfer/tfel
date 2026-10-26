@@ -109,7 +109,7 @@ namespace tfel::utilities {
              "'" +
                  this->outputFile + '\'');
     if (!this->logFile.empty()) {
-      this->logptr = std::make_shared<std::ofstream>(argv[2]);
+      this->logptr = std::make_shared<std::ofstream>(this->logFile);
       raise_if(!(*(this->logptr)),
                "TestDocMain: can't open log file "
                "'" +
