@@ -221,14 +221,10 @@ namespace tfel::math {
       (*p)->reduce();
       ++p;
     }
-    // treating operator/
-    this->reduce("/");
-    // treating operator*
-    this->reduce("*");
-    // treating operator* -
-    this->reduce("-");
-    // operator+ has the lowest priority
-    this->reduce("+");
+    // operators * and / have the same priority, treated from left to right
+    this->reduce("*/");
+    // operators + and - have the lowest priority, treated from left to right
+    this->reduce("+-");
   }
 
   std::shared_ptr<tfel::math::parser::IntegerExpr>
@@ -240,7 +236,7 @@ namespace tfel::math {
 
   IntegerEvaluator::TGroup::~TGroup() = default;
 
-  void IntegerEvaluator::TGroup::reduce(const std::string& op) {
+  void IntegerEvaluator::TGroup::reduce(const std::string& ops) {
     using namespace tfel::math::parser;
     auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "IntegerEvaluator::TGroup::reduce: " + m);
@@ -250,7 +246,8 @@ namespace tfel::math {
       if ((*p)->isOperator()) {
         auto o = std::make_shared<TOperator>(
             static_cast<const TOperator&>(*(p->get())));
-        if (o->getOperatorType() == op) {
+        const auto op = o->getOperatorType();
+        if (ops.find(op) != std::string::npos) {
           auto previous = p - 1;
           auto next = p + 1;
           if (p == this->subExpr.begin()) {
@@ -269,8 +266,7 @@ namespace tfel::math {
                      "group ends by operator '" + op + "'");
             if ((*previous)->isOperator()) {
               throw_if(op != "-", "group two successive operators");
-              auto po = std::shared_ptr<TOperator>(
-                  dynamic_cast<TOperator*>(previous->get()));
+              const auto po = std::dynamic_pointer_cast<TOperator>(*previous);
               throw_if(po->getOperatorType() != "+",
                        "group two successive operators");
               throw_if((*next)->isOperator(),

@@ -46,7 +46,7 @@ struct ParserTest12 final : public tfel::tests::TestCase {
     auto e0 = tfel::math::Evaluator("x**0");
     e0.setVariableValue("x", x);
     TFEL_TESTS_ASSERT(std::abs(e0.getValue() - 1) < eps);
-    TFEL_TESTS_ASSERT(e0.getCxxFormula() == "1");
+    TFEL_TESTS_ASSERT(e0.getCxxFormula() == "1.");
     //
     for (auto n = 1; n != 20; ++n) {
       auto e = tfel::math::Evaluator("x**" + std::to_string(n));
@@ -62,13 +62,13 @@ struct ParserTest12 final : public tfel::tests::TestCase {
         if (n <= 16) {
           return "tfel::math::power<" + std::to_string(n) + ">(x)";
         }
-        return "std::pow(x," + std::to_string(n) + ")";
+        return "std::pow(x," + std::to_string(n) + ".)";
       }();
       const auto ief = [n] {
         if (n <= 16) {
           return "tfel::math::power<-" + std::to_string(n) + ">(x)";
         }
-        return "std::pow(x,-(" + std::to_string(n) + "))";
+        return "std::pow(x,-(" + std::to_string(n) + ".))";
       }();
       TFEL_TESTS_ASSERT(e.getCxxFormula() == ef);
       TFEL_TESTS_ASSERT(ie.getCxxFormula() == ief);
@@ -92,13 +92,14 @@ struct ParserTest12 final : public tfel::tests::TestCase {
               ->getCxxFormula();
       TFEL_TESTS_ASSERT(dx == df_dx);
     };
-    check("x**2", "(2)*(x)");
-    check("x**3", "(3)*(tfel::math::power<2>(x))");
-    check("x**-2", "(-2)*(tfel::math::power<-3>(x))");
-    check("power<0>(x)", "0");
-    check("power<1>(x)", "1");
-    check("power<2>(x)", "(2)*(x)");
-    check("power<-2>(x)", "(-2)*(tfel::math::power<-3>(x))");
+    check("x**2", "(2.)*(x)");
+    check("x**3", "(3.)*(tfel::math::power<2>(x))");
+    check("x**-2", "(-2.)*(tfel::math::power<-3>(x))");
+    check("power<0>(x)", "0.");
+    check("power<1>(x)", "1.");
+    check("power<2>(x)", "(2.)*(x)");
+    check("power<-2>(x)", "(-2.)*(tfel::math::power<-3>(x))");
+    check("log10(x)", "(1.)/((log(10))*(x))");
   }  // end of test2
   void test3() {
     auto check = [this](const std::string& f, const std::string& df_dx,
@@ -113,10 +114,10 @@ struct ParserTest12 final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(dx == df_dx);
       TFEL_TESTS_ASSERT(dy == df_dy);
     };
-    check("2 * x + y", "(2)*(1)", "1");
-    check("x**2 * y", "((2)*(x))*(y)", "(tfel::math::power<2>(x))*(1)");
-    check("exp(x)+y", "exp(x)", "1");
-    check("x <0 ?  y : 2*y", "0", "((x)<(0)) ? (1) : ((2)*(1))");
+    check("2 * x + y", "(2.)*(1.)", "1.");
+    check("x**2 * y", "((2.)*(x))*(y)", "(tfel::math::power<2>(x))*(1.)");
+    check("exp(x)+y", "exp(x)", "1.");
+    check("x <0 ?  y : 2*y", "0.", "((x)<(0.)) ? (1.) : ((2.)*(1.))");
   }  // end of test3
   void test4() {
     const auto e = tfel::math::Evaluator("x**5.4");
@@ -131,7 +132,7 @@ struct ParserTest12 final : public tfel::tests::TestCase {
     const auto dx =
         std::dynamic_pointer_cast<tfel::math::Evaluator>(e.differentiate("x"))
             ->getCxxFormula();
-    const auto f = "(log(2))*(std::pow(2,x))";
+    const auto f = "(log(2.))*(std::pow(2.,x))";
     TFEL_TESTS_ASSERT(dx == f);
   }  // end of test5
 };

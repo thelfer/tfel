@@ -25,6 +25,7 @@
 #include "TFEL/Tests/TestManager.hxx"
 
 #include "TFEL/Math/Evaluator.hxx"
+#include "TFEL/Math/IntegerEvaluator.hxx"
 
 struct IntegerParserTest final : public tfel::tests::TestCase {
   IntegerParserTest()
@@ -38,6 +39,10 @@ struct IntegerParserTest final : public tfel::tests::TestCase {
     this->check("x< 2 && x>-2 ? 3 : 1", {{0, 3}, {-3, 1}, {3, 1}});
     this->check("x> 2 || x<-2 ? 3 : 1", {{0, 1}, {-3, 3}, {3, 3}});
     this->check("x==0 ? 2 : 1", {{0, 2}, {-1, 1}, {1, 1}});
+    TFEL_TESTS_ASSERT(tfel::math::IntegerEvaluator("2+-1").getValue() == 1);
+    TFEL_TESTS_ASSERT(tfel::math::IntegerEvaluator("2*3/4").getValue() == 1);
+    TFEL_TESTS_ASSERT(tfel::math::IntegerEvaluator("2*(2+1)/2").getValue() ==
+                      3);
     return this->result;
   }  // end of execute
  private:
