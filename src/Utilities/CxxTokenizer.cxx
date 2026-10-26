@@ -233,18 +233,19 @@ namespace tfel::utilities {
                                const std::string::const_iterator pe,
                                const Token::size_type n) {
     auto throw_if = [](const bool b, const std::string& m) {
-      raise_if(b, "CxxTokenizer::parseCChar: " + m);
+      raise_if(b, "CxxTokenizer::parseChar: " + m);
     };
     if (this->charAsString) {
       this->parseString(o, p, pe, n, '\'');
     } else {
       const auto pn = std::next(p, 1);
-      const auto pn2 = std::next(p, 2);
-      const auto pn3 = std::next(p, 3);
       throw_if(pn == pe, "unterminated char");
+      const auto pn2 = std::next(p, 2);
+      throw_if(pn2 == pe, "unterminated char");
+      const auto pn3 = std::next(p, 3);
       if (*pn == '\\') {
+        throw_if(pn3 == pe, "unterminated char");
         const auto pn4 = std::next(p, 4);
-        throw_if((pn2 == pe) || (pn3 == pe), "unterminated char");
         throw_if(*pn3 != '\'',
                  "unexpected token '" + std::string(1u, *pn3) + "'");
         this->tokens.emplace_back(std::string(p, pn4), n, o, Token::Char);
@@ -813,8 +814,8 @@ namespace tfel::utilities {
                                     Token::Standard);
           advance(o, p, 2u);
         } else if ((*p == '-') && ((pn != pe) && (*pn == '>'))) {
-          auto pn2 = std::next(p);
-          if ((pn2 != pe) && (*pn == '*')) {
+          auto pn2 = std::next(pn);
+          if ((pn2 != pe) && (*pn2 == '*')) {
             this->tokens.emplace_back("->*", n, o, Token::Standard);
             advance(o, p, 3u);
           } else {
@@ -1006,6 +1007,9 @@ namespace tfel::utilities {
   }  // end of CxxTokenizer::stripComments
 
   void CxxTokenizer::printFileTokens(std::ostream& out) const {
+    if (this->tokens.empty()) {
+      return;
+    }
     auto p = this->tokens.begin();
     auto line = p->line;
     for (const auto& t : this->tokens) {

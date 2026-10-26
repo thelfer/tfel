@@ -43,6 +43,7 @@ struct CxxTokenizerTest2 final : public tfel::tests::TestCase {
     this->check("a<=b", {"a", "<=", "b"});
     this->check("a:b", {"a", ":", "b"});
     this->check("a::b", {"a", "::", "b"});
+    this->check("a->*b", {"a", "->*", "b"});
     this->check2();
     this->check3();
     return this->result;
