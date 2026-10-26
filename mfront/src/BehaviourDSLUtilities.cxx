@@ -79,7 +79,11 @@ namespace mfront {
       const auto n = "initial_geometry_reference_temperature";
       const auto v = [&d, &n] {
         if (d.count(n) != 0) {
-          return d.at(n).get<double>();
+          const auto Ti = d.at(n);
+          if (Ti.is<int>()) {
+            return static_cast<double>(Ti.get<int>());
+          }
+          return Ti.get<double>();
         } else {
           return 293.15;
         }
@@ -168,6 +172,7 @@ namespace mfront {
     } else {
       check_not("initial_geometry_reference_temperature");
       check_not("thermal_expansion_reference_temperature");
+      check_not("reference_temperature");
       check_not("save_thermal_expansion");
     }
   }  // end of addThermalExpansionCoefficientsIfDefined
