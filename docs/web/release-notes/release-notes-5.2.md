@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1117: [mfront] Interfaces of material properties and models: exports, one-line functions, bounds, temperature of castem models and comsol
+
+For more details, see <https://github.com/thelfer/tfel/issues/1117>
+
 ## Issue 1113: [mfront] StandardElastoViscoPlasticity brick: nucleation, porosity name, porosity jacobian and porous stress criteria
 
 For more details, see <https://github.com/thelfer/tfel/issues/1113>
