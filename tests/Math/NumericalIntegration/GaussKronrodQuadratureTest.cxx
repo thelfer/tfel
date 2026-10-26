@@ -50,6 +50,11 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
         [](const double x) noexcept { return std::sin(x); }, a, b);
     TFEL_TESTS_ASSERT(or1.has_value());
     TFEL_TESTS_ASSERT(std::abs(std::get<1>(*or1)) < 1e-14);
+    // no refinement is needed
+    const auto oi = tfel::math::gauss_kronrod_integrate(
+        [](const double x) noexcept { return std::sin(x); }, a, b,
+        {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 0});
+    TFEL_TESTS_ASSERT(oi.has_value());
   }  // end of test1
   void test2() {
     constexpr auto a = double{};
