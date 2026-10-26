@@ -242,7 +242,7 @@ void declareExternalLibraryManager(pybind11::module_& m) {
            "This function looks for the symbol s+'_mfront_interface' in "
            "the library\n"
            "and expect it to a pointer to characters.\n"
-           "If the symbol is not found, an empty string is returned.")
+           "An exception is thrown if the symbol is not found.")
       .def("setUShortParameter", ELM_setUShortParameter,
            pybind11::arg("l"), pybind11::arg("s"), pybind11::arg("p"),
            pybind11::arg("v"),

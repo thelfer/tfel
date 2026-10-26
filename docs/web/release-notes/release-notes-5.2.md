@@ -689,6 +689,18 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1171>
 
+## Issue 1169: [tfel-tests] tfel-doc output, log and colors, TFEL/Tests XML output and exports, copy-paste slips, JUnit report names, TextData::skipLines, FSAlgorithm loop and strided iterator assignment
+
+For more details, see <https://github.com/thelfer/tfel/issues/1169>
+
+## Issue 1167: [tfel-utilities] CxxTokenizer, Data arrays, reserved keywords, systemCall::copy, wfstream, TFEL/System messages and tfel-check end of file and empty_output
+
+For more details, see <https://github.com/thelfer/tfel/issues/1167>
+
+## Issue 1163: [python] Bindings: CurrentStateVector, tfel.math operators, versioned packages, CMakeGenerator, return value policies, Hill tensors, DSLFactory and mergeTargetsDescription
+
+For more details, see <https://github.com/thelfer/tfel/issues/1163>
+
 ## Issue 1157: [mfront] castem, aster, abaqus, ansys and abaqusexplicit interfaces: LogarithmicStrain1D, sub-stepping, 2D finite strain fallbacks, tangent operator layouts and numerical comparison
 
 For more details, see <https://github.com/thelfer/tfel/issues/1157>

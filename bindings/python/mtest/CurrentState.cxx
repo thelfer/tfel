@@ -205,8 +205,8 @@ void declareCurrentState(pybind11::module_& m) {
            })
       .def(
           "__getitem__",
-          [](const tfel::math::vector<mtest::CurrentState>& v,
-             const unsigned short idx) {
+          [](tfel::math::vector<mtest::CurrentState>& v,
+             const unsigned short idx) -> mtest::CurrentState& {
             if (idx >= v.size()) {
               tfel::raise<std::range_error>(
                   "invalid index '" + std::to_string(static_cast<int>(idx)) +
@@ -214,7 +214,7 @@ void declareCurrentState(pybind11::module_& m) {
             }
             return v[idx];
           },
-          pybind11::return_value_policy::reference)
+          pybind11::return_value_policy::reference_internal)
       .def(
           "__iter__",
           [](const tfel::math::vector<mtest::CurrentState>& v) {

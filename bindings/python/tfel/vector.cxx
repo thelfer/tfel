@@ -107,20 +107,20 @@ void declareTFELMathVector(pybind11::module_& m) {
              r = a * b;
              return r;
            })
-      .def("__mul__",
-           [](const double a, const vector& b) -> vector {
+      .def("__rmul__",
+           [](const vector& b, const double a) -> vector {
              auto r = vector(b.size());
              r = a * b;
              return r;
            })
-      .def("__div__",
+      .def("__truediv__",
            [](const vector& a, const double b) -> vector {
              auto r = vector(a.size());
              r = a / b;
              return r;
            })
       .def("__iadd__",
-           [](vector& a, const vector& b) {
+           [](vector& a, const vector& b) -> vector& {
              if (a.size() != b.size()) {
                tfel::raise<std::runtime_error>(
                    "unmatched vector sizes ('" +
@@ -128,9 +128,10 @@ void declareTFELMathVector(pybind11::module_& m) {
                    std::to_string(static_cast<int>(b.size())) + "')");
              }
              a += b;
+             return a;
            })
       .def("__isub__",
-           [](vector& a, const vector& b) {
+           [](vector& a, const vector& b) -> vector& {
              if (a.size() != b.size()) {
                tfel::raise<std::runtime_error>(
                    "unmatched vector sizes ('" +
@@ -138,6 +139,7 @@ void declareTFELMathVector(pybind11::module_& m) {
                    std::to_string(static_cast<int>(b.size())) + "')");
              }
              a -= b;
+             return a;
            })
       .def(pybind11::self *= double())
       .def(pybind11::self /= double())

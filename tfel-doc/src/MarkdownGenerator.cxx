@@ -104,13 +104,13 @@ namespace tfel::utilities {
       if (t.models.size() == 1) {
         const auto& m = *(t.models.begin());
         out << "### " << getTranslation("Tested model", l) << "\n\n"
-            << getTranslation("The model tested is:", l) << '`' << m.first
+            << getTranslation("The model tested is:", l) << " `" << m.first
             << "`.\n\n";
       } else {
         out << "### " << getTranslation("List of tested models", l) << "\n\n"
             << " " << getTranslation("The models tested are:", l) << "\n\n";
         for (const auto& m : t.models) {
-          out << "- `" << m.first.front() << "`\n";
+          out << "- `" << m.first << "`\n";
         }
         out << '\n';
       }

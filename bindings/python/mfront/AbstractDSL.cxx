@@ -65,10 +65,10 @@ void declareAbstractDSL(pybind11::module_& m) {
            "Return the target of the dsl")
       .def("getMaterialKnowledgeDescription",
            &AbstractDSL::getMaterialKnowledgeDescription,
-           pybind11::return_value_policy::reference,
+           pybind11::return_value_policy::reference_internal,
            "Return the description of the considered material knowledge")
       .def("getFileDescription", &AbstractDSL::getFileDescription,
-           pybind11::return_value_policy::reference,
+           pybind11::return_value_policy::reference_internal,
            "Return the file description associated with the treated file")
       .def("analyseFile", analyseFile1,
            pybind11::arg("f"),
@@ -83,7 +83,7 @@ void declareAbstractDSL(pybind11::module_& m) {
            pybind11::arg("s"),
            "Analyse the specified string")
       .def("getTargetsDescription", &AbstractDSL::getTargetsDescription,
-           pybind11::return_value_policy::reference)
+           pybind11::return_value_policy::reference_internal)
       .def("generateOutputFiles", &AbstractDSL::generateOutputFiles)
       .def("setInterfaces", &setInterfaces, pybind11::arg("i"))
       .def("getKeywordsList", &getKeywordsList);

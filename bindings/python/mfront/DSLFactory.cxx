@@ -15,8 +15,16 @@
 #include <pybind11/stl.h>
 #include "MFront/DSLFactory.hxx"
 
+pybind11::object castDSL(std::shared_ptr<mfront::AbstractDSL>);
+
 static auto createNewDSL(mfront::DSLFactory& f, const std::string& n) {
-  return f.createNewDSL(n, {});
+  return castDSL(f.createNewDSL(n, {}));
+}
+
+static auto createNewDSL2(mfront::DSLFactory& f,
+                          const std::string& n,
+                          const mfront::AbstractDSL::DSLOptions& opts) {
+  return castDSL(f.createNewDSL(n, opts));
 }
 
 void declareDSLFactory(pybind11::module_&);
@@ -36,11 +44,11 @@ void declareDSLFactory(pybind11::module_& m) {
       .def("createNewDSL", &createNewDSL, pybind11::arg("n"),
            "Return an instance of the DSL with the given name\n"
            "n: name of the DSL to be generated")
-      .def("createNewParser", &DSLFactory::createNewDSL, pybind11::arg("n"),
+      .def("createNewParser", &createNewDSL2, pybind11::arg("n"),
            pybind11::arg("opts"),
            "Return an instance of the DSL with the given name\n"
            "n: name of the DSL to be generated")
-      .def("createNewDSL", &DSLFactory::createNewDSL, pybind11::arg("n"),
+      .def("createNewDSL", &createNewDSL2, pybind11::arg("n"),
            pybind11::arg("opts"),
            "Return an instance of the DSL with the given name\n"
            "n: name of the DSL to be generated");
