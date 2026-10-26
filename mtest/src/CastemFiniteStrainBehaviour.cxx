@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <limits>
+#include <cstring>
 #include <algorithm>
 
 #include "TFEL/Raise.hxx"
@@ -380,7 +381,7 @@ namespace mtest {
                 &(s.desv(0)) + 1, name, &ndi, nullptr, &ntens, &nstatv,
                 &(wk.mps(0)), &nprops, nullptr, &drot(0, 0), &ndt, nullptr,
                 &uu0(0, 0), &uu1(0, 0), nullptr, nullptr, nullptr, nullptr,
-                nullptr, &kinc, 0);
+                nullptr, &kinc, name == nullptr ? 0 : ::strlen(name));
     if (kinc != 1) {
       return {false, ndt};
     }
