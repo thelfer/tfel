@@ -215,6 +215,7 @@ namespace aster {
                                         AsterReal* const,
                                         const AsterInt* const,
                                         AsterReal* const,
+                                        const tfel::material::OutOfBoundsPolicy,
                                         const StressFreeExpansionHandler&) {
     tfel::raise(
         "AsterUnSupportedCaseHandler::exe : "

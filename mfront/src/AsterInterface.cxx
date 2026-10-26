@@ -245,6 +245,10 @@ namespace mfront {
         "the aster interface only supports "
         "small and finite strain behaviours "
         "and cohesive zone models");
+    throw_if(
+        (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) &&
+            (mb.getSymmetryType() == mfront::ORTHOTROPIC),
+        "orthotropic cohesive zone models are not supported");
     if ((this->compareToNumericalTangentOperator) ||
         (mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false))) {
       throw_if(mb.getBehaviourType() !=
