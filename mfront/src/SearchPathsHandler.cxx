@@ -135,7 +135,7 @@ namespace mfront {
             ((madnex_path.mkt == MadnexPath::MADNEX_ALL) ||
              (madnex_path.mkt == MadnexPath::MADNEX_BEHAVIOUR))) {
           mpath = getMatchingMaterialKnoweldge<static_cast<ptr>(
-              &madnex::DataBase::getAvailableMaterialProperties)>(
+              &madnex::DataBase::getAvailableBehaviours)>(
               db, madnex_path.file_path, madnex_path.material, name,
               "Behaviour");
         }
@@ -143,7 +143,7 @@ namespace mfront {
             ((madnex_path.mkt == MadnexPath::MADNEX_ALL) ||
              (madnex_path.mkt == MadnexPath::MADNEX_MODEL))) {
           mpath = getMatchingMaterialKnoweldge<static_cast<ptr>(
-              &madnex::DataBase::getAvailableMaterialProperties)>(
+              &madnex::DataBase::getAvailableModels)>(
               db, madnex_path.file_path, madnex_path.material, name, "Model");
         }
         if (!mpath.empty()) {
@@ -225,6 +225,7 @@ namespace mfront {
           MadnexPath path;
           path.file_path = file_path;
           path.material = material;
+          path.mkt = mkt;
           msf.paths.push_back(path);
         }
       }
