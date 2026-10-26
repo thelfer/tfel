@@ -112,6 +112,7 @@ namespace mfront {
        << "(iter<(" << this->bd.getClassName() << "::iterMax))){\n";
     n = 0;
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
+      os << "{\n";
       os << "this->p_  = this->p" << n << " + (";
       if (p->hasSpecificTheta) {
         os << "real(" << p->theta << ")";
@@ -243,6 +244,7 @@ namespace mfront {
           }
         }
       }
+      os << "}\n";
     }
     os << "auto error = NumericType(0);\n";
     n = 0;
