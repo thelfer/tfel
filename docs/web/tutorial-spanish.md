@@ -1132,8 +1132,8 @@ por la variable `t`.
 //Evolución lineal
 @Evolution 'Pressure' {0:0.,1.:1.e5};
 //Función
-@Real P0 2.e5
-@Real P1 4.e5
+@Real 'P0' 2.e5;
+@Real 'P1' 4.e5;
 @Evolution<function> 'Pressure' 'P0+(P1-P0)\*t\*\*2';
 ~~~~
 
@@ -1151,8 +1151,8 @@ se aceptan dos valores, evolution y function.
 //Evolución lineal
 @ExternalStateVariable 'Temperature' {0:293.15,1.:800};
 //Función
-@Real T0 293.15
-@Real T1 400.15
+@Real 'T0' 293.15;
+@Real 'T1' 400.15;
 @ExternalStateVariable<function>'Temperature''T0+(T1-T0)\*t\*\*2';
 ~~~~
 

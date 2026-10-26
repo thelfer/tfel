@@ -116,14 +116,14 @@ The `@CohesiveForce` let the user specify the initial value of the
 cohesive forces.
 
 This keyword is followed by an array. The size of this array must be
-equal to the number of components of symmetric tensors for the
-modelling hypothesis considered (see the `@ModellingHypothesis`
+equal to the space dimension of the modelling hypothesis considered
+(one component per space dimension, see the `@ModellingHypothesis`
 keyword).
 
 ## Example
 
 ~~~~ {.cpp}
-@CohesiveForce {'T0,,0.,0.};
+@CohesiveForce {'T0', 0., 0.};
 ~~~~
 
 # The `@CohesiveForceEpsilon` keyword
@@ -234,7 +234,7 @@ of information.
 @Description
 {
   "Modélisation d'un tube sous pression"
-}
+};
 ~~~~~~~~
 
 # The `@DrivingVariable` keyword
@@ -283,8 +283,8 @@ the variable `t`.
 ## Example (function):
 
 ~~~~ {.cpp}
-@Real P0 2.e5
-@Real P1 4.e5
+@Real 'P0' 2.e5;
+@Real 'P1' 4.e5;
 @Evolution<function> 'Pressure' 'P0+(P1-P0)*t**2';
 ~~~~~~~~
 
@@ -329,8 +329,8 @@ the variable `t`.
 ## Example (function)
 
 ~~~~ {.cpp}
-@Real T0 293.15
-@Real T1 400.15
+@Real 'T0' 293.15;
+@Real 'T1' 400.15;
 @ExternalStateVariable<function> 'Temperature' 'T0+(T1-T0)*t**2';
 ~~~~~~~~
 
