@@ -784,13 +784,13 @@ namespace mfront {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }
@@ -814,13 +814,13 @@ namespace mfront {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }
