@@ -288,18 +288,12 @@ namespace tfel::utilities {
         ++p;
         return Data{};
       }
-      // map or string vector
+      // map or vector
       ++p;
       CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
-      if (p->value == ":") {
-        p = std::prev(p, 2);
-        return read_map(p, pe, o);
-      }
-      if ((p->value != ",") && (p->value != "}")) {
-        raise("expected ',' or ':' or '}', read '" + p->value + "'");
-      }
+      const auto is_map = (std::prev(p)->value != "{") && (p->value == ":");
       p = std::prev(p, 2);
-      return read_vector(p, pe, o);
+      return is_map ? read_map(p, pe, o) : read_vector(p, pe, o);
     }
     // standard value
     return read_value(p, pe, o);
