@@ -137,11 +137,11 @@ namespace tfel::math {
      * \param[in] v: value
      */
     explicit Evaluator(const double);
-    //! \brief efault constructor
+    //! \brief default constructor
     Evaluator();
-    //! \brief opy constructor
+    //! \brief copy constructor
     Evaluator(const Evaluator&);
-    //! \brief ssignement operator constructor
+    //! \brief assignment operator
     Evaluator& operator=(const Evaluator&);
     /*!
      * \param const std::string&, function definition
