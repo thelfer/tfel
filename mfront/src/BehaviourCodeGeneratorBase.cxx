@@ -4985,10 +4985,10 @@ namespace mfront {
                << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">>::type, tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));\n";
+               << v2.type << ">&>(*(" + ptr + "));\n";
           } else {
-            os << "return tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));\n";
+            os << "return tfel::math::map<tfel::math::derivative_type<"
+               << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
           }
         } else {
           os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
@@ -5020,7 +5020,7 @@ namespace mfront {
                << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">>::type, tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));";
+               << v2.type << ">&>(*(" + ptr + "));";
           } else {
             os << "return tfel::math::map<tfel::math::derivative_type<"
                << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
