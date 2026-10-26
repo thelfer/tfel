@@ -38,6 +38,7 @@ void declareGeneratorOptions(pybind11::module_& m) {
   pybind11::class_<GeneratorOptions>(
       m, "GeneratorOptions",
       "A data structure holding options passed to generators")
+      .def(pybind11::init<>())
       .def_readwrite("olevel", &GeneratorOptions::olevel,
                      "Optimisation level");
 }
