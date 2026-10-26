@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1131: [mfront] Hooke stress potentials: plane stress jacobian, generic_prediction_operator option and broken state tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1131>
+
 ## Issue 1125: [mfront] Tangent operators of cohesive zone models (castem, aster, MTest) and calculix interface
 
 For more details, see <https://github.com/thelfer/tfel/issues/1125>
