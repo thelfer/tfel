@@ -973,8 +973,8 @@ namespace mfront {
             << "*(stressNew+i+   *(nblock))  = *(sg+1);\n"
             << "*(stressNew+i+2*(*(nblock))) = *(sg+2);\n"
             << "*(stressNew+i+3*(*(nblock))) = *(sg+3);\n"
-            << "*(stressNew+i+4*(*(nblock))) = *(sg+4);\n"
-            << "*(stressNew+i+5*(*(nblock))) = *(sg+5);\n";
+            << "*(stressNew+i+4*(*(nblock))) = *(sg+5);\n"
+            << "*(stressNew+i+5*(*(nblock))) = *(sg+4);\n";
       } else {
         tfel::raise(
             "AbaqusExplicitInterface::writeComputeElasticPrediction: "
@@ -1010,11 +1010,11 @@ namespace mfront {
             << "*(stressNew+i+3*(*(nblock))) = D[3]*eto[0]+D[9]*eto[1] "
                "+D[15]*eto[2]+D[21]*eto[3]+D[27]*eto[4]+D[33]*eto[5];\n"
             << "*(stressNew+i+4*(*(nblock))) = "
-               "D[4]*eto[0]+D[10]*eto[1]+D[16]*eto[2]+D[22]*eto[3]+D[28]*eto[4]"
-               "+D[34]*eto[5];\n"
-            << "*(stressNew+i+5*(*(nblock))) = "
                "D[5]*eto[0]+D[11]*eto[1]+D[17]*eto[2]+D[23]*eto[3]+D[29]*eto[4]"
-               "+D[35]*eto[5];\n";
+               "+D[35]*eto[5];\n"
+            << "*(stressNew+i+5*(*(nblock))) = "
+               "D[4]*eto[0]+D[10]*eto[1]+D[16]*eto[2]+D[22]*eto[3]+D[28]*eto[4]"
+               "+D[34]*eto[5];\n";
       } else {
         tfel::raise(
             "AbaqusExplicitInterface::writeComputeElasticPrediction: "
