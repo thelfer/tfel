@@ -770,6 +770,10 @@ namespace mfront {
              "parenthesis still opened at the end of function");
     throw_if(this->md.f.body.empty(), "empty function");
     throw_if(!this->md.f.modified, "function does not modify output.");
+    // the interfaces may write a preprocessor directive after the body
+    if (this->md.f.body.back() != '\n') {
+      this->md.f.body += '\n';
+    }
   }  // end of treatFunction
 
   void MaterialPropertyDSL::treatMethod() {
