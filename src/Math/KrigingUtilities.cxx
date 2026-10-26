@@ -17,6 +17,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/Kriging/KrigingErrors.hxx"
 #include "TFEL/Math/Kriging/KrigingUtilities.hxx"
 
 namespace tfel::math {
@@ -36,6 +37,7 @@ namespace tfel::math {
 
   std::pair<double, double> KrigingUtilities::normalize(
       const std::vector<double>& v) {
+    raise_if<KrigingErrorNoDataSpecified>(v.empty());
     const auto max = *(max_element(v.begin(), v.end()));
     const auto min = *(min_element(v.begin(), v.end()));
     raise_if(compareFloatingPointValues(max - min, 0.),
@@ -48,6 +50,7 @@ namespace tfel::math {
 
   std::pair<double, double> KrigingUtilities::normalize(
       const tfel::math::vector<double>& v) {
+    raise_if<KrigingErrorNoDataSpecified>(v.empty());
     const auto max = *(std::max_element(v.begin(), v.end()));
     const auto min = *(std::min_element(v.begin(), v.end()));
     raise_if(compareFloatingPointValues(max - min, 0.),

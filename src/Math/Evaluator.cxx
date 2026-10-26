@@ -291,8 +291,8 @@ namespace tfel::math {
       }
       std::istringstream converter(*p);
       converter >> diffNumber;
-      throw_if(diffNumber <= 1,
-               "order of differentiation must be greater or egal than 1");
+      throw_if(diffNumber < 1,
+               "order of differentiation must be greater or equal than 1");
       ++p;
       Evaluator::readSpecifiedToken("Evaluator::treatDiff", ">", p, pe);
       Evaluator::checkNotEndOfExpression("Evaluator::treatDiff", "expected ')'",
@@ -328,7 +328,9 @@ namespace tfel::math {
         throw_if(*p != ",",
                  "unexpected token '" + *p + "' (expected ',' or ')')");
         ++p;
-        Evaluator::readSpecifiedToken("Evaluator::treatDiff", ")", p, pe);
+        Evaluator::checkNotEndOfExpression("Evaluator::treatDiff",
+                                           "expected variable name", p, pe);
+        throw_if(*p == ")", "expected variable name after ','");
       }
     }
     throw_if(var.empty(), "empty var list");

@@ -100,6 +100,7 @@ namespace tfel::math {
 
   int IntegerEvaluator::TBinaryOperation::IntegerOpDiv::apply(const int a,
                                                               const int b) {
+    raise_if(b == 0, "IntegerOpDiv::apply: division by zero");
     return a / b;
   }
 
