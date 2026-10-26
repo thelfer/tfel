@@ -775,6 +775,12 @@ namespace tfel::check {
         manager.execute(this->directory, c.command, "", output_file, envs);
       }
       this->ClockAction(STOP);
+      if (c.shall_fail) {
+        this->log.addTestResult(this->testname, step, c.command,
+                                this->ClockAction(GET), false,
+                                "the command was expected to fail");
+        return false;
+      }
       if (c.output_check) {
         const auto output = getFileContent(output_file);
         const auto [success, msg] = c.output_check(output);
