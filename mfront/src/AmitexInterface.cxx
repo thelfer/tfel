@@ -53,7 +53,7 @@ namespace mfront {
             << "Type = \"Constant\" Value = \"...\" />\n";
         ++nprops;
       } else {
-        for (unsigned short j = 0; j != pm.arraySize;) {
+        for (unsigned short j = 0; j != pm.arraySize; ++j) {
           out << "<!-- material property " << pm.getExternalName() << "[" << j
               << "] -->\n"
               << "<Coeff Index = \"" << nprops << "\" "

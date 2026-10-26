@@ -3756,13 +3756,18 @@ namespace mfront {
             (mh.find(
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ==
              mh.end()) &&
-            (mh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) == mh.end()),
+            (mh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) ==
+             mh.end()) &&
+            (mh.find(ModellingHypothesis::PLANESTRAIN) == mh.end()) &&
+            (mh.find(ModellingHypothesis::PLANESTRESS) == mh.end()),
         "the @Relocation keyword has not effect on this behaviour as the none "
         "of "
         "the following hypothesis is supported:\n"
         "- AxisymmetricalGeneralisedPlaneStress\n"
         "- AxisymmetricalGeneralisedPlaneStrain\n"
-        "- GeneralisedPlaneStrain");
+        "- GeneralisedPlaneStrain\n"
+        "- PlaneStrain\n"
+        "- PlaneStress");
     this->checkNotEndOfFile("BehaviourDSLCommon::treatRelocation");
     const auto s = this->readStressFreeExpansionHandler(*(this->current));
     ++(this->current);
@@ -3775,6 +3780,8 @@ namespace mfront {
     add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
     add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
     add(ModellingHypothesis::GENERALISEDPLANESTRAIN);
+    add(ModellingHypothesis::PLANESTRAIN);
+    add(ModellingHypothesis::PLANESTRESS);
   }  // end of treatRelocation
 
   std::string BehaviourDSLCommon::predictionOperatorVariableModifier(

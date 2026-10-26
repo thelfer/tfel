@@ -318,11 +318,15 @@ namespace mfront {
               f << dest << "[" << currentOffset << "+idx] = this->" << p->name
                 << "[idx];\n";
             }
-          } else if ((flag == SupportedTypes::TVECTOR) ||
-                     (flag == SupportedTypes::STENSOR) ||
-                     (flag == SupportedTypes::TENSOR)) {
+          } else if (flag == SupportedTypes::TVECTOR) {
+            f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
+              << "[" << currentOffset << "+idx*TVectorSize]);\n";
+          } else if (flag == SupportedTypes::STENSOR) {
             f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
               << "[" << currentOffset << "+idx*StensorSize]);\n";
+          } else if (flag == SupportedTypes::TENSOR) {
+            f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
+              << "[" << currentOffset << "+idx*TensorSize]);\n";
           } else {
             tfel::raise(
                 "UMATInterfaceBase::exportResults: "
@@ -1275,7 +1279,8 @@ namespace mfront {
               << "[\" + std::to_string(i)+ \"]\";\n";
           out << "mg.addInternalStateVariable(name, "  //
               << as_string(flag) << ", "               //
-              << "mg_STATEV.data() + " << ivoffset << " + i);\n";
+              << "mg_STATEV.data() + " << ivoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "));\n";
           out << "}\n";
           ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
         } else {
@@ -1309,8 +1314,10 @@ namespace mfront {
           out << "const auto name = \"" << evname
               << "[\" +std::to_string(i)+\"]\";\n";
           out << "mg.addExternalStateVariable(name," << as_string(flag) << ", "
-              << "0, PREDEF + " << offset << " + i, "
-              << "dt, DPRED + " << offset << " + i, true);\n";
+              << "0, PREDEF + " << evoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "), "
+              << "dt, DPRED + " << evoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "), true);\n";
           out << "}\n";
           evoffset += SupportedTypes::TypeSize(p->arraySize, flag);
         } else {
