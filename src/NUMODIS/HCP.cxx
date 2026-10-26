@@ -375,6 +375,17 @@ namespace numodis {
       if (isNew) planes.push_back(newPlane);
 
     } while (next_permutation(indices.begin(), indices.begin() + 3));
+
+    // opposite sign for c axis (if needed): only adds the planes which are
+    // not equivalent to the previous ones, e.g. for the {11-22} planes
+    if (indices[3] != 0) {
+      indices[3] = -indices[3];
+      do {
+        IPlane newPlane(indices);
+        if (std::find(planes.begin(), planes.end(), newPlane) == planes.end())
+          planes.push_back(newPlane);
+      } while (next_permutation(indices.begin(), indices.begin() + 3));
+    }
   }
 
   //=====================================================================

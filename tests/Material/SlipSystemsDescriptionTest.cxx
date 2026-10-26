@@ -207,6 +207,13 @@ struct SlipSystemsDescriptionTest final : public tfel::tests::TestCase {
         contains(gs3, make_vec(-2, 1, 1, 3), make_vec(1, 0, -1, 1)));
     TFEL_TESTS_ASSERT(
         contains(gs3, make_vec(1, 1, -2, -3), make_vec(1, 0, -1, 1)));
+    // pyramidal II <c+a> slip systems
+    auto ssd2 = SlipSystemsDescription(CrystalStructure::HCP);
+    ssd2.addSlipSystemsFamily(make_vec(-1, -1, 2, 3), make_vec(1, 1, -2, 2));
+    const auto gs4 = ssd2.getSlipSystems(0);
+    TFEL_TESTS_CHECK_EQUAL(gs4.size(), 6u);
+    TFEL_TESTS_ASSERT(
+        contains(gs4, make_vec(-1, -1, 2, -3), make_vec(1, 1, -2, -2)));
   }
 };
 
