@@ -2209,11 +2209,14 @@ namespace mfront {
       const std::string_view s) {
     mfront::checkAndCompletePhysicalBoundsDeclaration(this->materialProperties,
                                                       s);
+    mfront::checkAndCompletePhysicalBoundsDeclaration(this->localVariables, s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(this->stateVariables, s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(
         this->auxiliaryStateVariables, s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(
         this->integrationVariables, s);
+    mfront::checkAndCompletePhysicalBoundsDeclaration(this->persistentVariables,
+                                                      s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(
         this->externalStateVariables, s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(this->parameters, s);
