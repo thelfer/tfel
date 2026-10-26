@@ -291,16 +291,16 @@ namespace mfront {
       }
     }
     // treating external commands
-    for (const auto& c : ecmds) {
+    for (auto pc = ecmds.rbegin(); pc != ecmds.rend(); ++pc) {
       CxxTokenizer t;
       try {
-        t.parseString(c);
+        t.parseString(*pc);
       } catch (std::exception& e) {
         tfel::raise(
             "DSLBase::openFile : "
             "error while parsing external command "
             "'" +
-            c + "'\n" + std::string(e.what()));
+            *pc + "'\n" + std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(), t.begin(), t.end());
     }

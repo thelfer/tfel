@@ -414,7 +414,7 @@ namespace mtest {
       add_mp2("ShearModulus12", mu);
       if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         add_mp2("ShearModulus23", mu);
-        add_mp2("ShearModulus14", mu);
+        add_mp2("ShearModulus13", mu);
       }
     }
     // mistral parameters
