@@ -1147,6 +1147,18 @@ namespace mfront {
     }
     if (this->bd.hasCode(h, BehaviourData::ComputePredictor)) {
       os << this->bd.getCode(h, BehaviourData::ComputePredictor) << '\n';
+      // correct prediction to take into account normalisation factors
+      for (const auto& v : d.getIntegrationVariables()) {
+        if (this->integrationVariablesIncrementsUsedInPredictor.find('d' +
+                                                                     v.name) !=
+            this->integrationVariablesIncrementsUsedInPredictor.end()) {
+          if (this->bd.hasAttribute(h, v.name + "_normalisation_factor")) {
+            const auto& nf = this->bd.getAttribute<std::string>(
+                h, v.name + "_normalisation_factor");
+            os << "this->d" << v.name << " /= " << nf << ";\n";
+          }
+        }
+      }
     }
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingBegin(os, this->bd.getClassName(),
