@@ -3030,7 +3030,8 @@ namespace mfront {
       out << "false;\n";
     }
     out << "static " << constexpr_c << " bool doSubSteppingOnInvalidResults = ";
-    if (this->doSubSteppingOnInvalidResults) {
+    if (mb.getAttribute<bool>(CastemInterface::doSubSteppingOnInvalidResults,
+                              false)) {
       out << "true;\n";
     } else {
       out << "false;\n";
