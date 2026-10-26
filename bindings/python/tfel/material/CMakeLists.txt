@@ -23,4 +23,8 @@ target_link_libraries(py_tfel_material_homogenization
   PRIVATE TFELMaterial TFELMath TFELException
   ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
-tfel_python_script(tfel/material __init__.py)
+if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  tfel_python_script_base(tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/material __init__.py)
+else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  tfel_python_script_base(tfel/material __init__.py)
+endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)

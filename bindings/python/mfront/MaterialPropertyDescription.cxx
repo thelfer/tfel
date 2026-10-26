@@ -59,11 +59,11 @@ void declareMaterialPropertyDescription(pybind11::module_& m) {
       m, "MaterialPropertyDescription",
       "Structure describing a material property")
       .def("getInputs", MaterialPropertyDescription_getInputs,
-           pybind11::return_value_policy::reference)
+           pybind11::return_value_policy::reference_internal)
       .def("getParameters", MaterialPropertyDescription_getParameters,
-           pybind11::return_value_policy::reference)
+           pybind11::return_value_policy::reference_internal)
       .def("getOutput", MaterialPropertyDescription_getOutput,
-           pybind11::return_value_policy::reference)
+           pybind11::return_value_policy::reference_internal)
       .def("getLawName", MaterialPropertyDescription_getLawName)
       .def("getMaterialName", MaterialPropertyDescription_getMaterialName)
       .def("getClassName", MaterialPropertyDescription_getClassName);

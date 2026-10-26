@@ -27,5 +27,5 @@ void declareStructureCurrentState(pybind11::module_& m) {
   pybind11::class_<mtest::StructureCurrentState>(m, "StructureCurrentState")
       .def(pybind11::init<>())
       .def_property_readonly("istates", get_istates,
-                             pybind11::return_value_policy::reference);
+                             pybind11::return_value_policy::reference_internal);
 }  // end of declareStructureCurrentState

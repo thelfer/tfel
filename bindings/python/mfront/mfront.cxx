@@ -49,9 +49,9 @@ void declareGeneratorOptions(pybind11::module_&);
 void declareMakefileGenerator(pybind11::module_&);
 void declareCMakeGenerator(pybind11::module_&);
 void declareOverridableImplementation(pybind11::module_&);
+pybind11::object castDSL(std::shared_ptr<mfront::AbstractDSL>);
 
-static pybind11::object getDSL(const std::string& f) {
-  auto dsl = mfront::MFrontBase::getDSL(f);
+pybind11::object castDSL(std::shared_ptr<mfront::AbstractDSL> dsl) {
   if (dsl->getTargetType() == mfront::AbstractDSL::MATERIALPROPERTYDSL) {
     auto b = std::dynamic_pointer_cast<mfront::MaterialPropertyDSL>(dsl);
     tfel::raise_if(b.get() == nullptr, "getDSL: invalid dsl implementation");
@@ -62,6 +62,10 @@ static pybind11::object getDSL(const std::string& f) {
     return pybind11::cast(b);
   }
   return pybind11::cast(dsl);
+}
+
+static pybind11::object getDSL(const std::string& f) {
+  return castDSL(mfront::MFrontBase::getDSL(f));
 }
 
 #ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES

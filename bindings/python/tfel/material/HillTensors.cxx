@@ -153,5 +153,5 @@ void declareHillTensors(pybind11::module_& m) {
       },
       pybind11::arg("C"), pybind11::arg("n_a"), pybind11::arg("a"),
       pybind11::arg("n_b"), pybind11::arg("b"), pybind11::arg("c"),
-      pybind11::arg("max_it"), compute_anisotropic_hill_tensor_doc);
+      pybind11::arg("max_it") = 12, compute_anisotropic_hill_tensor_doc);
 }
