@@ -1042,12 +1042,14 @@ namespace mfront {
           << "}\n"
           << "};\n"
           << "const auto nthreads = pool.getNumberOfThreads();\n"
-          << "const auto ntasks   = nthreads/(*nblock);\n"
+          << "const auto nb = "
+             "static_cast<tfel::system::ThreadPool::size_type>(*nblock);\n"
+          << "const auto ntasks   = nb/nthreads;\n"
           << "for(tfel::system::ThreadPool::size_type i=0;i!=nthreads;++i){\n"
           << "pool.addTask(integrate2,i*ntasks,(i+1)*ntasks);\n"
           << "}\n"
-          << "if(*nblock-ntasks*nthreads!=0){\n"
-          << "pool.addTask(integrate2,nthreads*ntasks,*nblock);\n"
+          << "if(nb-ntasks*nthreads!=0){\n"
+          << "pool.addTask(integrate2,nthreads*ntasks,nb);\n"
           << "}\n"
           << "pool.wait();\n";
     } else {
