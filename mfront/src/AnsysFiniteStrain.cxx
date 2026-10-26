@@ -261,6 +261,7 @@ namespace ansys {
           C, tensor::Id(), F1, s);
       // now convert to ansys
       AnsysTangentOperator<AnsysReal>::normalize(Ca);
+      AnsysTangentOperator<AnsysReal>::transpose(Ca);
     } else if (NTENS == 6) {
       using tensor = tensor<3u, AnsysReal>;
       stensor<3u, AnsysReal> s;
@@ -272,6 +273,7 @@ namespace ansys {
           C, tensor::Id(), F1, s);
       // now convert to ansys
       AnsysTangentOperator<AnsysReal>::normalize(Ca);
+      AnsysTangentOperator<AnsysReal>::transpose(Ca);
     }
   }  // end of AnsysFiniteStrain::computeAnsysTangentOperatorFromCSE
 

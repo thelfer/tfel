@@ -67,7 +67,8 @@ namespace tfel::system {
     auto throw_if_in_macos = [] {};
 #endif
     //
-    auto file = std::make_shared<std::ifstream>(f);
+    auto file = std::make_shared<std::ifstream>(
+        f, std::ios_base::in | std::ios_base::binary);
     throw_if(!(*file), "no library named '" + f + "' found");
     //
     if (details::elf_info32::parsing_supported(*file)) {

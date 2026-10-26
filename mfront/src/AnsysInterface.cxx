@@ -1322,17 +1322,19 @@ namespace mfront {
           << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
           << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
           << "deto[i] -= " << this->strainPerturbationValue << ";\n"
-          << "ansys::AnsysData d3 = {&sigf[0],&D[0],&sv[0],\n"
+          << "ansys::AnsysData d3 = {&sigb[0],&D[0],&sv[0],\n"
           << "                         SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
           << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
           << "                         STRAN,&deto[0],TEMP,DTEMP,PROPS,"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+          << sfeh << "};\n"
           << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ","
           << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
           << "return;\n"
           << "}\n"
           << "for(ansys::AnsysInt j=0;j!=*NTENS;++j){\n"
-          << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*"
+          << "nD[i*(*NTENS)+j] = (sigf[j]-sigb[j])/(2.*"
           << this->strainPerturbationValue << ");\n"
           << "}\n"
           << "}\n"
@@ -1340,7 +1342,7 @@ namespace mfront {
           << "m=0.;\n"
           << "mDt=0.;\n"
           << "mnDt=0.;\n"
-          << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
+          << "for(ansys::AnsysInt i=0;i!=(*NTENS)*(*NTENS);++i){\n"
           << "mDt=std::max(mDt,*(DDSDDE+i));\n"
           << "mnDt=std::max(mnDt,nD[i]);\n"
           << "m=std::max(m,std::abs(nD[i]-*(DDSDDE+i)));\n"
@@ -1559,11 +1561,13 @@ namespace mfront {
       out << "std::swap(STRESS[4],STRESS[5]);\n"
           << "tfel::math::ST2toST2View<3u,AnsysReal> Dt(DDSDDE);\n"
           << "Dt=D;\n"
-          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n"
+          << "AnsysTangentOperator<AnsysReal>::transpose(Dt);\n";
     } else {
       out << "tfel::math::ST2toST2View<2u,AnsysReal> Dt(DDSDDE);\n"
           << "Dt=D;\n"
-          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n"
+          << "AnsysTangentOperator<AnsysReal>::transpose(Dt);\n";
     }
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";
