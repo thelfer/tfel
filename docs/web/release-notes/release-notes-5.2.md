@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1115: [tfel-math] Eigenvalue sorting, Harari solver, positive/negative parts, convert, tpld and fromRotationMatrix on GPU
+
+For more details, see <https://github.com/thelfer/tfel/issues/1115>
+
 ## Issue 1113: [mfront] StandardElastoViscoPlasticity brick: nucleation, porosity name, porosity jacobian and porous stress criteria
 
 For more details, see <https://github.com/thelfer/tfel/issues/1113>
