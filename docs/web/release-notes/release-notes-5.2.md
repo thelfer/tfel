@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1119: [mfront] ansys and abaqusexplicit interfaces: finite strain strategies, plane stress, packaging and parallelisation
+
+For more details, see <https://github.com/thelfer/tfel/issues/1119>
+
 ## Issue 1115: [tfel-math] Eigenvalue sorting, Harari solver, positive/negative parts, convert, tpld and fromRotationMatrix on GPU
 
 For more details, see <https://github.com/thelfer/tfel/issues/1115>
