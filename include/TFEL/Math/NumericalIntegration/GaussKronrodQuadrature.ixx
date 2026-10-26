@@ -146,9 +146,15 @@ namespace tfel::math {
     }
     auto is_infinite = [](const real x) {
       if constexpr (ImmutableQuantityConcept<real>) {
-        return ieee754::fpclassify(base_type_cast(x)) == FP_INFINITE;
+        return (ieee754::fpclassify(base_type_cast(x)) == FP_INFINITE) ||
+               (base_type_cast(x) >=
+                std::numeric_limits<base_type<real>>::max()) ||
+               (base_type_cast(x) <=
+                -std::numeric_limits<base_type<real>>::max());
       } else {
-        return ieee754::fpclassify(x) == FP_INFINITE;
+        return (ieee754::fpclassify(x) == FP_INFINITE) ||
+               (x >= std::numeric_limits<real>::max()) ||
+               (x <= -std::numeric_limits<real>::max());
       }
     };
     //
