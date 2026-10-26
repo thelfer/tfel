@@ -520,11 +520,10 @@ namespace mfront {
             "unsupported behaviour type");
       }
       out << "//! space dimension\n"
-          << "static " << constexpr_c << " unsigned short N "
-          << "= "
-             "tfel::material::ModellingHypothesisToSpaceDimension<tfel::"
-             "material:"
-             ":ModellingHypothesis::TRIDIMENSIONAL>::value;\n"
+          << "static " << constexpr_c << " unsigned short N = "
+          << "tfel::material::ModellingHypothesisToSpaceDimension<"
+          << "tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ">::value;\n"
           << "// tiny vector size\n"
           << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
           << "// symmetric tensor size\n"
