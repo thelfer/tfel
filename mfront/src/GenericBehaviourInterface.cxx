@@ -600,18 +600,30 @@ namespace mfront {
     if (bd.getSymmetryType() != mfront::ORTHOTROPIC) {
       return;
     }
+    // the gradient of a finite strain behaviour defined through a strain
+    // measure is the deformation gradient, not the strain
+    const auto is_finite_strain_through_strain_measure =
+        (bd.getBehaviourType() ==
+         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+        (bd.isStrainMeasureDefined()) &&
+        (bd.getStrainMeasure() != BehaviourDescription::LINEARISED);
     const auto f = i.getFunctionNameForHypothesis(name, h);
     os << "void " << f << "_rotateGradients("
        << "mfront_gb_real* const dest, "
        << "const mfront_gb_real* const src, "
           "const mfront_gb_real* const rv){\n";
     writeRotationMatrixDefinition(os, false);
-    // offset of gradient variable
-    auto og = SupportedTypes::TypeSize{};
-    for (const auto& mv : bd.getMainVariables()) {
-      const auto& g = mv.first;
-      writeVariableRotation(os, h, g, og);
-      og += SupportedTypes::getTypeSize(g.type, g.arraySize);
+    if (is_finite_strain_through_strain_measure) {
+      auto args_F = WriteRotationFunctionArgument{os, h, "F", 0, ""};
+      writeTensorRotation(args_F);
+    } else {
+      // offset of gradient variable
+      auto og = SupportedTypes::TypeSize{};
+      for (const auto& mv : bd.getMainVariables()) {
+        const auto& g = mv.first;
+        writeVariableRotation(os, h, g, og);
+        og += SupportedTypes::getTypeSize(g.type, g.arraySize);
+      }
     }
     os << "}\n\n";
     os << "void " << f << "_rotateArrayOfGradients("
@@ -621,18 +633,26 @@ namespace mfront {
        << "const mfront_gb_size_type s){\n";
     writeRotationMatrixDefinition(os, false);
     os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
-    auto gsize = SupportedTypes::TypeSize{};
-    for (const auto& mv : bd.getMainVariables()) {
-      const auto& g = mv.first;
-      gsize += SupportedTypes::getTypeSize(g.type, g.arraySize);
-    }
-    const auto goffset =
-        "idx * " + std::to_string(gsize.getValueForModellingHypothesis(h));
-    og = SupportedTypes::TypeSize{};
-    for (const auto& mv : bd.getMainVariables()) {
-      const auto& g = mv.first;
-      writeVariableRotation(os, h, g, og, goffset);
-      og += SupportedTypes::getTypeSize(g.type, g.arraySize);
+    if (is_finite_strain_through_strain_measure) {
+      const auto tensor_offset =
+          "idx * " + std::to_string(tfel::material::getTensorSize(h));
+      auto args_F_2 =
+          WriteRotationFunctionArgument{os, h, "F", 0, tensor_offset};
+      writeTensorRotation(args_F_2);
+    } else {
+      auto gsize = SupportedTypes::TypeSize{};
+      for (const auto& mv : bd.getMainVariables()) {
+        const auto& g = mv.first;
+        gsize += SupportedTypes::getTypeSize(g.type, g.arraySize);
+      }
+      const auto goffset =
+          "idx * " + std::to_string(gsize.getValueForModellingHypothesis(h));
+      auto og = SupportedTypes::TypeSize{};
+      for (const auto& mv : bd.getMainVariables()) {
+        const auto& g = mv.first;
+        writeVariableRotation(os, h, g, og, goffset);
+        og += SupportedTypes::getTypeSize(g.type, g.arraySize);
+      }
     }
     os << "}\n";
     os << "}\n\n";
