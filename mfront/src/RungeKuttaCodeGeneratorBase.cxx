@@ -861,7 +861,7 @@ namespace mfront {
              << "+cste1_50*(this->d" << v.name << "_K5)"
              << "+cste2_55*(this->d" << v.name << "_K6)))";
           if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
-            os << "))/(" << get_enf(v) << ")";
+            os << ")/(" << get_enf(v) << ")";
           }
           os << ";\n";
         } else {
@@ -897,7 +897,7 @@ namespace mfront {
                       VariableDescription::errorNormalisationFactor)) {
                 os << "(";
               }
-              os << "tfel::math::base_type_case(tfel::math::abs("
+              os << "tfel::math::base_type_cast(tfel::math::abs("
                  << "cste1_360*(this->d" << v.name << "_K1[" << i << "])"
                  << "-cste128_4275*(this->d" << v.name << "_K3[" << i << "])"
                  << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
