@@ -172,6 +172,22 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
                           eps / young);
       }
     }
+
+    // localisation tensors given by the functions for dimensions 2 and 3
+    tfel::math::st2tost2<2u, stress> C_i;
+    computeIsotropicStiffnessTensorII<2u, value, stress, real>(C_i, 10 * young,
+                                                               nu);
+    const std::array<lg, 2u> semiLengths = {lg{3}, lg{2}};
+    const auto A2D1 = computeGeneralAnisotropicLocalisationTensor<2u, stress>(
+        C_0, C_i, n_a, n_b, semiLengths, 14);
+    const auto A2D2 = computeIsotropicLocalisationTensor<2u, stress>(
+        YoungNuModuli<stress>(young, nu), C_i, n_a, n_b, semiLengths);
+
+    for (int i : {0, 1, 2, 3}) {
+      for (int j : {0, 1, 2, 3}) {
+        TFEL_TESTS_ASSERT(std::abs(A2D1(i, j) - A2D2(i, j)) < eps);
+      }
+    }
 #endif /* _LIBCPP_VERSION */
   }    // end of test_Eshelby2D
 
