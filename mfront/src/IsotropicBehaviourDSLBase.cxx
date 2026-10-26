@@ -550,9 +550,9 @@ namespace mfront {
         const auto currentVarName = v.name + "_";
         this->mb.addLocalVariable(
             elem, VariableDescription(v.type, currentVarName, v.arraySize, 0u));
-        ib.code = "this->" + currentVarName + " = this->" + v.name + "+(" +
-                  this->mb.getClassName() + "::theta)*(this->d" + v.name +
-                  ");\n";
+        ib.code += "this->" + currentVarName + " = this->" + v.name + "+(" +
+                   this->mb.getClassName() + "::theta)*(this->d" + v.name +
+                   ");\n";
       }
       this->mb.setCode(elem, BehaviourData::BeforeInitializeLocalVariables, ib,
                        BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
