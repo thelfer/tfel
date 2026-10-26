@@ -1051,7 +1051,13 @@ namespace mfront {
         if (this->bd.hasAttribute(h, v.name + "_normalisation_factor")) {
           const auto& nf = this->bd.getAttribute<std::string>(
               h, v.name + "_normalisation_factor");
-          os << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
+          os << "partial_jacobian_" << v.name << " *= " << nf << ";\n";
+        }
+        if (this->bd.hasAttribute(
+                h, 'f' + isvs[0].name + "_normalisation_factor")) {
+          const auto& fnf = this->bd.getAttribute<std::string>(
+              h, 'f' + isvs[0].name + "_normalisation_factor");
+          os << "partial_jacobian_" << v.name << " /= " << fnf << ";\n";
         }
       }
       os << "return true;\n"
