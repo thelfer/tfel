@@ -1294,7 +1294,7 @@ namespace mfront {
           << "                              "
              "zero,cste*(*(stretchNew+i+3*(*nblock)))};\n"
           << "stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t
-          << ">::Id)/2;\n"
+          << ">::Id())/2;\n"
           << "stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t
           << ">::Id())/2-eto;\n\n"
           << "stensor<2u," << t
