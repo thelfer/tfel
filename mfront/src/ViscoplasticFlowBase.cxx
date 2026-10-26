@@ -32,7 +32,7 @@ namespace mfront::bbrick {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     InelasticFlowBase::initialize(bd, dsl, id, d);
     if (!this->equivalent_strain_external_name.empty()) {
-      addStateVariable(bd, "strain", "p",
+      addStateVariable(bd, "strain", "p" + id,
                        this->equivalent_strain_external_name);
     } else {
       if (id.empty()) {
