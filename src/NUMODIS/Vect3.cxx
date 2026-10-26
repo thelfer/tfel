@@ -178,7 +178,7 @@ namespace numodis {
   }
 
   Vect3 operator-(const double scalar, const Vect3& vec) {
-    return Vect3(vec[0] - scalar, vec[1] - scalar, vec[2] - scalar);
+    return Vect3(scalar - vec[0], scalar - vec[1], scalar - vec[2]);
   }
 
   Vect3 Vect3::operator+(const Vect3& vec) const {

@@ -19,14 +19,16 @@
 #include "TFEL/Utilities/Data.hxx"
 
 template <typename T>
-static bool is(const pybind11::object& o) {
+static bool is(const pybind11::handle& o) {
   return pybind11::isinstance<T>(o);
 }
 
 static pybind11::object convert_data_to_python_object(
     const tfel::utilities::Data& d) {
   using namespace tfel::utilities;
-  if (d.is<int>()) {
+  if (d.is<bool>()) {
+    return pybind11::cast(d.get<bool>());
+  } else if (d.is<int>()) {
     return pybind11::cast(d.get<int>());
   } else if (d.is<double>()) {
     return pybind11::cast(d.get<double>());
@@ -34,6 +36,8 @@ static pybind11::object convert_data_to_python_object(
     return pybind11::cast(d.get<std::string>());
   } else if (d.is<std::vector<Data>>()) {
     return pybind11::cast(d.get<std::vector<Data>>());
+  } else if (d.is<std::map<double, double>>()) {
+    return pybind11::cast(d.get<std::map<double, double>>());
   }
   if (!d.is<DataMap>()) {
     tfel::raise(
@@ -44,19 +48,35 @@ static pybind11::object convert_data_to_python_object(
 }  // end of convert_data_to_python_object
 
 static void convert_python_object_to_data(tfel::utilities::Data& d,
-                                          const pybind11::object& o) {
-  using tfel::utilities::Data;
-  if (is<int>(o)) {
+                                          const pybind11::handle& o) {
+  using namespace tfel::utilities;
+  if (is<Data>(o)) {
+    d = pybind11::cast<Data>(o);
+  } else if (is<pybind11::bool_>(o)) {
+    d = Data(pybind11::cast<bool>(o));
+  } else if (is<pybind11::int_>(o)) {
     d = Data(pybind11::cast<int>(o));
-  } else if (is<double>(o)) {
+  } else if (is<pybind11::float_>(o)) {
     d = Data(pybind11::cast<double>(o));
-  }
-  if (!is<std::string>(o)) {
+  } else if (is<pybind11::str>(o)) {
+    d = Data(pybind11::cast<std::string>(o));
+  } else if (is<pybind11::list>(o) || is<pybind11::tuple>(o)) {
+    auto v = std::vector<Data>{};
+    for (const auto& i : o) {
+      convert_python_object_to_data(v.emplace_back(), i);
+    }
+    d = Data(std::move(v));
+  } else if (is<pybind11::dict>(o)) {
+    auto m = DataMap{};
+    for (const auto& [k, v] : pybind11::reinterpret_borrow<pybind11::dict>(o)) {
+      convert_python_object_to_data(m[pybind11::cast<std::string>(k)], v);
+    }
+    d = Data(std::move(m));
+  } else {
     tfel::raise(
         "convert_python_object_to_data: "
         "unsupported conversion");
   }
-  d = Data(pybind11::cast<std::string>(o));
 }  // end of convert_python_object_to_data
 
 static std::unique_ptr<tfel::utilities::Data> convert_python_object_to_data_ptr(
@@ -96,6 +116,12 @@ void declareData(pybind11::module_& m) {
   data_add_def<std::string>(w, "String");
   data_add_def<std::vector<Data>>(w, "DataVector");
   data_add_def<DataMap>(w, "DataMap");
+  pybind11::implicitly_convertible<pybind11::bool_, Data>();
+  pybind11::implicitly_convertible<pybind11::int_, Data>();
+  pybind11::implicitly_convertible<pybind11::float_, Data>();
+  pybind11::implicitly_convertible<pybind11::str, Data>();
+  pybind11::implicitly_convertible<pybind11::list, Data>();
+  pybind11::implicitly_convertible<pybind11::dict, Data>();
   //
   //    class_<DataMap>("DataMap").def(map_indexing_suite<DataMap>());
   //    class_<std::vector<Data>>("DataVector")

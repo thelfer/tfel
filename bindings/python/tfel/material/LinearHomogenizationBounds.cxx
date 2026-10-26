@@ -13,6 +13,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include "TFEL/Raise.hxx"
 #include "TFEL/Material/LinearHomogenizationBounds.hxx"
 
 template <tfel::math::ScalarConcept StressType, std::size_t N>
@@ -21,6 +22,9 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
     st2tost2<N, StressType> computeVoigtStiffness(
         std::vector<tfel::types::real<StressType>>& tab_f,
         std::vector<tfel::math::st2tost2<N, StressType>>& tab_C) {
+  tfel::raise_if(tab_f.empty() || (tab_f.size() != tab_C.size()),
+                 "computeVoigtStiffness: the lists of volume fractions and "
+                 "of stiffness tensors must be non-empty and of equal sizes");
   return tfel::material::homogenization::elasticity::computeVoigtStiffness<
       N, StressType>(tab_f, tab_C);
 }
@@ -31,6 +35,9 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
     st2tost2<N, StressType> computeReussStiffness(
         std::vector<tfel::types::real<StressType>>& tab_f,
         std::vector<tfel::math::st2tost2<N, StressType>>& tab_C) {
+  tfel::raise_if(tab_f.empty() || (tab_f.size() != tab_C.size()),
+                 "computeReussStiffness: the lists of volume fractions and "
+                 "of stiffness tensors must be non-empty and of equal sizes");
   return tfel::material::homogenization::elasticity::computeReussStiffness<
       N, StressType>(tab_f, tab_C);
 }
@@ -44,6 +51,11 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
         std::vector<tfel::types::real<StressType>>& tab_f,
         std::vector<StressType>& tab_K,
         std::vector<StressType>& tab_mu) {
+  tfel::raise_if(tab_f.empty() || (tab_f.size() != tab_K.size()) ||
+                     (tab_f.size() != tab_mu.size()),
+                 "computeIsotropicHashinShtrikmanBounds: the lists of volume "
+                 "fractions, of bulk moduli and of shear moduli must be "
+                 "non-empty and of equal sizes");
   return tfel::material::homogenization::elasticity::
       computeIsotropicHashinShtrikmanBounds<N, StressType>(tab_f, tab_K,
                                                            tab_mu);

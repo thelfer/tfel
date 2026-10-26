@@ -21,7 +21,12 @@
 #include "TFEL/Math/AccelerationAlgorithms/UAnderson.hxx"
 #include "TFEL/Math/AccelerationAlgorithms/FAnderson.hxx"
 
-static void check(const pybind11::array_t<double>& a) {
+using input_array =
+    pybind11::array_t<double,
+                      pybind11::array::c_style | pybind11::array::forcecast>;
+using inout_array = pybind11::array_t<double, pybind11::array::c_style>;
+
+static void check(const pybind11::array& a) {
   const auto info = a.request();
   /* Some basic validation checks ... */
   if (info.format != pybind11::format_descriptor<double>::format()) {
@@ -32,19 +37,19 @@ static void check(const pybind11::array_t<double>& a) {
   }
 }
 
-static auto size(const pybind11::array_t<double>& a) {
+static auto size(const pybind11::array& a) {
   check(a);
   const auto info = a.request();
   return static_cast<tfel::math::vector<double>::size_type>(info.shape[0]);
 }
 
-static auto data(const pybind11::array_t<double>& a) {
+static auto data(const input_array& a) {
   check(a);
   const auto info = a.request();
   return static_cast<const double*>(info.ptr);
 }
 
-static auto data(pybind11::array_t<double>& a) {
+static auto data(inout_array& a) {
   check(a);
   const auto info = a.request();
   return static_cast<double*>(info.ptr);
@@ -58,7 +63,7 @@ struct UAndersonAccelerationAlgorithm {
   UAndersonAccelerationAlgorithm(const size_type n, const size_type p)
       : nfields(n), period(p) {}
 
-  void initialize(const pybind11::array_t<double>& u) {
+  void initialize(const input_array& u) {
     check(u);
     const auto s = size(u);
     if (!this->a) {
@@ -71,7 +76,7 @@ struct UAndersonAccelerationAlgorithm {
     *(this->uO) = tfel::math::vector<double>(b, b + s);
   }
 
-  void accelerate(pybind11::array_t<double>& u1) {
+  void accelerate(inout_array& u1) {
     if (!this->a) {
       tfel::raise(
           "UAndersonAccelerationAlgorithm::accelerate: "
@@ -104,7 +109,7 @@ struct FAndersonAccelerationAlgorithm {
   FAndersonAccelerationAlgorithm(const size_type n, const size_type p)
       : nfields(n), period(p) {}
 
-  void initialize(const pybind11::array_t<double>& u) {
+  void initialize(const input_array& u) {
     const auto s = size(u);
     if (!this->a) {
       this->a = std::unique_ptr<FAnderson>(
@@ -114,8 +119,7 @@ struct FAndersonAccelerationAlgorithm {
     this->a->restart(this->uO, this->uN, this->Df);
   }
 
-  void accelerate(pybind11::array_t<double>& u1,
-                  const pybind11::array_t<double>& r) {
+  void accelerate(inout_array& u1, const input_array& r) {
     if (!this->a) {
       tfel::raise(
           "FAndersonAccelerationAlgorithm::accelerate: "
@@ -153,12 +157,12 @@ void declareAccelerationAlgorithms(pybind11::module_& m) {
       .def("initialize", &UAndersonAccelerationAlgorithm::initialize,
            pybind11::arg("u"))
       .def("accelerate", &UAndersonAccelerationAlgorithm::accelerate,
-           pybind11::arg("u1"));
+           pybind11::arg("u1").noconvert());
   pybind11::class_<FAndersonAccelerationAlgorithm>(m, "FAnderson")
       .def(pybind11::init<size_type, size_type>(), pybind11::arg("n"),
            pybind11::arg("p"))
       .def("initialize", &FAndersonAccelerationAlgorithm::initialize,
            pybind11::arg("u"))
       .def("accelerate", &FAndersonAccelerationAlgorithm::accelerate,
-           pybind11::arg("u1"), pybind11::arg("r"));
+           pybind11::arg("u1").noconvert(), pybind11::arg("r"));
 }

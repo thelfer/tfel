@@ -689,9 +689,21 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1143>
 
+## Issue 1141: [tfel-utilities] tfel-check shall_fail and directory configurations, rstream::getLine, CxxTokenizer, Data reading and comparison, ArgumentParser
+
+For more details, see <https://github.com/thelfer/tfel/issues/1141>
+
+## Issue 1139: [python] Bindings: evtypes, ST2toST2 subscripts, homogenisation bounds, setRotationMatrix, setStrainMeasure, umatxx, Anderson algorithms and Data
+
+For more details, see <https://github.com/thelfer/tfel/issues/1139>
+
 ## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, @Relocation, rotation functions and MTest files on failure
 
 For more details, see <https://github.com/thelfer/tfel/issues/1137>
+
+## Issue 1135: [tfel-material] NUMODIS and slip systems: Schmid factors, installed headers, exports, HCP families and symmetries
+
+For more details, see <https://github.com/thelfer/tfel/issues/1135>
 
 ## Issue 1131: [mfront] Hooke stress potentials: plane stress jacobian, generic_prediction_operator option and broken state tests
 
