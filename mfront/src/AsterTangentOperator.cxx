@@ -239,10 +239,9 @@ namespace aster {
   }
 
   void AsterTangentOperator::transpose(
-      tfel::math::TMatrixView<3u, 3u, AsterReal>& Dt) {
-    std::swap(Dt(0, 1), Dt(1, 0));
-    std::swap(Dt(0, 2), Dt(2, 0));
-    std::swap(Dt(0, 3), Dt(3, 0));
+      tfel::math::TMatrixView<3u, 3u, AsterReal>&) {
+    // nothing to be done: code_aster reads the tangent operator of
+    // cohesive zone models row-major
   }
 
 }  // end of namespace aster
