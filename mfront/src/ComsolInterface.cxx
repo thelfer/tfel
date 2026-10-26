@@ -259,7 +259,7 @@ namespace mfront {
         << "const auto p = " << this->getFunctionNameBasis(name)
         << "_getOutOfBoundsPolicy();\n"
         << "const auto dt = double{0};\n"
-        << "const auto T  = mprops[" << nprops << "];\n"
+        << "const auto T  = mprops[" << nprops - 1 << "];\n"
         << "const tfel::math::stensor<3u,double> e0(stran);\n"
         << "tfel::math::stensor<3u,double> e1(e);\n"
         << "tfel::math::stensor<3u,double> eto;\n"
