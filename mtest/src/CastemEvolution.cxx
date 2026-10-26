@@ -42,7 +42,7 @@ namespace mtest {
       const auto& ev = *(pev->second);
       args[i] = ev(t);
     }
-    return this->f(&args[0]);
+    return this->f(args.data());
   }  // end of CastemEvolution::operator()
 
   bool CastemEvolution::isConstant() const {
