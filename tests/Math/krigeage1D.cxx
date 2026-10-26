@@ -18,6 +18,11 @@
 #include <cmath>
 #include <fstream>
 #include <cstdlib>
+#include <iostream>
+
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
 
 #include "TFEL/Math/General/floating_point_exceptions.hxx"
 #include "TFEL/Math/Kriging.hxx"
@@ -26,30 +31,49 @@ double rand(const double min, const double max) {
   return min + ((max - min) * rand()) / RAND_MAX;
 }
 
+struct Kriging1DTest final : public tfel::tests::TestCase {
+  Kriging1DTest()
+      : tfel::tests::TestCase("TFEL/Math", "Kriging1DTest") {
+  }  // end of Kriging1DTest
+  tfel::tests::TestResult execute() override {
+    using namespace std;
+    using namespace tfel::math;
+    Kriging<1> k;
+    double x;
+    double y;
+    unsigned int i;
+    ofstream data("data.txt");
+    ofstream out("out.txt");
+
+    init_floating_point_exceptions();
+
+    for (i = 0; i != 10; ++i) {
+      x = rand(0., 1.);
+      y = exp(cos(x * x)) + 0.1 * (rand(0., 1.) - 0.5);
+      k.addValue(x, y);
+      data << x << " " << y << endl;
+    }
+    k.setNuggetEffect(0.02);
+    k.buildInterpolation();
+    for (x = -0.5; x < 1.5; x += 0.05) {
+      out << x << " " << k(x) << endl;
+    }
+    // with the nugget effect, the noise of the data (whose amplitude is
+    // 0.05) is smoothed out: the interpolation stays close to the
+    // function without noise
+    for (x = 0; x < 1.025; x += 0.05) {
+      TFEL_TESTS_ASSERT(std::abs(k(x) - exp(cos(x * x))) < 0.1);
+    }
+    return this->result;
+  }  // end of execute
+};
+
+TFEL_TESTS_GENERATE_PROXY(Kriging1DTest, "Kriging1DTest");
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  using namespace std;
-  using namespace tfel::math;
-  Kriging<1> k;
-  double x;
-  double y;
-  unsigned int i;
-  ofstream data("data.txt");
-  ofstream out("out.txt");
-
-  init_floating_point_exceptions();
-
-  for (i = 0; i != 10; ++i) {
-    x = rand(0., 1.);
-    y = exp(cos(x * x)) + 0.1 * (rand(0., 1.) - 0.5);
-    k.addValue(x, y);
-    data << x << " " << y << endl;
-  }
-  k.setNuggetEffect(0.02);
-  k.buildInterpolation();
-  for (x = -0.5; x < 1.5; x += 0.05) {
-    out << x << " " << k(x) << endl;
-  }
-
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("krigeage1D.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
