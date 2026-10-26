@@ -44,7 +44,7 @@ struct ST2toST2FromTinyMatrixViewTest final : public tfel::tests::TestCase {
           TFEL_TESTS_ASSERT(ms2(i, i) == 1);
         } else {
           TFEL_TESTS_ASSERT(ms(i, j) == 0);
-          TFEL_TESTS_ASSERT(ms2(i, i) == 1);
+          TFEL_TESTS_ASSERT(ms2(i, j) == 0);
         }
       }
     }
