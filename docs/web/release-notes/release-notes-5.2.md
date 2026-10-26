@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1113: [mfront] StandardElastoViscoPlasticity brick: nucleation, porosity name, porosity jacobian and porous stress criteria
+
+For more details, see <https://github.com/thelfer/tfel/issues/1113>
+
 ## Issue 1111: [mtest] Crash without behaviour, time step at the end of a period, events, NaN results and cubic pipe elements
 
 For more details, see <https://github.com/thelfer/tfel/issues/1111>
