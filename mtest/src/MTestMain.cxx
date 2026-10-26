@@ -317,10 +317,13 @@ namespace mtest {
     using namespace tfel::system;
     // posix signals
     auto& sm = SignalManager::getSignalManager();
-    // blocking all signals during treatment of signals SIGSEGV, SIGFPE
+    // blocking all signals during treatment of signals SIGSEGV, SIGFPE. As
+    // in SignalManager::registerHandler, the default action is restored
+    // when the signal is caught, so that the process ends after the
+    // backtrace is printed
     struct sigaction action;
     sigfillset(&(action.sa_mask));
-    action.sa_flags = 0;
+    action.sa_flags = SA_RESETHAND;
     sm.registerHandler(SIGSEGV, sigPtrFun(SignalManager::printBackTrace),
                        action);
     sm.registerHandler(SIGFPE, sigPtrFun(SignalManager::printBackTrace),
