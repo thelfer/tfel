@@ -414,8 +414,8 @@ namespace mfront {
           const Hypothesis h) {
     const auto& d = mb.getBehaviourData(h);
     auto n = SupportedTypes::TypeSize{};
-    for (const auto& v : d.getStateVariables()) {
-      if (!v.hasPhysicalBounds()) {
+    for (const auto& v : d.getIntegrationVariables()) {
+      if ((!d.isStateVariableName(v.name)) || (!v.hasPhysicalBounds())) {
         n += mb.getTypeSize(v.type, v.arraySize);
         continue;
       }
