@@ -43,6 +43,8 @@ struct IntegerParserTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(tfel::math::IntegerEvaluator("2*3/4").getValue() == 1);
     TFEL_TESTS_ASSERT(tfel::math::IntegerEvaluator("2*(2+1)/2").getValue() ==
                       3);
+    TFEL_TESTS_CHECK_THROW(tfel::math::IntegerEvaluator("2/(1-1)").getValue(),
+                           std::runtime_error);
     return this->result;
   }  // end of execute
  private:
