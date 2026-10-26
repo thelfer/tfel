@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1107: [mfront] Normalisation factors, physical bounds and MultipleIsotropicMisesFlows in the implicit and isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1107>
+
 ## Issue 1105: [docs] Examples rejected by mfront and mtest, wrong keyword names and broken links
 
 For more details, see <https://github.com/thelfer/tfel/issues/1105>
