@@ -1502,7 +1502,7 @@ namespace mfront {
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       out << "// conversion to Ansys' convention\n"
           << "std::swap(eto[4],eto[5]);\n"
-          << "std::swap(eto[4],eto[5]);\n"
+          << "std::swap(deto[4],deto[5]);\n"
           << "// conversion to Abaqus conventions\n"
           << "std::swap(STRESS[4],STRESS[5]);\n";
     }
@@ -1550,8 +1550,11 @@ namespace mfront {
           << "T.importTab(STRESS);\n";
     }
     out << "const auto D = lsh1.convertToAbaqusTangentModuli(C,T);\n"
-        << "// converting the stress\n"
-        << "lsh1.convertToCauchyStress(STRESS);\n";
+        << "// converting the stress\n";
+    if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      out << "std::swap(STRESS[4],STRESS[5]);\n";
+    }
+    out << "lsh1.convertToCauchyStress(STRESS);\n";
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       out << "std::swap(STRESS[4],STRESS[5]);\n"
           << "tfel::math::ST2toST2View<3u,AnsysReal> Dt(DDSDDE);\n"
