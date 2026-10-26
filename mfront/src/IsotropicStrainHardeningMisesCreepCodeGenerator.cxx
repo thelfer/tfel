@@ -127,7 +127,7 @@ namespace mfront {
        << "}\n"
        << "}\n"
        << "}\n"
-       << "if(iter==this->iterMax){\n";
+       << "if(!converge){\n";
     if (getDebugMode()) {
       os << "std::cout << \"" << this->bd.getClassName()
          << "::NewtonIntegration() : no convergence after \" "
