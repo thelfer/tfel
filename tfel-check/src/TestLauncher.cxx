@@ -239,12 +239,12 @@ namespace tfel::check {
     const auto value = option.get<bool>();
     return [value](const std::vector<std::string>& output)
                -> std::tuple<bool, std::string> {
-      if ((value) && (output.empty())) {
+      if (output.empty() == value) {
         return {true, ""};
       }
       auto msg = std::string{"Unexpected command output "};
       if (value) {
-        msg += "(empty output expected)";
+        msg += "(empty output expected)\n";
         msg += "# Command output:\n\n";
         for (const auto& l : output) {
           msg += "'" + l + "'\n";
