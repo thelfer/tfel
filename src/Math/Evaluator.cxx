@@ -328,7 +328,9 @@ namespace tfel::math {
         throw_if(*p != ",",
                  "unexpected token '" + *p + "' (expected ',' or ')')");
         ++p;
-        Evaluator::readSpecifiedToken("Evaluator::treatDiff", ")", p, pe);
+        Evaluator::checkNotEndOfExpression("Evaluator::treatDiff",
+                                           "expected variable name", p, pe);
+        throw_if(*p == ")", "expected variable name after ','");
       }
     }
     throw_if(var.empty(), "empty var list");
