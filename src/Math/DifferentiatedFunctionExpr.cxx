@@ -154,8 +154,9 @@ namespace tfel::math::parser {
     vector<string>::size_type i;
     nf = this->f->createFunctionByChangingParametersIntoVariables(vnames, v,
                                                                   params, pos);
-    raise_if(nf->getNumberOfVariables() <= this->args.size(),
-             "ExternalFunctionExpr::getValue: "
+    raise_if(nf->getNumberOfVariables() < this->args.size(),
+             "DifferentiatedFunctionExpr::"
+             "createFunctionByChangingParametersIntoVariables: "
              "internal error (function has less variable after "
              "'createFunctionByChangingParametersIntoVariables' "
              "than before");
