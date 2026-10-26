@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1242: [tests] Twenty-one C++ unit tests check no result
+
+For more details, see <https://github.com/thelfer/tfel/issues/1242>
+
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
