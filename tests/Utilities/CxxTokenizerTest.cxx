@@ -58,6 +58,7 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::Standard);
     TFEL_TESTS_ASSERT(t[0].value == "test");
+    TFEL_TESTS_ASSERT(t[0].comment == "a comment \"with string\"");
     t.clear();
     t.parseString("//!< a comment \"with string\"");
     TFEL_TESTS_ASSERT(t.size() == 1u);
@@ -101,6 +102,7 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::Standard);
     TFEL_TESTS_ASSERT(t[0].value == "test");
+    TFEL_TESTS_ASSERT(t[0].comment == "a comment // C++ comment");
     /* strings */
     t.clear();
     t.parseString("a b c d");

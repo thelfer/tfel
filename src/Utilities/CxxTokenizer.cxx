@@ -991,9 +991,9 @@ namespace tfel::utilities {
         }
         p = this->tokens.erase(p);
       } else if (p->flag == Token::DoxygenBackwardComment) {
-        auto p2 = p;
-        --p2;
-        if (p2 != this->tokens.begin()) {
+        if (p != this->tokens.begin()) {
+          auto p2 = p;
+          --p2;
           if (p2->flag == Token::Standard) {
             p2->comment += p->value;
           }
