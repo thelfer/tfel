@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 
@@ -109,6 +110,13 @@ struct SlipSystemsDescriptionTest final : public tfel::tests::TestCase {
         im.getRank(system3d{make_vec(0, 1, -1), make_vec(1, 1, 1)},
                    system3d{make_vec(0, 1, -1), make_vec(1, 1, 1)}),
         0u);
+    /* Schmid factors: d.mu.d with d = (1, 0, 0) */
+    const auto sf = ssd.getSchmidFactors(make_vec(1, 0, 0), 0);
+    const auto mus = ssd.getOrientationTensors(0);
+    TFEL_TESTS_CHECK_EQUAL(sf.size(), 12u);
+    for (std::size_t idx = 0; idx != sf.size(); ++idx) {
+      TFEL_TESTS_ASSERT(std::abs(sf[idx] - mus[idx][0]) < 1e-14L);
+    }
   }
   //! \brief tests related to HCP systems
   void checkHCP() {
