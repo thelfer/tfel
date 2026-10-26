@@ -627,7 +627,7 @@ namespace mfront {
         }
         if (!opts.is<DataMap>()) {
           this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
-                                  "expected to read a string");
+                                  "expected to read a dictionary");
         }
         return opts.get<DataMap>();
       }();
