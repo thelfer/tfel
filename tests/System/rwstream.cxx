@@ -28,6 +28,7 @@ static void write() {
   tfel::system::wfstream f("test.bin");
   f << "toto" << 12.;
   f << "tutu";
+  f << "ab\ncd\n";
   f.close();
 }
 
@@ -43,6 +44,8 @@ static void read() {
   r.read(c, 4u);
   c[4] = '\0';
   assert(strcmp(c, "tutu") == 0);
+  assert(r.getLine() == "ab");
+  assert(r.getLine() == "cd");
   r.close();
 }  // end of main
 
