@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
+
+For more details, see <https://github.com/thelfer/tfel/issues/1171>
+
 ## Issue 1169: [tfel-tests] tfel-doc output, log and colors, TFEL/Tests XML output and exports, copy-paste slips, JUnit report names, TextData::skipLines, FSAlgorithm loop and strided iterator assignment
 
 For more details, see <https://github.com/thelfer/tfel/issues/1169>
