@@ -16,28 +16,52 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include <iostream>
 #include <cmath>
-#include <cassert>
 #include <cstdlib>
+#include <iostream>
+
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
 
 #include "TFEL/Math/stensor.hxx"
-#include "TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include "TFEL/Math/st2tost2.hxx"
-#include "TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
+
+struct STensorTest4 final : public tfel::tests::TestCase {
+  STensorTest4()
+      : tfel::tests::TestCase("TFEL/Math", "STensorTest4") {
+  }  // end of STensorTest4
+  tfel::tests::TestResult execute() override {
+    using namespace tfel::math;
+    const double eps = 1.e-14;
+    constexpr stensor<1> Id = stensor<1>::Id();
+    constexpr st2tost2<1> IxI = st2tost2<1>::IxI();
+    stensor<1> a;
+    a(0) = 1.;
+    a(1) = 2.;
+    a(2) = 3.;
+    const st2tost2<1> IdxId = Id ^ Id;
+    for (unsigned short i = 0; i != 3; ++i) {
+      for (unsigned short j = 0; j != 3; ++j) {
+        TFEL_TESTS_ASSERT(std::abs(IdxId(i, j) - 1) < eps);
+        TFEL_TESTS_ASSERT(std::abs(IxI(i, j) - 1) < eps);
+      }
+    }
+    // a | (Id ^ Id) = tr(a) Id
+    const stensor<1> b = a | (Id ^ Id);
+    for (unsigned short i = 0; i != 3; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(b(i) - 6) < eps);
+    }
+    return this->result;
+  }  // end of execute
+};
+
+TFEL_TESTS_GENERATE_PROXY(STensorTest4, "STensorTest4");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  using namespace std;
-  using namespace tfel::math;
-  constexpr stensor<1> Id = stensor<1>::Id();
-  constexpr st2tost2<1> IxI = st2tost2<1>::IxI();
-  stensor<1> a;
-  a(0) = 1.;
-  a(1) = 2.;
-  a(2) = 3.;
-  cout << (Id ^ Id) << endl;
-  cout << IxI << endl;
-  cout << (a | (Id ^ Id)) << endl;
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("stensor4.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

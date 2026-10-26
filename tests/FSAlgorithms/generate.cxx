@@ -11,8 +11,14 @@
  * project under specific licensing conditions.
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include <cstdlib>
+#include <cassert>
 #include <vector>
+#include <algorithm>
 
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
@@ -21,6 +27,12 @@ int main() {
   using namespace std;
   using tfel::fsalgo::generate;
   vector<int> V(10);
+  srand(1);
   generate<10>::exe(V.begin(), rand);
+  // same sequence as the standard algorithm
+  vector<int> V2(10);
+  srand(1);
+  std::generate(V2.begin(), V2.end(), rand);
+  assert(V == V2);
   return EXIT_SUCCESS;
 }
