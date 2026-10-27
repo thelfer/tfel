@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_SLIPSYSTEMSDESCRIPTION_HXX
 
 #include <array>
+#include <vector>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "TFEL/Material/CrystalStructure.hxx"
