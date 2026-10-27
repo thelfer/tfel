@@ -14,7 +14,10 @@
 #ifndef LIB_TFEL_MATH_ARRAY_MULTIPLEINDICESFUNCTORS_HXX
 #define LIB_TFEL_MATH_ARRAY_MULTIPLEINDICESFUNCTORS_HXX
 
+#include <iterator>
+#include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/Array/IndexingPolicies.hxx"
 
 namespace tfel::math {
 

@@ -27,6 +27,8 @@
 #ifndef LIB_TFEL_MATH_EVALUATORTEXPR_HXX
 #define LIB_TFEL_MATH_EVALUATORTEXPR_HXX
 
+#include "TFEL/Math/Evaluator.hxx"
+
 namespace tfel::math {
 
   struct Evaluator::TExpr {

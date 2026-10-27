@@ -25,6 +25,8 @@
 #include <cmath>
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx"
 
 namespace tfel::math::internals {
 

@@ -17,6 +17,7 @@
 #include "TFEL/Math/Forward/tmatrix.hxx"
 #include "TFEL/Math/Forward/tensor.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
+#include "TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel::math {
 

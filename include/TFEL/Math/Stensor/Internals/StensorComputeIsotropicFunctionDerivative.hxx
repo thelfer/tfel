@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_STENSORCOMPUTEISOTROPICFUNCTIONDERIVATIVE_HXX
 #define LIB_TFEL_MATH_STENSORCOMPUTEISOTROPICFUNCTIONDERIVATIVE_HXX
 
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
+
 namespace tfel::math::internals {
 
   template <unsigned short N>

@@ -16,6 +16,10 @@
 
 #include "TFEL/FSAlgorithm/copy.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/CalculiX/CalculiX.hxx"
 
 namespace calculix {
 

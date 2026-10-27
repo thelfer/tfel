@@ -19,6 +19,7 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel::math {
 
