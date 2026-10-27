@@ -179,6 +179,22 @@ static int SingleStructureScheme_getBehaviourKinematic(
   return 4;
 }  // end of SingleStructureScheme_getBehaviourKinematic
 
+static void SingleStructureScheme_setOutOfBoundsPolicy(
+    mtest::SingleStructureScheme& s, const std::string& p) {
+  if (p == "None") {
+    s.setOutOfBoundsPolicy(tfel::material::None);
+  } else if (p == "Warning") {
+    s.setOutOfBoundsPolicy(tfel::material::Warning);
+  } else if (p == "Strict") {
+    s.setOutOfBoundsPolicy(tfel::material::Strict);
+  } else {
+    tfel::raise(
+        "SingleStructureScheme::setOutOfBoundsPolicy: "
+        "invalid policy '" +
+        p + "'");
+  }
+}  // end of SingleStructureScheme_setOutOfBoundsPolicy
+
 void declareSingleStructureScheme(pybind11::module_&);
 
 void declareSingleStructureScheme(pybind11::module_& m) {
@@ -278,7 +294,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            pybind11::arg("p"),
            "This method let the user to precise the out "
            "of bounds policy.\n"
-           "* The argument (OutOfBoundsPolicy) is the selected "
+           "* The argument (OutOfBoundsPolicy or string) is the selected "
            "policy. Three policies are available:\n"
            "- 'None' : nothing is done when a variable is out of "
            "bounds.\n"
@@ -288,6 +304,8 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "is out of bounds. Most mechanical behaviours "
            "implementations throw an exception which is caught "
            "by 'MTest'.")
+      .def("setOutOfBoundsPolicy", SingleStructureScheme_setOutOfBoundsPolicy,
+           pybind11::arg("p"))
       .def("setMaterialProperty", SingleStructureScheme_setMaterialProperty,
            "name"_a, "value"_a, "check"_a = true,
            "This method defines a constant material property.\n"

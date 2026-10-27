@@ -25,6 +25,9 @@ static void setPredictionPolicy(mtest::SchemeBase& s, const std::string& p) {
     s.setPredictionPolicy(mtest::PredictionPolicy::LINEARPREDICTION);
   } else if (p == "ElasticPrediction") {
     s.setPredictionPolicy(mtest::PredictionPolicy::ELASTICPREDICTION);
+  } else if (p == "ElasticPredictionFromMaterialProperties") {
+    s.setPredictionPolicy(
+        mtest::PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES);
   } else if (p == "SecantOperatorPrediction") {
     s.setPredictionPolicy(mtest::PredictionPolicy::SECANTOPERATORPREDICTION);
   } else if (p == "TangentOperatorPrediction") {
@@ -59,13 +62,14 @@ static void setStiffnessMatrixType(mtest::SchemeBase& s, const std::string& t) {
 
 static void setStiffnessUpdatingPolicy(mtest::SchemeBase& s,
                                        const std::string& p) {
-  if (p == "CONSTANTSTIFFNESS") {
+  // the spellings of the @StiffnessUpdatePolicy keyword are also accepted
+  if ((p == "CONSTANTSTIFFNESS") || (p == "ConstantStiffness")) {
     s.setStiffnessUpdatingPolicy(
         mtest::StiffnessUpdatingPolicy::CONSTANTSTIFFNESS);
-  } else if (p == "CONSTANTSTIFFNESSBYPERIOD") {
+  } else if ((p == "CONSTANTSTIFFNESSBYPERIOD") || (p == "SecantOperator")) {
     s.setStiffnessUpdatingPolicy(
         mtest::StiffnessUpdatingPolicy::CONSTANTSTIFFNESSBYPERIOD);
-  } else if (p == "UPDATEDSTIFFNESSMATRIX") {
+  } else if ((p == "UPDATEDSTIFFNESSMATRIX") || (p == "TangentOperator")) {
     s.setStiffnessUpdatingPolicy(
         mtest::StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX);
   } else {
@@ -125,6 +129,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "- NOPREDICTION\n"
            "- LINEARPREDICTION\n"
            "- ELASTICPREDICTION\n"
+           "- ELASTICPREDICTIONFROMMATERIALPROPERTIES\n"
            "- SECANTOPERATORPREDICTION\n"
            "- TANGENTOPERATORPREDICTION\n")
       .def("setPredictionPolicy", setPredictionPolicy,
@@ -317,8 +322,8 @@ void declareSchemeBase(pybind11::module_& m) {
            "The two allowed options are:\n"
            "- 'UserDefinedTimes': the results are written at each "
            "user defined time (default).\n"
-           "- 'EveryIteration': the outputs are written after each "
-           "successful iteration.\n"
+           "- 'EveryPeriod': the outputs are written after each "
+           "successful period, i.e. at the end of every time step.\n"
            "Note : These options only differs in case of substepping.")
       .def("resetOutputFile", &SchemeBase::resetOutputFile,
            "close and reopen the output files");
