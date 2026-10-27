@@ -200,7 +200,7 @@ namespace mfront {
   void ModelDSLCommon::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
       this->throwRuntimeError("ModelDSLCommon::setMaterial",
-                              "material name alreay defined");
+                              "material name already defined");
     }
     if (!isValidMaterialName(m)) {
       this->throwRuntimeError("ModelDSLCommon::setMaterial",
@@ -837,7 +837,7 @@ namespace mfront {
       if (!converter || (!converter.eof())) {
         this->throwRuntimeError(
             "ModelDSLCommon::treatInputMethod",
-            "Could not read initial value of field '" + this->currentVar + "'");
+            "Could not read depth value of field '" + this->currentVar + "'");
       }
       auto& v = this->md.inputs.getVariable(this->currentVar);
       v.setAttribute(VariableDescription::depth, value, false);

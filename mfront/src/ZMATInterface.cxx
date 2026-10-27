@@ -803,7 +803,7 @@ namespace mfront {
               out << "for(unsigned short idx=0;idx!=" << ev.arraySize
                   << ";++idx){\n";
               out << "this->d" << ev.name
-                  << "[idx] = ZMATextvars_td-[ZMATevs_pos[" << o
+                  << "[idx] = ZMATextvars_tdt[ZMATevs_pos[" << o
                   << "+idx]]-ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];\n";
               out << "}\n";
               o += this->getTypeSize(ev.type, ev.arraySize);
@@ -1394,7 +1394,7 @@ namespace mfront {
         } else {
           for (unsigned short i = 0; i != isv.arraySize; ++i) {
             out << "this->" << isv.name << "[" << i << "].initialize(this,\""
-                << name << std::to_string(i) << "\",this->uts(),1);\n";
+                << name << std::to_string(i) << "\",this->utsz(),1);\n";
           }
         }
       } else {
@@ -1735,7 +1735,11 @@ namespace mfront {
       out << "zmat::ZMATInterface::convert(b.getStiffnessTensor(),this->get_"
              "elasticity_matrix(mdat,1.));\n";
     }
-    out << "b.initialize();\n"
+    out << "if(!b.initialize()){\n"
+        << "static INTEGRATION_RESULT bad_result;\n"
+        << "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
+        << "return &bad_result;\n"
+        << "}\n"
         << "if(b.integrate(smflag,smtype)!=" << mb.getClassName()
         << "::SUCCESS){\n"
         << "static INTEGRATION_RESULT bad_result;\n"

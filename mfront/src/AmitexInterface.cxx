@@ -65,59 +65,24 @@ namespace mfront {
     auto nisvs = std::size_t{1};
     if (!persistentVarsHolder.empty()) {
       for (const auto& v : persistentVarsHolder) {
-        const auto flag = SupportedTypes::getTypeFlag(v.type);
+        const auto s = SupportedTypes::getTypeSize(v.type, 1u)
+                           .getValueForModellingHypothesis(h);
         if (v.arraySize == 1) {
           out << "<!-- internal state variable " << v.getExternalName()
               << " -->\n";
-          if (flag == SupportedTypes::SCALAR) {
+          for (int i = 0; i != s; ++i) {
             out << "<IntVar Index = \"" << nisvs << "\" "
                 << "Type = \"Constant\" Value = \"...\" />\n";
             ++nisvs;
-          } else if (flag == SupportedTypes::STENSOR) {
-            for (unsigned short i = 0; i != tfel::material::getStensorSize(h);
-                 ++i) {
-              out << "<IntVar Index = \"" << nisvs << "\" "
-                  << "Type = \"Constant\" Value = \"...\" />\n";
-              ++nisvs;
-            }
-          } else if (flag == SupportedTypes::TENSOR) {
-            for (unsigned short i = 0; i != tfel::material::getStensorSize(h);
-                 ++i) {
-              out << "<IntVar Index = \"" << nisvs << "\" "
-                  << "Type = \"Constant\" Value = \"...\" />\n";
-              ++nisvs;
-            }
-          } else {
-            tfel::raise(
-                "AmitexInterface::generateInputFileExampleForHypothesis: "
-                "unsupported state variable type");
           }
         } else {
           for (unsigned short j = 0; j != v.arraySize; ++j) {
             out << "<!-- internal state variable " << v.getExternalName() << "["
                 << j << "] -->\n";
-            if (flag == SupportedTypes::SCALAR) {
+            for (int i = 0; i != s; ++i) {
               out << "<IntVar Index = \"" << nisvs << "\" "
                   << "Type = \"Constant\" Value = \"...\" />\n";
               ++nisvs;
-            } else if (flag == SupportedTypes::STENSOR) {
-              for (unsigned short i = 0; i != tfel::material::getStensorSize(h);
-                   ++i) {
-                out << "<IntVar Index = \"" << nisvs << "\" "
-                    << "Type = \"Constant\" Value = \"...\" />\n";
-                ++nisvs;
-              }
-            } else if (flag == SupportedTypes::TENSOR) {
-              for (unsigned short i = 0; i != tfel::material::getStensorSize(h);
-                   ++i) {
-                out << "<IntVar Index = \"" << nisvs << "\" "
-                    << "Type = \"Constant\" Value = \"...\" />\n";
-                ++nisvs;
-              }
-            } else {
-              tfel::raise(
-                  "AmitexInterface::generateInputFileExampleForHypothesis: "
-                  "unsupported state variable type");
             }
           }
         }
