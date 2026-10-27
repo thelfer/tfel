@@ -47,6 +47,10 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     this->check<EigenSolver::GTESYMMETRICQREIGENSOLVER>();
     this->check<EigenSolver::FSESJACOBIEIGENSOLVER>();
     this->check<EigenSolver::FSESQLEIGENSOLVER>();
+    // the following solvers are not checked: on random tensors, their
+    // failure ratios (about 2%, 9% and 11%, see the benchmarks of the
+    // eigen solvers in the release notes of TFEL 3.1) exceed the 0.3%
+    // accepted by test2 and test3
     // this->check<EigenSolver::FSESCUPPENEIGENSOLVER>();
     // this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>();
     // this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();

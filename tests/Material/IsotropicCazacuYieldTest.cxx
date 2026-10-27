@@ -41,12 +41,12 @@ struct IsotropicCazacuYieldTest final : public tfel::tests::TestCase {
                           0.24525337568425,  -1.7790370858361e-4,
                           3.613971630283e-3, -1.7873236537153e-02};
     for (const auto v : {v1, v2, v3, v4, v5}) {
-      // test<1u>(tfel::math::stensor<1u,double>(v));
-      // test<2u>(tfel::math::stensor<2u,double>(v));
-      // test<3u>(tfel::math::stensor<3u,double>(v));
+      test<1u>(tfel::math::stensor<1u, double>(v));
+      test<2u>(tfel::math::stensor<2u, double>(v));
+      test<3u>(tfel::math::stensor<3u, double>(v));
       test2<1u>(tfel::math::stensor<1u, double>(v));
-      // test2<2u>(tfel::math::stensor<2u,double>(v));
-      // test2<3u>(tfel::math::stensor<3u,double>(v));
+      test2<2u>(tfel::math::stensor<2u, double>(v));
+      test2<3u>(tfel::math::stensor<3u, double>(v));
     }
     return this->result;
   }  // end of execute

@@ -35,8 +35,8 @@ struct LocalDataStructureTest final : public tfel::tests::TestCase {
   }  // end of LocalDataStructureTest
 
   tfel::tests::TestResult execute() override {
-    // this->test1();
-    // this->test2();
+    this->test1();
+    this->test2();
     this->test3();
     return this->result;
   }
