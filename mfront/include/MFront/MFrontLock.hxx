@@ -19,8 +19,6 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#else
-#include <semaphore.h>
 #endif
 
 #include "MFront/MFrontConfig.hxx"
@@ -45,7 +43,8 @@ namespace mfront {
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     HANDLE ghMutex;
 #else
-    sem_t* l;
+    //! \brief file descriptor of the lock file
+    int fd;
 #endif
   };  // end of struct MFrontLock
 
