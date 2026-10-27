@@ -1,4 +1,10 @@
 @PACKAGE_INIT@
 
 include("${CMAKE_CURRENT_LIST_DIR}/tfel-modules-common.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/TFELMFrontDatabaseTargets.cmake")
+
+find_package(TFELSystemStatic REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELUtilitiesStatic REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+
+include("${CMAKE_CURRENT_LIST_DIR}/TFELMFrontDatabaseStaticTargets.cmake")

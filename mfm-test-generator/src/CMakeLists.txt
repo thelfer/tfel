@@ -46,12 +46,12 @@ if(TFEL_HAVE_MADNEX)
   target_compile_definitions(MFMTestGenerator
     PUBLIC MFM_TEST_GENERATOR_HAVE_MADNEX)
   target_link_libraries(MFMTestGenerator
-    PUBLIC madnex::Madnex)
+    PRIVATE madnex::Madnex)
   if(enable-static)
     target_compile_definitions(MFMTestGenerator-static
       PUBLIC MFM_TEST_GENERATOR_HAVE_MADNEX)
     target_link_libraries(MFMTestGenerator-static
-      PUBLIC madnex::Madnex)
+      PRIVATE madnex::Madnex)
   endif(enable-static)
 endif(TFEL_HAVE_MADNEX)
 
@@ -60,6 +60,9 @@ set_property(TARGET mfm-test-generator PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfm-test-generator
  PRIVATE
  MFMTestGenerator)
+if(TFEL_HAVE_MADNEX)
+  target_link_libraries(mfm-test-generator PRIVATE madnex::Madnex)
+endif(TFEL_HAVE_MADNEX)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfm-test-generator
     PROPERTIES OUTPUT_NAME "mfm-test-generator-${TFEL_SUFFIX}")
