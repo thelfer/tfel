@@ -60,7 +60,7 @@ specific needs.
 
 The installation process is fully described in the following pages:
 
-- [install.html](install.hml): this document describes the generic
+- [install.html](install.html): this document describes the generic
   installation procedure for `TFEL` from the sources on
   posix-compliant systems. Please note that the main system on which
   `TFEL` was developed is `Linux`. Extensive testing on other

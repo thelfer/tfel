@@ -219,7 +219,7 @@ function(tfel_library_internal name component)
     add_library(${name}-static STATIC ${ARGN})
     add_library(tfel::${name}-static ALIAS ${name}-static)
     if(TFEL_APPEND_SUFFIX)
-      set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-{TFEL_SUFFIX}")
+      set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
     else(TFEL_APPEND_SUFFIX)
       set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}")
     endif(TFEL_APPEND_SUFFIX)
@@ -390,7 +390,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS mfront
-	DEPENDS "${mfront_file}"
+	DEPENDS "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	COMMENT "treating mfront source ${source}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
@@ -398,7 +398,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS mfront
-	DEPENDS "${mfront_file}"
+	DEPENDS "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	COMMENT "treating mfront source ${source}.mfront")
       # add_test(NAME mfront-${source}-mfront COMMAND
       # 	COMMAND "${mfront_executable}"
