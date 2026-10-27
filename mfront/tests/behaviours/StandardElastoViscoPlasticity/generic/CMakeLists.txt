@@ -176,6 +176,7 @@ function(generictest_standardelastovicoplasticitybrick test_name test_file libra
                  --@ModellingHypothesis="${mh}"
                  --@library@="$<TARGET_FILE:${library_name}>"
                  --@behaviour@="${behaviour_name}"
+                 --xml-output-file=brick${test_name}_${behaviour_name}_${mh}_${rm}_generic_mtest.xml
                  --@xml_output@="${test_name}-${behaviour_name}-${rm}.xml" ${file})
       else(NOT _REFERENCE_FILE)
         set(rfile "${top_srcdir}/mfront/tests/behaviours/StandardElastoViscoPlasticity/references/${_REFERENCE_FILE}")
@@ -184,6 +185,7 @@ function(generictest_standardelastovicoplasticitybrick test_name test_file libra
                  --@ModellingHypothesis="${mh}"
           	     --@library@="$<TARGET_FILE:${library_name}>"
                  --@behaviour@="${behaviour_name}"
+          	     --xml-output-file=brick${test_name}_${behaviour_name}_${mh}_${rm}_generic_mtest.xml
           	     --@xml_output@="${test_name}-${behaviour_name}-${rm}.xml"
           	     --@reference_file@="${rfile}" ${file})
       endif(NOT _REFERENCE_FILE)

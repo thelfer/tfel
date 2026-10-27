@@ -192,6 +192,7 @@ function(test_aster test_arg)
       set(rfile "${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
       list(APPEND mtest_args --@reference_file@="${rfile}")
     endif(_REFERENCE_FILE)
+    list(APPEND mtest_args --xml-output-file=aster-${test_arg}_${rm}_mtest.xml)
     add_test(NAME aster-${test_arg}_${rm}_mtest
              COMMAND mtest ${mtest_args})
     if(_WILL_FAIL)

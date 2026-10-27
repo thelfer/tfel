@@ -23,6 +23,7 @@ function(castemptest test_arg)
     list(APPEND _mtest_args --xml-output=true)
   endif(_NO_XML_OUTPUT)
   set(_test_file ${CMAKE_CURRENT_SOURCE_DIR}/castem${test_arg}.ptest)
+  list(APPEND _mtest_args --xml-output-file=castem${test_arg}_ptest.xml)
   add_test(NAME castem${test_arg}_ptest
    	  COMMAND mtest ${_mtest_args} ${_test_file})
   if(_WILL_FAIL)

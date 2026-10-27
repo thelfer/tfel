@@ -1021,6 +1021,8 @@ Siendo las siguientes opciones disponibles:
 - `--version`: muestra la versión instalada. También se puede usar como
   `–v`.
 - `--xml-output`: salida xml de control ('No' por defecto).
+- `--xml-output-file`: nombre del archivo de salida xml, que prevalece
+  sobre la palabra clave `@XMLOutputFile`.
 
 ![Ilustración 6: --commands-list, instrucciones de `MTest`](img/tutorial-spanish-6.png){width="4.975250437445319in" height="9.10625in"}
 
