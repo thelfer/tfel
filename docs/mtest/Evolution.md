@@ -60,8 +60,8 @@ column.
 ## Example (function):
 
 ~~~~ {.cpp}
-@Real P0 2.e5
-@Real P1 4.e5
+@Real 'P0' 2.e5;
+@Real 'P1' 4.e5;
 @Evolution<function> 'Pressure' 'P0+(P1-P0)*t**2';
 ~~~~~~~~
 
@@ -70,6 +70,6 @@ column.
 ~~~~ {.cpp}
 // times are converted to seconds
 // pressure is converted to Pa
-@Evolution<data> 'Pressure' using '$1*3600':'$2*1e6';
+@Evolution<data> 'Pressure' 'data.txt' using '$1*3600':'$2*1e6';
 ~~~~~~~~
 

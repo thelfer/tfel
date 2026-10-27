@@ -460,7 +460,7 @@ namespace mfront {
         {{"YoungModulus", "YOUN"},
          {"PoissonRatio", "NU"},
          {"MassDensity", "RHO"},
-         {"ThermalExpansion", "ALP"},
+         {"ThermalExpansion", "ALPH"},
          {"ReferenceTemperatureForThermalExpansionCoefficient", "TALP"},
          {"ReferenceTemperatureForThermalExpansion", "TREF"},
          {"PlateWidth", "DIM3"},
@@ -1234,15 +1234,7 @@ namespace mfront {
             exportLogarithmicStrain1DFiniteStrainBehaviourSymbols(
                 this->getFunctionNameBasis(name + "_log1D"));
             if (fss.size() == 1u) {
-              sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
-              exportUnsignedShortSymbol(
-                  out,
-                  this->getFunctionNameBasis(name) + "_nModellingHypotheses",
-                  1u);
-              exportArrayOfStringsSymbol(
-                  out,
-                  this->getFunctionNameBasis(name) + "_ModellingHypotheses",
-                  {ModellingHypothesis::toString(agps)});
+              sg.generateGeneralSymbols(out, *this, mb, fd, {agps}, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
                 sg.generateSymbols(out, *this, mb, fd, name, uh);
@@ -2500,49 +2492,53 @@ namespace mfront {
     for (const auto& pv : v) {
       const auto flag = SupportedTypes::getTypeFlag(pv.type);
       std::string tmp;
-      tmp += "** - ";
       if (flag == SupportedTypes::SCALAR) {
         if (pv.arraySize == 1) {
-          tmp += pv.getExternalName();
+          tmp += "** - " + pv.getExternalName();
           tmp += ": " + ids.treatScalar(pv.getExternalName(), pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
-            tmp += pv.getExternalName();
+            tmp +=
+                "** - " + pv.getExternalName() + "[" + std::to_string(j) + "]";
             tmp +=
                 ": " + ids.treatScalar(pv.getExternalName(), pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TVECTOR) {
         if (pv.arraySize == 1) {
-          tmp += pv.getExternalName();
-          tmp += ": " + ids.treatTVector(h, pv.getExternalName(), pv.name);
+          tmp += "** - " + pv.getExternalName();
+          tmp +=
+              ": " + ids.treatTVector(h, pv.getExternalName(), pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
-            tmp += pv.getExternalName();
+            tmp +=
+                "** - " + pv.getExternalName() + "[" + std::to_string(j) + "]";
             tmp += ": " +
                    ids.treatTVector(h, pv.getExternalName(), pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::STENSOR) {
         if (pv.arraySize == 1) {
-          tmp += pv.getExternalName();
+          tmp += "** - " + pv.getExternalName();
           tmp +=
               ": " + ids.treatStensor(h, pv.getExternalName(), pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
-            tmp += pv.getExternalName();
+            tmp +=
+                "** - " + pv.getExternalName() + "[" + std::to_string(j) + "]";
             tmp += ": " +
                    ids.treatStensor(h, pv.getExternalName(), pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TENSOR) {
         if (pv.arraySize == 1) {
-          tmp += pv.getExternalName();
+          tmp += "** - " + pv.getExternalName();
           tmp +=
               ": " + ids.treatTensor(h, pv.getExternalName(), pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
-            tmp += pv.getExternalName();
+            tmp +=
+                "** - " + pv.getExternalName() + "[" + std::to_string(j) + "]";
             tmp += ": " + ids.treatTensor(h, pv.getExternalName(), pv.name, j) +
                    "\n";
           }
@@ -2569,14 +2565,14 @@ namespace mfront {
       throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       std::string tmp;
-      tmp += "** - ";
       if (pm.arraySize == 1) {
-        tmp += pm.getExternalName();
+        tmp += "** - " + pm.getExternalName();
         tmp += ": " + ids.treatScalar(pm.getExternalName(), pm.name) + "\n";
       } else {
         for (unsigned short j = 0; j != pm.arraySize; ++j) {
-          tmp += pm.getExternalName();
-          tmp += ids.treatScalar(pm.getExternalName(), pm.name, j) + "\n";
+          tmp += "** - " + pm.getExternalName() + "[" + std::to_string(j) + "]";
+          tmp +=
+              ": " + ids.treatScalar(pm.getExternalName(), pm.name, j) + "\n";
         }
       }
       out << tmp;
@@ -3038,7 +3034,8 @@ namespace mfront {
       out << "false;\n";
     }
     out << "static " << constexpr_c << " bool doSubSteppingOnInvalidResults = ";
-    if (this->doSubSteppingOnInvalidResults) {
+    if (mb.getAttribute<bool>(CastemInterface::doSubSteppingOnInvalidResults,
+                              false)) {
       out << "true;\n";
     } else {
       out << "false;\n";

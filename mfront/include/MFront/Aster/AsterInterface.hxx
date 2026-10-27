@@ -97,6 +97,9 @@ namespace aster {
         const tfel::material::OutOfBoundsPolicy op,
         const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::material;
+      // the 2D wrappers call the 3D behaviour
+      using BV3D =
+          Behaviour<ModellingHypothesis::TRIDIMENSIONAL, AsterReal, false>;
       if (*NUMMOD == 2u) {
         /*!
          * L'hypothèse de déformations planes généralisées n'est pas
@@ -110,7 +113,7 @@ namespace aster {
         using Handler = std::conditional_t<
             is_defined,
             CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>,
-            Behaviour2DWrapper<AsterTraits<BV>::btype,
+            Behaviour2DWrapper<AsterTraits<BV3D>::btype,
                                ModellingHypothesis::GENERALISEDPLANESTRAIN>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
@@ -121,7 +124,7 @@ namespace aster {
         constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         using Handler = std::conditional_t<
             is_defined, CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>,
-            Behaviour2DWrapper<AsterTraits<BV>::btype,
+            Behaviour2DWrapper<AsterTraits<BV3D>::btype,
                                ModellingHypothesis::AXISYMMETRICAL>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
@@ -132,7 +135,7 @@ namespace aster {
         constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         using Handler = std::conditional_t<
             is_defined, CallBehaviour<ModellingHypothesis::PLANESTRESS>,
-            Behaviour2DWrapper<AsterTraits<BV>::btype,
+            Behaviour2DWrapper<AsterTraits<BV3D>::btype,
                                ModellingHypothesis::PLANESTRESS>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
@@ -143,7 +146,7 @@ namespace aster {
         constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         using Handler = std::conditional_t<
             is_defined, CallBehaviour<ModellingHypothesis::PLANESTRAIN>,
-            Behaviour2DWrapper<AsterTraits<BV>::btype,
+            Behaviour2DWrapper<AsterTraits<BV3D>::btype,
                                ModellingHypothesis::PLANESTRAIN>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
@@ -249,9 +252,27 @@ namespace aster {
         copy<StensorDimeToSize<N>::value>::exe(STRESS, s);
         copy<9u>::exe(STRAN, F0);
         copy<9u>::exe(DSTRAN, F1);
-        int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
-            emsg, &NTENS, DTIME, DROT, DDSOE, F0, F1, TEMP, DTEMP, PROPS,
-            NPROPS, PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
+        using BV3D =
+            Behaviour<ModellingHypothesis::TRIDIMENSIONAL, AsterReal, false>;
+        int r = 0;
+        if constexpr (AsterTraits<BV3D>::afsf == aster::GROT_GDEP) {
+          // the 6x6 tangent operator of the 3D behaviour is reduced
+          AsterReal K[36u] = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                              0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                              0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
+          K[0u] = DDSOE[0];
+          r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
+              emsg, &NTENS, DTIME, DROT, K, F0, F1, TEMP, DTEMP, PROPS, NPROPS,
+              PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
+          if (r == 0) {
+            AsterReduceTangentOperator<N>::exe(DDSOE, K);
+          }
+        } else {
+          // SIMO_MIEHE: same 6x3x3 layout of the tangent operator in 2D and 3D
+          r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
+              emsg, &NTENS, DTIME, DROT, DDSOE, F0, F1, TEMP, DTEMP, PROPS,
+              NPROPS, PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
+        }
         if (r == 0) {
           copy<StensorDimeToSize<N>::value>::exe(s, STRESS);
         }
@@ -292,14 +313,14 @@ namespace aster {
         copy<2u>::exe(STRAN, u0);
         copy<2u>::exe(DSTRAN, du);
         int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
-            emsg, &NTENS, DTIME, DROT, DDSOE, u0, du, TEMP, DTEMP, PROPS,
-            NPROPS, PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
+            emsg, &NTENS, DTIME, DROT, K, u0, du, TEMP, DTEMP, PROPS, NPROPS,
+            PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
         if (r == 0) {
           copy<2u>::exe(s, STRESS);
           DDSOE[0] = K[0];
           DDSOE[1] = K[1];
-          DDSOE[2] = K[4];
-          DDSOE[3] = K[5];
+          DDSOE[2] = K[3];
+          DDSOE[3] = K[4];
         }
         return r;
       }

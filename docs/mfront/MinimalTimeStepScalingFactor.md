@@ -6,8 +6,7 @@ be reduce in case of non convergence or when the time step is rejected
 by one of the `@APrioriTimeStepScalingFactor` or
 `@APosterioriTimeStepScalingFactor` code blocks.
 
-This keyword is followed by a number which must be strictly positive
-and strictly lower than one.
+This keyword is followed by a number which must be strictly positive.
 
 ## Note
 

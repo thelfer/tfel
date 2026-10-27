@@ -15,6 +15,7 @@
 #define LIB_TFEL_TESTS_TESTCASE_HXX 1
 
 #include <string>
+#include <stdexcept>
 #include <string_view>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Raise.hxx"
@@ -51,7 +52,8 @@
       TestCase::registerResult("assertion: '" #X "'", false);               \
     }                                                                       \
     if (!(TFEL_TEMPORARY_VARIABLE(TFEL_TESTS_ASSERT))) {                    \
-      tfel::raise("assertion: '" #X "' failed");                            \
+      tfel::raise<tfel::tests::TestAssertionFailure>(                       \
+          "assertion: '" #X "' failed", TestCase::result);                  \
     }                                                                       \
   } while (0)
 
@@ -200,6 +202,26 @@
   } while (0)
 
 namespace tfel::tests {
+
+  /*!
+   * \brief exception thrown by `TFEL_TESTS_ASSERT` when an assertion fails.
+   * It holds the results registered by the test before the failure.
+   */
+  struct TFELTESTS_VISIBILITY_EXPORT TestAssertionFailure
+      : public std::runtime_error {
+    /*!
+     * \brief constructor
+     * \param[in] m: error message
+     * \param[in] r: results registered by the test
+     */
+    TestAssertionFailure(const std::string&, const TestResult&);
+    TestAssertionFailure(TestAssertionFailure&&) = default;
+    TestAssertionFailure(const TestAssertionFailure&) = default;
+    //! \brief destructor
+    ~TestAssertionFailure() noexcept override;
+    //! \brief results registered by the test, including the failed assertion
+    TestResult result;
+  };  // end of struct TestAssertionFailure
 
   //! \brief class used to describe an single test
   struct TFELTESTS_VISIBILITY_EXPORT TestCase : public Test {

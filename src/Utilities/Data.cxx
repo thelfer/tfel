@@ -151,12 +151,12 @@ namespace tfel::utilities {
     auto is_integer = [&throw_if](const std::string& s) {
       auto ps = s.cbegin();
       const auto pse = s.cend();
-      if (*ps == '-') {
+      if ((*ps == '-') || (*ps == '+')) {
         ++ps;
       }
       throw_if(ps == pse, "invalid number '" + s + "'");
       while (ps != pse) {
-        if (!::isdigit(*ps)) {
+        if (!::isdigit(static_cast<unsigned char>(*ps))) {
           return false;
         }
         ++ps;
@@ -183,7 +183,7 @@ namespace tfel::utilities {
     } else if (p->flag == Token::String) {
       const auto name = CxxTokenizer::readString(p, pe);
       return readDataStructureOrString(name);
-    } else if ((o.allowRawStrings) &&
+    } else if ((o.allowRawStrings) && (p->flag != Token::Number) &&
                (CxxTokenizer::isValidIdentifier(p->value,
                                                 o.rawStringParsingOptions))) {
       const auto name = p->value;
@@ -222,6 +222,7 @@ namespace tfel::utilities {
     std::vector<Data> v;
     while (p->value != "}") {
       v.push_back(Data::read(p, pe, o));
+      CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
       if (p->value == ",") {
         CxxTokenizer::readSpecifiedToken("Data::read_vector", ",", p, pe);
         CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
@@ -251,6 +252,7 @@ namespace tfel::utilities {
         const auto a = convert<double>(p->value);
         ++p;
         CxxTokenizer::readSpecifiedToken("Data::read_map", ":", p, pe);
+        CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
         const auto o = convert<double>(p->value);
         ++p;
         values.insert({a, o});
@@ -286,18 +288,12 @@ namespace tfel::utilities {
         ++p;
         return Data{};
       }
-      // map or string vector
+      // map or vector
       ++p;
       CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
-      if (p->value == ":") {
-        p = std::prev(p, 2);
-        return read_map(p, pe, o);
-      }
-      if ((p->value != ",") && (p->value != "}")) {
-        raise("expected ',' or ':' or '}', read '" + p->value + "'");
-      }
+      const auto is_map = (std::prev(p)->value != "{") && (p->value == ":");
       p = std::prev(p, 2);
-      return read_vector(p, pe, o);
+      return is_map ? read_map(p, pe, o) : read_vector(p, pe, o);
     }
     // standard value
     return read_value(p, pe, o);
@@ -357,6 +353,9 @@ namespace tfel::utilities {
     static bool apply(const std::string& x1, const std::string& x2) {
       return x1 == x2;
     }  // end of apply
+    static bool apply(const bool x1, const bool x2) {
+      return x1 == x2;
+    }  // end of apply
     static bool apply(const int x1, const int x2) {
       return x1 == x2;
     }  // end of apply
@@ -376,6 +375,10 @@ namespace tfel::utilities {
       }
       return e;
     }  // end of apply
+    static bool apply(const std::map<double, double>& m1,
+                      const std::map<double, double>& m2) {
+      return m1 == m2;
+    }  // end of apply
     static bool apply(const DataMap& v1, const DataMap& v2) {
       bool e = true;
       if (v1.size() != v2.size()) {
@@ -389,6 +392,9 @@ namespace tfel::utilities {
       }
       return e;
     }  // end of apply
+    static bool apply(const DataStructure& d1, const DataStructure& d2) {
+      return (d1.name == d2.name) && (DataComparator::apply(d1.data, d2.data));
+    }  // end of apply
     static bool apply(const double v1, const double v2) {
       return tfel::math::ieee754::fpclassify(v1 - v2) == FP_ZERO;
     }  // end of apply
@@ -397,6 +403,9 @@ namespace tfel::utilities {
   bool operator==(const Data& lhs, const Data& rhs) {
     if (&lhs == &rhs) {
       return true;
+    }
+    if ((lhs.empty()) || (rhs.empty())) {
+      return (lhs.empty()) && (rhs.empty());
     }
     return apply<DataComparator>(lhs, rhs);
   }
@@ -415,7 +424,7 @@ namespace tfel::utilities {
         tfel::raise("data named '" + k + "' is not an integer");
       }
       if (d.get<int>() <= 0) {
-        tfel::raise("data named '" + k + "' is not strictly postive");
+        tfel::raise("data named '" + k + "' is not strictly positive");
       }
     });
   }  // end of addStrictlyPositiveIntegerCheck
@@ -466,7 +475,7 @@ namespace tfel::utilities {
     tfel::raise(
         "raiseUnmatchedDataType: "
         "the type of data '" +
-        std::string{n} + "'is not the expected one");
+        std::string{n} + "' is not the expected one");
   }  // end of raiseUnmatchedParameterType
 
   const Data& get(const DataMap& m, std::string_view n) {

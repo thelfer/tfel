@@ -17,6 +17,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 endif(NOT CMAKE_CONFIGURATION_TYPES)
 tests_system(rwstream)
 tests_system(binary_write)
+tests_system(process_signal)
 endif(UNIX)
 
 if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))

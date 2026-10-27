@@ -271,8 +271,8 @@ namespace tfel::math {
             BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
             numeric_type<MappedType>>()) {
       static_assert(!is_const, "invalid call");
-      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(1 /
-                                                                            s);
+      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(
+          base_type<numeric_type<MappedType>>{1} / s);
       return *this;
     }  // end of operator/=
 

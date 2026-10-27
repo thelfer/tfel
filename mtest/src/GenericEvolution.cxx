@@ -47,7 +47,7 @@ namespace mtest {
     }
     auto s = mfront_gmp_OutputStatus{};
     const auto r =
-        this->f(&s, &args[0], static_cast<mfront_gmp_size_type>(args.size()),
+        this->f(&s, args.data(), static_cast<mfront_gmp_size_type>(args.size()),
                 GENERIC_MATERIALPROPERTY_NONE_POLICY);
     if (s.status != 0) {
       tfel::raise("GenericEvolution::operator(): " + std::string(s.msg));

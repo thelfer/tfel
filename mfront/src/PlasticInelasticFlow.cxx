@@ -90,7 +90,7 @@ namespace mfront::bbrick {
                    "PlasticInelasticFlow::initialize: "
                    "no isotropic hardening rule defined");
     if (!this->equivalent_strain_external_name.empty()) {
-      addStateVariable(bd, "strain", "p",
+      addStateVariable(bd, "strain", "p" + id,
                        this->equivalent_strain_external_name);
     } else {
       if (id.empty()) {

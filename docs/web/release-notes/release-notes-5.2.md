@@ -48,6 +48,16 @@ library, see below.
 # Known incompatibilities
 
 - `MFront`' interfaces have to implement a method named `setOptions`.
+- The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
+  as documented, if `C++` keywords are allowed (see Issue #964): its
+  meaning has been inverted. With the default value (`true`), `C++`
+  keywords are now considered as valid identifiers.
+- The static method `get` of the
+  `GlobalDomainSpecificLanguageOptionsManager` class has been removed.
+  The global options passed to domain specific languages are now handled
+  by the `ConfigurationManager` class, which derives from the
+  `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
+  instance is returned by `ConfigurationManager::get()`.
 
 # Improvements to the build system
 
@@ -98,6 +108,10 @@ The following configurations are supported for parallel computations:
   policy and NVIDIA's `nvhpc` compiler with offloading on the GPU.
 - `sycl-default-icpx`: configuration associated with `SYCL` programming
   model INTEL's `icpx` compiler.
+- `sycl-default-acpp`: configuration associated with `SYCL` programming
+  model and AdaptativeCpp's `acpp` compiler.
+- `sycl-gpu-acpp`: configuration associated with `SYCL` programming
+  model and AdaptativeCpp's `acpp` compiler, with offloading on the GPU.
 
 ## Add a `build-tests` target
 
@@ -119,9 +133,11 @@ page](tfel-config.html).
 
 ## TFEL's default substitutions
 
-The `getDefaultSubstitutions` function returns some default
+The `getTFELDefaultSubstitutions` function returns some default
 substitutions used by `MFront` when reading configuration files and
-`tfel-check` when analysing `.check` files.
+`tfel-check` when analysing `.check` files. The keys listed below are
+delimited by the `@` character in those files and in the map returned
+by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 ### General substitutions
 
@@ -166,8 +182,8 @@ substitutions used by `MFront` when reading configuration files and
   1. by passing the variable `TFEL_NVHPC_COMPILER` during the invocation of
   `cmake`,
   2. by using `nvhpc` as the main compiler to compile `TFEL`,
-  3. by searching `nvhpc` using `cmake`'s `find_program` function.
-- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvhcp` as found by
+  3. by searching `nvc++` using `cmake`'s `find_program` function.
+- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvcc` as found by
   `FindCUDAToolkit`.
 - `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value
   associated with this key is determined as follows, by order of
@@ -179,7 +195,7 @@ substitutions used by `MFront` when reading configuration files and
 
 ### Substitutions related to the `HIPCC` compiler
 
-- `TFEL_HIPCC_FLAGS: additional flags to be passed to the `hipcc`
+- `TFEL_HIPCC_FLAGS`: additional flags to be passed to the `hipcc`
   compiler.
 - `TFEL_HIP_INCLUDE_DIR`: paths to `HIP` headers
 
@@ -341,7 +357,7 @@ generated files and directories listed by the `@CleanFiles` and
 default) or not in case of success.
 
 ~~~~{.bash}
-$ tfel-check --clean-up
+$ tfel-check --clean-up=false
 ~~~~
 
 The `--discard-clean-up-on-failure` command line argument allows to
@@ -350,7 +366,7 @@ choose whether the generated files and directories listed by the
 (this is the case by default) in case of failure.
 
 ~~~~{.bash}
-$ tfel-check --clean-up
+$ tfel-check --discard-clean-up-on-failure=false
 ~~~~
 
 ## Timeout for commands
@@ -512,7 +528,11 @@ the following sections:
 - `behaviour_dsl_options`
 - `model_dsl_options`
 - `interfaces_options`
+- `material_property_interfaces_options`
+- `behaviour_interfaces_options`
+- `model_interfaces_options`
 - `compilation_options`
+- `linking_options`
 
 None of those sections is required. All those sections must introduce a
 dictionary.
@@ -532,14 +552,25 @@ dictionary.
 ~~~~{.json}
 interfaces_options: {
   generic-parallel: {
-    backend: {"stlpar", execution_policy: "par_unseq"}
+    backend: {stlpar: {execution_policy: "par_unseq"}}
   }
 }
 ~~~~
 
 ### The `interfaces_options` section
 
+The `interfaces_options` section associates to the name of an interface
+a dictionary of options passed to this interface, as in the previous
+example. The `material_property_interfaces_options`,
+`behaviour_interfaces_options` and `model_interfaces_options` sections
+have the same syntax, but their options are only passed to the
+interfaces dedicated to material properties, behaviours and models
+respectively.
+
 ### The `compilation_options` section
+
+The `compilation_options` section associates to a language (`c`,
+`cxx`, `cuda`, `hip`, etc.) a dictionary of options, as follows:
 
 ~~~~{.json}
 compilation_options : {
@@ -552,11 +583,32 @@ compilation_options : {
 
 #### The `compiler` option
 
+The `compiler` option specifies the compiler used for the given
+language. The environment variables `CC`, `CXX`, `CUDA_COMPILER` and
+`HIP_COMPILER` take precedence over this option.
+
 #### The `compilation_flags` option
+
+The `compilation_flags` option specifies the compilation flags used for
+the given language, as a string or as an array of strings. The
+environment variables `CFLAGS`, `CXXFLAGS`, `CUDAFLAGS` and `HIPFLAGS`
+take precedence over this option.
+
+#### The `preprocessor_flags` option
+
+The `preprocessor_flags` option specifies the preprocessor flags used
+for the given language, as a string or as an array of strings. Those
+flags are written before the compilation flags.
 
 ### The `linking_options` section
 
+The `linking_options` section defines the options passed to the linker.
+
 #### The `linker_flags` option
+
+The `linker_flags` option specifies the flags passed to the linker, as a
+string or as an array of strings. The environment variable `LDFLAGS`
+takes precedence over this option.
 
 ## Passing options to interfaces on the command line
 
@@ -726,7 +778,7 @@ agents: [coding guidelines](coding-guidelines.html).
 ## Github actions
 
 Github actions have been updated to supported a wider range of
-configurations, including testing based on `Visual Studio 2024` and
+configurations, including testing based on `Visual Studio 2022` and
 `Visual Studio 2026`.
 
 # Acknowledgements
@@ -739,6 +791,218 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
+
+For more details, see <https://github.com/thelfer/tfel/issues/1217>
+
+## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
+
+For more details, see <https://github.com/thelfer/tfel/issues/1195>
+
+## Issue 1193: [mtest] End of input in the MTest and PTest parsers, ansys input file example of orthotropic behaviours, misleading interface messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1193>
+
+## Issue 1191: [mfront-query] Names of the DSL options in the help, strain measure output, specific targets rules and help texts
+
+For more details, see <https://github.com/thelfer/tfel/issues/1191>
+
+## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1189>
+
+## Issue 1187: [mfront] castem logarithmic strain helpers, stensor absolute value, DSLBase helpers, FSES return codes, TestDescription constructor, exported constants precision, tfel-check columns and ABAQUSEXPLICIT_NTHREADS
+
+For more details, see <https://github.com/thelfer/tfel/issues/1187>
+
+## Issue 1185: [mtest] dianafea wrapper shear order, tfel-check JUnit escaping, raw stream readers, Python docstrings, documentation links and tutorial examples
+
+For more details, see <https://github.com/thelfer/tfel/issues/1185>
+
+## Issue 1183: [cmake] Static library names, test dependencies, C++ standard, static MFront package, environment scripts, Doxygen install, installed MFront headers and exports
+
+For more details, see <https://github.com/thelfer/tfel/issues/1183>
+
+## Issue 1181: [python] mfront.database entry points, mtest initial values and depths, tfel.material imports, mfm-test-generator, mfm --filter-by-type and MTest files on failure
+
+For more details, see <https://github.com/thelfer/tfel/issues/1181>
+
+## Issue 1179: [mfront] Wrong or misleading error messages and documentation of DSLs, tools, material property interfaces, stress criteria, MTest bindings and tfel-check
+
+For more details, see <https://github.com/thelfer/tfel/issues/1179>
+
+## Issue 1177: [mfront] ansys, comsol, dianafea, castem, aster and cyrano interfaces: material properties layout, tangent operator conventions, 2D sizes, plane stress checks, Gibiane examples and messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1177>
+
+## Issue 1175: [installation] Doxygen deployment, keyword descriptions, installation pages, maintainer scripts, generic interface and math docs, quantity tests option, physical constants and glossary generators
+
+For more details, see <https://github.com/thelfer/tfel/issues/1175>
+
+## Issue 1173: [mfront] abaqus and amitex input examples, cyrano header, ansys/lsdyna/dianafea example files and zmat interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/1173>
+
+## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
+
+For more details, see <https://github.com/thelfer/tfel/issues/1171>
+
+## Issue 1169: [tfel-tests] tfel-doc output, log and colors, TFEL/Tests XML output and exports, copy-paste slips, JUnit report names, TextData::skipLines, FSAlgorithm loop and strided iterator assignment
+
+For more details, see <https://github.com/thelfer/tfel/issues/1169>
+
+## Issue 1167: [tfel-utilities] CxxTokenizer, Data arrays, reserved keywords, systemCall::copy, wfstream, TFEL/System messages and tfel-check end of file and empty_output
+
+For more details, see <https://github.com/thelfer/tfel/issues/1167>
+
+## Issue 1165: [tfel-math] Headers and parser: parenthesised conditions, stensor setComponent/getComponent, isqrt3 with MSVC, square_root of quantities, GPU attribute, ATLAS binding, HasRandomAccessIterator, self-contained material headers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1165>
+
+## Issue 1163: [python] Bindings: CurrentStateVector, tfel.math operators, versioned packages, CMakeGenerator, return value policies, Hill tensors, DSLFactory and mergeTargetsDescription
+
+For more details, see <https://github.com/thelfer/tfel/issues/1163>
+
+## Issue 1161: [mtest] MTest and PTest: ptest keywords help, array component names, orthotropic generic stress, mistral defaults, PTest output and jacobian, algorithm names, installed and exported classes
+
+For more details, see <https://github.com/thelfer/tfel/issues/1161>
+
+## Issue 1159: [tfel-material] Finite strain tangent operators, logarithmic strain handler, Hosford/Barlat with quantities, bounds checks, Gauss-Kronrod, broyden, parser and LU messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1159>
+
+## Issue 1157: [mfront] castem, aster, abaqus, ansys and abaqusexplicit interfaces: LogarithmicStrain1D, sub-stepping, 2D finite strain fallbacks, tangent operator layouts and numerical comparison
+
+For more details, see <https://github.com/thelfer/tfel/issues/1157>
+
+## Issue 1155: [mfront] DSLs and generated code: modelling hypotheses intersection, braceless assignments, output operators, brick symmetries, code blocks, error messages and debug comments
+
+For more details, see <https://github.com/thelfer/tfel/issues/1155>
+
+## Issue 1153: [tfel-math] Quantities and views: qt_ref assignment, change_basis, positive parts, runtime matrix views, arrays of views, tmatrix products, FSES NaN, Hashin-Shtrikman shear bounds, Anderson weights
+
+For more details, see <https://github.com/thelfer/tfel/issues/1153>
+
+## Issue 1151: [mfront] Generated code: integration variable derivatives, tangent operator blocks, generic gradients, relocation model, brick arrays, MultipleIsotropicMisesFlows, behaviour variables and ℝ₊ bounds
+
+For more details, see <https://github.com/thelfer/tfel/issues/1151>
+
+## Issue 1149: [mtest] Initial elastic stiffness of Abaqus/Explicit behaviours: halved shear terms and 3D shear columns
+
+For more details, see <https://github.com/thelfer/tfel/issues/1149>
+
+## Issue 1147: [tfel-math] Formula parsers, kriging and LUSolve: copy and arguments of diff, Cast3M functions without argument, integer division by zero, rebuilt and empty kriging, work vector size
+
+For more details, see <https://github.com/thelfer/tfel/issues/1147>
+
+## Issue 1145: [tfel-math] Headers: abs of t2tost2, st2tost2 conversion in 1D, eigen tensors of quantities, tmatrix, array derivatives, copy, strided maps and indexing policies
+
+For more details, see <https://github.com/thelfer/tfel/issues/1145>
+
+## Issue 1143: [mfront] DSLs: bricks, behaviour variables, @TangentOperator, initialisation values, targets.lst, overriding increments and bounds
+
+For more details, see <https://github.com/thelfer/tfel/issues/1143>
+
+## Issue 1141: [tfel-utilities] tfel-check shall_fail and directory configurations, rstream::getLine, CxxTokenizer, Data reading and comparison, ArgumentParser
+
+For more details, see <https://github.com/thelfer/tfel/issues/1141>
+
+## Issue 1139: [python] Bindings: evtypes, ST2toST2 subscripts, homogenisation bounds, setRotationMatrix, setStrainMeasure, umatxx, Anderson algorithms and Data
+
+For more details, see <https://github.com/thelfer/tfel/issues/1139>
+
+## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, @Relocation, rotation functions and MTest files on failure
+
+For more details, see <https://github.com/thelfer/tfel/issues/1137>
+
+## Issue 1135: [tfel-material] NUMODIS and slip systems: Schmid factors, installed headers, exports, HCP families and symmetries
+
+For more details, see <https://github.com/thelfer/tfel/issues/1135>
+
+## Issue 1133: [tfel-math] Powell dog leg solvers, scalar Newton-Raphson, TinyMatrixSolve/Invert, CubicRoots, runtime_array output and Fischer-Burmeister derivatives
+
+For more details, see <https://github.com/thelfer/tfel/issues/1133>
+
+## Issue 1131: [mfront] Hooke stress potentials: plane stress jacobian, generic_prediction_operator option and broken state tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1131>
+
+## Issue 1129: [mtest] Wrappers of the generic, aster, castem, ansys, abaqusexplicit and castem_umat behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/1129>
+
+## Issue 1127: [tfel-system] rmdir following symbolic links, mkdir, binary_read, ThreadPool, ThreadedTaskResult, pipes and ELF symbols
+
+For more details, see <https://github.com/thelfer/tfel/issues/1127>
+
+## Issue 1125: [mfront] Tangent operators of cohesive zone models (castem, aster, MTest) and calculix interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/1125>
+
+## Issue 1123: [mfront] StandardElastoViscoPlasticity brick: flow identifiers, flow criteria coefficients, theta factors and hardening rules
+
+For more details, see <https://github.com/thelfer/tfel/issues/1123>
+
+## Issue 1121: [tfel-material] Hill tensors, orientation averages, Plate convention and altered stiffness tensors in axisymmetrical generalised plane stress
+
+For more details, see <https://github.com/thelfer/tfel/issues/1121>
+
+## Issue 1119: [mfront] ansys and abaqusexplicit interfaces: finite strain strategies, plane stress, packaging and parallelisation
+
+For more details, see <https://github.com/thelfer/tfel/issues/1119>
+
+## Issue 1117: [mfront] Interfaces of material properties and models: exports, one-line functions, bounds, temperature of castem models and comsol
+
+For more details, see <https://github.com/thelfer/tfel/issues/1117>
+
+## Issue 1115: [tfel-math] Eigenvalue sorting, Harari solver, positive/negative parts, convert, tpld and fromRotationMatrix on GPU
+
+For more details, see <https://github.com/thelfer/tfel/issues/1115>
+
+## Issue 1113: [mfront] StandardElastoViscoPlasticity brick: nucleation, porosity name, porosity jacobian and porous stress criteria
+
+For more details, see <https://github.com/thelfer/tfel/issues/1113>
+
+## Issue 1111: [mtest] Crash without behaviour, time step at the end of a period, events, NaN results and cubic pipe elements
+
+For more details, see <https://github.com/thelfer/tfel/issues/1111>
+
+## Issue 1109: [mfront] Runge-Kutta DSLs and solvers: rk4 last stage, external models, error estimates and final time
+
+For more details, see <https://github.com/thelfer/tfel/issues/1109>
+
+## Issue 1107: [mfront] Normalisation factors, physical bounds and MultipleIsotropicMisesFlows in the implicit and isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1107>
+
+## Issue 1105: [docs] Examples rejected by mfront and mtest, wrong keyword names and broken links
+
+For more details, see <https://github.com/thelfer/tfel/issues/1105>
+
+## Issue 1103: [tfel-math] Crash, operator precedence, derivative and integer literal errors of the formula parsers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1103>
+
+## Issue 1101: [tfel-material] Wrong second derivatives, NaN and single precision build errors of several stress criteria
+
+For more details, see <https://github.com/thelfer/tfel/issues/1101>
+
+## Issue 1099: [mfront] Wrong shear components of stress-free expansions in several behaviour interfaces
+
+For more details, see <https://github.com/thelfer/tfel/issues/1099>
+
+## Issue 1097: [tfel-math] `x /= 2` sets every component of arrays and views to zero
+
+For more details, see <https://github.com/thelfer/tfel/issues/1097>
+
+## Issue 1095: [mfront] `rk54` and `rk4` compute the final stress with the stiffness tensor of the middle of the time step
+
+For more details, see <https://github.com/thelfer/tfel/issues/1095>
+
+## Issue 1093: [5.2] Regressions since TFEL 5.1
+
+For more details, see <https://github.com/thelfer/tfel/issues/1093>
 
 ## Issue 1074: [mfront] generic-parallel material properties: API of the generated functions
 
@@ -771,18 +1035,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/1014>
 ## Issue 1013: [tfel-math] Refine `QuantityConcept` to take mutability into account
 
 For more details, see <https://github.com/thelfer/tfel/issues/1013>
-￼
 
 ## Issue 1012: [github-actions] Add testing of `TFEL` with `madnex`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1012>
-￼
 
 ## Issue 1010: [clang-tidy] fix warnings related to the google-explicit-constructor check
 
 For more details, see <https://github.com/thelfer/tfel/issues/1010>
 
-￼
 ## Issue 1007: [github-actions] Add continuous integration for the generic-parallel interface with CUDA backend
 
 For more details, see <https://github.com/thelfer/tfel/issues/1007>
@@ -795,7 +1056,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/1006>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1004>
 
-￼
 ## Issue 1003:[tfel-math] Improve error messages when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/1003>
@@ -821,7 +1081,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/926>
 For more details, see <https://github.com/thelfer/tfel/issues/925>
 
 ## Issue 922: [tfel-math] two functions have no GPU device support
-￼
 
 For more details, see <https://github.com/thelfer/tfel/issues/922>
 

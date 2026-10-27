@@ -117,9 +117,11 @@ namespace mfront {
     if (p->value == "\u211D\u208A") {
       b.lowerBound = 0.;
       b.boundsType = VariableBoundsDescription::LOWER;
+      ++p;
     } else if (p->value == "\u211D\u208B") {
       b.upperBound = 0.;
       b.boundsType = VariableBoundsDescription::UPPER;
+      ++p;
     } else {
       if (p->value == "]") {
         ++p;

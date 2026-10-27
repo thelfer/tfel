@@ -114,7 +114,7 @@ namespace mfront {
   BehaviourDSLCommon::StandardWordAnalyser::~StandardWordAnalyser() = default;
 
   bool isValidBehaviourName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
   BehaviourDSLCommon::BehaviourDSLCommon(const DSLOptions& opts)
@@ -449,7 +449,7 @@ namespace mfront {
                               "invalid material name '" + m + "'");
     }
     this->mb.setMaterialName(m);
-    if (!isValidIdentifier(this->mb.getClassName())) {
+    if (!isValidIdentifier(this->mb.getClassName(), false)) {
       this->throwRuntimeError("BehaviourDSLCommon::setMaterial",
                               "resulting class name is not valid (read '" +
                                   this->mb.getClassName() + "')");
@@ -630,7 +630,7 @@ namespace mfront {
       o2.modifier = std::make_shared<StandardVariableModifier>(h, m2);
       o2.member_names = md.getRegistredMembersNames();
       o2.static_member_names = md.getRegistredStaticMembersNames();
-      this->getSymbols(o2.symbols, h, n1);
+      this->getSymbols(o2.symbols, h, n2);
       this->readNextBlock(c1, c2, o1, o2);
       this->mb.setCode(h, n1, c1, o.m, o.p);
       this->mb.setCode(h, n2, c2, o.m, o.p);
@@ -1718,7 +1718,7 @@ namespace mfront {
     this->readHypothesesList(hs);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatPostProcessing");
     const auto pname = this->current->value;
-    if (!this->isValidIdentifier(pname)) {
+    if (!this->isValidIdentifier(pname, false)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::treatPostProcessing",
           "invalid post-processing name (read '" + pname + "').");
@@ -1767,10 +1767,10 @@ namespace mfront {
     this->readHypothesesList(hs);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatInitializeFunction");
     const auto iname = this->current->value;
-    if (!this->isValidIdentifier(iname)) {
+    if (!this->isValidIdentifier(iname, false)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::treatInitializeFunction",
-          "invalid post-processing name (read '" + iname + "').");
+          "invalid initialize function name (read '" + iname + "').");
     }
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatInitializeFunction");
@@ -1934,6 +1934,7 @@ namespace mfront {
       while (po != poe) {
         const auto& opt = *po;
         if (opt.flag != Token::Standard) {
+          ++po;
           continue;
         }
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
@@ -1951,8 +1952,8 @@ namespace mfront {
       }
       if (ktype.empty()) {
         std::ostringstream msg;
-        msg << "Undefined tangent operator type '" + ktype +
-                   "'. Valid tangent operator type are :\n";
+        msg << "no valid tangent operator type given. "
+            << "Valid tangent operator types are:\n";
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
           msg << "- "
               << convertFiniteStrainBehaviourTangentOperatorFlagToString(to)
@@ -2022,7 +2023,7 @@ namespace mfront {
             false)) {
       tfel::raise(
           "BehaviourDSLCommon::treatComputeThermalExpansion: "
-          "@ComputeThermalExpansion can be used along with "
+          "@ComputeThermalExpansion can not be used along with "
           "@RequireThermalExpansionCoefficientTensor");
     }
     const auto new_syntax = [this] {
@@ -2124,7 +2125,7 @@ namespace mfront {
           if (getVerboseMode() != VERBOSE_QUIET) {
             auto& os = getLogStream();
             os << "no reference temperature in material property '";
-            if (mpd.material.empty()) {
+            if (!mpd.material.empty()) {
               os << mpd.material << '_';
             }
             os << mpd.law << "'\n";
@@ -2156,7 +2157,7 @@ namespace mfront {
       }
       if (!data.is<tfel::utilities::DataMap>()) {
         this->throwRuntimeError(
-            "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+            "BehaviourDSLCommon::treatComputeThermalExpansionSecondSyntax",
             "expected to read a map");
       }
       return data.get<tfel::utilities::DataMap>();
@@ -2315,9 +2316,10 @@ namespace mfront {
   void BehaviourDSLCommon::treatComputeStiffnessTensor() {
     if (this->mb.getAttribute<bool>(
             BehaviourDescription::requiresStiffnessTensor, false)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
-                              "@ComputeStiffnessTensor can be used along with "
-                              "@RequireStiffnessTensor");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatComputeStiffnessTensor",
+          "@ComputeStiffnessTensor can not be used along with "
+          "@RequireStiffnessTensor");
     }
     if (this->current->value == "<") {
       this->treatStiffnessTensorOption();
@@ -2389,7 +2391,7 @@ namespace mfront {
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatModellingHypothesis");
     // variable name
-    if (!this->isValidIdentifier(this->current->value)) {
+    if (!this->isValidIdentifier(this->current->value, false)) {
       this->throwRuntimeError("BehaviourDSLCommon::treatHillTensor: ",
                               "variable name is not valid "
                               "(read '" +
@@ -2559,7 +2561,7 @@ namespace mfront {
     }
     const auto& e =
         this->current->value.substr(1, this->current->value.size() - 2);
-    if (!this->isValidIdentifier(e)) {
+    if (!this->isValidIdentifier(e, false)) {
       this->throwRuntimeError("BehaviourDSLCommon::treatSetEntryNameMethod: ",
                               "invalid entry name '" + e + "'");
     }
@@ -2895,9 +2897,10 @@ namespace mfront {
 
   void BehaviourDSLCommon::treatRequireStiffnessTensor() {
     if (this->mb.hasAttribute(BehaviourDescription::computesStiffnessTensor)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatRequireStiffnessTensor",
-                              "@RequireStiffnessTensor can be used along with "
-                              "@ComputeStiffnessTensor");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatRequireStiffnessTensor",
+          "@RequireStiffnessTensor can not be used along with "
+          "@ComputeStiffnessTensor");
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatRequireStiffnessTensor");
     if (this->current->value == "<") {
@@ -2926,7 +2929,7 @@ namespace mfront {
           "invalid behaviour name '" + i + "'");
     }
     this->mb.setBehaviourName(i);
-    if (!isValidIdentifier(this->mb.getClassName())) {
+    if (!isValidIdentifier(this->mb.getClassName(), false)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::setMaterialKnowledgeIdentifier",
           "resulting class name is not valid (read '" +
@@ -3142,7 +3145,7 @@ namespace mfront {
     auto endOfTreatment = false;
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
       const auto s = this->current->value;
-      if (!isValidIdentifier(s)) {
+      if (!isValidIdentifier(s, false)) {
         --(this->current);
         this->throwRuntimeError(
             "BehaviourDSLCommon::readStringList",
@@ -3245,14 +3248,9 @@ namespace mfront {
   }  // end of treatLocalVar
 
   void BehaviourDSLCommon::treatInterface() {
-    auto& mbif = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
     auto inames = std::vector<std::string>{};
     this->readStringList(inames);
-    for (const auto& i : inames) {
-      if (this->interfaces.count(i) == 0) {
-        this->interfaces.insert({i, mbif.getInterface(i)});
-      }
-    }
+    this->setInterfaces(std::set<std::string>(inames.begin(), inames.end()));
   }  // end of treatInterface
 
   void BehaviourDSLCommon::setInterfaces(const std::set<std::string>& inames) {
@@ -3662,7 +3660,7 @@ namespace mfront {
     if (t.value == "0") {
       return {BehaviourData::NullExpansion{}};
     }
-    throw_if(!CxxTokenizer::isValidIdentifier(t.value, true),
+    throw_if(!CxxTokenizer::isValidIdentifier(t.value, false),
              "unexpected token '" + t.value +
                  "', expected "
                  "external state variable name");
@@ -3761,13 +3759,18 @@ namespace mfront {
             (mh.find(
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ==
              mh.end()) &&
-            (mh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) == mh.end()),
+            (mh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) ==
+             mh.end()) &&
+            (mh.find(ModellingHypothesis::PLANESTRAIN) == mh.end()) &&
+            (mh.find(ModellingHypothesis::PLANESTRESS) == mh.end()),
         "the @Relocation keyword has not effect on this behaviour as the none "
         "of "
         "the following hypothesis is supported:\n"
         "- AxisymmetricalGeneralisedPlaneStress\n"
         "- AxisymmetricalGeneralisedPlaneStrain\n"
-        "- GeneralisedPlaneStrain");
+        "- GeneralisedPlaneStrain\n"
+        "- PlaneStrain\n"
+        "- PlaneStress");
     this->checkNotEndOfFile("BehaviourDSLCommon::treatRelocation");
     const auto s = this->readStressFreeExpansionHandler(*(this->current));
     ++(this->current);
@@ -3780,6 +3783,8 @@ namespace mfront {
     add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
     add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
     add(ModellingHypothesis::GENERALISEDPLANESTRAIN);
+    add(ModellingHypothesis::PLANESTRAIN);
+    add(ModellingHypothesis::PLANESTRESS);
   }  // end of treatRelocation
 
   std::string BehaviourDSLCommon::predictionOperatorVariableModifier(
@@ -3806,7 +3811,7 @@ namespace mfront {
     using namespace tfel::material;
     using namespace tfel::utilities;
     if (this->mb.getTangentOperatorBlocks().empty()) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
+      this->throwRuntimeError("BehaviourDSLCommon::treatPredictionOperator",
                               "no thermodynamic force defined");
     }
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
@@ -3896,7 +3901,7 @@ namespace mfront {
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       const auto sname = this->current->value;
       const auto vname = tfel::unicode::getMangledString(sname);
-      throw_if(!isValidIdentifier(vname),
+      throw_if(!isValidIdentifier(vname, false),
                "variable given is not valid (read "
                "'" +
                    sname + "').");
@@ -4130,7 +4135,7 @@ namespace mfront {
       const auto& opt = *po;
       if (!ModellingHypothesis::isModellingHypothesis(opt.value)) {
         id = opt.value;
-        if (!isValidIdentifier(id)) {
+        if (!isValidIdentifier(id, false)) {
           this->throwRuntimeError(
               "BehaviourDSLCommon::treatInitialize",
               "initialize function identifier is invalid (read '" + id + "').");
@@ -4151,7 +4156,9 @@ namespace mfront {
         m = [this](const Hypothesis h, const std::string& sv, const bool bv) {
           return this->standardModifier(h, sv, bv);
         };
+    const auto beg = this->current;
     for (const auto h : o.hypotheses) {
+      this->current = beg;
       const auto& d = this->mb.getBehaviourData(h);
       const auto c = this->readNextBlock(h, n, m, true);
       for (const auto& mn : c.members) {

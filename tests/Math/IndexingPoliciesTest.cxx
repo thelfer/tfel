@@ -86,6 +86,10 @@ struct IndexingPoliciesTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(p.getIndex(0, 1) == 1);
     TFEL_TESTS_STATIC_ASSERT(p.getIndex(1, 0) == 2);
     TFEL_TESTS_STATIC_ASSERT(p.getIndex(1, 1) == 3);
+    constexpr FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, 2, 3, 4> p2;
+    TFEL_TESTS_STATIC_ASSERT(p2.getUnderlyingArrayMinimalSize() == 7);
+    constexpr FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, 3, 2, 3> p3;
+    TFEL_TESTS_STATIC_ASSERT(p3.getUnderlyingArrayMinimalSize() == 8);
   }  // end of test1
 };
 

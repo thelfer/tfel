@@ -48,9 +48,10 @@ namespace tfel::material {
     const auto pr = trace(sig) / 3;
     const auto n = p.n;
     const auto is_zero = tfel::math::ieee754::fpclassify(f) == FP_ZERO;
-    const auto A0 = f < p.feps ? pow((f + p.feps) / 2, -1 / n) : pow(f, -1 / n);
-    const auto A = is_zero ? 0 : pow(n * (A0 - 1), -2 * n / (n + 1));
-    const auto B = (1 + (2 * f) / 3) * pow(1 - f, -2 * n / (n + 1));
+    const auto A0 =
+        f < p.feps ? std::pow((f + p.feps) / 2, -1 / n) : std::pow(f, -1 / n);
+    const auto A = is_zero ? 0 : std::pow(n * (A0 - 1), -2 * n / (n + 1));
+    const auto B = (1 + (2 * f) / 3) * std::pow(1 - f, -2 * n / (n + 1));
     return std::sqrt(cste_9_4 * A * pr * pr + B * s2);
   }  // end of computeMichelAndSuquet1992HollowSphereYieldStress
 
@@ -79,10 +80,11 @@ namespace tfel::material {
     const auto d = 1 - f;
     const auto inv_d = 1 / std::max(d, p.feps);
     const auto is_zero = tfel::math::ieee754::fpclassify(f) == FP_ZERO;
-    const auto A0 = f < p.feps ? pow((f + p.feps) / 2, -1 / n) : pow(f, -1 / n);
-    const auto A = is_zero ? 0 : pow(n * (A0 - 1), -2 * n / (n + 1));
+    const auto A0 =
+        f < p.feps ? std::pow((f + p.feps) / 2, -1 / n) : std::pow(f, -1 / n);
+    const auto A = is_zero ? 0 : std::pow(n * (A0 - 1), -2 * n / (n + 1));
     const auto B1 = 1 + cste_2_3 * f;
-    const auto B2 = pow(1 - f, -2 * n / (n + 1));
+    const auto B2 = std::pow(1 - f, -2 * n / (n + 1));
     const auto B = B1 * B2;
     const auto seq = std::sqrt(cste_9_4 * A * pr * pr + B * s2);
     const auto iseq = 1 / (std::max(seq, seps));
@@ -126,10 +128,11 @@ namespace tfel::material {
     const auto d = 1 - f;
     const auto inv_d = 1 / std::max(d, p.feps);
     const auto is_zero = tfel::math::ieee754::fpclassify(f) == FP_ZERO;
-    const auto A0 = f < p.feps ? pow((f + p.feps) / 2, -1 / n) : pow(f, -1 / n);
-    const auto A = is_zero ? 0 : pow(n * (A0 - 1), -2 * n / (n + 1));
+    const auto A0 =
+        f < p.feps ? std::pow((f + p.feps) / 2, -1 / n) : std::pow(f, -1 / n);
+    const auto A = is_zero ? 0 : std::pow(n * (A0 - 1), -2 * n / (n + 1));
     const auto B1 = 1 + cste_2_3 * f;
-    const auto B2 = pow(1 - f, -2 * n / (n + 1));
+    const auto B2 = std::pow(1 - f, -2 * n / (n + 1));
     const auto B = B1 * B2;
     const auto seq = std::sqrt(cste_9_4 * A * pr * pr + B * s2);
     // derivatives with respect to the stress

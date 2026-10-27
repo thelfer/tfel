@@ -152,9 +152,9 @@ namespace tfel::math::parser {
     static double ln10 = std::numbers::ln10_v<double>;
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
-    auto de_ = std::make_shared<BinaryOperation<OpMult>>(
-        std::make_shared<Number>("log(10)", ln10), de);
-    return std::make_shared<BinaryOperation<OpDiv>>(de_, ce);
+    auto den = std::make_shared<BinaryOperation<OpMult>>(
+        std::make_shared<Number>("log(10)", ln10), ce);
+    return std::make_shared<BinaryOperation<OpDiv>>(de, den);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(asin) {

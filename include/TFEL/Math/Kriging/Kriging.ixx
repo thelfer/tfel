@@ -114,6 +114,7 @@ namespace tfel::math {
     }
     matrix<T> m(x.size() + Model::nb, x.size() + Model::nb,
                 T(0));                                      // temporary matrix
+    this->a.clear();
     this->a.resize(x.size() + Model::nb, T(0));             // unknowns
     copy(this->f.begin(), this->f.end(), this->a.begin());  // copy values
     // filling the matrix

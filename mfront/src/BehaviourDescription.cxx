@@ -57,6 +57,7 @@ namespace mfront {
     auto mpd = MaterialPropertyDescription{};
     mpd.output = VariableDescription{"real", "res", 1u, 0u};
     std::ostringstream body;
+    body.precision(14);
     body << "res = " << mp.value << ";\n";
     mpd.law = prefix + n;
     mpd.className = prefix + n;
@@ -504,7 +505,7 @@ namespace mfront {
             std::string{BehaviourDescription::internalNamespace} + "'");
       }
       const auto& ns = ns_opt.get<std::string>();
-      if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+      if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns, false)) {
         tfel::raise(
             "BehaviourDescription::BehaviourDescription: "
             "invalid namespace space '" +
@@ -557,7 +558,7 @@ namespace mfront {
     }
     const auto& ns = this->getAttribute<std::string>(
         BehaviourDescription::internalNamespace);
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns, false)) {
       tfel::raise(
           "BehaviourDescription::getInternalNamespace: "
           "invalid namespace space '" +
@@ -901,7 +902,7 @@ namespace mfront {
   void BehaviourDescription::setLibrary(const std::string& l) {
     tfel::raise_if(!this->library.empty(),
                    "BehaviourDescription::setLibrary: "
-                   "library alreay defined");
+                   "library already defined");
     this->library = l;
   }  // end of setLibrary
 
@@ -912,7 +913,7 @@ namespace mfront {
   void BehaviourDescription::setMaterialName(const std::string& m) {
     tfel::raise_if(!this->material.empty(),
                    "BehaviourDescription::setMaterialName: "
-                   "material name alreay defined");
+                   "material name already defined");
     this->material = m;
     this->updateClassName();
   }  // end of setMaterialName
@@ -924,7 +925,7 @@ namespace mfront {
   void BehaviourDescription::setClassName(const std::string& n) {
     tfel::raise_if(!this->className.empty(),
                    "BehaviourDescription::setClassName: "
-                   "class name alreay defined");
+                   "class name already defined");
     this->className = n;
   }  // end of setClassName
 
@@ -1397,7 +1398,7 @@ namespace mfront {
       return r;
     };
     tfel::raise_if(
-        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, true),
+        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, false),
         "BehaviourDSLCommon::addLocalDataStructure: "
         "invalid local structure name '" +
             lds.name + "'");
@@ -2175,9 +2176,6 @@ namespace mfront {
     // never ever trust a user
     throw_if(mhs.find(uh) != mhs.end(),
              "undefined modelling hypothesis specified");
-    // check that the user did not already set the modelling hypotheses
-    throw_if(!this->hypotheses.empty(),
-             "supported modelling hypotheses have already been declared");
     // check that if a specialised version of the behaviour
     // is defined, it is present in the set of hypotheses defined here
     for (const auto& ld : this->sd) {
@@ -2468,8 +2466,8 @@ namespace mfront {
           bd.addAuxiliaryStateVariable(applyNamesChanges(bv, th),
                                        BehaviourData::UNREGISTRED);
         } catch (std::exception& e) {
-          tfel::raise("Error while treating saved gradient '" + th.name +
-                      "' from behaviour '" + bv.name + "' of type '" +
+          tfel::raise("Error while treating saved thermodynamic force '" +
+                      th.name + "' from behaviour '" + bv.name + "' of type '" +
                       bv.behaviour.getClassName() + "'\n" +
                       std::string{e.what()});
         }
@@ -2537,7 +2535,8 @@ namespace mfront {
       }
       // check compatibility with the modelling hypotheses of the behaviour
       const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
-      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      const auto& v_distinct_hypotheses =
+          v.behaviour.getDistinctModellingHypotheses();
       for (const auto& h : this->hypotheses) {
         if (!v_hypotheses.contains(h)) {
           tfel::raise(
@@ -2600,7 +2599,8 @@ namespace mfront {
       }
       // check compatibility with the modelling hypotheses of the behaviour
       const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
-      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      const auto& v_distinct_hypotheses =
+          v.behaviour.getDistinctModellingHypotheses();
       for (const auto& h : this->hypotheses) {
         if (!v_hypotheses.contains(h)) {
           tfel::raise(
@@ -2829,38 +2829,43 @@ namespace mfront {
                   "variable ");
             }
           }
-          auto report = [&osource, &bv](const std::string_view& reason) {
-            tfel::raise("The sourve variable '" + osource->name +
-                        "' declared by behaviour variable '" + bv.name +
-                        "' is not compatible with the variable declared by the "
-                        "calling behaviour: " +
-                        std::string{reason});
+          auto report = [&bv, &v](const std::string_view& source,
+                                  const std::string_view& reason) {
+            tfel::raise(
+                "The variable '" + v.name + "' of behaviour variable '" +
+                bv.name + "' is not compatible with the variable '" +
+                std::string{source} +
+                "' declared by the calling behaviour: " + std::string{reason});
           };
           if (bdata.isStaticVariableName(v.getExternalName())) {
             const auto sv =
                 bdata.getStaticVariableDescription(v.getExternalName());
             if (v.getVariableTypeIdentifier() !=
                 sv.getVariableTypeIdentifier()) {
-              report("unmatched type ('" + v.type + "' vs '" + sv.type + "')");
+              report(sv.name,
+                     "unmatched type ('" + v.type + "' vs '" + sv.type + "')");
             }
             if (v.arraySize != sv.arraySize) {
-              report("unmatched array size (" + std::to_string(v.arraySize) +
-                     " vs " + std::to_string(sv.arraySize) + ")");
+              report(sv.name, "unmatched array size (" +
+                                  std::to_string(v.arraySize) + " vs " +
+                                  std::to_string(sv.arraySize) + ")");
             }
           } else {
             if (v.getVariableTypeIdentifier() !=
                 osource->getVariableTypeIdentifier()) {
-              report("unmatched type ('" + v.type + "' vs '" + osource->type +
-                     "')");
+              report(osource->name, "unmatched type ('" + v.type + "' vs '" +
+                                        osource->type + "')");
             }
             if (v.arraySize != osource->arraySize) {
-              report("unmatched array size (" + std::to_string(v.arraySize) +
-                     " vs " + std::to_string(osource->arraySize) + ")");
+              report(osource->name,
+                     "unmatched array size (" + std::to_string(v.arraySize) +
+                         " vs " + std::to_string(osource->arraySize) + ")");
             }
             if ((v.hasGlossaryName()) && (osource->hasGlossaryName())) {
               if (v.getExternalName() != osource->getExternalName()) {
-                report("unmatched external names ('" + v.getExternalName() +
-                       "' vs '" + osource->getExternalName() + "')");
+                report(osource->name, "unmatched external names ('" +
+                                          v.getExternalName() + "' vs '" +
+                                          osource->getExternalName() + "')");
               }
             }
           }

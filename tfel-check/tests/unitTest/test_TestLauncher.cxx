@@ -228,6 +228,16 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                                 "@Test 'test_TestLauncher_A.ref' "
                                 "'test_TestLauncher_D.res' 2;\n") == b);
     }
+    // a command declared with the shall_fail option must fail
+    TFEL_TESTS_ASSERT(run("test_TestLauncher_shall_fail1",
+                          "@Command \"false\"{shall_fail: true};\n"));
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher_shall_fail2",
+                           "@Command \"true\"{shall_fail: true};\n"));
+    // a command declared with empty_output: false must print something
+    TFEL_TESTS_ASSERT(run("test_TestLauncher_empty_output1",
+                          "@Command \"echo hello\"{empty_output: false};\n"));
+    TFEL_TESTS_ASSERT(!run("test_TestLauncher_empty_output2",
+                           "@Command \"true\"{empty_output: false};\n"));
     return this->result;
   }
 

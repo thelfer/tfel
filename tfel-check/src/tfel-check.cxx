@@ -174,7 +174,7 @@ namespace tfel::check {
      * \brief boolean stating that terminal colors shall be used for the
      * terminal output (std::cout)
      */
-    bool use_terminal_colors = false;
+    bool use_terminal_colors = true;
     /*!
      * \brief boolean stating that the terminal output (std::cout) shall be
      * synchronized
@@ -261,11 +261,12 @@ namespace tfel::check {
               auto pos = std::size_t{};
               try {
                 this->njobs = std::stoul(o, &pos);
-              } catch (std::invalid_argument& e) {
+              } catch (std::exception&) {
                 std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
                 std::exit(EXIT_FAILURE);
               }
-              if (pos != o.size()) {
+              // std::stoul accepts negative values
+              if ((o[0] == '-') || (pos != o.size()) || (this->njobs == 0)) {
                 std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
                 std::exit(EXIT_FAILURE);
               }
@@ -338,7 +339,7 @@ namespace tfel::check {
             "disable test on the number of jobs allowed to run simultaneously.",
             [this, read_boolean_value] {
               this->discard_jobs_limit =
-                  read_boolean_value("--discard-commands-failure");
+                  read_boolean_value("--discard-jobs-limit");
             },
             true));
     this->registerCallBack(
@@ -380,6 +381,15 @@ namespace tfel::check {
     declareTFELComponents(this->configurations);
     declareTFELSubstitutions(this->configurations);
     this->setArguments(argc, argv);
+    // '-j' without value is treated as '--jobs' without value, since the
+    // argument parser requires a value after an alias
+    for (auto p = this->args.begin(); p != this->args.end(); ++p) {
+      const auto next = std::next(p);
+      if ((p->as_string() == "-j") &&
+          ((next == this->args.end()) || (next->as_string()[0] == '-'))) {
+        p->as_string() = "--jobs";
+      }
+    }
     this->registerArgumentCallBacks();
     this->parseArguments();
     //
@@ -413,12 +423,16 @@ namespace tfel::check {
       const auto cpath = systemCall::getCurrentWorkingDirectory();
       const auto path = systemCall::getAbsolutePath(d);
       // store the output of the given process that will be saved in
-      // tfel-check.log
+      // tfel-check.log, without terminal colors
       std::ostringstream output;
-      auto log = PCLogger(
-          std::make_shared<PCTextDriver>(output, this->use_terminal_colors));
-      // this adds unsynchronized output to std::cout
-      if (!this->synchronize_terminal_output) {
+      // store the synchronized terminal output
+      std::ostringstream terminal_output;
+      auto log = PCLogger(std::make_shared<PCTextDriver>(output, false));
+      if (this->synchronize_terminal_output) {
+        log.addDriver(std::make_shared<PCTextDriver>(
+            terminal_output, this->use_terminal_colors));
+      } else {
+        // this adds unsynchronized output to std::cout
         log.addDriver(
             std::make_shared<PCTextDriver>(this->use_terminal_colors));
       }
@@ -443,7 +457,7 @@ namespace tfel::check {
         std::lock_guard<std::mutex> guard(log_synchronization);
         log_file << output.str();
         if (this->synchronize_terminal_output) {
-          std::cout << output.str();
+          std::cout << terminal_output.str();
         }
       }
       return success;

@@ -64,7 +64,7 @@ policy. The normalisation policy can have one of the following values:
 ~~~~~ {.cpp}
 // impose the first piola kirchoff stress
 // in an uniaxial compression test
-@Real 'Pi0' -40e6
+@Real 'Pi0' -40e6;
 @NonLinearConstraint<Stress> 'SXX*FYY*FZZ-Pi0';
 @NonLinearConstraint<Stress> 'SYY';
 @NonLinearConstraint<Stress> 'SZZ';

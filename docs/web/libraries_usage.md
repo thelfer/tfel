@@ -142,7 +142,7 @@ the `TFELMathCubicSpline` library:
 project(Test)
 cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(TFELMathCubicSpline REQUIRED HINTS "${TFEL_DIR}/share/tfel/cmake")
 add_executable(test main.cxx)
 target_link_libraries(test tfel::TFELMathCubicSpline)

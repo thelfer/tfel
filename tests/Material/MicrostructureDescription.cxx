@@ -59,6 +59,7 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     this->template user_defined_distribution<real, stress, length>();
     this->template test_poly<real, stress, length>(k0, mu0, ki, mui, ellipsoid1,
                                                    spheroid1);
+    this->template test_poly_fraction<real, stress, length>(k0, mu0);
 
     return this->result;
   }
@@ -290,6 +291,30 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     std::ignore = poly1.removeGrain(2);
     TFEL_TESTS_ASSERT(my_abs(poly1.getNumberOfGrains() - 2) < eps);
   }
+
+  //! \brief change the fraction of a grain of a full polycrystal
+  template <typename real, typename stress, typename length>
+  void test_poly_fraction(const stress& k0, const stress& mu0) {
+    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    using namespace tfel::material::homogenization::elasticity;
+    const auto KG0 = tfel::material::KGModuli(k0, mu0);
+    tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
+    tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
+    const auto sph = Sphere<length>();
+    Grain<stress> grain1(sph, real(0.5), KG0, n_a, n_b);
+    Grain<stress> grain2(sph, real(0.5), KG0, n_a, n_b);
+    Polycrystal<stress> poly;
+    std::ignore = poly.addGrain(grain1);
+    std::ignore = poly.addGrain(grain2);
+    TFEL_TESTS_ASSERT(my_abs(poly.getTotalFraction() - real(1)) < eps);
+    TFEL_TESTS_ASSERT(poly.changeFractionOfGrain(0, real(0.4)) == 1);
+    TFEL_TESTS_ASSERT(my_abs((*(poly.getGrain(0))).fraction - real(0.4)) < eps);
+    TFEL_TESTS_ASSERT(my_abs(poly.getTotalFraction() - real(0.9)) < 10 * eps);
+    TFEL_TESTS_ASSERT(poly.changeFractionOfGrain(0, real(0.5)) == 1);
+    TFEL_TESTS_ASSERT(my_abs(poly.getTotalFraction() - real(1)) < 10 * eps);
+    TFEL_TESTS_ASSERT(poly.changeFractionOfGrain(0, real(0.6)) == 0);
+    TFEL_TESTS_ASSERT(my_abs((*(poly.getGrain(0))).fraction - real(0.5)) < eps);
+  }  // end of test_poly_fraction
 
 };  // end of struct MicrostructureDescriptionTest
 

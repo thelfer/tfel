@@ -35,7 +35,7 @@ given by:
 
 ~~~~ {#AxialGrowth .cpp}
 // axial growth defined by an external model
-@AxialGrowth 'M5AxialGrowth.mfront';
+@AxialGrowth "M5AxialGrowth.mfront";
 ~~~~
 
 ~~~~ {#AxialGrowth2 .cpp}

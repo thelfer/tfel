@@ -15,6 +15,12 @@
 
 namespace tfel::tests {
 
+  TestAssertionFailure::TestAssertionFailure(const std::string& m,
+                                             const TestResult& r)
+      : std::runtime_error(m), result(r) {}
+
+  TestAssertionFailure::~TestAssertionFailure() noexcept = default;
+
   TestCase::TestCase(const std::string& n)
       : gname("UnitTest"), tname(n) {}  // end of TestCase::~TestCase
 

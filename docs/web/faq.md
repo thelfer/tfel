@@ -60,7 +60,7 @@ specific needs.
 
 The installation process is fully described in the following pages:
 
-- [install.html](install.hml): this document describes the generic
+- [install.html](install.html): this document describes the generic
   installation procedure for `TFEL` from the sources on
   posix-compliant systems. Please note that the main system on which
   `TFEL` was developed is `Linux`. Extensive testing on other
@@ -267,7 +267,7 @@ you must check your units.
 In the second case, the trouble may be related to your implementation
 of the Jacobian matrix (assuming you are using an `Implicit` scheme
 with analytical jacobian). In this case, it is worth comparing your
-jacobian to a numerical one (see `@CompareToNumericalJaobian`). As
+jacobian to a numerical one (see `@CompareToNumericalJacobian`). As
 this comparison is CPU intensive, please consider specifying this
 keyword in the command line rather than in your implementation to
 avoid forgetting to remove it in your real-world tests:

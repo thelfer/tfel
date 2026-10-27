@@ -540,6 +540,9 @@ namespace mfront {
           "linear solver has already been set");
     }
     this->linear_solver = s;
+    for (const auto& rn : this->linear_solver->getReservedNames()) {
+      this->reserveName(rn);
+    }
   }  // end of setLinearSystemSolver
 
   void ImplicitDSLBase::setLinearSystemSolver(
@@ -624,7 +627,7 @@ namespace mfront {
         }
         if (!opts.is<DataMap>()) {
           this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
-                                  "expected to read a string");
+                                  "expected to read a dictionary");
         }
         return opts.get<DataMap>();
       }();
@@ -672,7 +675,7 @@ namespace mfront {
           "the choosen default value for the convergence threshold could be "
           "too stringent (" +
           converter.str() +
-          "). You may want to consider a more stringent value (1e-14 "
+          "). You may want to consider a less stringent value (1e-14 "
           "is generally a good choice).");
     }
     if ((!safe) && (epsilon > 1e-12)) {
@@ -774,20 +777,20 @@ namespace mfront {
     if (d.isIntegrationVariableIncrementName(var)) {
       const auto v = var.substr(1);
       if (this->mb.hasAttribute(h, v + "_normalisation_factor")) {
-        const auto& s = d.getStateVariableDescription(v);
+        const auto& s = d.getIntegrationVariableDescription(v);
         const auto& nf =
             this->mb.getAttribute<std::string>(h, v + "_normalisation_factor");
         if (s.arraySize == 1u) {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }
@@ -804,20 +807,20 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     if (d.isIntegrationVariableIncrementName(var)) {
       if (this->mb.hasAttribute(h, var.substr(1) + "_normalisation_factor")) {
-        const auto& s = d.getStateVariableDescription(var.substr(1));
+        const auto& s = d.getIntegrationVariableDescription(var.substr(1));
         const auto& nf = this->mb.getAttribute<std::string>(
             h, var.substr(1) + "_normalisation_factor");
         if (s.arraySize == 1u) {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }
@@ -1608,7 +1611,7 @@ namespace mfront {
     }
     // create the compute final stress code is necessary
     this->setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
-    // correct prediction to take into account normalisation factors
+    // numerically computed jacobian blocks
     for (const auto& h : mh) {
       if (this->mb.hasAttribute(
               h, BehaviourData::numericallyComputedJacobianBlocks)) {
@@ -1651,42 +1654,6 @@ namespace mfront {
                        "'" +
                        nd.second + "' is not an integration variable");
         }
-      }
-      if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
-        CodeBlock predictor;
-        const auto& d = this->mb.getBehaviourData(h);
-        for (const auto& v : d.getIntegrationVariables()) {
-          if (this->integrationVariablesIncrementsUsedInPredictor.find(
-                  'd' + v.name) !=
-              this->integrationVariablesIncrementsUsedInPredictor.end()) {
-            if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
-              const auto& nf = this->mb.getAttribute<std::string>(
-                  h, v.name + "_normalisation_factor");
-              predictor.code += "this->d" + v.name + " /= " + nf + ";\n";
-            }
-          }
-        }
-        this->mb.setCode(h, BehaviourData::ComputePredictor, predictor,
-                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
-      }
-    }
-    if (!this->mb.areAllMechanicalDataSpecialised()) {
-      if (this->mb.hasCode(uh, BehaviourData::ComputePredictor)) {
-        CodeBlock predictor;
-        const auto& d = this->mb.getBehaviourData(uh);
-        for (const auto& v : d.getIntegrationVariables()) {
-          if (this->integrationVariablesIncrementsUsedInPredictor.find(
-                  'd' + v.name) !=
-              this->integrationVariablesIncrementsUsedInPredictor.end()) {
-            if (this->mb.hasAttribute(uh, v.name + "_normalisation_factor")) {
-              const auto& nf = this->mb.getAttribute<std::string>(
-                  uh, v.name + "_normalisation_factor");
-              predictor.code += "this->d" + v.name + " /= " + nf + ";\n";
-            }
-          }
-        }
-        this->mb.setCode(uh, BehaviourData::ComputePredictor, predictor,
-                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
     }
     // minimal tangent operator

@@ -290,15 +290,15 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CalculiXInterface::treatKeyword: " + m);
     };
-    auto check_interface_restriction = [&i, &k] {
+    auto check_interface_restriction = [this, &i, &k] {
       if (i.empty()) {
-        reportWarning(
-            "keyword '" + k +
-            "' is used without being restricted "
-            "to the `generic` interface, which could be a portability "
-            "issue. Please add [generic] after the "
-            "keyword (i.e. replace '" +
-            k + "' by '" + k + "[generic]')");
+        reportWarning("keyword '" + k +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      k + "' by '" + k + "[" + this->getName() + "]')");
       }
     };
     if (!i.empty()) {
@@ -583,7 +583,7 @@ namespace mfront {
         << "stensor<3u,real> pk2;\n"
         << "pk2.importTab(STRESS);\n"
         << "auto s = "
-           "convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);\n";
+           "convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F0);\n";
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       out << "const auto rF0 = change_basis(F0,r);\n"
           << "const auto rF1 = change_basis(F1,r);\n"

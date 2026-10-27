@@ -333,7 +333,7 @@ namespace mtest {
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    this->allocateCurrentState(wk.cs);
+    this->b->allocateCurrentState(wk.cs);
   }  // end of allocateWorkSpace
 
   tfel::math::tmatrix<3u, 3u, real>
@@ -379,7 +379,7 @@ namespace mtest {
           "AsterLogarithmicStrainBehaviourWrapper::"
           "computePredictionOperator: unsupported space dimension");
     }
-    const auto r = this->b->computePredictionOperator(wk, s, ktype);
+    const auto r = this->b->computePredictionOperator(wk, cs, ktype);
     if (r.first) {
       if (N == 1) {
         const auto& h =

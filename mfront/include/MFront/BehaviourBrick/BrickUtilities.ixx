@@ -14,6 +14,8 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_BRICKUTILITIES_IXX
 #define LIB_MFRONT_BEHAVIOURBRICK_BRICKUTILITIES_IXX
 
+#include <limits>
+#include <sstream>
 #include "MFront/BehaviourDSLUtilities.hxx"
 
 namespace mfront::bbrick {
@@ -145,8 +147,10 @@ namespace mfront::bbrick {
         } else {
           const auto& cmp =
               mp.template get<BehaviourDescription::ConstantMaterialProperty>();
-          c += "this->" + vn + " = " + std::to_string(i) +
-               "] = " + std::to_string(cmp.value) + ";\n";
+          std::ostringstream os;
+          os.precision(std::numeric_limits<double>::max_digits10);
+          os << "this->" << vn << " = " << cmp.value << ";\n";
+          c += os.str();
         }
       }
     }

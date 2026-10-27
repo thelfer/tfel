@@ -295,9 +295,9 @@ static void MTest_setImposedCohesiveForce1(mtest::MTest& t,
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   tfel::raise_if(b != MechanicalBehaviourBase::COHESIVEZONEMODEL,
-                 "MTestParser::handleImposedCohesiveForce: "
+                 "MTest::handleImposedCohesiveForce: "
                  "the setImposedCohesiveForce method is only valid "
-                 "for small strain behaviours");
+                 "for cohesive zone models");
   MTest_setImposedThermodynamicForce1(t, n, v);
 }  // end of MTest_setImposedCohesiveForce1
 
@@ -309,9 +309,9 @@ static void MTest_setImposedCohesiveForce1b(
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   tfel::raise_if(b != MechanicalBehaviourBase::COHESIVEZONEMODEL,
-                 "MTestParser::handleImposedCohesiveForce: "
+                 "MTest::handleImposedCohesiveForce: "
                  "the setImposedCohesiveForce method is only valid "
-                 "for small strain behaviours");
+                 "for cohesive zone models");
   MTest_setImposedThermodynamicForce1b(t, n, v, opts);
 }  // end of MTest_setImposedCohesiveForce1b
 
@@ -322,9 +322,9 @@ static void MTest_setImposedCohesiveForce2(
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   tfel::raise_if(b != MechanicalBehaviourBase::COHESIVEZONEMODEL,
-                 "MTestParser::handleImposedCohesiveForce: "
+                 "MTest::handleImposedCohesiveForce: "
                  "the setImposedCohesiveForce method is only valid "
-                 "for small strain behaviours");
+                 "for cohesive zone models");
   MTest_setImposedThermodynamicForce2(t, n, v);
 }  // end of MTest_setImposedCohesiveForce2
 
@@ -336,9 +336,9 @@ static void MTest_setImposedCohesiveForce2b(
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   tfel::raise_if(b != MechanicalBehaviourBase::COHESIVEZONEMODEL,
-                 "MTestParser::handleImposedCohesiveForce: "
+                 "MTest::handleImposedCohesiveForce: "
                  "the setImposedCohesiveForce method is only valid "
-                 "for small strain behaviours");
+                 "for cohesive zone models");
   MTest_setImposedThermodynamicForce2b(t, n, v, opts);
 }  // end of MTest_setImposedCohesiveForce2b
 
@@ -569,7 +569,7 @@ static void MTest_setImposedOpeningDisplacement1(mtest::MTest& t,
       t.getBehaviourType() != MechanicalBehaviourBase::COHESIVEZONEMODEL,
       "MTest::handleImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
-      "for small strain behaviours");
+      "for cohesive zone models");
   MTest_setImposedGradient1(t, n, v);
 }  // end of MTest_setImposedOpeningDisplacement1
 
@@ -583,7 +583,7 @@ static void MTest_setImposedOpeningDisplacement1b(
       t.getBehaviourType() != MechanicalBehaviourBase::COHESIVEZONEMODEL,
       "MTest::handleImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
-      "for small strain behaviours");
+      "for cohesive zone models");
   MTest_setImposedGradient1b(t, n, v, opts);
 }  // end of MTest_setImposedOpeningDisplacement1b
 
@@ -594,9 +594,9 @@ static void MTest_setImposedOpeningDisplacement2(
   using namespace tfel::material;
   tfel::raise_if(
       t.getBehaviourType() != MechanicalBehaviourBase::COHESIVEZONEMODEL,
-      "MTestParser::setImposedOpeningDisplacement : "
+      "MTest::setImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
-      "for small strain behaviours");
+      "for cohesive zone models");
   MTest_setImposedGradient2(t, n, v);
 }  // end of MTest_setImposedOpeningDisplacement2
 
@@ -608,9 +608,9 @@ static void MTest_setImposedOpeningDisplacement2b(
   using namespace tfel::material;
   tfel::raise_if(
       t.getBehaviourType() != MechanicalBehaviourBase::COHESIVEZONEMODEL,
-      "MTestParser::setImposedOpeningDisplacement : "
+      "MTest::setImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
-      "for small strain behaviours");
+      "for cohesive zone models");
   MTest_setImposedGradient2b(t, n, v, opts);
 }  // end of MTest_setImposedOpeningDisplacement2b
 
@@ -630,6 +630,9 @@ static void MTest_setRotationMatrix1(
     mtest::MTest& t,
     const std::vector<std::vector<mtest::real>>& m,
     const bool b) {
+  tfel::raise_if((m.size() != 3) || (m[0].size() != 3) || (m[1].size() != 3) ||
+                     (m[2].size() != 3),
+                 "MTest::setRotationMatrix: a 3x3 matrix is expected");
   tfel::math::tmatrix<3u, 3u, mtest::real> r;
   for (decltype(r.size()) i = 0; i != 3; ++i) {
     for (decltype(r.size()) j = 0; j != 3; ++j) {
@@ -913,7 +916,8 @@ void declareMTest(pybind11::module_& m) {
            "step\n"
            "\n"
            "param[in]  n: variable name")
-      .def("getInternalStateVariableValue", ::getInternalStateVariableValue2,
+      .def("getInternalStateVariableValue", ::getInternalStateVariableValue1,
+           pybind11::arg("n"), pybind11::arg("d"),
            "get the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"

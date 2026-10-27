@@ -72,6 +72,7 @@ void declareCMakeGenerator(pybind11::module_&);
 void declareCMakeGenerator(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<CMakeGenerator>(m, "CMakeGenerator")
+      .def(pybind11::init<>())
       .def("generate", &CMakeGenerator::generate0, pybind11::arg("t"))
       .def("generate", &CMakeGenerator::generate1,
           pybind11::arg("t"), pybind11::arg("o"))

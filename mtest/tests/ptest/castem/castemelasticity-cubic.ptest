@@ -1,0 +1,21 @@
+@InnerRadius 4.2e-3;
+@OuterRadius 4.7e-3;
+@NumberOfElements 10;
+@ElementType 'Cubic';
+@AxialLoading 'None';
+@PerformSmallStrainAnalysis true;
+
+@Behaviour<castem> @library@ 'umatelasticity';
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio'   0.3;
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Real 'Pi' 1.5e6;
+@Real 'Pe' 10e6;
+@InnerPressureEvolution 'Pi';
+@OuterPressureEvolution<evolution> {0:'Pi',1:'Pe'};
+
+@Times {0,1};
+
+// inner displacement given by the Lamé solution (no axial force)
+@Test<function> 'InnerDisplacement' 'Ri/YoungModulus*((Pi*(Ri*Ri+Re*Re)-2*Pe*Re*Re)/(Re*Re-Ri*Ri)+PoissonRatio*Pi)' 1.e-12;

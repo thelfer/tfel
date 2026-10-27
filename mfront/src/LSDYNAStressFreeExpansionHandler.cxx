@@ -38,7 +38,7 @@ namespace lsdyna {
     }
     if (d == 3) {
       e[3] -= s0[3] * cste;
-      e[4] -= s0[3] * cste;
+      e[4] -= s0[4] * cste;
       e[5] -= s0[5] * cste;
       de[3] -= (s1[3] - s0[3]) * cste;
       de[4] -= (s1[4] - s0[4]) * cste;
@@ -95,7 +95,7 @@ namespace lsdyna {
       e[1] -= ln_e0[1];
       e[2] -= ln_e0[2];
       e[3] -= ln_e0[3] * cste;
-      e[4] -= ln_e0[3] * cste;
+      e[4] -= ln_e0[4] * cste;
       e[5] -= ln_e0[5] * cste;
       de[0] -= (ln_e1[0] - ln_e0[0]);
       de[1] -= (ln_e1[1] - ln_e0[1]);

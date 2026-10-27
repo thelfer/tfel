@@ -50,10 +50,15 @@ namespace tfel::math {
     if (this->dt < 0) {
       tfel::raise<InvalidTimeStepException>();
     }
-    while (t < this->tf - (this->dt) / 2) {
+    while (t < this->tf) {
+      const auto is_last_step = !(this->dt < this->tf - t);
+      if (is_last_step) {
+        this->dt = this->tf - t;
+      }
       const auto k1 = this->dt * child.computeF(t, this->y);
       auto t_ = t + (this->dt) / 4;
-      auto y_ = eval(this->y + k1 / 4);
+      auto y_ = typename TinyRungeKuttaSolverBase<N, Scalar>::SolutionType(
+          this->y + k1 / 4);
       const auto k2 = this->dt * child.computeF(t_, y_);
       t_ = t + 0.375 * (this->dt);
       y_ = this->y + 0.09375 * (k1 + 3 * k2);
@@ -95,14 +100,11 @@ namespace tfel::math {
       if (e < this->epsilon) {
         this->y += cste_16_135 * k1 + cste_6656_12825 * k3 +
                    cste_28561_56430 * k4 - cste_9_50 * k5 + cste_2_55 * k6;
-        t += this->dt;
+        t = is_last_step ? this->tf : t + this->dt;
       }
       // time multiplier
-      if (t < this->tf - (this->dt) / 2) {
+      if (t < this->tf) {
         this->dt *= 0.8 * pow(this->epsilon / e, 0.2);
-        if (this->dt > this->tf - t) {
-          this->dt = this->tf - t;
-        }
       }
     }
   }  // end of RungeKutta54<N,C,S>::iterate

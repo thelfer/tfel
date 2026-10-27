@@ -100,7 +100,7 @@ namespace mfront {
       throw_if(!this->package.empty(), "package name already defined");
       throw_if(current == end, "unexpected end of file");
       const auto p = current->value;
-      throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, true),
+      throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false),
                "invalid package name '" + p + "'");
       for (const auto c : p) {
         if (isalpha(c)) {
@@ -349,7 +349,7 @@ namespace mfront {
     writeTFELVersionSymbol(srcFile, name);
     writeUnitSystemSymbol(srcFile, name, mpd);
     writeInterfaceSymbol(srcFile, name, "Java");
-    writeLawSymbol(srcFile, name, mpd.material);
+    writeLawSymbol(srcFile, name, mpd.law);
     writeMaterialSymbol(srcFile, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile, name,
                                      MaterialKnowledgeType::MATERIALPROPERTY);

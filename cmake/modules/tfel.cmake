@@ -219,7 +219,7 @@ function(tfel_library_internal name component)
     add_library(${name}-static STATIC ${ARGN})
     add_library(tfel::${name}-static ALIAS ${name}-static)
     if(TFEL_APPEND_SUFFIX)
-      set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-{TFEL_SUFFIX}")
+      set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
     else(TFEL_APPEND_SUFFIX)
       set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}")
     endif(TFEL_APPEND_SUFFIX)
@@ -390,7 +390,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS mfront
-	DEPENDS "${mfront_file}"
+	DEPENDS "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	COMMENT "treating mfront source ${source}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
@@ -398,7 +398,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS mfront
-	DEPENDS "${mfront_file}"
+	DEPENDS "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	COMMENT "treating mfront source ${source}.mfront")
       # add_test(NAME mfront-${source}-mfront COMMAND
       # 	COMMAND "${mfront_executable}"
@@ -449,22 +449,18 @@ endfunction(mfront_model_check_library)
 set(tfel-check-components)
 # list of substitutions automatically declared in tfel-check
 # the  key-value pair must be separated by the % character
-set(tfel-substitutions "" CACHE STRING "")
-set(tfel-substitutions-keys "" CACHE STRING "")
-set_property(CACHE tfel-substitutions PROPERTY ADVANCED TRUE)
-set_property(CACHE tfel-substitutions-keys PROPERTY ADVANCED TRUE)
+# the substitutions are stored in global properties, not in the cache, so
+# that only the ones of the current configuration are kept
 function(add_tfel_substitution key value)
-  get_property(tfel-substitutions CACHE tfel-substitutions PROPERTY STRINGS)
-  get_property(tfel-substitutions-keys CACHE tfel-substitutions-keys PROPERTY STRINGS)
-  if(key IN_LIST tfel-substitutions-keys)
-    if(NOT "${key}%${value}" IN_LIST tfel-substitutions)
+  get_property(_keys GLOBAL PROPERTY TFEL_SUBSTITUTIONS_KEYS)
+  get_property(_substitutions GLOBAL PROPERTY TFEL_SUBSTITUTIONS)
+  if(key IN_LIST _keys)
+    if(NOT "${key}%${value}" IN_LIST _substitutions)
       message(FATAL_ERROR "a tfel substitution with key '${key}' is already defined")
     endif()
   else()
-    list(APPEND tfel-substitutions-keys "${key}")
-    list(APPEND tfel-substitutions "${key}%${value}")
-    set(tfel-substitutions "${tfel-substitutions}" CACHE STRING "" FORCE)
-    set(tfel-substitutions-keys "${tfel-substitutions-keys}" CACHE STRING "" FORCE)
+    set_property(GLOBAL APPEND PROPERTY TFEL_SUBSTITUTIONS_KEYS "${key}")
+    set_property(GLOBAL APPEND PROPERTY TFEL_SUBSTITUTIONS "${key}%${value}")
   endif()
 endfunction()
 add_tfel_substitution(TFEL_CXX_STANDARD "${CMAKE_CXX_STANDARD}")

@@ -316,6 +316,9 @@ if(HAVE_PYTHON)
     set(TFELMFront_SOURCES
 	PythonMaterialPropertyInterface.cxx
 	${TFELMFront_SOURCES})
+    # paths of python, see the main CMakeLists.txt
+    set_source_files_properties(PythonMaterialPropertyInterface.cxx
+      PROPERTIES COMPILE_DEFINITIONS "${TFEL_PYTHON_DEFINITIONS}")
 endif(HAVE_PYTHON)
 
 if(HAVE_JAVA)

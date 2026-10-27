@@ -18,7 +18,7 @@
 
 namespace mtest {
 
-  struct GenericSolver : public Solver {
+  struct MTEST_VISIBILITY_EXPORT GenericSolver : public Solver {
     /*!
      * \brief find the current state of the structure at the end of the
      * time step

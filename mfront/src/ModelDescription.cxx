@@ -189,7 +189,7 @@ namespace mfront {
   void ModelDescription::setEntryName(const std::string& v,
                                       const std::string& e) {
     this->checkVariableExistence(v);
-    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, false),
+    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, true),
                    "ModelDescription::setEntryName: "
                    "'" +
                        e + "' is a not a valid entry name");
@@ -339,6 +339,10 @@ namespace mfront {
         bd.setParameterDefaultValue(uh, p.name,
                                     md.overriding_parameters.at(p.name));
       } else {
+        tfel::raise_if(!p.hasAttribute(VariableDescription::defaultValue),
+                       "convertToBehaviourDescription: "
+                       "no default value for parameter '" +
+                           p.name + "'");
         const auto v =
             p.getAttribute<double>(VariableDescription::defaultValue);
         bd.setParameterDefaultValue(uh, p.name, v);

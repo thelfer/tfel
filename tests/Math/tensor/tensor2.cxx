@@ -62,6 +62,12 @@ struct RightCauchyGreenTensorTest2 final : public tfel::tests::TestCase {
     F(7) = -0.247;
     const stensor<3, double> e = computeRightCauchyGreenTensor(F);
     const stensor<3, double> U = square_root(e);
+    auto s = stensor<3, double>{};
+    s.copy(e.begin());
+    TFEL_TESTS_ASSERT(s(5) == e(5));
+    auto t = tensor<3, double>{};
+    t.copy(F.begin());
+    TFEL_TESTS_ASSERT(t(7) == F(7));
     return this->result;
   }  // end of execute
 };
@@ -76,7 +82,7 @@ int main() {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("Tensor.xml");
+  manager.addXMLTestOutput("Tensor2.xml");
   TestResult r = manager.execute();
   if (!r.success()) {
     return EXIT_FAILURE;

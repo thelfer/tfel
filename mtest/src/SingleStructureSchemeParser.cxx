@@ -282,7 +282,7 @@ namespace mtest {
       SingleStructureScheme& t, tokens_iterator& p) {
     const std::string& s = this->readString(p, this->tokens.end());
     this->readSpecifiedToken(
-        "SingleStructureSchemeParser::handlePredictionPolicy", ";", p,
+        "SingleStructureSchemeParser::handleOutOfBoundsPolicy", ";", p,
         this->tokens.end());
     if (s == "None") {
       t.setOutOfBoundsPolicy(tfel::material::None);
@@ -498,8 +498,8 @@ namespace mtest {
       log << "SingleStructureSchemeParser::execute : treating keyword '"
           << p->value << "' at line '" << p->line << "'\n";
     }
+    const auto line = p->line;
     ++p;
-    auto line = p->line;
     try {
       (this->*(pc->second))(t, p);
     } catch (std::exception& e) {

@@ -74,7 +74,7 @@ The `@Coef` keyword is a deprecated synonymous of
 
 # The `@ConstantMaterialProperty` keyword
 
-The `@ConstantMaterialPropery` let the user define a specific kind of
+The `@ConstantMaterialProperty` let the user define a specific kind of
 input to a model which is meant to be constant and uniform during the
 computations. This allows the interfaces to optimize the generated
 code. This keyword is followed by the names of the material
@@ -457,7 +457,7 @@ T.setGlossaryName("Temperature");
 p.setGlossaryName("Porosity");
 // we need the value at the end of the time step and the value at the
 // beginning at the time step
-p.setGlossaryName("Porosity");
+p.setDepth(1);
 ~~~~
 
 # The `@LocalParameter` keyword
@@ -750,9 +750,9 @@ respectively.
 
 ~~~~{.cpp}
 // scalar state variable
-@StateVariables strain p;
+@StateVariable strain p;
 // symmetric tensors state variable
-@StateVariables StrainStensor evp,evp2;
+@StateVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@StaticVar` keyword

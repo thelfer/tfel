@@ -323,7 +323,10 @@ namespace mfront {
     const auto has_constructor =
         (!md.constantMaterialProperties.empty()) || (hasRealParameters(md));
     //
-    os << "namespace castem{\n\n";
+    // the classes are local to the library: two libraries defining a
+    // model of the same name must not share their parameters
+    os << "namespace castem{\n\n"
+       << "namespace {\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
@@ -367,7 +370,8 @@ namespace mfront {
         first = false;
       }
       for (const auto& p : md.parameters) {
-        if (!isRealParameter(p)) {
+        // parameters treated as static variables are not members
+        if ((!isRealParameter(p)) || (!hasRealParameters(md))) {
           continue;
         }
         os << (first ? "" : ",\n");
@@ -450,13 +454,13 @@ namespace mfront {
           const auto& v = md.inputs.getVariable(n);
           const auto pos = getVariablePosition(md.inputs, n, true);
           if (v.getExternalName() == Glossary::Temperature) {
+            // the temperature is the only value of TEMP and DTEMP
             if (vdepth == 1) {
               os << "const auto " << v.name << "_1 = " << v.type
-                 << "{mfront_TEMP[" << pos << "]};\n";
+                 << "{*mfront_TEMP};\n";
             } else {
               os << "const auto " << v.name << " = " << v.type
-                 << "{mfront_TEMP[" << pos << "] + "
-                 << "mfront_DTEMP[" << pos << "]};\n";
+                 << "{*mfront_TEMP + *mfront_DTEMP};\n";
             }
           } else {
             if (vdepth == 1) {
@@ -490,10 +494,9 @@ namespace mfront {
             raise("error while treating physical bounds of variable '" +
                   v.name + "' (only scalar variable are supported)");
           }
-          writePhysicalBoundsChecks(os, v, n, "1u", false, false);
-          if (vdepth == 1u) {
-            writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
-          }
+          // the variable is checked under the name it is declared with
+          const auto vn = (vdepth == 1u) ? n + "_1" : n;
+          writePhysicalBoundsChecks(os, v, vn, "1u", false, false);
         };
         for (const auto& mv : f.usedVariables) {
           const auto [n, vdepth] = md.decomposeVariableName(mv);
@@ -522,11 +525,9 @@ namespace mfront {
             raise("error while treating bounds of variable '" + v.name +
                   "' (only scalar variable are supported)");
           }
-          writeBoundsChecks(os, v, n, "1u", "policy", false, false);
-          if (vdepth == 1u) {
-            writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false,
-                              false);
-          }
+          // the variable is checked under the name it is declared with
+          const auto vn = (vdepth == 1u) ? n + "_1" : n;
+          writeBoundsChecks(os, v, vn, "1u", "policy", false, false);
         };
         for (const auto& mv : f.usedVariables) {
           const auto [n, vdepth] = md.decomposeVariableName(mv);
@@ -598,8 +599,9 @@ namespace mfront {
       if (!getDebugMode()) {
         printLinePragma(os, v.lineNumber, fd.fileName);
       }
-      os << "static constexpr " << v.type << " " << v.name << " = "  //
-         << v.value << ";\n";
+      // brace initialisation is required by quantities
+      os << "static constexpr auto " << v.name << " = " << v.type << "{"
+         << v.value << "};\n";
     }
     os << "}; // end of struct " << md.className << "\n\n";
     //
@@ -634,7 +636,8 @@ namespace mfront {
        << "}\n"
        << "return 1;\n"
        << "}\n\n";
-    os << "} // end of namespace castem\n\n";
+    os << "} // end of anonymous namespace\n\n"
+       << "} // end of namespace castem\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {

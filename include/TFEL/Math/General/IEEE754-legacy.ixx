@@ -46,7 +46,7 @@ namespace tfel::math::ieee754 {
   }
 
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
-  constexpr int fpclassify(const long double x) noexcept {
+  TFEL_HOST_DEVICE inline int fpclassify(const long double x) noexcept {
     union {
       long double f;
       uint64_t i;
@@ -57,7 +57,7 @@ namespace tfel::math::ieee754 {
     return FP_NORMAL;
   }
 #elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384
-  constexpr int fpclassify(const long double x) noexcept {
+  TFEL_HOST_DEVICE inline int fpclassify(const long double x) noexcept {
 #ifdef __BYTE_ORDER
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #else
@@ -91,7 +91,7 @@ namespace tfel::math::ieee754 {
     return FP_NORMAL;
   }
 #elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384
-  constexpr int fpclassify(const long double x) noexcept {
+  TFEL_HOST_DEVICE inline int fpclassify(const long double x) noexcept {
 #ifdef __BYTE_ORDER
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #elif __BYTE_ORDER == __BIG_ENDIAN
@@ -155,7 +155,7 @@ namespace tfel::math::ieee754 {
     return fpclassify(x) == FP_NAN;
   }
 
-  constexpr bool isnan(const long double x) noexcept {
+  TFEL_HOST_DEVICE inline bool isnan(const long double x) noexcept {
     return fpclassify(x) == FP_NAN;
   }
 
@@ -169,7 +169,7 @@ namespace tfel::math::ieee754 {
     return (c == FP_NORMAL) || (c == FP_ZERO) || (c == FP_SUBNORMAL);
   }
 
-  constexpr bool isfinite(const long double x) noexcept {
+  TFEL_HOST_DEVICE inline bool isfinite(const long double x) noexcept {
     const auto c = fpclassify(x);
     return (c == FP_NORMAL) || (c == FP_ZERO) || (c == FP_SUBNORMAL);
   }

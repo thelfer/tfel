@@ -440,10 +440,12 @@ This can be computed by the `symmetric_product` function.
 
 ### Derivative
 
-The derivative of the symmetric product
-\(\tenseur{a}\,\cdot_{s}\,\tenseur{b}\) with respect to
-\(\tenseur{a}\) can be computed using the `st2tost2::stpd` static
-method with takes \(\tenseur{b}\) as argument.
+The `st2tost2::stpd` static method, which takes \(\tenseur{b}\) as
+argument, computes the derivative of
+\(\tenseur{a}\,\cdot\tenseur{b}+\tenseur{b}\,\cdot\tenseur{a}\)
+with respect to \(\tenseur{a}\). The derivative of the symmetric
+product \(\tenseur{a}\,\cdot_{s}\,\tenseur{b}\) with respect to
+\(\tenseur{a}\) is thus `st2tost2::stpd(b) / 2`.
 
 ## Second symmetric product of two symmetric second order tensors \(\tenseur{a}\,\cdot\,\tenseur{b}\,\cdot\,\tenseur{a}\)
 
@@ -931,7 +933,7 @@ have been proposed by Cazacu and Barlat (see
   &\frac{1}{27}\,(b_1+b_2)\,s_{xx}^3+\frac{1}{27}\,(b_3+b_4)\,s_{yy}^3+\frac{1}{27}\,(2\,(b_1+b_4)-b_2-b_3)\,s_{zz}^3\\
   &-\frac{1}{9}\,(b_1\,s_{yy}+b_2s_{zz})\,s_{xx}^2\\
   &-\frac{1}{9}\,(b_3\,s_{zz}+b_4\,s_{xx})\,s_{yy}^2\\
-  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b3+b_4)\,s_{yy})\,s_{zz}^3\\
+  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b_3+b_4)\,s_{yy})\,s_{zz}^2\\
   &+\frac{2}{9}\,(b_1+b_4)\,s_{xx}\,s_{yy}\,s_{zz}\\
   &-\frac{s_{xz}^2}{3}\,(2\,b_9\,s_{yy}-b_8\,s_{zz}-(2\,b_9-b_8)\,s_{xx})\\
   &-\frac{s_{xy}^2}{3}\,(2\,b_{10}\,s_{zz}-b_5\,s_{yy}-(2\,b_{10}-b_5)\,s_{xx})\\

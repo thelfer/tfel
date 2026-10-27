@@ -19,11 +19,13 @@ csl: iso690-numeric-en.csl
 The `TFEL/Config` library is mostly used internally by `TFEL` and
 provides some information related to the project.
 
-# `getDefaultSubstitutions`: TFEL's default substitutions
+# `getTFELDefaultSubstitutions`: TFEL's default substitutions
 
-The `getDefaultSubstitutions` function returns some default
+The `getTFELDefaultSubstitutions` function returns some default
 substitutions used by `MFront` when reading configuration files and
-`tfel-check` when analysing `.check` files.
+`tfel-check` when analysing `.check` files. The keys listed below are
+delimited by the `@` character in those files and in the map returned
+by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 ### General substitutions
 
@@ -68,7 +70,7 @@ substitutions used by `MFront` when reading configuration files and
   1. by passing the variable `TFEL_NVHPC_COMPILER` during the invocation of
   `cmake`,
   2. by using `nvhpc` as the main compiler to compile `TFEL`,
-  3. by searching `nvhpc` using `cmake`'s `find_program` function.
+  3. by searching `nvc++` using `cmake`'s `find_program` function.
 - `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvcc` as found by
   `FindCUDAToolkit`.
 - `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value

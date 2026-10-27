@@ -207,8 +207,7 @@ namespace tfel::math {
                      "group ends by operator '" + op + "'");
             if ((*previous)->isOperator()) {
               throw_if(op != "-", "group two successive operators");
-              const auto po = std::shared_ptr<TOperator>(
-                  dynamic_cast<TOperator*>(previous->get()));
+              const auto po = std::dynamic_pointer_cast<TOperator>(*previous);
               throw_if(po->getOperatorType() != "+",
                        "group two successive operators");
               throw_if((*next)->isOperator(),

@@ -1,4 +1,15 @@
 add_executable(tfel-config tfel-config.cxx)
+# commit of the sources and compilation flags, only defined for tfel-config, so that a
+# new commit or the processor of the machine (OPTIMISATION_FLAGS) does not change the
+# compilation of the other sources
+target_compile_definitions(tfel-config PRIVATE
+  "TFEL_GIT_HASH=\"${TFEL_GIT_HASH}\""
+  "OPTIMISATION_FLAGS0=\"${VISIBILITY_FLAGS} ${OPTIMISATION_FLAGS}\""
+  "OPTIMISATION_FLAGS=\"${OPTIMISATION_FLAGS_MARCH}\""
+  "OPTIMISATION_FLAGS2=\"${OPTIMISATION_FLAGS2}\""
+  "COMPILER_WARNINGS=\"${COMPILER_WARNINGS}\""
+  "COMPILER_FLAGS=\"${COMPILER_FLAGS}\""
+  "COMPILER_CXXFLAGS=\"${COMPILER_CXXFLAGS}\"")
 # type of architecture
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   target_compile_definitions(tfel-config PUBLIC "TFEL_ARCH64")

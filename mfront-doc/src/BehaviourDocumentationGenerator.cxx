@@ -217,7 +217,7 @@ namespace mfront {
           }
           d.description += pd->second;
         } else {
-          for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
+          for (pd2 = pd; pd2 != d.descriptions.end(); ++pd2) {
             if (!pd2->second.empty()) {
               if (!d.description.empty()) {
                 d.description += "\n";
@@ -444,11 +444,11 @@ namespace mfront {
                             ? mb.getLibrary() + mb.getClassName()
                             : mb.getClassName();
       output_file.open(name + ".md");
-      output_file.exceptions(std::ios::badbit | std::ios::failbit);
       tfel::raise_if(!output_file,
                      "BehaviourDocumentationGenerator::exe: "
-                     "could not open file 'src/" +
-                         name + ".txt'");
+                     "could not open file '" +
+                         name + ".md'");
+      output_file.exceptions(std::ios::badbit | std::ios::failbit);
       return output_file;
     }();
     DocumentationGeneratorBase::writeStandardLatexMacros(out);

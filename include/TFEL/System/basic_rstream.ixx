@@ -223,6 +223,7 @@ namespace tfel::system {
     this->operator>>(c);
     while (c != '\n') {
       res += c;
+      this->operator>>(c);
     }
     return res;
   }  // end of basic_rstream<Child,Traits>::getLine

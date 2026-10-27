@@ -318,34 +318,6 @@ namespace tfel::math {
     Id() noexcept;
 
     /*!
-     * \brief This function set the component (i,j) of a `stensor` to
-     * a value `Aij`, using the function `VoigtIndex`.
-     * \return void
-     * \tparam NumType: type of the values of the `stensor`
-     * \tparam T : type of the value `Aij` to set must be same as
-     * the type of the values of the `stensor`.
-     * \param[in] A: `stensor`
-     * \param[in] i,j: `unsigned short`
-     * \param[in] Aij: value that we want for \f[A_{ij}\f]
-     */
-    template <typename NumType, typename T>
-    TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto&,
-                                                 unsigned short,
-                                                 unsigned short,
-                                                 const T&) noexcept
-        requires(isAssignableTo<NumType, T>());
-
-    /*!
-     * \brief This function returns the component (i,j) of a `stensor`,
-     * using the function `VoigtIndex`.
-     * \return the value \f[A_{ij}\f]
-     * \param[in] A: `stensor`
-     * \param[in] i,j: `unsigned short`
-     */
-    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getComponent(
-        const StensorConcept auto&, unsigned short, unsigned short);
-
-    /*!
      * copy the value from a container
      */
     template <typename InputIterator>
@@ -754,6 +726,35 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T>
   using ConstStensorView = ConstView<stensor<N, T>>;
+
+  /*!
+   * \brief This function set the component (i,j) of a `stensor` to
+   * a value `Aij`, using the function `VoigtIndex`.
+   * \return void
+   * \tparam NumType: type of the values of the `stensor`
+   * \tparam T : type of the value `Aij` to set must be same as
+   * the type of the values of the `stensor`.
+   * \param[in] A: `stensor`
+   * \param[in] i,j: `unsigned short`
+   * \param[in] Aij: value that we want for \f[A_{ij}\f]
+   */
+  template <typename NumType, typename T>
+  TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto&,
+                                               unsigned short,
+                                               unsigned short,
+                                               const T&) noexcept
+      requires(isAssignableTo<NumType, T>());
+
+  /*!
+   * \brief This function returns the component (i,j) of a `stensor`,
+   * using the function `VoigtIndex`.
+   * \return the value \f[A_{ij}\f]
+   * \param[in] A: `stensor`
+   * \param[in] i,j: `unsigned short`
+   */
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getComponent(
+      const StensorConcept auto&, unsigned short, unsigned short);
+
   /*!
    * \brief export the given vector to an array
    */
@@ -965,7 +966,7 @@ namespace tfel::math {
   /*!
    * \brief return the symmetric product of two stensors as a symmetric tensor:
    * \f[
-   * s1 * s2 + s2 * s1
+   * \frac{1}{2}\left(s1 * s2 + s2 * s1\right)
    * \f]
    * \param[in] s1: first  tensor
    * \param[in] s2: second tensor

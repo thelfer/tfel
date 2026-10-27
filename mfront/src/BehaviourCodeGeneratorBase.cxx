@@ -71,7 +71,7 @@ namespace mfront {
       std::vector<std::string>& tmpnames,
       const BehaviourDescription& bd,
       const std::string& p) {
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(p)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false)) {
       tfel::raise(
           "getTemporaryVariableName: "
           "invalid variable prefix '" +
@@ -2258,8 +2258,11 @@ namespace mfront {
       mfront::writeBoundsChecks(os, v, v.name, "N", "policy", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writeBoundsChecks(os, v, v.name + '[' + std::to_string(i) + ']',
-                                  "N", "policy", true, b);
+        if (v.hasBounds(i)) {
+          mfront::writeBoundsChecks(os, v, v.getBounds(i),
+                                    v.name + '[' + std::to_string(i) + ']', "N",
+                                    "policy", true, b);
+        }
       }
     }
   }  // end of writeBoundsChecks
@@ -2270,8 +2273,11 @@ namespace mfront {
       mfront::writePhysicalBoundsChecks(os, v, v.name, "N", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writePhysicalBoundsChecks(
-            os, v, v.name + '[' + std::to_string(i) + ']', "N", true, b);
+        if (v.hasPhysicalBounds(i)) {
+          mfront::writePhysicalBoundsChecks(
+              os, v, v.getPhysicalBounds(i),
+              v.name + '[' + std::to_string(i) + ']', "N", true, b);
+        }
       }
     }
   }  // end of writePhysicalBoundsChecks
@@ -3127,14 +3133,27 @@ namespace mfront {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "mfront_dl0_l0[2]+=(this->" << vs << ")/2;\n";
           }
-          this->writeModelCall(os, tmpnames, h, md,
-                               std::vector<std::string>(1u, vs),
-                               std::vector<std::string>(1u, vs), "sfeh");
           if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "mfront_dl0_l0[1]+=(this->" << vs << ")/2;\n";
+          }
+          this->writeModelCall(os, tmpnames, h, md,
+                               std::vector<std::string>(1u, vs),
+                               std::vector<std::string>(1u, vs), "sfeh");
+          if ((h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
+              (h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)) {
+            os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl1_l0[2]+=(this->" << vs << ")/2;\n";
+          }
+          if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRESS)) {
+            os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl1_l0[1]+=(this->" << vs << ")/2;\n";
           }
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
@@ -3818,7 +3837,7 @@ namespace mfront {
     for (const auto& v : md.getLocalVariables()) {
 #pragma message( \
     "BehaviourCodeGeneratorBase: handle LocalDataStructure properly")
-      if ((v.type.size() >= 7) && (v.type.substr(0, 7) != "struct{")) {
+      if (!tfel::utilities::starts_with(v.type, "struct{")) {
         os << "os << \"" << displayName(v) << " : \" << b." << v.name
            << " << '\\n';\n";
       }
@@ -4979,10 +4998,10 @@ namespace mfront {
                << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">>::type, tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));\n";
+               << v2.type << ">&>(*(" + ptr + "));\n";
           } else {
-            os << "return tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));\n";
+            os << "return tfel::math::map<tfel::math::derivative_type<"
+               << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
           }
         } else {
           os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
@@ -5014,7 +5033,7 @@ namespace mfront {
                << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">>::type, tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));";
+               << v2.type << ">&>(*(" + ptr + "));";
           } else {
             os << "return tfel::math::map<tfel::math::derivative_type<"
                << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
@@ -5483,8 +5502,8 @@ namespace mfront {
         if (v.first.arraySize == 1u) {
           os << v.first.type << " d" << v.first.name << ";\n\n";
         } else {
-          os << v.first.type << " d" << v.first.name << "[" << v.first.arraySize
-             << "];\n\n";
+          os << "tfel::math::fsarray<" << v.first.arraySize << ", "
+             << v.first.type << "> d" << v.first.name << ";\n\n";
         }
       } else {
         os << "/*!\n"
@@ -5493,8 +5512,8 @@ namespace mfront {
         if (v.first.arraySize == 1u) {
           os << v.first.type << " " << v.first.name << "1;\n\n";
         } else {
-          os << v.first.type << " " << v.first.name << "1[" << v.first.arraySize
-             << "];\n\n";
+          os << "tfel::math::fsarray<" << v.first.arraySize << ", "
+             << v.first.type << "> " << v.first.name << "1;\n\n";
         }
       }
     }
@@ -5831,8 +5850,6 @@ namespace mfront {
              << v.first.name << "1 << '\\n';\n";
         }
       }
-      os << "os << \"" << displayName(v.second) << " : \" << b."
-         << v.second.name << " << '\\n';\n";
     }
     if (getUnicodeOutputOption()) {
       os << "os << \"\u0394t : \" << b.dt << '\\n';\n";

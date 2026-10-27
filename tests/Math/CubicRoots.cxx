@@ -145,5 +145,12 @@ int main() {
   generate_coef(a3, a2, a1, a0, M_2_SQRTPI, -M_SQRT2, M_SQRT1_2);
   solve(a3, a2, a1, a0);
 
+  // reduced form without linear term: one real root
+  double x = 0., y = 0., z = 0.;
+  assert(CubicRoots::exe(x, y, z, 1., 0., 0., -8.) == 1);
+  assert(std::abs(x - 2) < 1.e-14);
+  assert(CubicRoots::exe(x, y, z, 1., 0., 0., 8.) == 1);
+  assert(std::abs(x + 2) < 1.e-14);
+
   return EXIT_SUCCESS;
 }

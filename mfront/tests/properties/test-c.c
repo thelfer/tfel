@@ -20,6 +20,7 @@
 #include<assert.h>
 
 #include"ErrnoHandlingCheck.hxx"
+#include"PoissonRatioTest.hxx"
 #include"VanadiumAlloy_YoungModulus_SRMA.hxx"
 #include"VanadiumAlloy_PoissonRatio_SRMA.hxx"
 #include"VanadiumAlloy_ThermalExpansion_SRMA.hxx"
@@ -33,6 +34,8 @@ int main(void){
   const double n = 0.3272  * (1.-3.056e-5*(T-293.15));
   assert(fabs(VanadiumAlloy_YoungModulus_SRMA(900.)-y)<1.e-14*y);
   assert(fabs(VanadiumAlloy_PoissonRatio_SRMA(900.)-n)<1.e-14*n);
+  // material property without input, exported by the library
+  assert(fabs(PoissonRatioTest()-0.39991)<1.e-14);
   // check for errno value
   assert(isnan(ErrnoHandlingCheck(2)));
   assert(!isnan(ErrnoHandlingCheck(0)));
