@@ -6,6 +6,7 @@
  */
 
 @ModellingHypothesis 'GeneralisedPlaneStrain';
+@AccelerationAlgorithm 'FAnderson';
 @Behaviour<umat> @library@ 'umatelasticity_frst';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

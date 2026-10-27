@@ -5,6 +5,7 @@
  * \brief 08 octobre 2014
  */
 
+@AccelerationAlgorithm 'UAnderson';
 @Behaviour<umat> @library@ 'umatpolycrystals_dd_cc';
 @StiffnessMatrixType 'Elastic' ;
 
