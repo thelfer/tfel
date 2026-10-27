@@ -53,27 +53,6 @@ namespace mfront {
     std::vector<std::string> cmds;
   };  // end of struct SpecificTargetDescription
 
-  /*!
-   * \brief write a library description to a stream
-   * \param[out] os : output stream
-   * \param[in]  t  : library description
-   */
-  MFRONT_VISIBILITY_EXPORT std::ostream& operator<<(
-      std::ostream&, const SpecificTargetDescription&);
-  /*!
-   * \brief read a SpecificTargetDescription from a stream created by the
-   * CxxTokenizer class
-   * \param[in,out] p  : current position in the stream
-   * \param[in]     pe : end of the stream
-   * \return the library description read.
-   * If this function succeed, p points past the last token treated.
-   * If this function fails,   p is unchanged.
-   */
-  template <>
-  MFRONT_VISIBILITY_EXPORT SpecificTargetDescription
-  read(tfel::utilities::CxxTokenizer::const_iterator&,
-       const tfel::utilities::CxxTokenizer::const_iterator);
-
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_SPECIFICTARGETDESCRIPTION_HXX */

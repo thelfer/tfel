@@ -168,10 +168,12 @@ namespace mfront {
   /*!
    * \brief various checks on variables
    * \param[in] v  : variables
+   * \param[in] b  : check if bounds are declared
    */
   static void performPedanticChecks(const VariableDescriptionContainer& vc,
                                     const std::set<std::string>& m,
-                                    const std::string& t) {
+                                    const std::string& t,
+                                    const bool b = true) {
     auto& log = getLogStream();
     auto& glossary = tfel::glossary::Glossary::getGlossary();
     // boucle sur md.inputs
@@ -182,10 +184,10 @@ namespace mfront {
         if ((!v.hasGlossaryName()) && (!v.hasEntryName())) {
           log << "- " << t << " '" << v.name << "' has no external name.\n";
         }
-        if (!v.hasPhysicalBounds()) {
+        if ((b) && (!v.hasPhysicalBounds())) {
           log << "- " << t << " '" << v.name << "' has no physical bounds.\n";
         }
-        if (!v.hasBounds()) {
+        if ((b) && (!v.hasBounds())) {
           log << "- " << t << " '" << v.name << "' has no bounds.\n";
         }
         if (v.description.empty()) {
@@ -238,8 +240,9 @@ namespace mfront {
     log << "\n* Pedantic checks of " << this->fd.fileName << "\n\n";
     performPedanticChecks(this->fd);
     performPedanticChecks(this->md.inputs, this->md.f.used_inputs, "input");
+    // bounds can't be declared for parameters
     performPedanticChecks(this->md.parameters, md.f.used_parameters,
-                          "parameter");
+                          "parameter", false);
     performPedanticChecks(this->md.output, "output");
     log << "\n# End of pedantic checks\n";
   }  // end of doPedanticChecks

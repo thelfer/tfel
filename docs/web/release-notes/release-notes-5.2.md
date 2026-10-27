@@ -689,6 +689,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
+## Issue 1215: [mfront] Installed GenericData and LSDYNA explicit headers, undefined declarations of the code generator and specific targets, madnex search paths documentation, pedantic bounds of parameters, castem21 keyword restrictions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1215>
+
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 
 For more details, see <https://github.com/thelfer/tfel/issues/1195>
