@@ -33,7 +33,7 @@ The entry points can be filtered. The following filters are available:
 - `--filter-by-material`
 - `--filter-by-name`.
 - `--filter-by-type`. This option can be followed by
-  `material-property`, `behaviour` or `model`
+  `material_property`, `behaviour` or `model`
 
 Filters are based on case-insensitive regular expressions. 
 

@@ -209,7 +209,7 @@ namespace mfront {
           "the choosen default value for the convergence threshold could be "
           "too stringent (" +
           converter.str() +
-          "). You may want to consider a more stringent value (1e-14 "
+          "). You may want to consider a less stringent value (1e-14 "
           "is generally a good choice).");
     }
     if ((!safe) && (epsilon > 1e-12)) {
@@ -575,7 +575,8 @@ namespace mfront {
         bd.addLocalVariable(h, v, BehaviourData::UNREGISTRED);
       } else {
         tfel::raise_if(!r.first,
-                       "ImplicitDSLBase::completeVariableDeclaration: "
+                       "IsotropicBehaviourDSLBase::"
+                       "completeVariableDeclaration: "
                        "Parameter '" +
                            n + "' is not defined for all hypotheses");
         if (!g.empty()) {
@@ -702,7 +703,7 @@ namespace mfront {
         for (const auto& [id, lihrs] : this->ihrs) {
           if (id + 1 > this->getNumberOfFlowRules()) {
             this->throwRuntimeError(
-                "IsotropicBehaviourDSLBase::completeVariableDeclaration",
+                "IsotropicBehaviourDSLBase::endsInputFileProcessing",
                 "no flow rule associated with flow id '" + std::to_string(id) +
                     "'");
           }
@@ -723,7 +724,7 @@ namespace mfront {
         if (this->ihrs.size() != 0) {
           if ((this->ihrs.size() != 1) || (!this->ihrs.contains(0))) {
             this->throwRuntimeError(
-                "IsotropicBehaviourDSLBase::completeVariableDeclaration",
+                "IsotropicBehaviourDSLBase::endsInputFileProcessing",
                 "internal error (inconsistent isotropic hardening");
           }
           if (this->ihrs.at(0).size() == 1) {
@@ -737,7 +738,7 @@ namespace mfront {
           }
           if (!d.hasCode(BehaviourData::FlowRule)) {
             this->throwRuntimeError(
-                "IsotropicBehaviourDSLBase::completeVariableDeclaration",
+                "IsotropicBehaviourDSLBase::endsInputFileProcessing",
                 "no flow rule defined");
           }
           add_ihrs(BehaviourData::BeforeFlowRule, "", this->ihrs.at(0));
