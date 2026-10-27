@@ -618,7 +618,7 @@ namespace tfel::math {
         const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                                   (isAssignableTo<
                                       BinaryOperationResult<
-                                          base_type<ValueType>,
+                                          ValueType,
                                           ValueType,
                                           OpDiv>,
                                       numeric_type<ST2toST2Type>>()));
@@ -661,7 +661,7 @@ namespace tfel::math {
         const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                                   (isAssignableTo<
                                       BinaryOperationResult<
-                                          base_type<ValueType>,
+                                          ValueType,
                                           ValueType,
                                           OpDiv>,
                                       numeric_type<ST2toST2Type>>()));
