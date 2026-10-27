@@ -68,8 +68,9 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] micro: ParticulateMicrostructure
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
+  requires((N == 3) &&
+           (tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                               StressType>()))
       HomogenizationScheme<N, StressType> computeDilute(
           ParticulateMicrostructure<N, StressType>&,
           int max_iter_anisotropic_integration = 12,
@@ -85,8 +86,9 @@ namespace tfel::material::homogenization::elasticity {
    * \return an object of type HomogenizationScheme
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
+  requires((N == 3) &&
+           (tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                               StressType>()))
       HomogenizationScheme<N, StressType> computeMoriTanaka(
           ParticulateMicrostructure<N, StressType>&,
           int max_iter_anisotropic_integration = 12,
@@ -103,8 +105,9 @@ namespace tfel::material::homogenization::elasticity {
    */
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
+  requires((N == 3) &&
+           (tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                               StressType>()))
       HomogenizationScheme<N, StressType> computeAsymmetricSelfConsistent(
           ParticulateMicrostructure<N, StressType>&,
           const tfel::types::real<StressType>&,
@@ -123,8 +126,9 @@ namespace tfel::material::homogenization::elasticity {
    */
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
+  requires((N == 3) &&
+           (tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                               StressType>()))
       HomogenizationScheme<N, StressType> computeSelfConsistent(
           Polycrystal<StressType>&,
           const tfel::types::real<StressType>&,

@@ -113,7 +113,7 @@ namespace tfel::material::homogenization::elasticity {
     Phase(real f, const tfel::math::st2tost2<N, StressType>& C)
         : fraction(f), stiffness(C), isotropic(false) {}
 
-    Phase(real f, const IsotropicModuli<StressType>& IM)
+    Phase(real f, const IsotropicModuli<StressType>& IM) requires(N == 3)
         : fraction(f),
           stiffness(computeIsotropicStiffnessTensor<StressType>(IM)),
           isotropic(true) {}
@@ -128,7 +128,8 @@ namespace tfel::material::homogenization::elasticity {
       this->stiffness = C;
       this->isotropic = false;
     }
-    void changeElasticityOfPhase(const IsotropicModuli<StressType>& IM) {
+    void changeElasticityOfPhase(const IsotropicModuli<StressType>& IM)
+        requires(N == 3) {
       this->stiffness = computeIsotropicStiffnessTensor<StressType>(IM);
       this->isotropic = true;
     }
