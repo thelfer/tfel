@@ -58,6 +58,11 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- Inputs that were silently ignored are now rejected (see Issue #1256):
+  the `overriding_parameters` option of the model DSLs, `@Bounds` and
+  `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
+  component of a scalar variable, and the `Ksf` option of the
+  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
 
 # Improvements to the build system
 
@@ -684,6 +689,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1256: [mfront] Model overriding parameters, bounds on main variables and on components, ScalarDamage in axisymmetrical generalised plane stress, keyword pages, Ksf of the harmonic sum flow, brick base classes exports, mfront-doc/mfront-query global options, MFrontLock
+
+For more details, see <https://github.com/thelfer/tfel/issues/1256>
 
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
