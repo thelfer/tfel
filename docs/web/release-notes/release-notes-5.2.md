@@ -685,9 +685,17 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
+
+For more details, see <https://github.com/thelfer/tfel/issues/1217>
+
 ## Issue 1215: [mfront] Installed GenericData and LSDYNA explicit headers, undefined declarations of the code generator and specific targets, madnex search paths documentation, pedantic bounds of parameters, castem21 keyword restrictions
 
 For more details, see <https://github.com/thelfer/tfel/issues/1215>
+
+## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
+
+For more details, see <https://github.com/thelfer/tfel/issues/1195>
 
 ## Issue 1193: [mtest] End of input in the MTest and PTest parsers, ansys input file example of orthotropic behaviours, misleading interface messages
 
@@ -701,9 +709,25 @@ For more details, see <https://github.com/thelfer/tfel/issues/1191>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1189>
 
+## Issue 1187: [mfront] castem logarithmic strain helpers, stensor absolute value, DSLBase helpers, FSES return codes, TestDescription constructor, exported constants precision, tfel-check columns and ABAQUSEXPLICIT_NTHREADS
+
+For more details, see <https://github.com/thelfer/tfel/issues/1187>
+
+## Issue 1185: [mtest] dianafea wrapper shear order, tfel-check JUnit escaping, raw stream readers, Python docstrings, documentation links and tutorial examples
+
+For more details, see <https://github.com/thelfer/tfel/issues/1185>
+
 ## Issue 1183: [cmake] Static library names, test dependencies, C++ standard, static MFront package, environment scripts, Doxygen install, installed MFront headers and exports
 
 For more details, see <https://github.com/thelfer/tfel/issues/1183>
+
+## Issue 1181: [python] mfront.database entry points, mtest initial values and depths, tfel.material imports, mfm-test-generator, mfm --filter-by-type and MTest files on failure
+
+For more details, see <https://github.com/thelfer/tfel/issues/1181>
+
+## Issue 1179: [mfront] Wrong or misleading error messages and documentation of DSLs, tools, material property interfaces, stress criteria, MTest bindings and tfel-check
+
+For more details, see <https://github.com/thelfer/tfel/issues/1179>
 
 ## Issue 1177: [mfront] ansys, comsol, dianafea, castem, aster and cyrano interfaces: material properties layout, tangent operator conventions, 2D sizes, plane stress checks, Gibiane examples and messages
 
@@ -712,6 +736,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1177>
 ## Issue 1175: [installation] Doxygen deployment, keyword descriptions, installation pages, maintainer scripts, generic interface and math docs, quantity tests option, physical constants and glossary generators
 
 For more details, see <https://github.com/thelfer/tfel/issues/1175>
+
+## Issue 1173: [mfront] abaqus and amitex input examples, cyrano header, ansys/lsdyna/dianafea example files and zmat interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/1173>
 
 ## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
 

@@ -313,9 +313,7 @@ namespace mfront {
     while (p2 != p2e) {
       msg += "'" + *p2 + "'";
       if (++p2 != p2e) {
-        msg += ",";
-      } else {
-        msg += " and ";
+        msg += (std::next(p2) != p2e) ? ", " : " and ";
       }
     }
     return msg;
@@ -332,7 +330,7 @@ namespace mfront {
   void MaterialPropertyDSL::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::setMaterial",
-                              "material name alreay defined");
+                              "material name already defined");
     }
     if (!isValidMaterialName(m)) {
       this->throwRuntimeError("MaterialPropertyDSL::setMaterial",
@@ -355,7 +353,7 @@ namespace mfront {
   void MaterialPropertyDSL::treatLibrary() {
     if (!this->md.library.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
-                              "material name alreay defined");
+                              "library name already defined");
     }
     const auto& l = this->readOnlyOneToken();
     if (!isValidLibraryName(l)) {

@@ -593,7 +593,7 @@ d.author = 'John Doe'
 d.date = '01/03/2022'
 d.name = 'UniaxialTensileTest'
 d.behaviour = 'Plasticity'
-mfm_test_generator.loadMFMTestGeneratorFileContent(d, 'Plasticity.mdnx')
+mfm_test_generator.loadMFMTestGeneratorFileContent(d, 'Plasticity.mfmtg')
 
 mfm_test_generator.write(d,'Plasticity.mdnx')
 ~~~~
