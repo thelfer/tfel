@@ -138,7 +138,7 @@ namespace mfront {
              "invalid bounds type");
     throw_if(!this->registredTestBounds.insert(b).second,
              "test bounds for variable '" + b.first + "' already registred");
-    return {true, ++p};
+    return {true, p};
   }  // end of registerTestBounds
 
   std::pair<bool, GnuplotMaterialPropertyInterface::tokens_iterator>
@@ -208,8 +208,8 @@ namespace mfront {
                           : mpd.material + "_" + mpd.className;
     const auto target = name + "GnuplotGraph";
     insert_if(d.specific_targets[target].deps, name + "CppTest");
-    insert_if(d.specific_targets[target].sources, "./" + name + "CppTest");
-    insert_if(d.specific_targets[target].sources,
+    insert_if(d.specific_targets[target].cmds, "./" + name + "CppTest");
+    insert_if(d.specific_targets[target].cmds,
               string(GNUPLOT_PATH) + " " + name + ".gp");
     insert_if(d.specific_targets["graph"].deps, target);
     insert_if(d.specific_targets["check"].deps, target);
@@ -303,7 +303,7 @@ namespace mfront {
               for (auto p6 = testBounds.begin(); p6 != testBounds.end(); ++p6) {
                 if (p6->first == p4->name) {
                   out << p4->name << "="
-                      << (p6->second.upperBound - p6->second.lowerBound) / 2.;
+                      << (p6->second.upperBound + p6->second.lowerBound) / 2.;
                   if (p3 + 1 == inputs.end()) {
                     if (p4 + 2 != inputs.end()) out << ",";
                   } else {
