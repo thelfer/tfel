@@ -113,8 +113,9 @@ namespace mtest {
 
   void SchemeParserBase::handleLonelySeparator(SchemeBase&,
                                                tokens_iterator& p) {
-    mfront::getLogStream() << this->file << ":" << p->line << ":" << p->offset
-                           << ": warning: extra ‘;’\n";
+    const auto previous = std::prev(p);
+    mfront::getLogStream() << this->file << ":" << previous->line << ":"
+                           << previous->offset << ": warning: extra ‘;’\n";
   }  // end of SchemeParserBase::handleAuthor
 
   void SchemeParserBase::handleDate(SchemeBase& t, tokens_iterator& p) {
@@ -130,8 +131,8 @@ namespace mtest {
     auto currentLine = p->line;
     auto openedBrackets = 1u;
     auto description = std::string{};
-    while ((!((p->value == "}") && (openedBrackets == 1u))) &&
-           (p != this->tokens.end())) {
+    while ((p != this->tokens.end()) &&
+           (!((p->value == "}") && (openedBrackets == 1u)))) {
       if (p->value == "{") {
         const auto previous = std::prev(p);
         if ((previous->value.size() > 0) &&
@@ -851,8 +852,8 @@ namespace mtest {
       log << "SchemeParserBase::execute : treating keyword '" << p->value
           << "' at line '" << p->line << "'\n";
     }
+    const auto line = p->line;
     ++p;
-    auto line = p->line;
     try {
       (this->*(pc->second))(t, p);
     } catch (std::exception& e) {

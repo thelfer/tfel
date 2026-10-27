@@ -33,7 +33,7 @@ if(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
 endif(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
 
 set(CMAKE_CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # tfel specific macros
 include(cmake/modules/tfel.cmake)

@@ -310,11 +310,13 @@ namespace castem {
       using tensor = tfel::math::tensor<1u, CastemReal>;
       const auto F = tensor::buildFromFortranMatrix(Fv);
       h.emplace<LogarithmicStrainHandler<1u>>(s, F);
+      return;
     } else if (NTENS == 4) {
       constexpr auto s = LogarithmicStrainHandler<2u>::EULERIAN;
       using tensor = tfel::math::tensor<2u, CastemReal>;
       const auto F = tensor::buildFromFortranMatrix(Fv);
       h.emplace<LogarithmicStrainHandler<2u>>(s, F);
+      return;
     }
     tfel::raise_if(NTENS != 6,
                    "CastemFiniteStrain::initializeLogarithmicStrainHandler: "
