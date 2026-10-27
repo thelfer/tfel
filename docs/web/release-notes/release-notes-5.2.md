@@ -709,6 +709,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1189>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1187>
 
+## Issue 1185: [mtest] dianafea wrapper shear order, tfel-check JUnit escaping, raw stream readers, Python docstrings, documentation links and tutorial examples
+
+For more details, see <https://github.com/thelfer/tfel/issues/1185>
+
 ## Issue 1183: [cmake] Static library names, test dependencies, C++ standard, static MFront package, environment scripts, Doxygen install, installed MFront headers and exports
 
 For more details, see <https://github.com/thelfer/tfel/issues/1183>
