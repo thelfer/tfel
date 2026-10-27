@@ -131,7 +131,15 @@ namespace mfront {
     if (p == this->interfaces_options.end()) {
       this->interfaces_options.insert({id, opts});
     } else {
-      p->second = merge(p->second, opts, false);
+      // options already defined with the same value are ignored
+      auto nopts = DataMap{};
+      for (const auto& o : opts) {
+        const auto po = p->second.find(o.first);
+        if ((po == p->second.end()) || (po->second != o.second)) {
+          nopts.insert(o);
+        }
+      }
+      p->second = merge(p->second, nopts, false);
     }
   }  // end of addInterfaceOptions
 
