@@ -132,6 +132,7 @@ static void generate_cxx(const std::vector<Constant>& cs) {
     }
   };
   std::ofstream os("PhysicalConstants.hxx");
+  os.precision(std::numeric_limits<double>::max_digits10);
   os << "/*!\n"
      << " * \\file   include/TFEL/PhysicalConstants.hxx\n"
      << " * \\brief\n"
@@ -238,6 +239,7 @@ static void generate_cxx(const std::vector<Constant>& cs) {
 
 static void generate_python(const std::vector<Constant>& cs) {
   std::ofstream os("PhysicalConstants-python.cxx");
+  os.precision(std::numeric_limits<double>::max_digits10);
   os << "/*!\n"
      << " * \\file   bindings/python/tfel/PhysicalConstants.cxx\n"
      << " * \\brief\n"
