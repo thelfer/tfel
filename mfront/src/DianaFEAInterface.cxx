@@ -255,9 +255,6 @@ namespace mfront {
     if (bd.getAttribute(BehaviourData::profiling, false)) {
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "#include\"MFront/DianaFEA/DianaFEARotationMatrix.hxx\"\n";
-    }
     out << "#include\"MFront/DianaFEA/"
            "DianaFEAStressFreeExpansionHandler.hxx\"\n\n"
         << "#include\"MFront/DianaFEA/DianaFEAOutOfBoundsPolicy.hxx\"\n"
