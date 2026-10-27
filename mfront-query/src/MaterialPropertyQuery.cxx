@@ -105,7 +105,6 @@ namespace mfront {
         "--bounds-type",
         CallBack("return the bounds type associated to a variable.\n"
                  "The returned value has the follwing meaning:\n"
-                 "- `None`\n"
                  "- `Lower`\n"
                  "- `Upper`\n"
                  "- `LowerAndUpper`",
@@ -153,7 +152,6 @@ namespace mfront {
         "--physical-bounds-type",
         CallBack("return the physical bounds type associated to a variable.\n"
                  "The returned value has the follwing meaning:\n"
-                 "- `None`\n"
                  "- `Lower`\n"
                  "- `Upper`\n"
                  "- `LowerAndUpper`",
@@ -179,7 +177,7 @@ namespace mfront {
     const auto& qn = q.as_string();
     const auto pn = q.getOption();
     tfel::raise_if(pn.empty(),
-                   "Behaviour::treatStandardQuery2 : "
+                   "MaterialPropertyQuery::treatParameterDefaultValue: "
                    "no option given to the '" +
                        qn + "' query");
     this->queries.push_back(

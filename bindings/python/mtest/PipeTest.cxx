@@ -108,7 +108,8 @@ static void PipeTest_setAxialLoading(mtest::PipeTest& t, const std::string& h) {
         h +
         "').\n"
         "Valid modelling hypothesis are "
-        "'None', 'ImposedAxialForce' and 'EndCapEffect'");
+        "'None', 'ImposedAxialForce', 'ImposedAxialGrowth' and "
+        "'EndCapEffect'");
   }
 }  // end of PipeTest_setAxialLoading
 
@@ -156,7 +157,7 @@ static void PipeTest_setElementType(mtest::PipeTest& t, const std::string& e) {
         e +
         "').\n"
         "Valid element type are "
-        "'Linear' and 'Quadratic'");
+        "'Linear', 'Quadratic' and 'Cubic'");
   }
 }  // end of PipeTest_setElementType
 

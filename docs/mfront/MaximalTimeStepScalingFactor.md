@@ -2,12 +2,12 @@ The `@MaximalTimeStepScalingFactor` let the user define the default
 value of the `maximal_time_step_scaling_factor` parameter.
 
 This parameter defines the maximal value by which the time step will
-be increase in case of convergence. This parameter acts as a lower
+be increase in case of convergence. This parameter acts as an upper
 bound for the value returned by the
 `@APosterioriTimeStepScalingFactor` code block.
 
-This keyword is followed by a number which must be strictly greater
-than one.
+This keyword is followed by a number which must be greater than or
+equal to one.
 
 ## Note
 

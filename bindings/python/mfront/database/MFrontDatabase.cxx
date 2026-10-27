@@ -136,7 +136,7 @@ PYBIND11_MODULE(_mfront_database, m) {
       .def_readonly("library", &MFrontDatabase::EntryPoint::library)
       .def_readonly("name", &MFrontDatabase::EntryPoint::name)
       .def_readonly("source", &MFrontDatabase::EntryPoint::source)
-      .def_readonly("source", &MFrontDatabase::EntryPoint::type);
+      .def_readonly("type", &MFrontDatabase::EntryPoint::type);
 
   pybind11::class_<
       MFrontDatabase::AnalyseDirectoryResults::LibraryAnalysisFailureReport>(

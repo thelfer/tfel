@@ -124,7 +124,9 @@ static void generate_cxx(const std::vector<Constant>& cs) {
         os << ' ' << c.description;
       }
       if (!c.unit.empty()) {
-        os << " (" << c.unit << ')';
+        using tfel::utilities::replace_all;
+        os << " (" << replace_all(replace_all(c.unit, "^{", ""), "}", "")
+           << ')';
       }
       os << '\n';
     }
@@ -139,9 +141,11 @@ static void generate_cxx(const std::vector<Constant>& cs) {
      << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights\n"
      << " * reserved.\n"
      << " * This project is publicly released under either the GNU GPL "
-        "Licence\n"
-     << " * or the CECILL-A licence. A copy of thoses licences are delivered\n"
-     << " * with the sources of TFEL. CEA or EDF may also distribute this\n"
+        "Licence with\n"
+     << " * linking exception or the CECILL-A licence. A copy of thoses "
+        "licences are\n"
+     << " * delivered with the sources of TFEL. CEA or EDF may also distribute "
+        "this\n"
      << " * project under specific licensing conditions.\n"
      << " */\n"
      << "\n"
@@ -164,8 +168,9 @@ static void generate_cxx(const std::vector<Constant>& cs) {
      << "//! a simple alias\n"
      << "template<int N1, int N2, int N3, int N4, int N5, int N6, int N7>\n"
      << "using quantity = "
-     << "tfel::math::qt<typename tfel::math::GenerateUnit<N1, N2, N3, N4, N5, "
-        "N6, N7>::type, NumericType>;\n";
+     << "tfel::math::qt<typename tfel::math::unit::UnitRebind<"
+        "tfel::math::unit::makeUnitExponents<N1, N2, N3, N4, N5, N6, N7>()>::"
+        "type, NumericType>;\n";
   for (const auto& c : cs) {
     write_comments(os, c);
     const auto type = [&c]() -> std::string {
@@ -250,23 +255,14 @@ static void generate_python(const std::vector<Constant>& cs) {
      << " * project under specific licensing conditions. \n"
      << " */\n"
      << "\n"
-     << "#include<boost/python.hpp>\n"
+     << "#include <pybind11/pybind11.h>\n"
+     << "#include <pybind11/stl.h>\n"
      << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
      << "\n"
-     << "void declarePhysicalConstants();\n"
+     << "void declarePhysicalConstants(pybind11::module_& m);\n"
      << "\n"
      << "struct TFEL_VISIBILITY_LOCAL PhysicalConstants{\n";
   for (const auto& c : cs) {
-    if ((!c.description.empty()) || (!c.unit.empty())) {
-      os << "//!";
-      if (!c.description.empty()) {
-        os << ' ' << c.description;
-      }
-      if (!c.unit.empty()) {
-        os << " (" << c.unit << ')';
-      }
-      os << '\n';
-    }
     os << "static const double " << c.name << ";\n";
   }
   os << "};\n\n";
@@ -275,33 +271,17 @@ static void generate_python(const std::vector<Constant>& cs) {
        << c.value << ");\n";
   }
   os << "\n"
-     << "void declarePhysicalConstants()\n"
+     << "void declarePhysicalConstants(pybind11::module_& m)\n"
      << "{\n"
-     << "  boost::python::class_<PhysicalConstants>(\"PhysicalConstants\")\n";
+     << "  pybind11::class_<PhysicalConstants> w(m, \"PhysicalConstants\", "
+        "\"Physical constants\");\n"
+     << "  w";
   for (const auto& c : cs) {
-    auto write_comments = [&os, &c] {
-      if ((!c.description.empty()) || (!c.unit.empty())) {
-        os << ",\n\"";
-        if (!c.description.empty()) {
-          os << c.description;
-        }
-        if (!c.unit.empty()) {
-          if (!c.description.empty()) {
-            os << ' ';
-          }
-          os << "(" << c.unit << ')';
-        }
-        os << '"';
-      }
-    };
-    os << ".def_readonly(\"" << c.name << "\",PhysicalConstants::" << c.name;
-    write_comments();
-    os << ")\n";
+    os << ".def_readonly_static(\"" << c.name
+       << "\", &PhysicalConstants::" << c.name << ")\n";
     if (!c.short_name.empty()) {
-      os << ".def_readonly(\"" << c.short_name
-         << "\",PhysicalConstants::" << c.name;
-      write_comments();
-      os << ")\n";
+      os << ".def_readonly_static(\"" << c.short_name
+         << "\", &PhysicalConstants::" << c.name << ")\n";
     }
   }
   os << ";\n\n"
