@@ -43,6 +43,8 @@ struct StensorComputeEigenvectors4 final : public tfel::tests::TestCase {
                           tfel::math::tvector<3u, double>{1, 0, 0}}) {
       this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>(l, 1e-13);
     }
+    // a large isotropic part
+    this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>({1, 1.0002, 1.001}, 1e-13);
     return this->result;
   }  // end of execute
 
