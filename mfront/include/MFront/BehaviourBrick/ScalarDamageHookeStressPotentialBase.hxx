@@ -59,6 +59,8 @@ namespace mfront::bbrick {
         BehaviourDescription&) const override;
     void declareComputeStressForIsotropicBehaviour(
         BehaviourDescription&, LocalDataStructure&) const override;
+    void addAxisymmetricalGeneralisedPlaneStressSupport(
+        BehaviourDescription&, const AbstractBehaviourDSL&) const override;
     void addGenericTangentOperatorSupport(
         BehaviourDescription&, const AbstractBehaviourDSL&) const override;
     void addGenericPredictionOperatorSupport(

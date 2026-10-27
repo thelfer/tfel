@@ -131,21 +131,21 @@ namespace mfront::bbrick {
                      "(this->D(1,1)))*prediction_strain(0)+\n";
                 m += "                       "
                      "(this->D(0,2)-((this->D(0,1))*(this->D(1,2)))/"
-                     "(this->D(1,1)))*prediction_strain(2)+\n";
+                     "(this->D(1,1)))*prediction_strain(2))+\n";
                 m += "                       "
                      "(this->D(0,1))/"
                      "(this->D(1,1))*(this->sigzz+(this->theta)*(this->"
-                     "dsigzz)));\n";
+                     "dsigzz));\n";
                 m += "prediction_stress(2) = " + gde + "*(" +
                      "(this->D(2,0)-((this->D(2,1))*(this->D(1,0)))/"
                      "(this->D(1,1)))*prediction_strain(0)+\n";
                 m += "                       "
                      "(this->D(2,2)-((this->D(2,1))*(this->D(1,2)))/"
-                     "(this->D(1,1)))*prediction_strain(2)+\n";
+                     "(this->D(1,1)))*prediction_strain(2))+\n";
                 m += "                       "
                      "(this->D(2,1))/"
                      "(this->D(1,1))*(this->sigzz+(this->theta)*(this->"
-                     "dsigzz)));\n";
+                     "dsigzz));\n";
                 m += "return prediction_stress;\n";
               }
             } else {
@@ -182,20 +182,20 @@ namespace mfront::bbrick {
               m += "StressStensor prediction_stress;\n";
               m += "StrainStensor prediction_strain = "
                    "this->eel+(this->theta)*this->deto;\n";
-              m += "prediction_stress(0) = " + gde + " * (2 * (" + mu +
+              m += "prediction_stress(0) = " + gde + " * 2 * (" + mu +
                    ") * ((" + lambda + ")/(" + lambda + "+2*(" + mu +
                    "))*(prediction_strain(0)+prediction_strain(2))+"
                    "prediction_"
                    "strain(0))+\n";
               m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
-                   "))*(this->sigzz+(this->theta)*(this->dsigzz)));\n";
-              m += "prediction_stress(2) = " + gde + "*(2*(" + mu + ")*((" +
+                   "))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
+              m += "prediction_stress(2) = " + gde + "*2*(" + mu + ")*((" +
                    lambda + ")/(" + lambda + "+2*(" + mu +
                    "))*(prediction_strain(0)+prediction_strain(2))+"
                    "prediction_"
                    "strain(2))+\n";
               m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
-                   "))*(this->sigzz+(this->theta)*(this->dsigzz)));\n";
+                   "))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
               m += "prediction_stress(1) = "
                    "this->sigzz+(this->theta)*(this->dsigzz);\n";
               m += "return prediction_stress;\n";
@@ -377,6 +377,170 @@ namespace mfront::bbrick {
                         "declareComputeStressForIsotropicBehaviour: end\n";
     }
   }  // end of declareComputeStressForIsotropicBehaviour
+
+  void ScalarDamageHookeStressPotentialBase::
+      addAxisymmetricalGeneralisedPlaneStressSupport(
+          BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
+    const auto agps = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS;
+    // damage effect at the end of the time step
+    const std::string gd_ets = "(1 - this->d - this->dd)";
+    auto c = std::string{};
+    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+    if ((bd.isStrainMeasureDefined()) &&
+        (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+      c += "this->sebdata.exp_etozz = std::exp(this->etozz+this->detozz);\n";
+    }
+    if ((bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,
+                               false)) ||
+        (bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
+                               false))) {
+      const std::string D =
+          bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
+                                false)
+              ? "this->D_tdt"
+              : "this->D";
+      c += "// the generalised plane stress equation is satisfied\n";
+      c += "// at the end of the time step\n";
+      c += "this->sebdata.szz = ";
+      c += "(" + D + "(1,1))*(this->eel(1)+this->deel(1))+";
+      c += "(" + D + "(1,0))*(this->eel(0)+this->deel(0))+";
+      c += "(" + D + "(1,2))*(this->eel(2)+this->deel(2));\n";
+      if ((bd.isStrainMeasureDefined()) &&
+          (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+        c += "fetozz = ";
+        c += "(" + gd_ets + " * (this->sebdata.szz)-";
+        c += "this->sebdata.exp_etozz * (this->sigzz+this->dsigzz))/";
+        c += "(" + D + "(1,1));\n";
+      } else {
+        c += "fetozz = ";
+        c += "(" + gd_ets + " * (this->sebdata.szz)-this->sigzz-this->dsigzz)/";
+        c += "(" + D + "(1,1));\n";
+      }
+      c += "// modification of the partition of strain\n";
+      c += "feel(1) -= this->detozz;\n";
+      if ((idsl.getSolver().usesJacobian()) &&
+          (!idsl.getSolver().requiresNumericalJacobian())) {
+        c += "// jacobian\n";
+        c += "dfeel_ddetozz(1) = -1;\n";
+        c += "dfetozz_ddetozz  = real(0);\n";
+        c += "dfetozz_ddeel(1) = " + gd_ets + ";\n";
+        c += "dfetozz_ddeel(0) = " + gd_ets + " * (" + D + "(1,0))/(" + D +
+             "(1,1));\n";
+        c += "dfetozz_ddeel(2) = " + gd_ets + " * (" + D + "(1,2))/(" + D +
+             "(1,1));\n";
+        c += "dfetozz_ddd = -(this->sebdata.szz)/(" + D + "(1,1));\n";
+        if ((bd.isStrainMeasureDefined()) &&
+            (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+          c += "dfetozz_ddetozz = ";
+          c += "-this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)/";
+          c += "(" + D + "(1,1));\n";
+        }
+      }
+    } else {
+      if (bd.areElasticMaterialPropertiesDefined()) {
+        c += "// the generalised plane stress equation \n";
+        c += "// is satisfied at the end of the time step\n";
+        c += "this->sebdata.szz = \n";
+        c += "(this->lambda_tdt+2*(this->mu_tdt))*";
+        c += "(this->eel(1)+this->deel(1))";
+        c += "+ (this->lambda_tdt)*";
+        c += "(this->eel(0)+this->deel(0)+";
+        c += " this->eel(2)+this->deel(2));\n";
+        if ((bd.isStrainMeasureDefined()) &&
+            (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+          c += "fetozz = ";
+          c += "(" + gd_ets + " * (this->sebdata.szz)-";
+          c += "this->sebdata.exp_etozz * (this->sigzz+this->dsigzz))/";
+          c += "this->young_tdt;\n";
+        } else {
+          c += "fetozz   = ";
+          c += "(" + gd_ets +
+               " * (this->sebdata.szz)-this->sigzz-this->dsigzz)/"
+               "this->young_tdt;\n";
+        }
+        c += "// modification of the partition of strain\n";
+        c += "feel(1) -= this->detozz;\n";
+        if ((idsl.getSolver().usesJacobian()) &&
+            (!idsl.getSolver().requiresNumericalJacobian())) {
+          c += "// jacobian\n";
+          c += "dfeel_ddetozz(1) = -1;\n";
+          c += "dfetozz_ddetozz  = real(0);\n";
+          c += "dfetozz_ddeel(1) = " + gd_ets + " * ";
+          c += "(this->lambda_tdt+2*(this->mu_tdt))/this->young_tdt;\n";
+          c += "dfetozz_ddeel(0) = " + gd_ets +
+               " * this->lambda_tdt/this->young_tdt;\n";
+          c += "dfetozz_ddeel(2) = " + gd_ets +
+               " * this->lambda_tdt/this->young_tdt;\n";
+          c += "dfetozz_ddd = -(this->sebdata.szz)/this->young_tdt;\n";
+          if ((bd.isStrainMeasureDefined()) &&
+              (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+            c += "dfetozz_ddetozz = ";
+            c += "-this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)/";
+            c += "this->young_tdt;\n";
+          }
+        }
+      } else {
+        auto b = bd.getAttribute(
+            "HookeStressPotentialBase::UseLocalLameCoeficients", false);
+        const std::string lambda = b ? "this->sebdata.lambda" : "this->lambda";
+        const std::string mu = b ? "this->sebdata.mu" : "this->mu";
+        const auto young = [&bd]() -> std::string {
+          if (bd.areElasticMaterialPropertiesDefined()) {
+            return "this->young_tdt";
+          }
+          if (bd.hasAttribute("HookeStressPotentialBase::YoungModulus")) {
+            return "this->" + bd.getAttribute<std::string>(
+                                  "HookeStressPotentialBase::YoungModulus");
+          }
+          return "this->young";
+        }();
+        c += "// the generalised plane stress equation \n";
+        c += "// is satisfied at the end of the time step\n";
+        c += "this->sebdata.szz = ";
+        c += "(" + lambda + "+2*(" + mu + "))*(this->eel(1)+this->deel(1))";
+        c += " + ";
+        c += "(" + lambda + ")*(this->eel(0)+this->deel(0)+";
+        c += "this->eel(2)+this->deel(2));\n";
+        if ((bd.isStrainMeasureDefined()) &&
+            (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+          c += "fetozz = ";
+          c += "(" + gd_ets + " * (this->sebdata.szz)-";
+          c += "this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)) / ";
+          c += young + ";\n";
+        } else {
+          c += "fetozz = ";
+          c += "(" + gd_ets +
+               " * (this->sebdata.szz)-this->sigzz-this->dsigzz) / ";
+          c += young + ";\n";
+        }
+        c += "// modification of the partition of strain\n";
+        c += "feel(1) -= this->detozz;\n";
+        if ((idsl.getSolver().usesJacobian()) &&
+            (!idsl.getSolver().requiresNumericalJacobian())) {
+          c += "// jacobian\n";
+          c += "dfeel_ddetozz(1) = -1;\n";
+          c += "dfetozz_ddetozz  = real(0);\n";
+          c += "dfetozz_ddeel(1) = " + gd_ets + " * ";
+          c += "(" + lambda + "+2*(" + mu + "))/" + young + ";\n";
+          c += "dfetozz_ddeel(0) = " + gd_ets + " * " + lambda + "/" + young +
+               ";\n";
+          c += "dfetozz_ddeel(2) = " + gd_ets + " * " + lambda + "/" + young +
+               ";\n";
+          c += "dfetozz_ddd = -(this->sebdata.szz)/" + young + ";\n";
+          if ((bd.isStrainMeasureDefined()) &&
+              (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+            c += "dfetozz_ddetozz = ";
+            c += "-this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)/";
+            c += young + ";\n";
+          }
+        }
+      }
+    }
+    CodeBlock integrator;
+    integrator.code = c;
+    bd.setCode(agps, BehaviourData::Integrator, integrator,
+               BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+  }  // end of addAxisymmetricalGeneralisedPlaneStressSupport
 
   void ScalarDamageHookeStressPotentialBase::addGenericTangentOperatorSupport(
       BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
