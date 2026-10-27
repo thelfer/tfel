@@ -33,10 +33,6 @@ namespace mfront::bbrick {
                       OptionDescription::ARRAYOFMATERIALPROPERTIES);
     opts.emplace_back("n", "Norton exponents",
                       OptionDescription::ARRAYOFMATERIALPROPERTIES);
-    opts.emplace_back("Ksf",
-                      "stress thresold factor. If the seq-R is greater "
-                      "than Ksf*K, the newton step is rejected",
-                      OptionDescription::ARRAYOFMATERIALPROPERTIES);
     return opts;
   }  // end of HarmonicSumOfNortonHoffViscoplasticFlows::getOptions
 
@@ -90,11 +86,6 @@ namespace mfront::bbrick {
           this->K.size(), cmp);
       declareParameterOrLocalVariable(bd, this->A, "strainrate", "A" + id);
     }
-    if (d.count("Ksf") != 0) {
-      this->Ksf =
-          getBehaviourDescriptionMaterialProperty(dsl, "Ksf", d.at("Ksf"));
-      declareParameterOrLocalVariable(bd, this->Ksf, "real", "Ksf" + id);
-    }
   }  // end of HarmonicSumOfNortonHoffViscoplasticFlows::initialize
 
   void HarmonicSumOfNortonHoffViscoplasticFlows::endTreatment(
@@ -111,10 +102,6 @@ namespace mfront::bbrick {
                                                            this->K);
     i.code += generateMaterialPropertiesInitializationCode(dsl, bd, "E" + id,
                                                            this->n);
-    if (!this->Ksf.empty()) {
-      i.code += generateMaterialPropertyInitializationCode(dsl, bd, "Ksf" + id,
-                                                           this->Ksf);
-    }
     if (!i.code.empty()) {
       bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
@@ -138,12 +125,6 @@ namespace mfront::bbrick {
       return "seq" + id + "- R" + id;
     }();
     auto c = std::string{};
-    //         if (!this->Ksf.empty()) {
-    //           c += "if(" + seq + " > (this->Ksf" + id + ") * (this->K"
-    //           + id + ")){\n";
-    //           c += "return false;\n";
-    //           c += "}\n";
-    //         }
     c += "const auto vp" + id + " = ";
     c += "tfel::material::computeEquivalentStrainRateOf"
          "HarmonicSumOfNortonHoffViscoplasticFlows";
@@ -164,13 +145,6 @@ namespace mfront::bbrick {
       return "seq" + id + "- R" + id;
     }();
     auto c = std::string{};
-    //       if (this->ihrs.empty()) {
-    //         if (!this->Ksf.empty()) {
-    //           c += "if(seq" + id + ">(this->Ksf" + id + ")*this->K" + id +
-    //           "){\n";
-    //           c += "return false;\n";
-    //           c += "}\n";
-    //         }
     c += "const auto [vp" + id + ", dvp" + id + "_dseqe" + id + "] = ";
     c += "tfel::material::computeEquivalentStrainRateAndDerivativeOf"
          "HarmonicSumOfNortonHoffViscoplasticFlows";

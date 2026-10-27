@@ -21,6 +21,7 @@
 #include <utility>
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourBrickDescription.hxx"
 
 namespace tfel::utilities {
@@ -46,7 +47,7 @@ namespace mfront {
    * \brief an a behaviour' brick is a way to alleviate to build a complex
    * behaviour.
    */
-  struct AbstractBehaviourBrick {
+  struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourBrick {
     //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! \brief a simple alias

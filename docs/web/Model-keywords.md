@@ -460,6 +460,25 @@ p.setGlossaryName("Porosity");
 p.setDepth(1);
 ~~~~
 
+# The `@Link` keyword
+
+The `@Link` keyword let the user specify additional linker flags used
+to build their shared library/executables. This keyword must be
+followed by a string or an array of strings.
+
+Usage of the `@Link` keyword is deprecated a linker flags are not
+portable. The user may prefer using the `LDFLAGS` environment
+variable.
+
+## Example
+
+~~~~{.cpp}
+// explicit link with libm.so
+// (not necessary in pratice)
+@Link "-lm";
+~~~~
+
+
 # The `@LocalParameter` keyword
 
 The `@LocalParameter` keyword let the user defines specialisation
@@ -774,6 +793,23 @@ an equal sign and its value.
 ~~~~{.cpp}
 @StaticVariable real A = 1.234e56;
 ~~~~
+
+# The `@TFELLibraries` keyword
+
+The `@TFELLibraries` keyword let the user specify TFEL libraries to link
+with. This keyword must be followed by an array of strings.
+
+The following libraries are available: `Config`, `Exception`,
+`Glossary`, `Tests`, `UnicodeSupport`, `Utilities`, `System`, `Math`,
+`MathCubicSpline`, `MathKriging`, `MathParser`, `NUMODIS`, `Material`,
+`MFront`, `MTest`.
+
+## Example
+
+~~~~{.cpp}
+@TFELLibraries {"MathParser"};
+~~~~
+
 
 # The `@UnitSystem` keyword
 

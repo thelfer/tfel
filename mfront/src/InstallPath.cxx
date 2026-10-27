@@ -28,7 +28,7 @@ namespace mfront {
 
   void setInstallPath(const std::string& p) {
     auto& path = mfront::internals::getInstallPath();
-    tfel::raise_if(!path.empty(),
+    tfel::raise_if((!path.empty()) && (path != p),
                    "mfront::setInstallPath: install path already set");
     path = p;
   }  // end of setInstallPath

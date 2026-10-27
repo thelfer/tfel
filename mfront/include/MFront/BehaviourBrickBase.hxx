@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICKBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICKBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/AbstractBehaviourBrick.hxx"
 
 namespace tfel::glossary {
@@ -35,7 +36,8 @@ namespace mfront {
   /*!
    * an helper class providing a set of helper method to build BehaviourBricks.
    */
-  struct BehaviourBrickBase : public AbstractBehaviourBrick {
+  struct MFRONT_VISIBILITY_EXPORT BehaviourBrickBase
+      : public AbstractBehaviourBrick {
     /*!
      * constructor
      * \param[in] dsl_ : domain specific language
