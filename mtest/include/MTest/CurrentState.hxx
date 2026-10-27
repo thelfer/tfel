@@ -21,6 +21,7 @@
 #include "TFEL/Math/matrix.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Utilities/GenTypeBase.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
@@ -171,6 +172,19 @@ namespace mtest {
                                                        const real,
                                                        const real,
                                                        const unsigned short);
+  /*!
+   * \brief compute the thermal expansion (orthotropic case)
+   *
+   * In plane stress, the third thermal expansion coefficient is
+   * optional: if it is not defined, the out-of-plane thermal strain is
+   * null.
+   */
+  MTEST_VISIBILITY_EXPORT void computeThermalExpansion(
+      CurrentState&,
+      const EvolutionManager&,
+      const real,
+      const real,
+      const tfel::material::ModellingHypothesis::Hypothesis);
   /*!
    * \brief update the state for the next time step
    * \param[out] s: state

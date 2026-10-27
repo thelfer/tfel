@@ -340,8 +340,7 @@ namespace mtest {
           computeThermalExpansion(s, *(this->evm), t, dt);
         } else if (this->b->getSymmetryType() == 1) {
           // orthotropic case
-          computeThermalExpansion(s, *(this->evm), t, dt,
-                                  getSpaceDimension(this->hypothesis));
+          computeThermalExpansion(s, *(this->evm), t, dt, this->hypothesis);
         } else {
           tfel::raise(
               "SingleStructureScheme::prepare: "
