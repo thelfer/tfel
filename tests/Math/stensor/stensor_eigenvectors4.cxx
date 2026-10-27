@@ -37,6 +37,12 @@ struct StensorComputeEigenvectors4 final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     // two close eigenvalues
     this->check<EigenSolver::HARARIEIGENSOLVER>({1, 1 + 1e-12, -0.5}, 1e-14);
+    // a double eigenvalue
+    for (const auto& l : {tfel::math::tvector<3u, double>{3, 3, 1},
+                          tfel::math::tvector<3u, double>{-1, -1, 2},
+                          tfel::math::tvector<3u, double>{1, 0, 0}}) {
+      this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>(l, 1e-13);
+    }
     return this->result;
   }  // end of execute
 

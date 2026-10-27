@@ -78,7 +78,8 @@ namespace tfel::math {
     enum EigenSolver {
       //! \brief historical native and homemade algorithm
       TFELEIGENSOLVER,
-      //! \brief non iterative solver from Joachim Kopp,
+      //! \brief analytical solver from Joachim Kopp (the eigenvectors are
+      //! computed as by the hybrid solver)
       FSESANALYTICALEIGENSOLVER,
       //! \brief Jacobi iterative solver from Joachim Kopp
       FSESJACOBIEIGENSOLVER,
