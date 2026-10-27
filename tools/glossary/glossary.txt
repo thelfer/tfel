@@ -7,7 +7,7 @@ short_description:
 };
 
 "DualStress" {
-units : { "SI" : "stress" };
+units : { "SI" : "Pa" };
 type:
   "tensor";
 short_description:
@@ -257,7 +257,7 @@ notes : {
 };
 
 "TemperatureGradient" {
-units : { "SI" : "T.m^{-1}" };
+units : { "SI" : "K.m^{-1}" };
 type:
   "vector";
 short_description:
@@ -330,7 +330,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the Young's modulus of an isotropic material along the first direction of "
+  "the Young's modulus of an orthotropic material along the first direction of "
   "orthotropy";
 };
 
@@ -340,7 +340,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the Young's modulus of an isotropic material along the second direction of "
+  "the Young's modulus of an orthotropic material along the second direction of "
   "orthotropy";
 };
 
@@ -350,7 +350,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the Young's modulus of an isotropic material along the third direction of "
+  "the Young's modulus of an orthotropic material along the third direction of "
   "orthotropy";
 };
 
@@ -574,7 +574,7 @@ short_description:
 };
 
 "CohesiveForce" {
-units : { "SI" : "Newton" };
+units : { "SI" : "Pa" };
 type:
   "vector";
 short_description:
@@ -593,7 +593,7 @@ notes : { "This quantity is only meaningful under the axisymmetrical generalized
 units : { "SI" : "Pa" };
 lower_physical_bounds : { "SI" : 0 };
 type:
-  "tensor";
+  "scalar";
 short_description:
   "the Hill equivalent stress";
 };
@@ -617,7 +617,7 @@ short_description:
 "HydrostaticPressure" {
 units : { "SI" : "Pa" };
 type:
-  "tensor";
+  "scalar";
 short_description:
   "the hydrostatic pressure, defined as the third of the trace of the stress tensor";
 };
@@ -653,7 +653,7 @@ units : { "SI" : "Pa" };
 type:
   "scalar";
 short_description:
-  "the third principal stress";
+  "the second principal stress";
 };
 
 "PrincipalStress3" {
@@ -839,7 +839,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the fast neutron fluence";
+  "the fast neutron flux, where the limit for fast neutron is 0.1 MeV";
 };
 
 "FastNeutronFlux_1MeV" {
@@ -850,7 +850,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the fast neutron fluence";
+  "the fast neutron flux, where the limit for fast neutron is 1 MeV";
 };
 
 "FastNeutronFluence_01MeV" {
@@ -933,7 +933,7 @@ units : { "SI" : "m" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the out-of-plane width of a plate";
 };
 
 "CrossSectionArea" {
@@ -941,7 +941,7 @@ units : { "SI" : "m^{2}" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the area of the cross section of a beam";
 };
 
 "FirstAxisSecondMomentArea" {
@@ -949,7 +949,7 @@ units : { "SI" : "m^{4}" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the second moment of area of the cross section of a beam about its first axis";
 };
 
 "SecondAxisSecondMomentArea" {
@@ -957,15 +957,15 @@ units : { "SI" : "m^{4}" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the second moment of area of the cross section of a beam about its second axis";
 };
 
 "TorsionConstant" {
-units : { "SI" : "??" };
+units : { "SI" : "m^{4}" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the torsion constant of the cross section of a beam";
 };
 
 "NumberOfMoles" {
