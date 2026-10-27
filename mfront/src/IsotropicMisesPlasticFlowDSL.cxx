@@ -108,7 +108,7 @@ namespace mfront {
       if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
         if (this->ihrs.empty()) {
           this->throwRuntimeError(
-              "IsotropicMisesCreepDSL::endsInputFileProcessing",
+              "IsotropicMisesPlasticFlowDSL::endsInputFileProcessing",
               "no flow rule and no hardening rule defined");
         }
         auto c = CodeBlock{};
