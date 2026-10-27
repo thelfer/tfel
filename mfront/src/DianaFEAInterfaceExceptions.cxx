@@ -85,6 +85,24 @@ namespace dianafea {
         b + "'");
   }  // end of DianaFEAInterfaceExceptions::throwNegativeTimeStepException
 
+  void DianaFEAInterfaceExceptions::throwBehaviourInitializationFailedException(
+      const std::string& b) {
+    tfel::raise<DianaFEAException>(
+        "DianaFEAInterfaceExceptions::"
+        "throwBehaviourInitializationFailedException: "
+        "initialization of behaviour '" +
+        b + "' failed");
+  }  // end of throwBehaviourInitializationFailedException
+
+  void DianaFEAInterfaceExceptions::throwBehaviourIntegrationFailedException(
+      const std::string& b) {
+    tfel::raise<DianaFEAException>(
+        "DianaFEAInterfaceExceptions::"
+        "throwBehaviourIntegrationFailedException: "
+        "integration failed for behaviour '" +
+        b + "'");
+  }  // end of throwBehaviourIntegrationFailedException
+
   void DianaFEAInterfaceExceptions::throwPredictionComputationFailedException(
       const std::string& b) {
     tfel::raise(

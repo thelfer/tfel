@@ -99,7 +99,7 @@ namespace mfront {
              "invalid bounds type");
     throw_if(!testBounds.insert(b).second,
              "test bounds for variable '" + b.first + "' already registred");
-    return {true, ++p};
+    return {true, p};
   }  // end of registerTestBounds
 
   void CppTestMaterialPropertyInterface::getTargetsDescription(
@@ -112,7 +112,7 @@ namespace mfront {
     insert_if(d.specific_targets[target].deps, lib);
     insert_if(d.specific_targets[target].sources, name + "-CppTest.o");
     insert_if(d.specific_targets[target].cmds,
-              "$(CXX) $(LDFLAGS) -L. -l" + lib + " $^ -o $@");
+              "$(CXX) $(LDFLAGS) " + name + "-CppTest.o -o $@ -L. -l" + lib);
     insert_if(d.specific_targets["check"].deps, target);
   }  // end of CppMaterialPropertyInterface::getSpecificTargets
 
@@ -159,6 +159,12 @@ namespace mfront {
     tfel::raise_if(tests.empty(),
                    "MaterialPropertyDSL::writeTestFile:\n"
                    "No bounds defined to draw graph !");
+    for (const auto& i : mpd.inputs) {
+      tfel::raise_if(tests.count(i.name) == 0,
+                     "MaterialPropertyDSL::writeTestFile:\n"
+                     "No bounds defined for input '" +
+                         i.name + "' to draw graph !");
+    }
     for (const auto& t : tests) {
       const auto& n = t.first;
       const auto& b = t.second;
@@ -170,7 +176,7 @@ namespace mfront {
                      "No lower bound defined to draw graph !");
       srcFile << "  const double " << n << "_min = " << b.lowerBound << " ;\n"
               << "  const double " << n << "_max = " << b.upperBound << " ;\n"
-              << "  const double " << n << "_moy = (" << n << "_max - " << n
+              << "  const double " << n << "_moy = (" << n << "_max + " << n
               << "_min)/2. ;\n";
     }
     // fichier csv
@@ -194,7 +200,7 @@ namespace mfront {
         srcFile << "    file<<" << p3->name << "_min+i*" << p3->name
                 << "_interval<<\" \"\n";
         // all min
-        srcFile << "        <<my" << name << ".defaultCompute(";
+        srcFile << "        <<my" << name << "(";
         for (auto p4 = inputs.begin(); p4 != inputs.end();) {
           if (p3 != p4) srcFile << p4->name << "_min";
           if (p3 == p4)
@@ -203,7 +209,7 @@ namespace mfront {
         }
         srcFile << ") << \" \"\n";
         // all moy
-        srcFile << "        <<my" << name << ".defaultCompute(";
+        srcFile << "        <<my" << name << "(";
         for (auto p4 = inputs.begin(); p4 != inputs.end();) {
           if (p3 != p4)
             srcFile << p4->name << "_moy";
@@ -213,7 +219,7 @@ namespace mfront {
         }
         srcFile << ") << \" \"\n";
         // all max
-        srcFile << "        <<my" << name << ".defaultCompute(";
+        srcFile << "        <<my" << name << "(";
         for (auto p4 = inputs.begin(); p4 != inputs.end();) {
           if (p3 != p4)
             srcFile << p4->name << "_max";
