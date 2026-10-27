@@ -187,7 +187,7 @@ namespace tfel::check {
     std::string XMLResult; /**!< string containing testcase result, Junit
                               formatted. */
     double prec = 1.e-8;
-    double precision2 = 0.;
+    std::optional<double> precision2;
     //! \brief the type of comparison of the test (absolute, relative...)
     std::shared_ptr<Comparison> comparison;
     tms timeStart, timeStop; /**!< tms struct used by ClockAction */
