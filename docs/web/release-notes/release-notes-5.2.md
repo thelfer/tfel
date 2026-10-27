@@ -714,9 +714,17 @@ For more details, see <https://github.com/thelfer/tfel/issues/1189>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1187>
 
+## Issue 1185: [mtest] dianafea wrapper shear order, tfel-check JUnit escaping, raw stream readers, Python docstrings, documentation links and tutorial examples
+
+For more details, see <https://github.com/thelfer/tfel/issues/1185>
+
 ## Issue 1183: [cmake] Static library names, test dependencies, C++ standard, static MFront package, environment scripts, Doxygen install, installed MFront headers and exports
 
 For more details, see <https://github.com/thelfer/tfel/issues/1183>
+
+## Issue 1181: [python] mfront.database entry points, mtest initial values and depths, tfel.material imports, mfm-test-generator, mfm --filter-by-type and MTest files on failure
+
+For more details, see <https://github.com/thelfer/tfel/issues/1181>
 
 ## Issue 1179: [mfront] Wrong or misleading error messages and documentation of DSLs, tools, material property interfaces, stress criteria, MTest bindings and tfel-check
 
