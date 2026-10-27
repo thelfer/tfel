@@ -72,7 +72,7 @@ Intel and AMD processors, either 32 or 64 bits. As no specific
 instructions relative to the underlying architecture are used in the
 code, other architectures shall work as well.
 
-You must have the `cmake` build system (version greater than \(2.8\))
+You must have the `cmake` build system (version \(3.20\) or later)
 installed on your system, installing ̀`TFEL` basically boils down to the
 following simple commands:
 
@@ -126,7 +126,7 @@ optional bindings for the [`Python`](https://www.python.org/) language.
 The best way to build the `TFEL` is to use the
 [`cmake`](http://www.cmake.org/) build system (see this
 [section](#using-the-cmake-build-system)). *We only support `cmake`
-versions greater than \(2.8\)*.
+versions \(3.20\) or later*.
 
 To build `TFEL` documentation, one may need:
 
@@ -164,12 +164,15 @@ Both `<srcdir>` and `<install_prefix>` must contain an *absolute* path.
 
 The use of the `cmake` build system is described in depth in the
 `INSTALL-cmake` file that is located in the top directory of `TFEL`
-sources. *We only support `cmake` versions greater than \(2.8\)*, so
+sources. *We only support `cmake` versions \(3.20\) or later*, so
 please check the version available on your system:
 
 ~~~~ {#cmake-version .bash}
 $ cmake --version
 ~~~~
+
+On older systems (`Ubuntu` 20.04, `Debian` 11), a recent version of
+`cmake` can be installed with `python3 -m pip install --user cmake`.
 
 A typical usage of `cmake` is the following:
 

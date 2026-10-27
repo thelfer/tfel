@@ -1,15 +1,12 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 cmake_policy(SET CMP0022 NEW)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0074 NEW)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
   cmake_policy(SET CMP0167 NEW)  
 endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
-if(CMAKE_VERSION VERSION_GREATER 3.14.0)
-  cmake_policy(SET CMP0083 NEW)  
-  include(CheckPIESupported)
-  check_pie_supported()
-endif(CMAKE_VERSION VERSION_GREATER 3.14.0)
+include(CheckPIESupported)
+check_pie_supported()
 
 set(TFEL_VERSION_FLAVOUR "" CACHE STRING
   "Append a flavour to the version number")
@@ -25,12 +22,6 @@ if(NOT BUILD_SHARED_LIBS)
   # when BUILD_SHARED_LIBS=OFF then disable option enable-static
   set(enable-static OFF CACHE BOOL "enable additional static libraries" FORCE)
 endif()
-
-if(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
-  include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(NO_OUTPUT_DIRS)
-  set(TFEL_USES_CONAN ON)
-endif(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -149,7 +140,7 @@ if(enable-vera++)
   find_package(vera++)
   include(${VERA++_USE_FILE})
   if(NOT VERA_ROOT)
-    message(fatal "VERA_ROOT is not defined")
+    message(FATAL_ERROR "VERA_ROOT is not defined")
   endif(NOT VERA_ROOT)
   add_vera_targets(*.h *.cpp
     RECURSE
@@ -301,15 +292,11 @@ option(enable-numpy-support
  
 if(enable-python OR enable-python-bindings)
   set(_tfel_python_components Interpreter)
-  if(CMAKE_VERSION VERSION_LESS 3.18)
-    list(APPEND _tfel_python_components Development)
-  else(CMAKE_VERSION VERSION_LESS 3.18)
-    # The python library is only used by MFront's python interface. It is
-    # optional as it is not always available (for instance in the
-    # manylinux images used to build the pip package)
-    list(APPEND _tfel_python_components Development.Module)
-    set(_tfel_python_optional_components OPTIONAL_COMPONENTS Development.Embed)
-  endif(CMAKE_VERSION VERSION_LESS 3.18)
+  # The python library is only used by MFront's python interface. It is
+  # optional as it is not always available (for instance in the
+  # manylinux images used to build the pip package)
+  list(APPEND _tfel_python_components Development.Module)
+  set(_tfel_python_optional_components OPTIONAL_COMPONENTS Development.Embed)
   if(enable-numpy-support)
     list(APPEND _tfel_python_components NumPy)
   endif(enable-numpy-support)
@@ -618,11 +605,7 @@ install(DIRECTORY test-suite
   PATTERN ".svn" EXCLUDE)
 
 set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION}")
-if(${CMAKE_SYSTEM_PROCESSOR})
-  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
-else(${CMAKE_SYSTEM_PROCESSOR})
-  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}") 
-endif(${CMAKE_SYSTEM_PROCESSOR})
+set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CPACK_PACKAGE_VERSION}")
 set(CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
 set(CPACK_PACKAGE_CONTACT             "${PACKAGE_BUGREPORT}")

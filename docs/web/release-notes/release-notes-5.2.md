@@ -47,6 +47,7 @@ library, see below.
 
 # Known incompatibilities
 
+- `cmake` \(3.20\) or later is now required to build `TFEL`.
 - `MFront`' interfaces have to implement a method named `setOptions`.
 - The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
   as documented, if `C++` keywords are allowed (see Issue #964): its
@@ -684,6 +685,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1239: [cmake] Obsolete packaging files, TFEL_OPTIMISATION_FLAGS0, Debug flags, checks that never act, Cast3M 2026 header, minimum CMake version, exports of libTFELMFront
+
+For more details, see <https://github.com/thelfer/tfel/issues/1239>
 
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
