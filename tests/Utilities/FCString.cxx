@@ -80,7 +80,7 @@ struct FCStringTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(s2[0] == 'a');
     TFEL_TESTS_ASSERT(s2[1] == 'b');
     TFEL_TESTS_ASSERT(std::strcmp(s2.data(), "ab") == 0);
-    TFEL_TESTS_ASSERT(s.size() == 2);
+    TFEL_TESTS_ASSERT(s2.size() == 2);
     TFEL_TESTS_CHECK_THROW(s2[3], std::out_of_range);
   }
   void test3() {

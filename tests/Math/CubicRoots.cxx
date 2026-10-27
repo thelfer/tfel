@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
 #include <cmath>
 #include <cassert>
 
@@ -85,6 +86,17 @@ double cubic(const double a3,
   return a3 * x * x * x + a2 * x * x + a1 * x + a0;
 }
 
+//! \return a bound of the magnitude of the terms of the cubic at x
+double cubic_scale(const double a3,
+                   const double a2,
+                   const double a1,
+                   const double a0,
+                   const double x) {
+  const auto m = std::max(1., std::abs(x));
+  return (std::abs(a3) + std::abs(a2) + std::abs(a1) + std::abs(a0)) * m * m *
+         m;
+}
+
 void generate_coef(double& a3,
                    double& a2,
                    double& a1,
@@ -107,9 +119,13 @@ void solve(const double a3, const double a2, const double a1, const double a0) {
   static constexpr double prec = 1.e-14;
 
   assert(CubicRoots::exe(x, y, z, a3, a2, a1, a0) == 3);
-  if (!((std::abs(cubic(a3, a2, a1, a0, x)) < prec) ||
-        (std::abs(cubic(a3, a2, a1, a0, y)) < prec) ||
-        (std::abs(cubic(a3, a2, a1, a0, z)) < prec))) {
+  // the residual is compared to the magnitude of the terms of the cubic,
+  // since rounding errors depend on the platform
+  auto check = [&a3, &a2, &a1, &a0](const double r) {
+    return std::abs(cubic(a3, a2, a1, a0, r)) <
+           prec * cubic_scale(a3, a2, a1, a0, r);
+  };
+  if (!(check(x) && check(y) && check(z))) {
     assert(false);
   }
 #ifdef TFEL_VERBOSE

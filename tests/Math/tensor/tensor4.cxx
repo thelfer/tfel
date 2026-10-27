@@ -44,18 +44,18 @@ struct Tensor4Test1D final : public tfel::tests::TestCase {
     tensor<1u, double> Id = transpose(R) * R;
     TFEL_TESTS_ASSERT(abs(Id(0) - 1.) < eps);
     TFEL_TESTS_ASSERT(abs(Id(1) - 1.) < eps);
-    TFEL_TESTS_ASSERT(abs(Id(1) - 1.) < eps);
+    TFEL_TESTS_ASSERT(abs(Id(2) - 1.) < eps);
     TFEL_TESTS_ASSERT(abs(R(0) - 1.) < eps);
     TFEL_TESTS_ASSERT(abs(R(1) - 1.) < eps);
-    TFEL_TESTS_ASSERT(abs(R(1) - 1.) < eps);
+    TFEL_TESTS_ASSERT(abs(R(2) - 1.) < eps);
     // check that we can get back F
     tensor<1u, double> F1 = R * U;
     TFEL_TESTS_ASSERT(abs(F(0) - F1(0)) < eps);
     TFEL_TESTS_ASSERT(abs(F(1) - F1(1)) < eps);
-    TFEL_TESTS_ASSERT(abs(F(1) - F1(1)) < eps);
+    TFEL_TESTS_ASSERT(abs(F(2) - F1(2)) < eps);
     TFEL_TESTS_ASSERT(abs(F(0) - U(0)) < eps);
     TFEL_TESTS_ASSERT(abs(F(1) - U(1)) < eps);
-    TFEL_TESTS_ASSERT(abs(F(1) - U(1)) < eps);
+    TFEL_TESTS_ASSERT(abs(F(2) - U(2)) < eps);
     return this->result;
   }  // end of execute
 };

@@ -49,6 +49,7 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     const auto or1 = tfel::math::gauss_kronrod_integrate(
         [](const double x) noexcept { return std::sin(x); }, a, b);
     TFEL_TESTS_ASSERT(or1.has_value());
+    TFEL_TESTS_ASSERT(std::abs(std::get<0>(*or1) + std::cos(b) - 1) < 1e-14);
     TFEL_TESTS_ASSERT(std::abs(std::get<1>(*or1)) < 1e-14);
     // no refinement is needed
     const auto oi = tfel::math::gauss_kronrod_integrate(

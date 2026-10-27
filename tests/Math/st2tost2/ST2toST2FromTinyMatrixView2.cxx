@@ -52,7 +52,7 @@ struct ST2toST2FromTinyMatrixView2Test : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(m(1, 1) - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(m(1, 2)) < eps);
     TFEL_TESTS_ASSERT(std::abs(m(2, 0)) < eps);
-    TFEL_TESTS_ASSERT(std::abs(m(2, 0)) < eps);
+    TFEL_TESTS_ASSERT(std::abs(m(2, 1)) < eps);
     TFEL_TESTS_ASSERT(std::abs(m(2, 2) - 1) < eps);
     // ms2
     TFEL_TESTS_ASSERT(std::abs(m(0, 3) - 2 * C_1_3) < eps);
@@ -72,7 +72,7 @@ struct ST2toST2FromTinyMatrixView2Test : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(m(4, 1) - 1.) < eps);
     TFEL_TESTS_ASSERT(std::abs(m(4, 2) + 0.5) < eps);
     TFEL_TESTS_ASSERT(std::abs(m(5, 0) + 0.5) < eps);
-    TFEL_TESTS_ASSERT(std::abs(m(5, 0) + 0.5) < eps);
+    TFEL_TESTS_ASSERT(std::abs(m(5, 1) + 0.5) < eps);
     TFEL_TESTS_ASSERT(std::abs(m(5, 2) - 1.) < eps);
     // ms4
     TFEL_TESTS_ASSERT(std::abs(m(3, 3) - 4.) < eps);

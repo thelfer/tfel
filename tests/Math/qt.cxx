@@ -130,12 +130,12 @@ struct qtTest final : public tfel::tests::TestCase {
       TFEL_TESTS_STATIC_ASSERT(can_assign == b);
       constexpr auto can_assign1 =
           requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
-        lhs = rhs;
+        lhs += rhs;
       };
       TFEL_TESTS_STATIC_ASSERT(can_assign1 == b);
       constexpr auto can_assign2 =
           requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
-        lhs = rhs;
+        lhs -= rhs;
       };
       TFEL_TESTS_STATIC_ASSERT(can_assign2 == b);
     };
