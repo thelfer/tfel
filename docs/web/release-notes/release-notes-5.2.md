@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
+
+For more details, see <https://github.com/thelfer/tfel/issues/1223>
+
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
