@@ -162,7 +162,7 @@ namespace abaqus {
                                          const AbaqusReal* const props) {
         const auto o = AbaqusTraits<BV>::elasticPropertiesOffset;
         AbaqusComputeThermalExpansionCoefficientTensor<
-            AbaqusTraits<BV>::btype, H, AbaqusTraits<BV>::stype>::
+            AbaqusTraits<BV>::btype, H, AbaqusTraits<BV>::etype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
