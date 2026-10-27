@@ -97,12 +97,18 @@ if(APPLE)
    set(CMAKE_MACOSX_RPATH ON)
    set(CMAKE_SKIP_BUILD_RPATH FALSE)
    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
+# rpath of the installed executables, libraries and python modules, so
+# that they find the TFEL libraries and their dependencies (madnex,
+# HDF5) without setting LD_LIBRARY_PATH. Values given by the user are
+# kept. CMAKE_SKIP_INSTALL_RPATH disables it.
+if(NOT DEFINED CMAKE_INSTALL_RPATH_USE_LINK_PATH)
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-   list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-   if("${isSystemDir}" STREQUAL "-1")
-      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-   endif()
+endif()
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" isSystemDir)
+if((NOT DEFINED CMAKE_INSTALL_RPATH) AND ("${isSystemDir}" STREQUAL "-1"))
+   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
 endif()
 
 #extraction git hash

@@ -123,9 +123,9 @@ def is_binary(path, magic_numbers):
 def set_relative_runtime_paths(package_directory):
     """make all the binaries look for the libraries in tfel/lib.
 
-    The installed binaries either have no runtime path (linux) or an
-    absolute one (macOS). auditwheel and delocate keep the libraries
-    already in the wheel when the runtime paths point to them.
+    The installed binaries have an absolute runtime path. auditwheel
+    and delocate keep the libraries already in the wheel when the
+    runtime paths point to them.
 
     On linux, DT_RPATH is used rather than DT_RUNPATH, since it is
     searched before LD_LIBRARY_PATH: the binaries of the package use the
