@@ -357,6 +357,15 @@ namespace mtest {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "MTestParser::handleTest: " + m);
     };
+    auto warn_if = [this](const bool c, const tokens_iterator pv,
+                          const std::string& v) {
+      if (c) {
+        mfront::getLogStream()
+            << this->file << ":" << pv->line << ":" << pv->offset
+            << ": warning: variable '" << v
+            << "' given twice, only its first entry is used\n";
+      }
+    };
     this->readSpecifiedToken("MTestParser::handleTest", "<", p,
                              this->tokens.end());
     this->checkNotEndOfLine("MTestParser::handleTest", p, this->tokens.end());
@@ -379,11 +388,12 @@ namespace mtest {
         this->checkNotEndOfLine("MTestParser::handleTest", p,
                                 this->tokens.end());
         while (p->value != "}") {
+          const auto pv = p;
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("MTestParser::handleTest", ":", p,
                                    this->tokens.end());
           const auto& f = this->readString(p, this->tokens.end());
-          functions.insert({v, f});
+          warn_if(!functions.insert({v, f}).second, pv, v);
           this->checkNotEndOfLine("MTestParser::handleTest", p,
                                   this->tokens.end());
           if (p->value != "}") {
@@ -420,16 +430,18 @@ namespace mtest {
         this->checkNotEndOfLine("MTestParser::handleTest", p,
                                 this->tokens.end());
         while (p->value != "}") {
+          const auto pv = p;
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("MTestParser::handleTest", ":", p,
                                    this->tokens.end());
           if (p->flag == tfel::utilities::Token::String) {
-            columns.insert({v, p->value.substr(1, p->value.size() - 2)});
+            const auto c = p->value.substr(1, p->value.size() - 2);
+            warn_if(!columns.insert({v, gentype(c)}).second, pv, v);
             ++p;
           } else {
             const unsigned short c =
                 this->readUnsignedInt(p, this->tokens.end());
-            columns.insert({v, gentype(c)});
+            warn_if(!columns.insert({v, gentype(c)}).second, pv, v);
           }
           this->checkNotEndOfLine("MTestParser::handleTest", p,
                                   this->tokens.end());
