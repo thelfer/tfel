@@ -64,7 +64,7 @@ Here is an example of a behavior based on the `DDIF2` brick:
 @DSL Implicit;
 @Author Thomas Helfer;
 @Date 25/10/2017;
-@Behavior DDIF2_4;
+@Behaviour DDIF2_4;
 
 @Brick DDIF2 {
  fracture_stresses : {150e6,150e6,1e11},

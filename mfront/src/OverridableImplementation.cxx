@@ -199,7 +199,13 @@ namespace mfront {
   static void writeMadnexFile(
       const OverridableImplementation& i,
       const std::string& f,
-      const std::vector<std::string>& already_treated_implementations) {
+      std::vector<std::string>& already_treated_implementations) {
+    const auto gpath = getPath(i);
+    if (std::find(already_treated_implementations.begin(),
+                  already_treated_implementations.end(),
+                  gpath) != already_treated_implementations.end()) {
+      return;
+    }
     const auto impl = getMFrontImplementation(i);
     auto file = [&f] {
       std::ifstream infile(f);
@@ -211,7 +217,10 @@ namespace mfront {
     auto r = file.getRoot();
     // check if paths already exists
     for (const auto& p : getPaths(i)) {
-      if (madnex::exists(r, p)) {
+      if ((std::find(already_treated_implementations.begin(),
+                     already_treated_implementations.end(),
+                     p) == already_treated_implementations.end()) &&
+          (madnex::exists(r, p))) {
         tfel::raise(
             "mfront::writeMadnexFile: "
             "path '" +
@@ -229,16 +238,14 @@ namespace mfront {
       madnex::createGroup(r, "MFront/" + m);
     }
     auto g = madnex::createGroup(r, getPathBaseName(i));
-    const auto gpath = getPath(i);
     // writing dependencies
-    auto already_treated_implementations2 = already_treated_implementations;
-    already_treated_implementations2.push_back(gpath);
     for (const auto& d : i.getExternalMFrontFiles()) {
       writeMadnexFile(OverridableImplementation(d.first), f,
-                      already_treated_implementations2);
+                      already_treated_implementations);
     }
     //
     madnex::write(g, impl);
+    already_treated_implementations.push_back(gpath);
   }    // end of writeMadnexFile
 #endif /* MFRONT_HAVE_MADNEX */
 
@@ -249,7 +256,8 @@ namespace mfront {
     }();
 #ifdef MFRONT_HAVE_MADNEX
     if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {
-      writeMadnexFile(i, f, {});
+      auto already_treated_implementations = std::vector<std::string>{};
+      writeMadnexFile(i, f, already_treated_implementations);
     } else {
       tfel::raise("write: unsupported file extension '" + ext + "'");
     }

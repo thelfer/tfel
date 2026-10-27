@@ -8,7 +8,7 @@ of axial growths between the pipe and the mandrel is kept constant to
 its value when contact is established.
 
 This keyword may have one option, which is the way the evolution will
-be defined. Two values are accepted: `evolution`, `function`, `data`
+be defined. Four values are accepted: `evolution`, `function`, `data`
 or `file`. The `data` and `file` options are equivalent. If no option
 is specified, the `evolution` option is chosen.
 
@@ -52,5 +52,5 @@ column.
 ## Example (linear evolution)
 
 ~~~~ {.cpp}
-@MandrelRadiusEvolution<evolution> {0.:4.e-3, 1:4.3e-3};
+@MandrelAxialGrowthEvolution<evolution> {0.:0., 1:1.e-3};
 ~~~~~~~~
