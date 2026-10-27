@@ -34,6 +34,11 @@ namespace mfront {
                                         const BehaviourInterfaceBase&,
                                         const BehaviourDescription&,
                                         const std::string&) const override;
+    void writeStateVariablesSymbols(std::ostream&,
+                                    const BehaviourInterfaceBase&,
+                                    const BehaviourDescription&,
+                                    const std::string&,
+                                    const Hypothesis) const override;
     void writeAdditionalSymbols(std::ostream&,
                                 const BehaviourInterfaceBase&,
                                 const BehaviourDescription&,
