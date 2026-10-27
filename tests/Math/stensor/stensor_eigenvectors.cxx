@@ -53,6 +53,14 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     // this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();
     this->check<EigenSolver::HARARIEIGENSOLVER>();
     this->testFSESSort();
+    // the non-convergence of the FSES Jacobi solver is reported by NaN
+    const auto nan = std::numeric_limits<double>::quiet_NaN();
+    const auto s = tfel::math::stensor<3u, double>{1, 2, 3, nan, 0.5, 0.6};
+    const auto [vp, m] =
+        s.computeEigenVectors<EigenSolver::FSESJACOBIEIGENSOLVER>();
+    TFEL_TESTS_ASSERT(std::isnan(vp[0]) && std::isnan(m(0, 0)));
+    TFEL_TESTS_ASSERT(std::isnan(
+        s.computeEigenValues<EigenSolver::FSESJACOBIEIGENSOLVER>()[0]));
     return this->result;
   }  // end of execute
 

@@ -66,7 +66,12 @@ namespace tfel::check {
       variables.push_back(Variable{v, d.getColumn(convert(v))});
     }
     if (variables.empty()) {
-      return d.getColumn(convert(f));
+      const auto is_digit = [](const char c) {
+        return (c >= '0') && (c <= '9');
+      };
+      raise_if(f.empty() || !std::all_of(f.begin(), f.end(), is_digit),
+               "tfel::check::eval: invalid column '" + f + "'");
+      return d.getColumn(std::stoul(f));
     }
     std::vector<double> r;
     r.resize(variables[0].values.size());

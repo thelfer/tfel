@@ -231,7 +231,7 @@ const auto mu0 = sig0/3.*po;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The second moment is given by the function `computeMeanSquaredEquivalentStrain`
-(see [documentation](tfel-material.html#second-moments-of-the-strains)):
+(see [documentation](tfel-material-homogenization.html#second-moments-of-the-strains-hashin-shtrikman-two-phase-composite)):
 
 ~~~~ {#Integrator .cpp .numberLines}
 //second moments/////////////////////////////////

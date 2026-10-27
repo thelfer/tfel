@@ -83,6 +83,16 @@ struct STensorTest7 final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(abs(sn1(3) - sn2(3)) < eps);
     TFEL_TESTS_ASSERT(abs(sn1(4) - sn2(4)) < eps);
     TFEL_TESTS_ASSERT(abs(sn1(5) - sn2(5)) < eps);
+    // absolute value
+    const auto sa1 =
+        stensor<3u, double>::buildAbsoluteValueFromEigenValuesAndVectors(vp, m);
+    const auto sa2 =
+        stensor<3u, double>::buildAbsoluteValueFromEigenValuesAndVectors(
+            -vp(0), -vp(1), -vp(2), m);
+    for (unsigned short i = 0; i != 6; ++i) {
+      TFEL_TESTS_ASSERT(abs(s(i) - sa1(i)) < eps);
+      TFEL_TESTS_ASSERT(abs(s(i) - sa2(i)) < eps);
+    }
     tvector<3u, double> vp_p;
     tvector<3u, double> vp_n;
     tmatrix<3u, 3u, double> m_p;
