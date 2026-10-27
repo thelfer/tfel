@@ -71,8 +71,14 @@ namespace mfront {
   //! a simple alias for backward compatibility
   typedef StaticVariableDescription StaticVarHandler;
 
-  //! a simple wrapper around the std::vector class
-  struct MFRONT_VISIBILITY_EXPORT StaticVariableDescriptionContainer
+  /*!
+   * \brief a simple wrapper around the std::vector class
+   *
+   * \note the member functions are exported one by one: with Visual
+   * Studio, exporting the class would instantiate every member of the
+   * base `std::vector`, some of which need a default constructor.
+   */
+  struct StaticVariableDescriptionContainer
       : private std::vector<StaticVariableDescription> {
     using std::vector<StaticVariableDescription>::value_type;
     using std::vector<StaticVariableDescription>::reference;
@@ -92,12 +98,13 @@ namespace mfront {
      * \param[in] n : variable name
      * \return true if a variable with the given name exists
      */
-    [[nodiscard]] bool contains(const std::string&) const;
+    [[nodiscard]] MFRONT_VISIBILITY_EXPORT bool contains(
+        const std::string&) const;
     /*!
      * \param[in] n : variable name
      * \return the variable description with the given name
      */
-    [[nodiscard]] const StaticVariableDescription& get(
+    [[nodiscard]] MFRONT_VISIBILITY_EXPORT const StaticVariableDescription& get(
         const std::string&) const;
   };
 
