@@ -17,8 +17,10 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <cstring>
 #include <utility>
 #include <iostream>
+#include <exception>
 
 #if defined _WIN32 || defined _WIN64
 #ifndef NOMINMAX
@@ -151,6 +153,9 @@ namespace mtest {
   }
 
   void MTestMain::registerArgumentCallBacks() {
+    this->registerCallBack(
+        "--no-terminate-handler",
+        CallBack("don't set a terminate handler", []() noexcept {}, false));
     this->registerNewCallBack("--verbose", &MTestMain::treatVerbose,
                               "set verbose output", true);
     this->registerNewCallBack("--scheme", &MTestMain::treatScheme, "set scheme",
@@ -719,8 +724,38 @@ namespace mtest {
 
 }  // end of namespace mtest
 
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+[[noreturn]] static void mtest_terminate_handler() {
+  if (auto pe = std::current_exception()) {
+    // we have an exception
+    try {
+      std::rethrow_exception(pe);
+    } catch (const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch (...) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, v) == 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+  if (!find("--no-terminate-handler")) {
+    std::set_terminate(mtest_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
   int r = EXIT_FAILURE;
 #if not defined(__GLIBCXX__)
   try {

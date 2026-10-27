@@ -20,7 +20,8 @@ namespace mtest {
 
   struct SingleStructureScheme;
 
-  struct SingleStructureSchemeParser : public SchemeParserBase {
+  struct MTEST_VISIBILITY_EXPORT SingleStructureSchemeParser
+      : public SchemeParserBase {
     /*!
      * \brief handle the `@Behaviour` keyword
      * \param[in,out] p : position in the input file

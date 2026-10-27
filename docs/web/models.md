@@ -58,7 +58,7 @@ s.setDefaultInitialValue(0.);
 s.setDepth(1);
 
 @Input Bu;
-Bu.setGlossaryName("BurnUp");
+Bu.setGlossaryName("BurnUp (at.%)");
 Bu.setDepth(1);
 
 @Input f;

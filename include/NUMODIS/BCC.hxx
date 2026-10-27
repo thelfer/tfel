@@ -56,8 +56,6 @@ namespace numodis {
     BCC(const BCC&);
     //! \brief move constructor
     BCC(BCC&&) noexcept;
-
-    void PrintData(std::ostream& os) const;
     //! \brief destructor
     ~BCC() override;
 
