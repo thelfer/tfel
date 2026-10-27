@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_VISCOPLASTICFLOWBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_VISCOPLASTICFLOWBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourBrick/InelasticFlowBase.hxx"
 
 namespace mfront::bbrick {
@@ -39,7 +40,7 @@ namespace mfront::bbrick {
    * \note If \f$f\f$ depends explicitly on the equivalent viscoplastic strain,
    * the method `describesStrainHardeningExplicitly` must return `true`.
    */
-  struct ViscoplasticFlowBase : InelasticFlowBase {
+  struct MFRONT_VISIBILITY_EXPORT ViscoplasticFlowBase : InelasticFlowBase {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,

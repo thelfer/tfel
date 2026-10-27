@@ -16,6 +16,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_SCALARDAMAGEHOOKESTRESSPOTENTIALBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_SCALARDAMAGEHOOKESTRESSPOTENTIALBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"
 
 namespace mfront {
@@ -31,7 +32,8 @@ namespace mfront::bbrick {
    * \brief base class for stress potential describing the computation of the
    * stress through the Hooke law coupled with an isotropic damage.
    */
-  struct ScalarDamageHookeStressPotentialBase : HookeStressPotentialBase {
+  struct MFRONT_VISIBILITY_EXPORT ScalarDamageHookeStressPotentialBase
+      : HookeStressPotentialBase {
     //! \brief constructor
     ScalarDamageHookeStressPotentialBase();
     //
