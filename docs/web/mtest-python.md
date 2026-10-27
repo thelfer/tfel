@@ -343,10 +343,12 @@ behaviour treated:
 
 ### Methods of the `MTestCurrentState` class
 
-The `MTestCurrentState` class provide the `copy` method to get a deep
-copy of the structure. It is mandatory to use such a copy in some
-advanced usage of the `MTest` class. This includes the following
-cases:
+The `MTestCurrentState` class provides the `copy` method, which returns
+a shallow copy of the structure: the copy shares the states of the
+integration point with the original structure. The `makeDeepCopy`
+method returns a deep copy of the structure. It is mandatory to use
+such a deep copy in some advanced usage of the `MTest` class. This
+includes the following cases:
 
 - make appropriate time substepping in case of integration failure
 - loading control based of the behaviour feed-back

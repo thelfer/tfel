@@ -424,7 +424,7 @@ namespace tfel::utilities {
         tfel::raise("data named '" + k + "' is not an integer");
       }
       if (d.get<int>() <= 0) {
-        tfel::raise("data named '" + k + "' is not strictly postive");
+        tfel::raise("data named '" + k + "' is not strictly positive");
       }
     });
   }  // end of addStrictlyPositiveIntegerCheck
@@ -475,7 +475,7 @@ namespace tfel::utilities {
     tfel::raise(
         "raiseUnmatchedDataType: "
         "the type of data '" +
-        std::string{n} + "'is not the expected one");
+        std::string{n} + "' is not the expected one");
   }  // end of raiseUnmatchedParameterType
 
   const Data& get(const DataMap& m, std::string_view n) {
