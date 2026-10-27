@@ -592,6 +592,15 @@ namespace mfront {
       }
       return "tfel::math::numeric_type<" + v.type + ">";
     }();
+    // bounds set on a component of a non scalar variable only apply to this
+    // component
+    const auto c = ((bounds.component != -1) && (!v.isScalar()))
+                       ? std::to_string(bounds.component)
+                       : std::string{};
+    const auto name =
+        c.empty() ? std::string{n} : std::string{n} + '(' + c + ')';
+    const auto value =
+        c.empty() ? std::string{n} : std::string{n} + '[' + c + ']';
     const auto this_pointer = addThis ? "this->" : "";
     const auto policy_argument = [&physicalBounds, &policy]() -> std::string {
       if (!physicalBounds) {
@@ -601,39 +610,41 @@ namespace mfront {
     }();
     if (bounds.boundsType == VariableBoundsDescription::LOWER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::lowerBoundCheck(\"" << n << "\", " << this_pointer << n << ","
+         << ">::lowerBoundCheck(\"" << name << "\", " << this_pointer << value
+         << ","
          << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::lowerBoundCheck(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::lowerBoundCheck(\"" << name << "+d" << name << "\", "
+           << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << ")"
            << policy_argument << ");\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::upperBoundCheck(\"" << n << "\", " << this_pointer << n << ","
+         << ">::upperBoundCheck(\"" << name << "\", " << this_pointer << value
+         << ","
          << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::upperBoundCheck(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::upperBoundCheck(\"" << name << "+d" << name << "\", "
+           << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
            << policy_argument << ");\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::lowerAndUpperBoundsChecks(\"" << n << "\", " << this_pointer
-         << n << ","
+         << ">::lowerAndUpperBoundsChecks(\"" << name << "\", " << this_pointer
+         << value << ","
          << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
          << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::lowerAndUpperBoundsChecks(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::lowerAndUpperBoundsChecks(\"" << name << "+d" << name
+           << "\", " << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
            << "),"
            << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
