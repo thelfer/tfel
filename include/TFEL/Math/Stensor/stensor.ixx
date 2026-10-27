@@ -670,6 +670,26 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto
+  stensor<N, T>::buildAbsoluteValueFromEigenValuesAndVectors(
+      const T& v1,
+      const T& v2,
+      const T& v3,
+      const rotation_matrix<T>& m) noexcept {
+    return stensor::buildFromEigenValuesAndVectors(
+        tfel::math::abs(v1), tfel::math::abs(v2), tfel::math::abs(v3), m);
+  }  // end of buildAbsoluteValueFromEigenValuesAndVectors
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto
+  stensor<N, T>::buildAbsoluteValueFromEigenValuesAndVectors(
+      const tvector<3u, T>& vp, const rotation_matrix<T>& m) noexcept {
+    return stensor::buildFromEigenValuesAndVectors(tfel::math::abs(vp(0)),
+                                                   tfel::math::abs(vp(1)),
+                                                   tfel::math::abs(vp(2)), m);
+  }  // end of buildAbsoluteValueFromEigenValuesAndVectors
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto
   stensor<N, T>::buildPositivePartFromEigenValuesAndVectors(
       const T& v1,
       const T& v2,

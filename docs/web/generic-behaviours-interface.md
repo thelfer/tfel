@@ -77,7 +77,7 @@ The following tangent operators are available:
 
 Orthotropic behaviours require to:
 
-- rotate the gradients in the material frame to the global frame before
+- rotate the gradients from the global frame to the material frame before
   the behaviour integration.
 - rotate the thermodynamic forces and the tangent operator blocks from
   the material frame to the global frame.
