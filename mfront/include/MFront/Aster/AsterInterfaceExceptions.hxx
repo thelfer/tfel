@@ -18,6 +18,7 @@
 #include <string_view>
 #include "TFEL/Exception/TFELException.hxx"
 #include "TFEL/Material/MaterialException.hxx"
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/Aster/Aster.hxx"
 #include "MFront/Aster/AsterConfig.hxx"
 #include "MFront/Aster/AsterException.hxx"
@@ -48,6 +49,7 @@ namespace aster {
                                  AsterReal* const,
                                  const AsterInt* const,
                                  AsterReal* const,
+                                 const tfel::material::OutOfBoundsPolicy,
                                  const StressFreeExpansionHandler&);
   };  // end of struct AsterUnSupportedCaseHandler
 

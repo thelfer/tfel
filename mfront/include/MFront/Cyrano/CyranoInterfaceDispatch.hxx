@@ -27,7 +27,6 @@
 #include "MFront/Cyrano/CyranoBehaviourHandler.hxx"
 #include "MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx"
 #include "MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx"
-// #include"MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx"
 
 namespace cyrano {
 

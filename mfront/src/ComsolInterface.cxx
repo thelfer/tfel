@@ -254,6 +254,10 @@ namespace mfront {
           << "return 2;\n"
           << "}\n";
     }
+    // return values of the eval function (COMSOL Multiphysics Reference
+    // Manual, "Accepted return values for the EVAL function"): 0 for a
+    // normal exit, -1 for a normal exit with a warning (since COMSOL 5.5),
+    // any value other than 0, 1, 2, -1 and -2 for an error (3 is used here)
     out << "auto rdt = double{1};\n"
         << "try{\n"
         << "const auto p = " << this->getFunctionNameBasis(name)
@@ -296,23 +300,25 @@ namespace mfront {
         << "b.setCOMSOLBehaviourDataGradients(eto.begin());\n"
         << "b.setCOMSOLIntegrationDataGradients(deto.begin());\n"
         << "b.setOutOfBoundsPolicy(p);\n"
-        << "b.initialize();\n"
+        << "if (!b.initialize()) {\n"
+        << "  return 3;\n"
+        << "}\n"
         << "b.checkBounds();\n"
         << "const auto smflag = Behaviour::STANDARDTANGENTOPERATOR;\n"
         << "const auto smt = Behaviour::CONSISTENTTANGENTOPERATOR;\n"
         << "auto tsf = b.computeAPrioriTimeStepScalingFactor(rdt);\n"
         << "rdt = tsf.second;\n"
         << "if (!tsf.first) {\n"
-        << "  return -1;\n"
+        << "  return 3;\n"
         << "}\n"
         << "const auto r = b.integrate(smflag, smt);\n"
         << "if (r == Behaviour::FAILURE) {\n"
-        << "  return -1;\n"
+        << "  return 3;\n"
         << "}\n"
         << "const auto atsf = "
            "b.computeAPosterioriTimeStepScalingFactor(rdt);\n"
         << "if (!atsf.first) {\n"
-        << "  return -1;\n"
+        << "  return 3;\n"
         << "}\n"
         << "rdt = std::min(atsf.second, rdt);\n";
     if (!d.getPersistentVariables().empty()) {
@@ -338,7 +344,7 @@ namespace mfront {
         << "std::copy(K.begin(),K.end(), D);\n"
         << "tfel::fsalgo::copy<6>::exe(e1.begin(),stran);\n"
         << "} catch(...){\n"
-        << "return -1;\n"
+        << "return 3;\n"
         << "}\n"
         << "return rdt < 0.99 ? -1 : 0;\n"
         << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
