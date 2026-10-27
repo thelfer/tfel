@@ -21,6 +21,7 @@
 #include <cassert>
 #include <cstring>
 
+#include "TFEL/System/SystemError.hxx"
 #include "TFEL/System/wfstream.hxx"
 #include "TFEL/System/rfstream.hxx"
 
@@ -46,6 +47,14 @@ static void read() {
   assert(strcmp(c, "tutu") == 0);
   assert(r.getLine() == "ab");
   assert(r.getLine() == "cd");
+  // reading past the end of the file
+  auto eof = false;
+  try {
+    r >> t;
+  } catch (tfel::system::SystemError&) {
+    eof = true;
+  }
+  assert(eof);
   r.close();
 }  // end of main
 
