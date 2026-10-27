@@ -510,10 +510,12 @@ namespace mfront {
             // can't use std::swap here as errno might be a macro
             << "const auto mfront_errno = errno;\n"
             << "errno = mfront_errno_old;\n"
-            << "tfel::raise_if((mfront_errno!=0)||"
-            << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")),\n"
+            << "tfel::raise_if(mfront_errno!=0,\n"
             << "\"" << name << ": errno has been set \"\n"
-            << "\"(\"+std::string(::strerror(errno))+\")\");\n"
+            << "\"(\"+std::string(::strerror(mfront_errno))+\")\");\n"
+            << "tfel::raise_if("
+            << "!tfel::math::ieee754::isfinite(" << mpd.output.name << "),\n"
+            << "\"" << name << ": invalid result\");\n"
             << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
       }
       //

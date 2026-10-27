@@ -144,8 +144,8 @@ namespace mtest {
       log << "MTestParser::execute : treating keyword '" << p->value
           << "' at line '" << p->line << "'\n";
     }
-    ++p;
     const auto line = p->line;
+    ++p;
     try {
       (this->*(pc->second))(t, p);
     } catch (std::exception& e) {
@@ -986,6 +986,7 @@ namespace mtest {
   void MTestParser::handlePrintLagrangeMultipliers(MTest& t,
                                                    tokens_iterator& p) {
     const std::string m = "MTestParser::handlePrintLagrangeMultipliers";
+    this->checkNotEndOfLine(m, p, this->tokens.end());
     const auto b = [&p] {
       if (p->value == "true") {
         return true;
