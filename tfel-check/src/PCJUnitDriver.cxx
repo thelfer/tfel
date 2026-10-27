@@ -17,17 +17,42 @@
 
 namespace tfel::check {
 
+  //! \return the given string with the XML special characters escaped
+  static std::string escape(const std::string& s) {
+    const auto c1 = tfel::utilities::replace_all(s, "&", "&amp;");
+    const auto c2 = tfel::utilities::replace_all(c1, ">", "&gt;");
+    const auto c3 = tfel::utilities::replace_all(c2, "<", "&lt;");
+    const auto c4 = tfel::utilities::replace_all(c3, "\"", "&quot;");
+    return tfel::utilities::replace_all(c4, "'", "&apos;");
+  }  // end of escape
+
+  /*!
+   * \return the given string without `--`, which is not allowed in an XML
+   * comment, nor a trailing `-`
+   */
+  static std::string escapeComment(const std::string& s) {
+    auto r = s;
+    while (r.find("--") != std::string::npos) {
+      r = tfel::utilities::replace_all(r, "--", "- -");
+    }
+    if ((!r.empty()) && (r.back() == '-')) {
+      r += ' ';
+    }
+    return r;
+  }  // end of escapeComment
+
   PCJUnitDriver::PCJUnitDriver(const std::string& f) : PCILogDriver(f) {
     this->getStream()
         << "<?xml version=\"1.0\" ?><testsuite name=\"tfel-check\">\n";
   }
 
   void PCJUnitDriver::addMessage(const std::string& message) {
-    this->getStream() << "<!--" << message << "-->\n";
+    this->getStream() << "<!--" << escapeComment(message) << "-->\n";
   }
 
   void PCJUnitDriver::reportSkippedTest(const std::string& d) {
-    this->getStream() << "<!-- test '" << d << "' has been skipped -->\n";
+    this->getStream() << "<!-- test '" << escapeComment(d)
+                      << "' has been skipped -->\n";
   }  // end of PCJUnitDriver::reportSkippedTest
 
   void PCJUnitDriver::addTestResult(const std::string& testname,
@@ -37,11 +62,6 @@ namespace tfel::check {
                                     bool success,
                                     const std::string& message) {
     using namespace std;
-    const auto c1 = tfel::utilities::replace_all(command, "&", "&amp;");
-    const auto c2 = tfel::utilities::replace_all(c1, ">", "&gt;");
-    const auto c3 = tfel::utilities::replace_all(c2, "<", "&lt;");
-    const auto c4 = tfel::utilities::replace_all(c3, "\"", "&quot;");
-    const auto c5 = tfel::utilities::replace_all(c4, "'", "&apos;");
     string testcase;
     ostringstream stime;
     stime << time;
@@ -49,11 +69,12 @@ namespace tfel::check {
     const auto open = (success) ? "  <success>" : "  <failure>";
     const auto close = (success) ? "  </success>" : "  </failure>";
 
-    this->getStream() << "<testcase classname=\"" << testname << "\" name=\""
-                      << step << "\" time=\"" << stime.str() << "\">\n";
+    this->getStream() << "<testcase classname=\"" << escape(testname)
+                      << "\" name=\"" << escape(step) << "\" time=\""
+                      << stime.str() << "\">\n";
     this->getStream() << open << '\n';
-    this->getStream() << "  Command was : " + c5 << '\n';
-    this->getStream() << message << '\n';
+    this->getStream() << "  Command was : " + escape(command) << '\n';
+    this->getStream() << escape(message) << '\n';
     this->getStream() << close << '\n';
     this->getStream() << "</testcase>\n";
   }

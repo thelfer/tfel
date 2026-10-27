@@ -33,8 +33,7 @@ void declareLibraryInformation(pybind11::module_& m) {
            pybind11::arg("f"),
            "Opens file with specified path and prepares for\n"
            "information extraction\n"
-           "f: path to the binary file from which the info must be extracted\n"
-           "b: throw an exception if this file format is not supported by OS")
+           "f: path to the binary file from which the info must be extracted")
       .def("sections", &LibraryInformation::sections,
            "List of sections that exist in binary file")
       .def("symbols", ptr1,
