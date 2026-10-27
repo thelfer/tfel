@@ -119,7 +119,7 @@ This entry describes cohesive force for cohesive zone models.
 
 
 * units:
-  *SI: Newton
+  *SI: Pa
 * type: vector
 
 # The `ConvectiveHeatTransferCoefficient` entry
@@ -133,7 +133,7 @@ This entry describes the heat transfer coefficient by convection.
 
 # The `CrossSectionArea` entry
 
-This entry describes ??.
+This entry describes the area of the cross section of a beam.
 
 
 * units:
@@ -182,7 +182,7 @@ This entry describes the dual stress of the strain measure.
 
 
 * units:
-  *SI: stress
+  *SI: Pa
 * type: tensor
 
 # The `ElasticStrain` entry
@@ -254,7 +254,7 @@ This entry describes the fast neutron fluence, where the limit for fast neutron 
 
 # The `FastNeutronFlux_01MeV` entry
 
-This entry describes the fast neutron fluence.
+This entry describes the fast neutron flux, where the limit for fast neutron is 0.1 MeV.
 
 
 * units:
@@ -263,7 +263,7 @@ This entry describes the fast neutron fluence.
 
 # The `FastNeutronFlux_1MeV` entry
 
-This entry describes the fast neutron fluence.
+This entry describes the fast neutron flux, where the limit for fast neutron is 1 MeV.
 
 
 * units:
@@ -272,7 +272,7 @@ This entry describes the fast neutron fluence.
 
 # The `FirstAxisSecondMomentArea` entry
 
-This entry describes ??.
+This entry describes the second moment of area of the cross section of a beam about its first axis.
 
 
 * units:
@@ -340,7 +340,7 @@ This entry describes the Hill equivalent stress.
 
 * units:
   *SI: Pa
-* type: tensor
+* type: scalar
 
 # The `HydrostaticPressure` entry
 
@@ -349,7 +349,7 @@ This entry describes the hydrostatic pressure, defined as the third of the trace
 
 * units:
   *SI: Pa
-* type: tensor
+* type: scalar
 
 # The `IrradiationDamage` entry
 
@@ -616,7 +616,7 @@ no units specified
 
 # The `PlateWidth` entry
 
-This entry describes ??.
+This entry describes the out-of-plane width of a plate.
 
 
 * units:
@@ -715,7 +715,7 @@ This entry describes the first principal stress.
 
 # The `PrincipalStress2` entry
 
-This entry describes the third principal stress.
+This entry describes the second principal stress.
 
 
 * units:
@@ -733,7 +733,7 @@ This entry describes the third principal stress.
 
 # The `SecondAxisSecondMomentArea` entry
 
-This entry describes ??.
+This entry describes the second moment of area of the cross section of a beam about its second axis.
 
 
 * units:
@@ -863,7 +863,7 @@ This entry describes the temperature gradient, generally in the current configur
 
 
 * units:
-  *SI: T.m^{-1}
+  *SI: K.m^{-1}
 * type: vector
 
 # The `ThermalConductivity` entry
@@ -956,11 +956,11 @@ This entry shall have been named MeanThermalExpansionCoefficient3.
 
 # The `TorsionConstant` entry
 
-This entry describes ??.
+This entry describes the torsion constant of the cross section of a beam.
 
 
 * units:
-  *SI: ??
+  *SI: m^{4}
 * type: scalar
 
 # The `TrescaStress` entry
@@ -1032,7 +1032,7 @@ This entry describes the Young's modulus of an isotropic material.
 
 # The `YoungModulus1` entry
 
-This entry describes the Young's modulus of an isotropic material along the first direction of orthotropy.
+This entry describes the Young's modulus of an orthotropic material along the first direction of orthotropy.
 
 
 * units:
@@ -1041,7 +1041,7 @@ This entry describes the Young's modulus of an isotropic material along the firs
 
 # The `YoungModulus2` entry
 
-This entry describes the Young's modulus of an isotropic material along the second direction of orthotropy.
+This entry describes the Young's modulus of an orthotropic material along the second direction of orthotropy.
 
 
 * units:
@@ -1050,7 +1050,7 @@ This entry describes the Young's modulus of an isotropic material along the seco
 
 # The `YoungModulus3` entry
 
-This entry describes the Young's modulus of an isotropic material along the third direction of orthotropy.
+This entry describes the Young's modulus of an orthotropic material along the third direction of orthotropy.
 
 
 * units:

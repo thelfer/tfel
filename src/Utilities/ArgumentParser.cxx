@@ -96,7 +96,7 @@ namespace tfel::utilities {
   void ArgumentParser::registerCallBack(const std::string& k,
                                         const CallBack& c) {
     raise_if(k.empty(),
-             "ArgumentParser::registerNewCallBack: "
+             "ArgumentParser::registerCallBack: "
              "invalid key");
 #ifdef _WIN32
     if (k.size() > 2) {
@@ -112,7 +112,7 @@ namespace tfel::utilities {
                                         const std::string& a,
                                         const CallBack& c) {
     raise_if(a.empty(),
-             "ArgumentParser::registerNewCallBack: "
+             "ArgumentParser::registerCallBack: "
              "invalid alias");
     this->alias.insert({a, k});
 #ifdef _WIN32

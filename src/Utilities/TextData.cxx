@@ -159,7 +159,7 @@ namespace tfel::utilities {
     raise_if(p == this->legends.end(),
              "TextData::findColumn: "
              "no column named '" +
-                 n + "' found'.");
+                 n + "' found.");
     return static_cast<size_type>(p - this->legends.begin() + 1);
   }  // end of TextData::findColumn
 

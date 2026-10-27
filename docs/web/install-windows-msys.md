@@ -69,7 +69,7 @@ Then run:
 $ cmake .. -G "MinGW Makefiles" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=/mingw64 \
-        -DPYTHON_EXECUTABLE=/mingw64/bin/python \
+        -DPython_EXECUTABLE=/mingw64/bin/python \
         -Denable-python=ON \
         -Denable-python-bindings=ON
         

@@ -444,11 +444,11 @@ namespace mfront {
                             ? mb.getLibrary() + mb.getClassName()
                             : mb.getClassName();
       output_file.open(name + ".md");
-      output_file.exceptions(std::ios::badbit | std::ios::failbit);
       tfel::raise_if(!output_file,
                      "BehaviourDocumentationGenerator::exe: "
-                     "could not open file 'src/" +
-                         name + ".txt'");
+                     "could not open file '" +
+                         name + ".md'");
+      output_file.exceptions(std::ios::badbit | std::ios::failbit);
       return output_file;
     }();
     DocumentationGeneratorBase::writeStandardLatexMacros(out);

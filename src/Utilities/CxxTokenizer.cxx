@@ -1314,7 +1314,8 @@ namespace tfel::utilities {
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt",
                                     "expected number", p, pe);
     raise_if(p->flag != Token::Number,
-             "CxxTokenizer::readInt: given value is not a number (read " +
+             "CxxTokenizer::readUnsignedInt: given value is not a number "
+             "(read " +
                  p->value + ")");
     const auto value = [&p] {
       auto v = p->value;
