@@ -56,12 +56,16 @@ namespace tfel::system {
     if (::pipe(in) == -1) {
       std::cerr << "callGdb : pipe creation failed (" << strerror(errno)
                 << ")\n";
+      // tells the father to die
+      ::write(fd, "NO", 2u);
       return;
     }
     // creating pipe
     if (pipe(ffd) == -1) {
       std::cerr << "callGdb : pipe creation failed (" << strerror(errno)
                 << ")\n";
+      // tells the father to die
+      ::write(fd, "NO", 2u);
       return;
     }
     // forking
@@ -72,6 +76,8 @@ namespace tfel::system {
       ::close(ffd[0]);
       ::close(ffd[1]);
       std::cerr << "callGdb : fork failed (" << strerror(errno) << ")\n";
+      // tells the father to die
+      ::write(fd, "NO", 2u);
       return;
     }
     if (pid == 0) {
@@ -90,7 +96,7 @@ namespace tfel::system {
       // called failed, tells the father, free memory and quit
       ::write(ffd[1], "NO", 2u);
       ::close(ffd[1]);
-      return;
+      ::_exit(EXIT_FAILURE);
     }
     // here we are in the father
     ::close(ffd[1]);
@@ -158,6 +164,8 @@ namespace tfel::system {
     if (pid == 0) {
       ::close(res[0]);
       SignalManager::callGdb(res[1], id);
+      // the child shall not return into the code of the father
+      ::_exit(EXIT_SUCCESS);
     }
     ::close(res[1]);
     while ((readChar = read(res[0], buf, 2u)) == -1) {

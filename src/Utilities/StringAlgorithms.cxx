@@ -12,6 +12,7 @@
  */
 
 #include <sstream>
+#include <algorithm>
 #include <concepts>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
@@ -33,7 +34,9 @@ namespace tfel::utilities {
                                     const char c,
                                     const bool keep_empty_strings) {
     std::vector<std::string> res;
-    auto b = std::string::size_type{};
+    // leading delimiters give empty strings, which are kept only on demand
+    auto b =
+        keep_empty_strings ? std::string::size_type{} : s.find_first_not_of(c);
     auto e = s.find_first_of(c, b);
     while (std::string::npos != e || std::string::npos != b) {
       // Found a token, add it to the vector.
@@ -53,7 +56,8 @@ namespace tfel::utilities {
     const auto sl = s.length();
     const auto dl = d.length();
     auto b = std::string::size_type{};
-    auto e = s.find(d, b);
+    // an empty delimiter is never found, as in replace_all
+    auto e = d.empty() ? std::string::npos : s.find(d, b);
     while (e != std::string::npos) {
       res.emplace_back(s.substr(b, e - b));
       b = e + dl;
@@ -81,9 +85,10 @@ namespace tfel::utilities {
                    const std::string::size_type ps) {
     using namespace std;
     string::size_type rs;
-    string::size_type pos = ps;
+    string::size_type pos = min(ps, s.size());
     string::size_type p;
-    r.clear();
+    // the characters before the beginning of the search are kept
+    r.assign(s.substr(0, pos));
     if (s.empty()) {
       return;
     }
