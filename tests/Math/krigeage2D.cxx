@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include <cmath>
+#include <random>
 #include <fstream>
 #include <cstdlib>
 #include <iostream>
@@ -29,7 +30,11 @@
 #include "TFEL/Math/FactorizedKriging1D1D.hxx"
 
 static double rand(const double min, const double max) {
-  return min + ((max - min) * rand()) / RAND_MAX;
+  // std::minstd_rand0 is fully specified by the standard: the data set is
+  // the same on every platform, unlike the one given by std::rand
+  static std::minstd_rand0 g;
+  return min + (max - min) * static_cast<double>(g() - g.min()) /
+                   static_cast<double>(g.max() - g.min());
 }
 
 struct Kriging2DTest final : public tfel::tests::TestCase {
