@@ -1,6 +1,6 @@
 @Behaviour<aster> 'src/libAsterBehaviour.so' 'asterchaboche';
-@MaterialProperty<constant> 'young' 200000. ; 
-@MaterialProperty<constant> 'nu'  0.33 ;    
+@MaterialProperty<constant> 'YoungModulus' 200000. ;
+@MaterialProperty<constant> 'PoissonRatio'  0.33 ;
 @MaterialProperty<constant> 'R_inf' 50. ;
 @MaterialProperty<constant> 'R_0' 30. ;
 @MaterialProperty<constant> 'b'  20. ;

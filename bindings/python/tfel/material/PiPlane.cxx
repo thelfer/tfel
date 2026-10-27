@@ -46,7 +46,7 @@ static const char project_on_pi_plane_stensor_doc[] =
 
 static const char build_from_pi_plane_doc[] =
     "This function returns the stress state\n"
-    "$s_{0}\\,\\vec{n}_{0}+s_{0}\\,\\vec{n}_{1}$, defined by three\n"
+    "$s_{0}\\,\\vec{n}_{0}+s_{1}\\,\\vec{n}_{1}$, defined by three\n"
     "eigenvalues, where $\\vec{n}_{0}$ and $\\vec{n}_{1}$ is the basis of\n"
     "the $\\pi$-plane\n"
     "s0: first position in the $\\pi$-plane.\n"
