@@ -337,7 +337,7 @@ namespace mfront {
     writeTFELVersionSymbol(out, name);
     writeUnitSystemSymbol(out, name, mpd);
     writeInterfaceSymbol(out, name, "Octave");
-    writeLawSymbol(out, name, mpd.material);
+    writeLawSymbol(out, name, mpd.law);
     writeMaterialSymbol(out, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(out, name,
                                      MaterialKnowledgeType::MATERIALPROPERTY);

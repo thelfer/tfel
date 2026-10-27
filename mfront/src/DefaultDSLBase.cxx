@@ -196,7 +196,8 @@ namespace mfront {
       } else {
         reportWarning(
             "neither the increment of the opening displacement 'du' nor its "
-            "normal or tangential components ('du_n', 'du_t) is used in the '" +
+            "normal or tangential components ('du_n', 'du_t') is used in "
+            "the '" +
             cname + "' code block");
       }
       const auto uses_t = integrator.members.contains("t");
@@ -233,8 +234,8 @@ namespace mfront {
         }
       } else {
         reportWarning(
-            "neither the increment of the opening displacement 'u' nor its "
-            "normal or tangential components ('u_n', 'u_t) is used in the '" +
+            "neither the cohesive force 't' nor its normal or tangential "
+            "components ('t_n', 't_t') is used in the '" +
             cname + "' code block");
       }
     } else {

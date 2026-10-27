@@ -221,8 +221,7 @@ boolean options:
 - `enable-doxygen-doc`, which enables or disables the generation of the
   doxygen documentation (disabled by default)
 - `enable-reference-doc`, which enables or disables the reference
-  documentation generation (enabled by default if `latex` or `pandoc` is
-  found)
+  documentation generation (disabled by default)
 - `enable-website`, which enables or disables the generation of the
   `TFEL` website (enabled by default if `pandoc` is found)
 
@@ -286,11 +285,11 @@ used to build the `pip` package, which can't store symbolic links.
 
 ### Selecting the `python` version
 
-A specific `python` version can be selected by setting the
-`Python_ADDITIONAL_VERSIONS`, as follows:
+A specific `python` interpreter can be selected by setting
+`Python_EXECUTABLE` (or `Python_ROOT_DIR`), as follows:
 
 ~~~~{.bash}
-cmake ../master/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
+cmake ../master/ -Denable-python-bindings=ON -DPython_EXECUTABLE=/usr/bin/python3.12 ...
 ~~~~
 
 # Building

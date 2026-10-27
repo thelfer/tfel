@@ -55,17 +55,16 @@ namespace mfront {
    * \param[out] os: output stream
    * \param[in] n: name of the symbol
    */
-  void exportStringSymbol(std::ostream&,
-                          const std::string_view,
-                          const std::string_view);
+  MFRONT_VISIBILITY_EXPORT void exportStringSymbol(std::ostream&,
+                                                   const std::string_view,
+                                                   const std::string_view);
   /*!
    * \brief export string symbol using the `MFRONT_EXPORT_SYMBOL` macro
    * \param[out] os: output stream
    * \param[in] n: name of the symbol
    */
-  void exportUnsignedShortSymbol(std::ostream&,
-                                 const std::string_view,
-                                 const unsigned short);
+  MFRONT_VISIBILITY_EXPORT void exportUnsignedShortSymbol(
+      std::ostream&, const std::string_view, const unsigned short);
   /*!
    * \brief write the name of the variable
    * \param[out] os: output stream
