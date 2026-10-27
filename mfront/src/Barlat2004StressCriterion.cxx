@@ -29,7 +29,8 @@ namespace mfront::bbrick {
                       OptionDescription::MATERIALPROPERTY);
     opts.emplace_back(
         "eigen_solver",
-        "Choice of the eigen solver. Valid value are 'default' and 'Jacoby'.",
+        "Choice of the eigen solver. Valid value are 'default' (or 'TFEL') and "
+        "'Jacobi'.",
         OptionDescription::STRING);
     return opts;
   }  // end of getOptions
@@ -118,7 +119,7 @@ namespace mfront::bbrick {
           tfel::raise_if(mh != ModellingHypothesis::TRIDIMENSIONAL,
                          "Barlat2004StressCriterion::endTreatment: "
                          "an orthotropic axes convention must be choosen when "
-                         "defining a stress free expansion in behaviours "
+                         "using the Barlat 2004 stress criterion in behaviours "
                          "which shall be valid in other modelling hypothesis "
                          "than 'Tridimensional'.\n"
                          "Either restrict the validity of the behaviour to "

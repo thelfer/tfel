@@ -62,7 +62,7 @@ namespace mfront::bbrick {
         this->save_porosity_increase = e.second.get<bool>();
       } else if (e.first == "porosity_evolution_algorithm") {
         if (!e.second.is<std::string>()) {
-          raise("'porosity_evolution_algorithm' is not a boolean");
+          raise("'porosity_evolution_algorithm' is not a string");
         }
         const auto& a = e.second.get<std::string>();
         if (a == "standard_implicit_scheme") {
@@ -79,11 +79,10 @@ namespace mfront::bbrick {
     // treating material coefficients
     for (const auto& mc : this->getMaterialCoefficientDescriptions()) {
       const auto mc_n = PorosityNucleationModel::getVariableId(mc.name, id);
-      tfel::raise_if(
-          d.count(mc.name) == 0,
-          "ChuNeedleman1980StrainBasedPorosityNucleationModel::initialize: "
-          "material property '" +
-              mc_n + "' is not defined");
+      tfel::raise_if(d.count(mc.name) == 0,
+                     "PorosityNucleationModelBase::initialize: "
+                     "material property '" +
+                         mc_n + "' is not defined");
       this->material_coefficients.insert(
           {mc.name, getBehaviourDescriptionMaterialProperty(dsl, mc.name,
                                                             d.at(mc.name))});

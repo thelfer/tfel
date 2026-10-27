@@ -759,9 +759,16 @@ namespace mfront {
   void BehaviourDSLCommon::appendToHypothesesList(std::set<Hypothesis>& h,
                                                   const std::string& v) const {
     if (v == ".+") {
-      const auto& ash = ModellingHypothesis::getModellingHypotheses();
-      for (const auto& lh : ash) {
-        this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+      if (this->mb.areModellingHypothesesDefined()) {
+        // all the hypotheses supported by the behaviour
+        for (const auto& lh : this->mb.getModellingHypotheses()) {
+          this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+        }
+      } else {
+        const auto& ash = ModellingHypothesis::getModellingHypotheses();
+        for (const auto& lh : ash) {
+          this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+        }
       }
     } else {
       const auto nh = ModellingHypothesis::fromString(v);
@@ -877,9 +884,8 @@ namespace mfront {
         cposition = true;
         o.p = BehaviourData::AT_END;
       } else if ((t.flag == Token::String) &&
-                 (t.value.substr(1, t.value.size() - 2) == "+")) {
-        this->appendToHypothesesList(o.hypotheses,
-                                     t.value.substr(1, t.value.size() - 2));
+                 (t.value.substr(1, t.value.size() - 2) == ".+")) {
+        this->appendToHypothesesList(o.hypotheses, ".+");
       } else if (ModellingHypothesis::isModellingHypothesis(t.value)) {
         this->appendToHypothesesList(o.hypotheses, t.value);
       } else {
@@ -3432,10 +3438,15 @@ namespace mfront {
     auto b = current;
     for (const auto& h : hs) {
       this->current = b;
-      const auto bounds = this->readVariableBounds();
-      this->mb.setPhysicalBounds(h, bounds.first, bounds.second);
+      const auto r = this->readVariableBounds();
+      const auto v = extractVariableNameAndArrayPosition(r.first);
+      if (std::get<1>(v)) {
+        this->mb.setPhysicalBounds(h, std::get<0>(v), std::get<2>(v), r.second);
+      } else {
+        this->mb.setPhysicalBounds(h, std::get<0>(v), r.second);
+      }
     }
-    this->readSpecifiedToken("BehaviourDSLCommon::treatBounds", ";");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatPhysicalBounds", ";");
   }  // end of treatPhysicalBounds
 
   void BehaviourDSLCommon::registerDefaultVarNames() {

@@ -2058,7 +2058,7 @@ namespace mfront {
         return "tfel::math::derivative_type<" + th.type + "," + g.type + ">";
       }
       return "tfel::math::tvector<" + this->computeTangentOperatorSize() +
-             ",real>";
+             ",NumericType>";
     } else if (this->getBehaviourType() == STANDARDSTRAINBASEDBEHAVIOUR) {
       return "StiffnessTensor";
     } else if (this->getBehaviourType() == STANDARDFINITESTRAINBEHAVIOUR) {

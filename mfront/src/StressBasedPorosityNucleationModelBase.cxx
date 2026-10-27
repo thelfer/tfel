@@ -52,10 +52,9 @@ namespace mfront::bbrick {
     addLocalVariable(bd, "" + mn + "Parameters<StressStensor>", parameters);
     //
     const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
-    tfel::raise_if(
-        d.count("fmax") == 0,
-        "ChuNeedleman1980StressBasedPorosityNucleationModel::initialize: "
-        "material property 'fmax' is not defined");
+    tfel::raise_if(d.count("fmax") == 0,
+                   "StressBasedPorosityNucleationModelBase::initialize: "
+                   "material property 'fmax' is not defined");
     this->fmax =
         getBehaviourDescriptionMaterialProperty(dsl, "fmax", d.at("fmax"));
     declareParameterOrLocalVariable(bd, this->fmax, "real", fmax_n);
@@ -107,7 +106,7 @@ namespace mfront::bbrick {
           v += " + ";
         }
         v += "this->p" + flow.first + " + ";
-        v += theta + " * std::max(this->dp" + flow.first + ", real(0))";
+        v += theta + " * std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;
@@ -120,7 +119,7 @@ namespace mfront::bbrick {
         if (!first) {
           v += " + ";
         }
-        v += "std::max(this->dp" + flow.first + ", real(0))";
+        v += "std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;
@@ -205,7 +204,7 @@ namespace mfront::bbrick {
           v += " + ";
         }
         v += "this->p" + flow.first + " + ";
-        v += theta + " * std::max(this->dp" + flow.first + ", real(0))";
+        v += theta + " * std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;
@@ -218,7 +217,7 @@ namespace mfront::bbrick {
         if (!first) {
           v += " + ";
         }
-        v += "std::max(this->dp" + flow.first + ", real(0))";
+        v += "std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;

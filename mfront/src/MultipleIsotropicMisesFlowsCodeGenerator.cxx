@@ -277,7 +277,7 @@ namespace mfront {
     os << "converge = ((error)/(real(" << this->flows.size() << "))<"
        << "(" << this->bd.getClassName() << "::epsilon));\n"
        << "}\n\n"
-       << "if(iter==" << this->bd.getClassName() << "::iterMax){\n";
+       << "if(!converge){\n";
     if (getDebugMode()) {
       os << "std::cout << \"" << this->bd.getClassName()
          << "::NewtonIntegration() : no convergence after \" "

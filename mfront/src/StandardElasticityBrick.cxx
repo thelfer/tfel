@@ -71,7 +71,7 @@ namespace mfront {
         // setElasticSymmetryType call
         throw_if(this->bd.getSymmetryType() != mfront::ORTHOTROPIC,
                  "using the orthotropic behaviour requires that the "
-                 "behaviour has not been declared orthotropic");
+                 "behaviour has been declared orthotropic");
         this->checkThatParameterHasNoValue(pp);
         setElasticSymmetryType(this->bd, mfront::ORTHOTROPIC);
       } else {
