@@ -685,6 +685,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1264: [tfel] Installed headers that cannot be compiled, 2D microstructure-based homogenisation, Windows installation pages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1264>
+
 ## Issue 1254: [tfel-math] Eigen solvers of symmetric tensors: wrong eigenvectors for equal or close eigenvalues, Cardano eigenvalues of syevc3, derivatives of isotropic functions of quantities, ConvertLogarithmicStrainTangentOperator
 
 For more details, see <https://github.com/thelfer/tfel/issues/1254>
