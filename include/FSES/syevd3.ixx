@@ -42,6 +42,7 @@
 #include "FSES/syev2.hxx"
 #include "FSES/slvsec3.hxx"
 #include "FSES/sytrd3.hxx"
+#include "FSES/syevq3.hxx"
 
 namespace fses {
 
@@ -131,6 +132,18 @@ namespace fses {
     }
 
 #ifndef FSES_EVALS_ONLY
+    // The eigenvectors computed from the secular equation lose their
+    // orthogonality as eps / gap when two eigenvalues are close (and are
+    // meaningless when a deflation is missed): fall back to the QL algorithm
+    const auto wmax =
+        std::max({std::abs(at(w, 0)), std::abs(at(w, 1)), std::abs(at(w, 2))});
+    const auto gap =
+        std::min({std::abs(at(w, 0) - at(w, 1)), std::abs(at(w, 0) - at(w, 2)),
+                  std::abs(at(w, 1) - at(w, 2))});
+    if (gap <= std::sqrt(std::sqrt(ulp)) * wmax) {
+      return syevq3(Q, w, A);
+    }
+
     // Calculate eigenvectors of matrix D + beta * z * z^t and store them in the
     // columns of P
     z[0] = std::sqrt(std::abs(e[0]));
