@@ -127,6 +127,20 @@ namespace dianafea {
      */
     [[noreturn]] static void throwNegativeTimeStepException(const std::string&);
     /*!
+     * \brief throw an DianaFEAException if the initialization of the
+     * behaviour failed
+     * \param[in] b : behaviour name
+     */
+    [[noreturn]] static void throwBehaviourInitializationFailedException(
+        const std::string&);
+    /*!
+     * \brief throw an DianaFEAException if the behaviour integration
+     * failed
+     * \param[in] b : behaviour name
+     */
+    [[noreturn]] static void throwBehaviourIntegrationFailedException(
+        const std::string&);
+    /*!
      * \brief throw an DianaFEAException if the prediction computation
      * failed
      * \param[in] b : behaviour name
