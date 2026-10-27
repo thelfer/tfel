@@ -177,7 +177,7 @@ namespace mfront {
     const auto& qn = q.as_string();
     const auto pn = q.getOption();
     tfel::raise_if(pn.empty(),
-                   "Behaviour::treatStandardQuery2 : "
+                   "MaterialPropertyQuery::treatParameterDefaultValue: "
                    "no option given to the '" +
                        qn + "' query");
     this->queries.push_back(
