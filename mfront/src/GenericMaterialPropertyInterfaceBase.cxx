@@ -108,137 +108,156 @@ namespace mfront {
     return name + "-" + i + ".cxx";
   }
 
-  static void writePhysicalBounds(std::ostream& os,
-                                  const VariableDescription& v,
-                                  const size_t i,
-                                  const bool useQuantities) {
-    if (!v.hasPhysicalBounds()) {
-      return;
-    }
-    const auto& b = v.getPhysicalBounds();
-    const auto to_string = useQuantities
-                               ? "std::to_string(" + v.name + ".getValue())"
-                               : "std::to_string(" + v.name + ")";
-    if (b.boundsType == VariableBoundsDescription::LOWER) {
-      os << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
-         << "mfront_report(\"" << v.name
-         << " is below its physical lower bound (\" + " << to_string << " + \"<"
-         << b.lowerBound << ").\\n\");\n"
-         << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i << ";\n"
-         << "errno = mfront_errno_old;\n"
-         << "return std::nan(\"\");\n"
-         << "}\n";
-    } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      os << "if(" << v.name << " > " << v.type << "(" << b.upperBound << ")){\n"
-         << "mfront_report(\"" << v.name
-         << " is over its physical upper bound (\" + " << to_string << " + \">"
-         << b.upperBound << ").\\n\");\n"
-         << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i << ";\n"
-         << "errno = mfront_errno_old;\n"
-         << "return std::nan(\"\");\n"
-         << "}\n";
-    } else {
-      os << "if((" << v.name << " < " << v.type << "(" << b.lowerBound << "))||"
-         << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
-         << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
-         << "mfront_report(\"" << v.name
-         << " is below its physical lower bound (\" + " << to_string << " + \"<"
-         << b.lowerBound << ").\\n\");\n"
-         << "} else {\n"
-         << "mfront_report(\"" << v.name
-         << " is over its physical upper bound (\" + " << to_string << " + \">"
-         << b.upperBound << ").\\n\");\n"
-         << "}\n"
-         << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i << ";\n"
-         << "errno = mfront_errno_old;\n"
-         << "return std::nan(\"\");\n"
-         << "}\n";
-    }
-  }  // end of writePhysicalBounds
+  unsigned long long
+  GenericMaterialPropertyInterfaceBase::getPhysicalBoundCheck(
+      const std::size_t i, const bool upper) {
+    return 1 + 2 * i + (upper ? 0 : 1);
+  }  // end of getPhysicalBoundCheck
 
-  static void writeBounds(std::ostream& os,
-                          const std::string& iucname,
-                          const VariableDescription& v,
-                          const size_t i,
-                          const bool useQuantities) {
-    if (!v.hasBounds()) {
-      return;
+  unsigned long long GenericMaterialPropertyInterfaceBase::getBoundCheck(
+      const MaterialPropertyDescription& mpd,
+      const std::size_t i,
+      const bool upper) {
+    return 1 + 2 * (mpd.inputs.size() + 1) + 2 * i + (upper ? 0 : 1);
+  }  // end of getBoundCheck
+
+  void GenericMaterialPropertyInterfaceBase::writePointEvaluation(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const PointEvaluationOptions& opts) {
+    const auto checks = !areRuntimeChecksDisabled(mpd);
+    auto has_lower_bound = [](const VariableBoundsDescription& b) {
+      return (b.boundsType == VariableBoundsDescription::LOWER) ||
+             (b.boundsType == VariableBoundsDescription::LOWERANDUPPER);
+    };
+    auto has_upper_bound = [](const VariableBoundsDescription& b) {
+      return (b.boundsType == VariableBoundsDescription::UPPER) ||
+             (b.boundsType == VariableBoundsDescription::LOWERANDUPPER);
+    };
+    // the physical bounds always make the evaluation fail
+    auto write_physical_bounds =
+        [&os, &opts, &has_lower_bound, &has_upper_bound](
+            const VariableDescription& v, const std::size_t idx) {
+          if (!v.hasPhysicalBounds()) {
+            return;
+          }
+          const auto& b = v.getPhysicalBounds();
+          auto write = [&os, &opts, &v, idx](const char* const op,
+                                             const long double value,
+                                             const bool upper) {
+            os << "if(" << v.name << " " << op << " " << v.type << "(" << value
+               << ")){\n";
+            opts.failure(os, BoundCheck{.variable = v,
+                                        .rank = idx + 1,
+                                        .physical = true,
+                                        .upper = upper,
+                                        .bound = value,
+                                        .identifier =
+                                            getPhysicalBoundCheck(idx, upper)});
+            os << "}\n";
+          };
+          if (has_lower_bound(b)) {
+            write("<", b.lowerBound, false);
+          }
+          if (has_upper_bound(b)) {
+            write(">", b.upperBound, true);
+          }
+        };
+    // the bounds make the evaluation fail with the strict policy, and are
+    // reported with the warning policy
+    auto write_bounds = [&os, &opts, &mpd, &has_lower_bound, &has_upper_bound](
+                            const VariableDescription& v,
+                            const std::size_t idx) {
+      if (!v.hasBounds()) {
+        return;
+      }
+      const auto& b = v.getBounds();
+      const auto& prefix = opts.out_of_bounds_policy_prefix;
+      auto write = [&os, &opts, &mpd, &v, &prefix, idx](const char* const op,
+                                                        const long double value,
+                                                        const bool upper) {
+        const auto c = BoundCheck{.variable = v,
+                                  .rank = idx + 1,
+                                  .physical = false,
+                                  .upper = upper,
+                                  .bound = value,
+                                  .identifier = getBoundCheck(mpd, idx, upper)};
+        os << "if(" << v.name << " " << op << " " << v.type << "(" << value
+           << ")){\n"
+           << "if(mfront_out_of_bounds_policy==" << prefix
+           << "_STRICT_POLICY){\n";
+        opts.failure(os, c);
+        os << "}\n"
+           << "if(mfront_out_of_bounds_policy==" << prefix
+           << "_WARNING_POLICY){\n";
+        opts.warning(os, c);
+        os << "}\n"
+           << "}\n";
+      };
+      if (has_lower_bound(b)) {
+        write("<", b.lowerBound, false);
+      }
+      if (has_upper_bound(b)) {
+        write(">", b.upperBound, true);
+      }
+    };
+    const auto& inputs = mpd.inputs;
+    if ((checks) && ((hasPhysicalBounds(inputs)) || (hasBounds(inputs)))) {
+      os << "#ifndef " << opts.bounds_check_macro << "\n";
+      for (std::size_t idx = 0; idx != inputs.size(); ++idx) {
+        write_physical_bounds(inputs[idx], idx);
+      }
+      for (std::size_t idx = 0; idx != inputs.size(); ++idx) {
+        write_bounds(inputs[idx], idx);
+      }
+      os << "#endif /* " << opts.bounds_check_macro << " */\n";
     }
-    const auto to_string = useQuantities
-                               ? "std::to_string(" + v.name + ".getValue())"
-                               : "std::to_string(" + v.name + ")";
-    const auto& b = v.getBounds();
-    if (b.boundsType == VariableBoundsDescription::LOWER) {
-      os << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
-         << "if(mfront_out_of_bounds_policy==" << iucname
-         << "_STRICT_POLICY){\n"
-         << "mfront_report(\"" << v.name << " is below its lower bound (\" + "
-         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
+    os << mpd.f.body;
+    if ((checks) &&
+        ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds()))) {
+      os << "#ifndef " << opts.bounds_check_macro << "\n";
+      write_physical_bounds(mpd.output, inputs.size());
+      write_bounds(mpd.output, inputs.size());
+      os << "#endif /* " << opts.bounds_check_macro << " */\n";
+    }
+  }  // end of writePointEvaluation
+
+  /*!
+   * \brief write the report of a violated bound by the `generic` and
+   * `cyrano` interfaces: error message giving the value of the variable,
+   * status and bounds status. A failure ends the evaluation: the output is
+   * `NaN`.
+   * \param[out] os: output stream
+   * \param[in] c: check
+   * \param[in] qt: true if quantities are used
+   * \param[in] failure: true if the evaluation fails
+   */
+  static void writeGenericBoundReport(
+      std::ostream& os,
+      const GenericMaterialPropertyInterfaceBase::BoundCheck& c,
+      const bool qt,
+      const bool failure) {
+    const auto& v = c.variable;
+    const auto to_string = qt ? "std::to_string(" + v.name + ".getValue())"
+                              : "std::to_string(" + v.name + ")";
+    const auto kind = c.physical ? std::string{"physical "} : std::string{};
+    const auto msg =
+        "mfront_report(\"" + v.name +
+        (c.upper ? " is over its " + kind + "upper bound (\" + "
+                 : " is below its " + kind + "lower bound (\" + ") +
+        to_string + " + \"" + (c.upper ? ">" : "<");
+    if (failure) {
+      os << msg << c.bound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i << ";\n"
+         << "mfront_output_status->bounds_status = -" << c.rank << ";\n"
          << "errno = mfront_errno_old;\n"
-         << "return std::nan(\"\");\n"
-         << "} else if (mfront_out_of_bounds_policy==" << iucname
-         << "_WARNING_POLICY){\n"
-         << "mfront_output_status->status = 1;\n"
-         << "mfront_output_status->bounds_status = " << i << ";\n"
-         << "mfront_report(\"" << v.name << " is below its lower bound (\" + "
-         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
-         << "}\n"
-         << "}\n";
-    } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      os << "if(" << v.name << " > " << v.type << "(" << b.upperBound << ")){\n"
-         << "if(mfront_out_of_bounds_policy==" << iucname
-         << "_STRICT_POLICY){\n"
-         << "mfront_report(\"" << v.name << " is over its upper bound (\" + "
-         << to_string << " + \">" << b.upperBound << ").\\n\");\n"
-         << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i << ";\n"
-         << "errno = mfront_errno_old;\n"
-         << "return std::nan(\"\");\n"
-         << "} else if (mfront_out_of_bounds_policy==" << iucname
-         << "_WARNING_POLICY){\n"
-         << "mfront_output_status->status = 1;\n"
-         << "mfront_output_status->bounds_status = " << i << ";\n"
-         << "mfront_report(\"" << v.name << " is over its upper bound (\" + "
-         << to_string << " + \">" << b.upperBound << ").\\n\");\n"
-         << "}\n"
-         << "}\n";
+         << "return std::nan(\"\");\n";
     } else {
-      os << "if((" << v.name << " < " << v.type << "(" << b.lowerBound << "))||"
-         << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
-         << "if(mfront_out_of_bounds_policy==" << iucname
-         << "_STRICT_POLICY){\n"
-         << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
-         << "mfront_report(\"" << v.name << " is below its lower bound (\" + "
-         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
-         << "} else {\n"
-         << "mfront_report(\"" << v.name << " is over its upper bound (\" + "
-         << to_string << " + \">" << b.upperBound << ").\\n\");\n"
-         << "}\n"
-         << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i << ";\n"
-         << "errno = mfront_errno_old;\n"
-         << "return std::nan(\"\");\n"
-         << "} else if (mfront_out_of_bounds_policy==" << iucname
-         << "_WARNING_POLICY){\n"
-         << "mfront_output_status->status = 1;\n"
-         << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
-         << "mfront_output_status->bounds_status = " << i << ";\n"
-         << "mfront_report(\"" << v.name << " is below its lower bound (\" + "
-         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
-         << "} else {\n"
-         << "mfront_output_status->bounds_status = " << i << ";\n"
-         << "mfront_report(\"" << v.name << " is over its upper bound (\" + "
-         << to_string << " + \">" << b.upperBound << ").\\n\");\n"
-         << "}\n"
-         << "}\n"
-         << "}\n";
+      os << "mfront_output_status->status = 1;\n"
+         << "mfront_output_status->bounds_status = " << c.rank << ";\n"
+         << msg << c.bound << ").\\n\");\n";
     }
-  }  // end of writeBounds
+  }  // end of writeGenericBoundReport
 
   void GenericMaterialPropertyInterfaceBase::writeOutputFiles(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
@@ -306,96 +325,15 @@ namespace mfront {
     os.close();
   }  // end of writeHeaderFile()
 
-  void GenericMaterialPropertyInterfaceBase::writeSrcFile(
-      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
-    const auto types = this->getTypesDescription();
-    const auto iucname = this->getInterfaceNameInUpperCase();
-    const auto iname = this->getInterfaceName();
-    const auto prefix = this->getOutOfBoundsPolicyEnumerationPrefix();
-    const auto name = this->getFunctionName(mpd);
-    const auto fn = "src/" + this->getSourceFileName(name);
-    std::ofstream os{fn};
-    tfel::raise_if(!os,
-                   "GenericMaterialPropertyInterfaceBase::writeOutputFiles: "
-                   "unable to open '" +
-                       fn + "'");
-    os.exceptions(std::ios::badbit | std::ios::failbit);
-    os.precision(14);
-    const auto& file = fd.fileName;
-    const auto& author = fd.authorName;
-    const auto& date = fd.date;
-    const auto& includes = mpd.includes;
+  void GenericMaterialPropertyInterfaceBase::writePointwiseFunction(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const FileDescription& fd,
+      const std::string& name,
+      const PointwiseFunctionDescription& d) {
+    const auto& types = d.types;
+    const auto& iname = d.interface_namespace;
     const auto& params = mpd.parameters;
-    const auto& function = mpd.f;
-    os << "/*!\n"
-       << "* \\file   " << fn << '\n'
-       << "* \\brief  "
-       << "this file implements the " << name << " MaterialLaw.\n"
-       << "*         File generated by " << MFrontHeader::getVersionName()
-       << " "
-       << "version " << MFrontHeader::getVersionNumber() << '\n';
-    if (!author.empty()) {
-      os << "* \\author " << author << '\n';
-    }
-    if (!date.empty()) {
-      os << "* \\date " << date << '\n';
-    }
-    os << " */\n\n"
-       << "#include<algorithm>\n"
-       << "#include<iterator>\n"
-       << "#include<iostream>\n"
-       << "#include<sstream>\n"
-       << "#include<fstream>\n"
-       << "#include<cstring>\n"
-       << "#include<cstdlib>\n"
-       << "#include<cerrno>\n"
-       << "#include<string>\n"
-       << "#include<vector>\n"
-       << "#include<locale>\n"
-       << "#include<cmath>\n"
-       << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include\"TFEL/PhysicalConstants.hxx\"\n"
-       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
-       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
-    if (useQuantities(mpd)) {
-      os << "#include\"TFEL/Math/qt.hxx\"\n"
-         << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
-    }
-    os << "#include\"" << name << "-" << iname << ".hxx\"\n\n";
-    if (!includes.empty()) {
-      os << includes << "\n\n";
-    }
-
-    writeMaterialPropertyParametersHandler(os, mpd, name, "double", iname);
-
-    os << "#ifdef __cplusplus\n"
-       << "extern \"C\"{\n"
-       << "#endif /* __cplusplus */\n\n";
-
-    writeFileDescriptionSymbols(os, name, fd);
-    writeVariablesNamesSymbol(os, name, mpd);
-    writeVariablesBoundsSymbols(os, name, mpd);
-    writeValidatorSymbol(os, name, mpd);
-    writeBuildIdentifierSymbol(os, name, mpd);
-    writeEntryPointSymbol(os, name);
-    writeTFELVersionSymbol(os, name);
-    writeUnitSystemSymbol(os, name, mpd);
-    writeInterfaceSymbol(os, name, this->getInterfaceNameInCamelCase());
-    writeLawSymbol(os, name, mpd.law);
-    writeMaterialSymbol(os, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(os, name,
-                                     MaterialKnowledgeType::MATERIALPROPERTY);
-    writeParametersSymbols(os, name, mpd);
-    exportStringSymbol(
-        os, name + "_src",
-        tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back());
-
-    writeParametersSetterFunctionImplementation(
-        os, mpd,
-        {.material_property_name = name,
-         .floating_point_type = "double",
-         .interface_namespace = iname});
-
     os << "MFRONT_SHAREDOBJ " << types.real_type << "\n" << name << "(";
     os << types.output_status_type << "* const mfront_output_status,\n"
        << "const " << types.real_type << "* const";
@@ -468,43 +406,20 @@ namespace mfront {
     }
     os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
     os << "try{\n";
-    if (!areRuntimeChecksDisabled(mpd)) {
-      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-        os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
-      }
-      if (hasPhysicalBounds(mpd.inputs)) {
-        os << "// treating physical bounds\n";
-        for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
-          writePhysicalBounds(os, mpd.inputs[i], i + 1, useQuantities(mpd));
-        }
-      }
-      if (hasBounds(mpd.inputs)) {
-        os << "// treating standard bounds\n";
-        for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
-          writeBounds(os, prefix, mpd.inputs[i], i + 1, useQuantities(mpd));
-        }
-      }
-      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-        os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
-      }
-    }
-    os << function.body;
-    if (!areRuntimeChecksDisabled(mpd)) {
-      if ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds())) {
-        os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
-        if (mpd.output.hasPhysicalBounds()) {
-          os << "// treating physical bounds\n";
-          writePhysicalBounds(os, mpd.output, mpd.inputs.size() + 1,
-                              useQuantities(mpd));
-        }
-        if (mpd.output.hasBounds()) {
-          os << "// treating bounds\n";
-          writeBounds(os, prefix, mpd.output, mpd.inputs.size() + 1,
-                      useQuantities(mpd));
-        }
-        os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
-      }
-    }
+    const auto qt = useQuantities(mpd);
+    writePointEvaluation(
+        os, mpd,
+        PointEvaluationOptions{
+            .bounds_check_macro = d.bounds_check_macro,
+            .out_of_bounds_policy_prefix = d.out_of_bounds_policy_prefix,
+            .failure =
+                [qt](std::ostream& out, const BoundCheck& c) {
+                  writeGenericBoundReport(out, c, qt, true);
+                },
+            .warning =
+                [qt](std::ostream& out, const BoundCheck& c) {
+                  writeGenericBoundReport(out, c, qt, false);
+                }});
     os << "} catch(std::exception& e){\n"
        << "mfront_output_status->status = -2;\n"
        << "mfront_report(e.what());\n";
@@ -536,8 +451,105 @@ namespace mfront {
     } else {
       os << "return " << mpd.output.name << ";\n";
     }
-    os << "} // end of " << name << "\n\n"
-       << "#ifdef __cplusplus\n"
+    os << "} // end of " << name << "\n\n";
+  }  // end of writePointwiseFunction
+
+  void GenericMaterialPropertyInterfaceBase::writeSrcFile(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
+    const auto types = this->getTypesDescription();
+    const auto iucname = this->getInterfaceNameInUpperCase();
+    const auto iname = this->getInterfaceName();
+    const auto prefix = this->getOutOfBoundsPolicyEnumerationPrefix();
+    const auto name = this->getFunctionName(mpd);
+    const auto fn = "src/" + this->getSourceFileName(name);
+    std::ofstream os{fn};
+    tfel::raise_if(!os,
+                   "GenericMaterialPropertyInterfaceBase::writeOutputFiles: "
+                   "unable to open '" +
+                       fn + "'");
+    os.exceptions(std::ios::badbit | std::ios::failbit);
+    os.precision(14);
+    const auto& file = fd.fileName;
+    const auto& author = fd.authorName;
+    const auto& date = fd.date;
+    const auto& includes = mpd.includes;
+    os << "/*!\n"
+       << "* \\file   " << fn << '\n'
+       << "* \\brief  "
+       << "this file implements the " << name << " MaterialLaw.\n"
+       << "*         File generated by " << MFrontHeader::getVersionName()
+       << " "
+       << "version " << MFrontHeader::getVersionNumber() << '\n';
+    if (!author.empty()) {
+      os << "* \\author " << author << '\n';
+    }
+    if (!date.empty()) {
+      os << "* \\date " << date << '\n';
+    }
+    os << " */\n\n";
+    os << "#include<algorithm>\n"
+       << "#include<iterator>\n"
+       << "#include<iostream>\n"
+       << "#include<sstream>\n"
+       << "#include<fstream>\n"
+       << "#include<cstring>\n"
+       << "#include<cstdlib>\n"
+       << "#include<cerrno>\n"
+       << "#include<string>\n"
+       << "#include<vector>\n"
+       << "#include<locale>\n"
+       << "#include<cmath>\n"
+       << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+       << "#include\"TFEL/PhysicalConstants.hxx\"\n"
+       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
+    if (useQuantities(mpd)) {
+      os << "#include\"TFEL/Math/qt.hxx\"\n"
+         << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    }
+    os << "#include\"" << name << "-" << iname << ".hxx\"\n\n";
+    if (!includes.empty()) {
+      os << includes << "\n\n";
+    }
+
+    writeMaterialPropertyParametersHandler(os, mpd, name, "double", iname);
+
+    os << "#ifdef __cplusplus\n"
+       << "extern \"C\"{\n"
+       << "#endif /* __cplusplus */\n\n";
+
+    writeFileDescriptionSymbols(os, name, fd);
+    writeVariablesNamesSymbol(os, name, mpd);
+    writeVariablesBoundsSymbols(os, name, mpd);
+    writeValidatorSymbol(os, name, mpd);
+    writeBuildIdentifierSymbol(os, name, mpd);
+    writeEntryPointSymbol(os, name);
+    writeTFELVersionSymbol(os, name);
+    writeUnitSystemSymbol(os, name, mpd);
+    writeInterfaceSymbol(os, name, this->getInterfaceNameInCamelCase());
+    writeLawSymbol(os, name, mpd.law);
+    writeMaterialSymbol(os, name, mpd.material);
+    writeMaterialKnowledgeTypeSymbol(os, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
+    writeParametersSymbols(os, name, mpd);
+    exportStringSymbol(
+        os, name + "_src",
+        tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back());
+
+    writeParametersSetterFunctionImplementation(
+        os, mpd,
+        {.material_property_name = name,
+         .floating_point_type = "double",
+         .interface_namespace = iname});
+
+    writePointwiseFunction(
+        os, mpd, fd, name,
+        PointwiseFunctionDescription{
+            .types = types,
+            .interface_namespace = iname,
+            .bounds_check_macro = "NO_" + iucname + "_BOUNDS_CHECK",
+            .out_of_bounds_policy_prefix = prefix});
+    os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";
     os.close();

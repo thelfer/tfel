@@ -11,69 +11,29 @@
  * project under specific licensing conditions.
  */
 #include <ostream>
-#include "TFEL/Raise.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/GenericParallelMaterialPropertyInterface.hxx"
+#include "MFront/GenericParallel/BackendOptions.hxx"
 #include "MFront/GenericParallel/MaterialProperty/SYCLBackend.hxx"
 
 namespace mfront::generic_parallel::material_property {
-
-  /*!
-   * \brief write the code waiting for the end of the commands previously
-   * submitted to an out-of-order queue
-   *
-   * With an out-of-order queue, the commands submitted by the generated
-   * functions would not be ordered after the commands previously submitted
-   * by the calling code (for instance the kernels computing the arguments).
-   * An in-order queue orders them.
-   *
-   * \param[in] os: output stream
-   */
-  static void writeOutOfOrderQueueSynchronization(std::ostream& os) {
-    os << "if (!mfront_queue->is_in_order()) {\n"
-       << "mfront_queue->wait_and_throw();\n"
-       << "}\n";
-  }  // end of writeOutOfOrderQueueSynchronization
 
   SYCLBackend::SYCLBackend() {}  // end of SYCLBackend
 
   SYCLBackend::SYCLBackend(const tfel::utilities::DataMap& opts) {
     auto validator = tfel::utilities::DataMapValidator{};
-    validator.addDataTypeValidator<std::string>("data_transfer_policy");
+    declareDataTransferPolicyOption(validator);
+    declareDeviceStackSizeOption(validator);
     validator.validate(opts);
-    if (contains(opts, "data_transfer_policy")) {
-      const auto dl = get<std::string>(opts, "data_transfer_policy");
-      if ((dl == "auto") || (dl == "automatic")) {
-        this->data_transfer_policy = DataTransferPolicy::AUTOMATIC;
-      } else if (dl == "none") {
-        this->data_transfer_policy = DataTransferPolicy::NONE;
-      } else {
-        tfel::raise(
-            "unsuported data transfer policy '" + dl +
-            "'. The only valid value is: 'automatic' (or 'auto') and 'none'");
-      }
-    }
+    this->data_transfer_policy = areDataTransfersAutomatic(opts)
+                                     ? DataTransferPolicy::AUTOMATIC
+                                     : DataTransferPolicy::NONE;
+    this->device_stack_size = getDeviceStackSize(opts);
   }  // end of SYCLBackend
 
   std::string SYCLBackend::getName() const { return "sycl"; }  // end of getName
-
-  void SYCLBackend::writeSpecificIncludesInHeaderFile(
-      std::ostream& os,
-      const GenericParallelMaterialPropertyInterface& i,
-      const MaterialPropertyDescription& mpd) const {
-    CxxProgrammingModelBackendBase::writeSpecificIncludesInHeaderFile(os, i,
-                                                                      mpd);
-    os << "#ifdef __cplusplus\n"
-       << "#include <sycl/sycl.hpp>\n"
-       << "#endif\n\n"
-       << "#ifdef __cplusplus\n"
-       << "using mfront_gpmp_sycl_queue = sycl::queue;\n"
-       << "#else\n"
-       << "typedef struct mfront_gpmp_sycl_queue mfront_gpmp_sycl_queue;\n"
-       << "#endif\n\n";
-  }  // end of writeSpecificIncludesInSourceFile
 
   void SYCLBackend::writeSpecificIncludesInSourceFile(
       std::ostream& os,
@@ -81,194 +41,121 @@ namespace mfront::generic_parallel::material_property {
       const MaterialPropertyDescription& mpd) const {
     CxxProgrammingModelBackendBase::writeSpecificIncludesInSourceFile(os, i,
                                                                       mpd);
-    os << "#include<concepts>\n"
-       << "#include<type_traits>\n"
-       << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n";
-
-    if (this->handlesDataTransfer()) {
-      os << "#include\"TFEL/Raise.hxx\"\n\n"
-         << "namespace mfront::gpmp::sycl{\n\n"
-         << "template<typename T>\n"
-         << "struct [[nodiscard]] DataBuffer{\n"
-         << "DataBuffer(::sycl::queue& q)\n"
-         << " : queue(q)\n"
-         << "{}\n"
-         << "DataBuffer(DataBuffer&&) = delete;\n"
-         << "DataBuffer(const DataBuffer&) = delete;\n"
-         << "DataBuffer& operator=(DataBuffer&&) = delete;\n"
-         << "DataBuffer& operator=(const DataBuffer&) = delete;\n"
-         << "[[nodiscard]] ::sycl::event acquire(T* const src, "
-         << "const std::size_t s, const bool do_copy){\n"
-         << "const bool is_queue_device = !this->queue.get_device().is_cpu();\n"
-         << "const auto ptr_type = ::sycl::get_pointer_type(src, "
-         << "this->queue.get_context());\n"
-         << "bool may_require_device_allocation = \n"
-         << "                     (ptr_type == ::sycl::usm::alloc::host) ||\n"
-         << "                     (ptr_type == ::sycl::usm::alloc::unknown);\n"
-         << "this->cleanup();\n"
-         << "this->host_ptr = src;\n"
-         << "if (may_require_device_allocation && is_queue_device) {\n"
-         << "  this->device_ptr = "
-         << "  ::sycl::malloc_device<std::remove_const_t<T>>(s, this->queue);\n"
-         << "  if (this->device_ptr == nullptr) {\n"
-         << "    tfel::raise(\"memory allocation on the device "
-         << "failed\");\n"
-         << "  }\n"
-         << "  this->ptr = this->device_ptr;\n"
-         << "  if (do_copy) {\n"
-         << "    this->copy_event = "
-         << "this->queue.copy(src, this->device_ptr, s);\n"
-         << "    return this->copy_event;\n"
-         << "  }\n"
-         << "  return ::sycl::event{};\n"
-         << "}\n"
-         << "this->device_ptr = nullptr;\n"
-         << "this->ptr = src;\n"
-         << "return ::sycl::event{};\n"
-         << "}\n"
-         << "[[nodiscard]] T* data() noexcept{\n"
-         << "return this->ptr;\n"
-         << "}\n"
-         << "[[nodiscard]] bool requiresSynchronization() const "
-         << "requires(!std::is_const_v<T>){ "
-         << "  return this->device_ptr != nullptr;\n"
-         << "}\n"
-         << "~DataBuffer() noexcept{\n"
-         << "try{\n"
-         << "this->cleanup();\n"
-         << "} catch(...){}\n"
-         << "}\n"
-         << "void cleanup(){\n"
-         << "if(this->device_ptr != nullptr) {\n"
-         << "// the copy may still be running if an exception was thrown\n"
-         << "this->copy_event.wait();\n"
-         << "::sycl::free(this->device_ptr, this->queue);\n"
-         << "}\n"
-         << "this->host_ptr = nullptr;\n"
-         << "this->device_ptr = nullptr;\n"
-         << "this->ptr = nullptr;\n"
-         << "}\n"
-         << "private:\n"
-         << "::sycl::queue queue;\n"
-         << "T* ptr = nullptr;\n"
-         << "T* host_ptr = nullptr;\n"
-         << "std::remove_const_t<T>* device_ptr = nullptr;\n"
-         << "::sycl::event copy_event;\n"
-         << "};\n\n"
-         << "} // end of namespace mfront::gpmp::sycl\n";
+    os << "#include <sycl/sycl.hpp>\n";
+    if (this->device_stack_size != 0) {
+      os << "#include\"MFront/GenericParallel/DeviceStackSize.hxx\"\n";
     }
 
+    if (this->handlesDataTransfer()) {
+      os << "#include\"MFront/GenericParallel/SYCLDeviceCopies.hxx\"\n";
+    }
+    os << "\n";
   }  // end of writeSpecificIncludesInSourceFile
 
-  std::vector<BackendBase::ExtraArgumentOfCFunctions>
-  SYCLBackend::getExtraArgumentsOfCFunctions() const {
-    return {{.type = "mfront_gpmp_sycl_queue",
-             .name = "mfront_queue",
-             .description = "SYCL queue",
-             .is_pointer = true,
-             .is_mutable = true}};
-  }  // end of getExtraArgumentsOfCFunctions
+  void SYCLBackend::writeExecutionPreparation(
+      std::ostream& os,
+      const GenericParallelMaterialPropertyInterface&,
+      const MaterialPropertyDescription&) const {
+    // SYCL has no default queue: the queue of the execution policy gives
+    // the device and the context of the unified shared memory of the calling
+    // code
+    os << "if (mfront_backend_policy.policy == nullptr) {\n";
+    writeBatchError(os, -5,
+                    "\"no execution policy given: the sycl backend requires "
+                    "a queue\"");
+    os << "}\n"
+       << "auto mfront_sycl_queue = mfront_backend_policy.policy->queue;\n"
+       << "auto* const mfront_queue = &mfront_sycl_queue;\n"
+       // the kernel must be executed after the computations already
+       // submitted to the queue, which may compute the arguments. This is
+       // guaranteed by an in-order queue. With an out-of-order queue, the
+       // evaluation is synchronous and the queue is synchronized before the
+       // kernel.
+       << "if (!mfront_queue->is_in_order()) {\n"
+       << "if (mfront_asynchronous) {\n";
+    writeBatchError(os, -5,
+                    "\"asynchronous evaluations require an in-order SYCL "
+                    "queue\"");
+    os << "}\n"
+       << "mfront_queue->wait_and_throw();\n"
+       << "}\n";
+  }  // end of writeExecutionPreparation
 
   void SYCLBackend::writeKernelCall(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
       const MaterialPropertyDescription& mpd,
-      const FileDescription& fd,
-      const bool treatStrides) const {
-    const auto types = i.getTypesDescription();
+      const FileDescription& fd) const {
     const auto requiresBoundsCheck = this->isBoundsCheckingRequired(mpd);
-    if (!this->handlesDataTransfer()) {
-      // otherwise, done before the data transfers
-      writeOutOfOrderQueueSynchronization(os);
-    }
+    writeDeviceStackSizeSetting(os, this->device_stack_size);
     if (requiresBoundsCheck) {
-      os << "using mfront_shared_allocator_type = "
-         << "sycl::usm_allocator<int, sycl::usm::alloc::shared>;\n"
-         << "auto mfront_shared_allocator = "
-            "mfront_shared_allocator_type{*mfront_queue};\n"
-         << "auto mfront_bounds_statuses = "
-         << "std::vector<int, "
-            "mfront_shared_allocator_type>{mfront_shared_allocator};\n"
-         << "mfront_bounds_statuses.resize(" << getStatusesArraySize(mpd)
-         << ", 0);\n";
+      // the statistics are held by a block of shared memory, identified by
+      // the device and the context of the queue
+      writeStatisticsDeclaration(
+          os, "std::pair<sycl::device, sycl::context>",
+          "{mfront_queue->get_device(), mfront_queue->get_context()}",
+          "return sycl::malloc_shared<mfront_gpmp_Statistics>(1, "
+          "*mfront_queue);");
+      if (this->handlesDataTransfer()) {
+        // statistics given by the calling code which are not accessible by
+        // the device, as the arguments and the output
+        os << "if (mfront_deferred_report) {\n"
+           << "mfront_copies.transfer(mfront_statistics, 1, true);\n"
+           << "}\n";
+      }
     }
-    this->writeKernel(os, i, mpd, fd, false);
-    if (treatStrides) {
-      this->writeKernel(os, i, mpd, fd, true);
-    }
-    // the asynchronous errors of the kernels and of the copies are passed
-    // to the asynchronous handler of the queue (wait_and_throw). The
-    // exceptions it throws are reported by the status -2
-    auto write_kernel_call = [&os, this, &types](const std::string_view npoints,
-                                                 const bool handleStrides) {
+    this->writeKernels(os, i, mpd, fd);
+    auto write_kernel_call = [&os, this](const std::string_view npoints,
+                                         const bool handleStrides) {
       os << "// loop over the points\n";
       os << "auto mfront_sycl_kernel_event = ";
-      os << "mfront_queue->parallel_for(" << npoints;
-      if (this->handlesDataTransfer()) {
-        os << ", mfront_sycl_copy_events";
-      }
-      os << ", mfront_kernel";
+      os << "mfront_queue->parallel_for(" << npoints << ", mfront_kernel";
       if (!handleStrides) {
         os << "_without_strides";
       }
       os << ");\n";
       if (this->handlesDataTransfer()) {
-        os << "if (mfront_output_ptr.requiresSynchronization()) {\n";
-        if (handleStrides) {
-          if (npoints == "1") {
-            os << "mfront_queue->copy<" << types.real_type
-               << ">(mfront_output_ptr.data(), mfront_output_host, " << 1
-               << ", mfront_sycl_kernel_event).wait_and_throw();\n";
-          } else {
-            os << "mfront_queue->copy<" << types.real_type
-               << ">(mfront_output_ptr.data(), mfront_output_host, "  //
-               << "(" << npoints << " - 1) * mfront_output_stride + 1, "
-               << "mfront_sycl_kernel_event).wait_and_throw();\n";
-          }
-        } else {
-          os << "mfront_queue->copy<" << types.real_type
-             << ">(mfront_output_ptr.data(), mfront_output_host, " << npoints
-             << ", mfront_sycl_kernel_event).wait_and_throw();\n";
-        }
-        os << "} else {"
-           << "  mfront_sycl_kernel_event.wait_and_throw();\n"
+        // the copies must be completed before they are destroyed: the
+        // evaluation is then synchronous
+        os << "if (mfront_copies.holdsCopies()) {\n"
+           << "mfront_copies.copyOutputs();\n"
+           << "} else if (!mfront_asynchronous) {\n"
+           << "mfront_sycl_kernel_event.wait_and_throw();\n"
            << "}\n";
       } else {
-        os << "mfront_sycl_kernel_event.wait_and_throw();\n";
+        // an asynchronous evaluation returns once the kernel is submitted
+        os << "if (!mfront_asynchronous) {\n"
+           << "mfront_sycl_kernel_event.wait_and_throw();\n"
+           << "}\n";
       }
     };
-    if (treatStrides) {
-      if (mpd.inputs.empty()) {
-        os << "if(mfront_output_stride == 0){\n";
-        write_kernel_call("1", false);
-        os << "} else if(mfront_output_stride == 1){\n";
-        write_kernel_call("mfront_npoints", false);
-        os << "} else {\n";
-        write_kernel_call("mfront_npoints", true);
-        os << "}\n";
-      } else {
-        os << "if(mfront_areAllArgumentsUniform && "
-           << "(mfront_output_stride == 0)){\n";
-        write_kernel_call("1", false);
-        os << "} else {\n"
-           << "const bool mfront_areAllArgumentsStrideOne = std::all_of("
-           << "mfront_args_strides_tmp.begin(), "
-           << "mfront_args_strides_tmp.end(), "
-           << "[](const " << types.integer_type << " mfront_stride){"
-           << "return mfront_stride == 1;});\n"
-           << "if(mfront_areAllArgumentsStrideOne && "
-              "(mfront_output_stride == "
-              "1)){\n";
-        write_kernel_call("mfront_npoints", false);
-        os << "} else {\n";
-        write_kernel_call("mfront_npoints", true);
-        os << "}\n"
-           << "}\n";
-      }
-    } else {
-      write_kernel_call("mfront_npoints", false);
-    }
+    this->writeKernelSelection(os, i, mpd, write_kernel_call);
   }  // end of writeKernelCall
+
+  bool SYCLBackend::mergesPointStatusesInKernels() const {
+    return true;
+  }  // end of mergesPointStatusesInKernels
+
+  /*!
+   * \return the declaration of an atomic reference to a counter of the
+   * statistics, held by unified shared memory
+   * \param[in] c: counter
+   */
+  static std::string getSYCLAtomicReference(const std::string_view c) {
+    return "::sycl::atomic_ref<unsigned long long, "
+           "::sycl::memory_order::relaxed, ::sycl::memory_scope::device, "
+           "::sycl::access::address_space::global_space>(" +
+           std::string{c} + ")";
+  }  // end of getSYCLAtomicReference
+
+  std::string SYCLBackend::getAtomicIncrement(const std::string_view c) const {
+    return getSYCLAtomicReference(c) + ".fetch_add(1ull)";
+  }  // end of getAtomicIncrement
+
+  std::string SYCLBackend::getAtomicMinimum(const std::string_view c,
+                                            const std::string_view v) const {
+    return getSYCLAtomicReference(c) + ".fetch_min(" + std::string{v} + ")";
+  }  // end of getAtomicMinimum
 
   bool SYCLBackend::handlesDataTransfer() const {
     return this->data_transfer_policy == DataTransferPolicy::AUTOMATIC;
@@ -277,79 +164,62 @@ namespace mfront::generic_parallel::material_property {
   void SYCLBackend::writeDataTransfersToDevice(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
-      const MaterialPropertyDescription& mpd,
-      const bool treatStrides) const {
-    const auto types = i.getTypesDescription();
+      const MaterialPropertyDescription& mpd) const {
     if (!this->handlesDataTransfer()) {
       return;
     }
-    writeOutOfOrderQueueSynchronization(os);
-    os << "auto mfront_sycl_copy_events = std::vector<::sycl::event>{};\n";
-    if (mpd.inputs.empty()) {
-      os << "mfront_sycl_copy_events.reserve(1);\n";
-      os << "const " << types.real_type
-         << " * const * mfront_args = nullptr;\n";
-    } else {
-      os << "mfront_sycl_copy_events.reserve(" << mpd.inputs.size() + 1
-         << ");\n"
-         << "auto mfront_args_storage = std::array<const " << types.real_type
+    // the arrays which are not accessible by the device are copied in
+    // device memory. The output is copied in both
+    // directions, so that the values between two values of a strided output
+    // are kept
+    const auto types = i.getTypesDescription();
+    const auto ns = std::string{"::mfront::generic_parallel::sycl::"};
+    os << "auto mfront_copies = " << ns << "DeviceCopies{*mfront_queue, "
+       << "mfront_npoints, " << ns << "DataTransferPolicy::AUTOMATIC};\n";
+    if (!mpd.inputs.empty()) {
+      os << "auto mfront_args_storage = std::array<const " << types.real_type
          << "*, " << mpd.inputs.size() << ">{};\n";
       for (std::size_t idx = 0; idx != mpd.inputs.size(); ++idx) {
-        os << "auto mfront_arg" << idx << "_ptr = "
-           << "::mfront::gpmp::sycl::DataBuffer<const " << types.real_type
-           << ">{*mfront_queue};\n";
-        if (treatStrides) {
-          os << "if(mfront_args_strides[" << idx << "] ==0){\n"
-             << ";\n"
-             << "mfront_sycl_copy_events.push_back("
-             << "mfront_arg" << idx << "_ptr.acquire("
-             << "mfront_args_host[" << idx << "], 1, true));\n"
-             << "} else {\n"
-             << "mfront_sycl_copy_events.push_back("
-             << "mfront_arg" << idx << "_ptr.acquire("
-             << "mfront_args_host[" << idx << "], "
-             << "(mfront_npoints - 1) * mfront_args_strides[" << idx
-             << "] + 1, true));\n"
-             << "}\n";
-        } else {
-          os << "mfront_sycl_copy_events.push_back("
-             << "mfront_arg" << idx << "_ptr.acquire("
-             << "mfront_args_host[" << idx << "], mfront_npoints, true));\n";
-        }
-        os << "mfront_args_storage[" << idx << "] = "  //
-           << "mfront_arg" << idx << "_ptr.data();\n";
+        os << "{\n"
+           << "auto mfront_values = " << ns << "StridedArray<const "
+           << types.real_type << ">{mfront_args_host[" << idx << "], "
+           << "mfront_strides[" << idx << "], 1};\n"
+           << "mfront_copies.transfer(mfront_values, 1, false);\n"
+           << "mfront_args_storage[" << idx << "] = mfront_values.values;\n"
+           << "}\n";
       }
-      os << "const " << types.real_type << " * * mfront_args = "
-         << "mfront_args_storage.data();\n";
+      os << "const auto* const mfront_args = mfront_args_storage.data();\n";
     }
-    // the output is copied to the device, so that the values which are not
-    // computed (points where the evaluation fails, values between two
-    // values of a strided output) are kept when the output is copied back
-    os << "auto mfront_output_ptr = "
-       << "::mfront::gpmp::sycl::DataBuffer<" << types.real_type
-       << ">{*mfront_queue};\n";
-    if (treatStrides) {
-      os << "if (mfront_output_stride == 0) {\n"
-         << "mfront_sycl_copy_events.push_back("
-         << "mfront_output_ptr.acquire(mfront_output_host,  1, true));\n"
-         << "} else {\n"
-         << "mfront_sycl_copy_events.push_back("
-         << "mfront_output_ptr.acquire(mfront_output_host, "
-         << "(mfront_npoints - 1) * mfront_output_stride + 1, true));\n"
-         << "}\n";
-    } else {
-      os << "mfront_sycl_copy_events.push_back("
-         << "mfront_output_ptr.acquire(mfront_output_host, "
-         << "mfront_npoints, true));\n";
-    }
-    os << "auto *mfront_output = mfront_output_ptr.data();\n";
-  }
+    os << "auto mfront_output_values = " << ns << "StridedArray<"
+       << types.real_type << ">{mfront_output_host, mfront_output_stride, "
+       << "1};\n"
+       << "mfront_copies.transfer(mfront_output_values, 1, true);\n"
+       << "auto* const mfront_output = mfront_output_values.values;\n"
+       // statuses of the points, if requested
+       << "mfront_copies.transfer(mfront_statuses, mfront_npoints, true);\n";
+  }  // end of writeDataTransfersToDevice
 
   void SYCLBackend::writeDataTransfersToHost(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,
-      const MaterialPropertyDescription&,
-      const bool) const {}
+      const MaterialPropertyDescription&) const {}
+
+  std::string SYCLBackend::getMemorySpace() const {
+    // with automatic transfers, the arguments and the output which are not
+    // accessible by the device are copied
+    if (this->handlesDataTransfer()) {
+      return "mfront::generic_parallel::any_memory_space";
+    }
+    return "mfront::generic_parallel::device_memory_space";
+  }  // end of getMemorySpace
+
+  std::string SYCLBackend::getExecutionPolicyType() const {
+    return "::mfront::generic_parallel::SyclBackendExecutionPolicy";
+  }  // end of getExecutionPolicyType
+
+  std::string SYCLBackend::getExecutionPolicyHeader() const {
+    return "MFront/GenericParallel/SyclBackendExecutionPolicy.hxx";
+  }  // end of getExecutionPolicyHeader
 
   SYCLBackend::~SYCLBackend() = default;
 
