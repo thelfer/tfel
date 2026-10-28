@@ -23,7 +23,7 @@ namespace tfel::check {
   static std::vector<double> eval(const tfel::utilities::TextData& d,
                                   const std::string& f) {
     struct Variable {
-      unsigned short p;
+      std::string n;
       std::vector<double> values;
     };
     auto matches = [](const std::string& vn) {
@@ -58,14 +58,12 @@ namespace tfel::check {
     };
     tfel::math::Evaluator e{f};
     std::vector<Variable> variables;
-    unsigned short p = 0u;
     for (const auto& v : e.getVariablesNames()) {
       raise_if(!matches(v),
                "tfel::check::eval: undeclared "
                "variable '" +
                    v + "'");
-      variables.push_back(Variable{p, d.getColumn(convert(v))});
-      ++p;
+      variables.push_back(Variable{v, d.getColumn(convert(v))});
     }
     if (variables.empty()) {
       const auto is_digit = [](const char c) {
@@ -79,7 +77,7 @@ namespace tfel::check {
     r.resize(variables[0].values.size());
     for (std::vector<double>::size_type i = 0; i != r.size(); ++i) {
       for (const auto& v : variables) {
-        e.setVariableValue(v.p, v.values[i]);
+        e.setVariableValue(v.n, v.values[i]);
       }
       r[i] = e.getValue();
     }

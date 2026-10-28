@@ -697,6 +697,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1262>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
+## Issue 1209: [tfel-math] Variable positions of Evaluator in diff() and tfel-check, fses::sort, vector::copy, GenType output, GTN flow stress, Mohr-Coulomb second derivative, eigen solvers on GPUs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1209>
+
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 
 For more details, see <https://github.com/thelfer/tfel/issues/1195>
