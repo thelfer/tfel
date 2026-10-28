@@ -56,10 +56,10 @@ struct STensorTest9_3D final : public tfel::tests::TestCase {
     stensor<3u, double>::computeEigenTensorsDerivatives(dn0, dn1, dn2, vp, m,
                                                         1.e-7);
     stensor<3u, double> exp_s(s.buildFromEigenValuesAndVectors(
-        exp(vp(0)), exp(vp(1)), exp(vp(1)), m));
+        exp(vp(0)), exp(vp(1)), exp(vp(2)), m));
     st2tost2<3u, double> dexp;
     dexp = exp(vp(0)) * ((n0 ^ n0) + dn0) + exp(vp(1)) * ((n1 ^ n1) + dn1) +
-           exp(vp(2)) * ((n2 ^ n2) + dn1);
+           exp(vp(2)) * ((n2 ^ n2) + dn2);
     TFEL_TESTS_ASSERT(abs(exp_s(0) - 10.966e3) < eps);
     TFEL_TESTS_ASSERT(abs(exp_s(1) - 8.0687e3) < eps);
     TFEL_TESTS_ASSERT(abs(exp_s(2) - 20.217e3) < eps);
@@ -103,11 +103,89 @@ struct STensorTest9_3D final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(abs(dexp(5, 3) - 3.1467e3 * 2) < eps);
     TFEL_TESTS_ASSERT(abs(dexp(5, 4) - 4.5353e3 * 2) < eps);
     TFEL_TESTS_ASSERT(abs(dexp(5, 5) - 4.5181e3 * 2) < eps);
+    // exponential of s computed by mpmath (expm, 40 digits)
+    const double exp_ref[6] = {
+        10966.187461159059,         8068.6757603006099,
+        20216.736463761345,         9406.5155226577201 * sqrt2,
+        14889.605884263750 * sqrt2, 12771.926783682471 * sqrt2};
+    for (unsigned short i = 0; i != 6; ++i) {
+      TFEL_TESTS_ASSERT(abs(exp_s(i) - exp_ref[i]) < 1.e-13 * exp_ref[2]);
+    }
     return this->result;
   }  // end of execute
 };
 
+/*!
+ * \brief same computations for a symmetric tensor whose eigenvalues
+ * have comparable magnitudes, so that the three terms of the
+ * exponential and of its derivative have comparable weights
+ */
+struct STensorTest9_3D_2 final : public tfel::tests::TestCase {
+  STensorTest9_3D_2()
+      : tfel::tests::TestCase("TFEL/Math", "STensorTest9-3D-2") {
+  }  // end of STensorTest9_3D_2
+  tfel::tests::TestResult execute() override {
+    using namespace std;
+    using namespace tfel::math;
+    const double sqrt2 = sqrt(2.);
+    const double values[6] = {-0.1,        -0.2,        0.3,
+                              0.4 * sqrt2, 0.6 * sqrt2, 0.5 * sqrt2};
+    const stensor<3u, double> s(values);
+    const auto exp_s = exponential(s);
+    // exponential of s computed by mpmath (expm, 40 digits)
+    const double exp_ref[6] = {
+        1.2209312103103473,          1.0619455180265054,
+        1.7760906599295133,          0.56054500425357944 * sqrt2,
+        0.86774527955243638 * sqrt2, 0.73568736044066169 * sqrt2};
+    for (unsigned short i = 0; i != 6; ++i) {
+      TFEL_TESTS_ASSERT(abs(exp_s(i) - exp_ref[i]) < 1.e-13);
+    }
+    // derivative compared to a centered finite difference of the
+    // exponential, as in stensor_isotropic_function.cxx
+    stensor<3u, double> n0;
+    stensor<3u, double> n1;
+    stensor<3u, double> n2;
+    st2tost2<3u, double> dn0;
+    st2tost2<3u, double> dn1;
+    st2tost2<3u, double> dn2;
+    tvector<3u, double> vp;
+    tmatrix<3u, 3u, double> m;
+    s.computeEigenVectors(vp, m);
+    stensor<3u, double>::computeEigenTensors(n0, n1, n2, m);
+    stensor<3u, double>::computeEigenTensorsDerivatives(dn0, dn1, dn2, vp, m,
+                                                        1.e-7);
+    const st2tost2<3u, double> dexp = exp(vp(0)) * ((n0 ^ n0) + dn0) +
+                                      exp(vp(1)) * ((n1 ^ n1) + dn1) +
+                                      exp(vp(2)) * ((n2 ^ n2) + dn2);
+    constexpr double eps = 1.e-7;
+    constexpr double prec = 5.e-8;
+    for (unsigned short i = 0; i != 6; ++i) {
+      auto s2 = s;
+      s2(i) += eps;
+      const auto exp_f = exponential(s2);
+      s2(i) -= 2 * eps;
+      const auto exp_b = exponential(s2);
+      for (unsigned short j = 0; j != 6; ++j) {
+        const auto nd = (exp_f(j) - exp_b(j)) / (2 * eps);
+        TFEL_TESTS_ASSERT(abs(dexp(j, i) - nd) < prec);
+      }
+    }
+    return this->result;
+  }  // end of execute
+ private:
+  //! \return the exponential of a symmetric tensor
+  static tfel::math::stensor<3u, double> exponential(
+      const tfel::math::stensor<3u, double>& s) {
+    tfel::math::tvector<3u, double> vp;
+    tfel::math::tmatrix<3u, 3u, double> m;
+    s.computeEigenVectors(vp, m);
+    return tfel::math::stensor<3u, double>::buildFromEigenValuesAndVectors(
+        std::exp(vp(0)), std::exp(vp(1)), std::exp(vp(2)), m);
+  }  // end of exponential
+};
+
 TFEL_TESTS_GENERATE_PROXY(STensorTest9_3D, "STensorTest9-3D");
+TFEL_TESTS_GENERATE_PROXY(STensorTest9_3D_2, "STensorTest9-3D-2");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
