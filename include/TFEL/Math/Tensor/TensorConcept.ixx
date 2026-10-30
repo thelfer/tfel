@@ -505,6 +505,14 @@ namespace tfel::math {
         std::forward<TensorType>(t));
   }  // end of matrix_view
 
+  //! \brief forward declarations, see TensorTransposeExpr.hxx
+  template <typename A>
+  struct TensorTransposeExpr1D;
+  template <typename A>
+  struct TensorTransposeExpr2D;
+  template <typename A>
+  struct TensorTransposeExpr3D;
+
   template <TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto transpose(TensorType&& t) noexcept {
     constexpr auto N = getSpaceDimension<TensorType>();

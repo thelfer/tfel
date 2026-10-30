@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX
 #define LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX
 
+#include <string>
+
 namespace tfel::utilities {
 
   /*!

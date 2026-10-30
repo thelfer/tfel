@@ -25,7 +25,7 @@
 #include "TFEL/Math/General/RunTimeCheck.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/tvector.hxx"
-#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel::math {
 

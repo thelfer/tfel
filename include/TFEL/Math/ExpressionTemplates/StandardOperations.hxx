@@ -19,6 +19,7 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ComputeUnaryResult.hxx"
 #include "TFEL/Math/General/ComputeBinaryResult.hxx"
+#include "TFEL/Math/General/BasicOperations.hxx"
 
 namespace tfel::math {
 

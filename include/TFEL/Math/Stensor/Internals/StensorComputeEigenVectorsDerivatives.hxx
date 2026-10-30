@@ -14,6 +14,12 @@
 #ifndef LIB_TFEL_MATH_INTERNALS_STENSORCOMPUTEEIGENVECTORSDERIVATIVES_HXX
 #define LIB_TFEL_MATH_INTERNALS_STENSORCOMPUTEEIGENVECTORSDERIVATIVES_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/General/ComputeBinaryResult.hxx"
+#include "TFEL/Math/Forward/General.hxx"
+#include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
+
 namespace tfel::math::internals {
 
   template <unsigned short N>
@@ -24,8 +30,11 @@ namespace tfel::math::internals {
     TFEL_HOST_DEVICE TFEL_MATH_INLINE static
         typename ComputeBinaryResult<base_type<NumType>, NumType, OpDiv>::Result
         regularized_inverse(const NumType x, const NumType eps) {
-      if (tfel::math::abs(x) < 100 * std::numeric_limits<NumType>::min()) {
-        return NumType(0);
+      using Result = typename ComputeBinaryResult<base_type<NumType>, NumType,
+                                                  OpDiv>::Result;
+      if (tfel::math::abs(x) <
+          NumType(100 * std::numeric_limits<base_type<NumType>>::min())) {
+        return Result(0);
       }
       return regularization_function(x / eps) / x;
     }  // end of regularization

@@ -37,6 +37,7 @@
 #define LIB_FSES_UTILITIES_IXX
 
 #include <array>
+#include <limits>
 
 namespace fses {
 

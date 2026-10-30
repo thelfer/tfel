@@ -11,6 +11,16 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+> **Note**
+>
+> This page was written for `TFEL` 3.x. The `MinGW` compiler
+> packaged with `Cast3M` `2017` (`gcc` `6.3`) does not support
+> `C++-20` and can not build `TFEL` 5. `TFEL` 5.1 was tested with
+> `MinGW` `14.2`, notably the one packaged with `Cast3M` `2025`. A
+> recent `MinGW-w64` compiler can also be used in the
+> [`MSYS2`](https://www.msys2.org/) environment, as described
+> [here](install-windows-msys.html).
+
 Building and using `MFront` on `Windows` is more complex than on other
 systems for the following reasons:
 

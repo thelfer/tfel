@@ -56,11 +56,14 @@ page dedicated to `FreeBSD` is available [here](install-freebsd.html).
 The installation on [Windows platform](http://windows.microsoft.com)
 is described in the following pages:
 
-- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
-- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html). This
-  tutorial can easily be adapted to other versions of `MinGW`, without
-  requiring `Cast3M` to be installed.
 - [Installation on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment](install-windows-msys.html).
+- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
+  This tutorial was written for `TFEL` 3.x: `TFEL` 5 requires
+  `Visual Studio` `2022` or later.
+- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html).
+  This tutorial was written for `TFEL` 3.x: the `MinGW` compiler
+  packaged with `Cast3M` `2017` does not support `C++-20` and can not
+  build `TFEL` 5.
 
 The creation of binary packages is detailed [here](packages.html). 
 

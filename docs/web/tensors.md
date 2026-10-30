@@ -1040,6 +1040,14 @@ fall back to some default algorithm as described below.
 The various eigen solvers available are enumerated in Table
 @tbl:eigensolvers.
 
+> **Note**
+>
+> The analytical formulas of the eigenvectors are not reliable for
+> repeated or nearly repeated eigenvalues. The eigenvectors of the
+> `FSESANALYTICALEIGENSOLVER` solver are thus computed as by the
+> `FSESHYBRIDEIGENSOLVER` solver, which falls back to the QL algorithm
+> in this case.
+
 The eigen solver is passed as a template argument of the
 `computeEigenValues` or the `computeEigenVectors` methods as
 illustrated in the code below:

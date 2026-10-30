@@ -18,6 +18,7 @@
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
+#include "TFEL/Math/Forward/vector.hxx"
 #include "TFEL/Math/matrix.hxx"
 
 namespace tfel::math {

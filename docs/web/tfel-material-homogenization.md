@@ -731,9 +731,11 @@ Note that the 5 `InclusionDistribution` classes are currently available in 3d on
 
 ### The `ParticulateMicrostructure`
 
-The `ParticulateMicrostructure class` is available in 3d an 2d
-via 2 template parameters: `ParticulateMicrostructure<N,stress>`
-with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'
+The `ParticulateMicrostructure class` has 2 template parameters:
+`ParticulateMicrostructure<N,stress>` with `N` the dimension. Only
+the 3d case is currently supported: the construction of a phase from
+isotropic moduli and the homogenization schemes require `N=3`.
+For the details, see the file 'MicrostructureDescription.hxx'
 which introduces the `class`.
 
 ![The `ParticulateMicrostructure class` is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}

@@ -15,7 +15,7 @@
 #define LIB_TFEL_MATH_ST2TOST2_BUILDFROMROTATIONMATRIX_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/Forward/st2tost2.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"

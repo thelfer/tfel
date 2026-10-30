@@ -18,6 +18,7 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel::math {
 

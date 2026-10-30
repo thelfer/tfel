@@ -21,6 +21,8 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/CubicRoots.hxx"
 #include "TFEL/Exception/TFELException.hxx"
+#include "TFEL/Math/Forward/stensor.hxx"
+#include "TFEL/FSAlgorithm/max_element.hxx"
 
 namespace tfel::math::internals {
 

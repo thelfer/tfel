@@ -15,6 +15,10 @@
 #define LIB_MFRONT_ANSYS_ANSYSCONVERT_HXX
 
 #include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/Ansys/Ansys.hxx"
 
 namespace ansys {
 

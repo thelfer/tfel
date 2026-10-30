@@ -11,6 +11,13 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+> **Note**
+>
+> This page was written for `TFEL` 3.x. `TFEL` 5 requires a `C++-20`
+> compiler: `Visual Studio` `2022` or later. A `MinGW-w64` compiler
+> can also be used in the [`MSYS2`](https://www.msys2.org/)
+> environment, as described [here](install-windows-msys.html).
+
 Building and using `MFront` on `Windows` is more complex than on other
 systems for the following reasons:
 
@@ -130,15 +137,15 @@ The `compil-vs.bat` can now be used to compile and install `TFEL`
 using the `Visual Studio` compiler suite.
 
 This script supposes that the user uses `Visual` `Studio` version
-`2015`. Although untested yet, we expect `TFEL` to build with more
-recent versions. The version of `Visual` `Studio` to be used can be
-changed by modifying the value following the `-G` parameter:
+`2015`, which can not build `TFEL` 5. The version of `Visual` `Studio`
+to be used can be changed by modifying the value following the `-G`
+parameter, for example for `Visual` `Studio` `2022`:
 
 ~~~~{.bash}
-cmake.exe ..\tfel -G "Visual Studio 14 2015 Win64" ...
+cmake.exe ..\tfel -G "Visual Studio 17 2022" -A x64 ...
 ~~~~
 
-See the [`cmake` documentation for details](https://cmake.org/cmake/help/v3.0/manual/cmake-generators.7.html).
+See the [`cmake` documentation for details](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html).
 
 ## Changing the location of the sources
 
