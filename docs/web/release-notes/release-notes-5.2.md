@@ -58,6 +58,12 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- `MTest` and `tfel-check` (see Issue #1260): an incomplete set of
+  orthotropic thermal expansion coefficients is now an error (except
+  `ThermalExpansion1` and `ThermalExpansion2` in plane stress), a failed
+  comparison to the numerical tangent operator now fails the test, and a
+  `Mixed` or `RelativeAndAbsolute` comparison without a second precision
+  is now an error.
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
@@ -692,6 +698,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 ## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
 
 For more details, see <https://github.com/thelfer/tfel/issues/1262>
+
+## Issue 1260: [mtest] Abaqus/Explicit stiffness in a rotated frame, incomplete orthotropic thermal expansion, tfel-check second precision, failed tangent operator comparison, overwritten JUnit reports
+
+For more details, see <https://github.com/thelfer/tfel/issues/1260>
 
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 

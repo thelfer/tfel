@@ -137,6 +137,7 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
                   --@ModellingHypothesis="${mh}"
                   --@library@="$<TARGET_FILE:MFrontCastemStandardElastoViscoPlasticityBrickBehaviours>"
                   --@behaviour@="${behaviour_name}"
+                  --xml-output-file=brick${test_arg}_${behaviour_name}_${mh}_${rm}_castem_mtest.xml
                   --@xml_output@="${test_arg}-${behaviour_name}-${rm}.xml" ${file})
           add_test(NAME brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_castem_mtest
             	     COMMAND mtest --rounding-direction-mode=${rm}
@@ -145,6 +146,7 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
                   --@ModellingHypothesis="${mh}"
                   --@library@="$<TARGET_FILE:MFrontCastemStandardElastoViscoPlasticityBrickBehaviours>"
                   --@behaviour@="${behaviour_name}"
+                  --xml-output-file=brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_castem_mtest.xml
                   --@xml_output@="${test_arg}-${behaviour_name}-consistenttangentoperator-${rm}.xml" ${file})
         else(NOT _REFERENCE_FILE)
           set(rfile "${top_srcdir}/mfront/tests/behaviours/StandardElastoViscoPlasticity/references/${_REFERENCE_FILE}")
@@ -154,6 +156,7 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
                   --@ModellingHypothesis="${mh}"
             	     --@library@="$<TARGET_FILE:MFrontCastemStandardElastoViscoPlasticityBrickBehaviours>"
                   --@behaviour@="${behaviour_name}"
+            	     --xml-output-file=brick${test_arg}_${behaviour_name}_${mh}_${rm}_castem_mtest.xml
             	     --@xml_output@="${test_arg}-${behaviour_name}-${rm}.xml"
             	     --@reference_file@="${rfile}" ${file})
           add_test(NAME brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_castem_mtest
@@ -162,6 +165,7 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
                   --@ModellingHypothesis="${mh}"
             	     --@library@="$<TARGET_FILE:MFrontCastemStandardElastoViscoPlasticityBrickBehaviours>"
                   --@behaviour@="${behaviour_name}"
+            	     --xml-output-file=brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_castem_mtest.xml
             	     --@xml_output@="${test_arg}-${behaviour_name}-consistenttangentoperator-${rm}.xml"
             	     --@reference_file@="${rfile}" ${file})
         endif(NOT _REFERENCE_FILE)

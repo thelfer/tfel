@@ -20,23 +20,27 @@ macro(castemtest_finitestrainsinglecrystalbrick test_arg behaviour)
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
     --@AccelerationAlgorithm='Cast3M'
 	--@library@="$<TARGET_FILE:MFrontCastemFiniteStrainSingleCrystalBrickBehaviours>" --@behaviour@="${behaviour}"
+	--xml-output-file=brick${test_arg}_${behaviour}_mtest.xml
 	--@xml_output@="${test_arg}-${behaviour}.xml" ${file})
       add_test(NAME brick${test_arg}_${behaviour}_consistenttangentoperator_mtest
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
 	--@StiffnessMatrixType='ConsistentTangentOperator'
 	--@library@="$<TARGET_FILE:MFrontCastemFiniteStrainSingleCrystalBrickBehaviours>" --@behaviour@="${behaviour}"
+	--xml-output-file=brick${test_arg}_${behaviour}_consistenttangentoperator_mtest.xml
 	--@xml_output@="${test_arg}-${behaviour}-consistenttangentoperator.xml" ${file})
     else(NOT _REFERENCE_FILE)
       add_test(NAME brick${test_arg}_${behaviour}_mtest
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
     --@AccelerationAlgorithm='Cast3M'
 	--@library@="$<TARGET_FILE:MFrontCastemFiniteStrainSingleCrystalBrickBehaviours>" --@behaviour@="${behaviour}"
+	--xml-output-file=brick${test_arg}_${behaviour}_mtest.xml
 	--@xml_output@="${test_arg}-${behaviour}.xml"
 	--@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
       add_test(NAME brick${test_arg}_${behaviour}_consistenttangentoperator_mtest
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
 	--@StiffnessMatrixType='ConsistentTangentOperator'
 	--@library@="$<TARGET_FILE:MFrontCastemFiniteStrainSingleCrystalBrickBehaviours>" --@behaviour@="${behaviour}"
+	--xml-output-file=brick${test_arg}_${behaviour}_consistenttangentoperator_mtest.xml
 	--@xml_output@="${test_arg}-${behaviour}-consistenttangentoperator.xml"
 	--@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
     endif(NOT _REFERENCE_FILE)

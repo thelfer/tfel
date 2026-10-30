@@ -77,6 +77,7 @@ namespace mtest {
     void treatVerbose();
     void treatScheme();
     void treatXMLOutput();
+    void treatXMLOutputFile();
     void treatResultFileOutput();
     void treatResidualFileOutput();
     [[noreturn]] void treatHelpCommandsList();
@@ -135,6 +136,8 @@ namespace mtest {
 #endif /* MTEST_HAVE_MADNEX */
     // xml output
     bool xml_output = false;
+    // xml output file defined by the `--xml-output-file` option
+    std::shared_ptr<tfel::tests::TestOutput> xml_output_file;
     // generate result file
     bool result_file_output = true;
     // generate residual file
@@ -157,6 +160,11 @@ namespace mtest {
                               true);
     this->registerNewCallBack("--xml-output", &MTestMain::treatXMLOutput,
                               "control xml output (default no)", true);
+    this->registerNewCallBack(
+        "--xml-output-file", &MTestMain::treatXMLOutputFile,
+        "set the xml output file, overriding the @XMLOutputFile keyword "
+        "(only meaningful with the --xml-output option)",
+        true);
     this->registerNewCallBack("--result-file-output",
                               &MTestMain::treatResultFileOutput,
                               "control result output (default yes)", true);
@@ -354,6 +362,15 @@ namespace mtest {
       }
     }
   }  // end of MTestMain::treatXMLOutput
+
+  void MTestMain::treatXMLOutputFile() {
+    const auto& option = this->currentArgument->getOption();
+    tfel::raise_if(option.empty(),
+                   "MTestMain::treatXMLOutputFile: "
+                   "no option given");
+    this->xml_output_file =
+        std::make_shared<tfel::tests::XMLTestOutput>(option);
+  }  // end of MTestMain::treatXMLOutputFile
 
   void MTestMain::treatResultFileOutput() {
     if (this->currentArgument->getOption().empty()) {
@@ -704,7 +721,9 @@ namespace mtest {
     tm.addTest("MTest/" + n, t);
     if (this->xml_output) {
       std::shared_ptr<tfel::tests::TestOutput> o;
-      if (!t->isXMLOutputFileNameDefined()) {
+      if (this->xml_output_file != nullptr) {
+        o = this->xml_output_file;
+      } else if (!t->isXMLOutputFileNameDefined()) {
         o = std::make_shared<tfel::tests::XMLTestOutput>(n + ".xml");
       } else {
         o = std::make_shared<tfel::tests::XMLTestOutput>(

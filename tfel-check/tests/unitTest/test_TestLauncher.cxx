@@ -140,6 +140,15 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                             "@Test 'test_TestLauncher_M1.ref' '" +
                                 std::string{f} + "' 2;\n"));
     }
+    // the second precision of a previous @Precision keyword is not kept
+    TFEL_TESTS_CHECK_THROW(run("test_TestLauncher_mixed2",
+                               "@TestType Mixed;\n"
+                               "@Precision 1.e-3 1.e-12;\n"
+                               "@Precision 1.e-3;\n"
+                               "@Test 'test_TestLauncher_M1.ref' "
+                               "'test_TestLauncher_M2.res' 2;\n"),
+                           std::runtime_error);
+    std::remove("TEST-test_TestLauncher_mixed2.xml");
     // a NaN in the results makes all comparisons fail
     write("test_TestLauncher_N.res", "# t y\n0 0\n2 nan\n4 4\n");
     const char* const types[] = {

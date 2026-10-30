@@ -153,7 +153,8 @@ It is followed by the criterion value.
 If the `@CompareToNumericalTangentOperator` is followed by `true`, a
 comparison of the tangent operator given by the behaviour to a
 numerical approximation computed by a centered finite difference is
-performed.
+performed. The test fails if this comparison fails or if the numerical
+approximation can't be computed.
 
 The value of the perturbation used to compute this numerical
 approximation can be adjusted by the
@@ -520,7 +521,9 @@ thermal expansions:
   `ThermalExpansion` property
 - orthotropic thermal expansion is defined through the
   `ThermalExpansion1`, `ThermalExpansion2` and `ThermalExpansion3`
-  material properties.
+  material properties. In plane stress, `ThermalExpansion3` is
+  optional (the out-of-plane thermal strain is then null). An
+  incomplete set of coefficients is an error.
 
 This keyword takes the type of the material property as an option.
 Three types of material properties are supported, `constant` or

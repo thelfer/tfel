@@ -322,15 +322,15 @@ namespace mtest {
         (h == ModellingHypothesis::PLANESTRAIN)) {
       m.resize(4u, 5u);
       for (unsigned short i = 0; i != 4; ++i) {
-        K(i, 3) /= 2;
+        K(i, 3) /= cste;
         K(3, i) *= cste;
       }
     } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       m.resize(6u, 9u);
       for (unsigned short i = 0; i != 6; ++i) {
-        K(i, 3) /= 2;
-        K(i, 4) /= 2;
-        K(i, 5) /= 2;
+        K(i, 3) /= cste;
+        K(i, 4) /= cste;
+        K(i, 5) /= cste;
         K(3, i) *= cste;
         K(4, i) *= cste;
         K(5, i) *= cste;
@@ -350,12 +350,16 @@ namespace mtest {
           D(i, j) = K(i, j);
         }
       }
-      const auto D2 = tfel::math::change_basis(D, tfel::math::transpose(s.r));
+      // with the MFront orthotropy management policy, the behaviour
+      // works in the global frame
+      const auto D2 = (this->omp == 2u) ? D
+                                        : tfel::math::change_basis(
+                                              D, tfel::math::transpose(s.r));
       for (unsigned short i = 0; i != 4; ++i) {
         for (unsigned short j = 0; j != 3; ++j) {
           m(i, j) = D2(i, j);
         }
-        m(i, 3) = m(i, 4) = D2(i, 3);
+        m(i, 3) = m(i, 4) = D2(i, 3) / cste;
       }
     } else {
       tfel::math::st2tost2<3, real> D;
@@ -364,14 +368,18 @@ namespace mtest {
           D(i, j) = K(i, j);
         }
       }
-      const auto D2 = tfel::math::change_basis(D, tfel::math::transpose(s.r));
+      // with the MFront orthotropy management policy, the behaviour
+      // works in the global frame
+      const auto D2 = (this->omp == 2u) ? D
+                                        : tfel::math::change_basis(
+                                              D, tfel::math::transpose(s.r));
       for (unsigned short i = 0; i != 6; ++i) {
         for (unsigned short j = 0; j != 3; ++j) {
           m(i, j) = D2(i, j);
         }
-        m(i, 3) = m(i, 4) = D2(i, 3);
-        m(i, 5) = m(i, 6) = D2(i, 4);
-        m(i, 7) = m(i, 8) = D2(i, 5);
+        m(i, 3) = m(i, 4) = D2(i, 3) / cste;
+        m(i, 5) = m(i, 6) = D2(i, 4) / cste;
+        m(i, 7) = m(i, 8) = D2(i, 5) / cste;
       }
     }
     return true;

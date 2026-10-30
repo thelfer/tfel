@@ -288,6 +288,10 @@ The `@Precision` keyword sets the tolerance(s) for value comparisons.
 - For `Absolute`, `Relative`, or `Area` comparisons: a single value.
 - For `RelativeAndAbsolute` or `Mixed` comparisons: two values (relative and absolute).
 
+The second value is not kept from a previous `@Precision` keyword: a
+`RelativeAndAbsolute` or `Mixed` test following a `@Precision` keyword
+with a single value is an error.
+
 Example:
 
 ~~~~{.cxx}

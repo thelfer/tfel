@@ -551,6 +551,11 @@ namespace mtest {
     for (const auto& t : this->tests) {
       tr.append(t->getResults());
     }
+    if (state.containsParameter("TangentOperatorComparisonFailure")) {
+      tr.append(tfel::tests::TestResult(
+          false,
+          state.getParameter<std::string>("TangentOperatorComparisonFailure")));
+    }
     return tr;
   }
 
@@ -705,6 +710,12 @@ namespace mtest {
       return rb;
     }
     if ((this->cto) && (mt == StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)) {
+      // the first failure is reported as a failed test by the execute method
+      auto report = [&state](const std::string& m) {
+        if (!state.containsParameter("TangentOperatorComparisonFailure")) {
+          state.setParameter("TangentOperatorComparisonFailure", m);
+        }
+      };
       bool ok = true;
       bwk.ne.swap(s.e1);
       bwk.ns.swap(s.s1);
@@ -763,7 +774,7 @@ namespace mtest {
         }
         if (merr > this->toeps) {
           auto& log = mfront::getLogStream();
-          log << "Comparison to numerical jacobian failed "
+          log << "Comparison to numerical tangent operator failed "
               << "(error : " << merr << " for (" << mi << "," << mj
               << "), criterium " << this->toeps << ").\n"
               << "Tangent operator returned by the behaviour : \n";
@@ -771,10 +782,21 @@ namespace mtest {
           log << "Numerical tangent operator (perturbation value : " << this->pv
               << ") : \n";
           display(bwk.nk, mi, mj);
+          std::ostringstream msg;
+          msg << "MTest::computeStiffnessMatrixAndResidual: comparison to "
+              << "numerical tangent operator failed for time '" << t + dt
+              << "' (error: '" << merr << "' for (" << mi << "," << mj
+              << "), criterion '" << this->toeps << "')";
+          report(msg.str());
         }
       } else {
         auto& log = mfront::getLogStream();
-        log << "Numerical evalution of tangent operator failed.\n\n";
+        log << "Numerical evaluation of tangent operator failed.\n\n";
+        std::ostringstream msg;
+        msg << "MTest::computeStiffnessMatrixAndResidual: numerical "
+            << "evaluation of tangent operator failed for time '" << t + dt
+            << "'";
+        report(msg.str());
       }
     }
     //! update the stiffness matrix and the residual

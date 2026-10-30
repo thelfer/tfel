@@ -19,22 +19,26 @@ macro(castemtest_ddif2brick test_arg behaviour)
 	add_test(NAME brick${test_arg}_${behaviour}_${rm}_mtest
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
 	  --@library@="$<TARGET_FILE:MFrontCastemDDIF2BrickBehaviours>" --@behaviour@="${behaviour}"
+	  --xml-output-file=brick${test_arg}_${behaviour}_${rm}_mtest.xml
 	  --@xml_output@="${test_arg}-${behaviour}-${rm}.xml" ${file})
 	add_test(NAME brick${test_arg}_${behaviour}_consistenttangentoperator_${rm}_mtest
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
 	  --@StiffnessMatrixType='ConsistentTangentOperator'
 	  --@library@="$<TARGET_FILE:MFrontCastemDDIF2BrickBehaviours>" --@behaviour@="${behaviour}"
+	  --xml-output-file=brick${test_arg}_${behaviour}_consistenttangentoperator_${rm}_mtest.xml
 	  --@xml_output@="${test_arg}-${behaviour}-consistenttangentoperator-${rm}.xml" ${file})
       else(NOT _REFERENCE_FILE)
 	add_test(NAME brick${test_arg}_${behaviour}_${rm}_mtest
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
 	  --@library@="$<TARGET_FILE:MFrontCastemDDIF2BrickBehaviours>" --@behaviour@="${behaviour}"
+	  --xml-output-file=brick${test_arg}_${behaviour}_${rm}_mtest.xml
 	  --@xml_output@="${test_arg}-${behaviour}-${rm}.xml"
 	  --@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
 	add_test(NAME brick${test_arg}_${behaviour}_consistenttangentoperator_${rm}_mtest
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
 	  --@StiffnessMatrixType='ConsistentTangentOperator'
 	  --@library@="$<TARGET_FILE:MFrontCastemDDIF2BrickBehaviours>" --@behaviour@="${behaviour}"
+	  --xml-output-file=brick${test_arg}_${behaviour}_consistenttangentoperator_${rm}_mtest.xml
 	  --@xml_output@="${test_arg}-${behaviour}-consistenttangentoperator-${rm}.xml"
 	  --@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
       endif(NOT _REFERENCE_FILE)
