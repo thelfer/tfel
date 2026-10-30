@@ -195,7 +195,7 @@ namespace mfront::bbrick {
       m += "return {};\n";
     }
     m += "} // end of " + m1 + "\n\n";
-    m += "std::pair<stress, stress> " + m2 + local_id +
+    m += "std::pair<stress, stress> " + m2 +
          "(const strain mfront_arg_p) const {\n";
     if (this->values.size() == 1) {
       const auto& v = *(this->values.begin());

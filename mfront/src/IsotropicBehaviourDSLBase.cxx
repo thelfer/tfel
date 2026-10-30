@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   01 jui 2007
+ * \date 01/06/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -565,14 +565,16 @@ namespace mfront {
                      const std::string& sn, const std::string& n,
                      const std::string& g, const std::string d) {
       const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      // `second` is true if the parameter is declared for at least one
+      // modelling hypothesis, `first` if it is declared for all of them
       auto r = bd.checkVariableExistence(n, "Parameter", false);
-      if (!r.first) {
+      if (!r.second) {
         auto v = (!sn.empty()) ? VariableDescription(t, sn, n, 1u, 0u)
                                : VariableDescription(t, n, 1u, 0u);
         v.description = d;
         bd.addLocalVariable(h, v, BehaviourData::UNREGISTRED);
       } else {
-        tfel::raise_if(!r.second,
+        tfel::raise_if(!r.first,
                        "ImplicitDSLBase::completeVariableDeclaration: "
                        "Parameter '" +
                            n + "' is not defined for all hypotheses");

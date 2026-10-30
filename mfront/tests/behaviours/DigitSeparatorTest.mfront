@@ -11,4 +11,5 @@
 
 @FlowRule{
   f = de0 * pow(seq / s0, E);
+  df_dseq = de0 * E * pow(seq / s0, E - 1) / s0;
 }

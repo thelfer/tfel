@@ -2,7 +2,7 @@
  * \file   tfel-check/src/tfel-check.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28 Jan 2008
+ * \date 28/01/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -12,16 +12,19 @@
  */
 
 #include <map>
+#include <mutex>
+#include <thread>
 #include <vector>
 #include <string>
+#include <cerrno>
+#include <sstream>
 #include <cstring>
 #include <cstdlib>
-#include <cerrno>
+#include <climits>
 #include <stdexcept>
 #include <iterator>
 #include <algorithm>
 #include <iostream>
-#include <climits>
 #include <unistd.h>
 #include <libgen.h>
 #include <sys/stat.h>
@@ -33,6 +36,7 @@
 #include "TFEL/System/System.hxx"
 #include "TFEL/System/RecursiveFind.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
@@ -40,7 +44,6 @@
 #include "MFront/ModelInterfaceFactory.hxx"
 #include "TFEL/Check/ConfigurationManager.hxx"
 #include "TFEL/Check/TestLauncher.hxx"
-#include "TFEL/Check/TestLauncherV1.hxx"
 #include "TFEL/Check/PCLogger.hxx"
 #include "TFEL/Check/PCTextDriver.hxx"
 #include "TFEL/Check/PCJUnitDriver.hxx"
@@ -86,7 +89,26 @@ namespace tfel::check {
     for (const auto& i : mf.getRegistredInterfaces()) {
       c.addComponent("mfront::model::" + i + "_interface");
     }
-  }  // end of declareTFELComponents
+#ifdef TFEL_CHECK_COMPONENTS
+    for (const auto& co :
+         tfel::utilities::tokenize(TFEL_CHECK_COMPONENTS, '@')) {
+      c.addComponent(co);
+    }
+#endif /* TFEL_CHECK_COMPONENTS */
+  }    // end of declareTFELComponents
+
+  static void declareTFELSubstitutions(ConfigurationManager& c) {
+    const auto s = tfel::system::dirSeparator();
+    c.addSubstitution("@TFEL_INCLUDE_DIR@", getInstallPath() + s + "include",
+                      false);
+#ifdef _WIN32
+    c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "bin",
+                      false);
+#else
+    c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "lib",
+                      false);
+#endif
+  }  // end of declareTFELSubstitutions
 
   static void declareTFELExecutables(ConfigurationManager& c) {
     for (const std::string e : {"mfront", "mtest", "mfront-doc",
@@ -120,20 +142,30 @@ namespace tfel::check {
      * arguments.
      */
     void treatUnknownArgument() override;
-    //! \brief treat a substituion pattern
-    virtual bool treatSubstitution();
-    //! \brief register call backs associated to command line arguments
-    virtual void registerArgumentCallBacks();
     //! \return the current version of `tfel-check`
-    std::string getVersionDescription() const override;
+    [[nodiscard]] std::string getVersionDescription() const override;
     //! \return the description of the usage of `tfel-check`
-    std::string getUsageDescription() const override;
+    [[nodiscard]] std::string getUsageDescription() const override;
+    //! \brief treat a substituion pattern
+    bool treatSubstitution();
+    //! \brief register call backs associated to command line arguments
+    void registerArgumentCallBacks();
     //! \brief configuration manager
     ConfigurationManager configurations;
-    //! list of configuration files
+    //! \brief list of configuration files
     std::vector<std::string> configFiles;
     //! list of input files
     std::vector<std::string> inputs;
+    /*!
+     * \brief boolean stating that terminal colors shall be used for the
+     * terminal output (std::cout)
+     */
+    bool use_terminal_colors = true;
+    /*!
+     * \brief boolean stating that the terminal output (std::cout) shall be
+     * synchronized
+     */
+    bool synchronize_terminal_output = false;
   };  // end of struct TFELCheck
 
   bool TFELCheck::treatSubstitution() {
@@ -184,7 +216,18 @@ namespace tfel::check {
                            const CallBack& c) {
       this->registerCallBack(n, a, c);
     };
-    declare2("--config", "-c",
+    auto read_boolean_value = [this](const char* const m) {
+      const auto& opt = this->currentArgument->getOption();
+      if (opt == "true") {
+        return true;
+      } else if (opt != "false") {
+        std::cerr << "invalid option '" << opt << "' passed to '" << m << "', "
+                  << "expected 'true' or 'false'.\n";
+        std::exit(EXIT_FAILURE);
+      }
+      return false;
+    };
+       declare2("--config", "-c",
              CallBack(
                  "add a configuration file",
                  [this] {
@@ -193,25 +236,56 @@ namespace tfel::check {
                  },
                  true));
     this->registerCallBack(
+        "--clean-up", CallBack(
+                          "clean generated files and directories listed by "
+                          "the @CleanFiles and @CleanDirectories keywords in "
+                          "case of success (true by default).",
+                          [this, read_boolean_value] {
+                            const auto b = read_boolean_value("--clean-up");
+                            this->configurations.setCleanUp(b);
+                          },
+                          true));
+    this->registerCallBack(
+        "--discard-clean-up-on-failure",
+        CallBack(
+            "don't clean generated files and directories listed by "
+            "the @CleanFiles and @CleanDirectories keywords in case of "
+            "failure (true by default).",
+            [this, read_boolean_value] {
+              const auto b =
+                  read_boolean_value("--discard-clean-up-on-failure");
+              this->configurations.discardCleanUpOnFailure(b);
+            },
+            true));
+    this->registerCallBack(
+        "--synchronize-terminal-output",
+        CallBack(
+            "synchronize the terminal output in parallel (false by default). "
+            "If synchronized, the results of each `.check` file is diplayed "
+            "after its full completion.",
+            [this, read_boolean_value] {
+              this->synchronize_terminal_output =
+                  read_boolean_value("--synchronize-terminal-output");
+            },
+            true));
+    this->registerCallBack(
+        "--use-terminal-colors",
+        CallBack(
+            "use terminal colors for terminal output (std::cout).",
+            [this, read_boolean_value] {
+              this->use_terminal_colors =
+                  read_boolean_value("--use-terminal-colors");
+            },
+            true));
+    this->registerCallBack(
         "--discard-commands-failure",
         CallBack(
             "discard command's failure if comparisons are ok (default "
-            "behaviour). If no "
-            "comparisons is declared, command's failure is never ignored.",
-            [this] {
-              const auto boolean_value = [this] {
-                const auto& opt = this->currentArgument->getOption();
-                if (opt == "true") {
-                  return true;
-                } else if (opt != "false") {
-                  std::cerr << "invalid option '" << opt
-                            << "' passed to '--discard-commands-failure', "
-                            << "expected 'true' or 'false'.";
-                  std::exit(EXIT_FAILURE);
-                }
-                return false;
-              }();
-              this->configurations.setDiscardCommandsFailure(boolean_value);
+            "behaviour). If no comparisons is declared, command's failure is "
+            "never ignored.",
+            [this, read_boolean_value] {
+              const auto b = read_boolean_value("--discard-commands-failure");
+              this->configurations.setDiscardCommandsFailure(b);
             },
             true));
     this->registerCallBack(
@@ -227,6 +301,19 @@ namespace tfel::check {
               std::exit(EXIT_SUCCESS);
             },
             false));
+    this->registerCallBack(
+        "--list-default-substitutions",
+        CallBack(
+            "list all default substitutions",
+            [this] {
+              auto global_configuration =
+                  this->configurations.getConfiguration("");
+              for (const auto& [k, v] : global_configuration.substitutions) {
+                std::cout << "- '" << k << "': '" << v << "'\n";
+              }
+              std::exit(EXIT_SUCCESS);
+            },
+            false));
   }  // end of TFELCheck::registerArgumentCallBacks
 
   std::string TFELCheck::getVersionDescription() const { return VERSION; }
@@ -238,6 +325,7 @@ namespace tfel::check {
   TFELCheck::TFELCheck(const int argc, const char* const* const argv) {
     parseConfigFiles(this->configurations);
     declareTFELComponents(this->configurations);
+    declareTFELSubstitutions(this->configurations);
     this->setArguments(argc, argv);
     this->registerArgumentCallBacks();
     this->parseArguments();
@@ -248,8 +336,10 @@ namespace tfel::check {
 
   int TFELCheck::execute() {
     using namespace std;
-    auto log = PCLogger(std::make_shared<PCTextDriver>("tfel-check.log"));
-    log.addDriver(std::make_shared<PCTextDriver>());
+    auto log =
+        PCLogger(std::make_shared<PCTextDriver>("tfel-check.log", false));
+    log.addDriver(
+        std::make_shared<PCTextDriver>(std::cout, this->use_terminal_colors));
     auto exe = [this, &log](const std::string& d, const std::string& f) {
       using namespace tfel::system;
       const auto cpath = systemCall::getCurrentWorkingDirectory();
@@ -268,15 +358,10 @@ namespace tfel::check {
       const auto name = d + '/' + f;
       auto success = true;
       try {
-        // if(this->file_version==TestLauncher::V1){
-        // 	TestLauncherV1 c(f,log);
-        // 	success = c.execute();
-        // } else {
         auto c = this->configurations.getConfiguration(d);
         c.log = log;
         TestLauncher t(c, f);
         success = t.execute(c);
-        //      }
       } catch (std::exception& e) {
         log.addMessage("test failed : '" + f + "', reason:\n" + e.what());
         success = false;

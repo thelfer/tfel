@@ -2,7 +2,7 @@
  * \file   mfront/src/GenericMaterialPropertyInterfaceBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/05/2022
+ * \date 04/05/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -125,7 +125,7 @@ namespace mfront {
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       os << "if(" << v.name << " > " << v.type << "(" << b.upperBound << ")){\n"
          << "mfront_report(\"" << v.name
-         << " is below its physical upper bound (\" + " << to_string << " + \">"
+         << " is over its physical upper bound (\" + " << to_string << " + \">"
          << b.upperBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
@@ -168,7 +168,8 @@ namespace mfront {
       os << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
          << "if(mfront_out_of_bounds_policy==" << iucname
          << "_STRICT_POLICY){\n"
-         << "mfront_report(\"" << v.name << " is out of bounds.\");\n"
+         << "mfront_report(\"" << v.name << " is below its lower bound (\" + "
+         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
@@ -189,6 +190,7 @@ namespace mfront {
          << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
+         << "errno = mfront_errno_old;\n"
          << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
@@ -249,6 +251,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     os.exceptions(std::ios::badbit | std::ios::failbit);
+    os.precision(14);
     os << "/*!\n"
        << "* \\file   " << fn << "\n"
        << "* \\brief  "
@@ -260,7 +263,7 @@ namespace mfront {
       os << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << '\n';
+      os << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       os << fd.description << '\n';
@@ -308,6 +311,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     os.exceptions(std::ios::badbit | std::ios::failbit);
+    os.precision(14);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
     const auto& date = fd.date;
@@ -325,7 +329,7 @@ namespace mfront {
       os << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      os << "* \\date   " << date << '\n';
+      os << "* \\date " << date << '\n';
     }
     os << " */\n\n"
        << "#include<algorithm>\n"

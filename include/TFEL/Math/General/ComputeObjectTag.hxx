@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_COMPUTEOBJECTTAG_HXX
 #define LIB_TFEL_MATH_COMPUTEOBJECTTAG_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
+
 namespace tfel::math {
 
   /*!

@@ -1693,9 +1693,10 @@ namespace mfront {
     /*!
      * \brief check variable existence
      * \return a pair of booleans. The first part tells if the
-     * variable was found in a least one specialisation of the
-     * behaviour and the second tells if the variable is available
-     * for all distinct modelling hypothesis.
+     * variable is available for all the distinct modelling hypotheses
+     * and the second tells if the variable was found in at least one
+     * specialisation of the behaviour. The first part is false if the
+     * variable was not found.
      * The variable could be any sort of variable (local variable,
      * integration variable, static variable, ...)
      * \param[in] v : variable name
@@ -1704,13 +1705,14 @@ namespace mfront {
     /*!
      * \brief check variable existence for a particular sort of variable.
      * \return a pair of booleans. The first part tells if the
-     * variable was found in a least one specialisation of the
-     * behaviour and the second tells if the variable is available
-     * for all distinct modelling hypothesis.
+     * variable is available for all the distinct modelling hypotheses
+     * and the second tells if the variable was found in at least one
+     * specialisation of the behaviour. The first part is false if the
+     * variable was not found.
      * \param[in] v: variable name
      * \param[in] c: variable category
-     * \param[in] b: if true, an exception if thrown if the variable is not
-     * found
+     * \param[in] b: if true, an exception is thrown if the variable is not
+     * found for one of the distinct modelling hypotheses
      */
     std::pair<bool, bool> checkVariableExistence(const std::string&,
                                                  const std::string&,

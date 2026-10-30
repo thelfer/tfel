@@ -436,9 +436,11 @@ namespace mfront::bbrick {
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
     // elastic strain
+    // `second` is true if `eel` is declared for at least one specialisation
+    // of the behaviour, `first` if it is declared for all of them
     const auto b = bd.checkVariableExistence("eel");
-    if (b.first) {
-      throw_if(!b.second,
+    if (b.second) {
+      throw_if(!b.first,
                "'eel' is not declared for all specialisation of the behaviour");
       bd.checkVariableExistence("eel", "IntegrationVariable");
       bd.checkVariableGlossaryName("eel", Glossary::ElasticStrain);

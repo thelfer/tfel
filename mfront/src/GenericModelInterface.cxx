@@ -2,7 +2,7 @@
  * \file   mfront/src/GenericModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28/04/2022
+ * \date 28/04/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -135,7 +135,7 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n";
 
     const auto hg = getHeaderGuard(md);
@@ -214,7 +214,7 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
        << "#include <cstring>\n"
@@ -251,7 +251,10 @@ namespace mfront {
     const auto has_constructor =
         (!md.constantMaterialProperties.empty()) || (hasRealParameters(md));
     //
-    os << "namespace mfront::gm{\n\n";
+    // the classes are local to the library: two libraries defining a
+    // model of the same name must not share their parameters
+    os << "namespace mfront::gm{\n\n"
+       << "namespace {\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
@@ -474,8 +477,9 @@ namespace mfront {
       if (!getDebugMode()) {
         printLinePragma(os, v.lineNumber, fd.fileName);
       }
-      os << "static constexpr " << v.type << " " << v.name << " = "  //
-         << v.value << ";\n";
+      // brace initialisation is required by quantities
+      os << "static constexpr auto " << v.name << " = " << v.type << "{"
+         << v.value << "};\n";
     }
     os << "}; // end of struct " << md.className << "\n\n";
     //
@@ -498,7 +502,8 @@ namespace mfront {
        << "}\n"
        << "return 1;\n"
        << "}\n\n";
-    os << "} // end of namespace mfront::gm\n\n";
+    os << "} // end of anonymous namespace\n\n"
+       << "} // end of namespace mfront::gm\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {

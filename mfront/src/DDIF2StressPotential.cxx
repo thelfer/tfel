@@ -2,7 +2,7 @@
  * \file  DDIF2StressPotential.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20 oct. 2014
+ * \date 20/10/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -38,9 +38,10 @@ namespace mfront::bbrick {
 
   /*!
    * \brief extract a material property or an array of material properties
-   * \param[out] mps: array of material properties. If only one material
-   * property is defined in the options, then only the first entry of the
-   * array is defined.
+   * \param[out] mps: array of material properties. If only one non
+   * constant material property is defined in the options, then only the
+   * first entry of the array is defined. A single constant value is copied
+   * in the three entries.
    * \param[out] bd: behaviour description
    * \param[in] dsl: abstract behaviour dsl
    * \param[in] n: material property name
@@ -88,7 +89,7 @@ namespace mfront::bbrick {
         std::vector<double> values(3u);
         for (unsigned short i = 0; i != 3; ++i) {
           tfel::raise_if(!mps[i].is<ConstantMaterialProperty>(),
-                         "if one  component of '" + an +
+                         "if the first component of '" + an +
                              "' is a constant value, all components must be "
                              "constant values");
           if (b) {
@@ -100,6 +101,18 @@ namespace mfront::bbrick {
         }
         addParameter(bd, vn, en, 3, values);
       } else {
+        // the constant components following a non constant one are
+        // checked too
+        for (unsigned short i = 1; i != 3; ++i) {
+          if (!mps[i].is<ConstantMaterialProperty>()) {
+            continue;
+          }
+          if (b) {
+            checkIsStrictlyPositive(mps[i]);
+          } else {
+            checkIsStrictlyNegative(mps[i]);
+          }
+        }
         addLocalVariable(bd, vt, vn, 3);
       }
     }
@@ -198,10 +211,11 @@ namespace mfront::bbrick {
     // data
     throw_if((d.count("fracture_stress")) && (d.count("fracture_stresses")),
              "can't specify 'fracture_stress' and 'fracture_stresses");
-    throw_if((d.count("softening_slope")) && (d.count("softening_slopes")) &&
-                 (d.count("fracture_energy")) && (d.count("fracture_energies")),
-             "only of of 'softening_slope', 'softening_slopes', "
-             "'fracture_energy' and 'fracture_energies' must be specified");
+    throw_if(d.count("softening_slope") + d.count("softening_slopes") +
+                     d.count("fracture_energy") + d.count("fracture_energies") >
+                 1,
+             "only one of 'softening_slope', 'softening_slopes', "
+             "'fracture_energy' and 'fracture_energies' can be specified");
     extractDDIF2MaterialProperty(this->sr, bd, dsl, "fracture_stress",
                                  "fracture_stresses", "sigr", "stress",
                                  "FractureStress", d, true);
@@ -343,7 +357,7 @@ namespace mfront::bbrick {
     if (!this->sr[0].empty()) {
       if (!this->sr[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
         std::ostringstream ssigr;
-        if (this->sr[1].empty()) {
+        if (!this->sr[1].empty()) {
           for (unsigned short i = 0; i != 3; ++i) {
             ssigr << "this->sigr[" << i << "] = ";
             dsl.writeMaterialPropertyEvaluation(ssigr, this->sr[i], ets);
@@ -383,7 +397,7 @@ namespace mfront::bbrick {
       if (!this->gc[1].empty()) {
         for (unsigned short i = 0; i != 3; ++i) {
           sgc << "this->Gc[" << i << "] = ";
-          dsl.writeMaterialPropertyEvaluation(sgc, this->gc[0], ets);
+          dsl.writeMaterialPropertyEvaluation(sgc, this->gc[i], ets);
           sgc << ";\n";
         }
       } else {

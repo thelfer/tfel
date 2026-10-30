@@ -16,9 +16,9 @@
 namespace tfel::check {
 
   Interpolation::Interpolation() = default;
-  Interpolation::Interpolation(Interpolation&&) = default;
+  Interpolation::Interpolation(Interpolation&&) noexcept = default;
   Interpolation::Interpolation(const Interpolation&) = default;
-  Interpolation& Interpolation::operator=(Interpolation&&) = default;
+  Interpolation& Interpolation::operator=(Interpolation&&) noexcept = default;
   Interpolation& Interpolation::operator=(const Interpolation&) = default;
   Interpolation::~Interpolation() = default;
 

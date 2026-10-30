@@ -20,9 +20,9 @@
 namespace tfel::check {
 
   Linearization::Linearization() = default;
-  Linearization::Linearization(Linearization&&) = default;
+  Linearization::Linearization(Linearization&&) noexcept = default;
   Linearization::Linearization(const Linearization&) = default;
-  Linearization& Linearization::operator=(Linearization&&) = default;
+  Linearization& Linearization::operator=(Linearization&&) noexcept = default;
   Linearization& Linearization::operator=(const Linearization&) = default;
 
   Linearization::~Linearization() = default;
