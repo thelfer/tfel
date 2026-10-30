@@ -35,7 +35,8 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(T&, T&, T&, const EigenValuesOrdering) {}  // end of exe
+    TFEL_HOST_DEVICE static void exe(T&, T&, T&, const EigenValuesOrdering) {
+    }  // end of exe
   };  // end of struct SortEigenValues<1u>
   //! \brief partial specialisation of the `SortEigenValues` in 2D
   template <>
@@ -50,7 +51,10 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(T& vp0, T& vp1, T&, const EigenValuesOrdering o) {
+    TFEL_HOST_DEVICE static void exe(T& vp0,
+                                     T& vp1,
+                                     T&,
+                                     const EigenValuesOrdering o) {
       if (o == EigenValuesOrdering::ASCENDING) {
         if (vp0 > vp1) {
           std::swap(vp0, vp1);
@@ -75,7 +79,10 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(T& vp0, T& vp1, T& vp2, const EigenValuesOrdering o) {
+    TFEL_HOST_DEVICE static void exe(T& vp0,
+                                     T& vp1,
+                                     T& vp2,
+                                     const EigenValuesOrdering o) {
       auto swap_if_greater = [](T& x, T& y) {
         if (x > y) {
           std::swap(x, y);

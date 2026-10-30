@@ -109,5 +109,19 @@ class ViscoChabochMemoNRad(unittest.TestCase):
         for i in range(len(ltime)):
             f.write('{0} {1} {2}\n'.format(ltime[i],SXX[i],SXY[i]))
 
+        # the first step is elastic and uniaxial
+        self.assertTrue(abs(SXX[1] - 205000.0 * eps0 * ltime[1] / pas) < 1.e-2)
+        self.assertTrue(abs(SXY[1]) < 1.e-2)
+        # regression reference produced by the current code: stresses
+        # after the first loading and at the end of each repetition
+        ref = {12: (239.797661, 0.),
+               1152: (86.771921, -236.986801),
+               2304: (74.796976, -284.622500),
+               3456: (76.814965, -293.645349),
+               4607: (63.952169, -298.551029)}
+        for i, (sxx, sxy) in ref.items():
+            self.assertTrue(abs(SXX[i] - sxx) < 1.e-2)
+            self.assertTrue(abs(SXY[i] - sxy) < 1.e-2)
+
 if __name__ == '__main__':
     unittest.main()

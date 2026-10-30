@@ -157,14 +157,14 @@ namespace tfel::material {
     const auto sin_lode = std::sin(lode);
     const auto cos_3_lode = std::cos(3 * lode);
     const auto sin_3_lode = arg;
-    const auto sin_6_lode = std::sin(6 * lode);
-    const auto tan_3_lode = std::tan(3 * lode);
+    // K and its derivative with respect to x = sin(3 lode)
     auto K = real{0};
-    auto dK_dlode = real{1};
-    std::tie(K, dK_dlode) = [&]() -> std::pair<real, real> {
+    auto dK_dx = real{1};
+    std::tie(K, dK_dx) = [&]() -> std::pair<real, real> {
       if (tfel::math::abs(lode) < p.lodeT) {
-        return {cos_lode - isqrt3 * p.sin_angle * sin_lode,
-                -sin_lode - isqrt3 * p.sin_angle * cos_lode};
+        return {
+            cos_lode - isqrt3 * p.sin_angle * sin_lode,
+            (-sin_lode - isqrt3 * p.sin_angle * cos_lode) / (3 * cos_3_lode)};
       }
       const auto sign = std::min(
           std::max(lode / std::max(tfel::math::abs(lode), local_zero_tolerance),
@@ -184,7 +184,7 @@ namespace tfel::material {
                      B * sign * p.sin_3_lodeT -
                      C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
       return {A + B * sin_3_lode + C * sin_3_lode * sin_3_lode,
-              3 * B * cos_3_lode + 3 * C * sin_6_lode};
+              B + 2 * C * sin_3_lode};
     }();
     // flow direction
     const auto dev_s_squared =
@@ -193,8 +193,12 @@ namespace tfel::material {
     const auto root =
         std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
                  local_zero_tolerance);
-    const auto dG_dJ2 = K / (2 * root) * (K - tan_3_lode * dK_dlode);
-    const auto dG_dJ3 = J2 * K * tan_3_lode / (3 * J3 * root) * dK_dlode;
+    // derivatives of x = sin(3 lode) with respect to J2 and J3
+    const auto dx_dJ2 = -3 * sin_3_lode / (2 * J2);
+    const auto dx_dJ3 = -3 * sqrt3 / (2 * J2 * std::sqrt(J2));
+    const auto dG_dx = J2 * K * dK_dx / root;
+    const auto dG_dJ2 = K * K / (2 * root) + dG_dx * dx_dJ2;
+    const auto dG_dJ3 = dG_dx * dx_dJ3;
     const auto n =
         tfel::math::eval(dG_dI1 * id + dG_dJ2 * s + dG_dJ3 * dev_s_squared);
     const auto Fy1 = I1 * p.sin_angle / 3 + root;
@@ -231,17 +235,20 @@ namespace tfel::material {
     const auto sin_lode = std::sin(lode);
     const auto cos_3_lode = std::cos(3 * lode);
     const auto sin_3_lode = arg;
-    const auto tan_3_lode = std::tan(3 * lode);
-    const auto sin_6_lode = std::sin(6 * lode);
-    const auto cos_6_lode = std::cos(6 * lode);
+    // K and its first and second derivatives with respect to
+    // x = sin(3 lode)
     auto K = real{};
-    auto dK_dlode = real{};
-    auto d2K_d2lode = real{};
-    std::tie(K, dK_dlode, d2K_d2lode) = [&]() -> std::tuple<real, real, real> {
+    auto dK_dx = real{};
+    auto d2K_d2x = real{};
+    std::tie(K, dK_dx, d2K_d2x) = [&]() -> std::tuple<real, real, real> {
       if (tfel::math::abs(lode) < p.lodeT) {
+        const auto dK_dlode = -sin_lode - isqrt3 * p.sin_angle * cos_lode;
+        const auto d2K_d2lode = -cos_lode + isqrt3 * p.sin_angle * sin_lode;
         return {cos_lode - isqrt3 * p.sin_angle * sin_lode,
-                -sin_lode - isqrt3 * p.sin_angle * cos_lode,
-                -cos_lode + isqrt3 * p.sin_angle * sin_lode};
+                dK_dlode / (3 * cos_3_lode),
+                d2K_d2lode / (9 * cos_3_lode * cos_3_lode) +
+                    dK_dlode * sin_3_lode /
+                        (3 * cos_3_lode * cos_3_lode * cos_3_lode)};
       }
       const auto sign = std::min(
           std::max(lode / std::max(tfel::math::abs(lode), local_zero_tolerance),
@@ -261,8 +268,7 @@ namespace tfel::material {
                      B * sign * p.sin_3_lodeT -
                      C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
       return {A + B * sin_3_lode + C * sin_3_lode * sin_3_lode,
-              3 * B * cos_3_lode + 3 * C * sin_6_lode,
-              -9 * B * sin_3_lode + 18 * C * cos_6_lode};
+              B + 2 * C * sin_3_lode, 2 * C};
     }();
     // flow direction
     const auto dJ3 = tfel::math::computeDeviatorDeterminantDerivative(sig);
@@ -272,30 +278,28 @@ namespace tfel::material {
     const auto root =
         std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
                  local_zero_tolerance);
-    const auto dG_dJ2 = K / (2 * root) * (K - tan_3_lode * dK_dlode);
-    const auto dG_dJ3 = J2 * K * tan_3_lode / (3 * J3 * root) * dK_dlode;
-    const auto Pdev = id4 - (id ^ id) / 3;
-    const auto dG_dlode = K * J2 / (root)*dK_dlode;
-    const auto d2G_d2lode =
+    // derivatives of x = sin(3 lode) with respect to J2 and J3: G is
+    // differentiated with respect to J2 and x, which introduces no division
+    // by J3 nor by cos(3 lode) outside the region |lode| < lodeT
+    const auto dx_dJ2 = -3 * sin_3_lode / (2 * J2);
+    const auto dx_dJ3 = -3 * sqrt3 / (2 * J2 * std::sqrt(J2));
+    const auto d2x_d2J2 = 15 * sin_3_lode / (4 * J2 * J2);
+    const auto d2x_dJ2dJ3 = -3 * dx_dJ3 / (2 * J2);
+    const auto dG_dx = J2 * K * dK_dx / root;
+    const auto d2G_d2x =
         J2 / root *
-        (dK_dlode * dK_dlode * (1 - J2 * K * K / (root * root)) +
-         K * d2K_d2lode);
-    const auto d2G_dlodedJ2 =
-        K / root * dK_dlode * (1 - J2 * K * K / (2 * root * root));
-    const auto dG_d2J2 =
-        -K * K * K * K / (4 * root * root * root) +
-        dG_dlode * tan_3_lode / (2 * J2 * J2) -
-        tan_3_lode / (2 * J2) *
-            (2 * d2G_dlodedJ2 - tan_3_lode / (2 * J2) * d2G_d2lode -
-             3 / (2 * J2 * cos_3_lode * cos_3_lode) * dG_dlode);
-    const auto dG_d2J3 = -tan_3_lode / (3 * J3 * J3) * dG_dlode +
-                         tan_3_lode / (3 * J3) *
-                             (d2G_d2lode * tan_3_lode / (3 * J3) +
-                              dG_dlode / (J3 * cos_3_lode * cos_3_lode));
-    const auto dG_dJ2dJ3 = d2G_dlodedJ2 * tan_3_lode / (3 * J3) -
-                           tan_3_lode / (2 * J2) *
-                               (d2G_d2lode * tan_3_lode / (3 * J3) +
-                                dG_dlode / (J3 * cos_3_lode * cos_3_lode));
+        (dK_dx * dK_dx * (1 - J2 * K * K / (root * root)) + K * d2K_d2x);
+    const auto d2G_dxdJ2 =
+        K / root * dK_dx * (1 - J2 * K * K / (2 * root * root));
+    const auto dG_dJ2 = K * K / (2 * root) + dG_dx * dx_dJ2;
+    const auto dG_dJ3 = dG_dx * dx_dJ3;
+    const auto Pdev = id4 - (id ^ id) / 3;
+    const auto dG_d2J2 = -K * K * K * K / (4 * root * root * root) +
+                         2 * d2G_dxdJ2 * dx_dJ2 + d2G_d2x * dx_dJ2 * dx_dJ2 +
+                         dG_dx * d2x_d2J2;
+    const auto dG_d2J3 = d2G_d2x * dx_dJ3 * dx_dJ3;
+    const auto dG_dJ2dJ3 =
+        d2G_dxdJ2 * dx_dJ3 + d2G_d2x * dx_dJ2 * dx_dJ3 + dG_dx * d2x_dJ2dJ3;
     const auto Fy1 = I1 * p.sin_angle / 3 + root;
     const auto n = tfel::math::eval(dG_dI1 * id + dG_dJ2 * s + dG_dJ3 * dJ3);
     const auto dn = tfel::math::eval(dG_dJ2 * Pdev + dG_dJ3 * d2J3 +

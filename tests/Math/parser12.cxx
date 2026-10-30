@@ -124,7 +124,7 @@ struct ParserTest12 final : public tfel::tests::TestCase {
     const auto dx =
         std::dynamic_pointer_cast<tfel::math::Evaluator>(e.differentiate("x"))
             ->getCxxFormula();
-    const auto f = "(5.4)*(std::pow(x," + std::to_string(4.4) + "))";
+    const auto f = "(5.4)*(std::pow(x,4.4))";
     TFEL_TESTS_ASSERT(dx == f);
   }  // end of test4
   void test5() {

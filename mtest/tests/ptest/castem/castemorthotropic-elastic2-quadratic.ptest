@@ -31,5 +31,5 @@
 @OutputFilePrecision 14;
 @Profile 'orthotropic-elastic2-profile.res' {'SRR','SZZ','STT',
                                              'ERR','EZZ','ETT'};
-// @Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/orthotropic-elastic2-profile.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-4;
-// @Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/orthotropic-elastic2-profile.ref' {'ERR':5,'EZZ':6,'ETT':7} 1e-15;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/orthotropic-elastic2-profile-quadratic.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-4;
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/orthotropic-elastic2-profile-quadratic.ref' {'ERR':5,'EZZ':6,'ETT':7} 1e-15;

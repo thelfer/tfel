@@ -40,6 +40,16 @@ struct RightCauchyGreenTensorTest final : public tfel::tests::TestCase {
     F(4) = 0.750;
     const stensor<2, double> e = computeRightCauchyGreenTensor(F);
     const stensor<2, double> U = square_root(e);
+    // C = tF.F is diagonal for this deformation gradient
+    const double eps = 1.e-14;
+    TFEL_TESTS_ASSERT(abs(e(0) - 2.2525) < eps);
+    TFEL_TESTS_ASSERT(abs(e(1) - 0.563125) < eps);
+    TFEL_TESTS_ASSERT(abs(e(2)) < eps);
+    TFEL_TESTS_ASSERT(abs(e(3)) < eps);
+    TFEL_TESTS_ASSERT(abs(U(0) - sqrt(2.2525)) < eps);
+    TFEL_TESTS_ASSERT(abs(U(1) - sqrt(0.563125)) < eps);
+    TFEL_TESTS_ASSERT(abs(U(2)) < eps);
+    TFEL_TESTS_ASSERT(abs(U(3)) < eps);
     return this->result;
   }  // end of execute
 };
@@ -62,6 +72,22 @@ struct RightCauchyGreenTensorTest2 final : public tfel::tests::TestCase {
     F(7) = -0.247;
     const stensor<3, double> e = computeRightCauchyGreenTensor(F);
     const stensor<3, double> U = square_root(e);
+    // C = tF.F computed by hand
+    const double eps = 1.e-14;
+    const double sqrt2 = sqrt(2.);
+    TFEL_TESTS_ASSERT(abs(e(0) - 2.03057) < eps);
+    TFEL_TESTS_ASSERT(abs(e(1) - 1.245025) < eps);
+    TFEL_TESTS_ASSERT(abs(e(2) - 2.561009) < eps);
+    TFEL_TESTS_ASSERT(abs(e(3) - 0.162 * sqrt2) < eps);
+    TFEL_TESTS_ASSERT(abs(e(4) - 2.020751 * sqrt2) < eps);
+    TFEL_TESTS_ASSERT(abs(e(5) - 0.0005 * sqrt2) < eps);
+    // square root of C computed by numpy (eigen-decomposition)
+    TFEL_TESTS_ASSERT(abs(U(0) - 1.1880436209666456) < eps);
+    TFEL_TESTS_ASSERT(abs(U(1) - 1.1127612086738372) < eps);
+    TFEL_TESTS_ASSERT(abs(U(2) - 1.3955238503015746) < eps);
+    TFEL_TESTS_ASSERT(abs(U(3) - 0.078700901874544371 * sqrt2) < eps);
+    TFEL_TESTS_ASSERT(abs(U(4) - 0.78289751738308211 * sqrt2) < eps);
+    TFEL_TESTS_ASSERT(abs(U(5) + 0.024365149596814156 * sqrt2) < eps);
     auto s = stensor<3, double>{};
     s.copy(e.begin());
     TFEL_TESTS_ASSERT(s(5) == e(5));
