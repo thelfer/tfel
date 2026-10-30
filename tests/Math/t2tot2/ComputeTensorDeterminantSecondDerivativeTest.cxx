@@ -66,9 +66,9 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
     for (size_type i = 0; i != s.size(); ++i) {
       tensor<N> s_e(s);
       s_e[i] += eps;
-      const tensor<N> dJp = det(s_e) * invert(s_e);
+      const tensor<N> dJp = computeDeterminantDerivative(s_e);
       s_e[i] -= 2 * eps;
-      const tensor<N> dJm = det(s_e) * invert(s_e);
+      const tensor<N> dJm = computeDeterminantDerivative(s_e);
       for (size_type j = 0; j != s.size(); ++j) {
         ndJ2(j, i) = (dJp(j) - dJm(j)) / (2 * eps);
       }
@@ -101,9 +101,10 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
     const Tensor c = s3 - i1 * s2 + i2 * s - i3 * Tensor::Id();
     const auto dJ2 = computeDeterminantSecondDerivative(s);
     const Tensor id = Tensor::Id();
-    const t2tot2<N, double> dJ2_2 = Tensor4::tpld(s) + Tensor4::tprd(s) -
-                                    (s ^ id) - i1 * Tensor4::Id() +
-                                    (id ^ (i1 * id - transpose(s)));
+    const t2tot2<N, double> dJ2_2 =
+        Tensor4::transpose_derivative() *
+        (Tensor4::tpld(s) + Tensor4::tprd(s) - (s ^ id) - i1 * Tensor4::Id() +
+         (id ^ (i1 * id - transpose(s))));
     for (size_type i = 0; i != s.size(); ++i) {
       TFEL_TESTS_ASSERT(std::abs(c(i)) <
                         100 * std::numeric_limits<double>::epsilon());

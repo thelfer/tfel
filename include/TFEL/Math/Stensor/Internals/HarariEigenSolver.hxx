@@ -46,14 +46,14 @@ namespace tfel::math::internals {
      * \param[in]  E:  component of the matrix
      * \param[in]  F:  component of the matrix
      */
-    static void computeEigenVectors(tvector<3u, real>&,
-                                    tmatrix<3u, 3u, real>&,
-                                    const real,
-                                    const real,
-                                    const real,
-                                    const real,
-                                    const real,
-                                    const real);
+    TFEL_HOST_DEVICE static void computeEigenVectors(tvector<3u, real>&,
+                                                     tmatrix<3u, 3u, real>&,
+                                                     const real,
+                                                     const real,
+                                                     const real,
+                                                     const real,
+                                                     const real,
+                                                     const real);
 
     /*!
      * \brief computes the first eigen value of a real symmetric 3x3 matrix
@@ -68,13 +68,13 @@ namespace tfel::math::internals {
      * \param[in]  E:  component of the matrix
      * \param[in]  F:  component of the matrix
      */
-    static void computeEigenValues(tvector<3u, real>&,
-                                   const real,
-                                   const real,
-                                   const real,
-                                   const real,
-                                   const real,
-                                   const real);
+    TFEL_HOST_DEVICE static void computeEigenValues(tvector<3u, real>&,
+                                                    const real,
+                                                    const real,
+                                                    const real,
+                                                    const real,
+                                                    const real,
+                                                    const real);
 
    private:
     /*!
@@ -96,14 +96,14 @@ namespace tfel::math::internals {
      * \param[in]  E:  component of the matrix
      * \param[in]  F:  component of the matrix
      */
-    static void computeProjectionBasis(tvector<3u, real>&,
-                                       tmatrix<3u, 3u, real>&,
-                                       const real,
-                                       const real,
-                                       const real,
-                                       const real,
-                                       const real,
-                                       const real);
+    TFEL_HOST_DEVICE static void computeProjectionBasis(tvector<3u, real>&,
+                                                        tmatrix<3u, 3u, real>&,
+                                                        const real,
+                                                        const real,
+                                                        const real,
+                                                        const real,
+                                                        const real,
+                                                        const real);
   };
 
 }  // end of namespace tfel::math::internals

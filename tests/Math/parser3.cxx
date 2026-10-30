@@ -40,5 +40,7 @@ int main() {
   assert(abs(h.getValue({{"x", 2.}, {"y", 3.}}) - 24.) < 1.e-14);
   Evaluator h1("diff<1>(x*x*y,x)");
   assert(abs(h1.getValue({{"x", 2.}, {"y", 3.}}) - 12.) < 1.e-14);
+  Evaluator h2("diff(y*x*x,x)");
+  assert(abs(h2.getValue({{"x", 2.}, {"y", 3.}}) - 12.) < 1.e-14);
   return EXIT_SUCCESS;
 }

@@ -58,6 +58,10 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- `computeDeterminantSecondDerivative` of a non-symmetric tensor now
+  returns the second derivative of the determinant in 2D and 3D (see
+  Issue #1262): the rows of the off-diagonal components differ from the
+  previous results, which were the derivative of the adjugate.
 
 # Improvements to the build system
 
@@ -689,6 +693,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1264>
 
+## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
+
+For more details, see <https://github.com/thelfer/tfel/issues/1262>
+
 ## Issue 1254: [tfel-math] Eigen solvers of symmetric tensors: wrong eigenvectors for equal or close eigenvalues, Cardano eigenvalues of syevc3, derivatives of isotropic functions of quantities, ConvertLogarithmicStrainTangentOperator
 
 For more details, see <https://github.com/thelfer/tfel/issues/1254>
@@ -696,6 +704,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1254>
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
+
+## Issue 1209: [tfel-math] Variable positions of Evaluator in diff() and tfel-check, fses::sort, vector::copy, GenType output, GTN flow stress, Mohr-Coulomb second derivative, eigen solvers on GPUs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 

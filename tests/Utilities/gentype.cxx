@@ -18,6 +18,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <sstream>
 
 #include <cassert>
 
@@ -72,6 +73,10 @@ struct GenTypeTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(test2.get<int>(), 12);
     TFEL_TESTS_CHECK_EQUAL(static_cast<const int&>(test2.get<int>()), 12);
     TFEL_TESTS_CHECK_EQUAL(test2.getInt(), 12);
+
+    ostringstream os;
+    os << test2 << ' ' << test3 << ' ' << MyGenType{};
+    TFEL_TESTS_CHECK_EQUAL(os.str(), "12 string1 ");
 
     return this->result;
   }  // end of execute()
