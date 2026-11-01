@@ -280,7 +280,10 @@ namespace tfel::math::parser {
       auto e = [&cb]() -> std::shared_ptr<Expr> {
         if (cb->isConstant()) {
           const auto ev = cb->getValue() - 1;
-          return std::make_shared<Number>(std::to_string(ev), ev);
+          std::ostringstream converter;
+          converter.precision(15);
+          converter << ev;
+          return std::make_shared<Number>(converter.str(), ev);
         }
         auto one = Number::one();
         return std::make_shared<BinaryOperation<OpMinus>>(cb, one);
