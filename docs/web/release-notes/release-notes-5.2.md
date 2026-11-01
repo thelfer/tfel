@@ -58,6 +58,10 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- `Evaluator::getVariablesNames` returns the names of the variables
+  ordered by their positions (the order given to the constructor, or the
+  order of their first appearance in the expression), instead of the
+  alphabetical order (see Issue #1209).
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
