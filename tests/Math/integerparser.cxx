@@ -45,6 +45,22 @@ struct IntegerParserTest final : public tfel::tests::TestCase {
                       3);
     TFEL_TESTS_CHECK_THROW(tfel::math::IntegerEvaluator("2/(1-1)").getValue(),
                            std::runtime_error);
+    // integer formulas with variables
+    auto ev = tfel::math::IntegerEvaluator("x*(y-1)/2");
+    TFEL_TESTS_ASSERT(ev.getNumberOfVariables() == 2);
+    ev.setVariableValue("x", 3);
+    ev.setVariableValue("y", 4);
+    TFEL_TESTS_ASSERT(ev.getValue() == 4);
+    ev.setVariableValue("y", -2);
+    TFEL_TESTS_ASSERT(ev.getValue() == -4);
+    auto ev2 = tfel::math::IntegerEvaluator(std::vector<std::string>{"x", "y"},
+                                            "x-2*y");
+    ev2.setVariableValue(0, 1);
+    ev2.setVariableValue(1, 3);
+    TFEL_TESTS_ASSERT(ev2.getValue() == -5);
+    TFEL_TESTS_CHECK_THROW(
+        tfel::math::IntegerEvaluator(std::vector<std::string>{"x"}, "x+y"),
+        std::runtime_error);
     return this->result;
   }  // end of execute
  private:
