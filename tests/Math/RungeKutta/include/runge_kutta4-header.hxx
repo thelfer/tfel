@@ -15,9 +15,11 @@
 #ifndef LIB_TFEL_RUNGE_KUTTA4_HEADER_HXX
 #define LIB_TFEL_RUNGE_KUTTA4_HEADER_HXX
 
+#include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/RungeKutta4.hxx"
@@ -90,6 +92,31 @@ void test() {
     rk.increm();
     out << rk.get_t() << "  " << (rk.get_y())(0) << endl;
   }
+}
+
+/*!
+ * \return the largest difference between the solution of the harmonic
+ * oscillator (Van der Pol equation without damping) computed on [0, 10]
+ * with a time step of 1.e-2 and the exact solution (cos(t), -sin(t))
+ */
+template <typename T>
+T computeHarmonicOscillatorError() {
+  VanDerPol<T> rk;
+  tfel::math::tvector<2, T> y;
+  y(0) = T{1};
+  y(1) = T{0};
+  rk.set_mu(T{0});
+  rk.set_h(T(1.e-2));
+  rk.set_y(y);
+  rk.set_t(T{0});
+  auto e = T{0};
+  for (int i = 0; i != 1000; ++i) {
+    rk.increm();
+    const auto t = rk.get_t();
+    e = std::max(e, std::abs((rk.get_y())(0) - std::cos(t)));
+    e = std::max(e, std::abs((rk.get_y())(1) + std::sin(t)));
+  }
+  return e;
 }
 
 #endif /* LIB_TFEL_RUNGE_KUTTA4_HEADER_HXX */
