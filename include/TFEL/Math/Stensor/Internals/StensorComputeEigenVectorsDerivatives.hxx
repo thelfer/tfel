@@ -14,6 +14,12 @@
 #ifndef LIB_TFEL_MATH_INTERNALS_STENSORCOMPUTEEIGENVECTORSDERIVATIVES_HXX
 #define LIB_TFEL_MATH_INTERNALS_STENSORCOMPUTEEIGENVECTORSDERIVATIVES_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/General/ComputeBinaryResult.hxx"
+#include "TFEL/Math/Forward/General.hxx"
+#include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
+
 namespace tfel::math::internals {
 
   template <unsigned short N>

@@ -26,7 +26,7 @@
 #include "TFEL/Math/General/CubicRoots.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
-#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx"
 
 namespace tfel::math::internals {
 
