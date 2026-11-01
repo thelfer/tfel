@@ -31,6 +31,7 @@
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/Matrix/tmatrixIO.hxx"
 #include "TFEL/Math/stensor.hxx"
+#include "FSES/Utilities.hxx"
 
 struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
   //! a simple alias
@@ -47,10 +48,15 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     this->check<EigenSolver::GTESYMMETRICQREIGENSOLVER>();
     this->check<EigenSolver::FSESJACOBIEIGENSOLVER>();
     this->check<EigenSolver::FSESQLEIGENSOLVER>();
+    // the following solvers are not checked: on random tensors, their
+    // failure ratios (about 2%, 9% and 11%, see the benchmarks of the
+    // eigen solvers in the release notes of TFEL 3.1) exceed the 0.3%
+    // accepted by test2 and test3
     // this->check<EigenSolver::FSESCUPPENEIGENSOLVER>();
     // this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>();
     // this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();
     this->check<EigenSolver::HARARIEIGENSOLVER>();
+    this->testFSESSort();
     // the non-convergence of the FSES Jacobi solver is reported by NaN
     const auto nan = std::numeric_limits<double>::quiet_NaN();
     const auto s = tfel::math::stensor<3u, double>{1, 2, 3, nan, 0.5, 0.6};
@@ -303,6 +309,18 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(
         (double(unprecised_results) / double(nb_boucles) < 0.003));
   }
+
+  //! \brief sort of eigen values by `fses::sort` with a double eigenvalue
+  void testFSESSort() {
+    using EigenValuesOrdering = fses::EigenValuesOrdering;
+    auto m = tfel::math::tmatrix<3u, 3u, double>::Id();
+    auto vp = tfel::math::tvector<3u, double>{-1, -1, 0};
+    fses::sort(m, vp, EigenValuesOrdering::ASCENDING);
+    TFEL_TESTS_ASSERT((vp(0) <= vp(1)) && (vp(1) <= vp(2)));
+    vp = tfel::math::tvector<3u, double>{-1, 0, -1};
+    fses::sort(m, vp, EigenValuesOrdering::DESCENDING);
+    TFEL_TESTS_ASSERT((vp(0) >= vp(1)) && (vp(1) >= vp(2)));
+  }  // end of testFSESSort
 
   template <typename T, EigenSolver es>
   void test4() {
