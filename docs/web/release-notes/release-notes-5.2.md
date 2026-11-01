@@ -717,6 +717,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1231>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1229>
 
+## Issue 1225: [mtest] The fanderson and uanderson tests do not select their acceleration algorithm
+
+For more details, see <https://github.com/thelfer/tfel/issues/1225>
+
 ## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
 
 For more details, see <https://github.com/thelfer/tfel/issues/1223>
