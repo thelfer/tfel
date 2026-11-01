@@ -693,6 +693,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1262>
 
+## Issue 1241: [ptest] Thirty of the 42 PTest pipe tests compare nothing
+
+For more details, see <https://github.com/thelfer/tfel/issues/1241>
+
 ## Issue 1235: [tests] Copy-paste slips and vacuous checks in unit tests
 
 For more details, see <https://github.com/thelfer/tfel/issues/1235>
