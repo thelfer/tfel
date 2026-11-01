@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/DianaFEA/DianaFEAInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_DIANAFEA_CALL_HXX
+#include "MFront/DianaFEA/DianaFEAInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_DIANAFEA_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_DIANAFEA_CALL_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -272,3 +274,5 @@ namespace dianafea {
 }  // end of namespace dianafea
 
 #endif /* LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_DIANAFEA_CALL_HXX */

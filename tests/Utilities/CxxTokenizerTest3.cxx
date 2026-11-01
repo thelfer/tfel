@@ -30,6 +30,8 @@ struct CxxTokenizerTest3 final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->checkInteger("1000", 1000);
     this->checkInteger("1'000", 1000);
+    this->checkInteger("+3u", 3);
+    this->checkInteger("3.0", 3);
     return this->result;
   }  // end of execute()
  private:

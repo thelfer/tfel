@@ -295,7 +295,12 @@ namespace tfel::system {
         }
       }
       assert(readChar == 2);
-      if (!cmd.execute(cfd[0], ffd[1])) {
+      try {
+        if (!cmd.execute(cfd[0], ffd[1])) {
+          exit(EXIT_FAILURE);
+        }
+      } catch (...) {
+        // no exception shall leave the child
         exit(EXIT_FAILURE);
       }
       exit(EXIT_SUCCESS);
@@ -413,13 +418,15 @@ namespace tfel::system {
       for (const auto& ev : e) {
         ::setenv(ev.first.c_str(), ev.second.c_str(), 1);
       }
-      if (!directory.empty()) {
-        systemCall::changeCurrentWorkingDirectory(directory);
+      if ((!directory.empty()) && (::chdir(directory.c_str()) == -1)) {
+        // changing directory failed, tells the father
+        write(ffd[1], "CD", 2u);
+      } else {
+        // calling the command
+        execvp(argv[0], argv);
+        // called failed, tells the father, free memory and quit
+        write(ffd[1], "NO", 2u);
       }
-      // calling the command
-      execvp(argv[0], argv);
-      // called failed, tells the father, free memory and quit
-      write(ffd[1], "NO", 2u);
       close(ffd[1]);
       p2 = argv;
       while (p2 != argv + tmp.size() + 1) {
@@ -470,6 +477,11 @@ namespace tfel::system {
       }
       waitpid(pid, &status, 0);
       sigprocmask(SIG_SETMASK, &oSigSet, nullptr);
+      if (string(buf) == "CD") {
+        tfel::raise<SystemError>(
+            "ProcessManager::createProcess : can't change to directory '" +
+            directory + "'");
+      }
       string msg("ProcessManager::createProcess : call to execvp failed ");
       msg += "(can't execute command '" + cmd + "')";
       throw(SystemError(msg));

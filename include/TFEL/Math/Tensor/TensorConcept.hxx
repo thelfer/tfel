@@ -209,6 +209,15 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto computeDeterminantDerivative(
       TensorConcept auto&, const TensorConcept auto&) noexcept;
   /*!
+   * \brief compute the adjugate of a tensor, \f$\det\left(F\right)\,F^{-1}\f$,
+   * i.e. the transpose of the derivative of the determinant with respect to
+   * its argument.
+   * \param[out] : adjugate
+   * \param[in]  : argument
+   */
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantDerivative(
+      TensorConcept auto&, const TensorConcept auto&) noexcept;
+  /*!
    * \brief provide the polar decomposition of a tensor
    * \param[out] R: rotation tensor
    * \param[out] U: stretch tensor

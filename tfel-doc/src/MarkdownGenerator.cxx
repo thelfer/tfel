@@ -140,16 +140,18 @@ namespace tfel::utilities {
       std::ostream& out,
       const std::map<std::string, std::vector<TestDocumentation>>& tests,
       const GeneratorOptions& o) {
-    if (!(o.split) && (o.standAlone)) {
+    if (o.standAlone) {
       writeMarkdownHeader(out, tests, o.lang);
     }
     for (const auto& td : tests) {
       if (o.split) {
-        const auto& tf = replace_all(td.first, ' ', '_') + ".tex";
+        const auto& tf = replace_all(td.first, ' ', '_') + ".md";
         const auto& file = o.outputDirectory + "/" + tf;
         std::ofstream f(file);
         raise_if(!f, "writeMarkdownFile : can't open file '" + file + "'");
         writeMarkdownSection(f, td.first, td.second, o);
+        out << "- [" << capitalize(getTranslation("text in category", o.lang))
+            << " " << td.first << "](" << tf << ")\n";
       } else {
         writeMarkdownSection(out, td.first, td.second, o);
       }
