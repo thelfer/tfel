@@ -7,6 +7,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @Behaviour<abaqus_explicit> @library@ 'INITIALIZATIONFAILURETEST_3D';
+@MaterialProperty<constant> 'MassDensity'  15000.;
 @ExternalStateVariable 'Temperature' 293.15;
 
 @ImposedDrivingVariable 'FXY' 0.;

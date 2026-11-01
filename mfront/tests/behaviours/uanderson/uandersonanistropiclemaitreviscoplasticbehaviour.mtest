@@ -5,6 +5,7 @@
  * \brief  11 avril 2014
  */
 
+@AccelerationAlgorithm 'UAnderson';
 @Behaviour<umat> @library@ 'umatanistropiclemaitreviscoplasticbehaviour';
 
 @Real 'young' 80000.;
