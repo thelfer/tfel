@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Castem/CastemBehaviourHandler.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
+#include "MFront/Castem/CastemBehaviourHandler.hxx"
+#else
+
 #ifndef LIB_MFRONT_CASTEM_CASTEMISOTROPICBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CASTEM_CASTEMISOTROPICBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX */
 
 #include "TFEL/FSAlgorithm/copy.hxx"
 
@@ -140,3 +142,5 @@ namespace castem {
 }  // namespace castem
 
 #endif /* LIB_MFRONT_CASTEM_CASTEMISOTROPICBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX */

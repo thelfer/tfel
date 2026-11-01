@@ -14,6 +14,11 @@
 #ifndef LIB_ASTER_ASTERCONVERTSTRESS_HXX
 #define LIB_ASTER_ASTERCONVERTSTRESS_HXX
 
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "MFront/Aster/Aster.hxx"
+#include "MFront/Aster/AsterTraits.hxx"
+
 namespace aster {
 
   /*!

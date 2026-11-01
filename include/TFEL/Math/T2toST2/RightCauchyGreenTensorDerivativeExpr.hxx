@@ -19,6 +19,7 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
+#include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::math {
 
