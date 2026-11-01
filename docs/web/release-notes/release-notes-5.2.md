@@ -697,6 +697,14 @@ For more details, see <https://github.com/thelfer/tfel/issues/1262>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1235>
 
+## Issue 1233: [mfront] MFront DSL unit tests accept any exception
+
+For more details, see <https://github.com/thelfer/tfel/issues/1233>
+
+## Issue 1231: [tests] Commented-out cases in the Cazacu, LocalDataStructure, CxxTokenizerOffset and eigenvectors unit tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1231>
+
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
