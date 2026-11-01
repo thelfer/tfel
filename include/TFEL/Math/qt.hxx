@@ -224,18 +224,23 @@ namespace tfel::math {
         requires(std::is_same_v<promote<ValueType, ValueType2>, ValueType>)
         : OwnershipPolicy(src.getValue()) {}  // end of Quantity
     //
+    //! \brief true if the quantity holds a reference to a mutable value
+    static constexpr bool holdsAMutableReference =
+        std::is_base_of_v<
+            internals::QuantityReferenceOwnershipPolicy<ValueType, true>,
+            OwnershipPolicy> ||
+        std::is_base_of_v<
+            internals::QuantityReferenceOwnershipPolicy<ValueType, false>,
+            OwnershipPolicy>;
+    //! \brief standard copy assignement (value semantic)
+    constexpr Quantity& operator=(const Quantity&) noexcept
+        requires(!holdsAMutableReference) = default;
+    //! \brief standard move assignement (value semantic)
+    constexpr Quantity& operator=(Quantity&&) noexcept
+        requires(!holdsAMutableReference) = default;
     //! \brief copy assignement, writes through the reference
     TFEL_HOST_DEVICE constexpr Quantity& operator=(
-        const Quantity& src) noexcept
-        requires(
-            std::is_base_of_v<internals::QuantityReferenceOwnershipPolicy<
-                                  ValueType,
-                                  true>,
-                              Quantity> ||
-            std::is_base_of_v<internals::QuantityReferenceOwnershipPolicy<
-                                  ValueType,
-                                  false>,
-                              Quantity>) {
+        const Quantity& src) noexcept requires(holdsAMutableReference) {
       this->getValue() = src.getValue();
       return *this;
     }
