@@ -2,7 +2,7 @@
  * \file   mfront/src/CMaterialPropertyInterfaceBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -72,6 +72,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "' for writing output file.");
     os.exceptions(std::ios::badbit | std::ios::failbit);
+    os.precision(14);
     const auto headerGard = transformHeaderName(header) + "_HH";
     os << "/*!\n"
        << "* \\file   " << fn << "\n"
@@ -84,7 +85,7 @@ namespace mfront {
       os << "* \\author " << fd.authorName << "\n";
     }
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << "\n";
+      os << "* \\date " << fd.date << "\n";
     }
     if (!fd.description.empty()) {
       os << fd.description << "\n";
@@ -268,6 +269,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "' for writing output file.");
     os.exceptions(std::ios::badbit | std::ios::failbit);
+    os.precision(14);
     os << "/*!\n"
        << " * \\file   " << fn << '\n'
        << " * \\brief  "
@@ -279,7 +281,7 @@ namespace mfront {
       os << "* \\fd.author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << '\n';
+      os << "* \\date " << fd.date << '\n';
     }
     os << " */\n\n"
        << "#include<cmath>\n"

@@ -2,7 +2,7 @@
  * \file   MFront/GenericBehaviour/Integrate.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/07/2018
+ * \date 03/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -155,9 +155,11 @@ namespace mfront::gb {
                                 mfront_gb_BehaviourData& d,
                                 const typename Behaviour::SMFlag f) {
     const auto smt = [&d] {
-      if (-1.5 < d.K[0]) {
+      // the offset used to request the speed of sound is removed
+      const auto Ke = d.K[0] > 50 ? d.K[0] - 100 : d.K[0];
+      if (-1.5 < Ke) {
         return Behaviour::ELASTIC;
-      } else if ((-2.5 < d.K[0]) && (d.K[0] < -1.5)) {
+      } else if ((-2.5 < Ke) && (Ke < -1.5)) {
         return Behaviour::SECANTOPERATOR;
       }
       return Behaviour::TANGENTOPERATOR;
@@ -256,10 +258,14 @@ namespace mfront::gb {
     using speed = typename Behaviour::speed;
     using massdensity = typename Behaviour::massdensity;
     using behaviour_real_type = typename Behaviour::real;
-    Behaviour b(d);
-    b.setOutOfBoundsPolicy(p);
     auto&& rdt = tfel::math::map<behaviour_real_type>(d.rdt);
+    // time step scaling factor returned if an exception is thrown. The
+    // behaviour is built in the try block since its constructor may throw.
+    auto rdt_on_exception = behaviour_real_type{rdt};
     try {
+      Behaviour b(d);
+      b.setOutOfBoundsPolicy(p);
+      rdt_on_exception = b.getMinimalTimeStepScalingFactor();
       b.initialize();
       b.checkBounds();
       const auto bs = d.K[0] > 50;
@@ -325,7 +331,7 @@ namespace mfront::gb {
       }
     } catch (...) {
       reportIntegrationFailure(d);
-      rdt = b.getMinimalTimeStepScalingFactor();
+      rdt = rdt_on_exception;
       return -1;
     }
     return rdt < behaviour_real_type{0.99} ? 0 : 1;

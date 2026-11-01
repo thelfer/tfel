@@ -54,24 +54,27 @@ namespace mfront {
           b, "BehaviourBrickBase::addMaterialPropertyIfNotDefined: " + m);
     };
     // treating material properties
+    // `second` is true if the variable is declared for at least one
+    // specialisation of the behaviour, `first` if it is declared for all of
+    // them
     const auto b = this->bd.checkVariableExistence(n);
-    if (b.first) {
-      throw_if(!b.second, "variable '" + n +
-                              "' is not declared for all specialisations "
-                              "of the behaviour");
+    if (b.second) {
+      throw_if(!b.first, "variable '" + n +
+                             "' is not declared for all specialisations "
+                             "of the behaviour");
       auto r = this->bd.checkVariableExistence(n, "Parameter", false);
-      if (r.first) {
-        throw_if(!r.second, "parameter '" + n +
-                                "' is not declared for all specialisations "
-                                "of the behaviour");
+      if (r.second) {
+        throw_if(!r.first, "parameter '" + n +
+                               "' is not declared for all specialisations "
+                               "of the behaviour");
       } else {
         r = this->bd.checkVariableExistence(n, "MaterialProperty", false);
-        throw_if(!r.first, "variable '" + n +
-                               "' is neither declared as a parameter nor "
-                               "a material property");
-        throw_if(!r.second, "material property '" + n +
-                                "' is not declared"
-                                "for all specialisations of the behaviour");
+        throw_if(!r.second, "variable '" + n +
+                                "' is neither declared as a parameter nor "
+                                "a material property");
+        throw_if(!r.first, "material property '" + n +
+                               "' is not declared "
+                               "for all specialisations of the behaviour");
       }
       this->bd.checkVariableGlossaryName(n, g);
     } else {
@@ -91,24 +94,27 @@ namespace mfront {
           b, "BehaviourBrickBase::addMaterialPropertyIfNotDefined: " + m);
     };
     // treating material properties
+    // `second` is true if the variable is declared for at least one
+    // specialisation of the behaviour, `first` if it is declared for all of
+    // them
     const auto b = this->bd.checkVariableExistence(n);
-    if (b.first) {
-      throw_if(!b.second, "variable '" + n +
-                              "' is not declared for all specialisations "
-                              "of the behaviour");
+    if (b.second) {
+      throw_if(!b.first, "variable '" + n +
+                             "' is not declared for all specialisations "
+                             "of the behaviour");
       auto r = this->bd.checkVariableExistence(n, "Parameter", false);
-      if (r.first) {
-        throw_if(!r.second, "parameter '" + n +
-                                "' is not declared for all specialisations "
-                                "of the behaviour");
+      if (r.second) {
+        throw_if(!r.first, "parameter '" + n +
+                               "' is not declared for all specialisations "
+                               "of the behaviour");
       } else {
         r = this->bd.checkVariableExistence(n, "MaterialProperty", false);
-        throw_if(!r.first, "variable '" + n +
-                               "' is neither declared as a parameter nor "
-                               "a material property");
-        throw_if(!r.second, "material property '" + n +
-                                "' is not declared"
-                                "for all specialisations of the behaviour");
+        throw_if(!r.second, "variable '" + n +
+                                "' is neither declared as a parameter nor "
+                                "a material property");
+        throw_if(!r.first, "material property '" + n +
+                               "' is not declared "
+                               "for all specialisations of the behaviour");
       }
       this->bd.checkVariableEntryName(n, e);
     } else {
