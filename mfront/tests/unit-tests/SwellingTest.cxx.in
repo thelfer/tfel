@@ -52,9 +52,6 @@ struct SwellingTest final
     this->check("@Swelling<Linear> 3;");
     // null swelling only is not allowed (isotropic case)
     this->check("@Swelling<Linear> 0;");
-    // the external state variables mandatory for the model are not
-    // defined
-    this->check("@Swelling<Linear> \""+m+"\"};");
     // external state variable has not been declared
     this->check("@OrthotropicBehaviour;"
 		"@Swelling<Orthotropic> s;");
@@ -62,12 +59,14 @@ struct SwellingTest final
     this->check("@OrthotropicBehaviour;"
 		"@Swelling<Orthotropic> {0,0,0};");
     // external state variable has an invalid array size
-    this->check("OrthotropicBehaviour;"
+    this->check("@OrthotropicBehaviour;"
 		"@ExternalStateVariable real s[2];"
-		"@Swelling<Orthotropic> s;");
+		"@Swelling<Orthotropic> s;",
+		"size of variable 's'");
     // invalid number of swelling models
-    this->check("OrthotropicBehaviour;"
-		"@Swelling<Orthotropic> {\""+m+"\",\""+m+"\"};");
+    this->check("@OrthotropicBehaviour;"
+		"@Swelling<Orthotropic> {\""+m+"\",\""+m+"\"};",
+		"invalid number of swelling description");
     // axial growth is only not allowed for orthotropic behaviours
     this->check("@AxialGrowth ag;");
     // null expansion is not allowed for axial growth
@@ -90,6 +89,22 @@ struct SwellingTest final
     catch(std::runtime_error& e){
       TestCase::registerResult("analysing '"+s+"' has thrown as expected "
 			       "("+std::string(e.what())+")",true);
+      return;
+    }
+    TestCase::registerResult("analysing '"+s+"' did *not* throw as expected",
+			     false);
+  }
+  void check(const std::string& s, const std::string& m){
+    auto& f = mfront::DSLFactory::getDSLFactory();
+    auto dsl = f.createNewDSL("DefaultDSL");
+    try{
+      dsl->analyseString(s);
+    }
+    catch(std::runtime_error& e){
+      const auto msg = std::string(e.what());
+      TestCase::registerResult("analysing '"+s+"' has thrown ("+msg+
+			       "), the message containing '"+m+"'",
+			       msg.find(m)!=std::string::npos);
       return;
     }
     TestCase::registerResult("analysing '"+s+"' did *not* throw as expected",

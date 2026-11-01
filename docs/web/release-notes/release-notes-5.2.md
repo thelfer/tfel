@@ -693,9 +693,41 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1262>
 
+## Issue 1242: [tests] Twenty-one C++ unit tests check no result
+
+For more details, see <https://github.com/thelfer/tfel/issues/1242>
+
+## Issue 1241: [ptest] Thirty of the 42 PTest pipe tests compare nothing
+
+For more details, see <https://github.com/thelfer/tfel/issues/1241>
+
+## Issue 1235: [tests] Copy-paste slips and vacuous checks in unit tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1235>
+
+## Issue 1233: [mfront] MFront DSL unit tests accept any exception
+
+For more details, see <https://github.com/thelfer/tfel/issues/1233>
+
+## Issue 1231: [tests] Commented-out cases in the Cazacu, LocalDataStructure, CxxTokenizerOffset and eigenvectors unit tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1231>
+
+## Issue 1229: [mfront] Expected-failure tests that fail for an unrelated reason
+
+For more details, see <https://github.com/thelfer/tfel/issues/1229>
+
 ## Issue 1225: [mtest] The fanderson and uanderson tests do not select their acceleration algorithm
 
 For more details, see <https://github.com/thelfer/tfel/issues/1225>
+
+## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
+
+For more details, see <https://github.com/thelfer/tfel/issues/1223>
+
+## Issue 1219: [mfront] Strain tolerance of the axisymmetric shear tests of orthotropic elasticity
+
+For more details, see <https://github.com/thelfer/tfel/issues/1219>
 
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
