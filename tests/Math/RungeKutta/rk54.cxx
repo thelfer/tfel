@@ -60,5 +60,32 @@ int main() {
     const auto& v = rk.getValue();
     out << t + h << " " << v[0] << " " << v[1] << '\n';
   }
-  return EXIT_SUCCESS;
+  // values at t = 100 computed with mpmath (odefun, Taylor series, 35
+  // digits); the tolerance is ten times the criterion value, as in
+  // rk_final_time.cxx
+  VanDerPol rk2;
+  rk2.setInitialValue(y);
+  rk2.setCriterionValue(1.e-9);
+  rk2.setMu(10.);
+  rk2.setInitialTime(0.);
+  rk2.setFinalTime(end);
+  rk2.setInitialTimeIncrement(1.);
+  rk2.iterate();
+  auto success = (std::abs(rk2.getValue()(0) + 1.7588880803915539) < 1.e-8) &&
+                 (std::abs(rk2.getValue()(1) - 0.083643606665915065) < 1.e-8);
+  // without damping (mu = 0), the solution is (cos(t), -sin(t))
+  VanDerPol rk3;
+  rk3.setInitialValue(y);
+  rk3.setCriterionValue(1.e-9);
+  rk3.setMu(0.);
+  rk3.setInitialTimeIncrement(1.);
+  for (int i = 0; i != 10; ++i) {
+    rk3.setInitialTime(i);
+    rk3.setFinalTime(i + 1);
+    rk3.iterate();
+    success = success &&
+              (std::abs(rk3.getValue()(0) - std::cos(i + 1.)) < 1.e-8) &&
+              (std::abs(rk3.getValue()(1) + std::sin(i + 1.)) < 1.e-8);
+  }
+  return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
