@@ -15,6 +15,8 @@
 #ifndef LIB_TFEL_GENTYPEBASEIXX
 #define LIB_TFEL_GENTYPEBASEIXX
 
+#include <ostream>
+
 namespace tfel::utilities::internals {
 
   template <typename T, typename List, unsigned short N = 0>
@@ -294,7 +296,14 @@ namespace tfel::utilities {
 
   template <typename List>
   std::ostream& operator<<(std::ostream& os, const GenTypeBase<List>& g) {
-    g.print(os);
+    std::visit(
+        [&os](const auto& v) {
+          if constexpr (!std::is_same_v<std::decay_t<decltype(v)>,
+                                        std::monostate>) {
+            os << v;
+          }
+        },
+        static_cast<const typename GenTypeBase<List>::variant&>(g));
     return os;
   }
 

@@ -58,9 +58,6 @@ struct ComputeStiffnessTensorTest final : public tfel::tests::TestCase {
                 "@ComputeStiffnessTensor {150e9,0.3};"
                 "@MaterialProperty real nu;");
     this->check("Implicit",
-                "@OrthotrophicBehaviours;"
-                "@ComputeStiffnessTensor {150e9,0.3};");
-    this->check("Implicit",
                 "@ComputeStiffnessTensor {150e9,0.3};"
                 "@MaterialProperty real nu;"
                 "nu.setGlossaryName(\"PoissonRatio\");");

@@ -55,11 +55,11 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(tokens1[2] == "d");
     }
     TFEL_TESTS_ASSERT(tokens2.size() == 4);
-    if (tokens2.size() == 3) {
+    if (tokens2.size() == 4) {
       TFEL_TESTS_ASSERT(tokens2[0] == "a");
       TFEL_TESTS_ASSERT(tokens2[1] == "bbc");
-      TFEL_TESTS_ASSERT(tokens2[1] == "");
-      TFEL_TESTS_ASSERT(tokens2[2] == "d");
+      TFEL_TESTS_ASSERT(tokens2[2] == "");
+      TFEL_TESTS_ASSERT(tokens2[3] == "d");
     }
   }  // end of test2
 };
