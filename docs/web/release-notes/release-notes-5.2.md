@@ -714,6 +714,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1283: [mfront] MTest files generated on failure by the generic interface cannot be replayed in plane stress, and in plane strain at finite strain
+
+For more details, see <https://github.com/thelfer/tfel/issues/1283>
+
 ## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
 
 For more details, see <https://github.com/thelfer/tfel/issues/1270>
