@@ -34,14 +34,13 @@ struct TVector6 final : public tfel::tests::TestCase {
     tvector<3u, int> x(vx);
     tvector<3u, int> y(vy);
     tvector<3u, int> z(vz);
-    TFEL_TESTS_ASSERT(equal<2u>::exe(z.begin(), cross_product(x, y).begin()));
-    TFEL_TESTS_ASSERT(equal<2u>::exe(x.begin(), cross_product(y, z).begin()));
-    TFEL_TESTS_ASSERT(equal<2u>::exe(y.begin(), cross_product(z, x).begin()));
-#pragma message("something needs to be done")
-    // TFEL_TESTS_ASSERT(equal<2u>::exe((-x).begin(),
-    // 				     cross_product(z,y).begin()));
-    // TFEL_TESTS_ASSERT(equal<2u>::exe((-y).begin(),
-    // 				     cross_product(x,z).begin()));
+    TFEL_TESTS_ASSERT(equal<3u>::exe(z.begin(), cross_product(x, y).begin()));
+    TFEL_TESTS_ASSERT(equal<3u>::exe(x.begin(), cross_product(y, z).begin()));
+    TFEL_TESTS_ASSERT(equal<3u>::exe(y.begin(), cross_product(z, x).begin()));
+    const tvector<3u, int> mx = -x;
+    const tvector<3u, int> my = -y;
+    TFEL_TESTS_ASSERT(equal<3u>::exe(mx.begin(), cross_product(z, y).begin()));
+    TFEL_TESTS_ASSERT(equal<3u>::exe(my.begin(), cross_product(x, z).begin()));
     return this->result;
   }  // end of execute
 };
