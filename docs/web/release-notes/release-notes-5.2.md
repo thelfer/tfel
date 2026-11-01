@@ -717,6 +717,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1264>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1262>
 
+## Issue 1258: [mfront] generic MTest files of finite strain behaviours, cpptest and gnuplot interfaces, calculix MieheApelLambrechtLogarithmicStrainII strategy, dianafea failures and orthotropic behaviours, abaqus glue lock on Windows
+
+For more details, see <https://github.com/thelfer/tfel/issues/1258>
+
 ## Issue 1254: [tfel-math] Eigen solvers of symmetric tensors: wrong eigenvectors for equal or close eigenvalues, Cardano eigenvalues of syevc3, derivatives of isotropic functions of quantities, ConvertLogarithmicStrainTangentOperator
 
 For more details, see <https://github.com/thelfer/tfel/issues/1254>

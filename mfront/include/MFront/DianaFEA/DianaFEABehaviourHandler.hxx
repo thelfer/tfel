@@ -207,7 +207,7 @@ namespace dianafea {
           throwNegativeTimeStepException(Traits::getName());
         }
         if (!this->behaviour.initialize()) {
-          return;
+          throwBehaviourInitializationFailedException(Traits::getName());
         }
         this->behaviour.checkBounds();
         auto r = BV::SUCCESS;
@@ -219,7 +219,7 @@ namespace dianafea {
           r = BV::FAILURE;
         }
         if (r == BV::FAILURE) {
-          return;
+          throwBehaviourIntegrationFailedException(Traits::getName());
         }
         this->behaviour.checkBounds();
         this->behaviour.DIANAFEAexportStateData(d.STRESS, d.STATEV);
