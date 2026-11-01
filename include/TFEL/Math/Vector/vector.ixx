@@ -15,7 +15,9 @@
 #define LIB_TFEL_MATH_VECTOR_IXX
 
 #include <cassert>
+#include <iterator>
 #include <algorithm>
+#include "TFEL/ContractViolation.hxx"
 
 namespace tfel::math {
 
@@ -35,7 +37,11 @@ namespace tfel::math {
   template <typename ValueType>
   template <typename InputIterator>
   void vector<ValueType>::copy(const InputIterator b, const InputIterator e) {
-    std::copy(b, e, this->v);
+    if (static_cast<typename vector::size_type>(std::distance(b, e)) >
+        this->size()) {
+      tfel::reportContractViolation("vector::copy: invalid range size");
+    }
+    std::copy(b, e, this->begin());
   }
 
   //   template <typename T>
