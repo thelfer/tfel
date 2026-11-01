@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Cyrano/CyranoInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CYRANO_CALL_HXX
+#include "MFront/Cyrano/CyranoInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CYRANO_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CYRANO_CALL_HXX */
 
 #include <algorithm>
 #include "TFEL/Math/st2tost2.hxx"
@@ -655,3 +657,5 @@ namespace cyrano {
 #include "MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx"
 
 #endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CYRANO_CALL_HXX */

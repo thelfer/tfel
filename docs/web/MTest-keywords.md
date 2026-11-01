@@ -734,7 +734,10 @@ the principal directions of the material are different from those used
 for the resolution and the boundary conditions.
 
 This keyword is followed by an array of array reprensentig a 3x3
-matrix.
+matrix, given row by row. The columns of the rotation matrix \(R\) are
+the material axes expressed in the global frame: the components of a
+symmetric tensor \(\underline{s}\) in the material frame are given by
+\(R^{T}\,.\,\underline{s}\,.\,R\).
 
 ## Example
 

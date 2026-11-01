@@ -52,6 +52,8 @@ PYBIND11_MODULE(_mtest, m) {
       .value("NOPREDICTION", mtest::PredictionPolicy::NOPREDICTION)
       .value("LINEARPREDICTION", mtest::PredictionPolicy::LINEARPREDICTION)
       .value("ELASTICPREDICTION", mtest::PredictionPolicy::ELASTICPREDICTION)
+      .value("ELASTICPREDICTIONFROMMATERIALPROPERTIES",
+             mtest::PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES)
       .value("SECANTOPERATORPREDICTION",
              mtest::PredictionPolicy::SECANTOPERATORPREDICTION)
       .value("TANGENTOPERATORPREDICTION",
