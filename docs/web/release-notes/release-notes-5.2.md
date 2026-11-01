@@ -58,6 +58,11 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- `@RotationMatrix<Euler>` of `MTest` now gives the rotation described
+  by the Euler angles in the convention of Bunge, as the polycrystal
+  classes of `MFront` (see Issue #1270): the rotation matrix was the
+  Bunge matrix instead of its transpose, i.e. the inverse rotation was
+  applied.
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
@@ -688,6 +693,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
+
+For more details, see <https://github.com/thelfer/tfel/issues/1270>
 
 ## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
 
