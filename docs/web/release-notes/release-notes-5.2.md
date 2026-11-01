@@ -58,6 +58,10 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- `computeDeterminantSecondDerivative` of a non-symmetric tensor now
+  returns the second derivative of the determinant in 2D and 3D (see
+  Issue #1262): the rows of the off-diagonal components differ from the
+  previous results, which were the derivative of the adjugate.
 
 # Improvements to the build system
 
@@ -685,13 +689,57 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
+
+For more details, see <https://github.com/thelfer/tfel/issues/1262>
+
+## Issue 1242: [tests] Twenty-one C++ unit tests check no result
+
+For more details, see <https://github.com/thelfer/tfel/issues/1242>
+
+## Issue 1241: [ptest] Thirty of the 42 PTest pipe tests compare nothing
+
+For more details, see <https://github.com/thelfer/tfel/issues/1241>
+
+## Issue 1235: [tests] Copy-paste slips and vacuous checks in unit tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1235>
+
+## Issue 1233: [mfront] MFront DSL unit tests accept any exception
+
+For more details, see <https://github.com/thelfer/tfel/issues/1233>
+
+## Issue 1231: [tests] Commented-out cases in the Cazacu, LocalDataStructure, CxxTokenizerOffset and eigenvectors unit tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1231>
+
+## Issue 1229: [mfront] Expected-failure tests that fail for an unrelated reason
+
+For more details, see <https://github.com/thelfer/tfel/issues/1229>
+
 ## Issue 1227: [mfront] Comparisons of the finite strain single crystal tests are commented out
 
 For more details, see <https://github.com/thelfer/tfel/issues/1227>
 
+## Issue 1225: [mtest] The fanderson and uanderson tests do not select their acceleration algorithm
+
+For more details, see <https://github.com/thelfer/tfel/issues/1225>
+
+## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
+
+For more details, see <https://github.com/thelfer/tfel/issues/1223>
+
+## Issue 1219: [mfront] Strain tolerance of the axisymmetric shear tests of orthotropic elasticity
+
+For more details, see <https://github.com/thelfer/tfel/issues/1219>
+
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
+
+## Issue 1209: [tfel-math] Variable positions of Evaluator in diff() and tfel-check, fses::sort, vector::copy, GenType output, GTN flow stress, Mohr-Coulomb second derivative, eigen solvers on GPUs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 

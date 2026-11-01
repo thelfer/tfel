@@ -654,7 +654,8 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-012-2
   REFERENCE_FILE finitestrainsinglecrystal-012.ref)
 test_castem(finitestrainsinglecrystal_numericaljacobian-159
   REFERENCE_FILE finitestrainsinglecrystal-159.ref)
-test_castem(finitestrainsinglecrystal2-001)
+test_castem(finitestrainsinglecrystal2-001
+  REFERENCE_FILE finitestrainsinglecrystal2-001.ref)
 test_castem(anistropiclemaitreviscoplasticbehaviour
   REFERENCE_FILE AnistropicLemaitreViscoplasticBehaviour.ref) 
 test_castem(tssf REFERENCE_FILE tssf.ref)
