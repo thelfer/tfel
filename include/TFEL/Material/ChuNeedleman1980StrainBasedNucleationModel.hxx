@@ -14,9 +14,11 @@
 #ifndef LIB_TFEL_MATERIAL_CHUNEEDLEMAN1980STRAINBASEDNUCLEATIONMODEL_HXX
 #define LIB_TFEL_MATERIAL_CHUNEEDLEMAN1980STRAINBASEDNUCLEATIONMODEL_HXX
 
+#include <cmath>
 #include <tuple>
 #include <ostream>
 #include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 
 namespace tfel::material {
 

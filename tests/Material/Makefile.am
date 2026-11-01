@@ -33,7 +33,9 @@ test_PROGRAMS = Lame                                                            
                 BarlatSecondDerivativeTest2                                       \
                 IsotropicCazacuYieldTest                                          \
                 LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest \
-                InverseLangevinFunctionTest
+                InverseLangevinFunctionTest                                  \
+                StressCriteriaTest                                           \
+                StiffnessTensorTest
 
 LDADD = -lTFELMaterial -lTFELMath       \
 	-lTFELUtilities -lTFELException \
@@ -75,6 +77,8 @@ BarlatSecondDerivativeTest2_SOURCES = BarlatSecondDerivativeTest2.cxx
 IsotropicCazacuYieldTest_SOURCES    = IsotropicCazacuYieldTest.cxx
 LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest_SOURCES = LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest.cxx
 InverseLangevinFunctionTest_SOURCES = InverseLangevinFunctionTest.cxx
+StressCriteriaTest_SOURCES = StressCriteriaTest.cxx
+StiffnessTensorTest_SOURCES = StiffnessTensorTest.cxx
 
 TESTS=$(test_PROGRAMS)
 

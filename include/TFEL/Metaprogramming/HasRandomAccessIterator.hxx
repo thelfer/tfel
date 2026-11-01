@@ -51,9 +51,9 @@ namespace tfel::meta {
      */
     template <typename B>
     static typename std::enable_if<
-        IsSameType<typename std::iterator_traits<
-                       typename B::iterator>::iterator_category,
-                   std::random_access_iterator_tag>::cond,
+        std::is_same_v<typename std::iterator_traits<
+                           typename B::iterator>::iterator_category,
+                       std::random_access_iterator_tag>,
         Small>::type
     Test(const Subs<B>);
 

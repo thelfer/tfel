@@ -64,7 +64,7 @@ namespace mtest {
 
    protected:
     //! material name
-    char mname[16u];
+    char mname[17u] = {};
   };  // end of struct Behaviour
 
 }  // end of namespace mtest

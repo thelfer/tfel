@@ -287,6 +287,7 @@ namespace tfel::math {
     //! \return the identity
     TFEL_HOST_DEVICE
     TFEL_MATH_INLINE static constexpr stensor<N, base_type<ValueType>> Id();
+
     /*!
      * copy the value from a container
      */

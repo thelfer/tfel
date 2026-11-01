@@ -578,7 +578,7 @@ namespace mfront {
 
   void MFrontBase::setInterface(const std::string& i) {
     tfel::raise_if(!this->interfaces.insert(i).second,
-                   "MFrontBase::treatInterface : "
+                   "MFrontBase::setInterface: "
                    "the interface '" +
                        i +
                        "' has "

@@ -152,7 +152,7 @@ namespace mtest {
     auto evnames = get("PARA_LOI");
     if (!evnames.empty()) {
       if (evnames.front() == "T") {
-        evnames.pop_back();
+        evnames.erase(evnames.begin());
       }
     }
     evnames.insert(evnames.begin(), "Temperature");

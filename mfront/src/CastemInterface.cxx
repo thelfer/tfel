@@ -1111,15 +1111,7 @@ namespace mfront {
             exportLogarithmicStrain1DFiniteStrainBehaviourSymbols(
                 this->getFunctionNameBasis(name + "_log1D"));
             if (fss.size() == 1u) {
-              sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
-              exportUnsignedShortSymbol(
-                  out,
-                  this->getFunctionNameBasis(name) + "_nModellingHypotheses",
-                  1u);
-              exportArrayOfStringsSymbol(
-                  out,
-                  this->getFunctionNameBasis(name) + "_ModellingHypotheses",
-                  {ModellingHypothesis::toString(agps)});
+              sg.generateGeneralSymbols(out, *this, mb, fd, {agps}, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
                 sg.generateSymbols(out, *this, mb, fd, name, uh);
@@ -2806,7 +2798,8 @@ namespace mfront {
       out << "false;\n";
     }
     out << "static " << constexpr_c << " bool doSubSteppingOnInvalidResults = ";
-    if (this->doSubSteppingOnInvalidResults) {
+    if (mb.getAttribute<bool>(CastemInterface::doSubSteppingOnInvalidResults,
+                              false)) {
       out << "true;\n";
     } else {
       out << "false;\n";

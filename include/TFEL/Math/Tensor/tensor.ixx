@@ -130,8 +130,9 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <typename InputIterator>
   void tensor<N, T>::copy(const InputIterator src) {
-    tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(src, *this);
+    tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(src, this->begin());
   }
+
 
   template <unsigned short N, typename T, typename OutputIterator>
   TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(

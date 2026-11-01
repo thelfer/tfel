@@ -324,7 +324,7 @@ requires to determine their increments during the time step and does not
 require to know their values at the beginning of the time step. If such
 post-processing does not matter, a significant amount of memory can be
 saved by removing their declaration as auxiliary state variables and
-their update in the `@UpdateAuxiliaryStateVariable` code block.
+their update in the `@UpdateAuxiliaryStateVariables` code block.
 
 ## Computation of the stress
 
@@ -463,7 +463,7 @@ In this paragraph, we introduce an alternative treatment of this
 equation based on the regularised Fisher-Burmeister complementary
 function \(\Phi_{\varepsilon_{\text{FB}}}\), introduced in
 @liao-mcpherson_regularized_2019 and whose application to plasticity is
-described on a [dedicated web page](FisherBurmeister.html)
+described on a [dedicated web page](FischerBurmeister.html)
 [@ceaedf_fisher-burmeister_2021]:
 
 \[

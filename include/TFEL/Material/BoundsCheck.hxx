@@ -324,16 +324,6 @@ namespace tfel::material {
     using BoundsCheckBase::lowerAndUpperBoundsChecks;
     using BoundsCheckBase::lowerBoundCheck;
     using BoundsCheckBase::upperBoundCheck;
-    template <typename T, typename Unit, typename OwnerShip>
-    static inline void lowerAndUpperBoundsChecks(
-        const std::string& name,
-        const tfel::math::Quantity<Unit, T, OwnerShip> value,
-        const T lBound,
-        const T uBound,
-        const OutOfBoundsPolicy p = Strict) {
-      BoundsCheckBase::lowerBoundCheck(name, value.getValue(), lBound, p);
-      BoundsCheckBase::upperBoundCheck(name, value.getValue(), uBound, p);
-    }
     template <typename T>
     static void lowerBoundCheck(const std::string& name,
                                 const tfel::math::stensor<2u, T>& s,
