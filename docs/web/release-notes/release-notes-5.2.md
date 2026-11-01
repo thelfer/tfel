@@ -58,12 +58,9 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
-- `MTest` and `tfel-check` (see Issue #1260): an incomplete set of
-  orthotropic thermal expansion coefficients is now an error (except
-  `ThermalExpansion1` and `ThermalExpansion2` in plane stress), a failed
-  comparison to the numerical tangent operator now fails the test, and a
-  `Mixed` or `RelativeAndAbsolute` comparison without a second precision
-  is now an error.
+- `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
+  expansion coefficients is now an error (except `ThermalExpansion1` and
+  `ThermalExpansion2` in plane stress).
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
