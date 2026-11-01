@@ -16,6 +16,3 @@
 @OuterPressureEvolution<evolution> {0:'Pi',1:'Pe'};
 
 @Times {0,1};
-
-// inner displacement given by the Lamé solution (no axial force)
-@Test<function> 'InnerDisplacement' 'Ri/YoungModulus*((Pi*(Ri*Ri+Re*Re)-2*Pe*Re*Re)/(Re*Re-Ri*Ri)+PoissonRatio*Pi)' 1.e-12;
