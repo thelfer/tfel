@@ -50,9 +50,9 @@ namespace mtest {
     //! name or number of the behaviour
     std::string mname(16, ' ');
     throw_if((mp.count("FCT_LOI") == 1u) && (mp.count("NUME_LOI") == 1u),
-             "either 'FCT_LOI' or 'NUME_LOI' must be defined");
-    throw_if((mp.count("FCT_LOI") != 1u) && (mp.count("NUME_LOI") != 1u),
              "'FCT_LOI' or 'NUME_LOI' must not be both defined");
+    throw_if((mp.count("FCT_LOI") != 1u) && (mp.count("NUME_LOI") != 1u),
+             "either 'FCT_LOI' or 'NUME_LOI' must be defined");
     if (mp.count("FCT_LOI") == 1u) {
       const auto& d = mp.at("FCT_LOI");
       throw_if(!d.is<std::string>(), "parameter 'FCT_LOI' must be a string");
@@ -95,7 +95,7 @@ namespace mtest {
     auto ompnames = std::vector<std::string>{};
     if (md.stype == 0u) {
       mmpnames.insert(mmpnames.begin(), {"YOUN", "NU"});
-      ompnames.insert(ompnames.begin(), {"RHO", "ALPA"});
+      ompnames.insert(ompnames.begin(), {"RHO", "ALPH"});
     } else if (md.stype == 1u) {
       if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
         mmpnames.insert(mmpnames.begin(),
@@ -138,13 +138,17 @@ namespace mtest {
                                               mmpnames[i] + "', but '" +
                                               mpnames[i] + "' declared");
     }
-    auto pmp = mpnames.begin() + mpnames.size();
+    // the optional material properties which are declared must follow the
+    // mandatory ones, in the order of ompnames
+    auto pmp = mpnames.begin() + mmpnames.size();
     for (const auto& omp : ompnames) {
-      if (pmp == mpnames.end()) {
-        break;
+      const auto pomp = std::find(pmp, mpnames.end(), omp);
+      if (pomp == mpnames.end()) {
+        continue;
       }
-      throw_if(std::find(pmp, mpnames.end(), omp) != pmp,
+      throw_if(pomp != pmp,
                "invalid position for material property '" + omp + "'");
+      ++pmp;
     }
     md.mpnames = mpnames;
     md.ivnames = get("C_VARINTER");
