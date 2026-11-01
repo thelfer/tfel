@@ -1243,7 +1243,7 @@ namespace mfront {
       return r;
     };
     tfel::raise_if(
-        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, true),
+        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, false),
         "BehaviourDSLCommon::addLocalDataStructure: "
         "invalid local structure name '" +
             lds.name + "'");
