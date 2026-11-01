@@ -23,15 +23,16 @@
 namespace tfel::math::internals {
 
   template <typename real>
-  int GteSymmetricEigensolver3x3<real>::exe(tvector<3u, real>& vp,
-                                            tmatrix<3u, 3u, real>& m,
-                                            real a00,
-                                            real a01,
-                                            real a02,
-                                            real a11,
-                                            real a12,
-                                            real a22,
-                                            bool aggressive) {
+  TFEL_HOST_DEVICE int GteSymmetricEigensolver3x3<real>::exe(
+      tvector<3u, real>& vp,
+      tmatrix<3u, 3u, real>& m,
+      real a00,
+      real a01,
+      real a02,
+      real a11,
+      real a12,
+      real a22,
+      bool aggressive) {
     // compute the Householder reflection H and B = H*A*H, where b02 = 0.
     constexpr const real zero = real(0);
     constexpr const real one = real(1);
@@ -190,7 +191,9 @@ namespace tfel::math::internals {
   }
 
   template <typename real>
-  void GteSymmetricEigensolver3x3<real>::update0(real Q[3][3], real c, real s) {
+  TFEL_HOST_DEVICE void GteSymmetricEigensolver3x3<real>::update0(real Q[3][3],
+                                                                  real c,
+                                                                  real s) {
     for (int r = 0; r < 3; ++r) {
       const auto tmp0 = c * Q[r][0] + s * Q[r][1];
       const auto tmp1 = Q[r][2];
@@ -202,7 +205,9 @@ namespace tfel::math::internals {
   }
 
   template <typename real>
-  void GteSymmetricEigensolver3x3<real>::update1(real Q[3][3], real c, real s) {
+  TFEL_HOST_DEVICE void GteSymmetricEigensolver3x3<real>::update1(real Q[3][3],
+                                                                  real c,
+                                                                  real s) {
     for (int r = 0; r < 3; ++r) {
       const auto tmp0 = c * Q[r][1] - s * Q[r][2];
       const auto tmp1 = Q[r][0];
@@ -214,7 +219,9 @@ namespace tfel::math::internals {
   }
 
   template <typename real>
-  void GteSymmetricEigensolver3x3<real>::update2(real Q[3][3], real c, real s) {
+  TFEL_HOST_DEVICE void GteSymmetricEigensolver3x3<real>::update2(real Q[3][3],
+                                                                  real c,
+                                                                  real s) {
     for (int r = 0; r < 3; ++r) {
       const auto tmp0 = c * Q[r][0] + s * Q[r][1];
       const auto tmp1 = s * Q[r][0] - c * Q[r][1];
@@ -224,7 +231,9 @@ namespace tfel::math::internals {
   }
 
   template <typename real>
-  void GteSymmetricEigensolver3x3<real>::update3(real Q[3][3], real c, real s) {
+  TFEL_HOST_DEVICE void GteSymmetricEigensolver3x3<real>::update3(real Q[3][3],
+                                                                  real c,
+                                                                  real s) {
     for (int r = 0; r < 3; ++r) {
       const auto tmp0 = c * Q[r][1] + s * Q[r][2];
       const auto tmp1 = s * Q[r][1] - c * Q[r][2];
@@ -234,10 +243,10 @@ namespace tfel::math::internals {
   }
 
   template <typename real>
-  void GteSymmetricEigensolver3x3<real>::getCosSin(real u,
-                                                   real v,
-                                                   real& cs,
-                                                   real& sn) {
+  TFEL_HOST_DEVICE void GteSymmetricEigensolver3x3<real>::getCosSin(real u,
+                                                                    real v,
+                                                                    real& cs,
+                                                                    real& sn) {
     constexpr real zero = real(0);
     constexpr real one = real(1);
     const real maxAbsComp = std::max(tfel::math::abs(u), tfel::math::abs(v));
@@ -258,10 +267,8 @@ namespace tfel::math::internals {
   }
 
   template <typename real>
-  bool GteSymmetricEigensolver3x3<real>::converged(bool aggressive,
-                                                   real bDiag0,
-                                                   real bDiag1,
-                                                   real bSuper) {
+  TFEL_HOST_DEVICE bool GteSymmetricEigensolver3x3<real>::converged(
+      bool aggressive, real bDiag0, real bDiag1, real bSuper) {
     constexpr const auto rmin = std::numeric_limits<real>::min();
     constexpr const auto re = std::numeric_limits<real>::epsilon();
     if (aggressive) {
@@ -273,10 +280,8 @@ namespace tfel::math::internals {
   }
 
   template <typename real>
-  bool GteSymmetricEigensolver3x3<real>::sort(const tvector<3u, real>& d,
-                                              int& i0,
-                                              int& i1,
-                                              int& i2) {
+  TFEL_HOST_DEVICE bool GteSymmetricEigensolver3x3<real>::sort(
+      const tvector<3u, real>& d, int& i0, int& i1, int& i2) {
     bool odd;
     if (d[0] < d[1]) {
       if (d[2] < d[0]) {

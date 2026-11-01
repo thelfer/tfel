@@ -36,6 +36,7 @@
 #ifndef LIB_FSES_UTILITIES_HXX
 #define LIB_FSES_UTILITIES_HXX
 
+#include <limits>
 #include <cstdlib>
 #include <type_traits>
 
