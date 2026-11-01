@@ -10,9 +10,15 @@
 @MaterialProperty<constant> 'PoissonRatio'   0.3;
 @ExternalStateVariable 'Temperature' 293.15;
 
-@InnerPressureEvolution 1.5e6;
-@OuterPressureEvolution<evolution> {0:1.5e6,1:10e6};
+@Real 'Pi' 1.5e6;
+@Real 'Pe' 10e6;
+@InnerPressureEvolution 'Pi';
+@OuterPressureEvolution<evolution> {0:'Pi',1:'Pe'};
 
 @Times {0,1};
 
 @Profile 'pipe.res' {'SRR','STT','SZZ'};
+
+// inner and outer displacements given by the Lamé solution (no axial force)
+@Test<function> 'InnerDisplacement' 'Ri/YoungModulus*((Pi*(Ri*Ri+Re*Re)-2*Pe*Re*Re)/(Re*Re-Ri*Ri)+PoissonRatio*Pi)' 1.e-12;
+@Test<function> 'OuterDisplacement' 'Re/YoungModulus*((2*Pi*Ri*Ri-Pe*(Ri*Ri+Re*Re))/(Re*Re-Ri*Ri)+PoissonRatio*Pe)' 1.e-12;

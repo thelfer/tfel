@@ -1063,6 +1063,13 @@ std::tie(vp,m)=s.computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>();
 > In `2D`, the last eigenvector always corresponds to the out-of-plane
 > direction.
 
+> **Note**
+>
+> The `TFELEIGENSOLVER`, `GTESYMMETRICQREIGENSOLVER` and
+> `HARARIEIGENSOLVER` eigen solvers can be used in GPU kernels. The
+> eigen solvers based on the `FSES` library are only available on the
+> host.
+
 The `computeEigenVectors` method can also order the eigenvalues in
 ascending or descending order, see the `computeEigenValues` method for
 details.
