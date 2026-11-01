@@ -206,7 +206,10 @@ namespace mfront {
                                         const unsigned short s,
                                         const std::vector<double>& p) const {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    VariableDescription v("real", n, 1u, 0u);
+    tfel::raise_if(p.size() != s,
+                   "BehaviourBrickBase::addParameter: "
+                   "invalid number of default parameters values");
+    VariableDescription v("real", n, s, 0u);
     this->bd.addParameter(h, v);
     this->bd.setGlossaryName(h, n, g);
     for (unsigned short i = 0; i != s; ++i) {

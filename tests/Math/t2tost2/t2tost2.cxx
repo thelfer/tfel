@@ -53,6 +53,8 @@ struct T2toST2Test_1D final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(abs(t3(3, 1) - 3.5) < 1.e-14);
     TFEL_TESTS_ASSERT(abs(t3(3, 2) - 3.5) < 1.e-14);
     TFEL_TESTS_ASSERT(abs(t3(3, 3) - 3.5) < 1.e-14);
+    // `abs` is the sum of the absolute values of all the components
+    TFEL_TESTS_ASSERT(abs(abs(t3) - 189) < 1.e-14);
     return this->result;
   }  // end of execute
 };

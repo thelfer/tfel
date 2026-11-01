@@ -35,7 +35,7 @@ namespace tfel::math::internals {
               typename Function,
               typename FunctionDerivative,
               typename T>
-    static
+    TFEL_HOST_DEVICE static
         typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
                                     (getSpaceDimension<ST2toST2Type>() == 1u),
                                 void>::type
@@ -65,7 +65,7 @@ namespace tfel::math::internals {
         * equals
         */
     template <typename ST2toST2Type, typename T1, typename T2, typename T3>
-    static
+    TFEL_HOST_DEVICE static
         typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
                                     (getSpaceDimension<ST2toST2Type>() == 1u),
                                 void>::type
@@ -99,7 +99,7 @@ namespace tfel::math::internals {
      * equals
      */
     template <typename ST2toST2Type, typename T1, typename T2, typename T3>
-    static
+    TFEL_HOST_DEVICE static
         typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
                                     (getSpaceDimension<ST2toST2Type>() == 2u),
                                 void>::type
@@ -142,7 +142,7 @@ namespace tfel::math::internals {
               typename T,
               typename Function,
               typename FunctionDerivative>
-    static
+    TFEL_HOST_DEVICE static
         typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
                                     (getSpaceDimension<ST2toST2Type>() == 2u),
                                 void>::type
@@ -171,7 +171,7 @@ namespace tfel::math::internals {
      * equals
      */
     template <typename ST2toST2Type, typename T1, typename T2, typename T3>
-    static
+    TFEL_HOST_DEVICE static
         typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
                                     (getSpaceDimension<ST2toST2Type>() == 3u),
                                 void>::type
@@ -262,7 +262,7 @@ namespace tfel::math::internals {
               typename T,
               typename Function,
               typename FunctionDerivative>
-    static
+    TFEL_HOST_DEVICE static
         typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
                                     (getSpaceDimension<ST2toST2Type>() == 3u),
                                 void>::type

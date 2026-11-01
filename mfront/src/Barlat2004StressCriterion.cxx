@@ -180,17 +180,14 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const StressPotential& sp,
       const Role r) const {
-    const auto an = StressCriterion::getVariableId(
-        "a", id, StressCriterion::STRESSCRITERION);
-    const auto l1n = StressCriterion::getVariableId(
-        "l1", id, StressCriterion::STRESSCRITERION);
-    const auto l2n = StressCriterion::getVariableId(
-        "l2", id, StressCriterion::STRESSCRITERION);
+    const auto an = StressCriterion::getVariableId("a", id, r);
+    const auto l1n = StressCriterion::getVariableId("l1", id, r);
+    const auto l2n = StressCriterion::getVariableId("l2", id, r);
     auto c = std::string{};
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
       c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + "] = ";
       c += "computeBarlatStressNormal" + this->getTemplateParameters() + "(s" +
-           id + ",this->" + l1n + ",this->" + l2n + "," + an + "," +
+           id + ",this->" + l1n + ",this->" + l2n + ",this->" + an + "," +
            sp.getEquivalentStressLowerBound(bd) + ");\n";
     }
     if (r == STRESSANDFLOWCRITERION) {
@@ -210,12 +207,9 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const StressPotential& sp,
       const Role r) const {
-    const auto an = StressCriterion::getVariableId(
-        "a", id, StressCriterion::STRESSCRITERION);
-    const auto l1n = StressCriterion::getVariableId(
-        "l1", id, StressCriterion::STRESSCRITERION);
-    const auto l2n = StressCriterion::getVariableId(
-        "l2", id, StressCriterion::STRESSCRITERION);
+    const auto an = StressCriterion::getVariableId("a", id, r);
+    const auto l1n = StressCriterion::getVariableId("l1", id, r);
+    const auto l2n = StressCriterion::getVariableId("l2", id, r);
     auto c = std::string{};
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
       c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" + id +

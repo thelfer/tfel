@@ -179,8 +179,9 @@ namespace tfel::math {
       Child&>
   GenericRuntimeArray<Child, ArrayPolicy>::operator/=(
       const ValueType2& v) noexcept {
+    using vt = typename GenericRuntimeArray<Child, ArrayPolicy>::value_type;
     auto& child = static_cast<Child&>(*this);
-    child.multiplyByScalar(1 / v);
+    child.multiplyByScalar(base_type<numeric_type<vt>>{1} / v);
     return child;
   }  // end of operator /=
 

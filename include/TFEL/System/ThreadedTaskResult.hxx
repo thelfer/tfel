@@ -39,12 +39,13 @@ namespace tfel::system {
      * \brief constructor of T
      * \param[in] args: arguments to T constructor
      */
-    template <typename... Args>
+    template <typename... Args,
+              typename = typename std::enable_if<
+                  (sizeof...(Args) != 1) ||
+                  !std::disjunction<std::is_same<
+                      typename std::decay<Args>::type,
+                      ThreadedTaskResult>...>::value>::type>
     ThreadedTaskResult(Args&&...);
-    /*!
-     * \brief constructor of T
-     */
-    ThreadedTaskResult(const T&);
     //! \brief move constructor
     ThreadedTaskResult(ThreadedTaskResult&&);
     //! \brief copy constructor
