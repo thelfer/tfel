@@ -58,32 +58,31 @@ namespace tfel::math {
               ST2toST2Concept ST2toST2Type2,
               ST2toST2Concept ST2toST2Type3,
               StensorConcept StressStensorType>
-    TFEL_HOST_DEVICE constexpr void exe(ST2toST2Type& Cse,
-                                        const ST2toST2Type2& C,
-                                        const ST2toST2Type2& P,
-                                        const StressStensorType& T,
-                                        const tmatrix<3u, 3u, real>&,
-                                        const tvector<3u,
-                                                      real>&) noexcept  //
-        requires(
-            (tfel::math::getSpaceDimension<ST2toST2Type>() == 1u) &&
-                (std::is_same<numeric_type<ST2toST2Type>, stress>::value) &&
-                (tfel::math::getSpaceDimension<ST2toST2Type2>() == 1u) &&
-                (isAssignableTo<numeric_type<ST2toST2Type2>, stress>()),
-            (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
-                (isAssignableTo<numeric_type<ST2toST2Type3>, real>())) {
+    TFEL_HOST_DEVICE static constexpr void exe(
+        ST2toST2Type& Cse,
+        const ST2toST2Type2& C,
+        const ST2toST2Type3& P,
+        const StressStensorType& T,
+        const tmatrix<3u, 3u, real>&,
+        const tvector<3u, real>&) noexcept  //
+        requires((tfel::math::getSpaceDimension<ST2toST2Type>() == 1u) &&
+                 (std::is_same<numeric_type<ST2toST2Type>, stress>::value) &&
+                 (tfel::math::getSpaceDimension<ST2toST2Type2>() == 1u) &&
+                 (isAssignableTo<numeric_type<ST2toST2Type2>, stress>()) &&
+                 (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
+                 (isAssignableTo<numeric_type<ST2toST2Type3>, real>())) {
       const auto iC0 = P(0, 0);
       const auto iC1 = P(1, 1);
       const auto iC2 = P(2, 2);
-      Cse(0, 0) = (C(0, 0) - T[0]) * iC0 * iC0;
+      Cse(0, 0) = (C(0, 0) - 2 * T[0]) * iC0 * iC0;
       Cse(0, 1) = C(0, 1) * iC1 * iC0;
       Cse(0, 2) = C(0, 2) * iC2 * iC0;
-      Cse(1, 0) = (C(1, 0) - T[1]) * iC0 * iC1;
-      Cse(1, 1) = C(1, 1) * iC1 * iC1;
+      Cse(1, 0) = C(1, 0) * iC0 * iC1;
+      Cse(1, 1) = (C(1, 1) - 2 * T[1]) * iC1 * iC1;
       Cse(1, 2) = C(1, 2) * iC2 * iC1;
-      Cse(2, 0) = (C(2, 0) - T[2]) * iC0 * iC2;
+      Cse(2, 0) = C(2, 0) * iC0 * iC2;
       Cse(2, 1) = C(2, 1) * iC1 * iC2;
-      Cse(2, 2) = C(2, 2) * iC2 * iC2;
+      Cse(2, 2) = (C(2, 2) - 2 * T[2]) * iC2 * iC2;
     }
   };  // end of struct ConvertLogarithmicStrainTangentOperator<1u,stress>
 

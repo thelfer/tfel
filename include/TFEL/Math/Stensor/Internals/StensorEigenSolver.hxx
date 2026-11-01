@@ -11,6 +11,12 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by TFEL/Math/stensor.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_TFEL_MATH_STENSOR_HXX
+#include "TFEL/Math/stensor.hxx"
+#else
+
 #ifndef LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX
 #define LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX
 
@@ -500,7 +506,10 @@ namespace tfel::math::internals {
       auto vp = tvector<3u, real>{};
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto m = tmatrix<3u, 3u>{};
-      fses::syevd3(m, vp, sm);
+      if (fses::syevd3(m, vp, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -517,7 +526,11 @@ namespace tfel::math::internals {
                                                      const bool) {
       auto vp2 = tvector<3u, real>{};
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
-      fses::syevd3(m, vp2, sm);
+      if (fses::syevd3(m, vp2, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp2 = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+        m = tmatrix<3u, 3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
@@ -588,3 +601,5 @@ namespace tfel::math::internals {
 }  // namespace tfel::math::internals
 
 #endif /* LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX */
+
+#endif /* LIB_TFEL_MATH_STENSOR_HXX */

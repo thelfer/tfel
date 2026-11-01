@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_STENSORCOMPUTEISOTROPICFUNCTIONDERIVATIVE_HXX
 #define LIB_TFEL_MATH_STENSORCOMPUTEISOTROPICFUNCTIONDERIVATIVE_HXX
 
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
+
 namespace tfel::math::internals {
 
   template <unsigned short N>
@@ -102,17 +104,15 @@ namespace tfel::math::internals {
               typename T2,
               typename T3>
     TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
-                                     const tvector<3u, T1>& f,
-                                     const tvector<3u, T2>& df,
-                                     const tvector<3u, T3>& vp,
-                                     const tmatrix<3u, 3u, base_type<T3>>& m,
-                                     const T3 eps)  //
-      requires(getSpaceDimension<ST2toST2Type>() == 2u)
-    {
-      using real = numeric_type<ST2toST2Type>;
-      using base = base_type<real>;
-      using tvector = tfel::math::tvector<3u, real>;
-      using stensor = tfel::math::stensor<2u, real>;
+                    const tvector<3u, T1>& f,
+                    const tvector<3u, T2>& df,
+                    const tvector<3u, T3>& vp,
+                    const tmatrix<3u, 3u, base_type<T3>>& m,
+                    const T3 eps)  //
+        requires(getSpaceDimension<ST2toST2Type>() == 2u) {
+      using base = base_type<T3>;
+      using tvector = tfel::math::tvector<3u, base>;
+      using stensor = tfel::math::stensor<2u, base>;
       constexpr base cste = Cste<base>::sqrt2;
       stensor n0, n1, n2;
       stensor::computeEigenTensors(n0, n1, n2, m);
@@ -173,18 +173,18 @@ namespace tfel::math::internals {
               typename T2,
               typename T3>
     TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
-                                     const tvector<3u, T1>& f,
-                                     const tvector<3u, T2>& df,
-                                     const tvector<3u, T3>& vp,
-                                     const tmatrix<3u, 3u, base_type<T3>>& m,
-                                     const T3 eps)  //
-      requires(getSpaceDimension<ST2toST2Type>() == 3u)
-    {
-      using real = numeric_type<ST2toST2Type>;
-      using base = base_type<real>;
-      using tvector = tfel::math::tvector<3u, real>;
-      using stensor = tfel::math::stensor<3u, real>;
-      using st2tost2 = tfel::math::st2tost2<3u, real>;
+                    const tvector<3u, T1>& f,
+                    const tvector<3u, T2>& df,
+                    const tvector<3u, T3>& vp,
+                    const tmatrix<3u, 3u, base_type<T3>>& m,
+                    const T3 eps)  //
+        requires(getSpaceDimension<ST2toST2Type>() == 3u) {
+      using base = base_type<T3>;
+      using tvector = tfel::math::tvector<3u, base>;
+      using stensor = tfel::math::stensor<3u, base>;
+      using st2tost2 = tfel::math::st2tost2<3u, base>;
+      using ist2tost2 =
+          tfel::math::st2tost2<3u, BinaryOperationResult<base, T3, OpDiv>>;
       constexpr base cste = Cste<base>::sqrt2;
       if ((tfel::math::abs(vp(0) - vp(1)) < eps) &&
           (tfel::math::abs(vp(0) - vp(2)) < eps)) {
@@ -239,10 +239,11 @@ namespace tfel::math::internals {
         d = ((n0 ^ n0) * df[0] + ((n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12)) * dfm +
              ((f[0] - f[1]) / (vp(0) - vpm)) * ((n01 ^ n01) + (n02 ^ n02)));
       } else {
-        st2tost2 dn0, dn1, dn2;
+        ist2tost2 dn0, dn1, dn2;
         stensor n0, n1, n2;
         stensor::computeEigenTensors(n0, n1, n2, m);
-        stensor::computeEigenTensorsDerivatives(dn0, dn1, dn2, vp, m, eps / 4);
+        tfel::math::stensor<3u, T3>::computeEigenTensorsDerivatives(
+            dn0, dn1, dn2, vp, m, eps / 4);
         d = (n0 ^ n0) * df[0] + (n1 ^ n1) * df[1] + (n2 ^ n2) * df[2] +
             f[0] * dn0 + f[1] * dn1 + f[2] * dn2;
       }
