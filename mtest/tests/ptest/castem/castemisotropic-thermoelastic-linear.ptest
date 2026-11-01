@@ -19,3 +19,8 @@
 @ExternalStateVariable<function> 'Temperature' '(Ti+D*log(r/Ri)-293.15)*t+293.15';
 
 @Times {0,1};
+
+// inner and outer displacements given by the thermoelastic Lamé solution
+// (no axial force, logarithmic temperature profile)
+@Test<function> 'InnerDisplacement' '3.68395010441353e-6' 1.e-8;
+@Test<function> 'OuterDisplacement' '5.11902749779609e-6' 1.e-8;
