@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_DIANAFEA_DIANAFEADATA_HXX
 #define LIB_MFRONT_DIANAFEA_DIANAFEADATA_HXX
 
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/DianaFEA/DianaFEA.hxx"
 
 namespace dianafea {

@@ -22,6 +22,7 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 
@@ -45,6 +46,7 @@ struct StensorIsotropicFunctionDerivativeTest final
     this->test2<1>({1., 1.2, 0.8});
     this->test2<2>({0.9, 1.06, 0.7, 0.33});
     this->test2<3>({0.9, 1.06, 0.7, 0.33, 0.46, 0.2});
+    this->test3();
     return this->result;
   }  // end of execute
  private:
@@ -91,6 +93,26 @@ struct StensorIsotropicFunctionDerivativeTest final
         [](const double x) {
           return std::abs(x) < 1.e-12 ? 0.5 : ((x < 0) ? -1 : 1);
         });
+  }
+  //! \brief positive part of a stress tensor
+  void test3() {
+    using namespace tfel::math;
+    using stress = qt<unit::Stress, double>;
+    const auto s = stensor<3u, stress>{stress(0.9),  stress(1.06), stress(-0.7),
+                                       stress(0.33), stress(0.46), stress(0.2)};
+    const auto [f, d] = s.computeIsotropicFunctionAndDerivative(
+        [](const stress x) { return x > stress(0) ? x : stress(0); },
+        [](const stress x) { return x > stress(0) ? 1. : 0.; }, stress(1e-12));
+    const auto sv = stensor<3u, double>{0.9, 1.06, -0.7, 0.33, 0.46, 0.2};
+    const auto [fv, dv] = sv.computeIsotropicFunctionAndDerivative(
+        [](const double x) { return x > 0 ? x : 0; },
+        [](const double x) { return x > 0 ? 1. : 0.; }, 1e-12);
+    for (unsigned short i = 0; i != 6; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(f[i].getValue() - fv[i]) < 1e-14);
+      for (unsigned short j = 0; j != 6; ++j) {
+        TFEL_TESTS_ASSERT(std::abs(d(i, j) - dv(i, j)) < 1e-14);
+      }
+    }
   }
 };
 
