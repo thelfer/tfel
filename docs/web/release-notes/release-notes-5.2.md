@@ -61,6 +61,11 @@ library, see below.
 - `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
   expansion coefficients is now an error (except `ThermalExpansion1` and
   `ThermalExpansion2` in plane stress).
+- `abaqusexplicit` interface (see Issue #1274): the results of
+  orthotropic behaviours using the `MFront` orthotropy management policy
+  change when the material frame is not symmetric with respect to the
+  global frame: the integration applied the inverse rotation, and the
+  second material axis was read beyond the orientation in 2D.
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
@@ -691,6 +696,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
+
+For more details, see <https://github.com/thelfer/tfel/issues/1274>
 
 ## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
 
