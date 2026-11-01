@@ -714,6 +714,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1281: [mfront] The generated Makefile adds the calling directory, not src, to LD_LIBRARY_PATH
+
+For more details, see <https://github.com/thelfer/tfel/issues/1281>
+
 ## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
 
 For more details, see <https://github.com/thelfer/tfel/issues/1270>
