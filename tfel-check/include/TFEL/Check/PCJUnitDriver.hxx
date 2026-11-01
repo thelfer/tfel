@@ -6,7 +6,7 @@
  * Output log according to JUnit format (to be used with Hudson)
  *
  * \author sb152252
- * \date 1 sept. 2009
+ * \date 01/09/2009
  *
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -29,7 +29,7 @@ namespace tfel::check {
    * \brief class in charg of build XML report for JUnit.
    */
   struct TFELCHECK_VISIBILITY_EXPORT PCJUnitDriver : public PCILogDriver {
-    PCJUnitDriver(const std::string& f = "");
+    explicit PCJUnitDriver(const std::string& f = "");
     void addMessage(const std::string&) override;
     void addTestResult(const std::string&,
                        const std::string&,

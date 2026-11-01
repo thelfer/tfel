@@ -3,7 +3,7 @@
  * \brief A class designed to manage logs with different format.
  *
  * \author sb152252
- * \date 31 août 2009
+ * \date 31/08/2009
  *
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -33,13 +33,13 @@ namespace tfel::check {
     /*!
      * \param[in] logDriver
      */
-    PCLogger(const Driver&);
+    explicit PCLogger(const Driver&);
     //! \brief move constructor
-    PCLogger(PCLogger&&);
+    PCLogger(PCLogger&&) noexcept;
     //! \brief copy constructor
     PCLogger(const PCLogger&);
     //! \brief move assignement
-    PCLogger& operator=(PCLogger&&);
+    PCLogger& operator=(PCLogger&&) noexcept;
     //! \brief standard assignement
     PCLogger& operator=(const PCLogger&);
     //! \brief destructor

@@ -81,9 +81,9 @@ namespace tfel::check {
     return r;
   }  // end of eval
 
-  Column::Column(Column&&) = default;
+  Column::Column(Column&&) noexcept = default;
   Column::Column(const Column&) = default;
-  Column& Column::operator=(Column&&) = default;
+  Column& Column::operator=(Column&&) noexcept = default;
   Column& Column::operator=(const Column&) = default;
 
   Column::Column(const int n) : num(n), byName(false) {
@@ -95,7 +95,10 @@ namespace tfel::check {
   std::string Column::getName() const { return this->name; }
 
   const std::vector<double>& Column::getValues() { return this->values; }
-  void Column::clearValues() { this->values.clear(); }
+  void Column::clearValues() {
+    this->values.clear();
+    this->lines.clear();
+  }
 
   void Column::resizeValues(std::vector<double>::size_type size) {
     this->values.resize(size);
@@ -115,16 +118,27 @@ namespace tfel::check {
         this->values = this->data->getColumn(this->num);
       } else {
         this->values = eval(*(this->data), this->name);
-        return;
       }
     } else {
       this->data->getColumn(this->values, this->num);
     }
+    // each line of data gives one value
+    this->lines.clear();
+    for (auto p = this->data->begin(); p != this->data->end(); ++p) {
+      this->lines.push_back(p->tokens.empty() ? 0 : p->tokens.front().line);
+    }
+    if (this->lines.size() != this->values.size()) {
+      this->lines.clear();
+    }
+  }
+
+  const std::vector<std::size_t>& Column::getLineNumbers() const {
+    return this->lines;
   }
 
   const std::string& Column::getFilename() const { return this->f; }
 
-  const std::shared_ptr<tfel::utilities::TextData> Column::getData() const {
+  std::shared_ptr<const tfel::utilities::TextData> Column::getData() const {
     return this->data;
   }
 

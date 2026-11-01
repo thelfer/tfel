@@ -372,7 +372,7 @@ namespace tfel::math::internals {
       } else if ((tfel::math::abs(vp2(1) - vp2(0)) > prec) &&
                  (tfel::math::abs(vp2(1) - vp2(2)) > prec)) {
         // vp1 is single, vp0 and vp2 are equal
-        assert(tfel::math::abs(vp2(0) - vp2(2)) < prec);
+        assert(tfel::math::abs(vp2(0) - vp2(2)) <= prec);
         if (computeEigenVector(s2.begin(), vp2(1), vec(0, 1), vec(1, 1),
                                vec(2, 1)) == false) {
           return false;
@@ -390,7 +390,7 @@ namespace tfel::math::internals {
       }
       assert((tfel::math::abs(vp2(2) - vp2(0)) > prec) &&
              (tfel::math::abs(vp2(2) - vp2(1)) > prec));
-      assert(tfel::math::abs(vp2(0) - vp2(1)) < prec);
+      assert(tfel::math::abs(vp2(0) - vp2(1)) <= prec);
       if (computeEigenVector(s2.begin(), vp2(2), vec(0, 2), vec(1, 2),
                              vec(2, 2)) == false) {
         return false;
