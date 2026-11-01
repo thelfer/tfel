@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/LSDYNA/LSDYNAInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_LSDYNA_CALL_HXX
+#include "MFront/LSDYNA/LSDYNAInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_LSDYNA_LSDYNABEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_LSDYNA_LSDYNABEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_LSDYNA_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_LSDYNA_CALL_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -54,7 +56,7 @@ namespace lsdyna {
     typedef tfel::material::TangentOperatorTraits<
         MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
         TangentOperatorTraits;
-    static constexpr auto value = TangentOperatorTraits::LSDYNA;
+    static constexpr auto value = TangentOperatorTraits::ABAQUS;
   };
 
   template <tfel::material::ModellingHypothesis::Hypothesis H>
@@ -242,7 +244,7 @@ namespace lsdyna {
           r = BV::FAILURE;
         } else {
           try {
-            r = this->this->behaviour.integrate(smflag,
+            r = this->behaviour.integrate(smflag,
                                                 BV::CONSISTENTTANGENTOPERATOR);
           } catch (DivergenceException&) {
             r = BV::FAILURE;
@@ -324,3 +326,5 @@ namespace lsdyna {
 }  // end of namespace lsdyna
 
 #endif /* LIB_MFRONT_LSDYNA_LSDYNABEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_LSDYNA_CALL_HXX */

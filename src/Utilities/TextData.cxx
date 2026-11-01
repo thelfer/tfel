@@ -12,6 +12,7 @@
  */
 
 #include <cassert>
+#include <cctype>
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
@@ -24,13 +25,47 @@
 
 namespace tfel::utilities {
 
+  //! \return true if the string is an infinity or a NaN for std::stod
+  static bool is_inf_or_nan(std::string v) {
+    std::transform(v.begin(), v.end(), v.begin(), [](const char c) {
+      return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    });
+    return (v == "inf") || (v == "infinity") || (v == "nan");
+  }  // end of is_inf_or_nan
+
+  /*!
+   * \return the tokens of a line, without comments
+   * \param[in] l: line
+   */
+  static std::vector<Token> tokenize_line(const std::string& l) {
+    // the `#` character starts a comment anywhere in a line
+    auto opts = CxxTokenizerOptions{};
+    opts.treatPreprocessorDirectives = false;
+    opts.treatHashCharacterAsCommentDelimiter = true;
+    opts.allowStrayHashCharacter = true;
+    CxxTokenizer t(opts);
+    t.treatCharAsString(true);
+    t.parseString(l);
+    t.stripComments();
+    auto r = std::vector<Token>{};
+    for (const auto& w : t) {
+      // the tokenizer only merges a sign with a following number: signed
+      // infinities and NaNs are merged here
+      if ((!r.empty()) &&
+          ((r.back().value == "-") || (r.back().value == "+")) &&
+          (r.back().offset + 1 == w.offset) && (is_inf_or_nan(w.value))) {
+        r.back().value += w.value;
+      } else {
+        r.push_back(w);
+      }
+    }
+    return r;
+  }  // end of tokenize_line
+
   TextData::TextData(const std::string& file, const std::string& format) {
     auto get_legends = [](const std::string& l) {
       std::vector<std::string> r;
-      CxxTokenizer t;
-      t.treatCharAsString(true);
-      t.parseString(l);
-      t.stripComments();
+      const auto t = tokenize_line(l);
       std::for_each(t.begin(), t.end(), [&r](const Token& w) {
         if (w.flag == Token::String) {
           r.push_back(w.value.substr(1, w.value.size() - 2));
@@ -42,10 +77,7 @@ namespace tfel::utilities {
     };
     auto add_line = [this](const std::string& l, const Token::size_type n) {
       Line nl;
-      CxxTokenizer t;
-      t.treatCharAsString(true);
-      t.parseString(l);
-      t.stripComments();
+      const auto t = tokenize_line(l);
       std::for_each(t.begin(), t.end(), [&nl, &n](const Token& w) {
         nl.tokens.push_back(w);
         nl.tokens.back().line = n;
@@ -60,6 +92,9 @@ namespace tfel::utilities {
     while (!f.eof()) {
       auto line = std::string{};
       getline(f, line);
+      // leading white spaces, including the `\r` of empty lines of files
+      // with Windows line endings, are ignored
+      line.erase(0, line.find_first_not_of(" \t\r"));
       if (line.empty()) {
         continue;
       }

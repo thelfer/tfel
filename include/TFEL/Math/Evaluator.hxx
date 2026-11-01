@@ -234,10 +234,10 @@ namespace tfel::math {
     [[nodiscard]] virtual std::string getCxxFormula(
         const std::map<std::string, std::string>& = {}) const;
     /*!
-     * \return the names of the variables, sorted in alphabetical order
-     * \note this order is not the order of the positions of the variables:
-     * the index of a name in the returned vector must not be used as a
-     * position
+     * \return the names of the variables, ordered by their positions: the
+     * index of a name in the returned vector is the position of the variable,
+     * i.e. the order of the variables given to the constructor, or the order
+     * of their first appearance in the expression otherwise
      */
     [[nodiscard]] virtual std::vector<std::string> getVariablesNames() const;
     virtual void checkCyclicDependency() const;

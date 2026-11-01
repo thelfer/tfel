@@ -58,6 +58,15 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- `@RotationMatrix<Euler>` of `MTest` now gives the rotation described
+  by the Euler angles in the convention of Bunge, as the polycrystal
+  classes of `MFront` (see Issue #1270): the rotation matrix was the
+  Bunge matrix instead of its transpose, i.e. the inverse rotation was
+  applied.
+- `Evaluator::getVariablesNames` returns the names of the variables
+  ordered by their positions (the order given to the constructor, or the
+  order of their first appearance in the expression), instead of the
+  alphabetical order (see Issue #1209).
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
@@ -255,6 +264,22 @@ Quantities were deeply refactored to:
 - allow creating surrogate classes for quantities,
 - improve error message,
 - reduce size of the generated symbols.
+
+## Adjugate of a tensor and its derivative
+
+The `computeAdjugateDeterminantDerivative` function returns the
+adjugate of a tensor, \(\det\left(F\right)\,F^{-1}\), i.e. the
+transpose of the derivative of the determinant returned by
+`computeDeterminantDerivative`. The
+`computeAdjugateDeterminantSecondDerivative` function returns its
+derivative, which `computeDeterminantSecondDerivative` returned in 2D
+and 3D before Issue #1262 (it now returns the second derivative of the
+determinant).
+
+~~~~{.cxx}
+const auto adj = computeAdjugateDeterminantDerivative(F);
+const auto dadj = computeAdjugateDeterminantSecondDerivative(F);
+~~~~
 
 # New `TFEL/Material` features
 
@@ -689,9 +714,25 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
+
+For more details, see <https://github.com/thelfer/tfel/issues/1270>
+
+## Issue 1264: [tfel] Installed headers that cannot be compiled, 2D microstructure-based homogenisation, Windows installation pages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1264>
+
 ## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
 
 For more details, see <https://github.com/thelfer/tfel/issues/1262>
+
+## Issue 1258: [mfront] generic MTest files of finite strain behaviours, cpptest and gnuplot interfaces, calculix MieheApelLambrechtLogarithmicStrainII strategy, dianafea failures and orthotropic behaviours, abaqus glue lock on Windows
+
+For more details, see <https://github.com/thelfer/tfel/issues/1258>
+
+## Issue 1254: [tfel-math] Eigen solvers of symmetric tensors: wrong eigenvectors for equal or close eigenvalues, Cardano eigenvalues of syevc3, derivatives of isotropic functions of quantities, ConvertLogarithmicStrainTangentOperator
+
+For more details, see <https://github.com/thelfer/tfel/issues/1254>
 
 ## Issue 1242: [tests] Twenty-one C++ unit tests check no result
 
@@ -740,6 +781,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/1209>
 ## Issue 1203: [tfel-math] Isotropic moduli assignment, stensor products on GPUs, Gauss-Kronrod half-infinite error estimate, QR with more rows than columns, Levenberg-Marquardt factor, physical constants digits
 
 For more details, see <https://github.com/thelfer/tfel/issues/1203>
+
+## Issue 1201: [tfel-utilities] CxxTokenizer numbers and integers, string algorithms, TextData comments and infinities, ProcessManager and SignalManager children, tfel-doc --split
+
+For more details, see <https://github.com/thelfer/tfel/issues/1201>
+
+## Issue 1197: [mtest] Acceleration algorithm parameters, Anderson method orders above 22, castem_umat optional material properties, mtest Python options
+
+For more details, see <https://github.com/thelfer/tfel/issues/1197>
+  
 
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 

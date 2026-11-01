@@ -11,6 +11,12 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Cyrano/CyranoInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CYRANO_CALL_HXX
+#include "MFront/Cyrano/CyranoInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_HXX
 #define LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_HXX
 
@@ -18,10 +24,6 @@
 
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Math/tvector.hxx"
-
-#ifndef LIB_MFRONT_CYRANO_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CYRANO_CALL_HXX */
 
 namespace cyrano {
 
@@ -337,3 +339,5 @@ namespace cyrano {
 }  // end of namespace cyrano
 
 #endif /* LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CYRANO_CALL_HXX */

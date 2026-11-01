@@ -17,6 +17,8 @@
 #ifndef LIB_TFEL_MATH_INTEGEREVALUATORTEXPR_HXX
 #define LIB_TFEL_MATH_INTEGEREVALUATORTEXPR_HXX
 
+#include "TFEL/Math/IntegerEvaluator.hxx"
+
 namespace tfel::math {
 
   struct IntegerEvaluator::TExpr {
