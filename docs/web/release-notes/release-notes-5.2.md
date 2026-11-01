@@ -714,6 +714,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1285: [mfront] generic interface, finite strain in plane stress: the Green-Lagrange and standard finite strain families add the axial deformation gradient to the one of the caller
+
+For more details, see <https://github.com/thelfer/tfel/issues/1285>
+
 ## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
 
 For more details, see <https://github.com/thelfer/tfel/issues/1270>
