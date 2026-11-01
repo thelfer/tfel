@@ -545,16 +545,7 @@ namespace tfel::check {
       auto test = std::make_shared<Test>();
       test->setComparison(this->comparison);
       test->setPrec(this->prec);
-      if ((!this->precision2.has_value()) &&
-          ((dynamic_cast<const MixedComparison*>(this->comparison.get()) !=
-            nullptr) ||
-           (dynamic_cast<const RelativeAndAbsoluteComparison*>(
-                this->comparison.get()) != nullptr))) {
-        this->throwRuntimeError("TestLauncher::treatTest",
-                                "the 'Mixed' and 'RelativeAndAbsolute' test "
-                                "types require two precision values");
-      }
-      test->setPrecision2(this->precision2.value_or(0.));
+      test->setPrecision2(this->precision2);
       test->setInterpolation(this->interpolation->clone());
       test->setIntegralInterpolation(this->integralInterpolation);
       // abscissa column, used to interpolate or, without interpolation,
@@ -615,7 +606,6 @@ namespace tfel::check {
 
   void TestLauncher::treatPrecision() {
     this->prec = CxxTokenizer::readDouble(this->current, this->end());
-    this->precision2.reset();
     this->checkNotEndOfFile("TestLauncher::treatPrecision");
     if (this->current->value != ";") {
       // Optional second precision
