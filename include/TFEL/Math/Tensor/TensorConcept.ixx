@@ -451,6 +451,41 @@ namespace tfel::math {
     }
   }  // end of computeDeterminantDerivative
 
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantDerivative(
+      TensorConcept auto& adj, const TensorConcept auto& F) noexcept {
+    using TensorType = decltype(F);
+    using TensorResultType = decltype(adj);
+    constexpr auto N = getSpaceDimension<TensorType>();
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    static_assert(N == getSpaceDimension<TensorResultType>(),
+                  "arguments must have the same space dimension");
+    static_assert(
+        isAssignableTo<UnaryOperationResult<numeric_type<TensorType>, Power<2>>,
+                       numeric_type<TensorResultType>>(),
+        "invalid arguments");
+    if constexpr (N == 1u) {
+      adj[0] = F[1] * F[2];
+      adj[1] = F[0] * F[2];
+      adj[2] = F[0] * F[1];
+    } else if constexpr (N == 2u) {
+      adj[0] = F[1] * F[2];
+      adj[1] = F[0] * F[2];
+      adj[2] = F[0] * F[1] - F[3] * F[4];
+      adj[3] = -F[2] * F[3];
+      adj[4] = -F[2] * F[4];
+    } else {
+      adj[0] = F[1] * F[2] - F[7] * F[8];
+      adj[1] = F[0] * F[2] - F[5] * F[6];
+      adj[2] = F[0] * F[1] - F[3] * F[4];
+      adj[3] = F[5] * F[8] - F[2] * F[3];
+      adj[4] = F[6] * F[7] - F[2] * F[4];
+      adj[5] = F[3] * F[7] - F[1] * F[5];
+      adj[6] = F[4] * F[8] - F[1] * F[6];
+      adj[7] = F[4] * F[5] - F[0] * F[7];
+      adj[8] = F[3] * F[6] - F[0] * F[8];
+    }
+  }  // end of computeAdjugateDeterminantDerivative
+
   TFEL_HOST void polar_decomposition(TensorConcept auto& R,
                                      StensorConcept auto& U,
                                      const TensorConcept auto& F) {
