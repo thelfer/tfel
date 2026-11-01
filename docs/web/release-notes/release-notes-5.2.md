@@ -693,6 +693,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1262>
 
+## Issue 1242: [tests] Twenty-one C++ unit tests check no result
+
+For more details, see <https://github.com/thelfer/tfel/issues/1242>
+
 ## Issue 1241: [ptest] Thirty of the 42 PTest pipe tests compare nothing
 
 For more details, see <https://github.com/thelfer/tfel/issues/1241>
