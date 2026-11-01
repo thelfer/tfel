@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_LSDYNA_LSDYNADATA_HXX
 #define LIB_MFRONT_LSDYNA_LSDYNADATA_HXX
 
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/LSDYNA/LSDYNA.hxx"
 
 namespace lsdyna {

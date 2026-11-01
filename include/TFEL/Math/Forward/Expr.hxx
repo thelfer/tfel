@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_FORWARD_EXPR_HXX
 #define LIB_TFEL_MATH_FORWARD_EXPR_HXX
 
+#include <type_traits>
+
 namespace tfel::math {
 
   /*!
