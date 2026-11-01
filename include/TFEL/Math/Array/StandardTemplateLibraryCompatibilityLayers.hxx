@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::math {
 

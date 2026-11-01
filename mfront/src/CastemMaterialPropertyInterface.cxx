@@ -132,7 +132,7 @@ namespace mfront {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
           << ")){\n"
           << "cerr << \"" << name << ": " << v.name
-          << " is below its physical upper bound (\"\n << " << v.name
+          << " is over its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
           << "return nan(\"" << name << ": " << v.name
           << " is not physically valid.\");\n"
@@ -265,6 +265,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     out << "/*!\n"
         << "* \\file   " << fn << "\n"
         << "* \\brief  "
@@ -276,7 +277,7 @@ namespace mfront {
       out << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      out << "* \\date   " << fd.date << '\n';
+      out << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       out << fd.description << '\n';
@@ -319,6 +320,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
     const auto& date = fd.date;
@@ -336,7 +338,7 @@ namespace mfront {
       out << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      out << "* \\date   " << date << '\n';
+      out << "* \\date " << date << '\n';
     }
     out << " */\n\n"
         << "#include<algorithm>\n"
