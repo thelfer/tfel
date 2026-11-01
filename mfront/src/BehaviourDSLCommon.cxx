@@ -608,7 +608,7 @@ namespace mfront {
       o2.modifier = std::make_shared<StandardVariableModifier>(h, m2);
       o2.mn = md.getRegistredMembersNames();
       o2.smn = md.getRegistredStaticMembersNames();
-      this->getSymbols(o2.symbols, h, n1);
+      this->getSymbols(o2.symbols, h, n2);
       this->readNextBlock(c1, c2, o1, o2);
       this->mb.setCode(h, n1, c1, o.m, o.p);
       this->mb.setCode(h, n2, c2, o.m, o.p);
@@ -1667,7 +1667,7 @@ namespace mfront {
     if (!this->isValidIdentifier(iname)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::treatInitializeFunction",
-          "invalid post-processing name (read '" + iname + "').");
+          "invalid initialize function name (read '" + iname + "').");
     }
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatInitializeFunction");
@@ -1823,6 +1823,7 @@ namespace mfront {
       while (po != poe) {
         const auto& opt = *po;
         if (opt.flag != Token::Standard) {
+          ++po;
           continue;
         }
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
@@ -1840,8 +1841,8 @@ namespace mfront {
       }
       if (ktype.empty()) {
         std::ostringstream msg;
-        msg << "Undefined tangent operator type '" + ktype +
-                   "'. Valid tangent operator type are :\n";
+        msg << "no valid tangent operator type given. "
+            << "Valid tangent operator types are:\n";
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
           msg << "- "
               << convertFiniteStrainBehaviourTangentOperatorFlagToString(to)
@@ -1947,7 +1948,7 @@ namespace mfront {
         this->mb.getAttribute<bool>(
             BehaviourDescription::requiresThermalExpansionCoefficientTensor,
             false),
-        "@ComputeThermalExpansion can be used along with "
+        "@ComputeThermalExpansion can not be used along with "
         "@RequireThermalExpansionCoefficientTensor");
     const auto& acs = this->readMaterialPropertyOrArrayOfMaterialProperties(m);
     this->checkNotEndOfFile(m);
@@ -1985,7 +1986,7 @@ namespace mfront {
           if (getVerboseMode() != VERBOSE_QUIET) {
             auto& os = getLogStream();
             os << "no reference temperature in material property '";
-            if (mpd.material.empty()) {
+            if (!mpd.material.empty()) {
               os << mpd.material << '_';
             }
             os << mpd.law << "'\n";
@@ -2092,9 +2093,10 @@ namespace mfront {
   void BehaviourDSLCommon::treatComputeStiffnessTensor() {
     if (this->mb.getAttribute<bool>(
             BehaviourDescription::requiresStiffnessTensor, false)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
-                              "@ComputeStiffnessTensor can be used along with "
-                              "@RequireStiffnessTensor");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatComputeStiffnessTensor",
+          "@ComputeStiffnessTensor can not be used along with "
+          "@RequireStiffnessTensor");
     }
     if (this->current->value == "<") {
       this->treatStiffnessTensorOption();
@@ -2620,9 +2622,10 @@ namespace mfront {
 
   void BehaviourDSLCommon::treatRequireStiffnessTensor() {
     if (this->mb.hasAttribute(BehaviourDescription::computesStiffnessTensor)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatRequireStiffnessTensor",
-                              "@RequireStiffnessTensor can be used along with "
-                              "@ComputeStiffnessTensor");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatRequireStiffnessTensor",
+          "@RequireStiffnessTensor can not be used along with "
+          "@ComputeStiffnessTensor");
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatRequireStiffnessTensor");
     if (this->current->value == "<") {
@@ -3210,13 +3213,18 @@ namespace mfront {
             (mh.find(
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ==
              mh.end()) &&
-            (mh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) == mh.end()),
+            (mh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) ==
+             mh.end()) &&
+            (mh.find(ModellingHypothesis::PLANESTRAIN) == mh.end()) &&
+            (mh.find(ModellingHypothesis::PLANESTRESS) == mh.end()),
         "the @Relocation keyword has not effect on this behaviour as the none "
         "of "
         "the following hypothesis is supported:\n"
         "- AxisymmetricalGeneralisedPlaneStress\n"
         "- AxisymmetricalGeneralisedPlaneStrain\n"
-        "- GeneralisedPlaneStrain");
+        "- GeneralisedPlaneStrain\n"
+        "- PlaneStrain\n"
+        "- PlaneStress");
     this->checkNotEndOfFile("BehaviourDSLCommon::treatRelocation");
     const auto s = this->readStressFreeExpansionHandler(*(this->current));
     ++(this->current);
@@ -3229,6 +3237,8 @@ namespace mfront {
     add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
     add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
     add(ModellingHypothesis::GENERALISEDPLANESTRAIN);
+    add(ModellingHypothesis::PLANESTRAIN);
+    add(ModellingHypothesis::PLANESTRESS);
   }  // end of treatRelocation
 
   std::string BehaviourDSLCommon::predictionOperatorVariableModifier(
@@ -3255,7 +3265,7 @@ namespace mfront {
     using namespace tfel::material;
     using namespace tfel::utilities;
     if (this->mb.getTangentOperatorBlocks().empty()) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
+      this->throwRuntimeError("BehaviourDSLCommon::treatPredictionOperator",
                               "no thermodynamic force defined");
     }
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
@@ -3600,7 +3610,9 @@ namespace mfront {
         m = [this](const Hypothesis h, const std::string& sv, const bool bv) {
           return this->standardModifier(h, sv, bv);
         };
+    const auto beg = this->current;
     for (const auto h : o.hypotheses) {
+      this->current = beg;
       const auto& d = this->mb.getBehaviourData(h);
       const auto c = this->readNextBlock(h, n, m, true);
       for (const auto& mn : c.members) {

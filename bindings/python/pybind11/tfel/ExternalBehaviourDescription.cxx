@@ -43,7 +43,7 @@ static std::vector<int> get_ivs_types(
 
 static std::vector<int> get_evs_types(
     const tfel::system::ExternalBehaviourDescription& d) {
-  return d.ivtypes;
+  return d.evtypes;
 }
 
 static std::vector<std::string> get_evs(

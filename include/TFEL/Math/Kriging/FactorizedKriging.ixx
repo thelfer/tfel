@@ -94,6 +94,7 @@ namespace tfel::math {
     matrix<T> m(x1.size() + Model1::nb + Model2::nb,
                 x1.size() + Model1::nb + Model2::nb,
                 T(0));  // temporary matrix
+    this->a.clear();
     this->a.resize(x1.size() + Model1::nb + Model2::nb, T(0));  // unknowns
     copy(this->f.begin(), this->f.end(), this->a.begin());      // copy values
     // filling the matrix

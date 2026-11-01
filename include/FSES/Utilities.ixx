@@ -200,7 +200,7 @@ template <typename real>
 inline bool is_negligible(const real& x, const real& y) {
   static constexpr real e = std::numeric_limits<real>::epsilon();
   // y+x==y;
-  return std::abs(x) < std::abs(y) * e;
+  return std::abs(x) <= std::abs(y) * e;
 }
 
 template <typename MatrixType, typename VectorType>
@@ -216,33 +216,33 @@ void sort(MatrixType& m, VectorType& v, const EigenValuesOrdering o) {
       at(m, 0, 0), at(m, 0, 1), at(m, 0, 2), at(m, 1, 0), at(m, 1, 1),
       at(m, 1, 2), at(m, 2, 0), at(m, 2, 1), at(m, 2, 2)};
   if (o == EigenValuesOrdering::ASCENDING) {
-    if ((at(v, 0) < at(v, 1)) && (at(v, 1) < at(v, 2))) {
+    if ((at(v, 0) <= at(v, 1)) && (at(v, 1) <= at(v, 2))) {
       idx = {zero, one, two};
-    } else if ((at(v, 0) < at(v, 2)) && (at(v, 2) < at(v, 1))) {
+    } else if ((at(v, 0) <= at(v, 2)) && (at(v, 2) <= at(v, 1))) {
       idx = {zero, two, one};
-    } else if ((at(v, 1) < at(v, 0)) && (at(v, 0) < at(v, 2))) {
+    } else if ((at(v, 1) <= at(v, 0)) && (at(v, 0) <= at(v, 2))) {
       idx = {one, zero, two};
-    } else if ((at(v, 1) < at(v, 2)) && (at(v, 2) < at(v, 0))) {
+    } else if ((at(v, 1) <= at(v, 2)) && (at(v, 2) <= at(v, 0))) {
       idx = {one, two, zero};
-    } else if ((at(v, 2) < at(v, 0)) && (at(v, 0) < at(v, 1))) {
+    } else if ((at(v, 2) <= at(v, 0)) && (at(v, 0) <= at(v, 1))) {
       idx = {two, zero, one};
     } else {
-      // ((at(v,2)<at(v,1))&&(at(v,1)<at(v,0))){
+      // ((at(v,2)<=at(v,1))&&(at(v,1)<=at(v,0))){
       idx = {two, one, zero};
     }
   } else if (o == EigenValuesOrdering::DESCENDING) {
-    if ((at(v, 0) > at(v, 1)) && (at(v, 1) > at(v, 2))) {
+    if ((at(v, 0) >= at(v, 1)) && (at(v, 1) >= at(v, 2))) {
       idx = {zero, one, two};
-    } else if ((at(v, 0) > at(v, 2)) && (at(v, 2) > at(v, 1))) {
+    } else if ((at(v, 0) >= at(v, 2)) && (at(v, 2) >= at(v, 1))) {
       idx = {zero, two, one};
-    } else if ((at(v, 1) > at(v, 0)) && (at(v, 0) > at(v, 2))) {
+    } else if ((at(v, 1) >= at(v, 0)) && (at(v, 0) >= at(v, 2))) {
       idx = {one, zero, two};
-    } else if ((at(v, 1) > at(v, 2)) && (at(v, 2) > at(v, 0))) {
+    } else if ((at(v, 1) >= at(v, 2)) && (at(v, 2) >= at(v, 0))) {
       idx = {one, two, zero};
-    } else if ((at(v, 2) > at(v, 0)) && (at(v, 0) > at(v, 1))) {
+    } else if ((at(v, 2) >= at(v, 0)) && (at(v, 0) >= at(v, 1))) {
       idx = {two, zero, one};
     } else {
-      // ((at(v,2)>at(v,1))&&(at(v,1)>at(v,0))){
+      // ((at(v,2)>=at(v,1))&&(at(v,1)>=at(v,0))){
       idx = {two, one, zero};
     }
   }

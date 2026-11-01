@@ -35,7 +35,7 @@ namespace tfel::fsalgo {
        * \param[in,out] f: callable describing the body of the loop
        */
       template <typename F>
-      void exe(F& f) {
+      TFEL_HOST_DEVICE constexpr static void exe(F& f) {
         f(I);
         do_loop<I + 1, N>::exe(f);
       }  // end of exe
@@ -53,7 +53,7 @@ namespace tfel::fsalgo {
        * \tparam F: type of the callable
        */
       template <typename F>
-      void exe(F&) {}  // end of exe
+      TFEL_HOST_DEVICE constexpr static void exe(F&) {}  // end of exe
     };                 // end of struct do_loop<N, N>
 
   }  // namespace internals
@@ -73,7 +73,7 @@ namespace tfel::fsalgo {
      * \param[in,out] f: callable describing the body of the loop
      */
     template <typename F>
-    void exe(F& f) {
+    TFEL_HOST_DEVICE constexpr static void exe(F& f) {
       tfel::fsalgo::internals::do_loop<0, N>::exe(f);
     }  // end of exe
   };

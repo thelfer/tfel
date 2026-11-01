@@ -15,6 +15,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <algorithm>
+#include <atomic>
 #include "TFEL/Raise.hxx"
 #include "MFront/MTestFileGeneratorBase.hxx"
 
@@ -40,7 +41,7 @@ namespace mfront {
       default;
 
   unsigned int MTestFileGeneratorBase::getIdentifier() {
-    static unsigned int i = 0;
+    static std::atomic<unsigned int> i{0};
     return ++i;
   }
 

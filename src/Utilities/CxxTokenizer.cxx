@@ -40,6 +40,19 @@ namespace std {
 
 namespace tfel::utilities {
 
+  // the functions of <cctype> require values representable as unsigned char
+  static bool is_space(const char c) {
+    return std::isspace(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_space
+
+  static bool is_digit(const char c) {
+    return std::isdigit(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_digit
+
+  static bool is_alpha(const char c) {
+    return std::isalpha(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_alpha
+
   static std::pair<std::string::const_iterator, std::string> findSeparator(
       const std::string::const_iterator p,
       const std::string::const_iterator pe,
@@ -187,7 +200,7 @@ namespace tfel::utilities {
     explicit is_separator_or_space(const bool bd, const bool bm, const bool ba)
         : is_separator(bd, bm, ba) {}
     bool operator()(const std::string::value_type &c) const {
-      return ((std::isspace(c)) || (is_separator::operator()(c)));
+      return ((is_space(c)) || (is_separator::operator()(c)));
     }
   };  // end of struct is_separator_or_space
 
@@ -209,7 +222,7 @@ namespace tfel::utilities {
                            std::string::const_iterator &p,
                            const std::string::const_iterator pe) {
     auto np = std::find_if_not(
-        p, pe, [](const std::string::value_type c) { return std::isspace(c); });
+        p, pe, [](const std::string::value_type c) { return is_space(c); });
     advance(o, p, np);
   }
 
@@ -218,18 +231,19 @@ namespace tfel::utilities {
                                const std::string::const_iterator pe,
                                const Token::size_type n) {
     auto throw_if = [](const bool b, const std::string &m) {
-      raise_if(b, "CxxTokenizer::parseCChar: " + m);
+      raise_if(b, "CxxTokenizer::parseChar: " + m);
     };
     if (this->charAsString) {
       this->parseString(o, p, pe, n, '\'');
     } else {
       const auto pn = std::next(p, 1);
-      const auto pn2 = std::next(p, 2);
-      const auto pn3 = std::next(p, 3);
       throw_if(pn == pe, "unterminated char");
+      const auto pn2 = std::next(p, 2);
+      throw_if(pn2 == pe, "unterminated char");
+      const auto pn3 = std::next(p, 3);
       if (*pn == '\\') {
+        throw_if(pn3 == pe, "unterminated char");
         const auto pn4 = std::next(p, 4);
-        throw_if((pn2 == pe) || (pn3 == pe), "unterminated char");
         throw_if(*pn3 != '\'',
                  "unexpected token '" + std::string(1u, *pn3) + "'");
         this->tokens.emplace_back(std::string(p, pn4), n, o, Token::Char);
@@ -348,12 +362,12 @@ namespace tfel::utilities {
       // reading decimal part
       throw_if(++p == pe, "invalid number");
     }
-    throw_if((!(std::isdigit(*p))) && (*p != '.'),
+    throw_if((!(is_digit(*p))) && (*p != '.'),
              std::string("expected digit, read '") + *p + '\'');
     if (*p == '.') {
       is_float = true;
       throw_if(++p == pe, "invalid number");
-      throw_if(!std::isdigit(*p),
+      throw_if(!is_digit(*p),
                std::string("expected digit, read '") + *p + '\'');
     } else if (*p == '0') {
       starts_with_zero = true;
@@ -363,7 +377,7 @@ namespace tfel::utilities {
           is_binary_integer = true;
           throw_if(++p == pe, "invalid binary integer");
           throw_if(!is_binary(*p), "invalid binary integer");
-          while ((p != pe) && (std::isdigit(*p))) {
+          while ((p != pe) && (is_digit(*p))) {
             throw_if(!is_binary(*p), "invalid binary integer");
             ++p;
           }
@@ -372,7 +386,7 @@ namespace tfel::utilities {
           is_hex_integer = true;
           throw_if(++p == pe, "invalid hexadecimal integer");
           throw_if(!is_hex(*p), "invalid hexadecimal integer");
-          while ((p != pe) && (std::isdigit(*p))) {
+          while ((p != pe) && (is_digit(*p))) {
             throw_if(!is_hex(*p), "invalid hexadecimal integer");
             ++p;
           }
@@ -381,10 +395,10 @@ namespace tfel::utilities {
         }
       }
     }
-    while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
+    while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
       if (*p == '\'') {
         throw_if(++p == pe, "invalid number");
-        throw_if(!std::isdigit(*p),
+        throw_if(!is_digit(*p),
                  std::string("expected digit, read '") + *p + '\'');
       }
       ++p;
@@ -396,11 +410,11 @@ namespace tfel::utilities {
       is_float = true;
       // the decimal part
       ++p;
-      while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
+      while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
         if (*p == '\'') {
           // C++14 digit separator
           throw_if(++p == pe, "invalid number");
-          throw_if(!std::isdigit(*p),
+          throw_if(!is_digit(*p),
                    std::string("expected digit, read '") + *p + '\'');
         }
         ++p;
@@ -419,12 +433,12 @@ namespace tfel::utilities {
           }
           throw_if(++p == pe, "invalid number");
         }
-        throw_if(!(std::isdigit(*p)), "invalid number");
+        throw_if(!(is_digit(*p)), "invalid number");
         ++p;
-        while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
+        while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
           if (*p == '\'') {
             throw_if(++p == pe, "invalid number");
-            throw_if(!std::isdigit(*p),
+            throw_if(!is_digit(*p),
                      std::string("expected digit, read '") + *p + '\'');
           }
           ++p;
@@ -498,7 +512,7 @@ namespace tfel::utilities {
     if ((p != pe) && (*p == '_')) {
       throw_if(++p == pe, "invalid user litteral");
       while (p != pe) {
-        if (!((isalpha(*p)) || std::isdigit(*p) || (*p == '_'))) {
+        if (!((is_alpha(*p)) || is_digit(*p) || (*p == '_'))) {
           break;
         }
         ++p;
@@ -571,7 +585,7 @@ namespace tfel::utilities {
     } else {
       if (p != e) {
         auto ps = std::prev(e);
-        while ((std::isspace(*ps)) && (ps != p)) {
+        while ((is_space(*ps)) && (ps != p)) {
           --ps;
         }
         ++ps;
@@ -731,9 +745,8 @@ namespace tfel::utilities {
           if (pn == pe) {
             throw_if(!this->allowStrayHashCharacter, "stray ‘#’");
           } else {
-            throw_if(
-                (!this->allowStrayHashCharacter) && (std::isalpha(*pn) == 0),
-                "stray ‘#’");
+            throw_if((!this->allowStrayHashCharacter) && (!is_alpha(*pn)),
+                     "stray ‘#’");
           }
           this->tokens.emplace_back("#", n, o, Token::Standard);
           advance(o, p, 1u);
@@ -743,7 +756,7 @@ namespace tfel::utilities {
                  "stray ‘\\’");
         this->tokens.emplace_back("\\", n, o, Token::Standard);
         advance(o, p, 1u);
-      } else if (std::isdigit(*p)) {
+      } else if (is_digit(*p)) {
         if (this->treatNumbers) {
           this->parseNumber(o, p, pe, n);
         } else {
@@ -797,8 +810,8 @@ namespace tfel::utilities {
                                     Token::Standard);
           advance(o, p, 2u);
         } else if ((*p == '-') && ((pn != pe) && (*pn == '>'))) {
-          auto pn2 = std::next(p);
-          if ((pn2 != pe) && (*pn == '*')) {
+          auto pn2 = std::next(pn);
+          if ((pn2 != pe) && (*pn2 == '*')) {
             this->tokens.emplace_back("->*", n, o, Token::Standard);
             advance(o, p, 3u);
           } else {
@@ -809,7 +822,7 @@ namespace tfel::utilities {
                     (is_separator_or_space(
                         this->dotAsSeparator, this->minusAsSeparator,
                         this->graveAccentAsSeparator)(*(std::prev(p))))) &&
-                   ((pn != pe) && ((*pn == '.') || (std::isdigit(*pn))))) {
+                   ((pn != pe) && ((*pn == '.') || (is_digit(*pn))))) {
           if (this->treatNumbers) {
             this->parseNumber(o, p, pe, n);
           } else {
@@ -835,7 +848,7 @@ namespace tfel::utilities {
         this->try_join(o, p, pe, n, '&');
       } else if (*p == '.') {
         auto pn = std::next(p);
-        if ((pn != pe) && (std::isdigit(*pn))) {
+        if ((pn != pe) && (is_digit(*pn))) {
           if (this->treatNumbers) {
             this->parseNumber(o, p, pe, n);
           } else {
@@ -973,9 +986,9 @@ namespace tfel::utilities {
         }
         p = this->tokens.erase(p);
       } else if (p->flag == Token::DoxygenBackwardComment) {
-        auto p2 = p;
-        --p2;
-        if (p2 != this->tokens.begin()) {
+        if (p != this->tokens.begin()) {
+          auto p2 = p;
+          --p2;
           if (p2->flag == Token::Standard) {
             p2->comment += p->value;
           }
@@ -988,6 +1001,9 @@ namespace tfel::utilities {
   }  // end of CxxTokenizer::stripComments
 
   void CxxTokenizer::printFileTokens(std::ostream &out) const {
+    if (this->tokens.empty()) {
+      return;
+    }
     auto p = this->tokens.begin();
     auto line = p->line;
     for (const auto &t : this->tokens) {
@@ -1005,14 +1021,14 @@ namespace tfel::utilities {
       return false;
     }
     auto p = s.begin();
-    if (std::isdigit(*p)) {
+    if (is_digit(*p)) {
       return false;
     }
     for (; p != s.end(); ++p) {
-      if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_')) {
+      if ((!is_alpha(*p)) && (!(is_digit(*p))) && (*p != '_')) {
         return false;
       }
-      if (isspace(*p)) {
+      if (is_space(*p)) {
         return false;
       }
     }
@@ -1030,15 +1046,14 @@ namespace tfel::utilities {
       return false;
     }
     auto p = s.begin();
-    if (std::isdigit(*p)) {
+    if (is_digit(*p)) {
       return false;
     }
     for (; p != s.end(); ++p) {
-      if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_') &&
-          (*p != ':')) {
+      if ((!is_alpha(*p)) && (!(is_digit(*p))) && (*p != '_') && (*p != ':')) {
         return false;
       }
-      if (isspace(*p)) {
+      if (is_space(*p)) {
         return false;
       }
       if (*p == ':') {
@@ -1051,7 +1066,7 @@ namespace tfel::utilities {
         if (++p == s.end()) {
           return false;
         }
-        if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_')) {
+        if ((!is_alpha(*p)) && (!(is_digit(*p))) && (*p != '_')) {
           return false;
         }
       }
@@ -1232,7 +1247,8 @@ namespace tfel::utilities {
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt",
                                     "expected number", p, pe);
     raise_if(p->flag != Token::Number,
-             "CxxTokenizer::readInt: given value is not a number (read " +
+             "CxxTokenizer::readUnsignedInt: given value is not a number "
+             "(read " +
                  p->value + ")");
     const auto value = [&p] {
       auto v = p->value;

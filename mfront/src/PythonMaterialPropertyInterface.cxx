@@ -366,7 +366,7 @@ namespace mfront {
     writeTFELVersionSymbol(srcFile, name);
     writeUnitSystemSymbol(srcFile, name, mpd);
     writeInterfaceSymbol(srcFile, name, "Python");
-    writeLawSymbol(srcFile, name, mpd.material);
+    writeLawSymbol(srcFile, name, mpd.law);
     writeMaterialSymbol(srcFile, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile, name,
                                      MaterialKnowledgeType::MATERIALPROPERTY);

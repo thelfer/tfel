@@ -584,6 +584,36 @@ namespace mfront {
     const auto& isvs = d.getIntegrationVariables();
     const auto nivs = mfront::getTypeSize(isvs);
     const auto& cb = this->bd.getCodeBlock(h, n);
+    // scaling of the rows of the matrix `m`, having `nc` columns, associated
+    // with the normalised integration variables (`p` is empty) or with the
+    // normalised implicit equations (`p` is "f"). `b` gives access to the
+    // members of the behaviour used as normalisation factors.
+    auto write_rows_scaling = [this, &os, h, &isvs](
+                                  const std::string& m,
+                                  const SupportedTypes::TypeSize& nc,
+                                  const std::string& p, const std::string& op,
+                                  const std::string& b) {
+      auto cr = SupportedTypes::TypeSize{};  // current row
+      for (const auto& iv : isvs) {
+        auto nr = cr;  // next row
+        nr += mfront::getTypeSize(iv);
+        if (this->bd.hasAttribute(h, p + iv.name + "_normalisation_factor")) {
+          auto nf = this->bd.getAttribute<std::string>(
+              h, p + iv.name + "_normalisation_factor");
+          if (nf.starts_with("this->")) {
+            nf = b + nf.substr(6);
+          }
+          os << "for(ushort mfront_idx = " << cr << "; mfront_idx != " << nr
+             << "; ++mfront_idx){\n"
+             << "for(ushort mfront_idx2 = 0; mfront_idx2 != " << nc
+             << "; ++mfront_idx2){\n"
+             << m << "(mfront_idx, mfront_idx2) " << op << " " << nf << ";\n"
+             << "}\n"
+             << "}\n";
+        }
+        cr = nr;
+      }
+    };
     if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
       os << "TinyPermutation<" << nivs << "> jacobian_permutation;\n"
          << "if(!TinyMatrixSolve<" << nivs << ", NumericType, false>"
@@ -605,12 +635,14 @@ namespace mfront {
          << ", NumericType>::size_type mfront_idx=0; mfront_idx != " << nivs
          << "; ++mfront_idx){\n"
          << "jacobian_invert(mfront_idx, mfront_idx) = NumericType(1);\n"
-         << "}\n"
-         << "if(!TinyMatrixSolve<" << nivs
+         << "}\n";
+      write_rows_scaling("jacobian_invert", nivs, "f", "/=", "this->");
+      os << "if(!TinyMatrixSolve<" << nivs
          << ", NumericType, false>::back_substitute("
          << "this->jacobian, jacobian_permutation, jacobian_invert)){\n"
          << "return false;\n"
          << "}\n";
+      write_rows_scaling("jacobian_invert", nivs, "", "*=", "this->");
       auto cr = SupportedTypes::TypeSize{};  // current row
       for (const auto& iv1 : isvs) {
         auto cc = SupportedTypes::TypeSize{};  // current column
@@ -832,13 +864,17 @@ namespace mfront {
             }
           }
           os << "){\n"
-             << rhs_type << " mfront_local_lhs(-(this->mfront_local_rhs));\n"
-             << "if(!tfel::math::TinyMatrixSolve<" << nivs
+             << rhs_type << " mfront_local_lhs(-(this->mfront_local_rhs));\n";
+          write_rows_scaling("mfront_local_lhs", nc, "f",
+                             "/=", "this->behaviour.");
+          os << "if(!tfel::math::TinyMatrixSolve<" << nivs
              << ", NumericType, false>"
              << "::back_substitute(this->behaviour.jacobian, "
              << "this->mfront_local_permutation, mfront_local_lhs)){\n"
              << "this->mfront_success_reference=false;\n"
              << "}\n";
+          write_rows_scaling("mfront_local_lhs", nc, "",
+                             "*=", "this->behaviour.");
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (std::size_t i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
@@ -864,7 +900,7 @@ namespace mfront {
                  << v.name << "_dd" << givd.name << "_view;\n";
             } else {
               os << "for(typename " << rhs_type
-                 << "::size_type mfront_local_idx; mfront_local_idx !="
+                 << "::size_type mfront_local_idx = 0; mfront_local_idx !="
                  << v.arraySize << "; ++mfront_local_idx){\n"
                  << "integration_variable_derivative_d" << v.name << "_dd"
                  << givd.name
@@ -978,7 +1014,13 @@ namespace mfront {
         if (this->bd.hasAttribute(h, v.name + "_normalisation_factor")) {
           const auto& nf = this->bd.getAttribute<std::string>(
               h, v.name + "_normalisation_factor");
-          os << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
+          os << "partial_jacobian_" << v.name << " *= " << nf << ";\n";
+        }
+        if (this->bd.hasAttribute(
+                h, 'f' + isvs[0].name + "_normalisation_factor")) {
+          const auto& fnf = this->bd.getAttribute<std::string>(
+              h, 'f' + isvs[0].name + "_normalisation_factor");
+          os << "partial_jacobian_" << v.name << " /= " << fnf << ";\n";
         }
       }
       os << "return true;\n"
@@ -1074,6 +1116,18 @@ namespace mfront {
     }
     if (this->bd.hasCode(h, BehaviourData::ComputePredictor)) {
       os << this->bd.getCode(h, BehaviourData::ComputePredictor) << '\n';
+      // correct prediction to take into account normalisation factors
+      for (const auto& v : d.getIntegrationVariables()) {
+        if (this->integrationVariablesIncrementsUsedInPredictor.find('d' +
+                                                                     v.name) !=
+            this->integrationVariablesIncrementsUsedInPredictor.end()) {
+          if (this->bd.hasAttribute(h, v.name + "_normalisation_factor")) {
+            const auto& nf = this->bd.getAttribute<std::string>(
+                h, v.name + "_normalisation_factor");
+            os << "this->d" << v.name << " /= " << nf << ";\n";
+          }
+        }
+      }
     }
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingBegin(os, this->bd.getClassName(),
@@ -1298,7 +1352,7 @@ namespace mfront {
          << "::integrate() : convergence after \" "
          << "<< this->iter << \" iterations\\n\\n\";\n"
          << "}\n"
-         << "//! \brief method called when the resolution fails\n"
+         << "//! \\brief method called when the resolution fails\n"
          << "void reportFailure() const {\n"
          << "std::cout << \"" << this->bd.getClassName()
          << "::integrate() : no convergence after \" "
@@ -1316,7 +1370,8 @@ namespace mfront {
          << "two\\n\\n\";\n"
          << "}\n"
          << "/*!\n"
-         << " * \brief method called when the computation of a new correction\n"
+         << " * \\brief method called when the computation of a new "
+            "correction\n"
          << " * failed.\n"
          << " */\n"
          << "void reportNewCorrectionComputationFailure() const {\n"

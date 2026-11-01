@@ -15,6 +15,7 @@
 #define LIB_MFRONT_LOGSTREAM_HXX
 
 #include <string>
+#include <string_view>
 #include <iosfwd>
 
 #include "MFront/MFrontConfig.hxx"
@@ -54,6 +55,11 @@ namespace mfront {
    * \return the current logging stream
    */
   MFRONTLOGSTREAM_VISIBILITY_EXPORT std::ostream& getLogStream();
+  /*!
+   * \brief report a warning
+   * \param[in] msg: the warning message
+   */
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT void reportWarning(std::string_view msg);
 
   /*!
    * set the current logging stream
