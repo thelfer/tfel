@@ -810,7 +810,7 @@ namespace mfront {
              "STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
           << "stensor<3u,real> eto0(ivs0+" << nivs << ");\n"
           << "stensor<3u,real> T;\n"
-          << "tfel::fsalgo::copy<6u>::exe(ivs1+" << nivs + 6
+          << "tfel::fsalgo::copy<6u>::exe(ivs0+" << nivs + 6
           << ",T.begin());\n";
     }
     out << "auto eto1 = lsh1.getHenckyLogarithmicStrain();\n";

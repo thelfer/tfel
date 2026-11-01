@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_ABAQUS_ABAQUSDATA_HXX
 #define LIB_MFRONT_ABAQUS_ABAQUSDATA_HXX
 
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/Abaqus/Abaqus.hxx"
 
 namespace abaqus {

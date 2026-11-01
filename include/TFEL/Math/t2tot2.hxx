@@ -263,6 +263,16 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto computeDeterminantSecondDerivative(
       const TensorType&) noexcept
       requires(isScalar<numeric_type<TensorType>>());
+  /*!
+   * \brief compute the derivative of the adjugate of a tensor,
+   * \f$\det\left(F\right)\,F^{-1}\f$, i.e. of the result of
+   * `computeAdjugateDeterminantDerivative`
+   * \param[in] s: tensor
+   */
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantSecondDerivative(
+      const TensorType&) noexcept
+      requires(isScalar<numeric_type<TensorType>>());
 
   template <typename T, T2toST2Concept T2toST2Type>
   TFEL_HOST_DEVICE constexpr void convert(

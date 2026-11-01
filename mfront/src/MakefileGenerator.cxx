@@ -592,6 +592,9 @@ namespace mfront {
         for (const auto& dependency : target.second.deps) {
           m << " " << getTargetName(t, dependency);
         }
+        for (const auto& source : target.second.sources) {
+          m << " " << source;
+        }
         m << '\n';
         for (const auto& cmd : target.second.cmds) {
           m << "\t" << cmd << '\n';

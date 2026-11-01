@@ -49,6 +49,11 @@ namespace tfel::math {
           "Anderson<Field,real>::setAnderson: "
           "parameters already set");
     }
+    if (Nmax_i == 0) {
+      tfel::raise(
+          "Anderson<Field,real>::setAnderson: "
+          "invalid method order (null value)");
+    }
     this->w.clear();
     this->cM.resize(Nmax_i);
     this->w.resize(Nmax_i);
