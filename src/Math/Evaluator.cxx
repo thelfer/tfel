@@ -357,7 +357,12 @@ namespace tfel::math {
       }
       return std::make_shared<Evaluator>(f, this->manager);
     }();
-    const auto& fvars = pev->getVariablesNames();
+    // names of the variables of the differentiated function, ordered by
+    // position (getVariablesNames returns them in alphabetical order)
+    auto fvars = std::vector<std::string>(pev->positions.size());
+    for (const auto& [n, pos] : pev->positions) {
+      fvars[pos] = n;
+    }
     for (const auto& v : var) {
       throw_if(find(fvars.begin(), fvars.end(), v) == fvars.end(),
                "expression '" + f + "'can't be differentiated by variable '" +

@@ -36,16 +36,16 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenVectors<1u> {
     template <typename T>
-    static bool test(const T* const,
-                     const tfel::math::tvector<3u, T>&,
-                     const tfel::math::rotation_matrix<T>&) {
+    TFEL_HOST_DEVICE static bool test(const T* const,
+                                      const tfel::math::tvector<3u, T>&,
+                                      const tfel::math::rotation_matrix<T>&) {
       return true;
     }
 
     template <typename VectorType, typename T>
-    static bool computeEigenVector(VectorType& v,
-                                   const T* const s,
-                                   const T vp) {
+    TFEL_HOST_DEVICE static bool computeEigenVector(VectorType& v,
+                                                    const T* const s,
+                                                    const T vp) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<
                     numeric_type<VectorType>>::cond);
       static_assert(std::is_same_v<numeric_type<VectorType>, T>);
@@ -70,10 +70,10 @@ namespace tfel::math::internals {
     }
 
     template <typename T>
-    static bool exe(const T* const s,
-                    tfel::math::tvector<3u, T>& vp,
-                    tfel::math::rotation_matrix<T>& m,
-                    const bool) {
+    TFEL_HOST_DEVICE static bool exe(const T* const s,
+                                     tfel::math::tvector<3u, T>& vp,
+                                     tfel::math::rotation_matrix<T>& m,
+                                     const bool) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       vp = {s[0], s[1], s[2]};
@@ -85,9 +85,9 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenVectors<2u> {
     template <typename T>
-    static bool test(const T* const s,
-                     const tfel::math::tvector<3u, T>& vp,
-                     const tfel::math::rotation_matrix<T>& m) {
+    TFEL_HOST_DEVICE static bool test(const T* const s,
+                                      const tfel::math::tvector<3u, T>& vp,
+                                      const tfel::math::rotation_matrix<T>& m) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       using tfel::math::constexpr_fct::sqrt;
@@ -110,9 +110,9 @@ namespace tfel::math::internals {
     }
 
     template <typename VectorType, typename T>
-    static bool computeEigenVector(VectorType& v,
-                                   const T* const s,
-                                   const T vp) {
+    TFEL_HOST_DEVICE static bool computeEigenVector(VectorType& v,
+                                                    const T* const s,
+                                                    const T vp) {
       using namespace tfel::typetraits;
       static_assert(IsFundamentalNumericType<numeric_type<VectorType>>::cond);
       static_assert(std::is_same_v<numeric_type<VectorType>, T>);
@@ -131,10 +131,10 @@ namespace tfel::math::internals {
     }
 
     template <typename T>
-    static bool exe(const T* const s,
-                    tfel::math::tvector<3u, T>& vp,
-                    tfel::math::rotation_matrix<T>& vec,
-                    const bool) {
+    TFEL_HOST_DEVICE static bool exe(const T* const s,
+                                     tfel::math::tvector<3u, T>& vp,
+                                     tfel::math::rotation_matrix<T>& vec,
+                                     const bool) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       vp(2) = s[2];
@@ -162,7 +162,7 @@ namespace tfel::math::internals {
 
    private:
     template <typename T>
-    static void computeEigenValues(
+    TFEL_HOST_DEVICE static void computeEigenValues(
         const T s0, const T s1, const T s3, T& vp1, T& vp2) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
@@ -175,7 +175,7 @@ namespace tfel::math::internals {
     }
 
     template <typename T>
-    static bool computeEigenVector(
+    TFEL_HOST_DEVICE static bool computeEigenVector(
         const T s_0, const T s_1, const T s3, const T& vp, T& x, T& y) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
@@ -223,9 +223,9 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenVectors<3u> {
     template <typename T>
-    static bool test(const T* const s,
-                     const tfel::math::tvector<3u, T>& vp,
-                     const tfel::math::rotation_matrix<T>& m) {
+    TFEL_HOST_DEVICE static bool test(const T* const s,
+                                      const tfel::math::tvector<3u, T>& vp,
+                                      const tfel::math::rotation_matrix<T>& m) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       constexpr auto icste = Cste<T>::isqrt2;
@@ -266,9 +266,9 @@ namespace tfel::math::internals {
     }
 
     template <typename VectorType, typename T>
-    static bool computeEigenVector(VectorType& v,
-                                   const T* const src,
-                                   const T vp) {
+    TFEL_HOST_DEVICE static bool computeEigenVector(VectorType& v,
+                                                    const T* const src,
+                                                    const T vp) {
       using namespace tfel::typetraits;
       static_assert(IsFundamentalNumericType<numeric_type<VectorType>>::cond);
       static_assert(std::is_same_v<numeric_type<VectorType>, T>);
@@ -278,19 +278,20 @@ namespace tfel::math::internals {
     }
 
     template <typename T>
-    static bool exe(const T* const s,
-                    tfel::math::tvector<3u, T>& vp,
-                    tfel::math::rotation_matrix<T>& vec,
-                    const bool b) {
+    TFEL_HOST_DEVICE static bool exe(const T* const s,
+                                     tfel::math::tvector<3u, T>& vp,
+                                     tfel::math::rotation_matrix<T>& vec,
+                                     const bool b) {
       StensorComputeEigenValues<3u>::exe(s, vp(0), vp(1), vp(2), b);
       vp = {vp(0), vp(1), vp(2)};
       return computeEigenVectors<T>(s, vp, vec);
     }
 
     template <typename T>
-    static bool computeEigenVectors(const T* const s,
-                                    const tfel::math::tvector<3u, T>& vp,
-                                    tfel::math::rotation_matrix<T>& vec) {
+    TFEL_HOST_DEVICE static bool computeEigenVectors(
+        const T* const s,
+        const tfel::math::tvector<3u, T>& vp,
+        tfel::math::rotation_matrix<T>& vec) {
       using namespace std;
       using tfel::math::tvector;
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
@@ -409,7 +410,9 @@ namespace tfel::math::internals {
 
    private:
     template <typename T>
-    static T conditionning_number(const T a, const T b, const T c) {
+    TFEL_HOST_DEVICE static T conditionning_number(const T a,
+                                                   const T b,
+                                                   const T c) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       auto tmp = a + b;
@@ -432,29 +435,29 @@ namespace tfel::math::internals {
     }
 
     template <typename T>
-    static T norm(const T& x0, const T& x1, const T& x2) {
+    TFEL_HOST_DEVICE static T norm(const T& x0, const T& x1, const T& x2) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       return std::sqrt(x0 * x0 + x1 * x1 + x2 * x2);
     }
 
     template <typename T>
-    static T norm2(const T x0, const T x1, const T x2) {
+    TFEL_HOST_DEVICE static T norm2(const T x0, const T x1, const T x2) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       return x0 * x0 + x1 * x1 + x2 * x2;
     }
 
     template <typename T>
-    static void cross_product(T& z0,
-                              T& z1,
-                              T& z2,
-                              const T x0,
-                              const T x1,
-                              const T x2,
-                              const T y0,
-                              const T y1,
-                              const T y2) {
+    TFEL_HOST_DEVICE static void cross_product(T& z0,
+                                               T& z1,
+                                               T& z2,
+                                               const T x0,
+                                               const T x1,
+                                               const T x2,
+                                               const T y0,
+                                               const T y1,
+                                               const T y2) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       z0 = x1 * y2 - x2 * y1;
@@ -463,7 +466,7 @@ namespace tfel::math::internals {
     }
 
     template <typename T>
-    static void find_perpendicular_vector(
+    TFEL_HOST_DEVICE static void find_perpendicular_vector(
         T& y0, T& y1, T& y2, const T x0, const T x1, const T x2) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
@@ -507,7 +510,7 @@ namespace tfel::math::internals {
     }
 
     template <typename T>
-    static bool computeEigenVector(
+    TFEL_HOST_DEVICE static bool computeEigenVector(
         const T* const src, const T vp, T& v0, T& v1, T& v2) {
       using namespace tfel::math;
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
