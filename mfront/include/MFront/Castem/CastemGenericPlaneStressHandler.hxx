@@ -11,6 +11,12 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Castem/CastemInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CASTEM_CALL_HXX
+#include "MFront/Castem/CastemInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_CASTEM_CASTEMGENERICPLANESTRESSHANDLER_HXX
 #define LIB_MFRONT_CASTEM_CASTEMGENERICPLANESTRESSHANDLER_HXX
 
@@ -19,10 +25,6 @@
 
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Math/tvector.hxx"
-
-#ifndef LIB_MFRONT_CASTEM_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CASTEM_CALL_HXX */
 
 namespace castem {
 
@@ -380,3 +382,5 @@ namespace castem {
 }  // end of namespace castem
 
 #endif /* LIB_MFRONT_CASTEM_CASTEMGENERICPLANESTRESSHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CASTEM_CALL_HXX */

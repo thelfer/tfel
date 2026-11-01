@@ -11,6 +11,12 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by TFEL/Math/stensor.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_TFEL_MATH_STENSOR_HXX
+#include "TFEL/Math/stensor.hxx"
+#else
+
 #ifndef LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX
 #define LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX
 
@@ -595,3 +601,5 @@ namespace tfel::math::internals {
 }  // namespace tfel::math::internals
 
 #endif /* LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX */
+
+#endif /* LIB_TFEL_MATH_STENSOR_HXX */
