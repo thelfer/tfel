@@ -645,7 +645,6 @@ namespace castem {
       CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
-      ThermalExpansionCoefficientCheck::exe(PROPS[12]);
       m.rotateStressesForward(STRESS, s);
       m.rotateDeformationGradientForward(F0, F0m);
       m.rotateDeformationGradientForward(F1, F1m);

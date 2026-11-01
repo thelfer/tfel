@@ -140,6 +140,8 @@ namespace tfel::math {
       std::string msg("Evaluator::checkParameterNumber: ");
       if (p == 0) {
         msg += "no parameter given";
+      } else if (p < n) {
+        msg += "too few parameters given";
       } else {
         msg += "too many parameters given";
       }
@@ -152,9 +154,11 @@ namespace tfel::math {
     if (p != n) {
       std::string msg("Evaluator::checkVariableNumber: ");
       if (p == 0) {
-        msg += "no parameter given";
+        msg += "no argument given";
+      } else if (p < n) {
+        msg += "too few arguments given";
       } else {
-        msg += "too many parameters given";
+        msg += "too many arguments given";
       }
       raise(msg);
     }
@@ -266,8 +270,8 @@ namespace tfel::math {
       }
       std::istringstream converter(*p);
       converter >> diffNumber;
-      throw_if(diffNumber <= 1,
-               "order of differentiation must be greater or egal than 1");
+      throw_if(diffNumber < 1,
+               "order of differentiation must be greater or equal than 1");
       ++p;
       Evaluator::readSpecifiedToken("Evaluator::treatDiff", ">", p, pe);
       Evaluator::checkNotEndOfExpression("Evaluator::treatDiff", "expected ')'",
@@ -303,7 +307,9 @@ namespace tfel::math {
         throw_if(*p != ",",
                  "unexpected token '" + *p + "' (expected ',' or ')')");
         ++p;
-        Evaluator::readSpecifiedToken("Evaluator::treatDiff", ")", p, pe);
+        Evaluator::checkNotEndOfExpression("Evaluator::treatDiff",
+                                           "expected variable name", p, pe);
+        throw_if(*p == ")", "expected variable name after ','");
       }
     }
     throw_if(var.empty(), "empty var list");
@@ -326,7 +332,12 @@ namespace tfel::math {
       }
       return std::make_shared<Evaluator>(f, this->manager);
     }();
-    const auto& fvars = pev->getVariablesNames();
+    // names of the variables of the differentiated function, ordered by
+    // position (getVariablesNames returns them in alphabetical order)
+    auto fvars = std::vector<std::string>(pev->positions.size());
+    for (const auto& [n, pos] : pev->positions) {
+      fvars[pos] = n;
+    }
     for (const auto& v : var) {
       throw_if(find(fvars.begin(), fvars.end(), v) == fvars.end(),
                "expression '" + f + "'can't be differentiated by variable '" +
@@ -685,7 +696,7 @@ namespace tfel::math {
       }
       if (*p == ")") {
         raise_if(openedParenthesis == 0,
-                 "Analyser::readNextGroup: "
+                 "Evaluator::search: "
                  "unbalanced parenthesis");
         --openedParenthesis;
       }
@@ -713,10 +724,10 @@ namespace tfel::math {
     auto pb = p;
     auto pbe = pe;
     checkNotEndOfExpression("Evaluator::treatLogicalExpression", pb, pbe);
-    const auto pa = this->search(pb, pbe, "&&", "");
     const auto po = this->search(pb, pbe, "||", "");
-    if ((pa.second != pe) || (po.second != pe)) {
-      auto pt = pa.first ? pa.second : po.second;
+    const auto pa = this->search(pb, pbe, "&&", "");
+    if (po.first || pa.first) {
+      auto pt = po.first ? po.second : pa.second;
       throw_if(pt == pb, "no left logical expression");
       throw_if(pt + 1 == pbe, "no right logical expression");
       auto lo = this->treatLogicalExpression(pb, pt, b);
@@ -730,12 +741,21 @@ namespace tfel::math {
       }
     }
     if (*pb == "(") {
-      --pbe;
-      Evaluator::checkNotEndOfExpression("Evaluator::treatLogicalExpression",
-                                         pb, pbe);
-      throw_if(*pbe != ")", "unmatched parenthesis");
-      ++pb;
-      return this->treatLogicalExpression(pb, pbe, b);
+      auto pc = pb;
+      unsigned short opened = 0;
+      for (; pc != pbe; ++pc) {
+        if (*pc == "(") {
+          ++opened;
+        } else if (*pc == ")") {
+          if (--opened == 0) {
+            break;
+          }
+        }
+      }
+      throw_if(pc == pbe, "unmatched parenthesis");
+      if (pc + 1 == pbe) {
+        return this->treatLogicalExpression(pb + 1, pc, b);
+      }
     }
     if (*pb == "!") {
       ++pb;
@@ -759,7 +779,7 @@ namespace tfel::math {
       }
       if (*p == ")") {
         raise_if(openedParenthesis == 0,
-                 "Analyser::readNextGroup: "
+                 "Evaluator::searchComparisonOperator: "
                  "unbalanced parenthesis");
         --openedParenthesis;
       }
@@ -838,7 +858,7 @@ namespace tfel::math {
       std::ostringstream msg;
       msg << "Evaluator::treatLogicalExpression : "
           << "no left part to logical operator (error while parsing '";
-      std::copy(p, pe, std::ostream_iterator<std::string>(msg, " "));
+      std::copy(pb, pe, std::ostream_iterator<std::string>(msg, " "));
       msg << "')";
       raise(msg.str());
     }

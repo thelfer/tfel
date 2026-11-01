@@ -151,7 +151,8 @@ namespace mfront::bbrick {
       const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
       i.code += "if(this->fn" + id + " + this->dfn" + id + " >= this->" +
                 fmax_n + "){\n";
-      i.code += "this->dfn" + id + " = this->" + fmax_n + " - this->fn;\n";
+      i.code +=
+          "this->dfn" + id + " = this->" + fmax_n + " - this->fn" + id + ";\n";
       i.code += "f" + f.name + " -= this->dfn" + id + ";\n";
       i.code += "} else {\n";
     }
@@ -220,7 +221,8 @@ namespace mfront::bbrick {
       c += "compute" + mn + "PorosityIncrement" +  //
            "(this->" + parameters + "," + p + "," + dp + ");\n";
       c += "this->dfn" + id + " = ";
-      c += "std::min(" + dfn_n + ", this->" + fmax_n + " - this->fn);\n";
+      c += "std::min(" + dfn_n + ", this->" + fmax_n + " - this->fn" + id +
+           ");\n";
     } else {
       c += "this->dfn" + id + " = compute" + mn + "PorosityIncrement" +  //
            "(this->" + parameters + "," + p + "," + dp + ");\n";

@@ -23,9 +23,10 @@ namespace tfel::system {
   ThreadedTaskResult<T>::ThreadedTaskResult() = default;
 
   template <typename T>
-  template <typename... Args>
+  template <typename... Args, typename>
   ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args)
-      : result(args...) {}  // end of ThreadedTaskResult
+      : result(std::in_place, std::forward<Args>(args)...) {
+  }  // end of ThreadedTaskResult
 
   template <typename T>
   ThreadedTaskResult<T>::ThreadedTaskResult(ThreadedTaskResult&&) = default;

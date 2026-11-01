@@ -31,7 +31,7 @@ struct ParserTest11 final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "ParserTest11") {
   }  // end of ParserTest11
   tfel::tests::TestResult execute() override {
-    this->check("12", "12");
+    this->check("12", "12.");
     for (const std::string f :
          {"H", "exp", "log", "log10", "ln", "cos", "sin", "tan", "acos", "asin",
           "atan", "cosh", "sinh", "tanh"}) {
@@ -40,13 +40,14 @@ struct ParserTest11 final : public tfel::tests::TestCase {
     for (const std::string f : {"min", "max"}) {
       this->check(f + "(x,y)", f + "(x,y)");
     }
-    this->check("power<0>(x)", "1");
+    this->check("power<0>(x)", "1.");
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     for (int i = 1; i != 16; ++i) {
       const auto p = "power<" + std::to_string(i) + ">";
       this->check(p + "(x)", "tfel::math::" + p + "(x)");
     }
 #endif /* !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+    this->check("x ** 17", "std::pow(x,17.)");
     for (const std::string op : {"+", "-", "*", "/"}) {
       this->check("a" + op + "b", "(a)" + op + "(b)");
     }
@@ -54,7 +55,7 @@ struct ParserTest11 final : public tfel::tests::TestCase {
     this->check("-a", "-(a)");
     this->check("x>y?2*y:x-1",
                 "((x)>(y)) ? "
-                "((2)*(y)) : ((x)-(1))");
+                "((2.)*(y)) : ((x)-(1.))");
     return this->result;
   }  // end of execute
  private:

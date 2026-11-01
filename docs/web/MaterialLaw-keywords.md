@@ -60,7 +60,7 @@ value.
 ## Example
 
 ~~~~{.cpp}
-@Constant A 1.234e56;
+@Constant A = 1.234e56;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

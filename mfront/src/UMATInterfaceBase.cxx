@@ -300,11 +300,15 @@ namespace mfront {
               f << dest << "[" << currentOffset << "+idx] = this->" << p->name
                 << "[idx];\n";
             }
-          } else if ((flag == SupportedTypes::TVECTOR) ||
-                     (flag == SupportedTypes::STENSOR) ||
-                     (flag == SupportedTypes::TENSOR)) {
+          } else if (flag == SupportedTypes::TVECTOR) {
+            f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
+              << "[" << currentOffset << "+idx*TVectorSize]);\n";
+          } else if (flag == SupportedTypes::STENSOR) {
             f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
               << "[" << currentOffset << "+idx*StensorSize]);\n";
+          } else if (flag == SupportedTypes::TENSOR) {
+            f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
+              << "[" << currentOffset << "+idx*TensorSize]);\n";
           } else {
             tfel::raise(
                 "UMATInterfaceBase::exportResults: "
@@ -1165,7 +1169,7 @@ namespace mfront {
             out << "mg.addInternalStateVariable(name,SupportedTypes::STENSOR,"
                    "&"
                    "mg_STATEV["
-                << ivoffset << "]+i);\n";
+                << ivoffset << "]+i*StensorSize);\n";
           }
           out << "}\n";
           if (flag == SupportedTypes::SCALAR) {

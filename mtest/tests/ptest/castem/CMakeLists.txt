@@ -41,6 +41,7 @@ endfunction(castemptest)
 
 castemptest(elasticity-linear)
 castemptest(elasticity-quadratic)
+castemptest(elasticity-cubic)
 castemptest(isotropic-elastic-linear)
 castemptest(isotropic-elastic-quadratic)
 castemptest(isotropic-elastic2-linear)

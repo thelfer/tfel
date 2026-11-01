@@ -17,9 +17,10 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <cassert>
-
+#include <type_traits>
+#include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/t2tost2.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
@@ -52,5 +53,11 @@ int main() {
   assert(abs(s3(3, 2) - 3.5) < 1.e-14);
   assert(abs(s3(3, 3) - 3.5) < 1.e-14);
 
+  // conversion of the derivative of the symmetric part of a tensor
+  const auto dsym = computeRateOfDeformationDerivative(tensor<3>::Id());
+  const st2tost2<3> s4 = st2tost2<3>::convert(dsym);
+  assert(abs(s4(3, 3) - 1) < 1.e-14);
+  assert(abs(s4(4, 4) - 1) < 1.e-14);
+  assert(abs(s4(5, 5) - 1) < 1.e-14);
   return EXIT_SUCCESS;
 }

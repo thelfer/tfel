@@ -165,7 +165,9 @@ namespace mfront {
            << "struct " << md.className << '\n'
            << "{\n"
            << "//! a simple alias\n"
-           << "typedef tfel::material::OutOfBoundsPolicy OutOfBoundsPolicy;\n";
+           << "typedef tfel::material::OutOfBoundsPolicy OutOfBoundsPolicy;\n"
+           << "//! the type of time increments\n"
+           << "using time = real;\n";
     if (md.constantMaterialProperties.empty()) {
       header << "//! default constructor\n"
              << md.className << "() = default;\n";

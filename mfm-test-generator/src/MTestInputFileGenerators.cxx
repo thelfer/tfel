@@ -248,7 +248,7 @@ namespace mfmtg {
       if (t.element_type == ClosedPipeTest::LINEAR) {
         os << "@ElementType 'Linear';\n";
       } else if (t.element_type == ClosedPipeTest::QUADRATIC) {
-        os << "@ElementType 'Quadratic'\n";
+        os << "@ElementType 'Quadratic';\n";
       } else {
         tfel::raise(
             "mfmtg::mtest::generateClosedPipeTest: "

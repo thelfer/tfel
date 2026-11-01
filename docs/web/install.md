@@ -241,12 +241,12 @@ $ CXX=icpc CC=icc FC=ifort F77=ifort cmake $srcdir -DCMAKE_BUILD_TYPE=Release -D
 
 Generation of the documentation can be controlled by the following options:
 
-- `enable-doxygen-doc`,which enable the generation of the doxygen
-  documentation (disabled by default)
-- `disable-reference-doc`, which disable the reference documentation
-  generation (enabled by default if `latex` of `pandoc` is found)
-- `disable-website`, which disables the generation of the `TFEL`
-  website (enabled by default if `pandoc` is found)
+- `enable-doxygen-doc`, which enables or disables the generation of the
+  doxygen documentation (disabled by default)
+- `enable-reference-doc`, which enables or disables the reference
+  documentation generation (disabled by default)
+- `enable-website`, which enables or disables the generation of the
+  `TFEL` website (enabled by default if `pandoc` is found)
 
 ### Localisation of the libraries
 
@@ -297,11 +297,11 @@ This option can be combined with the `TFEL_APPEND_VERSION` option.
 
 ### Selecting the `python` version
 
-A specific `python` version can be selected by setting the
-`Python_ADDITIONAL_VERSIONS`, as follows:
+A specific `python` interpreter can be selected by setting
+`Python_EXECUTABLE` (or `Python_ROOT_DIR`), as follows:
 
 ~~~~{.bash}
-cmake ../trunk/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
+cmake ../trunk/ -Denable-python-bindings=ON -DPython_EXECUTABLE=/usr/bin/python3.12 ...
 ~~~~
 
 ## Using the `configure` script
