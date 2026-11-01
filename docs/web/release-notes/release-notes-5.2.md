@@ -713,6 +713,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1233>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1231>
 
+## Issue 1229: [mfront] Expected-failure tests that fail for an unrelated reason
+
+For more details, see <https://github.com/thelfer/tfel/issues/1229>
+
 ## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
 
 For more details, see <https://github.com/thelfer/tfel/issues/1223>
