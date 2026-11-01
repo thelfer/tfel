@@ -313,7 +313,7 @@ namespace tfel::math {
       const rotation_matrix<T>& m,
       const T eps) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                             (isAssignableTo<
-                                BinaryOperationResult<base_type<T>, T, OpDiv>,
+                                BinaryOperationResult<T, T, OpDiv>,
                                 numeric_type<ST2toST2Type>>())) {
     tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe2(
         d, f, df, vp, m, eps);
@@ -342,7 +342,7 @@ namespace tfel::math {
       const rotation_matrix<T>& m,
       const T eps) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                             (isAssignableTo<
-                                BinaryOperationResult<base_type<T>, T, OpDiv>,
+                                BinaryOperationResult<T, T, OpDiv>,
                                 numeric_type<ST2toST2Type>>())) {
     tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe(
         d, f, df, vp, m, eps);
@@ -367,7 +367,7 @@ namespace tfel::math {
       const T eps,
       const bool b) const {
     const auto [vp, m] = this->template computeEigenVectors<es>(b);
-    st2tost2<N, T> r;
+    st2tost2<N, BinaryOperationResult<T, T, OpDiv>> r;
     stensor<N, T>::computeIsotropicFunctionDerivative(r, f, df, vp, m, eps);
     return r;
   }
@@ -384,7 +384,7 @@ namespace tfel::math {
     const auto [vp, m] = this->template computeEigenVectors<es>(b);
     const auto fv = map(f, vp);
     const auto dfv = map(df, vp);
-    std::pair<stensor<N, T>, st2tost2<N, T>> r;
+    std::pair<stensor<N, T>, st2tost2<N, BinaryOperationResult<T, T, OpDiv>>> r;
     r.first =
         stensor<N, T>::buildFromEigenValuesAndVectors(fv(0), fv(1), fv(2), m);
     stensor<N, T>::computeIsotropicFunctionDerivative(r.second, fv, dfv, vp, m,

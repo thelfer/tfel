@@ -19,6 +19,8 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
+#include "TFEL/Math/fsarray.hxx"
+#include "TFEL/Math/ST2toT2/ST2toT2Concept.hxx"
 
 namespace tfel::math {
 

@@ -19,7 +19,7 @@
 
 #include "omi_for_c.h"
 
-#if __cplusplus >= 201103L
+#if (__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))
 #include <mutex>
 #define HAVE_STD_MUTEX
 #define NULLPTR(X) nullptr
@@ -62,12 +62,12 @@ struct Mutex {
 struct lock {
   lock() {
     DWORD r = WaitForSingleObject(Mutex::getMutex().m, INFINITE);
-    if (r == WAIT_ABANDONED) {
+    if ((r == WAIT_ABANDONED) || (r == WAIT_FAILED)) {
       std::cerr << "vumat: abandonned mutex" << std::endl;
       std::exit(EXIT_FAILURE);
     }
   }
-  ~lock() { CloseHandle(Mutex::getMutex().m); }
+  ~lock() { ReleaseMutex(Mutex::getMutex().m); }
 };
 #endif /* HAVE_STD_MUTEX */
 

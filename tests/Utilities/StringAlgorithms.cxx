@@ -39,6 +39,7 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "ar", "u"), "foo bu");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "foo ", ""), "bar");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "", "test"), "foo bar");
+    TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "o", "a", 2), "foa bar");
     TFEL_TESTS_ASSERT(starts_with("foobar", "foo"));
     TFEL_TESTS_ASSERT(!starts_with("foobar", "bar"));
     TFEL_TESTS_ASSERT(ends_with("foobar", "bar"));
@@ -48,6 +49,8 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
     const auto s = "a:bbc::d";
     const auto tokens1 = tfel::utilities::tokenize(s, ':');
     const auto tokens2 = tfel::utilities::tokenize(s, ':', true);
+    TFEL_TESTS_ASSERT(tfel::utilities::tokenize(":a", ':').size() == 1);
+    TFEL_TESTS_ASSERT(tfel::utilities::tokenize("a:b", "").size() == 1);
     TFEL_TESTS_ASSERT(tokens1.size() == 3);
     if (tokens1.size() == 3) {
       TFEL_TESTS_ASSERT(tokens1[0] == "a");

@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_CALCULIX_CALCULIXDATA_HXX
 #define LIB_MFRONT_CALCULIX_CALCULIXDATA_HXX
 
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/CalculiX/CalculiX.hxx"
 
 namespace calculix {
