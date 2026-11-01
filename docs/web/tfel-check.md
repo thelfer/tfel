@@ -241,6 +241,10 @@ run the tests described in the considered input file.
 The `@Environment` keyword specifies a set of environment variables that
 will be defined accessible to the commands.
 
+If a variable is already defined, in the environment of `tfel-check`
+or earlier in the test file, the value is prepended to it, separated by
+`:`, as for search paths (`PATH`, `LD_LIBRARY_PATH`, etc.).
+
 ### The `@Command` keyword
 
 The `@Command` keyword specifies a command to be launched.

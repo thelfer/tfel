@@ -66,21 +66,18 @@ namespace tfel::material::homogenization::elasticity {
     using real = types::real<StressType>;
     const auto N = tab_f.size();
 
-    std::vector<StressType> tab_H;
-    for (std::size_t i = 0; i < N; i++) {
-      tab_H.push_back(
-          tab_mu[i] *
-          (real(d) * tab_K[i] / 2 + (d + 1) * (d - 2) * tab_mu[i] / real(d)) /
-          (tab_K[i] + 2 * tab_mu[i]));
-    }
+    const auto H = [](const StressType K, const StressType mu) {
+      return mu * (real(d) * K / 2 + (d + 1) * (d - 2) * mu / real(d)) /
+             (K + 2 * mu);
+    };
     auto mu_max = *std::max_element(tab_mu.begin(), tab_mu.end());
     auto mu_min = *std::min_element(tab_mu.begin(), tab_mu.end());
-    auto H_max = *std::max_element(tab_H.begin(), tab_H.end());
-    auto H_min = *std::min_element(tab_H.begin(), tab_H.end());
+    auto K_max = *std::max_element(tab_K.begin(), tab_K.end());
+    auto K_min = *std::min_element(tab_K.begin(), tab_K.end());
     auto K_star_min = 2 * (d - 1) / real(d) * mu_min;
     auto K_star_max = 2 * (d - 1) / real(d) * mu_max;
-    auto mu_star_min = H_min;
-    auto mu_star_max = H_max;
+    auto mu_star_min = H(K_min, mu_min);
+    auto mu_star_max = H(K_max, mu_max);
     using compliance = types::compliance<StressType>;
     StressType Ke_U;
     StressType mue_U;

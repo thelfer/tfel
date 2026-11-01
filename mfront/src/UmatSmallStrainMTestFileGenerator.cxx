@@ -99,12 +99,12 @@ namespace mfront {
       if (i < 3) {
         if (!((i == 2) &&
               (this->hypothesis == ModellingHypothesis::PLANESTRAIN))) {
-          os << "@ImposedStrain<evolution> 'E" << *p << "' {" << t0 << ":"
+          os << "@ImposedStrain<evolution> '" << *p << "' {" << t0 << ":"
              << this->eto[i] << "," << t1 << ":" << this->eto[i] + this->deto[i]
              << "};\n";
         }
       } else {
-        os << "@ImposedStrain<evolution> 'E" << *p << "' {" << t0 << ":"
+        os << "@ImposedStrain<evolution> '" << *p << "' {" << t0 << ":"
            << this->eto[i] * icste << "," << t1 << ":"
            << (this->eto[i] + this->deto[i]) * icste << "};\n";
       }

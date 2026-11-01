@@ -45,7 +45,7 @@ namespace tfel::material {
       return {real(0), real(0)};
     }
     const auto rp = p / params.en - 1;
-    const auto irp = std::max(rp, 1e-12);
+    const auto irp = std::max(rp, real(1e-12));
     const auto An = (params.fn) * std::pow(rp, params.m);
     // derivative of fn * rp^m: (m / en) * fn * rp^(m - 1)
     const auto dAn_dp = (params.m / params.en) * An / irp;

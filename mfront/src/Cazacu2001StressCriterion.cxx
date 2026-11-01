@@ -143,9 +143,8 @@ namespace mfront::bbrick {
             "- AxisymmetricalGeneralisedPlaneStrain\n"
             "- AxisymmetricalGeneralisedPlaneStress.");
       }
-    }
-    if (bd.getOrthotropicAxesConvention() ==
-        tfel::material::OrthotropicAxesConvention::PLATE) {
+    } else if (bd.getOrthotropicAxesConvention() ==
+               tfel::material::OrthotropicAxesConvention::PLATE) {
       for (const auto mh : bd.getModellingHypotheses()) {
         tfel::raise_if(
             ((mh != ModellingHypothesis::TRIDIMENSIONAL) &&
@@ -219,10 +218,8 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const StressPotential& sp,
       const Role r) const {
-    const auto an = StressCriterion::getVariableId(
-        "a", id, StressCriterion::STRESSCRITERION);
-    const auto bn = StressCriterion::getVariableId(
-        "b", id, StressCriterion::STRESSCRITERION);
+    const auto an = StressCriterion::getVariableId("a", id, r);
+    const auto bn = StressCriterion::getVariableId("b", id, r);
     const auto cn = StressCriterion::getVariableId("c", id, r);
     auto c = std::string{};
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
@@ -248,10 +245,8 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const StressPotential& sp,
       const Role r) const {
-    const auto an = StressCriterion::getVariableId(
-        "a", id, StressCriterion::STRESSCRITERION);
-    const auto bn = StressCriterion::getVariableId(
-        "b", id, StressCriterion::STRESSCRITERION);
+    const auto an = StressCriterion::getVariableId("a", id, r);
+    const auto bn = StressCriterion::getVariableId("b", id, r);
     const auto cn = StressCriterion::getVariableId("c", id, r);
     auto c = std::string{};
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {

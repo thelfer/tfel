@@ -1137,15 +1137,7 @@ namespace mfront {
             exportLogarithmicStrain1DFiniteStrainBehaviourSymbols(
                 this->getFunctionNameBasis(name + "_log1D"));
             if (fss.size() == 1u) {
-              sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
-              exportUnsignedShortSymbol(
-                  out,
-                  this->getFunctionNameBasis(name) + "_nModellingHypotheses",
-                  1u);
-              exportArrayOfStringsSymbol(
-                  out,
-                  this->getFunctionNameBasis(name) + "_ModellingHypotheses",
-                  {ModellingHypothesis::toString(agps)});
+              sg.generateGeneralSymbols(out, *this, mb, fd, {agps}, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
                 sg.generateSymbols(out, *this, mb, fd, name, uh);
@@ -2400,44 +2392,47 @@ namespace mfront {
     for (const auto& pv : v) {
       const auto flag = SupportedTypes::getTypeFlag(pv.type);
       std::string tmp;
-      tmp += "** - ";
       if (flag == SupportedTypes::SCALAR) {
         if (pv.arraySize == 1) {
-          tmp += pv.getExternalName();
+          tmp += "** - " + pv.getExternalName();
           tmp += ": " + treatScalar(pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
-            tmp += pv.getExternalName();
+            tmp += "** - " + pv.getExternalName() + "[" +
+                   std::to_string(j) + "]";
             tmp += ": " + treatScalar(pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TVECTOR) {
         if (pv.arraySize == 1) {
-          tmp += pv.getExternalName();
-          tmp += ": " + treatTVector(h, pv.name);
+          tmp += "** - " + pv.getExternalName();
+          tmp += ": " + treatTVector(h, pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
-            tmp += pv.getExternalName();
+            tmp += "** - " + pv.getExternalName() + "[" +
+                   std::to_string(j) + "]";
             tmp += ": " + treatTVector(h, pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::STENSOR) {
         if (pv.arraySize == 1) {
-          tmp += pv.getExternalName();
+          tmp += "** - " + pv.getExternalName();
           tmp += ": " + treatStensor(h, pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
-            tmp += pv.getExternalName();
+            tmp += "** - " + pv.getExternalName() + "[" +
+                   std::to_string(j) + "]";
             tmp += ": " + treatStensor(h, pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TENSOR) {
         if (pv.arraySize == 1) {
-          tmp += pv.getExternalName();
+          tmp += "** - " + pv.getExternalName();
           tmp += ": " + treatTensor(h, pv.name) + "\n";
         } else {
           for (unsigned short j = 0; j != pv.arraySize; ++j) {
-            tmp += pv.getExternalName();
+            tmp += "** - " + pv.getExternalName() + "[" +
+                   std::to_string(j) + "]";
             tmp += ": " + treatTensor(h, pv.name, j) + "\n";
           }
         }
@@ -2465,14 +2460,13 @@ namespace mfront {
       throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       std::string tmp;
-      tmp += "** - ";
       if (pm.arraySize == 1) {
-        tmp += pm.getExternalName();
+        tmp += "** - " + pm.getExternalName();
         tmp += ": " + treatScalar(pm.name) + "\n";
       } else {
         for (unsigned short j = 0; j != pm.arraySize; ++j) {
-          tmp += pm.getExternalName();
-          tmp += treatScalar(pm.name, j) + "\n";
+          tmp += "** - " + pm.getExternalName() + "[" + std::to_string(j) + "]";
+          tmp += ": " + treatScalar(pm.name, j) + "\n";
         }
       }
       out << tmp;
@@ -2926,7 +2920,8 @@ namespace mfront {
       out << "false;\n";
     }
     out << "static " << constexpr_c << " bool doSubSteppingOnInvalidResults = ";
-    if (this->doSubSteppingOnInvalidResults) {
+    if (mb.getAttribute<bool>(CastemInterface::doSubSteppingOnInvalidResults,
+                              false)) {
       out << "true;\n";
     } else {
       out << "false;\n";

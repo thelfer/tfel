@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_IXX
-#define LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_IXX
+#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX
+#define LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX
 
 #include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
 
@@ -44,4 +44,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_IXX */
+#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX */

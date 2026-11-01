@@ -141,7 +141,7 @@ namespace tfel::math {
     Evaluator();
     //! Copy constructor
     Evaluator(const Evaluator&);
-    //! Assignement operator constructor
+    //! Assignment operator
     Evaluator& operator=(const Evaluator&);
     /*!
      * \param const std::string&, function definition
@@ -209,6 +209,12 @@ namespace tfel::math {
      */
     virtual std::string getCxxFormula(
         const std::map<std::string, std::string>& = {}) const;
+    /*!
+     * \return the names of the variables, sorted in alphabetical order
+     * \note this order is not the order of the positions of the variables:
+     * the index of a name in the returned vector must not be used as a
+     * position
+     */
     virtual std::vector<std::string> getVariablesNames() const;
     std::vector<double>::size_type getNumberOfVariables() const override;
     virtual void checkCyclicDependency() const;

@@ -27,7 +27,7 @@ namespace tfel::math {
   std::ostream& operator<<(std::ostream& os, const runtime_array<T>& a) {
     os << "( ";
     for (const auto& v : a) {
-      os << a << " ";
+      os << v << " ";
     }
     os << ")";
     return os;

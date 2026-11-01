@@ -60,8 +60,8 @@ namespace tfel::math {
     auto is_infinite = [](const real x) {
       if constexpr (isQuantity<real>()) {
         return (ieee754::fpclassify(x.getValue()) == FP_INFINITE) ||
-               (x >= std::numeric_limits<base_type<real>>::max()) ||
-               (x <= -std::numeric_limits<base_type<real>>::max());
+               (x.getValue() >= std::numeric_limits<base_type<real>>::max()) ||
+               (x.getValue() <= -std::numeric_limits<base_type<real>>::max());
       } else {
         return (ieee754::fpclassify(x) == FP_INFINITE) ||
                (x >= std::numeric_limits<real>::max()) ||
@@ -146,9 +146,13 @@ namespace tfel::math {
     }
     auto is_infinite = [](const real x) {
       if constexpr (isQuantity<real>()) {
-        return ieee754::fpclassify(x.getValue()) == FP_INFINITE;
+        return (ieee754::fpclassify(x.getValue()) == FP_INFINITE) ||
+               (x.getValue() >= std::numeric_limits<base_type<real>>::max()) ||
+               (x.getValue() <= -std::numeric_limits<base_type<real>>::max());
       } else {
-        return ieee754::fpclassify(x) == FP_INFINITE;
+        return (ieee754::fpclassify(x) == FP_INFINITE) ||
+               (x >= std::numeric_limits<real>::max()) ||
+               (x <= -std::numeric_limits<real>::max());
       }
     };
     //
@@ -198,11 +202,11 @@ namespace tfel::math {
                                   std::invoke_result_t<FunctionType, real>,
                                   OpMult>>  //
   requires(std::is_invocable_v<FunctionType, real>) {
-    if (params.maximum_number_of_refinements == 0) {
-      return {};
-    }
     const auto [i, e] = this->integrate(f, a, b);
     if (e > params.absolute_tolerance) {
+      if (params.maximum_number_of_refinements == 0) {
+        return {};
+      }
       const auto n = params.maximum_number_of_refinements - 1;
       const auto c = std::midpoint(a, b);
       const auto oi1 =

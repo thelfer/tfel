@@ -56,7 +56,7 @@ namespace tfel::math {
         real(0);
     if (abs(s(0)) < eps) {
       dpp(0, 0) = one_half;
-      pp(0) = real(0);
+      pp(0) = NumType(0);
     } else if (s(0) > NumType(0)) {
       dpp(0, 0) = real(1);
       pp(0) = s(0);
@@ -66,7 +66,7 @@ namespace tfel::math {
     }
     if (abs(s(1)) < eps) {
       dpp(1, 1) = one_half;
-      pp(1) = real(0);
+      pp(1) = NumType(0);
     } else if (s(1) > NumType(0)) {
       dpp(1, 1) = real(1);
       pp(1) = s(1);
@@ -76,7 +76,7 @@ namespace tfel::math {
     }
     if (abs(s(2)) < eps) {
       dpp(2, 2) = one_half;
-      pp(2) = real(0);
+      pp(2) = NumType(0);
     } else if (s(2) > NumType(0)) {
       dpp(2, 2) = real(1);
       pp(2) = s(2);
@@ -125,24 +125,24 @@ namespace tfel::math {
       const NumType vpm = (vp(0) + vp(1)) * one_half;
       if (abs(vpm) < eps) {
         dpp = ((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * one_half;
-        pp = stensor<2u, NumType>(real(0));
+        pp = stensor<2u, NumType>(NumType(0));
       } else if (vpm > NumType(0)) {
         dpp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
         pp = vpm * (n0 + n1);
       } else {
         dpp = st2tost2<2u, real>(real(0));
-        pp = stensor<2u, NumType>(real(0));
+        pp = stensor<2u, NumType>(NumType(0));
       }
     } else {
       if (abs(vp(0)) < eps) {
         dpp = (n0 ^ n0) * one_half;
-        pp = stensor<2u, NumType>(real(0));
+        pp = stensor<2u, NumType>(NumType(0));
       } else if (vp(0) > NumType(0)) {
         dpp = (n0 ^ n0);
         pp = vp(0) * n0;
       } else {
         dpp = st2tost2<2u, real>(real(0));
-        pp = stensor<2u, NumType>(real(0));
+        pp = stensor<2u, NumType>(NumType(0));
       }
       if (abs(vp(1)) < eps) {
         dpp += (n1 ^ n1) * one_half;
@@ -150,12 +150,13 @@ namespace tfel::math {
         dpp += (n1 ^ n1);
         pp += vp(1) * n1;
       }
-      dpp += (stensor_ppos(vp(1)) - stensor_ppos(vp(0))) / (vp(1) - vp(0)) *
+      dpp += base_type_cast((stensor_ppos(vp(1)) - stensor_ppos(vp(0))) /
+                            (vp(1) - vp(0))) *
              (n01 ^ n01);
     }
     if (abs(vp(2)) < eps) {
       dpp += (n2 ^ n2) * one_half;
-    } else if (vp(2) > 0) {
+    } else if (vp(2) > NumType(0)) {
       dpp += (n2 ^ n2);
       pp(2) += vp(2);
     }
@@ -200,7 +201,7 @@ namespace tfel::math {
         pp = s;
       } else {
         dpp = st2tost2<3u, real>(real(0));
-        pp = stensor<3u, real>(real(0));
+        pp = stensor<3u, NumType>(NumType(0));
       }
     } else {
       const tvector<3u, real> v0 = m.template column_view<0u>();
@@ -233,7 +234,8 @@ namespace tfel::math {
           dpp += n2 ^ n2;
           pp += vp(2) * n2;
         }
-        dpp += (stensor_ppos(vpm) - stensor_ppos(vp(2))) / (vpm - vp(2)) *
+        dpp += base_type_cast((stensor_ppos(vpm) - stensor_ppos(vp(2))) /
+                              (vpm - vp(2))) *
                ((n02 ^ n02) + (n12 ^ n12));
       } else if (abs(vp(0) - vp(2)) < eps) {
         NumType vpm = (vp(0) + vp(2)) * one_half;
@@ -253,7 +255,8 @@ namespace tfel::math {
           dpp += (n1 ^ n1);
           pp += vp(1) * n1;
         }
-        dpp += (stensor_ppos(vpm) - stensor_ppos(vp(1))) / (vpm - vp(1)) *
+        dpp += base_type_cast((stensor_ppos(vpm) - stensor_ppos(vp(1))) /
+                              (vpm - vp(1))) *
                ((n01 ^ n01) + (n12 ^ n12));
       } else if (abs(vp(1) - vp(2)) < eps) {
         NumType vpm = (vp(1) + vp(2)) * one_half;
@@ -273,7 +276,8 @@ namespace tfel::math {
           dpp += (n0 ^ n0);
           pp += vp(0) * n0;
         }
-        dpp += (stensor_ppos(vpm) - stensor_ppos(vp(0))) / (vpm - vp(0)) *
+        dpp += base_type_cast((stensor_ppos(vpm) - stensor_ppos(vp(0))) /
+                              (vpm - vp(0))) *
                ((n01 ^ n01) + (n02 ^ n02));
       } else {
         // all eigenvalues are distincts
@@ -281,8 +285,9 @@ namespace tfel::math {
           dpp = (n0 ^ n0) * one_half;
           pp = stensor<3u, NumType>(NumType(0));
         } else if (vp(0) > NumType(0)) {
-          dpp = (n0 ^ n0) + vp(0) / (vp(0) - vp(1)) * (n01 ^ n01) +
-                vp(0) / (vp(0) - vp(2)) * (n02 ^ n02);
+          dpp = (n0 ^ n0) +
+                base_type_cast(vp(0) / (vp(0) - vp(1))) * (n01 ^ n01) +
+                base_type_cast(vp(0) / (vp(0) - vp(2))) * (n02 ^ n02);
           pp = vp(0) * n0;
         } else {
           dpp = st2tost2<3u, real>(real(0));
@@ -291,8 +296,9 @@ namespace tfel::math {
         if (abs(vp(1)) < eps) {
           dpp += (n1 ^ n1) * one_half;
         } else if (vp(1) > NumType(0)) {
-          dpp += (n1 ^ n1) + vp(1) / (vp(1) - vp(0)) * (n01 ^ n01) +
-                 vp(1) / (vp(1) - vp(2)) * (n12 ^ n12);
+          dpp += (n1 ^ n1) +
+                 base_type_cast(vp(1) / (vp(1) - vp(0))) * (n01 ^ n01) +
+                 base_type_cast(vp(1) / (vp(1) - vp(2))) * (n12 ^ n12);
           pp += vp(1) * n1;
         } else {
           dpp += st2tost2<3u, real>(real(0));
@@ -301,8 +307,9 @@ namespace tfel::math {
         if (abs(vp(2)) < eps) {
           dpp += (n2 ^ n2) * one_half;
         } else if (vp(2) > NumType(0)) {
-          dpp += (n2 ^ n2) + vp(2) / (vp(2) - vp(0)) * (n02 ^ n02) +
-                 vp(2) / (vp(2) - vp(1)) * (n12 ^ n12);
+          dpp += (n2 ^ n2) +
+                 base_type_cast(vp(2) / (vp(2) - vp(0))) * (n02 ^ n02) +
+                 base_type_cast(vp(2) / (vp(2) - vp(1))) * (n12 ^ n12);
           pp += vp(2) * n2;
         } else {
           dpp += st2tost2<3u, real>(real(0));
@@ -347,7 +354,7 @@ namespace tfel::math {
     if (abs(s(0)) < eps) {
       dpp(0, 0) = one_half;
       dnp(0, 0) = one_half;
-      pp(0) = np(0) = real(0);
+      pp(0) = np(0) = NumType(0);
     } else if (s(0) > NumType(0)) {
       dpp(0, 0) = real(1);
       dnp(0, 0) = real(0);
@@ -362,7 +369,7 @@ namespace tfel::math {
     if (abs(s(1)) < eps) {
       dpp(1, 1) = one_half;
       dnp(1, 1) = one_half;
-      pp(1) = np(1) = real(0);
+      pp(1) = np(1) = NumType(0);
     } else if (s(1) > NumType(0)) {
       dpp(1, 1) = real(1);
       dnp(1, 1) = real(0);
@@ -377,7 +384,7 @@ namespace tfel::math {
     if (abs(s(2)) < eps) {
       dpp(2, 2) = one_half;
       dnp(2, 2) = one_half;
-      pp(2) = np(2) = real(0);
+      pp(2) = np(2) = NumType(0);
     } else if (s(2) > NumType(0)) {
       dpp(2, 2) = real(1);
       dnp(2, 2) = real(0);
@@ -439,31 +446,31 @@ namespace tfel::math {
       const NumType vpm = (vp(0) + vp(1)) * one_half;
       if (abs(vpm) < eps) {
         dpp = dnp = ((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * one_half;
-        pp = np = stensor<2u, NumType>(real(0));
+        pp = np = stensor<2u, NumType>(NumType(0));
       } else if (vpm > NumType(0)) {
         dpp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
         dnp = st2tost2<2u, real>(real(0));
         pp = vpm * (n0 + n1);
-        np = stensor<2u, NumType>(real(0));
+        np = stensor<2u, NumType>(NumType(0));
       } else {
         dpp = st2tost2<2u, real>(real(0));
         dnp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
-        pp = stensor<2u, NumType>(real(0));
+        pp = stensor<2u, NumType>(NumType(0));
         np = vpm * (n0 + n1);
       }
     } else {
       if (abs(vp(0)) < eps) {
         dpp = dnp = (n0 ^ n0) * one_half;
-        pp = np = stensor<2u, NumType>(real(0));
+        pp = np = stensor<2u, NumType>(NumType(0));
       } else if (vp(0) > NumType(0)) {
         dpp = (n0 ^ n0);
         dnp = st2tost2<2u, real>(real(0));
         pp = vp(0) * n0;
-        np = stensor<2u, NumType>(real(0));
+        np = stensor<2u, NumType>(NumType(0));
       } else {
         dpp = st2tost2<2u, real>(real(0));
         dnp = (n0 ^ n0);
-        pp = stensor<2u, NumType>(real(0));
+        pp = stensor<2u, NumType>(NumType(0));
         np = vp(0) * n0;
       }
       if (abs(vp(1)) < eps) {
@@ -476,15 +483,17 @@ namespace tfel::math {
         dnp += (n1 ^ n1);
         np += vp(1) * n1;
       }
-      dpp += (stensor_ppos(vp(1)) - stensor_ppos(vp(0))) / (vp(1) - vp(0)) *
+      dpp += base_type_cast((stensor_ppos(vp(1)) - stensor_ppos(vp(0))) /
+                            (vp(1) - vp(0))) *
              (n01 ^ n01);
-      dnp += (stensor_pneg(vp(1)) - stensor_pneg(vp(0))) / (vp(1) - vp(0)) *
+      dnp += base_type_cast((stensor_pneg(vp(1)) - stensor_pneg(vp(0))) /
+                            (vp(1) - vp(0))) *
              (n01 ^ n01);
     }
     if (abs(vp(2)) < eps) {
       dpp += (n2 ^ n2) * one_half;
       dnp += (n2 ^ n2) * one_half;
-    } else if (vp(2) > 0) {
+    } else if (vp(2) > NumType(0)) {
       dpp += (n2 ^ n2);
       pp(2) += vp(2);
     } else {
@@ -540,10 +549,10 @@ namespace tfel::math {
         dpp = st2tost2<3u, real>::Id();
         pp = s;
         dnp = st2tost2<3u, real>(real(0));
-        np = stensor<3u, real>(real(0));
+        np = stensor<3u, NumType>(NumType(0));
       } else {
         dpp = st2tost2<3u, real>(real(0));
-        pp = stensor<3u, real>(real(0));
+        pp = stensor<3u, NumType>(NumType(0));
         dnp = st2tost2<3u, real>::Id();
         np = s;
       }
@@ -586,9 +595,11 @@ namespace tfel::math {
           dnp += n2 ^ n2;
           np += vp(2) * n2;
         }
-        dpp += (stensor_ppos(vpm) - stensor_ppos(vp(2))) / (vpm - vp(2)) *
+        dpp += base_type_cast((stensor_ppos(vpm) - stensor_ppos(vp(2))) /
+                              (vpm - vp(2))) *
                ((n02 ^ n02) + (n12 ^ n12));
-        dnp += (stensor_pneg(vpm) - stensor_pneg(vp(2))) / (vpm - vp(2)) *
+        dnp += base_type_cast((stensor_pneg(vpm) - stensor_pneg(vp(2))) /
+                              (vpm - vp(2))) *
                ((n02 ^ n02) + (n12 ^ n12));
       } else if (abs(vp(0) - vp(2)) < eps) {
         NumType vpm = (vp(0) + vp(2)) * one_half;
@@ -616,9 +627,11 @@ namespace tfel::math {
           dnp += (n1 ^ n1);
           np += vp(1) * n1;
         }
-        dpp += (stensor_ppos(vpm) - stensor_ppos(vp(1))) / (vpm - vp(1)) *
+        dpp += base_type_cast((stensor_ppos(vpm) - stensor_ppos(vp(1))) /
+                              (vpm - vp(1))) *
                ((n01 ^ n01) + (n12 ^ n12));
-        dnp += (stensor_pneg(vpm) - stensor_pneg(vp(1))) / (vpm - vp(1)) *
+        dnp += base_type_cast((stensor_pneg(vpm) - stensor_pneg(vp(1))) /
+                              (vpm - vp(1))) *
                ((n01 ^ n01) + (n12 ^ n12));
       } else if (abs(vp(1) - vp(2)) < eps) {
         NumType vpm = (vp(1) + vp(2)) * one_half;
@@ -646,9 +659,11 @@ namespace tfel::math {
           dnp += (n0 ^ n0);
           np += vp(0) * n0;
         }
-        dpp += (stensor_ppos(vpm) - stensor_ppos(vp(0))) / (vpm - vp(0)) *
+        dpp += base_type_cast((stensor_ppos(vpm) - stensor_ppos(vp(0))) /
+                              (vpm - vp(0))) *
                ((n01 ^ n01) + (n02 ^ n02));
-        dnp += (stensor_pneg(vpm) - stensor_pneg(vp(0))) / (vpm - vp(0)) *
+        dnp += base_type_cast((stensor_pneg(vpm) - stensor_pneg(vp(0))) /
+                              (vpm - vp(0))) *
                ((n01 ^ n01) + (n02 ^ n02));
       } else {
         // all eigenvalues are distincts
@@ -658,15 +673,17 @@ namespace tfel::math {
           pp = stensor<3u, NumType>(NumType(0));
           np = stensor<3u, NumType>(NumType(0));
         } else if (vp(0) > NumType(0)) {
-          dpp = (n0 ^ n0) + vp(0) / (vp(0) - vp(1)) * (n01 ^ n01) +
-                vp(0) / (vp(0) - vp(2)) * (n02 ^ n02);
+          dpp = (n0 ^ n0) +
+                base_type_cast(vp(0) / (vp(0) - vp(1))) * (n01 ^ n01) +
+                base_type_cast(vp(0) / (vp(0) - vp(2))) * (n02 ^ n02);
           dnp = st2tost2<3u, real>(real(0));
           pp = vp(0) * n0;
           np = stensor<3u, NumType>(NumType(0));
         } else {
           dpp = st2tost2<3u, real>(real(0));
-          dnp = (n0 ^ n0) + vp(0) / (vp(0) - vp(1)) * (n01 ^ n01) +
-                vp(0) / (vp(0) - vp(2)) * (n02 ^ n02);
+          dnp = (n0 ^ n0) +
+                base_type_cast(vp(0) / (vp(0) - vp(1))) * (n01 ^ n01) +
+                base_type_cast(vp(0) / (vp(0) - vp(2))) * (n02 ^ n02);
           pp = stensor<3u, NumType>(NumType(0));
           np = vp(0) * n0;
         }
@@ -674,15 +691,17 @@ namespace tfel::math {
           dpp += (n1 ^ n1) * one_half;
           dnp += (n1 ^ n1) * one_half;
         } else if (vp(1) > NumType(0)) {
-          dpp += (n1 ^ n1) + vp(1) / (vp(1) - vp(0)) * (n01 ^ n01) +
-                 vp(1) / (vp(1) - vp(2)) * (n12 ^ n12);
+          dpp += (n1 ^ n1) +
+                 base_type_cast(vp(1) / (vp(1) - vp(0))) * (n01 ^ n01) +
+                 base_type_cast(vp(1) / (vp(1) - vp(2))) * (n12 ^ n12);
           dnp += st2tost2<3u, real>(real(0));
           pp += vp(1) * n1;
           np += stensor<3u, NumType>(NumType(0));
         } else {
           dpp += st2tost2<3u, real>(real(0));
-          dnp += (n1 ^ n1) + vp(1) / (vp(1) - vp(0)) * (n01 ^ n01) +
-                 vp(1) / (vp(1) - vp(2)) * (n12 ^ n12);
+          dnp += (n1 ^ n1) +
+                 base_type_cast(vp(1) / (vp(1) - vp(0))) * (n01 ^ n01) +
+                 base_type_cast(vp(1) / (vp(1) - vp(2))) * (n12 ^ n12);
           pp += stensor<3u, NumType>(NumType(0));
           np += vp(1) * n1;
         }
@@ -690,15 +709,17 @@ namespace tfel::math {
           dpp += (n2 ^ n2) * one_half;
           dnp += (n2 ^ n2) * one_half;
         } else if (vp(2) > NumType(0)) {
-          dpp += (n2 ^ n2) + vp(2) / (vp(2) - vp(0)) * (n02 ^ n02) +
-                 vp(2) / (vp(2) - vp(1)) * (n12 ^ n12);
+          dpp += (n2 ^ n2) +
+                 base_type_cast(vp(2) / (vp(2) - vp(0))) * (n02 ^ n02) +
+                 base_type_cast(vp(2) / (vp(2) - vp(1))) * (n12 ^ n12);
           dnp += st2tost2<3u, real>(real(0));
           pp += vp(2) * n2;
           np += stensor<3u, NumType>(NumType(0));
         } else {
           dpp += st2tost2<3u, real>(real(0));
-          dnp += (n2 ^ n2) + vp(2) / (vp(2) - vp(1)) * (n02 ^ n02) +
-                 vp(2) / (vp(2) - vp(1)) * (n12 ^ n12);
+          dnp += (n2 ^ n2) +
+                 base_type_cast(vp(2) / (vp(2) - vp(0))) * (n02 ^ n02) +
+                 base_type_cast(vp(2) / (vp(2) - vp(1))) * (n12 ^ n12);
           pp += stensor<3u, NumType>(NumType(0));
           np += vp(2) * n2;
         }

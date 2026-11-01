@@ -382,9 +382,11 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights\n"
       << " * reserved.\n"
       << " * This project is publicly released under either the GNU GPL "
-         "Licence\n"
-      << " * or the CECILL-A licence. A copy of thoses licences are delivered\n"
-      << " * with the sources of TFEL. CEA or EDF may also distribute this\n"
+         "Licence with\n"
+      << " * linking exception or the CECILL-A licence. A copy of thoses "
+         "licences are\n"
+      << " * delivered with the sources of TFEL. CEA or EDF may also "
+         "distribute this\n"
       << " * project under specific licensing conditions.\n"
       << " */\n"
       << '\n'
@@ -420,19 +422,17 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
          << " * \\return true if the glossary contains the given name or key\n"
          << " * \\param[in] n: name\n"
          << " */\n"
-         << "bool\n"
+         << "[[nodiscard]] bool\n"
          << "contains(const std::string&) const;\n"
          << "/*!\n"
          << " * \\return the glossary entry associated with the given name or "
             "key\n"
          << " * \\param[in] n: name\n"
          << " */\n"
-         << "const GlossaryEntry&\n"
+         << "[[nodiscard]] const GlossaryEntry&\n"
          << "getGlossaryEntry(const std::string&) const;\n"
-         << "/*!\n"
-         << " * \\return all the registred keys\n"
-         << " */\n"
-         << "const std::vector<std::string>&\n"
+         << "//! \\return all the registred keys\n"
+         << "[[nodiscard]] const std::vector<std::string>&\n"
          << "getKeys() const;\n"
          << '\n'
          << "protected :\n";
@@ -460,13 +460,13 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << " * returned. \n"
       << " * \\param[in] n: name or key.\n"
       << "*/\n"
-      << "std::set<GlossaryEntry>::const_iterator\n"
+      << "[[nodiscard]] std::set<GlossaryEntry>::const_iterator\n"
       << "findGlossaryEntry(const std::string&) const;\n"
       << '\n'
-      << "//! \brief list of all registred entries\n"
+      << "//! \\brief list of all registred entries\n"
       << "std::set<GlossaryEntry> entries;\n"
       << '\n'
-      << "//! \brief list of all registred keys\n"
+      << "//! \\brief list of all registred keys\n"
       << "std::vector<std::string> keys;\n"
       << '\n'
       << "}; // end of struct Glossary\n"
@@ -798,6 +798,7 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer) {
 
       << '\n'
       << "#include <pybind11/pybind11.h>\n"
+      << "#include <pybind11/stl.h>\n"
       << "#include\"TFEL/Glossary/Glossary.hxx\"\n"
       << "#include\"TFEL/Glossary/GlossaryEntry.hxx\"\n"
       << '\n'
@@ -806,10 +807,14 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer) {
       << "void\ndeclareGlossary(pybind11::module_& m)\n"
       << "{\n"
       << "using namespace tfel::glossary;\n"
-      << "pybind11::class_<Glossary>(m, \"Glossary\")\n"
+      << "pybind11::class_<Glossary>(m, \"Glossary\",\n"
+      << "\"Structure in charge of handling the TFEL Glossary\")\n"
       << ".def_static(\"getGlossary\",Glossary::getGlossary,\n"
-      << "pybind11::return_value_policy::reference)\n"
-      << ".def(\"contains\",&Glossary::contains)\n";
+      << "pybind11::return_value_policy::reference,\n"
+      << "\"Return the unique instance of this class (singleton pattern)\")\n"
+      << ".def(\"contains\",&Glossary::contains,\n"
+      << "pybind11::arg(\"n\"),\n"
+      << "\"Return true if the glossary contains the given name or key\")\n";
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
     psrc << ".def_readonly_static(\"" << p->key << "\",&Glossary::" << p->key
          << ")\n";

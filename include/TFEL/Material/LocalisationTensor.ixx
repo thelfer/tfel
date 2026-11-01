@@ -275,8 +275,9 @@ namespace tfel::material::homogenization::elasticity {
     exe(const IsotropicModuli<StressType>& IM0,
         const tfel::math::st2tost2<2u, StressType>& C_i_loc,
         const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+        const tfel::math::tvector<2u, types::real<StressType>>&,
         const std::array<types::length<StressType>, 2u>& semiLengths) {
-      return computePlainStrainLocalisationTensor<StressType>(
+      return computePlaneStrainLocalisationTensor<StressType>(
           IM0, C_i_loc, n_a, semiLengths[0], semiLengths[1]);
     }
   };  // end of IsotropicLocalisationTensor<2u, StressType>

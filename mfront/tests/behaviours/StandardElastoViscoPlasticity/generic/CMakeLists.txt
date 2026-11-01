@@ -266,16 +266,18 @@ foreach(final_time 0.05 0.5 5 50 500 5000)
      MFrontStandardElastoViscoPlasticityBrickBehaviours
      "PlasticityTest22_nj"
      "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
-  generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt-${final_time}"
-     "RateSensitivityFactorTest-${final_time}"
-     MFrontStandardElastoViscoPlasticityBrickBehaviours3
-     "PlasticityTest22_qt"
-     "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
-  generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt_nj-${final_time}"
-     "RateSensitivityFactorTest-${final_time}"
-     MFrontStandardElastoViscoPlasticityBrickBehaviours3
-     "PlasticityTest22_qt_nj"
-     "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+  if(enable-mfront-quantity-tests)
+    generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt-${final_time}"
+       "RateSensitivityFactorTest-${final_time}"
+       MFrontStandardElastoViscoPlasticityBrickBehaviours3
+       "PlasticityTest22_qt"
+       "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+    generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt_nj-${final_time}"
+       "RateSensitivityFactorTest-${final_time}"
+       MFrontStandardElastoViscoPlasticityBrickBehaviours3
+       "PlasticityTest22_qt_nj"
+       "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+  endif(enable-mfront-quantity-tests)
   generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor-${final_time}"
      "RateSensitivityFactorTest-${final_time}"
      MFrontStandardElastoViscoPlasticityBrickBehaviours
@@ -286,15 +288,17 @@ foreach(final_time 0.05 0.5 5 50 500 5000)
      MFrontStandardElastoViscoPlasticityBrickBehaviours
      "PlasticityTest24_nj"
      "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
-  generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt-${final_time}"
-     "RateSensitivityFactorTest-${final_time}"
-     MFrontStandardElastoViscoPlasticityBrickBehaviours3
-     "PlasticityTest24_qt"
-     "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
-  generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt_nj-${final_time}"
-     "RateSensitivityFactorTest-${final_time}"
-     MFrontStandardElastoViscoPlasticityBrickBehaviours3
-     "PlasticityTest24_qt_nj"
-     "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+  if(enable-mfront-quantity-tests)
+    generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt-${final_time}"
+       "RateSensitivityFactorTest-${final_time}"
+       MFrontStandardElastoViscoPlasticityBrickBehaviours3
+       "PlasticityTest24_qt"
+       "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+    generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt_nj-${final_time}"
+       "RateSensitivityFactorTest-${final_time}"
+       MFrontStandardElastoViscoPlasticityBrickBehaviours3
+       "PlasticityTest24_qt_nj"
+       "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+  endif(enable-mfront-quantity-tests)
 endforeach()
 

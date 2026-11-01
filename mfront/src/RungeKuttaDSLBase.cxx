@@ -394,7 +394,7 @@ namespace mfront {
       this->throwRuntimeError(
           "RungeKuttaDSLBase::treatStressErrorNormalizationFactor",
           "defining the normalization factor for the stress error is only "
-          "meaningful if the Runge-Kutta algorithm has not been set.");
+          "meaningful for the rkCastem algorithm.");
     }
     if (this->mb.hasParameter(h, "stress_error_normalization_factor")) {
       this->throwRuntimeError(
@@ -527,9 +527,9 @@ namespace mfront {
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::treatAlgorithm",
                               this->current->value +
-                                  " is not a valid algorithm name"
+                                  " is not a valid algorithm name. "
                                   "Supported algorithms are : 'euler', 'rk2',"
-                                  " 'rk4', 'rk42' , 'rk54' and 'rkCastem'");
+                                  " 'rk4', 'rk42', 'rk54' and 'rkCastem'");
     }
     ++this->current;
     this->readSpecifiedToken("RungeKuttaDSLBase::treatAlgorithm", ";");
@@ -698,6 +698,7 @@ namespace mfront {
                       // initialisation
       // creating local variables
       const auto& ivs = d.getStateVariables();
+      const auto& aivs = d.getAuxiliaryStateVariables();
       const auto& evs = d.getExternalStateVariables();
       for (const auto& iv : ivs) {
         if (uvs.find(iv.name) != uvs.end()) {
@@ -720,6 +721,21 @@ namespace mfront {
           if (uvs.find(dv.name) != uvs.end()) {
             ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
           }
+        }
+      }
+      // auxiliary state variables computed by an external model
+      for (const auto& iv : aivs) {
+        if ((!iv.getAttribute<bool>("ComputedByExternalModel", false)) ||
+            (uvs.find(iv.name) == uvs.end())) {
+          continue;
+        }
+        const auto currentVarName = iv.name + "_";
+        if (this->mb.useDynamicallyAllocatedVector(iv.arraySize)) {
+          icb.code += "this->" + currentVarName + ".resize(" +
+                      std::to_string(iv.arraySize) + ");\n";
+        }
+        if ((algorithm != "RungeKutta4/2") && (algorithm != "RungeKutta5/4")) {
+          icb.code += "this->" + currentVarName + " = this->" + iv.name + ";\n";
         }
       }
       for (const auto& ev : evs) {

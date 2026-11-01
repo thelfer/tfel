@@ -235,10 +235,10 @@ namespace tfel::material {
       const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
       const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
       D(0, 0) = D1;
-      D(0, 1) = D2;
-      D(1, 0) = D2;
-      D(1, 1) = D1;
-      D(2, 2) = D(0, 2) = D(1, 2) = D(2, 0) = D(2, 1) = stress(T(0));
+      D(0, 2) = D2;
+      D(2, 0) = D2;
+      D(2, 2) = D1;
+      D(1, 1) = D(0, 1) = D(1, 0) = D(1, 2) = D(2, 1) = stress(T(0));
     }
     TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<1u, T, false>::StiffnessTensor& D,
@@ -248,10 +248,10 @@ namespace tfel::material {
       const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
       const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
       D(0, 0) = D1;
-      D(0, 1) = D2;
-      D(1, 0) = D2;
-      D(1, 1) = D1;
-      D(2, 2) = D(0, 2) = D(1, 2) = D(2, 0) = D(2, 1) = stress(T(0));
+      D(0, 2) = D2;
+      D(2, 0) = D2;
+      D(2, 2) = D1;
+      D(1, 1) = D(0, 1) = D(1, 0) = D(1, 2) = D(2, 1) = stress(T(0));
     }
   };  // end of struct ComputeAlteredElasticStiffnessBase
 

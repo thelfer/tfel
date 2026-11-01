@@ -63,12 +63,10 @@ namespace numodis {
     /*! \param iplane index of the glide plane                */
     //===========================================================
     void setIPlane(const std::vector<int>& iplane) {
-      int gcd = numodis::math::GCD(iplane);
+      _index = iplane;
+      int gcd = numodis::math::GCD(_index);
       if (gcd != 0)
-        for (unsigned i = 0; i != iplane.size(); i++)
-          _index[i] = iplane[i] / gcd;
-      else
-        for (unsigned i = 0; i != iplane.size(); i++) _index[i] = iplane[i];
+        for (unsigned i = 0; i != _index.size(); i++) _index[i] /= gcd;
     }
 
     //=============================================================

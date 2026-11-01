@@ -101,7 +101,7 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     };
     auto type_filter = [this] {
       const auto t = this->currentArgument->getOption();
-      if (t == "material_property") {
+      if ((t == "material_property") || (t == "material-property")) {
         this->query.type = EntryPoint::MATERIALPROPERTY;
       } else if (t == "behaviour") {
         this->query.type = EntryPoint::BEHAVIOUR;
@@ -139,7 +139,7 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
         "--filter-by-type",
         CallBack(
             "filter entry points by material knowledge type. Valid types are "
-            "material-property, behaviour or model",
+            "material_property, behaviour or model",
             type_filter, true));
     this->registerCallBack(
         "--verbose", CallBack("set verbose output", set_verbose_level, true));
