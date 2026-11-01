@@ -58,6 +58,11 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- `@RotationMatrix<Euler>` of `MTest` now gives the rotation described
+  by the Euler angles in the convention of Bunge, as the polycrystal
+  classes of `MFront` (see Issue #1270): the rotation matrix was the
+  Bunge matrix instead of its transpose, i.e. the inverse rotation was
+  applied.
 - `Evaluator::getVariablesNames` returns the names of the variables
   ordered by their positions (the order given to the constructor, or the
   order of their first appearance in the expression), instead of the
@@ -708,6 +713,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
+
+For more details, see <https://github.com/thelfer/tfel/issues/1270>
 
 ## Issue 1264: [tfel] Installed headers that cannot be compiled, 2D microstructure-based homogenisation, Windows installation pages
 
