@@ -6,6 +6,7 @@
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@AccelerationAlgorithm 'UAnderson';
 @Behaviour<castem,LogarithmicStrain1D> @library@ 'umatelasticity';
 
 @Real 'E'  150.e9;
