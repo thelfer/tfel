@@ -21,6 +21,7 @@
 #include "TFEL/TypeTraits/RealPartType.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/ExpressionTemplates/StandardOperations.hxx"
+#include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/Vector/VectorVectorDotProduct.hxx"
 
 namespace tfel::math {

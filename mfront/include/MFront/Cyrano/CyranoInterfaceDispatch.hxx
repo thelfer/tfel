@@ -11,6 +11,12 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Cyrano/CyranoInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CYRANO_CALL_HXX
+#include "MFront/Cyrano/CyranoInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_HXX
 #define LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_HXX
 
@@ -77,3 +83,5 @@ namespace cyrano {
 }  // end of namespace cyrano
 
 #endif /* LIB_MFRONT_CYRANO_CYRANOINTERFACEDISPATCH_HXX */
+
+#endif /* LIB_MFRONT_CYRANO_CALL_HXX */

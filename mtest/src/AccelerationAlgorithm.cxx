@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <limits>
 #include <sstream>
 #include "TFEL/Raise.hxx"
 #include "MTest/AccelerationAlgorithm.hxx"
@@ -19,14 +20,18 @@ namespace mtest {
 
   unsigned short AccelerationAlgorithm::convertToUnsignedShort(
       const std::string& m, const std::string& v) {
+    // the value is read as a signed integer so that negative values are
+    // detected, and only trailing white spaces are allowed after it
     std::istringstream converter(v);
-    unsigned short res;
+    auto res = long{};
     converter >> res;
-    tfel::raise_if((!converter) && (!converter.eof()),
+    tfel::raise_if((!converter) || (!(converter >> std::ws).eof()) ||
+                       (res < 0) ||
+                       (res > std::numeric_limits<unsigned short>::max()),
                    m + ": can't convert string '" + v +
                        "' "
                        "to unsigned short");
-    return res;
+    return static_cast<unsigned short>(res);
   }
 
   AccelerationAlgorithm::~AccelerationAlgorithm() = default;

@@ -20,6 +20,10 @@
 
 namespace tfel::math {
 
+  //! \brief forward declaration, see KrigingDefaultModels.hxx
+  template <unsigned short N, typename T, typename NM>
+  struct KrigingDefaultModel;
+
   /*!
    * Partial specialisation in 1D
    * \param T  : numeric type
