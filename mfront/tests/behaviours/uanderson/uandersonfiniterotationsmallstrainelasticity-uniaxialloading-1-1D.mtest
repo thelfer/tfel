@@ -6,6 +6,7 @@
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@AccelerationAlgorithm 'UAnderson';
 @Behaviour<umat> @library@ 'umatfiniterotationsmallstrainelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

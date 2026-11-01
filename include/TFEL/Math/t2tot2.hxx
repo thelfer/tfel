@@ -256,7 +256,7 @@ namespace tfel::math {
       const TensorConcept auto&) noexcept;
   /*!
    * \brief compute the second derivative of the determinant of a
-   * symmetric tensor
+   * tensor
    * \param[in] s: tensor
    */
   template <TensorConcept TensorType>
