@@ -713,6 +713,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1233>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1231>
 
+## Issue 1219: [mfront] Strain tolerance of the axisymmetric shear tests of orthotropic elasticity
+
+For more details, see <https://github.com/thelfer/tfel/issues/1219>
+
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
