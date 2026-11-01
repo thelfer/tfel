@@ -65,6 +65,10 @@ namespace tfel::utilities {
       }
       tmp += ": ";
       const auto lines = tokenize(c.second.d, '\n');
+      if (lines.empty()) {
+        // option without description
+        std::cout << tmp << '\n';
+      }
       for (const auto& l : lines) {
         std::cout << tmp << l << '\n';
         std::fill(tmp.begin(), tmp.end(), ' ');

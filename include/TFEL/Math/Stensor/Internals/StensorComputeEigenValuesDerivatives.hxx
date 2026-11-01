@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_INTERNALS_STENSORCOMPUTEEIGENVALUESDERIVATIVES_HXX
 #define LIB_TFEL_MATH_INTERNALS_STENSORCOMPUTEEIGENVALUESDERIVATIVES_HXX
 
+#include "TFEL/Math/Stensor/StensorConcept.hxx"
+
 namespace tfel::math::internals {
 
   template <unsigned short N>

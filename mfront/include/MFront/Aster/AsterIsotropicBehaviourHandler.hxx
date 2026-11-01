@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Aster/AsterBehaviourHandler.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
+#include "MFront/Aster/AsterBehaviourHandler.hxx"
+#else
+
 #ifndef LIB_MFRONT_ASTER_ASTERISOTROPICBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_ASTER_ASTERISOTROPICBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX */
 
 namespace aster {
 
@@ -68,3 +70,5 @@ namespace aster {
 }  // end of namespace aster
 
 #endif /* LIB_MFRONT_ASTER_ASTERISOTROPICBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX */

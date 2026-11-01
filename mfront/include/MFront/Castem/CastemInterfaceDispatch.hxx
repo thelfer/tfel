@@ -11,6 +11,12 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Castem/CastemInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CASTEM_CALL_HXX
+#include "MFront/Castem/CastemInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_HXX
 #define LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_HXX
 
@@ -458,3 +464,5 @@ namespace castem {
 }  // end of namespace castem
 
 #endif /* LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_HXX */
+
+#endif /* LIB_MFRONT_CASTEM_CALL_HXX */

@@ -30,6 +30,7 @@
 #include "TFEL/Material/MechanicalBehaviourTraits.hxx"
 #include "TFEL/Material/MaterialException.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 
 #include "MFront/Aster/Aster.hxx"
 #include "MFront/Aster/AsterConfig.hxx"

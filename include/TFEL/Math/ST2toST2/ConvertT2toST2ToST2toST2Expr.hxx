@@ -16,6 +16,8 @@
 
 #include "TFEL/FSAlgorithm/copy.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
+#include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
 
 namespace tfel::math {
 

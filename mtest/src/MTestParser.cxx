@@ -479,6 +479,9 @@ namespace mtest {
   }  // end of MTestParser::handleTest
 
   void MTestParser::handleRotationMatrix(MTest& t, tokens_iterator& p) {
+    // the columns of the rotation matrix are the material axes expressed in
+    // the global frame: this is the transpose of the Bunge matrix associated
+    // with the Euler angles (psi, the, phi), whose rows are the material axes
     auto from_euler = [](tfel::math::tmatrix<3, 3, real>& r, const real psi,
                          const real the, const real phi) {
       const real cospsi = std::cos(psi);
@@ -488,13 +491,13 @@ namespace mtest {
       const real sinthe = std::sin(the);
       const real sinphi = std::sin(phi);
       r(0, 0) = cosphi * cospsi - sinphi * costhe * sinpsi;
-      r(0, 1) = cosphi * sinpsi + sinphi * costhe * cospsi;
-      r(0, 2) = sinphi * sinthe;
-      r(1, 0) = -sinphi * cospsi - cosphi * costhe * sinpsi;
+      r(1, 0) = cosphi * sinpsi + sinphi * costhe * cospsi;
+      r(2, 0) = sinphi * sinthe;
+      r(0, 1) = -sinphi * cospsi - cosphi * costhe * sinpsi;
       r(1, 1) = -sinphi * sinpsi + cosphi * costhe * cospsi;
-      r(1, 2) = cosphi * sinthe;
-      r(2, 0) = sinthe * sinpsi;
-      r(2, 1) = -sinthe * cospsi;
+      r(2, 1) = cosphi * sinthe;
+      r(0, 2) = sinthe * sinpsi;
+      r(1, 2) = -sinthe * cospsi;
       r(2, 2) = costhe;
     };
     enum { STANDARD, EULER, MILLER, DIRECTION } choice = STANDARD;

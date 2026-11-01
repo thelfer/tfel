@@ -12,6 +12,7 @@
  */
 
 #include <vector>
+#include <limits>
 #include <memory>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -61,7 +62,19 @@ struct UAndersonAccelerationAlgorithm {
   using size_type = Field::size_type;
 
   UAndersonAccelerationAlgorithm(const size_type n, const size_type p)
-      : nfields(n), period(p) {}
+      : nfields(n), period(p) {
+    // the Anderson algorithm stores those values in an unsigned char
+    if ((n == 0) || (n > std::numeric_limits<unsigned char>::max())) {
+      tfel::raise(
+          "UAndersonAccelerationAlgorithm::UAndersonAccelerationAlgorithm: "
+          "invalid method order");
+    }
+    if (p > std::numeric_limits<unsigned char>::max()) {
+      tfel::raise(
+          "UAndersonAccelerationAlgorithm::UAndersonAccelerationAlgorithm: "
+          "invalid acceleration period");
+    }
+  }
 
   void initialize(const input_array& u) {
     check(u);
@@ -107,7 +120,19 @@ struct FAndersonAccelerationAlgorithm {
   using size_type = Field::size_type;
 
   FAndersonAccelerationAlgorithm(const size_type n, const size_type p)
-      : nfields(n), period(p) {}
+      : nfields(n), period(p) {
+    // the Anderson algorithm stores those values in an unsigned char
+    if ((n == 0) || (n > std::numeric_limits<unsigned char>::max())) {
+      tfel::raise(
+          "FAndersonAccelerationAlgorithm::FAndersonAccelerationAlgorithm: "
+          "invalid method order");
+    }
+    if (p > std::numeric_limits<unsigned char>::max()) {
+      tfel::raise(
+          "FAndersonAccelerationAlgorithm::FAndersonAccelerationAlgorithm: "
+          "invalid acceleration period");
+    }
+  }
 
   void initialize(const input_array& u) {
     const auto s = size(u);
