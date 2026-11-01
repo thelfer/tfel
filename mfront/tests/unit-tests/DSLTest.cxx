@@ -68,7 +68,8 @@ struct DSLTest final : public tfel::tests::TestCase {
                 "@StateVariable real v;");
     this->check("DefaultDSL",
                 "@MaterialProperty real v;"
-                "@StaticVariable   real v;");
+                "@StaticVariable   real v = 1;",
+                "name 'v' already");
     this->check("DefaultDSL",
                 "@MaterialProperty real v;"
                 "@Parameter v = 12;");
@@ -78,21 +79,28 @@ struct DSLTest final : public tfel::tests::TestCase {
           "strain"}) {
       for (const auto& t :
            {"MaterialProperty", "StateVariable", "AuxiliaryStateVariable",
-            "ExternalStateVariable", "StaticVariable"}) {
+            "ExternalStateVariable"}) {
         this->check("DefaultDSL",
                     "@" + std::string(t) + " real " + std::string(r) + ";");
       }
+      this->check("DefaultDSL",
+                  "@StaticVariable real " + std::string(r) + " = 1;",
+                  "name '" + std::string(r) + "' already");
       this->check("DefaultDSL", "@Parameter " + std::string(r) + ";");
     }
-    for (const auto& t :
-         {"MaterialProperty", "StateVariable", "AuxiliaryStateVariable",
-          "ExternalStateVariable", "StaticVariable"}) {
+    for (const auto& t : {"MaterialProperty", "StateVariable",
+                          "AuxiliaryStateVariable", "ExternalStateVariable"}) {
       this->check("Implicit", "@" + std::string(t) + " real eel;");
       this->check("RungeKutta", "@" + std::string(t) + " real eel;");
     }
+    this->check("Implicit", "@StaticVariable real eel = 1;",
+                "name 'eel' already");
+    this->check("RungeKutta", "@StaticVariable real eel = 1;",
+                "name 'eel' already");
     this->check("DefaultDSL",
-                "@RequiresStiffnessTensor;"
-                "@MaterialProperty real D;");
+                "@RequireStiffnessTensor;"
+                "@MaterialProperty real D;",
+                "name 'D' already");
     for (const auto& dsl : {"MaterialLaw", "Model"}) {
       this->check(dsl,
                   "@Input a;"
@@ -141,13 +149,13 @@ struct DSLTest final : public tfel::tests::TestCase {
                              " a;"
                              "a.setEntryName(\"?test\");");
         // multiple glossary/entry name definition
-        this->check(dsl, "@" + std::string(t) +
-                             " a;"
-                             "@" +
-                             std::string(t) +
-                             " b;"
-                             "a.setGlossaryName(\"Porosity\");"
-                             "b.setGlossaryName(\"Porosity\");");
+        this->check(dsl,
+                    "@" + std::string(t) +
+                        " a;"
+                        "@Input b;"
+                        "a.setGlossaryName(\"Porosity\");"
+                        "b.setGlossaryName(\"Porosity\");",
+                    "'Porosity' already");
         this->check(dsl, "@" + std::string(t) +
                              " a;"
                              "@Input b;"
