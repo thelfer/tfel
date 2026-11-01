@@ -256,6 +256,22 @@ Quantities were deeply refactored to:
 - improve error message,
 - reduce size of the generated symbols.
 
+## Adjugate of a tensor and its derivative
+
+The `computeAdjugateDeterminantDerivative` function returns the
+adjugate of a tensor, \(\det\left(F\right)\,F^{-1}\), i.e. the
+transpose of the derivative of the determinant returned by
+`computeDeterminantDerivative`. The
+`computeAdjugateDeterminantSecondDerivative` function returns its
+derivative, which `computeDeterminantSecondDerivative` returned in 2D
+and 3D before Issue #1262 (it now returns the second derivative of the
+determinant).
+
+~~~~{.cxx}
+const auto adj = computeAdjugateDeterminantDerivative(F);
+const auto dadj = computeAdjugateDeterminantSecondDerivative(F);
+~~~~
+
 # New `TFEL/Material` features
 
 ## Homogenization
