@@ -317,7 +317,7 @@ namespace tfel::math {
     struct ScalarViewImplementation<ScalarType, true> {
       using type = std::conditional_t<
           std::is_const_v<ScalarType>,
-          const qt_ref<
+          const_qt_ref<
               typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
               typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>,
           qt_ref<typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,

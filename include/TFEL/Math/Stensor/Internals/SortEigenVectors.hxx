@@ -35,9 +35,10 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(tfel::math::tvector<3u, T>&,
-                    tfel::math::tmatrix<3u, 3u, T>&,
-                    const EigenValuesOrdering) {}  // end of exe
+    TFEL_HOST_DEVICE static void exe(tfel::math::tvector<3u, T>&,
+                                     tfel::math::tmatrix<3u, 3u, T>&,
+                                     const EigenValuesOrdering) {
+    }  // end of exe
   };  // end of struct SortEigenVectors<1u>
   //! \brief partial specialisation of the `SortEigenVectors` in 2D
   template <>
@@ -51,9 +52,9 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(tfel::math::tvector<3u, T>& vp,
-                    tfel::math::tmatrix<3u, 3u, T>& m,
-                    const EigenValuesOrdering o) {
+    TFEL_HOST_DEVICE static void exe(tfel::math::tvector<3u, T>& vp,
+                                     tfel::math::tmatrix<3u, 3u, T>& m,
+                                     const EigenValuesOrdering o) {
       if (o == EigenValuesOrdering::ASCENDING) {
         if (vp(1) < vp(0)) {
           std::swap(vp(0), vp(1));
@@ -81,9 +82,9 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(tfel::math::tvector<3u, T>& vp,
-                    tfel::math::tmatrix<3u, 3u, T>& m,
-                    const EigenValuesOrdering o) {
+    TFEL_HOST_DEVICE static void exe(tfel::math::tvector<3u, T>& vp,
+                                     tfel::math::tmatrix<3u, 3u, T>& m,
+                                     const EigenValuesOrdering o) {
       using size_type = decltype(vp.size());
       size_type zero = 0;
       size_type one = 1;
