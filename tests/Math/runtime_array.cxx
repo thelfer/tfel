@@ -61,6 +61,13 @@ struct RuntimeArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(c[0] == 5);
     TFEL_TESTS_ASSERT(c[1] == 5);
     TFEL_TESTS_ASSERT(c[2] == 5);
+    // the assignement operators copy the size of the source
+    abc = a;
+    TFEL_TESTS_ASSERT(abc.size() == 3);
+    TFEL_TESTS_ASSERT(abc[2] == 5);
+    abc = tfel::math::runtime_array<int>(4, 1);
+    TFEL_TESTS_ASSERT(abc.size() == 4);
+    TFEL_TESTS_ASSERT(abc[3] == 1);
     // initialize from an std::initializer list
     tfel::math::runtime_array<int> d({1, 2, -3});
     TFEL_TESTS_ASSERT(d[0] == 1);

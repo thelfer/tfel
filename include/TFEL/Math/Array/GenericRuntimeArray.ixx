@@ -58,11 +58,9 @@ namespace tfel::math {
   GenericRuntimeArray<Child, ArrayPolicy>&
   GenericRuntimeArray<Child, ArrayPolicy>::operator=(
       const GenericRuntimeArray& src) {
-    //     checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-    //                                              src.getIndexingPolicy());
-    const auto f = makeMultiIndicesBinaryOperatorFunctor(
-        [](auto& a, const auto& b) { a = b; }, *this, src);
-    this->iterate(f);
+    static_cast<typename ArrayPolicy::IndexingPolicy&>(*this) =
+        src.getIndexingPolicy();
+    this->data_values = src.data_values;
     return *this;
   }  // end of GenericRuntimeArray
 
@@ -70,21 +68,9 @@ namespace tfel::math {
   GenericRuntimeArray<Child, ArrayPolicy>&
   GenericRuntimeArray<Child, ArrayPolicy>::operator=(
       GenericRuntimeArray&& src) noexcept {
-    //     checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-    //                                              src.getIndexingPolicy());
-    if constexpr (ArrayPolicy::IndexingPolicy::areDataContiguous) {
-      if (this->getContainerSize() == src.getContainerSize()) {
-        this->data_values.operator=(std::move(src.data_values));
-      } else {
-        const auto f = makeMultiIndicesBinaryOperatorFunctor(
-            [](auto& a, const auto& b) { a = b; }, *this, src);
-        this->iterate(f);
-      }
-    } else {
-      const auto f = makeMultiIndicesBinaryOperatorFunctor(
-          [](auto& a, const auto& b) { a = b; }, *this, src);
-      this->iterate(f);
-    }
+    static_cast<typename ArrayPolicy::IndexingPolicy&>(*this) =
+        src.getIndexingPolicy();
+    this->data_values = std::move(src.data_values);
     return *this;
   }  // end of GenericRuntimeArray
 
