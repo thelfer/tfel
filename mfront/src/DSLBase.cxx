@@ -73,15 +73,15 @@ namespace mfront {
       "disable_runtime_checks";
 
   bool isValidMaterialName(std::string_view n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
   bool isValidLibraryName(std::string_view n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
   bool isValidUserDefinedVariableName(std::string_view n) {
-    return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) &&
+    return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, false)) &&
            (!tfel::utilities::starts_with(n, "mfront_"));
   }  // end of isValidUserDefinedVariableName
 
@@ -197,6 +197,8 @@ namespace mfront {
             {DSLBase::initializationFromFileOption,
              "boolean stating if the values of parameters can be changed from "
              "an external file"},
+            {DSLBase::validatorOption,
+             "string specifying the validator of the implementation"},
             {DSLBase::buildIdentifierOption,
              "string specifying a build identifier. This option shall only be "
              "specified on the command line"},
@@ -289,16 +291,16 @@ namespace mfront {
       }
     }
     // treating external commands
-    for (const auto& c : ecmds) {
+    for (auto pc = ecmds.rbegin(); pc != ecmds.rend(); ++pc) {
       CxxTokenizer t;
       try {
-        t.parseString(c);
+        t.parseString(*pc);
       } catch (std::exception& e) {
         tfel::raise(
             "DSLBase::openFile : "
             "error while parsing external command "
             "'" +
-            c + "'\n" + std::string(e.what()));
+            *pc + "'\n" + std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(), t.begin(), t.end());
     }
@@ -659,7 +661,7 @@ namespace mfront {
   void DSLBase::registerIntegerConstant(const std::string& n,
                                         const size_t l,
                                         const int v) {
-    if (!this->isValidIdentifier(n)) {
+    if (!this->isValidIdentifier(n, false)) {
       this->throwRuntimeError("DSLBase::registerIntegerConstant",
                               "Variable name '" + n + "' is not valid.");
     }
@@ -959,7 +961,7 @@ namespace mfront {
   std::string DSLBase::readSpecifiedValue(const std::string& file,
                                           const std::string& value) {
     std::vector<std::string> values(1, value);
-    return this->readSpecifiedValues(file, values)[1];
+    return this->readSpecifiedValues(file, values)[0];
   }  // end of readSpecifiedValue
 
   std::vector<std::string> DSLBase::readSpecifiedValues(
@@ -997,18 +999,18 @@ namespace mfront {
         }
         throw_if(
             std::next(pt) == pte,
-            "unexepected end of file '" + file + "' (expected " + *p + ").\n",
-            (--pt)->line);
+            "unexpected end of file '" + file + "' (expected " + *p + ").\n",
+            pt->line);
         ++pt;
         const auto value = pt->value;
-        throw_if(pt->value == ";",
-                 "unexepected token ';' (exepected " + *p + ")", pt->line);
+        throw_if(pt->value == ";", "unexpected token ';' (expected " + *p + ")",
+                 pt->line);
         throw_if(std::next(pt) == pte,
-                 "unexepected end of file '" + file + "' (expected ';').\n",
-                 (--pt)->line);
+                 "unexpected end of file '" + file + "' (expected ';').\n",
+                 pt->line);
         ++pt;
         throw_if(pt->value != ";",
-                 "unexepected token '" + pt->value + "' (exepected ';')",
+                 "unexpected token '" + pt->value + "' (expected ';')",
                  pt->line);
         res[static_cast<std::vector<std::string>::size_type>(
             p - values.begin())] = value;
@@ -1072,9 +1074,11 @@ namespace mfront {
 
   void DSLBase::treatLonelySeparator() {
     if (getPedanticMode()) {
-      getLogStream() << this->fd.fileName << ":" << this->current->line << ":"
-                     << this->current->offset
-                     << ": warning: extra ‘;’ [-pedantic]\n";
+      const auto previous = std::prev(this->current);
+      auto msg = std::ostringstream{};
+      msg << this->fd.fileName << ":" << previous->line << ":"
+          << previous->offset << ": warning: extra ‘;’ [-pedantic]\n";
+      reportWarning(msg.str());
     }
   }  // end of treatLonelySperator
 
@@ -1126,7 +1130,7 @@ namespace mfront {
   void DSLBase::overrideUnitSystem(const std::string& d) {
     if (!this->overriden_unit_system.empty()) {
       this->throwRuntimeError("DSLBase::overrideUnitSystem",
-                              "the author is already overriden");
+                              "the unit system is already overriden");
     }
     this->overriden_unit_system = d;
     this->setUnitSystem(d);

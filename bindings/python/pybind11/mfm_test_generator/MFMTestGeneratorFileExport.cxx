@@ -26,6 +26,7 @@ static void mfmtg_loadMFMTestGeneratorFileContent(mfmtg::TestDescription& d,
 void declareMFMTestGeneratorFileExport(pybind11::module_& m) {
   //
   pybind11::class_<mfmtg::TestDescription>(m, "TestDescription")
+      .def(pybind11::init<>())
       .def_readwrite("name", &mfmtg::TestDescription::name)
       .def_readwrite("author", &mfmtg::TestDescription::author)
       .def_readwrite("date", &mfmtg::TestDescription::date)

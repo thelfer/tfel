@@ -57,7 +57,7 @@ namespace std {
 namespace mfront {
 
   bool isValidMaterialPropertyName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
   MaterialPropertyDSL::MaterialPropertyDSL(const DSLOptions& opts)
@@ -305,9 +305,7 @@ namespace mfront {
     while (p2 != p2e) {
       msg += "'" + *p2 + "'";
       if (++p2 != p2e) {
-        msg += ",";
-      } else {
-        msg += " and ";
+        msg += (std::next(p2) != p2e) ? ", " : " and ";
       }
     }
     return msg;
@@ -324,7 +322,7 @@ namespace mfront {
   void MaterialPropertyDSL::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::setMaterial",
-                              "material name alreay defined");
+                              "material name already defined");
     }
     if (!isValidMaterialName(m)) {
       this->throwRuntimeError("MaterialPropertyDSL::setMaterial",
@@ -347,7 +345,7 @@ namespace mfront {
   void MaterialPropertyDSL::treatLibrary() {
     if (!this->md.library.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
-                              "material name alreay defined");
+                              "library name already defined");
     }
     const auto& l = this->readOnlyOneToken();
     if (!isValidLibraryName(l)) {
@@ -361,7 +359,7 @@ namespace mfront {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatConstant",
                             "Cannot read variable name.");
     const auto name = this->current->value;
-    if (!isValidIdentifier(name)) {
+    if (!isValidIdentifier(name, false)) {
       this->throwRuntimeError("DSLBase::treatConstant",
                               "constant name '" + name + "' is not valid.");
     }
@@ -394,7 +392,7 @@ namespace mfront {
     //
     const auto sname = this->current->value;
     const auto name = tfel::unicode::getMangledString(sname);
-    if (!this->isValidIdentifier(name)) {
+    if (!this->isValidIdentifier(name, false)) {
       this->throwRuntimeError("DSLBase::treatParameter",
                               "parameter name '" + name + "' is not valid.");
     }
@@ -703,6 +701,9 @@ namespace mfront {
         throw_if(openedParenthesis == 0, "unbalanced parenthesis");
         --openedParenthesis;
         this->md.f.body += ")";
+        // a variable directly following a closing parenthesis starts the
+        // body of an if, for or while statement
+        newInstruction = (openedParenthesis == 0);
       } else if (this->current->value == ";") {
         this->md.f.body += ";";
         newInstruction = true;
@@ -752,7 +753,7 @@ namespace mfront {
           this->md.f.body +=
               tfel::unicode::getMangledString(this->current->value);
         }
-        newInstruction = false;
+        newInstruction = (var == "else") || (var == "do");
       }
       newLine = false;
     }
@@ -761,7 +762,11 @@ namespace mfront {
     throw_if(openedBrackets != 0,
              "parenthesis still opened at the end of function");
     throw_if(this->md.f.body.empty(), "empty function");
-    throw_if(!this->md.f.modified, "function does not modifiy output.");
+    throw_if(!this->md.f.modified, "function does not modify output.");
+    // the interfaces may write a preprocessor directive after the body
+    if (this->md.f.body.back() != '\n') {
+      this->md.f.body += '\n';
+    }
   }  // end of treatFunction
 
   void MaterialPropertyDSL::treatMethod() {
@@ -817,7 +822,7 @@ namespace mfront {
                                                 glossary.getGlossaryEntry(en));
         this->throwRuntimeError("MaterialPropertyDSL::treatMethod", msg.str());
       }
-      throw_if(!CxxTokenizer::isValidIdentifier(en),
+      throw_if(!CxxTokenizer::isValidIdentifier(en, false),
                "invalid entry name '" + en + "'");
       this->md.setEntryName(this->currentVar, en);
     } else if (methodName == "setDefaultValue") {
@@ -1027,7 +1032,7 @@ namespace mfront {
                               "output type'" + type + "' is not valid.");
     }
     const auto n = tfel::unicode::getMangledString(s);
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(n, false)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
                               "invalid output name.");
     }

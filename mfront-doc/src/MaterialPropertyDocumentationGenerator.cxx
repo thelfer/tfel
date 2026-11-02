@@ -84,6 +84,7 @@ namespace mfront {
     ndata.name = v.name;
     ndata.arraySize = v.arraySize;
     ndata.type = v.type;
+    ndata.externalName = v.name;
     ndata.description = v.description;
     data.push_back(ndata);
   }  // end of getData
@@ -281,11 +282,11 @@ namespace mfront {
                             ? mpd.className
                             : mpd.material + "_" + mpd.className;
       output_file.open(name + ".md");
-      output_file.exceptions(std::ios::badbit | std::ios::failbit);
       tfel::raise_if(!output_file,
                      "MaterialPropertyDocumentationGenerator::exe: "
-                     "could not open file 'src/" +
-                         name + ".txt'");
+                     "could not open file '" +
+                         name + ".md'");
+      output_file.exceptions(std::ios::badbit | std::ios::failbit);
       return output_file;
     }();
     DocumentationGeneratorBase::writeStandardLatexMacros(out);
@@ -311,8 +312,8 @@ namespace mfront {
       const MaterialPropertyDescription& mpd,
       const FileDescription& fd) const {
     using namespace tfel::utilities;
-    out << "# " << mfront::getMaterialLawLibraryNameBase(mpd) << mpd.className
-        << " material property description\n\n"
+    out << "# " << mfront::getMaterialLawLibraryNameBase(mpd) << '_'
+        << mpd.className << " material property description\n\n"
         << "* file   : " << fd.fileName << '\n'
         << "* author : ";
     if (!fd.authorName.empty()) {
@@ -364,7 +365,7 @@ namespace mfront {
     if (this->standalone) {
       out << "---\n"
           << "title: Description of material property "
-          << mfront::getMaterialLawLibraryNameBase(mpd) << mpd.className
+          << mfront::getMaterialLawLibraryNameBase(mpd) << '_' << mpd.className
           << '\n';
       if (!fd.authorName.empty()) {
         out << "author: " << fd.authorName << '\n';
@@ -427,7 +428,7 @@ namespace mfront {
       }
     }
     out << '\n';
-    printData(out, "Constantes", getData(mpd.staticVars), this->standalone);
+    printData(out, "Constants", getData(mpd.staticVars), this->standalone);
 
     const auto code = getCodeBlocksDocumentation(mpd, fd, this->standalone);
     if (!code.empty() != 0) {

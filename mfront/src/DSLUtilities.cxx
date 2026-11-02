@@ -346,33 +346,27 @@ namespace mfront {
       const mfront::MaterialPropertyDescription& mpd) {
     const auto prec = out.precision();
     out.precision(14);
+    // the bounds and the physical bounds are independent
     for (const auto& v : mpd.inputs) {
       if (v.arraySize == 1u) {
-        if (!v.hasBounds()) {
-          continue;
+        if (v.hasBounds()) {
+          writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
         }
-        writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
-        if (!v.hasPhysicalBounds()) {
-          continue;
+        if (v.hasPhysicalBounds()) {
+          writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
+                            v.getPhysicalBounds());
         }
-        writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
-                          v.getPhysicalBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasBounds(idx)) {
-            continue;
+          const auto n = v.getExternalName() + "_mfront_index_" +
+                         std::to_string(idx) + "_";
+          if (v.hasBounds(idx)) {
+            writeBoundsSymbol(out, name, n, "", v.getBounds(idx));
           }
-          writeBoundsSymbol(out, name,
-                            v.getExternalName() + "_mfront_index_" +
-                                std::to_string(idx) + "_",
-                            "", v.getBounds(idx));
-          if (!v.hasPhysicalBounds(idx)) {
-            continue;
+          if (v.hasPhysicalBounds(idx)) {
+            writeBoundsSymbol(out, name, n, "Physical",
+                              v.getPhysicalBounds(idx));
           }
-          writeBoundsSymbol(out, name,
-                            v.getExternalName() + "_mfront_index_" +
-                                std::to_string(idx) + "_",
-                            "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
@@ -709,22 +703,13 @@ namespace mfront {
 
   static void writeBoundsChecks(std::ostream& os,
                                 const VariableDescription& v,
+                                const VariableBoundsDescription& bounds,
                                 const std::string_view n,
                                 const std::string_view space_dimension,
                                 const std::string_view policy,
                                 const bool addThis,
                                 const bool checkEndOfTimeStepValue,
                                 const bool physicalBounds) {
-    if (physicalBounds) {
-      if (!v.hasPhysicalBounds()) {
-        return;
-      }
-    } else {
-      if (!v.hasBounds()) {
-        return;
-      }
-    }
-    const auto& bounds = physicalBounds ? v.getPhysicalBounds() : v.getBounds();
     const auto numeric_type = [&v] {
       if (v.isScalar()) {
         return v.type;
@@ -791,7 +776,22 @@ namespace mfront {
                          const std::string_view policy,
                          const bool addThis,
                          const bool checkEndOfTimeStepValue) {
-    writeBoundsChecks(os, v, n, space_dimension, policy, addThis,
+    if (!v.hasBounds()) {
+      return;
+    }
+    writeBoundsChecks(os, v, v.getBounds(), n, space_dimension, policy, addThis,
+                      checkEndOfTimeStepValue);
+  }  // end of writeBoundsChecks
+
+  void writeBoundsChecks(std::ostream& os,
+                         const VariableDescription& v,
+                         const VariableBoundsDescription& bounds,
+                         const std::string_view n,
+                         const std::string_view space_dimension,
+                         const std::string_view policy,
+                         const bool addThis,
+                         const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, bounds, n, space_dimension, policy, addThis,
                       checkEndOfTimeStepValue, false);
   }  // end of writeBoundsChecks
 
@@ -801,7 +801,21 @@ namespace mfront {
                                  const std::string_view space_dimension,
                                  const bool addThis,
                                  const bool checkEndOfTimeStepValue) {
-    writeBoundsChecks(os, v, n, space_dimension, "", addThis,
+    if (!v.hasPhysicalBounds()) {
+      return;
+    }
+    writePhysicalBoundsChecks(os, v, v.getPhysicalBounds(), n, space_dimension,
+                              addThis, checkEndOfTimeStepValue);
+  }  // end of writePhysicalBoundsChecks
+
+  void writePhysicalBoundsChecks(std::ostream& os,
+                                 const VariableDescription& v,
+                                 const VariableBoundsDescription& bounds,
+                                 const std::string_view n,
+                                 const std::string_view space_dimension,
+                                 const bool addThis,
+                                 const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, bounds, n, space_dimension, "", addThis,
                       checkEndOfTimeStepValue, true);
   }  // end of writePhysicalBoundsChecks
 

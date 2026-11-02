@@ -146,9 +146,11 @@ namespace mfront {
     if (p->value == "\u211D\u208A") {
       b.lowerBound = 0.;
       b.boundsType = VariableBoundsDescription::LOWER;
+      ++p;
     } else if (p->value == "\u211D\u208B") {
       b.upperBound = 0.;
       b.boundsType = VariableBoundsDescription::UPPER;
+      ++p;
     } else {
       if (p->value == "]") {
         ++p;
@@ -205,8 +207,8 @@ namespace mfront {
     }
     auto r = std::string{n.cbegin(), p};
     ++p;
-    throw_if(p == pe, "unexpected end of string 'n'");
-    throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
+    throw_if(p == pe, "unexpected end of string '" + n + "'");
+    throw_if(!std::isdigit(*p), "expected a digit in '" + n + "'");
     while ((p != pe) && (std::isdigit(*p))) {
       i *= 10;
       i += *p - '0';

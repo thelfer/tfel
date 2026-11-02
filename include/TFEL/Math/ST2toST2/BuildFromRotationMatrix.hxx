@@ -37,8 +37,8 @@ namespace tfel::math::st2tost2_internals {
      * \return the st2tost2 that has the same effect as applying
      * the rotation
      */
-    static TFEL_MATH_INLINE2 tfel::math::st2tost2<1u, T> exe(
-        const rotation_matrix<T>&) {
+    TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<1u, T> exe(
+        const rotation_matrix<T>&) noexcept {
       return tfel::math::st2tost2<1u, T>::Id();
     }
   };  // end of struct BuildFromRotationMatrix<1u>
@@ -52,8 +52,8 @@ namespace tfel::math::st2tost2_internals {
      * the rotation
      * \param[in] r : rotation matrix
      */
-    static TFEL_MATH_INLINE2 tfel::math::st2tost2<2u, T> exe(
-        const rotation_matrix<T>& r) {
+    TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<2u, T> exe(
+        const rotation_matrix<T>& r) noexcept {
       tfel::math::st2tost2<2u, T> s;
       constexpr auto cste = Cste<T>::sqrt2;
       constexpr T zero = T{0};
@@ -94,8 +94,8 @@ namespace tfel::math::st2tost2_internals {
      * the rotation
      * \param[in] r : rotation matrix
      */
-    static TFEL_MATH_INLINE2 tfel::math::st2tost2<3u, T> exe(
-        const rotation_matrix<T>& r) {
+    TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<3u, T> exe(
+        const rotation_matrix<T>& r) noexcept {
       constexpr auto cste = Cste<T>::sqrt2;
       tfel::math::st2tost2<3u, T> s;
       const T a = r(0, 0);

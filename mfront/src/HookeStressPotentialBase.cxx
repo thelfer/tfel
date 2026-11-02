@@ -360,7 +360,7 @@ namespace mfront::bbrick {
     bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sebdata");
     update(this->pss, "plane_stress_support");
     update(this->gto, "generic_tangent_operator");
-    update(this->gpo, "generic_tangent_operator");
+    update(this->gpo, "generic_prediction_operator");
     if (this->pss) {
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "etozz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "detozz");
@@ -482,9 +482,11 @@ namespace mfront::bbrick {
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
     // elastic strain
+    // `second` is true if `eel` is declared for at least one specialisation
+    // of the behaviour, `first` if it is declared for all of them
     const auto b = bd.checkVariableExistence("eel");
-    if (b.first) {
-      throw_if(!b.second,
+    if (b.second) {
+      throw_if(!b.first,
                "'eel' is not declared for all specialisation of the behaviour");
       bd.checkVariableExistence("eel", "IntegrationVariable");
       bd.checkVariableGlossaryName("eel", Glossary::ElasticStrain);
@@ -951,10 +953,10 @@ namespace mfront::bbrick {
             "dfetozz_ddetozz   = real(0);\n"
             "dfetozz_ddeel(2)  = 1;\n"
             "dfetozz_ddeel(0)  = (this->" +
-            D + "(1,0))/(this->" + D +
-            "(1,1));\n"
+            D + "(2,0))/(this->" + D +
+            "(2,2));\n"
             "dfetozz_ddeel(1)  = (this->" +
-            D + "(2,0))/(this->" + D + "(1,1));\n";
+            D + "(2,1))/(this->" + D + "(2,2));\n";
       }
     } else {
       if (bd.areElasticMaterialPropertiesDefined()) {

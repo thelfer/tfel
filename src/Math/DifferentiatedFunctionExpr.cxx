@@ -133,6 +133,7 @@ namespace tfel::math::parser {
     auto p = nargs.begin();
     for (const auto& a : this->args) {
       *p = a->clone(v);
+      ++p;
     }
     return std::make_shared<DifferentiatedFunctionExpr>(this->f, nargs,
                                                         this->pvar);
@@ -153,8 +154,9 @@ namespace tfel::math::parser {
     vector<string>::size_type i;
     nf = this->f->createFunctionByChangingParametersIntoVariables(vnames, v,
                                                                   params, pos);
-    raise_if(nf->getNumberOfVariables() <= this->args.size(),
-             "ExternalFunctionExpr::getValue: "
+    raise_if(nf->getNumberOfVariables() < this->args.size(),
+             "DifferentiatedFunctionExpr::"
+             "createFunctionByChangingParametersIntoVariables: "
              "internal error (function has less variable after "
              "'createFunctionByChangingParametersIntoVariables' "
              "than before");

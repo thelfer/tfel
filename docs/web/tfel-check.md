@@ -94,9 +94,8 @@ This file can can be launched as follows:
 $ tfel-check --@python@=python3.5 madnex.check
 entering directory '/tmp/madnex'
 * beginning of test './madnex.check'
-** Exec-1 python3.5 MadnexTest.py                                      [SUCCESS]
-** Exec-2 python3.5 OverridableImplementation.py                       [SUCCESS]
-** Exec-3 mfront-query --author --material=A316LN --behaviour=Plast... [SUCCESS]
+** Exec-1 python3.5 OverridableImplementation.py                       [SUCCESS]
+** Exec-2 mfront-query --author --material=A316LN --behaviour=Plast... [SUCCESS]
 * end of test './madnex.check'                                         [SUCCESS]
 ======
 ~~~~
@@ -108,8 +107,8 @@ This command produces several files:
 - `madnex.checklog`: this file contains a summary of the execution of
   the commands and test described in the `madnex.check` file. A similar
   file is created for each file considered by `tfel-check`.
-- Three files `madnex-Exec-1.out`, `madnex-Exec-2.out` and
-  `madnex-Exec-3.out` associated to the three commands listed in the
+- Two files `madnex-Exec-1.out` and `madnex-Exec-2.out` associated
+  to the two commands listed in the
   `madnex.check` file. Those files contain the output of each command
   and the execution time of the command.
 - `TEST-madnex.xml` is an `XML` file conforming the `JUnit` standard
@@ -124,9 +123,8 @@ marked as skipped:
 $ tfel-check
 entering directory '/tmp/madnex'
 * beginning of test './madnex.check'
-** Exec-1 @python@ MadnexTest.py                                       [SKIPPED]
-** Exec-2 @python@ OverridableImplementation.py                        [SKIPPED]
-** Exec-3 mfront-query --author --material=A316LN --behaviour=Plast... [SKIPPED]
+** Exec-1 @python@ OverridableImplementation.py                        [SKIPPED]
+** Exec-2 mfront-query --author --material=A316LN --behaviour=Plast... [SKIPPED]
 * end of test './madnex.check'                                         [SUCCESS]
 ======
 ~~~~
@@ -137,9 +135,8 @@ If the execution of a command fails, this is reported as follows:
 $ tfel-check --@python@=python2.7
 entering directory '/tmp/madnex'
 * beginning of test './madnex.check'
-** Exec-1 toto MadnexTest.py                                           [ FAILED]
-** Exec-2 toto OverridableImplementation.py                            [ FAILED]
-** Exec-3 mfront-query --author --material=A316LN --behaviour=Plast... [ FAILED]
+** Exec-1 toto OverridableImplementation.py                            [ FAILED]
+** Exec-2 mfront-query --author --material=A316LN --behaviour=Plast... [ FAILED]
 * end of test './madnex.check'                                         [ FAILED]
 ======
 ~~~~
@@ -211,6 +208,10 @@ run the tests described in the considered input file.
 
 The `@Environment` keyword specifies a set of environment variables that
 will be defined accessible to the commands.
+
+If a variable is already defined, in the environment of `tfel-check`
+or earlier in the test file, the value is prepended to it, separated by
+`:`, as for search paths (`PATH`, `LD_LIBRARY_PATH`, etc.).
 
 ### The `@Command` keyword
 

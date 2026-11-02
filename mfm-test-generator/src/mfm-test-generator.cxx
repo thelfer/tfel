@@ -76,6 +76,13 @@ namespace mfmtg {
      * \param[in] i: input file
      */
     void execute(const std::string& i) {
+      const auto ext = [&i]() -> std::string {
+        const auto pos = i.rfind('.');
+        if (pos != std::string::npos) {
+          return i.substr(pos);
+        }
+        return "";
+      }();
       if (tfel::utilities::starts_with(i, "madnex:")) {
 #ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
         this->treatMadnexPath(i);
@@ -84,15 +91,7 @@ namespace mfmtg {
             "MFMTestGenerator::execute: "
             "madnex support is not enabled");
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
-      }
-      const auto ext = [&i]() -> std::string {
-        const auto pos = i.rfind('.');
-        if (pos != std::string::npos) {
-          return i.substr(pos);
-        }
-        return "";
-      }();
-      if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
+      } else if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
 #ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
         this->treatMadnexInputFile(i);
 #else  /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
@@ -100,8 +99,9 @@ namespace mfmtg {
             "MFMTestGenerator::execute: "
             "madnex support is not enabled");
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
+      } else {
+        this->treatStandardInputFile(i);
       }
-      this->treatStandardInputFile(i);
     }  // end of execute
 
    private:

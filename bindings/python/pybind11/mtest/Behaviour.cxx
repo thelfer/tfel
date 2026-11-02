@@ -187,7 +187,6 @@ void declareBehaviour(pybind11::module_& m) {
            "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
-           "- d(tfel::utilities::Data): parameters\n"
            "- h(std::string): modelling hypothesis\n")
       .def("getBehaviourType", &Behaviour_getBehaviourType,
            "Return the behaviour type.\n"
@@ -264,6 +263,7 @@ void declareBehaviour(pybind11::module_& m) {
            "Return the type of an internal variable:\n"
            "- 0 means that the internal state variable is a scalar\n"
            "- 1 means that the internal state variable is a symmetric tensor\n"
+           "- 2 means that the internal state variable is a vector\n"
            "- 3 means that the internal state variable is a tensor\n")
       .def("getInternalStateVariablePosition",
            &Behaviour::getInternalStateVariablePosition,
@@ -281,6 +281,7 @@ void declareBehaviour(pybind11::module_& m) {
            "Return the type of an external variable:\n"
            "- 0 means that the external state variable is a scalar\n"
            "- 1 means that the external state variable is a symmetric tensor\n"
+           "- 2 means that the external state variable is a vector\n"
            "- 3 means that the external state variable is a tensor\n")
       .def("getExternalStateVariablePosition",
            &Behaviour::getExternalStateVariablePosition,

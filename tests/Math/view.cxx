@@ -179,7 +179,7 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     static_assert(std::same_as<scalar_view<const float>, const float&>);
     static_assert(std::same_as<scalar_view<time>, qt_ref<Time, double>>);
     static_assert(
-        std::same_as<scalar_view<const time>, const qt_ref<Time, double>>);
+        std::same_as<scalar_view<const time>, const_qt_ref<Time, double>>);
   }
 
   //! \brief an helper method to check values

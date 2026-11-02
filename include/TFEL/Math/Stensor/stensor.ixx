@@ -235,7 +235,8 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto stensor<N, T>::computeEigenTensors(
       const rotation_matrix<T>& m) noexcept {
-    std::tuple<stensor<N, T>, stensor<N, T>, stensor<N, T>> r;
+    using real = base_type<T>;
+    std::tuple<stensor<N, real>, stensor<N, real>, stensor<N, real>> r;
     tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(
         std::get<0>(r), std::get<1>(r), std::get<2>(r), m);
     return r;
@@ -414,7 +415,7 @@ namespace tfel::math {
   template <typename InputIterator>
   TFEL_HOST_DEVICE constexpr void stensor<N, T>::copy(
       const InputIterator src) noexcept {
-    tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src, *this);
+    tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src, this->begin());
   }
 
   template <unsigned short N, typename T, typename OutputIterator>
@@ -635,6 +636,26 @@ namespace tfel::math {
     return stensor::buildFromEigenValuesAndVectors(
         std::log(vp(0)), std::log(vp(1)), std::log(vp(2)), m);
   }  // end of buildLogarithmFromEigenValuesAndVectors
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto
+  stensor<N, T>::buildAbsoluteValueFromEigenValuesAndVectors(
+      const T& v1,
+      const T& v2,
+      const T& v3,
+      const rotation_matrix<T>& m) noexcept {
+    return stensor::buildFromEigenValuesAndVectors(
+        tfel::math::abs(v1), tfel::math::abs(v2), tfel::math::abs(v3), m);
+  }  // end of buildAbsoluteValueFromEigenValuesAndVectors
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto
+  stensor<N, T>::buildAbsoluteValueFromEigenValuesAndVectors(
+      const tvector<3u, T>& vp, const rotation_matrix<T>& m) noexcept {
+    return stensor::buildFromEigenValuesAndVectors(tfel::math::abs(vp(0)),
+                                                   tfel::math::abs(vp(1)),
+                                                   tfel::math::abs(vp(2)), m);
+  }  // end of buildAbsoluteValueFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto

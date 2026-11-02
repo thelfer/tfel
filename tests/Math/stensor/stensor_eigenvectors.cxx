@@ -31,6 +31,7 @@
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/Matrix/tmatrixIO.hxx"
 #include "TFEL/Math/stensor.hxx"
+#include "FSES/Utilities.hxx"
 
 struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
   //! a simple alias
@@ -51,6 +52,15 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     // this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>();
     // this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();
     this->check<EigenSolver::HARARIEIGENSOLVER>();
+    this->testFSESSort();
+    // the non-convergence of the FSES Jacobi solver is reported by NaN
+    const auto nan = std::numeric_limits<double>::quiet_NaN();
+    const auto s = tfel::math::stensor<3u, double>{1, 2, 3, nan, 0.5, 0.6};
+    const auto [vp, m] =
+        s.computeEigenVectors<EigenSolver::FSESJACOBIEIGENSOLVER>();
+    TFEL_TESTS_ASSERT(std::isnan(vp[0]) && std::isnan(m(0, 0)));
+    TFEL_TESTS_ASSERT(std::isnan(
+        s.computeEigenValues<EigenSolver::FSESJACOBIEIGENSOLVER>()[0]));
     return this->result;
   }  // end of execute
 
@@ -66,6 +76,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
 #endif /* (!defined __CYGWIN__) && (!defined __FreeBSD__) */
     this->test3<float, es>();
     this->test3<double, es>();
+    this->test4<double, es>();
   }  // end of check
 
   template <typename T, typename ColumnView>
@@ -293,6 +304,33 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     }
     TFEL_TESTS_ASSERT(
         (double(unprecised_results) / double(nb_boucles) < 0.003));
+  }
+
+  //! \brief sort of eigen values by `fses::sort` with a double eigenvalue
+  void testFSESSort() {
+    using EigenValuesOrdering = fses::EigenValuesOrdering;
+    auto m = tfel::math::tmatrix<3u, 3u, double>::Id();
+    auto vp = tfel::math::tvector<3u, double>{-1, -1, 0};
+    fses::sort(m, vp, EigenValuesOrdering::ASCENDING);
+    TFEL_TESTS_ASSERT((vp(0) <= vp(1)) && (vp(1) <= vp(2)));
+    vp = tfel::math::tvector<3u, double>{-1, 0, -1};
+    fses::sort(m, vp, EigenValuesOrdering::DESCENDING);
+    TFEL_TESTS_ASSERT((vp(0) >= vp(1)) && (vp(1) >= vp(2)));
+  }  // end of testFSESSort
+
+  template <typename T, EigenSolver es>
+  void test4() {
+    using stensor = tfel::math::stensor<3u, T>;
+    // tensors with a double eigenvalue
+    for (const auto& s :
+         {stensor{0, 1, 1, 0, 0, 0}, stensor{1, 1, 0, 0, 0, 0}}) {
+      tfel::math::tmatrix<3u, 3u, T> m;
+      tfel::math::tvector<3u, T> vp;
+      s.template computeEigenVectors<es>(vp, m, stensor::ASCENDING);
+      TFEL_TESTS_ASSERT((vp(0) <= vp(1)) && (vp(1) <= vp(2)));
+      s.template computeEigenVectors<es>(vp, m, stensor::DESCENDING);
+      TFEL_TESTS_ASSERT((vp(0) >= vp(1)) && (vp(1) >= vp(2)));
+    }
   }
 };
 

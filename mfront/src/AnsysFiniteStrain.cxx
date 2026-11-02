@@ -51,7 +51,7 @@ namespace ansys {
     if (NTENS == 4) {
       e[3] = F[2] * F[5] + F[1] * F[4] + F[0] * F[3];
     } else if (NTENS == 6) {
-      e[3] = F[2] * F[5] + F[1] * F[4] + F[0] * F[3] / 2;
+      e[3] = F[2] * F[5] + F[1] * F[4] + F[0] * F[3];
       // Ansys ordering conventions differs from TFEL' ones
       e[5] = F[2] * F[8] + F[1] * F[7] + F[0] * F[6];
       e[4] = F[5] * F[8] + F[4] * F[7] + F[3] * F[6];
@@ -261,6 +261,7 @@ namespace ansys {
           C, tensor::Id(), F1, s);
       // now convert to ansys
       AnsysTangentOperator<AnsysReal>::normalize(Ca);
+      AnsysTangentOperator<AnsysReal>::transpose(Ca);
     } else if (NTENS == 6) {
       using tensor = tensor<3u, AnsysReal>;
       stensor<3u, AnsysReal> s;
@@ -272,6 +273,7 @@ namespace ansys {
           C, tensor::Id(), F1, s);
       // now convert to ansys
       AnsysTangentOperator<AnsysReal>::normalize(Ca);
+      AnsysTangentOperator<AnsysReal>::transpose(Ca);
     }
   }  // end of AnsysFiniteStrain::computeAnsysTangentOperatorFromCSE
 
