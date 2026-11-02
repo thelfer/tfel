@@ -22,3 +22,8 @@
 @ImposedStrain 'EXZ' 0;
 @ImposedStrain 'EYZ' 0;
 @Times {0., 1 in 20};
+
+// The stresses are compared to the ones computed by the ImplicitNorton
+// behaviour: calling computeNumericalJacobian in the @TangentOperator
+// block overwrote them (see Issue 1290).
+@Test<file> @reference_file@ {'SXX':2,'SYY':3,'SZZ':4} 1.e5;

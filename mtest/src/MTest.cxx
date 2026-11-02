@@ -76,8 +76,8 @@ namespace mtest {
       }
       if (getSpaceDimension(b.getHypothesis()) > 1u) {
         for (size_type i = 0; i != nth - 3u; ++i) {
-          r(2 * i + 3u) += s(i);
-          r(2 * i + 3u + 1) += s(i);
+          r(2 * i + 3u) += s(i + 3u);
+          r(2 * i + 3u + 1) += s(i + 3u);
           for (size_type j = 0; j != ndv; ++j) {
             k(2 * i + 3u, j) += kt(i + 3u, j);
             k(2 * i + 3u + 1, j) += kt(i + 3u, j);

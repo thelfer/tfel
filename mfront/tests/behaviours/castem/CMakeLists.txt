@@ -440,7 +440,7 @@ test_castem(chaboche2 REFERENCE_FILE chaboche2-aster.ref)
 test_castem(viscochaboche REFERENCE_FILE ViscoChaboche.ref)
 test_castem(monocrystal REFERENCE_FILE monocrystal.ref)
 test_castem(monocrystal-2)
-test_castem(implicitmonocrystal REFERENCE_FILE monocrystal.ref)
+test_castem(implicitmonocrystal REFERENCE_FILE implicitmonocrystal.ref)
 test_castem(implicitmonocrystal-2)
 test_castem(monocrystal_dd_cfc
   REFERENCE_FILE monocrystal_dd_cfc.ref)
