@@ -71,6 +71,16 @@ library, see below.
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
   previous results, which were the derivative of the adjugate.
+- The tiny non-linear solvers (and the `Implicit` DSLs) evaluate the
+  estimate given by the last allowed correction (see Issue #1288): an
+  integration that converges with exactly `iterMax` corrections now
+  succeeds, and a failing one evaluates its residual once more.
+- The copy and move assignments of `tfel::math::vector` and
+  `tfel::math::matrix` give the destination the sizes of the source (see
+  Issue #1288): the destination kept its own sizes.
+- The Levenberg-Marquardt minimisers (`LevenbergMarquardt`,
+  `FSLevenbergMarquardt`) reject the steps that increase the cost (see
+  Issue #1288): the iterates of every fit change.
 
 # Improvements to the build system
 
@@ -713,6 +723,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1288: [tfel-math] Adaptive Gauss-Kronrod integration with quantities, last correction of the tiny non-linear solvers, assignment of runtime arrays, Levenberg-Marquardt steps increasing the cost, ExternalLibraryManager library path, contract violations aborting Python
+
+For more details, see <https://github.com/thelfer/tfel/issues/1288>
 
 ## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
 
