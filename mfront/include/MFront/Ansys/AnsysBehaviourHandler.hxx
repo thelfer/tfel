@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Ansys/AnsysInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_ANSYS_ANSYSINTERFACE_HXX
+#include "MFront/Ansys/AnsysInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_ANSYS_ANSYSINTERFACE_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ANSYS_ANSYSINTERFACE_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -156,7 +158,7 @@ namespace ansys {
                                         const AnsysReal* const props) {
         const unsigned short o = AnsysTraits<BV>::elasticPropertiesOffset;
         AnsysComputeThermalExpansionCoefficientTensor<AnsysTraits<BV>::btype, H,
-                                                      AnsysTraits<BV>::stype>::
+                                                      AnsysTraits<BV>::etype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
@@ -280,3 +282,5 @@ namespace ansys {
 }  // end of namespace ansys
 
 #endif /* LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_ANSYS_ANSYSINTERFACE_HXX */

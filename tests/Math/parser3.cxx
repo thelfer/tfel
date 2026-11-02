@@ -19,6 +19,8 @@
 #include <cmath>
 #include <cassert>
 #include <cstdlib>
+#include <string>
+#include <vector>
 
 #include "TFEL/Math/Evaluator.hxx"
 
@@ -42,5 +44,15 @@ int main() {
   assert(abs(h1.getValue({{"x", 2.}, {"y", 3.}}) - 12.) < 1.e-14);
   Evaluator h2("diff(y*x*x,x)");
   assert(abs(h2.getValue({{"x", 2.}, {"y", 3.}}) - 12.) < 1.e-14);
+  // the names of the variables are ordered by position
+  Evaluator h3("y*x+z");
+  assert((h3.getVariablesNames() == std::vector<std::string>{"y", "x", "z"}));
+  using size_type = std::vector<double>::size_type;
+  h3.setVariableValue(size_type{0}, 2.);
+  h3.setVariableValue(size_type{1}, 3.);
+  h3.setVariableValue(size_type{2}, 4.);
+  assert(abs(h3.getValue() - 10.) < 1.e-14);
+  Evaluator h4(std::vector<std::string>{"z", "x", "y"}, "y*x+z");
+  assert((h4.getVariablesNames() == std::vector<std::string>{"z", "x", "y"}));
   return EXIT_SUCCESS;
 }

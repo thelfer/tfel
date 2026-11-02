@@ -56,11 +56,14 @@ page dedicated to `FreeBSD` is available [here](install-freebsd.html).
 The installation on [Windows platform](http://windows.microsoft.com)
 is described in the following pages:
 
-- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
-- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html). This
-  tutorial can easily be adapted to other versions of `MinGW`, without
-  requiring `Cast3M` to be installed.
 - [Installation on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment](install-windows-msys.html).
+- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
+  This tutorial was written for `TFEL` 3.x: `TFEL` 5 requires
+  `Visual Studio` `2022` or later.
+- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html).
+  This tutorial was written for `TFEL` 3.x: the `MinGW` compiler
+  packaged with `Cast3M` `2017` does not support `C++-20` and can not
+  build `TFEL` 5.
 
 The creation of binary packages is detailed [here](packages.html). 
 
@@ -113,6 +116,17 @@ suites are officially supported:
 - [The `clang` C and C++ compilers](http://clang.llvm.org/).
 - The
   [Intel compilers suite](https://software.intel.com/en-us/c-compilers).
+
+The required `C++` standard depends on the major version of `TFEL`.
+The following table gives, for each major version, the minimal
+versions checked at configuration time or required by the sources, and
+the compilers listed in the release notes:
+
+| `TFEL` | Standard   | Minimal versions                     | Compilers listed in the release notes                                                                 |
+| :----: | :--------: | :----------------------------------: | :---------------------------------------------------------------------------------------------------- |
+| 3.x    | `C++-11`   | `gcc` 4.7, `clang` 3.4               | `Visual Studio` 2015, `MinGW` packaged with `Cast3M` 2017                                             |
+| 4.x    | `C++-17`   |                                      | `gcc` 8.3 and 10.3, `clang` 11.0.1, Intel oneAPI 2023.2 (Linux, Windows), `MinGW` 10.3 (`TFEL` 4.2)   |
+| 5.x    | `C++-20`   | `gcc` 11 ([`std::bit_cast`](https://github.com/thelfer/tfel/issues/918)) | `gcc` 11.4 to 15.1, `clang` 14 to 21, Intel 2024.2, `Visual Studio` 2022 (17.4), `MinGW` 14.2         |
 
 ## Third party libraries
 

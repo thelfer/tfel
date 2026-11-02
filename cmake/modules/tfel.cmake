@@ -59,7 +59,8 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
     set(export_install_path "share/tfel/cmake")
   endif(TFEL_APPEND_SUFFIX)
   install(FILES "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
-    DESTINATION "${export_install_path}")
+    DESTINATION "${export_install_path}"
+    COMPONENT core)
 
   if(TFEL_APPEND_SUFFIX)
     set(TFEL_DATAROOTDIR "share/tfel-${TFEL_SUFFIX}")
@@ -132,10 +133,12 @@ endfunction(install_mfm_header)
 function(install_data dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/tfel-${TFEL_SUFFIX}/${dir}")
+      DESTINATION "share/tfel-${TFEL_SUFFIX}/${dir}"
+      COMPONENT core)
   else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/tfel/${dir}")
+      DESTINATION "share/tfel/${dir}"
+      COMPONENT core)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(install_data)
 
@@ -156,11 +159,11 @@ function(install_gallery dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/doc/tfel-${TFEL_SUFFIX}/web/gallery/${dir}"
-      COMPONENT web)
+      COMPONENT website)
   else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/doc/tfel/web/gallery/${dir}"
-      COMPONENT web)
+      COMPONENT website)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(install_gallery)
 
@@ -197,7 +200,8 @@ function(tfel_library_internal name component)
   endif(WIN32)
   install(EXPORT ${name} DESTINATION ${export_install_path}
           EXPORT_LINK_INTERFACE_LIBRARIES
-          NAMESPACE tfel:: FILE ${name}Targets.cmake)
+          NAMESPACE tfel:: FILE ${name}Targets.cmake
+          COMPONENT ${component})
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
     set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
   else()
@@ -214,7 +218,8 @@ function(tfel_library_internal name component)
                                 NO_SET_AND_CHECK_MACRO
                                 NO_CHECK_REQUIRED_COMPONENTS_MACRO)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
-          DESTINATION ${export_install_path})
+          DESTINATION ${export_install_path}
+          COMPONENT ${component})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
     add_library(tfel::${name}-static ALIAS ${name}-static)
@@ -236,13 +241,16 @@ function(tfel_library_internal name component)
     set_target_properties(${name}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
     set_target_properties(${name}-static PROPERTIES COMPILE_FLAGS "-D${name}_EXPORTS -DTFEL_STATIC_BUILD")
     if(WIN32)
-      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION bin)
+      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION bin
+        COMPONENT ${component})
     else(WIN32)
-      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX})
+      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX}
+        COMPONENT ${component})
     endif(WIN32)
     install(EXPORT ${name}-static DESTINATION ${export_install_path}
             NAMESPACE tfel:: FILE ${name}StaticTargets.cmake
-            EXPORT_LINK_INTERFACE_LIBRARIES)
+            EXPORT_LINK_INTERFACE_LIBRARIES
+            COMPONENT ${component})
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
       set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
     else()
@@ -259,7 +267,8 @@ function(tfel_library_internal name component)
                                   NO_SET_AND_CHECK_MACRO
                                   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}StaticConfig.cmake"
-            DESTINATION ${export_install_path})
+            DESTINATION ${export_install_path}
+            COMPONENT ${component})
     target_compile_options (${name}-static PRIVATE "${TFEL_CXX_FLAGS}")
   endif(enable-static)
 endfunction(tfel_library_internal)

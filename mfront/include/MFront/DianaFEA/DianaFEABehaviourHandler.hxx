@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/DianaFEA/DianaFEAInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_DIANAFEA_CALL_HXX
+#include "MFront/DianaFEA/DianaFEAInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_DIANAFEA_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_DIANAFEA_CALL_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -146,7 +148,7 @@ namespace dianafea {
                                            const DianaFEAReal* const props) {
         const unsigned short o = DianaFEATraits<BV>::elasticPropertiesOffset;
         DianaFEAComputeThermalExpansionCoefficientTensor<
-            DianaFEATraits<BV>::btype, H, DianaFEATraits<BV>::stype>::
+            DianaFEATraits<BV>::btype, H, DianaFEATraits<BV>::etype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
@@ -205,7 +207,7 @@ namespace dianafea {
           throwNegativeTimeStepException(Traits::getName());
         }
         if (!this->behaviour.initialize()) {
-          return;
+          throwBehaviourInitializationFailedException(Traits::getName());
         }
         this->behaviour.checkBounds();
         auto r = BV::SUCCESS;
@@ -217,7 +219,7 @@ namespace dianafea {
           r = BV::FAILURE;
         }
         if (r == BV::FAILURE) {
-          return;
+          throwBehaviourIntegrationFailedException(Traits::getName());
         }
         this->behaviour.checkBounds();
         this->behaviour.DIANAFEAexportStateData(d.STRESS, d.STATEV);
@@ -272,3 +274,5 @@ namespace dianafea {
 }  // end of namespace dianafea
 
 #endif /* LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_DIANAFEA_CALL_HXX */

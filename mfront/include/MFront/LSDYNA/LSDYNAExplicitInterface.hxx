@@ -86,7 +86,7 @@ namespace lsdyna {
         const unsigned short o = ATraits::elasticPropertiesOffset;
         LSDYNAComputeThermalExpansionCoefficientTensor<
             ATraits::btype, H,
-            ATraits::stype>::exe(props + o,
+            ATraits::etype>::exe(props + o,
                                  data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
@@ -187,7 +187,7 @@ namespace lsdyna {
         return 1;
       }
       b.checkBounds();
-      const auto smf = TangentOperatorTraits::LSDYNA;
+      const auto smf = TangentOperatorTraits::ABAQUS;
       const auto r =
           b.computePredictionOperator(smf, Behaviour<H, T, false>::ELASTIC);
       ExtractAndConvertTangentOperator<H>::exe(b, D);
@@ -270,7 +270,7 @@ namespace lsdyna {
         return 1;
       }
       b.checkBounds();
-      const auto smf = TangentOperatorTraits::LSDYNA;
+      const auto smf = TangentOperatorTraits::ABAQUS;
       auto r_dt = std::numeric_limits<T>::max();
       auto tsf = b.computeAPrioriTimeStepScalingFactor(r_dt);
       if (!tsf.first) {

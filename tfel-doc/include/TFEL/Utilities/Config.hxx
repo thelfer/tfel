@@ -14,6 +14,9 @@
 #ifndef LIB_TFEL_UTILITIES_CONFIG_HXX
 #define LIB_TFEL_UTILITIES_CONFIG_HXX
 
+#include <map>
+#include <string>
+
 namespace tfel::utilities {
 
   std::map<std::string, std::map<std::string, std::string>>& getTypeMap();

@@ -602,7 +602,7 @@ print(Ai)
 ~~~~
 
 Note that in the latter case, passing `C0`, a `ST2toST2` object
-as an argument of the method will return an error, because
+as an argument of the method will raise an exception, because
 it will be considered that the matrix is not isotropic,
 so that computing a average localisator of a distribution
 of ellipsoids in an anisotropic matrix is impossible (too complicated).

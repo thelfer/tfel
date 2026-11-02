@@ -169,6 +169,15 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
       const auto v = c * b * b / 2;
       TFEL_TESTS_ASSERT(tfel::math::abs(std::get<0>(*or1) - v) < strain{1e-12});
     }
+    // adaptative version: the tolerance has the unit of the integral
+    const auto oi = tfel::math::gauss_kronrod_integrate(
+        [c](const time t) noexcept { return c * t; }, a, b,
+        {.absolute_tolerance = strain{1e-12},
+         .maximum_number_of_refinements = 8});
+    TFEL_TESTS_ASSERT(oi.has_value());
+    if (oi.has_value()) {
+      TFEL_TESTS_ASSERT(tfel::math::abs(*oi - c * b * b / 2) < strain{1e-12});
+    }
   }  // end of test6
 };
 

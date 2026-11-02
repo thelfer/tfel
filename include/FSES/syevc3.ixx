@@ -60,19 +60,22 @@ namespace fses {
     //       | a   d   f  |
     //  A =  | d*  b   e  |
     //       | f*  e*  c  |
+    // Cardano's formula is applied to the deviatoric part of A to avoid
+    // the cancellations due to a large isotropic part
+    const real mean = one_third * (at(A, 0, 0) + at(A, 1, 1) + at(A, 2, 2));
+    const real a = at(A, 0, 0) - mean;
+    const real b = at(A, 1, 1) - mean;
+    const real cc = at(A, 2, 2) - mean;
     const real de = at(A, 0, 1) * at(A, 1, 2);  // d * e
     const real dd = square(at(A, 0, 1));        // d^2
     const real ee = square(at(A, 1, 2));        // e^2
     const real ff = square(at(A, 0, 2));        // f^2
-    const real m = at(A, 0, 0) + at(A, 1, 1) + at(A, 2, 2);
+    const real m = a + b + cc;
     // a*b + a*c + b*c - d^2 - e^2 - f^2
-    const real c1 = (at(A, 0, 0) * at(A, 1, 1) + at(A, 0, 0) * at(A, 2, 2) +
-                     at(A, 1, 1) * at(A, 2, 2)) -
-                    (dd + ee + ff);
+    const real c1 = (a * b + a * cc + b * cc) - (dd + ee + ff);
     // c*d^2 + a*e^2 + b*f^2 - a*b*c - 2*f*d*e)
     const real c0 =
-        (at(A, 2, 2) * dd + at(A, 0, 0) * ee + at(A, 1, 1) * ff -
-         at(A, 0, 0) * at(A, 1, 1) * at(A, 2, 2) - two * at(A, 0, 2) * de);
+        (cc * dd + a * ee + b * ff - a * b * cc - two * at(A, 0, 2) * de);
 
     const real p = square(m) - three * c1;
     const real q = m * (p - c3_2 * c1) - c27_2 * c0;
@@ -85,9 +88,9 @@ namespace fses {
     const real s = (one / c_sqrt3) * sqrt_p * std::sin(phi);
 
     at(w, 1) = one_third * (m - c);
-    at(w, 2) = at(w, 1) + s;
-    at(w, 0) = at(w, 1) + c;
-    at(w, 1) -= s;
+    at(w, 2) = at(w, 1) + s + mean;
+    at(w, 0) = at(w, 1) + c + mean;
+    at(w, 1) += mean - s;
 
     return 0;
   }
