@@ -994,8 +994,9 @@ namespace tfel::material {
       const auto u = findSingleEigenValue(this->vp);
       if (u != 3) {
         const auto i = (u == 2) ? 0 : 2;
+        // second divided difference at the double eigenvalue
         const auto idvp = 1 / (this->vp[i] - this->vp[u]);
-        return ((this->e[i] - this->e[u]) * idvp - d[u]) * idvp;
+        return (d[i] - (this->e[i] - this->e[u]) * idvp) * idvp;
       }
       auto r = real{};
       for (size_type i = 0; i != 3; ++i) {

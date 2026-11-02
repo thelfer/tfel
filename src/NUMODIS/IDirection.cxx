@@ -20,6 +20,25 @@
 namespace numodis {
 
   //===============================================================
+  // IDirection : Operator <<
+  //---------------------------------------------------------------
+  //! Print the data of a discrete direction
+  //---------------------------------------------------------------
+  /*!
+    \param os output stream
+    \param idirection IDirection to be printed
+  */
+  //===============================================================
+  std::ostream& operator<<(std::ostream& os, const IDirection& idirection) {
+    os << "[";
+    for (unsigned i = 0; i != idirection.getNindices() - 1; i++)
+      os << idirection.getIndex()[i] << ",";
+    os << idirection.getIndex()[idirection.getNindices() - 1] << "]";
+
+    return os;
+  }
+
+  //===============================================================
   // IDirection :: Operator ==
   //---------------------------------------------------------------
   //! Determines whether two directions are identical or not
