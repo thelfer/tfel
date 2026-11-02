@@ -70,6 +70,13 @@ library, see below.
 - `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
   expansion coefficients is now an error (except `ThermalExpansion1` and
   `ThermalExpansion2` in plane stress).
+- `MTest` assembles the equations associated with the off-diagonal
+  components of the deformation gradient of finite strain behaviours
+  with the off-diagonal stresses, and applies the imposed off-diagonal
+  Cauchy stresses to both of their rows (see Issue #1290): computations
+  leaving one of these components free, which failed or converged to a
+  wrong state, converge to the right state, and the number of
+  iterations of the other ones may change.
 - `abaqusexplicit` interface (see Issue #1274): the results of
   orthotropic behaviours using the `MFront` orthotropy management policy
   change when the material frame is not symmetric with respect to the
@@ -721,6 +728,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1290: [mtest] Off-diagonal deformation gradient equations and imposed off-diagonal stresses at finite strain, Broyden test behaviours overwriting the decomposed jacobian, implicitmonocrystal tests running MonoCrystal, elastic stiffness of the castem generic plane stress algorithm
+
+For more details, see <https://github.com/thelfer/tfel/issues/1290>
 
 ## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
 
