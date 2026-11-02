@@ -31,7 +31,8 @@ namespace tfel::math {
       const FunctionType& f,                                     //
       const real a,                                              //
       const real b,                                              //
-      const NumericalParameters<real> params) const              //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
@@ -60,8 +61,10 @@ namespace tfel::math {
     auto is_infinite = [](const real x) {
       if constexpr (ImmutableQuantityConcept<real>) {
         return (ieee754::fpclassify(base_type_cast(x)) == FP_INFINITE) ||
-               (x >= std::numeric_limits<base_type<real>>::max()) ||
-               (x <= -std::numeric_limits<base_type<real>>::max());
+               (base_type_cast(x) >=
+                std::numeric_limits<base_type<real>>::max()) ||
+               (base_type_cast(x) <=
+                -std::numeric_limits<base_type<real>>::max());
       } else {
         return (ieee754::fpclassify(x) == FP_INFINITE) ||
                (x >= std::numeric_limits<real>::max()) ||
@@ -197,7 +200,8 @@ namespace tfel::math {
       const FunctionType& f,
       const real a,
       const real b,
-      const NumericalParameters<real>& params) const             //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
@@ -210,7 +214,13 @@ namespace tfel::math {
         return {};
       }
       const auto n = params.maximum_number_of_refinements - 1;
-      const auto c = std::midpoint(a, b);
+      const auto c = [a, b] {
+        if constexpr (ImmutableQuantityConcept<real>) {
+          return real{std::midpoint(base_type_cast(a), base_type_cast(b))};
+        } else {
+          return std::midpoint(a, b);
+        }
+      }();
       const auto oi1 =
           this->integrate(f, a, c,
                           {.absolute_tolerance = params.absolute_tolerance / 2,
@@ -378,7 +388,8 @@ namespace tfel::math {
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeUnboundedIntegral(
       const FunctionType& f,
-      const NumericalParameters<real>& params) const             //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [f](const base_type<real> t) noexcept(
@@ -397,7 +408,8 @@ namespace tfel::math {
   constexpr auto GaussKronrodQuadrature::computeLeftUnboundedIntegral(
       const FunctionType& f,
       const real b,
-      const NumericalParameters<real>& params) const             //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
@@ -418,7 +430,8 @@ namespace tfel::math {
   constexpr auto GaussKronrodQuadrature::computeRightUnboundedIntegral(
       const FunctionType& f,
       const real a,
-      const NumericalParameters<real>& params) const             //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
