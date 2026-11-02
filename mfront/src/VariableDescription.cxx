@@ -178,7 +178,7 @@ namespace mfront {
                  "' (invalid type '" + v.type + "')");
     if ((b.component != -1) && (b.component != 0)) {
       const auto f = SupportedTypes::getTypeFlag(v.type);
-      throw_if(f != SupportedTypes::SCALAR,
+      throw_if(f == SupportedTypes::SCALAR,
                "invalid component value for a scalar "
                "(" +
                    std::to_string(b.component) + ")");

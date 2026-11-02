@@ -87,6 +87,11 @@ library, see below.
 - The Levenberg-Marquardt minimisers (`LevenbergMarquardt`,
   `FSLevenbergMarquardt`) reject the steps that increase the cost (see
   Issue #1288): the iterates of every fit change.
+- Inputs that were silently ignored are now rejected (see Issue #1256):
+  the `overriding_parameters` option of the model DSLs, `@Bounds` and
+  `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
+  component of a scalar variable, and the `Ksf` option of the
+  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
 
 # Improvements to the build system
 
@@ -773,6 +778,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1260>
 ## Issue 1258: [mfront] generic MTest files of finite strain behaviours, cpptest and gnuplot interfaces, calculix MieheApelLambrechtLogarithmicStrainII strategy, dianafea failures and orthotropic behaviours, abaqus glue lock on Windows
 
 For more details, see <https://github.com/thelfer/tfel/issues/1258>
+
+## Issue 1256: [mfront] Model overriding parameters, bounds on main variables and on components, ScalarDamage in axisymmetrical generalised plane stress, keyword pages, Ksf of the harmonic sum flow, brick base classes exports, mfront-doc/mfront-query global options, MFrontLock
+
+For more details, see <https://github.com/thelfer/tfel/issues/1256>
 
 ## Issue 1254: [tfel-math] Eigen solvers of symmetric tensors: wrong eigenvectors for equal or close eigenvalues, Cardano eigenvalues of syevc3, derivatives of isotropic functions of quantities, ConvertLogarithmicStrainTangentOperator
 

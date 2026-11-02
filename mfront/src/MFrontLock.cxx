@@ -17,8 +17,8 @@
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/file.h>
 #include <fcntl.h>
-#include <semaphore.h>
 #include <unistd.h>
 #endif
 
@@ -43,12 +43,15 @@ namespace mfront {
                    "MFrontLock::MFrontLock: "
                    "semaphore creation failed");
 #else
-    std::ostringstream sn;
-    sn << "/mfront-" << ::geteuid();
-    this->l = ::sem_open(sn.str().c_str(), O_CREAT, S_IRUSR | S_IWUSR, 1);
-    tfel::raise_if(this->l == SEM_FAILED,
+    // lock file shared by all the processes of the user. The lock is
+    // released by the system when the process holding it terminates.
+    std::ostringstream fn;
+    fn << "/tmp/mfront-" << ::geteuid() << ".lock";
+    this->fd = ::open(fn.str().c_str(), O_RDWR | O_CREAT | O_CLOEXEC,
+                      S_IRUSR | S_IWUSR);
+    tfel::raise_if(this->fd == -1,
                    "MFrontLock::MFrontLock: "
-                   "semaphore creation failed");
+                   "lock file creation failed");
 #endif
   }  // end of MFrontLock::MFrontLock()
 
@@ -65,9 +68,9 @@ namespace mfront {
                    "MFrontLock::MFrontLock: "
                    "semaphore can't be aquired");
 #else
-    tfel::raise_if(::sem_wait(this->l) == -1,
-                   "MFrontLock::MFrontLock: "
-                   "semaphore can't be aquired");
+    tfel::raise_if(::flock(this->fd, LOCK_EX) == -1,
+                   "MFrontLock::lock: "
+                   "lock can't be acquired");
 #endif
   }  // end of MFrontLock::lock()
 
@@ -79,7 +82,7 @@ namespace mfront {
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     ::ReleaseMutex(this->ghMutex);
 #else
-    ::sem_post(this->l);
+    ::flock(this->fd, LOCK_UN);
 #endif
   }  // end of MFrontLock::unlock()
 
