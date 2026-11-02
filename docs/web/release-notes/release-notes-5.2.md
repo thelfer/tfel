@@ -722,6 +722,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1292: [tfel-material] LogarithmicStrainHandler: wrong tangent moduli in 3D when two eigenvalues of C are equal
+
+For more details, see <https://github.com/thelfer/tfel/issues/1292>
+
 ## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
 
 For more details, see <https://github.com/thelfer/tfel/issues/1274>
