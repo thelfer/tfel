@@ -778,6 +778,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1258>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1254>
 
+## Issue 1251: [cmake] Installed executables, libraries and Python modules without RUNPATH on Linux, madnex library not found, empty entries added by env.sh
+
+For more details, see <https://github.com/thelfer/tfel/issues/1251>
+
 ## Issue 1242: [tests] Twenty-one C++ unit tests check no result
 
 For more details, see <https://github.com/thelfer/tfel/issues/1242>
