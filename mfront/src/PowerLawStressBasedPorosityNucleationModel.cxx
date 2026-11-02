@@ -28,7 +28,7 @@ namespace mfront::bbrick {
     auto mcs = StressBasedPorosityNucleationModelBase::
         getMaterialCoefficientDescriptions();
     mcs.push_back({"real", "fn", "law coefficient"});
-    mcs.push_back({"strain", "sn", "minimal value of equivalent pastic srain"});
+    mcs.push_back({"stress", "sn", "reference stress"});
     mcs.push_back({"real", "m", "exponent of the power law"});
     mcs.push_back({"real", "pmin", "minimal equivalent plastic strain"});
     return mcs;

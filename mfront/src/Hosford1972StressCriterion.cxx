@@ -31,7 +31,8 @@ namespace mfront::bbrick {
                       OptionDescription::MATERIALPROPERTY);
     opts.emplace_back(
         "eigen_solver",
-        "Choice of the eigen solver. Valid value are 'default' and 'Jacoby'.",
+        "Choice of the eigen solver. Valid value are 'default' (or 'TFEL') and "
+        "'Jacobi'.",
         OptionDescription::STRING);
     return opts;
   }  // end of Hosford1972StressCriterion::getOptions()
