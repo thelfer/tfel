@@ -766,6 +766,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1242>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1241>
 
+## Issue 1237: [cmake] Compiler printed by mfront --version, installed headers of the isotropic DSLs and of TFELCheck, dependencies of the installed CMake packages, static TFELMFrontDatabase package, CPack components
+
+For more details, see <https://github.com/thelfer/tfel/issues/1237>
+
 ## Issue 1235: [tests] Copy-paste slips and vacuous checks in unit tests
 
 For more details, see <https://github.com/thelfer/tfel/issues/1235>
