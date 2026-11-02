@@ -798,6 +798,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1219>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
+## Issue 1211: [tfel-system] Undefined SignalManager and NUMODIS declarations, MTestParser and ProcessManagerCommand constructors, mtest reference file generator, terminate handler of the tools, BurnUp glossary name in the docs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1211>
+
 ## Issue 1209: [tfel-math] Variable positions of Evaluator in diff() and tfel-check, fses::sort, vector::copy, GenType output, GTN flow stress, Mohr-Coulomb second derivative, eigen solvers on GPUs
 
 For more details, see <https://github.com/thelfer/tfel/issues/1209>
