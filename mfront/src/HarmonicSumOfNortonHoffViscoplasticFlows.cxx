@@ -148,7 +148,8 @@ namespace mfront::bbrick {
     c += "const auto vp" + id + " = ";
     c += "tfel::material::computeEquivalentStrainRateOf"
          "HarmonicSumOfNortonHoffViscoplasticFlows";
-    c += "(this->A, this->K, this->E, " + seq + ");\n";
+    c += "(this->A" + id + ", this->K" + id + ", this->E" + id + ", " + seq +
+         ");\n";
     return c;
   }  // end of HarmonicSumOfNortonHoffViscoplasticFlows::computeFlowRate
 
@@ -174,7 +175,8 @@ namespace mfront::bbrick {
     c += "const auto [vp" + id + ", dvp" + id + "_dseqe" + id + "] = ";
     c += "tfel::material::computeEquivalentStrainRateAndDerivativeOf"
          "HarmonicSumOfNortonHoffViscoplasticFlows";
-    c += "(this->A, this->K, this->E, " + seq + ");\n";
+    c += "(this->A" + id + ", this->K" + id + ", this->E" + id + ", " + seq +
+         ");\n";
     return c;
   }  // end of
      // HarmonicSumOfNortonHoffViscoplasticFlows::computeFlowRateAndDerivative

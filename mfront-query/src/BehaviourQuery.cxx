@@ -74,8 +74,8 @@ namespace mfront {
       return p->second;
     }
     p = as1.find(n);
-    if (p != as2.end()) {
-      return p->second;
+    if (p == as1.end()) {
+      tfel::raise("no attribute named '" + n + "'");
     }
     return p->second;
   }
@@ -215,8 +215,7 @@ namespace mfront {
          "return the symmetry of the elastic part of the behaviour. "
          "If the returned value is 0, this part of the behaviour is isotropic. "
          "If the returned value is 1, this part of the behaviour is "
-         "orthotropic."
-         "the behaviour is orthotropic."},
+         "orthotropic."},
         {"--has-crystal-structure",
          "return `true` if a crystal structure has been defined"},
         {"--crystal-structure", "return the crystal structure"},
@@ -312,7 +311,6 @@ namespace mfront {
         {"--bounds-type",
          "return the bounds type associated to a variable.\n"
          "The returned value has the follwing meaning:\n"
-         "- `None`\n"
          "- `Lower`\n"
          "- `Upper`\n"
          "- `LowerAndUpper`"},
@@ -322,7 +320,6 @@ namespace mfront {
         {"--physical-bounds-type",
          "return the physical bounds type associated to a variable.\n"
          "The returned value has the follwing meaning:\n"
-         "- `None`\n"
          "- `Lower`\n"
          "- `Upper`\n"
          "- `LowerAndUpper`"},
@@ -458,7 +455,7 @@ namespace mfront {
                             "no strain measure defined");
              const auto ss = d.getStrainMeasure();
              if (ss == BehaviourDescription::LINEARISED) {
-               cout << "Linearised";
+               cout << "Linearised\n";
              } else if (ss == BehaviourDescription::GREENLAGRANGE) {
                cout << "GreenLagrange\n";
              } else if (ss == BehaviourDescription::HENCKY) {
@@ -1290,7 +1287,7 @@ namespace mfront {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     tfel::raise_if(o.empty(),
                    "BehaviourQuery::treatModellingHypothesis: "
-                   "no option given to --modelling-hypothesis"
+                   "no option given to --modelling-hypothesis "
                    "command line option");
     tfel::raise_if(this->hypothesis != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                    "BehaviourQuery::treatModellingHypothesis: "

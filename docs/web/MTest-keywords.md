@@ -102,14 +102,14 @@ The `@CohesiveForce` let the user specifiy the inital value of the
 cohesive forces.
 
 This keyword is followed by an array. The size of this array must be
-equal to the number of components of symmetric tensors for the
-modelling hypothesis considered (see the `@ModellingHypothesis`
+equal to the space dimension of the modelling hypothesis considered
+(one component per space dimension, see the `@ModellingHypothesis`
 keyword).
 
 ## Example
 
 ~~~~ {.cpp}
-@CohesiveForce {'T0,,0.,0.};
+@CohesiveForce {'T0', 0., 0.};
 ~~~~
 
 # The `@CohesiveForceEpsilon` keyword
@@ -123,7 +123,7 @@ Newton algorithm is low enought. By default, this value is equal to
 1.e-3, which is a convenient value if cohesive force are expressed in
 Newton.
 
-The `@CohesiveEpsilon` let the user specifiy the criterium value used
+The `@CohesiveForceEpsilon` let the user specifiy the criterium value used
 for the criterium on cohesive force.
 
 It is followed by the criterium value.
@@ -131,7 +131,7 @@ It is followed by the criterium value.
 ## Example
 
 ~~~~~ {.cpp}
-@CohesiveForce 1.e2;
+@CohesiveForceEpsilon 1.e-3;
 ~~~~~~~~~~
 
 # The `@CompareToNumericalTangentOperator` keyword
@@ -147,7 +147,7 @@ approximation can be adjusted by the
 
 The value used for to compare the tangent operator given by the behaviour to a
 numerical approximation can be adjusted by the
-`@TangentOperatorComparisonCriterium`.
+`@TangentOperatorComparisonCriterion`.
 
 ## Example
 
@@ -195,7 +195,7 @@ This criterium on the deformation gradient checks if two successives
 estimate of the strains are close enough.  By default, the criterium
 value used is 1.e-12;
 
-The `@SDeformationGradient` let the user specifiy the criterium value used
+The `@DeformationGradientEpsilon` let the user specifiy the criterium value used
 for the criterium on strains.
 
 It is followed by the criterium value.
@@ -203,7 +203,7 @@ It is followed by the criterium value.
 ## Example
 
 ~~~~ {.cpp}
-@DeformationGradient 1.e-12;
+@DeformationGradientEpsilon 1.e-12;
 ~~~~~~~~
 
 # The `@Description` keyword
@@ -220,7 +220,7 @@ of information.
 @Description
 {
   "Modélisation d'un tube sous pression"
-}
+};
 ~~~~~~~~
 
 # The `@DrivingVariable` keyword
@@ -269,8 +269,8 @@ the variable `t`.
 ## Example (function):
 
 ~~~~ {.cpp}
-@Real P0 2.e5
-@Real P1 4.e5
+@Real 'P0' 2.e5;
+@Real 'P1' 4.e5;
 @Evolution<function> 'Pressure' 'P0+(P1-P0)*t**2';
 ~~~~~~~~
 
@@ -315,8 +315,8 @@ the variable `t`.
 ## Example (function)
 
 ~~~~ {.cpp}
-@Real T0 293.15
-@Real T1 400.15
+@Real 'T0' 293.15;
+@Real 'T1' 400.15;
 @ExternalStateVariable<function> 'Temperature' 'T0+(T1-T0)*t**2';
 ~~~~~~~~
 
@@ -836,9 +836,9 @@ It is followed by the criterium value.
 @StressEpsilon 1.e2;
 ~~~~~~~~
 
-# The `@TangentOperatorComparisonCriterium` keyword
+# The `@TangentOperatorComparisonCriterion` keyword
 
-The keyword `@TangentOperatorComparisonCriterium` is not documented yet
+The keyword `@TangentOperatorComparisonCriterion` is not documented yet
 
 # The `@Test` keyword
 

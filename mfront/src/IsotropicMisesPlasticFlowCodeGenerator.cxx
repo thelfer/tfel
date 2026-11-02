@@ -39,8 +39,8 @@ namespace mfront {
                ModellingHypothesis::toString(h) + "'.";
       }();
       this->throwRuntimeError(
-          "IsotropicBehaviourCodeGeneratorBase::"
-          "endsInputFileProcessing: ",
+          "IsotropicMisesPlasticFlowCodeGenerator::"
+          "writeBehaviourParserSpecificMembers",
           msg);
     }
     os << "bool computeFlow(){\n"

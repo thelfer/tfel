@@ -9,7 +9,8 @@ tests_SOURCES = tests.cxx                         \
 		test_LinearInterpolation.cxx      \
 	        test_SplineLocalInterpolation.cxx \
 	        test_SplineInterpolation.cxx      \
-		test_Test.cxx
+		test_Test.cxx		          \
+		test_TestLauncher.cxx
 
 tests_LDADD = -L$(top_builddir)/src/Tests      -lTFELTests     \
 	      -L$(top_builddir)/src/Utilities  -lTFELUtilities \

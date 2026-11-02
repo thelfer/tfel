@@ -5,7 +5,7 @@
  * Output log in unformatted ASCII text.
  *
  * \author sb152252
- * \date 1 sept. 2009
+ * \date 01/09/2009
  *
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -25,8 +25,28 @@
 namespace tfel::check {
 
   struct TFELCHECK_VISIBILITY_EXPORT PCTextDriver : public PCILogDriver {
+    //! \brief default constructor
     PCTextDriver();
-    PCTextDriver(const std::string&);
+    /*!
+     * \brief default constructor
+     * \param[in] b: use terminal colors
+     */
+    explicit PCTextDriver(const bool);
+    /*!
+     * \brief default constructor
+     * \param[in] os: external stream
+     * \param[in] b: use terminal colors
+     *
+     * \note user is responsible of keeping the stream alive
+     */
+    explicit PCTextDriver(std::ostream&, const bool = false);
+    /*!
+     * \brief default constructor
+     * \param[in] f: output file
+     * \param[in] b: use terminal colors
+     */
+    explicit PCTextDriver(const std::string&, const bool = false);
+    //
     void addMessage(const std::string&) override;
     void reportSkippedTest(const std::string&) override;
     void addTestResult(const std::string&,
@@ -35,8 +55,11 @@ namespace tfel::check {
                        const float,
                        bool,
                        const std::string& = "") override;
-    //! destructor
+    //! \brief destructor
     ~PCTextDriver() override;
+
+   private:
+    const bool use_terminal_colors = false;
   };
 
 }  // end of namespace tfel::check

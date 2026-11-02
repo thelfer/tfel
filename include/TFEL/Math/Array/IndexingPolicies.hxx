@@ -17,6 +17,7 @@
 #include <tuple>
 #include <utility>
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::math {
 

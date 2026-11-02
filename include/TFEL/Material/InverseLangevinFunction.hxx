@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_INVERSELANGEVINFUNCTION_HXX
 
 #include <utility>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::material {
 

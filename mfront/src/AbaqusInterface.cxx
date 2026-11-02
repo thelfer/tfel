@@ -248,6 +248,17 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AbaqusInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [this, &i, &k] {
+      if (i.empty()) {
+        reportWarning("keyword '" + k +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      k + "' by '" + k + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         auto keys = AbaqusInterfaceBase::getCommonKeywords();
@@ -295,10 +306,12 @@ namespace mfront {
       ++(current);
       return {true, current};
     } else if (k == "@AbaqusStrainPerturbationValue") {
-      throw_if(!this->compareToNumericalTangentOperator,
-               "time stepping is not enabled at this stage.\n"
-               "Use the @AbaqusUseTimeSubStepping directive before "
-               "@AbaqusStrainPerturbationValue");
+      check_interface_restriction();
+      throw_if(
+          !this->compareToNumericalTangentOperator,
+          "comparison to tangent operator is not enabled at this stage.\n"
+          "Use the @AbaqusCompareToNumericalTangentOperator directive before "
+          "@AbaqusStrainPerturbationValue");
       throw_if(current == end, "unexpected end of file");
       this->strainPerturbationValue = CxxTokenizer::readDouble(current, end);
       throw_if(current == end, "unexpected end of file");
@@ -904,7 +917,7 @@ namespace mfront {
           << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
           << "deto[i] += " << this->strainPerturbationValue << ";\n"
           << "D[0] = 0.;\n"
-          << "abaqus::AbaqusData d2 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+          << "abaqus::AbaqusData d2 = {&sigf[0],&pnewdt,&D[0],&sv[0],\n"
           << "                         &sse,&spd,&scd,\n"
           << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
           << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
@@ -925,18 +938,20 @@ namespace mfront {
           << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
           << "deto[i] -= " << this->strainPerturbationValue << ";\n"
           << "D[0] = 0.;\n"
-          << "abaqus::AbaqusData d3 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+          << "abaqus::AbaqusData d3 = {&sigb[0],&pnewdt,&D[0],&sv[0],\n"
           << "                         &sse,&spd,&scd,\n"
           << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
           << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
           << "                         PROPS,PREDEF,DPRED,\n"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+          << sfeh << "};\n"
           << "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ","
           << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
           << "return;\n"
           << "}\n"
           << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
-          << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*"
+          << "nD[i*(*NTENS)+j] = (sigf[j]-sigb[j])/(2.*"
           << this->strainPerturbationValue << ");\n"
           << "}\n"
           << "}\n"
@@ -944,7 +959,7 @@ namespace mfront {
           << "m=0.;\n"
           << "mDt=0.;\n"
           << "mnDt=0.;\n"
-          << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
+          << "for(abaqus::AbaqusInt i=0;i!=(*NTENS)*(*NTENS);++i){\n"
           << "mDt=std::max(mDt,*(DDSDDE+i));\n"
           << "mnDt=std::max(mnDt,nD[i]);\n"
           << "m=std::max(m,std::abs(nD[i]-*(DDSDDE+i)));\n"

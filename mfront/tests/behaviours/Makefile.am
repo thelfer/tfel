@@ -192,6 +192,8 @@ MFRONTS= DSLOptionsTest.mfront                                             \
      ode_implicit.mfront                                               \
      TensorialExternalStateVariableTest.mfront                         \
      ElasticityParametersAsStaticVariables.mfront                      \
+     RungeKuttaElasticity.mfront                                     \
+     RungeKuttaElasticity_rk4.mfront                                 \
      RungeKuttaElasticityParametersAsStaticVariables.mfront            \
      ImplicitElasticityParametersAsStaticVariables.mfront              \
      InitializationFailureTest.mfront                                  \

@@ -73,7 +73,7 @@ namespace mtest {
                                      const real t,
                                      const real dt) {
     tfel::raise_if(s.behaviour == nullptr,
-                   "mtest::computeThermalExpanstion: "
+                   "mtest::computeExternalStateVariables: "
                    "uninitialised state");
     tfel::raise_if((s.esv0.size() != esvnames.size()) ||
                        (s.desv.size() != esvnames.size()),
@@ -103,7 +103,7 @@ namespace mtest {
     static const std::string T{"Temperature"};
     static const std::string a{"ThermalExpansion"};
     tfel::raise_if(s.behaviour == nullptr,
-                   "mtest::computeThermalExpanstion: "
+                   "mtest::computeThermalExpansion: "
                    "uninitialised state");
     auto pev = evm.find(T);
     auto pev2 = evm.find(a);
@@ -130,7 +130,7 @@ namespace mtest {
     static const std::string a2{"ThermalExpansion2"};
     static const std::string a3{"ThermalExpansion3"};
     tfel::raise_if(s.behaviour == nullptr,
-                   "mtest::computeThermalExpanstion: "
+                   "mtest::computeThermalExpansion: "
                    "uninitialised state");
     const auto pev = evm.find(T);
     const auto pev2 = evm.find(a1);

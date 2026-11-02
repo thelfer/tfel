@@ -47,7 +47,7 @@ namespace mtest {
     }
     auto s = CyranoOutputStatus{};
     const auto r =
-        this->f(&s, &args[0], static_cast<CyranoIntegerType>(args.size()),
+        this->f(&s, args.data(), static_cast<CyranoIntegerType>(args.size()),
                 CYRANO_NONE_POLICY);
     if (s.status != 0) {
       tfel::raise("CyranoEvolution::operator(): " + std::string(s.msg));
