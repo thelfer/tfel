@@ -297,12 +297,14 @@ namespace mfront {
                     << "[" << currentOffset << "+idx] = this->" << v.name
                     << "[idx];\n";
               }
-            } else if ((flag == SupportedTypes::TVECTOR) ||
-                       (flag == SupportedTypes::STENSOR) ||
-                       (flag == SupportedTypes::TENSOR)) {
+            } else if (flag == SupportedTypes::STENSOR) {
               out << "zmat::ZMATInterface::convert(&ZMATstatev"
                   << "[" << currentOffset << "+idx*StensorSize],this->"
                   << v.name << "[idx]);\n";
+            } else if (flag == SupportedTypes::TENSOR) {
+              out << "zmat::ZMATInterface::convert(&ZMATstatev"
+                  << "[" << currentOffset << "+idx*TensorSize],this->" << v.name
+                  << "[idx]);\n";
             } else {
               tfel::raise(
                   "ZMATInterface::exportMechanicalData: "
@@ -522,9 +524,12 @@ namespace mfront {
               // 	<< n << "[idx].begin());\n";
               //   break;
               case SupportedTypes::STENSOR:
-              case SupportedTypes::TENSOR:
                 out << "zmat::ZMATInterface::convert(" << n
                     << "[idx],&ZMATstatev[" << o << "+idx*StensorSize]);\n";
+                break;
+              case SupportedTypes::TENSOR:
+                out << "zmat::ZMATInterface::convert(" << n
+                    << "[idx],&ZMATstatev[" << o << "+idx*TensorSize]);\n";
                 break;
               default:
                 tfel::raise(

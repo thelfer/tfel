@@ -16,6 +16,7 @@ function(test_castem2 test_arg)
     else(_NO_XML_OUTPUT)
       list(APPEND _mtest_args --xml-output=true)
     endif(_NO_XML_OUTPUT)
+    list(APPEND _mtest_args --xml-output-file=${test}.xml)
     add_test(NAME ${test} COMMAND mtest ${_mtest_args} ${file})
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))
      set_property(TEST ${test}

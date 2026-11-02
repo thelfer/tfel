@@ -267,6 +267,7 @@ namespace castem {
       CT = convert<TangentOperator::C_TRUESDELL, TangentOperator::DS_DEGL>(
           CSE, tensor::Id(), F1, s);
       CastemTangentOperator::normalize(CT);
+      CastemTangentOperator::transpose(CT);
     } else if (NTENS == 4u) {
       using tensor = tensor<2u, CastemReal>;
       stensor<2u, CastemReal> s;
@@ -281,6 +282,7 @@ namespace castem {
       CT = convert<TangentOperator::C_TRUESDELL, TangentOperator::DS_DEGL>(
           CSE, tensor::Id(), F1, s);
       CastemTangentOperator::normalize(CT);
+      CastemTangentOperator::transpose(CT);
     } else if (NTENS == 6u) {
       using tensor = tensor<3u, CastemReal>;
       stensor<3u, CastemReal> s;
@@ -292,6 +294,7 @@ namespace castem {
       CT = convert<TangentOperator::C_TRUESDELL, TangentOperator::DS_DEGL>(
           CSE, tensor::Id(), F1, s);
       CastemTangentOperator::normalize(CT);
+      CastemTangentOperator::transpose(CT);
     } else {
       tfel::raise(
           "CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli: "

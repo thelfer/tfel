@@ -354,11 +354,9 @@ namespace tfel::math {
       constexpr auto one = real{1};
       const auto z = 1 / (t + 1);
       const auto arg = (2 * z - 1) * one;
-      return f(b - arg) * z * z * one;
+      return f(b - arg) * 2 * z * z * one;
     };
-    const auto [i, e] =
-        this->integrate(u, base_type<real>{-1}, base_type<real>{1});
-    return std::make_tuple(2 * i, e);
+    return this->integrate(u, base_type<real>{-1}, base_type<real>{1});
   }  // end of computeLeftUnboundedIntegral
 
   template <ScalarConcept real, typename FunctionType>
@@ -372,11 +370,9 @@ namespace tfel::math {
       constexpr auto one = real{1};
       const auto z = 1 / (t + 1);
       const auto arg = (2 * z - 1) * one + a;
-      return f(arg) * z * z * one;
+      return f(arg) * 2 * z * z * one;
     };
-    const auto [i, e] =
-        this->integrate(u, base_type<real>{-1}, base_type<real>{1});
-    return std::make_tuple(2 * i, e);
+    return this->integrate(u, base_type<real>{-1}, base_type<real>{1});
   }  // end of computeRightUnboundedIntegral
 
   template <ScalarConcept real, typename FunctionType>
@@ -413,14 +409,9 @@ namespace tfel::math {
       constexpr auto one = real{1};
       const auto z = 1 / (t + 1);
       const auto arg = (2 * z - 1) * one;
-      return eval_if_required(f(b - arg) * z * z * one);
+      return eval_if_required(f(b - arg) * 2 * z * z * one);
     };
-    const auto ores =
-        this->integrate(u, base_type<real>{-1}, base_type<real>{1}, params);
-    if (ores.has_value()) {
-      return 2 * (*ores);
-    }
-    return {};
+    return this->integrate(u, base_type<real>{-1}, base_type<real>{1}, params);
   }  // end of computeLeftUnboundedIntegral
 
   template <ScalarConcept real, typename FunctionType>
@@ -439,14 +430,9 @@ namespace tfel::math {
       constexpr auto one = real{1};
       const auto z = 1 / (t + 1);
       const auto arg = (2 * z - 1) * one + a;
-      return eval_if_required(f(arg) * z * z * one);
+      return eval_if_required(f(arg) * 2 * z * z * one);
     };
-    const auto ores =
-        this->integrate(u, base_type<real>{-1}, base_type<real>{1}, params);
-    if (ores.has_value()) {
-      return 2 * (*ores);
-    }
-    return {};
+    return this->integrate(u, base_type<real>{-1}, base_type<real>{1}, params);
   }  // end of computeRightUnboundedIntegral
 
 }  // end of namespace tfel::math

@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include <limits>
+#include <type_traits>
 #include <cstdlib>
 #include <iostream>
 #include "TFEL/Config/TFELTypes.hxx"
@@ -79,6 +80,12 @@ struct IsotropicModuliTest final : public tfel::tests::TestCase {
     tfel::material::KGModuli<stress> kg_quad(KG);
     kg_quad = KG;
     kg_ter = KG;
+    // no assignment from another format or from the base class
+    TFEL_TESTS_STATIC_ASSERT(
+        (!std::is_assignable_v<YoungNuModuli<stress>&, KGModuli<stress>>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (!std::is_assignable_v<YoungNuModuli<stress>&,
+                               const IsotropicModuli<stress>&>));
 
     const auto E = Enu.young;
     const auto nu = Enu.nu;

@@ -67,6 +67,14 @@ library, see below.
   ordered by their positions (the order given to the constructor, or the
   order of their first appearance in the expression), instead of the
   alphabetical order (see Issue #1209).
+- `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
+  expansion coefficients is now an error (except `ThermalExpansion1` and
+  `ThermalExpansion2` in plane stress).
+- `abaqusexplicit` interface (see Issue #1274): the results of
+  orthotropic behaviours using the `MFront` orthotropy management policy
+  change when the material frame is not symmetric with respect to the
+  global frame: the integration applied the inverse rotation, and the
+  second material axis was read beyond the orientation in 2D.
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
@@ -718,6 +726,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1283>
 
+## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
+
+For more details, see <https://github.com/thelfer/tfel/issues/1274>
+
 ## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
 
 For more details, see <https://github.com/thelfer/tfel/issues/1270>
@@ -729,6 +741,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1264>
 ## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
 
 For more details, see <https://github.com/thelfer/tfel/issues/1262>
+
+## Issue 1260: [mtest] Abaqus/Explicit stiffness in a rotated frame, incomplete orthotropic thermal expansion, tfel-check second precision, failed tangent operator comparison, overwritten JUnit reports
+
+For more details, see <https://github.com/thelfer/tfel/issues/1260>
 
 ## Issue 1258: [mfront] generic MTest files of finite strain behaviours, cpptest and gnuplot interfaces, calculix MieheApelLambrechtLogarithmicStrainII strategy, dianafea failures and orthotropic behaviours, abaqus glue lock on Windows
 
@@ -762,6 +778,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1231>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1229>
 
+## Issue 1227: [mfront] Comparisons of the finite strain single crystal tests are commented out
+
+For more details, see <https://github.com/thelfer/tfel/issues/1227>
+
 ## Issue 1225: [mtest] The fanderson and uanderson tests do not select their acceleration algorithm
 
 For more details, see <https://github.com/thelfer/tfel/issues/1225>
@@ -769,6 +789,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1225>
 ## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
 
 For more details, see <https://github.com/thelfer/tfel/issues/1223>
+
+## Issue 1221: [mfront] Logarithmic strain shear tests: the shear-FZY-3D tests impose FZX, and the transposed cases compare too few stresses
+
+For more details, see <https://github.com/thelfer/tfel/issues/1221>
 
 ## Issue 1219: [mfront] Strain tolerance of the axisymmetric shear tests of orthotropic elasticity
 
@@ -782,14 +806,31 @@ For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
+## Issue 1207: [mfront] Logarithm of the stress-free expansion stretch (abaqus, ansys, calculix, lsdyna), castem tangent operators in 1D and with FiniteRotationSmallStrain, cyrano hypothesis identifier, repeated @Test keys
+
+For more details, see <https://github.com/thelfer/tfel/issues/1207>
+
+## Issue 1205: [mfront] comsol error codes and initialisation, aster orthotropic cohesive zone models, bounds symbols of array elements, cyrano plane stress header, zmat arrays of tensors
+
+For more details, see <https://github.com/thelfer/tfel/issues/1205>
+
+## Issue 1203: [tfel-math] Isotropic moduli assignment, stensor products on GPUs, Gauss-Kronrod half-infinite error estimate, QR with more rows than columns, Levenberg-Marquardt factor, physical constants digits
+
+For more details, see <https://github.com/thelfer/tfel/issues/1203>
+
 ## Issue 1201: [tfel-utilities] CxxTokenizer numbers and integers, string algorithms, TextData comments and infinities, ProcessManager and SignalManager children, tfel-doc --split
 
 For more details, see <https://github.com/thelfer/tfel/issues/1201>
+
+## Issue 1199: [mfront] Code block option ".+", @PhysicalBounds on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/1199>
 
 ## Issue 1197: [mtest] Acceleration algorithm parameters, Anderson method orders above 22, castem_umat optional material properties, mtest Python options
 
 For more details, see <https://github.com/thelfer/tfel/issues/1197>
   
+
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 
 For more details, see <https://github.com/thelfer/tfel/issues/1195>

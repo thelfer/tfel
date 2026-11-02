@@ -72,12 +72,15 @@ namespace ansys {
       const real* const s1,
       const AnsysInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+    // logarithmic strain of the expansion stretch I + s, i.e. log1p
+    // applied to the eigenvalues of s
+    const auto f = [](const real x) { return std::log1p(x); };
     if (d == 2) {
       // s0 and s1 are given using TFEL conventions
       tfel::math::stensor<2u, real> e0(s0);
       tfel::math::stensor<2u, real> e1(s1);
-      const auto ln_e0 = tfel::math::logarithm(e0);
-      const auto ln_e1 = tfel::math::logarithm(e1);
+      const auto ln_e0 = e0.computeIsotropicFunction(f);
+      const auto ln_e1 = e1.computeIsotropicFunction(f);
       e[0] -= ln_e0[0];
       e[1] -= ln_e0[1];
       e[2] -= ln_e0[2];
@@ -89,8 +92,8 @@ namespace ansys {
     } else {
       tfel::math::stensor<3u, real> e0(s0);
       tfel::math::stensor<3u, real> e1(s1);
-      const auto ln_e0 = tfel::math::logarithm(e0);
-      const auto ln_e1 = tfel::math::logarithm(e1);
+      const auto ln_e0 = e0.computeIsotropicFunction(f);
+      const auto ln_e1 = e1.computeIsotropicFunction(f);
       // e and de follow the Ansys order (XY, YZ, XZ)
       e[0] -= ln_e0[0];
       e[1] -= ln_e0[1];
