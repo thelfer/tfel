@@ -104,11 +104,11 @@ namespace tfel::math::internals {
               typename T2,
               typename T3>
     TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
-                    const tvector<3u, T1>& f,
-                    const tvector<3u, T2>& df,
-                    const tvector<3u, T3>& vp,
-                    const tmatrix<3u, 3u, base_type<T3>>& m,
-                    const T3 eps)  //
+                                     const tvector<3u, T1>& f,
+                                     const tvector<3u, T2>& df,
+                                     const tvector<3u, T3>& vp,
+                                     const tmatrix<3u, 3u, base_type<T3>>& m,
+                                     const T3 eps)  //
         requires(getSpaceDimension<ST2toST2Type>() == 2u) {
       using base = base_type<T3>;
       using tvector = tfel::math::tvector<3u, base>;
@@ -173,11 +173,11 @@ namespace tfel::math::internals {
               typename T2,
               typename T3>
     TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
-                    const tvector<3u, T1>& f,
-                    const tvector<3u, T2>& df,
-                    const tvector<3u, T3>& vp,
-                    const tmatrix<3u, 3u, base_type<T3>>& m,
-                    const T3 eps)  //
+                                     const tvector<3u, T1>& f,
+                                     const tvector<3u, T2>& df,
+                                     const tvector<3u, T3>& vp,
+                                     const tmatrix<3u, 3u, base_type<T3>>& m,
+                                     const T3 eps)  //
         requires(getSpaceDimension<ST2toST2Type>() == 3u) {
       using base = base_type<T3>;
       using tvector = tfel::math::tvector<3u, base>;
