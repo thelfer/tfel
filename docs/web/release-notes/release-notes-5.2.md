@@ -782,10 +782,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1201>
 
+## Issue 1199: [mfront] Code block option ".+", @PhysicalBounds on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/1199>
+
 ## Issue 1197: [mtest] Acceleration algorithm parameters, Anderson method orders above 22, castem_umat optional material properties, mtest Python options
 
 For more details, see <https://github.com/thelfer/tfel/issues/1197>
   
+
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 
 For more details, see <https://github.com/thelfer/tfel/issues/1195>
