@@ -1,7 +1,9 @@
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-conversion")
 include(cmake/modules/common-compiler-flags.cmake)
 
-set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
+endif(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 set(OPTIMISATION_FLAGS "-DTFEL_NO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wdisabled-optimization")

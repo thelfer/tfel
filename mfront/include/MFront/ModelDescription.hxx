@@ -219,7 +219,8 @@ namespace mfront {
    * \return the behaviour description
    * \param[in] md: model description
    */
-  BehaviourDescription convertToBehaviourDescription(const ModelDescription&);
+  MFRONT_VISIBILITY_EXPORT BehaviourDescription
+  convertToBehaviourDescription(const ModelDescription&);
 
 }  // end of namespace mfront
 
