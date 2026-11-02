@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Abaqus/AbaqusInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_ABAQUS_CALL_HXX
+#include "MFront/Abaqus/AbaqusInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_ABAQUS_ABAQUSBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_ABAQUS_ABAQUSBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_ABAQUS_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ABAQUS_CALL_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -334,3 +336,5 @@ namespace abaqus {
 }  // end of namespace abaqus
 
 #endif /* LIB_MFRONT_ABAQUS_ABAQUSBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_ABAQUS_CALL_HXX */

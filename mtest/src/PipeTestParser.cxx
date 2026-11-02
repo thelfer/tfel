@@ -594,6 +594,15 @@ namespace mtest {
   }
 
   void PipeTestParser::handleTest(PipeTest& t, tokens_iterator& p) {
+    auto warn_if = [this](const bool c, const tokens_iterator pv,
+                          const std::string& v) {
+      if (c) {
+        mfront::getLogStream()
+            << this->file << ":" << pv->line << ":" << pv->offset
+            << ": warning: variable '" << v
+            << "' given twice, only its first entry is used\n";
+      }
+    };
     this->readSpecifiedToken("PipeTestParser::handleTest", "<", p,
                              this->tokens.end());
     this->checkNotEndOfLine("PipeTestParser::handleTest", p,
@@ -639,11 +648,12 @@ namespace mtest {
         this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                                 this->tokens.end());
         while (p->value != "}") {
+          const auto pv = p;
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("PipeTestParser::handleTest", ":", p,
                                    this->tokens.end());
           const auto c = this->readUnsignedInt(p, this->tokens.end());
-          variables.insert({v, c});
+          warn_if(!variables.insert({v, c}).second, pv, v);
           this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                                   this->tokens.end());
           if (p->value != "}") {
@@ -689,11 +699,12 @@ namespace mtest {
         this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                                 this->tokens.end());
         while (p->value != "}") {
+          const auto pv = p;
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("PipeTestParser::handleTest", ":", p,
                                    this->tokens.end());
           const auto ev = this->readString(p, this->tokens.end());
-          variables.insert({v, ev});
+          warn_if(!variables.insert({v, ev}).second, pv, v);
           this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                                   this->tokens.end());
           if (p->value != "}") {

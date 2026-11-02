@@ -26,7 +26,7 @@
 #include "TFEL/Math/General/CubicRoots.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
-#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx"
 
 namespace tfel::math::internals {
 
@@ -350,13 +350,38 @@ namespace tfel::math::internals {
           return false;
         }
         if (tfel::math::abs(vp2(1) - vp2(2)) > prec) {
-          // vp1 is single
-          if (computeEigenVector(s2.begin(), vp2(1), vec(0, 1), vec(1, 1),
-                                 vec(2, 1)) == false) {
+          // vp1 is single: the eigenvalues are distinct. When two of them
+          // are close, their eigenvectors, computed independently, are not
+          // orthogonal. The eigenvector of the most isolated eigenvalue
+          // (k) is computed, the eigenvector of another eigenvalue (i) is
+          // orthogonalised against it, and the last one is their cross
+          // product.
+          const auto d01 = tfel::math::abs(vp2(0) - vp2(1));
+          const auto d02 = tfel::math::abs(vp2(0) - vp2(2));
+          const auto d12 = tfel::math::abs(vp2(1) - vp2(2));
+          const unsigned short k =
+              ((d01 <= d02) && (d01 <= d12)) ? 2 : ((d02 <= d12) ? 1 : 0);
+          const unsigned short i = (k == 0) ? 1 : 0;
+          // the eigenvector of vp0 is already known
+          const unsigned short l = (k == 0) ? i : k;
+          if (computeEigenVector(s2.begin(), vp2(l), vec(0, l), vec(1, l),
+                                 vec(2, l)) == false) {
             return false;
           }
-          cross_product(vec(0, 2), vec(1, 2), vec(2, 2), vec(0, 0), vec(1, 0),
-                        vec(2, 0), vec(0, 1), vec(1, 1), vec(2, 1));
+          const auto p = vec(0, i) * vec(0, k) + vec(1, i) * vec(1, k) +
+                         vec(2, i) * vec(2, k);
+          vec(0, i) -= p * vec(0, k);
+          vec(1, i) -= p * vec(1, k);
+          vec(2, i) -= p * vec(2, k);
+          const auto n = norm(vec(0, i), vec(1, i), vec(2, i));
+          vec(0, i) /= n;
+          vec(1, i) /= n;
+          vec(2, i) /= n;
+          const unsigned short j = 3 - l;
+          const unsigned short j1 = (j + 1) % 3;
+          const unsigned short j2 = (j + 2) % 3;
+          cross_product(vec(0, j), vec(1, j), vec(2, j), vec(0, j1), vec(1, j1),
+                        vec(2, j1), vec(0, j2), vec(1, j2), vec(2, j2));
         } else {
           // vp1 and vp2 are equal
           find_perpendicular_vector(vec(0, 1), vec(1, 1), vec(2, 1), vec(0, 0),

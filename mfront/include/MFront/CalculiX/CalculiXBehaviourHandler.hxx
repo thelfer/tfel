@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/CalculiX/CalculiXInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CALCULIX_CALL_HXX
+#include "MFront/CalculiX/CalculiXInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CALCULIX_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CALCULIX_CALL_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -336,3 +338,5 @@ namespace calculix {
 }  // end of namespace calculix
 
 #endif /* LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CALCULIX_CALL_HXX */

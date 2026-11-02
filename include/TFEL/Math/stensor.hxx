@@ -78,7 +78,8 @@ namespace tfel::math {
     enum EigenSolver {
       //! \brief historical native and homemade algorithm
       TFELEIGENSOLVER,
-      //! \brief non iterative solver from Joachim Kopp,
+      //! \brief analytical solver from Joachim Kopp (the eigenvectors are
+      //! computed as by the hybrid solver)
       FSESANALYTICALEIGENSOLVER,
       //! \brief Jacobi iterative solver from Joachim Kopp
       FSESJACOBIEIGENSOLVER,
@@ -618,7 +619,7 @@ namespace tfel::math {
         const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                                   (isAssignableTo<
                                       BinaryOperationResult<
-                                          base_type<ValueType>,
+                                          ValueType,
                                           ValueType,
                                           OpDiv>,
                                       numeric_type<ST2toST2Type>>()));
@@ -661,7 +662,7 @@ namespace tfel::math {
         const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                                   (isAssignableTo<
                                       BinaryOperationResult<
-                                          base_type<ValueType>,
+                                          ValueType,
                                           ValueType,
                                           OpDiv>,
                                       numeric_type<ST2toST2Type>>()));

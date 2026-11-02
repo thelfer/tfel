@@ -163,6 +163,11 @@ The value used for to compare the tangent operator given by the behaviour to a
 numerical approximation can be adjusted by the
 `@TangentOperatorComparisonCriterion`.
 
+This comparison is a debugging tool: when it fails, the tangent
+operator given by the behaviour and its numerical approximation are
+printed in the output of `MTest`, but the test is not considered as
+failed.
+
 ## Example
 
 ~~~~ {.cpp}
@@ -520,7 +525,9 @@ thermal expansions:
   `ThermalExpansion` property
 - orthotropic thermal expansion is defined through the
   `ThermalExpansion1`, `ThermalExpansion2` and `ThermalExpansion3`
-  material properties.
+  material properties. In plane stress, `ThermalExpansion3` is
+  optional (the out-of-plane thermal strain is then null). An
+  incomplete set of coefficients is an error.
 
 This keyword takes the type of the material property as an option.
 Three types of material properties are supported, `constant` or
@@ -727,7 +734,10 @@ the principal directions of the material are different from those used
 for the resolution and the boundary conditions.
 
 This keyword is followed by an array of array reprensentig a 3x3
-matrix.
+matrix, given row by row. The columns of the rotation matrix \(R\) are
+the material axes expressed in the global frame: the components of a
+symmetric tensor \(\underline{s}\) in the material frame are given by
+\(R^{T}\,.\,\underline{s}\,.\,R\).
 
 ## Example
 

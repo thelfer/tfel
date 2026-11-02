@@ -254,10 +254,10 @@ namespace mfront {
           if (!v.hasBounds(idx)) {
             continue;
           }
-          mfront::writeBoundsSymbol(os, n,
-                                    v.getExternalName() + "_mfront_index_" +
-                                        std::to_string(idx) + "_",
-                                    "", v.getBounds(idx));
+          mfront::writeBoundsSymbol(
+              os, n,
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx), "",
+              v.getBounds(idx));
         }
       }
     }
@@ -281,10 +281,10 @@ namespace mfront {
           if (!v.hasPhysicalBounds(idx)) {
             continue;
           }
-          mfront::writeBoundsSymbol(os, n,
-                                    v.getExternalName() + "_mfront_index_" +
-                                        std::to_string(idx) + "_",
-                                    "Physical", v.getPhysicalBounds(idx));
+          mfront::writeBoundsSymbol(
+              os, n,
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx),
+              "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
@@ -309,8 +309,8 @@ namespace mfront {
         }
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          const auto n = v.getExternalName() + "_mfront_index_" +
-                         std::to_string(idx) + "_";
+          const auto n =
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx);
           if (v.hasBounds(idx)) {
             writeBoundsSymbol(out, name, n, "", v.getBounds(idx));
           }

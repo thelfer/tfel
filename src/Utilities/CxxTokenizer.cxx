@@ -14,13 +14,17 @@
 #include <algorithm>
 #include <array>
 #include <cctype>
+#include <charconv>
 #include <fstream>
 #include <iterator>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
+#include <utility>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/CxxKeywords.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -357,7 +361,7 @@ namespace tfel::utilities {
     };
     auto is_binary = [](const char c) { return (c == '0') || (c == '1'); };
     auto is_hex = [](const char c) {
-      return (((c >= '0') && (c <= '7')) || ((c >= 'a') && (c <= 'f')) ||
+      return (((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'f')) ||
               ((c >= 'A') && (c <= 'F')));
     };
     const auto b = p;
@@ -366,10 +370,7 @@ namespace tfel::utilities {
     auto is_float = false;
     auto is_signed = false;
     auto is_binary_integer = false;
-    // auto is_octal_integer  = false;
     auto is_hex_integer = false;
-    auto starts_with_zero = false;
-    auto has_exponent = false;
     if ((*p == '-') || (*p == '+')) {
       if (*p == '-') {
         is_signed = true;
@@ -385,24 +386,29 @@ namespace tfel::utilities {
       throw_if(!is_digit(*p),
                std::string("expected digit, read '") + *p + '\'');
     } else if (*p == '0') {
-      starts_with_zero = true;
       if (++p != pe) {
-        if (*p == 'b') {
+        if ((*p == 'b') || (*p == 'B')) {
           // reading binary integer
           is_binary_integer = true;
           throw_if(++p == pe, "invalid binary integer");
           throw_if(!is_binary(*p), "invalid binary integer");
-          while ((p != pe) && (is_digit(*p))) {
+          while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
+            if (*p == '\'') {
+              throw_if(++p == pe, "invalid binary integer");
+            }
             throw_if(!is_binary(*p), "invalid binary integer");
             ++p;
           }
-        } else if (*p == 'x') {
+        } else if ((*p == 'x') || (*p == 'X')) {
           // reading hex integer
           is_hex_integer = true;
           throw_if(++p == pe, "invalid hexadecimal integer");
           throw_if(!is_hex(*p), "invalid hexadecimal integer");
-          while ((p != pe) && (is_digit(*p))) {
-            throw_if(!is_hex(*p), "invalid hexadecimal integer");
+          while ((p != pe) && ((is_hex(*p)) || (*p == '\''))) {
+            if (*p == '\'') {
+              throw_if(++p == pe, "invalid hexadecimal integer");
+              throw_if(!is_hex(*p), "invalid hexadecimal integer");
+            }
             ++p;
           }
         } else {
@@ -437,10 +443,10 @@ namespace tfel::utilities {
     }
     throw_if((p != pe) && (*p == '.'), "invalid number");
     if (p != pe) {
-      throw_if(is_hex_integer, "invalid hexadecimal integer");
-      throw_if(is_binary_integer, "invalid binary integer");
+      throw_if(is_hex_integer && ((*p == 'p') || (*p == 'P')),
+               "invalid hexadecimal integer");
       if ((*p == 'e') || (*p == 'E')) {
-        has_exponent = true;
+        throw_if(is_binary_integer, "invalid binary integer");
         throw_if(++p == pe, "invalid number");
         if ((*p == '+') || (*p == '-')) {
           if (*p == '-') {
@@ -461,15 +467,6 @@ namespace tfel::utilities {
       }
     }
     throw_if((p != pe) && (*p == '.'), "invalid number");
-    // checking  octal integer
-    if ((!is_float) && (!is_hex_integer) && (!is_binary_integer) &&
-        (starts_with_zero) && (!has_exponent)) {
-      // we may an octal integer
-      for (auto c = b; c != p; ++c) {
-        throw_if(!((*p >= '0') || (*p <= '7')), "invalid octal number");
-      }
-      // is_octal_integer=true;
-    }
     if (p != pe) {
       if (((is_float) &&
            ((*p == 'l') || (*p == 'f') || (*p == 'L') || (*p == 'F'))) ||
@@ -1249,6 +1246,46 @@ namespace tfel::utilities {
     return res;
   }  // end of CxxTokenizer::readDouble
 
+  /*!
+   * \brief convert the value of a number token to an integer
+   * \return true on success
+   * \param[out] r: integer
+   * \param[in] v: value of the token
+   *
+   * The value must be a decimal integer in the range of the integer
+   * type, possibly followed by an integer suffix or by a fractional part
+   * or an exponent, and their suffix, that do not change it (for example
+   * `3u`, `3.0` or `3.f`).
+   */
+  template <typename IntegerType>
+  static bool convertToInteger(IntegerType& r, const std::string& v) {
+    // std::from_chars does not accept an explicit plus sign
+    const auto b = v.data() + (((!v.empty()) && (v[0] == '+')) ? 1 : 0);
+    const auto e = v.data() + v.size();
+    auto i = static_cast<long long>(0);
+    const auto [pi, ec] = std::from_chars(b, e, i);
+    if ((ec != std::errc{}) || (!std::in_range<IntegerType>(i))) {
+      return false;
+    }
+    const auto s = std::string_view(pi, e - pi);
+    if ((!s.empty()) && ((s[0] == '.') || (s[0] == 'e') || (s[0] == 'E'))) {
+      // fractional part or exponent, without the suffix
+      const auto f = v.substr(0, v.find_last_not_of("fFlLuU") + 1);
+      try {
+        if (tfel::math::ieee754::fpclassify(
+                convert<double>(f) - static_cast<double>(i)) != FP_ZERO) {
+          return false;
+        }
+      } catch (std::exception&) {
+        return false;
+      }
+    } else if (s.find_first_not_of("uUlL") != std::string_view::npos) {
+      return false;
+    }
+    r = static_cast<IntegerType>(i);
+    return true;
+  }  // end of convertToInteger
+
   int CxxTokenizer::readInt(const_iterator& p, const const_iterator pe)
 
   {
@@ -1263,9 +1300,7 @@ namespace tfel::utilities {
       replace_all(v, '\'', "");
       return v;
     }();
-    std::istringstream is(value);
-    is >> res;
-    raise_if(!is && (!is.eof()),
+    raise_if(!convertToInteger(res, value),
              "CxxTokenizer::readInt: "
              "could not read value from token '" +
                  p->value + "'.");
@@ -1287,9 +1322,7 @@ namespace tfel::utilities {
       replace_all(v, '\'', "");
       return v;
     }();
-    std::istringstream is(value);
-    is >> res;
-    if (!is && (!is.eof())) {
+    if (!convertToInteger(res, value)) {
       tfel::raise(
           "CxxTokenizer::readUnsignedInt: "
           "could not read value from token '" +

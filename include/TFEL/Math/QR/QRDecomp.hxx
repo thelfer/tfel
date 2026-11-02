@@ -27,7 +27,7 @@ namespace tfel::math {
 
   /*!
    * structure in charge of computing the QR decomposition of a
-   * matrix. Column permutation is performed.
+   * matrix. No column permutation is performed.
    */
   struct QRDecomp {
     /*!
@@ -35,14 +35,14 @@ namespace tfel::math {
      *
      * \param[in,out] m      : the matrix to be decomposed
      * \param[out]    rdiag  : diagonal values of the R matrix
-     * \param[out]    beta   : euclidian norm of the columns of m
+     * \param[out]    beta   : half of the square of the norm of the
+     * householder vectors
      * The decomposition is done in-place
      *
      * This function uses householder transformations to compute a
      * qr factorization of the m by n matrix a. that is, one
-     * determines an orthogonal matrix q, and an upper trapezoidal
-     * matrix r with diagonal elements of nonincreasing magnitude,
-     * such that a = q*r. the householder transformation for column
+     * determines an orthogonal matrix q and an upper trapezoidal
+     * matrix r such that a = q*r. the householder transformation for column
      * k, k = 1,2,...,min(m,n), is of the form:
      * \[
      * I - (1/beta(k))*v*v
@@ -58,7 +58,8 @@ namespace tfel::math {
      * \param[in] v    : vector to be multiplied
      * \param[in] a    : decomposed matrix which stores a bunch of
      * householder transformations in its lower diagonal part
-     * \param[in] beta : square of norm of the householder vectors
+     * \param[in] beta : half of the square of the norm of the
+     * householder vectors
      */
     template <typename VectorType, typename MatrixType>
     static TFEL_MATH_INLINE2 void tq_product(VectorType&,
@@ -66,7 +67,8 @@ namespace tfel::math {
                                              const VectorType&);
 
     /*!
-     * \param[in] v : vector
+     * \param[in,out] v : vector of size greater than or equal to the number
+     * of columns of a (e.g. the result of tq_product)
      * \param[in] a : decomposed matrix
      * \param[in] d : diagonal element of the matrix
      * \param[in] e : precision
@@ -78,7 +80,8 @@ namespace tfel::math {
         const VectorType&,
         const numeric_type<MatrixType>);
     /*!
-     * \param[in] v : vector
+     * \param[in,out] v : vector of size greater than or equal to the number
+     * of columns of a (e.g. the result of tq_product)
      * \param[in] a : decomposed matrix
      * \param[in] d : diagonal element of the matrix
      */

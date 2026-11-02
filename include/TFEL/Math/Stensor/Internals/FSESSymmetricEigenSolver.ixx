@@ -41,7 +41,7 @@
 #define LIB_TFEL_MATH_INTERNALS_FSESSYMMETRICEIGENSOLVER_IXX
 
 #include "FSES/syevc3.hxx"
-#include "FSES/syevv3.hxx"
+#include "FSES/syevh3.hxx"
 
 namespace tfel::math::internals {
 
@@ -126,7 +126,14 @@ namespace tfel::math::internals {
       tvector<3u, real>& vp,
       tmatrix<3u, 3u, real>& m,
       tmatrix<3u, 3u, real>& s) {
-    fses::syevv3(m, vp, s);
+    // the eigenvectors given by the analytical formulas of syevv3 are wrong
+    // for repeated or nearly repeated eigenvalues: syevh3 uses the same
+    // formulas but falls back to the QL algorithm in this case
+    if (fses::syevh3(m, vp, s) != 0) {
+      // no convergence: report it as for the other solvers
+      vp = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+      m = tmatrix<3u, 3u, real>(std::numeric_limits<real>::quiet_NaN());
+    }
   }
 
 }  // end of namespace tfel::math::internals

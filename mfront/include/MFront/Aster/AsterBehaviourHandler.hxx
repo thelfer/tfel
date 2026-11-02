@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Aster/AsterInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_ASTER_CALL_HXX
+#include "MFront/Aster/AsterInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_ASTER_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ASTER_CALL_HXX */
 
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/t2tost2.hxx"
@@ -481,3 +483,5 @@ namespace aster {
 #include "MFront/Aster/AsterOrthotropicBehaviourHandler.hxx"
 
 #endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_ASTER_CALL_HXX */

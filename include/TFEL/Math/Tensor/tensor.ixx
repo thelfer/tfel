@@ -181,6 +181,17 @@ namespace tfel::math {
     return dJ;
   }
 
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantDerivative(
+      const TensorConcept auto& F) noexcept {
+    using TensorType = decltype(F);
+    tensor<
+        getSpaceDimension<TensorType>(),
+        typename ComputeUnaryResult<numeric_type<TensorType>, Power<2>>::Result>
+        adj;
+    computeAdjugateDeterminantDerivative(adj, F);
+    return adj;
+  }
+
   template <TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto change_basis(
       const TensorType& t,
