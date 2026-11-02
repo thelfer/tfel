@@ -778,6 +778,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
+## Issue 1207: [mfront] Logarithm of the stress-free expansion stretch (abaqus, ansys, calculix, lsdyna), castem tangent operators in 1D and with FiniteRotationSmallStrain, cyrano hypothesis identifier, repeated @Test keys
+
+For more details, see <https://github.com/thelfer/tfel/issues/1207>
+
 ## Issue 1205: [mfront] comsol error codes and initialisation, aster orthotropic cohesive zone models, bounds symbols of array elements, cyrano plane stress header, zmat arrays of tensors
 
 For more details, see <https://github.com/thelfer/tfel/issues/1205>
