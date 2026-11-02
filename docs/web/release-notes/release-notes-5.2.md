@@ -782,9 +782,17 @@ For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1205>
 
+## Issue 1203: [tfel-math] Isotropic moduli assignment, stensor products on GPUs, Gauss-Kronrod half-infinite error estimate, QR with more rows than columns, Levenberg-Marquardt factor, physical constants digits
+
+For more details, see <https://github.com/thelfer/tfel/issues/1203>
+
 ## Issue 1201: [tfel-utilities] CxxTokenizer numbers and integers, string algorithms, TextData comments and infinities, ProcessManager and SignalManager children, tfel-doc --split
 
 For more details, see <https://github.com/thelfer/tfel/issues/1201>
+
+## Issue 1199: [mfront] Code block option ".+", @PhysicalBounds on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/1199>
 
 ## Issue 1197: [mtest] Acceleration algorithm parameters, Anderson method orders above 22, castem_umat optional material properties, mtest Python options
 

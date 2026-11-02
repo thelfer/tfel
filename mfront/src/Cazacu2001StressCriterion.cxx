@@ -42,7 +42,7 @@ namespace mfront::bbrick {
     using ConstantMaterialProperty =
         mfront::BehaviourDescription::ConstantMaterialProperty;
     tfel::raise_if(bd.getSymmetryType() != mfront::ORTHOTROPIC,
-                   "Cazacu2004OrthotropicStressCriterion::initialize: "
+                   "Cazacu2001StressCriterion::initialize: "
                    "the behaviour must be orthotropic");
     StressCriterionBase::initialize(bd, dsl, id, d, r);
     const auto an = StressCriterion::getVariableId("a", id, r);
@@ -135,7 +135,7 @@ namespace mfront::bbrick {
              (mh !=
               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
              (mh != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)),
-            "Cazacu2001Criterion::endTreatment: "
+            "Cazacu2001StressCriterion::endTreatment: "
             "with the Pipe orthotropic axis convention, "
             "only the following modelling hypotheses are supported:\n"
             "- Tridimensional\n"
@@ -149,7 +149,7 @@ namespace mfront::bbrick {
         tfel::raise_if(
             ((mh != ModellingHypothesis::TRIDIMENSIONAL) &&
              (mh != ModellingHypothesis::PLANESTRESS)),
-            "Cazacu2001Criterion::endTreatment: "
+            "Cazacu2001StressCriterion::endTreatment: "
             "with the Plate orthotropic axis convention, "
             "only the following modelling hypotheses are supported:\n"
             "- Tridimensional\n"
@@ -158,13 +158,13 @@ namespace mfront::bbrick {
     } else {
       tfel::raise_if(bd.getOrthotropicAxesConvention() !=
                          tfel::material::OrthotropicAxesConvention::DEFAULT,
-                     "Cazacu2001Criterion::endTreatment: "
+                     "Cazacu2001StressCriterion::endTreatment: "
                      "internal error, unsupported orthotropic axes convention");
       for (const auto mh : bd.getModellingHypotheses()) {
         tfel::raise_if(mh != ModellingHypothesis::TRIDIMENSIONAL,
-                       "Cazacu2001Criterion::endTreatment: "
+                       "Cazacu2001StressCriterion::endTreatment: "
                        "an orthotropic axes convention must be choosen when "
-                       "defining a stress free expansion in behaviours "
+                       "using the Cazacu 2001 stress criterion in behaviours "
                        "which shall be valid in other modelling hypothesis "
                        "than 'Tridimensional'.\n"
                        "Either restrict the validity of the behaviour to "

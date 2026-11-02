@@ -275,7 +275,7 @@ namespace mfront::bbrick {
         this->save_porosity_increase = e.second.get<bool>();
       } else if (e.first == "porosity_evolution_algorithm") {
         if (!e.second.is<std::string>()) {
-          raise("'porosity_evolution_algorithm' is not a boolean");
+          raise("'porosity_evolution_algorithm' is not a string");
         }
         const auto& a = e.second.get<std::string>();
         if (a == "standard_implicit_scheme") {
