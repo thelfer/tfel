@@ -153,7 +153,7 @@ namespace mfront {
   void ModelDSLCommon::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
       this->throwRuntimeError("ModelDSLCommon::setMaterial",
-                              "material name alreay defined");
+                              "material name already defined");
     }
     if (!isValidMaterialName(m)) {
       this->throwRuntimeError("ModelDSLCommon::setMaterial",
@@ -430,6 +430,9 @@ namespace mfront {
         throw_if(openedParenthesis == 0, "unbalanced parenthesis");
         --openedParenthesis;
         f.body += ")";
+        // a variable directly following a closing parenthesis starts the
+        // body of an if, for or while statement
+        newInstruction = (openedParenthesis == 0);
       } else if (this->current->value == ";") {
         f.body += ";";
         newInstruction = true;
@@ -545,7 +548,7 @@ namespace mfront {
             f.body += c;
           }
         }
-        newInstruction = false;
+        newInstruction = (c == "else") || (c == "do");
       }
       newLine = false;
     }
@@ -702,7 +705,7 @@ namespace mfront {
       if (!converter || (!converter.eof())) {
         this->throwRuntimeError(
             "ModelDSLCommon::treatInputMethod",
-            "Could not read initial value of field '" + this->currentVar + "'");
+            "Could not read depth value of field '" + this->currentVar + "'");
       }
       auto& v = this->md.inputs.getVariable(this->currentVar);
       v.setAttribute(VariableDescription::depth, value, false);
@@ -864,7 +867,7 @@ namespace mfront {
       v.setAttribute(VariableDescription::defaultValue, values, false);
     } else if (v.type == "StringArray") {
       const auto values =
-          this->readArrayOfDouble("ModelDSLCommon::readDefaultValue");
+          this->readArrayOfString("ModelDSLCommon::readDefaultValue");
       v.setAttribute(VariableDescription::defaultValue, values, false);
     } else if ((v.type == "double") || (v.type == "real")) {
       const auto value = this->readDouble();

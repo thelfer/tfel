@@ -18,13 +18,13 @@ booleans called `statuses`.
 
 @LocalVariable bool statuses[2];
 
-@Prediction{
+@Predictor{
   // initial status based of the elastic prediction
   auto sigel = computeElasticPrediction();
   for(unsigned short i=0;i!=2;++i){
 	statuses[i] = ...
   }
-} // end of @Prediction
+} // end of @Predictor
 
 @Integrator{
   for(unsigned short i=0;i!=2;++i){

@@ -165,7 +165,9 @@ namespace mfront {
            << "struct " << md.className << '\n'
            << "{\n"
            << "//! a simple alias\n"
-           << "typedef tfel::material::OutOfBoundsPolicy OutOfBoundsPolicy;\n";
+           << "typedef tfel::material::OutOfBoundsPolicy OutOfBoundsPolicy;\n"
+           << "//! the type of time increments\n"
+           << "using time = real;\n";
     if (md.constantMaterialProperties.empty()) {
       header << "//! default constructor\n"
              << md.className << "() = default;\n";
@@ -226,18 +228,32 @@ namespace mfront {
       }
       header << " */\n";
       if (f.modifiedVariables.size() == 1) {
-        header << "real ";
+        const auto& output =
+            md.outputs.getVariable(*(f.modifiedVariables.begin()));
+        header << output.type << " ";
       } else {
         header << "void ";
       }
       header << f.name << "(";
       if (f.modifiedVariables.size() > 1) {
         for (const auto& mv : f.modifiedVariables) {
-          header << "real& " << mv << ",";
+          const auto& output = md.outputs.getVariable(mv);
+          header << output.type << "& " << mv << ",";
         }
       }
       for (auto pa = std::begin(args); pa != std::end(args);) {
-        header << "const real " << *pa;
+        if (*pa == "dt") {
+          header << "const time " << *pa;
+        } else {
+          const auto dv = md.decomposeVariableName(*pa);
+          const auto& v = [&md, &dv]() -> const VariableDescription& {
+            if (md.outputs.contains(dv.first)) {
+              return md.outputs.getVariable(dv.first);
+            }
+            return md.inputs.getVariable(dv.first);
+          }();
+          header << "const " << v.type << " " << *pa;
+        }
         if (++pa != std::end(args)) {
           header << ",";
         }
@@ -246,7 +262,9 @@ namespace mfront {
              << "using namespace std;\n"
              << "using tfel::material::BoundsCheckBase;\n";
       if (f.modifiedVariables.size() == 1) {
-        header << "real " << *(f.modifiedVariables.begin()) << ";\n";
+        const auto& vn = *(f.modifiedVariables.begin());
+        const auto& output = md.outputs.getVariable(vn);
+        header << output.type << " " << vn << ";\n";
       }
       for (const auto& vn : f.usedVariables) {
         const auto dv = md.decomposeVariableName(vn);
@@ -277,12 +295,13 @@ namespace mfront {
       if ((p.type == "double") || (p.type == "real")) {
         const auto v =
             p.getAttribute<double>(VariableDescription::defaultValue);
-        header << "real " << p.name << " = " << v << ";\n";
+        header << "const " << p.type << " " << p.name << " = " << p.type << "{"
+               << v << "};\n";
       } else if (p.type == "bool") {
         if (p.getAttribute<bool>(VariableDescription::defaultValue)) {
-          header << "bool " << p.name << " = true;\n";
+          header << "const bool " << p.name << " = true;\n";
         } else {
-          header << "bool " << p.name << " = false;\n";
+          header << "const bool " << p.name << " = false;\n";
         }
       } else {
         throw_if(true, "unsupported type (" + p.type + ") for  parameter '" +

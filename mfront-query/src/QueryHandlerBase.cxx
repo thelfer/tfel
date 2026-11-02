@@ -214,7 +214,7 @@ namespace mfront {
   std::function<void()>
   QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery(
       const std::string& n) const {
-    if (!n.empty()) {
+    if (n.empty()) {
       tfel::raise(
           "QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery: "
           "no option given for command line argument "
@@ -262,10 +262,10 @@ namespace mfront {
         std::cout << t.first << " : ";
         std::copy(std::begin(t.second.deps), std::end(t.second.deps),
                   std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl << "> rule : ";
-        std::copy(std::begin(t.second.cmds), std::end(t.second.cmds),
-                  std::ostream_iterator<std::string>(std::cout, "\n> rule : "));
-        std::cout << std::endl;
+        std::cout << '\n';
+        for (const auto& c : t.second.cmds) {
+          std::cout << "> rule : " << c << '\n';
+        }
       }
     };
   }  // end of generateSpecificTargetsQuery

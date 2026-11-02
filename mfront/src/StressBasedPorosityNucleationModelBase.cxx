@@ -147,7 +147,8 @@ namespace mfront::bbrick {
     i.code += "this->dfn" + id + " = " + An_n + " * (" + dp + ");\n";
     i.code += "if(this->fn" + id + " + this->dfn" + id + " >= this->" + fmax_n +
               "){\n";
-    i.code += "this->dfn" + id + " = this->" + fmax_n + " - this->fn;\n";
+    i.code +=
+        "this->dfn" + id + " = this->" + fmax_n + " - this->fn" + id + ";\n";
     i.code += "f" + f.name + " -= this->dfn" + id + ";\n";
     i.code += "} else {\n";
     i.code += "f" + f.name + " -= this->dfn" + id + ";\n";
@@ -228,7 +229,7 @@ namespace mfront::bbrick {
     c += "compute" + mn + "PorosityRateFactor<StressStensor>" +  //
          "(this->" + parameters + ", this->sig, " + p + ");\n";
     c += "this->dfn" + id + " = std::min(" + An_n + " * (" + dp + "), this->" +
-         fmax_n + " - this->fn);\n";
+         fmax_n + " - this->fn" + id + ");\n";
     c += mfront::StandardElastoViscoPlasticityBrick::
         nextEstimateOfThePorosityIncrement;
     c += " += this->dfn" + id + ";\n";

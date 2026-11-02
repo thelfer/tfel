@@ -259,6 +259,7 @@ namespace abaqus {
           C, tensor::Id(), F1, s);
       // now convert to abaqus
       AbaqusTangentOperator<AbaqusReal>::normalize(Ca);
+      AbaqusTangentOperator<AbaqusReal>::transpose(Ca);
     } else if (NTENS == 6) {
       using tensor = tensor<3u, AbaqusReal>;
       stensor<3u, AbaqusReal> s;
@@ -270,6 +271,7 @@ namespace abaqus {
           C, tensor::Id(), F1, s);
       // now convert to abaqus
       AbaqusTangentOperator<AbaqusReal>::normalize(Ca);
+      AbaqusTangentOperator<AbaqusReal>::transpose(Ca);
     }
   }  // end of AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE
 

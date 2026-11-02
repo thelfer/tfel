@@ -22,6 +22,7 @@
 
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/tensor.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/st2tot2.hxx"
 
 #include "TFEL/Tests/TestCase.hxx"
@@ -62,6 +63,15 @@ struct StensorProductDerivative final : public tfel::tests::TestCase {
     }
     st2tot2<N> ld = st2tot2<N>::tpld(t2);
     st2tot2<N> rd = st2tot2<N>::tprd(t1);
+    // derivatives with respect to a variable X, with C = dt1/dX = dt2/dX
+    st2tost2<N> C;
+    for (typename stensor<N>::size_type i = 0; i != t1.size(); ++i) {
+      for (typename stensor<N>::size_type j = 0; j != t1.size(); ++j) {
+        C(i, j) = 0.1 * (i + 1) - 0.3 * j;
+      }
+    }
+    const st2tot2<N> eld = st2tot2<N>::tpld(t2, C) - ld * C;
+    const st2tot2<N> erd = st2tot2<N>::tprd(t1, C) - rd * C;
     st2tot2<N> nld;
     st2tot2<N> nrd;
     tensor<N> t3(t1 * t2);
@@ -83,6 +93,8 @@ struct StensorProductDerivative final : public tfel::tests::TestCase {
     }
     for (typename tensor<N>::size_type i = 0; i != t3.size(); ++i) {
       for (typename stensor<N>::size_type j = 0; j != t1.size(); ++j) {
+        TFEL_TESTS_ASSERT(abs(eld(i, j)) < prec);
+        TFEL_TESTS_ASSERT(abs(erd(i, j)) < prec);
         TFEL_TESTS_ASSERT(abs(nld(i, j) - ld(i, j)) < prec);
         if (abs(nld(i, j) - ld(i, j)) > prec) {
           cout << "Error " << N << " nld (" << i << ", " << j << ") "

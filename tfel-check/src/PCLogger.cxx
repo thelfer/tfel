@@ -2,7 +2,7 @@
  * \file PCLogger.cxx
  * \brief PCLogger implementation
  * \author sb152252
- * \date 31 août 2009
+ * \date 31/08/2009
  *
  * $Id$
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -13,16 +13,19 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
+#include <mutex>
 #include "TFEL/Check/PCILogDriver.hxx"
 #include "TFEL/Check/PCLogger.hxx"
+
+//! \brief a mutex to avoid overlapping message on output
+std::mutex message_mutex;
 
 namespace tfel::check {
 
   PCLogger::PCLogger() = default;
-  PCLogger::PCLogger(PCLogger&&) = default;
+  PCLogger::PCLogger(PCLogger&&) noexcept = default;
   PCLogger::PCLogger(const PCLogger&) = default;
-  PCLogger& PCLogger::operator=(PCLogger&&) = default;
+  PCLogger& PCLogger::operator=(PCLogger&&) noexcept = default;
   PCLogger& PCLogger::operator=(const PCLogger&) = default;
   PCLogger::~PCLogger() = default;
 
@@ -33,12 +36,14 @@ namespace tfel::check {
   }
 
   void PCLogger::reportSkippedTest(const std::string& d) {
+    std::lock_guard<std::mutex> guard(message_mutex);
     for (auto& driver : this->drivers) {
       driver->reportSkippedTest(d);
     }
   }
 
   void PCLogger::addMessage(const std::string& message) {
+    std::lock_guard<std::mutex> guard(message_mutex);
     for (auto& driver : this->drivers) {
       driver->addMessage(message);
     }
@@ -56,6 +61,7 @@ namespace tfel::check {
                                const float time,
                                const bool success,
                                const std::string& message) {
+    std::lock_guard<std::mutex> guard(message_mutex);
     for (auto& d : this->drivers) {
       d->addTestResult(testname, step, command, time, success, message);
     }

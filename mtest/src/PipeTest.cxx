@@ -84,7 +84,7 @@ namespace mtest {
         this->results.append(tfel::tests::TestResult(false, msg.str()));
       } else {
         const real err = std::abs(uv - this->values[p]);
-        if (err > this->eps) {
+        if (!(err <= this->eps)) {
           std::ostringstream msg;
           msg << "IntegralTest::check : comparison for variable '" << this->name
               << "' failed for time '" << t + dt << "' "
@@ -157,7 +157,7 @@ namespace mtest {
           this->results.append(tfel::tests::TestResult(false, msg.str()));
         } else {
           const real err = std::abs(v - this->values[dp]);
-          if (err > this->eps) {
+          if (!(err <= this->eps)) {
             std::ostringstream msg;
             msg << "ProfileTest::check : comparison for variable '"
                 << this->name << "' failed for time '" << t + dt << "' "
@@ -930,7 +930,8 @@ namespace mtest {
           if (this->al == ENDCAPEFFECT) {
             r(n) -= pi * Ri_ * Ri_ * Pi;
             if (mt != StiffnessMatrixType::NOSTIFFNESS) {
-              k(n, n) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, 0) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, n) -= pi * Ri_ * Ri_ * dP_dV * dV_dezz;
             }
           }
         }
@@ -1033,6 +1034,9 @@ namespace mtest {
     using size_type = tfel::math::vector<real>::size_type;
     auto n = real(0);
     for (size_type i = 0; i != s; ++i) {
+      if (!tfel::math::ieee754::isfinite(v(i))) {
+        return v(i);
+      }
       n = std::max(n, std::abs(v(i)));
     }
     return n;

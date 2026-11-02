@@ -25,8 +25,7 @@ namespace tfel::material {
    * \brief compute the Cazacu 2004 orthotropic yield stress defined by:
    * \f[
    * \sigma_{\mathrm{eq}}^{C}=
-   * \sqrt{3}\,\sqrt[6]{\left(J_{2}^{O}\right)^{3} -
-   * c\,\left(J_{3}^{O}\right)^{2}}
+   * \sqrt[3]{\left(J_{2}^{O}\right)^{3/2} - c\,J_{3}^{O}}
    * \f]
    * where \(J_{2}\) and \(J_{3}\) are the first and second invariants
    * of the deviatoric part of the stress tensor

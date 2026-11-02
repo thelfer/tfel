@@ -2,7 +2,7 @@
  * \file   Configuration.cxx
  * \brief
  * \author Thomas Helfer
- * \date   13 sept. 2017
+ * \date 13/09/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -17,11 +17,11 @@ namespace tfel::check {
 
   Configuration::Configuration() = default;
 
-  Configuration::Configuration(Configuration&&) = default;
+  Configuration::Configuration(Configuration&&) noexcept = default;
 
   Configuration::Configuration(const Configuration&) = default;
 
-  Configuration& Configuration::operator=(Configuration&&) = default;
+  Configuration& Configuration::operator=(Configuration&&) noexcept = default;
 
   Configuration& Configuration::operator=(const Configuration&) = default;
 

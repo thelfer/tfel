@@ -271,8 +271,8 @@ namespace tfel::math {
         View&>
     operator/=(const ValueType2& s) noexcept {
       static_assert(!is_const, "invalid call");
-      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(1 /
-                                                                            s);
+      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(
+          base_type<numeric_type<MappedType>>{1} / s);
       return *this;
     }  // end of operator/=
 
@@ -323,8 +323,9 @@ namespace tfel::math {
           std::is_const_v<ScalarType>,
           std::conditional_t<
               isQuantity<ScalarType>(),
-              const qt_ref<typename QuantityTraits<ScalarType>::UnitType,
-                           typename QuantityTraits<ScalarType>::ValueType>,
+              const_qt_ref<
+                  typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
+                  typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>,
               const ScalarType&>,
           std::conditional_t<
               isQuantity<ScalarType>(),

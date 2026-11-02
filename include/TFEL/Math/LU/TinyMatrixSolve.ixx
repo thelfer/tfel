@@ -177,7 +177,7 @@ namespace tfel::math {
   bool TinyMatrixSolveBase<N, T, use_exceptions>::decomp(tmatrix<N, N, T>& m,
                                                          TinyPermutation<N>& p,
                                                          const T eps) {
-    return LUDecomp<false>::exe(m, p, eps).first;
+    return LUDecomp<use_exceptions>::exe(m, p, eps).first;
   }  // end of TinyMatrixSolve<N,T>::exe
 
   template <unsigned short N, typename T, bool use_exceptions>

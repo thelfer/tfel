@@ -455,7 +455,7 @@ namespace tfel::math {
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
   constexpr auto square_root(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
-    return power<1, 2>(q.getValue());
+    return power<1, 2>(q);
   }
 
 }  // namespace tfel::math

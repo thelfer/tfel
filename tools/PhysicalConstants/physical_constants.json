@@ -66,7 +66,7 @@
  description: "Elementary charge";
  unit: "C";
  qt_unit:
-   [ 0, 0, -1, 1, 0, 0, 0 ];
+   [ 0, 0, 1, 1, 0, 0, 0 ];
  value:1.6021766208e-19;
 }
 {
@@ -75,7 +75,7 @@
  description: "Faraday constant";
  unit: "C.mol^{-1}";
  qt_unit:
-   [ 0, 0, -1, 1, 0, 0, -1 ];
+   [ 0, 0, 1, 1, 0, 0, -1 ];
  value:96485.33289;
 }
 {

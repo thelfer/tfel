@@ -283,6 +283,7 @@ namespace tfel::math {
     TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<ValueType>&);
     //! \return the identity
     TFEL_MATH_INLINE static constexpr stensor<N, base_type<ValueType>> Id();
+
     /*!
      * copy the value from a container
      */

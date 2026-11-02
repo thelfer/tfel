@@ -105,7 +105,6 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      Model/Domains.md                                          \
 	      Model/Function.md                                         \
 	      Model/Input.md                                            \
-	      Model/GlobalParameter.md                                  \
 	      Model/LocalParameter.md				        \
 	      Model/Model.md				                \
 	      Model/Output.md                                           \

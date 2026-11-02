@@ -117,6 +117,9 @@ namespace tfel::tests {
       out = "FAILURE : ";
     }
     out += r.getDescription();
+    if (!r.success() && !r.getFailureDescription().empty()) {
+      out += " (" + r.getFailureDescription() + ")";
+    }
     convert_to_xml(out);
     this->os << out << '\n';
     for (const auto& t : r) {
