@@ -24,6 +24,9 @@
 #include <dlfcn.h>
 #if defined(__GLIBC__) || defined(RTLD_DI_LINKMAP)
 #include <link.h>
+#elif defined(__APPLE__) && defined(__MACH__)
+#include <cstdint>
+#include <mach-o/dyld.h>
 #endif /* defined(__GLIBC__) || defined(RTLD_DI_LINKMAP) */
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
@@ -239,6 +242,27 @@ namespace tfel::system {
     if ((::dlinfo(lib.first, RTLD_DI_LINKMAP, &lm) == 0) && (lm != nullptr) &&
         (lm->l_name != nullptr) && (lm->l_name[0] != '\0')) {
       return lm->l_name;
+    }
+#elif defined(__APPLE__) && defined(__MACH__)
+    // path of the image loaded by dyld: each loaded image is opened again
+    // with RTLD_NOLOAD and its handle is compared to the one of the library,
+    // the two lowest bits of a handle holding the opening mode
+    const auto id =
+        reinterpret_cast<std::intptr_t>(lib.first) & ~std::intptr_t{3};
+    for (auto i = static_cast<std::int64_t>(::_dyld_image_count()) - 1; i >= 0;
+         --i) {
+      const auto n = ::_dyld_get_image_name(static_cast<std::uint32_t>(i));
+      if (n == nullptr) {
+        continue;
+      }
+      const auto h = ::dlopen(n, RTLD_LAZY | RTLD_NOLOAD);
+      if (h == nullptr) {
+        continue;
+      }
+      ::dlclose(h);
+      if ((reinterpret_cast<std::intptr_t>(h) & ~std::intptr_t{3}) == id) {
+        return n;
+      }
     }
 #endif /* defined(__GLIBC__) || defined(RTLD_DI_LINKMAP) */
     // check if file exists
