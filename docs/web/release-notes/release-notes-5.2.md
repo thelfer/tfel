@@ -58,6 +58,23 @@ library, see below.
   by the `ConfigurationManager` class, which derives from the
   `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
   instance is returned by `ConfigurationManager::get()`.
+- `@RotationMatrix<Euler>` of `MTest` now gives the rotation described
+  by the Euler angles in the convention of Bunge, as the polycrystal
+  classes of `MFront` (see Issue #1270): the rotation matrix was the
+  Bunge matrix instead of its transpose, i.e. the inverse rotation was
+  applied.
+- `Evaluator::getVariablesNames` returns the names of the variables
+  ordered by their positions (the order given to the constructor, or the
+  order of their first appearance in the expression), instead of the
+  alphabetical order (see Issue #1209).
+- `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
+  expansion coefficients is now an error (except `ThermalExpansion1` and
+  `ThermalExpansion2` in plane stress).
+- `abaqusexplicit` interface (see Issue #1274): the results of
+  orthotropic behaviours using the `MFront` orthotropy management policy
+  change when the material frame is not symmetric with respect to the
+  global frame: the integration applied the inverse rotation, and the
+  second material axis was read beyond the orientation in 2D.
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
@@ -255,6 +272,22 @@ Quantities were deeply refactored to:
 - allow creating surrogate classes for quantities,
 - improve error message,
 - reduce size of the generated symbols.
+
+## Adjugate of a tensor and its derivative
+
+The `computeAdjugateDeterminantDerivative` function returns the
+adjugate of a tensor, \(\det\left(F\right)\,F^{-1}\), i.e. the
+transpose of the derivative of the determinant returned by
+`computeDeterminantDerivative`. The
+`computeAdjugateDeterminantSecondDerivative` function returns its
+derivative, which `computeDeterminantSecondDerivative` returned in 2D
+and 3D before Issue #1262 (it now returns the second derivative of the
+determinant).
+
+~~~~{.cxx}
+const auto adj = computeAdjugateDeterminantDerivative(F);
+const auto dadj = computeAdjugateDeterminantSecondDerivative(F);
+~~~~
 
 # New `TFEL/Material` features
 
@@ -689,9 +722,33 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
+
+For more details, see <https://github.com/thelfer/tfel/issues/1274>
+
+## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
+
+For more details, see <https://github.com/thelfer/tfel/issues/1270>
+
+## Issue 1264: [tfel] Installed headers that cannot be compiled, 2D microstructure-based homogenisation, Windows installation pages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1264>
+
 ## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
 
 For more details, see <https://github.com/thelfer/tfel/issues/1262>
+
+## Issue 1260: [mtest] Abaqus/Explicit stiffness in a rotated frame, incomplete orthotropic thermal expansion, tfel-check second precision, failed tangent operator comparison, overwritten JUnit reports
+
+For more details, see <https://github.com/thelfer/tfel/issues/1260>
+
+## Issue 1258: [mfront] generic MTest files of finite strain behaviours, cpptest and gnuplot interfaces, calculix MieheApelLambrechtLogarithmicStrainII strategy, dianafea failures and orthotropic behaviours, abaqus glue lock on Windows
+
+For more details, see <https://github.com/thelfer/tfel/issues/1258>
+
+## Issue 1254: [tfel-math] Eigen solvers of symmetric tensors: wrong eigenvectors for equal or close eigenvalues, Cardano eigenvalues of syevc3, derivatives of isotropic functions of quantities, ConvertLogarithmicStrainTangentOperator
+
+For more details, see <https://github.com/thelfer/tfel/issues/1254>
 
 ## Issue 1242: [tests] Twenty-one C++ unit tests check no result
 
@@ -717,6 +774,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1231>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1229>
 
+## Issue 1227: [mfront] Comparisons of the finite strain single crystal tests are commented out
+
+For more details, see <https://github.com/thelfer/tfel/issues/1227>
+
 ## Issue 1225: [mtest] The fanderson and uanderson tests do not select their acceleration algorithm
 
 For more details, see <https://github.com/thelfer/tfel/issues/1225>
@@ -724,6 +785,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1225>
 ## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
 
 For more details, see <https://github.com/thelfer/tfel/issues/1223>
+
+## Issue 1221: [mfront] Logarithmic strain shear tests: the shear-FZY-3D tests impose FZX, and the transposed cases compare too few stresses
+
+For more details, see <https://github.com/thelfer/tfel/issues/1221>
 
 ## Issue 1219: [mfront] Strain tolerance of the axisymmetric shear tests of orthotropic elasticity
 
@@ -737,9 +802,42 @@ For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1215>
 
+## Issue 1213: [mfront] @RequireThermalExpansionCoefficientTensor is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
+
+For more details, see <https://github.com/thelfer/tfel/issues/1213>
+
+## Issue 1211: [tfel-system] Undefined SignalManager and NUMODIS declarations, MTestParser and ProcessManagerCommand constructors, mtest reference file generator, terminate handler of the tools, BurnUp glossary name in the docs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1211>
+
 ## Issue 1209: [tfel-math] Variable positions of Evaluator in diff() and tfel-check, fses::sort, vector::copy, GenType output, GTN flow stress, Mohr-Coulomb second derivative, eigen solvers on GPUs
 
 For more details, see <https://github.com/thelfer/tfel/issues/1209>
+
+## Issue 1207: [mfront] Logarithm of the stress-free expansion stretch (abaqus, ansys, calculix, lsdyna), castem tangent operators in 1D and with FiniteRotationSmallStrain, cyrano hypothesis identifier, repeated @Test keys
+
+For more details, see <https://github.com/thelfer/tfel/issues/1207>
+
+## Issue 1205: [mfront] comsol error codes and initialisation, aster orthotropic cohesive zone models, bounds symbols of array elements, cyrano plane stress header, zmat arrays of tensors
+
+For more details, see <https://github.com/thelfer/tfel/issues/1205>
+
+## Issue 1203: [tfel-math] Isotropic moduli assignment, stensor products on GPUs, Gauss-Kronrod half-infinite error estimate, QR with more rows than columns, Levenberg-Marquardt factor, physical constants digits
+
+For more details, see <https://github.com/thelfer/tfel/issues/1203>
+
+## Issue 1201: [tfel-utilities] CxxTokenizer numbers and integers, string algorithms, TextData comments and infinities, ProcessManager and SignalManager children, tfel-doc --split
+
+For more details, see <https://github.com/thelfer/tfel/issues/1201>
+
+## Issue 1199: [mfront] Code block option ".+", @PhysicalBounds on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/1199>
+
+## Issue 1197: [mtest] Acceleration algorithm parameters, Anderson method orders above 22, castem_umat optional material properties, mtest Python options
+
+For more details, see <https://github.com/thelfer/tfel/issues/1197>
+  
 
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 

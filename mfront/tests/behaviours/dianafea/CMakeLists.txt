@@ -51,6 +51,7 @@ function(test_dianafea test_arg)
 	          --result-file-output=false
 	          --@library@="$<TARGET_FILE:MFrontDianaFEABehaviours>"
 			  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	          --xml-output-file=dianafea-${test_arg}_${rm}_mtest.xml
 	          --@xml_output@="${test_arg}-${rm}.xml" ${file})
 		else(HAVE_CASTEM)
 	        add_test(NAME dianafea-${test_arg}_${rm}_mtest
@@ -58,6 +59,7 @@ function(test_dianafea test_arg)
 	          --verbose=level0 --xml-output=${_XML_OUTPUT}
 	          --result-file-output=false
 	          --@library@="$<TARGET_FILE:MFrontDianaFEABehaviours>"
+	          --xml-output-file=dianafea-${test_arg}_${rm}_mtest.xml
 	          --@xml_output@="${test_arg}-${rm}.xml" ${file})
 			endif(HAVE_CASTEM)
       else(NOT _REFERENCE_FILE)
@@ -67,12 +69,14 @@ function(test_dianafea test_arg)
 	          COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=${_XML_OUTPUT} --result-file-output=false
 	          --@library@="$<TARGET_FILE:MFrontDianaFEABehaviours>"
 			  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	          --xml-output-file=dianafea-${test_arg}_${rm}_mtest.xml
 	          --@xml_output@="${test_arg}-${rm}.xml"
 	          --@reference_file@="${rfile}" ${file})
 		else(HAVE_CASTEM)
 	        add_test(NAME dianafea-${test_arg}_${rm}_mtest
 	          COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=${_XML_OUTPUT} --result-file-output=false
 	          --@library@="$<TARGET_FILE:MFrontDianaFEABehaviours>"
+	          --xml-output-file=dianafea-${test_arg}_${rm}_mtest.xml
 	          --@xml_output@="${test_arg}-${rm}.xml"
 	          --@reference_file@="${rfile}" ${file})
 		endif(HAVE_CASTEM)

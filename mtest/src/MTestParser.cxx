@@ -357,6 +357,15 @@ namespace mtest {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "MTestParser::handleTest: " + m);
     };
+    auto warn_if = [this](const bool c, const tokens_iterator pv,
+                          const std::string& v) {
+      if (c) {
+        mfront::getLogStream()
+            << this->file << ":" << pv->line << ":" << pv->offset
+            << ": warning: variable '" << v
+            << "' given twice, only its first entry is used\n";
+      }
+    };
     this->readSpecifiedToken("MTestParser::handleTest", "<", p,
                              this->tokens.end());
     this->checkNotEndOfLine("MTestParser::handleTest", p, this->tokens.end());
@@ -379,11 +388,12 @@ namespace mtest {
         this->checkNotEndOfLine("MTestParser::handleTest", p,
                                 this->tokens.end());
         while (p->value != "}") {
+          const auto pv = p;
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("MTestParser::handleTest", ":", p,
                                    this->tokens.end());
           const auto& f = this->readString(p, this->tokens.end());
-          functions.insert({v, f});
+          warn_if(!functions.insert({v, f}).second, pv, v);
           this->checkNotEndOfLine("MTestParser::handleTest", p,
                                   this->tokens.end());
           if (p->value != "}") {
@@ -420,16 +430,18 @@ namespace mtest {
         this->checkNotEndOfLine("MTestParser::handleTest", p,
                                 this->tokens.end());
         while (p->value != "}") {
+          const auto pv = p;
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("MTestParser::handleTest", ":", p,
                                    this->tokens.end());
           if (p->flag == tfel::utilities::Token::String) {
-            columns.insert({v, p->value.substr(1, p->value.size() - 2)});
+            const auto c = p->value.substr(1, p->value.size() - 2);
+            warn_if(!columns.insert({v, gentype(c)}).second, pv, v);
             ++p;
           } else {
             const unsigned short c =
                 this->readUnsignedInt(p, this->tokens.end());
-            columns.insert({v, gentype(c)});
+            warn_if(!columns.insert({v, gentype(c)}).second, pv, v);
           }
           this->checkNotEndOfLine("MTestParser::handleTest", p,
                                   this->tokens.end());
@@ -467,6 +479,9 @@ namespace mtest {
   }  // end of MTestParser::handleTest
 
   void MTestParser::handleRotationMatrix(MTest& t, tokens_iterator& p) {
+    // the columns of the rotation matrix are the material axes expressed in
+    // the global frame: this is the transpose of the Bunge matrix associated
+    // with the Euler angles (psi, the, phi), whose rows are the material axes
     auto from_euler = [](tfel::math::tmatrix<3, 3, real>& r, const real psi,
                          const real the, const real phi) {
       const real cospsi = std::cos(psi);
@@ -476,13 +491,13 @@ namespace mtest {
       const real sinthe = std::sin(the);
       const real sinphi = std::sin(phi);
       r(0, 0) = cosphi * cospsi - sinphi * costhe * sinpsi;
-      r(0, 1) = cosphi * sinpsi + sinphi * costhe * cospsi;
-      r(0, 2) = sinphi * sinthe;
-      r(1, 0) = -sinphi * cospsi - cosphi * costhe * sinpsi;
+      r(1, 0) = cosphi * sinpsi + sinphi * costhe * cospsi;
+      r(2, 0) = sinphi * sinthe;
+      r(0, 1) = -sinphi * cospsi - cosphi * costhe * sinpsi;
       r(1, 1) = -sinphi * sinpsi + cosphi * costhe * cospsi;
-      r(1, 2) = cosphi * sinthe;
-      r(2, 0) = sinthe * sinpsi;
-      r(2, 1) = -sinthe * cospsi;
+      r(2, 1) = cosphi * sinthe;
+      r(0, 2) = sinthe * sinpsi;
+      r(1, 2) = -sinthe * cospsi;
       r(2, 2) = costhe;
     };
     enum { STANDARD, EULER, MILLER, DIRECTION } choice = STANDARD;

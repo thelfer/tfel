@@ -256,12 +256,18 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_THROW(t.parseString("-2LLU"), std::runtime_error);
     // binary integer
     this->check("0b0101");
+    this->check("0b0101u");
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("0b"), std::runtime_error);
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("0b2"), std::runtime_error);
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("0b020"), std::runtime_error);
+    // hexadecimal integer
+    this->check("0x1F");
+    this->check("0X1fUL");
+    t.clear();
+    TFEL_TESTS_CHECK_THROW(t.parseString("0x1p3"), std::runtime_error);
     return this->result;
   }  // end of execute()
  private:

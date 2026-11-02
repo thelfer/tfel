@@ -105,12 +105,13 @@ namespace mfront {
           {std::string{f}, {interfaces, dsl_options}});
     } else {
 #pragma message("treat DSL options")
-      std::copy_if(interfaces.begin(), interfaces.end(),
-                   std::back_inserter(std::get<0>(p->second)),
-                   [&interfaces](const std::string& i) {
-                     return std::find(interfaces.begin(), interfaces.end(),
-                                      i) == interfaces.end();
-                   });
+      auto& registred_interfaces = std::get<0>(p->second);
+      for (const auto& i : interfaces) {
+        if (std::find(registred_interfaces.begin(), registred_interfaces.end(),
+                      i) == registred_interfaces.end()) {
+          registred_interfaces.push_back(i);
+        }
+      }
     }
   }  // end of addExternalMFrontFile
 

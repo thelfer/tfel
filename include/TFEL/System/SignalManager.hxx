@@ -29,7 +29,6 @@ namespace tfel::system {
                                 SignalHandler* const,
                                 struct sigaction&);
     std::size_t registerHandler(const int, SignalHandler* const);
-    void setSpecificHandler(const int, SignalHandler* const);
     void removeHandler(const std::size_t);
     ~SignalManager();
 
@@ -47,7 +46,6 @@ namespace tfel::system {
     TFEL_VISIBILITY_LOCAL
     static void treatAction(int);
     std::map<int, std::map<std::size_t, SignalHandler*>> callBacks;
-    std::map<int, SignalHandler*> sHandlers;
     std::size_t handlerNbr;
   };  // end of struct SignalManager
 

@@ -120,11 +120,17 @@ namespace mtest {
     }
   }
 
-  void computeThermalExpansion(CurrentState& s,
-                               const EvolutionManager& evm,
-                               const real t,
-                               const real dt,
-                               const unsigned short d) {
+  /*!
+   * \brief compute the orthotropic thermal expansion
+   * \param[in] b: if true, the third thermal expansion coefficient is
+   * optional (plane stress)
+   */
+  static void computeOrthotropicThermalExpansion(CurrentState& s,
+                                                 const EvolutionManager& evm,
+                                                 const real t,
+                                                 const real dt,
+                                                 const unsigned short d,
+                                                 const bool b) {
     static const std::string T{"Temperature"};
     static const std::string a1{"ThermalExpansion1"};
     static const std::string a2{"ThermalExpansion2"};
@@ -137,18 +143,21 @@ namespace mtest {
     const auto pev3 = evm.find(a2);
     const auto pev4 = evm.find(a3);
     if ((pev == evm.end()) ||
-        ((pev2 == evm.end()) || (pev3 == evm.end()) || (pev4 == evm.end()))) {
+        ((pev2 == evm.end()) && (pev3 == evm.end()) && (pev4 == evm.end()))) {
       return;
     }
-    tfel::raise_if(
-        (pev2 == evm.end()) || (pev3 == evm.end()) || (pev4 == evm.end()),
-        "computeThermalExpansion: at least one "
-        "of the three thermal expansion coefficient is "
-        "defined and at least one is not");
+    tfel::raise_if((pev2 == evm.end()) || (pev3 == evm.end()) ||
+                       ((pev4 == evm.end()) && (!b)),
+                   "computeThermalExpansion: at least one "
+                   "of the three thermal expansion coefficient is "
+                   "defined and at least one is not");
     const auto& T_ev = *(pev->second);
     const auto& a1_ev = *(pev2->second);
     const auto& a2_ev = *(pev3->second);
-    const auto& a3_ev = *(pev4->second);
+    // the third thermal expansion coefficient is null if not defined
+    const auto a3_ev = [&pev4, &evm](const real x) {
+      return (pev4 == evm.end()) ? real(0) : (*(pev4->second))(x);
+    };
     if (d == 1u) {
       s.e_th0[0u] = a1_ev(t) * (T_ev(t) - s.Tref);
       s.e_th1[0u] = a1_ev(t + dt) * (T_ev(t + dt) - s.Tref);
@@ -177,6 +186,26 @@ namespace mtest {
     } else {
       tfel::raise("computeThermalExpansion: invalid dimension");
     }
+  }  // end of computeOrthotropicThermalExpansion
+
+  void computeThermalExpansion(CurrentState& s,
+                               const EvolutionManager& evm,
+                               const real t,
+                               const real dt,
+                               const unsigned short d) {
+    computeOrthotropicThermalExpansion(s, evm, t, dt, d, false);
+  }
+
+  void computeThermalExpansion(
+      CurrentState& s,
+      const EvolutionManager& evm,
+      const real t,
+      const real dt,
+      const tfel::material::ModellingHypothesis::Hypothesis h) {
+    using tfel::material::ModellingHypothesis;
+    computeOrthotropicThermalExpansion(s, evm, t, dt,
+                                       tfel::material::getSpaceDimension(h),
+                                       h == ModellingHypothesis::PLANESTRESS);
   }
 
   void update(CurrentState& s) {

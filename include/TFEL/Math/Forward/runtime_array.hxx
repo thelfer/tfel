@@ -16,6 +16,7 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
+#include "TFEL/Math/Array/RuntimeArrayPolicies.hxx"
 
 namespace tfel::math {
 
