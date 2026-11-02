@@ -468,7 +468,7 @@ Ci[1,0]=1e8
 ellipsoid_dist_O_2=hm.OrientedDistribution(ellipso,f,Ci,n_a,n_b)
 ~~~~
 
-The `TransverseDistribution` is a special case
+The `TransverseIsotropicDistribution` is a special case
 which requires to precise which axis of the ellipsoid (or spheroid)
 will remain fixed when the two other axes rotate:
 

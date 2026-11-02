@@ -239,12 +239,12 @@ namespace mtest::internals {
       auto ncomponents = std::vector<std::string>{};
       if (components.empty()) {
         for (int j = 0; j != d; ++j) {
-          ncomponents.push_back('[' + std::to_string(d) + ']');
+          ncomponents.push_back('[' + std::to_string(j) + ']');
         }
       } else {
         for (const auto& c : components) {
           for (int j = 0; j != d; ++j) {
-            ncomponents.push_back(c + '[' + std::to_string(d) + ']');
+            ncomponents.push_back(c + '[' + std::to_string(j) + ']');
           }
         }
       }

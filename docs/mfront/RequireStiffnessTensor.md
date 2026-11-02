@@ -8,7 +8,7 @@ behaviour (see `@IsotropicElasticBehaviour` to change this in the case
 of an orthotropic behaviour).
 
 ~~~~{.cpp}
-@RequireStiffnessTensor true;
+@RequireStiffnessTensor;
 ~~~~
 
 

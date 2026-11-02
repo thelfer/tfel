@@ -17,6 +17,7 @@
 
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include "MFront/GenericBehaviour/GenericBehaviourTraits.hxx"
 #include "MFront/GenericBehaviour/Integrate.hxx"
 
 namespace mfront::gb::finite_strain {

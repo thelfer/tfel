@@ -131,7 +131,7 @@ namespace castem {
       tfel::math::TMatrixView<3u, 3u, CastemReal>& Dt) {
     std::swap(Dt(0, 1), Dt(1, 0));
     std::swap(Dt(0, 2), Dt(2, 0));
-    std::swap(Dt(0, 3), Dt(3, 0));
+    std::swap(Dt(1, 2), Dt(2, 1));
   }
 
 }  // end of namespace castem

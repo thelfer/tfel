@@ -579,22 +579,13 @@ namespace mfront {
 
   static void writeBoundsChecks(std::ostream& os,
                                 const VariableDescription& v,
+                                const VariableBoundsDescription& bounds,
                                 const std::string_view n,
                                 const std::string_view space_dimension,
                                 const std::string_view policy,
                                 const bool addThis,
                                 const bool checkEndOfTimeStepValue,
                                 const bool physicalBounds) {
-    if (physicalBounds) {
-      if (!v.hasPhysicalBounds()) {
-        return;
-      }
-    } else {
-      if (!v.hasBounds()) {
-        return;
-      }
-    }
-    const auto& bounds = physicalBounds ? v.getPhysicalBounds() : v.getBounds();
     const auto numeric_type = [&v] {
       if (v.isScalar()) {
         return v.type;
@@ -661,7 +652,22 @@ namespace mfront {
                          const std::string_view policy,
                          const bool addThis,
                          const bool checkEndOfTimeStepValue) {
-    writeBoundsChecks(os, v, n, space_dimension, policy, addThis,
+    if (!v.hasBounds()) {
+      return;
+    }
+    writeBoundsChecks(os, v, v.getBounds(), n, space_dimension, policy, addThis,
+                      checkEndOfTimeStepValue);
+  }  // end of writeBoundsChecks
+
+  void writeBoundsChecks(std::ostream& os,
+                         const VariableDescription& v,
+                         const VariableBoundsDescription& bounds,
+                         const std::string_view n,
+                         const std::string_view space_dimension,
+                         const std::string_view policy,
+                         const bool addThis,
+                         const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, bounds, n, space_dimension, policy, addThis,
                       checkEndOfTimeStepValue, false);
   }  // end of writeBoundsChecks
 
@@ -671,7 +677,21 @@ namespace mfront {
                                  const std::string_view space_dimension,
                                  const bool addThis,
                                  const bool checkEndOfTimeStepValue) {
-    writeBoundsChecks(os, v, n, space_dimension, "", addThis,
+    if (!v.hasPhysicalBounds()) {
+      return;
+    }
+    writePhysicalBoundsChecks(os, v, v.getPhysicalBounds(), n, space_dimension,
+                              addThis, checkEndOfTimeStepValue);
+  }  // end of writePhysicalBoundsChecks
+
+  void writePhysicalBoundsChecks(std::ostream& os,
+                                 const VariableDescription& v,
+                                 const VariableBoundsDescription& bounds,
+                                 const std::string_view n,
+                                 const std::string_view space_dimension,
+                                 const bool addThis,
+                                 const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, bounds, n, space_dimension, "", addThis,
                       checkEndOfTimeStepValue, true);
   }  // end of writePhysicalBoundsChecks
 

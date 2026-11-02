@@ -81,6 +81,7 @@ namespace tfel::system {
                        "'. The following "
                        "hypotheses are supported:\n"
                        "- AxisymmetricalGeneralisedPlaneStrain\n"
+                       "- AxisymmetricalGeneralisedPlaneStress\n"
                        "- Axisymmetrical\n"
                        "- PlaneStress\n"
                        "- PlaneStrain\n"
@@ -102,8 +103,8 @@ namespace tfel::system {
     }
     auto r = std::string{n.cbegin(), p};
     ++p;
-    throw_if(p == pe, "unexpected end of string 'n'");
-    throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
+    throw_if(p == pe, "unexpected end of string '" + n + "'");
+    throw_if(!std::isdigit(*p), "unexpected a digit '" + n + "'");
     r += "_mfront_index_";
     while ((p != pe) && (std::isdigit(*p))) {
       r.push_back(*p);
@@ -520,11 +521,12 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::setParameter: "
              "can't get the '" +
-                 f + "_setParameter' function (" + getErrorMessage() + ")");
+                 f + "_setIntegerParameter' function (" + getErrorMessage() +
+                 ")");
     raise_if(!fct(p.c_str(), v),
              "ExternalLibraryManager::setParameter: "
              "call to the '" +
-                 f + "_setParameter' function failed");
+                 f + "_setIntegerParameter' function failed");
   }  // end of setParameter
 
   void ExternalLibraryManager::setParameter(const std::string& l,
@@ -538,11 +540,12 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::setParameter: "
              "can't get the '" +
-                 f + "_setParameter' function (" + getErrorMessage() + ")");
+                 f + "_setUnsignedShortParameter' function (" +
+                 getErrorMessage() + ")");
     raise_if(!fct(p.c_str(), v),
              "ExternalLibraryManager::setParameter: "
              "call to the '" +
-                 f + "_setParameter' function failed");
+                 f + "_setUnsignedShortParameter' function failed");
   }  // end of setParameter
 
   void ExternalLibraryManager::setParameter(const std::string& l,
@@ -583,11 +586,12 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::setParameter: "
              "can't get the '" +
-                 f + "_setParameter' function (" + getErrorMessage() + ")");
+                 f + "_setIntegerParameter' function (" + getErrorMessage() +
+                 ")");
     raise_if(!fct(p.c_str(), v),
              "ExternalLibraryManager::setParameter: "
              "call to the '" +
-                 f + "_setParameter' function failed");
+                 f + "_setIntegerParameter' function failed");
   }  // end of setParameter
 
   void ExternalLibraryManager::setParameter(const std::string& l,
@@ -606,11 +610,12 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::setParameter: "
              "can't get the '" +
-                 f + "_setParameter' function (" + getErrorMessage() + ")");
+                 f + "_setUnsignedShortParameter' function (" +
+                 getErrorMessage() + ")");
     raise_if(!fct(p.c_str(), v),
              "ExternalLibraryManager::setParameter: "
              "call to the '" +
-                 f + "_setParameter' function failed");
+                 f + "_setUnsignedShortParameter' function failed");
   }  // end of setParameter
 
   double ExternalLibraryManager::getRealParameterDefaultValue(
@@ -1129,7 +1134,7 @@ namespace tfel::system {
         lib, (f + "_InitializeFunction_" + i).c_str());
     raise_if(fct == nullptr,
              "ExternalLibraryManager::getGenericBehaviourInitializeFunction: "
-             "could not load post-processing function '" +
+             "could not load initialize function '" +
                  i + "' for generic behaviour function '" + f + "' (" +
                  getErrorMessage() + ")");
     return fct;

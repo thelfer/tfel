@@ -210,6 +210,10 @@ namespace tfel::math {
         typename tfel::typetraits::Promote<ValueType1, ValueType2>::type;
     //! \brief a simple alias
     using value_type = ValueType;
+    //! \brief copy constructor
+    constexpr Quantity(const Quantity&) noexcept = default;
+    //! \brief move constructor
+    constexpr Quantity(Quantity&&) noexcept = default;
     //
     using OwnershipPolicy::OwnershipPolicy;
     //
@@ -219,6 +223,27 @@ namespace tfel::math {
             src) noexcept  //
         requires(std::is_same_v<promote<ValueType, ValueType2>, ValueType>)
         : OwnershipPolicy(src.getValue()) {}  // end of Quantity
+    //
+    //! \brief true if the quantity holds a reference to a mutable value
+    static constexpr bool holdsAMutableReference =
+        std::is_base_of_v<
+            internals::QuantityReferenceOwnershipPolicy<ValueType, true>,
+            OwnershipPolicy> ||
+        std::is_base_of_v<
+            internals::QuantityReferenceOwnershipPolicy<ValueType, false>,
+            OwnershipPolicy>;
+    //! \brief standard copy assignement (value semantic)
+    constexpr Quantity& operator=(const Quantity&) noexcept
+        requires(!holdsAMutableReference) = default;
+    //! \brief standard move assignement (value semantic)
+    constexpr Quantity& operator=(Quantity&&) noexcept
+        requires(!holdsAMutableReference) = default;
+    //! \brief copy assignement, writes through the reference
+    TFEL_HOST_DEVICE constexpr Quantity& operator=(
+        const Quantity& src) noexcept requires(holdsAMutableReference) {
+      this->getValue() = src.getValue();
+      return *this;
+    }
     //
     template <typename T>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(const T& src) noexcept
@@ -485,7 +510,7 @@ namespace tfel::math {
   template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
   constexpr auto square_root(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
-    return power<1, 2>(q.getValue());
+    return power<1, 2>(q);
   }
 
 }  // namespace tfel::math

@@ -55,17 +55,16 @@ namespace mfront {
    * \param[out] os: output stream
    * \param[in] n: name of the symbol
    */
-  void exportStringSymbol(std::ostream&,
-                          const std::string_view,
-                          const std::string_view);
+  MFRONT_VISIBILITY_EXPORT void exportStringSymbol(std::ostream&,
+                                                   const std::string_view,
+                                                   const std::string_view);
   /*!
    * \brief export string symbol using the `MFRONT_EXPORT_SYMBOL` macro
    * \param[out] os: output stream
    * \param[in] n: name of the symbol
    */
-  void exportUnsignedShortSymbol(std::ostream&,
-                                 const std::string_view,
-                                 const unsigned short);
+  MFRONT_VISIBILITY_EXPORT void exportUnsignedShortSymbol(
+      std::ostream&, const std::string_view, const unsigned short);
   /*!
    * \brief write the name of the variable
    * \param[out] os: output stream
@@ -348,6 +347,27 @@ namespace mfront {
   /*!
    * \param[out] os: output stream
    * \param[in] v: variable description
+   * \param[in] bounds: bounds to be checked
+   * \param[in] n: name of the variable tested. If the variable describes an
+   * array of variables, this argument may point to an element of this array.
+   * \param[in] space_dimension: string containing the space dimension
+   * \param[in] policy: name of the variable holding the policy
+   * \param[in] addThis: add "this->" in front of the variables
+   * \param[in] checkEndOfTimeStepValue: also check the value at the end of
+   * the time step given by the value of the variable plus its increment.
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void writeBoundsChecks(std::ostream&,
+                         const VariableDescription&,
+                         const VariableBoundsDescription&,
+                         const std::string_view,
+                         const std::string_view,
+                         const std::string_view,
+                         const bool,
+                         const bool);
+  /*!
+   * \param[out] os: output stream
+   * \param[in] v: variable description
    * \param[in] n: name of the variable tested. If the variable describes an
    * array of variables, this argument may point to an element of this array.
    * \param[in] space_dimension: string containing the space dimension
@@ -358,6 +378,25 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT
   void writePhysicalBoundsChecks(std::ostream&,
                                  const VariableDescription&,
+                                 const std::string_view,
+                                 const std::string_view,
+                                 const bool,
+                                 const bool);
+  /*!
+   * \param[out] os: output stream
+   * \param[in] v: variable description
+   * \param[in] bounds: physical bounds to be checked
+   * \param[in] n: name of the variable tested. If the variable describes an
+   * array of variables, this argument may point to an element of this array.
+   * \param[in] space_dimension: string containing the space dimension
+   * \param[in] addThis: add "this->" in front of the variables
+   * \param[in] checkEndOfTimeStepValue: also check the value at the end of
+   * the time step given by the value of the variable plus its increment.
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void writePhysicalBoundsChecks(std::ostream&,
+                                 const VariableDescription&,
+                                 const VariableBoundsDescription&,
                                  const std::string_view,
                                  const std::string_view,
                                  const bool,

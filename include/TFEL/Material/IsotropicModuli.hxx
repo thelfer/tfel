@@ -32,7 +32,7 @@ namespace tfel::material {
                                          StressType>()) struct IsotropicModuli;
 
   /*!
-   * \brief This class is relative to the format (K,Nu).
+   * \brief This class is relative to the format (K,Mu).
    * It can be converted to the other formats (Lambda,Mu) and (Young,Nu).
    */
   template <tfel::math::ScalarConcept StressType>

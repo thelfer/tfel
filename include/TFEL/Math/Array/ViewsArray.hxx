@@ -321,8 +321,8 @@ namespace tfel::math {
         (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
                         MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
-      const auto f =
-          makeMultiIndicesUnaryOperatorFunctor([s](auto& a) { a *= s; }, *this);
+      const auto f = makeMultiIndicesUnaryOperatorFunctor(
+          [s](auto&& a) { a *= s; }, *this);
       auto g = [p = static_cast<MemoryIndexingPolicyType>(*this)](
                    const typename ViewsArray::size_type i) {
         return p.size(i);
@@ -346,7 +346,7 @@ namespace tfel::math {
         (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
                         MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
-      return this->operator*=(1 / s);
+      return this->operator*=(base_type<numeric_type<MappedType>>{1} / s);
     }  // end of operator/=
     //! \brief destructor
     ~ViewsArray() noexcept = default;

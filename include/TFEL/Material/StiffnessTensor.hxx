@@ -97,6 +97,22 @@ namespace tfel::material {
         tfel::math::st2tost2<2u, StressType>&,
         const tfel::math::st2tost2<2u, StressType>&) noexcept;
   };
+  /*!
+   * \brief compute the altered stiffness tensor from the unaltered
+   * one in axisymmetrical generalised plane stress.
+   */
+  template <>
+  struct ComputeAlteredStiffnessTensor<
+      ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS> {
+    /*!
+     * \param[out] Da : altered stiffness
+     * \param[in]  D  : unaltered stiffness
+     */
+    template <typename StressType>
+    TFEL_HOST_DEVICE static constexpr void exe(
+        tfel::math::st2tost2<1u, StressType>&,
+        const tfel::math::st2tost2<1u, StressType>&) noexcept;
+  };
 
   /*!
    * \param[out] D:  stiffness tensor
