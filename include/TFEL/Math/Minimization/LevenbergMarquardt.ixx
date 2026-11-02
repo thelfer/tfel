@@ -110,6 +110,10 @@ namespace tfel::math {
       h = -g;
       T sn(T(0));
       LUSolve::exe(Jn, h);
+      if (norm(h) < this->eps2 * (norm(this->p) + this->eps2)) {
+        success = true;
+        break;
+      }
       fill(Jn.begin(), Jn.end(), T(0));
       for (auto it = this->data.begin(); it != this->data.end(); ++it) {
         p_ = this->p + h;
@@ -118,30 +122,32 @@ namespace tfel::math {
         Jn += gradient ^ gradient;
         sn += power<2>(v - it->second);
       }
-      T rho = (s - sn) / (0.5 * (h | (lambda * h - g)));
+      // gain ratio, s and sn being twice the cost function
+      const T rho = (s - sn) / (h | (lambda * h - g));
       if (rho > 0) {
+        // the step is accepted
         lambda *= max(T(0.3333), T(1) - power<3>(2 * rho - 1));
         nu = this->factor;
+        for (i = 0; i != m; ++i) {
+          Jn(i, i) += lambda;
+        }
+        this->p += h;
+        if (norm(gn) < this->eps1) {
+          success = true;
+        } else {
+          // preparing next iteration
+          J = Jn;
+          g = gn;
+          s = sn;
+        }
       } else {
+        // the step is rejected, only the damping parameter is increased
+        const auto lambda_old = lambda;
         lambda *= nu;
         nu *= 2;
-      }
-      for (i = 0; i != m; ++i) {
-        Jn(i, i) += lambda;
-      }
-      this->p += h;
-      T ng = norm(gn);
-      T nh = norm(h);
-      T np = norm(p);
-      if (nh < this->eps2 * (np + this->eps2)) {
-        success = true;
-      } else if (ng < this->eps1) {
-        success = true;
-      } else {
-        // preparing next iteration
-        J = Jn;
-        g = gn;
-        s = sn;
+        for (i = 0; i != m; ++i) {
+          J(i, i) += lambda - lambda_old;
+        }
       }
     }
     if (!success) {

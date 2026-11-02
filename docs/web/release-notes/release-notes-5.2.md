@@ -79,6 +79,13 @@ library, see below.
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
   previous results, which were the derivative of the adjugate.
+- The tiny non-linear solvers (and the `Implicit` DSLs) evaluate the
+  estimate given by the last allowed correction (see Issue #1288): an
+  integration that converges with exactly `iterMax` corrections now
+  succeeds, and a failing one evaluates its residual once more.
+- The Levenberg-Marquardt minimisers (`LevenbergMarquardt`,
+  `FSLevenbergMarquardt`) reject the steps that increase the cost (see
+  Issue #1288): the iterates of every fit change.
 
 # Improvements to the build system
 
@@ -725,6 +732,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 ## Issue 1292: [tfel-material] LogarithmicStrainHandler: wrong tangent moduli in 3D when two eigenvalues of C are equal
 
 For more details, see <https://github.com/thelfer/tfel/issues/1292>
+
+## Issue 1288: [tfel-math] Adaptive Gauss-Kronrod integration with quantities, last correction of the tiny non-linear solvers, Levenberg-Marquardt steps increasing the cost, ExternalLibraryManager library path, contract violations aborting Python
+
+For more details, see <https://github.com/thelfer/tfel/issues/1288>
 
 ## Issue 1285: [mfront] generic interface, finite strain in plane stress: the Green-Lagrange and standard finite strain families add the axial deformation gradient to the one of the caller
 
