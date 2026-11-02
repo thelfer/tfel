@@ -152,9 +152,15 @@ The `tfel-modules-common.cmake` file defines the following variables:
 - `TFEL_COMPILER_FLAGS`:
 - `TFEL_COMPILER_CXXFLAGS`:
 - `TFEL_COMPILER_WARNINGS`:
-- `TFEL_OPTIMISATION_FLAGS0`:
-- `TFEL_OPTIMISATION_FLAGS`:
-- `TFEL_OPTIMISATION_FLAGS2`:
+- `TFEL_OPTIMISATION_FLAGS0`: tfel recommended optimisation flags,
+  including the visibility flags, without architecture specific flags
+  (the flags returned by `tfel-config --oflags0`).
+- `TFEL_OPTIMISATION_FLAGS`: tfel recommended optimisation flags,
+  without the visibility flags nor architecture specific flags (unlike
+  `tfel-config --oflags`, which also returns these flags).
+- `TFEL_OPTIMISATION_FLAGS2`: some aggressive optimisation flags,
+  possibly at the expense of numerical precision (the flags returned by
+  `tfel-config --oflags2`). This shall be added to the previous ones.
 - `TFEL_CMAKE_C_FLAGS`:
 - `TFEL_CMAKE_C_FLAGS_DEBUG`:
 - `TFEL_CMAKE_C_FLAGS_RELEASE`:

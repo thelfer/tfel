@@ -47,6 +47,7 @@ library, see below.
 
 # Known incompatibilities
 
+- `cmake` \(3.20\) or later is now required to build `TFEL`.
 - `MFront`' interfaces have to implement a method named `setOptions`.
 - The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
   as documented, if `C++` keywords are allowed (see Issue #964): its
@@ -780,6 +781,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1242>
 ## Issue 1241: [ptest] Thirty of the 42 PTest pipe tests compare nothing
 
 For more details, see <https://github.com/thelfer/tfel/issues/1241>
+
+## Issue 1239: [cmake] Obsolete packaging files, TFEL_OPTIMISATION_FLAGS0, Debug flags, checks that never act, Cast3M 2026 header, minimum CMake version, exports of libTFELMFront
+
+For more details, see <https://github.com/thelfer/tfel/issues/1239>
 
 ## Issue 1237: [cmake] Compiler printed by mfront --version, installed headers of the isotropic DSLs and of TFELCheck, dependencies of the installed CMake packages, static TFELMFrontDatabase package, CPack components
 
