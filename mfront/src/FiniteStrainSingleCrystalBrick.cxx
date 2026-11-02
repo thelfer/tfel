@@ -101,7 +101,7 @@ namespace mfront {
     }
     throw_if(this->bd.getBehaviourType() !=
                  BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
-             "this BehaviourBrick is only usable for small strain behaviours");
+             "this BehaviourBrick is only usable for finite strain behaviours");
     throw_if(
         this->bd.getIntegrationScheme() != BehaviourDescription::IMPLICITSCHEME,
         "this BehaviourBrick is only usable in implicit schemes");

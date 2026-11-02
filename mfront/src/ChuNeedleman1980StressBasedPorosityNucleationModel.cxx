@@ -28,7 +28,7 @@ namespace mfront::bbrick {
       getMaterialCoefficientDescriptions() const {
     auto mcs = StressBasedPorosityNucleationModelBase::
         getMaterialCoefficientDescriptions();
-    mcs.push_back({"real", "fn", "porosity rate coefficient"});
+    mcs.push_back({"stress", "fn", "porosity rate coefficient"});
     mcs.push_back(
         {"stress", "sigm", "mean value of the gaussian distribution"});
     mcs.push_back(

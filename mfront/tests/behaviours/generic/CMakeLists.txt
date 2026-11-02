@@ -376,6 +376,7 @@ function(test_generic test_arg)
       set(rfile "${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
       list(APPEND mtest_args --@reference_file@="${rfile}")
     endif(_REFERENCE_FILE)
+    list(APPEND mtest_args --xml-output-file=generic-${test_arg}_${rm}_mtest.xml)
     add_test(NAME generic-${test_arg}_${rm}_mtest
              COMMAND mtest ${mtest_args})
     if(_WILL_FAIL)
@@ -413,6 +414,7 @@ function(test_generic_fs test_arg)
 	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
 	    --@stress_measure@=${ss}
 	    --@tangent_operator@=${tgo}
+            --xml-output-file=generic-${test_arg}_${ss}_${tgo}_${rm}_mtest.xml
             --@xml_output@="${test_arg}-${rm}.xml" ${file})
 	else(HAVE_CASTEM)
 	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
@@ -422,6 +424,7 @@ function(test_generic_fs test_arg)
             --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
 	    --@stress_measure@=${ss}
 	    --@tangent_operator@=${tgo}
+            --xml-output-file=generic-${test_arg}_${ss}_${tgo}_${rm}_mtest.xml
             --@xml_output@="${test_arg}-${rm}.xml" ${file})
 	endif(HAVE_CASTEM)
       else(NOT _REFERENCE_FILE)
@@ -434,6 +437,7 @@ function(test_generic_fs test_arg)
 	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
 	    --@stress_measure@=${ss}
 	    --@tangent_operator@=${tgo}
+            --xml-output-file=generic-${test_arg}_${ss}_${tgo}_${rm}_mtest.xml
             --@xml_output@="${test_arg}-${rm}.xml"
             --@reference_file@="${rfile}" ${file})
 	else(HAVE_CASTEM)
@@ -443,6 +447,7 @@ function(test_generic_fs test_arg)
             --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
 	    --@stress_measure@=${ss}
 	    --@tangent_operator@=${tgo}
+            --xml-output-file=generic-${test_arg}_${ss}_${tgo}_${rm}_mtest.xml
             --@xml_output@="${test_arg}-${rm}.xml"
             --@reference_file@="${rfile}" ${file})
 	endif(HAVE_CASTEM)
