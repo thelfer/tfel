@@ -53,7 +53,7 @@ namespace mfront::bbrick {
     if (std::find(variables.begin(), variables.end(), "p") == variables.end()) {
       tfel::raise(
           "UserDefinedIsotropicHardeningRule::initialize: "
-          "the strain rate does not depend on "
+          "the yield radius does not depend on "
           "the equivalent plastic strain 'p'");
     }
     const auto& opts = this->getOptions();
@@ -205,7 +205,8 @@ namespace mfront::bbrick {
         }
         if (m.count(v) == 0) {
           tfel::raise(
-              "UserDefinedViscoplasticFlow::computeFlowRateAndDerivative: "
+              "UserDefinedIsotropicHardeningRule::"
+              "computeElasticLimitAndDerivative: "
               "internal error (unexpected variable '" +
               v + "' in derivative)");
         }

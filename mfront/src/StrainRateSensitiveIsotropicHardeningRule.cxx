@@ -58,7 +58,8 @@ namespace mfront::bbrick {
     using namespace tfel::glossary;
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto raise = [](const std::string& m) {
-      tfel::raise("InelasticFlowBase::initialize: " + m);
+      tfel::raise("StrainRateSensitiveIsotropicHardeningRule::initialize: " +
+                  m);
     };  // end of raise
     auto getDataStructure = [&raise](const std::string& n, const Data& ds) {
       if (ds.is<std::string>()) {
@@ -114,9 +115,7 @@ namespace mfront::bbrick {
                          << std::endl;
         }
         if (this->rsf != nullptr) {
-          raise(
-              "a rate independant isotropic hardening rule "
-              "has already been defined");
+          raise("a rate sensitivity factor has already been defined");
         }
         auto& rf = StrainRateSensitivityFactorFactory::getFactory();
         this->rsf = rf.generate(ds.name);
