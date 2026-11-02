@@ -22,6 +22,9 @@
 #include <windows.h>
 #else
 #include <dlfcn.h>
+#if defined(__GLIBC__) || defined(RTLD_DI_LINKMAP)
+#include <link.h>
+#endif /* defined(__GLIBC__) || defined(RTLD_DI_LINKMAP) */
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
 #include <iterator>
@@ -230,6 +233,14 @@ namespace tfel::system {
     if (lib.first == nullptr) {
       raise("can't load library '" + l + "'");
     }
+#if defined(__GLIBC__) || defined(RTLD_DI_LINKMAP)
+    // path of the file actually loaded by the dynamic loader
+    struct link_map* lm = nullptr;
+    if ((::dlinfo(lib.first, RTLD_DI_LINKMAP, &lm) == 0) && (lm != nullptr) &&
+        (lm->l_name != nullptr) && (lm->l_name[0] != '\0')) {
+      return lm->l_name;
+    }
+#endif /* defined(__GLIBC__) || defined(RTLD_DI_LINKMAP) */
     // check if file exists
     if (exists(lib.second)) {
       return lib.second;
