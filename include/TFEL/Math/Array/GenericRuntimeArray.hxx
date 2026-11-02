@@ -198,9 +198,9 @@ namespace tfel::math {
     void shrink_to_fit();
 
    protected:
-    //! \brief assignement operator, the sizes of the source are copied
+    //! \brief assignement operator
     GenericRuntimeArray& operator=(const GenericRuntimeArray&);
-    //! \brief move assigment, the sizes of the source are copied
+    //! \brief move assigment
     GenericRuntimeArray& operator=(GenericRuntimeArray&&) noexcept;
 
    protected:
