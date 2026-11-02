@@ -180,6 +180,13 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto computeDeterminantDerivative(
       const TensorConcept auto&) noexcept;
   /*!
+   * \return the adjugate of a tensor, \f$\det\left(F\right)\,F^{-1}\f$,
+   * i.e. the transpose of the derivative of the determinant
+   * \param[in] F: tensor where the the adjugate is evaluated
+   */
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantDerivative(
+      const TensorConcept auto&) noexcept;
+  /*!
    * \brief rotate a tensor using a rotation matrix
    * \param[in] s: tensor to be rotated
    * \param[in] r: rotation matrix

@@ -437,19 +437,19 @@ namespace ansys {
       tmatrix<3u, 3u, typename std::iterator_traits<InputIterator>::value_type>
       getRotationMatrix2D(const InputIterator v) {
     using real = typename std::iterator_traits<InputIterator>::value_type;
+    // the columns of the rotation matrix are the material axes, the
+    // second one being orthogonal to the first one given by v
     const auto v1x = v[0];
     const auto v1y = v[1];
-    const auto v2x = v[2];
-    const auto v2y = v[3];
     tfel::math::tmatrix<3u, 3u, real> r;
     r(0, 0) = v1x;
-    r(0, 1) = v1y;
-    r(0, 2) = 0;
-    r(1, 0) = v2x;
-    r(1, 1) = v2y;
-    r(1, 2) = 0;
+    r(1, 0) = v1y;
     r(2, 0) = 0;
+    r(0, 1) = -v1y;
+    r(1, 1) = v1x;
     r(2, 1) = 0;
+    r(0, 2) = 0;
+    r(1, 2) = 0;
     r(2, 2) = 1;
     return r;
   }
@@ -468,15 +468,16 @@ namespace ansys {
     const auto v3x = v1y * v2z - v2y * v1z;
     const auto v3y = v2x * v1z - v2z * v1x;
     const auto v3z = v1x * v2y - v2x * v1y;
+    // the columns of the rotation matrix are the material axes
     tfel::math::tmatrix<3u, 3u, real> r;
     r(0, 0) = v1x;
-    r(0, 1) = v1y;
-    r(0, 2) = v1z;
-    r(1, 0) = v2x;
+    r(1, 0) = v1y;
+    r(2, 0) = v1z;
+    r(0, 1) = v2x;
     r(1, 1) = v2y;
-    r(1, 2) = v2z;
-    r(2, 0) = v3x;
-    r(2, 1) = v3y;
+    r(2, 1) = v2z;
+    r(0, 2) = v3x;
+    r(1, 2) = v3y;
     r(2, 2) = v3z;
     return r;
   }

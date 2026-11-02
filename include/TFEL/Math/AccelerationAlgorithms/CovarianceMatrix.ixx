@@ -37,10 +37,11 @@ namespace tfel::math::anderson {
   void CovarianceMatrix<real>::resize(const size_type n) {
     this->Nmax = n;
     if (this->Nmax) {
-      this->C.resize(
-          static_cast<size_type>((this->Nmax * (this->Nmax + 1)) / 2));
-      this->a.resize(
-          static_cast<size_type>((this->Nmax * (this->Nmax - 1)) / 2));
+      // the sizes of the triangular storages may exceed the maximum value of
+      // size_type
+      const auto s = static_cast<std::size_t>(this->Nmax);
+      this->C.resize((s * (s + 1)) / 2);
+      this->a.resize((s * (s - 1)) / 2);
       this->ne.resize(this->Nmax);
     }
   }

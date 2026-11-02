@@ -23,6 +23,12 @@ namespace mfront {
     static std::string getName();
     //! \brief constructor
     Castem21ModelInterface();
+    //
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     //! \brief destructor
     ~Castem21ModelInterface() override;
   };  // end of struct CastemModelInterface

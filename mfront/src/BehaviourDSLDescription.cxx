@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <algorithm>
 #include "MFront/BehaviourDSLDescription.hxx"
 
 namespace mfront {
@@ -44,5 +45,16 @@ namespace mfront {
         tfel::material::MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR;
     return d;
   }  // end of getDefaultFiniteStrainBehaviourDSLDescription
+
+  bool supportAllModellingHypothes(const BehaviourDSLDescription& d) {
+    const auto& mh = d.supportedModellingHypotheses;
+    for (const auto h :
+         tfel::material::ModellingHypothesis::getModellingHypotheses()) {
+      if (std::find(mh.begin(), mh.end(), h) == mh.end()) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of supportAllModellingHypothes
 
 }  // end of namespace mfront

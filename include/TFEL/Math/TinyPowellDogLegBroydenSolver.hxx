@@ -83,8 +83,13 @@ namespace tfel::math {
         const TinyPowellDogLegBroydenSolver&) noexcept = default;
     //! \brief destructor
     ~TinyPowellDogLegBroydenSolver() noexcept = default;
-    //! \brief update the jacobian matrix
-    TFEL_HOST_DEVICE void updateOrCheckJacobian();
+    /*!
+     * \brief update the jacobian matrix
+     *
+     * This method is called by `computeNewCorrection` before the
+     * `updateOrCheckJacobian` method of the derived class.
+     */
+    TFEL_HOST_DEVICE void updateJacobian();
     //! \brief compute a new correction to the unknowns
     TFEL_HOST_DEVICE bool computeNewCorrection();
 

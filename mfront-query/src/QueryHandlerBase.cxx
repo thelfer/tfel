@@ -271,6 +271,9 @@ namespace mfront {
                                            "do not display errors using "
                                            "a message box (windows only)",
                                            []() noexcept {}, false));
+    this->registerCallBack(
+        "--no-terminate-handler",
+        CallBack("don't set a terminate handler", []() noexcept {}, false));
   }
 
   std::function<void()> QueryHandlerBase::generateGeneratedSourcesQuery(

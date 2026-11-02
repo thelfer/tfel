@@ -41,8 +41,38 @@
 #include "MFront/PathSpecifier.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+[[noreturn]] static void mfront_doc_terminate_handler() {
+  if (auto pe = std::current_exception()) {
+    // we have an exception
+    try {
+      std::rethrow_exception(pe);
+    } catch (const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch (...) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, v) == 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+  if (!find("--no-terminate-handler")) {
+    std::set_terminate(mfront_doc_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
   using namespace mfront;
   initDSLs();
   initInterfaces();
@@ -68,6 +98,32 @@ int main(const int argc, const char* const* const argv) {
       } else if (a == "--usage") {
         std::cout << "Usage : " << argv[0] << " [options] [files]" << std::endl;
         exit(EXIT_SUCCESS);
+      } else if (tfel::utilities::starts_with(a, "--dsl-option=")) {
+        MFrontBase::addDSLOption(a.substr(std::strlen("--dsl-option=")));
+      } else if (tfel::utilities::starts_with(
+                     a, "--material-property-dsl-option=")) {
+        MFrontBase::addMaterialPropertyDSLOption(
+            a.substr(std::strlen("--material-property-dsl-option=")));
+      } else if (tfel::utilities::starts_with(a, "--behaviour-dsl-option=")) {
+        MFrontBase::addBehaviourDSLOption(
+            a.substr(std::strlen("--behaviour-dsl-option=")));
+      } else if (tfel::utilities::starts_with(a, "--model-dsl-option=")) {
+        MFrontBase::addModelDSLOption(
+            a.substr(std::strlen("--model-dsl-option=")));
+      } else if (tfel::utilities::starts_with(a, "--dsl-options-file=")) {
+        MFrontBase::parseDSLOptionsFile(
+            a.substr(std::strlen("--dsl-options-file=")));
+      } else if (tfel::utilities::starts_with(
+                     a, "--material-property-dsl-options-file=")) {
+        MFrontBase::parseMaterialPropertyDSLOptionsFile(
+            a.substr(std::strlen("--material-property-dsl-options-file=")));
+      } else if (tfel::utilities::starts_with(
+                     a, "--behaviour-dsl-options-file=")) {
+        MFrontBase::parseBehaviourDSLOptionsFile(
+            a.substr(std::strlen("--behaviour-dsl-options-file=")));
+      } else if (tfel::utilities::starts_with(a, "--model-dsl-options-file=")) {
+        MFrontBase::parseModelDSLOptionsFile(
+            a.substr(std::strlen("--model-dsl-options-file=")));
       } else if (tfel::utilities::starts_with(a, "--configuration-file=")) {
         mfront::parseConfigurationFile(
             a.substr(std::strlen("--configuration-file=")));

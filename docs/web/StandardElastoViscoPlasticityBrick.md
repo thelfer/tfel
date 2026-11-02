@@ -306,6 +306,13 @@ The viscoplastic flow is defined by:
 - one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
 - one isotropic hardening rule (optional), denoted \(R_{i}\)
 
+#### Newton steps rejection
+
+The exponential nature of the hyperbolic sinus function may lead to
+divergence of the Newton method. To avoid this, one may specify a
+relative threshold denoted \(K_{sf}\): if the stress estimate is greater
+than \(K_{sf}\,K\), the step is rejected.
+
 ### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow 
 
 The equivalent viscoplastic strain rate \(\dot{p}\) is defined as:
@@ -340,13 +347,6 @@ in which appear:
   }
 };
 ~~~~
-
-#### Newton steps rejection
-
-The exponential nature of the hyperbolic sinus function may lead to
-divergence of the Newton method. To avoid this, one may specify a
-relative threshold denoted \(K_{sf}\): if the stress estimate is greater
-than \(K_{sf}\,K\), the step is rejected.
 
 ### The `UserDefinedViscoplasticity` inelastic flow
 

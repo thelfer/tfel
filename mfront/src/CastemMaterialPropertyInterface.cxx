@@ -65,7 +65,7 @@ namespace mfront {
       const tokens_iterator) {
     tfel::raise_if((std::find(i.begin(), i.end(), "castem") != i.end()) ||
                        (std::find(i.begin(), i.end(), "Castem") != i.end()) ||
-                       (std::find(i.begin(), i.end(), "Cast3m") != i.end()),
+                       (std::find(i.begin(), i.end(), "Cast3M") != i.end()),
                    "CastemMaterialPropertyInterface::treatKeyword: "
                    "unsupported keyword '" +
                        k + "'");
