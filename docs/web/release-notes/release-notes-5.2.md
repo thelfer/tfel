@@ -742,6 +742,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1288>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1285>
 
+## Issue 1283: [mfront] MTest files generated on failure by the generic interface cannot be replayed in plane stress, and in plane strain at finite strain
+
+For more details, see <https://github.com/thelfer/tfel/issues/1283>
+
 ## Issue 1281: [mfront] The generated Makefile adds the calling directory, not src, to LD_LIBRARY_PATH
 
 For more details, see <https://github.com/thelfer/tfel/issues/1281>

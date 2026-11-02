@@ -88,8 +88,14 @@ namespace mfront {
     os << "};\n\n";
     for (p = n.begin(), i = 0; p != n.end(); ++p, ++i) {
       os.precision(14);
-      if (!((i == 2) &&
-            (this->hypothesis == ModellingHypothesis::PLANESTRAIN))) {
+      // the axial strain is not an unknown of MTest in plane strain
+      // (null) and in plane stress (computed by the behaviour)
+      if (!(((i == 2) &&
+             ((this->hypothesis == ModellingHypothesis::PLANESTRAIN) ||
+              (this->hypothesis == ModellingHypothesis::PLANESTRESS))) ||
+            ((i == 1) &&
+             (this->hypothesis ==
+              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)))) {
         os << "@ImposedStrain<evolution> '" << *p << "' {" << t0 << ":"
            << this->eto0[i] << "," << t1 << ":" << this->eto1[i] << "};\n";
       }
