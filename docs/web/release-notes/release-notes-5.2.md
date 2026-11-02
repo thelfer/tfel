@@ -778,6 +778,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
+## Issue 1203: [tfel-math] Isotropic moduli assignment, stensor products on GPUs, Gauss-Kronrod half-infinite error estimate, QR with more rows than columns, Levenberg-Marquardt factor, physical constants digits
+
+For more details, see <https://github.com/thelfer/tfel/issues/1203>
+
 ## Issue 1201: [tfel-utilities] CxxTokenizer numbers and integers, string algorithms, TextData comments and infinities, ProcessManager and SignalManager children, tfel-doc --split
 
 For more details, see <https://github.com/thelfer/tfel/issues/1201>
