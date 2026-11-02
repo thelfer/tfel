@@ -726,6 +726,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 For more details, see <https://github.com/thelfer/tfel/issues/1292>
 
+## Issue 1285: [mfront] generic interface, finite strain in plane stress: the Green-Lagrange and standard finite strain families add the axial deformation gradient to the one of the caller
+
+For more details, see <https://github.com/thelfer/tfel/issues/1285>
+
 ## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
 
 For more details, see <https://github.com/thelfer/tfel/issues/1274>

@@ -1744,13 +1744,13 @@ namespace mfront {
             if (this->checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
                         bd, h)
                     .first) {
-              os << F0zz << " += d->s0.internal_state_variables"
+              os << F0zz << " = d->s0.internal_state_variables"
                  << "[mg_Traits::axial_deformation_gradient_offset];\n";
             }
           } else if (bd.getStrainMeasure() ==
                      BehaviourDescription::GREENLAGRANGE) {
             if (this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd, h).first) {
-              os << F0zz << " += std::sqrt(1 + 2 * "
+              os << F0zz << " = std::sqrt(1 + 2 * "
                  << "d->s0.internal_state_variables"
                  << "[mg_Traits::axial_strain_offset]);\n";
             }
