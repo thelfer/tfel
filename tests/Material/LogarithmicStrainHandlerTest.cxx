@@ -37,6 +37,7 @@ struct LogarithmicStrainHandlerTest final : public tfel::tests::TestCase {
     this->check2<1u, double>();
     this->check2<2u, double>();
     this->check2<3u, double>();
+    this->check3();
     return this->result;
   }
 
@@ -129,6 +130,26 @@ struct LogarithmicStrainHandlerTest final : public tfel::tests::TestCase {
         const auto K2 = h2.convertToAbaqusTangentModuli(D, T);
         TFEL_TESTS_ASSERT(abs(K1 - K2) < eps);
       }
+    }
+  }
+  // continuity of the tangent moduli when two eigenvalues of C become equal,
+  // for a dual stress which is not coaxial with C
+  void check3() {
+    using namespace tfel::math;
+    using LSHandler = tfel::material::LogarithmicStrainHandler<3u, double>;
+    const auto Ks = st2tost2<3u, double>{0.};
+    const auto T = stensor<3u, double>{1e8, -2e8, 3e8, 4e8, -5e8, 6e8};
+    const double v0[9u] = {1.2, 1, 1, 0, 0, 0, 0, 0, 0};
+    const double v1[9u] = {1.2, 1, 1 + 1e-5, 0, 0, 0, 0, 0, 0};
+    for (const auto s : {LSHandler::LAGRANGIAN, LSHandler::EULERIAN}) {
+      const auto K = [&Ks, &T, s](const double* const v) {
+        const LSHandler h(s, tensor<3u, double>{v});
+        return s == LSHandler::LAGRANGIAN
+                   ? h.convertToMaterialTangentModuli(Ks, T)
+                   : h.convertToSpatialTangentModuli(Ks, T);
+      };
+      const auto K0 = K(v0);
+      TFEL_TESTS_ASSERT(abs(K(v1) - K0) < 1e-3 * abs(K0));
     }
   }
 };

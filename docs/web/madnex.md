@@ -157,10 +157,11 @@ optionals, as in the previous example.
 #### Selecting a specific type of material kowledge
 
 `material_knowledge_type` may have one of the following values
-`material_property`, `behaviours` and `models`.
+`material_property` (or `MaterialProperty`), `behaviour` (or
+`Behaviour`) and `model` (or `Model`).
 
-If `material_knowledge_type` is not specified, materials properties,
-behaviours and models are all considered (in that order).
+If `material_knowledge_type` is empty or not specified, materials
+properties, behaviours and models are all considered (in that order).
 
 #### About the material identifier
 
@@ -171,20 +172,21 @@ all materials is `.+`, but this will exclude material knowledge
 associated with no material.
 
 The regular expression `.*` will select material knowledge associated to
-all material *and* material knowledge associated with no material. This
-is what happen if not `material_identifier` is specified.
+all material *and* material knowledge associated with no material.
 
 The special material identifier `<none>` selects only material knowledge
-associated with no material.
+associated with no material. This is what happens if the
+`material_identifier` is empty or not specified.
 
 #### Examples of madnex search paths
 
 - `MaterialProperties.mdnx`: appends all the materials properties,
+  behaviours, models associated to no material to the search path.
+- `MaterialProperties.mdnx::.*`: appends all the materials properties,
   behaviours, models associated to any materials or to no material to
   the search path.
 - `MaterialProperties.mdnx:material_property`: appends all the
-  materials properties, associated to any materials or to no material to
-  the search path.
+  materials properties associated to no material to the search path.
 - `MaterialProperties.mdnx:material_property:Zircaloy4`: appends all
   the materials properties, associated to `Zircaloy4` to the search
   path.
