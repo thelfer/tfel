@@ -798,6 +798,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1219>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
+## Issue 1213: [mfront] @RequireThermalExpansionCoefficientTensor is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
+
+For more details, see <https://github.com/thelfer/tfel/issues/1213>
+
 ## Issue 1211: [tfel-system] Undefined SignalManager and NUMODIS declarations, MTestParser and ProcessManagerCommand constructors, mtest reference file generator, terminate handler of the tools, BurnUp glossary name in the docs
 
 For more details, see <https://github.com/thelfer/tfel/issues/1211>

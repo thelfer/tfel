@@ -751,7 +751,7 @@ integración del comportamiento.
 calcule el tensor del coeficiente de expansión térmica.
 
 ~~~~{.cpp}
-@RequireThermalExpansionCoefficientTensor true;
+@RequireThermalExpansionCoefficientTensor;
 ~~~~
 
 `@MaterialProperty` permite al usuario una varias propiedades del
