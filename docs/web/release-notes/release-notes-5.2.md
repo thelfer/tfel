@@ -770,6 +770,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1225>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1223>
 
+## Issue 1221: [mfront] Logarithmic strain shear tests: the shear-FZY-3D tests impose FZX, and the transposed cases compare too few stresses
+
+For more details, see <https://github.com/thelfer/tfel/issues/1221>
+
 ## Issue 1219: [mfront] Strain tolerance of the axisymmetric shear tests of orthotropic elasticity
 
 For more details, see <https://github.com/thelfer/tfel/issues/1219>
