@@ -301,7 +301,7 @@ test_aster(chaboche2 REFERENCE_FILE chaboche2-aster.ref)
 test_aster(viscochaboche REFERENCE_FILE ViscoChaboche.ref)
 test_aster(monocrystal REFERENCE_FILE monocrystal.ref)
 test_aster(monocrystal-2)
-test_aster(implicitmonocrystal)
+test_aster(implicitmonocrystal REFERENCE_FILE implicitmonocrystal.ref)
 test_aster(implicitmonocrystal-2)
 test_aster(monocrystal_dd_cfc
            REFERENCE_FILE monocrystal_dd_cfc.ref)
