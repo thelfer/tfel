@@ -92,6 +92,16 @@ library, see below.
   `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
   component of a scalar variable, and the `Ksf` option of the
   `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
+- The Broyden algorithms of the `Implicit` DSLs (`Broyden`,
+  `PowellDogLeg_Broyden` and `Broyden2`) update the jacobian, or its
+  inverse, again (see Issue #1295): since `TFEL-4.0`, the update was
+  hidden by the `updateOrCheckJacobian` method generated in every
+  behaviour. The number of iterations of the behaviours using them
+  changes, and so do their results within the convergence criterion.
+  In `TinyBroydenSolver` and `TinyPowellDogLegBroydenSolver`
+  (respectively `TinyBroyden2Solver`), the update is performed by the
+  `updateJacobian` (respectively `updateJacobianInvert`) method, which
+  replaces their `updateOrCheckJacobian` method.
 
 # Improvements to the build system
 
@@ -734,6 +744,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1295: [tfel-math] The Broyden solvers never update the jacobian in MFront behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/1295>
 
 ## Issue 1292: [tfel-material] LogarithmicStrainHandler: wrong tangent moduli in 3D when two eigenvalues of C are equal
 
