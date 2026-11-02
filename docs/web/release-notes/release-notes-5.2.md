@@ -758,6 +758,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1231>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1229>
 
+## Issue 1227: [mfront] Comparisons of the finite strain single crystal tests are commented out
+
+For more details, see <https://github.com/thelfer/tfel/issues/1227>
+
 ## Issue 1225: [mtest] The fanderson and uanderson tests do not select their acceleration algorithm
 
 For more details, see <https://github.com/thelfer/tfel/issues/1225>
