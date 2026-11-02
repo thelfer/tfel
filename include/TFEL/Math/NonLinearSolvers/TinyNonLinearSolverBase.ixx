@@ -61,6 +61,9 @@ namespace tfel::math {
       if (converged) {
         return true;
       }
+      if (this->iter == this->iterMax) {
+        break;
+      }
       if (!child.computeNewCorrection()) {
         child.reportNewCorrectionComputationFailure();
         break;
@@ -70,9 +73,6 @@ namespace tfel::math {
       this->zeros += this->delta_zeros;
       child.processNewEstimate();
       ++(this->iter);
-      if (this->iter == this->iterMax) {
-        break;
-      }
     }
     return false;
   }  // end of solveNonLinearSystem2

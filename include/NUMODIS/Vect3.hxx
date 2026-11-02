@@ -56,8 +56,6 @@ namespace numodis {
 
     Vect3 operator/(const double scalar) const;
 
-    Vect3 operator*(const Vect3& vec) const;
-
     Vect3& operator=(const Vect3& vec);
 
     Vect3& operator=(const double scalar);

@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <algorithm>
+#include "TFEL/Raise.hxx"
 #include "MFront/Castem21MaterialPropertyInterface.hxx"
 
 namespace mfront {
@@ -21,6 +23,21 @@ namespace mfront {
 
   Castem21MaterialPropertyInterface::Castem21MaterialPropertyInterface() =
       default;
+
+  std::pair<bool, Castem21MaterialPropertyInterface::tokens_iterator>
+  Castem21MaterialPropertyInterface::treatKeyword(
+      const std::string& k,
+      const std::vector<std::string>& i,
+      tokens_iterator current,
+      const tokens_iterator end) {
+    tfel::raise_if((std::find(i.begin(), i.end(), "castem21") != i.end()) ||
+                       (std::find(i.begin(), i.end(), "Castem21") != i.end()) ||
+                       (std::find(i.begin(), i.end(), "Cast3M21") != i.end()),
+                   "Castem21MaterialPropertyInterface::treatKeyword: "
+                   "unsupported keyword '" +
+                       k + "'");
+    return CastemMaterialPropertyInterface::treatKeyword(k, i, current, end);
+  }  // end of treatKeyword
 
   Castem21MaterialPropertyInterface::~Castem21MaterialPropertyInterface() =
       default;
