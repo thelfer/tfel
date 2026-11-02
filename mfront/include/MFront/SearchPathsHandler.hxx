@@ -68,17 +68,21 @@ namespace mfront {
      * The path has one of the form:
      *
      * - `<file_path>`
-     * - `<file_path>:<material_id>`
-     * - `<file_path>:<material_id>:<mkt>`
+     * - `<file_path>:<mkt>`
+     * - `<file_path>:<mkt>:<material_id>`
      *
-     * If the material identifier is not specified, all
-     * materials are selected, including the empty one.
+     * `<mkt>` can have one of the values `material_property` (or
+     * `MaterialProperty`), `behaviour` (or `Behaviour`) or `model` (or
+     * `Model`). If `<mkt>` is empty or not specified, all types of material
+     * knowledge are selected.
      *
      * `<material_id>` can be a regular expression.
      * `<material_id>` can also have the special value `<none>`.
      *
-     * <mkt> can have one of the values `MaterialProperties`, `Behaviours` or
-     * `Models`.
+     * If the material identifier is empty or not specified, only the
+     * material knowledge associated with no material is selected, as with
+     * `<none>`. The regular expression `.*` selects all materials,
+     * including the empty one.
      *
      * \param[in] p: path
      */
@@ -86,7 +90,7 @@ namespace mfront {
     /*!
      * \brief Add new search paths.
      *
-     * Multiple paths are separated by commas under unices systems and
+     * Multiple paths are separated by colons under unices systems and
      * by semicolons under Windows systems.
      * \param[in] p : new search paths
      */

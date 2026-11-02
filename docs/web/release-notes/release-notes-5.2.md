@@ -806,6 +806,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1219>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
+## Issue 1215: [mfront] Installed GenericData and LSDYNA explicit headers, undefined declarations of the code generator and specific targets, madnex search paths documentation, pedantic bounds of parameters, castem21 keyword restrictions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1215>
+
 ## Issue 1213: [mfront] @RequireThermalExpansionCoefficientTensor is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
 
 For more details, see <https://github.com/thelfer/tfel/issues/1213>
