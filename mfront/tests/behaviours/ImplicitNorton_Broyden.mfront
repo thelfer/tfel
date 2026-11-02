@@ -33,7 +33,6 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  computeNumericalJacobian(this->jacobian);
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
      computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){

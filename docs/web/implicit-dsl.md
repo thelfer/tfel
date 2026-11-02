@@ -401,6 +401,11 @@ current version of `TFEL`), which is guaranteed in the
 solving \(6\) linear systems. In particular, the jacobian matrix is not
 inverted.
 
+The jacobian matrix must thus not be modified in the
+`@TangentOperator` block before calling `getPartialJacobianInvert`,
+for instance by calling `computeNumericalJacobian`: the decomposed
+matrix would be overwritten.
+
 A typical computation of the consistent tangent operator is as follows:
 
 ~~~~{.cxx}
