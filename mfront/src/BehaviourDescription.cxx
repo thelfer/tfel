@@ -3516,17 +3516,11 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
     };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b);
-    } else {
-      this->callBehaviourData(h, &BehaviourData::setBounds, n, b, true);
-    }
+    throw_if((this->isGradientName(n)) || (this->isThermodynamicForceName(n)),
+             "bounds on gradients and thermodynamic forces are not "
+             "supported ('" +
+                 n + "')");
+    this->callBehaviourData(h, &BehaviourData::setBounds, n, b, true);
   }  // end of setBounds
 
   void BehaviourDescription::setBounds(const Hypothesis h,
@@ -3536,23 +3530,17 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
     };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b, i);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b, i);
-    } else {
-      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        this->d.setBounds(n, i, b);
-        for (auto md : this->sd) {
-          md.second.get()->setBounds(n, i, b);
-        }
-      } else {
-        this->getBehaviourData2(h).setBounds(n, i, b);
+    throw_if((this->isGradientName(n)) || (this->isThermodynamicForceName(n)),
+             "bounds on gradients and thermodynamic forces are not "
+             "supported ('" +
+                 n + "')");
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      this->d.setBounds(n, i, b);
+      for (auto md : this->sd) {
+        md.second.get()->setBounds(n, i, b);
       }
+    } else {
+      this->getBehaviourData2(h).setBounds(n, i, b);
     }
   }  // end of setBounds
 
@@ -3563,17 +3551,11 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
     };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b);
-    } else {
-      this->callBehaviourData(h, &BehaviourData::setPhysicalBounds, n, b, true);
-    }
+    throw_if((this->isGradientName(n)) || (this->isThermodynamicForceName(n)),
+             "physical bounds on gradients and thermodynamic forces are not "
+             "supported ('" +
+                 n + "')");
+    this->callBehaviourData(h, &BehaviourData::setPhysicalBounds, n, b, true);
   }  // end of setPhysicalBounds
 
   void BehaviourDescription::setPhysicalBounds(
@@ -3584,23 +3566,17 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
     };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b, i);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b, i);
-    } else {
-      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        this->d.setPhysicalBounds(n, i, b);
-        for (auto md : this->sd) {
-          md.second.get()->setPhysicalBounds(n, i, b);
-        }
-      } else {
-        this->getBehaviourData2(h).setPhysicalBounds(n, i, b);
+    throw_if((this->isGradientName(n)) || (this->isThermodynamicForceName(n)),
+             "physical bounds on gradients and thermodynamic forces are not "
+             "supported ('" +
+                 n + "')");
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      this->d.setPhysicalBounds(n, i, b);
+      for (auto md : this->sd) {
+        md.second.get()->setPhysicalBounds(n, i, b);
       }
+    } else {
+      this->getBehaviourData2(h).setPhysicalBounds(n, i, b);
     }
   }  // end of setPhysicalBounds
 

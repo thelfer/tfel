@@ -1,0 +1,24 @@
+@Author Tristan Chenaille;
+@Date 02/11/2026;
+
+// This test checks that the jacobian is updated at each iteration of
+// the PowellDogLeg_Broyden algorithm: with the maximum number of
+// iterations given below, the integration fails otherwise (it then
+// takes at most 15 iterations per time step, against 6). See Issue 1295.
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'ImplicitNorton_PowellDogLegBroyden';
+
+@MaterialProperty<constant> 'YoungModulus' 150.e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+@ExternalStateVariable 'Temperature' 293.15;
+@UnsignedIntegerParameter 'iterMax' 10;
+
+@ImposedStrain 'EXX' {0 : 0, 1 : 1e-2};
+@ImposedStrain 'EYY' 0;
+@ImposedStrain 'EZZ' 0;
+@ImposedStrain 'EXY' 0;
+@ImposedStrain 'EXZ' 0;
+@ImposedStrain 'EYZ' 0;
+@Times {0., 1 in 20};

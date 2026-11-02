@@ -114,8 +114,13 @@ namespace mfront {
         "unimplemented feature");
   }  // end of getOverridableVariableNameByExternalName
 
-  void ModelDSLCommon::overrideByAParameter(const std::string&, const double){
+  void ModelDSLCommon::overrideByAParameter(const std::string& n,
+                                            const double) {
 #pragma message("unimplemented")
+    tfel::raise("ModelDSLCommon::overrideByAParameter: overriding variable '" +
+                n +
+                "' by a parameter is not supported by models "
+                "(unimplemented feature)");
   }  // end of overrideByAParameter
 
   std::map<std::string, double> ModelDSLCommon::getOverridenParameters() const {

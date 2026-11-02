@@ -47,6 +47,7 @@ library, see below.
 
 # Known incompatibilities
 
+- `cmake` \(3.20\) or later is now required to build `TFEL`.
 - `MFront`' interfaces have to implement a method named `setOptions`.
 - The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
   as documented, if `C++` keywords are allowed (see Issue #964): its
@@ -93,6 +94,21 @@ library, see below.
 - The Levenberg-Marquardt minimisers (`LevenbergMarquardt`,
   `FSLevenbergMarquardt`) reject the steps that increase the cost (see
   Issue #1288): the iterates of every fit change.
+- Inputs that were silently ignored are now rejected (see Issue #1256):
+  the `overriding_parameters` option of the model DSLs, `@Bounds` and
+  `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
+  component of a scalar variable, and the `Ksf` option of the
+  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
+- The Broyden algorithms of the `Implicit` DSLs (`Broyden`,
+  `PowellDogLeg_Broyden` and `Broyden2`) update the jacobian, or its
+  inverse, again (see Issue #1295): since `TFEL-4.0`, the update was
+  hidden by the `updateOrCheckJacobian` method generated in every
+  behaviour. The number of iterations of the behaviours using them
+  changes, and so do their results within the convergence criterion.
+  In `TinyBroydenSolver` and `TinyPowellDogLegBroydenSolver`
+  (respectively `TinyBroyden2Solver`), the update is performed by the
+  `updateJacobian` (respectively `updateJacobianInvert`) method, which
+  replaces their `updateOrCheckJacobian` method.
 
 # Improvements to the build system
 
@@ -736,6 +752,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1295: [tfel-math] The Broyden solvers never update the jacobian in MFront behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/1295>
+
 ## Issue 1292: [tfel-material] LogarithmicStrainHandler: wrong tangent moduli in 3D when two eigenvalues of C are equal
 
 For more details, see <https://github.com/thelfer/tfel/issues/1292>
@@ -751,6 +771,14 @@ For more details, see <https://github.com/thelfer/tfel/issues/1288>
 ## Issue 1285: [mfront] generic interface, finite strain in plane stress: the Green-Lagrange and standard finite strain families add the axial deformation gradient to the one of the caller
 
 For more details, see <https://github.com/thelfer/tfel/issues/1285>
+
+## Issue 1283: [mfront] MTest files generated on failure by the generic interface cannot be replayed in plane stress, and in plane strain at finite strain
+
+For more details, see <https://github.com/thelfer/tfel/issues/1283>
+
+## Issue 1281: [mfront] The generated Makefile adds the calling directory, not src, to LD_LIBRARY_PATH
+
+For more details, see <https://github.com/thelfer/tfel/issues/1281>
 
 ## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
 
@@ -776,9 +804,17 @@ For more details, see <https://github.com/thelfer/tfel/issues/1260>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1258>
 
+## Issue 1256: [mfront] Model overriding parameters, bounds on main variables and on components, ScalarDamage in axisymmetrical generalised plane stress, keyword pages, Ksf of the harmonic sum flow, brick base classes exports, mfront-doc/mfront-query global options, MFrontLock
+
+For more details, see <https://github.com/thelfer/tfel/issues/1256>
+
 ## Issue 1254: [tfel-math] Eigen solvers of symmetric tensors: wrong eigenvectors for equal or close eigenvalues, Cardano eigenvalues of syevc3, derivatives of isotropic functions of quantities, ConvertLogarithmicStrainTangentOperator
 
 For more details, see <https://github.com/thelfer/tfel/issues/1254>
+
+## Issue 1251: [cmake] Installed executables, libraries and Python modules without RUNPATH on Linux, madnex library not found, empty entries added by env.sh
+
+For more details, see <https://github.com/thelfer/tfel/issues/1251>
 
 ## Issue 1242: [tests] Twenty-one C++ unit tests check no result
 
@@ -787,6 +823,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1242>
 ## Issue 1241: [ptest] Thirty of the 42 PTest pipe tests compare nothing
 
 For more details, see <https://github.com/thelfer/tfel/issues/1241>
+
+## Issue 1239: [cmake] Obsolete packaging files, TFEL_OPTIMISATION_FLAGS0, Debug flags, checks that never act, Cast3M 2026 header, minimum CMake version, exports of libTFELMFront
+
+For more details, see <https://github.com/thelfer/tfel/issues/1239>
 
 ## Issue 1237: [cmake] Compiler printed by mfront --version, installed headers of the isotropic DSLs and of TFELCheck, dependencies of the installed CMake packages, static TFELMFrontDatabase package, CPack components
 

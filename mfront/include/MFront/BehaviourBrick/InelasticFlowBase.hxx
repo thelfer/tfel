@@ -15,6 +15,7 @@
 #define LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX
 
 #include <vector>
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx"
 #include "MFront/BehaviourBrick/InelasticFlow.hxx"
 
@@ -24,7 +25,7 @@ namespace mfront::bbrick {
    * \brief an helper class which provide common method for all inelastic
    * potentials.
    */
-  struct InelasticFlowBase : InelasticFlow {
+  struct MFRONT_VISIBILITY_EXPORT InelasticFlowBase : InelasticFlow {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
