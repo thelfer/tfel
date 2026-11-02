@@ -164,3 +164,14 @@ constexpr auto c = tfel::math::derivative_type<strainrate, time>{2.3e-5};
 const auto or1 = tfel::math::gauss_kronrod_integrate(
     [c](const time t) noexcept { return c * t; }, a, b);
 ~~~~
+
+With the adaptative version, the absolute tolerance has the unit of the
+integral, i.e. the type of the estimate of the error returned by the
+non-adaptative version:
+
+~~~~{.cxx}
+const auto oi = tfel::math::gauss_kronrod_integrate(
+    [c](const time t) noexcept { return c * t; }, a, b,
+    {.absolute_tolerance = strain{1e-12},
+     .maximum_number_of_refinements = 8});
+~~~~
