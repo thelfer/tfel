@@ -402,9 +402,15 @@ solving \(6\) linear systems. In particular, the jacobian matrix is not
 inverted.
 
 The jacobian matrix must thus not be modified in the
-`@TangentOperator` block before calling `getPartialJacobianInvert`,
-for instance by calling `computeNumericalJacobian`: the decomposed
-matrix would be overwritten.
+`@TangentOperator` block before calling `getPartialJacobianInvert`.
+
+Besides, the `computeNumericalJacobian` method must not be called
+in the `@TangentOperator` block. This block is executed once the state
+variables are updated and the final thermodynamic forces are computed:
+the residual would be evaluated at a wrong state, the thermodynamic
+forces would be overwritten by values computed at this wrong state,
+and, if the jacobian matrix is given as argument, its decomposition
+would be overwritten.
 
 A typical computation of the consistent tangent operator is as follows:
 
