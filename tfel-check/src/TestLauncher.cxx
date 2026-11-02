@@ -2,7 +2,7 @@
  * \file   tfel-check/src/TestLauncher.cxx
  * \brief  Class to manage tfel unit tests.
  * \author Thomas Helfer
- * \date   26 jan 2008
+ * \date 26/01/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -43,15 +43,16 @@
 #include "TFEL/Check/RelativeAndAbsoluteComparison.hxx"
 #include "TFEL/Check/MixedComparison.hxx"
 #include "TFEL/Check/AreaComparison.hxx"
+#include "TFEL/Check/L2Comparison.hxx"
 #include "TFEL/Check/TestLauncher.hxx"
 
 namespace tfel::check {
 
   TestLauncher::Command::Command() = default;
-  TestLauncher::Command::Command(Command&&) = default;
+  TestLauncher::Command::Command(Command&&) noexcept = default;
   TestLauncher::Command::Command(const Command&) = default;
   TestLauncher::Command&  //
-  TestLauncher::Command::operator=(Command&&) = default;
+  TestLauncher::Command::operator=(Command&&) noexcept = default;
   TestLauncher::Command&  //
   TestLauncher::Command::operator=(const Command&) = default;
   TestLauncher::Command::~Command() = default;
@@ -220,12 +221,12 @@ namespace tfel::check {
     const auto value = option.get<bool>();
     return [value](const std::vector<std::string>& output)
                -> std::tuple<bool, std::string> {
-      if ((value) && (output.empty())) {
+      if (output.empty() == value) {
         return {true, ""};
       }
       auto msg = std::string{"Unexpected command output "};
       if (value) {
-        msg += "(empty output expected)";
+        msg += "(empty output expected)\n";
         msg += "# Command output:\n\n";
         for (const auto& l : output) {
           msg += "'" + l + "'\n";
@@ -378,6 +379,7 @@ namespace tfel::check {
      *   compares the command output to the expected value.
      * - `shall_fail`: if specified and set to true, the command shall return an
      *   invalid exit status.
+     * - `timeout`: the maximum duration allowed for a test.
      */
     auto parseCommandOptions = [&c](const tfel::utilities::DataMap& options) {
       auto is_output_check_defined = [&c] {
@@ -407,6 +409,19 @@ namespace tfel::check {
                 "for option 'shall_fail'");
           }
           c.shall_fail = o.second.get<bool>();
+        } else if (o.first == "timeout") {
+          if (!o.second.is<int>()) {
+            tfel::raise(
+                "TestLaucher::treatCommand: invalid type "
+                "for option 'timeout'");
+          }
+          const auto d = o.second.get<int>();
+          if (d <= 0) {
+            tfel::raise(
+                "TestLaucher::treatCommand: invalid value for the "
+                "'timeout', expecting a strictly positive integer");
+          }
+          c.timeout = d;
         } else {
           tfel::raise(
               "TestLaucher::treatCommand: "
@@ -431,6 +446,7 @@ namespace tfel::check {
   }  // end of treatCommand
 
   void TestLauncher::treatTestType() {
+    this->checkNotEndOfFile("TestLauncher::treatTestType");
     if (this->current->value == "Absolute") {
       this->comparison.reset(new AbsoluteComparison());
     } else if (this->current->value == "Relative") {
@@ -441,15 +457,20 @@ namespace tfel::check {
       this->comparison.reset(new MixedComparison());
     } else if (this->current->value == "Area") {
       this->comparison.reset(new AreaComparison());
+    } else if (this->current->value == "L2") {
+      this->comparison.reset(new L2Comparison());
     } else {
-      this->throwRuntimeError("TestLauncher::treatTest",
+      this->throwRuntimeError("TestLauncher::treatTestType",
                               "unknown test type "
                               "(read '" +
                                   this->current->value + "').");
     }
     ++(this->current);
-    if (this->comparison->getName() != "area") {
-      this->readSpecifiedToken("TestLauncher::treatTest", ";");
+    // the Area and L2 comparisons need an interpolation for the
+    // integration
+    if (dynamic_cast<const AreaComparison*>(this->comparison.get()) ==
+        nullptr) {
+      this->readSpecifiedToken("TestLauncher::treatTestType", ";");
       return;
     }
     auto check = [this] {
@@ -458,15 +479,17 @@ namespace tfel::check {
                                 "missing argument after '" +
                                     std::prev(this->current)->value +
                                     "'\n"
-                                    "Usage : \"TestType Area interpolation "
+                                    "Usage : \"TestType <Area|L2> "
+                                    "interpolation "
                                     "<None|Linear|Spline|LocalSpline> "
                                     "using <columnName|columnNumber>\"");
       }
     };
     check();
-    this->readSpecifiedToken("TestLauncher::treatTest", "interpolation");
+    this->readSpecifiedToken("TestLauncher::treatTestType", "interpolation");
     check();
-    this->setInterpolation("TestLauncher::treatTest");
+    this->integralInterpolation =
+        this->readInterpolation("TestLauncher::treatTestType");
     this->readSpecifiedToken("TestLauncher::treatTestType", "using");
     check();
     if ((this->current->flag == tfel::utilities::Token::String) ||
@@ -482,6 +505,7 @@ namespace tfel::check {
 
   void TestLauncher::treatTest() {
     auto getColumn = [this] {
+      this->checkNotEndOfFile("TestLauncher::treatTest");
       // fetching the column's name to compare
       if ((this->current->flag == tfel::utilities::Token::String) ||
           (this->current->flag == tfel::utilities::Token::Char)) {
@@ -500,10 +524,9 @@ namespace tfel::check {
       test->setPrecision2(this->precision2);
       test->setInterpolation(this->interpolation->clone());
       test->setIntegralInterpolation(this->integralInterpolation);
-      if (test->getInterpolation()->isConform()) {
-        // fetch the times if doing an interpolation
-        test->setColInterpolated(this->ci);
-      }
+      // abscissa column, used to interpolate or, without interpolation,
+      // to check that the abscissas of both files are the same
+      test->setColInterpolated(this->ci);
       // fetch the times for an integration
       test->setColIntegralInterpolated(this->colIntegralInterpolated);
       test->setAllowLessResults(this->allowLessResults);
@@ -548,6 +571,7 @@ namespace tfel::check {
         test->setFileA(f1);
         test->setFileB(f2);
         this->comparisons.push_back(*test);
+        this->checkNotEndOfFile("TestLauncher::treatTest");
       }
     }
     this->readSpecifiedToken("TestLauncher::treatTest", ";");
@@ -563,16 +587,18 @@ namespace tfel::check {
     this->readSpecifiedToken("TestLauncher::treatPrecision", ";");
   }  // end of treatPrecision
 
-  void TestLauncher::setInterpolation(const std::string& m) {
+  std::shared_ptr<Interpolation> TestLauncher::readInterpolation(
+      const std::string& m) {
     this->checkNotEndOfFile(m);
+    auto i = std::shared_ptr<Interpolation>{};
     if (this->current->value == "Spline") {
-      this->integralInterpolation.reset(new SplineInterpolation());
+      i = std::make_shared<SplineInterpolation>();
     } else if (this->current->value == "Linear") {
-      this->integralInterpolation.reset(new LinearInterpolation());
+      i = std::make_shared<LinearInterpolation>();
     } else if (this->current->value == "LocalSpline") {
-      this->integralInterpolation.reset(new SplineLocalInterpolation());
+      i = std::make_shared<SplineLocalInterpolation>();
     } else if (this->current->value == "None") {
-      this->integralInterpolation.reset(new NoInterpolation());
+      i = std::make_shared<NoInterpolation>();
     } else {
       this->throwRuntimeError(m,
                               "unknown interpolation type "
@@ -580,10 +606,14 @@ namespace tfel::check {
                                   this->current->value + "')");
     }
     ++(this->current);
+    return i;
   }
 
   void TestLauncher::treatInterpolation() {
-    this->setInterpolation("TestLauncher::treatInterpolation");
+    this->interpolation =
+        this->readInterpolation("TestLauncher::treatInterpolation");
+    this->allowLessResults = false;
+    this->ci.reset();
     this->checkNotEndOfFile("TestLauncher::treatInterpolation");
     if (this->current->value == ";") {
       if (this->interpolation->isConform()) {
@@ -686,11 +716,17 @@ namespace tfel::check {
   bool TestLauncher::execute(const Command& c,
                              const std::string& output_file,
                              const std::string& step) {
-    tfel::system::ProcessManager manager;
     try {
+      tfel::system::ProcessManager manager;
       this->ClockAction(START);
       manager.execute(c.command, "", output_file, this->environments);
       this->ClockAction(STOP);
+      if (c.shall_fail) {
+        this->log.addTestResult(this->testname, step, c.command,
+                                this->ClockAction(GET), false,
+                                "the command was expected to fail");
+        return false;
+      }
       if (c.output_check) {
         const auto output = getFileContent(output_file);
         const auto [success, msg] = c.output_check(output);
@@ -720,9 +756,12 @@ namespace tfel::check {
 
   bool TestLauncher::execute(const Configuration& configuration) {
     using namespace tfel::utilities;
-    bool gsuccess = true; /* global success indicator : false only
-                             if comparison fails or when command
-                             fails if no comparison are given*/
+    /* global success indicator:
+     * - false if a comparison failed
+     * - false if a command failed and no comparison is given
+     * - false if a command failed and command failure is not discarded
+     */
+    bool gsuccess = true;
     // checking that the requirements are met
     const auto& components = configuration.available_components;
     for (const auto& r : this->requirements) {
@@ -779,11 +818,33 @@ namespace tfel::check {
           success);
     }
     // files and directories clean-up
-    for (const auto& f : this->cleanfiles) {
-      tfel::system::systemCall::unlink(f);
-    }
-    for (const auto& d : this->cleandirectories) {
-      tfel::system::systemCall::rmdir(d);
+    const auto do_clean_up = [&configuration, &gsuccess] {
+      if (!gsuccess) {
+        return !configuration.discard_clean_up_on_failure;
+      }
+      return configuration.clean_up;
+    }();
+    if (do_clean_up) {
+      for (const auto& f : this->cleanfiles) {
+        try {
+          tfel::system::systemCall::unlink(f);
+        } catch (std::exception& e) {
+          this->glog.addMessage("cleaning file '" + f +
+                                "' failed: " + std::string{e.what()});
+        } catch (...) {
+          this->glog.addMessage("cleaning file '" + f + "' failed");
+        }
+      }
+      for (const auto& d : this->cleandirectories) {
+        try {
+          tfel::system::systemCall::rmdir(d);
+        } catch (std::exception& e) {
+          this->glog.addMessage("cleaning directory '" + d +
+                                "' failed: " + std::string{e.what()});
+        } catch (...) {
+          this->glog.addMessage("cleaning directory '" + d + "' failed");
+        }
+      }
     }
     return gsuccess;
   }  // end of execute

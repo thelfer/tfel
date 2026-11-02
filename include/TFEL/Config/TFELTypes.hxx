@@ -169,7 +169,7 @@ namespace tfel::config {
     typedef tfel::math::st2tost2<N, T> StiffnessTensor;
     typedef typename tfel::config::internals::PositionType<N, T, false>::type
         PositionType;
-    typedef typename tfel::config::internals::SpatialGradType<N, T, true>::type
+    typedef typename tfel::config::internals::SpatialGradType<N, T, false>::type
         SpatialGradType;
     typedef typename tfel::config::internals::JacobianType<N, T, false>::type
         JacobianType;

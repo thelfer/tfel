@@ -271,7 +271,7 @@ namespace tfel::math {
   computeSpinRateDerivative(const TensorType&);
   /*!
    * \brief compute the second derivative of the determinant of a
-   * symmetric tensor
+   * tensor
    * \param[in] s: tensor
    */
   template <typename TensorType>

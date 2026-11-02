@@ -29,7 +29,11 @@ namespace tfel::math {
     if (this->dt < 0) {
       throw(InvalidTimeStepException());
     }
-    while (t < this->tf - 0.5 * (this->dt)) {
+    while (t < this->tf) {
+      const auto is_last_step = !(this->dt < this->tf - t);
+      if (is_last_step) {
+        this->dt = this->tf - t;
+      }
       // compute k1
       const auto k1 = this->dt * child.computeF(t, this->y);
       // compute k2
@@ -63,14 +67,11 @@ namespace tfel::math {
       // test for convergence
       if (e < this->epsilon) {
         this->y += cste1_6 * (k1 + k4) + cste1_3 * (k2 + k3);
-        t += this->dt;
+        t = is_last_step ? this->tf : t + this->dt;
       }
       // time multiplier
-      if (t < this->tf - 0.5 * (this->dt)) {
+      if (t < this->tf) {
         this->dt *= 0.8 * pow(this->epsilon / e, cste1_3);
-        if (this->dt > this->tf - t) {
-          this->dt = this->tf - t;
-        }
       }
     }
   }  // end of RungeKutta42<N,C,S>::iterate

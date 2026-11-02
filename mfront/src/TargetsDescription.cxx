@@ -45,7 +45,7 @@ namespace mfront {
     throw_if(l.prefix != pr, "unmatched library prefix for library '" + n +
                                  "'"
                                  " ('" +
-                                 l.prefix + "' vs '" + s + "')");
+                                 l.prefix + "' vs '" + pr + "')");
     throw_if(l.suffix != s, "unmatched library suffix for library '" + n +
                                 "'"
                                 " ('" +
@@ -186,7 +186,7 @@ namespace mfront {
     auto c = p;
     CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
     CxxTokenizer::checkNotEndOfLine(f, c, pe);
-    while (c->value != "}") {
+    while ((c != pe) && (c->value != "}")) {
       if (c->value == "library") {
         ++c;
         CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
@@ -209,7 +209,7 @@ namespace mfront {
         ++c;
         CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
         CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
-        while (c->value != "}") {
+        while ((c != pe) && (c->value != "}")) {
           if (c->value == "name") {
             if (!name.empty()) {
               error("target name '" + name + "' multiply defined");

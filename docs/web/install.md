@@ -245,8 +245,7 @@ boolean options:
 - `enable-doxygen-doc`, which enables or disables the generation of the
   doxygen documentation (disabled by default)
 - `enable-reference-doc`, which enables or disables the reference
-  documentation generation (enabled by default if `latex` of `pandoc` is
-  found)
+  documentation generation (disabled by default)
 - `enable-website`, which enables or disables the generation of the
   `TFEL` website (enabled by default if `pandoc` is found)
 
@@ -299,11 +298,11 @@ This option can be combined with the `TFEL_APPEND_VERSION` option.
 
 ### Selecting the `python` version
 
-A specific `python` version can be selected by setting the
-`Python_ADDITIONAL_VERSIONS`, as follows:
+A specific `python` interpreter can be selected by setting
+`Python_EXECUTABLE` (or `Python_ROOT_DIR`), as follows:
 
 ~~~~{.bash}
-cmake ../trunk/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
+cmake ../trunk/ -Denable-python-bindings=ON -DPython_EXECUTABLE=/usr/bin/python3.12 ...
 ~~~~
 
 ## Using the `configure` script

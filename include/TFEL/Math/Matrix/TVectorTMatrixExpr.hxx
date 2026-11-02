@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include <utility>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/FSAlgorithm/inner_product.hxx"
@@ -88,7 +89,8 @@ namespace tfel::math {
     typedef IndexType size_type;
     typedef ptrdiff_t difference_type;
 
-    TFEL_MATH_INLINE TVectorTMatrixExpr(const A& l, const B& r) : a(l), b(r) {}
+    TFEL_MATH_INLINE TVectorTMatrixExpr(A l, B r)
+        : a(std::forward<A>(l)), b(std::forward<B>(r)) {}
 
     TFEL_MATH_INLINE TVectorTMatrixExpr(
         const TVectorTMatrixExpr<N, M, A, B>& src)

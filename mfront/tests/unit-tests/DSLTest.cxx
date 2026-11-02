@@ -183,9 +183,48 @@ struct DSLTest final : public tfel::tests::TestCase {
     this->check("DefaultDSL", "@StateVariable real v;@Bounds v in ]*:*[;");
     this->check("DefaultDSL", "@StateVariable real v;@Bounds v in ]-*:0];");
     this->check("DefaultDSL", "@ComputeThermalExpansion {\"test.mfront\"};");
+    // variables declared for some modelling hypotheses only: the error
+    // reports it (checks of BehaviourDescription::checkVariableExistence)
+    this->check("IsotropicMisesCreep",
+                "@Behaviour PartialParameter;"
+                "@ModellingHypotheses {PlaneStrain, Tridimensional};"
+                "@ElasticMaterialProperties {150e9, 0.3};"
+                "@Parameter<PlaneStrain> real lambda = 1;"
+                "@FlowRule{f = seq; df_dseq = 1;}",
+                "is not defined for all hypotheses");
+    this->check("Implicit",
+                "@Behaviour PartialMaterialProperty;"
+                "@ModellingHypotheses {PlaneStrain, Tridimensional};"
+                "@MaterialProperty<PlaneStrain> stress young;"
+                "@MaterialProperty<PlaneStrain> real nu;"
+                "@Brick StandardElasticity;"
+                "@Integrator{}",
+                "is not declared for all specialisations");
     return this->result;
   }  // end of execute()
  private:
+  /*!
+   * \brief checks that analysing the given string throws an exception whose
+   * message contains the given text
+   * \param[in] n: name of the domain specific language
+   * \param[in] s: string to be analysed
+   * \param[in] m: text expected in the message of the exception
+   */
+  void check(const std::string& n, const std::string& s, const std::string& m) {
+    auto& f = mfront::DSLFactory::getDSLFactory();
+    auto dsl = f.createNewDSL(n);
+    try {
+      dsl->analyseString(s);
+    } catch (std::runtime_error& e) {
+      const auto msg = std::string(e.what());
+      TestCase::registerResult("analysing '" + s + "' has thrown (" + msg +
+                                   "), the message containing '" + m + "'",
+                               msg.find(m) != std::string::npos);
+      return;
+    }
+    TestCase::registerResult(
+        "analysing '" + s + "' did *not* throw as expected", false);
+  }
   void check(const std::string& n, const std::string& s) {
     auto& f = mfront::DSLFactory::getDSLFactory();
     auto dsl = f.createNewDSL(n);

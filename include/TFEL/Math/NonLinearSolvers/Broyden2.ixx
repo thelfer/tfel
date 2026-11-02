@@ -48,7 +48,7 @@ namespace tfel::math {
       df += vf;
       ++i;
     }
-    return {i != n, x};
+    return {norm(vf) <= e * N, x};
   }  // end of function broyden2
 
   template <unsigned short N,

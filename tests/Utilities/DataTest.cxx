@@ -84,6 +84,11 @@ struct DataTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(md.at("key1").get<int>() == 4);
     TFEL_TESTS_ASSERT(md.at("key2").is<int>());
     TFEL_TESTS_ASSERT(md.at("key2").get<int>() == -5);
+    // comparisons
+    TFEL_TESTS_ASSERT(Data() == Data());
+    TFEL_TESTS_ASSERT(Data(std::map<double, double>{{1., 2.}}) ==
+                      Data(std::map<double, double>{{1., 2.}}));
+    TFEL_TESTS_ASSERT(Data(DataStructure{}) == Data(DataStructure{}));
   }  // end of test1
 
   void test2() {
@@ -108,6 +113,14 @@ struct DataTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(m.count("isotropic_hardening") == 1u);
     TFEL_TESTS_ASSERT(m.at("isotropic_hardening").is<std::vector<Data>>());
     TFEL_TESTS_ASSERT(m.at("kinematic_hardening").is<std::vector<Data>>());
+    // arrays starting with a data structure or with an array
+    CxxTokenizer t2;
+    t2.parseString("{\"Linear\" {R0 : 150e6}, {{1, 2}, {3}}}");
+    auto p2 = t2.begin();
+    const auto v = Data::read(p2, t2.end()).get<std::vector<Data>>();
+    TFEL_TESTS_ASSERT(v.size() == 2u);
+    TFEL_TESTS_ASSERT(v.at(0).is<DataStructure>());
+    TFEL_TESTS_ASSERT(v.at(1).is<std::vector<Data>>());
   }  // end of test2
 };
 
