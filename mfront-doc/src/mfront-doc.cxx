@@ -41,8 +41,38 @@
 #include "MFront/PathSpecifier.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+[[noreturn]] static void mfront_doc_terminate_handler() {
+  if (auto pe = std::current_exception()) {
+    // we have an exception
+    try {
+      std::rethrow_exception(pe);
+    } catch (const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch (...) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, v) == 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+  if (!find("--no-terminate-handler")) {
+    std::set_terminate(mfront_doc_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
   using namespace mfront;
   initDSLs();
   initInterfaces();

@@ -732,9 +732,17 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1292: [tfel-material] LogarithmicStrainHandler: wrong tangent moduli in 3D when two eigenvalues of C are equal
+
+For more details, see <https://github.com/thelfer/tfel/issues/1292>
+
 ## Issue 1288: [tfel-math] Adaptive Gauss-Kronrod integration with quantities, last correction of the tiny non-linear solvers, assignment of runtime arrays, Levenberg-Marquardt steps increasing the cost, ExternalLibraryManager library path, contract violations aborting Python
 
 For more details, see <https://github.com/thelfer/tfel/issues/1288>
+
+## Issue 1285: [mfront] generic interface, finite strain in plane stress: the Green-Lagrange and standard finite strain families add the axial deformation gradient to the one of the caller
+
+For more details, see <https://github.com/thelfer/tfel/issues/1285>
 
 ## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
 
@@ -771,6 +779,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1242>
 ## Issue 1241: [ptest] Thirty of the 42 PTest pipe tests compare nothing
 
 For more details, see <https://github.com/thelfer/tfel/issues/1241>
+
+## Issue 1237: [cmake] Compiler printed by mfront --version, installed headers of the isotropic DSLs and of TFELCheck, dependencies of the installed CMake packages, static TFELMFrontDatabase package, CPack components
+
+For more details, see <https://github.com/thelfer/tfel/issues/1237>
 
 ## Issue 1235: [tests] Copy-paste slips and vacuous checks in unit tests
 
@@ -811,6 +823,18 @@ For more details, see <https://github.com/thelfer/tfel/issues/1219>
 ## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
 
 For more details, see <https://github.com/thelfer/tfel/issues/1217>
+
+## Issue 1215: [mfront] Installed GenericData and LSDYNA explicit headers, undefined declarations of the code generator and specific targets, madnex search paths documentation, pedantic bounds of parameters, castem21 keyword restrictions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1215>
+
+## Issue 1213: [mfront] @RequireThermalExpansionCoefficientTensor is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
+
+For more details, see <https://github.com/thelfer/tfel/issues/1213>
+
+## Issue 1211: [tfel-system] Undefined SignalManager and NUMODIS declarations, MTestParser and ProcessManagerCommand constructors, mtest reference file generator, terminate handler of the tools, BurnUp glossary name in the docs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1211>
 
 ## Issue 1209: [tfel-math] Variable positions of Evaluator in diff() and tfel-check, fses::sort, vector::copy, GenType output, GTN flow stress, Mohr-Coulomb second derivative, eigen solvers on GPUs
 
