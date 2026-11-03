@@ -54,10 +54,20 @@ struct Runtime {};
 
 /*!
  * \return the SYCL queue used by all the computations. The asynchronous
- * computations require an in-order queue.
+ * computations require an in-order queue. The device is the CPU if
+ * `TFEL_SYCL_DEVICE` is `0`, a GPU if it is `1`, and the default device
+ * otherwise.
  */
 static ::sycl::queue& getQueue() {
+#if defined(TFEL_SYCL_DEVICE) && (TFEL_SYCL_DEVICE == 0)
+  static auto q = ::sycl::queue{::sycl::cpu_selector_v,
+                                ::sycl::property::queue::in_order{}};
+#elif defined(TFEL_SYCL_DEVICE) && (TFEL_SYCL_DEVICE == 1)
+  static auto q = ::sycl::queue{::sycl::gpu_selector_v,
+                                ::sycl::property::queue::in_order{}};
+#else
   static auto q = ::sycl::queue{::sycl::property::queue::in_order{}};
+#endif
   return q;
 }
 
