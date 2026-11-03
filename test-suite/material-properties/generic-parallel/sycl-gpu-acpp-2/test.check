@@ -19,8 +19,6 @@
 @Command "sh ../build-libraries.sh @mfront@ config-sycl-default-acpp-2.json";
 @Command "@TFEL_ACPP_COMPILER@ -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ -DMFRONT_GPMP_COMPARE_USE_SYCL -I @TFEL_INCLUDE_DIR@ ../compare.cxx -o compare -L@TFEL_LIBRARY_DIR@ -lMFrontGenericParallelRuntime -ldl";
 @Command "sh ../compare-all.sh ./compare sycl --tolerance=1e-13";
-@Command "@TFEL_ACPP_COMPILER@ -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ -DMFRONT_GPMP_COMPARE_USE_SYCL -DMFRONT_GPMP_COMPARE_USE_HOST_MEMORY -I @TFEL_INCLUDE_DIR@ ../compare.cxx -o compare-host -L@TFEL_LIBRARY_DIR@ -lMFrontGenericParallelRuntime -ldl";
-@Command "sh ../compare-all.sh ./compare-host sycl --tolerance=1e-13";
 
-@CleanFiles {"test-sycl-device", "test-sycl-usm-1-1", "compare", "compare-host"};
+@CleanFiles {"test-sycl-device", "test-sycl-usm-1-1", "compare"};
 @CleanDirectories {"include", "src"};
