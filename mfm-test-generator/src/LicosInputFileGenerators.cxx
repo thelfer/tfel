@@ -150,6 +150,9 @@ namespace mfmtg::licos {
     if (b.btype != 1) {
       raise("only small strain behahaviour are supported");
     }
+    if (!t.times.is<std::vector<double>>()) {
+      raise("times read from a file are not supported");
+    }
     const auto& f = t.name + "-licos.ple";
     std::ofstream os(t.name + "-licos.ple");
     if (!os) {
