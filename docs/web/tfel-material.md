@@ -194,7 +194,7 @@ const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
 > 
 > ~~~~{.cpp}
 > const auto l1 = makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
->                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
+>                                                   cB_23,cB_32,cB_66,cB_55,cB_44);
 > ~~~~
 
 The `TFEL/Material` library also provides an overload of the

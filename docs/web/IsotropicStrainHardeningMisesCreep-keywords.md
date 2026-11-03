@@ -1357,18 +1357,18 @@ the `--interaction-matrix` query:
 
 ~~~~{.sh}
 $ mfront-query --interaction-matrix SlipSystemGenerationTest.mfront 
-| 0 1 2 2 3 4 5 6 5 6 4 3 |
-| 1 0 2 2 6 5 4 3 4 3 5 6 |
-| 2 2 0 1 5 6 3 4 6 5 3 4 |
-| 2 2 1 0 4 3 6 5 3 4 6 5 |
-| 3 4 5 6 0 1 2 2 6 5 4 3 |
-| 6 5 4 3 1 0 2 2 3 4 5 6 |
-| 5 6 3 4 2 2 0 1 5 6 3 4 |
-| 4 3 6 5 2 2 1 0 4 3 6 5 |
-| 5 6 4 3 4 3 5 6 0 1 2 2 |
-| 4 3 5 6 5 6 4 3 1 0 2 2 |
-| 6 5 3 4 6 5 3 4 2 2 0 1 |
-| 3 4 6 5 3 4 6 5 2 2 1 0 |
+| 0 1 1 2 3 4 5 6 6 2 4 3 |
+| 1 0 1 3 2 4 4 2 3 6 5 6 |
+| 1 1 0 6 6 5 4 3 2 3 4 2 |
+| 2 3 4 0 1 1 2 4 3 5 6 6 |
+| 3 2 4 1 0 1 6 5 6 4 2 3 |
+| 6 6 5 1 1 0 3 4 2 4 3 2 |
+| 5 6 6 2 4 3 0 1 1 2 3 4 |
+| 4 2 3 6 5 6 1 0 1 3 2 4 |
+| 4 3 2 3 4 2 1 1 0 6 6 5 |
+| 2 4 3 5 6 6 2 3 4 0 1 1 |
+| 6 5 6 4 2 3 3 2 4 1 0 1 |
+| 3 4 2 4 3 2 6 6 5 1 1 0 |
 ~~~~
 
 Here only \(7\) coefficients are needed. The number corresponding to a
@@ -1386,8 +1386,19 @@ $ mfront-query --interaction-matrix-structure SlipSystemGenerationTest.mfront
 .....
 ~~~~
 
-In this example, the rank \(0\) contains all the interactions of a
-slip system with itself.
+In this example, the ranks correspond to the following interactions
+between the first system of a pair (the row of the matrix) and the
+second one (the column of the matrix):
+
+- rank \(0\): interaction of a slip system with itself,
+- rank \(1\): coplanar systems (same slip plane),
+- rank \(2\): Hirth lock (orthogonal Burgers vectors),
+- rank \(3\): Lomer lock (junction whose Burgers vector lies in neither
+  slip plane),
+- ranks \(4\) and \(6\): glissile junction, whose Burgers vector lies
+  in the slip plane of the first system (rank \(4\)) or of the second
+  system (rank \(6\)),
+- rank \(5\): collinear systems (same Burgers vector).
 
 ## Definition of the interaction matrix
 
