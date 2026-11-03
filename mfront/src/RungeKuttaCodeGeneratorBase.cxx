@@ -109,7 +109,11 @@ namespace mfront {
                                                  const std::string& p,
                                                  const bool b) {
     if (p == "0") {
-      f << "this->" << n << "_ = this->" << n << ";\n";
+      if (b) {
+        f << "this->" << n << "_ = this->" << n << ";\n";
+      } else {
+        f << "this->" << n << "_ = this->" << n << "0;\n";
+      }
     } else if (p == "1") {
       if (b) {
         f << "this->" << n << "_ = this->" << n << "+this->d" << n << ";\n";
@@ -121,7 +125,7 @@ namespace mfront {
         f << "this->" << n << "_ = this->" << n << "+" << p << "*(this->d" << n
           << ");\n";
       } else {
-        f << "this->" << n << "_ = this->" << n << "+" << p << "*(this->" << n
+        f << "this->" << n << "_ = this->" << n << "0+" << p << "*(this->" << n
           << "1-this->" << n << "0);\n";
       }
     }

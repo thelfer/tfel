@@ -86,6 +86,8 @@ set(mfront_tests_SOURCES
   OrthotropicCreep_rkCastem
   RungeKuttaElasticity
   RungeKuttaElasticity_rk4
+  RungeKuttaFiniteStrainElasticity_rk2
+  RungeKuttaFiniteStrainElasticity_rk54
   ImplicitOrthotropicCreep
   ImplicitOrthotropicCreep2
   StrainHardeningCreep
@@ -614,6 +616,8 @@ test_generic(orthotropiccreep-rk42)
 test_generic(orthotropiccreep-rkCastem)
 test_generic(rungekuttaelasticity)
 test_generic(rungekuttaelasticity-rk4)
+test_generic(rungekuttafinitestrainelasticity-rk2)
+test_generic(rungekuttafinitestrainelasticity-rk54)
 test_generic(strainhardeningcreep)
 test_generic(strainhardeningcreep2)
 test_generic(strainhardeningcreep3)
