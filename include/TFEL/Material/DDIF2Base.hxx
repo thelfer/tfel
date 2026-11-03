@@ -19,6 +19,7 @@
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 
 namespace tfel::material {
 
@@ -212,6 +213,13 @@ namespace tfel::material {
     template <typename real>
     TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
         tfel::math::stensor<3u, real>&, const real);
+    /*!
+     * \brief change a fourth order tensor, mapping symmetric tensors
+     * expressed in the cylindrical frame, to the cartesian frame
+     */
+    template <unsigned short N, typename real>
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
+        tfel::math::st2tost2<N, real>&, const real);
 
     template <typename real>
     TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void invmat(
