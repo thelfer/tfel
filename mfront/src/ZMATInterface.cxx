@@ -1740,11 +1740,13 @@ namespace mfront {
       out << "zmat::ZMATInterface::convert(b.getStiffnessTensor(),this->get_"
              "elasticity_matrix(mdat,1.));\n";
     }
-    out << "if(!b.initialize()){\n"
+    out << "b.setOutOfBoundsPolicy(this->obp);\n"
+        << "if(!b.initialize()){\n"
         << "static INTEGRATION_RESULT bad_result;\n"
         << "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
         << "return &bad_result;\n"
         << "}\n"
+        << "b.checkBounds();\n"
         << "auto tsf = b.computeAPrioriTimeStepScalingFactor(1);\n"
         << "if(!tsf.first){\n"
         << "static INTEGRATION_RESULT bad_result;\n"
@@ -1763,6 +1765,7 @@ namespace mfront {
         << "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
         << "return &bad_result;\n"
         << "}\n"
+        << "b.checkBounds();\n"
         << "b.ZMATexportStateData(this->sig,mdat);\n"
         << "if(smtype!=" << mb.getClassName() << "::NOSTIFFNESSREQUESTED){\n";
     if (mb.getBehaviourType() ==
