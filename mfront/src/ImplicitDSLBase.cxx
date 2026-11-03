@@ -1060,6 +1060,13 @@ namespace mfront {
               (pd != implicit_equation_derivatives.end()) ||
               (piJ != jacobian_invert_blocks.end()) ||
               (get_integration_variables_derivatives_names.count(v) != 0)) {
+            if (!this->solver->usesJacobian()) {
+              this->throwRuntimeError(
+                  "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                  "'" + v +
+                      "' can only be used with an algorithm based on "
+                      "the jacobian");
+            }
             if (cb.attributes.count(an) == 0) {
               cb.attributes[an] = true;
             } else {
