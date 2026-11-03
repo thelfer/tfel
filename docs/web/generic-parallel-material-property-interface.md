@@ -259,7 +259,8 @@ computed:
   array of arguments or no values for an argument, invalid number of
   arguments, uniform output with several points, more than
   \(2^{48}-1\) points, more blocks of threads than the grid of the device
-  can hold with the `CUDA` and `HIP` backends (\(2^{31}-1\) blocks), an
+  can hold with the `CUDA` and `HIP` backends (\(2^{31}-1\) blocks, and
+  at most \(2^{32}-1\) threads on AMD devices), an
   execution policy of another backend, no execution policy given to the
   `SYCL` backend, an asynchronous evaluation without statistics or with
   an out-of-order `SYCL` queue, or no statistics given to the report

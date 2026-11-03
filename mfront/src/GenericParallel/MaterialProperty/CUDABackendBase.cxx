@@ -192,6 +192,19 @@ namespace mfront::generic_parallel::material_property {
                       "std::to_string(" +
                           std::string{npoints} + ") + \" given)\"");
       os << "}\n";
+      if (pm == "hip") {
+        // the AMD devices also limit the number of work-items of a launch to
+        // 2^32 - 1
+        os << "#if defined(__HIP_PLATFORM_AMD__)\n"
+           << "if (mfront_number_of_blocks * mfront_threads_per_block > "
+           << "std::numeric_limits<std::uint32_t>::max()) {\n";
+        writeBatchError(os, -5,
+                        "\"too many points for the grid of the device (\" + "
+                        "std::to_string(" +
+                            std::string{npoints} + ") + \" given)\"");
+        os << "}\n"
+           << "#endif /* defined(__HIP_PLATFORM_AMD__) */\n";
+      }
       // stack size of the threads
       os << "const auto mfront_stack_size = "
          << "::mfront::generic_parallel::gpu::ensureStackSize<" << kernel
