@@ -324,9 +324,9 @@ struct MicrostructureLinearHomogenizationTest final
     // localisation tensor in an isotropic matrix, given by its moduli or by
     // its stiffness
     const auto A1 = computeEllipsoidLocalisationTensor<stress>(
-        KG0, C_loc, n_a, length(3), n_b, length(2), length(1));
+        KG0, C_loc, n_a, length(3), n_b, length(1), length(1));
     const auto A2 = computeAnisotropicLocalisationTensor<stress>(
-        C_0, C_loc, n_a, length(3), n_b, length(2), length(1));
+        C_0, C_loc, n_a, length(3), n_b, length(1), length(1));
     TFEL_TESTS_ASSERT(tfel::material::relative_error(A1, A2) < real(1e-6));
     // a polycrystal of two grains with the same orientation is the rotated
     // crystal
