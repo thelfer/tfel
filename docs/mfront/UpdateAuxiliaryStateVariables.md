@@ -19,7 +19,9 @@ lower than the total time step increment `dt` if substeppings is
 performed, gives the current time increment. If external point-wise
 models were declared (see the `@Model` keyword), the associated
 auxiliary states are set to their values at the current date. The
-external state variables are set to their values at the current date.
+external state variables and the gradients (the total strain `eto`
+or the deformation gradient `F` for instance) are set to their
+values at the current date.
 
 ## Example (Implicit dsl)
 

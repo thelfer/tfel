@@ -2550,7 +2550,9 @@ substepping: in this case, the code declared by
 behaviour integration. An additional variable called `dt_`, which is
 lower than the total time step increment `dt` if substepping is
 performed, gives the current time increment. The external state
-variables are set to their values at the current date.
+variables and the gradients (the total strain `eto` or the
+deformation gradient `F` for instance) are set to their values at
+the current date.
 
 ## Example (Implicit dsl)
 
