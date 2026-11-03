@@ -236,6 +236,14 @@ namespace ansys {
             Traits::hasConsistentTangentOperator,
             ExtractAndConvertTangentOperator<H>,
             ConsistentTangentOperatorIsNotAvalaible>::type;
+        using IEnergyComputer =
+            typename std::conditional<Traits::hasComputeInternalEnergy,
+                                      InternalEnergyComputer,
+                                      DoNothingEnergyComputer>::type;
+        using DEnergyComputer =
+            typename std::conditional<Traits::hasComputeDissipatedEnergy,
+                                      DissipatedEnergyComputer,
+                                      DoNothingEnergyComputer>::type;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
         }
@@ -263,6 +271,8 @@ namespace ansys {
         this->behaviour.checkBounds();
         this->behaviour.ANSYSexportStateData(d.STRESS, d.STATEV);
         ConsistentTangentOperatorHandler::exe(this->behaviour, d.DDSDDE);
+        IEnergyComputer::exe(*(d.SEDEL), this->behaviour);
+        DEnergyComputer::exe(*(d.SEDPL), this->behaviour);
         return true;
       }  // end of Integrator::exe
 
@@ -274,6 +284,25 @@ namespace ansys {
           throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
         }  // end of exe
       };
+      //! structure in charge of calling the computeInternalEnergy method
+      struct InternalEnergyComputer {
+        typedef Behaviour<H, AnsysReal, false> BV;
+        static void exe(AnsysReal& Psi_s, const BV& b) {
+          b.computeInternalEnergy(Psi_s);
+        }  // end of exe
+      };  // end of struct InternalEnergyComputer
+      //! structure in charge of calling the computeDissipatedEnergy method
+      struct DissipatedEnergyComputer {
+        typedef Behaviour<H, AnsysReal, false> BV;
+        static void exe(AnsysReal& Psi_d, const BV& b) {
+          b.computeDissipatedEnergy(Psi_d);
+        }  // end of exe
+      };  // end of struct DissipatedEnergyComputer
+      //! place holder for tag dispatching
+      struct DoNothingEnergyComputer {
+        typedef Behaviour<H, AnsysReal, false> BV;
+        static void exe(AnsysReal&, const BV&) {}
+      };  // end of struct DoNothingEnergyComputer
 
       typedef Behaviour<H, AnsysReal, false> BV;
       BV behaviour;
