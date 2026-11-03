@@ -203,7 +203,9 @@ namespace mfront::bbrick {
         "c", id, StressCriterion::STRESSCRITERION);
     return "const auto seqel" + id +
            " = computeCazacu2004OrthotropicStressCriterion(sel" + id +
-           ",this->" + an + ",this->" + bn + ",this->" + cn + ");\n";
+           ",J2OCoefficients<StressStensor>(this->" + an +
+           "),J3OCoefficients<StressStensor>(this->" + bn + "),this->" + cn +
+           ");\n";
   }  // end of Cazacu2004OrthotropicStressCriterion::computeElasticPrediction
 
   std::string Cazacu2004OrthotropicStressCriterion::computeCriterion(
@@ -217,8 +219,10 @@ namespace mfront::bbrick {
     const auto cn = StressCriterion::getVariableId(
         "c", id, StressCriterion::STRESSCRITERION);
     return "const auto seq" + id +
-           " = computeCazacu2004OrthotropicStressCriterion(s" + id + ",this->" +
-           an + ",this->" + bn + ",this->" + cn + ");\n";
+           " = computeCazacu2004OrthotropicStressCriterion(s" + id +
+           ",J2OCoefficients<StressStensor>(this->" + an +
+           "),J3OCoefficients<StressStensor>(this->" + bn + "),this->" + cn +
+           ");\n";
   }  // end of Cazacu2004OrthotropicStressCriterion::computeCriterion
 
   std::string Cazacu2004OrthotropicStressCriterion::computeNormal(
@@ -233,8 +237,9 @@ namespace mfront::bbrick {
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
       c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + "] = ";
       c += "computeCazacu2004OrthotropicStressCriterionNormal(s" + id +
-           ", this->" + an + ", this->" + bn + ", this->" + cn + "," +
-           sp.getEquivalentStressLowerBound(bd) + ");\n";
+           ", J2OCoefficients<StressStensor>(this->" + an +
+           "), J3OCoefficients<StressStensor>(this->" + bn + "), this->" + cn +
+           "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
     }
     if (r == STRESSANDFLOWCRITERION) {
       c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
@@ -242,8 +247,9 @@ namespace mfront::bbrick {
     if (r == FLOWCRITERION) {
       c += "const auto [seqf" + id + ", n" + id + "] = ";
       c += "computeCazacu2004OrthotropicStressCriterionNormal(s" + id +
-           ", this->" + an + ", this->" + bn + ", this->" + cn + "," +
-           sp.getEquivalentStressLowerBound(bd) + ");\n";
+           ", J2OCoefficients<StressStensor>(this->" + an +
+           "), J3OCoefficients<StressStensor>(this->" + bn + "), this->" + cn +
+           "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
     }
     return c;
   }  // end of Cazacu2004OrthotropicStressCriterion::computeNormal
@@ -261,8 +267,9 @@ namespace mfront::bbrick {
       c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" + id +
            "_ds" + id + "ds" + id + "] = ";
       c += "computeCazacu2004OrthotropicStressCriterionSecondDerivative(s" +
-           id + ", this->" + an + ", this->" + bn + ", this->" + cn + "," +
-           sp.getEquivalentStressLowerBound(bd) + ");\n";
+           id + ", J2OCoefficients<StressStensor>(this->" + an +
+           "), J3OCoefficients<StressStensor>(this->" + bn + "), this->" + cn +
+           "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
     }
     if (r == STRESSANDFLOWCRITERION) {
       c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
@@ -273,8 +280,9 @@ namespace mfront::bbrick {
       c += "const auto [seqf" + id + ", n" + id + ", dn" + id + "_ds" + id +
            "] = ";
       c += "computeCazacu2004OrthotropicStressCriterionSecondDerivative(s" +
-           id + ", this->" + an + ", this->" + bn + ",this->" + cn + "," +
-           sp.getEquivalentStressLowerBound(bd) + ");\n";
+           id + ", J2OCoefficients<StressStensor>(this->" + an +
+           "), J3OCoefficients<StressStensor>(this->" + bn + "),this->" + cn +
+           "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
     }
     return c;
   }  // end of Cazacu2004OrthotropicStressCriterion::computeNormalDerivative

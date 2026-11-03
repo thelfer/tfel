@@ -26,7 +26,7 @@ namespace tfel::material {
    * \sigma_{\mathrm{eq}}^{C}=
    * \sqrt[3]{J_{2}^{3/2} - c\,J_{3}}
    * \f]
-   * where \(J_{2}\) and \(J_{3}\) are the first and second invariants
+   * where \(J_{2}\) and \(J_{3}\) are the second and third invariants
    * of the deviatoric part of the stress tensor
    *
    * Cazacu, Oano and Barlat, Frédéric. 2004.

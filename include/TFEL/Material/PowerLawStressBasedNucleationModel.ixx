@@ -21,7 +21,7 @@ namespace tfel::material {
       std::ostream& os,
       const PowerLawStressBasedNucleationModelParameters<StressStensorType>&
           p) {
-    os << '{' << p.fn << ", " << p.sn << ", " << p.m << '}';
+    os << '{' << p.fn << ", " << p.sn << ", " << p.m << ", " << p.pmin << '}';
     return os;
   }  // end of operator<<
 

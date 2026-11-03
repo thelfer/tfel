@@ -83,19 +83,24 @@ namespace tfel::material {
   MohrCoulombStressType<StressStensor> computeMohrCoulombStressCriterion(
       const MohrCoulombParameters<StressStensor>& p, const StressStensor& sig) {
     using real = MohrCoulombBaseType<StressStensor>;
+    using stress = MohrCoulombStressType<StressStensor>;
+    using stress2 = tfel::math::result_type<stress, stress, tfel::math::OpMult>;
+    using stress3 =
+        tfel::math::result_type<stress2, stress, tfel::math::OpMult>;
     constexpr auto local_zero_tolerance = real(1e-14);
     constexpr auto sqrt3 = tfel::math::Cste<real>::sqrt3;
     constexpr auto isqrt3 = tfel::math::Cste<real>::isqrt3;
     const auto s = tfel::math::deviator(sig);
     const auto det_s = tfel::math::det(s);
     const auto I1 = tfel::math::trace(sig);
-    const auto J2 = std::max((s | s) / 2, local_zero_tolerance);
-    const auto J3 = real(det_s < 0 ? std::min(det_s, -local_zero_tolerance)
-                                   : std::max(det_s, local_zero_tolerance));
-    const auto arg =
-        std::min(std::max(-3 * sqrt3 * J3 / (2 * J2 * std::sqrt(J2)),
-                          -1 + local_zero_tolerance),
-                 1 - local_zero_tolerance);
+    const auto J2 = std::max((s | s) / 2, stress2(local_zero_tolerance));
+    const auto J3 = det_s < stress3(0)
+                        ? std::min(det_s, stress3(-local_zero_tolerance))
+                        : std::max(det_s, stress3(local_zero_tolerance));
+    const auto arg = std::min(
+        std::max(real(-3 * sqrt3 * J3 / (2 * J2 * tfel::math::power<1, 2>(J2))),
+                 -1 + local_zero_tolerance),
+        1 - local_zero_tolerance);
     const auto lode = std::asin(arg) / 3;
     const auto cos_lode = std::cos(lode);
     const auto sin_lode = std::sin(lode);
@@ -124,8 +129,9 @@ namespace tfel::material {
       return A + B * sin_3_lode + C * sin_3_lode * sin_3_lode;
     }();
     const auto rootF =
-        std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                 local_zero_tolerance);
+        std::max(tfel::math::power<1, 2>(J2 * K * K +
+                                         p.a * p.a * p.sin_angle * p.sin_angle),
+                 stress(local_zero_tolerance));
     const auto Fy1 = I1 * p.sin_angle / 3 + rootF;
     return Fy1 - p.c * p.cos_angle;
   }  // end of computeMohrCoulombStressCriterion
@@ -137,6 +143,10 @@ namespace tfel::material {
       const MohrCoulombParameters<StressStensor>& p, const StressStensor& sig) {
     constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
     using real = MohrCoulombBaseType<StressStensor>;
+    using stress = MohrCoulombStressType<StressStensor>;
+    using stress2 = tfel::math::result_type<stress, stress, tfel::math::OpMult>;
+    using stress3 =
+        tfel::math::result_type<stress2, stress, tfel::math::OpMult>;
     using Stensor = tfel::math::stensor<N, real>;
     constexpr auto local_zero_tolerance = real(1e-14);
     constexpr auto sqrt3 = tfel::math::Cste<real>::sqrt3;
@@ -145,13 +155,14 @@ namespace tfel::material {
     const auto s = tfel::math::deviator(sig);
     const auto det_s = tfel::math::det(s);
     const auto I1 = tfel::math::trace(sig);
-    const auto J2 = std::max((s | s) / 2, local_zero_tolerance);
-    const auto J3 = real(det_s < 0 ? std::min(det_s, -local_zero_tolerance)
-                                   : std::max(det_s, local_zero_tolerance));
-    const auto arg =
-        std::min(std::max(-3 * sqrt3 * J3 / (2 * J2 * std::sqrt(J2)),
-                          -1 + local_zero_tolerance),
-                 1 - local_zero_tolerance);
+    const auto J2 = std::max((s | s) / 2, stress2(local_zero_tolerance));
+    const auto J3 = det_s < stress3(0)
+                        ? std::min(det_s, stress3(-local_zero_tolerance))
+                        : std::max(det_s, stress3(local_zero_tolerance));
+    const auto arg = std::min(
+        std::max(real(-3 * sqrt3 * J3 / (2 * J2 * tfel::math::power<1, 2>(J2))),
+                 -1 + local_zero_tolerance),
+        1 - local_zero_tolerance);
     const auto lode = std::asin(arg) / 3;
     const auto cos_lode = std::cos(lode);
     const auto sin_lode = std::sin(lode);
@@ -191,11 +202,12 @@ namespace tfel::material {
         tfel::math::computeDeviatorDeterminantDerivative(sig);
     const auto dG_dI1 = p.sin_angle / 3;
     const auto root =
-        std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                 local_zero_tolerance);
+        std::max(tfel::math::power<1, 2>(J2 * K * K +
+                                         p.a * p.a * p.sin_angle * p.sin_angle),
+                 stress(local_zero_tolerance));
     // derivatives of x = sin(3 lode) with respect to J2 and J3
     const auto dx_dJ2 = -3 * sin_3_lode / (2 * J2);
-    const auto dx_dJ3 = -3 * sqrt3 / (2 * J2 * std::sqrt(J2));
+    const auto dx_dJ3 = -3 * sqrt3 / (2 * J2 * tfel::math::power<1, 2>(J2));
     const auto dG_dx = J2 * K * dK_dx / root;
     const auto dG_dJ2 = K * K / (2 * root) + dG_dx * dx_dJ2;
     const auto dG_dJ3 = dG_dx * dx_dJ3;
@@ -213,6 +225,10 @@ namespace tfel::material {
       const MohrCoulombParameters<StressStensor>& p, const StressStensor& sig) {
     constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
     using real = MohrCoulombBaseType<StressStensor>;
+    using stress = MohrCoulombStressType<StressStensor>;
+    using stress2 = tfel::math::result_type<stress, stress, tfel::math::OpMult>;
+    using stress3 =
+        tfel::math::result_type<stress2, stress, tfel::math::OpMult>;
     using Stensor = tfel::math::stensor<N, real>;
     using Stensor4 = tfel::math::st2tost2<N, real>;
     constexpr auto local_zero_tolerance = real(1e-14);
@@ -223,13 +239,14 @@ namespace tfel::material {
     const auto s = tfel::math::deviator(sig);
     const auto det_s = tfel::math::det(s);
     const auto I1 = tfel::math::trace(sig);
-    const auto J2 = std::max((s | s) / 2, local_zero_tolerance);
-    const auto J3 = real(det_s < 0 ? std::min(det_s, -local_zero_tolerance)
-                                   : std::max(det_s, local_zero_tolerance));
-    const auto arg =
-        std::min(std::max(-3 * sqrt3 * J3 / (2 * J2 * std::sqrt(J2)),
-                          -1 + local_zero_tolerance),
-                 1 - local_zero_tolerance);
+    const auto J2 = std::max((s | s) / 2, stress2(local_zero_tolerance));
+    const auto J3 = det_s < stress3(0)
+                        ? std::min(det_s, stress3(-local_zero_tolerance))
+                        : std::max(det_s, stress3(local_zero_tolerance));
+    const auto arg = std::min(
+        std::max(real(-3 * sqrt3 * J3 / (2 * J2 * tfel::math::power<1, 2>(J2))),
+                 -1 + local_zero_tolerance),
+        1 - local_zero_tolerance);
     const auto lode = std::asin(arg) / 3;
     const auto cos_lode = std::cos(lode);
     const auto sin_lode = std::sin(lode);
@@ -276,13 +293,14 @@ namespace tfel::material {
         tfel::math::computeDeviatorDeterminantSecondDerivative(sig);
     const auto dG_dI1 = p.sin_angle / 3;
     const auto root =
-        std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                 local_zero_tolerance);
+        std::max(tfel::math::power<1, 2>(J2 * K * K +
+                                         p.a * p.a * p.sin_angle * p.sin_angle),
+                 stress(local_zero_tolerance));
     // derivatives of x = sin(3 lode) with respect to J2 and J3: G is
     // differentiated with respect to J2 and x, which introduces no division
     // by J3 nor by cos(3 lode) outside the region |lode| < lodeT
     const auto dx_dJ2 = -3 * sin_3_lode / (2 * J2);
-    const auto dx_dJ3 = -3 * sqrt3 / (2 * J2 * std::sqrt(J2));
+    const auto dx_dJ3 = -3 * sqrt3 / (2 * J2 * tfel::math::power<1, 2>(J2));
     const auto d2x_d2J2 = 15 * sin_3_lode / (4 * J2 * J2);
     const auto d2x_dJ2dJ3 = -3 * dx_dJ3 / (2 * J2);
     const auto dG_dx = J2 * K * dK_dx / root;

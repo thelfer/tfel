@@ -79,6 +79,15 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(s1 - s2) < 1e-10 * s2);
     TFEL_TESTS_ASSERT(
         std::isfinite(computeFlowStressGTN(0.1f, 300.f, 0.01f, 1.5f, 1.f)));
+    // small porosity, in compression and in tension
+    for (const auto& sig2 : {Stensor{-994, -1003, -1003, 0, 0, 0},
+                             Stensor{1006, 997, 997, 0, 0, 0}}) {
+      const auto s3 = computeFlowStressGTN(
+          tfel::math::sigmaeq(sig2), tfel::math::trace(sig2), 1e-5, 1.5, 1.);
+      const auto s4 =
+          computeGursonTvergaardNeedleman1982Stress(sig2, 1e-5, params, 1e-8);
+      TFEL_TESTS_ASSERT(std::abs(s3 - s4) < 1e-10 * s4);
+    }
   }  // end of testFlowStressGTN
   //! \brief derivative of the normal of the Cazacu 2001 criterion for c != 1
   void testCazacu2001() {
