@@ -678,6 +678,7 @@ namespace mfront {
                              return (derivative.first.name == iv1.name) &&
                                     (derivative.second.name == iv2.name);
                            }) == invert_jacobian_blocks.end()) {
+            cc += mfront::getTypeSize(iv2);
             continue;
           }
           auto derivative_view = DerivativeViewDescription{};
