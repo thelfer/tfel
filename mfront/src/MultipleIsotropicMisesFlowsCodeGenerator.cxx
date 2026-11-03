@@ -416,11 +416,13 @@ namespace mfront {
        << "using tfel::material::computeElasticStiffness;\n"
        << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
        << "computeElasticStiffness<N, "
-          "NumericType>::exe(this->Dt,this->lambda,this->mu)"
+          "NumericType>::exe(this->Dt,this->lambda_tdt,this->mu_tdt)"
           ";\n"
        << "return true;\n"
        << "}\n"
-       << "return false;\n"
+       << "tfel::raise(\"" << this->bd.getClassName()
+       << "::computeConsistentTangentOperator: \"\n"
+       << "\"only the elastic and secant operators are available\");\n"
        << "}\n\n";
   }
 

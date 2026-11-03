@@ -60,6 +60,11 @@ namespace mfront {
     this->mb.addLocalVariable(
         h, VariableDescription("StrainStensor", "n", 1u, 0u));
     this->mb.addLocalVariable(h, VariableDescription("strain", "p_", 1u, 0u));
+    // only the elastic and secant operators are provided, see the
+    // computeConsistentTangentOperator method written by the code generator
+    this->mb.setAttribute(h, BehaviourData::hasConsistentTangentOperator, true);
+    this->mb.setAttribute(
+        h, BehaviourData::isConsistentTangentOperatorSymmetric, true);
   }
 
   std::unique_ptr<AbstractBehaviourCodeGenerator>
