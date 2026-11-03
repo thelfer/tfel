@@ -214,7 +214,11 @@ namespace tfel::math {
     /*!
      * \brief method meant to process the new estimate.
      *
-     * This method may be called to apply bounds on the estimate.
+     * This method may be called to apply bounds on the estimate. When this
+     * method is called after the update of the estimate by a new correction,
+     * any modification of the estimate is added to this correction
+     * (`delta_zeros`), which thus remains the step actually taken: this method
+     * shall not modify the correction itself.
      */
     TFEL_HOST_DEVICE constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins

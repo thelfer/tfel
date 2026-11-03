@@ -1082,7 +1082,11 @@ the robustness of the algorithm:
   along the search direction returned by the `computeNewCorrection`
   method.
 - `processNewEstimate`: this method is meant to update variables
-  depending on the current estimate of the unknowns.
+  depending on the current estimate of the unknowns. It may also apply
+  bounds on the estimate: after the update of the estimate by a new
+  correction, any modification of the estimate made by this method is
+  added to this correction (`delta_zeros`), which thus remains the step
+  actually taken.
 - By convention, the `computeNewCorrection` method may use the following
   helper methods:
   - `updateOrCheckJacobian`: This method can be used to compute the

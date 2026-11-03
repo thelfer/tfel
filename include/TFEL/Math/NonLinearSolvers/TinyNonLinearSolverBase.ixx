@@ -71,7 +71,13 @@ namespace tfel::math {
       this->is_delta_zeros_defined = true;
       child.processNewCorrection();
       this->zeros += this->delta_zeros;
+      // `processNewEstimate` may modify the new estimate, for instance to
+      // apply bounds: the correction is updated so that it remains the step
+      // actually taken, which is used by the quasi-Newton updates of the
+      // jacobian, the rejection of a step and the halving of the last step.
+      const EvaluationResult<decltype(this->zeros)> new_estimate = this->zeros;
       child.processNewEstimate();
+      this->delta_zeros += this->zeros - new_estimate;
       ++(this->iter);
     }
     return false;
