@@ -157,6 +157,9 @@ namespace mfront {
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
 
+    GenericBehaviourInterface bi;
+    bi.writeSetOutOfBoundsPolicyFunctionDeclaration(os, name);
+
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
       os << "/*!\n"
@@ -226,6 +229,7 @@ namespace mfront {
        << "#include <cmath>\n"
        << "#include <cstring>\n"
        << "#include <sstream>\n"
+       << "#include <iostream>\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include \"TFEL/Math/Array/View.hxx\"\n"
@@ -250,6 +254,8 @@ namespace mfront {
     sg.generateGeneralSymbols(os, bi, bd, fd, hypotheses, name);
     os << '\n';
     sg.generateSymbols(os, bi, bd, fd, name, uh);
+    //
+    bi.writeGetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if (!md.sources.empty()) {
       os << md.sources << "\n\n";
@@ -330,9 +336,8 @@ namespace mfront {
         os << "using PhysicalConstants [[maybe_unused]] = "
            << "tfel::PhysicalConstants<NumericType, false>;\n";
       }
-      const auto policy = getDefaultOutOfBoundsPolicyAsString(md);
-      os << "[[maybe_unused]] constexpr const auto policy = "
-         << "tfel::material::" << policy << ";\n";
+      os << "[[maybe_unused]] const auto policy = ::" << name
+         << "_getOutOfBoundsPolicy();\n";
       if (f.useTimeIncrement) {
         os << "const auto dt = time{mfront_model_data.dt};\n";
       }
@@ -519,6 +524,8 @@ namespace mfront {
        << "}\n\n";
     os << "} // end of anonymous namespace\n\n"
        << "} // end of namespace mfront::gm\n\n";
+    //
+    bi.writeSetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
