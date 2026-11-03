@@ -178,6 +178,9 @@ namespace mtest {
     }
     std::copy(s.s0.begin(), s.s0.end(), us.begin());
     // ansys standard convention
+    if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      std::swap(us[4], us[5]);
+    }
     for (AnsysInt i = 3; i != static_cast<unsigned short>(ntens); ++i) {
       us(i) /= sqrt2;
     }
