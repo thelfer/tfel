@@ -235,10 +235,24 @@ namespace dianafea {
         auto r = BV::SUCCESS;
         const auto smflag =
             DianaFEATangentOperatorFlag<DianaFEATraits<BV>::btype>::value;
-        try {
-          r = this->behaviour.integrate(smflag, BV::CONSISTENTTANGENTOPERATOR);
-        } catch (DivergenceException&) {
+        auto tsf = this->behaviour.computeAPrioriTimeStepScalingFactor(
+            DianaFEAReal(1));
+        if (!tsf.first) {
           r = BV::FAILURE;
+        } else {
+          try {
+            r = this->behaviour.integrate(smflag,
+                                          BV::CONSISTENTTANGENTOPERATOR);
+          } catch (DivergenceException&) {
+            r = BV::FAILURE;
+          }
+          if (r != BV::FAILURE) {
+            tsf = this->behaviour.computeAPosterioriTimeStepScalingFactor(
+                tsf.second);
+            if (!tsf.first) {
+              r = BV::FAILURE;
+            }
+          }
         }
         if (r == BV::FAILURE) {
           throwBehaviourIntegrationFailedException(Traits::getName());

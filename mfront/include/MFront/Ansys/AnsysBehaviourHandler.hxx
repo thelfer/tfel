@@ -245,9 +245,19 @@ namespace ansys {
         this->behaviour.checkBounds();
         const auto smflag =
             AnsysTangentOperatorFlag<AnsysTraits<BV>::btype>::value;
+        auto tsf =
+            this->behaviour.computeAPrioriTimeStepScalingFactor(AnsysReal(1));
+        if (!tsf.first) {
+          return false;
+        }
         const auto r =
             this->behaviour.integrate(smflag, BV::CONSISTENTTANGENTOPERATOR);
         if (r == BV::FAILURE) {
+          return false;
+        }
+        tsf =
+            this->behaviour.computeAPosterioriTimeStepScalingFactor(tsf.second);
+        if (!tsf.first) {
           return false;
         }
         this->behaviour.checkBounds();

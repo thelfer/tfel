@@ -341,7 +341,11 @@ namespace aster {
             throwPredictionComputationFailedException(Traits::getName());
           }
         } else {
-          if ((-0.25 < *DDSOE) && (*DDSOE < 0.25)) {
+          auto tsf =
+              this->behaviour.computeAPrioriTimeStepScalingFactor(AsterReal(1));
+          if (!tsf.first) {
+            r = BV::FAILURE;
+          } else if ((-0.25 < *DDSOE) && (*DDSOE < 0.25)) {
             r = this->behaviour.integrate(smflag, BV::NOSTIFFNESSREQUESTED);
           } else if ((0.75 < *DDSOE) && (*DDSOE < 1.25)) {
             r = this->behaviour.integrate(smflag, BV::ELASTIC);
@@ -354,6 +358,13 @@ namespace aster {
                                           BV::CONSISTENTTANGENTOPERATOR);
           } else {
             throwInvalidDDSOEException(Traits::getName(), *DDSOE);
+          }
+          if (r != BV::FAILURE) {
+            tsf = this->behaviour.computeAPosterioriTimeStepScalingFactor(
+                tsf.second);
+            if (!tsf.first) {
+              r = BV::FAILURE;
+            }
           }
           if (r == BV::FAILURE) {
             throwBehaviourIntegrationFailedException(Traits::getName());
