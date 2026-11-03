@@ -5948,6 +5948,7 @@ namespace mfront {
     if (this->bd.hasParameters()) {
       os << "#include<string>\n"
          << "#include<locale>\n"
+         << "#include<limits>\n"
          << "#include<cstring>\n"
          << "#include<sstream>\n"
          << "#include<fstream>\n"
@@ -5989,20 +5990,32 @@ namespace mfront {
       const std::string& cname,
       const std::string& type,
       const std::string& type2) {
+    // an unsigned short is read as a long, so that negative and out of range
+    // values are rejected instead of being wrapped around
+    const auto is_unsigned_short = type == "unsigned short";
     f << type << '\n'
       << cname << "::get" << type2 << "(const std::string& n,\n"
       << "const std::string& v)\n"
       << "{\n"
-      << type << " value;\n"
+      << (is_unsigned_short ? "long" : type) << " value;\n"
       << "std::istringstream converter(v);\n"
       << "converter.imbue(std::locale::classic());\n"
       << "converter >> value;\n"
-      << "tfel::raise_if(!converter||(!converter.eof()),\n"
+      << "tfel::raise_if(!converter||(!converter.eof())";
+    if (is_unsigned_short) {
+      f << "||(value<0)||\n"
+        << "(value>std::numeric_limits<unsigned short>::max())";
+    }
+    f << ",\n"
       << "\"" << cname << "::get" << type2 << ": \"\n"
       << "\"can't convert '\"+v+\"' to " << type << " "
-      << "for parameter '\"+ n+\"'\");\n"
-      << "return value;\n"
-      << "}\n\n";
+      << "for parameter '\"+ n+\"'\");\n";
+    if (is_unsigned_short) {
+      f << "return static_cast<unsigned short>(value);\n";
+    } else {
+      f << "return value;\n";
+    }
+    f << "}\n\n";
   }
 
   void BehaviourCodeGeneratorBase::writeSrcFileParametersInitializer(
