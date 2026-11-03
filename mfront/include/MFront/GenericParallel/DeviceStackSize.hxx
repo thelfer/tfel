@@ -41,9 +41,11 @@ namespace mfront::generic_parallel {
 
   /*!
    * \brief increase the stack size of the threads of the current CUDA
-   * device, if the CUDA runtime is loaded by the process. Otherwise, the
-   * computations are not performed on an NVIDIA GPU through the CUDA runtime
-   * and nothing is done.
+   * device, if the CUDA runtime is loaded by the process. Otherwise, nothing
+   * is done. A loaded CUDA runtime does not mean that the computations are
+   * performed on an NVIDIA GPU: the generated code only calls this function
+   * when they are offloaded to a GPU (`nvc++ -stdpar=gpu`, `sycl` queue
+   * running on a GPU).
    *
    * Some parallel programming models execute the computations on NVIDIA GPUs
    * through the CUDA runtime but give no access to the stack size of the

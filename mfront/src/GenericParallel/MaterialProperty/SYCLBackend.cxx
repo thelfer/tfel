@@ -87,7 +87,12 @@ namespace mfront::generic_parallel::material_property {
       const MaterialPropertyDescription& mpd,
       const FileDescription& fd) const {
     const auto requiresBoundsCheck = this->isBoundsCheckingRequired(mpd);
-    writeDeviceStackSizeSetting(os, this->device_stack_size);
+    // the stack size is only set when the queue runs on a GPU
+    if (this->device_stack_size != 0) {
+      os << "if (mfront_queue->get_device().is_gpu()) {\n";
+      writeDeviceStackSizeSetting(os, this->device_stack_size);
+      os << "}\n";
+    }
     if (requiresBoundsCheck) {
       // the statistics are held by a block of device memory, identified by
       // the device and the context of the queue

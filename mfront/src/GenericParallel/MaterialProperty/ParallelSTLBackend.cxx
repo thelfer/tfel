@@ -61,8 +61,13 @@ namespace mfront::generic_parallel::material_property {
     const auto types = i.getTypesDescription();
     const auto requiresBoundsCheck = this->isBoundsCheckingRequired(mpd);
     // only the common options of the execution policy are used: the C++
-    // parallel algorithms have no queue
-    writeDeviceStackSizeSetting(os, this->device_stack_size);
+    // parallel algorithms have no queue. The stack size is only set when
+    // the algorithms are offloaded to a GPU by `nvc++ -stdpar=gpu`
+    if (this->device_stack_size != 0) {
+      os << "#if defined(__NVCOMPILER_STDPAR_GPU)\n";
+      writeDeviceStackSizeSetting(os, this->device_stack_size);
+      os << "#endif /* defined(__NVCOMPILER_STDPAR_GPU) */\n";
+    }
     if (requiresBoundsCheck) {
       // the statuses of the points are merged by a reduction
       writeLocalStatisticsDeclaration(os);
