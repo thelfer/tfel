@@ -340,12 +340,14 @@ The `Polycrystal` object has been added to deal with
 homogenization schemes which do not assume that there is a matrix phase.
 An object `Grain` was created for this class of microstructures.
 
-The `computeSelfConsistentScheme` has been modified in order to be
+The `computeSelfConsistent` function (`computeSelfConsistentScheme` in
+the `Python` bindings) has been modified in order to be
 more consistent with the literature. Now, This scheme takes a `Polycrystal`
 in which no matrix phase exists. For the `ParticulateMicrostructure`,
-the function `computeAsymmetricSelfConsistentScheme` has been introduced,
-which corresponds to a variant of the Self-Consistent scheme for which
-the matrix phase plays a particular role.
+the function `computeAsymmetricSelfConsistent`
+(`computeAsymmetricSelfConsistentScheme` in the `Python` bindings) has
+been introduced, which corresponds to a variant of the Self-Consistent
+scheme for which the matrix phase plays a particular role.
 
 In the homogenization schemes relative to the `ParticulateMicrostructure`,
 the computation of the derivatives of the homogenized stiffness tensor

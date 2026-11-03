@@ -241,7 +241,7 @@ current behaviour.
 
 The following snippet declares a variable named `b1` associated with a
 behaviour `Plasticity` defined in the file
-`BehaviourVariablePlasticity.mfront`.
+`Plasticity.mfront`.
 
 ~~~~{.cpp}
 @BehaviourVariable b1 {
@@ -330,8 +330,8 @@ Dt = b1.getTangentOperator();
 - `shared_external_state_variables`: list of regular expressions used to
   select shared external state variables. This list is empty by default.
 - `automatically_save_associated_auxiliary_state_variables`: flag
-  stating if the persistent variables, gradients (if `stored_gradients`
-  is true) or thermodynamic forces (if `stored_thermodynamic_forces` is
+  stating if the persistent variables, gradients (if `store_gradients`
+  is true) or thermodynamic forces (if `store_thermodynamic_forces` is
   true) of the behaviour variable shall automatically be saved in the
   `updateAuxiliaryStateVariables` method of the calling behaviour. This
   flag is `true` by default.
@@ -1581,18 +1581,18 @@ the `--interaction-matrix` query:
 
 ~~~~{.sh}
 $ mfront-query --interaction-matrix SlipSystemGenerationTest.mfront 
-| 0 1 2 2 3 4 5 6 5 6 4 3 |
-| 1 0 2 2 6 5 4 3 4 3 5 6 |
-| 2 2 0 1 5 6 3 4 6 5 3 4 |
-| 2 2 1 0 4 3 6 5 3 4 6 5 |
-| 3 4 5 6 0 1 2 2 6 5 4 3 |
-| 6 5 4 3 1 0 2 2 3 4 5 6 |
-| 5 6 3 4 2 2 0 1 5 6 3 4 |
-| 4 3 6 5 2 2 1 0 4 3 6 5 |
-| 5 6 4 3 4 3 5 6 0 1 2 2 |
-| 4 3 5 6 5 6 4 3 1 0 2 2 |
-| 6 5 3 4 6 5 3 4 2 2 0 1 |
-| 3 4 6 5 3 4 6 5 2 2 1 0 |
+| 0 1 1 2 3 4 5 6 6 2 4 3 |
+| 1 0 1 3 2 4 4 2 3 6 5 6 |
+| 1 1 0 6 6 5 4 3 2 3 4 2 |
+| 2 3 4 0 1 1 2 4 3 5 6 6 |
+| 3 2 4 1 0 1 6 5 6 4 2 3 |
+| 6 6 5 1 1 0 3 4 2 4 3 2 |
+| 5 6 6 2 4 3 0 1 1 2 3 4 |
+| 4 2 3 6 5 6 1 0 1 3 2 4 |
+| 4 3 2 3 4 2 1 1 0 6 6 5 |
+| 2 4 3 5 6 6 2 3 4 0 1 1 |
+| 6 5 6 4 2 3 3 2 4 1 0 1 |
+| 3 4 2 4 3 2 6 6 5 1 1 0 |
 ~~~~
 
 Here only \(7\) coefficients are needed. The number corresponding to a
@@ -1610,8 +1610,19 @@ $ mfront-query --interaction-matrix-structure SlipSystemGenerationTest.mfront
 .....
 ~~~~
 
-In this example, the rank \(0\) contains all the interactions of a
-slip system with itself.
+In this example, the ranks correspond to the following interactions
+between the first system of a pair (the row of the matrix) and the
+second one (the column of the matrix):
+
+- rank \(0\): interaction of a slip system with itself,
+- rank \(1\): coplanar systems (same slip plane),
+- rank \(2\): Hirth lock (orthogonal Burgers vectors),
+- rank \(3\): Lomer lock (junction whose Burgers vector lies in neither
+  slip plane),
+- ranks \(4\) and \(6\): glissile junction, whose Burgers vector lies
+  in the slip plane of the first system (rank \(4\)) or of the second
+  system (rank \(6\)),
+- rank \(5\): collinear systems (same Burgers vector).
 
 ## Definition of the interaction matrix
 
@@ -2805,7 +2816,7 @@ also defines the meaning of the stress tensor by energetic duality.
 
 The following values are supported:
 
-- `LINEARISED` (or `LINEARISED`, or `HPP`): the behaviour is meant to
+- `Linearised` (or `Linearized`): the behaviour is meant to
   be used in a small strain analysis.
 - `GreenLagrange`: the behaviour is meant to be used in a finite
   strain analysis. The dual stress is the second Piola-Kirchhoff
@@ -2816,7 +2827,7 @@ The following values are supported:
 Two options can be specified:
 
 - `save_strain`: save the strain in a dedicated auxiliary state variable
-  called `DualStrain`. Internally, the name of this auxiliary state
+  called `StrainMeasure`. Internally, the name of this auxiliary state
   variable is `saved_strain_measure`.
 - `save_stress`: save the stress in a dedicated auxiliary state variable
   called `DualStress`. Internally, the name of this auxiliary state

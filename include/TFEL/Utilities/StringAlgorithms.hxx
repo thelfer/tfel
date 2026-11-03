@@ -53,6 +53,11 @@ namespace tfel::utilities {
    * \param s     : string to be splitted
    * \param delim : delimiter
    * \return the tokens
+   *
+   * \note the empty strings before and between the delimiters are kept,
+   * but not the one after the last delimiter: `tokenize(":a::b:", ":")`
+   * returns `{"", "a", "", "b"}`. An empty string gives no token. If the
+   * delimiter is empty, the string is not split.
    */
   TFELUTILITIES_VISIBILITY_EXPORT
   std::vector<std::string> tokenize(std::string_view, std::string_view);
