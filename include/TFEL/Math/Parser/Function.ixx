@@ -145,6 +145,14 @@ namespace tfel::math::parser {
       const std::vector<double>::size_type,
       const std::vector<double>&);
 
+  /*!
+   * \brief the Heaviside function has no C++ counterpart: a conditional
+   * expression is used.
+   */
+  template <>
+  std::string StandardFunction<Evaluator::Heavyside>::getCxxFormula(
+      const std::vector<std::string>&) const;
+
   template <StandardFunctionPtr f>
   StandardFunction<f>::~StandardFunction() = default;
 

@@ -395,4 +395,11 @@ namespace tfel::math::parser {
     return Number::zero();
   }  // end of differentiateFunction
 
+  template <>
+  std::string StandardFunction<Evaluator::Heavyside>::getCxxFormula(
+      const std::vector<std::string>& m) const {
+    // consistent with Evaluator::Heavyside
+    return "(((" + this->expr->getCxxFormula(m) + ")<(0.)) ? (0.) : (1.))";
+  }  // end of getCxxFormula
+
 }  // end of namespace tfel::math::parser
