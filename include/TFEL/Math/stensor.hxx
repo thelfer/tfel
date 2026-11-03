@@ -589,8 +589,10 @@ namespace tfel::math {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <typename T1, typename T2>
     [[nodiscard]] TFEL_HOST_DEVICE static auto
@@ -606,8 +608,10 @@ namespace tfel::math {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type, typename T1, typename T2>
     TFEL_HOST_DEVICE static void computeIsotropicFunctionDerivative(
@@ -630,8 +634,10 @@ namespace tfel::math {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <typename Function, typename FunctionDerivative>
     [[nodiscard]] TFEL_HOST_DEVICE static auto
@@ -647,8 +653,10 @@ namespace tfel::math {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename Function,
@@ -678,8 +686,10 @@ namespace tfel::math {
      * \return the derivative of an isotropic function
      * \param[in] f:   function
      * \param[in] df:  derivative of the function
-     * \param[in] eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in] eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      * \param[in] b:   if true, refinement of eigen values is performed
      */
     template <EigenSolver = TFELEIGENSOLVER,
@@ -694,8 +704,10 @@ namespace tfel::math {
      * \return the derivative of an isotropic function
      * \param[in] f:   function
      * \param[in] df:  derivative of the function
-     * \param[in] eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in] eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      * \param[in] b:   if true, refinement of eigen values is performed
      */
     template <EigenSolver = TFELEIGENSOLVER,
@@ -893,8 +905,10 @@ namespace tfel::math {
    * \param[in] f:   function
    * \param[in] df:  derivative of the function
    * \param[in] s:   symmetric tensor
-   * \param[in] eps: criterion value used to judge if two eigenvalues are
-   * equals
+   * \param[in] eps: absolute threshold below which two eigenvalues are
+   * considered equal. It must be well above the rounding errors of the
+   * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+   * eigenvalue (see the documentation of tensors)
    * \param[in] b:   if true, refinement of eigen values is performed
    */
   template <
@@ -913,8 +927,10 @@ namespace tfel::math {
    * \param[in] f:   function
    * \param[in] df:  derivative of the function
    * \param[in] s:   symmetric tensor
-   * \param[in] eps: criterion value used to judge if two eigenvalues are
-   * equals
+   * \param[in] eps: absolute threshold below which two eigenvalues are
+   * considered equal. It must be well above the rounding errors of the
+   * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+   * eigenvalue (see the documentation of tensors)
    * \param[in] b:   if true, refinement of eigen values is performed
    */
   template <
