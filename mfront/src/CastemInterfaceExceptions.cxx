@@ -273,21 +273,24 @@ namespace castem {
         "operator requested");
   }  // end of throwInvalidDDSDDEException
 
-  void CastemUnSupportedCaseHandler::exe(const CastemReal* const,
-                                         const CastemReal* const,
-                                         CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemInt* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         CastemReal* const,
-                                         const CastemInt* const,
-                                         CastemReal* const,
-                                         const StressFreeExpansionHandler&) {
+  void CastemUnSupportedCaseHandler::exe(
+      const CastemReal* const,
+      const CastemReal* const,
+      CastemReal* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      const CastemInt* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      CastemReal* const,
+      const CastemInt* const,
+      CastemReal* const,
+      CastemReal* const,
+      const tfel::material::OutOfBoundsPolicy,
+      const StressFreeExpansionHandler&) {
     tfel::raise(
         "CastemUnSupportedCaseHandler::exe : "
         "we fall in a case that the castem interface "

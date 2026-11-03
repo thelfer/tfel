@@ -901,9 +901,14 @@ namespace mfront {
         << "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
         << "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n";
     if (this->shallGenerateMTestFileOnFailure(mb)) {
+      // the entry point of the modelling hypothesis is named after the
+      // behaviour followed by the suffix of the hypothesis
+      // (getFunctionNameForHypothesis("", h) returns this suffix preceded by
+      // an underscore)
+      const auto suffix = this->getFunctionNameForHypothesis("", h).substr(1);
       out << "if(*PNEWDT<1){\n";
       this->generateMTestFileForHypothesis(out, mb, mb.getBehaviourType(), name,
-                                           "", h);
+                                           suffix, h);
       out << "}\n";
     }
     if (this->compareToNumericalTangentOperator) {
@@ -1176,6 +1181,24 @@ namespace mfront {
   AbaqusInterface::getBehaviourDataConstructorAdditionalVariables() const {
     return {{"DR", "increment of rigid body rotation"}};
   }  // end of AbaqusInterface::getBehaviourDataConstructorAdditionalVariables
+
+  void AbaqusInterface::writeMTestFileGeneratorSetStrainAndStressTensors(
+      std::ostream& out, const Hypothesis h) const {
+    if (h == ModellingHypothesis::PLANESTRESS) {
+      // only the in-plane components are given (11, 22 and 12)
+      out << "const double mg_eto[4] = {STRAN[0], STRAN[1], 0, STRAN[2]};\n"
+          << "const double mg_deto[4] = "
+          << "{DSTRAN[0], DSTRAN[1], 0, DSTRAN[2]};\n"
+          << "const double mg_sig[4] = "
+          << "{mg_STRESS[0], mg_STRESS[1], 0, mg_STRESS[2]};\n"
+          << "mg.setStrainTensor(mg_eto);\n"
+          << "mg.setStrainTensorIncrement(mg_deto);\n"
+          << "mg.setStressTensor(mg_sig);\n";
+    } else {
+      UMATInterfaceBase::writeMTestFileGeneratorSetStrainAndStressTensors(out,
+                                                                          h);
+    }
+  }  // end of AbaqusInterface::writeMTestFileGeneratorSetStrainAndStressTensors
 
   void AbaqusInterface::writeBehaviourDataMainVariablesSetters(
       std::ostream& os, const BehaviourDescription& mb) const {

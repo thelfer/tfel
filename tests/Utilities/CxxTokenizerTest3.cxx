@@ -31,7 +31,12 @@ struct CxxTokenizerTest3 final : public tfel::tests::TestCase {
     this->checkInteger("1000", 1000);
     this->checkInteger("1'000", 1000);
     this->checkInteger("+3u", 3);
-    this->checkInteger("3.0", 3);
+    for (const auto& s : {"3.0", "3.", "3e0"}) {
+      tfel::utilities::CxxTokenizer t;
+      t.parseString(s);
+      auto p = t.begin();
+      TFEL_TESTS_CHECK_THROW(t.readInt(p, t.end()), std::runtime_error);
+    }
     return this->result;
   }  // end of execute()
  private:
