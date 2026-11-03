@@ -576,6 +576,11 @@ namespace mfront {
                                    "' in the body of function '" + f.name +
                                    "'");
               f.body += c + " " + op + " ";
+              // a compound assignment reads the initial value of the
+              // variable only if it is its first modification in the function
+              if ((op != "=") && (f.modifiedVariables.count(c) == 0)) {
+                f.compoundAssignedVariables.insert(c);
+              }
               f.modifiedVariables.insert(c);
               auto p6 = f.depths.find(c);
               if (p6 == f.depths.end()) {

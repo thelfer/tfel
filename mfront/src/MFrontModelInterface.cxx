@@ -224,11 +224,21 @@ namespace mfront {
       throw_if(f.name.empty(), "unnamed function");
       throw_if(f.modifiedVariables.empty(),
                "no modified variable for function '" + f.name + "'");
-      throw_if((f.usedVariables.empty()) && (!f.useTimeIncrement),
+      // an output updated by a compound assignment whose depth is at least
+      // one starts from its value at the beginning of the time step, which
+      // is passed as argument
+      const auto updatedOutputs =
+          getOutputsStartingFromBeginningOfTimeStepValue(md, f);
+      throw_if((f.usedVariables.empty()) && (updatedOutputs.empty()) &&
+                   (!f.useTimeIncrement),
                "no used variable for function '" + f.name + "'");
-      const auto args = [&f] {
+      const auto args = [&f, &updatedOutputs] {
+        auto vars = f.usedVariables;
+        for (const auto& v : updatedOutputs) {
+          vars.insert(v + "_1");
+        }
         auto a = std::vector<std::string>{};
-        for (const auto& uv : f.usedVariables) {
+        for (const auto& uv : vars) {
           a.push_back(uv);
         }
         if (f.useTimeIncrement) {
@@ -298,7 +308,15 @@ namespace mfront {
       if (f.modifiedVariables.size() == 1) {
         const auto& vn = *(f.modifiedVariables.begin());
         const auto& output = md.outputs.getVariable(vn);
-        header << output.type << " " << vn << ";\n";
+        header << output.type << " " << vn;
+        if (updatedOutputs.count(vn) != 0) {
+          header << " = " << vn << "_1";
+        }
+        header << ";\n";
+      } else {
+        for (const auto& vn : updatedOutputs) {
+          header << vn << " = " << vn << "_1;\n";
+        }
       }
       for (const auto& vn : f.usedVariables) {
         const auto dv = md.decomposeVariableName(vn);

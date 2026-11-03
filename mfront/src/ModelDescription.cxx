@@ -351,4 +351,17 @@ namespace mfront {
     return bd;
   }  // end of convertToBehaviourDescription
 
+  std::set<std::string> getOutputsStartingFromBeginningOfTimeStepValue(
+      const ModelDescription& md, const ModelDescription::Function& f) {
+    auto outputs = std::set<std::string>{};
+    for (const auto& v : f.compoundAssignedVariables) {
+      const auto& output = md.outputs.getVariable(v);
+      if (output.getAttribute<unsigned short>(VariableDescription::depth, 0) !=
+          0) {
+        outputs.insert(v);
+      }
+    }
+    return outputs;
+  }  // end of getOutputsStartingFromBeginningOfTimeStepValue
+
 }  // end of namespace mfront

@@ -47,6 +47,12 @@ namespace mfront {
       std::set<std::string> usedVariables;
       //! \brief list of variables modified by the function
       std::set<std::string> modifiedVariables;
+      /*!
+       * \brief list of the modified variables whose first modification in
+       * the function is a compound assignment (`+=`, `-=`, `*=` or `/=`),
+       * which reads their value
+       */
+      std::set<std::string> compoundAssignedVariables;
       //! \brief list of constant material properties used by the function
       std::set<std::string> constantMaterialProperties;
       //! \brief list of parameters used by the function
@@ -221,6 +227,17 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT BehaviourDescription
   convertToBehaviourDescription(const ModelDescription&);
+  /*!
+   * \return the outputs of a function which start from their value at the
+   * beginning of the time step in the `mfront` model interface, this value
+   * being passed as argument: the outputs whose first modification is a
+   * compound assignment and whose depth is at least one
+   * \param[in] md: model description
+   * \param[in] f: function
+   */
+  MFRONT_VISIBILITY_EXPORT std::set<std::string>
+  getOutputsStartingFromBeginningOfTimeStepValue(
+      const ModelDescription&, const ModelDescription::Function&);
 
 }  // end of namespace mfront
 

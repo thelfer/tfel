@@ -836,7 +836,14 @@ namespace mfront {
     throw_if(f.modifiedVariables.size() != outputVariables.size(),
              "invalid number of functions in model '" + md.className + "'");
     throw_if(f.name.empty(), "unnamed function");
-    throw_if((f.usedVariables.empty()) && (!f.useTimeIncrement),
+    // the values at the beginning of the time step of the outputs updated by
+    // a compound assignment whose depth is at least one are passed as
+    // arguments, as the other values at the beginning of the time step (see
+    // the mfront model interface)
+    const auto updatedOutputs =
+        getOutputsStartingFromBeginningOfTimeStepValue(md, f);
+    throw_if((f.usedVariables.empty()) && (updatedOutputs.empty()) &&
+                 (!f.useTimeIncrement),
              "no used variable for function '" + f.name + "'");
     const auto sm = getTemporaryVariableName(tmpnames, this->bd, bn);
     if (inputVariables.size() == 1) {
@@ -861,9 +868,13 @@ namespace mfront {
         out << "this->" << outputVariables[p - pb] << ", ";
       }
     }
-    const auto args = [&f] {
+    const auto args = [&f, &updatedOutputs] {
+      auto vars = f.usedVariables;
+      for (const auto& v : updatedOutputs) {
+        vars.insert(v + "_1");
+      }
       auto a = std::vector<std::string>{};
-      for (const auto& uv : f.usedVariables) {
+      for (const auto& uv : vars) {
         a.push_back(uv);
       }
       if (f.useTimeIncrement) {
