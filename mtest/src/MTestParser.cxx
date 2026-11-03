@@ -434,6 +434,8 @@ namespace mtest {
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("MTestParser::handleTest", ":", p,
                                    this->tokens.end());
+          this->checkNotEndOfLine("MTestParser::handleTest", p,
+                                  this->tokens.end());
           if (p->flag == tfel::utilities::Token::String) {
             const auto c = p->value.substr(1, p->value.size() - 2);
             warn_if(!columns.insert({v, gentype(c)}).second, pv, v);

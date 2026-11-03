@@ -313,6 +313,7 @@ namespace mfront {
         ++(this->current);
         this->checkNotEndOfFile("BehaviourDSLCommon::analyse");
         this->readSpecifiedToken("BehaviourDSLCommon::analyse", "::");
+        this->checkNotEndOfFile("BehaviourDSLCommon::analyse");
         const auto v = tfel::unicode::getMangledString(this->current->value);
         if (!this->isCallableVariable(h, v)) {
           this->throwRuntimeError("BehaviourDSLCommon::analyse",

@@ -689,6 +689,8 @@ namespace mtest {
       tfel::utilities::TextData data{this->readString(p, this->tokens.end())};
       this->readSpecifiedToken("SchemeParserBase::parseEvolution", "using", p,
                                this->tokens.end());
+      this->checkNotEndOfLine("SchemeParserBase::parseEvolution", p,
+                              this->tokens.end());
       auto tv = std::vector<double>{};
       auto vv = std::vector<double>{};
       if (p->flag == tfel::utilities::Token::String) {
@@ -699,6 +701,8 @@ namespace mtest {
       }
       this->readSpecifiedToken("SchemeParserBase::parseEvolution", ":", p,
                                this->tokens.end());
+      this->checkNotEndOfLine("SchemeParserBase::parseEvolution", p,
+                              this->tokens.end());
       if (p->flag == tfel::utilities::Token::String) {
         vv = eval(data, t.getEvolutions(),
                   this->readString(p, this->tokens.end()));
