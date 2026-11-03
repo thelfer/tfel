@@ -12,6 +12,7 @@
  */
 
 #include <sstream>
+#include <iterator>
 #include <algorithm>
 #include <stdexcept>
 
@@ -57,12 +58,12 @@ namespace mfront {
   GnuplotMaterialPropertyInterface::nextToken(tokens_iterator current,
                                               const tokens_iterator endTokens,
                                               const std::string& msg) {
-    tfel::raise_if(++current == endTokens,
-                   msg +
-                       ": unexpected end of file.\n"
-                       "Error at line : " +
-                       std::to_string((--current)->line));
-    return current;
+    const auto next = std::next(current);
+    tfel::raise_if(next == endTokens, msg +
+                                          ": unexpected end of file.\n"
+                                          "Error at line : " +
+                                          std::to_string(current->line));
+    return next;
   }
 
   std::string GnuplotMaterialPropertyInterface::getName() { return "gnuplot"; }
@@ -154,7 +155,7 @@ namespace mfront {
              "Error at line '" +
                  std::to_string(current->line) + "'");
     current = nextToken(current, pe, method);
-    while ((current->value != "}") && (current != pe)) {
+    while ((current != pe) && (current->value != "}")) {
       throw_if(current->value == "{",
                "'{' is not allowed in graph.\n"
                "Error at line '" +
