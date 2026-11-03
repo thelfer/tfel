@@ -136,8 +136,9 @@ namespace tfel::system {
   void systemCall::throwSystemError(const std::string& errMsg,
                                     const int errNbr) {
     std::string err = strerror(errNbr);
-    std::transform(err.begin(), err.end(), err.begin(),
-                   [](const auto c) { return ::tolower(c); });
+    std::transform(err.begin(), err.end(), err.begin(), [](const auto c) {
+      return ::tolower(static_cast<unsigned char>(c));
+    });
     auto msg = errMsg;
     msg += " (system error: ";
     msg += err;

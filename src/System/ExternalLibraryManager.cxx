@@ -110,9 +110,10 @@ namespace tfel::system {
     auto r = std::string{n.cbegin(), p};
     ++p;
     throw_if(p == pe, "unexpected end of string '" + n + "'");
-    throw_if(!std::isdigit(*p), "unexpected a digit '" + n + "'");
+    throw_if(!std::isdigit(static_cast<unsigned char>(*p)),
+             "unexpected a digit '" + n + "'");
     r += "_mfront_index_";
-    while ((p != pe) && (std::isdigit(*p))) {
+    while ((p != pe) && (std::isdigit(static_cast<unsigned char>(*p)))) {
       r.push_back(*p);
       ++p;
     }

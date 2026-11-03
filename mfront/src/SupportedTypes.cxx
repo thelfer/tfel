@@ -926,7 +926,7 @@ namespace mfront {
       ++p;
     }
     for (; p != s2.end(); ++p) {
-      if (!std::isdigit(*p)) {
+      if (!std::isdigit(static_cast<unsigned char>(*p))) {
         return {};
       }
     }
