@@ -394,9 +394,24 @@ Several algorithms are available to solve the previous implicit system:
   time, this algorithm can in some cases outperform the Newton-Raphson
   algorithm.
 - `PowellDogLeg_XX` algorithm, where `XX` is one of the previous
-  algorithms. Those trust-region algorithms implement the classical
-  Powell dogleg method [see @chen_modification_1981] to improve the
-  robustness of the resolution.
+  algorithms. Those algorithms limit the corrections given by the `XX`
+  algorithm using Powell's dog leg step [see @chen_modification_1981]:
+  when the sum of the absolute values of the components of the
+  correction exceeds \(N\) times the trust region size, \(N\) being the
+  number of unknowns, the correction is replaced by the point of the dog
+  leg path (from the current estimate to the minimum of the linearised
+  residual along the steepest descent direction, then to the correction)
+  whose euclidean norm is equal to the trust region size. Contrary to the
+  classical trust region methods, the trust region size is fixed: it is
+  not updated from the ratio of the actual and predicted reductions of
+  the residual, and no step is rejected. This size is set by the
+  `@PowellDogLegTrustRegionSize` keyword (or by the
+  `powell_dogleg_trust_region_size` parameter) and is equal to
+  \(10^{-4}\) by default. Since the progress per iteration is limited to
+  about this size, it must be chosen according to the expected
+  increments of the integration variables over a time step: otherwise,
+  the algorithm may need many more iterations than the `XX` algorithm,
+  or even fail where the latter converges.
 
 ### Consistent tangent operator
 

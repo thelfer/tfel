@@ -115,6 +115,24 @@ library](tfel-math.html). The main steps of those algorithms and the
 associated code blocks are depicted in Figure
 @fig:mfront:implicit-dsl:resolution_steps.
 
+The `PowellDogLeg_` algorithms limit the corrections of the underlying
+algorithm using Powell's dog leg step: when the sum of the absolute
+values of the components of the correction exceeds \(N\) times the
+trust region size, \(N\) being the number of unknowns, the correction
+is replaced by a step of euclidean norm equal to the trust region size.
+This size is fixed during the iterations (it is not updated, and no
+step is rejected): it is set by the `@PowellDogLegTrustRegionSize`
+keyword, followed by a positive value, or by the
+`powell_dogleg_trust_region_size` parameter, and is equal to
+\(10^{-4}\) by default. It must be chosen according to the expected
+increments of the integration variables over a time step, since the
+progress per iteration is limited to about this size:
+
+~~~~{.cpp}
+@Algorithm PowellDogLeg_NewtonRaphson;
+@PowellDogLegTrustRegionSize 1.e-2;
+~~~~
+
 ## Notes about updating auxiliary state variable or local variables in the `Integrator` code blocks when the numerical evaluation of the jacobian is requested
 
 In some cases, it is convenient to update auxiliary state variables
