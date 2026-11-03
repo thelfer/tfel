@@ -836,7 +836,6 @@ namespace mtest {
         }
       } else {
         std::cout << this->readDouble(t, p);
-        ++p;
       }
       this->checkNotEndOfLine("SchemeParserBase::handleMessage", p,
                               this->tokens.end());
