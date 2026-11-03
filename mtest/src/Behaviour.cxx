@@ -531,7 +531,7 @@ namespace mtest {
     if (p != isvnames.end()) {
       return true;
     }
-    const auto esvnames = b.getExternalStateVariablesNames();
+    const auto esvnames = b.expandExternalStateVariablesNames();
     p = std::find(esvnames.begin(), esvnames.end(), n);
     if (p != esvnames.end()) {
       return true;
@@ -559,7 +559,7 @@ namespace mtest {
       const auto pos = static_cast<unsigned short>(p - isvnames.begin());
       return [pos](const CurrentState& s) noexcept { return s.iv1[pos]; };
     }
-    const auto esvnames = b.getExternalStateVariablesNames();
+    const auto esvnames = b.expandExternalStateVariablesNames();
     p = std::find(esvnames.begin(), esvnames.end(), n);
     if (p != esvnames.end()) {
       const auto pos = static_cast<unsigned short>(p - esvnames.begin());
