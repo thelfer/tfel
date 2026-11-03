@@ -110,7 +110,6 @@ namespace mfront::bbrick {
                                                 const AbstractBehaviourDSL& dsl,
                                                 const std::string& fid,
                                                 const std::string& id) const {
-    auto mts = getMiddleOfTimeStepModifier(bd);
     // computation of the material properties
     if ((!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) ||
         (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) ||
@@ -120,21 +119,17 @@ namespace mfront::bbrick {
       std::ostringstream mps;
       if (!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) {
         const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
-        mps << "this->" + R0n + " = ";
-        dsl.writeMaterialPropertyEvaluation(mps, this->R0, mts);
-        mps << ";\n";
+        mps << generateMaterialPropertyInitializationCode(dsl, bd, R0n,
+                                                          this->R0);
       }
       if (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) {
         const auto Rin = IsotropicHardeningRule::getVariableId("Rinf", fid, id);
-        mps << "this->" + Rin + " = ";
-        dsl.writeMaterialPropertyEvaluation(mps, this->Rinf, mts);
-        mps << ";\n";
+        mps << generateMaterialPropertyInitializationCode(dsl, bd, Rin,
+                                                          this->Rinf);
       }
       if (!this->b.is<BehaviourDescription::ConstantMaterialProperty>()) {
         const auto bn = IsotropicHardeningRule::getVariableId("b", fid, id);
-        mps << "this->" + bn + " = ";
-        dsl.writeMaterialPropertyEvaluation(mps, this->b, mts);
-        mps << ";\n";
+        mps << generateMaterialPropertyInitializationCode(dsl, bd, bn, this->b);
       }
       i.code += mps.str();
       bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
