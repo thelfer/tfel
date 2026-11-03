@@ -83,12 +83,19 @@ namespace tfel::material {
      * \tparam strain: type of strain variables
      * \tparam stress: type of stress variables
      *
+     * \param[in,out] fe: implicit equation associated with the crack strain
+     * \param[in,out] dfe_dde: derivative of the implicit equation with respect
+     * to the increment of the crack strain
+     * \param[in,out] dfe_ddeel: derivative of the implicit equation with
+     * respect to the increment of the elastic strain
      * \param[in] s: current estimation of the state.
      * \param[in] sig: current estimate of the stress tensor at the end of the
      * time step.
      * \param[in] n: crack direction
      * \param[in] em:  maximum crack strain at the beginning of the time step
-     * \param[in] e: current estimate of the crack strain
+     * \param[in] e: crack strain at the beginning of the time step
+     * \param[in] de: current estimate of the increment of the crack strain
+     * \param[in] yg: Young modulus, used to normalise the implicit equation
      * \param[in] l: first Lamé coefficient
      * \param[in] m: second Lamé coefficient (shear modulus)
      * \param[in] smax: elastic limit

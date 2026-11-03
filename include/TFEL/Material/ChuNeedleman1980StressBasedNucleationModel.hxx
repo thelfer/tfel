@@ -47,7 +47,7 @@ namespace tfel::material {
               StressStensorType>>;
 
   /*!
-   * \brief parameters of the strain version of the nucleation model
+   * \brief parameters of the stress version of the nucleation model
    * proposed by Chu and Needleman.
    *
    * Chu, C. C., and A. Needleman. 1980.
@@ -86,7 +86,7 @@ namespace tfel::material {
    * A_{n} = \frac{f_N}{s_N \sqrt{2\pi}}
    *         \exp\left(-\frac{1}{2}
    *                    \left(\frac{\sigma_{I} -
-   * \epsilon_N}{s_N}\right)^2\right) \f]
+   * \sigma_N}{s_N}\right)^2\right) \f]
    *
    * Chu, C. C., and A. Needleman. 1980.
    * “Void Nucleation Effects in Biaxially Stretched Sheets.”
@@ -116,7 +116,7 @@ namespace tfel::material {
    * A_{n} = \frac{f_N}{s_N \sqrt{2\pi}}
    *         \exp\left(-\frac{1}{2}
    *                    \left(\frac{\sigma_{I} -
-   * \epsilon_N}{s_N}\right)^2\right) \f]
+   * \sigma_N}{s_N}\right)^2\right) \f]
    *
    * Chu, C. C., and A. Needleman. 1980.
    * “Void Nucleation Effects in Biaxially Stretched Sheets.”
