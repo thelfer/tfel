@@ -1669,6 +1669,24 @@ namespace mfront {
           }
         }
       }
+      // physical bounds are only taken into account for state variables
+      for (const auto& v : d.getIntegrationVariables()) {
+        if (d.isStateVariableName(v.name)) {
+          continue;
+        }
+        auto b = v.hasPhysicalBounds();
+        if (v.arraySize != 1u) {
+          for (unsigned short i = 0; i != v.arraySize; ++i) {
+            b = b || v.hasPhysicalBounds(i);
+          }
+        }
+        if (b) {
+          reportWarning("physical bounds set on integration variable '" +
+                        v.name +
+                        "' are ignored since this variable is not a state "
+                        "variable");
+        }
+      }
     }
     //
     if (this->mb.getAttribute(

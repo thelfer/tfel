@@ -412,8 +412,81 @@ namespace mfront {
           const BehaviourDescription& mb,
           const Hypothesis h) {
     const auto& d = mb.getBehaviourData(h);
+    // write the code bounding the scalar value `value + zero` (or
+    // `value + nf * zero` if a normalisation factor `nf` is defined) by
+    // modifying `zero`, `op` being '<' for a lower bound and '>' for an upper
+    // bound
+    auto write_bound = [&out, &mb, h](const VariableDescription& v,
+                                      const std::string& value,
+                                      const std::string& zero,
+                                      const long double bound, const char op) {
+      const auto nf = [&mb, &v, h]() -> std::string {
+        if (mb.hasAttribute(h, v.name + "_normalisation_factor")) {
+          return mb.getAttribute<std::string>(h,
+                                              v.name + "_normalisation_factor");
+        }
+        return "";
+      }();
+      if (nf.empty()) {
+        out << "if(" << value << "+" << zero << op << bound << "){\n";
+      } else {
+        out << "if(" << value << "+(" << nf << ")*(" << zero << ")" << op
+            << bound << "){\n";
+      }
+      if (std::abs(bound) > std::numeric_limits<long double>::min()) {
+        if (nf.empty()) {
+          out << zero << " = " << bound << "- (" << value << ");\n";
+        } else {
+          out << zero << " = (" << bound << "- (" << value << "))/(" << nf
+              << ");\n";
+        }
+      } else {
+        out << zero << " = - (" << value << ")";
+        if (!nf.empty()) {
+          out << "/(" << nf << ")";
+        }
+        out << ";\n";
+      }
+      out << "}\n";
+    };
     auto n = SupportedTypes::TypeSize{};
     for (const auto& v : d.getIntegrationVariables()) {
+      if ((d.isStateVariableName(v.name)) && (v.arraySize != 1u) &&
+          (!v.hasPhysicalBounds())) {
+        // physical bounds set on some elements of an array
+        const auto n2 = mb.getTypeSize(v.type, 1u);
+        for (unsigned short i = 0; i != v.arraySize; ++i) {
+          if (!v.hasPhysicalBounds(i)) {
+            continue;
+          }
+          const auto& b = v.getPhysicalBounds(i);
+          const auto value = "this->" + v.name + "[" + std::to_string(i) + "]";
+          auto ni = n;
+          ni += n2 * i;
+          const auto zero = "this->zeros[" + to_string(ni);
+          auto write_bounds = [&b, &v, &write_bound](const std::string& vi,
+                                                     const std::string& zi) {
+            if ((b.boundsType == VariableBoundsDescription::LOWER) ||
+                (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
+              write_bound(v, vi, zi, b.lowerBound, '<');
+            }
+            if ((b.boundsType == VariableBoundsDescription::UPPER) ||
+                (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
+              write_bound(v, vi, zi, b.upperBound, '>');
+            }
+          };
+          if (mb.getTypeFlag(v.type) == SupportedTypes::SCALAR) {
+            write_bounds(value, zero + "]");
+          } else if (b.component == -1) {
+            out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n";
+            write_bounds(value + "[idx]", zero + "+idx]");
+            out << "}\n";
+          } else {
+            const auto c = std::to_string(b.component);
+            write_bounds(value + "[" + c + "]", zero + "+" + c + "]");
+          }
+        }
+      }
       if ((!d.isStateVariableName(v.name)) || (!v.hasPhysicalBounds())) {
         n += mb.getTypeSize(v.type, v.arraySize);
         continue;
