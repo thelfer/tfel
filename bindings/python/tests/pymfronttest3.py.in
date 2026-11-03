@@ -17,6 +17,12 @@ class PyMFrontTest3(unittest.TestCase):
         self.assertTrue(bd.hasAttribute('requiresStiffnessTensor'))
         self.assertTrue(bd.getBooleanAttribute('requiresStiffnessTensor',False))
 
+        # material knowledge description
+        mkd = dsl.getMaterialKnowledgeDescription()
+        self.assertTrue(mkd.hasAttribute('requiresStiffnessTensor'))
+        self.assertTrue(mkd.getBooleanAttribute('requiresStiffnessTensor',False))
+        self.assertTrue(isinstance(bd,mfront.MaterialKnowledgeDescription))
+
     def test_material_property(self):
         f   = '@top_srcdir@/mfront/tests/properties/Inconel600_YoungModulus.mfront'
         dsl = mfront.getDSL(f)
@@ -26,6 +32,8 @@ class PyMFrontTest3(unittest.TestCase):
         self.assertEqual(dsl.getFileDescription().fileName,f)
         md = dsl.getMaterialPropertyDescription()
         self.assertEqual(md.getLawName(),'YoungModulus')
+        self.assertTrue(isinstance(md,mfront.MaterialKnowledgeDescription))
+        self.assertFalse(dsl.getMaterialKnowledgeDescription().hasAttribute('a'))
 
     def test_material_property_unit_system(self):
         # the physical bounds deduced from the unit system do not depend on
