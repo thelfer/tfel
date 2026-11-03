@@ -16,6 +16,16 @@ class PyMFrontTest3(unittest.TestCase):
         bd = dsl.getBehaviourDescription()
         self.assertTrue(bd.hasAttribute('requiresStiffnessTensor'))
         self.assertTrue(bd.getBooleanAttribute('requiresStiffnessTensor',False))
+
+    def test_material_property(self):
+        f   = '@top_srcdir@/mfront/tests/properties/Inconel600_YoungModulus.mfront'
+        dsl = mfront.getDSL(f)
+        self.assertEqual(dsl.getTargetType(),
+                         mfront.DSLTarget.MATERIALPROPERTYDSL)
+        dsl.analyseFile(f,[])
+        self.assertEqual(dsl.getFileDescription().fileName,f)
+        md = dsl.getMaterialPropertyDescription()
+        self.assertEqual(md.getLawName(),'YoungModulus')
         
 if __name__ == '__main__':
     unittest.main()
