@@ -300,8 +300,10 @@ namespace tfel::math {
 
   template <typename ArrayType>
   constexpr auto map_strided_array(
-      const StridedCoalescedViewsArrayDataPointerType<numeric_type<ArrayType>>
-          p) {
+      const StridedCoalescedViewsArrayDataPointerType<
+          std::conditional_t<std::is_const_v<ArrayType>,
+                             const numeric_type<ArrayType>,
+                             numeric_type<ArrayType>>> p) {
     using MappedType = numeric_type<ArrayType>;
     using IndexingPolicy = typename ArrayType::indexing_policy;
     using size_type = typename IndexingPolicy::size_type;

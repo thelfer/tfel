@@ -104,6 +104,7 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
     this->checkTimeStepScalingFactor();
     this->checkPostProcessing();
     this->checkInitializeFunctions();
+    this->checkInitializeFunctionArrayVariables();
     return this->result;
   }  // end of execute
 
@@ -221,6 +222,30 @@ struct IntegrationDriversTest final : public tfel::tests::TestCase {
           [](const mfront_gb_real F, const mfront_gb_real,
              const mfront_gb_real p) { return p / F; });
   }  // end of checkInitializeFunctions
+  /*!
+   * \brief the initialize functions must compile and read the values of the
+   * initialize function variables declared as arrays.
+   */
+  void checkInitializeFunctionArrayVariables() {
+    auto& elm =
+        tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    const auto f = elm.getGenericBehaviourInitializeFunction(
+        this->library, "InitializeFunctionArrayVariableTest", "Tridimensional",
+        "StressFromPressures");
+    // values of pr[0] and pr[1]
+    const auto pr = std::array<mfront_gb_real, 2>{100, 10};
+    MaterialPoint m;
+    std::fill(m.th1.begin(), m.th1.end(), -999);
+    TFEL_TESTS_ASSERT(f(&(m.d), pr.data()) == 0);
+    auto ok = true;
+    for (unsigned short i = 0; i != 3; ++i) {
+      ok = ok && (std::abs(m.th1[i] - 120) < 1e-12 * 120);
+    }
+    for (unsigned short i = 3; i != 6; ++i) {
+      ok = ok && (std::abs(m.th1[i]) < 1e-12 * 120);
+    }
+    this->registerResult("array of initialize function variables", ok);
+  }  // end of checkInitializeFunctionArrayVariables
   //! \brief path to the library
   const std::string library;
 };  // end of struct IntegrationDriversTest

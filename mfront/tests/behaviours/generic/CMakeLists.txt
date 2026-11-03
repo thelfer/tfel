@@ -279,7 +279,8 @@ mfront_behaviour_check_library(MFrontGenericIntegrationDriversBehaviours generic
   InternalStateVariablePostProcessingTest
   FiniteStrainInitializeFunctionTest
   GreenLagrangeInitializeFunctionTest
-  HenckyInitializeFunctionTest)
+  HenckyInitializeFunctionTest
+  InitializeFunctionArrayVariableTest)
 
 add_executable(generic-IntegrationDriversTest EXCLUDE_FROM_ALL
   IntegrationDriversTest.cxx)
