@@ -196,7 +196,8 @@ namespace mfront::bbrick {
    * \param[in] n: name of the variable storing the material property value.
    * \param[in] mps: array of material property description.
    */
-  std::string generateMaterialPropertiesInitializationCode(
+  MFRONT_VISIBILITY_EXPORT std::string
+  generateMaterialPropertiesInitializationCode(
       const AbstractBehaviourDSL&,
       const BehaviourDescription&,
       const std::string&,
