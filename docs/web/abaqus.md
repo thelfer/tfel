@@ -99,8 +99,7 @@ following:
   `@AbaqusFiniteStrainStrategy` keyword and the section dedicated to
   finite strain strategies below). The `Native` finite strain strategy
   will use the `Abaqus/Standard` functionalities to integrate the
-  behaviour in "rate-form" and also adds a correction to the
-  tangent operator (see below for details). *The user must then be
+  behaviour in "rate-form" (see below for details). *The user must then be
   aware that when using the `Native` finite strain strategy, results
   will depend on the fact that an orientation is defined or
   not*.
@@ -405,6 +404,11 @@ Among them is the `Native` finite strain strategy which relies on
 built-in `Abaqus/Standard` facilities to integrate the behaviours
 written in rate form. The `Native` finite strain strategy will use the
 Jauman rate.
+
+The behaviour is called as a small strain behaviour: the stress and
+the tangent operator that it computes are returned to
+`Abaqus/Standard` unchanged, without any correction of the tangent
+operator.
 
 Those strategies have some theoretical drawbacks
 (hypoelasticity, etc...) and are not portable from one code to

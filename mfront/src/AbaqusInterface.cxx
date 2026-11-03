@@ -999,12 +999,6 @@ namespace mfront {
           << "std::cout << std::endl;\n"
           << "}\n";
     }
-    // if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
-    //   if(AbaqusInterfaceBase::getFiniteStrainStrategy(mb)=="Native"){
-    // 	out <<
-    // "abaqus::AbaqusFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
-    //   }
-    // }
     out << "}\n\n";
   }
 
