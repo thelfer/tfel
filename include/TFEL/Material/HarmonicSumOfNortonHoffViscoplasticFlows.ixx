@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATERIAL_HARMONICSUMOFNORTONHOFFVISCOPLASTICFLOWS_IXX
 #define LIB_TFEL_MATERIAL_HARMONICSUMOFNORTONHOFFVISCOPLASTICFLOWS_IXX
 
+#include <cmath>
 #include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::material {
@@ -110,7 +111,5 @@ namespace tfel::material {
      // computeEquivalentStrainRateAndDerivativeOfHarmonicSumOfNortonHoffViscoplasticFlows
 
 }  // end of namespace tfel::material
-
-#include "TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.ixx"
 
 #endif /* LIB_TFEL_MATERIAL_HARMONICSUMOFNORTONHOFFVISCOPLASTICFLOWS_IXX */
