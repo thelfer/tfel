@@ -832,11 +832,11 @@ namespace mfront::bbrick {
           nextEstimateOfThePorosityIncrement;
       c += " += " + df + ";\n";
     }
-    if (this->save_porosity_increase) {
-      c += "} else {\n";
-      c += "this->dfg" + id + " = real{};\n";
-    }
     if (!this->ihrs.empty()) {
+      if (this->save_porosity_increase) {
+        c += "} else {\n";
+        c += "this->dfg" + id + " = real{};\n";
+      }
       c += "}\n";
     }
     return c;
