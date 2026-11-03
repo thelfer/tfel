@@ -358,6 +358,13 @@ namespace mfront {
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
              "by CalculiX's native interface");
+    // CalculiX only gives the temperature at the end of the time step: the
+    // increment of a stress-free expansion can't be computed
+    throw_if(mb.requiresStressFreeExpansionTreatment(h),
+             "stress-free expansions are not supported "
+             "by CalculiX's native interface, which does not give the "
+             "temperature at the beginning of the time step. The thermal "
+             "expansion shall be declared in CalculiX");
     // get the modelling hypotheses to be treated
     const auto name = mb.getLibrary() + mb.getClassName();
     // output directories
