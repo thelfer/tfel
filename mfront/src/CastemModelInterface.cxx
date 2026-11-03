@@ -426,6 +426,7 @@ namespace mfront {
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using namespace tfel::material;\n";
+      writeMaterialLaws(os, md.materialLaws);
       if (useQuantities(md)) {
         os << "using PhysicalConstants [[maybe_unused]] = "
            << "tfel::PhysicalConstants<NumericType, true>;\n";
