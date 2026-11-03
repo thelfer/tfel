@@ -4031,6 +4031,8 @@ namespace mfront {
           this->mb.addParameter(h, p);
         }
       }
+      this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter",
+                              "expected ',' or ';'");
       if (this->current->value == ",") {
         ++(this->current);
       } else if (this->current->value == ";") {

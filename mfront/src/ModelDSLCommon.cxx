@@ -895,6 +895,8 @@ namespace mfront {
           v.setAttribute(VariableDescription::defaultValue, op->second, false);
         }
       }
+      this->checkNotEndOfFile("DSLBase::handleParameter",
+                              "expected ',' or ';'");
       if (this->current->value == ",") {
         ++(this->current);
       } else if (this->current->value == ";") {
