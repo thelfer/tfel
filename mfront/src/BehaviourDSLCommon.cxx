@@ -2101,9 +2101,13 @@ namespace mfront {
                "the only data expected is "
                "'reference_temperature' (read '" +
                    pd->first + "')");
-      throw_if(!pd->second.is<double>(),
-               "invalid type for data 'reference_temperature'");
-      addTref(pd->second.get<double>());
+      if (pd->second.is<int>()) {
+        addTref(static_cast<double>(pd->second.get<int>()));
+      } else {
+        throw_if(!pd->second.is<double>(),
+                 "invalid type for data 'reference_temperature'");
+        addTref(pd->second.get<double>());
+      }
     }
     this->readSpecifiedToken(m, ";");
     throw_if((acs.size() != 1u) && (acs.size() != 3u),
