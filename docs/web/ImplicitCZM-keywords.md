@@ -39,6 +39,12 @@ One possible usage of this code block is multi-surfaces plasticity
 treated by activating or deactivating statuses, as described by Simo
 and Hughes.
 
+If a normalisation factor `nf` was given to the integration variable
+`v` (see the `setNormalisationFactor` method), `dv` is, in this code
+block, the normalised increment used by the solver: the updated value
+of `v` is `v + nf * dv`, whereas `dv` is the physical increment in the
+`@Integrator` code block.
+
 # Example
 
 Consider a two surfaces plastic behaviour. We will use an array of
@@ -2346,6 +2352,13 @@ an alias for `delta_dv`.
 The increments of the integration variables are not updated at this
 stage of the resolution algorithm.
 
+If a normalisation factor `nf` was given to the integration variable
+`v` (see the `setNormalisationFactor` method), `dv` and `delta_dv` are,
+in this code block, the normalised increment and correction used by
+the solver: the physical increment is `nf * dv` and the physical
+correction is `nf * delta_dv`, whereas `dv` is the physical increment
+in the `@Integrator` code block.
+
 ## Example
 
 The following code limits the amplitude of the correction given to the
@@ -2367,6 +2380,12 @@ the update of the increments of the integration variables.
 
 This method may be used to compute local variables dependent on the
 updated value of the integration variables.
+
+If a normalisation factor `nf` was given to the integration variable
+`v` (see the `setNormalisationFactor` method), `dv` is, in this code
+block, the normalised increment used by the solver: the updated value
+of `v` is `v + nf * dv`, whereas `dv` is the physical increment in the
+`@Integrator` code block.
 
 For example, `MFront` may define or update this code block to evaluate
 material properties dependent on the value of the state variable (for
@@ -2398,6 +2417,13 @@ This increment is stored in an array called `delta_zeros`. The
 `delta_zeros` variable is not meant to be used directly by the users and
 views to the corrections of the increments of the integration variables
 are automatically declared in this code block.
+
+If a normalisation factor `nf` was given to the integration variable
+`v` (see the `setNormalisationFactor` method), `dv` and `delta_dv` are,
+in this code block, the normalised increment and correction used by
+the solver: the physical increment is `nf * dv` and the physical
+correction is `nf * delta_dv`, whereas `dv` is the physical increment
+in the `@Integrator` code block.
 
 # The `@Relocation` keyword
 
