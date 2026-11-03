@@ -472,7 +472,8 @@ namespace mfront {
       out << "bool areAllVariablesScalars  = true;\n";
     }
     out << "octave_value retval;\n";
-    if (!mpd.parameters.empty()) {
+    if ((!areParametersTreatedAsStaticVariables(mpd)) &&
+        (!mpd.parameters.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "if(!octave::" << hn << "::get" << hn << "().ok){\n"
           << "error(\"%s\\n\", octave::" << hn << "::get" << hn
