@@ -24,6 +24,7 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Material/GursonTvergaardNeedleman.hxx"
 #include "TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.hxx"
+#include "TFEL/Material/RousselierTanguyBesson2002StressCriterion.hxx"
 #include "TFEL/Material/Cazacu2001YieldCriterion.hxx"
 #include "TFEL/Material/Cazacu2004IsotropicYieldCriterion.hxx"
 #include "TFEL/Material/Cazacu2004OrthotropicYieldCriterion.hxx"
@@ -43,6 +44,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     this->testDrucker1949();
     this->testMohrCoulomb();
     this->testSinglePrecision();
+    this->testPorousCriteriaInSinglePrecision();
     return this->result;
   }  // end of execute
  private:
@@ -155,6 +157,39 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     this->compare(druckerf, druckerd);
     this->compare(cazacuf, cazacud);
   }  // end of testSinglePrecision
+  //! \return the GTN and Rousselier equivalent stresses for a stress in Pa
+  template <typename real>
+  static auto computePorousCriteriaInPa(const Stensor& sig) {
+    using namespace tfel::material;
+    using StressStensor = tfel::math::stensor<3u, real>;
+    auto s = StressStensor{};
+    for (unsigned short i = 0; i != 6; ++i) {
+      s[i] = static_cast<real>(sig[i]);
+    }
+    const auto pg =
+        GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>{
+            .f_c = 0.01, .f_r = 0.1, .q_1 = 1.5, .q_2 = 1, .q_3 = 2.25};
+    auto pr =
+        RousselierTanguyBesson2002StressCriterionParameters<StressStensor>{};
+    pr.DR = 2;
+    pr.qR = 1.5;
+    return std::make_tuple(
+        computeGursonTvergaardNeedleman1982Stress(s, real(0.01), pg, real(0.2)),
+        computeRousselierTanguyBesson2002Stress(s, real(0.01), pr, real(0.2)));
+  }  // end of computePorousCriteriaInPa
+  //! \brief GTN and Rousselier criteria in single precision with stresses in
+  //! Pa
+  void testPorousCriteriaInSinglePrecision() {
+    for (const auto& sig : {Stensor{150e6, -40e6, 25e6, 30e6, -12e6, 18e6},
+                            Stensor{73.8e6, 10.9e6, -17.1e6, 10e6, 0, 0}}) {
+      const auto [gtnf, rousselierf] = computePorousCriteriaInPa<float>(sig);
+      const auto [gtnd, rousselierd] = computePorousCriteriaInPa<double>(sig);
+      TFEL_TESTS_ASSERT(std::abs(static_cast<double>(gtnf) - gtnd) <
+                        1e-5 * gtnd);
+      TFEL_TESTS_ASSERT(std::abs(static_cast<double>(rousselierf) -
+                                 rousselierd) < 1e-5 * rousselierd);
+    }
+  }  // end of testPorousCriteriaInSinglePrecision
   /*!
    * \brief compare the equivalent stress, the normal and its derivative
    * computed in single precision to the ones computed in double precision
