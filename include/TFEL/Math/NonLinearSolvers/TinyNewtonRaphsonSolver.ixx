@@ -38,7 +38,9 @@ namespace tfel::math {
   TinyNewtonRaphsonSolver<N, NumericType, Child, ExternalWorkSpace>::
       computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
-    child.updateOrCheckJacobian();
+    if (!this->callUpdateOrCheckJacobian()) {
+      return false;
+    }
     if (!child.solveLinearSystem(this->jacobian, this->fzeros)) {
       return false;
     }

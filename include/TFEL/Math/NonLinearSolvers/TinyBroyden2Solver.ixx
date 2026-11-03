@@ -46,9 +46,10 @@ namespace tfel::math {
             typename ExternalWorkSpace>
   bool TinyBroyden2Solver<N, NumericType, Child, ExternalWorkSpace>::
       computeNewCorrection() {
-    auto& child = static_cast<Child&>(*this);
     this->updateJacobianInvert();
-    child.updateOrCheckJacobian();
+    if (!this->callUpdateOrCheckJacobian()) {
+      return false;
+    }
     this->delta_zeros = -(this->inv_jacobian) * (this->fzeros);
     this->fzeros_1 = this->fzeros;
     return true;

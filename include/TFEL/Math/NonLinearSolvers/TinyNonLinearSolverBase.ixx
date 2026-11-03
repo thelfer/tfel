@@ -124,6 +124,24 @@ namespace tfel::math {
             typename Child,
             template <unsigned short, typename>
             typename ExternalWorkSpace>
+  TFEL_HOST_DEVICE bool
+  TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
+      callUpdateOrCheckJacobian() {
+    auto& child = static_cast<Child&>(*this);
+    if constexpr (std::is_same_v<decltype(child.updateOrCheckJacobian()),
+                                 bool>) {
+      return child.updateOrCheckJacobian();
+    } else {
+      child.updateOrCheckJacobian();
+      return true;
+    }
+  }  // end of callUpdateOrCheckJacobian
+
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   template <MatrixConcept FixedSizeMatrixType,
             VectorConcept FixedSizeVectorType>
   TFEL_HOST_DEVICE bool

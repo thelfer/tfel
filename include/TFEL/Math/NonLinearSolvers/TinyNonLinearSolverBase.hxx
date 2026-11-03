@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_HXX
 #define LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_HXX
 
+#include <type_traits>
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 
@@ -196,9 +197,19 @@ namespace tfel::math {
      *
      * This method is not used directly used by the
      * `TinyNonLinearSolverBase`. It is only defined to name an appropriate
-     * method which shall be used in derived class if required.
+     * method which shall be used in derived class if required, through the
+     * `callUpdateOrCheckJacobian` method.
+     *
+     * The derived class may define this method so that it returns a
+     * boolean: `false` reports that the jacobian could not be computed.
      */
     TFEL_HOST_DEVICE constexpr void updateOrCheckJacobian() noexcept {}
+    /*!
+     * \brief call the `updateOrCheckJacobian` method of the derived class.
+     * \return false if this method returns a boolean equal to `false`, true
+     * otherwise
+     */
+    [[nodiscard]] TFEL_HOST_DEVICE bool callUpdateOrCheckJacobian();
     /*!
      * \brief method meant to set bounds on some components of the current
      * correction or to implement a line search or to implement static

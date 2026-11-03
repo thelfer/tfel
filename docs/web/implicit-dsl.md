@@ -152,6 +152,26 @@ defined by a local variable and to update the auxiliary variable in
 the `@UpdateAuxiliaryStateVariables` code block. The previous trick can
 be used in this case in a straightforward manner.
 
+## Failure of the evaluation of the residual for a perturbed estimate
+
+The numerical approximation of the jacobian (or of some of its blocks)
+uses a centered finite difference. If the evaluation of the residual
+fails for one of the two perturbed estimates of an unknown, for example
+because the `@Integrator` code block returns `false` for a negative
+increment of a viscoplastic strain, a one-sided difference based on the
+other perturbed estimate and on the residual at the current estimate is
+used. If the evaluation fails for both perturbed estimates, the
+computation of the jacobian fails: during the iterations, this failure is
+handled as a failure of the computation of the new correction and, once
+the convergence is reached, the integration fails if a tangent operator
+is requested.
+
+The residual at the current estimate is the one stored in `fzeros`,
+which the non-linear solvers compute before the jacobian. A code block
+calling `computeNumericalJacobian` itself, for instance in
+`@InitJacobian`, must thus make sure that `fzeros` holds the residual at
+`zeros`.
+
 
 <!--
 ## Homotopy

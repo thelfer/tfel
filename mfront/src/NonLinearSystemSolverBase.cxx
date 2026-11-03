@@ -130,7 +130,8 @@ namespace mfront {
     out << "tfel::math::tmatrix<" << n << "," << n
         << ",real> tjacobian(this->jacobian);\n"
         << "tfel::math::tvector<" << n << ",real> tfzeros(this->fzeros);\n"
-        << "tfel::math::tvector<" << n << ",real> zeros_safe(this->zeros);\n";
+        << "tfel::math::tvector<" << n << ",real> zeros_safe(this->zeros);\n"
+        << "auto mfront_success = true;\n";
     bool first = true;
     for (const auto& b : blocs) {
       auto getPositionAndSize = [&ivs](const std::string& v)
@@ -169,14 +170,19 @@ namespace mfront {
           }
         }
       };
+      // if the evaluation of the residual fails for one of the two
+      // perturbed estimates, a one-sided difference based on the other one
+      // and on the residual at the current estimate is used
       auto compute_perturbation = [&out, &update_jacobian, &d,
                                    &n](const std::string& j) {
-        out << "this->zeros(" << j
+        out << "if(mfront_success){\n"
+            << "this->zeros(" << j
             << ") -= this->numerical_jacobian_epsilon;\n";
         if (d.hasCode(BehaviourData::ComputeThermodynamicForces)) {
           out << "this->computeThermodynamicForces();\n";
         }
-        out << "this->computeFdF(true);\n"
+        out << "const auto mfront_backward_evaluation = "
+               "this->computeFdF(true);\n"
             << "this->zeros = zeros_safe;\n"
             << "tfel::math::tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
             << "this->zeros(" << j
@@ -184,13 +190,28 @@ namespace mfront {
         if (d.hasCode(BehaviourData::ComputeThermodynamicForces)) {
           out << "this->computeThermodynamicForces();\n";
         }
-        out << "this->computeFdF(true);\n"
+        out << "const auto mfront_forward_evaluation = "
+               "this->computeFdF(true);\n"
             << "this->zeros  = zeros_safe;\n"
+            << "if((mfront_backward_evaluation) && "
+               "(mfront_forward_evaluation)){\n"
             << "this->fzeros = "
                "(this->fzeros-tfzeros2)/"
                "(2*(this->numerical_jacobian_epsilon));\n"
+            << "} else if(mfront_forward_evaluation){\n"
+            << "this->fzeros = "
+               "(this->fzeros-tfzeros)/(this->numerical_jacobian_epsilon);\n"
+            << "} else if(mfront_backward_evaluation){\n"
+            << "this->fzeros = "
+               "(tfzeros-tfzeros2)/(this->numerical_jacobian_epsilon);\n"
+            << "} else {\n"
+            << "mfront_success = false;\n"
+            << "}\n"
+            << "if(mfront_success){\n"
             << "// update jacobian\n";
         update_jacobian(j);
+        out << "}\n"
+            << "}\n";
       };
       if (!first) {
         out << "// restore residual values\n"
@@ -215,7 +236,10 @@ namespace mfront {
     out << "// update jacobian\n"
         << "this->jacobian = tjacobian;\n"
         << "// restore residual values\n"
-        << "this->fzeros = tfzeros;\n";
+        << "this->fzeros = tfzeros;\n"
+        << "if(!mfront_success){\n"
+        << "return false;\n"
+        << "}\n";
   }  // end of
      // NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks
 
@@ -228,8 +252,8 @@ namespace mfront {
       return;
     }
     const auto& d = mb.getBehaviourData(h);
-    out << "auto jacobian_error = real{};"
-        << "this->computeNumericalJacobian(" << nj << ");\n";
+    out << "if(this->computeNumericalJacobian(" << nj << ")){\n"
+        << "auto jacobian_error = real{};\n";
     auto n = SupportedTypes::TypeSize();
     for (const auto& v : d.getIntegrationVariables()) {
       if (v.arraySize == 1) {
@@ -338,6 +362,7 @@ namespace mfront {
         }
       }
     }
+    out << "}\n";
   }  // end of writeComparisonToNumericalJacobian
 
   void NonLinearSystemSolverBase::writeLimitsOnIncrementValues(
