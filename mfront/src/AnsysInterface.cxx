@@ -686,16 +686,26 @@ namespace mfront {
         out << "/com, Example for the '" << ModellingHypothesis::toString(h)
             << "' modelling hypothesis\n";
         out << "/com, List of material properties\n";
+        // one entry per element of an array of material properties
+        auto write_mp = [&out](const BehaviourMaterialProperty& m) {
+          if (m.arraySize == 1u) {
+            out << "/com, -" << m.getExternalName() << "\n";
+          } else {
+            for (unsigned short a = 0; a != m.arraySize; ++a) {
+              out << "/com, -" << m.getExternalName() << "[" << a << "]\n";
+            }
+          }
+        };
         const auto pmp = std::next(
             mps.first.begin(), mps.second.getValueForModellingHypothesis(h));
         for (auto pm = mps.first.begin(); pm != pmp; ++pm) {
-          out << "/com, -" << pm->getExternalName() << "\n";
+          write_mp(*pm);
         }
         for (const auto& a : axes) {
           out << "/com, -" << a << "\n";
         }
         for (auto pm = pmp; pm != mps.first.end(); ++pm) {
-          out << "/com, -" << pm->getExternalName() << "\n";
+          write_mp(*pm);
         }
         out << "tb,user,<mat_id>,<number of temperatures>,"
             << msize.getValueForModellingHypothesis(h) +
