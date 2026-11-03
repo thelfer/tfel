@@ -355,9 +355,8 @@ namespace mfront {
         if (mb.hasAttribute(h, iv.name + "_normalisation_factor")) {
           const auto& nf = mb.getAttribute<std::string>(
               h, iv.name + "_normalisation_factor");
-          out << "if(std::abs(" << v << "[" << n << "+idx])>" << nf
-              << "*(this->" << iv.name
-              << "_maximum_increment_value_per_iteration)){\n";
+          out << "if(std::abs(" << v << "[" << n << "+idx])>(this->" << iv.name
+              << "_maximum_increment_value_per_iteration)/(" << nf << ")){\n";
         } else {
           out << "if(std::abs(" << v << "[" << n << "+idx])>this->" << iv.name
               << "_maximum_increment_value_per_iteration){\n";
@@ -366,8 +365,8 @@ namespace mfront {
         if (mb.hasAttribute(h, iv.name + "_normalisation_factor")) {
           const auto& nf = mb.getAttribute<std::string>(
               h, iv.name + "_normalisation_factor");
-          out << "" << v << "[" << n << "+idx] = -" << nf << "*(this->"
-              << iv.name << "_maximum_increment_value_per_iteration);\n";
+          out << "" << v << "[" << n << "+idx] = -(this->" << iv.name
+              << "_maximum_increment_value_per_iteration)/(" << nf << ");\n";
         } else {
           out << "" << v << "[" << n << "+idx] = -this->" << iv.name
               << "_maximum_increment_value_per_iteration;\n";
@@ -376,8 +375,8 @@ namespace mfront {
         if (mb.hasAttribute(h, iv.name + "_normalisation_factor")) {
           const auto& nf = mb.getAttribute<std::string>(
               h, iv.name + "_normalisation_factor");
-          out << "" << v << "[" << n << "+idx] = " << nf << "*(this->"
-              << iv.name << "_maximum_increment_value_per_iteration);\n";
+          out << "" << v << "[" << n << "+idx] = (this->" << iv.name
+              << "_maximum_increment_value_per_iteration)/(" << nf << ");\n";
         } else {
           out << "" << v << "[" << n << "+idx] =  this->" << iv.name
               << "_maximum_increment_value_per_iteration;\n";
