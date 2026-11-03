@@ -26,6 +26,18 @@ class PyMFrontTest3(unittest.TestCase):
         self.assertEqual(dsl.getFileDescription().fileName,f)
         md = dsl.getMaterialPropertyDescription()
         self.assertEqual(md.getLawName(),'YoungModulus')
+
+    def test_material_property_unit_system(self):
+        # the physical bounds deduced from the unit system do not depend on
+        # the position of @UnitSystem
+        f   = mfront.DSLFactory.getDSLFactory()
+        dsl = f.createNewDSL('MaterialLaw')
+        dsl.analyseString('@Law L;\n@Input T;\n'
+                          'T.setGlossaryName("Temperature");\n'
+                          '@Function{ res = T; }\n@UnitSystem SI;\n')
+        inputs = [v for v in dsl.getMaterialPropertyDescription().getInputs()]
+        self.assertEqual(len(inputs),1)
+        self.assertTrue(inputs[0].hasPhysicalBounds())
         
 if __name__ == '__main__':
     unittest.main()
