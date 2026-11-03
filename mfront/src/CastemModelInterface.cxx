@@ -208,9 +208,18 @@ namespace mfront {
 
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
+      const auto fn = getUmatFunctionName(md);
       os << "/*!\n"
          << " * \\brief function allowing to modify the parameters of the "
          << name << " model\n"
+         << " * \\param[in] n: name of the parameter\n"
+         << " * \\param[in] v: value of the parameter\n"
+         << " */\n"
+         << "MFRONT_SHAREDOBJ int\n"
+         << fn << "_setParameter(const char *const, const double);\n\n"
+         << "/*!\n"
+         << " * \\brief same as " << fn
+         << "_setParameter, kept for backward compatibility\n"
          << " * \\param[in] n: name of the parameter\n"
          << " * \\param[in] v: value of the parameter\n"
          << " */\n"
@@ -643,7 +652,7 @@ namespace mfront {
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
       os << "MFRONT_SHAREDOBJ int\n"
-         << name << "_setParameter(const char *const n, const double v){\n";
+         << fn << "_setParameter(const char *const n, const double v){\n";
       writeScalarStandardTypedefs(os, md);
       os << "auto& parameters = castem::" << cn << "::get();\n";
       auto first = true;
@@ -674,6 +683,10 @@ namespace mfront {
       }
       os << "}\n"
          << "return 0;\n"
+         << "} // end of " << fn << "_setParameter\n\n";
+      os << "MFRONT_SHAREDOBJ int\n"
+         << name << "_setParameter(const char *const n, const double v){\n"
+         << "return " << fn << "_setParameter(n, v);\n"
          << "} // end of " << name << "_setParameter\n\n";
     }
     //
