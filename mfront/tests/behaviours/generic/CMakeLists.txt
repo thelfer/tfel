@@ -206,6 +206,12 @@ if(enable-mfront-quantity-tests)
        ode_implicit
        BarBehaviour2
        BarBehaviour4
+       Norton_euler_qt
+       Norton_rk2_qt
+       Norton_rk42_qt
+       Norton_rk4_qt
+       Norton_rk54_qt
+       Norton_rkCastem_qt
 )
 endif(enable-mfront-quantity-tests)
 
@@ -255,12 +261,6 @@ mfront_behaviour_check_library(MFrontGenericBehaviours generic
 
 if(enable-mfront-quantity-tests)
   mfront_behaviour_check_library(MFrontGenericBehaviours2 generic
-    Norton_euler_qt
-    Norton_rk2_qt
-    Norton_rk42_qt
-    Norton_rk4_qt
-    Norton_rk54_qt
-    Norton_rkCastem_qt
     ImplicitNorton7
     ImplicitOrthotropicCreep3
     ImplicitOrthotropicCreep4)
@@ -859,6 +859,12 @@ if(enable-mfront-quantity-tests)
   test_generic(ode_default ode_default.ref)
   test_generic(ode_implicit ode_implicit.ref)
   test_generic(ode_rk54 ode_rk54.ref)
+  test_generic(norton-qt-euler)
+  test_generic(norton-qt-rk2)
+  test_generic(norton-qt-rk4)
+  test_generic(norton-qt-rk42)
+  test_generic(norton-qt-rk54)
+  test_generic(norton-qt-rkCastem)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-2D logarithmicstrainelasticity-shear.ref)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D logarithmicstrainelasticity-shear.ref)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D logarithmicstrainelasticity-shear.ref)
