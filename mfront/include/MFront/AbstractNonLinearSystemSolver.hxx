@@ -144,6 +144,12 @@ namespace mfront {
 
   };  // end of struct AbstractNonLinearSystemSolver
 
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \deprecated use `AbstractNonLinearSystemSolver`
+   */
+  using NonLinearSystemSolver = AbstractNonLinearSystemSolver;
+
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_ABSTRACTNONLINEARSYSTEMSOLVER_HXX */
