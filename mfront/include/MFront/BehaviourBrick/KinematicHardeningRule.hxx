@@ -165,6 +165,33 @@ namespace mfront::bbrick {
         const std::string&,
         const std::string&,
         const bool) const = 0;
+    /*!
+     * \return the code computing the implicit equations associated with the
+     * back-strains and the derivatives of those equations (if requested) when
+     * the inelastic flow is inactive, i.e. when the code returned by the
+     * `buildBackStrainImplicitEquations` method is not executed.
+     *
+     * Only the terms which do not depend on the increment of the equivalent
+     * plastic strain, such as a static recovery, shall be computed. By
+     * default, an empty string is returned.
+     *
+     * \param[in] bd: behaviour description
+     * \param[in] sp: stress potential
+     * \param[in] fc: flow criterion
+     * \param[in] khrs: list of kinematic hardening rules
+     * \param[in] fid: flow id
+     * \param[in] kid: kinematic hardening rule id
+     * \param[in] b: compute derivatives
+     */
+    [[nodiscard]] virtual std::string
+    buildBackStrainImplicitEquationsForAnInactiveFlow(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const StressCriterion&,
+        const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
+        const std::string&,
+        const std::string&,
+        const bool) const;
     //! \brief destructor
     virtual ~KinematicHardeningRule();
   };  // end of struct KinematicHardeningRule
