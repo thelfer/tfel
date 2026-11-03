@@ -1,4 +1,5 @@
 import tfel.material
+import tfel.utilities
 from ._mfront import *
 
 initDSLs()
