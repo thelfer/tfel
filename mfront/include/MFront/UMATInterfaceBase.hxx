@@ -348,6 +348,18 @@ namespace mfront {
     virtual void writeMTestFileGeneratorSetRotationMatrix(
         std::ostream&, const BehaviourDescription&) const;
     /*!
+     * \brief write the code giving the strain at the beginning of the time
+     * step, the strain increment and the stress at the beginning of the time
+     * step of a strain based behaviour to the generator of `MTest` files. The
+     * generator expects the components in the order of the symmetric tensors
+     * of TFEL. The default implementation gives the arrays `STRAN`, `DSTRAN`
+     * and `mg_STRESS` unchanged.
+     * \param[in] out : output file
+     * \param[in] h   : modelling hypothesis
+     */
+    virtual void writeMTestFileGeneratorSetStrainAndStressTensors(
+        std::ostream&, const Hypothesis) const;
+    /*!
      * \param[in] out : output file
      */
     virtual void writeMTestFileGeneratorSetModellingHypothesis(

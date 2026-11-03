@@ -596,6 +596,35 @@ namespace mfront {
     out << "mg.setModellingHypothesis(h);\n";
   }  // end of AnsysInterface::writeMTestFileGeneratorSetModellingHypothesis
 
+  void AnsysInterface::writeMTestFileGeneratorSetStrainAndStressTensors(
+      std::ostream& out, const Hypothesis h) const {
+    if (h == ModellingHypothesis::PLANESTRESS) {
+      // only the in-plane components are given (11, 22 and 12)
+      out << "const double mg_eto[4] = {STRAN[0], STRAN[1], 0, STRAN[2]};\n"
+          << "const double mg_deto[4] = "
+          << "{DSTRAN[0], DSTRAN[1], 0, DSTRAN[2]};\n"
+          << "const double mg_sig[4] = "
+          << "{mg_STRESS[0], mg_STRESS[1], 0, mg_STRESS[2]};\n"
+          << "mg.setStrainTensor(mg_eto);\n"
+          << "mg.setStrainTensorIncrement(mg_deto);\n"
+          << "mg.setStressTensor(mg_sig);\n";
+    } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      // the shear components are given in the order 12, 23, 13
+      out << "const double mg_eto[6] = {STRAN[0], STRAN[1], STRAN[2], "
+          << "STRAN[3], STRAN[5], STRAN[4]};\n"
+          << "const double mg_deto[6] = {DSTRAN[0], DSTRAN[1], DSTRAN[2], "
+          << "DSTRAN[3], DSTRAN[5], DSTRAN[4]};\n"
+          << "const double mg_sig[6] = {mg_STRESS[0], mg_STRESS[1], "
+          << "mg_STRESS[2], mg_STRESS[3], mg_STRESS[5], mg_STRESS[4]};\n"
+          << "mg.setStrainTensor(mg_eto);\n"
+          << "mg.setStrainTensorIncrement(mg_deto);\n"
+          << "mg.setStressTensor(mg_sig);\n";
+    } else {
+      UMATInterfaceBase::writeMTestFileGeneratorSetStrainAndStressTensors(out,
+                                                                          h);
+    }
+  }  // end of AnsysInterface::writeMTestFileGeneratorSetStrainAndStressTensors
+
   void AnsysInterface::writeInputFileExample(const BehaviourDescription& mb,
                                              const FileDescription& fd) const {
     try {
@@ -1317,9 +1346,14 @@ namespace mfront {
         << " EPSPL,PROPS,coords,DROT,F0,F1,tsstif,EPSZZ,\n"
         << " var1,var2,var3,var4,var5,var6,var7,var8);\n";
     if (this->shallGenerateMTestFileOnFailure(mb)) {
+      // the entry point of the modelling hypothesis is named after the
+      // behaviour followed by the suffix of the hypothesis
+      // (getFunctionNameForHypothesis("", h) returns this suffix preceded by
+      // an underscore)
+      const auto suffix = this->getFunctionNameForHypothesis("", h).substr(1);
       out << "if(*keycut!=0){\n";
       this->generateMTestFileForHypothesis(out, mb, mb.getBehaviourType(), name,
-                                           "", h);
+                                           suffix, h);
       out << "}\n";
     }
     if (this->compareToNumericalTangentOperator) {

@@ -1223,9 +1223,7 @@ namespace mfront {
         << "mg.addTime(0.);\n"
         << "mg.addTime(dt);\n";
     if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "mg.setStrainTensor(STRAN);\n"
-          << "mg.setStrainTensorIncrement(DSTRAN);\n"
-          << "mg.setStressTensor(&mg_STRESS[0]);\n";
+      this->writeMTestFileGeneratorSetStrainAndStressTensors(out, h);
     } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n"
           << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n"
@@ -1353,6 +1351,13 @@ namespace mfront {
           << "DROT[2],DROT[5],DROT[8]);\n";
     }
   }  // end of writeMTestFileGeneratorSetRotationMatrix
+
+  void UMATInterfaceBase::writeMTestFileGeneratorSetStrainAndStressTensors(
+      std::ostream& out, const Hypothesis) const {
+    out << "mg.setStrainTensor(STRAN);\n"
+        << "mg.setStrainTensorIncrement(DSTRAN);\n"
+        << "mg.setStressTensor(&mg_STRESS[0]);\n";
+  }  // end of writeMTestFileGeneratorSetStrainAndStressTensors
 
   bool UMATInterfaceBase::areExternalStateVariablesSupported() const {
     return true;
