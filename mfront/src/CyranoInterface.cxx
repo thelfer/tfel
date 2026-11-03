@@ -111,7 +111,7 @@ namespace mfront {
                                 tokens_iterator current,
                                 const tokens_iterator end) {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "Cyrano::treatKeyword: " + m);
+      tfel::raise_if(b, "CyranoInterface::treatKeyword: " + m);
     };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) == i.end()) {
@@ -253,7 +253,7 @@ namespace mfront {
     using namespace tfel::system;
     using namespace tfel::utilities;
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "Cyrano::endTreatment: " + m);
+      tfel::raise_if(b, "CyranoInterface::endTreatment: " + m);
     };
     this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     // get the modelling hypotheses to be treated

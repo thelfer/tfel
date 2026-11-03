@@ -1183,7 +1183,7 @@ namespace mfront {
         return "SupportedTypes::TENSOR";
       }
       tfel::raise(
-          "GenericBehaviourInterface::generateMTestFile: "
+          "UMATInterfaceBase::generateMTestFileForHypothesis: "
           "unsupported type flag");
     };
     const auto& d = bd.getBehaviourData(h);
