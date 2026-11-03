@@ -14,6 +14,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <utility>
 #include <iterator>
 #include <stdexcept>
 #include <algorithm>
@@ -111,7 +112,7 @@ namespace mfront {
                                 tokens_iterator current,
                                 const tokens_iterator end) {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "Cyrano::treatKeyword: " + m);
+      tfel::raise_if(b, "CyranoInterface::treatKeyword: " + m);
     };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) == i.end()) {
@@ -163,15 +164,18 @@ namespace mfront {
                "@CyranoMaximumSubStepping");
       const bool safe = readSafeOptionTypeIfPresent(current, end);
       throw_if(current == end, "unexpected end of file");
-      std::istringstream flux(current->value);
-      flux >> this->maximumSubStepping;
-      throw_if(flux.fail(), "failed to read maximum substepping value.");
+      // checked conversion: negative and non integer values are rejected
+      const auto mss =
+          tfel::utilities::CxxTokenizer::readUnsignedInt(current, end);
+      throw_if(!std::in_range<unsigned short>(mss),
+               "maximum substepping value out of range (" +
+                   std::to_string(mss) + ")");
+      this->maximumSubStepping = static_cast<unsigned short>(mss);
       if ((this->maximumSubStepping > 3) && (!safe)) {
         reportWarning("the maximum number of substeps specified is to high (" +
                       std::to_string(this->maximumSubStepping) +
                       "). It is recommended to allow at most 3 substeps.");
       }
-      ++(current);
       throw_if(current == end, "unexpected end of file");
       throw_if(current->value != ";",
                "expected ';',read '" + current->value + "'");
@@ -253,7 +257,7 @@ namespace mfront {
     using namespace tfel::system;
     using namespace tfel::utilities;
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "Cyrano::endTreatment: " + m);
+      tfel::raise_if(b, "CyranoInterface::endTreatment: " + m);
     };
     this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     // get the modelling hypotheses to be treated

@@ -27,8 +27,9 @@ namespace tfel::material {
    * \sigma_{\mathrm{eq}}^{C}=
    * \sqrt[3]{\left(J_{2}^{O}\right)^{3/2} - c\,J_{3}^{O}}
    * \f]
-   * where \(J_{2}\) and \(J_{3}\) are the first and second invariants
-   * of the deviatoric part of the stress tensor
+   * where \(J_{2}^{O}\) and \(J_{3}^{O}\) are the orthotropic generalizations
+   * of the second and third invariants of the deviatoric part of the stress
+   * tensor
    *
    * Cazacu, Oano and Barlat, Frédéric. 2004.
    * “A Criterion for Description of Anisotropy and Yield Differential

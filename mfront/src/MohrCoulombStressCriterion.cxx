@@ -51,7 +51,7 @@ namespace mfront::bbrick {
                    "MohrCoulombStressCriterion::initialize: "
                    "material property 'c' is not defined");
     this->c = getBehaviourDescriptionMaterialProperty(dsl, "c", d.at("c"));
-    declareParameterOrLocalVariable(bd, this->c, "real", cn);
+    declareParameterOrLocalVariable(bd, this->c, "stress", cn);
     const auto phin = StressCriterion::getVariableId("phi", id, r);
     tfel::raise_if(d.count("phi") == 0,
                    "MohrCoulombStressCriterion::initialize: "
@@ -71,7 +71,7 @@ namespace mfront::bbrick {
                    "MohrCoulombStressCriterion::initialize: "
                    "material property 'a' is not defined");
     this->a = getBehaviourDescriptionMaterialProperty(dsl, "a", d.at("a"));
-    declareParameterOrLocalVariable(bd, this->a, "real", an);
+    declareParameterOrLocalVariable(bd, this->a, "stress", an);
     const auto pn = StressCriterion::getVariableId("mcsc_parameters", id, r);
     bd.addLocalVariable(
         uh, VariableDescription("MohrCoulombParameters<StressStensor>", pn, 1u,

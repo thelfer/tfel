@@ -20,6 +20,7 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/QR/QRException.hxx"
 
@@ -48,7 +49,9 @@ namespace tfel::math {
       rdiag(k) = alpha;
       a(k, k) -= alpha;
       index_type<MatrixType> nk = k + 1;
-      if (nk != m) {
+      // a null sub-column gives a null beta: the householder
+      // transformation is then the identity
+      if (tfel::math::ieee754::fpclassify(beta[k]) != FP_ZERO) {
         for (index_type<MatrixType> j = nk; j != n; ++j) {
           auto gamma = real(0);
           for (index_type<MatrixType> i = k; i != m; ++i) {
@@ -76,6 +79,10 @@ namespace tfel::math {
     }
     if ((n != beta.size()) || (m != v.size())) {
       throw(QRUnmatchedSize());
+    }
+    // a null beta denotes the identity, see QRDecomp::exe
+    if (tfel::math::ieee754::fpclassify(beta(c)) == FP_ZERO) {
+      return;
     }
     auto gamma = real(0);
     for (index_type<MatrixType> i = c; i != m; ++i) {

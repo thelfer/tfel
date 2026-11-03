@@ -3,11 +3,13 @@ if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
   set(tfel_material_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.material")
   set(mfront_python_module "mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
   set(mtest_python_module "mtest_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mfm_test_generator_python_module "mfm_test_generator_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
 else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
   set(tfel_system_python_module "tfel.system")
   set(tfel_material_python_module "tfel.material")
   set(mfront_python_module "mfront")
   set(mtest_python_module "mtest")
+  set(mfm_test_generator_python_module "mfm_test_generator")
 endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 
 configure_file(behaviour-constructors.py.in behaviour-constructors.py @ONLY)
@@ -54,6 +56,14 @@ if(HAVE_ASTER)
 endif(HAVE_ASTER)
 test_pymfront(test2)
 test_pymfront(test3)
+
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  configure_file(mfm-test-generator.py.in mfm-test-generator.py @ONLY)
+  add_test(NAME pymfm_test_generator_py
+    COMMAND ${Python_EXECUTABLE} mfm-test-generator.py)
+  set_tests_properties(pymfm_test_generator_py
+    PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
+endif(NOT CMAKE_CONFIGURATION_TYPES)
 
 test_pymfront_mp("generic" "$<TARGET_FILE:MFrontMaterialProperties-generic>" "VanadiumAlloy_YoungModulus_SRMA")
 test_pymfront_mp("c" "$<TARGET_FILE:MFrontMaterialProperties>" "VanadiumAlloy_YoungModulus_SRMA")

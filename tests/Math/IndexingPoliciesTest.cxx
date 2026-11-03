@@ -15,6 +15,7 @@
 #undef NDEBUG
 #endif
 
+#include <array>
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
@@ -64,6 +65,7 @@ struct IndexingPoliciesTest final : public tfel::tests::TestCase {
   }  // end of IndexingPoliciesTest
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }  // end of execute
  private:
@@ -91,6 +93,18 @@ struct IndexingPoliciesTest final : public tfel::tests::TestCase {
     constexpr FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, 3, 2, 3> p3;
     TFEL_TESTS_STATIC_ASSERT(p3.getUnderlyingArrayMinimalSize() == 8);
   }  // end of test1
+  void test2() {
+    using namespace tfel::math;
+    using IndexingPolicy1 = FixedSizeVectorIndexingPolicy<unsigned short, 3>;
+    using IndexingPolicy2 = ScalarIndexingPolicy<unsigned short>;
+    using IndexingPolicy =
+        FixedSizeIndexingPoliciesCartesianProduct<IndexingPolicy1,
+                                                  IndexingPolicy2, 4>;
+    constexpr IndexingPolicy p;
+    TFEL_TESTS_STATIC_ASSERT(IndexingPolicy::arity == 1);
+    TFEL_TESTS_STATIC_ASSERT(p.getIndex(2) == 8);
+    TFEL_TESTS_STATIC_ASSERT(p.getIndex(std::array<unsigned short, 1>{2}) == 8);
+  }  // end of test2
 };
 
 TFEL_TESTS_GENERATE_PROXY(IndexingPoliciesTest, "IndexingPoliciesTest");

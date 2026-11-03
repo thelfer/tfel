@@ -409,7 +409,7 @@ namespace tfel::math {
         return getIndexPolicyIndex<IndexingPolicy2>(indices, r2);
       } else if constexpr (IndexingPolicy2::arity == 0) {
         const tfel::meta::make_integer_range<size_type, 0, arity> r1;
-        return getIndexPolicyIndex<IndexingPolicy1>(indices, r1);
+        return getIndexPolicyIndex<IndexingPolicy1>(indices, r1) * Stride;
       } else {
         const tfel::meta::make_integer_range<size_type, 0, a1> r1;
         const tfel::meta::make_integer_range<size_type, a1, arity> r2;

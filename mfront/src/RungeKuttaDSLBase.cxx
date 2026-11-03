@@ -13,6 +13,7 @@
 
 #include <string>
 #include <sstream>
+#include <utility>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
@@ -232,6 +233,15 @@ namespace mfront {
   std::string RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
+    if ((this->mb.isGradientName(var)) &&
+        (!Gradient::isIncrementKnown(
+            std::as_const(this->mb).getGradient(var)))) {
+      if (addThisPtr) {
+        return "this->" + var + "1";
+      } else {
+        return var + "1";
+      }
+    }
     if ((this->mb.isGradientName(var)) ||
         (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
@@ -719,7 +729,11 @@ namespace mfront {
         for (const auto& vm : this->mb.getMainVariables()) {
           const auto& dv = vm.first;
           if (uvs.find(dv.name) != uvs.end()) {
-            ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
+            if (Gradient::isIncrementKnown(dv)) {
+              ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
+            } else {
+              ib.code += "this->" + dv.name + "_ = this->" + dv.name + "0;\n";
+            }
           }
         }
       }

@@ -91,10 +91,17 @@ namespace tfel::material {
       return (3 * p.q_2 * tfel::math::abs(pr)) / den;
     }
     // Second order approximation (development of the hyperbolic cosine to the
-    // second order)
-    const auto x0 =
-        std::sqrt((4 * (1 + p.q_3 * fstar * fstar - 2 * p.q_1 * fstar)) /
-                  (4 * seq2 + 9 * p.q_1 * p.q_2 * p.q_2 * fstar * pr2));
+    // second order), bounded by the solution for a vanishing von Mises stress
+    // so that the Newton-Raphson algorithm does not start far in the
+    // exponential branch of the hyperbolic cosine
+    auto x0 = std::sqrt((4 * (1 + p.q_3 * fstar * fstar - 2 * p.q_1 * fstar)) /
+                        (4 * seq2 + 9 * p.q_1 * p.q_2 * p.q_2 * fstar * pr2));
+    if (p.q_1 * fstar > 0) {
+      x0 = std::min(
+          x0,
+          2 * std::acosh((1 + p.q_3 * fstar * fstar) / (2 * p.q_1 * fstar)) /
+              (3 * p.q_2 * tfel::math::abs(pr)));
+    }
     //
     const auto SdS = [seq2, pr, fstar, p](const istress x) {
       const auto fstar2 = fstar * fstar;

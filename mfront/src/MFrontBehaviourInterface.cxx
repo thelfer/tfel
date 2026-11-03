@@ -41,7 +41,7 @@ namespace mfront {
                                          tokens_iterator current,
                                          const tokens_iterator) {
     tfel::raise_if(std::find(i.begin(), i.end(), "mfront") != i.end(),
-                   "MFrontMaterialPropertyInterface::treatKeyword: "
+                   "MFrontBehaviourInterface::treatKeyword: "
                    "unsupported key '" +
                        k + "'");
     return {false, current};

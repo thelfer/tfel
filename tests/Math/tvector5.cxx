@@ -34,6 +34,7 @@ struct TVectorTest5 final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }  // end of execute
 
@@ -65,6 +66,15 @@ struct TVectorTest5 final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(v1[1] + 4.2) < eps);
     TFEL_TESTS_ASSERT(std::abs(v1[2] + 0.3) < eps);
   }  // end of test3
+  void test4() {
+    // sum of the absolute values of the components of a vector and of an
+    // expression whose result is a vector
+    constexpr auto eps = double(1.e-14);
+    const tfel::math::tvector<3u, double> v1{1.2, -4.2, -0.3};
+    const tfel::math::tvector<3u, double> v2{0.5, 1, -2};
+    TFEL_TESTS_ASSERT(std::abs(tfel::math::abs(v1) - 5.7) < eps);
+    TFEL_TESTS_ASSERT(std::abs(tfel::math::abs(v1 - 2 * v2) - 10.1) < eps);
+  }  // end of test4
 };
 
 TFEL_TESTS_GENERATE_PROXY(TVectorTest5, "TVectorTest5");

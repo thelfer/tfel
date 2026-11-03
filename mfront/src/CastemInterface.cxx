@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <utility>
 #include <iterator>
 #include <algorithm>
 #include <sstream>
@@ -386,6 +387,9 @@ namespace mfront {
       throw_if(current == end, "unexpected end of file");
       const bool safe = readSafeOptionTypeIfPresent(current, end);
       const auto mss = CxxTokenizer::readUnsignedInt(current, end);
+      throw_if(!std::in_range<unsigned short>(mss),
+               "maximum substepping value out of range (" +
+                   std::to_string(mss) + ")");
       if ((mss > 3) && (!safe)) {
         reportWarning("the maximum number of substeps specified is to high (" +
                       std::to_string(mss) +
@@ -2794,6 +2798,7 @@ namespace mfront {
                      "CastemInterface::generateInputFileExample: "
                      "could not open file '" +
                          fileName + "'");
+      out.precision(14);
       // header
       out << "*\n"
           << "* \\file   " << fd.fileName << '\n'

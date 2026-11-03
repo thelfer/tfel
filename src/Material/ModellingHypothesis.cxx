@@ -98,7 +98,7 @@ namespace tfel::material {
       return TRIDIMENSIONAL;
     }
     raise(
-        "MFrontBehaviourParserCommon::getModellingHypothesisFromString: "
+        "ModellingHypothesis::fromString: "
         "invalid or unsupported hypothesis '" +
         h +
         "'. The following "

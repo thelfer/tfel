@@ -221,6 +221,9 @@ namespace mfront {
     this->bd.reserveName(h, "fsscb_data");
     this->bd.reserveName(h, "fsscb_tprd");
     this->bd.reserveName(h, "fsscb_dfeel_dinv_dFp");
+    this->bd.reserveName(h, "fsscb_c");
+    this->bd.reserveName(h, "fsscb_iinv_dFp_t");
+    this->bd.reserveName(h, "fsscb_mu");
     this->bd.reserveName(h, "fsscb_dC_dFe");
     this->bd.reserveName(h, "fsscb_dS_dFe");
     this->bd.reserveName(h, "fsscb_dtau_dFe");
@@ -330,10 +333,19 @@ namespace mfront {
           "t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr);\n"
           "const auto fsscb_dfeel_dinv_dFp = "
           "t2tost2<N,real>::dCdF(this->Fe)*fsscb_tprd;\n"
+          "// derivatives of the normalised inverse of the plastic\n"
+          "// deformation gradient increment with respect to dg\n"
+          "const auto fsscb_c = "
+          "CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
+          "const auto fsscb_iinv_dFp_t = "
+          "transpose(invert(this->fsscb_data.inv_dFp));\n"
           "for(unsigned short i=0;i!=" +
           cn +
           "::Nss;++i){\n"
-          "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*ss.mu[i]/2;\n"
+          "  const auto fsscb_mu = "
+          "eval((ss.mu[i] - ((fsscb_iinv_dFp_t | ss.mu[i]) / 3) * "
+          "(this->fsscb_data.inv_dFp)) / fsscb_c);\n"
+          "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*fsscb_mu/2;\n"
           "}\n";
     }
     integrator.members = {"eel", "Fe", "D"};
@@ -411,12 +423,19 @@ namespace mfront {
         cn +
         "::Nss,Stensor> fsscb_Jg;\n"
         "getPartialJacobianInvert(fsscb_Je,fsscb_Jg);\n"
-        "t2tot2<N,real> fsscb_dinv_Fp_dDF = "
-        "(ss.mu[0])^(fsscb_Jg[0]|fsscb_dfeel_dDF);\n"
-        "for(unsigned short i=1;i!=" +
+        "// derivatives of the normalised inverse of the plastic\n"
+        "// deformation gradient increment with respect to dg\n"
+        "const auto fsscb_c = CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
+        "const auto fsscb_iinv_dFp_t = "
+        "transpose(invert(this->fsscb_data.inv_dFp));\n"
+        "t2tot2<N,real> fsscb_dinv_Fp_dDF(real(0));\n"
+        "for(unsigned short i=0;i!=" +
         cn +
         "::Nss;++i){\n"
-        "  fsscb_dinv_Fp_dDF += (ss.mu[i])^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
+        "  const auto fsscb_mu = "
+        "eval((ss.mu[i] - ((fsscb_iinv_dFp_t | ss.mu[i]) / 3) * "
+        "(this->fsscb_data.inv_dFp)) / fsscb_c);\n"
+        "  fsscb_dinv_Fp_dDF += (fsscb_mu)^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
         "}\n"
         "const auto fsscb_dFe_dDF=\n"
         "  "

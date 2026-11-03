@@ -21,10 +21,13 @@ namespace tfel::material {
   template <typename StressStensor>
   Cazacu2004StressType<StressStensor> computeCazacu2004IsotropicStressCriterion(
       const StressStensor& sig, const Cazacu2004BaseType<StressStensor> c) {
+    using stress = Cazacu2004StressType<StressStensor>;
     const auto s = tfel::math::deviator(sig);
     const auto J2 = (s | s) / 2;
     const auto J3 = det(s);
-    return std::cbrt(tfel::math::power<3>(sqrt(J2)) - c * J3);
+    const auto sJ2 = tfel::math::power<1, 2>(J2);
+    return stress(std::cbrt(
+        tfel::math::base_type_cast(tfel::math::power<3>(sJ2) - c * J3)));
   }  // end of computeCazacu2004IsotropicStressCriterion
 
   template <typename StressStensor>
@@ -34,15 +37,18 @@ namespace tfel::material {
       const StressStensor& sig,
       const Cazacu2004BaseType<StressStensor> c,
       const Cazacu2004StressType<StressStensor> seps) {
+    using stress = Cazacu2004StressType<StressStensor>;
     const auto s = tfel::math::deviator(sig);
     const auto J2 = (s | s) / 2;
     const auto J3 = tfel::math::det(s);
-    const auto seq = std::cbrt(tfel::math::power<3>(std::sqrt(J2)) - c * J3);
+    const auto sJ2 = tfel::math::power<1, 2>(J2);
+    const auto seq = stress(std::cbrt(
+        tfel::math::base_type_cast(tfel::math::power<3>(sJ2) - c * J3)));
     const auto iseq = 1 / std::max(seq, seps);
     // the derivative of J2 is s
     const auto dJ3 = tfel::math::computeDeviatorDeterminantDerivative(sig);
     // the normal is written n = nb/(seq*seq)
-    const auto nb = (std::sqrt(J2) / 2) * s - (c / 3) * dJ3;
+    const auto nb = (sJ2 / 2) * s - (c / 3) * dJ3;
     return std::make_tuple(seq, tfel::math::eval(iseq * iseq * nb));
   }  // end of computeCazacu2004IsotropicStressCriterionNormal
 
@@ -55,11 +61,14 @@ namespace tfel::material {
       const Cazacu2004BaseType<StressStensor> c,
       const Cazacu2004StressType<StressStensor> seps) {
     using real = Cazacu2004BaseType<StressStensor>;
+    using stress = Cazacu2004StressType<StressStensor>;
     constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
     const auto s = tfel::math::deviator(sig);
     const auto J2 = (s | s) / 2;
     const auto J3 = tfel::math::det(s);
-    const auto seq = std::cbrt(tfel::math::power<3>(std::sqrt(J2)) - c * J3);
+    const auto sJ2 = tfel::math::power<1, 2>(J2);
+    const auto seq = stress(std::cbrt(
+        tfel::math::base_type_cast(tfel::math::power<3>(sJ2) - c * J3)));
     const auto iseq = 1 / std::max(seq, seps);
     // the derivative of J2 is s
     const auto d2J2 = tfel::math::st2tost2<N, real>::K();
@@ -67,9 +76,9 @@ namespace tfel::material {
     const auto d2J3 =
         tfel::math::computeDeviatorDeterminantSecondDerivative(sig);
     // the normal is written n = nb/(seq*seq)
-    const auto nb = (std::sqrt(J2) / 2) * s - (c / 3) * dJ3;
-    const auto dnb = 1 / (4 * std::max(std::sqrt(J2), seps)) * (s ^ s) +
-                     (std::sqrt(J2) / 2) * d2J2 - (c / 3) * d2J3;
+    const auto nb = (sJ2 / 2) * s - (c / 3) * dJ3;
+    const auto dnb = 1 / (4 * std::max(sJ2, seps)) * (s ^ s) +
+                     (sJ2 / 2) * d2J2 - (c / 3) * d2J3;
     const auto n = tfel::math::eval(iseq * iseq * nb);
     return std::make_tuple(
         seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb)));

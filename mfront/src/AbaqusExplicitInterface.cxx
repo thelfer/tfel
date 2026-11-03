@@ -386,7 +386,8 @@ namespace mfront {
     this->getExtraSrcIncludes(out, mb);
 
     if (ppolicy == "ThreadPool") {
-      out << "#include\"TFEL/System/ThreadPool.hxx\"\n";
+      out << "#include<atomic>\n"
+          << "#include\"TFEL/System/ThreadPool.hxx\"\n";
     }
     out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
         << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
@@ -904,27 +905,37 @@ namespace mfront {
     }
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::"
+      out << "auto r = 0;\n"
+          << "try{\n"
+          << "r = abaqus::AbaqusExplicitInterface<ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << "," << t << ","
-          << mb.getClassName() << ">::computeElasticPrediction(D,d)!=0){\n"
-          << "std::cerr << \"" << mb.getClassName()
-          << ": elastic loading failed\\n\";\n"
-          << "::exit(-1);\n"
-          << "}\n";
+          << mb.getClassName() << ">::computeElasticPrediction(D,d);\n";
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::"
+      out << "auto r = 0;\n"
+          << "try{\n"
+          << "r = abaqus::AbaqusExplicitInterface<ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << "," << t << ","
-          << mb.getClassName() << ">::computeElasticPrediction2(D,d)!=0){\n"
-          << "std::cerr << \"" << mb.getClassName()
-          << ": elastic loading failed\\n\";\n"
-          << "::exit(-1);\n"
-          << "}\n";
+          << mb.getClassName() << ">::computeElasticPrediction2(D,d);\n";
     } else {
       tfel::raise(
           "AbaqusExplicitInterface::writeComputeElasticPrediction: "
           "unsupported behaviour type");
     }
+    out << "} catch(const std::exception& e){\n"
+        << "std::cerr << \"" << mb.getClassName()
+        << ": \" << e.what() << '\\n';\n"
+        << "r = -1;\n"
+        << "} catch(...){\n"
+        << "std::cerr << \"" << mb.getClassName()
+        << ": unknown exception\\n\";\n"
+        << "r = -1;\n"
+        << "}\n"
+        << "if(r!=0){\n"
+        << "std::cerr << \"" << mb.getClassName()
+        << ": elastic loading failed\\n\";\n"
+        << "::exit(-1);\n"
+        << "}\n";
     if (mfront_omp) {
       if (h == ModellingHypothesis::PLANESTRESS) {
         out << "abaqus::AbaqusRotation2D<" << t << "> R(cview(stateOld+i));\n"
@@ -1039,15 +1050,38 @@ namespace mfront {
     // parallel policy
     const auto ppolicy = bd.getAttribute<std::string>(
         AbaqusExplicitParallelizationPolicy, "None");
+    // the exceptions thrown at an integration point are reported and
+    // treated as an integration failure
+    out << "auto integrate_ = [&integrate](const int i) -> bool {\n"
+        << "try{\n"
+        << "return integrate(i);\n"
+        << "} catch(const std::exception& e){\n"
+        << "std::cerr << \"" << bd.getClassName()
+        << ": \" << e.what() << '\\n';\n"
+        << "} catch(...){\n"
+        << "std::cerr << \"" << bd.getClassName()
+        << ": unknown exception\\n\";\n"
+        << "}\n"
+        << "return false;\n"
+        << "};\n";
+    // the computation is stopped by the calling thread
     if (ppolicy == "None") {
       out << "for(int i=0;i!=*nblock;++i){\n"
-          << "integrate(i);\n"
+          << "if(!integrate_(i)){\n"
+          << "std::cerr << \"" << bd.getClassName()
+          << ": behaviour integration failed\\n\";\n"
+          << "::exit(-1);\n"
+          << "}\n"
           << "}\n";
     } else if (ppolicy == "ThreadPool") {
-      out << "auto integrate2 = [&integrate,nblock](const int b, const int "
+      out << "std::atomic<bool> failed(false);\n"
+          << "auto integrate2 = [&integrate_,&failed](const int b, const int "
              "e){\n"
           << "for(int i=b;i!=e;++i){\n"
-          << "integrate(i);\n"
+          << "if(!integrate_(i)){\n"
+          << "failed = true;\n"
+          << "return;\n"
+          << "}\n"
           << "}\n"
           << "};\n"
           << "const auto nthreads = pool.getNumberOfThreads();\n"
@@ -1060,7 +1094,12 @@ namespace mfront {
           << "if(nb-ntasks*nthreads!=0){\n"
           << "pool.addTask(integrate2,nthreads*ntasks,nb);\n"
           << "}\n"
-          << "pool.wait();\n";
+          << "pool.wait();\n"
+          << "if(failed){\n"
+          << "std::cerr << \"" << bd.getClassName()
+          << ": behaviour integration failed\\n\";\n"
+          << "::exit(-1);\n"
+          << "}\n";
     } else {
       tfel::raise(
           "AbaqusExplicitInterface::writeIntegrateLoop: "
@@ -1135,7 +1174,7 @@ namespace mfront {
         out << "std::cerr << \"no state variable standing for the axial strain "
                "(variable with the "
             << "glossary name 'AxialStrain')\" << std::endl;\n";
-        out << "::exit(-1);\n";
+        out << "return false;\n";
       }
       out << "const stensor<2u," << t << "> eto  = {zero,zero,zero,zero};\n"
           << "const stensor<2u," << t
@@ -1205,9 +1244,7 @@ namespace mfront {
     out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::"
         << ModellingHypothesis::toUpperCaseString(h) << "," << t << ","
         << mb.getClassName() << ">::integrate(s,d,eto,deto,sfeh)!=0){\n"
-        << "std::cerr << \"" << mb.getClassName()
-        << ": behaviour integration failed\";\n"
-        << "::exit(-1);\n"
+        << "return false;\n"
         << "}\n";
     if (mfront_omp) {
       out << "s.changeBasis(transpose(R));\n";
@@ -1226,7 +1263,7 @@ namespace mfront {
         out << "std::cerr << \"no state variable standing for the axial strain "
                "(variable with the "
             << "glossary name 'AxialStrain')\" << std::endl;\n";
-        out << "::exit(-1);\n";
+        out << "return false;\n";
       }
     }
     if (h == ModellingHypothesis::PLANESTRESS) {
@@ -1252,7 +1289,8 @@ namespace mfront {
       out << "tfel::fsalgo::copy<" << ivoffset
           << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
-    out << "};\n";
+    out << "return true;\n"
+        << "};\n";
     this->writeIntegrateLoop(out, mb);
   }
 
@@ -1398,9 +1436,7 @@ namespace mfront {
     out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::"
         << ModellingHypothesis::toUpperCaseString(h) << "," << t << ","
         << mb.getClassName() << ">::integrate(sk2,d,eto,deto,sfeh)!=0){\n"
-        << "std::cerr << \"" << mb.getClassName()
-        << ": behaviour integration failed\";\n"
-        << "::exit(-1);\n"
+        << "return false;\n"
         << "}\n";
     if (h == ModellingHypothesis::PLANESTRESS) {
       // axial strain !
@@ -1417,7 +1453,7 @@ namespace mfront {
         out << "std::cerr << \"no state variable standing for the axial strain "
                "(variable with the "
             << "glossary name 'AxialStrain')\" << std::endl;\n";
-        out << "::exit(-1);\n";
+        out << "return false;\n";
       }
     }
     if (mfront_omp) {
@@ -1449,7 +1485,8 @@ namespace mfront {
       out << "tfel::fsalgo::copy<" << ivoffset
           << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
-    out << "};\n";
+    out << "return true;\n"
+        << "};\n";
     this->writeIntegrateLoop(out, mb);
   }
 
@@ -1620,10 +1657,8 @@ namespace mfront {
           << ">::min())||\n"
           << "   (std::abs(dl1_l0[3])>10*std::numeric_limits<" << t
           << ">::min())){\n"
-          << "  std::cerr << \"" << mb.getClassName()
-          << ": stress free expansion is assumed to be diagonal\" << "
-             "std::endl;\n"
-          << "  std::exit(EXIT_FAILURE);\n"
+          << "  tfel::raise(\"stress free expansion is assumed to be "
+             "diagonal\");\n"
           << "}\n"
           << "e[0] -=std::log1p(dl0_l0[0]);\n"
           << "de[0]-=std::log1p((dl1_l0[0]-dl0_l0[0])/(1+dl0_l0[0]));\n"
@@ -1649,10 +1684,8 @@ namespace mfront {
           << ">::min())||\n"
           << "   (std::abs(dl1_l0[5])>10*std::numeric_limits<" << t
           << ">::min())){\n"
-          << "  std::cerr << \"" << mb.getClassName()
-          << ": stress free expansion is assumed to be diagonal\" << "
-             "std::endl;\n"
-          << "  std::exit(EXIT_FAILURE);\n"
+          << "  tfel::raise(\"stress free expansion is assumed to be "
+             "diagonal\");\n"
           << "}\n"
           << "e[0] -=std::log1p(dl0_l0[0]);\n"
           << "de[0]-=std::log1p((dl1_l0[0]-dl0_l0[0])/(1+dl0_l0[0]));\n"
@@ -1667,9 +1700,7 @@ namespace mfront {
     out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::"
         << ModellingHypothesis::toUpperCaseString(h) << "," << t << ","
         << mb.getClassName() << ">::integrate(T,d,eto,deto,sfeh)!=0){\n"
-        << "std::cerr << \"" << mb.getClassName()
-        << ": behaviour integration failed\";\n"
-        << "::exit(-1);\n"
+        << "return false;\n"
         << "}\n";
     if (h == ModellingHypothesis::PLANESTRESS) {
       // axial strain !
@@ -1687,7 +1718,7 @@ namespace mfront {
         out << "std::cerr << \"no state variable standing for the axial strain "
                "(variable with the "
             << "glossary name 'AxialStrain')\" << std::endl;\n";
-        out << "::exit(-1);\n";
+        out << "return false;\n";
       }
     }
     out << "// stress update\n"
@@ -1721,7 +1752,8 @@ namespace mfront {
       out << "tfel::fsalgo::copy<" << ivoffset
           << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
-    out << "};\n";
+    out << "return true;\n"
+        << "};\n";
     this->writeIntegrateLoop(out, mb);
   }
 
@@ -1877,9 +1909,7 @@ namespace mfront {
     out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::"
         << ModellingHypothesis::toUpperCaseString(h) << "," << t << ","
         << mb.getClassName() << ">::integrate(s,d,F0,F1)!=0){\n"
-        << "std::cerr << \"" << mb.getClassName()
-        << ": behaviour integration failed\";\n"
-        << "::exit(-1);\n"
+        << "return false;\n"
         << "}\n";
     if (mfront_omp) {
       out << "s.changeBasis(transpose(R));\n";
@@ -1908,7 +1938,8 @@ namespace mfront {
       out << "tfel::fsalgo::copy<" << ivoffset
           << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
-    out << "};\n";
+    out << "return true;\n"
+        << "};\n";
     this->writeIntegrateLoop(out, mb);
   }
 
