@@ -94,8 +94,6 @@ namespace mtest {
           tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
                                  "ThermalExpansion3"});
         }
-        tmp.insert(tmp.end(),
-                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2"});
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         if (this->requiresStiffnessTensor) {
           tmp.insert(tmp.end(),
@@ -107,10 +105,6 @@ namespace mtest {
           tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
                                  "ThermalExpansion3"});
         }
-        tmp.insert(tmp.end(),
-                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2",
-                    "FirstOrthotropicAxis_3", "SecondOrthotropicAxis_1",
-                    "SecondOrthotropicAxis_2", "SecondOrthotropicAxis_3"});
       } else {
         throw_if(true, "unsupported modelling hypothesis");
       }
@@ -118,6 +112,23 @@ namespace mtest {
       throw_if(true,
                "unsupported behaviour type "
                "(neither isotropic nor orthotropic)");
+    }
+    if (this->stype == 1u) {
+      // orthotropic axes, after the elastic properties and the thermal
+      // expansion coefficients, as in the generated code
+      if ((h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::PLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        tmp.insert(tmp.end(),
+                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2"});
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        tmp.insert(tmp.end(),
+                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2",
+                    "FirstOrthotropicAxis_3", "SecondOrthotropicAxis_1",
+                    "SecondOrthotropicAxis_2", "SecondOrthotropicAxis_3"});
+      } else {
+        throw_if(true, "unsupported modelling hypothesis");
+      }
     }
     this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }
