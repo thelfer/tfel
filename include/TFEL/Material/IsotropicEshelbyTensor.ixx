@@ -351,6 +351,35 @@ namespace tfel::material::homogenization::elasticity {
           return {2, 1, 0};
       }
     }  // end of sortEllipsoidLengths
+
+    /*!
+     * This function checks that the directions n_a and n_b of two principal
+     * axes of an ellipsoid are orthogonal, up to a tolerance relative to
+     * their norms, and removes from n_b its component along n_a, so that
+     * n_a, n_b and their cross product define an orthogonal basis up to
+     * rounding errors. n_a and n_b need not be unit vectors.
+     * \return n_b made orthogonal to n_a
+     * \tparam real: numeric type
+     * \param[in] n_a: direction of the first principal axis
+     * \param[in] n_b: direction of the second principal axis
+     * \param[in] msg: message reported if n_a and n_b are not orthogonal
+     */
+    template <typename real>
+    TFEL_HOST_DEVICE tfel::math::tvector<3u, real> orthogonaliseEllipsoidAxes(
+        const tfel::math::tvector<3u, real>& n_a,
+        const tfel::math::tvector<3u, real>& n_b,
+        const char* const msg = "n_a and n_b not normals") {
+      using NumericType = tfel::math::base_type<real>;
+      const auto tol = std::sqrt(std::numeric_limits<NumericType>::epsilon());
+      const auto n_ab = n_a | n_b;
+      if (not(std::abs(n_ab) <= tol * norm(n_a) * norm(n_b))) {
+        tfel::reportContractViolation(msg);
+      }
+      if (tfel::math::ieee754::fpclassify(n_ab) == FP_ZERO) {
+        return n_b;
+      }
+      return n_b - (n_ab / (n_a | n_a)) * n_a;
+    }  // end of orthogonaliseEllipsoidAxes
   }    // end of namespace internals
 
   template <tfel::math::ScalarConcept StressType>
@@ -458,17 +487,15 @@ namespace tfel::material::homogenization::elasticity {
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
     }
-    if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-      tfel::reportContractViolation("n_a and n_b not normals");
-    }
     if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
     if (norm(n_b) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_b is null");
     }
+    const auto n_b_o = internals::orthogonaliseEllipsoidAxes(n_a, n_b);
     const auto n_a_ = n_a / norm(n_a);
-    const auto n_b_ = n_b / norm(n_b);
+    const auto n_b_ = n_b_o / norm(n_b_o);
     const auto n_c_ = tfel::math::cross_product<real>(n_a_, n_b_);
     const std::array<LengthType, 3> abc_ = {a, b, c};
     const auto sig = internals::sortEllipsoidLengths<LengthType>(a, b, c);

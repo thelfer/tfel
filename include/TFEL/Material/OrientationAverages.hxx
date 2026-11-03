@@ -277,15 +277,13 @@ namespace tfel::material::homogenization::elasticity {
             (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
-      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
       if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
         tfel::reportContractViolation("n_a is null");
       }
       if (norm(n_b) < std::numeric_limits<real>::epsilon()) {
         tfel::reportContractViolation("n_b is null");
       }
+      const auto n_b_o = internals::orthogonaliseEllipsoidAxes(n_a, n_b);
       using namespace tfel::math;
       st2tost2<3u, real> A;
       if (areAlmostEqual(eps, b / a, real(1)) &&
@@ -293,19 +291,19 @@ namespace tfel::material::homogenization::elasticity {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);
       } else if (areAlmostEqual(eps, (a - b) / c, real(0))) {
-        tvector<3u, real> n_1 = tfel::math::cross_product(n_a, n_b);
+        tvector<3u, real> n_1 = tfel::math::cross_product(n_a, n_b_o);
         n_1 = n_1 / norm(n_1);
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_1, c / a);
       } else if (areAlmostEqual(eps, (a - c) / b, real(0))) {
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
-            young, nu, young_i, nu_i, n_b, b / a);
+            young, nu, young_i, nu_i, n_b_o, b / a);
       } else if (areAlmostEqual(eps, (c - b) / a, real(0))) {
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_a, a / b);
       } else {
         A = computeEllipsoidLocalisationTensor<StressType>(
-            young, nu, young_i, nu_i, n_a, a, n_b, b, c);
+            young, nu, young_i, nu_i, n_a, a, n_b_o, b, c);
       }
       return A;
     }  // end of Oriented

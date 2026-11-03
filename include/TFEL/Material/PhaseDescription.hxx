@@ -516,11 +516,7 @@ namespace tfel::material::homogenization::elasticity {
                          const tfel::math::tvector<3u, real>& n_b_)
         : InclusionDistribution<3u, StressType>(ell, frac, C),
           n_a(n_a_),
-          n_b(n_b_) {
-      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
-    }
+          n_b(internals::orthogonaliseEllipsoidAxes(n_a_, n_b_)) {}
 
     OrientedDistribution(const Ellipsoid<LengthType>& ell,
                          real frac,
@@ -529,11 +525,7 @@ namespace tfel::material::homogenization::elasticity {
                          const tfel::math::tvector<3u, real>& n_b_)
         : InclusionDistribution<3u, StressType>(ell, frac, IM),
           n_a(n_a_),
-          n_b(n_b_) {
-      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
-    }
+          n_b(internals::orthogonaliseEllipsoidAxes(n_a_, n_b_)) {}
 
     [[nodiscard]] std::unique_ptr<InclusionDistribution<3u, StressType>> clone()
         const override {
