@@ -439,6 +439,12 @@ namespace mfront {
             tfel::raise("invalid options types for language'" + l + "'");
           }
           const auto language = ConfigurationManager::getLanguage(l);
+          if ((language == ConfigurationManager::FORTRAN) ||
+              (language == ConfigurationManager::SYCL)) {
+            tfel::raise("language '" + l +
+                        "' is not supported by the build file generators "
+                        "(supported languages are c, cxx, cuda and hip)");
+          }
           for (const auto& [c, o] : opts.get<tfel::utilities::DataMap>()) {
             if (c == "compiler") {
               if (!o.is<std::string>()) {

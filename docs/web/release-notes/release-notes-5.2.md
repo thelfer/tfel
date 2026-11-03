@@ -637,7 +637,7 @@ respectively.
 ### The `compilation_options` section
 
 The `compilation_options` section associates to a language (`c`,
-`cxx`, `cuda`, `hip`, etc.) a dictionary of options, as follows:
+`cxx`, `cuda` or `hip`) a dictionary of options, as follows:
 
 ~~~~{.json}
 compilation_options : {
