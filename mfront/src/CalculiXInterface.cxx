@@ -858,16 +858,15 @@ namespace mfront {
     }
     out << "// stress at the end of the time step\n";
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "auto s = lsh1.convertToSecondPiolaKirchhoffStress(T);\n"
-          << "s.changeBasis(rb);\n";
-    } else {
-      out << "const auto s = lsh1.convertToSecondPiolaKirchhoffStress(T);\n";
+      // the dual stress and the tangent operator are rotated back to the
+      // global frame before being converted by the logarithmic strain
+      // handler, which is built with the global deformation gradient
+      out << "T.changeBasis(rb);\n"
+          << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
     }
-    out << "D = lsh1.convertToMaterialTangentModuli(st2tost2<3u,real>(D),T);\n";
-    if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
-    }
-    out << "// converting the stress\n"
+    out << "const auto s = lsh1.convertToSecondPiolaKirchhoffStress(T);\n"
+        << "D = lsh1.convertToMaterialTangentModuli(st2tost2<3u,real>(D),T);\n"
+        << "// converting the stress\n"
         << "s.exportTab(STRESS);\n"
         << "// converting the consistent tangent operator\n"
         << "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D.begin());"
