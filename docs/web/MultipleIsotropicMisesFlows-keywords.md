@@ -173,7 +173,7 @@ current behaviour.
 
 The following snippet declares a variable named `b1` associated with a
 behaviour `Plasticity` defined in the file
-`BehaviourVariablePlasticity.mfront`.
+`Plasticity.mfront`.
 
 ~~~~{.cpp}
 @BehaviourVariable b1 {
@@ -262,8 +262,8 @@ Dt = b1.getTangentOperator();
 - `shared_external_state_variables`: list of regular expressions used to
   select shared external state variables. This list is empty by default.
 - `automatically_save_associated_auxiliary_state_variables`: flag
-  stating if the persistent variables, gradients (if `stored_gradients`
-  is true) or thermodynamic forces (if `stored_thermodynamic_forces` is
+  stating if the persistent variables, gradients (if `store_gradients`
+  is true) or thermodynamic forces (if `store_thermodynamic_forces` is
   true) of the behaviour variable shall automatically be saved in the
   `updateAuxiliaryStateVariables` method of the calling behaviour. This
   flag is `true` by default.
@@ -1431,7 +1431,7 @@ defining the flow rule:
 - For DSLs supporting only one flow rule, the `flow_id` parameter is
   optional and shall be equal to zero if specified.
 - In the case of the `IsotropicPlasticMisesFlow` DSL, the following
-  flow rule is implicitly defined (if the user does specify it):
+  flow rule is implicitly defined (if the user does not specify it):
 
   ~~~~{.cxx}
   @FlowRule {
@@ -1475,7 +1475,7 @@ defining the flow rule:
 - For DSLs supporting only one flow rule, the `flow_id` parameter is
   optional and shall be equal to zero if specified.
 - In the case of the `IsotropicPlasticMisesFlow` DSL, the following
-  flow rule is implicitly defined (if the user does specify it):
+  flow rule is implicitly defined (if the user does not specify it):
 
   ~~~~{.cxx}
   @FlowRule {
