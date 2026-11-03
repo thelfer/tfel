@@ -56,6 +56,11 @@
  * inverse de l'incrément de gradient de transformation plastique
  */
 @LocalVariable DeformationGradientTensor inv_dFp;
+/*!
+ * déterminant de l'inverse de l'incrément de gradient de transformation
+ * plastique avant sa normalisation
+ */
+@LocalVariable real J_inv_dFp;
 
 @Includes{
 #include"TFEL/Math/t2tot2.hxx"
@@ -178,7 +183,7 @@
   for(unsigned short i=0;i!=12;++i){
     inv_dFp -= dg[i]*ss.mu[i];
   }
-  real J_inv_dFp = det(inv_dFp);
+  J_inv_dFp = det(inv_dFp);
   inv_dFp /= CubicRoots::cbrt(J_inv_dFp);
   /*!
    * Nous calculons la partie élastique de gradient de la
@@ -249,11 +254,14 @@
    */
   t2tot2<N,real>  tprd = t2tot2<N,real>::tprd(Fe_tr);
   t2tost2<N,real> dfeel_dinv_dFp = t2tost2<N,real>::dCdF(Fe)*tprd;
+  // prise en compte de la normalisation de l'inverse de l'incrément de
+  // gradient de transformation plastique par la racine cubique de son
+  // déterminant: sa dérivée par rapport à dg[i] est -mu_n
+  const real c_inv_dFp = CubicRoots::cbrt(J_inv_dFp);
+  const Tensor iinv_dFp_t = transpose(invert(inv_dFp));
   for(unsigned short i=0;i!=12;++i){
-    // ok, je suis une fainéasse, j'oublie la correction due au déterminant:
-    // 1) il y a de fortes chances pour que ça ne serve à rien
-    // 2) il faut bien laisser du boulot au thésard
-    dfeel_ddg(i) = 0.5*dfeel_dinv_dFp*ss.mu[i];
+    const Tensor mu_n = (ss.mu[i]-((iinv_dFp_t|ss.mu[i])/3)*inv_dFp)/c_inv_dFp;
+    dfeel_ddg(i) = 0.5*dfeel_dinv_dFp*mu_n;
   }
   // increment de déformation plastique
   real agi[Nss];
@@ -311,7 +319,7 @@
   for(unsigned short i=0;i!=12;++i){
     inv_dFp -= dg[i]*ss.mu[i];
   }
-  real J_inv_dFp = det(inv_dFp);
+  J_inv_dFp = det(inv_dFp);
   inv_dFp /= CubicRoots::cbrt(J_inv_dFp);
   // Fe en fin de pas de temps
   Fe  = Fe_tr*inv_dFp;
@@ -460,10 +468,14 @@
   st2tost2<N,real> Je;
   tvector<12u,Stensor> Jg;
   getPartialJacobianInvert(Je,Jg);
-  // calcul de dinv_Fp_dDF  
-  t2tot2<N,real> dinv_Fp_dDF((ss.mu[0])^(Jg[0]|dfeel_dDF));
-  for(unsigned short i=1;i!=12;++i){
-    dinv_Fp_dDF += (ss.mu[i])^(Jg[i]|dfeel_dDF);
+  // calcul de dinv_Fp_dDF, en tenant compte de la normalisation de
+  // l'inverse de l'incrément de gradient de transformation plastique
+  const real c_inv_dFp = CubicRoots::cbrt(J_inv_dFp);
+  const Tensor iinv_dFp_t = transpose(invert(inv_dFp));
+  t2tot2<N,real> dinv_Fp_dDF(real(0));
+  for(unsigned short i=0;i!=12;++i){
+    const Tensor mu_n = (ss.mu[i]-((iinv_dFp_t|ss.mu[i])/3)*inv_dFp)/c_inv_dFp;
+    dinv_Fp_dDF += mu_n^(Jg[i]|dfeel_dDF);
   }
   // On peut maintenant calculer dFe_dDF
   const t2tot2<N,real> dFe_dDF=
