@@ -93,7 +93,7 @@ namespace tfel::material::homogenization::elasticity {
 
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.getInclusionPhase(i);
-      auto Ci = (*phasei).getElasticityOfPhase();
+      auto Ci = (*phasei).getElasticityOfPhaseInGlobalBasis();
       if (!((*phasei).isIsotropic()) && with_Chom_derivatives) {
         tfel::reportContractViolation(
             "I cannot compute the derivatives of the homogenized stiffness "
@@ -220,7 +220,7 @@ namespace tfel::material::homogenization::elasticity {
 
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.getInclusionPhase(i);
-      auto Ci = (*phasei).getElasticityOfPhase();
+      auto Ci = (*phasei).getElasticityOfPhaseInGlobalBasis();
       auto fi = (*phasei).fraction;
       auto taui = polarisations_[i + 1];
       localisators[i + 1] = localisators[i + 1] * A0;
@@ -391,7 +391,7 @@ namespace tfel::material::homogenization::elasticity {
 
       for (std::size_t i = 0; i < np - 1; i++) {
         auto phasei = micro.getInclusionPhase(i);
-        auto Ci = (*phasei).getElasticityOfPhase();
+        auto Ci = (*phasei).getElasticityOfPhaseInGlobalBasis();
         auto fi = (*phasei).fraction;
         auto Ai = localisators_[i + 1];
         Ch += fi * (Ci - C0) * Ai;
@@ -563,7 +563,7 @@ namespace tfel::material::homogenization::elasticity {
         }
         Ai_mean += fi * Ai;
         if (with_Chom_derivatives && (N == 3)) {
-          auto Ci = (*graini).getElasticityOfPhase();
+          auto Ci = (*graini).getElasticityOfPhaseInGlobalBasis();
           CDSC += fi * Ci * Ai;
         }
         localisators_try.push_back(Ai);
@@ -577,7 +577,7 @@ namespace tfel::material::homogenization::elasticity {
 
       for (std::size_t i = 0; i < ng; i++) {
         auto graini = poly.getGrain(i);
-        auto Ci = (*graini).getElasticityOfPhase();
+        auto Ci = (*graini).getElasticityOfPhaseInGlobalBasis();
         auto fi = (*graini).fraction;
         localisators_try[i] = localisators_try[i] * Ai_mean;
         auto Ai = localisators_try[i];

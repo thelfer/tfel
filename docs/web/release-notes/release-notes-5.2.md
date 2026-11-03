@@ -109,6 +109,15 @@ library, see below.
   (respectively `TinyBroyden2Solver`), the update is performed by the
   `updateJacobian` (respectively `updateJacobianInvert`) method, which
   replaces their `updateOrCheckJacobian` method.
+- In the homogenisation schemes of `TFEL/Material`, the elasticity of an
+  anisotropic `OrientedDistribution` or `Grain`, given in the local basis
+  of its inclusions, is rotated to the global basis (see Issue #1299):
+  it was used as a global elasticity, so that the orientation of these
+  phases was ignored. `computeEllipsoidLocalisationTensor` and
+  `computePlaneStrainLocalisationTensor` with an isotropic matrix rotate
+  the elasticity of the inclusion as well, as documented. The results of
+  the dilute, Mori-Tanaka and self-consistent schemes with such phases
+  change.
 
 # Improvements to the build system
 
@@ -751,6 +760,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1299: TFEL/Material homogenisation: the stiffness of oriented anisotropic inclusions and grains, given in their local basis, is used as a global stiffness
+
+For more details, see <https://github.com/thelfer/tfel/issues/1299>
 
 ## Issue 1295: [tfel-math] The Broyden solvers never update the jacobian in MFront behaviours
 
