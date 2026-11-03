@@ -38,6 +38,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
   }  // end of StressCriteriaTest
   tfel::tests::TestResult execute() override {
     this->testGursonTvergaardNeedleman1982();
+    this->testGursonTvergaardNeedleman1982WithoutPorosity();
     this->testFlowStressGTN();
     this->testCazacu2001();
     this->testCazacu2004();
@@ -65,6 +66,29 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(n2[0] + n1[0]) < 1e-12);
     TFEL_TESTS_ASSERT(std::abs(ds2_df - ds1_df) < 1e-12 * ds1_df);
   }  // end of testGursonTvergaardNeedleman1982
+  //! \brief the GTN criterion reduces to the von Mises one without porosity
+  void testGursonTvergaardNeedleman1982WithoutPorosity() {
+    using namespace tfel::material;
+    const auto params =
+        GursonTvergaardNeedleman1982StressCriterionParameters<Stensor>{
+            .f_c = 0.05, .f_r = 0.2, .q_1 = 1.5, .q_2 = 1, .q_3 = 2.25};
+    for (const auto& sig : {Stensor{-1000, -1000, -1000, 0, 0, 0},
+                            Stensor{-999, -1000.5, -1000.5, 0, 0, 0},
+                            Stensor{1001, 999.5, 999.5, 0, 0, 0}}) {
+      const auto [s, n, ds_df, dn, dn_df] =
+          computeGursonTvergaardNeedleman1982StressSecondDerivative(
+              sig, 0, params, 1e-8);
+      TFEL_TESTS_ASSERT(std::abs(s - tfel::math::sigmaeq(sig)) < 1e-12);
+      TFEL_TESTS_ASSERT(std::isfinite(ds_df));
+      for (unsigned short i = 0; i != 6; ++i) {
+        TFEL_TESTS_ASSERT(std::isfinite(n[i]));
+        TFEL_TESTS_ASSERT(std::isfinite(dn_df[i]));
+        for (unsigned short j = 0; j != 6; ++j) {
+          TFEL_TESTS_ASSERT(std::isfinite(dn(i, j)));
+        }
+      }
+    }
+  }  // end of testGursonTvergaardNeedleman1982WithoutPorosity
   //! \brief flow stress of the GTN model for a nearly hydrostatic stress
   void testFlowStressGTN() {
     using namespace tfel::material;

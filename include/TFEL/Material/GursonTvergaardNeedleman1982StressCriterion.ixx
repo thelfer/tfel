@@ -78,7 +78,10 @@ namespace tfel::material {
     const auto seq2 = seq * seq;
     const auto pr2 = pr * pr;
     // special cases
-    if (tfel::math::abs(pr) < seps) {
+    // when q1 f* vanishes (no porosity), the equivalent stress does not
+    // depend on the mean stress
+    if ((tfel::math::abs(pr) < seps) ||
+        (tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)) {
       const auto iomf =
           1 /
           std::max(1 - 2 * p.q_1 * fstar + p.q_3 * fstar * fstar, real(1.e-12));
@@ -170,7 +173,15 @@ namespace tfel::material {
     const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
     const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
     const auto dfstar = (f < p.f_c) ? real(1) : delta;
-    const auto e = std::exp(3 * p.q_2 * pr * iss / 2);
+    // when q1 f* vanishes, the hyperbolic functions only appear in the
+    // derivative with respect to the porosity, which is unbounded for a
+    // nearly hydrostatic stress: their argument is bounded, as in the
+    // Rousselier criterion, to avoid an overflow
+    const real a = 3 * p.q_2 * pr * iss / 2;
+    const auto e = std::exp(
+        (tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)
+            ? std::clamp(a, real(-40), real(40))
+            : a);
     const auto ch = (e + 1 / e) / 2;
     const auto sh = (e - 1 / e) / 2;
     const auto q1q2 = p.q_1 * p.q_2;
@@ -232,7 +243,15 @@ namespace tfel::material {
     const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
     const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
     const auto dfstar = (f < p.f_c) ? real(1) : delta;
-    const auto e = std::exp(3 * p.q_2 * pr * iss / 2);
+    // when q1 f* vanishes, the hyperbolic functions only appear in the
+    // derivative with respect to the porosity, which is unbounded for a
+    // nearly hydrostatic stress: their argument is bounded, as in the
+    // Rousselier criterion, to avoid an overflow
+    const real a = 3 * p.q_2 * pr * iss / 2;
+    const auto e = std::exp(
+        (tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)
+            ? std::clamp(a, real(-40), real(40))
+            : a);
     const auto ch = (e + 1 / e) / 2;
     const auto sh = (e - 1 / e) / 2;
     const auto q1q2 = p.q_1 * p.q_2;
