@@ -641,6 +641,7 @@ namespace mfront {
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
               tfel::glossary::Glossary::Porosity);
       const auto f_ = f.name + "_";
+      mfront::bbrick::checkNoNormalisationFactor(bd, f.name);
       // value of the porosity at t+theta*dt
       CodeBlock ib;
       ib.code += "const auto " + f_ + " = ";

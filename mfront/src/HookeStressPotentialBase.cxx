@@ -589,6 +589,10 @@ namespace mfront::bbrick {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "HookeStressPotentialBase::endTreatment: begin\n";
     }
+    checkNoNormalisationFactor(bd, "eel");
+    if (this->pss) {
+      checkNoNormalisationFactor(bd, "etozz");
+    }
     // implicit equation associated with the elastic strain
     CodeBlock integrator;
     auto broken_test = getBrokenTest(bd, false);

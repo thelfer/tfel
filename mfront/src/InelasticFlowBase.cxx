@@ -555,6 +555,7 @@ namespace mfront::bbrick {
                                        const std::string& id) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+    checkNoNormalisationFactor(bd, "p" + id);
     if (this->fc != nullptr) {
       this->sc->endTreatment(bd, dsl, id, StressCriterion::STRESSCRITERION);
       this->fc->endTreatment(bd, dsl, id, StressCriterion::FLOWCRITERION);

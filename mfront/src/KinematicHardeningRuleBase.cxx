@@ -82,6 +82,8 @@ namespace mfront::bbrick {
                                                 const std::string& fid,
                                                 const std::string& kid) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    checkNoNormalisationFactor(
+        bd, KinematicHardeningRule::getVariableId("a", fid, kid));
     auto mts = getMiddleOfTimeStepModifier(bd);
     if (!this->C.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);

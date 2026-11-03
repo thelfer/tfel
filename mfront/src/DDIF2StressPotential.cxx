@@ -318,6 +318,7 @@ namespace mfront::bbrick {
       getLogStream() << "DDIF2StressPotential::endTreatment: begin\n";
     }
     HookeStressPotential::endTreatment(bd, dsl);
+    checkNoNormalisationFactor(bd, "ef");
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "DDIF2StressPotential::endTreatment: " + m);
     };
