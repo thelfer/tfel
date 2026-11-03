@@ -20,6 +20,8 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/BehaviourDSLUtilities.hxx"
+#include "MFront/ImplicitDSLBase.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 
@@ -243,6 +245,35 @@ namespace mfront::bbrick {
                          "take it into account)");
     }
   }  // end of checkNoNormalisationFactor
+
+  void checkNoImplicitEquationNormalisationFactor(
+      const BehaviourDescription& bd,
+      const AbstractBehaviourDSL& dsl,
+      const BehaviourDescription::Hypothesis h,
+      const std::string& n) {
+    const auto& solver = dynamic_cast<const ImplicitDSLBase&>(dsl).getSolver();
+    if ((!solver.usesJacobian()) || (solver.requiresNumericalJacobian())) {
+      // the bricks do not compute any jacobian block
+      return;
+    }
+    tfel::raise_if(bd.hasAttribute(h, 'f' + n + "_normalisation_factor"),
+                   "checkNoImplicitEquationNormalisationFactor: a "
+                   "normalisation factor can't be given to the implicit "
+                   "equation 'f" +
+                       n +
+                       "', some jacobian blocks of which are computed by a "
+                       "brick (the generated code does not scale these "
+                       "blocks)");
+  }  // end of checkNoImplicitEquationNormalisationFactor
+
+  void checkNoImplicitEquationNormalisationFactor(
+      const BehaviourDescription& bd,
+      const AbstractBehaviourDSL& dsl,
+      const std::string& n) {
+    for (const auto h : bd.getDistinctModellingHypotheses()) {
+      checkNoImplicitEquationNormalisationFactor(bd, dsl, h, n);
+    }
+  }  // end of checkNoImplicitEquationNormalisationFactor
 
   void addStateVariableIfNotDefined(BehaviourDescription& bd,
                                     const std::string& t,

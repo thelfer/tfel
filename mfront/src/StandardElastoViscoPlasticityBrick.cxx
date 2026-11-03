@@ -651,6 +651,9 @@ namespace mfront {
                  ") * " + std::string(porosityUpperBound) + "), real(0));\n ";
       ib.code += "static_cast<void>(" + f_ + ");\n";
       if (this->elastic_contribution) {
+        // jacobian blocks computed by the elastic contribution
+        mfront::bbrick::checkNoImplicitEquationNormalisationFactor(
+            bd, this->dsl, f.name);
         if (this->porosity_evolution_algorithm ==
             mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
           ib.code += "if(";

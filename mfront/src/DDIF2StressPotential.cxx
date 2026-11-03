@@ -319,6 +319,9 @@ namespace mfront::bbrick {
     }
     HookeStressPotential::endTreatment(bd, dsl);
     checkNoNormalisationFactor(bd, "ef");
+    // jacobian blocks computed below
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, "eel");
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, "ef");
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "DDIF2StressPotential::endTreatment: " + m);
     };

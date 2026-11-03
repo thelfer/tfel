@@ -281,6 +281,9 @@ namespace mfront {
     const auto cn = this->bd.getClassName() + "SlipSystems<real>";
     bbrick::checkNoNormalisationFactor(this->bd, "eel");
     bbrick::checkNoNormalisationFactor(this->bd, "g");
+    // the jacobian blocks dfeel_ddg are computed below
+    bbrick::checkNoImplicitEquationNormalisationFactor(this->bd, this->dsl,
+                                                       "eel");
     // local data values initialisation
     CodeBlock init;
     if (this->bd.getAttribute<bool>(

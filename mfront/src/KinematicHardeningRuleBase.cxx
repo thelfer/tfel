@@ -84,6 +84,9 @@ namespace mfront::bbrick {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     checkNoNormalisationFactor(
         bd, KinematicHardeningRule::getVariableId("a", fid, kid));
+    // jacobian blocks computed by buildBackStrainImplicitEquations
+    checkNoImplicitEquationNormalisationFactor(
+        bd, dsl, KinematicHardeningRule::getVariableId("a", fid, kid));
     auto mts = getMiddleOfTimeStepModifier(bd);
     if (!this->C.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
