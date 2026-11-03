@@ -1,4 +1,4 @@
-The `@RotationMatrix` let the user specifiy a rotation matrix, so that
+The `@RotationMatrix` let the user specify a rotation matrix, so that
 the principal directions of the material are different from those used
 for the resolution and the boundary conditions.
 
