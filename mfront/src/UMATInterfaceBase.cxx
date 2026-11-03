@@ -808,7 +808,7 @@ namespace mfront {
       }
     } else {
       if (pT != nullptr) {
-        out << ",dT(temperature(0))";
+        out << ", d" << pT->name << "(temperature(0))";
       }
     }
     bool first = false;
