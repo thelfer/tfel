@@ -45,7 +45,7 @@ namespace tfel::material {
       const GursonTvergaardNeedleman1982StressCriterionParameters<
           StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
-    using istress = GursonTvergaardNeedleman1982InvertStressType<StressStensor>;
+    using stress = GursonTvergaardNeedleman1982StressType<StressStensor>;
     using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
     using size_type = unsigned short;
     using namespace tfel::math;
@@ -97,26 +97,31 @@ namespace tfel::material {
     // second order), bounded by the solution for a vanishing von Mises stress
     // so that the Newton-Raphson algorithm does not start far in the
     // exponential branch of the hyperbolic cosine
-    auto x0 = std::sqrt((4 * (1 + p.q_3 * fstar * fstar - 2 * p.q_1 * fstar)) /
-                        (4 * seq2 + 9 * p.q_1 * p.q_2 * p.q_2 * fstar * pr2));
+    auto x0 = tfel::math::power<1, 2>(
+        (4 * (1 + p.q_3 * fstar * fstar - 2 * p.q_1 * fstar)) /
+        (4 * seq2 + 9 * p.q_1 * p.q_2 * p.q_2 * fstar * pr2));
     if (p.q_1 * fstar > 0) {
       x0 = std::min(
           x0,
           2 * std::acosh((1 + p.q_3 * fstar * fstar) / (2 * p.q_1 * fstar)) /
               (3 * p.q_2 * tfel::math::abs(pr)));
     }
-    //
-    const auto SdS = [seq2, pr, fstar, p](const istress x) {
+    // The Newton-Raphson algorithm works on the base numeric type, since the
+    // unknown and S do not have the same unit
+    const auto bseq2 = base_type_cast(seq2);
+    const auto bpr = base_type_cast(pr);
+    const auto bseps = base_type_cast(seps);
+    const auto SdS = [bseq2, bpr, fstar, p](const real x) {
       const auto fstar2 = fstar * fstar;
-      const auto e = std::exp(3 * p.q_2 * pr * (x / 2));
+      const auto e = std::exp(3 * p.q_2 * bpr * (x / 2));
       const auto ch = (e + 1 / e) / 2;
       const auto sh = (e - 1 / e) / 2;
-      const auto S = seq2 * x * x + 2 * p.q_1 * fstar * ch - 1 - p.q_3 * fstar2;
-      const auto dS = 2 * seq2 * x + 3 * p.q_1 * p.q_2 * fstar * pr * sh;
+      const auto S = bseq2 * x * x + 2 * p.q_1 * fstar * ch - 1 - p.q_3 * fstar2;
+      const auto dS = 2 * bseq2 * x + 3 * p.q_1 * p.q_2 * fstar * bpr * sh;
       return std::make_tuple(S, dS);
     };
-    const auto c = [&p, seps](const real S, const istress dx, const istress x,
-                              const size_type) {
+    const auto c = [&p, bseps](const real S, const real dx, const real x,
+                               const size_type) {
       // First criterion based on the value of the yield surface
       if (std::abs(S) < p.eps) {
         return true;
@@ -128,7 +133,7 @@ namespace tfel::material {
       // d(1/y) = -dy/(y*y) => y*y*d(1/y) = -dy
       // so if I want |dy|<eps, |y*y*d(1/y)| must be lower than eps
       // Here, x is the inverse of the equivalent stress, so
-      if (10 * tfel::math::abs(dx) < seps * tfel::math::abs(x * x)) {
+      if (10 * tfel::math::abs(dx) < bseps * tfel::math::abs(x * x)) {
         return true;
       }
       // Third criterion based on the relative stationnarity of the solution,
@@ -137,11 +142,12 @@ namespace tfel::material {
       return tfel::math::abs(dx) <
              10 * std::numeric_limits<real>::epsilon() * tfel::math::abs(x);
     };
-    const auto r = tfel::math::scalarNewtonRaphson(SdS, c, x0, size_type{100});
+    const auto r = tfel::math::scalarNewtonRaphson(SdS, c, base_type_cast(x0),
+                                                   size_type{100});
     if (!std::get<0>(r)) {
       throw(DivergenceException());
     }
-    return 1 / std::get<1>(r);
+    return stress(1 / std::get<1>(r));
   }  // end of computeGursonTvergaardNeedleman1982Stress
 
   template <typename StressStensor>
@@ -156,6 +162,8 @@ namespace tfel::material {
       const GursonTvergaardNeedleman1982StressCriterionParameters<
           StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
+    using stress = GursonTvergaardNeedleman1982StressType<StressStensor>;
+    using istress = GursonTvergaardNeedleman1982InvertStressType<StressStensor>;
     using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
     using result = std::tuple<
@@ -188,10 +196,11 @@ namespace tfel::material {
     // normal
     const auto dS_dss =
         (-2 * power<2>(seq) * iss - 3 * q1q2 * fstar * pr * sh) * power<2>(iss);
-    const auto sgn = (dS_dss < 0) ? -1 : 1;
+    const auto sgn = (dS_dss < istress(0)) ? -1 : 1;
     const auto idS_dss =
-        sgn * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
-                   ? 1 / seps
+        sgn * ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) ==
+                FP_ZERO)
+                   ? stress(1 / base_type_cast(seps))
                    : 1 / tfel::math::abs(dS_dss));
     const auto dS_dsig = 3 * power<2>(iss) * deviator(sig) +  //
                          q1q2 * fstar * iss * sh * id;
@@ -220,6 +229,8 @@ namespace tfel::material {
           StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
     using namespace tfel::math;
+    using stress = GursonTvergaardNeedleman1982StressType<StressStensor>;
+    using istress = GursonTvergaardNeedleman1982InvertStressType<StressStensor>;
     using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
     using result = std::tuple<
@@ -258,10 +269,11 @@ namespace tfel::material {
     // normal
     const auto dS_dss =
         (-2 * power<2>(seq) * iss - 3 * q1q2 * fstar * pr * sh) * power<2>(iss);
-    const auto sgn = (dS_dss < 0) ? -1 : 1;
+    const auto sgn = (dS_dss < istress(0)) ? -1 : 1;
     const auto idS_dss =
-        sgn * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
-                   ? 1 / seps
+        sgn * ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) ==
+                FP_ZERO)
+                   ? stress(1 / base_type_cast(seps))
                    : 1 / tfel::math::abs(dS_dss));
     const auto dS_dsig = 3 * power<2>(iss) * deviator(sig) +  //
                          q1q2 * fstar * iss * sh * id;
