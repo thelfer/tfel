@@ -147,7 +147,13 @@ if(enable-mfront-quantity-tests)
     PlasticityTest23_qt
     PlasticityTest23_qt_nj
     PlasticityTest24_qt
-    PlasticityTest24_qt_nj)
+    PlasticityTest24_qt_nj
+    PlasticityTest12_qt
+    PlasticityTest13_qt
+    PlasticityTest14_qt
+    PlasticityTest15_qt
+    MohrCoulombTest_qt
+    MichelAndSuquet1992HollowSphereTest_qt)
 endif(enable-mfront-quantity-tests)
 
 function(generictest_standardelastovicoplasticitybrick test_name test_file library_name behaviour_name)
