@@ -1088,8 +1088,9 @@ This isotropic hardening rule can be parametrised using three entries:
 - `interpolation`: which allows to select the interpolation type.
   Possible values are `linear` (default choice) and `cubic_spline`.
 - `extrapolation`: which allows to select the extrapolation type.
-  Possible values are `bound_to_last_value` (or `constant`) and
-  `extrapolation` (default choice).
+  Possible values are `bound_to_last_value` (or `constant`, or the
+  boolean value `false`) and `extrapolation` (or the boolean value
+  `true`, default choice).
 
 #### Example of usage
 
