@@ -1,0 +1,61 @@
+The `@FlowRule` keyword adds a flow to the behaviour. Each call defines
+a new flow: the first one has the identifier `0`, the second one the
+identifier `1`, and so on.
+
+The keyword is followed by the type of the flow, an optional value of
+the \(\theta\) parameter specific to this flow, and a code block. The
+following types are supported:
+
+- `Plasticity`: the flow is defined by a yield function. The code block
+  shall compute the value of the yield function `f` and its derivatives
+  `df_dseq` and `df_dp` with respect to the von Mises stress and to the
+  equivalent plastic strain.
+- `Creep`: the code block shall compute the equivalent strain rate `f`
+  as a function of the von Mises stress and its derivative `df_dseq`.
+- `StrainHardeningCreep`: the code block shall compute the equivalent
+  strain rate `f` as a function of the von Mises stress and of the
+  equivalent plastic strain, and its derivatives `df_dseq` and `df_dp`.
+
+In the code block, `seq` is the current estimate of the von Mises stress
+at \(t+\theta\,\Delta\,t\) and `p` is the current estimate of the
+equivalent plastic strain of the flow at \(t+\theta\,\Delta\,t\). If an
+isotropic hardening rule is associated with the flow (see
+`@IsotropicHardeningRule`), the variables `R` and `dR_dp` are also
+available.
+
+## Specific value of the \(\theta\) parameter
+
+By default, all the flows are evaluated with the value of \(\theta\)
+given by `@Theta`. A value given after the type of the flow is used
+instead for this flow: the von Mises stress, the equivalent plastic
+strain of the flow and the isotropic hardening rules associated with the
+flow are evaluated at \(t+\theta_{i}\,\Delta\,t\), where \(\theta_{i}\)
+is the specific value. The external state variables and the material
+properties of the isotropic hardening rules are still evaluated with the
+value of \(\theta\) given by `@Theta`.
+
+## Example
+
+~~~~{.cxx}
+@DSL MultipleIsotropicMisesFlows;
+@Behaviour PlasticityAndCreep;
+@Epsilon 1e-14;
+@Theta 1;
+@ElasticMaterialProperties {150e9, 0.3};
+@IsotropicHardeningRule "Voce" {flow_id : 0, R0 : 125e6, Rinf : 500e6, b : 20};
+// this flow is evaluated at the middle of the time step
+@FlowRule Plasticity 0.5 {
+  f = seq - R;
+  df_dseq = 1;
+  df_dp = -dR_dp;
+}
+// this flow is evaluated at the end of the time step
+@FlowRule Creep {
+  constexpr auto de0 = strainrate{1e-8};
+  constexpr auto s0 = stress{100e6};
+  constexpr auto E = real{5};
+  const auto tmp = de0 * pow(seq / s0, E - 1);
+  f = tmp * seq / s0;
+  df_dseq = E * tmp / s0;
+}
+~~~~

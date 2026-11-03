@@ -176,11 +176,12 @@ namespace mfront::bbrick {
   std::string UserDefinedIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription& bd,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R_id = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto m = getVariablesMap(
         this->R, this->mps, bd, fid, id,
-        "(this->p" + fid + "+(this->theta) * (this->dp" + fid + "))");
+        "(this->p" + fid + "+(" + theta + ") * (this->dp" + fid + "))");
     return "const auto " + R_id + " = " + this->R.getCxxFormula(m) + ";\n";
   }  // end of computeElasticLimit
 
@@ -188,12 +189,13 @@ namespace mfront::bbrick {
   UserDefinedIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription& bd,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R_id = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR_id = "d" + R_id + "_dp" + fid;
     const auto m = getVariablesMap(
         this->R, this->mps, bd, fid, id,
-        "(this->p" + fid + "+(this->theta) * (this->dp" + fid + "))");
+        "(this->p" + fid + "+(" + theta + ") * (this->dp" + fid + "))");
     auto c = "const auto " + R_id + " = " + this->R.getCxxFormula(m) + ";\n";
     c += "const auto " + dR_id + " = ";
     if (this->dR_dp.has_value()) {

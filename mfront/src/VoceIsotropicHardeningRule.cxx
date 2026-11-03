@@ -79,28 +79,30 @@ namespace mfront::bbrick {
   std::string VoceIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto Rin = IsotropicHardeningRule::getVariableId("Rinf", fid, id);
     const auto bn = IsotropicHardeningRule::getVariableId("b", fid, id);
     return "const auto " + R + " = this->" + Rin + "+(this->" + R0n +
-           "-this->" + Rin + ")*exp(-(this->" + bn + ")*(this->p" + fid +
-           "+(this->theta)*(this->dp" + fid + ")));\n";
+           "-this->" + Rin + ")*exp(-(this->" + bn + ")*(this->p" + fid + "+(" +
+           theta + ")*(this->dp" + fid + ")));\n";
   }  // end of computeElasticLimit
 
   std::string VoceIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR = "d" + R + "_dp" + fid;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto Rin = IsotropicHardeningRule::getVariableId("Rinf", fid, id);
     const auto bn = IsotropicHardeningRule::getVariableId("b", fid, id);
     return "const auto " + R + " = this->" + Rin + "+(this->" + R0n +
-           "-this->" + Rin + ")*exp(-(this->" + bn + ")*(this->p" + fid +
-           "+(this->theta)*(this->dp" + fid +
+           "-this->" + Rin + ")*exp(-(this->" + bn + ")*(this->p" + fid + "+(" +
+           theta + ")*(this->dp" + fid +
            ")));\n"  //
            "const auto " +
            dR + " = - (this->" + bn + ")*(" + R + "-(this->" + Rin + "));\n";
