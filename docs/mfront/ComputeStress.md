@@ -10,6 +10,11 @@ This keyword interprets the code block to generate two methods:
   not provide an appropriate way of computing the stress at the end of
   the time step using the `@ComputeFinalStress` keyword.
 
+In the implicit DSLs, the second method uses the values at the end of
+the time step of the stiffness tensor `D`, of the elastic material
+properties `young`, `nu`, `lambda` and `mu` and of the Hill tensors
+computed by the DSL (`D_tdt`, `young_tdt`, etc.).
+
 ## Note
 
 If the user provide a way of computing the stress at the end of the

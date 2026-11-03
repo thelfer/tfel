@@ -968,6 +968,38 @@ namespace mfront {
     this->treatCodeBlock(BehaviourData::ComputePredictor, m, a, true, true);
   }  // end of treatPredictor
 
+  /*!
+   * \return the name of the value at the end of the time step of the
+   * stiffness tensor, of the isotropic elastic material properties or of a
+   * Hill tensor computed by the implicit DSLs at t + theta * dt, or the
+   * given name if it does not designate such a quantity or if this quantity
+   * is constant during the time step.
+   * \param[in] bd: behaviour description
+   * \param[in] n: variable name
+   */
+  static std::string getStiffnessQuantityAtTheEndOfTheTimeStep(
+      const BehaviourDescription& bd, const std::string& n) {
+    if (bd.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) {
+      if ((n == "D") &&
+          (!bd.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
+        return "D_tdt";
+      }
+    } else if ((bd.getElasticSymmetryType() == ISOTROPIC) &&
+               (bd.areElasticMaterialPropertiesDefined()) &&
+               (!bd.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
+      if ((n == "young") || (n == "nu") || (n == "lambda") || (n == "mu")) {
+        return n + "_tdt";
+      }
+    }
+    for (const auto& ht : bd.getHillTensors()) {
+      if ((n == ht.name) &&
+          (!bd.areMaterialPropertiesConstantDuringTheTimeStep(ht.c))) {
+        return n + "_tdt";
+      }
+    }
+    return n;
+  }  // end of getStiffnessQuantityAtTheEndOfTheTimeStep
+
   void ImplicitDSLBase::treatComputeThermodynamicForces() {
     /*
      * Most behaviours will only rely the @ComputeStress keyword to
@@ -978,6 +1010,10 @@ namespace mfront {
      * ComputeFinalStressCandidate code block which will be used if
      * the user does not provide an alternative through the
      * @ComputeFinalStress
+     *
+     * In this candidate, the stiffness tensor, the elastic material
+     * properties and the Hill tensors computed by the DSL are replaced by
+     * their values at the end of the time step.
      */
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         m1 = [this](const Hypothesis h, const std::string& sv, const bool b) {
@@ -985,7 +1021,8 @@ namespace mfront {
         };
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         m2 = [this](const Hypothesis h, const std::string& sv, const bool b) {
-          return this->computeThermodynamicForcesVariableModifier2(h, sv, b);
+          return this->computeThermodynamicForcesVariableModifier2(
+              h, getStiffnessQuantityAtTheEndOfTheTimeStep(this->mb, sv), b);
         };
     this->treatCodeBlock(
         BehaviourData::ComputeThermodynamicForces,
