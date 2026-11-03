@@ -34,8 +34,9 @@ namespace tfel::system {
     }
 
    private:
-    template <typename T, typename... Args>
+    template <typename T>
     struct Get {
+      template <typename... Args>
       static void exe(ThreadedTaskResult<T>& r, F& t, Args&&... args) {
         try {
           r = t(args...);
