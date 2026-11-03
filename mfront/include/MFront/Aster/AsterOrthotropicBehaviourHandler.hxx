@@ -572,7 +572,16 @@ namespace aster {
       handler.exe(DDSOE, sm, STATEV, F1m);
       m.rotateStressesBackward(sm, STRESS);
       if (bDDSOE) {
-        m.rotateTangentOperatorBackward(DDSOE);
+        if constexpr (Traits::afsf == GROT_GDEP) {
+          // the derivative of the second Piola-Kirchhoff stress with respect
+          // to the Green-Lagrange strain is a st2tost2 stored as a 6x6
+          // matrix, rotated as the tangent operator of small strain
+          // behaviours
+          AsterRotationMatrix3D mr(DROT);
+          mr.rotateTangentOperatorBackward(DDSOE);
+        } else {
+          m.rotateTangentOperatorBackward(DDSOE);
+        }
       }
     }  // end of AsterOrthotropicBehaviourHandler<3u,Behaviour>::exe
 
