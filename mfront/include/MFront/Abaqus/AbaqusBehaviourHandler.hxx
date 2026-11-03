@@ -350,7 +350,7 @@ namespace abaqus {
       constexpr const bool is_defined_ = MTraits::is_defined;
       // Test if the nb of state variables matches Behaviour requirements
       if ((ntens != size) && is_defined_) {
-        throwInvalidTensorSize(Traits::getName(), ntens, size);
+        throwInvalidTensorSize(Traits::getName(), size, ntens);
       }
     }  // end of checkNSTATV
   };   // end of struct AbaqusBehaviourHandler
