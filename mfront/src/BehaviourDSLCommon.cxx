@@ -2940,6 +2940,8 @@ namespace mfront {
     this->mb.setAttribute(
         BehaviourDescription::requiresThermalExpansionCoefficientTensor, true,
         false);
+    // thermal expansion coefficient tensor
+    this->mb.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "A");
   }  // end of treatRequireThermalExpansionCoefficientTensor
 
   void BehaviourDSLCommon::setMaterialKnowledgeIdentifier(
