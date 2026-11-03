@@ -123,6 +123,12 @@ library, see below.
   exported as `268`, like `Stensor4`, instead of `76`, which `MTest` and
   `MGIS` decode as `derivative_type<stensor<1, real>, real>`. Behaviours
   declaring such variables must be generated again (see Issue #1332).
+- The array sizes of the variables of `MFront` and the integer
+  formulas evaluated by `IntegerEvaluator` (for instance the
+  `tile_size` option of the `TDLS` linear solver) shall only contain
+  integers: a number with a decimal point or an exponent, such as `2.5`
+  (which was truncated to `2`), `1e1` or `2.0`, is now rejected (see
+  Issue #1321).
 
 # Improvements to the build system
 
@@ -783,6 +789,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1326>
 ## Issue 1324: [tfel-material] GTN equivalent stress for small porosities, Norton-Hoff harmonic sum derivative, criteria with quantities, Schmid factors of cubic crystals, documentation of criteria and nucleation models
 
 For more details, see <https://github.com/thelfer/tfel/issues/1324>
+
+## Issue 1321: [tfel-math, tfel-system] formula parsers, raw streams, recursiveFind, ThreadPool, Python tfel.system: non-integer sizes, missing derivatives, nested external functions, ln and H in C++, pointers, short writes, symbolic links
+
+For more details, see <https://github.com/thelfer/tfel/issues/1321>
 
 ## Issue 1319: [mfront] RungeKuttaFiniteStrain with the deformation gradient, truncated files, command-line keywords of mtest, unsigned parameters, MaterialLaw bounds, Python mfront module, empty configuration options, tfel-config of the CMake generator
 
