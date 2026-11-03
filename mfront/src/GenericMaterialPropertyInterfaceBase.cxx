@@ -362,7 +362,8 @@ namespace mfront {
     }
     os << "mfront_output_status->status = 0;\n"
        << "mfront_output_status->bounds_status = 0;\n"
-       << "mfront_output_status->c_error_number = 0;\n";
+       << "mfront_output_status->c_error_number = 0;\n"
+       << "mfront_output_status->msg[0] = '\\0';\n";
     if (!areRuntimeChecksDisabled(mpd)) {
       // C-error handling
       os << "errno = 0;\n";
@@ -444,6 +445,7 @@ namespace mfront {
          << "errno = mfront_errno_old;\n"
          << "if(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")){\n"
          << "mfront_output_status->status = -4;\n"
+         << "mfront_report(\"invalid result\");\n"
          << "}\n";
     }
     if (useQuantities(mpd)) {
