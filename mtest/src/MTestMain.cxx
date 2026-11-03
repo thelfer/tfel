@@ -634,13 +634,12 @@ namespace mtest {
     std::regex r(this->test);
     auto found = false;
     const auto m = this->material == "<none>" ? "" : this->material;
-    for (const auto& tname :
-         d.getAvailableMTestTests(this->material, this->behaviour)) {
+    for (const auto& tname : d.getAvailableMTestTests(m, this->behaviour)) {
       if (!std::regex_match(tname, r)) {
         continue;
       }
       found = true;
-      this->appendTestFromMadnexFile(i, this->material, this->behaviour, tname);
+      this->appendTestFromMadnexFile(i, m, this->behaviour, tname);
     }
     if (!found) {
       tfel::raise(
