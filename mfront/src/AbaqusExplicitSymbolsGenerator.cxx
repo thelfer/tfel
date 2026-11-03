@@ -40,12 +40,12 @@ namespace mfront {
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       const auto s =
           i.getFunctionNameBasis(name) + "_OrthotropyManagementPolicy";
-      if (!mb.hasAttribute(
-              AbaqusExplicitInterface::orthotropyManagementPolicy)) {
+      if (!AbaqusInterfaceBase::hasOrthotropyManagementPolicy(
+              i.getInterfaceName(), mb)) {
         exportUnsignedShortSymbol(out, s, 0u);
       } else {
-        const auto omp = mb.getAttribute<std::string>(
-            AbaqusExplicitInterface::orthotropyManagementPolicy);
+        const auto omp = AbaqusInterfaceBase::getOrthotropyManagementPolicy(
+            i.getInterfaceName(), mb);
         if (omp == "MFront") {
           exportUnsignedShortSymbol(out, s, 2u);
         } else if (omp == "Native") {
@@ -68,7 +68,8 @@ namespace mfront {
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       tfel::raise_if(
-          !AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
+          !AbaqusInterfaceBase::hasFiniteStrainStrategy(i.getInterfaceName(),
+                                                        mb),
           "AbaqusExplicitSymbolsGenerator::writeBehaviourTypeSymbols: "
           "behaviours written in the small strain framework "
           "must be embedded in a strain strategy");
@@ -92,7 +93,8 @@ namespace mfront {
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       tfel::raise_if(
-          !AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
+          !AbaqusInterfaceBase::hasFiniteStrainStrategy(i.getInterfaceName(),
+                                                        mb),
           "AbaqusExplicitSymbolsGenerator::writeBehaviourKinematicSymbols: "
           "behaviours written in the small strain framework "
           "must be embedded in a strain strategy");
