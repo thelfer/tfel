@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cctype>
 #include <cstring>
 #include <sstream>
 #include <stdexcept>
@@ -23,26 +24,31 @@
 
 namespace tfel::math::parser {
 
+  // the functions of <cctype> require values representable as unsigned char
+  static bool is_digit(const char c) {
+    return std::isdigit(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_digit
+
   std::string EvaluatorBase::readNumber(std::string::const_iterator& p,
                                         const std::string::const_iterator pe) {
     std::string word;
     std::string::const_iterator b = p;
     if (*p == '-') {
       ++p;
-      if ((p == pe) || (!(isdigit(*p)))) {
+      if ((p == pe) || (!(is_digit(*p)))) {
         tfel::raise(
             "EvaluatorBase::readNumber: "
             "invalid number");
       }
     }
     // reading decimal part
-    while ((isdigit(*p)) && (p != pe)) {
+    while ((p != pe) && (is_digit(*p))) {
       ++p;
     }
     if (p != pe) {
       if (*p == '.') {
         ++p;
-        while ((isdigit(*p)) && (p != pe)) {
+        while ((p != pe) && (is_digit(*p))) {
           ++p;
         }
       }
@@ -57,15 +63,15 @@ namespace tfel::math::parser {
             ++p;
             if (p == pe) {
               --(--p);
-            } else if (isdigit(*p)) {
-              while ((isdigit(*p)) && (p != pe)) {
+            } else if (is_digit(*p)) {
+              while ((p != pe) && (is_digit(*p))) {
                 ++p;
               }
             } else {
               --(--p);
             }
-          } else if (isdigit(*p)) {
-            while ((isdigit(*p)) && (p != pe)) {
+          } else if (is_digit(*p)) {
+            while ((p != pe) && (is_digit(*p))) {
               ++p;
             }
           } else {
@@ -130,7 +136,7 @@ namespace tfel::math::parser {
       auto p2 = w2.begin();
       const auto p2e = w2.end();
       while (p2 != p2e) {
-        if (isdigit(*p2) && (p2 == b)) {
+        if (is_digit(*p2) && (p2 == b)) {
           res.push_back(readNumber(p2, p2e));
           b = p2;
         } else if (*p2 == '+') {

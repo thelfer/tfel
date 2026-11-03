@@ -127,7 +127,7 @@ namespace tfel::utilities {
     } else if (tfel::utilities::starts_with(r, "ç")) {
       replace("ç", "Ç");
     } else {
-      r[0] = static_cast<char>(toupper(r[0]));
+      r[0] = static_cast<char>(toupper(static_cast<unsigned char>(r[0])));
     }
     return r;
   }  // end of capitalize

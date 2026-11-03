@@ -30,6 +30,19 @@
 
 namespace tfel::math {
 
+  // the functions of <cctype> require values representable as unsigned char
+  static bool is_digit(const char c) {
+    return std::isdigit(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_digit
+
+  static bool is_alpha(const char c) {
+    return std::isalpha(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_alpha
+
+  static bool is_space(const char c) {
+    return std::isspace(static_cast<unsigned char>(c)) != 0;
+  }  // end of is_space
+
   struct Evaluator::FunctionGeneratorManager {
     void insert(const std::string&, const Evaluator::FunctionGenerator);
     void insert(const std::string&, const Evaluator::BinaryFunctionGenerator);
@@ -78,7 +91,7 @@ namespace tfel::math {
   unsigned short Evaluator::convertToUnsignedShort(const std::string& method,
                                                    const std::string& value) {
     for (const auto c : value) {
-      if (!isdigit(c)) {
+      if (!is_digit(c)) {
         tfel::raise(method + " : invalid entry");
       }
     }
@@ -94,7 +107,7 @@ namespace tfel::math {
   unsigned int Evaluator::convertToUnsignedInt(const std::string& method,
                                                const std::string& value) {
     for (const auto c : value) {
-      if (!isdigit(c)) {
+      if (!is_digit(c)) {
         tfel::raise(method + ": invalid entry");
       }
     }
@@ -117,7 +130,7 @@ namespace tfel::math {
       ++p;
     }
     for (; p != pe; ++p) {
-      if (!isdigit(*p)) {
+      if (!is_digit(*p)) {
         return false;
       }
     }
@@ -290,7 +303,7 @@ namespace tfel::math {
       auto ps = p->begin();
       const auto pse = p->end();
       while (ps != pse) {
-        throw_if(!std::isdigit(*ps), "expected a number");
+        throw_if(!is_digit(*ps), "expected a number");
         ++ps;
       }
       std::istringstream converter(*p);
@@ -613,14 +626,14 @@ namespace tfel::math {
         ++p;
         Evaluator::checkNotEndOfExpression(m, p, pe);
         for (const auto c : *p) {
-          raise_if(!isdigit(c), m + ": invalid parameter '" + *p + "'");
+          raise_if(!is_digit(c), m + ": invalid parameter '" + *p + "'");
         }
         n += *p;
         params.push_back(n);
         ++p;
       } else {
         for (const auto c : tfel::unicode::getMangledString(*p)) {
-          raise_if(!(isalpha(c) || isdigit(c) || (c == '-')) || (c == '_'),
+          raise_if(!(is_alpha(c) || is_digit(c) || (c == '-')) || (c == '_'),
                    m + ": invalid parameter '" + *p + "'");
         }
         params.push_back(*p);
@@ -985,20 +998,20 @@ namespace tfel::math {
       const auto v = tfel::unicode::getMangledString(variable);
       auto ps = v.begin();
       const auto pse = v.end();
-      throw_if(isdigit(*ps));
-      throw_if((!isalpha(*ps)) && (!(isdigit(*ps))) && (*ps != '_') &&
+      throw_if(is_digit(*ps));
+      throw_if((!is_alpha(*ps)) && (!(is_digit(*ps))) && (*ps != '_') &&
                (*ps != '$'));
       ++ps;
       while (ps != pse) {
-        throw_if((!isalpha(*ps)) && (!(isdigit(*ps))) && (*ps != '_') &&
+        throw_if((!is_alpha(*ps)) && (!(is_digit(*ps))) && (*ps != '_') &&
                  (*ps != '['));
-        throw_if(isspace(*ps));
+        throw_if(is_space(*ps));
         if (*ps == '[') {
           ++ps;
           throw_if(ps == pse);
-          throw_if(!isdigit(*ps));
+          throw_if(!is_digit(*ps));
           while (*ps != ']') {
-            throw_if(!isdigit(*ps));
+            throw_if(!is_digit(*ps));
             ++ps;
             throw_if(ps == pse);
           }
