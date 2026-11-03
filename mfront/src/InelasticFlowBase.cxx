@@ -518,14 +518,6 @@ namespace mfront::bbrick {
       i.code += this->sc->computeElasticPrediction(id, bd, sp);
       i.code += computeElasticLimitInitialValue(bd, this->ihrs, id);
       i.code += "this->bpl" + id + " = seqel" + id + " > Rel" + id + ";\n";
-      if (this->save_stress_criterion) {
-        i.code += "this->mfront_" + stress_criterion_external_name +
-                  " = seqel" + id + ";\n";
-      }
-      if (this->save_yield_surface_radius) {
-        i.code += "this->mfront_" + yield_surface_radius_external_name +
-                  " = Rel" + id + ";\n";
-      }
       bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                  BehaviourData::BeforeInitializeLocalVariables, i,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
@@ -624,7 +616,9 @@ namespace mfront::bbrick {
             this->fc->computeNormal(id, bd, sp, StressCriterion::FLOWCRITERION);
       }
     }
-    if (this->save_stress_criterion) {
+    if ((this->save_stress_criterion) && (this->ihrs.empty())) {
+      // with isotropic hardening rules, the stress criterion is saved once
+      // the convergence is reached, see the additional convergence checks
       ib.code += "this->mfront_" + stress_criterion_external_name + " = seq" +
                  id + ";\n";
     }
@@ -756,6 +750,43 @@ namespace mfront::bbrick {
                BehaviourData::AT_BEGINNING);
     // additional checks
     if (!this->ihrs.empty()) {
+      const auto save_values =
+          (this->save_stress_criterion) || (this->save_yield_surface_radius);
+      // stress criterion and elastic limit at t + theta * dt
+      const auto compute_criterion_and_elastic_limit =
+          [this, &bd, &sp, &id](const bool criterion, const bool limit) {
+            auto c = std::string{};
+            if (criterion) {
+              if (this->isCoupledWithPorosityEvolution()) {
+                const auto& f = bd.getBehaviourData(uh)
+                                    .getStateVariableDescriptionByExternalName(
+                                        tfel::glossary::Glossary::Porosity);
+                c += "const auto " + f.name + "_ = ";
+                c += "this->" + f.name + " + (" + bd.getClassName() +
+                     "::theta) * (this->d" + f.name + ");\n";
+              }
+              c += this->computeEffectiveStress(id);
+              c += this->sc->computeCriterion(id, bd, sp);
+            }
+            if (limit) {
+              c += computeElasticLimit(bd, this->ihrs, id);
+            }
+            return c;
+          };
+      // the saved values are the ones of the solution, whether the flow is
+      // active or not
+      const auto save = [this, &id] {
+        auto c = std::string{};
+        if (this->save_stress_criterion) {
+          c += "this->mfront_" + stress_criterion_external_name + " = seq" +
+               id + ";\n";
+        }
+        if (this->save_yield_surface_radius) {
+          c += "this->mfront_" + yield_surface_radius_external_name + " = R" +
+               id + ";\n";
+        }
+        return c;
+      };
       CodeBlock acc;
       acc.code += "if (converged) {\n";
       acc.code += "// checking status consistency\n";
@@ -763,22 +794,23 @@ namespace mfront::bbrick {
       acc.code += "if (this->dp" + id + " < -2*this->epsilon) {\n";
       acc.code += "// desactivating this system\n";
       acc.code += "converged = this->bpl" + id + " = false;\n";
+      if (save_values) {
+        acc.code += "} else {\n";
+        // only the saved values are computed
+        acc.code += compute_criterion_and_elastic_limit(
+            this->save_stress_criterion, this->save_yield_surface_radius);
+        acc.code += save();
+      }
       acc.code += "}\n";
       acc.code += "} else {\n";
-      if (this->isCoupledWithPorosityEvolution()) {
-        const auto& f =
-            bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
-                tfel::glossary::Glossary::Porosity);
-        acc.code += "const auto " + f.name + "_ = ";
-        acc.code += "this->" + f.name + " + (" + bd.getClassName() +
-                    "::theta) * (this->d" + f.name + ");\n";
-      }
-      acc.code += this->computeEffectiveStress(id);
-      acc.code += this->sc->computeCriterion(id, bd, sp);
-      acc.code += computeElasticLimit(bd, this->ihrs, id);
+      acc.code += compute_criterion_and_elastic_limit(true, true);
       acc.code += "if(seq" + id + " > R" + id + ") {\n";
       acc.code += "converged = false;\n";
       acc.code += "this->bpl" + id + " = true;\n";
+      if (save_values) {
+        acc.code += "} else {\n";
+        acc.code += save();
+      }
       acc.code += "}\n";
       acc.code += "}\n";
       acc.code += "} // end of if(converged)\n";
