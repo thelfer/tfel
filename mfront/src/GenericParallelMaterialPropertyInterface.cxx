@@ -342,14 +342,10 @@ namespace mfront {
     // HIP runtime must be included first)
     os << "#include\"" << this->backend->getExecutionPolicyHeader() << "\"\n\n";
 
-    // the parameters handler has a hidden visibility: libraries of several
-    // backends for the same material property, loaded in the same process,
-    // have their own parameters
     writeMaterialPropertyParametersHandler(os, mpd,
                                            {.material_property_name = name,
                                             .floating_point_type = "double",
-                                            .interface_namespace = nname,
-                                            .hidden_visibility = true});
+                                            .interface_namespace = nname});
 
     this->backend->writeGlobalFunctions(os, *this, mpd, fd);
 
