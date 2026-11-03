@@ -752,6 +752,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1303: [mfront] Implicit DSLs: inverse jacobian blocks, normalisation factors, reference temperature of external files, UserDefined and Broyden2 algorithms, reserved names
+
+For more details, see <https://github.com/thelfer/tfel/issues/1303>
+
 ## Issue 1301: Fixes of the 5.2 review: incomplete fixes and regressions in merged code
 
 For more details, see <https://github.com/thelfer/tfel/issues/1301>
