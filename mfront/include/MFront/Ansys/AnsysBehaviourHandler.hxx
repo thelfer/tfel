@@ -93,10 +93,27 @@ namespace ansys {
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
         typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
         const AnsysInt N = ModellingHypothesisToSpaceDimension<H>::value;
+        // in plane stress, Ansys gives the three strain components (e11,
+        // e22, gamma12) whereas the stress-free expansion handler works on
+        // the four components (xx, yy, zz, xy)
+        constexpr auto ps =
+            (H == ModellingHypothesis::PLANESTRESS) &&
+            (AnsysTraits<BV>::btype == ansys::STANDARDSTRAINBASEDBEHAVIOUR);
         AnsysReal dv0[AnsysTraits<BV>::GradientSize];
         AnsysReal dv1[AnsysTraits<BV>::GradientSize];
-        copy<AnsysTraits<BV>::GradientSize>::exe(STRAN, dv0);
-        copy<AnsysTraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        if constexpr (ps) {
+          dv0[0] = STRAN[0];
+          dv0[1] = STRAN[1];
+          dv0[2] = AnsysReal{0};
+          dv0[3] = STRAN[2];
+          dv1[0] = DSTRAN[0];
+          dv1[1] = DSTRAN[1];
+          dv1[2] = AnsysReal{0};
+          dv1[3] = DSTRAN[2];
+        } else {
+          copy<AnsysTraits<BV>::GradientSize>::exe(STRAN, dv0);
+          copy<AnsysTraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        }
         // check that the function pointer are not null
         if (sfeh == nullptr) {
           throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -106,6 +123,11 @@ namespace ansys {
         const auto& s0 = s.first;
         const auto& s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], N);
+        if constexpr (ps) {
+          // back to the three components given by Ansys
+          dv0[2] = dv0[3];
+          dv1[2] = dv1[3];
+        }
         b.setANSYSBehaviourDataGradients(dv0);
         b.setANSYSIntegrationDataGradients(dv1);
       }  // end of exe
