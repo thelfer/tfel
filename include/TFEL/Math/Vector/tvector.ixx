@@ -82,6 +82,16 @@ namespace tfel::math {
     return a.result;
   }
 
+  template <unsigned short N, typename T, typename Operation>
+  TFEL_HOST_DEVICE constexpr auto abs(
+      const Expr<tvector<N, T>, Operation>& e) noexcept {
+    AbsSum<T> a;
+    for (unsigned short i = 0; i != N; ++i) {
+      a(e(i));
+    }
+    return a.result;
+  }
+
   template <typename T>
   TFEL_HOST_DEVICE constexpr tvector<1u, T> makeTVector1D(const T v) noexcept {
     return {v};
