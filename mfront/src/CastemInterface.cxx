@@ -2794,6 +2794,7 @@ namespace mfront {
                      "CastemInterface::generateInputFileExample: "
                      "could not open file '" +
                          fileName + "'");
+      out.precision(14);
       // header
       out << "*\n"
           << "* \\file   " << fd.fileName << '\n'
