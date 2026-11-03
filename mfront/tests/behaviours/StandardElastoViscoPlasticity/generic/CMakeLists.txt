@@ -235,6 +235,11 @@ generictest_standardelastovicoplasticitybrick(HarmonicSumOfNortonHoffViscoplasti
     MFrontStandardElastoViscoPlasticityBrickBehaviours
     HarmonicSumOfNortonHoffViscoplasticFlowsTest3)
 
+generictest_standardelastovicoplasticitybrick(ElasticContributionToPorosityGrowth-compaction
+    ElasticContributionToPorosityGrowth-compaction
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    ElasticContributionToPorosityGrowth)
+
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
     GursonTvergaardNeedleman1982-test1
     MFrontStandardElastoViscoPlasticityBrickBehaviours

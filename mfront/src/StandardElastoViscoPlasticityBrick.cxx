@@ -699,7 +699,7 @@ namespace mfront {
         ib.code = "if(this->" + f.name + " + this->d" + f.name +  //
                   " - f" + f.name + " < 0){\n";
         ib.code += "f" + f.name + " = " +  //
-                   "this->d" + f.name + " - this->" + f.name + ";\n";
+                   "this->d" + f.name + " + this->" + f.name + ";\n";
         if (requiresAnalyticalJacobian) {
           ib.code +=
               "for(unsigned short idx = 0; idx!= "  //
