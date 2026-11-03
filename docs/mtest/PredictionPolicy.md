@@ -8,8 +8,8 @@ allowed:
 - LinearPrediction
 - ElasticPrediction
 - ElasticPredictionFromMaterialProperties
-- SecantPrediction
-- TangentPrediction
+- SecantOperatorPrediction
+- TangentOperatorPrediction
 
 ## Example
 
