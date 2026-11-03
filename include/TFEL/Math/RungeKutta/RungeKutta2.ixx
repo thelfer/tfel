@@ -15,6 +15,7 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/MathException.hxx"
 
 namespace tfel::math {
 
@@ -38,6 +39,9 @@ namespace tfel::math {
     }
 
     TFEL_MATH_INLINE2 void exe(const T begin, const T end) {
+      if ((end > begin) && !(this->h > T{0})) {
+        throw(InvalidTimeStepException());
+      }
       const auto h0 = this->h;
       this->t = begin;
       while (this->t < end) {
