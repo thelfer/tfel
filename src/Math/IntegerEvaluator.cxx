@@ -21,7 +21,6 @@
 #include <stdexcept>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
-#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/Math/Parser/IntegerEvaluatorTExpr.hxx"
@@ -59,25 +58,7 @@ namespace tfel::math {
   }  // end of convert
 
   bool IntegerEvaluator::isNumber(const std::string& value) {
-    if (convert<int>(value)) {
-      return true;
-    }
-    // a real number is accepted if its fractional part or its exponent leaves
-    // the value of its integer part unchanged (2.0 or 2e0, but not 2.5 or
-    // 1e1), as in CxxTokenizer::readInt
-    auto i = int{};
-    std::istringstream is(value);
-    is >> i;
-    if (is.fail()) {
-      return false;
-    }
-    const auto c = is.peek();
-    if (((c != '.') && (c != 'e') && (c != 'E')) || (!convert<double>(value))) {
-      return false;
-    }
-    auto d = double{};
-    std::istringstream(value) >> d;
-    return ieee754::fpclassify(d - static_cast<double>(i)) == FP_ZERO;
+    return convert<int>(value);
   }  // end of IntegerEvaluator::isNumber
 
   std::vector<std::string> IntegerEvaluator::analyseParameters(
