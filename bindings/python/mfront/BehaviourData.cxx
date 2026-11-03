@@ -62,6 +62,7 @@ void declareBehaviourData(pybind11::module_& m) {
       m, "BehaviourData",
       "This structure gathers various behaviour characteristic\n"
       "for a given modelling hypothesis")
+      .def(pybind11::init<>())
       .def("getMaterialProperties", &BehaviourData::getMaterialProperties,
            pybind11::return_value_policy::reference_internal)
       .def("getPersistentVariables", &BehaviourData::getPersistentVariables,

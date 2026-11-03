@@ -153,10 +153,11 @@ namespace mfront {
     if (opts.useMaterialPropertiesToBuildStiffnessTensor) {
       if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                           false)) {
-        if (bd.getSymmetryType() == mfront::ISOTROPIC) {
+        // the stiffness tensor has the elastic symmetry
+        if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
           add_mp("stress", "YoungModulus", "youn", false);
           add_mp("real", "PoissonRatio", "nu", false);
-        } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+        } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
           add_mp("stress", "YoungModulus1", "yg1", false);
           add_mp("stress", "YoungModulus2", "yg2", false);
           add_mp("stress", "YoungModulus3", "yg3", false);
@@ -174,7 +175,7 @@ namespace mfront {
             add_mp("stress", "ShearModulus13", "g13", false);
           }
         } else {
-          throw_if(true, "unsupported behaviour symmetry type");
+          throw_if(true, "unsupported elastic symmetry type");
         }
       }
     }
@@ -182,6 +183,8 @@ namespace mfront {
       if (bd.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
+        // the thermal expansion coefficient tensor has the symmetry of the
+        // behaviour
         if (bd.getSymmetryType() == mfront::ISOTROPIC) {
           add_mp("thermalexpansion", "ThermalExpansion", "alph", false);
         } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {

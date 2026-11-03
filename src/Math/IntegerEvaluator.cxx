@@ -69,7 +69,8 @@ namespace tfel::math {
     while (*p != ">") {
       // check parameter validity
       for (const auto c : tfel::unicode::getMangledString(*p)) {
-        raise_if(!(isalpha(c) || isdigit(c)) || (c == '_') || (c == '-'),
+        const auto uc = static_cast<unsigned char>(c);
+        raise_if(!(isalpha(uc) || isdigit(uc)) || (c == '_') || (c == '-'),
                  "IntegerEvaluator::analyseParameters: "
                  "invalid parameter '" +
                      *p + "'");

@@ -26,6 +26,7 @@ void declareVariableDescription(pybind11::module_&);
 void declareVariableDescription(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<VariableDescriptionBase>(m, "VariableDescriptionBase")
+      .def(pybind11::init<>())
       .def_readwrite("type", &VariableDescriptionBase::type)
       .def_readwrite("name", &VariableDescriptionBase::name)
       .def_readwrite("description", &VariableDescriptionBase::description)
@@ -63,6 +64,7 @@ void declareVariableDescription(pybind11::module_& m) {
   pybind11::class_<VariableDescription, VariableDescriptionBase>(
       m, "VariableDescription",
       "Structure standing for a standard (non static) variable")
+      .def(pybind11::init<>())
       .def("hasBounds", hasBounds_1,
            "Return true if bounds has been specified for this variable")
       .def("hasBounds", hasBounds_2,
@@ -119,6 +121,7 @@ void declareVariableDescription(pybind11::module_& m) {
 
   pybind11::class_<VariableDescriptionContainer>(m,
                                                  "VariableDescriptionContainer")
+      .def(pybind11::init<>())
       .def(
           "__iter__",
           [](const VariableDescriptionContainer& v) {

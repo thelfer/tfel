@@ -1491,6 +1491,12 @@ namespace mfront {
       }
       if (this->shallGenerateMTestFileOnFailure(bd)) {
         out << "using mfront::SupportedTypes;\n";
+        if ((type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
+            (is_finite_strain_through_strain_measure)) {
+          // the stress measure is read before the integration, which may
+          // overwrite d->K with the tangent operator
+          out << "const auto mg_sm = mfront::gb::getStressMeasure(d->K);\n";
+        }
       }
       if ((type == BehaviourDescription::GENERALBEHAVIOUR) ||
           (type == BehaviourDescription::COHESIVEZONEMODEL)) {
@@ -1756,8 +1762,8 @@ namespace mfront {
             }
           }
         }
+        // mg_sm, the stress measure, is read before the integration
         os << "auto mg_s0 = tfel::math::stensor<mg_Traits::N, real>{};\n"
-           << "const auto mg_sm = mfront::gb::getStressMeasure(d->K);\n"
            << "if (mg_sm == mfront::gb::StressMeasure::PK1) {\n"
            << "mg_s0 = "
            << "tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress("

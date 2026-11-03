@@ -34,6 +34,7 @@ void declareVariableBoundsDescription(pybind11::module_& m) {
       "  positive.\n"
       "- (standard) bounds: give the bounds out of which the correlation\n"
       "  has not been identified.")
+      .def(pybind11::init<>())
       .def_readwrite("boundsType", &VariableBoundsDescription::boundsType)
       .def_readwrite("lineNumber", &VariableBoundsDescription::lineNumber)
       .def_readwrite("component", &VariableBoundsDescription::component)

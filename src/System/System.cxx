@@ -136,8 +136,9 @@ namespace tfel::system {
   void systemCall::throwSystemError(const std::string& errMsg,
                                     const int errNbr) {
     std::string err = strerror(errNbr);
-    std::transform(err.begin(), err.end(), err.begin(),
-                   [](const auto c) { return ::tolower(c); });
+    std::transform(err.begin(), err.end(), err.begin(), [](const auto c) {
+      return ::tolower(static_cast<unsigned char>(c));
+    });
     auto msg = errMsg;
     msg += " (system error: ";
     msg += err;
@@ -388,18 +389,28 @@ namespace tfel::system {
 #else
     struct stat dInfos;
     std::vector<std::string> o;
-    if (::stat(d.c_str(), &dInfos) == -1) {
+    // trailing slashes would make lstat follow a symbolic link
+    auto dn = d;
+    while ((dn.size() > 1) && (dn.back() == '/')) {
+      dn.pop_back();
+    }
+    // a symbolic link is removed, never followed, as the entries below
+    if (::lstat(dn.c_str(), &dInfos) == -1) {
       systemCall::throwSystemError(
           "systemCall::rmdir: "
           "can't stat directory " +
               d,
           errno);
     }
+    if (S_ISLNK(dInfos.st_mode)) {
+      systemCall::unlink(dn);
+      return;
+    }
     raise_if(!S_ISDIR(dInfos.st_mode),
              "systemCall::rmdir: "
              "'" +
-                 d + "' is not a directory");
-    auto* dir = opendir(d.c_str());
+                 dn + "' is not a directory");
+    auto* dir = opendir(dn.c_str());
     if (dir == nullptr) {
       systemCall::throwSystemError(
           "systemCall::rmdir,"
@@ -416,7 +427,7 @@ namespace tfel::system {
     closedir(dir);
     for (const auto& fb : o) {
       struct stat pInfos;
-      const auto f = d + "/" + fb;
+      const auto f = dn + "/" + fb;
       // a symbolic link is removed, never followed
       if (::lstat(f.c_str(), &pInfos) == -1) {
         systemCall::throwSystemError(
@@ -431,7 +442,7 @@ namespace tfel::system {
         systemCall::unlink(f);
       }
     }
-    if (::rmdir(d.c_str()) != 0) {
+    if (::rmdir(dn.c_str()) != 0) {
       systemCall::throwSystemError(
           "systemCall::rmdir: can't remove directory " + d, errno);
     }
