@@ -430,6 +430,14 @@ namespace mfront {
       }
       //
       os << f.body << '\n';
+      // bounds of the outputs computed by the function
+      if (!areRuntimeChecksDisabled(md)) {
+        for (const auto& mv : f.modifiedVariables) {
+          const auto& v = md.outputs.getVariable(mv);
+          write_physical_bounds(v, v.name, 0u);
+          write_bounds(v, v.name, 0u);
+        }
+      }
       for (const auto& mv : f.modifiedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
         const auto& v = md.outputs.getVariable(mv);
