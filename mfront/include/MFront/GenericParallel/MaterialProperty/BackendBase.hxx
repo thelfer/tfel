@@ -211,22 +211,46 @@ namespace mfront::generic_parallel::material_property {
      * If the calling code gives statistics (deferred report, required by an
      * asynchronous evaluation), they are initialized by the calling code.
      * Otherwise, they
-     * are held by a block of a pool of blocks accessible by the host and by
-     * the device (see `mfront::generic_parallel::StatusBlockPool`),
-     * initialized on the host: no memory is allocated per call. The device
-     * only accesses the statistics if an event occurs at a point.
+     * are held by a block of a pool of blocks in device memory (see
+     * `mfront::generic_parallel::StatusBlockPool`): no memory is allocated
+     * per call. The block is initialized by a copy of the local statistics
+     * `mfront_host_statistics` (see `writeStatisticsCopyToDevice`) and copied
+     * back to them after the computations (see `writeStatisticsCopyToHost`):
+     * the host never accesses the block, which the device may not share
+     * with the host while kernels run (devices without concurrent access to
+     * managed memory).
      *
      * \param[in] os: output stream
      * \param[in] device_type: type identifying a device
      * \param[in] device: expression identifying the current device
      * \param[in] allocation: body of a function allocating a
-     * `mfront_gpmp_Statistics` structure, returning a null pointer on
-     * failure
+     * `mfront_gpmp_Statistics` structure in device memory, returning a null
+     * pointer on failure
      */
     static void writeStatisticsDeclaration(std::ostream&,
                                            const std::string_view,
                                            const std::string_view,
                                            const std::string_view);
+    /*!
+     * \brief write the initialization of the block of statistics of the
+     * pool (see `writeStatisticsDeclaration`), before the kernels
+     * \param[in] os: output stream
+     * \param[in] copy: expression copying `mfront_host_statistics` to
+     * `mfront_statistics`, true on success
+     */
+    static void writeStatisticsCopyToDevice(std::ostream&,
+                                            const std::string_view);
+    /*!
+     * \brief write the copy of the block of statistics of the pool (see
+     * `writeStatisticsDeclaration`) to `mfront_host_statistics`, once the
+     * computations are completed, and make `mfront_statistics` point to them
+     * \param[in] os: output stream
+     * \param[in] copy: expression copying `mfront_statistics` to
+     * `mfront_host_statistics` and waiting for the end of the copy, true on
+     * success
+     */
+    static void writeStatisticsCopyToHost(std::ostream&,
+                                          const std::string_view);
     /*!
      * \brief write the declaration of the statistics `mfront_statistics`
      * of the backends merging the statuses of the points with a reduction:

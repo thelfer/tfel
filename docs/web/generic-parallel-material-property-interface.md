@@ -186,7 +186,10 @@ and by the device where the computations are performed, for instance in
 managed or shared memory if the memory space of the library is `device`:
 the kernels update them, and the report function reads them on the host
 (the C++ parallel algorithms also merge the statuses of the points in
-them on the host). With the automatic data
+them on the host). On devices without concurrent access to managed
+memory (`cudaDevAttrConcurrentManagedAccess` null, for instance under
+Windows), the host must not access managed statistics while kernels run
+on the device. With the automatic data
 transfers of the `SYCL`
 backend, statistics which are not accessible by the device are copied,
 as the values, and the evaluation is then synchronous:
@@ -215,9 +218,10 @@ const auto status =
 
 The report function is only meaningful if the evaluation returned `0`.
 An evaluation without statistics calls the same report function on
-statistics held by blocks of memory reused from one call to another
-(`CUDA`, `HIP` and `SYCL` backends) or by a local variable (C++ parallel
-algorithms): the output status is the same.
+statistics held by blocks of device memory reused from one call to
+another and copied to the host after the computations (`CUDA`, `HIP` and
+`SYCL` backends), or by a local variable (C++ parallel algorithms): the
+output status is the same.
 
 The statistics give the number of points where the evaluation failed, the number of points where
 a bound is violated with the warning policy, and two keys giving the

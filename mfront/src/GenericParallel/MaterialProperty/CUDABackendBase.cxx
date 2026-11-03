@@ -125,7 +125,7 @@ namespace mfront::generic_parallel::material_property {
     // based on C++ programming models
     os << "try{\n";
     if (isBoundsCheckingRequired(mpd)) {
-      // the statistics are held by a block of managed memory of the current
+      // the statistics are held by a block of device memory of the current
       // device
       os << "auto mfront_device = int{};\n"
          << "const auto mfront_" << pm << "_device_error = " << pm
@@ -138,8 +138,7 @@ namespace mfront::generic_parallel::material_property {
           os, "int", "mfront_device",
           "mfront_gpmp_Statistics* mfront_ptr = nullptr;\n"
           "return " +
-              pm +
-              "MallocManaged(&mfront_ptr, sizeof(mfront_gpmp_Statistics)) == " +
+              pm + "Malloc(&mfront_ptr, sizeof(mfront_gpmp_Statistics)) == " +
               pm + "Success ? mfront_ptr : nullptr;");
     }
     this->writeKernelCall(os, i, mpd);
@@ -176,6 +175,12 @@ namespace mfront::generic_parallel::material_property {
        << "const auto mfront_threads_per_block = static_cast<unsigned int>(("
        << threads_per_block
        << " + mfront_warp_size - 1) / mfront_warp_size * mfront_warp_size);\n";
+    if (isBoundsCheckingRequired(mpd)) {
+      writeStatisticsCopyToDevice(
+          os, pm + "MemcpyAsync(mfront_statistics, &mfront_host_statistics, " +
+                  "sizeof(mfront_gpmp_Statistics), " + pm +
+                  "MemcpyHostToDevice, mfront_stream) == " + pm + "Success");
+    }
     auto write_kernel_call = [&](const std::string_view npoints,
                                  const bool handleStrides) {
       const auto kernel = "mfront_" + name + "_kernel" +
@@ -254,6 +259,15 @@ namespace mfront::generic_parallel::material_property {
          << "}\n";
     };
     this->writeKernelSelection(os, i, mpd, write_kernel_call);
+    if (isBoundsCheckingRequired(mpd)) {
+      writeStatisticsCopyToHost(
+          os, "(" + pm +
+                  "MemcpyAsync(&mfront_host_statistics, mfront_statistics, "
+                  "sizeof(mfront_gpmp_Statistics), " +
+                  pm + "MemcpyDeviceToHost, mfront_stream) == " + pm +
+                  "Success) && (" + pm +
+                  "StreamSynchronize(mfront_stream) == " + pm + "Success)");
+    }
   }  // end of writeKernelCall
 
   bool CUDABackendBase::mergesPointStatusesInKernels() const {

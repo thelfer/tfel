@@ -25,11 +25,11 @@ namespace mfront::generic_parallel {
    * of synchronous computations performed on a device.
    *
    * The kernels only write in a block when an event occurs (failure at a
-   * point, bound violated, etc.). When the block is accessible by the host
-   * and by the device (managed or shared memory), the host initializes it
-   * before the computations and reads it once they are completed: without
-   * event, the device does not access the block and no data is transferred
-   * between the host and the device.
+   * point, bound violated, etc.). The generated code allocates the blocks in
+   * device memory, initializes them by a copy before the computations and
+   * copies them back once the computations are completed: the host never
+   * accesses a block, which the device may not share with the host while
+   * kernels run.
    *
    * The blocks are allocated at their first use on a device and reused by
    * the following calls: no memory is allocated per call. A block is used

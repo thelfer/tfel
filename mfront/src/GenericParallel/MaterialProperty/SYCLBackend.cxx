@@ -89,13 +89,17 @@ namespace mfront::generic_parallel::material_property {
     const auto requiresBoundsCheck = this->isBoundsCheckingRequired(mpd);
     writeDeviceStackSizeSetting(os, this->device_stack_size);
     if (requiresBoundsCheck) {
-      // the statistics are held by a block of shared memory, identified by
+      // the statistics are held by a block of device memory, identified by
       // the device and the context of the queue
       writeStatisticsDeclaration(
           os, "std::pair<sycl::device, sycl::context>",
           "{mfront_queue->get_device(), mfront_queue->get_context()}",
-          "return sycl::malloc_shared<mfront_gpmp_Statistics>(1, "
+          "return sycl::malloc_device<mfront_gpmp_Statistics>(1, "
           "*mfront_queue);");
+      writeStatisticsCopyToDevice(
+          os,
+          "(mfront_queue->copy(&mfront_host_statistics, mfront_statistics, "
+          "1).wait(), true)");
       if (this->handlesDataTransfer()) {
         // statistics given by the calling code which are not accessible by
         // the device, as the arguments and the output
@@ -130,6 +134,12 @@ namespace mfront::generic_parallel::material_property {
       }
     };
     this->writeKernelSelection(os, i, mpd, write_kernel_call);
+    if (requiresBoundsCheck) {
+      writeStatisticsCopyToHost(
+          os,
+          "(mfront_queue->copy(mfront_statistics, &mfront_host_statistics, "
+          "1).wait(), true)");
+    }
   }  // end of writeKernelCall
 
   bool SYCLBackend::mergesPointStatusesInKernels() const {

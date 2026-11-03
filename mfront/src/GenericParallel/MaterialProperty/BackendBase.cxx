@@ -291,11 +291,13 @@ namespace mfront::generic_parallel::material_property {
         "mfront_gpmp_Statistics, " +
         std::string{device_type} + ">";
     // statistics given by the calling code (deferred report), or block of
-    // the pool, initialized here
+    // the pool in device memory, initialized by a copy of
+    // `mfront_host_statistics` (see `writeStatisticsCopyToDevice`)
     os << "static auto mfront_statistics_blocks = " << pool << "{};\n"
        << "auto mfront_statistics_block = std::optional<" << pool
        << "::Block>{};\n"
        << "auto* mfront_statistics = mfront_given_statistics;\n"
+       << "auto mfront_host_statistics = mfront_gpmp_Statistics{};\n"
        << "if (mfront_statistics == nullptr) {\n"
        << "mfront_statistics_block.emplace("
        << "mfront_statistics_blocks.acquire(" << device << ", [&]{\n"
@@ -306,9 +308,30 @@ namespace mfront::generic_parallel::material_property {
     writeBatchError(os, -7,
                     "\"unable to allocate the statistics of the evaluation\"");
     os << "}\n"
-       << "mfront_gpmp_initializeStatistics(mfront_statistics);\n"
+       << "mfront_gpmp_initializeStatistics(&mfront_host_statistics);\n"
        << "}\n";
   }  // end of writeStatisticsDeclaration
+
+  void BackendBase::writeStatisticsCopyToDevice(std::ostream& os,
+                                                const std::string_view copy) {
+    os << "if (!mfront_deferred_report) {\n"
+       << "if (!(" << copy << ")) {\n";
+    writeBatchError(
+        os, -7, "\"unable to initialize the statistics of the evaluation\"");
+    os << "}\n"
+       << "}\n";
+  }  // end of writeStatisticsCopyToDevice
+
+  void BackendBase::writeStatisticsCopyToHost(std::ostream& os,
+                                              const std::string_view copy) {
+    os << "if (!mfront_deferred_report) {\n"
+       << "if (!(" << copy << ")) {\n";
+    writeBatchError(os, -7,
+                    "\"unable to copy the statistics of the evaluation\"");
+    os << "}\n"
+       << "mfront_statistics = &mfront_host_statistics;\n"
+       << "}\n";
+  }  // end of writeStatisticsCopyToHost
 
   void BackendBase::writeLocalStatisticsDeclaration(std::ostream& os) {
     os << "auto mfront_local_statistics = mfront_gpmp_Statistics{};\n"
