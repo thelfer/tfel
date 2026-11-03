@@ -212,12 +212,13 @@ namespace mfront {
         if (v1.arraySize == 1u) {
           i += "f" + v1n + " += ;\n";
           i += "// jacobian blocks\n";
-          if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+          if ((this->solver != nullptr) && (this->solver->usesJacobian()) &&
+              (!this->solver->requiresNumericalJacobian())) {
             for (const auto& v2 : ivs) {
               const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
               const auto j = o.useUnicodeSymbols
                                  ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
-                                 : "df" + v1n + "_d" + v2n;
+                                 : "df" + v1n + "_dd" + v2n;
               const auto op = v1.name == v2.name ? "+=" : "=";
               if (v2.arraySize == 1u) {
                 i += j + " " + op + " ;\n";
@@ -234,12 +235,13 @@ namespace mfront {
                ";++i){\n";
           i += "f" + v1n + "(i) += ;\n";
           i += "// jacobian blocks\n";
-          if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+          if ((this->solver != nullptr) && (this->solver->usesJacobian()) &&
+              (!this->solver->requiresNumericalJacobian())) {
             for (const auto& v2 : ivs) {
               const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
               const auto j = o.useUnicodeSymbols
                                  ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
-                                 : "df" + v1n + "_d" + v2n;
+                                 : "df" + v1n + "_dd" + v2n;
               const auto op = v1.name == v2.name ? "+=" : "=";
               if (v2.arraySize == 1u) {
                 i += j + "(i) " + op + " ;\n";
