@@ -113,7 +113,7 @@ namespace mfront {
     m.exceptions(std::ios::badbit | std::ios::failbit);
     throw_if(!m, "can't open file 'src/CMakeList.txt'");
     auto append = [&m](const std::string& n, const std::string& v) {
-      if ((tfel::utilities::starts_with(v, "$(shell ")) ||
+      if ((tfel::utilities::starts_with(v, "$(shell ")) &&
           (tfel::utilities::ends_with(v, ")"))) {
         m << "append_spawn(" << n << " " << v.substr(8, v.size() - 9) << ")\n";
       } else {
@@ -122,11 +122,12 @@ namespace mfront {
     };
     // spawn without calling seperate_arguments
     auto append2 = [&m](const std::string& n, const std::string& v) {
-      if ((tfel::utilities::starts_with(v, "$(shell ")) ||
+      if ((tfel::utilities::starts_with(v, "$(shell ")) &&
           (tfel::utilities::ends_with(v, ")"))) {
         m << "append_spawn2(" << n << " " << v.substr(8, v.size() - 9) << ")\n";
       } else {
-        m << "list(APPEND " << n << " " << v << ")\n";
+        // bracket argument, so that spaces and semicolons are kept
+        m << "list(APPEND " << n << " [==[" << v << "]==])\n";
       }
     };
     // some target' names are reserved by CMake
@@ -235,7 +236,7 @@ namespace mfront {
       return r;
     }();
     if (include_directories.size() == 1) {
-      m << "include_directories(" << include_directories[0] << ")\n";
+      m << "include_directories([==[" << include_directories[0] << "]==])\n";
     } else {
       m << "set(INCLUDE_DIRECTORIES)\n";
       for (const auto& d : include_directories) {
