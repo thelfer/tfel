@@ -40,6 +40,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     this->testGursonTvergaardNeedleman1982();
     this->testGursonTvergaardNeedleman1982WithoutPorosity();
     this->testFlowStressGTN();
+    this->testRousselierTanguyBesson2002();
     this->testCazacu2001();
     this->testCazacu2004();
     this->testDrucker1949();
@@ -113,6 +114,28 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(s3 - s4) < 1e-10 * s4);
     }
   }  // end of testFlowStressGTN
+  //! \brief Rousselier criterion under a nearly hydrostatic tension
+  void testRousselierTanguyBesson2002() {
+    using namespace tfel::material;
+    auto params =
+        RousselierTanguyBesson2002StressCriterionParameters<Stensor>{};
+    params.DR = 2;
+    params.qR = 1.5;
+    const auto sig = Stensor{500.2, 499.9, 499.9, 0, 0, 0};
+    // without porosity, the criterion reduces to the von Mises one
+    const auto s0 =
+        computeRousselierTanguyBesson2002Stress(sig, 0, params, 1e-10);
+    TFEL_TESTS_ASSERT(std::abs(s0 - tfel::math::sigmaeq(sig)) < 1e-12);
+    // small porosity: close to the solution for a vanishing von Mises stress
+    const auto f = 1e-5;
+    const auto [s1, n1, ds1_df] =
+        computeRousselierTanguyBesson2002StressNormal(sig, f, params, 1e-10);
+    const auto sh =
+        3 * params.qR * 500 / (2 * (1 - f) * std::log(3 / (2 * f * params.DR)));
+    TFEL_TESTS_ASSERT(std::abs(s1 - sh) < 1e-2 * sh);
+    TFEL_TESTS_ASSERT(std::isfinite(n1[0]));
+    TFEL_TESTS_ASSERT(std::isfinite(ds1_df));
+  }  // end of testRousselierTanguyBesson2002
   //! \brief derivative of the normal of the Cazacu 2001 criterion for c != 1
   void testCazacu2001() {
     using namespace tfel::material;

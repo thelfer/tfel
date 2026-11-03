@@ -85,6 +85,10 @@ namespace tfel::material {
     // First order approximation
     const auto A = iomf * seq;
     const auto B = 2 * f * (p.DR / 3);
+    // without porosity, the criterion reduces to seq / (1 - f)
+    if (tfel::math::ieee754::fpclassify(B) == FP_ZERO) {
+      return seq * iomf;
+    }
     const auto C = 3 * p.qR * pr * iomf / 2;
     const auto a = B * C * C / 2;
     const auto b = A + B * C;
@@ -102,7 +106,10 @@ namespace tfel::material {
     // const auto lf = std::log(3 / (2 * f * p.DR));
     // const auto ilf = 1 / std::max(lf, seps);
     // const auto x0 = (x01 + 1 / (3 * p.qR * (pr / 2) * iomf * ilf)) / 2;
-    const auto x0 = x01;
+    // under tension, the starting point is bounded by the solution for a
+    // vanishing von Mises stress, so that the Newton-Raphson algorithm does
+    // not start far in the exponential branch
+    const auto x0 = (pr > 0) ? std::min(x01, std::log(1 / B) / C) : x01;
     // const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
     const auto SdS = [seq, pr, f, iomf, p](const istress x) {
       const auto e = std::exp(3 * p.qR * pr * iomf * tfel::math::abs(x) / 2);
