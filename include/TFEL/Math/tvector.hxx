@@ -180,6 +180,14 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto abs(const tvector<N, T>& v) noexcept;
+  /*!
+   * \return the sum of the absolute values of the components of an
+   * expression whose result is a tvector
+   * \param[in] e: expression
+   */
+  template <unsigned short N, typename T, typename Operation>
+  TFEL_HOST_DEVICE constexpr auto abs(
+      const Expr<tvector<N, T>, Operation>&) noexcept;
 
   template <typename T>
   TFEL_HOST_DEVICE constexpr tvector<1u, T> makeTVector1D(const T) noexcept;
