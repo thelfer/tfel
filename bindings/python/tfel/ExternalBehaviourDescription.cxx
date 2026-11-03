@@ -158,6 +158,11 @@ void declareExternalBehaviourDescription(pybind11::module_& m) {
                     "If requiresThermalExpansionCoefficientTensor is true, the "
                     "caller must provide the thermal expansion coefficients "
                     "tensor")
+      .def_readonly("hasTemperatureBeenRemovedFromExternalStateVariables",
+                    &ExternalBehaviourDescription::
+                        hasTemperatureBeenRemovedFromExternalStateVariables,
+                    "If true, the temperature was removed from the list of "
+                    "the external\nstate variables (evnames).")
       .def("hasBounds", &ExternalBehaviourDescription::hasBounds,
            pybind11::arg("v"),
            "Return true if the given variable has bounds\n"
