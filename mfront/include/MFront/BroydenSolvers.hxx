@@ -29,6 +29,7 @@ namespace mfront {
     //! a simple alias
     using Hypothesis = NonLinearSystemSolverBase::Hypothesis;
     //
+    [[nodiscard]] std::vector<std::string> getMemberNames() const override;
     [[nodiscard]] bool requiresNumericalJacobian() const override;
     [[nodiscard]] bool allowsJacobianInitialisation() const override;
     [[nodiscard]] bool allowsJacobianInvertInitialisation() const override;

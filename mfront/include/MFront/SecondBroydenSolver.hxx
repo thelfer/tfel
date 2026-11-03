@@ -23,6 +23,7 @@ namespace mfront {
    * second Broyden algorithm.
    */
   struct SecondBroydenSolver : public NonLinearSystemSolverBase {
+    [[nodiscard]] std::vector<std::string> getMemberNames() const override;
     [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
     [[nodiscard]] std::string getExternalAlgorithmClassName(
         const BehaviourDescription&, const Hypothesis) const override;
