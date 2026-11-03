@@ -15,6 +15,7 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   Test13
   Test14
   Test15
+  Test16
   NortonTest
   NortonTest_nj
   NortonTest2
@@ -101,6 +102,8 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   PlasticityTest23_nj
   PlasticityTest24
   PlasticityTest24_nj
+  PlasticityTest26
+  PlasticityTest27
   IsotropicDamageHookeLaw
   IsotropicDamageHookeLaw_nj
   IsotropicDamageHookeLaw2
@@ -229,6 +232,20 @@ generictest_standardelastovicoplasticitybrick(Test13
     test13 MFrontStandardElastoViscoPlasticityBrickBehaviours Test13)
 generictest_standardelastovicoplasticitybrick(Test15
     test15 MFrontStandardElastoViscoPlasticityBrickBehaviours Test15)
+generictest_standardelastovicoplasticitybrick(Test16
+    test16 MFrontStandardElastoViscoPlasticityBrickBehaviours Test16)
+
+foreach(variant "" _nj _na _nanj)
+  generictest_standardelastovicoplasticitybrick(PlasticityTest9${variant}
+    plasticitytest9 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest9${variant})
+endforeach()
+generictest_standardelastovicoplasticitybrick(PlasticityTest26
+    plasticitytest26 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest26)
+generictest_standardelastovicoplasticitybrick(PlasticityTest27
+    plasticitytest27 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest27)
 
 generictest_standardelastovicoplasticitybrick(HarmonicSumOfNortonHoffViscoplasticFlowsTest3
     HarmonicSumOfNortonHoffViscoplasticFlowsTest3

@@ -51,7 +51,9 @@ namespace mfront::bbrick {
     opts.emplace_back("extrapolation",
                       "extrapolation type. "
                       "Possible values are 'bound_to_last_value' (or "
-                      "'constant') and 'extrapolation' (default choice)",
+                      "'constant', or the boolean value false) and "
+                      "'extrapolation' (or the boolean value true, "
+                      "default choice)",
                       OptionDescription::STRING);
     return opts;
   }  // end of getOptions
