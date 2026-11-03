@@ -441,7 +441,7 @@ namespace mtest {
     throw_if(wk.evs.size() != s.esv0.size(),
              "temporary external state variable vector was not allocated "
              "properly");
-    auto rdt = real{1};
+    auto rdt = std::numeric_limits<real>::max();
     const auto ir = tfel::math::transpose(s.r);
     if (this->btype == 2u) {
       if (this->fsto == DSIG_DF) {
