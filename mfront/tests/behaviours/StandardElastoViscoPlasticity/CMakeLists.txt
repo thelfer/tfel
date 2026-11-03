@@ -192,6 +192,8 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2_nj.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest3.mfront)
 
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	 IsotropicDamageHookeLaw.mfront)

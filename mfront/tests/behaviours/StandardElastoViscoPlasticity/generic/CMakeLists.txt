@@ -113,6 +113,7 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   HarmonicSumOfNortonHoffViscoplasticFlowsTest_nj
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2_nj
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest3
   ChuNeedleman1980StrainBasedNucleationModelTest
   ChuNeedleman1980StressBasedNucleationModelTest
   PowerLawStrainBasedNucleationModelTest
@@ -222,6 +223,11 @@ generictest_standardelastovicoplasticitybrick(Test13
     test13 MFrontStandardElastoViscoPlasticityBrickBehaviours Test13)
 generictest_standardelastovicoplasticitybrick(Test15
     test15 MFrontStandardElastoViscoPlasticityBrickBehaviours Test15)
+
+generictest_standardelastovicoplasticitybrick(HarmonicSumOfNortonHoffViscoplasticFlowsTest3
+    HarmonicSumOfNortonHoffViscoplasticFlowsTest3
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    HarmonicSumOfNortonHoffViscoplasticFlowsTest3)
 
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
     GursonTvergaardNeedleman1982-test1
