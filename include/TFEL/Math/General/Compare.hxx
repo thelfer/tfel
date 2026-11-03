@@ -33,7 +33,7 @@ namespace tfel::math {
   /*
    * \brief compare two quantities with a precision
    */
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   TFEL_HOST_DEVICE constexpr bool areAlmostEqual(
       const base_type<QuantityType>& eps,
       const QuantityType& a,
