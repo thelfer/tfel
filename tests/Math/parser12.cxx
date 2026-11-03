@@ -36,6 +36,7 @@ struct ParserTest12 final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
     return this->result;
   }  // end of execute
  private:
@@ -135,6 +136,41 @@ struct ParserTest12 final : public tfel::tests::TestCase {
     const auto f = "(log(2.))*(std::pow(2.,x))";
     TFEL_TESTS_ASSERT(dx == f);
   }  // end of test5
+  void test6() {
+    // derivatives compared to centred finite differences
+    constexpr auto h = double{1e-6};
+    constexpr auto eps = double{1e-8};
+    for (const auto f :
+         {"exp2(x)",    "expm1(x)",   "cbrt(x+2)",  "abs(x)",
+          "log2(x+2)",  "log1p(x+2)", "asinh(x)",   "acosh(x+2)",
+          "atanh(x/2)", "erf(x)",     "erfc(x)",    "H(x)*x",
+          "max(x,y)",   "min(x,y)",   "max(x*x,y)", "min(x*x,y)",
+          "hypot(x,y)", "hypot(y,x)", "atan2(x,y)", "atan2(y,x)"}) {
+      auto e = tfel::math::Evaluator(std::vector<std::string>{"x", "y"}, f);
+      const auto dx = e.differentiate(0);
+      const auto dy = e.differentiate(1);
+      for (const auto x : {-0.7, 0.4}) {
+        for (const auto y : {-0.2, 0.3}) {
+          e.setVariableValue("y", y);
+          e.setVariableValue("x", x + h);
+          const auto vp = e.getValue();
+          e.setVariableValue("x", x - h);
+          const auto vm = e.getValue();
+          dx->setVariableValue(0, x);
+          dx->setVariableValue(1, y);
+          TFEL_TESTS_ASSERT(std::abs(dx->getValue() - (vp - vm) / (2 * h)) <
+                            eps);
+        }
+      }
+      // derivative with respect to a variable not used in the formula
+      if (std::string(f).find('y') == std::string::npos) {
+        TFEL_TESTS_ASSERT(std::abs(dy->getValue()) < eps);
+      }
+    }
+    TFEL_TESTS_CHECK_THROW(
+        tfel::math::Evaluator("tgamma(x)").differentiate("x"),
+        std::runtime_error);
+  }  // end of test6
 };
 
 TFEL_TESTS_GENERATE_PROXY(ParserTest12, "ParserTest12");

@@ -557,6 +557,14 @@ void declareExternalLibraryManager(pybind11::module_& m) {
            "l: name of the library\n"
            "f: law name\n"
            "h: modelling hypothesis")
+      .def("hasTemperatureBeenRemovedFromExternalStateVariables",
+           &ELM::hasTemperatureBeenRemovedFromExternalStateVariables,
+           pybind11::arg("l"), pybind11::arg("f"),
+           "Return true if the temperature has been removed from the list "
+           "of\nthe external state variables. This is the default behaviour "
+           "of `MFront`.\n"
+           "l: name of the library\n"
+           "f: law name")
       .def("getUMATExternalStateVariablesNames",
            &ELM::getUMATExternalStateVariablesNames,
            pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("h"),
