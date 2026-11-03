@@ -199,6 +199,9 @@ namespace mfront::generic_parallel::material_property {
          << "if (!mfront_stack_size.succeeded()) {\n";
       writeBatchError(os, -7, "mfront_stack_size.getErrorMessage()");
       os << "}\n";
+      // an error left by a previous call of the calling code must not be
+      // taken for an error of the launch
+      os << "static_cast<void>(" << pm << "GetLastError());\n";
       os << kernel << "<<<static_cast<unsigned int>(mfront_number_of_blocks), "
          << "mfront_threads_per_block, 0, mfront_stream>>>(mfront_output, ";
       if (handleStrides) {
