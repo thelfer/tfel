@@ -206,7 +206,8 @@ namespace mfront {
   }  // end of getFunctionName
 
   bool Fortran03MaterialPropertyInterface::requiresCheckBoundsFunction() const {
-    return false;
+    // the module declares the function for every material property
+    return true;
   }
 
   std::string Fortran03MaterialPropertyInterface::getCheckBoundsFunctionName(
