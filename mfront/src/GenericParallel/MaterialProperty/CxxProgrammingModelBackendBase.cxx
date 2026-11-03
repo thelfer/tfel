@@ -71,7 +71,9 @@ namespace mfront::generic_parallel::material_property {
     // the runtime of the backend (data transfers, submission of the kernels)
     // may throw exceptions, which must not cross the boundary of the C
     // function. They are reported as runtime errors of the backend, as the
-    // errors of the CUDA and HIP runtimes: the kernels can't throw.
+    // errors of the CUDA and HIP runtimes. The body of the material property
+    // must not throw: an exception leaving a kernel called by a parallel
+    // algorithm terminates the process.
     os << "try{\n";
     this->writeExecutionPreparation(os, i, mpd);
     if (this->handlesDataTransfer()) {

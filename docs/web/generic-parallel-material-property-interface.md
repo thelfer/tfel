@@ -304,7 +304,9 @@ kernels do not throw and `errno` does not exist on GPUs), the bounds
 status of a point where the result is not finite is null (the `generic`
 interface keeps the bounds status of a bound violated with the warning
 policy), the message does not give the values, and no `MTest` file is
-written when the evaluation fails.
+written when the evaluation fails. The body of a material property must
+thus not throw: with the C++ parallel algorithms, an exception leaving
+the computation of a point terminates the process (`std::terminate`).
 
 If the runtime checks are disabled (`disable_runtime_checks` DSL option),
 as with the `generic` interface, the number of arguments, the parameters,
