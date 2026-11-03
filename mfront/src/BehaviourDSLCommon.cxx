@@ -4522,8 +4522,7 @@ namespace mfront {
       reportWarning(
           "both the variable 'Dt' and some tangent operator blocks (" +
           makeTangentOperatorBlocksList(this->mb, used_tblocks) +
-          ") are used in the '" + cname +
-          "' code block, which is unexepected.");
+          ") are used in the '" + cname + "' code block, which is unexpected.");
     }
     if ((!used_tblocks.empty()) && (!unused_tblocks.empty())) {
       reportWarning("some tangent operator blocks (" +
@@ -4531,7 +4530,7 @@ namespace mfront {
                     ") are used while other are not (" +
                     makeTangentOperatorBlocksList(this->mb, unused_tblocks) +
                     ") in the '" + cname +
-                    "' code block, which is unexepected.");
+                    "' code block, which is unexpected.");
     }
   }  // end of checkTangentOperatorBlock
 
