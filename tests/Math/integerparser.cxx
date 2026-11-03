@@ -70,6 +70,9 @@ struct IntegerParserTest final : public tfel::tests::TestCase {
         std::runtime_error);
     TFEL_TESTS_CHECK_THROW(tfel::math::IntegerEvaluator("2.5*2"),
                            std::runtime_error);
+    // numbers which are integers are accepted
+    TFEL_TESTS_ASSERT(tfel::math::IntegerEvaluator("2.0*3").getValue() == 6);
+    TFEL_TESTS_ASSERT(tfel::math::IntegerEvaluator("2.+2e0").getValue() == 4);
     return this->result;
   }  // end of execute
  private:
