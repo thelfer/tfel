@@ -752,6 +752,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1305: [mfront] Material property and model interfaces: validator symbols, octave static parameters, castem bounds and models, gnuplot @Graph, java with MSVC, bounds of model outputs, out of bounds policy of generic models
+
+For more details, see <https://github.com/thelfer/tfel/issues/1305>
+
 ## Issue 1301: Fixes of the 5.2 review: incomplete fixes and regressions in merged code
 
 For more details, see <https://github.com/thelfer/tfel/issues/1301>
