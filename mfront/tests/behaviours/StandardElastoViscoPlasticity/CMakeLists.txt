@@ -187,6 +187,10 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	PlasticityTest17_nj.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+	PlasticityTest26.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+	PlasticityTest27.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest_nj.mfront)
