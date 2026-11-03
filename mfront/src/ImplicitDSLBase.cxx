@@ -772,29 +772,9 @@ namespace mfront {
   }  // end of treatIterMax
 
   std::string ImplicitDSLBase::tangentOperatorVariableModifier(
-      const Hypothesis h, const std::string& var, const bool addThisPtr) {
-    const auto& d = this->mb.getBehaviourData(h);
-    if (d.isIntegrationVariableIncrementName(var)) {
-      const auto v = var.substr(1);
-      if (this->mb.hasAttribute(h, v + "_normalisation_factor")) {
-        const auto& s = d.getIntegrationVariableDescription(v);
-        const auto& nf =
-            this->mb.getAttribute<std::string>(h, v + "_normalisation_factor");
-        if (s.arraySize == 1u) {
-          if (addThisPtr) {
-            return "((" + nf + ")*(this->" + var + "))";
-          } else {
-            return "((" + nf + ")*" + var + ")";
-          }
-        } else {
-          if (addThisPtr) {
-            return "(" + nf + ")*(this->" + var + ")";
-          } else {
-            return "(" + nf + ")*" + var;
-          }
-        }
-      }
-    }
+      const Hypothesis, const std::string& var, const bool addThisPtr) {
+    // the increments of the integration variables are no longer normalised
+    // when the tangent operator is computed
     if (addThisPtr) {
       return "(this->" + var + ")";
     } else {
