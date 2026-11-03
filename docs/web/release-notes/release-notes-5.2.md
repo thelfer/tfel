@@ -752,6 +752,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1311: [mfront] Material properties given by formulas or external laws do not compile with @UseQt
+
+For more details, see <https://github.com/thelfer/tfel/issues/1311>
+
 ## Issue 1301: Fixes of the 5.2 review: incomplete fixes and regressions in merged code
 
 For more details, see <https://github.com/thelfer/tfel/issues/1301>
