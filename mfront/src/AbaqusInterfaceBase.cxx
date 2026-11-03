@@ -434,8 +434,12 @@ namespace mfront {
       if (mb.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
+        // the thermal expansion coefficient tensor has the symmetry of
+        // the behaviour
         out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 1u;\n";
+            << " unsigned short thermalExpansionPropertiesOffset = "
+            << ((mb.getSymmetryType() == mfront::ORTHOTROPIC) ? "3u" : "1u")
+            << ";\n";
       } else {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
@@ -455,8 +459,12 @@ namespace mfront {
       if (mb.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
+        // the thermal expansion coefficient tensor has the symmetry of
+        // the behaviour
         out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 3u;\n";
+            << " unsigned short thermalExpansionPropertiesOffset = "
+            << ((mb.getSymmetryType() == mfront::ORTHOTROPIC) ? "3u" : "1u")
+            << ";\n";
       } else {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
