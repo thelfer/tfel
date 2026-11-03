@@ -15,6 +15,8 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include <string>
+#include <memory>
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -25,6 +27,7 @@
 
 #include "MFront/InitDSLs.hxx"
 #include "MFront/DSLFactory.hxx"
+#include "MFront/AbstractBehaviourDSL.hxx"
 
 struct DSLTest final : public tfel::tests::TestCase {
   DSLTest() : tfel::tests::TestCase("MFront", "DSLTest") {}  // end of DSLTest
@@ -208,6 +211,13 @@ struct DSLTest final : public tfel::tests::TestCase {
                 "@Brick StandardElasticity;"
                 "@Integrator{}",
                 "is not declared for all specialisations");
+    // name of the DSL stored in the behaviour description
+    for (const std::string n : {"ImplicitII", "IsotropicMisesCreep"}) {
+      const auto dsl = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(
+          mfront::DSLFactory::getDSLFactory().createNewDSL(n));
+      TFEL_TESTS_ASSERT(dsl.get() != nullptr);
+      TFEL_TESTS_CHECK_EQUAL(dsl->getBehaviourDescription().getDSLName(), n);
+    }
     return this->result;
   }  // end of execute()
  private:
