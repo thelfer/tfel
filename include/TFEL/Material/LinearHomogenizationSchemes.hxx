@@ -482,7 +482,6 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>&,
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::length<StressType>&,
-          const types::length<StressType>&,
           const types::length<StressType>&);
 
   /*!
