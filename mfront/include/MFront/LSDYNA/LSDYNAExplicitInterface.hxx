@@ -86,8 +86,8 @@ namespace lsdyna {
         const unsigned short o = ATraits::elasticPropertiesOffset;
         LSDYNAComputeThermalExpansionCoefficientTensor<
             ATraits::btype, H,
-            ATraits::etype>::exe(props + o,
-                                 data.getThermalExpansionCoefficientTensor());
+            ATraits::type>::exe(props + o,
+                                data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
     //! place holder for tag dispatching

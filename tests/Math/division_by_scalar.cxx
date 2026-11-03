@@ -23,6 +23,7 @@
 
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/vector.hxx"
+#include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Array/ViewsArray.hxx"
@@ -94,6 +95,29 @@ struct DivisionByScalarTest final : public tfel::tests::TestCase {
     a4 /= 2;
     for (unsigned short i = 0; i != 8; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values5[i] - (i + 1)) < eps);
+    }
+    // arrays of integers
+    auto i1 = tvector<3u, int>{9, -6, 12};
+    i1 /= 3;
+    auto i2 = vector<int>{9, -6, 12};
+    i2 /= 3;
+    auto values6 = std::array<int, 3>{9, -6, 12};
+    auto i3 = map<tvector<3u, int>>(values6.data());
+    i3 /= 3;
+    auto values7 = std::array<int, 3>{9, -6, 12};
+    auto i4 = ViewsFixedSizeVector<int, unsigned short, 3>(values7.data());
+    i4 /= 3;
+    auto values8 = std::array<int, 3>{9, -6, 12};
+    auto i5 = StridedCoalescedViewsFixedSizeVector<int, unsigned int, 3>(
+        values8.data());
+    i5 /= 3;
+    const auto expected = std::array<int, 3>{3, -2, 4};
+    for (unsigned short i = 0; i != 3; ++i) {
+      TFEL_TESTS_ASSERT(i1[i] == expected[i]);
+      TFEL_TESTS_ASSERT(i2[i] == expected[i]);
+      TFEL_TESTS_ASSERT(values6[i] == expected[i]);
+      TFEL_TESTS_ASSERT(values7[i] == expected[i]);
+      TFEL_TESTS_ASSERT(values8[i] == expected[i]);
     }
     return this->result;
   }  // end of execute

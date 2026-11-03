@@ -34,7 +34,7 @@ namespace mfront {
   IsotropicMisesCreepDSL::IsotropicMisesCreepDSL(const DSLOptions& opts)
       : IsotropicBehaviourDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->mb.setDSLName("IsotropicMisesCreepDSL");
+    this->mb.setDSLName("IsotropicMisesCreep");
     //
     this->disableCallBack("@IsotropicHardeningRule");
     this->disableCallBack("@IsotropicHardeningRules");

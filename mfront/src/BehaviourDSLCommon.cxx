@@ -885,7 +885,13 @@ namespace mfront {
         o.p = BehaviourData::AT_END;
       } else if ((t.flag == Token::String) &&
                  (t.value.substr(1, t.value.size() - 2) == ".+")) {
-        this->appendToHypothesesList(o.hypotheses, ".+");
+        if (this->mb.areModellingHypothesesDefined()) {
+          this->appendToHypothesesList(o.hypotheses, ".+");
+        } else {
+          // the modelling hypotheses are not known yet: same meaning as no
+          // hypothesis given
+          o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+        }
       } else if (ModellingHypothesis::isModellingHypothesis(t.value)) {
         this->appendToHypothesesList(o.hypotheses, t.value);
       } else {
@@ -2108,9 +2114,13 @@ namespace mfront {
                "the only data expected is "
                "'reference_temperature' (read '" +
                    pd->first + "')");
-      throw_if(!pd->second.is<double>(),
-               "invalid type for data 'reference_temperature'");
-      addTref(pd->second.get<double>());
+      if (pd->second.is<int>()) {
+        addTref(static_cast<double>(pd->second.get<int>()));
+      } else {
+        throw_if(!pd->second.is<double>(),
+                 "invalid type for data 'reference_temperature'");
+        addTref(pd->second.get<double>());
+      }
     }
     this->readSpecifiedToken(m, ";");
     throw_if((acs.size() != 1u) && (acs.size() != 3u),
@@ -2931,6 +2941,8 @@ namespace mfront {
     this->mb.setAttribute(
         BehaviourDescription::requiresThermalExpansionCoefficientTensor, true,
         false);
+    // thermal expansion coefficient tensor
+    this->mb.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "A");
   }  // end of treatRequireThermalExpansionCoefficientTensor
 
   void BehaviourDSLCommon::setMaterialKnowledgeIdentifier(
@@ -3208,10 +3220,15 @@ namespace mfront {
     this->readList(values, "BehaviourDSLCommon::readHypothesesList", "<", ">",
                    true);
     for (const auto& v : values) {
-      if (v.flag == tfel::utilities::Token::String) {
-        this->appendToHypothesesList(h, v.value.substr(1, v.value.size() - 2));
+      const auto s = (v.flag == tfel::utilities::Token::String)
+                         ? v.value.substr(1, v.value.size() - 2)
+                         : v.value;
+      if ((s == ".+") && (!this->mb.areModellingHypothesesDefined())) {
+        // the modelling hypotheses are not known yet: same meaning as no
+        // hypothesis given
+        h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       } else {
-        this->appendToHypothesesList(h, v.value);
+        this->appendToHypothesesList(h, s);
       }
     }
     if (h.empty()) {

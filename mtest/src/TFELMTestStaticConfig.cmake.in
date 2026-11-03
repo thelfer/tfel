@@ -17,4 +17,9 @@ find_package(TFELTestsStatic REQUIRED
 find_package(TFELConfigStatic REQUIRED
   HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
 
+set(TFEL_MADNEX_SUPPORT @TFEL_HAVE_MADNEX@)
+if(TFEL_MADNEX_SUPPORT)
+  find_package(Madnex REQUIRED HINTS "@Madnex_DIR@")
+endif(TFEL_MADNEX_SUPPORT)
+
 include("${CMAKE_CURRENT_LIST_DIR}/TFELMTestStaticTargets.cmake")

@@ -236,8 +236,38 @@ namespace tfel::math {
         (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
                         MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
-      const auto f = makeMultiIndicesUnaryOperatorFunctor(
-          [s](auto&& a) { a *= s; }, *this);
+      this->applyToEachView([s](auto&& a) { a *= s; });
+      return *this;
+    }  // end of operator*=
+    // \brief division by a scalar
+    template <typename ValueType2>
+    TFEL_HOST_DEVICE constexpr StridedCoalescedViewsArray&
+    operator/=(const ValueType2& s) noexcept requires(
+        (isScalar<ValueType2>()) &&
+        (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
+                        MappedType>())) {
+      static_assert(!std::is_const_v<MappedType>, "invalid call");
+      using base = base_type<numeric_type<MappedType>>;
+      if constexpr (std::is_integral_v<base>) {
+        // the reciprocal of an integer is zero in general
+        this->applyToEachView([s](auto&& a) { a /= s; });
+        return *this;
+      } else {
+        return this->operator*=(base{1} / s);
+      }
+    }  // end of operator/=
+    //! \brief destructor
+    ~StridedCoalescedViewsArray() noexcept = default;
+
+   private:
+    /*!
+     * \brief apply an operation to each view
+     * \param[in] op: operation
+     */
+    template <typename Operation>
+    TFEL_HOST_DEVICE constexpr void applyToEachView(
+        const Operation& op) noexcept {
+      const auto f = makeMultiIndicesUnaryOperatorFunctor(op, *this);
       auto g = [p = static_cast<MemoryIndexingPolicyType>(*this)](
                    const typename StridedCoalescedViewsArray::size_type i) {
         return p.size(i);
@@ -251,22 +281,7 @@ namespace tfel::math {
             typename StridedCoalescedViewsArray::size_type, 0,
             MemoryIndexingPolicyType::arity, false>::exe(f, g);
       }
-      return *this;
-    }  // end of operator*=
-    // \brief division by a scalar
-    template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr StridedCoalescedViewsArray&
-    operator/=(const ValueType2& s) noexcept requires(
-        (isScalar<ValueType2>()) &&
-        (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
-                        MappedType>())) {
-      static_assert(!std::is_const_v<MappedType>, "invalid call");
-      return this->operator*=(base_type<numeric_type<MappedType>>{1} / s);
-    }  // end of operator/=
-    //! \brief destructor
-    ~StridedCoalescedViewsArray() noexcept = default;
-
-   private:
+    }  // end of applyToEachView
     //! \brief memory area from which views are taken
     const data_pointer_type data_pointer;
   };  // end of struct StridedCoalescedViewsArray

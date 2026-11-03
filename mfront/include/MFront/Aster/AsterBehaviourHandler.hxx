@@ -211,7 +211,7 @@ namespace aster {
                                         const AsterReal* const props) {
         const unsigned short o = AsterTraits<BV>::elasticPropertiesOffset;
         AsterComputeThermalExpansionCoefficientTensor<AsterTraits<BV>::btype, H,
-                                                      AsterTraits<BV>::etype>::
+                                                      AsterTraits<BV>::type>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer

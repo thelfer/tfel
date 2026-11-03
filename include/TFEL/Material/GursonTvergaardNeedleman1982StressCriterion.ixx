@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <tuple>
+#include <limits>
 #include <ostream>
 #include <algorithm>
 #include "TFEL/Math/power.hxx"
@@ -117,7 +118,14 @@ namespace tfel::material {
       // d(1/y) = -dy/(y*y) => y*y*d(1/y) = -dy
       // so if I want |dy|<eps, |y*y*d(1/y)| must be lower than eps
       // Here, x is the inverse of the equivalent stress, so
-      return 10 * tfel::math::abs(dx) < seps * tfel::math::abs(x * x);
+      if (10 * tfel::math::abs(dx) < seps * tfel::math::abs(x * x)) {
+        return true;
+      }
+      // Third criterion based on the relative stationnarity of the solution,
+      // which can be reached in single precision, contrary to the previous
+      // ones
+      return tfel::math::abs(dx) <
+             10 * std::numeric_limits<real>::epsilon() * tfel::math::abs(x);
     };
     const auto r = tfel::math::scalarNewtonRaphson(SdS, c, x0, size_type{100});
     if (!std::get<0>(r)) {
