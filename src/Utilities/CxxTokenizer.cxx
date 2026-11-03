@@ -1227,7 +1227,7 @@ namespace tfel::utilities {
 #ifdef __CYGWIN__
     std::istringstream is(value);
     is >> res;
-    raise_if(!is && (!is.eof()),
+    raise_if((is.fail()) || (!is.eof()),
              "CxxTokenizer::readDouble: "
              "could not read value from token '" +
                  p->value + "'.");
