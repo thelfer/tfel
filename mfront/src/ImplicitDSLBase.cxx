@@ -75,6 +75,7 @@ namespace mfront {
     this->reserveName("GetPartialJacobianInvert");
     this->reserveName("TinyMatrixSolve");
     this->mb.registerMemberName(uh, "iter");
+    this->mb.registerMemberName(uh, "is_delta_zeros_defined");
     this->mb.registerMemberName(uh, "zeros");
     this->mb.registerMemberName(uh, "delta_zeros");
     this->mb.registerMemberName(uh, "fzeros");
@@ -212,12 +213,13 @@ namespace mfront {
         if (v1.arraySize == 1u) {
           i += "f" + v1n + " += ;\n";
           i += "// jacobian blocks\n";
-          if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+          if ((this->solver != nullptr) && (this->solver->usesJacobian()) &&
+              (!this->solver->requiresNumericalJacobian())) {
             for (const auto& v2 : ivs) {
               const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
               const auto j = o.useUnicodeSymbols
                                  ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
-                                 : "df" + v1n + "_d" + v2n;
+                                 : "df" + v1n + "_dd" + v2n;
               const auto op = v1.name == v2.name ? "+=" : "=";
               if (v2.arraySize == 1u) {
                 i += j + " " + op + " ;\n";
@@ -234,12 +236,13 @@ namespace mfront {
                ";++i){\n";
           i += "f" + v1n + "(i) += ;\n";
           i += "// jacobian blocks\n";
-          if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+          if ((this->solver != nullptr) && (this->solver->usesJacobian()) &&
+              (!this->solver->requiresNumericalJacobian())) {
             for (const auto& v2 : ivs) {
               const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
               const auto j = o.useUnicodeSymbols
                                  ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
-                                 : "df" + v1n + "_d" + v2n;
+                                 : "df" + v1n + "_dd" + v2n;
               const auto op = v1.name == v2.name ? "+=" : "=";
               if (v2.arraySize == 1u) {
                 i += j + "(i) " + op + " ;\n";
@@ -772,29 +775,9 @@ namespace mfront {
   }  // end of treatIterMax
 
   std::string ImplicitDSLBase::tangentOperatorVariableModifier(
-      const Hypothesis h, const std::string& var, const bool addThisPtr) {
-    const auto& d = this->mb.getBehaviourData(h);
-    if (d.isIntegrationVariableIncrementName(var)) {
-      const auto v = var.substr(1);
-      if (this->mb.hasAttribute(h, v + "_normalisation_factor")) {
-        const auto& s = d.getIntegrationVariableDescription(v);
-        const auto& nf =
-            this->mb.getAttribute<std::string>(h, v + "_normalisation_factor");
-        if (s.arraySize == 1u) {
-          if (addThisPtr) {
-            return "((" + nf + ")*(this->" + var + "))";
-          } else {
-            return "((" + nf + ")*" + var + ")";
-          }
-        } else {
-          if (addThisPtr) {
-            return "(" + nf + ")*(this->" + var + ")";
-          } else {
-            return "(" + nf + ")*" + var;
-          }
-        }
-      }
-    }
+      const Hypothesis, const std::string& var, const bool addThisPtr) {
+    // the increments of the integration variables are no longer normalised
+    // when the tangent operator is computed
     if (addThisPtr) {
       return "(this->" + var + ")";
     } else {
@@ -1078,6 +1061,13 @@ namespace mfront {
               (pd != implicit_equation_derivatives.end()) ||
               (piJ != jacobian_invert_blocks.end()) ||
               (get_integration_variables_derivatives_names.count(v) != 0)) {
+            if (!this->solver->usesJacobian()) {
+              this->throwRuntimeError(
+                  "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                  "'" + v +
+                      "' can only be used with an algorithm based on "
+                      "the jacobian");
+            }
             if (cb.attributes.count(an) == 0) {
               cb.attributes[an] = true;
             } else {

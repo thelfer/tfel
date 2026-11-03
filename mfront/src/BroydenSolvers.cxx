@@ -19,6 +19,10 @@
 
 namespace mfront {
 
+  std::vector<std::string> BroydenSolverBase::getMemberNames() const {
+    return {"fzeros_1"};
+  }  // end of getMemberNames
+
   bool BroydenSolverBase::requiresNumericalJacobian() const { return false; }
 
   bool BroydenSolverBase::allowsJacobianInitialisation() const { return true; }

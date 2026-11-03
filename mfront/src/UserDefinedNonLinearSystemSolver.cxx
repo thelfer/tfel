@@ -11,8 +11,10 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
+#include "MFront/BehaviourDescription.hxx"
 #include "MFront/UserDefinedNonLinearSystemSolver.hxx"
 
 namespace mfront {
@@ -137,7 +139,17 @@ namespace mfront {
       BehaviourDescription&) const {}  // end of completeVariableDeclaration
 
   void UserDefinedNonLinearSystemSolver::writeSpecificInitializeMethodPart(
-      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const Hypothesis h) const {
+    if ((this->allows_jacobian_initialisation) &&
+        (mb.hasCode(h, BehaviourData::InitializeJacobian))) {
+      out << mb.getCode(h, BehaviourData::InitializeJacobian);
+    }
+    if ((this->allows_jacobian_invert_initialisation) &&
+        (mb.hasCode(h, BehaviourData::InitializeJacobianInvert))) {
+      out << mb.getCode(h, BehaviourData::InitializeJacobianInvert);
+    }
   }  // end of writeSpecificInitializeMethodPart
 
   void UserDefinedNonLinearSystemSolver::writeSpecificMembers(

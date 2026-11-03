@@ -752,9 +752,9 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
-## Issue 1307: [mfront] UMAT-like interfaces: Ansys finite strain shear components, plane stress expansions, time step scaling factors, ZMAT bounds, Ansys energies, Abaqus/Explicit exceptions
+## Issue 1303: [mfront] Implicit DSLs: inverse jacobian blocks, normalisation factors, reference temperature of external files, UserDefined and Broyden2 algorithms, reserved names
 
-For more details, see <https://github.com/thelfer/tfel/issues/1307>
+For more details, see <https://github.com/thelfer/tfel/issues/1303>
 
 ## Issue 1301: Fixes of the 5.2 review: incomplete fixes and regressions in merged code
 
