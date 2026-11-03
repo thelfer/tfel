@@ -470,6 +470,7 @@ namespace mfront {
     this->writeFileDescriptionSymbols(os, mpd, fd);
     this->writeVariablesNamesSymbol(os, mpd);
     this->writeVariablesBoundsSymbols(os, mpd);
+    this->writeValidatorSymbol(os, mpd);
     this->writeBuildIdentifierSymbol(os, mpd);
     this->writeEntryPointSymbol(os, mpd);
     this->writeTFELVersionSymbol(os, mpd);

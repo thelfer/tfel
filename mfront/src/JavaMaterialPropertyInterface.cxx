@@ -134,8 +134,8 @@ namespace mfront {
                           ? mpd.className
                           : mpd.material + "_" + mpd.className;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-#if !((defined _WIN32) && (defined _MSC_VER))
     auto& l = d.getLibrary(lib);
+#if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     // the jni part
