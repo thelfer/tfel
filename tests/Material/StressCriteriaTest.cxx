@@ -42,6 +42,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     this->testCazacu2004();
     this->testDrucker1949();
     this->testMohrCoulomb();
+    this->testSinglePrecision();
     return this->result;
   }  // end of execute
  private:
@@ -133,6 +134,48 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
           sig);
     }
   }  // end of testMohrCoulomb
+  //! \return the Drucker 1949 and Cazacu 2001 criteria for a stress in Pa
+  template <typename real>
+  static auto computeCriteriaInPa() {
+    using namespace tfel::material;
+    using StressStensor = tfel::math::stensor<3u, real>;
+    const auto sig = StressStensor{150e6, -40e6, 25e6, 30e6, -12e6, 18e6};
+    const J2OCoefficients<StressStensor> a = {0.586, 1.05, 0.823, 0.96, 1, 1};
+    const J3OCoefficients<StressStensor> b = {
+        1.44, 0.061, -1.302, -0.281, -0.375, 1, 1, 1, 1, 0.445, 1};
+    return std::make_tuple(computeDrucker1949StressCriterionSecondDerivative(
+                               sig, real(1.285), real(0.2)),
+                           computeCazacu2001StressCriterionSecondDerivative(
+                               sig, a, b, real(1.285), real(0.2)));
+  }  // end of computeCriteriaInPa
+  //! \brief criteria in single precision with stresses in Pa
+  void testSinglePrecision() {
+    const auto [druckerf, cazacuf] = computeCriteriaInPa<float>();
+    const auto [druckerd, cazacud] = computeCriteriaInPa<double>();
+    this->compare(druckerf, druckerd);
+    this->compare(cazacuf, cazacud);
+  }  // end of testSinglePrecision
+  /*!
+   * \brief compare the equivalent stress, the normal and its derivative
+   * computed in single precision to the ones computed in double precision
+   */
+  template <typename SinglePrecisionResults, typename DoublePrecisionResults>
+  void compare(const SinglePrecisionResults& rf,
+               const DoublePrecisionResults& rd) {
+    const auto seq = std::get<0>(rd);
+    TFEL_TESTS_ASSERT(std::abs(static_cast<double>(std::get<0>(rf)) - seq) <
+                      1e-5 * seq);
+    for (unsigned short i = 0; i != 6; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(static_cast<double>(std::get<1>(rf)[i]) -
+                                 std::get<1>(rd)[i]) < 1e-5);
+      for (unsigned short j = 0; j != 6; ++j) {
+        TFEL_TESTS_ASSERT(std::abs(static_cast<double>(std::get<2>(rf)(i, j)) -
+                                   std::get<2>(rd)(i, j)) *
+                              seq <
+                          1e-4);
+      }
+    }
+  }  // end of compare
   /*!
    * \brief compare the derivative of the normal to its finite difference
    * approximation
