@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <locale>
 #include <sstream>
+#include <utility>
 #include <stdexcept>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
@@ -780,17 +780,25 @@ namespace mfront {
     } else if (mn == "setDepth") {
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
                               "Expected depth value.");
-      unsigned short value;
-      std::istringstream converter(this->current->value);
-      converter.imbue(std::locale::classic());
-      converter >> value;
-      if (!converter || (!converter.eof())) {
+      // checked conversion: negative, non integer and out of range values
+      // are rejected
+      auto p = this->current;
+      auto value = static_cast<unsigned int>(0);
+      try {
+        value = CxxTokenizer::readUnsignedInt(p, this->tokens.end());
+      } catch (std::exception&) {
+        this->throwRuntimeError(
+            "ModelDSLCommon::treatOutputMethod",
+            "Could not read depth value of field '" + this->currentVar + "'");
+      }
+      if (!std::in_range<unsigned short>(value)) {
         this->throwRuntimeError(
             "ModelDSLCommon::treatOutputMethod",
             "Could not read depth value of field '" + this->currentVar + "'");
       }
       auto& v = this->md.outputs.getVariable(this->currentVar);
-      v.setAttribute(VariableDescription::depth, value, false);
+      v.setAttribute(VariableDescription::depth,
+                     static_cast<unsigned short>(value), false);
       for (unsigned short i = 1; i <= value; ++i) {
         const auto vn = this->currentVar + "_" + std::to_string(i);
         this->md.registerMemberName(vn);
@@ -836,16 +844,25 @@ namespace mfront {
     } else if (mn == "setDepth") {
       this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
                               "Expected depth value.");
-      unsigned short value;
-      std::istringstream converter(this->current->value);
-      converter >> value;
-      if (!converter || (!converter.eof())) {
+      // checked conversion: negative, non integer and out of range values
+      // are rejected
+      auto p = this->current;
+      auto value = static_cast<unsigned int>(0);
+      try {
+        value = CxxTokenizer::readUnsignedInt(p, this->tokens.end());
+      } catch (std::exception&) {
+        this->throwRuntimeError(
+            "ModelDSLCommon::treatInputMethod",
+            "Could not read depth value of field '" + this->currentVar + "'");
+      }
+      if (!std::in_range<unsigned short>(value)) {
         this->throwRuntimeError(
             "ModelDSLCommon::treatInputMethod",
             "Could not read depth value of field '" + this->currentVar + "'");
       }
       auto& v = this->md.inputs.getVariable(this->currentVar);
-      v.setAttribute(VariableDescription::depth, value, false);
+      v.setAttribute(VariableDescription::depth,
+                     static_cast<unsigned short>(value), false);
       for (unsigned short i = 1; i <= value; ++i) {
         const auto vn = this->currentVar + "_" + std::to_string(i);
         this->md.registerMemberName(vn);
