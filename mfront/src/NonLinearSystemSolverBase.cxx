@@ -25,8 +25,8 @@ namespace mfront {
   }  // end of getMemberNames
 
   std::vector<std::string> NonLinearSystemSolverBase::getMemberNames() const {
-    // iter, epsilon, iterMax, zeros, fzeros, delta_zeros, jacobian are declared
-    // by ImplicitDSLBase
+    // iter, epsilon, iterMax, is_delta_zeros_defined, zeros, fzeros,
+    // delta_zeros, jacobian are declared by ImplicitDSLBase
     return {};
   }  // end of getMemberNames
 

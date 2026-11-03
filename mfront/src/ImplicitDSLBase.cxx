@@ -75,6 +75,7 @@ namespace mfront {
     this->reserveName("GetPartialJacobianInvert");
     this->reserveName("TinyMatrixSolve");
     this->mb.registerMemberName(uh, "iter");
+    this->mb.registerMemberName(uh, "is_delta_zeros_defined");
     this->mb.registerMemberName(uh, "zeros");
     this->mb.registerMemberName(uh, "delta_zeros");
     this->mb.registerMemberName(uh, "fzeros");
