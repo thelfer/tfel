@@ -328,14 +328,8 @@ namespace mtest {
     this->checkNotEndOfLine(
         "SchemeParserBase::handleAccelerationAlgorithmParameter", p,
         this->tokens.end());
-    // the value may be given as a string, as documented, or directly
-    auto v = std::string{};
-    if (p->flag == tfel::utilities::Token::String) {
-      v = this->readString(p, this->tokens.end());
-    } else {
-      v = p->value;
-      ++p;
-    }
+    const auto& v = p->value;
+    ++p;
     this->readSpecifiedToken(
         "SchemeParserBase::handleAccelerationAlgorithmParameter", ";", p,
         this->tokens.end());
