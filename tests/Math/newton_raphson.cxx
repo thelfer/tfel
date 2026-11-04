@@ -237,6 +237,30 @@ struct NewtonRaphsonSolver6 : public TinyNewtonRaphsonSolver6 {
 
 };  // end of struct NewtonRaphsonSolver6
 
+/*!
+ * \brief a solver whose `updateOrCheckJacobian` method reports that the
+ * jacobian can't be computed
+ */
+struct NewtonRaphsonSolver7
+    : public tfel::math::
+          TinyNewtonRaphsonSolver<1u, double, NewtonRaphsonSolver7> {
+  NewtonRaphsonSolver7() {
+    this->zeros = {100};
+    this->epsilon = 1.e-14;
+    this->iterMax = 20;
+  }
+
+  bool solve() { return this->solveNonLinearSystem(); }
+
+  bool computeResidual() noexcept {
+    this->fzeros(0) = this->zeros(0) * this->zeros(0) - 2.;
+    this->jacobian(0, 0) = 2 * this->zeros(0);
+    return true;
+  }  // end of computeResidual
+
+  bool updateOrCheckJacobian() noexcept { return false; }
+};  // end of struct NewtonRaphsonSolver7
+
 struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
   TinyNewtonRaphsonSolverTest()
       : tfel::tests::TestCase("TFEL/Math", "TinyNewtonRaphsonSolverTest") {
@@ -248,6 +272,7 @@ struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
     this->test4();
     this->test5();
     this->test6();
+    this->test7();
     return this->result;
   }  // end of execute
  private:
@@ -298,6 +323,11 @@ struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(x(1) - 1) < 1e-14);
     TFEL_TESTS_ASSERT(std::abs(x(2)) < 1e-14);
     TFEL_TESTS_ASSERT(std::abs(x(3)) < 1e-14);
+  }
+  void test7() {
+    // the failure reported by updateOrCheckJacobian stops the resolution
+    auto nr = NewtonRaphsonSolver7{};
+    TFEL_TESTS_ASSERT(!nr.solve());
   }
 };
 

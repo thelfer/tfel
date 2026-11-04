@@ -1085,13 +1085,21 @@ the robustness of the algorithm:
   along the search direction returned by the `computeNewCorrection`
   method.
 - `processNewEstimate`: this method is meant to update variables
-  depending on the current estimate of the unknowns.
+  depending on the current estimate of the unknowns. It may also apply
+  bounds on the estimate: after the update of the estimate by a new
+  correction, any modification of the estimate made by this method is
+  added to this correction (`delta_zeros`), which thus remains the step
+  actually taken.
 - By convention, the `computeNewCorrection` method may use the following
   helper methods:
   - `updateOrCheckJacobian`: This method can be used to compute the
     jacobian or part of the jacobian numerically. If the jacobian was
     computed in `computeResidual`, this method can be used to compare it
-    to a numerical approximation.
+    to a numerical approximation. This method may return a boolean: the
+    value `false` reports that the jacobian could not be computed, which
+    is handled by the solvers as a failure of the computation of the new
+    correction. The solvers call this method through the
+    `callUpdateOrCheckJacobian` method.
   - `solveLinearSystem`: This method can be used to solve a linear
     system if required. By default, an LU method with partial
     decomposition is used (implemented by the `TinyMatrixSolve` class).
