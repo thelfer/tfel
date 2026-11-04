@@ -77,6 +77,12 @@ namespace mfront::bbrick {
     bd.setEntryName(uh, dc_n, "DamageThresold");
   }  // end of initialize
 
+  void ScalarDamageHookeStressPotentialBase::endTreatment(
+      BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
+    checkNoNormalisationFactor(bd, "d");
+    HookeStressPotentialBase::endTreatment(bd, dsl);
+  }  // end of endTreatment
+
   void
   ScalarDamageHookeStressPotentialBase::declareComputeElasticPredictionMethod(
       BehaviourDescription& bd) const {

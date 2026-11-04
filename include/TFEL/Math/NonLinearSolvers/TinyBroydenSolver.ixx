@@ -46,7 +46,9 @@ namespace tfel::math {
       computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
     this->updateJacobian();
-    child.updateOrCheckJacobian();
+    if (!this->callUpdateOrCheckJacobian()) {
+      return false;
+    }
     auto tmp_jacobian = this->jacobian;
     auto tmp_fzeros = this->fzeros;
     if (!child.solveLinearSystem(tmp_jacobian, tmp_fzeros)) {

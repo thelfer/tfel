@@ -40,6 +40,8 @@ namespace mfront::bbrick {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const DataMap&) override;
+    void endTreatment(BehaviourDescription&,
+                      const AbstractBehaviourDSL&) const override;
     [[nodiscard]] std::vector<OptionDescription> getOptions(
         const BehaviourDescription&, const bool) const override;
     [[nodiscard]] std::vector<

@@ -30,7 +30,9 @@ namespace tfel::math {
       Child,
       ExternalWorkSpace>::computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
-    child.updateOrCheckJacobian();
+    if (!this->callUpdateOrCheckJacobian()) {
+      return false;
+    }
     const auto tjacobian = this->jacobian;
     const auto tfzeros = this->fzeros;
     if (!child.solveLinearSystem(this->jacobian, this->fzeros)) {

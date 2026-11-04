@@ -1,26 +1,12 @@
-@DSL DefaultGenericBehaviour;
+@DSL Implicit;
 @Behaviour WarningTest84;
 @Description {
-  "This test checks that no warning is reported if "
-  "all the explicitly declared tangent operator blocks, "
-  "including the ones related to a state variable and to "
-  "the temperature, are used in @TangentOperator."
+  "This file checks that a warning is reported if physical bounds are "
+  "set on an integration variable which is not a state variable"
 }
 
-@Gradient real a;
-@ThermodynamicForce real b;
-@StateVariable real s;
-
-@TangentOperatorBlocks {db_dda, db_ddT, ds_dda};
-
+@Epsilon 1e-12;
+@IntegrationVariable real x;
+@PhysicalBounds x in [0:*[;
 @Integrator {
-  da;
-  b;
-  ds;
-}
-
-@TangentOperator {
-  db_dda;
-  db_ddT;
-  ds_dda;
 }

@@ -45,7 +45,8 @@ Options
 - `enable-calculix  `: enables CalculiX support
 - `enable-comsol`: enables Combsol support
 - `enable-diana-fea`: enables Diana FEA support
-- `enable-lsdyna`: enables LS-DYNA support
+- `enable-lsdyna`: enables LS-DYNA support (not functional yet: mfront
+  rejects the `lsdyna` interface)
 - `enable-libcxx`: enable libc++ on Linux and clang
 - `enable-cxx-17`: enable c++-17 features (requires `gcc` >= 7.2)
 - `enable-random-tests: enable tests based on a random choice of

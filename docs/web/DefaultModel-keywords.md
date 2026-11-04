@@ -1773,9 +1773,11 @@ represented by the '*' character.
 
 ## Effect
 
-In implicit schemes, if physical bounds are set on an integration
-variable, this variable is bounded to satisfy them during the internal
-iterations.
+In implicit schemes, if physical bounds are set on a state variable,
+or on some elements of an array of state variables, this variable is
+bounded to satisfy them during the internal iterations. Physical bounds
+set on an integration variable which is not a state variable (see
+`@IntegrationVariable`) are ignored.
 
 If a variable is found to be out of its physical bounds, the
 computations are stopped. The tests are performed at different stages
@@ -2533,42 +2535,23 @@ and the porosity is automatic if the `SI` unit system is used.
 
 # The `@UpdateAuxiliaryStateVariables` keyword
 
-The `UpdateAuxiliaryStateVariables` introduces a code block meant to
+The `@UpdateAuxiliaryStateVariables` introduces a code block meant to
 update the auxiliary state variables after integration.
 
-In implicit domain specific languages, the code declared by
-`UpdateAuxiliaryStateVariables` is called once the integration
-variables (including state variables) and stresses (see the
-`@ComputeFinalStress` keyword) have been updated. The external state
-variables are not updated.
+The code declared by `@UpdateAuxiliaryStateVariables` is called once,
+at the end of the integration, after the update of the integration
+variables (including the state variables). If external point-wise
+models were declared (see the `@Model` keyword), the associated
+auxiliary state variables are also updated. The external state
+variables are not updated: for instance, `T` is the temperature at the
+beginning of the time step and `T + dT` the temperature at the end of
+the time step.
 
-In Runge-Kutta domain specific languages, the code declared by
-`UpdateAuxiliaryStateVariables` is called after each successful time
-step. Keep in mind that most Runge-Kutta algorithms perform internal
-substepping: in this case, the code declared by
-`UpdateAuxiliaryStateVariables` may be called several times during the
-behaviour integration. An additional variable called `dt_`, which is
-lower than the total time step increment `dt` if substepping is
-performed, gives the current time increment. The external state
-variables are set to their values at the current date.
-
-## Example (Implicit dsl)
+## Example
 
 ~~~~{.cpp}
 @UpdateAuxiliaryStateVariables{
-  // valeur de milieu de pas, q ayant
-  // déjà été mis à jour
-  const real q_ = q-(1-theta)*dq;
-  const real Q = Q0 + (Qm - Q0) * (1 - exp(-2 * Mu * q_) );
-  R+=b*(Q-R)*dp;
-}
-~~~~
-
-## Example (Runge-Kutta dsl)
-
-~~~~{.cpp}
-@UpdateAuxiliaryStateVariables{
-  sigeq = sqrt(sig|sig);
+  Tmax = max(Tmax, T + dT);
 }
 ~~~~
 

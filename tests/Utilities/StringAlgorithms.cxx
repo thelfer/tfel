@@ -11,6 +11,9 @@
  * project under specific licensing conditions.
  */
 
+#include <cmath>
+#include <cerrno>
+#include <limits>
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
@@ -28,6 +31,7 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
     return this->result;
   }  // end of execute
  private:
@@ -65,6 +69,25 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(tokens2[3] == "d");
     }
   }  // end of test2
+  //! \brief underflows are accepted, overflows rejected
+  void test3() {
+    using namespace tfel::utilities;
+    // a difference below the smallest subnormal number is null
+    constexpr auto dmin = std::numeric_limits<double>::denorm_min();
+    constexpr auto ldmin = std::numeric_limits<long double>::denorm_min();
+    TFEL_TESTS_ASSERT(std::abs(convert<double>("1.5") - 1.5) < dmin);
+    TFEL_TESTS_ASSERT(std::abs(convert<double>("1e-310") - 1e-310) < dmin);
+    TFEL_TESTS_ASSERT(std::abs(convert<double>("4.9e-324") - dmin) < dmin);
+    TFEL_TESTS_ASSERT(std::abs(convert<double>("1e-400")) < dmin);
+    TFEL_TESTS_CHECK_THROW(convert<double>("1e400"), std::exception);
+    TFEL_TESTS_CHECK_THROW(convert<double>("1.5x"), std::exception);
+    TFEL_TESTS_ASSERT(std::abs(convert<long double>("1e-5000")) < ldmin);
+    TFEL_TESTS_CHECK_THROW(convert<long double>("1e5000"), std::exception);
+    // errno is preserved
+    errno = EDOM;
+    static_cast<void>(convert<double>("1e-400"));
+    TFEL_TESTS_ASSERT(errno == EDOM);
+  }  // end of test3
 };
 
 TFEL_TESTS_GENERATE_PROXY(StringAlgorithmsTest, "StringAlgorithms");

@@ -360,6 +360,14 @@ The `@Function` keyword defines a computational part of the
 model. This keyword is followed by a string defining the name of this
 part of the computation.
 
+The functions are executed in the order of their declaration. An
+output can only be modified by one function.
+
+An output whose first modification in a function is a compound
+assignment (`+=`, `-=`, `*=` or `/=`) starts from its value at the
+beginning of the time step: its depth must be at least one (see the
+`setDepth` method).
+
 ## Example
 
 ~~~~{.cpp}
@@ -717,9 +725,11 @@ represented by the '*' character.
 
 ## Effect
 
-In implicit schemes, if physical bounds are set on an integration
-variable, this variable is bounded to satisfy them during the internal
-iterations.
+In implicit schemes, if physical bounds are set on a state variable,
+or on some elements of an array of state variables, this variable is
+bounded to satisfy them during the internal iterations. Physical bounds
+set on an integration variable which is not a state variable (see
+`@IntegrationVariable`) are ignored.
 
 If a variable is found to be out of its physical bounds, the
 computations are stopped. The tests are performed at different stages

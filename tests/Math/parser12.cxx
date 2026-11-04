@@ -37,6 +37,7 @@ struct ParserTest12 final : public tfel::tests::TestCase {
     this->test4();
     this->test5();
     this->test6();
+    this->test7();
     return this->result;
   }  // end of execute
  private:
@@ -171,6 +172,27 @@ struct ParserTest12 final : public tfel::tests::TestCase {
         tfel::math::Evaluator("tgamma(x)").differentiate("x"),
         std::runtime_error);
   }  // end of test6
+  //! \brief the exponentiation is right-associative
+  void test7() {
+    constexpr auto x = double{1.1};
+    constexpr auto eps = double{1e-14};
+    auto check = [this, x](const std::string& f, const double v) {
+      auto e = tfel::math::Evaluator(f);
+      if (!e.getVariablesNames().empty()) {
+        e.setVariableValue("x", x);
+      }
+      TFEL_TESTS_ASSERT(std::abs(e.getValue() - v) < eps * std::abs(v));
+    };
+    check("2**3**2", 512);
+    check("2**(3**2)", 512);
+    check("(2**3)**2", 64);
+    check("2**-3**2", 1. / 512);
+    check("-2**2", -4);
+    check("2*3**2**2", 162);
+    check("x**2**3", std::pow(x, 8));
+    TFEL_TESTS_ASSERT(tfel::math::Evaluator("x**2**3").getCxxFormula() ==
+                      "tfel::math::power<8>(x)");
+  }  // end of test7
 };
 
 TFEL_TESTS_GENERATE_PROXY(ParserTest12, "ParserTest12");

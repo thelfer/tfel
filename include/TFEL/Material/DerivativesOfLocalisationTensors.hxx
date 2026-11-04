@@ -14,10 +14,12 @@
 #define LIB_TFEL_MATERIAL_DERIVATIVESOFLOCALISATIONTENSORS_HXX
 
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
 #include "TFEL/Math/ST2toST2/WalpoleBasis.hxx"
 #include "TFEL/Material/EshelbyTolerances.hxx"
 #include <stdexcept>
+#include <type_traits>
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -28,6 +30,18 @@ namespace tfel::material::homogenization::elasticity {
                                                 StressType>())
             TFEL_HOST_DEVICE std::array < types::real<StressType>,
     4 > get_psi(const types::real<StressType>& e) {
+      if constexpr (std::is_same_v<tfel::math::base_type<StressType>, float>) {
+        // near the sphere, the following expressions are sums of terms
+        // diverging like 1 / (1 - e^2): in single precision, about two
+        // significant digits are lost just above the default tolerance.
+        // They are evaluated in double precision.
+        using real = types::real<StressType>;
+        const auto psi =
+            get_psi<double>(static_cast<double>(tfel::math::base_type_cast(e)));
+        return {
+            real(static_cast<float>(psi[0])), real(static_cast<float>(psi[1])),
+            real(static_cast<float>(psi[2])), real(static_cast<float>(psi[3]))};
+      }
       auto ace = types::real<StressType>(0.);
       if (e > 1) {
         ace = std::acosh(e);
@@ -37,7 +51,7 @@ namespace tfel::material::homogenization::elasticity {
       const auto gammae = 1 / (1 - e * e) - e / (1 - e * e) /
                                                 std::sqrt(std::abs(e * e - 1)) *
                                                 ace;
-      const auto gamma = 0.5 * (1 - gammae);
+      const auto gamma = (1 - gammae) / 2;
       const auto psi1 = (3 * gamma - 1) / 2 / (1 - e * e);
       const auto psi2 = (e * e * (4 * gamma - 1) - gamma) / 4 / (1 - e * e);
       const auto psi3 = (e * e * (1 - 2 * gamma) - gamma) / 4 / (1 - e * e);
@@ -50,6 +64,7 @@ namespace tfel::material::homogenization::elasticity {
             TFEL_HOST_DEVICE std::array < types::compliance<StressType>,
     6 > computeHillTensorComponents(const KGModuli<StressType>& kg0,
                                     const types::real<StressType>& e) {
+      using real = types::real<StressType>;
       const auto k0 = kg0.kappa;
       const auto mu0 = kg0.mu;
       const auto alpha0 = 1 / mu0;
@@ -59,8 +74,9 @@ namespace tfel::material::homogenization::elasticity {
 
       const auto p1 = alpha0 * (1 - 2 * psi[0]) + beta0 * psi[1];
       const auto p2 = alpha0 * psi[0] + beta0 * psi[2];
-      const auto p3 = beta0 * psi[3] * sqrt(2);
-      const auto p4 = beta0 * psi[3] * sqrt(2);
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+      const auto p3 = beta0 * psi[3] * cste;
+      const auto p4 = beta0 * psi[3] * cste;
       const auto pF = alpha0 * psi[0] + beta0 * psi[2] / 2;
       const auto pG = alpha0 * (1 - psi[0]) / 2 + beta0 * 2 * psi[3];
 
@@ -75,6 +91,7 @@ namespace tfel::material::homogenization::elasticity {
             const KGModuli<StressType>& kg0,
             const types::real<StressType>& e,
             const std::array<types::real<StressType>, 2>& dkg0) {
+      using real = types::real<StressType>;
       const auto k0 = kg0.kappa;
       const auto mu0 = kg0.mu;
       const auto dk0 = dkg0[0];
@@ -89,8 +106,9 @@ namespace tfel::material::homogenization::elasticity {
 
       const auto dp1 = dalpha0 * (1 - 2 * psi[0]) + dbeta0 * psi[1];
       const auto dp2 = dalpha0 * psi[0] + dbeta0 * psi[2];
-      const auto dp3 = dbeta0 * psi[3] * sqrt(2);
-      const auto dp4 = dbeta0 * psi[3] * sqrt(2);
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+      const auto dp3 = dbeta0 * psi[3] * cste;
+      const auto dp4 = dbeta0 * psi[3] * cste;
       const auto dpF = dalpha0 * psi[0] + dbeta0 * psi[2] / 2;
       const auto dpG = dalpha0 * (1 - psi[0]) / 2 + dbeta0 * 2 * psi[3];
 
@@ -126,10 +144,11 @@ namespace tfel::material::homogenization::elasticity {
       using namespace tfel::math;
       const tmatrix<2, 2, sq_compliance> dP = {{dp[0], dp[2]}, {dp[3], dp[1]}};
       const tmatrix<2, 2, compliance> P = {{p[0], p[2]}, {p[3], p[1]}};
-      const tmatrix<2, 2, real> J = {{1. / 3, sqrt(2) / 3},
-                                     {sqrt(2) / 3, 2. / 3}};
-      const tmatrix<2, 2, real> K = {{2. / 3, -sqrt(2) / 3},
-                                     {-sqrt(2) / 3, 1. / 3}};
+      constexpr auto cste = Cste<real>::sqrt2;
+      const tmatrix<2, 2, real> J = {{real(1) / 3, real(cste) / 3},
+                                     {real(cste) / 3, real(2) / 3}};
+      const tmatrix<2, 2, real> K = {{real(2) / 3, -real(cste) / 3},
+                                     {-real(cste) / 3, real(1) / 3}};
       const tmatrix<2, 2, StressType> dC = 3 * dk * J + 2 * dmu * K;
       const tmatrix<2, 2, real> ddC = 3 * ddk * J + 2 * ddmu * K;
 
@@ -262,8 +281,8 @@ namespace tfel::material::homogenization::elasticity {
 
       const auto kP = k0 + 4 * mu0 / 3;
       const auto muP = 5 * mu0 / 2 * kP / (k0 + 2 * mu0);
-      const auto pJ = 1. / 3 / kP;
-      const auto pK = 1. / 2 / muP;
+      const auto pJ = 1 / (3 * kP);
+      const auto pK = 1 / (2 * muP);
       const auto dkP = dk0 + 4 * dmu0 / 3;
       const auto dmuP = 5 * dmu0 / 2 * kP / (k0 + 2 * mu0) +
                         5 * mu0 / 2 *

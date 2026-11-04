@@ -12,6 +12,8 @@
  */
 
 #include <cmath>
+#include <limits>
+#include <algorithm>
 #include <sstream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
@@ -349,7 +351,6 @@ namespace castem {
       const CastemInt NDI) {
     using namespace tfel::math;
     using std::log;
-    constexpr auto eps = CastemReal(1.e-15);
     constexpr auto cste = Cste<CastemReal>::sqrt2;
     CastemCheckNDIValue(NDI);
     tvector<3u, CastemReal> vp;
@@ -365,6 +366,9 @@ namespace castem {
     }
     const auto C = computeRightCauchyGreenTensor(f);
     C.computeEigenVectors(vp, m);
+    // threshold below which the in-plane eigenvalues are considered equal
+    const auto eps = std::sqrt(std::numeric_limits<CastemReal>::epsilon()) *
+                     std::max(vp(0), vp(1));
     log_vp(0) = log(vp(0));
     log_vp(1) = log(vp(1));
     if (NDI != -2) {
@@ -401,7 +405,6 @@ namespace castem {
       CastemReal* const P, CastemReal* const E, const CastemReal* const F) {
     using namespace tfel::math;
     using std::log;
-    constexpr auto eps = CastemReal(1.e-15);
     constexpr auto cste = Cste<CastemReal>::sqrt2;
     tvector<3u, CastemReal> vp, log_vp;
     stensor<3u, CastemReal> n0, n1, n2;
@@ -411,6 +414,9 @@ namespace castem {
     const auto C = computeRightCauchyGreenTensor(f);
     C.computeEigenVectors<stensor<3u, CastemReal>::FSESJACOBIEIGENSOLVER>(vp,
                                                                           m);
+    // threshold below which two eigenvalues are considered equal
+    const auto eps = std::sqrt(std::numeric_limits<CastemReal>::epsilon()) *
+                     std::max(std::max(vp(0), vp(1)), vp(2));
     log_vp(0) = log(vp(0));
     log_vp(1) = log(vp(1));
     log_vp(2) = log(vp(2));
@@ -444,7 +450,7 @@ namespace castem {
       const auto vpm = (vp(0) + vp(1)) / 2;
       ST2toST2View<3u, CastemReal>{P} =
           (((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) / vpm + (n2 ^ n2) / vp(2) +
-           (log_vp(0) - log_vp(2)) / (vpm - vp(2)) *
+           ((log_vp(0) + log_vp(1)) / 2 - log_vp(2)) / (vpm - vp(2)) *
                ((n02 ^ n02) + (n12 ^ n12)));
     } else if (std::abs(vp(0) - vp(2)) < eps) {
       const tvector<3u, CastemReal> v0 = m.column_view<0u>();
@@ -465,7 +471,7 @@ namespace castem {
       const auto vpm = (vp(0) + vp(2)) / 2;
       ST2toST2View<3u, CastemReal>{P} =
           (((n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02)) / vpm + (n1 ^ n1) / vp(1) +
-           (log_vp(0) - log_vp(1)) / (vpm - vp(1)) *
+           ((log_vp(0) + log_vp(2)) / 2 - log_vp(1)) / (vpm - vp(1)) *
                ((n01 ^ n01) + (n12 ^ n12)));
     } else if (std::abs(vp(1) - vp(2)) < eps) {
       const tvector<3u, CastemReal> v0 = m.column_view<0u>();
@@ -486,7 +492,7 @@ namespace castem {
       const auto vpm = (vp(1) + vp(2)) / 2;
       ST2toST2View<3u, CastemReal>{P} =
           ((n0 ^ n0) / vp(0) + ((n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12)) / vpm +
-           ((log_vp(0) - log_vp(1)) / (vp(0) - vpm)) *
+           ((log_vp(0) - (log_vp(1) + log_vp(2)) / 2) / (vp(0) - vpm)) *
                ((n01 ^ n01) + (n02 ^ n02)));
     } else {
       st2tost2<3u, CastemReal> dn0_dC;

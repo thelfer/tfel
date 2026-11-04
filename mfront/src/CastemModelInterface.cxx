@@ -83,6 +83,44 @@ namespace mfront {
     }
   }  // end of writeScalarStandardTypedefs
 
+  /*!
+   * \return if the output `n` is modified by a function called before the
+   * function `f`, the functions being called in the order of their
+   * declaration
+   */
+  static bool isModifiedByAPreviousFunction(const ModelDescription& md,
+                                            const ModelDescription::Function& f,
+                                            const std::string& n) {
+    for (const auto& pf : md.functions) {
+      if (pf.name == f.name) {
+        return false;
+      }
+      if (pf.modifiedVariables.count(n) != 0) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isModifiedByAPreviousFunction
+
+  /*!
+   * \return if the function `f` uses the value at the beginning of the time
+   * step of an output modified by a previous function. Since each function
+   * stores the outputs it computes in the state variables, this value is
+   * read in a copy of the state variables made before calling the first
+   * function.
+   */
+  static bool requiresInitialStateVariables(
+      const ModelDescription& md, const ModelDescription::Function& f) {
+    for (const auto& uv : f.usedVariables) {
+      const auto [n, vdepth] = md.decomposeVariableName(uv);
+      if ((vdepth == 1) && (md.outputs.contains(n)) &&
+          (isModifiedByAPreviousFunction(md, f, n))) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of requiresInitialStateVariables
+
   void CastemModelInterface::writeUMATFunctionArguments(std::ostream& os) {
     os << "(castem::CastemReal *const,\n"
        << " castem::CastemReal *const STATEV,\n"
@@ -422,6 +460,9 @@ namespace mfront {
       }();
       os << "void execute_" << f.name
          << "(castem::CastemReal *const mfront_STATEV,\n";
+      if (requiresInitialStateVariables(md, f)) {
+        os << "const castem::CastemReal *const mfront_STATEV0,\n";
+      }
       if (f.useTimeIncrement) {
         os << "const castem::CastemReal *const mfront_DTIME,\n";
       } else {
@@ -496,8 +537,13 @@ namespace mfront {
           if (vdepth != 1) {
             raise("unsupported depth for variable '" + n + "'");
           }
-          os << "const auto " << v.name << "_1 = " << v.type
-             << "{mfront_STATEV[" << pos << "]};\n";
+          // a previous function has already stored the value of the
+          // output at the end of the time step in mfront_STATEV
+          const auto statev = isModifiedByAPreviousFunction(md, f, n)
+                                  ? "mfront_STATEV0"
+                                  : "mfront_STATEV";
+          os << "const auto " << v.name << "_1 = " << v.type << "{" << statev
+             << "[" << pos << "]};\n";
         }
       }
       auto write_physical_bounds = [&os, &raise](const VariableDescription& v,
@@ -650,9 +696,24 @@ namespace mfront {
     } else {
       os << "const " << md.className << " m;\n";
     }
+    if (std::any_of(md.functions.begin(), md.functions.end(),
+                    [&md](const ModelDescription::Function& f) {
+                      return requiresInitialStateVariables(md, f);
+                    })) {
+      // the state variables at the beginning of the time step
+      os << "const castem::CastemReal mfront_STATEV0[" << md.outputs.size()
+         << "] = {";
+      for (std::size_t i = 0; i != md.outputs.size(); ++i) {
+        os << (i == 0 ? "" : ", ") << "mfront_STATEV[" << i << "]";
+      }
+      os << "};\n";
+    }
     for (const auto& f : md.functions) {
-      os << "m.execute_" << f.name
-         << "(mfront_STATEV, mfront_DTIME, mfront_TEMP, mfront_DTEMP, "
+      os << "m.execute_" << f.name << "(mfront_STATEV, ";
+      if (requiresInitialStateVariables(md, f)) {
+        os << "mfront_STATEV0, ";
+      }
+      os << "mfront_DTIME, mfront_TEMP, mfront_DTEMP, "
          << "mfront_PREDEF, mfront_DPRED);\n";
     }
     os << "} catch(...){\n"

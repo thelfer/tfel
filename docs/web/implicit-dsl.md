@@ -115,6 +115,24 @@ library](tfel-math.html). The main steps of those algorithms and the
 associated code blocks are depicted in Figure
 @fig:mfront:implicit-dsl:resolution_steps.
 
+The `PowellDogLeg_` algorithms limit the corrections of the underlying
+algorithm using Powell's dog leg step: when the sum of the absolute
+values of the components of the correction exceeds \(N\) times the
+trust region size, \(N\) being the number of unknowns, the correction
+is replaced by a step of euclidean norm equal to the trust region size.
+This size is fixed during the iterations (it is not updated, and no
+step is rejected): it is set by the `@PowellDogLegTrustRegionSize`
+keyword, followed by a positive value, or by the
+`powell_dogleg_trust_region_size` parameter, and is equal to
+\(10^{-4}\) by default. It must be chosen according to the expected
+increments of the integration variables over a time step, since the
+progress per iteration is limited to about this size:
+
+~~~~{.cpp}
+@Algorithm PowellDogLeg_NewtonRaphson;
+@PowellDogLegTrustRegionSize 1.e-2;
+~~~~
+
 ## Notes about updating auxiliary state variable or local variables in the `Integrator` code blocks when the numerical evaluation of the jacobian is requested
 
 In some cases, it is convenient to update auxiliary state variables
@@ -151,6 +169,26 @@ Newton iterations, it can be more practical to compute its increment,
 defined by a local variable and to update the auxiliary variable in
 the `@UpdateAuxiliaryStateVariables` code block. The previous trick can
 be used in this case in a straightforward manner.
+
+## Failure of the evaluation of the residual for a perturbed estimate
+
+The numerical approximation of the jacobian (or of some of its blocks)
+uses a centered finite difference. If the evaluation of the residual
+fails for one of the two perturbed estimates of an unknown, for example
+because the `@Integrator` code block returns `false` for a negative
+increment of a viscoplastic strain, a one-sided difference based on the
+other perturbed estimate and on the residual at the current estimate is
+used. If the evaluation fails for both perturbed estimates, the
+computation of the jacobian fails: during the iterations, this failure is
+handled as a failure of the computation of the new correction and, once
+the convergence is reached, the integration fails if a tangent operator
+is requested.
+
+The residual at the current estimate is the one stored in `fzeros`,
+which the non-linear solvers compute before the jacobian. A code block
+calling `computeNumericalJacobian` itself, for instance in
+`@InitJacobian`, must thus make sure that `fzeros` holds the residual at
+`zeros`.
 
 
 <!--

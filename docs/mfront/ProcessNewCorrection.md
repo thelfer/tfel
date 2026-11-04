@@ -23,6 +23,13 @@ an alias for `delta_dv`.
 The increments of the integration variables are not updated at this
 stage of the resolution algorithm.
 
+If a normalisation factor `nf` was given to the integration variable
+`v` (see the `setNormalisationFactor` method), `dv` and `delta_dv` are,
+in this code block, the normalised increment and correction used by
+the solver: the physical increment is `nf * dv` and the physical
+correction is `nf * delta_dv`, whereas `dv` is the physical increment
+in the `@Integrator` code block.
+
 ## Example
 
 The following code limits the amplitude of the correction given to the
