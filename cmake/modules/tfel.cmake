@@ -457,19 +457,21 @@ endfunction(mfront_model_check_library)
 # list of components automatically declared in tfel-check
 set(tfel-check-components)
 # list of substitutions automatically declared in tfel-check
-# the  key-value pair must be separated by the % character
+# the keys are stored in the TFEL_SUBSTITUTIONS_KEYS global property and
+# the value associated with a key in the TFEL_SUBSTITUTION_<key> global
+# property, so that the value may contain any character
 # the substitutions are stored in global properties, not in the cache, so
 # that only the ones of the current configuration are kept
 function(add_tfel_substitution key value)
   get_property(_keys GLOBAL PROPERTY TFEL_SUBSTITUTIONS_KEYS)
-  get_property(_substitutions GLOBAL PROPERTY TFEL_SUBSTITUTIONS)
   if(key IN_LIST _keys)
-    if(NOT "${key}%${value}" IN_LIST _substitutions)
+    get_property(_value GLOBAL PROPERTY TFEL_SUBSTITUTION_${key})
+    if(NOT "${_value}" STREQUAL "${value}")
       message(FATAL_ERROR "a tfel substitution with key '${key}' is already defined")
     endif()
   else()
     set_property(GLOBAL APPEND PROPERTY TFEL_SUBSTITUTIONS_KEYS "${key}")
-    set_property(GLOBAL APPEND PROPERTY TFEL_SUBSTITUTIONS "${key}%${value}")
+    set_property(GLOBAL PROPERTY TFEL_SUBSTITUTION_${key} "${value}")
   endif()
 endfunction()
 add_tfel_substitution(TFEL_CXX_STANDARD "${CMAKE_CXX_STANDARD}")

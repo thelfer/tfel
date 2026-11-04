@@ -2709,9 +2709,14 @@ namespace mfront {
       const auto& amp = m.get<BehaviourDescription::AnalyticMaterialProperty>();
       tfel::math::Evaluator e(amp.f);
       auto mi = std::map<std::string, std::string>{};
+      const auto use_qt = this->bd.useQt();
       for (const auto& i :
            this->bd.getMaterialPropertyInputs(e.getVariablesNames())) {
-        mi[i.name] = f(i);
+        if (use_qt) {
+          mi[i.name] = "tfel::math::base_type_cast(" + f(i) + ")";
+        } else {
+          mi[i.name] = f(i);
+        }
       }
       out << e.getCxxFormula(mi);
     } else if (m.empty()) {

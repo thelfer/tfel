@@ -54,9 +54,17 @@ namespace mfront::bbrick {
     if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
       auto mts = getMiddleOfTimeStepModifier(bd);
       std::ostringstream mps;
-      mps << "this->" + n + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
-      mps << ";\n";
+      if (bd.useQt()) {
+        // the material property is evaluated as a plain number
+        mps << "this->" + n + " = std::remove_cvref_t<decltype(this->" + n +
+                   ")>(";
+        dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
+        mps << ");\n";
+      } else {
+        mps << "this->" + n + " = ";
+        dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
+        mps << ";\n";
+      }
       c = mps.str();
     }
     return c;
@@ -509,18 +517,19 @@ namespace mfront::bbrick {
   std::string computeElasticLimit(
       const BehaviourDescription& bd,
       const std::vector<std::shared_ptr<IsotropicHardeningRule>>& ihrs,
-      const std::string& fid) {
+      const std::string& fid,
+      const std::string& theta) {
     tfel::raise_if(ihrs.empty(),
                    "computeElastic: "
                    "empty list of isotropic hardenings");
     if (ihrs.size() == 1) {
-      return ihrs[0]->computeElasticLimit(bd, fid, "");
+      return ihrs[0]->computeElasticLimit(bd, fid, "", theta);
     }
     auto c = std::string{};
     auto R = std::string{};
     for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
       const auto id = std::to_string(i);
-      c += ihrs[i]->computeElasticLimit(bd, fid, id);
+      c += ihrs[i]->computeElasticLimit(bd, fid, id, theta);
       R += "R" + fid + "_" + id;
       if (++i != ihrs.size()) {
         R += " + ";
@@ -533,19 +542,20 @@ namespace mfront::bbrick {
   std::string computeElasticLimitAndDerivative(
       const BehaviourDescription& bd,
       const std::vector<std::shared_ptr<IsotropicHardeningRule>>& ihrs,
-      const std::string& fid) {
+      const std::string& fid,
+      const std::string& theta) {
     tfel::raise_if(ihrs.empty(),
                    "computeElasticAndDerivative: "
                    "empty list of isotropic hardenings");
     if (ihrs.size() == 1) {
-      return ihrs[0]->computeElasticLimitAndDerivative(bd, fid, "");
+      return ihrs[0]->computeElasticLimitAndDerivative(bd, fid, "", theta);
     }
     auto c = std::string{};
     auto R = std::string{};
     auto dR = std::string{};
     for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
       const auto id = std::to_string(i);
-      c += ihrs[i]->computeElasticLimitAndDerivative(bd, fid, id);
+      c += ihrs[i]->computeElasticLimitAndDerivative(bd, fid, id, theta);
       const auto Ri = "R" + fid + "_" + id;
       const auto dRi = "d" + Ri + "_dp" + fid;
       R += Ri;
@@ -700,7 +710,12 @@ namespace mfront::bbrick {
               mp.template get<BehaviourDescription::ConstantMaterialProperty>();
           std::ostringstream os;
           os.precision(std::numeric_limits<double>::max_digits10);
-          os << "this->" << vn << " = " << cmp.value << ";\n";
+          if (bd.useQt()) {
+            os << "this->" << vn << " = std::remove_cvref_t<decltype(this->"
+               << vn << ")>(" << cmp.value << ");\n";
+          } else {
+            os << "this->" << vn << " = " << cmp.value << ";\n";
+          }
           c += os.str();
         }
       }

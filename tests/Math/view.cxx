@@ -174,6 +174,23 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(s[1][3]) < eps);
   }
 
+  //! \brief create arrays of views of quantities from a tiny vector
+  void test8() {
+    using namespace tfel::math;
+    using stress = qt<unit::Stress, double>;
+    this->array = tvector<12, double>{0};
+    this->check0();
+    auto s = map<2u, stensor<2u, stress>>(this->array);
+    s[0] = stress(1) * stensor<2u, double>::Id();
+    this->check1();
+    // views of scalars, using an offset
+    auto v = map<3u, stress, 4u>(this->array);
+    v[0] = 2 * s[0][0];
+    v[1] = v[0];
+    v[2] = v[1];
+    this->check2();
+  }
+
   void constexpr_test1() {
     /* does not compile with icc 2021.1, but compiles with 2021.1 */
 #ifndef __INTEL_COMPILER

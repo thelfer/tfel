@@ -659,7 +659,11 @@ namespace mtest {
     if (b && (this->stype == 1u)) {
       this->rtf_fct(&s.s1[0], &s.s1[0], s.r.begin());
     }
-    return {true, rdt};
+    // the generic interface reports a success (status 1) for time step
+    // scaling factors greater than or equal to 0.99: the step is accepted,
+    // as by the solvers based on this interface, without increasing the
+    // time step if the factor is below one
+    return {true, std::max(rdt, real{1})};
   }  // end of call_behaviour
 
   void GenericBehaviour::executeFiniteStrainBehaviourStressPreProcessing(

@@ -212,6 +212,7 @@ if(enable-mfront-quantity-tests)
        Norton_rk4_qt
        Norton_rk54_qt
        Norton_rkCastem_qt
+       ImplicitNorton2_qt
 )
 endif(enable-mfront-quantity-tests)
 
@@ -867,6 +868,7 @@ if(enable-mfront-quantity-tests)
   test_generic(norton-qt-rk42)
   test_generic(norton-qt-rk54)
   test_generic(norton-qt-rkCastem)
+  test_generic(implicitnorton2-qt)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-2D logarithmicstrainelasticity-shear.ref)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D logarithmicstrainelasticity-shear.ref)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D logarithmicstrainelasticity-shear.ref)

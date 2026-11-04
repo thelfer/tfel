@@ -339,7 +339,7 @@ namespace tfel::math {
             unsigned short stride = getViewsArrayMinimalStride<MappedType>(),
             unsigned short N>
   TFEL_HOST_DEVICE constexpr auto map(
-      tvector<N, ViewsArrayNumericType<MappedType>>&) noexcept
+      tvector<N, ViewsArrayStorageType<MappedType>>&) noexcept
       requires(!std::is_const_v<MappedType>);
   /*!
    * \brief create a const view on an array of fixed sized math objects from a
@@ -355,7 +355,7 @@ namespace tfel::math {
             unsigned short stride = getViewsArrayMinimalStride<MappedType>(),
             unsigned short N>
   TFEL_HOST_DEVICE constexpr auto map(
-      const tvector<N, ViewsArrayNumericType<MappedType>>&);
+      const tvector<N, ViewsArrayStorageType<MappedType>>&);
 
 }  // namespace tfel::math
 

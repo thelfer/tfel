@@ -55,6 +55,8 @@ namespace mfront {
 
     bool allowMultipleFlowRules() const override;
     std::size_t getNumberOfFlowRules() const override;
+    std::string getIsotropicHardeningRulesTheta(
+        const std::size_t) const override;
     void treatFlowRule() override;
 
     struct FlowHandler {

@@ -147,6 +147,8 @@ install_mfront_desc(UseQt)
 
 install_mfront_desc2(Implicit HillTensor)
 
+install_mfront_desc2(MultipleIsotropicMisesFlows FlowRule)
+
 install_mfront_desc3(MaterialLaw MaterialProperty Constant)
 install_mfront_desc3(MaterialLaw MaterialProperty Data)
 install_mfront_desc3(MaterialLaw MaterialProperty Function)
