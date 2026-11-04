@@ -41,11 +41,12 @@ namespace mfront {
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       const auto s =
           i.getFunctionNameBasis(name) + "_OrthotropyManagementPolicy";
-      if (!mb.hasAttribute(AbaqusInterface::orthotropyManagementPolicy)) {
+      if (!AbaqusInterfaceBase::hasOrthotropyManagementPolicy(
+              i.getInterfaceName(), mb)) {
         exportUnsignedShortSymbol(out, s, 0u);
       } else {
-        const auto omp = mb.getAttribute<std::string>(
-            AbaqusInterface::orthotropyManagementPolicy);
+        const auto omp = AbaqusInterfaceBase::getOrthotropyManagementPolicy(
+            i.getInterfaceName(), mb);
         if (omp == "MFront") {
           exportUnsignedShortSymbol(out, s, 2u);
         } else if (omp == "Native") {
@@ -71,8 +72,10 @@ namespace mfront {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if ((AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) &&
-          (AbaqusInterfaceBase::getFiniteStrainStrategy(mb) != "Native")) {
+      if ((AbaqusInterfaceBase::hasFiniteStrainStrategy(i.getInterfaceName(),
+                                                        mb)) &&
+          (AbaqusInterfaceBase::getFiniteStrainStrategy(i.getInterfaceName(),
+                                                        mb) != "Native")) {
         exportUnsignedShortSymbol(out, s, 2u);
       } else {
         exportUnsignedShortSymbol(out, s, 1u);
@@ -97,7 +100,8 @@ namespace mfront {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourKinematic";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) {
+      if (AbaqusInterfaceBase::hasFiniteStrainStrategy(i.getInterfaceName(),
+                                                       mb)) {
         exportUnsignedShortSymbol(out, s, 3u);
       } else {
         exportUnsignedShortSymbol(out, s, 1u);
