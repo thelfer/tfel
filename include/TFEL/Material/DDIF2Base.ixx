@@ -284,6 +284,35 @@ namespace tfel::material {
     s(5) = (sint * a[4] + cost * a[5]) * cste;
   }  // end of DDIF2Base::cyl2cart
 
+  template <unsigned short N, typename real>
+  void DDIF2Base::cyl2cart(tfel::math::st2tost2<N, real>& D,
+                           const real theta) {
+    // the change of frame of symmetric tensors is applied to the columns,
+    // then to the rows of D
+    if constexpr (N != 1) {
+      constexpr auto n = tfel::math::StensorDimeToSize<N>::value;
+      auto v = tfel::math::stensor<N, real>{};
+      for (unsigned short j = 0; j != n; ++j) {
+        for (unsigned short i = 0; i != n; ++i) {
+          v(i) = D(i, j);
+        }
+        DDIF2Base::cyl2cart(v, theta);
+        for (unsigned short i = 0; i != n; ++i) {
+          D(i, j) = v(i);
+        }
+      }
+      for (unsigned short i = 0; i != n; ++i) {
+        for (unsigned short j = 0; j != n; ++j) {
+          v(j) = D(i, j);
+        }
+        DDIF2Base::cyl2cart(v, theta);
+        for (unsigned short j = 0; j != n; ++j) {
+          D(i, j) = v(j);
+        }
+      }
+    }
+  }  // end of DDIF2Base::cyl2cart
+
   template <typename real>
   void DDIF2Base::rk(
       tfel::math::tmatrix<3, 3, real>& m,

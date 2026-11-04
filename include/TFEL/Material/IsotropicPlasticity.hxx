@@ -32,7 +32,7 @@ namespace tfel::material {
    * \f[
    * J_{3} = \mathrm{det}\left(\underline{s}'\right)
    *       =
-   * \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
+   * \mathrm{det}\left(\underline{s}-\frac{1}{3}\,\mathrm{tr}\left(\underline{s}\right)\,\underline{I}\right)
    * \f]
    *
    * This function computes \f$\displaystyle\frac{\partial J_{3}}{\partial
@@ -53,7 +53,7 @@ namespace tfel::material {
    * \f[
    * J_{3} = \mathrm{det}\left(\underline{s}'\right)
    *       =
-   * \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
+   * \mathrm{det}\left(\underline{s}-\frac{1}{3}\,\mathrm{tr}\left(\underline{s}\right)\,\underline{I}\right)
    * \f]
    *
    * This function computes \f$\displaystyle\frac{\partial^{2} J_{3}}{\partial

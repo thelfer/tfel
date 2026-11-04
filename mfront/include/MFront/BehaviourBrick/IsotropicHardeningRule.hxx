@@ -89,9 +89,13 @@ namespace mfront::bbrick {
      * \param[in] bd: behaviour description
      * \param[in] fid: flow id
      * \param[in] id: identifier
+     * \param[in] theta: expression of the value of the \f$\theta\f$ parameter
+     * used to evaluate the equivalent plastic strain at the middle of the time
+     * step, generally `this->theta`
      */
     [[nodiscard]] virtual std::string computeElasticLimit(
         const BehaviourDescription&,
+        const std::string&,
         const std::string&,
         const std::string&) const = 0;
     /*!
@@ -105,9 +109,13 @@ namespace mfront::bbrick {
      * \param[in] bd: behaviour description
      * \param[in] fid: flow id
      * \param[in] id: identifier
+     * \param[in] theta: expression of the value of the \f$\theta\f$ parameter
+     * used to evaluate the equivalent plastic strain at the middle of the time
+     * step, generally `this->theta`
      */
     [[nodiscard]] virtual std::string computeElasticLimitAndDerivative(
         const BehaviourDescription&,
+        const std::string&,
         const std::string&,
         const std::string&) const = 0;
     /*!

@@ -1744,8 +1744,8 @@ namespace mfront {
             (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
           const auto* const F0zz =
               (h == ModellingHypothesis::PLANESTRESS) ? "mg_F0[2]" : "mg_F0[1]";
-          // the logarithmic strain integrate function converts the stress
-          // with the deformation gradient given by the caller
+          // the integrate functions convert the stress with the axial
+          // deformation gradient computed by the behaviour
           if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
             if (this->checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
                         bd, h)
@@ -1757,6 +1757,12 @@ namespace mfront {
                      BehaviourDescription::GREENLAGRANGE) {
             if (this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd, h).first) {
               os << F0zz << " = std::sqrt(1 + 2 * "
+                 << "d->s0.internal_state_variables"
+                 << "[mg_Traits::axial_strain_offset]);\n";
+            }
+          } else if (bd.getStrainMeasure() == BehaviourDescription::HENCKY) {
+            if (this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd, h).first) {
+              os << F0zz << " = std::exp("
                  << "d->s0.internal_state_variables"
                  << "[mg_Traits::axial_strain_offset]);\n";
             }

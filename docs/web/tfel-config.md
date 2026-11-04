@@ -27,6 +27,26 @@ substitutions used by `MFront` when reading configuration files and
 delimited by the `@` character in those files and in the map returned
 by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
+Only `TFEL_CXX_STANDARD` is always defined. The other keys are only
+defined if `TFEL` is configured with a configuration of the
+`generic-parallel` interface which uses them, i.e. listed in the
+`generic-parallel-configurations` variable of `cmake`:
+
+- `TFEL_GXX_COMPILER`: `stlpar-parunseq-gcc`,
+- `TFEL_CLANGXX_COMPILER`: `cuda-clang`, `hip-clang` or
+  `stlpar-parunseq-clang`,
+- `TFEL_ICPX_COMPILER`: `stlpar-parunseq-icpx` or `sycl-default-icpx`,
+- `TFEL_ACPP_COMPILER`: `sycl-default-acpp` or `sycl-gpu-acpp`,
+- `TFEL_NVHPC_COMPILER`: `stlpar-parunseq-nvhpc-gpu`,
+- `TFEL_HIPCC_COMPILER`, `TFEL_HIPCC_FLAGS` and `TFEL_HIP_INCLUDE_DIR`:
+  `hip-hipcc` or `hip-clang`,
+- `TFEL_NVCC_COMPILER`, `TFEL_CUDA_PATH` and `TFEL_CUDA_LIBRARY_DIR`:
+  `cuda-nvcc`, `cuda-clang`, or `hip-hipcc` and `hip-clang` on the
+  NVIDIA platform (`HIP_PLATFORM` set to `nvidia`).
+
+Without such a configuration, these keys are not substituted, and the
+variables `TFEL_xxx_COMPILER` passed to `cmake` are not used.
+
 ### General substitutions
 
 - `TFEL_CXX_STANDARD`: the `C++` standard used by the project.

@@ -434,14 +434,25 @@ namespace tfel::math {
     this->extOpGenerators.insert({name, f});
   }  // end of FunctionGeneratorManager::insert
 
+  /*!
+   * \param[in] n: name of the function in the formulas
+   * \param[in] cn: name of the function in the generated C++ code
+   */
+  template <double (*f)(const double)>
+  static std::pair<std::string,
+                   std::function<Evaluator::ExprPtr(const Evaluator::ExprPtr)>>
+  makeStandardFunctionGenerator(const char* const n, const char* const cn) {
+    return {n, [cn](const Evaluator::ExprPtr e) {
+              return std::shared_ptr<parser::Expr>(
+                  new parser::StandardFunction<f>(cn, e));
+            }};
+  }  // end of makeStandardFunctionGenerator
+
   template <double (*f)(const double)>
   static std::pair<std::string,
                    std::function<Evaluator::ExprPtr(const Evaluator::ExprPtr)>>
   makeStandardFunctionGenerator(const char* const n) {
-    return {n, [n](const Evaluator::ExprPtr e) {
-              return std::shared_ptr<parser::Expr>(
-                  new parser::StandardFunction<f>(n, e));
-            }};
+    return makeStandardFunctionGenerator<f>(n, n);
   }  // end of makeStandardFunctionGenerator
 
   template <double (*f)(const double, const double)>
@@ -504,7 +515,7 @@ namespace tfel::math {
          makeStandardFunctionGenerator<cbrt>("cbrt"),
          makeStandardFunctionGenerator<fabs>("abs"),
          makeStandardFunctionGenerator<sqrt>("sqrt"),
-         makeStandardFunctionGenerator<log>("ln"),
+         makeStandardFunctionGenerator<log>("ln", "log"),
          makeStandardFunctionGenerator<log>("log"),
          makeStandardFunctionGenerator<log10>("log10"),
          makeStandardFunctionGenerator<log2>("log2"),

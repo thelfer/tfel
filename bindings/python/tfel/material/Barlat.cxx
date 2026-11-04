@@ -63,7 +63,7 @@ static const char make_barlat_linear_transformation_doc[] =
     "one shall call this function as follows:\n"
     "const auto l1 =\n"
     "makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,\n"
-    "cB_23,cB_32,cB_66,cBB_55,cBB_44);";
+    "cB_23,cB_32,cB_66,cB_55,cB_44);";
 
 static const char compute_barlat_stress_doc[] =
     "This function computes the Barlat yield stress.\n"

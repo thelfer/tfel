@@ -307,7 +307,16 @@ namespace mfront {
   void ImplicitCodeGeneratorBase::writeBehaviourParserSpecificMembers(
       std::ostream& os, const Hypothesis h) const {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
+    Modifier mts = [this, h](const MaterialPropertyInput& i) -> std::string {
+      if ((i.category == MaterialPropertyInput::STATEVARIABLE) &&
+          (this->bd.hasAttribute(h, i.name + "_normalisation_factor"))) {
+        // the increment of a normalised state variable is normalised
+        // during the resolution
+        const auto& nf = this->bd.getAttribute<std::string>(
+            h, i.name + "_normalisation_factor");
+        return "this->" + i.name + " + (this->theta) * ((" + nf +
+               ") * (this->d" + i.name + "))";
+      }
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category ==
            MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
@@ -326,7 +335,13 @@ namespace mfront {
             "unsupported input type for variable '" + i.name + "'");
       }
     };
-    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
+    Modifier ets = [this, h](const MaterialPropertyInput& i) -> std::string {
+      if ((i.category == MaterialPropertyInput::STATEVARIABLE) &&
+          (this->bd.hasAttribute(h, i.name + "_normalisation_factor"))) {
+        const auto& nf = this->bd.getAttribute<std::string>(
+            h, i.name + "_normalisation_factor");
+        return "this->" + i.name + "+(" + nf + ")*(this->d" + i.name + ")";
+      }
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category ==
            MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
@@ -678,6 +693,7 @@ namespace mfront {
                              return (derivative.first.name == iv1.name) &&
                                     (derivative.second.name == iv2.name);
                            }) == invert_jacobian_blocks.end()) {
+            cc += mfront::getTypeSize(iv2);
             continue;
           }
           auto derivative_view = DerivativeViewDescription{};

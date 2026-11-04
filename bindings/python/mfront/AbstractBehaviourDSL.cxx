@@ -24,8 +24,8 @@ void declareAbstractBehaviourDSL(pybind11::module_&);
 void declareAbstractBehaviourDSL(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<AbstractBehaviourDSL, AbstractDSL,
-                    std::shared_ptr<AbstractBehaviourDSL>>(
-      m, "AbstractBehaviourDSL",
+                   std::shared_ptr<AbstractBehaviourDSL>>(
+      m, "AbstractBehaviourDSL", pybind11::multiple_inheritance(),
       "Interface class for all domain specific languages associated with\n"
       "behaviours")
       .def("getBehaviourDescription",

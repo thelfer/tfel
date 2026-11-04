@@ -24,6 +24,18 @@ namespace mfront::bbrick {
     return "khr_" + n + fid + '_' + kid;
   }  // end of getVariableId
 
+  std::string
+  KinematicHardeningRule::buildBackStrainImplicitEquationsForAnInactiveFlow(
+      const BehaviourDescription&,
+      const StressPotential&,
+      const StressCriterion&,
+      const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
+      const std::string&,
+      const std::string&,
+      const bool) const {
+    return "";
+  }  // end of buildBackStrainImplicitEquationsForAnInactiveFlow
+
   KinematicHardeningRule::~KinematicHardeningRule() = default;
 
 }  // end of namespace mfront::bbrick

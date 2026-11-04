@@ -52,7 +52,7 @@ namespace tfel::material {
         f < p.feps ? std::pow((f + p.feps) / 2, -1 / n) : std::pow(f, -1 / n);
     const auto A = is_zero ? 0 : std::pow(n * (A0 - 1), -2 * n / (n + 1));
     const auto B = (1 + (2 * f) / 3) * std::pow(1 - f, -2 * n / (n + 1));
-    return std::sqrt(cste_9_4 * A * pr * pr + B * s2);
+    return tfel::math::power<1, 2>(cste_9_4 * A * pr * pr + B * s2);
   }  // end of computeMichelAndSuquet1992HollowSphereYieldStress
 
   template <typename StressStensor>
@@ -86,7 +86,7 @@ namespace tfel::material {
     const auto B1 = 1 + cste_2_3 * f;
     const auto B2 = std::pow(1 - f, -2 * n / (n + 1));
     const auto B = B1 * B2;
-    const auto seq = std::sqrt(cste_9_4 * A * pr * pr + B * s2);
+    const auto seq = tfel::math::power<1, 2>(cste_9_4 * A * pr * pr + B * s2);
     const auto iseq = 1 / (std::max(seq, seps));
     const auto dseq_dsig = cste_3_2 * iseq * ((A * pr / 2) * id + B * s);
     const auto dA_df = 2 * A * A0 / (std::max(f, p.feps2) * (A0 - 1) * (n + 1));
@@ -134,7 +134,7 @@ namespace tfel::material {
     const auto B1 = 1 + cste_2_3 * f;
     const auto B2 = std::pow(1 - f, -2 * n / (n + 1));
     const auto B = B1 * B2;
-    const auto seq = std::sqrt(cste_9_4 * A * pr * pr + B * s2);
+    const auto seq = tfel::math::power<1, 2>(cste_9_4 * A * pr * pr + B * s2);
     // derivatives with respect to the stress
     const auto iseq = 1 / (std::max(seq, seps));
     const auto C = cste_3_2 * ((A * pr / 2) * id + B * s);

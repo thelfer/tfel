@@ -127,6 +127,9 @@ cmake usefull variables
 - `tdls_DIR`: directory where to find the `cmake` files installed by the
   Tiny Device-callable Linear Solvers (`TDLS`) library.
 
+The `TFEL_xxx_COMPILER` variables are only used by the `generic-parallel`
+configurations which require the corresponding compiler.
+
 cmake typical usage
 ===================
 

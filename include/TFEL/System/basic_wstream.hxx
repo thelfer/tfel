@@ -51,7 +51,7 @@ namespace tfel::system {
 
     basic_wstream& operator<<(const long double&);
 
-    basic_wstream& operator<<(const void*&);
+    basic_wstream& operator<<(const void*);
 
     basic_wstream& operator<<(const char*);
 

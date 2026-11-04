@@ -71,7 +71,7 @@ namespace mfmtg::mtest {
     if (times.times.is<unsigned int>()) {
       os << times.times.get<unsigned int>();
     } else if (times.times.is<std::string>()) {
-      os << times.times.get<std::string>();
+      os << "'" << times.times.get<std::string>() << "'";
     } else {
       tfel::raise(
           "mfmtg::mtest::writeTimes: "

@@ -545,22 +545,25 @@ namespace tfel::material {
       return to_array(bv);
     } else if (cs == CrystalStructure::Cubic) {
       throw_if(!d.is<SlipSystemsDescription::vec3d>(),
-               "invalid direction description for HCP "
-               "(shall be given as a four indices' vector)");
+               "invalid direction description for cubic crystals "
+               "(shall be given as a three indices' vector)");
       const auto s = numodis::Cubic();
       const auto d3d = d.get<SlipSystemsDescription::vec3d>();
       const auto bv = s.direction(build3d(d3d));
       return to_array(bv);
     } else if (cs == CrystalStructure::FCC) {
       throw_if(!d.is<SlipSystemsDescription::vec3d>(),
-               "invalid direction description for HCP "
-               "(shall be given as a four indices' vector)");
+               "invalid direction description for FCC "
+               "(shall be given as a three indices' vector)");
       const auto s = numodis::FCC();
       const auto d3d = d.get<SlipSystemsDescription::vec3d>();
       const auto bv = s.direction(build3d(d3d));
       return to_array(bv);
     }
     throw_if(cs != CrystalStructure::BCC, "unsupported crystalline structure");
+    throw_if(!d.is<SlipSystemsDescription::vec3d>(),
+             "invalid direction description for BCC "
+             "(shall be given as a three indices' vector)");
     const auto s = numodis::BCC();
     const auto d3d = d.get<SlipSystemsDescription::vec3d>();
     const auto bv = s.direction(build3d(d3d));

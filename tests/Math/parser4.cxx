@@ -52,6 +52,15 @@ struct ParserTest4 final : public tfel::tests::TestCase {
     g->getParametersNames(n2);
     TFEL_TESTS_ASSERT(n == set<string>{"a"});
     TFEL_TESTS_ASSERT((n2 == set<string>{"a", "b"}));
+    // nested calls of the same function
+    manager->operator[]("d") =
+        std::make_shared<Evaluator>(vector<string>{"u", "v"}, "u-v", manager);
+    TFEL_TESTS_ASSERT(abs(Evaluator("d(10, d(3, 1))", manager).getValue() - 8) <
+                      1.e-14);
+    auto e = Evaluator("2*d(y, d(z, 1))", manager);
+    e.setVariableValue("y", 10);
+    e.setVariableValue("z", 3);
+    TFEL_TESTS_ASSERT(abs(e.getValue() - 16) < 1.e-14);
     return this->result;
   }  // end of execute
 };

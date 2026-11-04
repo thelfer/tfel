@@ -248,6 +248,8 @@ namespace mfront {
   }  // end of doPedanticChecks
 
   void MaterialPropertyDSL::endsInputFileProcessing() {
+    // complete the declaration of physical bounds
+    this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of endsInputFileProcessing
 
   void MaterialPropertyDSL::makeConsistencyChecks() const {
@@ -528,7 +530,6 @@ namespace mfront {
         pp->setAttribute(VariableDescription::defaultValue, op.second, true);
       }
     }
-    this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of finalizeVariablesDeclaration
 
   static std::string getFunctionAssociatedWithAValue(
@@ -867,6 +868,7 @@ namespace mfront {
     this->fd.fileName = "user defined string";
     this->parseString(s);
     this->analyse();
+    this->endsInputFileProcessing();
   }
 
   void MaterialPropertyDSL::analyse() {

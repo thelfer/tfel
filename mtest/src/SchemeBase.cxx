@@ -390,6 +390,9 @@ namespace mtest {
           log << "** prediction using elastic stiffness computed from material "
                  "properties\n";
         } else if (this->options.ppolicy ==
+                   PredictionPolicy::SECANTOPERATORPREDICTION) {
+          log << "** prediction using secant operator\n";
+        } else if (this->options.ppolicy ==
                    PredictionPolicy::TANGENTOPERATORPREDICTION) {
           log << "** prediction using tangent operator\n";
         } else {

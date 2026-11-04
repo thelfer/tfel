@@ -41,6 +41,7 @@ void declareVariableBoundsDescription(pybind11::module_&);
 
 void declareVariableDescription(pybind11::module_&);
 void declareMaterialKnowledgeAttribute(pybind11::module_&);
+void declareMaterialKnowledgeDescription(pybind11::module_&);
 void declareBehaviourData(pybind11::module_&);
 void declareMaterialPropertyDescription(pybind11::module_&);
 void declareBehaviourDescription(pybind11::module_&);
@@ -85,6 +86,8 @@ PYBIND11_MODULE(_mfront, m) {
   m.def("getImplementationsPaths", ptr, "file"_a, "material"_a = "",
         "material_property"_a = "", "behaviour"_a = "", "model"_a = "");
   declareMadnexSupport(m);
+  declareMaterialKnowledgeAttribute(m);
+  declareMaterialKnowledgeDescription(m);
   declareAbstractDSL(m);
   declareDSLFactory(m);
   declareFileDescription(m);
@@ -92,7 +95,6 @@ PYBIND11_MODULE(_mfront, m) {
   declareLibraryDescription(m);
   declareTargetsDescription(m);
   declareOverridableImplementation(m);
-  declareMaterialKnowledgeAttribute(m);
   // material properties
   declareMaterialPropertyDSL(m);
   declareMaterialPropertyDescription(m);

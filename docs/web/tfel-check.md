@@ -60,7 +60,7 @@ By default, `tfel-check` uses a single process.
 ### Controlling parallel execution
 
 The `--jobs` (`-j`) option specifies the number of parallel jobs.
-If not provided, `tfel-check` uses the number of available CPU cores.
+If no value is given, `tfel-check` uses the number of available CPU cores.
 
 #### Job limit
 
@@ -265,6 +265,10 @@ The `@Command` keyword executes a command. It supports the following options:
 - `output_validation_regex`: Regular expression to validate the command output.
   The output is concatenated into a single string for validation.
 - `shall_fail`: Boolean. If `true`, the command must fail for the test to pass.
+  If an output check (`expected_output`, `expected_numerical_output`,
+  `empty_output`, `output_validation_regex`) is also given, it is applied
+  to the output of the failed command, so that the test also checks the
+  reason of the failure.
 - `timeout`: Integer. Maximum allowed duration in seconds.
 
 Example:
@@ -778,18 +782,22 @@ $ tfel-check --help
 
 ## Summary of options
 
+The options whose value is noted `<boolean>` require the value `true`
+or `false` after an equal sign, for example
+`--discard-jobs-limit=true`: they are rejected without value.
+
 | Option | Description |
 |--------|-------------|
-| `--clean-up` | clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of success. |
-| `--discard-clean-up-on-failure` | don't clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of failure (true by default). |
+| `--clean-up=<boolean>` | clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of success (default: `true`). |
+| `--discard-clean-up-on-failure=<boolean>` | don't clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of failure (default: `true`). |
 | `--config, -c` | Add a configuration file. |
-| `--discard-commands-failure` | Ignore command failures if comparisons pass (default: `true`). If no comparisons are defined, failures are never ignored. |
-| `--discard-jobs-limit` | Disable the limit on parallel jobs (default: enforced). |
+| `--discard-commands-failure=<boolean>` | Ignore command failures if comparisons pass (default: `true`). If no comparisons are defined, failures are never ignored. |
+| `--discard-jobs-limit=<boolean>` | Disable the limit on parallel jobs (default: `false`). |
 | `--help, -h` | Display help message. |
-| `--jobs, -j` | Number of parallel jobs (default: 1; number of CPU cores if no value is given). |
+| `--jobs, -j` | Number of parallel jobs (default: 1; number of CPU cores if no value is given). Without value, `-j` must be the last argument or be followed by another option: `tfel-check -j a.check` reads `a.check` as the number of jobs, whereas `tfel-check --jobs a.check` and `tfel-check a.check -j` use the number of CPU cores. |
 | `--list-default-components` | List all default components. |
-| `--synchronize-terminal-output` | Synchronize terminal output in parallel (default: `false`). |
-| `--use-terminal-colors` | Use terminal colors for output. |
+| `--synchronize-terminal-output=<boolean>` | Synchronize terminal output in parallel (default: `false`). |
+| `--use-terminal-colors=<boolean>` | Use terminal colors for output (default: `true`). |
 | `--version, -v` | Display version information. |
 
 ## Usage examples

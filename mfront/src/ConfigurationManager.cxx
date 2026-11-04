@@ -333,9 +333,20 @@ namespace mfront {
   }  // end ofreadConfigurationFile
 
   void parseConfigurationFile(const std::string& f) {
+    using tfel::utilities::Data;
     using tfel::utilities::DataMap;
+    // an empty dictionary, {}, is read as an empty value, which is accepted
+    // for every section and for the options of an interface or a language
+    const auto as_map = [](const Data& d) {
+      return d.empty() ? DataMap{} : d.get<DataMap>();
+    };
     const auto file = SearchPathsHandler::search(f);
-    const auto data = readConfigurationFile(file);
+    auto data = readConfigurationFile(file);
+    for (auto& section : data) {
+      if (section.second.empty()) {
+        section.second = DataMap{};
+      }
+    }
     auto validator = tfel::utilities::DataMapValidator{};
     validator.addDataTypeValidator<DataMap>("dsl_options")
         .addDataTypeValidator<DataMap>("material_property_dsl_options")
@@ -379,7 +390,7 @@ namespace mfront {
       if (data.contains("interfaces_options")) {
         for (const auto& [i, opts] :
              data.at("interfaces_options").get<DataMap>()) {
-          if (!opts.is<tfel::utilities::DataMap>()) {
+          if ((!opts.empty()) && (!opts.is<tfel::utilities::DataMap>())) {
             tfel::raise("invalid options types for interface '" + i + "'");
           }
           if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -387,13 +398,13 @@ namespace mfront {
                            << "property interface '" << i << " from file '"
                            << file << "''\n";
           }
-          m.addInterfaceOptions(i, opts);
+          m.addInterfaceOptions(i, as_map(opts));
         }
       }
       if (data.contains("material_property_interfaces_options")) {
         for (const auto& [i, opts] :
              data.at("material_property_interfaces_options").get<DataMap>()) {
-          if (!opts.is<tfel::utilities::DataMap>()) {
+          if ((!opts.empty()) && (!opts.is<tfel::utilities::DataMap>())) {
             tfel::raise("invalid options types for interface '" + i + "'");
           }
           if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -401,13 +412,13 @@ namespace mfront {
                            << "property interface '" << i << " from file '"
                            << file << "''\n";
           }
-          m.addMaterialPropertyInterfaceOptions(i, opts);
+          m.addMaterialPropertyInterfaceOptions(i, as_map(opts));
         }
       }
       if (data.contains("behaviour_interfaces_options")) {
         for (const auto& [i, opts] :
              data.at("behaviour_interfaces_options").get<DataMap>()) {
-          if (!opts.is<tfel::utilities::DataMap>()) {
+          if ((!opts.empty()) && (!opts.is<tfel::utilities::DataMap>())) {
             tfel::raise("invalid options types for interface '" + i + "'");
           }
           if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -415,13 +426,13 @@ namespace mfront {
                 << "treating configuration options for behaviour interface '"
                 << i << " from file '" << file << "''\n";
           }
-          m.addBehaviourInterfaceOptions(i, opts);
+          m.addBehaviourInterfaceOptions(i, as_map(opts));
         }
       }
       if (data.contains("model_interfaces_options")) {
         for (const auto& [i, opts] :
              data.at("model_interfaces_options").get<DataMap>()) {
-          if (!opts.is<tfel::utilities::DataMap>()) {
+          if ((!opts.empty()) && (!opts.is<tfel::utilities::DataMap>())) {
             tfel::raise("invalid options types for interface '" + i + "'");
           }
           if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -429,13 +440,13 @@ namespace mfront {
                 << "treating configuration options for model interface '" << i
                 << " from file '" << file << "''\n";
           }
-          m.addModelInterfaceOptions(i, opts);
+          m.addModelInterfaceOptions(i, as_map(opts));
         }
       }
       if (data.contains("compilation_options")) {
         for (const auto& [l, opts] :
              data.at("compilation_options").get<DataMap>()) {
-          if (!opts.is<tfel::utilities::DataMap>()) {
+          if ((!opts.empty()) && (!opts.is<tfel::utilities::DataMap>())) {
             tfel::raise("invalid options types for language'" + l + "'");
           }
           const auto language = ConfigurationManager::getLanguage(l);
@@ -445,7 +456,7 @@ namespace mfront {
                         "' is not supported by the build file generators "
                         "(supported languages are c, cxx, cuda and hip)");
           }
-          for (const auto& [c, o] : opts.get<tfel::utilities::DataMap>()) {
+          for (const auto& [c, o] : as_map(opts)) {
             if (c == "compiler") {
               if (!o.is<std::string>()) {
                 tfel::raise(

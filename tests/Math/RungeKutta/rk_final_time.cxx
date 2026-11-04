@@ -1,6 +1,6 @@
 /*!
  * \file   tests/Math/RungeKutta/rk_final_time.cxx
- * \brief  check that the adaptive Runge-Kutta solvers reach the final time
+ * \brief  check that the Runge-Kutta solvers reach the final time
  * \author Tristan Chenaille
  * \date   26/10/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -13,6 +13,8 @@
 
 #include <cmath>
 #include <cstdlib>
+#include "TFEL/Math/RungeKutta2.hxx"
+#include "TFEL/Math/RungeKutta4.hxx"
 #include "TFEL/Math/RungeKutta42.hxx"
 #include "TFEL/Math/RungeKutta54.hxx"
 
@@ -60,9 +62,36 @@ static bool test() {
   return success;
 }
 
+//! \brief y' = y with a fixed time step solver
+template <template <unsigned int, typename, typename> class RungeKutta>
+struct FixedStepExponential
+    : public RungeKutta<1u, double, FixedStepExponential<RungeKutta>> {
+  void computeF(const double, const tfel::math::tvector<1u, double>& v) {
+    this->f = v;
+  }
+};
+
+//! \brief integrate from 0 to 1 with time steps which do not divide 1
+template <template <unsigned int, typename, typename> class RungeKutta>
+static bool test_fixed_step(const double eps) {
+  auto success = true;
+  for (const auto h : {0.1, 0.3}) {
+    FixedStepExponential<RungeKutta> rk;
+    rk.set_y(tfel::math::tvector<1u, double>{1});
+    rk.set_h(h);
+    rk.exe(0, 1);
+    success = success && (std::abs(rk.get_t() - 1) < 1.e-14) &&
+              (std::abs(rk.get_h() - h) < 1.e-14) &&
+              (std::abs(rk.get_y()(0) - std::exp(1.)) < eps);
+  }
+  return success;
+}
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  const auto success =
-      test<tfel::math::RungeKutta42>() && test<tfel::math::RungeKutta54>();
+  const auto success = test<tfel::math::RungeKutta42>() &&
+                       test<tfel::math::RungeKutta54>() &&
+                       test_fixed_step<tfel::math::RungeKutta2>(5.e-2) &&
+                       test_fixed_step<tfel::math::RungeKutta4>(5.e-4);
   return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

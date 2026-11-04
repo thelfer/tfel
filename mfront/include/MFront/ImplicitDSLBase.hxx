@@ -25,6 +25,11 @@ namespace mfront {
   // forward declarations
   struct AbstractLinearSystemSolver;
   struct AbstractNonLinearSystemSolver;
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \deprecated use `AbstractNonLinearSystemSolver`
+   */
+  using NonLinearSystemSolver = AbstractNonLinearSystemSolver;
 
   //! \brief Base class for all parser based on an implicit scheme
   struct MFRONT_VISIBILITY_EXPORT ImplicitDSLBase
