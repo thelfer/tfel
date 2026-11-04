@@ -392,6 +392,8 @@ namespace mfront {
     writeFileDescriptionSymbols(src, name, fd);
     writeVariablesNamesSymbol(src, name, mpd);
     writeVariablesBoundsSymbols(src, name, mpd);
+    writeValidatorSymbol(src, name, mpd);
+    writeBuildIdentifierSymbol(src, name, mpd);
     writeEntryPointSymbol(src, name);
     writeLawSymbol(src, name, mpd.law);
     writeTFELVersionSymbol(src, name);

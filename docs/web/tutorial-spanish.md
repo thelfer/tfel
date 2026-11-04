@@ -1323,12 +1323,12 @@ imprimir los resultados en el archivo de salida.
 `@PredictionPolicy` le permite al usuario definir cómo se obtendrá la
 estimación inicial de la solución, pudiendo ser:
 
-- `Noprediction`
+- `NoPrediction`
 - `LinearPrediction`
 - `ElasticPrediction`
 - `ElasticPredictionFromMaterialProperties`
-- `SecantPrediction`
-- `TangentPrediction`
+- `SecantOperatorPrediction`
+- `TangentOperatorPrediction`
 
 ~~~~{.cpp}
 @PredictionPolicy 'ElasticPrediction';

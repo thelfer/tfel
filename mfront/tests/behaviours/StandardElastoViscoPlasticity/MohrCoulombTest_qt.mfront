@@ -1,0 +1,26 @@
+@DSL Implicit;
+@Behaviour MohrCoulombTest_qt;
+@Author Tristan Chenaille;
+@Date 03 / 11 / 2026;
+@UseQt true;
+@Description {
+  The Mohr-Coulomb criterion with quantities.
+}
+
+@ModellingHypotheses {".+"};
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150.e3, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "MohrCoulomb" {
+      c : 3.e1,
+      phi : 0.523598775598299,
+      lodeT : 0.506145483078356,
+      a : 1e1
+    },
+    isotropic_hardening : "Linear" {R0 : 0}
+  }
+};

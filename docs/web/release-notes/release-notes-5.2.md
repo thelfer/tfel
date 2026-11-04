@@ -109,6 +109,26 @@ library, see below.
   (respectively `TinyBroyden2Solver`), the update is performed by the
   `updateJacobian` (respectively `updateJacobianInvert`) method, which
   replaces their `updateOrCheckJacobian` method.
+- The integer values read by `CxxTokenizer::readInt` and
+  `CxxTokenizer::readUnsignedInt`, i.e. the integers of the `MTest`,
+  `MFront` and `tfel-check` files (numbers of iterations and of
+  sub-steps, columns, array sizes of the DSLs, ...), shall be written
+  without decimal point nor exponent: `3.0`, `3.` or `3e0` are now
+  rejected (see Issue #1326).
+- The type identifiers exported by `MFront` for the variables whose
+  type is the derivative of a tensorial type alias (such as
+  `StressStensor`, `Stensor`, `TVector` or `Tensor`) with respect to a
+  non-scalar type follow the encoding described in the documentation:
+  for instance, `derivative_type<StressStensor, StrainStensor>` is
+  exported as `268`, like `Stensor4`, instead of `76`, which `MTest` and
+  `MGIS` decode as `derivative_type<stensor<1, real>, real>`. Behaviours
+  declaring such variables must be generated again (see Issue #1332).
+- The array sizes of the variables of `MFront` and the integer
+  formulas evaluated by `IntegerEvaluator` (for instance the
+  `tile_size` option of the `TDLS` linear solver) shall only contain
+  integers: a number with a decimal point or an exponent, such as `2.5`
+  (which was truncated to `2`), `1e1` or `2.0`, is now rejected (see
+  Issue #1321).
 - In the homogenisation schemes of `TFEL/Material`, the elasticity of an
   anisotropic `OrientedDistribution` or `Grain`, given in the local basis
   of its inclusions, is rotated to the global basis (see Issue #1299):
@@ -349,12 +369,14 @@ The `Polycrystal` object has been added to deal with
 homogenization schemes which do not assume that there is a matrix phase.
 An object `Grain` was created for this class of microstructures.
 
-The `computeSelfConsistentScheme` has been modified in order to be
+The `computeSelfConsistent` function (`computeSelfConsistentScheme` in
+the `Python` bindings) has been modified in order to be
 more consistent with the literature. Now, This scheme takes a `Polycrystal`
 in which no matrix phase exists. For the `ParticulateMicrostructure`,
-the function `computeAsymmetricSelfConsistentScheme` has been introduced,
-which corresponds to a variant of the Self-Consistent scheme for which
-the matrix phase plays a particular role.
+the function `computeAsymmetricSelfConsistent`
+(`computeAsymmetricSelfConsistentScheme` in the `Python` bindings) has
+been introduced, which corresponds to a variant of the Self-Consistent
+scheme for which the matrix phase plays a particular role.
 
 In the homogenization schemes relative to the `ParticulateMicrostructure`,
 the computation of the derivatives of the homogenized stiffness tensor
@@ -760,6 +782,50 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1332: [mfront] type identifiers of the derivatives of tensorial type aliases (derivative_type<StressStensor, StrainStensor>) are decoded as another type by MTest and MGIS
+
+For more details, see <https://github.com/thelfer/tfel/issues/1332>
+
+## Issue 1330: [docs] StrainMeasure options, MTest prediction policies and keywords, implicit DSL tangent operator, tfel-check options, crystal plasticity, acceleration algorithms, cyrano generalised plane stress
+
+For more details, see <https://github.com/thelfer/tfel/issues/1330>
+
+## Issue 1326: [mfront] behaviour interfaces: Hencky strain in plane stress, calculix orthotropic logarithmic strain, MTest files of abaqus and ansys, cyrano NTENS, castem and abaqus examples, negative unsigned values of the DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1326>
+
+## Issue 1324: [tfel-material] GTN equivalent stress for small porosities, Norton-Hoff harmonic sum derivative, criteria with quantities, Schmid factors of cubic crystals, documentation of criteria and nucleation models
+
+For more details, see <https://github.com/thelfer/tfel/issues/1324>
+
+## Issue 1321: [tfel-math, tfel-system] formula parsers, raw streams, recursiveFind, ThreadPool, Python tfel.system: non-integer sizes, missing derivatives, nested external functions, ln and H in C++, pointers, short writes, symbolic links
+
+For more details, see <https://github.com/thelfer/tfel/issues/1321>
+
+## Issue 1319: [mfront] RungeKuttaFiniteStrain with the deformation gradient, truncated files, command-line keywords of mtest, unsigned parameters, MaterialLaw bounds, Python mfront module, empty configuration options, tfel-config of the CMake generator
+
+For more details, see <https://github.com/thelfer/tfel/issues/1319>
+
+## Issue 1317: [tfel-math] Include guard of runtime_array, assignment from views arrays, strided indexing, Runge-Kutta final time and null step, scalarNewtonRaphson last iterate, QRDecomp of wide matrices, Levenberg-Marquardt with one parameter, abs of vector expressions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1317>
+
+## Issue 1313: [mtest] Prediction of finite strain behaviours, derivative types with a scalar side, plane stress messages, time step scaling of generic behaviours, UAnderson, PTest mandrel, mfm-test-generator
+
+For more details, see <https://github.com/thelfer/tfel/issues/1313>
+
+## Issue 1309: [mfront] Bricks: staggered porosity scheme, ScalarDamage plane stress, DDIF2 tangent operator, FiniteStrainSingleCrystal derivatives, saved criteria, Data extrapolation, untested components
+
+For more details, see <https://github.com/thelfer/tfel/issues/1309>
+
+## Issue 1307: [mfront] UMAT-like interfaces: Ansys finite strain shear components, plane stress expansions, time step scaling factors, ZMAT bounds, Ansys energies, Abaqus/Explicit exceptions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1307>
+
+## Issue 1305: [mfront] Material property and model interfaces: validator symbols, octave static parameters, castem bounds and models, gnuplot @Graph, java with MSVC, bounds of model outputs, out of bounds policy of generic models
+
+For more details, see <https://github.com/thelfer/tfel/issues/1305>
 
 ## Issue 1303: [mfront] Implicit DSLs: inverse jacobian blocks, normalisation factors, reference temperature of external files, UserDefined and Broyden2 algorithms, reserved names
 

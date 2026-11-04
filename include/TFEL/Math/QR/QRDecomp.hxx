@@ -47,7 +47,9 @@ namespace tfel::math {
      * \[
      * I - (1/beta(k))*v*v
      * \]
-     * where v has zeros in the first k-1 positions.
+     * where v has zeros in the first k-1 positions. If the components k
+     * to m of the column k, after the k-1 previous transformations, are
+     * null, beta(k) is null and the transformation is the identity.
      */
     template <typename MatrixType, typename VectorType>
     static TFEL_MATH_INLINE2 void exe(MatrixType&, VectorType&, VectorType&);

@@ -61,6 +61,15 @@ struct IntegerParserTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_THROW(
         tfel::math::IntegerEvaluator(std::vector<std::string>{"x"}, "x+y"),
         std::runtime_error);
+    // numbers which are not integers are not truncated
+    TFEL_TESTS_CHECK_THROW(
+        tfel::math::IntegerEvaluator(std::vector<std::string>{"x"}, "2.5*x"),
+        std::runtime_error);
+    TFEL_TESTS_CHECK_THROW(
+        tfel::math::IntegerEvaluator(std::vector<std::string>{"x"}, "x+2e1"),
+        std::runtime_error);
+    TFEL_TESTS_CHECK_THROW(tfel::math::IntegerEvaluator("2.5*2"),
+                           std::runtime_error);
     return this->result;
   }  // end of execute
  private:

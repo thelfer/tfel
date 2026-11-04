@@ -62,13 +62,16 @@ namespace mfront {
           return opt.get<bool>();
         } else if (opt.is<std::string>()) {
           const auto& v = opt.get<std::string>();
-          if ((v == "bound_to_last_value") || (v == "constant")) {
+          if (v == "extrapolation") {
+            return true;
+          } else if ((v == "bound_to_last_value") || (v == "constant")) {
             return false;
           } else {
             tfel::raise(
                 "SingleVariableInterpolatedData::extract: "
                 "unsupported value for option 'extrapolation' "
-                "(expected 'bound_to_last_value' or 'constant')");
+                "(expected 'extrapolation', 'bound_to_last_value' or "
+                "'constant')");
           }
         } else {
           tfel::raise(

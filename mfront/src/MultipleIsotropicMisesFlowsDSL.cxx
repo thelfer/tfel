@@ -60,6 +60,11 @@ namespace mfront {
     this->mb.addLocalVariable(
         h, VariableDescription("StrainStensor", "n", 1u, 0u));
     this->mb.addLocalVariable(h, VariableDescription("strain", "p_", 1u, 0u));
+    // only the elastic and secant operators are provided, see the
+    // computeConsistentTangentOperator method written by the code generator
+    this->mb.setAttribute(h, BehaviourData::hasConsistentTangentOperator, true);
+    this->mb.setAttribute(
+        h, BehaviourData::isConsistentTangentOperatorSymmetric, true);
   }
 
   std::unique_ptr<AbstractBehaviourCodeGenerator>
@@ -144,6 +149,21 @@ namespace mfront {
   std::size_t MultipleIsotropicMisesFlowsDSL::getNumberOfFlowRules() const {
     return this->flows.size();
   }  // end of getNumberOfFlowRules
+
+  std::string MultipleIsotropicMisesFlowsDSL::getIsotropicHardeningRulesTheta(
+      const std::size_t id) const {
+    const auto& flow = this->flows.at(id);
+    if (!flow.hasSpecificTheta) {
+      return IsotropicBehaviourDSLBase::getIsotropicHardeningRulesTheta(id);
+    }
+    // same expression as in the NewtonIntegration method written by the code
+    // generator, which writes the behaviour file with a precision of 14
+    std::ostringstream theta;
+    theta.imbue(std::locale::classic());
+    theta.precision(14);
+    theta << "real(" << flow.theta << ")";
+    return theta.str();
+  }  // end of getIsotropicHardeningRulesTheta
 
   void MultipleIsotropicMisesFlowsDSL::treatFlowRule() {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;

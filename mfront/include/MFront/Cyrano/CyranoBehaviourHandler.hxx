@@ -333,7 +333,15 @@ namespace cyrano {
             behaviour.checkBounds();
             const auto smflag = TangentOperatorTraits<
                 BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
-            if ((-3.25 < *DDSOE) && (*DDSOE < -2.75)) {
+            // the time step scaling factors are only evaluated when the
+            // behaviour is integrated
+            auto tsf = std::pair<bool, CyranoReal>{true, CyranoReal(1)};
+            if (*DDSOE > -0.5) {
+              tsf = behaviour.computeAPrioriTimeStepScalingFactor(tsf.second);
+            }
+            if (!tsf.first) {
+              r = BV::FAILURE;
+            } else if ((-3.25 < *DDSOE) && (*DDSOE < -2.75)) {
               r = PredictionOperatorComputer::exe(behaviour, smflag,
                                                   BV::TANGENTOPERATOR);
             } else if ((-2.25 < *DDSOE) && (*DDSOE < -1.75)) {
@@ -354,6 +362,13 @@ namespace cyrano {
               r = behaviour.integrate(smflag, BV::CONSISTENTTANGENTOPERATOR);
             } else {
               throwInvalidDDSOEException(Traits::getName(), *DDSOE);
+            }
+            if ((r != BV::FAILURE) && (*DDSOE > -0.5)) {
+              tsf =
+                  behaviour.computeAPosterioriTimeStepScalingFactor(tsf.second);
+              if (!tsf.first) {
+                r = BV::FAILURE;
+              }
             }
             if (r == BV::FAILURE) {
               if (*DDSOE < -0.5) {
@@ -501,7 +516,15 @@ namespace cyrano {
         behaviour.checkBounds();
         const auto smflag = TangentOperatorTraits<
             BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
-        if ((-3.25 < *DDSOE) && (*DDSOE < -2.75)) {
+        // the time step scaling factors are only evaluated when the
+        // behaviour is integrated
+        auto tsf = std::pair<bool, CyranoReal>{true, CyranoReal(1)};
+        if (*DDSOE > -0.5) {
+          tsf = this->behaviour.computeAPrioriTimeStepScalingFactor(tsf.second);
+        }
+        if (!tsf.first) {
+          r = BV::FAILURE;
+        } else if ((-3.25 < *DDSOE) && (*DDSOE < -2.75)) {
           r = PredictionOperatorComputer::exe(this->behaviour, smflag,
                                               BV::TANGENTOPERATOR);
         } else if ((-2.25 < *DDSOE) && (*DDSOE < -1.75)) {
@@ -522,6 +545,13 @@ namespace cyrano {
           r = this->behaviour.integrate(smflag, BV::CONSISTENTTANGENTOPERATOR);
         } else {
           throwInvalidDDSOEException(Traits::getName(), *DDSOE);
+        }
+        if ((r != BV::FAILURE) && (*DDSOE > -0.5)) {
+          tsf = this->behaviour.computeAPosterioriTimeStepScalingFactor(
+              tsf.second);
+          if (!tsf.first) {
+            r = BV::FAILURE;
+          }
         }
         if (r == BV::FAILURE) {
           // Il manque un vraie gestion locale de résultats imprécis

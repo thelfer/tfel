@@ -86,7 +86,8 @@ namespace mfront::bbrick {
   std::string LinearIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
@@ -103,7 +104,7 @@ namespace mfront::bbrick {
         c += " + ";
       }
       c += "(this->" + Hn + ")*";
-      c += "(this->" + pn + "+(this->theta)*(this->d" + pn + "))";
+      c += "(this->" + pn + "+(" + theta + ")*(this->d" + pn + "))";
     }
     return c + ";\n";
   }  // end of computeElasticLimit
@@ -111,7 +112,8 @@ namespace mfront::bbrick {
   std::string LinearIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR = "d" + R + "_dp" + fid;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
@@ -130,7 +132,7 @@ namespace mfront::bbrick {
         c += " + ";
       }
       c += "(this->" + Hn + ")*";
-      c += "(this->" + pn + "+(this->theta)*(this->d" + pn + "));\n";
+      c += "(this->" + pn + "+(" + theta + ")*(this->d" + pn + "));\n";
       c += "const auto " + dR + " = this->" + Hn + ";\n";
     } else {
       c += ";\n";

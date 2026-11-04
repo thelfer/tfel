@@ -582,6 +582,20 @@ namespace mfront::bbrick {
       bd.setCode(h, BehaviourData::UpdateAuxiliaryStateVariables, uasv,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
     }
+    /* tangent operator */
+    if (this->gto) {
+      for (const auto h : bd.getModellingHypotheses()) {
+        if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+          continue;
+        }
+        CodeBlock to;
+        to.code =
+            "// change to cartesian coordinates\n"
+            "DDIF2Base::cyl2cart(this->Dt,this->angl);\n";
+        bd.setCode(h, BehaviourData::ComputeTangentOperator, to,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+      }
+    }
   }  // end of endTreatment
 
   DDIF2StressPotential::~DDIF2StressPotential() = default;

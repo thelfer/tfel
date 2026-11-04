@@ -50,9 +50,9 @@ namespace tfel::math::internals {
   struct ViewsArrayBase<true, MappedType, ViewIndexingPolicyType> {
     static_assert(tfel::math::isScalar<MappedType>());
     //! \brief type of views
-    using view_type = MappedType&;
+    using view_type = tfel::math::scalar_view<MappedType>;
     //! \brief type of read-only views
-    using const_view_type = const MappedType&;
+    using const_view_type = tfel::math::scalar_view<const MappedType>;
   };  // end of ViewsArrayBase
 
   /*!
@@ -90,12 +90,22 @@ namespace tfel::math {
                                                    std::remove_cv_t<MappedType>,
                                                    numeric_type<MappedType>>;
 
+  /*!
+   * \brief the type of the values stored in the memory area: the base type of
+   * the numeric type for quantities, as for views (see `ViewStorageType`)
+   */
+  template <typename MappedType>
+  using ViewsArrayStorageType =
+      std::conditional_t<isQuantity<ViewsArrayNumericType<MappedType>>(),
+                         base_type<ViewsArrayNumericType<MappedType>>,
+                         ViewsArrayNumericType<MappedType>>;
+
   //! \brief the pointer type used to build the view
   template <typename MappedType>
   using ViewsArrayDataPointerType =
       std::conditional_t<std::is_const_v<MappedType>,
-                         const ViewsArrayNumericType<MappedType>*,
-                         ViewsArrayNumericType<MappedType>*>;
+                         const ViewsArrayStorageType<MappedType>*,
+                         ViewsArrayStorageType<MappedType>*>;
 
   //! \brief return the minimal size required to a store the given object
   template <typename MappedType>
@@ -182,7 +192,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + this->getIndex(i);
       if constexpr (is_scalar) {
-        return *d;
+        return typename ViewsArray::view_type(*d);
       } else {
         return typename ViewsArray::view_type{d};
       }
@@ -194,7 +204,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + this->getIndex(i);
       if constexpr (is_scalar) {
-        return *d;
+        return typename ViewsArray::const_view_type(*d);
       } else {
         return typename ViewsArray::const_view_type{d};
       }
@@ -206,7 +216,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + this->getIndex(i...);
       if constexpr (is_scalar) {
-        return *d;
+        return typename ViewsArray::view_type(*d);
       } else {
         return typename ViewsArray::view_type{d};
       }
@@ -218,7 +228,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       const auto* const d = this->data_pointer + this->getIndex(i...);
       if constexpr (is_scalar) {
-        return *d;
+        return typename ViewsArray::const_view_type(*d);
       } else {
         return typename ViewsArray::const_view_type{d};
       }

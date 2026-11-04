@@ -163,6 +163,8 @@ namespace mtest {
       if (p->value == ",") {
         this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",
                                  ",", p, this->tokens.end());
+        this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",
+                                p, this->tokens.end());
         w = p->value;
         ++p;
       }

@@ -24,7 +24,6 @@
 #include <utility>
 
 #include "TFEL/Raise.hxx"
-#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/CxxKeywords.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -1227,7 +1226,7 @@ namespace tfel::utilities {
 #ifdef __CYGWIN__
     std::istringstream is(value);
     is >> res;
-    raise_if(!is && (!is.eof()),
+    raise_if((is.fail()) || (!is.eof()),
              "CxxTokenizer::readDouble: "
              "could not read value from token '" +
                  p->value + "'.");
@@ -1253,9 +1252,9 @@ namespace tfel::utilities {
    * \param[in] v: value of the token
    *
    * The value must be a decimal integer in the range of the integer
-   * type, possibly followed by an integer suffix or by a fractional part
-   * or an exponent, and their suffix, that do not change it (for example
-   * `3u`, `3.0` or `3.f`).
+   * type, possibly followed by an integer suffix (for example `3u`): a
+   * fractional part or an exponent is rejected, even if it does not change
+   * the value (`3.0`).
    */
   template <typename IntegerType>
   static bool convertToInteger(IntegerType& r, const std::string& v) {
@@ -1268,18 +1267,7 @@ namespace tfel::utilities {
       return false;
     }
     const auto s = std::string_view(pi, e - pi);
-    if ((!s.empty()) && ((s[0] == '.') || (s[0] == 'e') || (s[0] == 'E'))) {
-      // fractional part or exponent, without the suffix
-      const auto f = v.substr(0, v.find_last_not_of("fFlLuU") + 1);
-      try {
-        if (tfel::math::ieee754::fpclassify(
-                convert<double>(f) - static_cast<double>(i)) != FP_ZERO) {
-          return false;
-        }
-      } catch (std::exception&) {
-        return false;
-      }
-    } else if (s.find_first_not_of("uUlL") != std::string_view::npos) {
+    if (s.find_first_not_of("uUlL") != std::string_view::npos) {
       return false;
     }
     r = static_cast<IntegerType>(i);

@@ -83,15 +83,16 @@ namespace mfront::bbrick {
   std::string SwiftIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
     const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
     const auto pn = "p" + fid;
-    auto c = "const auto " + R + " = (this->" + pn + "+(this->theta)*(this->d" +
-             pn + ")> strain(0)) ? (this->" + R0n + ")*";
-    c += "pow((this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
+    auto c = "const auto " + R + " = (this->" + pn + "+(" + theta +
+             ")*(this->d" + pn + ")> strain(0)) ? (this->" + R0n + ")*";
+    c += "pow((this->" + pn + "+(" + theta + ")*(this->d" + pn + ")+this->" +
          p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n + ";\n";
     return c;
   }  // end of computeElasticLimit
@@ -99,21 +100,21 @@ namespace mfront::bbrick {
   std::string SwiftIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR = "d" + R + "_dp" + fid;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
     const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
     const auto pn = "p" + fid;
-    auto c = "const auto " + R + " = (this->" + pn + "+(this->theta)*(this->d" +
-             pn + ") > strain(0)) ? (this->" + R0n + ")*";
-    c += "pow((this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
+    auto c = "const auto " + R + " = (this->" + pn + "+(" + theta +
+             ")*(this->d" + pn + ") > strain(0)) ? (this->" + R0n + ")*";
+    c += "pow((this->" + pn + "+(" + theta + ")*(this->d" + pn + ")+this->" +
          p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n + ";\n";
     c += "const auto " + dR + " = ";
-    c += "(this->" + nn + ") * " + R + "/(std::max(this->" + pn +
-         "+(this->theta)*(this->d" + pn + ")+this->" + p0n + ",this->" + p0n +
-         "));\n";
+    c += "(this->" + nn + ") * " + R + "/(std::max(this->" + pn + "+(" + theta +
+         ")*(this->d" + pn + ")+this->" + p0n + ",this->" + p0n + "));\n";
     return c;
   }  // end of computeElasticLimitAndDerivative
 

@@ -14,6 +14,7 @@
 
 #include <cctype>
 #include <sstream>
+#include <utility>
 #include <iterator>
 #include <stdexcept>
 #include <algorithm>
@@ -583,14 +584,20 @@ namespace mfront {
 
   unsigned short DSLBase::readUnsignedShort(const std::string& m) {
     this->checkNotEndOfFile(m, "Cannot read unsigned short value.");
-    unsigned short value;
-    std::istringstream flux(current->value);
-    flux >> value;
-    if ((flux.fail()) || (!flux.eof())) {
+    // checked conversion: negative, non integer and out of range values
+    // are rejected
+    auto p = this->current;
+    auto value = static_cast<unsigned int>(0);
+    try {
+      value = CxxTokenizer::readUnsignedInt(p, this->tokens.end());
+    } catch (std::exception&) {
       this->throwRuntimeError(m, "Failed to read unsigned short value.");
     }
-    ++(this->current);
-    return value;
+    if (!std::in_range<unsigned short>(value)) {
+      this->throwRuntimeError(m, "Failed to read unsigned short value.");
+    }
+    this->current = p;
+    return static_cast<unsigned short>(value);
   }  // end of readUnsignedShort
 
   void DSLBase::readSpecifiedToken(const std::string& m, const std::string& v) {

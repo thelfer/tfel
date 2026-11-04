@@ -193,6 +193,9 @@ namespace mfront {
           << ")){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
+          << "cerr << \"" << name << ": " << v.name
+          << " is below its lower bound (\"\n << " << v.name << " << \"<"
+          << b.lowerBound << ").\\n\";\n"
           << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
