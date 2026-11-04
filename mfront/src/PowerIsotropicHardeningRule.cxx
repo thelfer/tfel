@@ -88,7 +88,8 @@ namespace mfront::bbrick {
   std::string PowerIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
@@ -96,10 +97,10 @@ namespace mfront::bbrick {
     auto c = "const auto " + R + " = (this->" + R0n + ")*";
     if (!this->p0.empty()) {
       const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
-      c += "pow(max(this->" + pn + "+(this->theta) * (this->d" + pn +
+      c += "pow(max(this->" + pn + "+(" + theta + ") * (this->d" + pn +
            "),strain(0))+this->" + p0n + ",this->" + nn + ");\n";
     } else {
-      c += "pow(max(this->" + pn + "+(this->theta) * (this->d" + pn + "),";
+      c += "pow(max(this->" + pn + "+(" + theta + ") * (this->d" + pn + "),";
       c += "strain(0)),this->" + nn + ");\n";
     }
     return c;
@@ -108,7 +109,8 @@ namespace mfront::bbrick {
   std::string PowerIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR = "d" + R + "_dp" + fid;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
@@ -117,18 +119,17 @@ namespace mfront::bbrick {
     auto c = "const auto " + R + " = (this->" + R0n + ")*";
     if (!this->p0.empty()) {
       const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
-      c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn +
+      c += "pow(max(this->" + pn + "+(" + theta + ")*(this->d" + pn +
            "),strain(0))+this->" + p0n + ", this->" + nn + ");\n";
       c += "const auto " + dR + " = ";
-      c += "(this->" + nn + ")*" + R + "/(std::max(this->" + pn +
-           "+(this->theta)*(this->d" + pn + ")+this->" + p0n + ",this->" + p0n +
-           "));\n";
+      c += "(this->" + nn + ")*" + R + "/(std::max(this->" + pn + "+(" + theta +
+           ")*(this->d" + pn + ")+this->" + p0n + ",this->" + p0n + "));\n";
     } else {
-      c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn +
+      c += "pow(max(this->" + pn + "+(" + theta + ")*(this->d" + pn +
            "),strain(0)),this->" + nn + ");\n";
       c += "const auto " + dR + " = ";
-      c += "(this->" + nn + ")*" + R + "/(std::max(this->" + pn +
-           "+(this->theta)*(this->d" + pn + "),strain(1e-12)));\n";
+      c += "(this->" + nn + ")*" + R + "/(std::max(this->" + pn + "+(" + theta +
+           ")*(this->d" + pn + "),strain(1e-12)));\n";
     }
     return c;
   }  // end of computeElasticLimitAndDerivative

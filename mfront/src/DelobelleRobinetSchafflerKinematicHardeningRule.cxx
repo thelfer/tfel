@@ -267,6 +267,60 @@ namespace mfront::bbrick {
     return c;
   }  // end of buildBackStrainImplicitEquations
 
+  std::string DelobelleRobinetSchafflerKinematicHardeningRule::
+      buildBackStrainImplicitEquationsForAnInactiveFlow(
+          const BehaviourDescription& bd,
+          const StressPotential&,
+          const StressCriterion&,
+          const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
+          const std::string& fid,
+          const std::string& kid,
+          const bool b) const {
+    // only the static recovery term does not depend on the increment of the
+    // equivalent plastic strain
+    auto get_member_id = [&fid, &kid](const char* const n) {
+      return "this->" + KinematicHardeningRule::getVariableId(n, fid, kid);
+    };
+    const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
+    const auto aeqn = KinematicHardeningRule::getVariableId("aeq", fid, kid);
+    const auto nan = KinematicHardeningRule::getVariableId("na", fid, kid);
+    const auto dna_da =
+        KinematicHardeningRule::getVariableId("dna_da", fid, kid);
+    const auto iaeqn = KinematicHardeningRule::getVariableId("iaeq", fid, kid);
+    const auto aeq_a0_m =
+        KinematicHardeningRule::getVariableId("aeq_a0_m", fid, kid);
+    const auto Rs_a = KinematicHardeningRule::getVariableId("Rs_a", fid, kid);
+    const auto mn = get_member_id("m");
+    const auto a0n = get_member_id("a0");
+    const auto fn = get_member_id("f");
+    const auto Rsn = get_member_id("Rs");
+    const auto a_mts = "this->" + an + " + " + bd.getClassName() +
+                       "::theta * (this->d" + an + ")";
+    auto c = std::string{};
+    c += "const auto " + aeqn + " = ";
+    c += "power<1,2>(std::max((" + a_mts + ") | (" + Rsn + " * (" + a_mts +
+         ")), strain(0)));\n";
+    c += "const auto " + iaeqn + " = ";
+    c += "1/std::max(strain(1e-14)," + aeqn + ");\n";
+    c += "const auto " + Rs_a + " = ";
+    c += "eval((" + Rsn + ") * (" + a_mts + "));\n";
+    c += "const auto " + nan + " = " + Rs_a + " * " + iaeqn + ";\n";
+    c += "const auto " + aeq_a0_m;
+    c += " = pow(" + aeqn + " / (" + a0n + "), " + mn + ");\n";
+    c += "f" + an + " += (this->dt) * (" + fn + ")  * " + aeq_a0_m + " * " +
+         nan + ";\n";
+    if (b) {
+      c += "const auto " + dna_da + " = ";
+      c += "(" + Rsn + " - ((" + nan + ") ^ (" + nan + "))) * " + iaeqn + ";\n";
+      const auto theta = bd.getClassName() + "::theta";
+      c += "df" + an + "_dd" + an + " += ";
+      c += "(this->dt) * (" + fn + ")  * " + aeq_a0_m + " * " + theta;
+      c += " * (" + dna_da + " + (" + mn + ") * ((" + nan + ")^(" + nan +
+           ")) * " + iaeqn + ");\n";
+    }
+    return c;
+  }  // end of buildBackStrainImplicitEquationsForAnInactiveFlow
+
   DelobelleRobinetSchafflerKinematicHardeningRule::
       ~DelobelleRobinetSchafflerKinematicHardeningRule() = default;
 

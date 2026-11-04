@@ -72,10 +72,12 @@ namespace mfront::bbrick {
   std::string DataIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto local_id = id.empty() ? fid : fid + "_" + id;
     const auto R = "R" + local_id;
-    const auto p = "this->p" + fid + " + (this->theta) * (this->dp" + fid + ")";
+    const auto p =
+        "this->p" + fid + " + (" + theta + ") * (this->dp" + fid + ")";
     return "const auto " + R +  //
            " = this->mfront_computeYieldRadius" + local_id + "(" + p + ");\n";
   }  // end of computeElasticLimit
@@ -83,11 +85,13 @@ namespace mfront::bbrick {
   std::string DataIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto local_id = id.empty() ? fid : fid + "_" + id;
     const auto R = "R" + local_id;
     const auto dR = "d" + R + "_dp" + fid;
-    const auto p = "this->p" + fid + " + (this->theta) * (this->dp" + fid + ")";
+    const auto p =
+        "this->p" + fid + " + (" + theta + ") * (this->dp" + fid + ")";
     return "const auto [" + R + ", " + dR + "]" +  //
            " = this->mfront_computeYieldRadiusAndDerivative" + local_id + "(" +
            p + ");\n";
