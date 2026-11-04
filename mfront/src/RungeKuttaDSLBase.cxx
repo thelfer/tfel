@@ -149,8 +149,27 @@ namespace mfront {
   }  // end of getCodeBlockTemplate
 
   void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
+    // the gradients, the external state variables and the auxiliary state
+    // variables computed by an external model are replaced by their values
+    // at the current date, which the code generator writes in the
+    // associated local variables before each call of this code block
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          const auto& d = this->mb.getBehaviourData(h);
+          const auto is_current_value = [&d, &sv, this] {
+            if ((this->mb.isGradientName(sv)) ||
+                (d.isExternalStateVariableName(sv))) {
+              return true;
+            }
+            if (d.isAuxiliaryStateVariableName(sv)) {
+              const auto& v = d.getAuxiliaryStateVariables().getVariable(sv);
+              return v.getAttribute<bool>("ComputedByExternalModel", false);
+            }
+            return false;
+          }();
+          if (is_current_value) {
+            return b ? "this->" + sv + "_" : sv + "_";
+          }
           return this->standardModifier(h, sv, b);
         };
     this->treatCodeBlock(

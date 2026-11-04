@@ -589,6 +589,10 @@ namespace mfront::bbrick {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "HookeStressPotentialBase::endTreatment: begin\n";
     }
+    checkNoNormalisationFactor(bd, "eel");
+    if (this->pss) {
+      checkNoNormalisationFactor(bd, "etozz");
+    }
     // implicit equation associated with the elastic strain
     CodeBlock integrator;
     auto broken_test = getBrokenTest(bd, false);
@@ -608,6 +612,16 @@ namespace mfront::bbrick {
           bmh.count(
               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) != 0;
       const bool ps = bmh.count(ModellingHypothesis::PLANESTRESS) != 0;
+      // the plane stress support computes some jacobian blocks of the
+      // implicit equations of the elastic strain and of the axial strain
+      for (const auto h :
+           {ModellingHypothesis::PLANESTRESS,
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS}) {
+        if (bmh.count(h) != 0) {
+          checkNoImplicitEquationNormalisationFactor(bd, dsl, h, "eel");
+          checkNoImplicitEquationNormalisationFactor(bd, dsl, h, "etozz");
+        }
+      }
       if (ps) {
         this->addPlaneStressSupport(bd, dsl);
       }

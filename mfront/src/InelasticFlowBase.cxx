@@ -555,6 +555,11 @@ namespace mfront::bbrick {
                                        const std::string& id) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+    checkNoNormalisationFactor(bd, "p" + id);
+    // jacobian blocks computed below (see also the contribution to the
+    // porosity evolution)
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, "eel");
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, "p" + id);
     if (this->fc != nullptr) {
       this->sc->endTreatment(bd, dsl, id, StressCriterion::STRESSCRITERION);
       this->fc->endTreatment(bd, dsl, id, StressCriterion::FLOWCRITERION);
@@ -917,6 +922,8 @@ namespace mfront::bbrick {
         bd.getBehaviourData(uh)
             .getAuxiliaryStateVariableDescriptionByExternalName(
                 tfel::glossary::Glossary::Broken);
+    // jacobian blocks computed below
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, f.name);
     const auto f_ = f.name + "_";
     ib.code += "if(2 * (this->" + broken.name + ") > 1){\n";
     if (this->save_porosity_increase) {

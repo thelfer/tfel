@@ -67,12 +67,12 @@ namespace mfront {
       std::ostream& f,
       const BehaviourDescription& mb,
       const RungeKuttaCodeGeneratorBase::Hypothesis h,
-      const std::string& p) {
+      const std::string& p,
+      const std::set<std::string>& uvs) {
     const auto t = ((p == "0") ? "(t/this->dt)"
                                : ((p == "1") ? "((t+dt_)/this->dt)"
                                              : "((t+" + p + "*dt_)/this->dt)"));
     const auto& d = mb.getBehaviourData(h);
-    const auto uvs = getVariablesUsedDuringIntegration(mb, h);
     for (const auto& mv : mb.getMainVariables()) {
       const auto& dv = mv.first;
       if (uvs.find(dv.name) != uvs.end()) {
@@ -102,6 +102,25 @@ namespace mfront {
           << v.name << ")*" << t << ";\n";
       }
     }
+  }
+
+  static void writeExternalVariablesCurrentValues(
+      std::ostream& f,
+      const BehaviourDescription& mb,
+      const RungeKuttaCodeGeneratorBase::Hypothesis h,
+      const std::string& p) {
+    writeExternalVariablesCurrentValues(
+        f, mb, h, p, getVariablesUsedDuringIntegration(mb, h));
+  }
+
+  //! \return the variables used in the `@UpdateAuxiliaryStateVariables` block
+  static std::set<std::string> getVariablesUsedInUpdateAuxiliaryStateVariables(
+      const BehaviourDescription& mb,
+      const RungeKuttaCodeGeneratorBase::Hypothesis h) {
+    return mb.getBehaviourData(h)
+        .getCodeBlock(
+            RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)
+        .members;
   }
 
   static void writeExternalVariableCurrentValue2(std::ostream& f,
@@ -199,9 +218,9 @@ namespace mfront {
       std::ostream& f,
       const BehaviourDescription& mb,
       const RungeKuttaCodeGeneratorBase::Hypothesis h,
-      const std::string& p) {
+      const std::string& p,
+      const std::set<std::string>& uvs) {
     const auto& d = mb.getBehaviourData(h);
-    const auto uvs = getVariablesUsedDuringIntegration(mb, h);
     for (const auto& mv : mb.getMainVariables()) {
       const auto& dv = mv.first;
       if (uvs.find(dv.name) != uvs.end()) {
@@ -222,6 +241,15 @@ namespace mfront {
         writeExternalVariableCurrentValue2(f, v.name, p, true);
       }
     }
+  }  // end of writeExternalVariablesCurrentValues2
+
+  static void writeExternalVariablesCurrentValues2(
+      std::ostream& f,
+      const BehaviourDescription& mb,
+      const RungeKuttaCodeGeneratorBase::Hypothesis h,
+      const std::string& p) {
+    writeExternalVariablesCurrentValues2(
+        f, mb, h, p, getVariablesUsedDuringIntegration(mb, h));
   }  // end of writeExternalVariablesCurrentValues2
 
   static void writeReturnSuccess(std::ostream& os,
@@ -409,6 +437,9 @@ namespace mfront {
       os << "}\n";
     }
     if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+      writeExternalVariablesCurrentValues2(
+          os, this->bd, h, "1",
+          getVariablesUsedInUpdateAuxiliaryStateVariables(this->bd, h));
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of writeBehaviourEulerIntegrator
@@ -480,6 +511,9 @@ namespace mfront {
       os << "}\n";
     }
     if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+      writeExternalVariablesCurrentValues2(
+          os, this->bd, h, "1",
+          getVariablesUsedInUpdateAuxiliaryStateVariables(this->bd, h));
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of writeBehaviourRK2Integrator
@@ -1024,6 +1058,9 @@ namespace mfront {
       os << "}\n";
     }
     if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+      writeExternalVariablesCurrentValues(
+          os, this->bd, h, "1",
+          getVariablesUsedInUpdateAuxiliaryStateVariables(this->bd, h));
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -1638,6 +1675,9 @@ namespace mfront {
     }
     if (this->bd.hasCode(
             h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+      writeExternalVariablesCurrentValues(
+          os, this->bd, h, "1",
+          getVariablesUsedInUpdateAuxiliaryStateVariables(this->bd, h));
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -2047,6 +2087,9 @@ namespace mfront {
     }
     if (this->bd.hasCode(
             h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+      writeExternalVariablesCurrentValues(
+          os, this->bd, h, "1",
+          getVariablesUsedInUpdateAuxiliaryStateVariables(this->bd, h));
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -2222,6 +2265,9 @@ namespace mfront {
     }
     if (this->bd.hasCode(
             h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+      writeExternalVariablesCurrentValues2(
+          os, this->bd, h, "1",
+          getVariablesUsedInUpdateAuxiliaryStateVariables(this->bd, h));
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of writeBehaviourRK4Integrator

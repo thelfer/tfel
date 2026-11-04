@@ -118,6 +118,14 @@ namespace mfront::bbrick {
           "PorosityNucleationModelBase::endTreatment: "
           "no inelastic flow declared");
     }
+    // the nucleation models compute some jacobian blocks of the implicit
+    // equation associated with the porosity
+    checkNoImplicitEquationNormalisationFactor(
+        bd, dsl,
+        bd.getBehaviourData(uh)
+            .getStateVariableDescriptionByExternalName(
+                tfel::glossary::Glossary::Porosity)
+            .name);
     // initialize
     auto c = std::string{};
     for (const auto& mc : this->getMaterialCoefficientDescriptions()) {
