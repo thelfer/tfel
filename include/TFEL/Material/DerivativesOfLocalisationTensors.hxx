@@ -14,6 +14,7 @@
 #define LIB_TFEL_MATERIAL_DERIVATIVESOFLOCALISATIONTENSORS_HXX
 
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
 #include "TFEL/Math/ST2toST2/WalpoleBasis.hxx"
 #include "TFEL/Material/EshelbyTolerances.hxx"
@@ -73,8 +74,9 @@ namespace tfel::material::homogenization::elasticity {
 
       const auto p1 = alpha0 * (1 - 2 * psi[0]) + beta0 * psi[1];
       const auto p2 = alpha0 * psi[0] + beta0 * psi[2];
-      const auto p3 = beta0 * psi[3] * real(sqrt(2));
-      const auto p4 = beta0 * psi[3] * real(sqrt(2));
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+      const auto p3 = beta0 * psi[3] * cste;
+      const auto p4 = beta0 * psi[3] * cste;
       const auto pF = alpha0 * psi[0] + beta0 * psi[2] / 2;
       const auto pG = alpha0 * (1 - psi[0]) / 2 + beta0 * 2 * psi[3];
 
@@ -104,8 +106,9 @@ namespace tfel::material::homogenization::elasticity {
 
       const auto dp1 = dalpha0 * (1 - 2 * psi[0]) + dbeta0 * psi[1];
       const auto dp2 = dalpha0 * psi[0] + dbeta0 * psi[2];
-      const auto dp3 = dbeta0 * psi[3] * real(sqrt(2));
-      const auto dp4 = dbeta0 * psi[3] * real(sqrt(2));
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+      const auto dp3 = dbeta0 * psi[3] * cste;
+      const auto dp4 = dbeta0 * psi[3] * cste;
       const auto dpF = dalpha0 * psi[0] + dbeta0 * psi[2] / 2;
       const auto dpG = dalpha0 * (1 - psi[0]) / 2 + dbeta0 * 2 * psi[3];
 
@@ -141,10 +144,11 @@ namespace tfel::material::homogenization::elasticity {
       using namespace tfel::math;
       const tmatrix<2, 2, sq_compliance> dP = {{dp[0], dp[2]}, {dp[3], dp[1]}};
       const tmatrix<2, 2, compliance> P = {{p[0], p[2]}, {p[3], p[1]}};
-      const tmatrix<2, 2, real> J = {{real(1. / 3), real(sqrt(2) / 3)},
-                                     {real(sqrt(2) / 3), real(2. / 3)}};
-      const tmatrix<2, 2, real> K = {{real(2. / 3), real(-sqrt(2) / 3)},
-                                     {real(-sqrt(2) / 3), real(1. / 3)}};
+      constexpr auto cste = Cste<real>::sqrt2;
+      const tmatrix<2, 2, real> J = {{real(1) / 3, real(cste) / 3},
+                                     {real(cste) / 3, real(2) / 3}};
+      const tmatrix<2, 2, real> K = {{real(2) / 3, -real(cste) / 3},
+                                     {-real(cste) / 3, real(1) / 3}};
       const tmatrix<2, 2, StressType> dC = 3 * dk * J + 2 * dmu * K;
       const tmatrix<2, 2, real> ddC = 3 * ddk * J + 2 * ddmu * K;
 
@@ -277,8 +281,8 @@ namespace tfel::material::homogenization::elasticity {
 
       const auto kP = k0 + 4 * mu0 / 3;
       const auto muP = 5 * mu0 / 2 * kP / (k0 + 2 * mu0);
-      const auto pJ = real(1. / 3) / kP;
-      const auto pK = real(1. / 2) / muP;
+      const auto pJ = 1 / (3 * kP);
+      const auto pK = 1 / (2 * muP);
       const auto dkP = dk0 + 4 * dmu0 / 3;
       const auto dmuP = 5 * dmu0 / 2 * kP / (k0 + 2 * mu0) +
                         5 * mu0 / 2 *
