@@ -2611,44 +2611,29 @@ and the porosity is automatic if the `SI` unit system is used.
 
 # The `@UpdateAuxiliaryStateVariables` keyword
 
-The `UpdateAuxiliaryStateVariables` introduces a code block meant to
+The `@UpdateAuxiliaryStateVariables` introduces a code block meant to
 update the auxiliary state variables after integration.
 
-In implicit domain specific languages, the code declared by
-`UpdateAuxiliaryStateVariables` is called once the integration
-variables (including state variables) and stresses (see the
-`@ComputeFinalStress` keyword) have been updated. The external state
-variables are not updated.
+The code declared by `@UpdateAuxiliaryStateVariables` is called at the
+end of each successful step of the Runge-Kutta algorithm, after the
+update of the state variables and of the thermodynamic forces. Keep in
+mind that most Runge-Kutta algorithms perform internal substepping: in
+this case, the code declared by `@UpdateAuxiliaryStateVariables` may
+be called several times during the behaviour integration. An
+additional variable called `dt_`, which is lower than the total time
+step increment `dt` if substepping is performed, gives the current
+time increment.
 
-In Runge-Kutta domain specific languages, the code declared by
-`UpdateAuxiliaryStateVariables` is called after each successful time
-step. Keep in mind that most Runge-Kutta algorithms performs internal
-substepping: in this case, the code declared by
-`UpdateAuxiliaryStateVariables` may be called several time during the
-behaviour integration. An additional variable called `dt_`, which is
-lower than the total time step increment `dt` if substepping is
-performed, gives the current time increment. The external state
-variables and the gradients (the total strain `eto` or the
-deformation gradient `F` for instance) are set to their values at
-the current date.
+The gradients, the external state variables and the auxiliary state
+variables computed by external point-wise models (see the `@Model`
+keyword) are set to their values at the current date: for instance,
+`T` is the temperature at the current date.
 
-## Example (Implicit dsl)
+## Example
 
 ~~~~{.cpp}
 @UpdateAuxiliaryStateVariables{
-  // valeur de milieu de pas, q ayant
-  // déjà été mis à jour
-  const real q_ = q-(1-theta)*dq;
-  const real Q = Q0 + (Qm - Q0) * (1 - exp(-2 * Mu * q_) );
-  R+=b*(Q-R)*dp;
-}
-~~~~
-
-## Example (Runge-Kutta dsl)
-
-~~~~{.cpp}
-@UpdateAuxiliaryStateVariables{
-  sigeq = sqrt(sig|sig);
+  Tmax = max(Tmax, T);
 }
 ~~~~
 

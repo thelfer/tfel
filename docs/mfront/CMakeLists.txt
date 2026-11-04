@@ -177,6 +177,12 @@ install_mfront_desc2(Model Integrator)
 install_mfront_desc2(ImplicitCZM Integrator)
 install_mfront_desc2(DefaultFiniteStrain Integrator)
 
+install_mfront_desc3(DefaultModel ImplicitModel UpdateAuxiliaryStateVariables)
+install_mfront_desc2(RungeKutta UpdateAuxiliaryStateVariables)
+install_mfront_desc2(RungeKuttaFiniteStrain UpdateAuxiliaryStateVariables)
+install_mfront_desc2(RungeKuttaGenericBehaviour UpdateAuxiliaryStateVariables)
+install_mfront_desc2(RungeKuttaModel UpdateAuxiliaryStateVariables)
+
 install_mfront_desc2(bricks StandardElasticity)
 install_mfront_desc2(bricks DDIF2)
 
