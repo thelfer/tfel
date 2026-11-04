@@ -185,30 +185,24 @@ namespace mfront::bbrick {
       const AbstractBehaviourDSL& dsl,
       const std::string& fid,
       const std::string& id) const {
-    auto mts = getMiddleOfTimeStepModifier(bd);
     // computation of the material properties
     std::ostringstream mps;
     if (!this->A.empty()) {
       if (!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) {
         const auto An =
             StrainRateSensitivityFactor::getVariableId("A", fid, id);
-        mps << "this->" + An + " = ";
-        dsl.writeMaterialPropertyEvaluation(mps, this->A, mts);
-        mps << ";\n";
+        mps << generateMaterialPropertyInitializationCode(dsl, bd, An, this->A);
       }
     }
     if (!this->dp0.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto dp0n =
           StrainRateSensitivityFactor::getVariableId("dp0", fid, id);
-      mps << "this->" + dp0n + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, this->dp0, mts);
-      mps << ";\n";
+      mps << generateMaterialPropertyInitializationCode(dsl, bd, dp0n,
+                                                        this->dp0);
     }
     if (!this->n.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto nn = StrainRateSensitivityFactor::getVariableId("E", fid, id);
-      mps << "this->" + nn + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, this->n, mts);
-      mps << ";\n";
+      mps << generateMaterialPropertyInitializationCode(dsl, bd, nn, this->n);
     }
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     CodeBlock i;

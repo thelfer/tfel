@@ -146,7 +146,6 @@ namespace mfront::bbrick {
       const AbstractBehaviourDSL& dsl,
       const std::string& fid,
       const std::string& id) const {
-    auto mts = getMiddleOfTimeStepModifier(bd);
     // computation of the material properties
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     CodeBlock i;
@@ -154,16 +153,12 @@ namespace mfront::bbrick {
     if ((!this->R0.empty()) &&
         (!this->R0.is<BehaviourDescription::ConstantMaterialProperty>())) {
       const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
-      mps << "this->" + R0n + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, this->R0, mts);
-      mps << ";\n";
+      mps << generateMaterialPropertyInitializationCode(dsl, bd, R0n, this->R0);
     }
     if ((!this->H.empty()) &&
         (!this->H.is<BehaviourDescription::ConstantMaterialProperty>())) {
       const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
-      mps << "this->" + Hn + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, this->H, mts);
-      mps << ";\n";
+      mps << generateMaterialPropertyInitializationCode(dsl, bd, Hn, this->H);
     }
     i.code += mps.str();
     if (!i.code.empty()) {

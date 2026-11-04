@@ -815,6 +815,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/1317>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1313>
 
+## Issue 1311: [mfront] Material properties given by formulas or external laws do not compile with @UseQt
+
+For more details, see <https://github.com/thelfer/tfel/issues/1311>
+
 ## Issue 1309: [mfront] Bricks: staggered porosity scheme, ScalarDamage plane stress, DDIF2 tangent operator, FiniteStrainSingleCrystal derivatives, saved criteria, Data extrapolation, untested components
 
 For more details, see <https://github.com/thelfer/tfel/issues/1309>
