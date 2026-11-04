@@ -447,7 +447,7 @@ namespace mfront {
   void ModelDSLCommon::readFunction(const std::string& fn) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
-        this->throwRuntimeError("ModelDSLCommon::rreatFunction", m);
+        this->throwRuntimeError("ModelDSLCommon::readFunction", m);
       }
     };
     auto isStaticMemberName = [](const ModelDescription& d,
@@ -660,6 +660,11 @@ namespace mfront {
              "function " + f.name + " does not change any variable.");
     for (const auto& df : this->md.functions) {
       throw_if(df.name == f.name, "function " + f.name + " already declared.");
+      for (const auto& v : f.modifiedVariables) {
+        throw_if(df.modifiedVariables.count(v) != 0,
+                 "output '" + v + "' is modified by functions '" + df.name +
+                     "' and '" + f.name + "'");
+      }
     }
     // an output updated by a compound assignment starts from its value at
     // the beginning of the time step, which requires a depth of at least one

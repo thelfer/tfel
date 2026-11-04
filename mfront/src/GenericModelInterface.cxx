@@ -77,25 +77,6 @@ namespace mfront {
     }
   }  // end of writeScalarStandardTypedefs
 
-  /*!
-   * \return if the output `n` is modified by a function called before the
-   * function `f`, the functions being called in the order of their
-   * declaration
-   */
-  static bool isModifiedByAPreviousFunction(const ModelDescription& md,
-                                            const ModelDescription::Function& f,
-                                            const std::string& n) {
-    for (const auto& pf : md.functions) {
-      if (pf.name == f.name) {
-        return false;
-      }
-      if (pf.modifiedVariables.count(n) != 0) {
-        return true;
-      }
-    }
-    return false;
-  }  // end of isModifiedByAPreviousFunction
-
   GenericModelInterface::GenericModelInterface() = default;
 
   std::string GenericModelInterface::getLibraryName(
@@ -363,11 +344,9 @@ namespace mfront {
       for (const auto& mv : f.modifiedVariables) {
         const auto& v = md.outputs.getVariable(mv);
         const auto pos = getVariablePosition(md.outputs, mv);
-        // an output already updated by a previous function starts from the
-        // value computed by this function
-        const auto s = isModifiedByAPreviousFunction(md, f, mv) ? "s1" : "s0";
-        os << "auto " << v.name << " = " << v.type << "{mfront_model_data." << s
-           << ".internal_state_variables[" << pos << "]};\n";
+        os << "auto " << v.name << " = " << v.type
+           << "{mfront_model_data.s0.internal_state_variables[" << pos
+           << "]};\n";
       }
       for (const auto& mv : f.usedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
