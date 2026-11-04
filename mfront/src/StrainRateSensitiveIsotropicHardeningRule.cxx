@@ -167,11 +167,12 @@ namespace mfront::bbrick {
   std::string StrainRateSensitiveIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription& bd,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     auto c = std::string{};
     for (int idx = 0; const auto& ihr : this->ihrs) {
-      c += ihr->computeElasticLimit(bd, fid,
-                                    getIsotropicHardeningRuleId(id, idx));
+      c += ihr->computeElasticLimit(
+          bd, fid, getIsotropicHardeningRuleId(id, idx), theta);
       ++idx;
     }
     c += this->rsf->computeStrainRateSensitivityFactor(bd, fid, id);
@@ -197,11 +198,12 @@ namespace mfront::bbrick {
   StrainRateSensitiveIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription& bd,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     auto c = std::string{};
     for (int idx = 0; const auto& ihr : this->ihrs) {
       c += ihr->computeElasticLimitAndDerivative(
-          bd, fid, getIsotropicHardeningRuleId(id, idx));
+          bd, fid, getIsotropicHardeningRuleId(id, idx), theta);
       ++idx;
     }
     c +=
@@ -244,7 +246,7 @@ namespace mfront::bbrick {
       c += Rid;
       first = false;
     }
-    c += ") * " + dRs + " / (this->theta);\n";
+    c += ") * " + dRs + " / (" + theta + ");\n";
     return c;
   }  // end of computeElasticLimitAndDerivative
 

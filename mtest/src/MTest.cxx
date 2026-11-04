@@ -586,6 +586,7 @@ namespace mtest {
       const auto ndv = this->b->getGradientsSize();
       for (unsigned short i = 0; i != ndv; ++i) {
         s.e0[i] = state.u0[i];
+        s.e1[i] = state.u0[i];
       }
     }
     return SingleStructureScheme::prepare(state, t, dt);

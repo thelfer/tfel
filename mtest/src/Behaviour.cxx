@@ -278,6 +278,14 @@ namespace mtest::internals {
       // derivative type
       const auto components1 = getVariableComponents(v, b);
       const auto components2 = getVariableComponents(v, b);
+      // a scalar side has no component and does not change the names of
+      // the other side
+      if (components1.empty()) {
+        return components2;
+      }
+      if (components2.empty()) {
+        return components1;
+      }
       auto components = std::vector<std::string>{};
       for (const auto& c1 : components1) {
         for (const auto& c2 : components2) {
@@ -531,7 +539,7 @@ namespace mtest {
     if (p != isvnames.end()) {
       return true;
     }
-    const auto esvnames = b.getExternalStateVariablesNames();
+    const auto esvnames = b.expandExternalStateVariablesNames();
     p = std::find(esvnames.begin(), esvnames.end(), n);
     if (p != esvnames.end()) {
       return true;
@@ -559,7 +567,7 @@ namespace mtest {
       const auto pos = static_cast<unsigned short>(p - isvnames.begin());
       return [pos](const CurrentState& s) noexcept { return s.iv1[pos]; };
     }
-    const auto esvnames = b.getExternalStateVariablesNames();
+    const auto esvnames = b.expandExternalStateVariablesNames();
     p = std::find(esvnames.begin(), esvnames.end(), n);
     if (p != esvnames.end()) {
       const auto pos = static_cast<unsigned short>(p - esvnames.begin());

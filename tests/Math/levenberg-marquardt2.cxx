@@ -44,6 +44,13 @@ LM_STATIC std::pair<double, tfel::math::tvector<2u, double>> test(
   return res;
 }  // end of test
 
+//! \brief y = exp(p * x), a model with only one parameter
+LM_STATIC std::pair<double, tfel::math::tvector<1u, double>> test2(
+    const double& x, const tfel::math::tvector<1u, double>& p) {
+  const auto v = std::exp(p(0) * x);
+  return {v, tfel::math::tvector<1u, double>{x * v}};
+}  // end of test2
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   using namespace std;
@@ -68,5 +75,13 @@ int main() {
   // execute
   p = levmar.execute();
   cout << "res : " << p << endl;
-  return EXIT_SUCCESS;
+  // fit of a model with only one parameter
+  FSLevenbergMarquardt<1u, 1u> levmar2(test2);
+  for (i = 0; i != 10; ++i) {
+    levmar2.addData(x_data[i], exp(0.7 * x_data[i]));
+  }
+  levmar2.setInitialGuess(tvector<1u>{0.1});
+  const auto p2 = levmar2.execute();
+  cout << "res : " << p2 << endl;
+  return (abs(p2(0) - 0.7) < 1.e-8) ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

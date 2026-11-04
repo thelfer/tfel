@@ -149,7 +149,12 @@ namespace mfront::bbrick {
               mp.template get<BehaviourDescription::ConstantMaterialProperty>();
           std::ostringstream os;
           os.precision(std::numeric_limits<double>::max_digits10);
-          os << "this->" << vn << " = " << cmp.value << ";\n";
+          if (bd.useQt()) {
+            os << "this->" << vn << " = std::remove_cvref_t<decltype(this->"
+               << vn << ")>(" << cmp.value << ");\n";
+          } else {
+            os << "this->" << vn << " = " << cmp.value << ";\n";
+          }
           c += os.str();
         }
       }

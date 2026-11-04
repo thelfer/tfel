@@ -149,7 +149,7 @@ namespace tfel::material {
    * \code{.cpp}
    * const auto l1 =
    * makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
-   *                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
+   *                                                   cB_23,cB_32,cB_66,cB_55,cB_44);
    * \endcode
    */
   template <unsigned short N, typename real>

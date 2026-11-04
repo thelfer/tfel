@@ -266,6 +266,8 @@ namespace ansys {
       using tensor = tensor<3u, AnsysReal>;
       stensor<3u, AnsysReal> s;
       s.importTab(STRESS);
+      // Ansys ordering conventions differs from TFEL' ones
+      std::swap(s[4], s[5]);
       auto F1 = tensor::buildFromFortranMatrix(F);
       const auto C = AnsysTangentOperator<AnsysReal>::convert3D(CSE);
       ST2toST2View<3u, AnsysReal> Ca(D);

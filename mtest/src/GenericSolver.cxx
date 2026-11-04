@@ -61,15 +61,7 @@ namespace mtest {
         }
       }
     }
-    const auto r =
-        s.computeStiffnessMatrixAndResidual(scs, wk.K, wk.r, t, dt, o.ktype);
-    if (!r.first) {
-      return r;
-    }
-    if (!s.postConvergence(scs, t, dt, scs.period)) {
-      return {false, 0.1};
-    }
-    return r;
+    return s.computeStiffnessMatrixAndResidual(scs, wk.K, wk.r, t, dt, o.ktype);
   }  // end of iterate2
 
   static std::pair<bool, real> iterate(StudyCurrentState& scs,
@@ -242,9 +234,6 @@ namespace mtest {
     if (o.aa != nullptr) {
       o.aa->postExecuteTasks();
     }
-    if (!s.postConvergence(scs, t, dt, scs.period)) {
-      return {false, 0.1};
-    }
     return {true, r_dt};
   }  // end of iterate
 
@@ -280,15 +269,22 @@ namespace mtest {
     }
 
     while ((!end) && (subStep != o.mSubSteps)) {
-      const auto r = [&]() {
+      auto r = [&]() {
         if (scs.u1.empty()) {
           return iterate2(scs, wk, s, o, t, dt);
         }
         return iterate(scs, wk, s, o, t, dt);
       }();
-      const auto converged = o.dynamic_time_step_scaling
-                                 ? (r.first && (r.second >= aone))
-                                 : r.first;
+      auto converged = o.dynamic_time_step_scaling
+                           ? (r.first && (r.second >= aone))
+                           : r.first;
+      // the post-convergence tasks (tests, post-processings, failure
+      // criteria, profiles) are not reverted if the step is rejected:
+      // they are only called once the step has been accepted
+      if ((converged) && (!s.postConvergence(scs, t, dt, scs.period))) {
+        converged = false;
+        r = {false, 0.1};
+      }
       if (converged) {
         scs.update(dt);
         t += dt;

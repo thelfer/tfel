@@ -66,10 +66,20 @@ namespace tfel::math {
     }
 
     TFEL_MATH_INLINE2 void exe(const T begin, const T end) {
+      const auto h0 = this->h;
       this->t = begin;
       while (this->t < end) {
+        // the last step is shortened to end exactly at the final time
+        const auto is_last_step = (end - this->t <= this->h);
+        if (is_last_step) {
+          this->h = end - this->t;
+        }
         this->increm();
+        if (is_last_step) {
+          this->t = end;
+        }
       }
+      this->h = h0;
     }
 
     [[nodiscard]] TFEL_MATH_INLINE2 const tvector<N, T>& get_y() const {

@@ -1,0 +1,15 @@
+test_case: "ClosedPipeTest",
+name: "closedpipetest",
+behaviour: {
+  library: @library@,
+  function: "Elasticity3",
+  material_properties: {YoungModulus: 150e9, PoissonRatio: 0.3},
+  external_state_variables: {Temperature: 293.15}
+},
+inner_radius: 4.2e-3,
+outer_radius: 4.7e-3,
+number_of_elements: 10,
+element_type: "Quadratic",
+times: {0, 1},
+inner_pressure: {0: 0, 1: 1.5e6},
+outer_pressure: {0: 0, 1: 10e6}

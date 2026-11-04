@@ -418,6 +418,8 @@ requires(
       .def_readwrite("inclusion", &OD::inclusion)
       .def_readwrite("fraction", &OD::fraction)
       .def("getElasticityOfPhase", &OD::getElasticityOfPhase)
+      .def("getElasticityOfPhaseInGlobalBasis",
+           &OD::getElasticityOfPhaseInGlobalBasis)
       .def("changeElasticityOfPhase",
            [](OD& od, const tfel::math::st2tost2<3u, StressType>& C) {
              return od.changeElasticityOfPhase(C);
@@ -556,6 +558,8 @@ requires(tfel::math::checkUnitCompatibility<
       .def_readwrite("n_b", &Gr::n_b)
       .def_readwrite("fraction", &Gr::fraction)
       .def("getElasticityOfPhase", &Gr::getElasticityOfPhase)
+      .def("getElasticityOfPhaseInGlobalBasis",
+           &Gr::getElasticityOfPhaseInGlobalBasis)
       .def("changeElasticityOfPhase",
            [](Gr& gr, const tfel::math::st2tost2<3u, StressType>& C) {
              return gr.changeElasticityOfPhase(C);

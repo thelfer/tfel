@@ -33,10 +33,13 @@ struct ParserTest11 final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->check("12", "12.");
     for (const std::string f :
-         {"H", "exp", "log", "log10", "ln", "cos", "sin", "tan", "acos", "asin",
-          "atan", "cosh", "sinh", "tanh"}) {
+         {"exp", "log", "log10", "cos", "sin", "tan", "acos", "asin", "atan",
+          "cosh", "sinh", "tanh"}) {
       this->check(f + "(x)", f + "(x)");
     }
+    // functions without a C++ counterpart of the same name
+    this->check("ln(x)", "log(x)");
+    this->check("H(x-1)", "((((x)-(1.))<(0.)) ? (0.) : (1.))");
     for (const std::string f : {"min", "max"}) {
       this->check(f + "(x,y)", f + "(x,y)");
     }

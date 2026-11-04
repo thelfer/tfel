@@ -383,7 +383,10 @@ threshold.
 If those derivatives are not provided, automatic differentiation will be
 used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
-code.
+code. The functions `tgamma` and `lgamma` can't be differentiated: the
+derivatives must be provided if `vp` uses them. The functions `abs`,
+`max`, `min` and `H` are differentiated piecewise, the derivative of `H`
+being null.
 
 #### Example of usage {.unnumbered}
 
@@ -1054,7 +1057,10 @@ variable `R`.
 If this derivative is not provided, automatic differentiation will be
 used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
-code.
+code. The functions `tgamma` and `lgamma` can't be differentiated: the
+derivative must be provided if `R` uses them. The functions `abs`,
+`max`, `min` and `H` are differentiated piecewise, the derivative of `H`
+being null.
 
 #### Example of usage {.unnumbered}
 
@@ -1088,8 +1094,9 @@ This isotropic hardening rule can be parametrised using three entries:
 - `interpolation`: which allows to select the interpolation type.
   Possible values are `linear` (default choice) and `cubic_spline`.
 - `extrapolation`: which allows to select the extrapolation type.
-  Possible values are `bound_to_last_value` (or `constant`) and
-  `extrapolation` (default choice).
+  Possible values are `bound_to_last_value` (or `constant`, or the
+  boolean value `false`) and `extrapolation` (or the boolean value
+  `true`, default choice).
 
 #### Example of usage
 

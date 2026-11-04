@@ -97,17 +97,17 @@ namespace mtest {
       }
     }
     // treating external commands
-    for (const auto& c : ecmds) {
+    for (auto pc = ecmds.rbegin(); pc != ecmds.rend(); ++pc) {
       CxxTokenizer tokenizer;
       tokenizer.treatCharAsString(true);
       try {
-        tokenizer.parseString(c);
+        tokenizer.parseString(*pc);
       } catch (std::exception& e) {
         tfel::raise(
             "MTestParser::execute : "
             "error while parsing external command "
             "'" +
-            c + "'\n" + std::string(e.what()));
+            *pc + "'\n" + std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(), tokenizer.begin(),
                           tokenizer.end());
@@ -434,6 +434,8 @@ namespace mtest {
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("MTestParser::handleTest", ":", p,
                                    this->tokens.end());
+          this->checkNotEndOfLine("MTestParser::handleTest", p,
+                                  this->tokens.end());
           if (p->flag == tfel::utilities::Token::String) {
             const auto c = p->value.substr(1, p->value.size() - 2);
             warn_if(!columns.insert({v, gentype(c)}).second, pv, v);

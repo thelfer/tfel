@@ -460,6 +460,30 @@ namespace mfront {
     return this->getAuxiliaryStateVariables().getVariableByExternalName(v);
   }  // end of getAuxiliaryStateVariableDescriptionByExternalName
 
+  const VariableDescription&
+  BehaviourData::getInitializeFunctionVariableDescription(
+      const std::string& v) const {
+    return this->getInitializeFunctionVariables().getVariable(v);
+  }  // end of getInitializeFunctionVariableDescription
+
+  const VariableDescription&
+  BehaviourData::getInitializeFunctionVariableDescriptionByExternalName(
+      const std::string& v) const {
+    return this->getInitializeFunctionVariables().getVariableByExternalName(v);
+  }  // end of getInitializeFunctionVariableDescriptionByExternalName
+
+  const VariableDescription&
+  BehaviourData::getPostProcessingVariableDescription(
+      const std::string& v) const {
+    return this->getPostProcessingVariables().getVariable(v);
+  }  // end of getPostProcessingVariableDescription
+
+  const VariableDescription&
+  BehaviourData::getPostProcessingVariableDescriptionByExternalName(
+      const std::string& v) const {
+    return this->getPostProcessingVariables().getVariableByExternalName(v);
+  }  // end of getPostProcessingVariableDescriptionByExternalName
+
   const VariableDescription& BehaviourData::getParameterDescription(
       const std::string& v) const {
     return this->getParameters().getVariable(v);

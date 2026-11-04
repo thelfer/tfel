@@ -24,6 +24,7 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/runtime_array.hxx"
+#include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Array/runtime_arrayIO.hxx"
 
@@ -124,6 +125,12 @@ struct RuntimeArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(i[0] == -8);
     TFEL_TESTS_ASSERT(i[1] == -11);
     TFEL_TESTS_ASSERT(i[2] == -4);
+    // assignment from an array of views
+    tfel::math::runtime_array<int> j(3);
+    j = tfel::math::map_array<tfel::math::fsarray<3, int>>(external_values);
+    TFEL_TESTS_ASSERT(j[0] == -8);
+    TFEL_TESTS_ASSERT(j[1] == -11);
+    TFEL_TESTS_ASSERT(j[2] == -4);
     // output
     std::ostringstream os;
     os << a;

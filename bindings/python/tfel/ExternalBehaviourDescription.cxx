@@ -106,23 +106,49 @@ void declareExternalBehaviourDescription(pybind11::module_& m) {
       .def_property_readonly("ivnames", &get_ivs,
                              "Names of the internal state variables")
       .def_property_readonly("ivtypes", &get_ivs_types,
-                             "Types of the internal state variables\n"
+                             "Types of the internal state variables,\n"
+                             "encoded as integers whose three lowest bits\n"
+                             "give the kind of the variable:\n"
                              "- 0 means that the variable is a scalar\n"
                              "- 1 means that the variable is a symmetric "
                              "tensor\n"
                              "- 2 means that the variable is a vector\n"
                              "- 3 means that the variable is an unsymmetric "
-                             "tensor")
+                             "tensor\n"
+                             "- 4 means that the variable is a derivative\n"
+                             "- 5 means that the variable is an array\n"
+                             "The following bits give the space dimension\n"
+                             "of a tensorial object (0 if it is the one of\n"
+                             "the modelling hypothesis), the types of the\n"
+                             "two variables of a derivative and the sizes\n"
+                             "and the type of the elements of an array\n"
+                             "(see the `mfront-types` page of the\n"
+                             "documentation). For instance, 2 denotes a\n"
+                             "vector of the size of the space dimension\n"
+                             "and 26 a vector of size 3.")
       .def_property_readonly("evnames", &get_evs,
                              "Names of the external state variables")
       .def_property_readonly("evtypes", &get_evs_types,
-                             "Types of the external state variables\n"
+                             "Types of the external state variables,\n"
+                             "encoded as integers whose three lowest bits\n"
+                             "give the kind of the variable:\n"
                              "- 0 means that the variable is a scalar\n"
                              "- 1 means that the variable is a symmetric "
                              "tensor\n"
                              "- 2 means that the variable is a vector\n"
                              "- 3 means that the variable is an unsymmetric "
-                             "tensor")
+                             "tensor\n"
+                             "- 4 means that the variable is a derivative\n"
+                             "- 5 means that the variable is an array\n"
+                             "The following bits give the space dimension\n"
+                             "of a tensorial object (0 if it is the one of\n"
+                             "the modelling hypothesis), the types of the\n"
+                             "two variables of a derivative and the sizes\n"
+                             "and the type of the elements of an array\n"
+                             "(see the `mfront-types` page of the\n"
+                             "documentation). For instance, 2 denotes a\n"
+                             "vector of the size of the space dimension\n"
+                             "and 26 a vector of size 3.")
       .def_readonly("btype", &ExternalBehaviourDescription::btype,
                     "Behaviour type\n"
                     "0 : general behaviour\n"
@@ -158,6 +184,11 @@ void declareExternalBehaviourDescription(pybind11::module_& m) {
                     "If requiresThermalExpansionCoefficientTensor is true, the "
                     "caller must provide the thermal expansion coefficients "
                     "tensor")
+      .def_readonly("hasTemperatureBeenRemovedFromExternalStateVariables",
+                    &ExternalBehaviourDescription::
+                        hasTemperatureBeenRemovedFromExternalStateVariables,
+                    "If true, the temperature was removed from the list of "
+                    "the external\nstate variables (evnames).")
       .def("hasBounds", &ExternalBehaviourDescription::hasBounds,
            pybind11::arg("v"),
            "Return true if the given variable has bounds\n"

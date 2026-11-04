@@ -178,6 +178,16 @@ namespace tfel::material::homogenization::elasticity {
     [[nodiscard]] virtual std::unique_ptr<InclusionDistribution<N, StressType>>
     clone() const = 0;
 
+    /*!
+     * \return the elasticity of the phase in the global basis. The elasticity
+     * of an `OrientedDistribution` is given in the local basis of its
+     * inclusions.
+     */
+    [[nodiscard]] virtual tfel::math::st2tost2<N, StressType>
+    getElasticityOfPhaseInGlobalBasis() const {
+      return this->getElasticityOfPhase();
+    }
+
     [[nodiscard]] virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
         const tfel::math::st2tost2<N, StressType>& C0,
         int max_iter_anisotropic_integration = 12) = 0;
@@ -538,6 +548,25 @@ namespace tfel::material::homogenization::elasticity {
     [[nodiscard]] std::unique_ptr<InclusionDistribution<3u, StressType>> clone()
         const override {
       return std::make_unique<OrientedDistribution<StressType>>(*this);
+    }
+
+    [[nodiscard]] tfel::math::st2tost2<3u, StressType>
+    getElasticityOfPhaseInGlobalBasis() const override {
+      if (this->isIsotropic()) {
+        return this->getElasticityOfPhase();
+      }
+      using namespace tfel::math;
+      // the elasticity is given in the basis (n_a, n_b, n_c)
+      const auto n_a_ = this->n_a / norm(this->n_a);
+      const auto n_b_ = this->n_b / norm(this->n_b);
+      const auto n_c_ = cross_product<real>(n_a_, n_b_);
+      const rotation_matrix<real> r_glob_loc = {n_a_[0], n_b_[0], n_c_[0],
+                                                n_a_[1], n_b_[1], n_c_[1],
+                                                n_a_[2], n_b_[2], n_c_[2]};
+      const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
+      return change_basis(this->getElasticityOfPhase() / StressType(1),
+                          r_loc_glob) *
+             StressType(1);
     }
 
     [[nodiscard]] tfel::math::st2tost2<3u, real> computeMeanLocalisator(

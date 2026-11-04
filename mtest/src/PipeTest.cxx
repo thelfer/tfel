@@ -556,6 +556,10 @@ namespace mtest {
           "PipeTest::completeInitialisation: "
           "can't impose the evolution of the radius of the mandrel and "
           "the evolution of the inner or outer radius of the pipe");
+      tfel::raise_if(this->rl == TIGHTPIPE,
+                     "PipeTest::completeInitialisation: "
+                     "can't impose the evolution of the radius of the "
+                     "mandrel of a tight pipe");
     }
     if (this->rl == IMPOSEDOUTERRADIUS) {
       tfel::raise_if(this->outer_radius_evolution == nullptr,
@@ -1118,8 +1122,9 @@ namespace mtest {
           const auto Pc = state.getEvolution("InnerPressure")(t + dt);
           impose_inner_pressure(Pi, Pc);
         } else {
-          const auto Pi = state.getEvolution("InnerPressure")(t + dt);
-          impose_inner_pressure(Pi, 0);
+          // the contact pressure does not act on the end caps
+          const auto Pc = state.getEvolution("InnerPressure")(t + dt);
+          impose_inner_pressure(0, Pc);
         }
       } else {
         if ((this->rl == IMPOSEDPRESSURE) &&
@@ -1543,7 +1548,7 @@ namespace mtest {
       const real cv = Pi(t + dt);
       Pi.setValue(t + dt, cv - (cue - iue) / due_dp);
     }
-    auto impose_inner_radius = [&](const real iu) {
+    auto impose_inner_radius = [&](const real iu, const bool end_cap_effect) {
       // computed external displacement
       const real cu = state.u1[0];
       std::fill(du.begin(), du.end(), real(0));
@@ -1554,7 +1559,7 @@ namespace mtest {
       } else {
         du(0) += 2 * pi * (1 + ezz) * Ri_;
       }
-      if (this->al == ENDCAPEFFECT) {
+      if (end_cap_effect) {
         du(n) += pi * Ri_ * Ri_;
       }
       setRoundingMode();
@@ -1569,12 +1574,13 @@ namespace mtest {
     if (this->rl == IMPOSEDINNERRADIUS) {
       // imposed displacement
       const real iu = (*(this->inner_radius_evolution))(t + dt) - Ri;
-      impose_inner_radius(iu);
+      impose_inner_radius(iu, this->al == ENDCAPEFFECT);
     }
     if (this->mandrel_radius_evolution != nullptr) {
       if (state.getParameter<bool>("MandrelContactState")) {
         const auto Rm = (*(this->mandrel_radius_evolution))(t + dt);
-        impose_inner_radius(Rm - Ri);
+        // the contact pressure does not act on the end caps
+        impose_inner_radius(Rm - Ri, false);
       }
     }
     // imposed axial growth

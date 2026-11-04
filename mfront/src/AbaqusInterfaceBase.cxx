@@ -26,11 +26,15 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
-  const char* const AbaqusInterfaceBase::finiteStrainStrategy =
-      "abaqus::finiteStrainStrategy";
+  std::string AbaqusInterfaceBase::getFiniteStrainStrategyAttributeName(
+      const std::string& i) {
+    return i + "::finiteStrainStrategy";
+  }  // end of AbaqusInterfaceBase::getFiniteStrainStrategyAttributeName
 
-  const char* const AbaqusInterfaceBase::orthotropyManagementPolicy =
-      "abaqus::orthotropyManagementPolicy";
+  std::string AbaqusInterfaceBase::getOrthotropyManagementPolicyAttributeName(
+      const std::string& i) {
+    return i + "::orthotropyManagementPolicy";
+  }  // end of AbaqusInterfaceBase::getOrthotropyManagementPolicyAttributeName
 
   static void checkFiniteStrainStrategy(const std::string& fs) {
     tfel::raise_if((fs != "Native") && (fs != "FiniteRotationSmallStrain") &&
@@ -43,6 +47,43 @@ namespace mfront {
                        "'Native', 'FiniteRotationSmallStrain', "
                        "'MieheApelLambrechtLogarithmicStrain'");
   }  // end of checkFiniteStrainStrategy
+
+  /*!
+   * \return the names of the components of a variable, as described in the
+   * example input file
+   * \param[in] h: modelling hypothesis
+   * \param[in] v: variable
+   * \param[in] n: name of the variable (or of an element of an array)
+   */
+  static std::vector<std::string> getComponentsNames(
+      const tfel::material::ModellingHypothesis::Hypothesis h,
+      const VariableDescription& v,
+      const std::string& n) {
+    using tfel::material::ModellingHypothesis;
+    const auto b = h == ModellingHypothesis::TRIDIMENSIONAL;
+    const auto f = SupportedTypes::getTypeFlag(v.type);
+    if (f == SupportedTypes::SCALAR) {
+      return {n};
+    } else if (f == SupportedTypes::TVECTOR) {
+      if (b) {
+        return {n + "_1", n + "_2", n + "_3"};
+      }
+      return {n + "_1", n + "_2"};
+    } else if (f == SupportedTypes::STENSOR) {
+      if (b) {
+        return {n + "_11", n + "_22", n + "_33",
+                n + "_12", n + "_13", n + "_23"};
+      }
+      return {n + "_11", n + "_22", n + "_33", n + "_12"};
+    } else if (f == SupportedTypes::TENSOR) {
+      if (b) {
+        return {n + "_11", n + "_22", n + "_33", n + "_12", n + "_21",
+                n + "_13", n + "_31", n + "_23", n + "_32"};
+      }
+      return {n + "_11", n + "_22", n + "_33", n + "_12", n + "_21"};
+    }
+    tfel::raise("getComponentsNames: unsupported variable type");
+  }  // end of getComponentsNames
 
   void AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(
       const BehaviourDescription& bd, const std::string& fs) {
@@ -78,22 +119,22 @@ namespace mfront {
      // AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency
 
   void AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(
-      const BehaviourDescription& bd) {
+      const std::string& i, const BehaviourDescription& bd) {
     auto throw_if = [](const bool c, const std::string& msg) {
       tfel::raise_if(c,
                      "AbaqusInterfaceBase::"
                      "checkFiniteStrainStrategyDefinitionConsistency: " +
                          msg);
     };
+    const auto a = getFiniteStrainStrategyAttributeName(i);
     if (bd.getBehaviourType() !=
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      throw_if(bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
+      throw_if(bd.hasAttribute(a),
                "finite strain strategy is only supported for strain based "
                "behaviours");
     } else {
-      if (bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy)) {
-        const auto fs = bd.getAttribute<std::string>(
-            AbaqusInterfaceBase::finiteStrainStrategy);
+      if (bd.hasAttribute(a)) {
+        const auto fs = bd.getAttribute<std::string>(a);
         AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(bd,
                                                                             fs);
       }
@@ -102,17 +143,17 @@ namespace mfront {
      // AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency
 
   bool AbaqusInterfaceBase::hasFiniteStrainStrategy(
-      const BehaviourDescription& bd) {
-    checkFiniteStrainStrategyDefinitionConsistency(bd);
+      const std::string& i, const BehaviourDescription& bd) {
+    checkFiniteStrainStrategyDefinitionConsistency(i, bd);
     if (bd.isStrainMeasureDefined()) {
       return bd.getStrainMeasure() != BehaviourDescription::LINEARISED;
     }
-    return bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy);
+    return bd.hasAttribute(getFiniteStrainStrategyAttributeName(i));
   }  // end of AbaqusInterfaceBase::hasFiniteStrainStrategy
 
   std::string AbaqusInterfaceBase::getFiniteStrainStrategy(
-      const BehaviourDescription& bd) {
-    checkFiniteStrainStrategyDefinitionConsistency(bd);
+      const std::string& i, const BehaviourDescription& bd) {
+    checkFiniteStrainStrategyDefinitionConsistency(i, bd);
     auto throw_if = [](const bool c, const std::string& msg) {
       tfel::raise_if(c, "AbaqusInterfaceBase::getFiniteStrainStrategy: " + msg);
     };
@@ -126,26 +167,25 @@ namespace mfront {
         throw_if(true, "unsupported strain measure");
       }
     }
-    throw_if(!bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
-             "no finite strain strategy defined");
-    return bd.getAttribute<std::string>(
-        AbaqusInterfaceBase::finiteStrainStrategy);
+    const auto a = getFiniteStrainStrategyAttributeName(i);
+    throw_if(!bd.hasAttribute(a), "no finite strain strategy defined");
+    return bd.getAttribute<std::string>(a);
   }  // end of AbaqusInterfaceBase::getFiniteStrainStrategy
 
   bool AbaqusInterfaceBase::hasOrthotropyManagementPolicy(
-      const BehaviourDescription& mb) {
-    return mb.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy);
+      const std::string& i, const BehaviourDescription& mb) {
+    return mb.hasAttribute(getOrthotropyManagementPolicyAttributeName(i));
   }  // end of AbaqusInterfaceBase::hasOrthotropyManagementPolicy
 
   std::string AbaqusInterfaceBase::getOrthotropyManagementPolicy(
-      const BehaviourDescription& mb) {
+      const std::string& i, const BehaviourDescription& mb) {
     return mb.getAttribute<std::string>(
-        AbaqusInterfaceBase::orthotropyManagementPolicy);
+        getOrthotropyManagementPolicyAttributeName(i));
   }  // end of AbaqusInterfaceBase::getOrthotropyManagementPolicy
 
   void AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(
-      const BehaviourDescription& mb) {
-    if (AbaqusInterfaceBase::hasOrthotropyManagementPolicy(mb)) {
+      const std::string& i, const BehaviourDescription& mb) {
+    if (AbaqusInterfaceBase::hasOrthotropyManagementPolicy(i, mb)) {
       tfel::raise_if(
           mb.getSymmetryType() != mfront::ORTHOTROPIC,
           "AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency: "
@@ -179,7 +219,9 @@ namespace mfront {
       tfel::raise_if(b, "AbaqusInterfaceBase::treatCommonKeywords: " + m);
     };
     if (k == "@AbaqusFiniteStrainStrategy") {
-      throw_if(bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
+      const auto a =
+          getFiniteStrainStrategyAttributeName(this->getInterfaceName());
+      throw_if(bd.hasAttribute(a),
                "a finite strain strategy has already been defined");
       throw_if(current == end, "unexpected end of file");
       const auto fs = current->value;
@@ -189,7 +231,7 @@ namespace mfront {
       ++(current);
       AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(bd,
                                                                           fs);
-      bd.setAttribute(AbaqusInterfaceBase::finiteStrainStrategy, fs, false);
+      bd.setAttribute(a, fs, false);
       return {true, current};
     }
     if (k == "@AbaqusOrthotropyManagementPolicy") {
@@ -206,11 +248,12 @@ namespace mfront {
       throw_if(bd.getSymmetryType() != mfront::ORTHOTROPIC,
                "orthotropy management policy is only valid "
                "for orthotropic behaviour");
-      throw_if(bd.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy),
+      const auto a =
+          getOrthotropyManagementPolicyAttributeName(this->getInterfaceName());
+      throw_if(bd.hasAttribute(a),
                "an orthotropy management policy has already been defined");
       throw_if(current == end, "unexpected end of file");
-      bd.setAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy,
-                      read(current->value), false);
+      bd.setAttribute(a, read(current->value), false);
       throw_if(++current == end, "unexpected end of file");
       throw_if(current->value != ";",
                "expected ';', read '" + current->value + '\'');
@@ -222,9 +265,10 @@ namespace mfront {
 
   unsigned short AbaqusInterfaceBase::getStateVariablesOffset(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    if ((bd.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy)) &&
-        (bd.getAttribute<std::string>(
-             AbaqusInterfaceBase::orthotropyManagementPolicy) == "MFront")) {
+    const auto i = this->getInterfaceName();
+    if ((AbaqusInterfaceBase::hasOrthotropyManagementPolicy(i, bd)) &&
+        (AbaqusInterfaceBase::getOrthotropyManagementPolicy(i, bd) ==
+         "MFront")) {
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::PLANESTRESS)) {
@@ -528,15 +572,28 @@ namespace mfront {
         out << "** Example for the '" << ModellingHypothesis::toString(h)
             << "' modelling hypothesis\n";
         if (externalStateVarsHolder.size() > 1) {
-          out << "** This behaviour requires "
-              << externalStateVarsHolder.size() - 1
+          // one field variable per component of each external state variable
+          // (and of each element of an array), skipping the temperature
+          auto fvs = std::vector<std::string>{};
+          for (auto pv = std::next(externalStateVarsHolder.begin());
+               pv != externalStateVarsHolder.end(); ++pv) {
+            const auto vn = mb.getExternalName(h, pv->name);
+            if (pv->arraySize == 1) {
+              const auto c = getComponentsNames(h, *pv, vn);
+              fvs.insert(fvs.end(), c.begin(), c.end());
+            } else {
+              for (unsigned short a = 0; a != pv->arraySize; ++a) {
+                const auto c = getComponentsNames(
+                    h, *pv, vn + '[' + std::to_string(a) + ']');
+                fvs.insert(fvs.end(), c.begin(), c.end());
+              }
+            }
+          }
+          out << "** This behaviour requires " << fvs.size()
               << " field variables to be defined:\n";
           int i = 1;
-          for (auto pv = std::next(externalStateVarsHolder
-                                       .begin());  // skipping the temperature
-               pv != externalStateVarsHolder.end(); ++pv, ++i) {
-            out << "** " << i << ": " << mb.getExternalName(h, pv->name)
-                << '\n';
+          for (const auto& fv : fvs) {
+            out << "** " << i++ << ": " << fv << '\n';
           }
         }
         out << "*Material, name=" << this->getFunctionNameForHypothesis(mn, h)
@@ -547,10 +604,10 @@ namespace mfront {
         if (vsize != 0) {
           out << "*Depvar\n" << vsize << ",\n";
           int i = 1;
-          if (mb.hasAttribute(
-                  AbaqusInterfaceBase::orthotropyManagementPolicy)) {
-            const auto omp = mb.getAttribute<std::string>(
-                AbaqusInterfaceBase::orthotropyManagementPolicy);
+          if (AbaqusInterfaceBase::hasOrthotropyManagementPolicy(
+                  this->getInterfaceName(), mb)) {
+            const auto omp = AbaqusInterfaceBase::getOrthotropyManagementPolicy(
+                this->getInterfaceName(), mb);
             if (omp == "MFront") {
               if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
                   (h == ModellingHypothesis::PLANESTRAIN) ||
@@ -647,39 +704,8 @@ namespace mfront {
                                         const Hypothesis& h,
                                         const VariableDescription& v,
                                         const std::string& n) const {
-    if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-      out << i++ << ", " << n << '\n';
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
-      out << i++ << ", " << n << "_1\n";
-      out << i++ << ", " << n << "_2\n";
-      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        out << i++ << ", " << n << "_3\n";
-      }
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::STENSOR) {
-      out << i++ << ", " << n << "_11\n";
-      out << i++ << ", " << n << "_22\n";
-      out << i++ << ", " << n << "_33\n";
-      out << i++ << ", " << n << "_12\n";
-      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        out << i++ << ", " << n << "_13\n";
-        out << i++ << ", " << n << "_23\n";
-      }
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TENSOR) {
-      out << i++ << ", " << n << "_11\n";
-      out << i++ << ", " << n << "_22\n";
-      out << i++ << ", " << n << "_33\n";
-      out << i++ << ", " << n << "_12\n";
-      out << i++ << ", " << n << "_21\n";
-      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        out << i++ << ", " << n << "_13\n";
-        out << i++ << ", " << n << "_31\n";
-        out << i++ << ", " << n << "_23\n";
-        out << i++ << ", " << n << "_32\n";
-      }
-    } else {
-      tfel::raise(
-          "AbaqusInterfaceBase::writeDepvar: "
-          "unsupported variable type");
+    for (const auto& c : getComponentsNames(h, v, n)) {
+      out << i++ << ", " << c << '\n';
     }
   }
 

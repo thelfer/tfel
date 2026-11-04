@@ -127,7 +127,7 @@ namespace mfront {
     const auto srcFileName = "src/" + name + "-CppTest.cxx";
     std::ofstream srcFile(srcFileName);
     tfel::raise_if(!srcFile,
-                   "MaterialPropertyDSL::writeOutputFiles: "
+                   "CppTestMaterialPropertyInterface::writeOutputFiles: "
                    "unable to open '" +
                        srcFileName +
                        "' "
@@ -157,11 +157,11 @@ namespace mfront {
       }
     }
     tfel::raise_if(tests.empty(),
-                   "MaterialPropertyDSL::writeTestFile:\n"
+                   "CppTestMaterialPropertyInterface::writeOutputFiles:\n"
                    "No bounds defined to draw graph !");
     for (const auto& i : mpd.inputs) {
       tfel::raise_if(tests.count(i.name) == 0,
-                     "MaterialPropertyDSL::writeTestFile:\n"
+                     "CppTestMaterialPropertyInterface::writeOutputFiles:\n"
                      "No bounds defined for input '" +
                          i.name + "' to draw graph !");
     }
@@ -169,10 +169,10 @@ namespace mfront {
       const auto& n = t.first;
       const auto& b = t.second;
       tfel::raise_if(b.boundsType == VariableBoundsDescription::LOWER,
-                     "MaterialPropertyDSL::writeTestFile:\n"
+                     "CppTestMaterialPropertyInterface::writeOutputFiles:\n"
                      "No upper bound defined to draw graph !");
       tfel::raise_if(b.boundsType == VariableBoundsDescription::UPPER,
-                     "MaterialPropertyDSL::writeTestFile:\n"
+                     "CppTestMaterialPropertyInterface::writeOutputFiles:\n"
                      "No lower bound defined to draw graph !");
       srcFile << "  const double " << n << "_min = " << b.lowerBound << " ;\n"
               << "  const double " << n << "_max = " << b.upperBound << " ;\n"
