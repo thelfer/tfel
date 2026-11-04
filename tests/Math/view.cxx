@@ -41,6 +41,7 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     this->test6();
     this->test7();
     this->test8();
+    this->test9();
     this->constexpr_test1();
     this->constexpr_test2();
     return this->result;
@@ -163,17 +164,6 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(v2[2] - 4) < eps);
     TFEL_TESTS_ASSERT(std::abs(v2[3] - 4) < eps);
   }
-  //! \brief create an array view of constant data from raw memory
-  void test8() {
-    using namespace tfel::math;
-    const double values[8] = {1, 1, 1, 0, 2, 2, 2, 0};
-    const auto v = map_array<const fsarray<2u, double>>(values);
-    TFEL_TESTS_ASSERT(std::abs(v[1] - 1) < eps);
-    const auto s = map_array<const fsarray<2u, stensor<2u, double>>>(values);
-    TFEL_TESTS_ASSERT(std::abs(s[1][0] - 2) < eps);
-    TFEL_TESTS_ASSERT(std::abs(s[1][3]) < eps);
-  }
-
   //! \brief create arrays of views of quantities from a tiny vector
   void test8() {
     using namespace tfel::math;
@@ -189,6 +179,17 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     v[1] = v[0];
     v[2] = v[1];
     this->check2();
+  }
+
+  //! \brief create an array view of constant data from raw memory
+  void test9() {
+    using namespace tfel::math;
+    const double values[8] = {1, 1, 1, 0, 2, 2, 2, 0};
+    const auto v = map_array<const fsarray<2u, double>>(values);
+    TFEL_TESTS_ASSERT(std::abs(v[1] - 1) < eps);
+    const auto s = map_array<const fsarray<2u, stensor<2u, double>>>(values);
+    TFEL_TESTS_ASSERT(std::abs(s[1][0] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(s[1][3]) < eps);
   }
 
   void constexpr_test1() {
