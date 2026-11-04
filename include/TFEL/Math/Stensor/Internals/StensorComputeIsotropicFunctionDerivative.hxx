@@ -30,8 +30,10 @@ namespace tfel::math::internals {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename Function,
@@ -61,8 +63,10 @@ namespace tfel::math::internals {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T1,
@@ -96,8 +100,10 @@ namespace tfel::math::internals {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T1,
@@ -135,8 +141,10 @@ namespace tfel::math::internals {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T,
@@ -165,8 +173,10 @@ namespace tfel::math::internals {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T1,
@@ -205,7 +215,8 @@ namespace tfel::math::internals {
         const auto vpm = (vp(0) + vp(1)) / 2;
         const auto dfm = (df[0] + df[1]) / 2;
         d = (((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * dfm + (n2 ^ n2) * df[2] +
-             (f[0] - f[2]) / (vpm - vp(2)) * ((n02 ^ n02) + (n12 ^ n12)));
+             ((f[0] + f[1]) / 2 - f[2]) / (vpm - vp(2)) *
+                 ((n02 ^ n02) + (n12 ^ n12)));
       } else if (tfel::math::abs(vp(0) - vp(2)) < eps) {
         const tvector v0 = m.template column_view<0u>();
         const tvector v1 = m.template column_view<1u>();
@@ -221,7 +232,8 @@ namespace tfel::math::internals {
         const auto vpm = (vp(0) + vp(2)) / 2;
         const auto dfm = (df[0] + df[2]) / 2;
         d = (((n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02)) * dfm + (n1 ^ n1) * df[1] +
-             (f[0] - f[1]) / (vpm - vp(1)) * ((n01 ^ n01) + (n12 ^ n12)));
+             ((f[0] + f[2]) / 2 - f[1]) / (vpm - vp(1)) *
+                 ((n01 ^ n01) + (n12 ^ n12)));
       } else if (tfel::math::abs(vp(1) - vp(2)) < eps) {
         const tvector v0 = m.template column_view<0u>();
         const tvector v1 = m.template column_view<1u>();
@@ -237,7 +249,8 @@ namespace tfel::math::internals {
         const auto vpm = (vp(1) + vp(2)) / 2;
         const auto dfm = (df[1] + df[2]) / 2;
         d = ((n0 ^ n0) * df[0] + ((n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12)) * dfm +
-             ((f[0] - f[1]) / (vp(0) - vpm)) * ((n01 ^ n01) + (n02 ^ n02)));
+             ((f[0] - (f[1] + f[2]) / 2) / (vp(0) - vpm)) *
+                 ((n01 ^ n01) + (n02 ^ n02)));
       } else {
         ist2tost2 dn0, dn1, dn2;
         stensor n0, n1, n2;
@@ -255,8 +268,10 @@ namespace tfel::math::internals {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T,

@@ -54,6 +54,14 @@ namespace mfront::bbrick {
         const std::string&,
         const std::string&,
         const bool) const override;
+    [[nodiscard]] std::string buildBackStrainImplicitEquationsForAnInactiveFlow(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const StressCriterion&,
+        const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
+        const std::string&,
+        const std::string&,
+        const bool) const override;
     //! \brief destructor
     ~DelobelleRobinetSchafflerKinematicHardeningRule() override;
 

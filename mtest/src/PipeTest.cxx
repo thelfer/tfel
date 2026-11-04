@@ -556,6 +556,10 @@ namespace mtest {
           "PipeTest::completeInitialisation: "
           "can't impose the evolution of the radius of the mandrel and "
           "the evolution of the inner or outer radius of the pipe");
+      tfel::raise_if(this->rl == TIGHTPIPE,
+                     "PipeTest::completeInitialisation: "
+                     "can't impose the evolution of the radius of the "
+                     "mandrel of a tight pipe");
     }
     if (this->rl == IMPOSEDOUTERRADIUS) {
       tfel::raise_if(this->outer_radius_evolution == nullptr,

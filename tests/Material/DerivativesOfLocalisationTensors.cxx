@@ -54,6 +54,14 @@ struct DerivativesOfLocalisationTensorsTest final
     this->template test_loc_derivative<double, false>(1e-6, 1e-8, 0.5);
     this->template test_loc_derivative<double, true>(1e-6, 1e-8, 0.5);
 
+    // single precision: the sphere, and just above its tolerance
+    this->template test_Hill_derivative<float, false>();
+    this->template test_Hill_derivative<float, true>();
+    this->template test_loc_derivative<float, false>(1e-2, 1e-5, 1);
+    this->template test_loc_derivative<float, true>(1e-2, 1e-5, 1);
+    this->template test_loc_derivative<float, false>(1e-2, 1e-5, 1.0081);
+    this->template test_loc_derivative<float, true>(1e-2, 1e-5, 1.0081);
+
     return this->result;
   }
 
@@ -85,7 +93,7 @@ struct DerivativesOfLocalisationTensorsTest final
         5 * mu0 / 2 * ((k0 + 2 * mu0) - kP) / (k0 + 2 * mu0) / (k0 + 2 * mu0);
     const auto muP = 5 * mu0 / 2 * kP / (k0 + 2 * mu0);
     const auto dPSphere_dk0_an =
-        -1. / 3 / kP / kP * tfel::math::st2tost2<3u, real>::J() -
+        -real(1) / 3 / kP / kP * tfel::math::st2tost2<3u, real>::J() -
         dmuP / 2 / muP / muP * tfel::math::st2tost2<3u, real>::K();
     const auto dPSphere_dk0 =
         computeDerivativesOfAxisymmetricalHillTensor<stress>(KG0, n_a, real(1),
@@ -101,11 +109,12 @@ struct DerivativesOfLocalisationTensorsTest final
                           squared_compliance(eps));
       }
     }
-    const auto dmuP_dmu0 = 5. / 2 * kP / (k0 + 2 * mu0) +
-                           5 * mu0 / 2 * (4. / 3 * (k0 + 2 * mu0) - 2 * kP) /
+    const auto dmuP_dmu0 = real(5) / 2 * kP / (k0 + 2 * mu0) +
+                           5 * mu0 / 2 *
+                               (real(4) / 3 * (k0 + 2 * mu0) - 2 * kP) /
                                (k0 + 2 * mu0) / (k0 + 2 * mu0);
     const auto dPSphere_dmu0_an =
-        -4. / 9 / kP / kP * tfel::math::st2tost2<3u, real>::J() -
+        -real(4) / 9 / kP / kP * tfel::math::st2tost2<3u, real>::J() -
         dmuP_dmu0 / 2 / muP / muP * tfel::math::st2tost2<3u, real>::K();
     const auto dPSphere_dmu0 =
         computeDerivativesOfAxisymmetricalHillTensor<stress>(KG0, n_a, real(1),

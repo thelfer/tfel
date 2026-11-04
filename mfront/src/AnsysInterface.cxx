@@ -1444,12 +1444,6 @@ namespace mfront {
           << "std::cout << std::endl;\n"
           << "}\n";
     }
-    // if(AnsysInterface::hasFiniteStrainStrategy(mb)){
-    //   if(AnsysInterface::getFiniteStrainStrategy(mb)=="Native"){
-    // 	out <<
-    // "ansys::AnsysFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
-    //   }
-    // }
     out << "}\n\n";
   }
 

@@ -26,11 +26,15 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
-  const char* const AbaqusInterfaceBase::finiteStrainStrategy =
-      "abaqus::finiteStrainStrategy";
+  std::string AbaqusInterfaceBase::getFiniteStrainStrategyAttributeName(
+      const std::string& i) {
+    return i + "::finiteStrainStrategy";
+  }  // end of AbaqusInterfaceBase::getFiniteStrainStrategyAttributeName
 
-  const char* const AbaqusInterfaceBase::orthotropyManagementPolicy =
-      "abaqus::orthotropyManagementPolicy";
+  std::string AbaqusInterfaceBase::getOrthotropyManagementPolicyAttributeName(
+      const std::string& i) {
+    return i + "::orthotropyManagementPolicy";
+  }  // end of AbaqusInterfaceBase::getOrthotropyManagementPolicyAttributeName
 
   static void checkFiniteStrainStrategy(const std::string& fs) {
     tfel::raise_if((fs != "Native") && (fs != "FiniteRotationSmallStrain") &&
@@ -115,22 +119,22 @@ namespace mfront {
      // AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency
 
   void AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(
-      const BehaviourDescription& bd) {
+      const std::string& i, const BehaviourDescription& bd) {
     auto throw_if = [](const bool c, const std::string& msg) {
       tfel::raise_if(c,
                      "AbaqusInterfaceBase::"
                      "checkFiniteStrainStrategyDefinitionConsistency: " +
                          msg);
     };
+    const auto a = getFiniteStrainStrategyAttributeName(i);
     if (bd.getBehaviourType() !=
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      throw_if(bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
+      throw_if(bd.hasAttribute(a),
                "finite strain strategy is only supported for strain based "
                "behaviours");
     } else {
-      if (bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy)) {
-        const auto fs = bd.getAttribute<std::string>(
-            AbaqusInterfaceBase::finiteStrainStrategy);
+      if (bd.hasAttribute(a)) {
+        const auto fs = bd.getAttribute<std::string>(a);
         AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(bd,
                                                                             fs);
       }
@@ -139,17 +143,17 @@ namespace mfront {
      // AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency
 
   bool AbaqusInterfaceBase::hasFiniteStrainStrategy(
-      const BehaviourDescription& bd) {
-    checkFiniteStrainStrategyDefinitionConsistency(bd);
+      const std::string& i, const BehaviourDescription& bd) {
+    checkFiniteStrainStrategyDefinitionConsistency(i, bd);
     if (bd.isStrainMeasureDefined()) {
       return bd.getStrainMeasure() != BehaviourDescription::LINEARISED;
     }
-    return bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy);
+    return bd.hasAttribute(getFiniteStrainStrategyAttributeName(i));
   }  // end of AbaqusInterfaceBase::hasFiniteStrainStrategy
 
   std::string AbaqusInterfaceBase::getFiniteStrainStrategy(
-      const BehaviourDescription& bd) {
-    checkFiniteStrainStrategyDefinitionConsistency(bd);
+      const std::string& i, const BehaviourDescription& bd) {
+    checkFiniteStrainStrategyDefinitionConsistency(i, bd);
     auto throw_if = [](const bool c, const std::string& msg) {
       tfel::raise_if(c, "AbaqusInterfaceBase::getFiniteStrainStrategy: " + msg);
     };
@@ -163,26 +167,25 @@ namespace mfront {
         throw_if(true, "unsupported strain measure");
       }
     }
-    throw_if(!bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
-             "no finite strain strategy defined");
-    return bd.getAttribute<std::string>(
-        AbaqusInterfaceBase::finiteStrainStrategy);
+    const auto a = getFiniteStrainStrategyAttributeName(i);
+    throw_if(!bd.hasAttribute(a), "no finite strain strategy defined");
+    return bd.getAttribute<std::string>(a);
   }  // end of AbaqusInterfaceBase::getFiniteStrainStrategy
 
   bool AbaqusInterfaceBase::hasOrthotropyManagementPolicy(
-      const BehaviourDescription& mb) {
-    return mb.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy);
+      const std::string& i, const BehaviourDescription& mb) {
+    return mb.hasAttribute(getOrthotropyManagementPolicyAttributeName(i));
   }  // end of AbaqusInterfaceBase::hasOrthotropyManagementPolicy
 
   std::string AbaqusInterfaceBase::getOrthotropyManagementPolicy(
-      const BehaviourDescription& mb) {
+      const std::string& i, const BehaviourDescription& mb) {
     return mb.getAttribute<std::string>(
-        AbaqusInterfaceBase::orthotropyManagementPolicy);
+        getOrthotropyManagementPolicyAttributeName(i));
   }  // end of AbaqusInterfaceBase::getOrthotropyManagementPolicy
 
   void AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(
-      const BehaviourDescription& mb) {
-    if (AbaqusInterfaceBase::hasOrthotropyManagementPolicy(mb)) {
+      const std::string& i, const BehaviourDescription& mb) {
+    if (AbaqusInterfaceBase::hasOrthotropyManagementPolicy(i, mb)) {
       tfel::raise_if(
           mb.getSymmetryType() != mfront::ORTHOTROPIC,
           "AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency: "
@@ -216,7 +219,9 @@ namespace mfront {
       tfel::raise_if(b, "AbaqusInterfaceBase::treatCommonKeywords: " + m);
     };
     if (k == "@AbaqusFiniteStrainStrategy") {
-      throw_if(bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
+      const auto a =
+          getFiniteStrainStrategyAttributeName(this->getInterfaceName());
+      throw_if(bd.hasAttribute(a),
                "a finite strain strategy has already been defined");
       throw_if(current == end, "unexpected end of file");
       const auto fs = current->value;
@@ -226,7 +231,7 @@ namespace mfront {
       ++(current);
       AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(bd,
                                                                           fs);
-      bd.setAttribute(AbaqusInterfaceBase::finiteStrainStrategy, fs, false);
+      bd.setAttribute(a, fs, false);
       return {true, current};
     }
     if (k == "@AbaqusOrthotropyManagementPolicy") {
@@ -243,11 +248,12 @@ namespace mfront {
       throw_if(bd.getSymmetryType() != mfront::ORTHOTROPIC,
                "orthotropy management policy is only valid "
                "for orthotropic behaviour");
-      throw_if(bd.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy),
+      const auto a =
+          getOrthotropyManagementPolicyAttributeName(this->getInterfaceName());
+      throw_if(bd.hasAttribute(a),
                "an orthotropy management policy has already been defined");
       throw_if(current == end, "unexpected end of file");
-      bd.setAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy,
-                      read(current->value), false);
+      bd.setAttribute(a, read(current->value), false);
       throw_if(++current == end, "unexpected end of file");
       throw_if(current->value != ";",
                "expected ';', read '" + current->value + '\'');
@@ -259,9 +265,10 @@ namespace mfront {
 
   unsigned short AbaqusInterfaceBase::getStateVariablesOffset(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    if ((bd.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy)) &&
-        (bd.getAttribute<std::string>(
-             AbaqusInterfaceBase::orthotropyManagementPolicy) == "MFront")) {
+    const auto i = this->getInterfaceName();
+    if ((AbaqusInterfaceBase::hasOrthotropyManagementPolicy(i, bd)) &&
+        (AbaqusInterfaceBase::getOrthotropyManagementPolicy(i, bd) ==
+         "MFront")) {
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::PLANESTRESS)) {
@@ -597,10 +604,10 @@ namespace mfront {
         if (vsize != 0) {
           out << "*Depvar\n" << vsize << ",\n";
           int i = 1;
-          if (mb.hasAttribute(
-                  AbaqusInterfaceBase::orthotropyManagementPolicy)) {
-            const auto omp = mb.getAttribute<std::string>(
-                AbaqusInterfaceBase::orthotropyManagementPolicy);
+          if (AbaqusInterfaceBase::hasOrthotropyManagementPolicy(
+                  this->getInterfaceName(), mb)) {
+            const auto omp = AbaqusInterfaceBase::getOrthotropyManagementPolicy(
+                this->getInterfaceName(), mb);
             if (omp == "MFront") {
               if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
                   (h == ModellingHypothesis::PLANESTRAIN) ||

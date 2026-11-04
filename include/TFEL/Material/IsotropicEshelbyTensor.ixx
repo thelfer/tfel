@@ -14,6 +14,8 @@
 #define LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_IXX
 
 #include <cmath>
+#include <algorithm>
+#include <type_traits>
 #include <numbers>
 #include <stdexcept>
 #include "TFEL/Math/General/IEEE754.hxx"
@@ -194,6 +196,26 @@ namespace tfel::material::homogenization::elasticity {
     return computeSphereHillPolarisationTensor<StressType>(Enu0.young, Enu0.nu);
   }  // end of function computeSphereHillPolarisationTensor
 
+  namespace internals {
+    /*!
+     * \brief convert an Eshelby tensor computed in double precision
+     * \tparam real: single precision type
+     * \param[in] S: Eshelby tensor
+     */
+    template <typename real>
+    TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
+    convertEshelbyTensorFromDoublePrecision(
+        const tfel::math::st2tost2<3u, double>& S) {
+      auto r = tfel::math::st2tost2<3u, real>{};
+      for (unsigned short i = 0; i != 6; ++i) {
+        for (unsigned short j = 0; j != 6; ++j) {
+          r(i, j) = real(static_cast<tfel::math::base_type<real>>(S(i, j)));
+        }
+      }
+      return r;
+    }  // end of convertEshelbyTensorFromDoublePrecision
+  }    // end of namespace internals
+
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
   computeAxisymmetricalEshelbyTensor(
@@ -209,6 +231,17 @@ namespace tfel::material::homogenization::elasticity {
 
     if (std::abs(e - 1) < precision) {
       return computeSphereEshelbyTensor<real>(nu);
+    }
+    if constexpr (std::is_same_v<tfel::math::base_type<real>, float>) {
+      // near the sphere, the following expressions are sums of terms
+      // diverging like 1 / (e^2 - 1): in single precision, about two
+      // significant digits are lost just above the default tolerance.
+      // They are evaluated in double precision.
+      return internals::convertEshelbyTensorFromDoublePrecision<real>(
+          computeAxisymmetricalEshelbyTensor<double>(
+              static_cast<double>(tfel::math::base_type_cast(nu)),
+              static_cast<double>(tfel::math::base_type_cast(e)),
+              static_cast<double>(precision)));
     }
     const auto zero = real{0};
     const auto e2 = e * e;
@@ -371,15 +404,31 @@ namespace tfel::material::homogenization::elasticity {
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
     }
+    if constexpr (std::is_same_v<tfel::math::base_type<real>, float>) {
+      // when two semi-axes are close, the following expressions lose
+      // several significant digits in single precision: they are evaluated
+      // in double precision
+      return internals::convertEshelbyTensorFromDoublePrecision<real>(
+          computeEshelbyTensor<double>(
+              static_cast<double>(tfel::math::base_type_cast(nu)),
+              static_cast<double>(tfel::math::base_type_cast(a)),
+              static_cast<double>(tfel::math::base_type_cast(b)),
+              static_cast<double>(tfel::math::base_type_cast(c)),
+              static_cast<double>(precision)));
+    }
 
-    if (std::abs((b - a) / c) < precision ||
-        std::abs((a - c) / b) < precision ||
-        std::abs((b - c) / a) < precision) {
-      if (std::abs((b - a) / c) < precision) {
+    // the differences of the semi-axes are compared to the smallest
+    // semi-axis, so that the relative difference of the two semi-axes
+    // which are considered equal is below the given precision
+    const auto lmin = std::min(std::min(a, b), c);
+    if (std::abs((b - a) / lmin) < precision ||
+        std::abs((a - c) / lmin) < precision ||
+        std::abs((b - c) / lmin) < precision) {
+      if (std::abs((b - a) / lmin) < precision) {
         return computeAxisymmetricalEshelbyTensor<real>(nu, c / b);
-      } else if (std::abs((a - c) / b) < precision) {
+      } else if (std::abs((a - c) / lmin) < precision) {
         return computeAxisymmetricalEshelbyTensor<real>(nu, b / a);
-      } else if (std::abs((b - c) / a) < precision) {
+      } else if (std::abs((b - c) / lmin) < precision) {
         return computeAxisymmetricalEshelbyTensor<real>(nu, a / b);
       }
     }

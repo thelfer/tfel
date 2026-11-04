@@ -749,6 +749,27 @@ namespace mfront::bbrick {
       }
     }
     if (!this->ihrs.empty()) {
+      // hardening rules: terms of the implicit equations associated with the
+      // back-strains which do not depend on the increment of the equivalent
+      // plastic strain (static recovery)
+      auto inactive = std::string{};
+      kid = decltype(khrs.size()){};
+      for (const auto& khr : khrs) {
+        if (this->fc != nullptr) {
+          inactive += khr->buildBackStrainImplicitEquationsForAnInactiveFlow(
+              bd, sp, *(this->fc), this->khrs, id, std::to_string(kid),
+              requiresAnalyticalJacobian);
+        } else {
+          inactive += khr->buildBackStrainImplicitEquationsForAnInactiveFlow(
+              bd, sp, *(this->sc), this->khrs, id, std::to_string(kid),
+              requiresAnalyticalJacobian);
+        }
+        ++kid;
+      }
+      if (!inactive.empty()) {
+        ib.code += "} else {\n";
+        ib.code += inactive;
+      }
       ib.code += "} // end if(this->bpl" + id + ")\n";
     }
     bd.setCode(uh, BehaviourData::Integrator, ib, BehaviourData::CREATEORAPPEND,

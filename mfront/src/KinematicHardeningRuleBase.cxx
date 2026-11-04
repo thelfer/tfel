@@ -87,14 +87,11 @@ namespace mfront::bbrick {
     // jacobian blocks computed by buildBackStrainImplicitEquations
     checkNoImplicitEquationNormalisationFactor(
         bd, dsl, KinematicHardeningRule::getVariableId("a", fid, kid));
-    auto mts = getMiddleOfTimeStepModifier(bd);
     if (!this->C.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       CodeBlock i;
       std::ostringstream mps;
-      mps << "this->" + Cn + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, this->C, mts);
-      mps << ";\n";
+      mps << generateMaterialPropertyInitializationCode(dsl, bd, Cn, this->C);
       i.code += mps.str();
       bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);

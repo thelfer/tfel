@@ -11,6 +11,9 @@
  * project under specific licensing conditions.
  */
 
+#include <cerrno>
+#include <cmath>
+#include <cstdlib>
 #include <sstream>
 #include <algorithm>
 #include <concepts>
@@ -145,14 +148,16 @@ namespace tfel::utilities {
                                           "to double");
     };
     throw_if(s.empty());
-    auto p = std::size_t{};
-    auto r = double{};
-    try {
-      r = std::stod(s, &p);
-    } catch (std::exception&) {
-      throw_if(true);
-    }
-    throw_if(p != s.size());
+    // std::stod is not used since it rejects the numbers which underflow,
+    // including the subnormal ones: as the standard streams, only the
+    // numbers which overflow are rejected
+    const auto errno_value = errno;
+    errno = 0;
+    char* pe = nullptr;
+    const auto r = std::strtod(s.c_str(), &pe);
+    const auto overflow = (errno == ERANGE) && (std::isinf(r));
+    errno = errno_value;
+    throw_if((pe != s.c_str() + s.size()) || overflow);
     return r;
   }
 
@@ -167,14 +172,14 @@ namespace tfel::utilities {
                                           "to long double");
     };
     throw_if(s.empty());
-    auto p = std::size_t{};
-    auto r = static_cast<long double>(0);
-    try {
-      r = std::stold(s, &p);
-    } catch (std::exception&) {
-      throw_if(true);
-    }
-    throw_if(p != s.size());
+    // see convert<double>
+    const auto errno_value = errno;
+    errno = 0;
+    char* pe = nullptr;
+    const auto r = std::strtold(s.c_str(), &pe);
+    const auto overflow = (errno == ERANGE) && (std::isinf(r));
+    errno = errno_value;
+    throw_if((pe != s.c_str() + s.size()) || overflow);
     return r;
   }
 

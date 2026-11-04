@@ -576,22 +576,30 @@ namespace mfront::bbrick {
    * \param[in] bd: behaviour description
    * \param[in] ihrs: list of isotropic hardening rules.
    * \param[in] fid: flow id
+   * \param[in] theta: expression of the value of the \f$\theta\f$ parameter
+   * used to evaluate the equivalent plastic strain at the middle of the time
+   * step
    */
   MFRONT_VISIBILITY_EXPORT std::string computeElasticLimit(
       const BehaviourDescription&,
       const std::vector<std::shared_ptr<IsotropicHardeningRule>>&,
-      const std::string&);
+      const std::string&,
+      const std::string& = "this->theta");
   /*!
    * \brief generate the code that evaluates the elastic limit and its
    * derivative with respect to the equivalent strain.
    * \param[in] bd: behaviour description
    * \param[in] ihrs: list of isotropic hardening rules.
    * \param[in] fid: flow id
+   * \param[in] theta: expression of the value of the \f$\theta\f$ parameter
+   * used to evaluate the equivalent plastic strain at the middle of the time
+   * step
    */
   MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitAndDerivative(
       const BehaviourDescription&,
       const std::vector<std::shared_ptr<IsotropicHardeningRule>>&,
-      const std::string&);
+      const std::string&,
+      const std::string& = "this->theta");
   /*!
    * \brief return a string representation of the eigen solver enum associated
    * with this string according to the following map:
