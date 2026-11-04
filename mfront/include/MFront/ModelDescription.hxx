@@ -47,6 +47,13 @@ namespace mfront {
       std::set<std::string> usedVariables;
       //! \brief list of variables modified by the function
       std::set<std::string> modifiedVariables;
+      /*!
+       * \brief list of the modified variables whose first modification in
+       * the function is a compound assignment (`+=`, `-=`, `*=` or `/=`),
+       * which reads their value at the beginning of the time step. The
+       * depth of these variables is at least one (checked by the DSL).
+       */
+      std::set<std::string> compoundAssignedVariables;
       //! \brief list of constant material properties used by the function
       std::set<std::string> constantMaterialProperties;
       //! \brief list of parameters used by the function
