@@ -186,60 +186,75 @@ namespace tfel::math {
     auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "Evaluator::TGroup::reduce: " + m);
     };
+    // replace the operator pointed by p and its operand(s) by the
+    // resulting expression, and return an iterator to this expression
+    auto reduce_operator = [this, &op, &throw_if](auto p) {
+      auto o = std::make_shared<TOperator>(
+          static_cast<const TOperator&>(*(p->get())));
+      auto next = std::next(p);
+      if (p == this->subExpr.begin()) {
+        throw_if(op != "-", "group began with an operator ('" + op + "')");
+        throw_if(next == this->subExpr.end(),
+                 "group ends by operator '" + op + "'");
+        throw_if((*next)->isOperator(), "group two successive operators");
+        *next = std::shared_ptr<Evaluator::TExpr>(new TNegation(*next));
+        this->subExpr.erase(p);
+        return this->subExpr.begin();
+      }
+      auto previous = std::prev(p);
+      throw_if(next == this->subExpr.end(),
+               "group ends by operator '" + op + "'");
+      if ((*previous)->isOperator()) {
+        throw_if(op != "-", "group two successive operators");
+        const auto po = std::dynamic_pointer_cast<TOperator>(*previous);
+        throw_if(po->getOperatorType() != "+",
+                 "group two successive operators");
+        throw_if((*next)->isOperator(), "group three successive operators");
+        *p = std::shared_ptr<Evaluator::TExpr>(new TNegation(*next));
+        p = this->subExpr.erase(next);
+        return --p;
+      }
+      if ((*next)->isOperator()) {
+        throw_if(op == "-", "group two successive operators");
+        const auto no = dynamic_cast<TOperator*>(next->get());
+        throw_if(no->getOperatorType() != "-",
+                 "group two successive operators");
+        auto nnext = std::next(next);
+        throw_if(nnext == this->subExpr.end(),
+                 "group ends by operator '" + op + "'");
+        throw_if((*nnext)->isOperator(), "group two successive operators");
+        *nnext = std::shared_ptr<Evaluator::TExpr>(new TNegation(*nnext));
+        next = this->subExpr.erase(next);
+        p = next - 1;
+        previous = next - 2;
+      }
+      *previous = std::shared_ptr<Evaluator::TExpr>(
+          new TBinaryOperation(*previous, o, *next));
+      ++next;
+      p = this->subExpr.erase(p, next);
+      return --p;
+    };
+    auto is_operator = [&op](const std::shared_ptr<Evaluator::TExpr>& e) {
+      return (e->isOperator()) &&
+             (static_cast<const TOperator&>(*(e.get())).getOperatorType() ==
+              op);
+    };
+    if (op == "**") {
+      // the exponentiation is right-associative, a**b**c being a**(b**c):
+      // the operators are reduced from the last one to the first one
+      auto p = this->subExpr.end();
+      while (p != this->subExpr.begin()) {
+        --p;
+        if (is_operator(*p)) {
+          p = reduce_operator(p);
+        }
+      }
+      return;
+    }
     auto p = this->subExpr.begin();
     while (p != this->subExpr.end()) {
-      if ((*p)->isOperator()) {
-        auto o = std::make_shared<TOperator>(
-            static_cast<const TOperator&>(*(p->get())));
-        if (o->getOperatorType() == op) {
-          auto next = std::next(p);
-          if (p == this->subExpr.begin()) {
-            throw_if(op != "-", "group began with an operator ('" + op + "')");
-            throw_if(next == this->subExpr.end(),
-                     "group ends by operator '" + op + "'");
-            throw_if((*next)->isOperator(), "group two successive operators");
-            *next = std::shared_ptr<Evaluator::TExpr>(new TNegation(*next));
-            this->subExpr.erase(p);
-            p = this->subExpr.begin();
-          } else {
-            auto previous = std::prev(p);
-            throw_if(next == this->subExpr.end(),
-                     "group ends by operator '" + op + "'");
-            if ((*previous)->isOperator()) {
-              throw_if(op != "-", "group two successive operators");
-              const auto po = std::dynamic_pointer_cast<TOperator>(*previous);
-              throw_if(po->getOperatorType() != "+",
-                       "group two successive operators");
-              throw_if((*next)->isOperator(),
-                       "group three successive operators");
-              *p = std::shared_ptr<Evaluator::TExpr>(new TNegation(*next));
-              p = this->subExpr.erase(next);
-              --p;
-            } else {
-              if ((*next)->isOperator()) {
-                throw_if(op == "-", "group two successive operators");
-                const auto no = dynamic_cast<TOperator*>(next->get());
-                throw_if(no->getOperatorType() != "-",
-                         "group two successive operators");
-                auto nnext = std::next(next);
-                throw_if(nnext == this->subExpr.end(),
-                         "group ends by operator '" + op + "'");
-                throw_if((*nnext)->isOperator(),
-                         "group two successive operators");
-                *nnext =
-                    std::shared_ptr<Evaluator::TExpr>(new TNegation(*nnext));
-                next = this->subExpr.erase(next);
-                p = next - 1;
-                previous = next - 2;
-              }
-              *previous = std::shared_ptr<Evaluator::TExpr>(
-                  new TBinaryOperation(*previous, o, *next));
-              ++next;
-              p = this->subExpr.erase(p, next);
-              --p;
-            }
-          }
-        }
+      if (is_operator(*p)) {
+        p = reduce_operator(p);
       }
       ++p;
     }

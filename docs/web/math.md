@@ -82,6 +82,11 @@ Let `x` and `y` be two variables, then:
 The standard priority of those operators has been
 respected. Parenthesis may be used to define sub-expressions.
 
+As in `Fortran` and `Python`, the exponentiation is right-associative:
+`x**y**z` is \(x^{\left(y^{z}\right)}\), i.e. `x**(y**z)`, and has a
+higher priority than the unary minus: `-x**2` is \(-x^{2}\) and
+`x**-y**z` is `x**(-(y**z))`.
+
 ### Standard function and constants
 
 This paragraph gives a list of functions known by the `Evaluator`

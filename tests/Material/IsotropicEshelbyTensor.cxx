@@ -51,6 +51,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     this->template test_Eshelby_limits<float, true>();
     this->template test_Eshelby_limits<double, true>();
     this->template test_Eshelby_limits<long double, true>();
+    this->template test_Eshelby_near_limits<true>();
     this->template test_localisation_tensors<double, true>();
     this->template test_hill_tensors<double, true>();
     this->template test_Eshelby_2d<double, false>();
@@ -60,6 +61,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     this->template test_Eshelby_limits<float, false>();
     this->template test_Eshelby_limits<double, false>();
     this->template test_Eshelby_limits<long double, false>();
+    this->template test_Eshelby_near_limits<false>();
     this->template test_localisation_tensors<double, false>();
     this->template test_hill_tensors<double, false>();
     return this->result;
@@ -263,13 +265,14 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(10));
       tfel::math::st2tost2<3u, real> SAxis_lim_2;
       if (std::same_as<real, float>) {
-        SAxis_lim_2 = computeEshelbyTensor<stress>(nu, lg{1.05}, lg{1}, lg{10});
+        SAxis_lim_2 =
+            computeEshelbyTensor<stress>(nu, lg{1.005}, lg{1}, lg{10});
       } else if (std::same_as<real, double>) {
         SAxis_lim_2 =
-            computeEshelbyTensor<stress>(nu, lg{1.0005}, lg{1}, lg{10});
+            computeEshelbyTensor<stress>(nu, lg{1.0001}, lg{1}, lg{10});
       } else if (std::same_as<real, long double>) {
         SAxis_lim_2 =
-            computeEshelbyTensor<stress>(nu, lg{1.00005}, lg{1}, lg{10});
+            computeEshelbyTensor<stress>(nu, lg{1.000005}, lg{1}, lg{10});
       }
 
       for (int i : {0, 1, 2, 3, 4, 5}) {
@@ -278,6 +281,49 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
                             eps);
           // std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
         }
+      }
+    }
+#endif /* _LIBCPP_VERSION */
+  }
+
+  /*!
+   * \brief nearly spherical spheroids and nearly axisymmetrical ellipsoids
+   * just above the tolerances: the single precision tensors must agree with
+   * the double precision ones, and the axisymmetrical formula must not be
+   * used for an ellipsoid whose semi-axes differ by more than the
+   * tolerance
+   */
+  template <bool use_qt>
+  void test_Eshelby_near_limits() {
+#ifndef _LIBCPP_VERSION
+    using stressf = typename tfel::config::Types<1u, float, use_qt>::stress;
+    using lgf = typename tfel::config::Types<1u, float, use_qt>::length;
+    using stressd = typename tfel::config::Types<1u, double, use_qt>::stress;
+    using lgd = typename tfel::config::Types<1u, double, use_qt>::length;
+    using namespace tfel::material::homogenization::elasticity;
+    static constexpr auto epsf =
+        static_cast<double>(std::numeric_limits<float>::epsilon());
+    const auto Sf1 = computeAxisymmetricalEshelbyTensor(0.3f, 1.0084f);
+    const auto Sd1 =
+        computeAxisymmetricalEshelbyTensor(0.3, static_cast<double>(1.0084f));
+    const auto Sf2 =
+        computeEshelbyTensor<stressf>(0.3f, lgf{3}, lgf{1.02f}, lgf{1});
+    const auto Sd2 = computeEshelbyTensor<stressd>(
+        0.3, lgd{3}, lgd{static_cast<double>(1.02f)}, lgd{1});
+    // reference without switch to the axisymmetrical formula
+    const auto Sd3 =
+        computeEshelbyTensor<stressd>(0.3, lgd{1000}, lgd{1.1}, lgd{1}, 0);
+    const auto Sd4 =
+        computeEshelbyTensor<stressd>(0.3, lgd{1000}, lgd{1.1}, lgd{1});
+    const auto distance = [](const auto& x, const auto& y) {
+      return std::abs(static_cast<double>(tfel::math::base_type_cast(x)) -
+                      static_cast<double>(tfel::math::base_type_cast(y)));
+    };
+    for (int i : {0, 1, 2, 3, 4, 5}) {
+      for (int j : {0, 1, 2, 3, 4, 5}) {
+        TFEL_TESTS_ASSERT(distance(Sf1(i, j), Sd1(i, j)) < 10 * epsf);
+        TFEL_TESTS_ASSERT(distance(Sf2(i, j), Sd2(i, j)) < 10 * epsf);
+        TFEL_TESTS_ASSERT(distance(Sd3(i, j), Sd4(i, j)) < 1e-10);
       }
     }
 #endif /* _LIBCPP_VERSION */

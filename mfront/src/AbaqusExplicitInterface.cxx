@@ -1620,18 +1620,21 @@ namespace mfront {
       out << "C0.changeBasis(R);\n"
           << "C1.changeBasis(R);\n";
     }
+    // two eigenvalues of C are considered equal if their difference is
+    // below sqrt(epsilon) times the trace of C, an upper bound of its
+    // largest eigenvalue
     out << "stensor<" << dime << "," << t << "> eto;\n"
         << "stensor<" << dime << "," << t << "> deto;\n"
+        << "const auto eps_C = std::sqrt(std::numeric_limits<" << t
+        << ">::epsilon());\n"
         << "std::tie(eto ,P0) = "
            "C0.computeIsotropicFunctionAndDerivative<stensor<"
         << dime << "," << t
-        << ">::FSESJACOBIEIGENSOLVER>(f,df,std::numeric_limits<" << t
-        << ">::epsilon());\n"
+        << ">::FSESJACOBIEIGENSOLVER>(f,df,eps_C*trace(C0));\n"
         << "std::tie(deto,P1) = "
            "C1.computeIsotropicFunctionAndDerivative<stensor<"
         << dime << "," << t
-        << ">::FSESJACOBIEIGENSOLVER>(f,df,std::numeric_limits<" << t
-        << ">::epsilon());\n"
+        << ">::FSESJACOBIEIGENSOLVER>(f,df,eps_C*trace(C1));\n"
         << "deto -= eto;\n";
     if (h == ModellingHypothesis::PLANESTRESS) {
       // on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne
