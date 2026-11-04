@@ -265,6 +265,10 @@ The `@Command` keyword executes a command. It supports the following options:
 - `output_validation_regex`: Regular expression to validate the command output.
   The output is concatenated into a single string for validation.
 - `shall_fail`: Boolean. If `true`, the command must fail for the test to pass.
+  If an output check (`expected_output`, `expected_numerical_output`,
+  `empty_output`, `output_validation_regex`) is also given, it is applied
+  to the output of the failed command, so that the test also checks the
+  reason of the failure.
 - `timeout`: Integer. Maximum allowed duration in seconds.
 
 Example:

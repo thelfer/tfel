@@ -331,8 +331,11 @@ namespace mfront {
       if (k == "@CalculiXGenerateMTestFileOnFailure") {
         check_interface_restriction();
       }
-      this->setGenerateMTestFileOnFailureAttribute(
-          bd, this->readBooleanValue(k, current, end));
+      // the MTest file generators of UMATInterfaceBase use the arguments of
+      // the UMAT entry points, which the calculix entry points do not have
+      throw_if(this->readBooleanValue(k, current, end),
+               "the generation of MTest files on failure is not supported "
+               "by the calculix interface");
       return {true, current};
     }
     return {false, current};
@@ -358,6 +361,13 @@ namespace mfront {
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
              "by CalculiX's native interface");
+    // CalculiX only gives the temperature at the end of the time step: the
+    // increment of a stress-free expansion can't be computed
+    throw_if(mb.requiresStressFreeExpansionTreatment(h),
+             "stress-free expansions are not supported "
+             "by CalculiX's native interface, which does not give the "
+             "temperature at the beginning of the time step. The thermal "
+             "expansion shall be declared in CalculiX");
     // get the modelling hypotheses to be treated
     const auto name = mb.getLibrary() + mb.getClassName();
     // output directories
@@ -650,9 +660,6 @@ namespace mfront {
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
-    if (this->shallGenerateMTestFileOnFailure(mb)) {
-      this->generateMTestFile1(out, mb);
-    }
     out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
@@ -736,10 +743,6 @@ namespace mfront {
           << "}\n"
           << "std::cout << std::endl;\n";
     }
-    if (this->shallGenerateMTestFileOnFailure(mb)) {
-      out << "} else {\n";
-      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
-    }
     out << "}\n";
     out << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
   }
@@ -780,9 +783,6 @@ namespace mfront {
         << "using namespace tfel::math;\n"
         << "using namespace tfel::material;\n"
         << "using real = calculix::CalculiXReal;\n";
-    if (this->shallGenerateMTestFileOnFailure(mb)) {
-      this->generateMTestFile1(out, mb);
-    }
     out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
@@ -881,10 +881,6 @@ namespace mfront {
           << "std::cout << std::endl;\n"
           << "}\n"
           << "std::cout << std::endl;\n";
-    }
-    if (this->shallGenerateMTestFileOnFailure(mb)) {
-      out << "} else {\n";
-      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
     }
     out << "}\n"
         << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
@@ -985,10 +981,6 @@ namespace mfront {
               "$(shell " + tfel_config + " --library-path)");
     insert_if(l.link_libraries,
               tfel::getLibraryInstallName("CalculiXInterface"));
-    if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(l.link_libraries,
-                tfel::getLibraryInstallName("MTestFileGenerator"));
-    }
     insert_if(l.link_libraries, "$(shell " + tfel_config +
                                     " --library-dependency "
                                     "--material --mfront-profiling)");

@@ -25,10 +25,15 @@
 #include "TFEL/System/wfstream.hxx"
 #include "TFEL/System/rfstream.hxx"
 
+//! \brief variable whose address is written
+static double value = 1.;
+
 static void write() {
   tfel::system::wfstream f("test.bin");
   f << "toto" << 12.;
   f << "tutu";
+  void* const p = &value;
+  f << p;
   f << "ab\ncd\n";
   f.close();
 }
@@ -45,6 +50,9 @@ static void read() {
   r.read(c, 4u);
   c[4] = '\0';
   assert(strcmp(c, "tutu") == 0);
+  void* p = nullptr;
+  r >> p;
+  assert(p == &value);
   assert(r.getLine() == "ab");
   assert(r.getLine() == "cd");
   // reading past the end of the file

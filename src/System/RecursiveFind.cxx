@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <set>
+#include <utility>
 #include <stdexcept>
 #include <cstring>
 #include <memory>
@@ -65,16 +67,85 @@ namespace tfel::system {
     return r;
   }  // end of recursiveFind
 
+#if !((defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__))
+  /*!
+   * \brief recursively search files matching a given regular
+   * expression from the given directory.
+   * \param[out] r          : the matching files, ordered by directories
+   * \param[in,out] visited : device and inode numbers of the directories
+   * already visited. Those directories are skipped, so that symbolic links
+   * to an ancestor directory do not lead to an endless search.
+   * \param[in]  re         : a regular expression
+   * \param[in]  name       : name of the directory from which the search
+   * starts
+   * \param[in]  b          : throw an exception if something wrong happens.
+   * \param[in]  depth      : depth reached in the recursive search
+   * \param[in]  mdepth     : maximum depth allowed
+   */
+  static void recursiveFind(std::map<std::string, std::vector<std::string>>& r,
+                            std::set<std::pair<dev_t, ino_t>>& visited,
+                            const std::regex& re,
+                            const std::string& name,
+                            const bool b,
+                            const unsigned short depth,
+                            const unsigned short mdepth) {
+    auto throw_if = [](const bool c, const std::string& m) {
+      raise_if(c, "recursiveFind: " + m);
+    };
+    using DIRHandler = std::unique_ptr<DIR, int (*)(DIR*)>;
+    DIRHandler dir(::opendir(name.c_str()), &::closedir);
+    if (depth > mdepth) {
+      throw_if(b, "maximal directory depth reached");
+      return;
+    }
+    if (!dir) {
+      if (b) {
+        systemCall::throwSystemError("can't open directory '" + name + "'",
+                                     errno);
+      }
+      return;
+    }
+    struct stat dbuf;
+    if (stat(name.c_str(), &dbuf) == 0) {
+      if (!visited.insert({dbuf.st_dev, dbuf.st_ino}).second) {
+        // directory already visited
+        return;
+      }
+    }
+    struct dirent* p;
+    while ((p = readdir(dir.get())) != nullptr) {
+      const auto file = name + tfel::system::dirSeparator() + p->d_name;
+      struct stat buf;
+      if (stat(file.c_str(), &buf) == 0) {
+        if (S_ISREG(buf.st_mode)) {
+          if (std::regex_match(p->d_name, re)) {
+            r[name].emplace_back(p->d_name);
+          }
+        } else if (S_ISDIR(buf.st_mode)) {
+          if ((strcmp(p->d_name, ".") != 0) && (strcmp(p->d_name, "..") != 0)) {
+            std::map<std::string, std::vector<std::string>> r2;
+            recursiveFind(r2, visited, re, name + '/' + p->d_name, b, depth + 1,
+                          mdepth);
+            r.insert(r2.begin(), r2.end());
+          }
+        }
+      } else {
+        throw_if(b, "can't stat file '" + file + "'");
+      }
+    }
+  }  // end of recursiveFind
+#endif /* !((defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)) */
+
   void recursiveFind(std::map<std::string, std::vector<std::string>>& r,
                      const std::regex& re,
                      const std::string& name,
                      const bool b,
                      const unsigned short depth,
                      const unsigned short mdepth) {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     auto throw_if = [](const bool c, const std::string& m) {
       raise_if(c, "recursiveFind: " + m);
     };
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     if (depth > mdepth) {
       throw_if(b, "maximal directory depth reached");
       return;
@@ -94,8 +165,16 @@ namespace tfel::system {
           continue;
         }
         if (fh.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-          recursiveFind(r, re, name + "\\" + fh.cFileName, b, depth + 1,
-                        mdepth);
+          // symbolic links and junctions to directories are not followed,
+          // as they may point to an ancestor directory
+          const auto link =
+              (fh.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) &&
+              ((fh.dwReserved0 == IO_REPARSE_TAG_SYMLINK) ||
+               (fh.dwReserved0 == IO_REPARSE_TAG_MOUNT_POINT));
+          if (!link) {
+            recursiveFind(r, re, name + "\\" + fh.cFileName, b, depth + 1,
+                          mdepth);
+          }
         } else {
           if (std::regex_match(fh.cFileName, re)) {
             r[name].emplace_back(fh.cFileName);
@@ -109,39 +188,8 @@ namespace tfel::system {
     }
     ::FindClose(f);
 #else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-    using DIRHandler = std::unique_ptr<DIR, int (*)(DIR*)>;
-    DIRHandler dir(::opendir(name.c_str()), &::closedir);
-    if (depth > mdepth) {
-      throw_if(b, "maximal directory depth reached");
-      return;
-    }
-    if (!dir) {
-      if (b) {
-        systemCall::throwSystemError("can't open directory '" + name + "'",
-                                     errno);
-      }
-      return;
-    }
-    struct dirent* p;
-    while ((p = readdir(dir.get())) != nullptr) {
-      const auto file = name + tfel::system::dirSeparator() + p->d_name;
-      struct stat buf;
-      if (stat(file.c_str(), &buf) == 0) {
-        if (S_ISREG(buf.st_mode)) {
-          if (std::regex_match(p->d_name, re)) {
-            r[name].emplace_back(p->d_name);
-          }
-        } else if (S_ISDIR(buf.st_mode)) {
-          if ((strcmp(p->d_name, ".") != 0) && (strcmp(p->d_name, "..") != 0)) {
-            std::map<std::string, std::vector<std::string>> r2;
-            recursiveFind(r2, re, name + '/' + p->d_name, b, depth + 1, mdepth);
-            r.insert(r2.begin(), r2.end());
-          }
-        }
-      } else {
-        throw_if(b, "can't stat file '" + file + "'");
-      }
-    }
+    auto visited = std::set<std::pair<dev_t, ino_t>>{};
+    recursiveFind(r, visited, re, name, b, depth, mdepth);
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   }    // end of recursiveFind
 

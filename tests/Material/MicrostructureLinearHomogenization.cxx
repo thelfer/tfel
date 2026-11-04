@@ -17,6 +17,7 @@
 
 #include <limits>
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <typeinfo>
 #include "TFEL/Config/TFELTypes.hxx"
@@ -53,6 +54,8 @@ struct MicrostructureLinearHomogenizationTest final
     this->template user_defined_distribution<real, real, real>();
     this->template test_poly<real, stress, length>();
     this->template test_poly<real, real, real>();
+    this->template test_oriented_anisotropic_phases<real, stress, length>();
+    this->template test_oriented_anisotropic_phases<real, real, real>();
 
     return this->result;
   }
@@ -286,6 +289,58 @@ struct MicrostructureLinearHomogenizationTest final
     auto Chom_DS_1 = h_s_1.homogenized_stiffness;
 
   }  // end of test_poly
+
+  /*!
+   * The elasticity of an oriented phase is given in the local basis of its
+   * inclusions: a cubic crystal (copper) in a rotated basis.
+   */
+  template <typename real, typename stress, typename length>
+  void test_oriented_anisotropic_phases() {
+    using namespace tfel::math;
+    using namespace tfel::material::homogenization::elasticity;
+    const auto C11 = stress(168.4e9);
+    const auto C12 = stress(121.4e9);
+    const auto C44 = stress(75.4e9);
+    auto C_loc = st2tost2<3u, stress>(stress(0));
+    for (unsigned short i = 0; i != 3; ++i) {
+      for (unsigned short j = 0; j != 3; ++j) {
+        C_loc(i, j) = (i == j) ? C11 : C12;
+      }
+      C_loc(i + 3, i + 3) = 2 * C44;
+    }
+    const auto t = real(0.4);
+    const auto p = real(1.1);
+    const tvector<3u, real> n_a = {std::cos(t), std::sin(t), real(0)};
+    const tvector<3u, real> n_b = {-std::sin(t) * std::cos(p),
+                                   std::cos(t) * std::cos(p), std::sin(p)};
+    const auto n_c = cross_product<real>(n_a, n_b);
+    const rotation_matrix<real> r_glob_loc = {
+        n_a[0], n_b[0], n_c[0], n_a[1], n_b[1], n_c[1], n_a[2], n_b[2], n_c[2]};
+    const st2tost2<3u, stress> C_glob =
+        change_basis(C_loc / stress(1), transpose(r_glob_loc)) * stress(1);
+    const auto KG0 = tfel::material::KGModuli(stress(1e11), stress(4e10));
+    const auto C_0 = 3 * KG0.kappa * st2tost2<3u, real>::J() +
+                     2 * KG0.mu * st2tost2<3u, real>::K();
+    // localisation tensor in an isotropic matrix, given by its moduli or by
+    // its stiffness
+    const auto A1 = computeEllipsoidLocalisationTensor<stress>(
+        KG0, C_loc, n_a, length(3), n_b, length(1), length(1));
+    const auto A2 = computeAnisotropicLocalisationTensor<stress>(
+        C_0, C_loc, n_a, length(3), n_b, length(1), length(1));
+    TFEL_TESTS_ASSERT(tfel::material::relative_error(A1, A2) < real(1e-6));
+    // a polycrystal of two grains with the same orientation is the rotated
+    // crystal
+    const auto sph = Sphere<length>();
+    Grain<stress> grain1(sph, real(0.5), C_loc, n_a, n_b);
+    Grain<stress> grain2(sph, real(0.5), C_loc, n_a, n_b);
+    Polycrystal<stress> poly;
+    std::ignore = poly.addGrain(grain1);
+    std::ignore = poly.addGrain(grain2);
+    const auto h =
+        computeSelfConsistent<3u, stress>(poly, real(1e-8), C_0, false);
+    TFEL_TESTS_ASSERT(tfel::material::relative_error(h.homogenized_stiffness,
+                                                     C_glob) < real(1e-6));
+  }  // end of test_oriented_anisotropic_phases
 
 };  // end of struct MicrostructureLinearHomogenizationTest
 

@@ -778,7 +778,10 @@ It can be used as follows:
 auto a = map_array<tvector<2u, stensor<2u, double>>>(ptr);
 ~~~~
 
-where `ptr` is a pointer to a suitable memory location.
+where `ptr` is a pointer to a suitable memory location. When the mapped
+objects hold quantities, this memory location holds values of their
+base type (`double` for `qt<Stress>` or `stensor<2u, qt<Stress>>`), as
+for the views created by the `map` function.
 
 ### The `map_derivative` function
 

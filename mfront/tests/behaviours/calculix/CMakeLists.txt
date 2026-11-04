@@ -7,10 +7,7 @@ set(mfront_tests_SOURCES
   DSLOptionsTest
   InitializationFailureTest
   Elasticity
-  Elasticity2
-  Elasticity3
   OrthotropicElastic
-  OrthotropicElastic2
   JohnsonCook_s
   JohnsonCook_ssr
   JohnsonCook_ssrt
@@ -20,20 +17,11 @@ set(mfront_tests_SOURCES
   LogarithmicStrainNortonCreep
   SaintVenantKirchhoffElasticity
   FiniteStrainSingleCrystal
-  ComputeThermalExpansion
-  ComputeThermalExpansion2
-  ComputeThermalExpansion3
   ParameterTest
   ParameterTest2
   ProfilerTest
   ProfilerTest2
   ProfilerTest3)
-mfront_dependencies(MFrontCalculiXBehaviours
-  ThermalExpansionCoefficientTest
-  ThermalExpansionCoefficientTest2
-  ThermalExpansionCoefficientTest_1
-  ThermalExpansionCoefficientTest_2
-  ThermalExpansionCoefficientTest_3)
 
 mfront_behaviour_check_library(MFrontCalculiXBehaviours calculix
   ${mfront_tests_SOURCES})
@@ -153,12 +141,6 @@ test_calculix(elasticity10)
 test_calculix(elasticity11)
 test_calculix(elasticity14)
 test_calculix(elasticity15)
-test_calculix(elasticity18)
-test_calculix(elasticity19)
-test_calculix(elasticity20)
-test_calculix(elasticity21)
-test_calculix(elasticity22)
-test_calculix(elasticity23)
 test_calculix(saintvenantkirchhoffelasticity-uniaxialloading-sig11-3D)
 test_calculix(saintvenantkirchhoffelasticity-uniaxialloading-sig22-3D)
 test_calculix(saintvenantkirchhoffelasticity-uniaxialloading-sig33-3D)

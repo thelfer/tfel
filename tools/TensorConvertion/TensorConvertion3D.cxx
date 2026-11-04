@@ -11,9 +11,10 @@
  * project under specific licensing conditions.
  */
 
+#include <cstdlib>
 #include <iostream>
 
-unsigned short index(const unsigned short i, const unsigned short j) {
+static int index(const unsigned short i, const unsigned short j) {
   if ((i == j) && (i < 3)) {
     return i;
   } else if ((i == 0) && (j == 1)) {
@@ -29,28 +30,29 @@ unsigned short index(const unsigned short i, const unsigned short j) {
   } else if ((i == 2) && (j == 1)) {
     return 8;
   }
+  return -1;
 }
 
-// CIJKL=1/J(K_{IJKN}*F_{LN}
-void t2tot2() for (unsigned short i = 0; i != 3; ++i) {
-  for (unsigned short j = 0; j != 3; ++j) {
-    auto ri = index(i, j);
-    for (unsigned short k = 0; k != 3; ++k) {
-      for (unsigned short l = 0; l != 3; ++l) {
-        auto rj = index(k, l);
-        std::cout << "C(" << ri << "," << rj << ") = 1/J*(";
-        for (unsigned short n = 0; n != 3; ++n) {
-          if (n != 0) {
-            std::cout << "+";
+int main() {
+  // CIJKL=1/J(K_{IJKN}*F_{LN}
+  for (unsigned short i = 0; i != 3; ++i) {
+    for (unsigned short j = 0; j != 3; ++j) {
+      const auto ri = index(i, j);
+      for (unsigned short k = 0; k != 3; ++k) {
+        for (unsigned short l = 0; l != 3; ++l) {
+          const auto rj = index(k, l);
+          std::cout << "C(" << ri << "," << rj << ") = 1/J*(";
+          for (unsigned short n = 0; n != 3; ++n) {
+            if (n != 0) {
+              std::cout << "+";
+            }
+            std::cout << "K(" << ri << "," << index(k, n) << ")*F("
+                      << index(l, n) << ")";
           }
-          std::cout << "K(" << ri << "," << index(k, n) << ")*F(" << index(l, n)
-                    << ")";
+          std::cout << ");\n";
         }
-        std::cout << ");\n";
       }
     }
   }
+  return EXIT_SUCCESS;
 }
-}
-
-int main() { return EXIT_SUCCESS; }
