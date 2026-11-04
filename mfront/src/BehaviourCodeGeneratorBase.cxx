@@ -956,11 +956,9 @@ namespace mfront {
              "invalid number of functions in model '" + md.className + "'");
     throw_if(f.name.empty(), "unnamed function");
     // the values at the beginning of the time step of the outputs updated by
-    // a compound assignment whose depth is at least one are passed as
-    // arguments, as the other values at the beginning of the time step (see
-    // the mfront model interface)
-    const auto updatedOutputs =
-        getOutputsStartingFromBeginningOfTimeStepValue(md, f);
+    // a compound assignment are passed as arguments, as the other values at
+    // the beginning of the time step (see the mfront model interface)
+    const auto& updatedOutputs = f.compoundAssignedVariables;
     throw_if((f.usedVariables.empty()) && (updatedOutputs.empty()) &&
                  (!f.useTimeIncrement),
              "no used variable for function '" + f.name + "'");

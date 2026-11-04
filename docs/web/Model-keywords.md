@@ -360,6 +360,11 @@ The `@Function` keyword defines a computational part of the
 model. This keyword is followed by a string defining the name of this
 part of the computation.
 
+An output whose first modification in a function is a compound
+assignment (`+=`, `-=`, `*=` or `/=`) starts from its value at the
+beginning of the time step: its depth must be at least one (see the
+`setDepth` method).
+
 ## Example
 
 ~~~~{.cpp}

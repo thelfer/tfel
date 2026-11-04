@@ -224,11 +224,9 @@ namespace mfront {
       throw_if(f.name.empty(), "unnamed function");
       throw_if(f.modifiedVariables.empty(),
                "no modified variable for function '" + f.name + "'");
-      // an output updated by a compound assignment whose depth is at least
-      // one starts from its value at the beginning of the time step, which
-      // is passed as argument
-      const auto updatedOutputs =
-          getOutputsStartingFromBeginningOfTimeStepValue(md, f);
+      // an output updated by a compound assignment starts from its value at
+      // the beginning of the time step, which is passed as argument
+      const auto& updatedOutputs = f.compoundAssignedVariables;
       throw_if((f.usedVariables.empty()) && (updatedOutputs.empty()) &&
                    (!f.useTimeIncrement),
                "no used variable for function '" + f.name + "'");

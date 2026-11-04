@@ -661,6 +661,19 @@ namespace mfront {
     for (const auto& df : this->md.functions) {
       throw_if(df.name == f.name, "function " + f.name + " already declared.");
     }
+    // an output updated by a compound assignment starts from its value at
+    // the beginning of the time step, which requires a depth of at least one
+    for (const auto& v : f.compoundAssignedVariables) {
+      const auto& output = this->md.outputs.getVariable(v);
+      throw_if(
+          output.getAttribute<unsigned short>(VariableDescription::depth, 0) ==
+              0,
+          "output '" + v +
+              "' is updated by a compound assignment in function '" + f.name +
+              "', which requires its value at the beginning of the time step, "
+              "but its depth is 0 (use '" +
+              v + ".setDepth(1);')");
+    }
     for (auto p2 = f.modifiedVariables.begin(); p2 != f.modifiedVariables.end();
          ++p2) {
       auto p3 = f.usedVariables.find(*p2);
