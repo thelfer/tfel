@@ -157,7 +157,9 @@ if(enable-mfront-quantity-tests)
     PlasticityTest24_qt_nj
     PlasticityTest25_qt
     MohrCoulombTest_qt
-    MichelAndSuquet1992HollowSphereTest_qt)
+    MichelAndSuquet1992HollowSphereTest_qt
+    GursonTvergaardNeedleman1982_qt
+    RousselierTanguyBesson2002_qt)
 
 endif(enable-mfront-quantity-tests)
 
@@ -253,6 +255,11 @@ generictest_standardelastovicoplasticitybrick(HarmonicSumOfNortonHoffViscoplasti
     HarmonicSumOfNortonHoffViscoplasticFlowsTest3
     MFrontStandardElastoViscoPlasticityBrickBehaviours
     HarmonicSumOfNortonHoffViscoplasticFlowsTest3)
+
+generictest_standardelastovicoplasticitybrick(ElasticContributionToPorosityGrowth-compaction
+    ElasticContributionToPorosityGrowth-compaction
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    ElasticContributionToPorosityGrowth)
 
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
     GursonTvergaardNeedleman1982-test1
