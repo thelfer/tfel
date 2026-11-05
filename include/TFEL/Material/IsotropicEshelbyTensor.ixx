@@ -372,7 +372,7 @@ namespace tfel::material::homogenization::elasticity {
       using NumericType = tfel::math::base_type<real>;
       const auto tol = std::sqrt(std::numeric_limits<NumericType>::epsilon());
       const auto n_ab = n_a | n_b;
-      if (not(std::abs(n_ab) <= tol * norm(n_a) * norm(n_b))) {
+      if (!(std::abs(n_ab) <= tol * norm(n_a) * norm(n_b))) {
         tfel::reportContractViolation(msg);
       }
       if (tfel::math::ieee754::fpclassify(n_ab) == FP_ZERO) {
