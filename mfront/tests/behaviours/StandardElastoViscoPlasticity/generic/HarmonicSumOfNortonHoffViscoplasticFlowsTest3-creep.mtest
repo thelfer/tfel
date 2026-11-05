@@ -1,0 +1,40 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+@StressEpsilon 1e-2;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// constant multiaxial stress: the viscoplastic strain rate is constant
+@Real 'Sxx' 100e6;
+@Real 'Syy' 35e6;
+@Real 'Szz' -25e6;
+@Real 'Sxy' 30e6;
+@Real 'Sxz' 20e6;
+@Real 'Syz' -15e6;
+@ImposedStress 'SXX' 'Sxx';
+@ImposedStress 'SYY' 'Syy';
+@ImposedStress 'SZZ' 'Szz';
+@ImposedStress 'SXY' 'Sxy';
+@ImposedStress 'SXZ' 'Sxz';
+@ImposedStress 'SYZ' 'Syz';
+@Times{0, 1e-2 in 10};
+
+// von Mises stress, with Sij = sqrt(2) * sigma_ij for i != j
+@Real 'seq' 'sqrt(((Sxx - Syy) ** 2 + (Syy - Szz) ** 2 + (Szz - Sxx) ** 2) / 2 + 3 * (Sxy ** 2 + Sxz ** 2 + Syz ** 2) / 2)';
+
+// harmonic sum of two Norton-Hoff laws: 1 / dp = 1 / dp1 + 1 / dp2
+@Real 'K' 100e6;
+@Real 'dp1' '(seq / K) ** 3';
+@Real 'dp2' '(seq / K) ** 20';
+@Evolution<function> 'p' 't / (1 / dp1 + 1 / dp2)';
+
+@Real 'E' 150e9;
+@Real 'nu' 0.3;
+@Test<function> 'EquivalentViscoplasticStrain' 'p' 1e-10;
+@Test<function> 'EXX' '(Sxx - nu * (Syy + Szz)) / E + p * (2 * Sxx - Syy - Szz) / (2 * seq)' 1e-10;
+@Test<function> 'EYY' '(Syy - nu * (Szz + Sxx)) / E + p * (2 * Syy - Szz - Sxx) / (2 * seq)' 1e-10;
+@Test<function> 'EZZ' '(Szz - nu * (Sxx + Syy)) / E + p * (2 * Szz - Sxx - Syy) / (2 * seq)' 1e-10;
+@Test<function> 'EXY' '(1 + nu) * Sxy / E + 3 * p * Sxy / (2 * seq)' 1e-10;
+@Test<function> 'EXZ' '(1 + nu) * Sxz / E + 3 * p * Sxz / (2 * seq)' 1e-10;
+@Test<function> 'EYZ' '(1 + nu) * Syz / E + 3 * p * Syz / (2 * seq)' 1e-10;
