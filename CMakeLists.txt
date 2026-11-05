@@ -434,6 +434,13 @@ endif()
 add_subdirectory(mfm-test-generator)
 add_subdirectory(env)
 
+# Generation of the stubs of the python modules using pybind11-stubgen.
+# This call is placed at the end of the file as it requires that all the
+# python modules and all the TFEL libraries have been declared.
+if(enable-python-bindings)
+  generate_python_stubs()
+endif(enable-python-bindings)
+
 #documentations
 add_custom_target(doc)
 

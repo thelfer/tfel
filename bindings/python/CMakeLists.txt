@@ -6,7 +6,6 @@ if(enable-testing)
   add_subdirectory(tests)
 endif()
 
-# Generation of the stubs of the python modules using pybind11-stubgen.
-# This call shall be placed after all the calls to add_subdirectory as it
-# requires that all the python modules have been declared.
-generate_python_stubs()
+# The generation of the stubs of the python modules using pybind11-stubgen is
+# deferred: see the end of the main CMakeLists.txt, where the
+# generate_python_stubs function is called.

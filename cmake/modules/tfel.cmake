@@ -173,6 +173,9 @@ function(tfel_library_internal name component)
   endif(${ARGC} LESS 2)
   add_library(${name} ${ARGN})
   add_library(tfel::${name} ALIAS ${name})
+  # reference to the library, used by generate_python_stubs to know the
+  # directories containing the dynamic link libraries of the build tree
+  set_property(GLOBAL APPEND PROPERTY TFEL_LIBRARIES "${name}")
   if(TFEL_APPEND_SUFFIX)
     set(export_install_path "share/tfel-${TFEL_SUFFIX}/cmake")
   else(TFEL_APPEND_SUFFIX)
