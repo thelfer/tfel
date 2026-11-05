@@ -248,7 +248,8 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                            "@Command \"true\"{empty_output: false};\n"));
     // a warning is written when a comparison requiring two precisions uses the
     // second precision of a previous `@Precision` keyword
-    const auto warns = [](const std::string& name, const std::string& keywords) {
+    const auto warns = [](const std::string& name,
+                          const std::string& keywords) {
       tfel::raise_if(!run(name, keywords + "@Test 'test_TestLauncher_B.res' "
                                            "'test_TestLauncher_B.res' 2;\n"),
                      "test_TestLauncher::execute: test '" + name + "' failed");
