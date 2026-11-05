@@ -188,6 +188,11 @@ namespace tfel::check {
                               formatted. */
     double prec = 1.e-8;
     double precision2 = 0.;
+    /*!
+     * \brief true if the last `@Precision` keyword gave one value and a value
+     * of `precision2` given by a previous one is still in use
+     */
+    bool keepsPreviousPrecision2 = false;
     //! \brief the type of comparison of the test (absolute, relative...)
     std::shared_ptr<Comparison> comparison;
     tms timeStart, timeStop; /**!< tms struct used by ClockAction */

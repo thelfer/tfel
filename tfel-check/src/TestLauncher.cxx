@@ -543,6 +543,17 @@ namespace tfel::check {
       return f;
     };
     auto make_test = [this] {
+      const auto* const c = this->comparison.get();
+      if ((this->keepsPreviousPrecision2) &&
+          ((dynamic_cast<const RelativeAndAbsoluteComparison*>(c) != nullptr) ||
+           (dynamic_cast<const MixedComparison*>(c) != nullptr))) {
+        this->log.addMessage(
+            this->file +
+            ": warning: the last '@Precision' keyword gave one value, the "
+            "second precision of a previous one is still in use (" +
+            tfel::utilities::convert(this->precision2) + ")");
+        this->keepsPreviousPrecision2 = false;
+      }
       auto test = std::make_shared<Test>();
       test->setComparison(this->comparison);
       test->setPrec(this->prec);
@@ -611,6 +622,9 @@ namespace tfel::check {
     if (this->current->value != ";") {
       // Optional second precision
       this->precision2 = CxxTokenizer::readDouble(this->current, this->end());
+      this->keepsPreviousPrecision2 = false;
+    } else {
+      this->keepsPreviousPrecision2 = this->precision2 > 0;
     }
     this->readSpecifiedToken("TestLauncher::treatPrecision", ";");
   }  // end of treatPrecision

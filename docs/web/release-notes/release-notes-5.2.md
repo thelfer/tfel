@@ -783,6 +783,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1273: [tfel-check] Warning when @Precision with one value keeps the second precision of a previous @Precision
+
+For more details, see <https://github.com/thelfer/tfel/issues/1273>
+
 ## Issue 1332: [mfront] type identifiers of the derivatives of tensorial type aliases (derivative_type<StressStensor, StrainStensor>) are decoded as another type by MTest and MGIS
 
 For more details, see <https://github.com/thelfer/tfel/issues/1332>
