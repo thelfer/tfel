@@ -1299,14 +1299,23 @@ with:
 \)
 - \(
 \Psi^{\left(\tenseur{X}\right)}\left(\tenseur{X}\right)=
-\frac{\left<D\,J\left(\tenseur{X}\right)-\omega\,C\right>^{m}}{1-\omega}\,
+\frac{\left<D\,J\left(\tenseur{X}\right)-\omega\,C\right>^{m}}{\left(1-\omega\right)^{m}}\,
 \frac{1}{\left(D\,J\left(\tenseur{X}\right)\right)^{m}}
 \)
 - \(
 \Psi\left(\tenseur{a}\right)=
-\frac{\left<D\,J\left(\tenseur{a}\right)-\frac{3}{2}\omega\right>^{m}}{1-\omega}\,
+\frac{\left<D\,J\left(\tenseur{a}\right)-\frac{3}{2}\omega\right>^{m}}{\left(1-\omega\right)^{m}}\,
 \frac{1}{\left(D\,J\left(\tenseur{a}\right)\right)^{m}}
 \)
+
+> **Note**
+>
+> For \(m=1\), this is the rule used in @chaboche_cyclic_2012. For other
+> values of \(m\), this rule differs from equation 7 of this paper, which
+> has two exponents \(m_{1}\) and \(m_{2}\), and whose denominator is
+> \(D\,J\left(\tenseur{X}\right)^{m_{2}}\). Here, under monotonic loading,
+> \(J\left(\tenseur{X}\right)\) saturates at \(C/D\) whatever the value of
+> \(m\).
 
 #### Example
 

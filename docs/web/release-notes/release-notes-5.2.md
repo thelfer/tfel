@@ -908,6 +908,9 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1376: [mfront-doc] Formula of the Chaboche 2012 kinematic hardening rule differs from the code for m != 1
+
+For more details, see <https://github.com/thelfer/tfel/issues/1376>
 ## Issue 1359: [mfront] FiniteStrainSingleCrystal: corrections of the derivatives of the normalised plastic deformation gradient increment, test behaviours and option of the brick
 
 For more details, see <https://github.com/thelfer/tfel/issues/1359>
