@@ -1,0 +1,25 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'ImposedDamage' {0 : 0, 1 : 0, 2 : 0.6};
+
+// multiaxial strain, then a damage under a constant strain
+@ImposedStrain 'EXX' {0 : 0, 1 : 1e-3, 2 : 1e-3};
+@ImposedStrain 'EYY' {0 : 0, 1 : 4e-4, 2 : 4e-4};
+@ImposedStrain 'EZZ' {0 : 0, 1 : -3e-4, 2 : -3e-4};
+@ImposedStrain 'EXY' {0 : 0, 1 : 5e-4, 2 : 5e-4};
+@ImposedStrain 'EXZ' {0 : 0, 1 : 2e-4, 2 : 2e-4};
+@ImposedStrain 'EYZ' {0 : 0, 1 : -6e-4, 2 : -6e-4};
+@Times{0, 1 in 5, 2 in 5};
+
+// stress = (1 - d) * (l * tr(e) * I + 2 * m * e)
+@Real 'l' '150e9 * 0.3 / ((1 + 0.3) * (1 - 2 * 0.3))';
+@Real 'm' '150e9 / (2 * (1 + 0.3))';
+@Test<function> 'SXX' '(1 - ImposedDamage) * (l * (EXX + EYY + EZZ) + 2 * m * EXX)' 1e-1;
+@Test<function> 'SYY' '(1 - ImposedDamage) * (l * (EXX + EYY + EZZ) + 2 * m * EYY)' 1e-1;
+@Test<function> 'SZZ' '(1 - ImposedDamage) * (l * (EXX + EYY + EZZ) + 2 * m * EZZ)' 1e-1;
+@Test<function> 'SXY' '(1 - ImposedDamage) * 2 * m * EXY' 1e-1;
+@Test<function> 'SXZ' '(1 - ImposedDamage) * 2 * m * EXZ' 1e-1;
+@Test<function> 'SYZ' '(1 - ImposedDamage) * 2 * m * EYZ' 1e-1;

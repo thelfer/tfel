@@ -47,6 +47,13 @@ library, see below.
 
 # Known incompatibilities
 
+- The `enable-sanitize-options` option is no longer a boolean option: it
+  now takes the list of the sanitizers to enable, e.g.
+  `-Denable-sanitize-options="address;undefined"`. Enabling all the
+  sanitizers at once was indeed meaningless as most sanitizers cannot be
+  combined (for instance `address`, `thread` and `memory`). Each
+  sanitizer can also be enabled individually using its dedicated
+  `enable-<name>-sanitizer` option, see below.
 - `cmake` \(3.20\) or later is now required to build `TFEL`.
 - `MFront`' interfaces have to implement a method named `setOptions`.
 - The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
@@ -138,6 +145,20 @@ library, see below.
   the elasticity of the inclusion as well, as documented. The results of
   the dilute, Mori-Tanaka and self-consistent schemes with such phases
   change.
+- The `FiniteStrainSingleCrystal` brick takes into account, in the
+  jacobian and the consistent tangent operator, the derivatives of the
+  normalisation of the inverse of the plastic deformation gradient
+  increment (see Issues #1309 and #1359). These derivatives were
+  explicitly neglected, as numerical tests showed (or at least seemed to
+  show) that they were negligible. The residual is unchanged, so the
+  results only change within the convergence criteria, unless the
+  sub-stepping changes: the number of local and global iterations
+  changes, and decreases significantly when the deformation gradient is
+  not fully imposed. The boolean option
+  `plastic_deformation_gradient_normalisation_corrections` of the brick,
+  which is `true` by default, allows users to easily test if this
+  correction affects their results: setting it to `false` restores the
+  previous derivatives.
 
 # Improvements to the build system
 
@@ -148,6 +169,78 @@ library, see below.
 - `enable-tdls-as-default-linear-system-solver-in-mfront`: use `TDLS`
   as the default linear solver. Requires `enable-tdls` to be `ON`.
   `OFF` by default.
+
+## Sanitizers and hardening options
+
+The support for sanitizers has been modularised: the `enable-sanitize-options`
+option takes the list of the sanitizers to enable (a comma may be used as a
+separator instead of a semicolon), for instance:
+
+~~~~{.bash}
+$ cmake <srcdir> -Denable-sanitize-options="address;undefined"
+~~~~
+
+The available sanitizers depend on the compiler and on its version. The
+`address`, `thread` and `memory` sanitizers cannot be used simultaneously.
+
+Each sanitizer also has a dedicated option, whose name is obtained from the
+sanitizer name: `enable-<name>-sanitizer`, e.g.
+`-Denable-bounds-strict-sanitizer=ON`. Such options can be combined with the
+`enable-sanitize-options` option: the enabled sanitizers are the sanitizers
+listed in the `enable-sanitize-options` option and the sanitizers whose
+dedicated option is enabled. Dedicated options are also defined for the
+sanitizers which are not supported by the current compiler (enabling them
+issues a warning and they are ignored), so that the same options can be
+used whatever the compiler is.
+
+The following sanitizers are declared for `gcc` (the sanitizers corresponding
+to a subset of the undefined behaviour sanitizer can be enabled
+individually):
+
+- `address`, `thread`, `leak`, `hwaddress`,
+- `undefined` and its subsets: `alignment`, `bool`, `bounds`,
+  `bounds-strict`, `builtin`, `enum`, `float-cast-overflow`,
+  `float-divide-by-zero`, `null`, `object-size`, `return`, `shift`,
+  `shift-base`, `shift-exponent`, `signed-integer-overflow`, `vptr`,
+- `pointer-compare`, `pointer-subtract` (the address sanitizer and the link
+  time optimization are required and added automatically),
+- hardening flags, which can be combined with the sanitizers above:
+  `fstack-check`, `fstack-protector-all`, `fno-omit-frame-pointer`.
+
+The following sanitizers are declared for `clang`:
+
+- `address`, `thread`, `memory` (the memory sanitizer also enables
+  `-fsanitize-memory-track-origins=2`), `leak`, `hwaddress`,
+- `cfi`, `cfi-icall`, `safe-stack`, `shadow-call-stack`, `dataflow`,
+- `undefined` and its subsets: `alignment`, `bool`, `bounds`, `builtin`,
+  `enum`, `float-cast-overflow`, `float-divide-by-zero`, `integer`,
+  `unsigned-integer-overflow`, `null`, `object-size`, `return`, `shift`,
+  `shift-base`, `shift-exponent`, `signed-integer-overflow`, `vptr`,
+- `pointer-compare`, `pointer-subtract` (the address sanitizer and the link
+  time optimization are required and added automatically),
+- hardening flags, which can be combined with the sanitizers above:
+  `address-use-after-scope` (`-fsanitize-address-use-after-scope`),
+  `fstack-check`, `fstack-protector-all`, `fno-omit-frame-pointer`.
+
+Some sanitizers require specific settings to be fully effective (the link
+time optimization for `cfi` and `shadow-call-stack`, instrumentation of all
+the linked code for `memory` and `safe-stack`, etc.), as described in the
+`gcc` and `clang` documentations.
+
+Note that the `vptr` check, which is part of the `undefined` sanitizer,
+may lead to pathologically long compilation times with `gcc` for some
+files of `MFront`, which implement heavy template code: it takes more
+than ninety minutes to compile
+`mfront/src/GenericMaterialPropertyInterfaceBase.cxx` with
+`-fsanitize=undefined` (`-O2`), whereas a few minutes are needed when the
+`vptr` check is disabled. This check can be excluded by listing
+individually the sanitizers of interest, using the corresponding
+dedicated options (`alignment`, `bool`, `bounds`, `builtin`, `enum`,
+etc.) instead of the `undefined` sanitizer.
+
+When at least one sanitizer is enabled, the `-fno-omit-frame-pointer` flag is
+added automatically to ease the interpretation of the reports emitted by the
+sanitizers.
 
 ## User-defined `cmake` variables
 
@@ -756,6 +849,38 @@ In Version 5.1, the variable name `KHRR` is declared twice. `Cast3M`
 does not generate an error although duplicated names leads to erroneous
 results. Version 5.2 avoids this pitfall.
 
+## The `plastic_deformation_gradient_normalisation_corrections` option of the `FiniteStrainSingleCrystal` brick
+
+The `FiniteStrainSingleCrystal` brick normalises the inverse of the
+plastic deformation gradient increment by the cubic root of its
+determinant. The derivatives of this normalisation with respect to the
+plastic slips were explicitly neglected in the jacobian and in the
+consistent tangent operator, as numerical tests showed (or at least
+seemed to show) that they were negligible.
+
+These derivatives are now taken into account by default (see Issue
+#1359). The results are not affected, up to the convergence criteria,
+but the convergence is when the deformation gradient is not fully
+imposed: the global iterations recover their quadratic convergence. The
+boolean option
+`plastic_deformation_gradient_normalisation_corrections` allows to
+neglect them:
+
+~~~~{.cpp}
+@Brick FiniteStrainSingleCrystal{
+  plastic_deformation_gradient_normalisation_corrections : false
+};
+~~~~
+
+The same derivatives are explicitly neglected in the
+`FiniteStrainSingleCrystal`, `FiniteStrainSingleCrystal2` and
+`FiniteStrainSingleCrystal_NumericalJacobian` test behaviours. Versions
+taking them into account are provided by the
+`FiniteStrainSingleCrystal_WithCorrections`,
+`FiniteStrainSingleCrystal2_WithCorrections` and
+`FiniteStrainSingleCrystal_NumericalJacobian_WithCorrections` test
+behaviours.
+
 # Documentation
 
 ## New coding guidelines page
@@ -782,6 +907,19 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1376: [mfront-doc] Formula of the Chaboche 2012 kinematic hardening rule differs from the code for m != 1
+
+For more details, see <https://github.com/thelfer/tfel/issues/1376>
+## Issue 1359: [mfront] FiniteStrainSingleCrystal: corrections of the derivatives of the normalised plastic deformation gradient increment, test behaviours and option of the brick
+
+For more details, see <https://github.com/thelfer/tfel/issues/1359>
+## Issue 1273: [tfel-check] Warning when @Precision with one value keeps the second precision of a previous @Precision
+
+For more details, see <https://github.com/thelfer/tfel/issues/1273>
+## Issue 1371: [mtest] Generalised plane strain elastic stiffness used with the generic plane stress algorithm of the castem wrappers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1371>
 
 ## Issue 1332: [mfront] type identifiers of the derivatives of tensorial type aliases (derivative_type<StressStensor, StrainStensor>) are decoded as another type by MTest and MGIS
 
@@ -1002,7 +1140,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/1199>
 ## Issue 1197: [mtest] Acceleration algorithm parameters, Anderson method orders above 22, castem_umat optional material properties, mtest Python options
 
 For more details, see <https://github.com/thelfer/tfel/issues/1197>
-  
 
 ## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
 
@@ -1211,6 +1348,12 @@ For more details, see <https://github.com/thelfer/tfel/issues/1095>
 ## Issue 1093: [5.2] Regressions since TFEL 5.1
 
 For more details, see <https://github.com/thelfer/tfel/issues/1093>
+
+## Issue 1089: Add debug mode + hardening in the test matrix
+
+The sanitizers options have been modularised to allow the continuous
+integration to enable sanitizers individually. For more details, see
+<https://github.com/thelfer/tfel/issues/1089>
 
 ## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
 

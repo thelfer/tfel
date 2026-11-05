@@ -1,0 +1,43 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// proportional multiaxial strain, which is reversed
+@Real 'ryy' 0.35;
+@Real 'rzz' -0.25;
+@Real 'rxy' 0.3;
+@Real 'rxz' 0.2;
+@Real 'ryz' -0.15;
+@Real 'Em' 1e-3;
+@ImposedStrain 'EXX' {0 : 0, 1 : 'Em', 3 : '-Em'};
+@ImposedStrain 'EYY' {0 : 0, 1 : 'ryy * Em', 3 : '-ryy * Em'};
+@ImposedStrain 'EZZ' {0 : 0, 1 : 'rzz * Em', 3 : '-rzz * Em'};
+@ImposedStrain 'EXY' {0 : 0, 1 : 'rxy * Em', 3 : '-rxy * Em'};
+@ImposedStrain 'EXZ' {0 : 0, 1 : 'rxz * Em', 3 : '-rxz * Em'};
+@ImposedStrain 'EYZ' {0 : 0, 1 : 'ryz * Em', 3 : '-ryz * Em'};
+@Times{0, 1 in 20, 3 in 40};
+
+// von Mises norm by unit of EXX, with Eij = sqrt(2) * epsilon_ij for i != j
+@Real 'q' 'sqrt(((1 - ryy) ** 2 + (ryy - rzz) ** 2 + (rzz - 1) ** 2) / 2 + 3 * (rxy ** 2 + rxz ** 2 + ryz ** 2) / 2)';
+
+// Prager's rule: X = 2 / 3 * C * eps_p. The plastic strain is e * n, with
+// n = 3 / 2 * dev(r) / q, and |2 * mu * q * EXX - (3 * mu + C) * e| = R0.
+// The elastic domain has a size of 2 * R0 when the strain is reversed.
+@Real 'l' '150e9 * 0.3 / ((1 + 0.3) * (1 - 2 * 0.3))';
+@Real 'mu' '150e9 / (2 * (1 + 0.3))';
+@Real 'R0' 33e6;
+@Real 'C' 438e6;
+@Real 'emax' '(2 * mu * q * Em - R0) / (3 * mu + C)';
+@Evolution<function> 'e' 't <= 1 ? max(2 * mu * q * EXX - R0, 0) / (3 * mu + C) : min(emax, (2 * mu * q * EXX + R0) / (3 * mu + C))';
+@Evolution<function> 'p' 't <= 1 ? e : 2 * emax - e';
+@Evolution<function> 'tr' 'l * (1 + ryy + rzz) * EXX';
+
+@Test<function> 'EquivalentPlasticStrain' 'p' 1e-10;
+@Test<function> 'SXX' 'tr + 2 * mu * (EXX - e * (2 - ryy - rzz) / (2 * q))' 1;
+@Test<function> 'SYY' 'tr + 2 * mu * (EYY - e * (2 * ryy - rzz - 1) / (2 * q))' 1;
+@Test<function> 'SZZ' 'tr + 2 * mu * (EZZ - e * (2 * rzz - 1 - ryy) / (2 * q))' 1;
+@Test<function> 'SXY' '2 * mu * (EXY - 3 * e * rxy / (2 * q))' 1;
+@Test<function> 'SXZ' '2 * mu * (EXZ - 3 * e * rxz / (2 * q))' 1;
+@Test<function> 'SYZ' '2 * mu * (EYZ - 3 * e * ryz / (2 * q))' 1;

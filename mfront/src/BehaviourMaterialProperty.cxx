@@ -144,9 +144,9 @@ namespace mfront {
         (h != ModellingHypothesis::PLANESTRESS) &&
         (h != ModellingHypothesis::TRIDIMENSIONAL)) {
       if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        raise("unexepected undefined hypothesis");
+        raise("unexpected undefined hypothesis");
       } else {
-        raise("unexepected hypothesis '" + ModellingHypothesis::toString(h) +
+        raise("unexpected hypothesis '" + ModellingHypothesis::toString(h) +
               "'");
       }
     }

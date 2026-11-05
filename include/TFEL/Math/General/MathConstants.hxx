@@ -14,11 +14,11 @@
 #ifndef LIB_TFEL_MATH_MATHCONSTANTS_HXX
 #define LIB_TFEL_MATH_MATHCONSTANTS_HXX
 
+#include <numbers>
 #include <type_traits>
 #include "TFEL/Metaprogramming/EmptyClass.hxx"
 #include "TFEL/TypeTraits/IsReal.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
-#include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace tfel::math {
 
@@ -27,19 +27,10 @@ namespace tfel::math {
 
   template <typename real>
   struct CsteBase {
-#ifndef _MSC_VER
-    static constexpr real sqrt2 = constexpr_fct::sqrt(real{2});
-    static constexpr real isqrt2 = 1 / constexpr_fct::sqrt(real{2});
-    static constexpr real sqrt3 = constexpr_fct::sqrt(real{3});
-    static constexpr real isqrt3 = 1 / constexpr_fct::sqrt(real{3});
-#else
-    static constexpr real sqrt2 = 1.41421356237309504880;
-    static constexpr real isqrt2 = 0.70710678118654752440;
-    static constexpr real sqrt3 =
-        1.7320508075688772935274463415058723669428052538103806280;
-    static constexpr real isqrt3 =
-        0.57735026918962576450914878050195745564760175127;
-#endif
+    static constexpr real sqrt2 = std::numbers::sqrt2_v<real>;
+    static constexpr real isqrt2 = sqrt2 / 2;
+    static constexpr real sqrt3 = std::numbers::sqrt3_v<real>;
+    static constexpr real isqrt3 = std::numbers::inv_sqrt3_v<real>;
   };
 
   template <typename T>

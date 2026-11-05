@@ -1,0 +1,16 @@
+@DSL Implicit;
+@Behaviour DDIF2BrickTest;
+@Description {
+  "The DDIF2 brick."
+}
+
+@ModellingHypotheses {".+"};
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick DDIF2 {
+  young_modulus : 150e9,
+  poisson_ratio : 0.3,
+  fracture_stresses : {150e6, 1e11, 150e6},
+  softening_slopes : {-75e9, -50e9, -25e9}
+};

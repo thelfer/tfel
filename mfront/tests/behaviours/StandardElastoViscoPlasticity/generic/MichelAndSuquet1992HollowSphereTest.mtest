@@ -1,0 +1,23 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// constant multiaxial stress, with an initial porosity
+@InternalStateVariable 'Porosity' 0.05;
+@ImposedStress 'SXX' 80e6;
+@ImposedStress 'SYY' 60e6;
+@ImposedStress 'SZZ' 40e6;
+@ImposedStress 'SXY' 20e6;
+@ImposedStress 'SXZ' 10e6;
+@ImposedStress 'SYZ' -15e6;
+@Times{0, 1 in 20};
+
+// The reference is an implicit Euler integration of the documented equations in
+// Python (NumPy), independent of TFEL, with the same time steps.
+@Test<file> @reference_file@ {
+  'EXX' : 2, 'EYY' : 3, 'EZZ' : 4, 'EXY' : 5, 'EXZ' : 6, 'EYZ' : 7
+} 1e-8;
+@Test<file> @reference_file@ 'EquivalentViscoplasticStrain' 8 1e-8;
+@Test<file> @reference_file@ 'Porosity' 9 1e-8;
