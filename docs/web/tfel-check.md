@@ -299,6 +299,10 @@ Example:
 @Precision 1.e-3 1.;    // relative and absolute precision for Mixed
 ~~~~
 
+`@Precision` with one value keeps the second value of a previous
+`@Precision`. A warning is written in the log file of the test (`.checklog`)
+when a `RelativeAndAbsolute` or `Mixed` comparison uses this second value.
+
 ### The `@Test` keyword
 
 The `@Test` keyword compares two files (reference and current results).
