@@ -862,6 +862,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1371: [mtest] Generalised plane strain elastic stiffness used with the generic plane stress algorithm of the castem wrappers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1371>
+
 ## Issue 1332: [mfront] type identifiers of the derivatives of tensorial type aliases (derivative_type<StressStensor, StrainStensor>) are decoded as another type by MTest and MGIS
 
 For more details, see <https://github.com/thelfer/tfel/issues/1332>
