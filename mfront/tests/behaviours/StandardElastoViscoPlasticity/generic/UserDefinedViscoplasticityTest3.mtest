@@ -1,0 +1,29 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// constant multiaxial stress
+@Real 'Sxx' 100e6;
+@Real 'Syy' 35e6;
+@Real 'Szz' -25e6;
+@Real 'Sxy' 30e6;
+@Real 'Sxz' 20e6;
+@Real 'Syz' -15e6;
+@ImposedStress 'SXX' 'Sxx';
+@ImposedStress 'SYY' 'Syy';
+@ImposedStress 'SZZ' 'Szz';
+@ImposedStress 'SXY' 'Sxy';
+@ImposedStress 'SXZ' 'Sxz';
+@ImposedStress 'SYZ' 'Syz';
+@Times{0, 1e-2 in 10};
+
+// The reference is an implicit integration, in Python (NumPy) and independent of
+// TFEL, of the viscoplastic strain rate given by the user, with the same time steps:
+// dp = dt * A * f ** En / (p + theta * dp + p0) ** Em, with f the von Mises stress
+// at the middle of the time step (half of its final value during the first step).
+@Test<file> @reference_file@ {
+  'EXX' : 2, 'EYY' : 3, 'EZZ' : 4, 'EXY' : 5, 'EXZ' : 6, 'EYZ' : 7
+} 1e-10;
+@Test<file> @reference_file@ 'EquivalentViscoplasticStrain' 8 1e-10;

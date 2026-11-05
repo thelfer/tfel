@@ -1,0 +1,39 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// proportional multiaxial stress
+@Real 'ryy' 0.35;
+@Real 'rzz' -0.25;
+@Real 'rxy' 0.3;
+@Real 'rxz' 0.2;
+@Real 'ryz' -0.15;
+@ImposedStress 'SXX' {0 : 0, 1 : 120e6};
+@ImposedStress 'SYY' {0 : 0, 1 : 'ryy * 120e6'};
+@ImposedStress 'SZZ' {0 : 0, 1 : 'rzz * 120e6'};
+@ImposedStress 'SXY' {0 : 0, 1 : 'rxy * 120e6'};
+@ImposedStress 'SXZ' {0 : 0, 1 : 'rxz * 120e6'};
+@ImposedStress 'SYZ' {0 : 0, 1 : 'ryz * 120e6'};
+@Times{0, 1 in 20};
+
+// von Mises stress by unit of SXX, with Sij = sqrt(2) * sigma_ij for i != j
+@Real 'q' 'sqrt(((1 - ryy) ** 2 + (ryy - rzz) ** 2 + (rzz - 1) ** 2) / 2 + 3 * (rxy ** 2 + rxz ** 2 + ryz ** 2) / 2)';
+
+// the hardening rule R0 + R1 * (p + p0) ** n is inverted
+@Real 'R0' 50e6;
+@Real 'R1' 120e6;
+@Real 'p0' 1e-8;
+@Real 'n' 5e-2;
+@Evolution<function> 'p' 'max((max(q * SXX - R0, 0) / R1) ** (1 / n) - p0, 0)';
+
+@Real 'E' 160e9;
+@Real 'nu' 0.3;
+@Test<function> 'EquivalentPlasticStrain' 'p' 1e-10;
+@Test<function> 'EXX' '(1 - nu * (ryy + rzz)) * SXX / E + p * (2 - ryy - rzz) / (2 * q)' 1e-10;
+@Test<function> 'EYY' '(ryy - nu * (rzz + 1)) * SXX / E + p * (2 * ryy - rzz - 1) / (2 * q)' 1e-10;
+@Test<function> 'EZZ' '(rzz - nu * (1 + ryy)) * SXX / E + p * (2 * rzz - 1 - ryy) / (2 * q)' 1e-10;
+@Test<function> 'EXY' '(1 + nu) * SXY / E + 3 * p * rxy / (2 * q)' 1e-10;
+@Test<function> 'EXZ' '(1 + nu) * SXZ / E + 3 * p * rxz / (2 * q)' 1e-10;
+@Test<function> 'EYZ' '(1 + nu) * SYZ / E + 3 * p * ryz / (2 * q)' 1e-10;

@@ -1,0 +1,43 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// constant multiaxial stress: the viscoplastic strain rate is constant
+@Real 'Sxx' 100e6;
+@Real 'Syy' 35e6;
+@Real 'Szz' -25e6;
+@Real 'Sxy' 30e6;
+@Real 'Sxz' 20e6;
+@Real 'Syz' -15e6;
+@ImposedStress 'SXX' 'Sxx';
+@ImposedStress 'SYY' 'Syy';
+@ImposedStress 'SZZ' 'Szz';
+@ImposedStress 'SXY' 'Sxy';
+@ImposedStress 'SXZ' 'Sxz';
+@ImposedStress 'SYZ' 'Syz';
+@Times{0, 1e-1 in 10};
+
+// von Mises stress, with Sij = sqrt(2) * sigma_ij for i != j
+@Real 'seq' 'sqrt(((Sxx - Syy) ** 2 + (Syy - Szz) ** 2 + (Szz - Sxx) ** 2) / 2 + 3 * (Sxy ** 2 + Sxz ** 2 + Syz ** 2) / 2)';
+
+// Norton's law, and a damage depending on the equivalent viscoplastic strain
+@Real 'K' 100e6;
+@Real 'n' 3.2;
+@Real 'p0' 1;
+@Evolution<function> 'p' '(seq / K) ** n * t';
+@Evolution<function> 'd' '1 - exp(-p / p0)';
+
+@Real 'E' 150e9;
+@Real 'nu' 0.3;
+@Test<function> 'EquivalentViscoplasticStrain' 'p' 1e-12;
+@Test<function> 'Damage' 'd' 1e-12;
+
+// the stress is equal to (1 - d) * D : eel
+@Test<function> 'EXX' '(Sxx - nu * (Syy + Szz)) / (E * (1 - d)) + p * (2 * Sxx - Syy - Szz) / (2 * seq)' 1e-12;
+@Test<function> 'EYY' '(Syy - nu * (Szz + Sxx)) / (E * (1 - d)) + p * (2 * Syy - Szz - Sxx) / (2 * seq)' 1e-12;
+@Test<function> 'EZZ' '(Szz - nu * (Sxx + Syy)) / (E * (1 - d)) + p * (2 * Szz - Sxx - Syy) / (2 * seq)' 1e-12;
+@Test<function> 'EXY' '(1 + nu) * Sxy / (E * (1 - d)) + 3 * p * Sxy / (2 * seq)' 1e-12;
+@Test<function> 'EXZ' '(1 + nu) * Sxz / (E * (1 - d)) + 3 * p * Sxz / (2 * seq)' 1e-12;
+@Test<function> 'EYZ' '(1 + nu) * Syz / (E * (1 - d)) + 3 * p * Syz / (2 * seq)' 1e-12;
