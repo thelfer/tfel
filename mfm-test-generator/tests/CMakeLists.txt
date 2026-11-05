@@ -5,16 +5,15 @@ configure_file(uniaxialtensiletest-times.txt
 # target of mfm-test-generator, appends the tests of the file
 # <test_case>-tests.<extension> and runs it with mtest.
 function(mfm_test_generator_test test_case extension)
-  # the input file is given by a path relative to the current binary
-  # directory, since mfm-test-generator treats arguments starting with a
-  # slash as options
+  # the input file is given by its absolute path in the current binary
+  # directory
   configure_file(${test_case}.mfmtg ${test_case}.mfmtg COPYONLY)
   add_test(NAME mfm-test-generator-${test_case}
     COMMAND ${CMAKE_COMMAND}
     "-Dmfm_test_generator=$<TARGET_FILE:mfm-test-generator>"
     "-Dmtest=$<TARGET_FILE:mtest>"
     "-Dlibrary=$<TARGET_FILE:MFrontGenericBehaviours>"
-    "-Dinput=${test_case}.mfmtg"
+    "-Dinput=${CMAKE_CURRENT_BINARY_DIR}/${test_case}.mfmtg"
     "-Dgenerated_file=${test_case}.${extension}"
     "-Dtests=${CMAKE_CURRENT_SOURCE_DIR}/${test_case}-tests.${extension}"
     "-Doutput_file=${test_case}-with-tests.${extension}"

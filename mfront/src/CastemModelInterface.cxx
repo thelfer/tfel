@@ -244,6 +244,9 @@ namespace mfront {
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
 
+    CastemInterface i;
+    i.writeSetOutOfBoundsPolicyFunctionDeclaration(os, name);
+
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
       const auto fn = getUmatFunctionName(md);
@@ -328,6 +331,7 @@ namespace mfront {
        << "#include <locale>\n"
        << "#include <cstring>\n"
        << "#include <sstream>\n"
+       << "#include <iostream>\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include \"TFEL/Math/Array/View.hxx\"\n"
@@ -362,6 +366,11 @@ namespace mfront {
     exportUnsignedShortSymbol(os, fn + "_nThermodynamicForces", 0);
     exportArrayOfIntegersSymbol(os, fn + "_ThermodynamicForcesTypes", {});
     exportArrayOfStringsSymbol(os, fn + "_ThermodynamicForces", {""});
+    // policy initialised with the default policy of the model, as for the
+    // generic models (the castem behaviours also read the policy from the
+    // environment, which requires the castem interface library)
+    i.BehaviourInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation(
+        os, bd, name);
     //
     if (!md.sources.empty()) {
       os << md.sources << "\n\n";
@@ -484,9 +493,8 @@ namespace mfront {
         os << "using PhysicalConstants [[maybe_unused]] = "
            << "tfel::PhysicalConstants<NumericType, false>;\n";
       }
-      const auto policy = getDefaultOutOfBoundsPolicyAsString(md);
-      os << "[[maybe_unused]] constexpr const auto policy = "
-         << "tfel::material::" << policy << ";\n";
+      os << "[[maybe_unused]] const auto policy = ::" << fn
+         << "_getOutOfBoundsPolicy();\n";
       if (f.useTimeIncrement) {
         os << "const auto dt = time{*mfront_DTIME};\n";
       }
@@ -716,6 +724,8 @@ namespace mfront {
        << "}\n\n";
     os << "} // end of anonymous namespace\n\n"
        << "} // end of namespace castem\n\n";
+    //
+    i.writeSetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {

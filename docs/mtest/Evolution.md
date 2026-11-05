@@ -3,7 +3,7 @@ The `@Evolution` specifies a function of time.
 This keyword may have one option, which is the way the evolution will
 be defined. Four values are accepted: `evolution`, `function`, `data`
 and `file`. The `data` and `file` options are equivalent. If no option
-is specified, the `evolution` option is choosen.
+is specified, the `evolution` option is chosen.
 
 After the option, the name of evolution, which shall be given as
 string, is expected.
@@ -12,16 +12,16 @@ string, is expected.
 
 If the `evolution` option has been selected, the user may specify a
 constant evolution by simply giving its value. Otherwise, complex
-evolutions can be build using a associative array where the key is the
-time and the value the value of the evolution. Between two times, the
-values will be interpolated linearly. Prior the first declared time
-given, the value corresponding the this first time is used. After the
+evolutions can be build using an associative array where the key is the
+time and the value of the evolution. Between two times, the
+values will be interpolated linearly. Prior to the first declared time
+given, the value corresponding to this first time is used. After the
 last time given, the value corresponding this last time is used.
 
 ## `function` option
 
 If the `function` option has been selected, a string is expected which
-wil be interpreted as a function of time. The time is represented by
+will be interpreted as a function of time. The time is represented by
 the variable `t`.
 
 ## `data` or `file` options

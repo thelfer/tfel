@@ -415,8 +415,10 @@ namespace tfel::math {
                            typename ArrayType::indexing_policy().size(0)>>;
 
   template <FixedSizeArrayTypeDefininigArrayViewConcept ArrayType>
-  constexpr auto map_array(
-      const ViewsArrayDataPointerType<numeric_type<ArrayType>> p) {
+  constexpr auto map_array(const ViewsArrayDataPointerType<
+                           std::conditional_t<std::is_const_v<ArrayType>,
+                                              const numeric_type<ArrayType>,
+                                              numeric_type<ArrayType>>> p) {
     return StandardFixedSizeViewsArray<ArrayType>{p};
   }  // end of map_array
 

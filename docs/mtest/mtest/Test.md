@@ -4,27 +4,27 @@ executed at the end of each time step.
 
 This keyword is followed by the type of the test.
 
-If the type of the test is `function`, two syntaxs are allowed. In the
+If the type of the test is `function`, two syntaxes are allowed. In the
 first one, three arguments are expected: the name of the tested
-variable, a function of time given the exepected value, a criterium
+variable, a function of time given the expected value, a criterion
 value used for the comparison. In the second syntax, two arguments are
-exepected: an map which associates the name of a tested variable to a
+expected: a map which associates the name of a tested variable to a
 function of time given the expected value of this variable and a
-criterium value used for the comparison. The functions may explicitly
-depend of time through the variable `t`.
+criterion value used for the comparison. The functions may explicitly
+depend on time through the variable `t`.
 
 If the type of the test is `file`, the expected values are read in the
 columns of a text file. The name of the text file shall be given and
-then two syntaxs are allowed. In the first one, three arguments are
+then two syntaxes are allowed. In the first one, three arguments are
 expected: the name of the tested variable, a column number and a
-criterium value used for the comparison. In the second syntax, two
-arguments are exepected: an map which associates the name of a tested
-variable to a column number and a criterium value used for the
-comparison. In each cases, the values given by the n+1 line shall
-corresponds the values expected after the n period.
+criterion value used for the comparison. In the second syntax, two
+arguments are expected: a map which associates the name of a tested
+variable to a column number and a criterion value used for the
+comparison. In each case, the values given by the n+1 line shall
+correspond to the values expected after the n period.
 
-The comparisons are made using an absolute criterium.  The names of
-the componenents of the strains begins with E. The name of the
+The comparisons are made using an absolute criterion.  The names of
+the components of the strains begins with E. The name of the
 components of the stresses begins with S. The name of the components
 of symmetric tensor internal state variables begins with the name of
 the internal state variables. The name of the components of symmetric

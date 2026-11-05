@@ -155,7 +155,7 @@ namespace mtest {
     auto p = this->evs.find(n);
     if (p != this->evs.end()) {
       tfel::raise(
-          "StudyCurrentState::getEvolution: "
+          "StudyCurrentState::addEvolution: "
           "evolution '" +
           n + "' already defined");
     }

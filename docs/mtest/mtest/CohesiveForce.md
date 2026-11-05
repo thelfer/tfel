@@ -1,4 +1,4 @@
-The `@CohesiveForce` keyword let the user specifiy the inital value of
+The `@CohesiveForce` keyword let the user specify the initial value of
 the cohesive forces.
 
 This keyword is followed by an array. The size of this array must be

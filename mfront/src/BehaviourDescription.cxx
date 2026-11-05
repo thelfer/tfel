@@ -1735,6 +1735,13 @@ namespace mfront {
             bn + "' already defined");
       }
     }
+    // the names of the blocks between main variables are registered by the
+    // addMainVariable2 method
+    if (!((this->isThermodynamicForceName(b.first.name)) &&
+          (this->isGradientName(b.second.name)))) {
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                               block_name);
+    }
     this->additionalTangentOperatorBlocks.push_back(b);
   }  // end of addTangentOperatorBlock
 

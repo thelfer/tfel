@@ -42,6 +42,23 @@ namespace std {
 
 namespace mfront {
 
+  /*!
+   * \return if the given name is the one of the rate of a gradient whose
+   * increment is not known, such as `dF` for the deformation gradient `F`.
+   * \param[in] bd: behaviour description
+   * \param[in] n: name
+   */
+  static bool isRateOfAGradientWithUnknownIncrement(
+      const BehaviourDescription& bd, const std::string& n) {
+    for (const auto& v : bd.getMainVariables()) {
+      const auto& g = v.first;
+      if ((!Gradient::isIncrementKnown(g)) && ("d" + g.name == n)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isRateOfAGradientWithUnknownIncrement
+
   const char* const RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables =
       "RungeKuttaUpdateAuxiliaryStateVariables";
 
@@ -191,6 +208,7 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     if ((this->mb.isGradientName(var)) ||
         (this->mb.isGradientIncrementName(var)) ||
+        (isRateOfAGradientWithUnknownIncrement(this->mb, var)) ||
         (d.isIntegrationVariableName(var)) ||
         (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
@@ -287,6 +305,13 @@ namespace mfront {
         } else {
           return "(" + var + ")/(this->dt)";
         }
+      }
+    }
+    if (isRateOfAGradientWithUnknownIncrement(this->mb, var)) {
+      if (addThisPtr) {
+        return "this->" + var + "_";
+      } else {
+        return var + "_";
       }
     }
     if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT") ||

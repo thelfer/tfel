@@ -288,7 +288,7 @@ namespace mfmtg {
           return;
         }
       }
-      if ((a[0] == '-') || (a[0] == '/')) {
+      if (a[0] == '-') {
         tfel::utilities::ArgumentParserBase<
             MFMTestGenerator>::treatUnknownArgument();
       }
