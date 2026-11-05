@@ -516,6 +516,39 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       //           << Pttnn(0).getValue() << std::endl;
       TFEL_TESTS_ASSERT(5 * Pnnnn(0) - Ptttt(0) < compliance(0));
     }
+    // directions given by the first two rows of the rotation matrix
+    // associated with Bunge Euler angles: they are only orthogonal up to
+    // rounding errors, and need not be unit vectors
+    for (const auto& angles :
+         {std::array<real, 3>{2.990583854430175, 1.3529919793251031,
+                              2.1478637702682351},
+          std::array<real, 3>{6.2045771589047067, 1.4635658814732575,
+                              5.3737889848776303}}) {
+      const auto c1 = std::cos(angles[0]);
+      const auto s1 = std::sin(angles[0]);
+      const auto c = std::cos(angles[1]);
+      const auto s = std::sin(angles[1]);
+      const auto c2 = std::cos(angles[2]);
+      const auto s2 = std::sin(angles[2]);
+      const tfel::math::tvector<3u, real> n_1 = {c1 * c2 - s1 * s2 * c,
+                                                 s1 * c2 + c1 * s2 * c, s2 * s};
+      const tfel::math::tvector<3u, real> n_2 = {
+          -c1 * s2 - s1 * c2 * c, -s1 * s2 + c1 * c2 * c, c2 * s};
+      const auto PAxis_1 = computeAxisymmetricalHillPolarisationTensor<stress>(
+          young, nu, n_1, lg{20} / lg{2.0001});
+      for (const auto scale : {real(1), real(10)}) {
+        const tfel::math::tvector<3u, real> m_1 = scale * n_1;
+        const tfel::math::tvector<3u, real> m_2 = scale * n_2;
+        const auto PAxis_2 = computeHillPolarisationTensor<stress>(
+            young, nu, m_1, lg{20}, m_2, lg{2}, lg{2.0001});
+        for (int i : {0, 1, 2, 3, 4, 5}) {
+          for (int j : {0, 1, 2, 3, 4, 5}) {
+            TFEL_TESTS_ASSERT(my_abs(PAxis_1(i, j) - PAxis_2(i, j)) <
+                              compliance(eps));
+          }
+        }
+      }
+    }
 #endif /* _LIBCPP_VERSION */
   }
 

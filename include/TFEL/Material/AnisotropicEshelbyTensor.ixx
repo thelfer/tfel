@@ -212,9 +212,6 @@ namespace tfel::material::homogenization::elasticity {
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
     }
-    if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-      tfel::reportContractViolation("n_a and n_b not normals");
-    }
     if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
@@ -222,8 +219,9 @@ namespace tfel::material::homogenization::elasticity {
       tfel::reportContractViolation("n_b is null");
     }
     using namespace tfel::math;
+    const auto n_b_o = internals::orthogonaliseEllipsoidAxes(n_a, n_b);
     const auto n_a_ = n_a / norm(n_a);
-    const auto n_b_ = n_b / norm(n_b);
+    const auto n_b_ = n_b_o / norm(n_b_o);
     const auto n_c_ = cross_product<real>(n_a_, n_b_);
 
     const rotation_matrix<real> r_glob_loc = {n_a_[0], n_b_[0], n_c_[0],
@@ -299,17 +297,15 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& c,
           const std::size_t max_it) {
     using real = types::real<StressType>;
-    if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-      tfel::reportContractViolation("n_a and n_b not normals");
-    }
     if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
     if (norm(n_b) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_b is null");
     }
+    const auto n_b_o = internals::orthogonaliseEllipsoidAxes(n_a, n_b);
     const auto n_a_ = n_a / norm(n_a);
-    const auto n_b_ = n_b / norm(n_b);
+    const auto n_b_ = n_b_o / norm(n_b_o);
     const auto n_c_ = tfel::math::cross_product<real>(n_a_, n_b_);
 
     using namespace tfel::math;
