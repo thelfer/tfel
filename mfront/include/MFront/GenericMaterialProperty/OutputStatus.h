@@ -34,7 +34,8 @@ typedef struct {
    * its bounds.
    *
    * All negative values indicates that the result is not usable. For a material
-   * property, the returned value is `nan`.
+   * property, the returned value is `nan`, except for the exit statuses -3 and
+   * -4, for which the computed value is returned.
    *
    * For a material property, a negative value has the following meaning:
    *
@@ -54,6 +55,9 @@ typedef struct {
    * - If the exit status is -4, the computed value is invalid (either `nan`,
    *   `inf`, or `-inf`).
    * - If the exit status is -5, the number of arguments is invalid.
+   * - If the exit status is -6, the parameters of the material property are
+   *   invalid, for instance because the parameters file could not be read.
+   *   The `msg` field contains the error message.
    */
   int status;
   //! \brief error number reported by the C library.

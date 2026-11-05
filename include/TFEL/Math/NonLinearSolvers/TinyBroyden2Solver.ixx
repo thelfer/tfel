@@ -24,7 +24,7 @@ namespace tfel::math {
             template <unsigned short, typename>
             typename ExternalWorkSpace>
   void TinyBroyden2Solver<N, NumericType, Child, ExternalWorkSpace>::
-      updateOrCheckJacobian() {
+      updateJacobianInvert() {
     if (this->iter == 0) {
       return;
     }
@@ -37,7 +37,7 @@ namespace tfel::math {
     if (tfel::math::ieee754::fpclassify(nc) != FP_ZERO) {
       this->inv_jacobian += ((this->delta_zeros - c2) ^ (c3)) / nc;
     }
-  }  // end of updateOrCheckJacobian
+  }  // end of updateJacobianInvert
 
   template <unsigned short N,
             typename NumericType,
@@ -46,8 +46,10 @@ namespace tfel::math {
             typename ExternalWorkSpace>
   bool TinyBroyden2Solver<N, NumericType, Child, ExternalWorkSpace>::
       computeNewCorrection() {
-    auto& child = static_cast<Child&>(*this);
-    child.updateOrCheckJacobian();
+    this->updateJacobianInvert();
+    if (!this->callUpdateOrCheckJacobian()) {
+      return false;
+    }
     this->delta_zeros = -(this->inv_jacobian) * (this->fzeros);
     this->fzeros_1 = this->fzeros;
     return true;

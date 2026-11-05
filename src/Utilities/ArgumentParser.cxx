@@ -65,6 +65,10 @@ namespace tfel::utilities {
       }
       tmp += ": ";
       const auto lines = tokenize(c.second.d, '\n');
+      if (lines.empty()) {
+        // option without description
+        std::cout << tmp << '\n';
+      }
       for (const auto& l : lines) {
         std::cout << tmp << l << '\n';
         std::fill(tmp.begin(), tmp.end(), ' ');
@@ -92,7 +96,7 @@ namespace tfel::utilities {
   void ArgumentParser::registerCallBack(const std::string& k,
                                         const CallBack& c) {
     raise_if(k.empty(),
-             "ArgumentParser::registerNewCallBack: "
+             "ArgumentParser::registerCallBack: "
              "invalid key");
 #ifdef _WIN32
     if (k.size() > 2) {
@@ -108,7 +112,7 @@ namespace tfel::utilities {
                                         const std::string& a,
                                         const CallBack& c) {
     raise_if(a.empty(),
-             "ArgumentParser::registerNewCallBack: "
+             "ArgumentParser::registerCallBack: "
              "invalid alias");
     this->alias.insert({a, k});
 #ifdef _WIN32
@@ -166,7 +170,14 @@ namespace tfel::utilities {
   void ArgumentParser::stripArguments() {
     for (auto& a : this->args) {
       auto& an = a.as_string();
-      const auto pos = an.find('=');
+      // only options are split, not input files
+#ifdef _WIN32
+      const auto is_option =
+          (!an.empty()) && ((an[0] == '-') || (an[0] == '/'));
+#else
+      const auto is_option = (!an.empty()) && (an[0] == '-');
+#endif
+      const auto pos = is_option ? an.find('=') : std::string::npos;
       if (pos != std::string::npos) {
         const auto option = an.substr(pos + 1, std::string::npos);
         an.erase(pos, std::string::npos);

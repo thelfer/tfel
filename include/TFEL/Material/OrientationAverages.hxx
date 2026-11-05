@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_ORIENTATIONAVERAGES_HXX
 
 #include "TFEL/Math/General/Compare.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
 #include "TFEL/Material/EshelbyTolerances.hxx"
@@ -60,10 +61,10 @@ namespace tfel::material::homogenization::elasticity {
                  areAlmostEqual(eps, a / c, real(1)) ||
                  areAlmostEqual(eps, b / c, real(1))) {
         st2tost2<3u, real> A_;
-        if (areAlmostEqual(eps, (b - a) / c, real(0))) {
+        if (areAlmostEqual(eps, b / a, real(1))) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_1, c / a);
-        } else if (areAlmostEqual(eps, (c - a) / b, real(0))) {
+        } else if (areAlmostEqual(eps, a / c, real(1))) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_1, b / a);
         } else {
@@ -117,7 +118,7 @@ namespace tfel::material::homogenization::elasticity {
       const auto young_i = Enui.young;
       const auto nu_i = Enui.nu;
       using namespace tfel::math;
-      st2tost2<3u, StressType> C_i;
+      st2tost2<2u, StressType> C_i;
       static constexpr auto value =
           StiffnessTensorAlterationCharacteristic::UNALTERED;
       computeIsotropicStiffnessTensorII<2u, value, StressType, real>(
@@ -127,12 +128,15 @@ namespace tfel::material::homogenization::elasticity {
           computePlaneStrainLocalisationTensor<StressType>(IM0, C_i, n_a, a, b);
 
       const auto zero = real(0);
-      const auto A11 = 3 * A_(0, 0) / 4 + A_(0, 1) / 4 + A_(3, 3) / 4;
-      const auto A12 = A_(0, 0) / 4 + 3 * A_(0, 1) / 4 - A_(3, 3) / 4;
-      const auto A13 = A_(0, 2);
-      const auto A31 = A_(2, 0);
+      const auto A11 = 3 * (A_(0, 0) + A_(1, 1)) / 8 +
+                       (A_(0, 1) + A_(1, 0)) / 8 + A_(3, 3) / 4;
+      const auto A12 = (A_(0, 0) + A_(1, 1)) / 8 +
+                       3 * (A_(0, 1) + A_(1, 0)) / 8 - A_(3, 3) / 4;
+      const auto A13 = (A_(0, 2) + A_(1, 2)) / 2;
+      const auto A31 = (A_(2, 0) + A_(2, 1)) / 2;
       const auto A33 = A_(2, 2);
-      const auto A44 = A_(3, 3) / 4 + A_(0, 0) / 4 - A_(0, 1) / 4;
+      const auto A44 =
+          (A_(0, 0) + A_(1, 1) - A_(0, 1) - A_(1, 0)) / 4 + A_(3, 3) / 2;
 
       const st2tost2<2u, real> A_moy = {A11,  A12,  A13,  zero, A12, A11,
                                         A13,  zero, A31,  A31,  A33, zero,
@@ -274,15 +278,13 @@ namespace tfel::material::homogenization::elasticity {
             (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
-      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
       if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
         tfel::reportContractViolation("n_a is null");
       }
       if (norm(n_b) < std::numeric_limits<real>::epsilon()) {
         tfel::reportContractViolation("n_b is null");
       }
+      const auto n_b_o = internals::orthogonaliseEllipsoidAxes(n_a, n_b);
       using namespace tfel::math;
       st2tost2<3u, real> A;
       if (areAlmostEqual(eps, b / a, real(1)) &&
@@ -290,19 +292,19 @@ namespace tfel::material::homogenization::elasticity {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);
       } else if (areAlmostEqual(eps, (a - b) / c, real(0))) {
-        tvector<3u, real> n_1 = tfel::math::cross_product(n_a, n_b);
+        tvector<3u, real> n_1 = tfel::math::cross_product(n_a, n_b_o);
         n_1 = n_1 / norm(n_1);
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_1, c / a);
       } else if (areAlmostEqual(eps, (a - c) / b, real(0))) {
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
-            young, nu, young_i, nu_i, n_b, b / a);
+            young, nu, young_i, nu_i, n_b_o, b / a);
       } else if (areAlmostEqual(eps, (c - b) / a, real(0))) {
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_a, a / b);
       } else {
         A = computeEllipsoidLocalisationTensor<StressType>(
-            young, nu, young_i, nu_i, n_a, a, n_b, b, c);
+            young, nu, young_i, nu_i, n_a, a, n_b_o, b, c);
       }
       return A;
     }  // end of Oriented
@@ -353,8 +355,8 @@ namespace tfel::material::homogenization::elasticity {
         const auto A2i = A2 ^ id;
         const auto iA2 = id ^ A2;
         const auto E2_ = 0.5 * (3 * J + A4 - A2i - iA2);
-        const auto E3_ = 1 / sqrt(2) * (A2i - A4);
-        const auto E4_ = 1 / sqrt(2) * (iA2 - A4);
+        const auto E3_ = tfel::math::Cste<real>::isqrt2 * (A2i - A4);
+        const auto E4_ = tfel::math::Cste<real>::isqrt2 * (iA2 - A4);
         const auto F_ =
             I - TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id, A2) -
             TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2, id) -
@@ -402,8 +404,8 @@ namespace tfel::material::homogenization::elasticity {
     const auto A2i = A2 ^ id;
     const auto iA2 = id ^ A2;
     const auto E2_ = 0.5 * (3 * J + A4 - A2i - iA2);
-    const auto E3_ = 1 / sqrt(2) * (A2i - A4);
-    const auto E4_ = 1 / sqrt(2) * (iA2 - A4);
+    const auto E3_ = tfel::math::Cste<real>::isqrt2 * (A2i - A4);
+    const auto E4_ = tfel::math::Cste<real>::isqrt2 * (iA2 - A4);
     const auto F_ = I -
                     TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id, A2) -
                     TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2, id) -

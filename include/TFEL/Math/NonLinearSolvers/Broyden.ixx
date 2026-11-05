@@ -50,7 +50,7 @@ namespace tfel::math {
       vf = f(x);
       ++i;
     }
-    return std::pair<bool, tvector<N, T>>(i != n, x);
+    return std::pair<bool, tvector<N, T>>(norm(vf) <= N * e, x);
   }  // end of function broyden
 
   template <unsigned short N,

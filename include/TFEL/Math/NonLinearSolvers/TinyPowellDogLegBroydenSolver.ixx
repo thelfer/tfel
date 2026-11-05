@@ -12,9 +12,10 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYBROYDENSOLVER_IXX
-#define LIB_TFEL_MATH_TINYBROYDENSOLVER_IXX
+#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX
+#define LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX
 
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
 
 namespace tfel::math {
@@ -25,7 +26,7 @@ namespace tfel::math {
             template <unsigned short, typename>
             typename ExternalWorkSpace>
   void TinyPowellDogLegBroydenSolver<N, NumericType, Child, ExternalWorkSpace>::
-      updateOrCheckJacobian() {
+      updateJacobian() {
     if (this->iter == 0) {
       return;
     }
@@ -36,7 +37,7 @@ namespace tfel::math {
       this->jacobian +=
           ((this->fzeros - this->fzeros_1 - fzeros2) ^ (this->delta_zeros)) / n;
     }
-  }  // end of updateOrCheckJacobian
+  }  // end of updateJacobian
 
   template <unsigned short N,
             typename NumericType,
@@ -46,7 +47,10 @@ namespace tfel::math {
   bool TinyPowellDogLegBroydenSolver<N, NumericType, Child, ExternalWorkSpace>::
       computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
-    child.updateOrCheckJacobian();
+    this->updateJacobian();
+    if (!this->callUpdateOrCheckJacobian()) {
+      return false;
+    }
     auto tmp_jacobian = this->jacobian;
     auto tmp_fzeros = this->fzeros;
     if (!child.solveLinearSystem(tmp_jacobian, tmp_fzeros)) {
@@ -54,11 +58,11 @@ namespace tfel::math {
     }
     this->delta_zeros = -tmp_fzeros;
     this->fzeros_1 = this->fzeros;
-    applyPowellDogLegAlgorithm(this->delta_zeros, tmp_jacobian, tmp_fzeros,
+    applyPowellDogLegAlgorithm(this->delta_zeros, this->jacobian, this->fzeros,
                                this->powell_dogleg_trust_region_size);
     return true;
   }  // end of computeNewCorrection
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_TINYBROYDENSOLVER_IXX */
+#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX */

@@ -74,7 +74,7 @@ The `@Coef` keyword is a deprecated synonymous of
 
 # The `@ConstantMaterialProperty` keyword
 
-The `@ConstantMaterialPropery` let the user define a specific kind of
+The `@ConstantMaterialProperty` let the user define a specific kind of
 input to a model which is meant to be constant and uniform during the
 computations. This allows the interfaces to optimize the generated
 code. This keyword is followed by the names of the material
@@ -360,6 +360,14 @@ The `@Function` keyword defines a computational part of the
 model. This keyword is followed by a string defining the name of this
 part of the computation.
 
+The functions are executed in the order of their declaration. An
+output can only be modified by one function.
+
+An output whose first modification in a function is a compound
+assignment (`+=`, `-=`, `*=` or `/=`) starts from its value at the
+beginning of the time step: its depth must be at least one (see the
+`setDepth` method).
+
 ## Example
 
 ~~~~{.cpp}
@@ -457,8 +465,27 @@ T.setGlossaryName("Temperature");
 p.setGlossaryName("Porosity");
 // we need the value at the end of the time step and the value at the
 // beginning at the time step
-p.setGlossaryName("Porosity");
+p.setDepth(1);
 ~~~~
+
+# The `@Link` keyword
+
+The `@Link` keyword let the user specify additional linker flags used
+to build their shared library/executables. This keyword must be
+followed by a string or an array of strings.
+
+Usage of the `@Link` keyword is deprecated a linker flags are not
+portable. The user may prefer using the `LDFLAGS` environment
+variable.
+
+## Example
+
+~~~~{.cpp}
+// explicit link with libm.so
+// (not necessary in pratice)
+@Link "-lm";
+~~~~
+
 
 # The `@LocalParameter` keyword
 
@@ -698,9 +725,11 @@ represented by the '*' character.
 
 ## Effect
 
-In implicit schemes, if physical bounds are set on an integration
-variable, this variable is bounded to satisfy them during the internal
-iterations.
+In implicit schemes, if physical bounds are set on a state variable,
+or on some elements of an array of state variables, this variable is
+bounded to satisfy them during the internal iterations. Physical bounds
+set on an integration variable which is not a state variable (see
+`@IntegrationVariable`) are ignored.
 
 If a variable is found to be out of its physical bounds, the
 computations are stopped. The tests are performed at different stages
@@ -750,9 +779,9 @@ respectively.
 
 ~~~~{.cpp}
 // scalar state variable
-@StateVariables strain p;
+@StateVariable strain p;
 // symmetric tensors state variable
-@StateVariables StrainStensor evp,evp2;
+@StateVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@StaticVar` keyword
@@ -774,6 +803,23 @@ an equal sign and its value.
 ~~~~{.cpp}
 @StaticVariable real A = 1.234e56;
 ~~~~
+
+# The `@TFELLibraries` keyword
+
+The `@TFELLibraries` keyword let the user specify TFEL libraries to link
+with. This keyword must be followed by an array of strings.
+
+The following libraries are available: `Config`, `Exception`,
+`Glossary`, `Tests`, `UnicodeSupport`, `Utilities`, `System`, `Math`,
+`MathCubicSpline`, `MathKriging`, `MathParser`, `NUMODIS`, `Material`,
+`MFront`, `MTest`.
+
+## Example
+
+~~~~{.cpp}
+@TFELLibraries {"MathParser"};
+~~~~
+
 
 # The `@UnitSystem` keyword
 

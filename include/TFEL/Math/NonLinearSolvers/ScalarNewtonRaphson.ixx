@@ -57,11 +57,11 @@ namespace tfel::math {
       b.updateBounds(p.xmax0, std::get<0>(f(p.xmax0)));
     }
     auto converged = false;
-    while ((!converged) && (i != p.im)) {
+    while (true) {
       b.updateBounds(x, fv);
       auto have_valid_increment_estimate = false;
-      if ((tfel::math::ieee754::isfinite(fv)) ||
-          (tfel::math::ieee754::fpclassify(dfv) == FP_ZERO)) {
+      if ((tfel::math::ieee754::isfinite(fv)) &&
+          (tfel::math::ieee754::fpclassify(dfv) != FP_ZERO)) {
         dx = -fv / dfv;
         have_valid_increment_estimate = true;
       } else {
@@ -79,27 +79,35 @@ namespace tfel::math {
           // by 2
           if (i == 0) {
             return std::make_tuple(false, p.x0, i);
+          } else if (i == p.im) {
+            break;
           } else {
             // step back
-            x -= dx / 2;
+            dx /= 2;
+            x -= dx;
             b.iterate(x);
             const auto r = f(x);
             fv = std::get<0>(r);
             dfv = std::get<1>(r);
+            ++i;
+            continue;
           }
         }
       }
       converged = have_valid_increment_estimate &&
                   tfel::math::ieee754::isfinite(x) &&
                   tfel::math::ieee754::isfinite(fv) && c(fv, dx, x, i);
-      if (!converged) {
-        x += dx;
-        b.iterate(x);
-        const auto r = f(x);
-        fv = std::get<0>(r);
-        dfv = std::get<1>(r);
-        ++i;
+      // the maximum number of iterations is tested after the convergence
+      // check, so that the estimate given by the last correction is checked
+      if ((converged) || (i == p.im)) {
+        break;
       }
+      x += dx;
+      b.iterate(x);
+      const auto r = f(x);
+      fv = std::get<0>(r);
+      dfv = std::get<1>(r);
+      ++i;
     }
     return std::make_tuple(converged, x, i);
   }  // end of scalarNewtonRaphson

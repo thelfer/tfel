@@ -62,8 +62,8 @@ namespace tfel::math {
   struct FSLevenbergMarquardt {
     //! a simple alias
     typedef typename FSLevenbergMarquardtVariable<N, T>::type Variable;
-    //! a simple alias
-    typedef typename FSLevenbergMarquardtVariable<M, T>::type Parameter;
+    //! a simple alias (a vector, even if there is only one parameter)
+    typedef tvector<M, T> Parameter;
 
     //! a simple alias
     typedef std::pair<T, Parameter> (*PtrFun)(const Variable&,

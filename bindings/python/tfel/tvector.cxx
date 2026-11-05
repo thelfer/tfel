@@ -90,9 +90,9 @@ static void declaretvector(pybind11::module_& m, const char* const n) {
            [](const tvector& a, const tvector& b) -> tvector { return a - b; })
       .def("__mul__",
            [](const tvector& a, const double b) -> tvector { return a * b; })
-      .def("__mul__",
-           [](const double a, const tvector& b) -> tvector { return a * b; })
-      .def("__div__",
+      .def("__rmul__",
+           [](const tvector& b, const double a) -> tvector { return a * b; })
+      .def("__truediv__",
            [](const tvector& a, const double b) -> tvector { return a / b; })
       .def(pybind11::self += pybind11::self)
       .def(pybind11::self -= pybind11::self)

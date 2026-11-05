@@ -438,12 +438,14 @@ namespace mfront {
       switch (p->second) {
         case SupportedTypes::SCALAR:
           return {0, 3};
+        // tensorial objects use two more bits for the space dimension, which
+        // is zero here since it depends on the modelling hypothesis
         case SupportedTypes::STENSOR:
-          return {1, 3};
+          return {1, 5};
         case SupportedTypes::TVECTOR:
-          return {2, 3};
+          return {2, 5};
         case SupportedTypes::TENSOR:
-          return {3, 3};
+          return {3, 5};
         default:
           break;
       }
@@ -926,7 +928,7 @@ namespace mfront {
       ++p;
     }
     for (; p != s2.end(); ++p) {
-      if (!std::isdigit(*p)) {
+      if (!std::isdigit(static_cast<unsigned char>(*p))) {
         return {};
       }
     }
@@ -1386,7 +1388,7 @@ namespace mfront {
       SupportedTypes::checkIteratorValidity(current, end);
       const auto t = current->value;
       throw_if(
-          !CxxTokenizer::isValidIdentifier(t, false),
+          !CxxTokenizer::isValidIdentifier(t, true),
           "SupportedTypes::parseType: given token '" + t + "' is not valid.");
       type.type += "::" + t;
       ++(current);
@@ -1431,7 +1433,7 @@ namespace mfront {
           if (i) {
             f += std::to_string(*i);
           } else {
-            throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+            throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                      "SupportedTypes::parseType: invalid token '" +
                          current->value + "'");
             const auto pic = opts.integer_constants.find(current->value);
@@ -1452,7 +1454,7 @@ namespace mfront {
           if ((current->value != ">") && (current->value != ">>") &&
               (current->value != ",")) {
             if (!isOperation(current->value)) {
-              throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+              throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                        "SupportedTypes::parseType: invalid token '" +
                            current->value + "'");
             }
@@ -1460,7 +1462,7 @@ namespace mfront {
             ++(current);
             SupportedTypes::checkIteratorValidity(current, end);
             if ((current->value == ">") || ((current->value == ","))) {
-              throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+              throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                        "SupportedTypes::parseType: unexpected token '" +
                            current->value + "'");
             }
@@ -1563,8 +1565,13 @@ namespace mfront {
   }  // end of getTinyVectorTypeAliases
 
   std::vector<std::string> getStensorTypeAliases() {
-    return {"Stensor",       "StressStensor",     "StressRateStensor",
-            "StrainStensor", "StrainRateStensor", "FrequencyStensor"};
+    return {"Stensor",
+            "StressStensor",
+            "StressRateStensor",
+            "StrainStensor",
+            "StrainRateStensor",
+            "FrequencyStensor",
+            "ThermalExpansionCoefficientTensor"};
   }
 
   std::vector<std::string> getTensorTypeAliases() {

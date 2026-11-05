@@ -458,7 +458,7 @@ computeMichelAndSuquet1992HollowSphereTestStressNormal(
 >
 > At this stage, the `MFront` implementation based on a numerical
 > jacobian could be fully functional if one modifies the
-> `@InitLocalVarialbes` block to initialize the parameters of
+> `@InitLocalVariables` block to initialize the parameters of
 > stress criterion.
 
 ### Implementing the `computeMichelAndSuquet1992HollowSphereTestStressSecondDerivative` function
@@ -867,7 +867,10 @@ $ mfront -I $(pwd)/../../include --obuild --interface=generic \
 
 - The convergence of `MTest` is quadratic, i.e. that the consistent
   tangent operator is correct (this is just another way of checking if
-  the jacobian of the implicit system is correct):
+  the jacobian of the implicit system is correct). The comparison to a
+  numerical approximation of the tangent operator is a debugging tool:
+  a failed comparison is printed in the output of `MTest`, but does not
+  make the test fail:
 
 ~~~~{.bash}
 $ mtest MichelAndSuquet1992HollowSphereTestViscoPlasticity.mtest                   \

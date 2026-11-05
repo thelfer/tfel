@@ -45,7 +45,8 @@ Options
 - `enable-calculix  `: enables CalculiX support
 - `enable-comsol`: enables Combsol support
 - `enable-diana-fea`: enables Diana FEA support
-- `enable-lsdyna`: enables LS-DYNA support
+- `enable-lsdyna`: enables LS-DYNA support (not functional yet: mfront
+  rejects the `lsdyna` interface)
 - `enable-libcxx`: enable libc++ on Linux and clang
 - `enable-cxx-17`: enable c++-17 features (requires `gcc` >= 7.2)
 - `enable-random-tests: enable tests based on a random choice of
@@ -130,6 +131,9 @@ cmake usefull variables
 - `TFEL_ACPP_COMPILER`: path to AdaptativeCpp's `acpp` compiler.
 - `tdls_DIR`: directory where to find the `cmake` files installed by the
   Tiny Device-callable Linear Solvers (`TDLS`) library.
+
+The `TFEL_xxx_COMPILER` variables are only used by the `generic-parallel`
+configurations which require the corresponding compiler.
 
 cmake typical usage
 ===================

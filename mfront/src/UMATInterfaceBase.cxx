@@ -318,11 +318,15 @@ namespace mfront {
               f << dest << "[" << currentOffset << "+idx] = this->" << p->name
                 << "[idx];\n";
             }
-          } else if ((flag == SupportedTypes::TVECTOR) ||
-                     (flag == SupportedTypes::STENSOR) ||
-                     (flag == SupportedTypes::TENSOR)) {
+          } else if (flag == SupportedTypes::TVECTOR) {
+            f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
+              << "[" << currentOffset << "+idx*TVectorSize]);\n";
+          } else if (flag == SupportedTypes::STENSOR) {
             f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
               << "[" << currentOffset << "+idx*StensorSize]);\n";
+          } else if (flag == SupportedTypes::TENSOR) {
+            f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
+              << "[" << currentOffset << "+idx*TensorSize]);\n";
           } else {
             tfel::raise(
                 "UMATInterfaceBase::exportResults: "
@@ -804,7 +808,7 @@ namespace mfront {
       }
     } else {
       if (pT != nullptr) {
-        out << ",dT(temperature(0))";
+        out << ", d" << pT->name << "(temperature(0))";
       }
     }
     bool first = false;
@@ -1179,7 +1183,7 @@ namespace mfront {
         return "SupportedTypes::TENSOR";
       }
       tfel::raise(
-          "GenericBehaviourInterface::generateMTestFile: "
+          "UMATInterfaceBase::generateMTestFileForHypothesis: "
           "unsupported type flag");
     };
     const auto& d = bd.getBehaviourData(h);
@@ -1219,9 +1223,7 @@ namespace mfront {
         << "mg.addTime(0.);\n"
         << "mg.addTime(dt);\n";
     if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "mg.setStrainTensor(STRAN);\n"
-          << "mg.setStrainTensorIncrement(DSTRAN);\n"
-          << "mg.setStressTensor(&mg_STRESS[0]);\n";
+      this->writeMTestFileGeneratorSetStrainAndStressTensors(out, h);
     } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n"
           << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n"
@@ -1275,7 +1277,8 @@ namespace mfront {
               << "[\" + std::to_string(i)+ \"]\";\n";
           out << "mg.addInternalStateVariable(name, "  //
               << as_string(flag) << ", "               //
-              << "mg_STATEV.data() + " << ivoffset << " + i);\n";
+              << "mg_STATEV.data() + " << ivoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "));\n";
           out << "}\n";
           ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
         } else {
@@ -1309,8 +1312,10 @@ namespace mfront {
           out << "const auto name = \"" << evname
               << "[\" +std::to_string(i)+\"]\";\n";
           out << "mg.addExternalStateVariable(name," << as_string(flag) << ", "
-              << "0, PREDEF + " << offset << " + i, "
-              << "dt, DPRED + " << offset << " + i, true);\n";
+              << "0, PREDEF + " << evoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "), "
+              << "dt, DPRED + " << evoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "), true);\n";
           out << "}\n";
           evoffset += SupportedTypes::TypeSize(p->arraySize, flag);
         } else {
@@ -1346,6 +1351,13 @@ namespace mfront {
           << "DROT[2],DROT[5],DROT[8]);\n";
     }
   }  // end of writeMTestFileGeneratorSetRotationMatrix
+
+  void UMATInterfaceBase::writeMTestFileGeneratorSetStrainAndStressTensors(
+      std::ostream& out, const Hypothesis) const {
+    out << "mg.setStrainTensor(STRAN);\n"
+        << "mg.setStrainTensorIncrement(DSTRAN);\n"
+        << "mg.setStressTensor(&mg_STRESS[0]);\n";
+  }  // end of writeMTestFileGeneratorSetStrainAndStressTensors
 
   bool UMATInterfaceBase::areExternalStateVariablesSupported() const {
     return true;

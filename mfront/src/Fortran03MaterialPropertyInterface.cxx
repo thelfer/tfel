@@ -82,7 +82,7 @@ namespace mfront {
       throw_if(!this->module.empty(), "module name already defined");
       throw_if(current == end, "unexpected end of file");
       const auto p = current->value;
-      throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, true),
+      throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false),
                "invalid module name '" + p + "'");
       throw_if(++current == end, "unexpected end of file");
       throw_if(current->value != ";",
@@ -206,7 +206,8 @@ namespace mfront {
   }  // end of getFunctionName
 
   bool Fortran03MaterialPropertyInterface::requiresCheckBoundsFunction() const {
-    return false;
+    // the module declares the function for every material property
+    return true;
   }
 
   std::string Fortran03MaterialPropertyInterface::getCheckBoundsFunctionName(
@@ -266,7 +267,7 @@ namespace mfront {
     }
     mf.close();
     std::ofstream fm{"fortran/" + fmname + ".inc"};
-    throw_if(!mf, "unable to open 'fortran/" + fmname + ".inc'");
+    throw_if(!fm, "unable to open 'fortran/" + fmname + ".inc'");
     fm.exceptions(std::ios::badbit | std::ios::failbit);
     fm << "Module " << fmname << "\n"
        << "  Interface\n";
@@ -292,7 +293,7 @@ namespace mfront {
         }
         fm << "f_args" << i;
       }
-      fm << ") BIND (C,NAME='" << m.second.name << "_checkBounds')\n"
+      fm << ") BIND (C,NAME='" << m.second.name << "checkBounds_')\n"
          << "      Use iso_c_binding, only: c_double,c_int\n"
          << "      Integer(kind=c_int) :: " << m.first << "_checkBounds\n";
       for (decltype(m.second.n_args) i = 0; i != m.second.n_args; ++i) {

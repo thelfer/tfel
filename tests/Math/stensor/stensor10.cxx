@@ -415,6 +415,9 @@ struct DecompositionInPositiveAndNegativePartsTest3D final
     const double v3[6] = {8.2, 4.5, -7.2, 0, 0., 2.3 * sqrt2};
     const double v4[6] = {8.2,          4.5,           -7.2,
                           3.14 * sqrt2, -6.42 * sqrt2, 2.3 * sqrt2};
+    const double v5[6] = {8.2, -4.5, -7.2, 0., 0., 0.};
+    const double v6[6] = {-8.2,         -4.5,          -7.2,
+                          3.14 * sqrt2, -6.42 * sqrt2, 2.3 * sqrt2};
     stensor<3u, double> zero(0.);
     stensor<3u, double> s(zero);
     this->check(stensor<3u, double>(0.), 1.e-8);
@@ -438,6 +441,10 @@ struct DecompositionInPositiveAndNegativePartsTest3D final
     s = stensor<3u, double>(v3);
     this->check(s, 1.e-10);
     s = stensor<3u, double>(v4);
+    this->check(s, 1.e-10);
+    s = stensor<3u, double>(v5);
+    this->check(s, 1.e-10);
+    s = stensor<3u, double>(v6);
     this->check(s, 1.e-10);
     return this->result;
   }  // end of execute

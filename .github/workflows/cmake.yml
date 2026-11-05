@@ -29,11 +29,20 @@ jobs:
       with:
         path: tfel
 
+    - name: Set up ccache
+      id: ccache
+      uses: ./tfel/.github/actions/setup-ccache
+      with:
+        key: cmake-${{ matrix.os }}
+
     - name: Configure CMake
       run: |
         cmake ${{github.workspace}}/tfel                           \
               -B ${{github.workspace}}/build                       \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}               \
+              -Denable-portable-build=ON                           \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache                   \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache                 \
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
@@ -87,3 +96,8 @@ jobs:
             cat "$o"
           done
         done
+
+    # even when a test fails, so that the next run does not compile everything again
+    - name: Save ccache
+      if: ${{ !cancelled() && steps.ccache.outcome == 'success' }}
+      uses: ./tfel/.github/actions/save-ccache

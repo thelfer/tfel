@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Aster/AsterBehaviourHandler.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
+#include "MFront/Aster/AsterBehaviourHandler.hxx"
+#else
+
 #ifndef LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX */
 
 #include "MFront/Aster/AsterRotationMatrix.hxx"
 #include "MFront/Aster/AsterFiniteStrainRotationMatrix.hxx"
@@ -572,7 +574,16 @@ namespace aster {
       handler.exe(DDSOE, sm, STATEV, F1m);
       m.rotateStressesBackward(sm, STRESS);
       if (bDDSOE) {
-        m.rotateTangentOperatorBackward(DDSOE);
+        if constexpr (Traits::afsf == GROT_GDEP) {
+          // the derivative of the second Piola-Kirchhoff stress with respect
+          // to the Green-Lagrange strain is a st2tost2 stored as a 6x6
+          // matrix, rotated as the tangent operator of small strain
+          // behaviours
+          AsterRotationMatrix3D mr(DROT);
+          mr.rotateTangentOperatorBackward(DDSOE);
+        } else {
+          m.rotateTangentOperatorBackward(DDSOE);
+        }
       }
     }  // end of AsterOrthotropicBehaviourHandler<3u,Behaviour>::exe
 
@@ -581,3 +592,5 @@ namespace aster {
 }  // end of namespace aster
 
 #endif /* LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX */

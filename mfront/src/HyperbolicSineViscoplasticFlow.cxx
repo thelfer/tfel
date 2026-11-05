@@ -93,30 +93,20 @@ namespace mfront::bbrick {
       const std::string& id) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
-    if ((!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) ||
-        (!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) ||
-        (!this->n.is<BehaviourDescription::ConstantMaterialProperty>())) {
-      auto mts = getMiddleOfTimeStepModifier(bd);
-      CodeBlock i;
-      auto eval = [&mts, &dsl, &i](
-                      const BehaviourDescription::MaterialProperty& mp,
-                      const std::string& mpn) {
-        if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          std::ostringstream mps;
-          mps << "this->" + mpn + " = ";
-          dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
-          mps << ";\n";
-          i.code += mps.str();
-        }
-      };
-      eval(this->A, "A" + id);
-      eval(this->K, "K" + id);
-      if (!this->n.empty()) {
-        eval(this->n, "E" + id);
-      }
-      if (!this->Ksf.empty()) {
-        eval(this->Ksf, "Ksf" + id);
-      }
+    CodeBlock i;
+    i.code +=
+        generateMaterialPropertyInitializationCode(dsl, bd, "A" + id, this->A);
+    i.code +=
+        generateMaterialPropertyInitializationCode(dsl, bd, "K" + id, this->K);
+    if (!this->n.empty()) {
+      i.code += generateMaterialPropertyInitializationCode(dsl, bd, "E" + id,
+                                                           this->n);
+    }
+    if (!this->Ksf.empty()) {
+      i.code += generateMaterialPropertyInitializationCode(dsl, bd, "Ksf" + id,
+                                                           this->Ksf);
+    }
+    if (!i.code.empty()) {
       bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }

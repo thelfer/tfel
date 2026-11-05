@@ -30,6 +30,10 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   Test14.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test15.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test16.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	NortonTest.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	NortonTest_nj.mfront)
@@ -185,6 +189,10 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	PlasticityTest17_nj.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+	PlasticityTest26.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+	PlasticityTest27.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest_nj.mfront)
@@ -192,6 +200,8 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2_nj.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest3.mfront)
 
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	 IsotropicDamageHookeLaw.mfront)

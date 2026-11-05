@@ -14,6 +14,9 @@
 #include <ostream>
 #include <fstream>
 #include <sstream>
+#include <optional>
+#include <algorithm>
+#include <functional>
 #include "TFEL/Raise.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/System/System.hxx"
@@ -40,6 +43,122 @@
 #include "MFront/BehaviourCodeGeneratorBase.hxx"
 
 namespace mfront {
+
+  /*!
+   * \return the types of the arguments of the constructor declared at the
+   * beginning of the given code, i.e. without the names of the arguments, or
+   * nothing if no constructor is found
+   * \param[in] code: code of the constructor
+   * \param[in] n: name of the class
+   */
+  static std::optional<std::string> getConstructorArgumentsTypes(
+      const std::string& code, const std::string& n) {
+    using tfel::utilities::CxxTokenizer;
+    auto t = CxxTokenizer{};
+    try {
+      // only the declaration and the initializers are tokenized
+      t.parseString(code.substr(0, code.find("\n{")));
+      t.stripComments();
+    } catch (...) {
+      return {};
+    }
+    // look for the name of the class followed by an opening parenthesis
+    const auto pe = t.end();
+    auto p = t.begin();
+    while ((p != pe) && (std::next(p) != pe) &&
+           ((p->value != n) || (std::next(p)->value != "("))) {
+      ++p;
+    }
+    if ((p == pe) || (std::next(p) == pe)) {
+      return {};
+    }
+    auto r = std::string{};
+    auto arg = std::vector<std::string>{};
+    auto add_argument = [&r, &arg] {
+      // the last token is the name of the argument if it is an identifier
+      // preceded by the name of a type
+      const auto is_identifier = [](const std::string& v) {
+        return CxxTokenizer::isValidIdentifier(v, false);
+      };
+      if ((arg.size() > 1) && (is_identifier(arg.back())) &&
+          (std::any_of(arg.begin(), std::prev(arg.end()), is_identifier))) {
+        arg.pop_back();
+      }
+      for (const auto& v : arg) {
+        r += v + ' ';
+      }
+      arg.clear();
+    };
+    auto depth = 0;
+    for (p = std::next(p, 2); p != pe; ++p) {
+      const auto& v = p->value;
+      if ((depth == 0) && (v == ")")) {
+        add_argument();
+        return r;
+      }
+      if ((depth == 0) && (v == ",")) {
+        add_argument();
+        r += ", ";
+        continue;
+      }
+      if ((v == "(") || (v == "<")) {
+        ++depth;
+      } else if ((v == ")") || (v == ">")) {
+        --depth;
+      } else if (v == ">>") {
+        depth -= 2;
+      }
+      arg.push_back(v);
+    }
+    return {};
+  }  // end of getConstructorArgumentsTypes
+
+  /*!
+   * \brief write the constructors that the interfaces add to a class
+   * (behaviour data, integration data or behaviour). Two interfaces adding
+   * constructors with the same arguments, which would not compile, are
+   * reported.
+   * \param[out] os: output stream
+   * \param[in] interfaces: interfaces
+   * \param[in] bd: behaviour description
+   * \param[in] h: modelling hypothesis
+   * \param[in] c: name of the class
+   * \param[in] w: function writing the constructor of an interface
+   */
+  static void writeInterfacesSpecificConstructors(
+      std::ostream& os,
+      const BehaviourCodeGeneratorBase::BehaviourInterfaceMap& interfaces,
+      const BehaviourDescription& bd,
+      const tfel::material::ModellingHypothesis::Hypothesis h,
+      const std::string& c,
+      const std::function<void(std::ostream&,
+                               const AbstractBehaviourInterface&)>& w) {
+    // types of the arguments of the constructors already written and names
+    // of the associated interfaces
+    auto constructors = std::map<std::string, std::string>{};
+    for (const auto& i : interfaces) {
+      if (!i.second->isBehaviourConstructorRequired(h, bd)) {
+        continue;
+      }
+      std::ostringstream code;
+      w(code, *(i.second));
+      const auto args = getConstructorArgumentsTypes(code.str(), c);
+      if (args.has_value()) {
+        const auto p = constructors.find(*args);
+        if (p != constructors.end()) {
+          tfel::raise(
+              "BehaviourCodeGeneratorBase::"
+              "writeInterfacesSpecificConstructors: the interfaces '" +
+              p->second + "' and '" + i.first + "' both add to the class '" +
+              c +
+              "' a constructor with the same arguments. Those interfaces "
+              "can't be used in the same call to mfront");
+        }
+        constructors.insert({*args, i.first});
+      }
+      os << code.str();
+    }
+  }  // end of writeInterfacesSpecificConstructors
 
   static std::string makeCamelCase(std::string_view s) {
     const auto words = tfel::utilities::tokenize(s, '_', false);
@@ -71,7 +190,7 @@ namespace mfront {
       std::vector<std::string>& tmpnames,
       const BehaviourDescription& bd,
       const std::string& p) {
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(p)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false)) {
       tfel::raise(
           "getTemporaryVariableName: "
           "invalid variable prefix '" +
@@ -121,6 +240,18 @@ namespace mfront {
       const BehaviourDescription& d,
       const BehaviourInterfaceMap& bim)
       : fd(f), bd(d), interfaces(bim) {}  // end of BehaviourCodeGeneratorBase
+
+  void BehaviourCodeGeneratorBase::checkArraySizeOfMainVariables(
+      const std::string_view m,
+      const std::pair<Gradient, ThermodynamicForce>& mv) {
+    if (mv.first.arraySize != mv.second.arraySize) {
+      tfel::raise(std::string{m} + ": the array size of the gradient '" +
+                  mv.first.name +
+                  "' is "
+                  "different from the array size of the thermodynamic force '" +
+                  mv.second.name + "'");
+    }
+  }  // end of checkArraySizeOfMainVariables
 
   void BehaviourCodeGeneratorBase::throwRuntimeError(
       const std::string_view m, const std::string_view e) const {
@@ -824,7 +955,12 @@ namespace mfront {
     throw_if(f.modifiedVariables.size() != outputVariables.size(),
              "invalid number of functions in model '" + md.className + "'");
     throw_if(f.name.empty(), "unnamed function");
-    throw_if((f.usedVariables.empty()) && (!f.useTimeIncrement),
+    // the values at the beginning of the time step of the outputs updated by
+    // a compound assignment are passed as arguments, as the other values at
+    // the beginning of the time step (see the mfront model interface)
+    const auto& updatedOutputs = f.compoundAssignedVariables;
+    throw_if((f.usedVariables.empty()) && (updatedOutputs.empty()) &&
+                 (!f.useTimeIncrement),
              "no used variable for function '" + f.name + "'");
     const auto sm = getTemporaryVariableName(tmpnames, this->bd, bn);
     if (inputVariables.size() == 1) {
@@ -849,9 +985,13 @@ namespace mfront {
         out << "this->" << outputVariables[p - pb] << ", ";
       }
     }
-    const auto args = [&f] {
+    const auto args = [&f, &updatedOutputs] {
+      auto vars = f.usedVariables;
+      for (const auto& v : updatedOutputs) {
+        vars.insert(v + "_1");
+      }
       auto a = std::vector<std::string>{};
-      for (const auto& uv : f.usedVariables) {
+      for (const auto& uv : vars) {
         a.push_back(uv);
       }
       if (f.useTimeIncrement) {
@@ -1227,15 +1367,8 @@ namespace mfront {
       os << "ThermalExpansionCoefficientTensor A;\n";
     }
     for (const auto& mv : this->bd.getMainVariables()) {
-      if (mv.first.arraySize != mv.second.arraySize) {
-        tfel::raise(
-            "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers: "
-            "the array size of the gradient '" +
-            mv.first.name +
-            "' is "
-            "different from the array size of the thermodynamic force '" +
-            mv.second.name + "'");
-      }
+      checkArraySizeOfMainVariables(
+          "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers", mv);
       if (mv.first.arraySize == 1) {
         if (Gradient::isIncrementKnown(mv.first)) {
           os << mv.first.type << " " << mv.first.name << ";\n\n";
@@ -1348,11 +1481,12 @@ namespace mfront {
     }
     os << "\n{}\n\n";
     // Creating constructor for external interfaces
-    for (const auto& i : this->interfaces) {
-      if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
-        i.second->writeBehaviourDataConstructor(os, h, this->bd);
-      }
-    }
+    writeInterfacesSpecificConstructors(
+        os, this->interfaces, this->bd, h,
+        this->bd.getClassName() + "BehaviourData",
+        [this, h](std::ostream& out, const AbstractBehaviourInterface& i) {
+          i.writeBehaviourDataConstructor(out, h, this->bd);
+        });
   }  // end of writeBehaviourDataConstructors
 
   void BehaviourCodeGeneratorBase::writeBehaviourDataAssignementOperator(
@@ -2258,8 +2392,11 @@ namespace mfront {
       mfront::writeBoundsChecks(os, v, v.name, "N", "policy", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writeBoundsChecks(os, v, v.name + '[' + std::to_string(i) + ']',
-                                  "N", "policy", true, b);
+        if (v.hasBounds(i)) {
+          mfront::writeBoundsChecks(os, v, v.getBounds(i),
+                                    v.name + '[' + std::to_string(i) + ']', "N",
+                                    "policy", true, b);
+        }
       }
     }
   }  // end of writeBoundsChecks
@@ -2270,8 +2407,11 @@ namespace mfront {
       mfront::writePhysicalBoundsChecks(os, v, v.name, "N", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writePhysicalBoundsChecks(
-            os, v, v.name + '[' + std::to_string(i) + ']', "N", true, b);
+        if (v.hasPhysicalBounds(i)) {
+          mfront::writePhysicalBoundsChecks(
+              os, v, v.getPhysicalBounds(i),
+              v.name + '[' + std::to_string(i) + ']', "N", true, b);
+        }
       }
     }
   }  // end of writePhysicalBoundsChecks
@@ -2374,12 +2514,12 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourConstructors(
       std::ostream& os, const Hypothesis h) const {
     auto tmpnames = std::vector<std::string>{};
-    auto write_body = [this, &os, h] {
-      os << "using namespace std;\n"
-         << "using namespace tfel::math;\n"
-         << "using std::vector;\n";
-      writeMaterialLaws(os, this->bd.getMaterialLaws());
-      this->writeBehaviourParameterInitialisation(os, h);
+    auto write_body = [this, h](std::ostream& out) {
+      out << "using namespace std;\n"
+          << "using namespace tfel::math;\n"
+          << "using std::vector;\n";
+      writeMaterialLaws(out, this->bd.getMaterialLaws());
+      this->writeBehaviourParameterInitialisation(out, h);
     };
     this->checkBehaviourFile(os);
     // initializers
@@ -2392,7 +2532,7 @@ namespace mfront {
         os << "\n: " << init;
       }
       os << "\n{";
-      write_body();
+      write_body(os);
       os << "}\n\n";
     }
     os << "/*!\n"
@@ -2423,18 +2563,19 @@ namespace mfront {
       os << ",\n" << init;
     }
     os << "\n{\n";
-    write_body();
+    write_body(os);
     os << "}\n\n";
     // constructor specific to interfaces
-    for (const auto& i : this->interfaces) {
-      if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
-        i.second->writeBehaviourConstructorHeader(os, this->bd, h, init);
-        os << "\n{\n";
-        write_body();
-        i.second->writeBehaviourConstructorBody(os, this->bd, h);
-        os << "}\n\n";
-      }
-    }
+    writeInterfacesSpecificConstructors(
+        os, this->interfaces, this->bd, h, this->bd.getClassName(),
+        [this, h, &init, &write_body](std::ostream& out,
+                                      const AbstractBehaviourInterface& i) {
+          i.writeBehaviourConstructorHeader(out, this->bd, h, init);
+          out << "\n{\n";
+          write_body(out);
+          i.writeBehaviourConstructorBody(out, this->bd, h);
+          out << "}\n\n";
+        });
   }
 
   void BehaviourCodeGeneratorBase::writeHillTensorComputation(
@@ -2698,9 +2839,14 @@ namespace mfront {
       const auto& amp = m.get<BehaviourDescription::AnalyticMaterialProperty>();
       tfel::math::Evaluator e(amp.f);
       auto mi = std::map<std::string, std::string>{};
+      const auto use_qt = this->bd.useQt();
       for (const auto& i :
            this->bd.getMaterialPropertyInputs(e.getVariablesNames())) {
-        mi[i.name] = f(i);
+        if (use_qt) {
+          mi[i.name] = "tfel::math::base_type_cast(" + f(i) + ")";
+        } else {
+          mi[i.name] = f(i);
+        }
       }
       out << e.getCxxFormula(mi);
     } else if (m.empty()) {
@@ -3127,14 +3273,27 @@ namespace mfront {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "mfront_dl0_l0[2]+=(this->" << vs << ")/2;\n";
           }
-          this->writeModelCall(os, tmpnames, h, md,
-                               std::vector<std::string>(1u, vs),
-                               std::vector<std::string>(1u, vs), "sfeh");
           if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "mfront_dl0_l0[1]+=(this->" << vs << ")/2;\n";
+          }
+          this->writeModelCall(os, tmpnames, h, md,
+                               std::vector<std::string>(1u, vs),
+                               std::vector<std::string>(1u, vs), "sfeh");
+          if ((h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
+              (h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)) {
+            os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl1_l0[2]+=(this->" << vs << ")/2;\n";
+          }
+          if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRESS)) {
+            os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl1_l0[1]+=(this->" << vs << ")/2;\n";
           }
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
@@ -3818,7 +3977,7 @@ namespace mfront {
     for (const auto& v : md.getLocalVariables()) {
 #pragma message( \
     "BehaviourCodeGeneratorBase: handle LocalDataStructure properly")
-      if ((v.type.size() >= 7) && (v.type.substr(0, 7) != "struct{")) {
+      if (!tfel::utilities::starts_with(v.type, "struct{")) {
         os << "os << \"" << displayName(v) << " : \" << b." << v.name
            << " << '\\n';\n";
       }
@@ -4979,10 +5138,10 @@ namespace mfront {
                << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">>::type, tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));\n";
+               << v2.type << ">&>(*(" + ptr + "));\n";
           } else {
-            os << "return tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));\n";
+            os << "return tfel::math::map<tfel::math::derivative_type<"
+               << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
           }
         } else {
           os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
@@ -5014,7 +5173,7 @@ namespace mfront {
                << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">>::type, tfel::math::derivative_type<" << v1.type << ","
-               << v2.type << ">>(*(" + ptr + "));";
+               << v2.type << ">&>(*(" + ptr + "));";
           } else {
             os << "return tfel::math::map<tfel::math::derivative_type<"
                << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
@@ -5467,15 +5626,8 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     os << "protected: \n\n";
     for (const auto& v : this->bd.getMainVariables()) {
-      if (v.first.arraySize != v.second.arraySize) {
-        tfel::raise(
-            "BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers: "
-            "the array size of the gradient '" +
-            v.first.name +
-            "' is "
-            "different from the array size of the thermodynamic force '" +
-            v.second.name + "'");
-      }
+      checkArraySizeOfMainVariables(
+          "BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers", v);
       if (Gradient::isIncrementKnown(v.first)) {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " increment\n"
@@ -5483,8 +5635,8 @@ namespace mfront {
         if (v.first.arraySize == 1u) {
           os << v.first.type << " d" << v.first.name << ";\n\n";
         } else {
-          os << v.first.type << " d" << v.first.name << "[" << v.first.arraySize
-             << "];\n\n";
+          os << "tfel::math::fsarray<" << v.first.arraySize << ", "
+             << v.first.type << "> d" << v.first.name << ";\n\n";
         }
       } else {
         os << "/*!\n"
@@ -5493,8 +5645,8 @@ namespace mfront {
         if (v.first.arraySize == 1u) {
           os << v.first.type << " " << v.first.name << "1;\n\n";
         } else {
-          os << v.first.type << " " << v.first.name << "1[" << v.first.arraySize
-             << "];\n\n";
+          os << "tfel::math::fsarray<" << v.first.arraySize << ", "
+             << v.first.type << "> " << v.first.name << "1;\n\n";
         }
       }
     }
@@ -5551,11 +5703,12 @@ namespace mfront {
     }
     os << "\n{}\n\n";
     // Creating constructor for external interfaces
-    for (const auto& i : this->interfaces) {
-      if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
-        i.second->writeIntegrationDataConstructor(os, h, this->bd);
-      }
-    }
+    writeInterfacesSpecificConstructors(
+        os, this->interfaces, this->bd, h,
+        this->bd.getClassName() + "IntegrationData",
+        [this, h](std::ostream& out, const AbstractBehaviourInterface& i) {
+          i.writeIntegrationDataConstructor(out, h, this->bd);
+        });
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataScaleOperators(
@@ -5831,8 +5984,6 @@ namespace mfront {
              << v.first.name << "1 << '\\n';\n";
         }
       }
-      os << "os << \"" << displayName(v.second) << " : \" << b."
-         << v.second.name << " << '\\n';\n";
     }
     if (getUnicodeOutputOption()) {
       os << "os << \"\u0394t : \" << b.dt << '\\n';\n";
@@ -5933,6 +6084,7 @@ namespace mfront {
     if (this->bd.hasParameters()) {
       os << "#include<string>\n"
          << "#include<locale>\n"
+         << "#include<limits>\n"
          << "#include<cstring>\n"
          << "#include<sstream>\n"
          << "#include<fstream>\n"
@@ -5974,20 +6126,32 @@ namespace mfront {
       const std::string& cname,
       const std::string& type,
       const std::string& type2) {
+    // an unsigned short is read as a long, so that negative and out of range
+    // values are rejected instead of being wrapped around
+    const auto is_unsigned_short = type == "unsigned short";
     f << type << '\n'
       << cname << "::get" << type2 << "(const std::string& n,\n"
       << "const std::string& v)\n"
       << "{\n"
-      << type << " value;\n"
+      << (is_unsigned_short ? "long" : type) << " value;\n"
       << "std::istringstream converter(v);\n"
       << "converter.imbue(std::locale::classic());\n"
       << "converter >> value;\n"
-      << "tfel::raise_if(!converter||(!converter.eof()),\n"
+      << "tfel::raise_if(!converter||(!converter.eof())";
+    if (is_unsigned_short) {
+      f << "||(value<0)||\n"
+        << "(value>std::numeric_limits<unsigned short>::max())";
+    }
+    f << ",\n"
       << "\"" << cname << "::get" << type2 << ": \"\n"
       << "\"can't convert '\"+v+\"' to " << type << " "
-      << "for parameter '\"+ n+\"'\");\n"
-      << "return value;\n"
-      << "}\n\n";
+      << "for parameter '\"+ n+\"'\");\n";
+    if (is_unsigned_short) {
+      f << "return static_cast<unsigned short>(value);\n";
+    } else {
+      f << "return value;\n";
+    }
+    f << "}\n\n";
   }
 
   void BehaviourCodeGeneratorBase::writeSrcFileParametersInitializer(

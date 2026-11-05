@@ -125,7 +125,7 @@ namespace tfel::material {
   projectOnPiPlane(const StressStensor&);
   /*!
    * \brief this function returns the stress state
-   * \f$s_{0}\,\vec{n}_{0}+s_{0}\,\vec{n}_{1}\f$, defined by three
+   * \f$s_{0}\,\vec{n}_{0}+s_{1}\,\vec{n}_{1}\f$, defined by three
    * eigenvalues, where \f$\vec{n}_{0}\f$ and \f$\vec{n}_{1}\f$ is
    * the basis of the \f$\pi\f$-plane defined as follows:
    * \f[

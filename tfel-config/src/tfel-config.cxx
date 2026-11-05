@@ -372,8 +372,8 @@ int main(const int argc, const char* const* const argv) {
 
     registerCallBack(
         "--tfel-home", [] { tfel_home = true; },
-        "returns the environment variable in which the TFEL's installation "
-        "path shall be defined");
+        "returns the TFEL's installation path given by the environment "
+        "variables");
     registerCallBack(
         "--cmake-prefix-path", [] { cmake_prefix = true; },
         "returns the path to TFEL's cmake configuration files according to the "
@@ -640,11 +640,13 @@ int main(const int argc, const char* const* const argv) {
 
     if (cmake_prefix) {
       const auto s = dirSeparator();
-      std::cout << getTFELHOME() << s << "share" << s << "tfel";
+      const auto th = getTFELHOME();
+      std::cout << (th.empty() ? handleSpace(PREFIXDIR) : th) << s << "share"
+                << s << "tfel";
 #ifdef TFEL_APPEND_SUFFIX
       std::cout << "-" << TFEL_SUFFIX;
 #endif /* TFEL_APPEND_SUFFIX */
-      std::cout << s << "cmake";
+      std::cout << s << "cmake ";
     }
 
     if (cppflags) {

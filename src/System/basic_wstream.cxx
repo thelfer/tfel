@@ -29,7 +29,7 @@ namespace tfel::system {
     size_t r = count;  //< remaining block to be written
     if (count > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) {
       tfel::raise<SystemError>(
-          "BlockingStreamReader::write: "
+          "BlockingStreamWriter::write: "
           "number of bytes to write too high");
     }
     while (r > 0) {
@@ -57,18 +57,25 @@ namespace tfel::system {
   void NonBlockingStreamWriter::write(int fd,
                                       const void* const buf,
                                       const size_t count) {
-    ssize_t rwrite;
+    auto start = static_cast<const char*>(buf);
+    size_t r = count;  //< remaining block to be written
     if (count > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) {
       tfel::raise<SystemError>(
-          "NonBlockingStreamReader::write: "
+          "NonBlockingStreamWriter::write: "
           "number of bytes to write too high");
     }
-    rwrite = ::write(fd, buf, count);
-    if (rwrite == -1) {
-      systemCall::throwSystemError(
-          "NonBlockingStreamWriter::write: "
-          "write failed",
-          errno);
+    while (r > 0) {
+      ssize_t rwrite = 0;  //< number of written blocks
+      while ((rwrite = ::write(fd, start, r)) == -1) {
+        if (errno != EINTR) {
+          systemCall::throwSystemError(
+              "NonBlockingStreamWriter::write: "
+              "write failed",
+              errno);
+        }
+      }
+      r = static_cast<size_t>(r - rwrite);
+      start += rwrite;
     }
   }  // end of NonBlockingStreamWriter::write
 

@@ -90,9 +90,9 @@ static void declarestensor(pybind11::module_& m, const char* const n) {
            [](const stensor& a, const stensor& b) -> stensor { return a - b; })
       .def("__mul__",
            [](const stensor& a, const double b) -> stensor { return a * b; })
-      .def("__mul__",
-           [](const double a, const stensor& b) -> stensor { return a * b; })
-      .def("__div__",
+      .def("__rmul__",
+           [](const stensor& b, const double a) -> stensor { return a * b; })
+      .def("__truediv__",
            [](const stensor& a, const double b) -> stensor { return a / b; })
       .def(pybind11::self += pybind11::self)
       .def(pybind11::self -= pybind11::self)

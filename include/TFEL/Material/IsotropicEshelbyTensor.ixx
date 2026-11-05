@@ -14,6 +14,8 @@
 #define LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_IXX
 
 #include <cmath>
+#include <algorithm>
+#include <type_traits>
 #include <numbers>
 #include <stdexcept>
 #include "TFEL/Math/General/IEEE754.hxx"
@@ -194,6 +196,26 @@ namespace tfel::material::homogenization::elasticity {
     return computeSphereHillPolarisationTensor<StressType>(Enu0.young, Enu0.nu);
   }  // end of function computeSphereHillPolarisationTensor
 
+  namespace internals {
+    /*!
+     * \brief convert an Eshelby tensor computed in double precision
+     * \tparam real: single precision type
+     * \param[in] S: Eshelby tensor
+     */
+    template <typename real>
+    TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
+    convertEshelbyTensorFromDoublePrecision(
+        const tfel::math::st2tost2<3u, double>& S) {
+      auto r = tfel::math::st2tost2<3u, real>{};
+      for (unsigned short i = 0; i != 6; ++i) {
+        for (unsigned short j = 0; j != 6; ++j) {
+          r(i, j) = real(static_cast<tfel::math::base_type<real>>(S(i, j)));
+        }
+      }
+      return r;
+    }  // end of convertEshelbyTensorFromDoublePrecision
+  }    // end of namespace internals
+
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
   computeAxisymmetricalEshelbyTensor(
@@ -209,6 +231,17 @@ namespace tfel::material::homogenization::elasticity {
 
     if (std::abs(e - 1) < precision) {
       return computeSphereEshelbyTensor<real>(nu);
+    }
+    if constexpr (std::is_same_v<tfel::math::base_type<real>, float>) {
+      // near the sphere, the following expressions are sums of terms
+      // diverging like 1 / (e^2 - 1): in single precision, about two
+      // significant digits are lost just above the default tolerance.
+      // They are evaluated in double precision.
+      return internals::convertEshelbyTensorFromDoublePrecision<real>(
+          computeAxisymmetricalEshelbyTensor<double>(
+              static_cast<double>(tfel::math::base_type_cast(nu)),
+              static_cast<double>(tfel::math::base_type_cast(e)),
+              static_cast<double>(precision)));
     }
     const auto zero = real{0};
     const auto e2 = e * e;
@@ -334,23 +367,52 @@ namespace tfel::material::homogenization::elasticity {
     template <typename LengthType>
     TFEL_HOST_DEVICE std::array<std::size_t, 3> sortEllipsoidLengths(
         const LengthType& a, const LengthType& b, const LengthType& c) {
-      if ((a > b) and (a > c)) {
-        if (b > c)
+      if ((a >= b) and (a >= c)) {
+        if (b >= c)
           return {0, 1, 2};
         else
           return {0, 2, 1};
-      } else if ((b > a) and (b > c)) {
-        if (a > c)
+      } else if ((b >= a) and (b >= c)) {
+        if (a >= c)
           return {1, 0, 2};
         else
           return {1, 2, 0};
       } else {
-        if (a > b)
+        if (a >= b)
           return {2, 0, 1};
         else
           return {2, 1, 0};
       }
     }  // end of sortEllipsoidLengths
+
+    /*!
+     * This function checks that the directions n_a and n_b of two principal
+     * axes of an ellipsoid are orthogonal, up to a tolerance relative to
+     * their norms, and removes from n_b its component along n_a, so that
+     * n_a, n_b and their cross product define an orthogonal basis up to
+     * rounding errors. n_a and n_b need not be unit vectors.
+     * \return n_b made orthogonal to n_a
+     * \tparam real: numeric type
+     * \param[in] n_a: direction of the first principal axis
+     * \param[in] n_b: direction of the second principal axis
+     * \param[in] msg: message reported if n_a and n_b are not orthogonal
+     */
+    template <typename real>
+    TFEL_HOST_DEVICE tfel::math::tvector<3u, real> orthogonaliseEllipsoidAxes(
+        const tfel::math::tvector<3u, real>& n_a,
+        const tfel::math::tvector<3u, real>& n_b,
+        const char* const msg = "n_a and n_b not normals") {
+      using NumericType = tfel::math::base_type<real>;
+      const auto tol = std::sqrt(std::numeric_limits<NumericType>::epsilon());
+      const auto n_ab = n_a | n_b;
+      if (!(std::abs(n_ab) <= tol * norm(n_a) * norm(n_b))) {
+        tfel::reportContractViolation(msg);
+      }
+      if (tfel::math::ieee754::fpclassify(n_ab) == FP_ZERO) {
+        return n_b;
+      }
+      return n_b - (n_ab / (n_a | n_a)) * n_a;
+    }  // end of orthogonaliseEllipsoidAxes
   }    // end of namespace internals
 
   template <tfel::math::ScalarConcept StressType>
@@ -371,15 +433,31 @@ namespace tfel::material::homogenization::elasticity {
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
     }
+    if constexpr (std::is_same_v<tfel::math::base_type<real>, float>) {
+      // when two semi-axes are close, the following expressions lose
+      // several significant digits in single precision: they are evaluated
+      // in double precision
+      return internals::convertEshelbyTensorFromDoublePrecision<real>(
+          computeEshelbyTensor<double>(
+              static_cast<double>(tfel::math::base_type_cast(nu)),
+              static_cast<double>(tfel::math::base_type_cast(a)),
+              static_cast<double>(tfel::math::base_type_cast(b)),
+              static_cast<double>(tfel::math::base_type_cast(c)),
+              static_cast<double>(precision)));
+    }
 
-    if (std::abs((b - a) / c) < precision ||
-        std::abs((a - c) / b) < precision ||
-        std::abs((b - c) / a) < precision) {
-      if (std::abs((b - a) / c) < precision) {
+    // the differences of the semi-axes are compared to the smallest
+    // semi-axis, so that the relative difference of the two semi-axes
+    // which are considered equal is below the given precision
+    const auto lmin = std::min(std::min(a, b), c);
+    if (std::abs((b - a) / lmin) < precision ||
+        std::abs((a - c) / lmin) < precision ||
+        std::abs((b - c) / lmin) < precision) {
+      if (std::abs((b - a) / lmin) < precision) {
         return computeAxisymmetricalEshelbyTensor<real>(nu, c / b);
-      } else if (std::abs((a - c) / b) < precision) {
+      } else if (std::abs((a - c) / lmin) < precision) {
         return computeAxisymmetricalEshelbyTensor<real>(nu, b / a);
-      } else if (std::abs((b - c) / a) < precision) {
+      } else if (std::abs((b - c) / lmin) < precision) {
         return computeAxisymmetricalEshelbyTensor<real>(nu, a / b);
       }
     }
@@ -458,17 +536,15 @@ namespace tfel::material::homogenization::elasticity {
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
     }
-    if (not(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-      tfel::reportContractViolation("n_a and n_b not normals");
-    }
     if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
     if (norm(n_b) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_b is null");
     }
+    const auto n_b_o = internals::orthogonaliseEllipsoidAxes(n_a, n_b);
     const auto n_a_ = n_a / norm(n_a);
-    const auto n_b_ = n_b / norm(n_b);
+    const auto n_b_ = n_b_o / norm(n_b_o);
     const auto n_c_ = tfel::math::cross_product<real>(n_a_, n_b_);
     const std::array<LengthType, 3> abc_ = {a, b, c};
     const auto sig = internals::sortEllipsoidLengths<LengthType>(a, b, c);

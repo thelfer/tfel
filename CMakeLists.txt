@@ -1,15 +1,12 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 cmake_policy(SET CMP0022 NEW)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0074 NEW)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
   cmake_policy(SET CMP0167 NEW)  
 endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
-if(CMAKE_VERSION VERSION_GREATER 3.14.0)
-  cmake_policy(SET CMP0083 NEW)  
-  include(CheckPIESupported)
-  check_pie_supported()
-endif(CMAKE_VERSION VERSION_GREATER 3.14.0)
+include(CheckPIESupported)
+check_pie_supported()
 
 set(TFEL_VERSION_FLAVOUR "" CACHE STRING
   "Append a flavour to the version number")
@@ -26,14 +23,8 @@ if(NOT BUILD_SHARED_LIBS)
   set(enable-static OFF CACHE BOOL "enable additional static libraries" FORCE)
 endif()
 
-if(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
-  include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(NO_OUTPUT_DIRS)
-  set(TFEL_USES_CONAN ON)
-endif(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
-
 set(CMAKE_CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # tfel specific macros
 include(cmake/modules/tfel.cmake)
@@ -97,12 +88,18 @@ if(APPLE)
    set(CMAKE_MACOSX_RPATH ON)
    set(CMAKE_SKIP_BUILD_RPATH FALSE)
    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
+# rpath of the installed executables, libraries and python modules, so
+# that they find the TFEL libraries and their dependencies (madnex,
+# HDF5) without setting LD_LIBRARY_PATH. Values given by the user are
+# kept. CMAKE_SKIP_INSTALL_RPATH disables it.
+if(NOT DEFINED CMAKE_INSTALL_RPATH_USE_LINK_PATH)
    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-   list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-   if("${isSystemDir}" STREQUAL "-1")
-      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-   endif()
+endif()
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" isSystemDir)
+if((NOT DEFINED CMAKE_INSTALL_RPATH) AND ("${isSystemDir}" STREQUAL "-1"))
+   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
 endif()
 
 #extraction git hash
@@ -114,7 +111,6 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 message("Abbreviated commit hash: ${TFEL_GIT_HASH}")
 endif(NOT TFEL_GIT_HASH)
-tfel_add_c_cxx_definitions("TFEL_GIT_HASH=\"${TFEL_GIT_HASH}\"")
 tfel_add_c_cxx_definitions("TFEL_CMAKE_GENERATOR=\"${CMAKE_GENERATOR}\"")
 
 # testing
@@ -150,7 +146,7 @@ if(enable-vera++)
   find_package(vera++)
   include(${VERA++_USE_FILE})
   if(NOT VERA_ROOT)
-    message(fatal "VERA_ROOT is not defined")
+    message(FATAL_ERROR "VERA_ROOT is not defined")
   endif(NOT VERA_ROOT)
   add_vera_targets(*.h *.cpp
     RECURSE
@@ -302,15 +298,11 @@ option(enable-numpy-support
  
 if(enable-python OR enable-python-bindings)
   set(_tfel_python_components Interpreter)
-  if(CMAKE_VERSION VERSION_LESS 3.18)
-    list(APPEND _tfel_python_components Development)
-  else(CMAKE_VERSION VERSION_LESS 3.18)
-    # The python library is only used by MFront's python interface. It is
-    # optional as it is not always available (for instance in the
-    # manylinux images used to build the pip package)
-    list(APPEND _tfel_python_components Development.Module)
-    set(_tfel_python_optional_components OPTIONAL_COMPONENTS Development.Embed)
-  endif(CMAKE_VERSION VERSION_LESS 3.18)
+  # The python library is only used by MFront's python interface. It is
+  # optional as it is not always available (for instance in the
+  # manylinux images used to build the pip package)
+  list(APPEND _tfel_python_components Development.Module)
+  set(_tfel_python_optional_components OPTIONAL_COMPONENTS Development.Embed)
   if(enable-numpy-support)
     list(APPEND _tfel_python_components NumPy)
   endif(enable-numpy-support)
@@ -318,17 +310,21 @@ if(enable-python OR enable-python-bindings)
                ${_tfel_python_optional_components})
   set(HAVE_PYTHON ON)
   tfel_add_c_cxx_definitions("HAVE_PYTHON=1")
-  tfel_add_c_cxx_definitions("TFEL_PYTHON_INCLUDES=\"-I${Python_INCLUDE_DIRS}\"")
+  # paths of python, only defined for PythonMaterialPropertyInterface.cxx (see
+  # mfront/src/CMakeLists.txt), so that the version of python does not change
+  # the compilation of the other sources
+  set(TFEL_PYTHON_DEFINITIONS "TFEL_PYTHON_INCLUDES=\"-I${Python_INCLUDE_DIRS}\"")
   if(Python_LIBRARIES)
     get_filename_component(PYTHON_LIBRARY_PATH ${Python_LIBRARIES} PATH)
     get_filename_component(PYTHON_LIBRARY_FULL ${Python_LIBRARIES} NAME)
     string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
-    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY_PATH=\"${PYTHON_LIBRARY_PATH}\"")
-    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY=\"${PYTHON_LIBRARY}\"")
+    list(APPEND TFEL_PYTHON_DEFINITIONS
+      "TFEL_PYTHON_LIBRARY_PATH=\"${PYTHON_LIBRARY_PATH}\""
+      "TFEL_PYTHON_LIBRARY=\"${PYTHON_LIBRARY}\"")
     if(MSVC)
-      tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"")
+      list(APPEND TFEL_PYTHON_DEFINITIONS "TFEL_PYTHON_LIBS=\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"")
     else(MSVC)
-      tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
+      list(APPEND TFEL_PYTHON_DEFINITIONS "TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
     endif(MSVC)
   endif(Python_LIBRARIES)
   message(STATUS "found python          ${Python_VERSION}")
@@ -613,13 +609,12 @@ install(DIRECTORY test-suite
   DESTINATION ${TFEL_DATAROOTDIR}
   COMPONENT code
   PATTERN ".svn" EXCLUDE)
+list(APPEND CPACK_COMPONENTS_ALL code)
+set(CPACK_COMPONENT_CODE_DESCRIPTION
+  "Contains the test suite of TFEL")
 
 set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION}")
-if(${CMAKE_SYSTEM_PROCESSOR})
-  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
-else(${CMAKE_SYSTEM_PROCESSOR})
-  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}") 
-endif(${CMAKE_SYSTEM_PROCESSOR})
+set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CPACK_PACKAGE_VERSION}")
 set(CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
 set(CPACK_PACKAGE_CONTACT             "${PACKAGE_BUGREPORT}")

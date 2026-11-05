@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_IXX
 
 #include <cmath>
+#include <algorithm>
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
@@ -244,13 +245,15 @@ namespace tfel::material {
       this->e[2] = real(0);
     }
     const auto d = map(dfl, this->vp);
+    // threshold below which the in-plane eigenvalues are considered equal
+    const auto eps_vp = eps * std::max(this->vp[0], this->vp[1]);
     if (c == LAGRANGIAN) {
       // p is one half of the tensor defined by Miehe
       this->p = stensor::computeIsotropicFunctionDerivative(
-          this->e, d, this->vp, this->m, eps);
+          this->e, d, this->vp, this->m, eps_vp);
     } else {
-      const auto theta = [this, &d] {
-        if (tfel::math::abs(this->vp[0] - this->vp[1]) < eps) {
+      const auto theta = [this, &d, eps_vp] {
+        if (tfel::math::abs(this->vp[0] - this->vp[1]) < eps_vp) {
           return (d[0] + d[1]) / 2;
         }
         return (this->e[0] - this->e[1]) / (this->vp[0] - this->vp[1]);
@@ -400,7 +403,8 @@ namespace tfel::material {
     // compute the derivative of the Hencky strain with respect to C
     const auto f = map([](const real x) { return -2 / (x * x); }, this->vp);
     const auto xsi = [this, &d, &f]() -> tvector<2u, real> {
-      if (tfel::math::abs(this->vp[0] - this->vp[1]) < eps) {
+      const auto eps_vp = eps * std::max(this->vp[0], this->vp[1]);
+      if (tfel::math::abs(this->vp[0] - this->vp[1]) < eps_vp) {
         const auto rv = (f[0] + f[1]) / 16;
         return {rv, rv};
       }
@@ -589,7 +593,6 @@ namespace tfel::material {
       const auto Cse = this->convertToMaterialTangentModuli(Ks, T);
       auto Kr =
           convert<FSTOBase::ABAQUS, FSTOBase::DS_DEGL>(Cse, F0, this->F, sig);
-      Kr /= tfel::math::det(this->F);
       return Kr;
     }
     const auto N = getNTensors(this->m);
@@ -670,8 +673,10 @@ namespace tfel::material {
     const auto d = map(dfl, this->vp);
     // p is one half of the tensor defined by Miehe
     if (c == LAGRANGIAN) {
+      const auto eps_vp =
+          eps * std::max(std::max(this->vp[0], this->vp[1]), this->vp[2]);
       this->p = stensor::computeIsotropicFunctionDerivative(
-          this->e, d, this->vp, this->m, eps);
+          this->e, d, this->vp, this->m, eps_vp);
     } else {
       const auto theta = [this, &d] {
         constexpr auto zero = real{0};
@@ -900,9 +905,10 @@ namespace tfel::material {
   TFEL_HOST_DEVICE bool
   LogarithmicStrainHandler<3u, StressType>::areEigenValuesEqual(
       const tfel::math::tvector<3u, real>& vp) {
-    return ((tfel::math::abs(vp(1) - vp(0)) < eps) &&
-            (tfel::math::abs(vp(1) - vp(2)) < eps) &&
-            (tfel::math::abs(vp(2) - vp(0)) < eps));
+    const auto eps_vp = eps * std::max(std::max(vp(0), vp(1)), vp(2));
+    return ((tfel::math::abs(vp(1) - vp(0)) < eps_vp) &&
+            (tfel::math::abs(vp(1) - vp(2)) < eps_vp) &&
+            (tfel::math::abs(vp(2) - vp(0)) < eps_vp));
   }  // end of areEigenValuesEqual
 
   template <typename StressType>
@@ -916,16 +922,17 @@ namespace tfel::material {
                              "this method shall not be called if all "
                              "eigen values are equal."));
     }
-    if ((tfel::math::abs(vp(1) - vp(0)) > eps) &&
-        (tfel::math::abs(vp(1) - vp(2)) > eps) &&
-        (tfel::math::abs(vp(2) - vp(0)) > eps)) {
+    const auto eps_vp = eps * std::max(std::max(vp(0), vp(1)), vp(2));
+    if ((tfel::math::abs(vp(1) - vp(0)) > eps_vp) &&
+        (tfel::math::abs(vp(1) - vp(2)) > eps_vp) &&
+        (tfel::math::abs(vp(2) - vp(0)) > eps_vp)) {
       // all eigenvalues are different
       return 3;
     }
-    if ((tfel::math::abs(vp(1) - vp(0)) < eps)) {
+    if ((tfel::math::abs(vp(1) - vp(0)) < eps_vp)) {
       return 2;
     }
-    if ((tfel::math::abs(vp(2) - vp(0)) < eps)) {
+    if ((tfel::math::abs(vp(2) - vp(0)) < eps_vp)) {
       return 1;
     }
     return 0;
@@ -995,8 +1002,9 @@ namespace tfel::material {
       const auto u = findSingleEigenValue(this->vp);
       if (u != 3) {
         const auto i = (u == 2) ? 0 : 2;
+        // second divided difference at the double eigenvalue
         const auto idvp = 1 / (this->vp[i] - this->vp[u]);
-        return ((this->e[i] - this->e[u]) * idvp - d[u]) * idvp;
+        return (d[i] - (this->e[i] - this->e[u]) * idvp) * idvp;
       }
       auto r = real{};
       for (size_type i = 0; i != 3; ++i) {
@@ -1209,7 +1217,6 @@ namespace tfel::material {
       const auto Cse = this->convertToMaterialTangentModuli(Ks, T);
       auto Kr =
           convert<FSTOBase::ABAQUS, FSTOBase::DS_DEGL>(Cse, F0, this->F, sig);
-      Kr /= tfel::math::det(this->F);
       return Kr;
     } else {
       const auto N = getNTensors(this->m);

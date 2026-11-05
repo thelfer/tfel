@@ -46,9 +46,11 @@ namespace mfront::bbrick {
     [[nodiscard]] std::string computeElasticLimit(
         const BehaviourDescription&,
         const std::string&,
+        const std::string&,
         const std::string&) const override;
     [[nodiscard]] std::string computeElasticLimitAndDerivative(
         const BehaviourDescription&,
+        const std::string&,
         const std::string&,
         const std::string&) const override;
     //! \brief destructor

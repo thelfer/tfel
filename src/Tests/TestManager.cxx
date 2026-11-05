@@ -37,7 +37,7 @@ namespace tfel::tests {
         : TestCase("TestConstructionFailure", n), reason("unknown reason") {}
     //
     [[nodiscard]] TestResult execute() override {
-      this->registerResult("call to the constructor the test", false,
+      this->registerResult("call to the constructor of the test", false,
                            this->reason);
       return this->result;
     }

@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/DianaFEA/DianaFEAInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_DIANAFEA_CALL_HXX
+#include "MFront/DianaFEA/DianaFEAInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_DIANAFEA_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_DIANAFEA_CALL_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -81,10 +83,27 @@ namespace dianafea {
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
         typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
         const DianaFEAInt N = ModellingHypothesisToSpaceDimension<H>::value;
+        // in plane stress, DianaFEA gives the three strain components (e11,
+        // e22, gamma12) whereas the stress-free expansion handler works on
+        // the four components (xx, yy, zz, xy)
+        constexpr auto ps = (H == ModellingHypothesis::PLANESTRESS) &&
+                            (DianaFEATraits<BV>::btype ==
+                             dianafea::STANDARDSTRAINBASEDBEHAVIOUR);
         DianaFEAReal dv0[DianaFEATraits<BV>::GradientSize];
         DianaFEAReal dv1[DianaFEATraits<BV>::GradientSize];
-        copy<DianaFEATraits<BV>::GradientSize>::exe(STRAN, dv0);
-        copy<DianaFEATraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        if constexpr (ps) {
+          dv0[0] = STRAN[0];
+          dv0[1] = STRAN[1];
+          dv0[2] = DianaFEAReal{0};
+          dv0[3] = STRAN[2];
+          dv1[0] = DSTRAN[0];
+          dv1[1] = DSTRAN[1];
+          dv1[2] = DianaFEAReal{0};
+          dv1[3] = DSTRAN[2];
+        } else {
+          copy<DianaFEATraits<BV>::GradientSize>::exe(STRAN, dv0);
+          copy<DianaFEATraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        }
         // check that the function pointer are not null
         if (sfeh == nullptr) {
           throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -94,6 +113,11 @@ namespace dianafea {
         const auto& s0 = s.first;
         const auto& s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], N);
+        if constexpr (ps) {
+          // back to the three components given by DianaFEA
+          dv0[2] = dv0[3];
+          dv1[2] = dv1[3];
+        }
         b.setDIANAFEABehaviourDataGradients(dv0);
         b.setDIANAFEAIntegrationDataGradients(dv1);
       }  // end of exe
@@ -146,7 +170,7 @@ namespace dianafea {
                                            const DianaFEAReal* const props) {
         const unsigned short o = DianaFEATraits<BV>::elasticPropertiesOffset;
         DianaFEAComputeThermalExpansionCoefficientTensor<
-            DianaFEATraits<BV>::btype, H, DianaFEATraits<BV>::stype>::
+            DianaFEATraits<BV>::btype, H, DianaFEATraits<BV>::type>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
@@ -205,19 +229,33 @@ namespace dianafea {
           throwNegativeTimeStepException(Traits::getName());
         }
         if (!this->behaviour.initialize()) {
-          return;
+          throwBehaviourInitializationFailedException(Traits::getName());
         }
         this->behaviour.checkBounds();
         auto r = BV::SUCCESS;
         const auto smflag =
             DianaFEATangentOperatorFlag<DianaFEATraits<BV>::btype>::value;
-        try {
-          r = this->behaviour.integrate(smflag, BV::CONSISTENTTANGENTOPERATOR);
-        } catch (DivergenceException&) {
+        auto tsf = this->behaviour.computeAPrioriTimeStepScalingFactor(
+            DianaFEAReal(1));
+        if (!tsf.first) {
           r = BV::FAILURE;
+        } else {
+          try {
+            r = this->behaviour.integrate(smflag,
+                                          BV::CONSISTENTTANGENTOPERATOR);
+          } catch (DivergenceException&) {
+            r = BV::FAILURE;
+          }
+          if (r != BV::FAILURE) {
+            tsf = this->behaviour.computeAPosterioriTimeStepScalingFactor(
+                tsf.second);
+            if (!tsf.first) {
+              r = BV::FAILURE;
+            }
+          }
         }
         if (r == BV::FAILURE) {
-          return;
+          throwBehaviourIntegrationFailedException(Traits::getName());
         }
         this->behaviour.checkBounds();
         this->behaviour.DIANAFEAexportStateData(d.STRESS, d.STATEV);
@@ -272,3 +310,5 @@ namespace dianafea {
 }  // end of namespace dianafea
 
 #endif /* LIB_MFRONT_DIANAFEA_DIANAFEABEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_DIANAFEA_CALL_HXX */

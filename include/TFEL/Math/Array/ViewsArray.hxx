@@ -50,9 +50,9 @@ namespace tfel::math::internals {
   struct ViewsArrayBase<true, MappedType, ViewIndexingPolicyType> {
     static_assert(tfel::math::isScalar<MappedType>());
     //! \brief type of views
-    using view_type = MappedType&;
+    using view_type = tfel::math::scalar_view<MappedType>;
     //! \brief type of read-only views
-    using const_view_type = const MappedType&;
+    using const_view_type = tfel::math::scalar_view<const MappedType>;
   };  // end of ViewsArrayBase
 
   /*!
@@ -90,12 +90,22 @@ namespace tfel::math {
                                                    std::remove_cv_t<MappedType>,
                                                    numeric_type<MappedType>>;
 
+  /*!
+   * \brief the type of the values stored in the memory area: the base type of
+   * the numeric type for quantities, as for views (see `ViewStorageType`)
+   */
+  template <typename MappedType>
+  using ViewsArrayStorageType =
+      std::conditional_t<isQuantity<ViewsArrayNumericType<MappedType>>(),
+                         base_type<ViewsArrayNumericType<MappedType>>,
+                         ViewsArrayNumericType<MappedType>>;
+
   //! \brief the pointer type used to build the view
   template <typename MappedType>
   using ViewsArrayDataPointerType =
       std::conditional_t<std::is_const_v<MappedType>,
-                         const ViewsArrayNumericType<MappedType>*,
-                         ViewsArrayNumericType<MappedType>*>;
+                         const ViewsArrayStorageType<MappedType>*,
+                         ViewsArrayStorageType<MappedType>*>;
 
   //! \brief return the minimal size required to a store the given object
   template <typename MappedType>
@@ -182,7 +192,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + this->getIndex(i);
       if constexpr (is_scalar) {
-        return *d;
+        return typename ViewsArray::view_type(*d);
       } else {
         return typename ViewsArray::view_type{d};
       }
@@ -194,7 +204,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + this->getIndex(i);
       if constexpr (is_scalar) {
-        return *d;
+        return typename ViewsArray::const_view_type(*d);
       } else {
         return typename ViewsArray::const_view_type{d};
       }
@@ -206,7 +216,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + this->getIndex(i...);
       if constexpr (is_scalar) {
-        return *d;
+        return typename ViewsArray::view_type(*d);
       } else {
         return typename ViewsArray::view_type{d};
       }
@@ -218,7 +228,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       const auto* const d = this->data_pointer + this->getIndex(i...);
       if constexpr (is_scalar) {
-        return *d;
+        return typename ViewsArray::const_view_type(*d);
       } else {
         return typename ViewsArray::const_view_type{d};
       }
@@ -321,8 +331,38 @@ namespace tfel::math {
         (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
                         MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
-      const auto f =
-          makeMultiIndicesUnaryOperatorFunctor([s](auto& a) { a *= s; }, *this);
+      this->applyToEachView([s](auto&& a) { a *= s; });
+      return *this;
+    }  // end of operator*=
+    // \brief division by a scalar
+    template <typename ValueType2>
+    TFEL_HOST_DEVICE constexpr ViewsArray&
+    operator/=(const ValueType2& s) noexcept requires(
+        (isScalar<ValueType2>()) &&
+        (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
+                        MappedType>())) {
+      static_assert(!std::is_const_v<MappedType>, "invalid call");
+      using base = base_type<numeric_type<MappedType>>;
+      if constexpr (std::is_integral_v<base>) {
+        // the reciprocal of an integer is zero in general
+        this->applyToEachView([s](auto&& a) { a /= s; });
+        return *this;
+      } else {
+        return this->operator*=(base{1} / s);
+      }
+    }  // end of operator/=
+    //! \brief destructor
+    ~ViewsArray() noexcept = default;
+
+   private:
+    /*!
+     * \brief apply an operation to each view
+     * \param[in] op: operation
+     */
+    template <typename Operation>
+    TFEL_HOST_DEVICE constexpr void applyToEachView(
+        const Operation& op) noexcept {
+      const auto f = makeMultiIndicesUnaryOperatorFunctor(op, *this);
       auto g = [p = static_cast<MemoryIndexingPolicyType>(*this)](
                    const typename ViewsArray::size_type i) {
         return p.size(i);
@@ -336,22 +376,7 @@ namespace tfel::math {
                                    MemoryIndexingPolicyType::arity,
                                    false>::exe(f, g);
       }
-      return *this;
-    }  // end of operator*=
-    // \brief division by a scalar
-    template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr ViewsArray&
-    operator/=(const ValueType2& s) noexcept requires(
-        (isScalar<ValueType2>()) &&
-        (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
-                        MappedType>())) {
-      static_assert(!std::is_const_v<MappedType>, "invalid call");
-      return this->operator*=(1 / s);
-    }  // end of operator/=
-    //! \brief destructor
-    ~ViewsArray() noexcept = default;
-
-   private:
+    }  // end of applyToEachView
     //! \brief memory area from which views are taken
     const data_pointer_type data_pointer;
   };  // end of struct ViewsArray
@@ -390,8 +415,10 @@ namespace tfel::math {
                            typename ArrayType::indexing_policy().size(0)>>;
 
   template <FixedSizeArrayTypeDefininigArrayViewConcept ArrayType>
-  constexpr auto map_array(
-      const ViewsArrayDataPointerType<numeric_type<ArrayType>> p) {
+  constexpr auto map_array(const ViewsArrayDataPointerType<
+                           std::conditional_t<std::is_const_v<ArrayType>,
+                                              const numeric_type<ArrayType>,
+                                              numeric_type<ArrayType>>> p) {
     return StandardFixedSizeViewsArray<ArrayType>{p};
   }  // end of map_array
 

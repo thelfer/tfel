@@ -50,6 +50,25 @@ namespace tfel::math {
       //! \brief maximum level of refinement
       const std::size_t maximum_number_of_refinements;
     };
+    /*!
+     * \brief type of the estimate of the error on the integral, which has the
+     * unit of the integrand times the unit of the integration variable.
+     */
+    template <ScalarConcept real, typename FunctionType>
+    using IntegralErrorType = tfel::math::result_type<
+        real,
+        numeric_type<std::invoke_result_t<FunctionType, real>>,
+        OpMult>;
+    /*!
+     * \brief type of the absolute tolerance of the adaptative version, which
+     * bounds the error on the integral: the type of the error estimate when
+     * it is a quantity, the type of the integration variable otherwise.
+     */
+    template <ScalarConcept real, typename FunctionType>
+    using AbsoluteToleranceType = std::conditional_t<
+        ImmutableQuantityConcept<IntegralErrorType<real, FunctionType>>,
+        IntegralErrorType<real, FunctionType>,
+        real>;
 
     /*!
      * \param[in] f: function to be integrated
@@ -62,7 +81,8 @@ namespace tfel::math {
         const FunctionType& f,                                     //
         const real a,                                              //
         const real b,                                              //
-        const NumericalParameters<real> params) const              //
+        const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>
+            params) const                                          //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
         -> std::optional<
             tfel::math::result_type<real,
@@ -106,7 +126,8 @@ namespace tfel::math {
         const FunctionType&,
         const real,
         const real,
-        const NumericalParameters<real>&) const                    //
+        const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&)
+        const                                                      //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
         -> std::optional<
             tfel::math::result_type<real,
@@ -142,7 +163,8 @@ namespace tfel::math {
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto computeUnboundedIntegral(
         const FunctionType&,
-        const NumericalParameters<real>&) const                    //
+        const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&)
+        const                                                      //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
         requires(std::is_invocable_v<FunctionType, real>);
 
@@ -150,7 +172,8 @@ namespace tfel::math {
     [[nodiscard]] constexpr auto computeLeftUnboundedIntegral(
         const FunctionType&,
         const real,
-        const NumericalParameters<real>&) const                    //
+        const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&)
+        const                                                      //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
         -> std::optional<
             tfel::math::result_type<real,
@@ -162,7 +185,8 @@ namespace tfel::math {
     [[nodiscard]] constexpr auto computeRightUnboundedIntegral(
         const FunctionType&,
         const real,
-        const NumericalParameters<real>&) const                    //
+        const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&)
+        const                                                      //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
         -> std::optional<
             tfel::math::result_type<real,

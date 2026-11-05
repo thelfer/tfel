@@ -38,7 +38,7 @@ namespace tfel::math {
 
   /*!
    * Exception thrown when the abscissa vector given to the
-   * CubicSpline constructor has a size smaller than 3.
+   * CubicSpline constructor is empty.
    */
   struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT
       CubicSplineInvalidAbscissaVectorSize final : public MathRunTimeException {
@@ -65,7 +65,7 @@ namespace tfel::math {
 
   /*!
    * Exception thrown when the ordinate vector given to the
-   * CubicSpline constructor has a size smaller than 3.
+   * CubicSpline constructor is empty.
    */
   struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT
       CubicSplineInvalidOrdinateVectorSize final : public MathRunTimeException {

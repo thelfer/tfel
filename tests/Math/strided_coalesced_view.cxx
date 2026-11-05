@@ -257,6 +257,12 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(values[4] == 1);   // c1_s1
     TFEL_TESTS_ASSERT(values[7] == 1);   // c2_s1
     TFEL_TESTS_ASSERT(values[10] == 0);  // c3_s1
+    // Test a view of constant data
+    const auto& cvalues = values;
+    const auto carr =
+        map_strided_array<const tvector<3u, stensor<2u, int>>>(cvalues.data());
+    TFEL_TESTS_ASSERT(carr[1][0] == 1);
+    TFEL_TESTS_ASSERT(carr[2][1] == 30);
   }
 };
 

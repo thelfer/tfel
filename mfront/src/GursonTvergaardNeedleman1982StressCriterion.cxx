@@ -94,7 +94,7 @@ namespace mfront::bbrick {
         GursonTvergaardNeedleman1982StressCriterion::getVariableId(
             "sscb_parameters", id, r);
     return "this->" + bound + " = " +  //
-           "std::min(this->" + bound + ", this->" + params + ".f_r);\n";
+           "std::min(this->" + bound + ", real(this->" + params + ".f_r));\n";
   }  // end of updatePorosityUpperBound
 
   GursonTvergaardNeedleman1982StressCriterion::

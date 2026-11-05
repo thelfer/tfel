@@ -60,9 +60,11 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
              return os.str();
            })
       .def("__getitem__",
-           [](const st2tost2& s, const unsigned short r,
-              const unsigned short c) {
-             if ((r >= s.size(0)) && (c >= s.size(1))) {
+           [](const st2tost2& s,
+              const std::pair<unsigned short, unsigned short>& ind) {
+             const auto r = std::get<0>(ind);
+             const auto c = std::get<1>(ind);
+             if ((r >= s.size(0)) || (c >= s.size(1))) {
                tfel::raise<std::range_error>(
                    "invalid index '(" + std::to_string(static_cast<int>(r)) +
                    ", " + std::to_string(static_cast<int>(c)) + "')");
@@ -74,7 +76,7 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
               const double v) {
              const auto r = std::get<0>(ind);
              const auto c = std::get<1>(ind);
-             if ((r >= s.size(0)) && (c >= s.size(1))) {
+             if ((r >= s.size(0)) || (c >= s.size(1))) {
                tfel::raise<std::range_error>(
                    "invalid index '(" + std::to_string(static_cast<int>(r)) +
                    ", " + std::to_string(static_cast<int>(c)) + "')");
@@ -98,9 +100,9 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
            })
       .def("__mul__",
            [](const st2tost2& a, const double b) -> st2tost2 { return a * b; })
-      .def("__mul__",
-           [](const double a, const st2tost2& b) -> st2tost2 { return a * b; })
-      .def("__div__",
+      .def("__rmul__",
+           [](const st2tost2& b, const double a) -> st2tost2 { return a * b; })
+      .def("__truediv__",
            [](const st2tost2& a, const double b) -> st2tost2 { return a / b; })
       .def(pybind11::self += pybind11::self)
       .def(pybind11::self -= pybind11::self)

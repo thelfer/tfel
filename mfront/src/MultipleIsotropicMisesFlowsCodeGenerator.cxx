@@ -72,7 +72,10 @@ namespace mfront {
       writeMaterialLaws(os, this->bd.getMaterialLaws());
       const auto flow_id = std::to_string(n);
       if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule + flow_id)) {
-        os << this->bd.getCode(h, BehaviourData::BeforeFlowRule + flow_id);
+        // not profiled: the variables declared by this code block are used
+        // by the flow rule
+        os << this->bd.getCodeBlock(h, BehaviourData::BeforeFlowRule + flow_id)
+                  .code;
       }
       os << p->flowRule << '\n';
       os << "}\n\n";
@@ -83,8 +86,12 @@ namespace mfront {
             "100 * std::numeric_limits<NumericType>::epsilon();\n";
     }
     os << "tfel::math::tvector<" << this->flows.size()
-       << ", NumericType> vdp(NumericType(0));\n"
-       << "tfel::math::tvector<" << this->flows.size()
+       << ", NumericType> vdp;\n";
+    n = 0;
+    for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
+      os << "vdp(" << n << ") = this->dp" << n << ";\n";
+    }
+    os << "tfel::math::tvector<" << this->flows.size()
        << ", NumericType> newton_f;\n"
        << "tfel::math::tmatrix<" << this->flows.size() << ","
        << this->flows.size() << ", NumericType> newton_df;\n";
@@ -112,6 +119,8 @@ namespace mfront {
        << "(iter<(" << this->bd.getClassName() << "::iterMax))){\n";
     n = 0;
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
+      os << "{\n";
+      os << "this->dp" << n << " = strain(vdp(" << n << "));\n";
       os << "this->p_  = this->p" << n << " + (";
       if (p->hasSpecificTheta) {
         os << "real(" << p->theta << ")";
@@ -243,6 +252,7 @@ namespace mfront {
           }
         }
       }
+      os << "}\n";
     }
     os << "auto error = NumericType(0);\n";
     n = 0;
@@ -267,7 +277,7 @@ namespace mfront {
     os << "converge = ((error)/(real(" << this->flows.size() << "))<"
        << "(" << this->bd.getClassName() << "::epsilon));\n"
        << "}\n\n"
-       << "if(iter==" << this->bd.getClassName() << "::iterMax){\n";
+       << "if(!converge){\n";
     if (getDebugMode()) {
       os << "std::cout << \"" << this->bd.getClassName()
          << "::NewtonIntegration() : no convergence after \" "
@@ -406,11 +416,13 @@ namespace mfront {
        << "using tfel::material::computeElasticStiffness;\n"
        << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
        << "computeElasticStiffness<N, "
-          "NumericType>::exe(this->Dt,this->lambda,this->mu)"
+          "NumericType>::exe(this->Dt,this->lambda_tdt,this->mu_tdt)"
           ";\n"
        << "return true;\n"
        << "}\n"
-       << "return false;\n"
+       << "tfel::raise(\"" << this->bd.getClassName()
+       << "::computeConsistentTangentOperator: \"\n"
+       << "\"only the elastic and secant operators are available\");\n"
        << "}\n\n";
   }
 

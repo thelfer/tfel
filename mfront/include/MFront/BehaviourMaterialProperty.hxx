@@ -103,6 +103,7 @@ namespace mfront {
    * \param[in] mh: modelling hypotheses
    * \param[in] opts: options
    */
+  MFRONT_VISIBILITY_EXPORT
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   buildMaterialPropertiesList(
       const BehaviourDescription&,

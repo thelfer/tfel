@@ -78,7 +78,7 @@ value.
 ## Example
 
 ~~~~{.cpp}
-@Constant A 1.234e56;
+@Constant A = 1.234e56;
 ~~~~
 
 
@@ -217,6 +217,61 @@ The following options are available for all DSLs:
 @DSL Implicit;
 ~~~~
 
+
+# The `@Data` keyword
+
+The `@Data` keyword allow the definition of a material properties using
+the interpolation of a set of values.
+
+The `@Data` keyword is followed by a set of options defining:
+
+- the interpolation option,
+- the set of values,
+- the extrapolation option.
+
+The precise syntax depends on the number of inputs of the material
+property.
+
+## Material properties without input
+
+The only option accepted is `value`.
+
+## Material properties with only one input
+
+The `values` option is required. It must be a map associating values of
+the input and values of the output.
+
+The `interpolation` option is optional. It must be a string. The values
+`linear` and `cubic_spline` are accepted.
+
+The `extrapolation` option is optional. It must be a boolean or a
+string:
+
+- The boolean value `true` means that a linear extrapolation will be performed.
+- The boolean value `false` or the string value `bound_to_last_value` or
+  the string value `constant` means that a constant value will be used
+  for extrapolation.
+
+## Example of usage
+
+~~~~{.cpp}
+@DSL MaterialProperty;
+@Law LinearDataInterpolation;
+
+@UseQt true;
+@UnitSystem SI;
+
+@Output stress E;
+E.setGlossaryName("YoungModulus");
+
+@StateVariable temperature T;
+T.setGlossaryName("Temperature");
+
+@Data {
+  values: { 293.15 : 240e9, 693.15 : 180e9, 893.15 : 170e9 },
+  interpolation : "linear"
+}
+~~~~
 
 # The `@Date` keyword
 
@@ -577,9 +632,11 @@ represented by the '*' character.
 
 ## Effect
 
-In implicit schemes, if physical bounds are set on an integration
-variable, this variable is bounded to satisfy them during the internal
-iterations.
+In implicit schemes, if physical bounds are set on a state variable,
+or on some elements of an array of state variables, this variable is
+bounded to satisfy them during the internal iterations. Physical bounds
+set on an integration variable which is not a state variable (see
+`@IntegrationVariable`) are ignored.
 
 If a variable is found to be out of its physical bounds, the
 computations are stopped. The tests are performed at different stages
@@ -629,9 +686,9 @@ respectively.
 
 ~~~~{.cpp}
 // scalar state variable
-@StateVariables strain p;
+@StateVariable strain p;
 // symmetric tensors state variable
-@StateVariables StrainStensor evp,evp2;
+@StateVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@StaticVar` keyword
@@ -653,6 +710,23 @@ an equal sign and its value.
 ~~~~{.cpp}
 @StaticVariable real A = 1.234e56;
 ~~~~
+
+# The `@TFELLibraries` keyword
+
+The `@TFELLibraries` keyword let the user specify TFEL libraries to link
+with. This keyword must be followed by an array of strings.
+
+The following libraries are available: `Config`, `Exception`,
+`Glossary`, `Tests`, `UnicodeSupport`, `Utilities`, `System`, `Math`,
+`MathCubicSpline`, `MathKriging`, `MathParser`, `NUMODIS`, `Material`,
+`MFront`, `MTest`.
+
+## Example
+
+~~~~{.cpp}
+@TFELLibraries {"MathParser"};
+~~~~
+
 
 # The `@UnitSystem` keyword
 

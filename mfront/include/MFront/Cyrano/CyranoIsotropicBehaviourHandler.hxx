@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Cyrano/CyranoBehaviourHandler.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX
+#include "MFront/Cyrano/CyranoBehaviourHandler.hxx"
+#else
+
 #ifndef LIB_MFRONT_CYRANO_CYRANOISOTROPICBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CYRANO_CYRANOISOTROPICBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
 
 #include "TFEL/FSAlgorithm/copy.hxx"
 
@@ -73,3 +75,5 @@ namespace cyrano {
 }  // namespace cyrano
 
 #endif /* LIB_MFRONT_CYRANO_CYRANOISOTROPICBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */

@@ -32,18 +32,18 @@ struct TFEL_VISIBILITY_LOCAL PhysicalConstants {
   static const double StefanBoltzmannConstant;
 };
 
-const double PhysicalConstants::AtomicMassConstant = double(1.66054e-27);
-const double PhysicalConstants::AvogadroConstant = double(6.02214e+23);
-const double PhysicalConstants::BoltzmannConstant = double(1.38065e-23);
-const double PhysicalConstants::ConductanceQuantum = double(7.74809e-05);
-const double PhysicalConstants::ElectricConstant = double(8.85419e-12);
-const double PhysicalConstants::ElectronMass = double(9.10938e-31);
-const double PhysicalConstants::ElectronVolt = double(1.60218e-19);
-const double PhysicalConstants::ElementaryCharge = double(1.60218e-19);
-const double PhysicalConstants::FaradayConstant = double(96485.3);
-const double PhysicalConstants::FineStructureConstant = double(0.00729735);
-const double PhysicalConstants::MolarGasConstant = double(8.31446);
-const double PhysicalConstants::StefanBoltzmannConstant = double(5.67037e-08);
+const double PhysicalConstants::AtomicMassConstant = double(1.66053904e-27);
+const double PhysicalConstants::AvogadroConstant = double(6.022140857e+23);
+const double PhysicalConstants::BoltzmannConstant = double(1.38064852e-23);
+const double PhysicalConstants::ConductanceQuantum = double(7.748091731e-05);
+const double PhysicalConstants::ElectricConstant = double(8.854187817e-12);
+const double PhysicalConstants::ElectronMass = double(9.10938356e-31);
+const double PhysicalConstants::ElectronVolt = double(1.6021766208e-19);
+const double PhysicalConstants::ElementaryCharge = double(1.6021766208e-19);
+const double PhysicalConstants::FaradayConstant = double(96485.33289);
+const double PhysicalConstants::FineStructureConstant = double(0.0072973525664);
+const double PhysicalConstants::MolarGasConstant = double(8.3144598);
+const double PhysicalConstants::StefanBoltzmannConstant = double(5.670367e-08);
 
 void declarePhysicalConstants(pybind11::module_& m) {
   pybind11::class_<PhysicalConstants> w(m, "PhysicalConstants",

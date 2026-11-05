@@ -435,6 +435,11 @@ namespace tfel::math {
                        unit::areUnitsEqual<UnitType, unit::NoUnit>>>(src) {}
     constexpr qt_ref(qt_ref&&) noexcept = default;
     constexpr qt_ref(const qt_ref&) noexcept = default;
+    //! \brief copy assignement, writes through the reference
+    TFEL_HOST_DEVICE constexpr qt_ref& operator=(const qt_ref& src) noexcept {
+      this->getValue() = src.getValue();
+      return *this;
+    }
     using Quantity<UnitType,
                    ValueType,
                    tfel::math::internals::QuantityReferenceOwnershipPolicy<
@@ -559,7 +564,7 @@ namespace tfel::math {
   template <ImmutableQuantityConcept T>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr auto square_root(
       const T& q) noexcept {
-    return power<1, 2>(base_type_cast(q));
+    return power<1, 2>(q);
   }
 
 }  // namespace tfel::math
@@ -576,7 +581,7 @@ namespace tfel::math::ieee754 {
    * - FP_INFINITE: +Inf or -Inf value
    * \param[in] q: value to be tested
    */
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr int fpclassify(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,
@@ -588,7 +593,7 @@ namespace tfel::math::ieee754 {
    * \return true if the given quantity is a not-a-number (NaN) value.
    * \param[in] q: value to be tested
    */
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr bool isnan(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,
@@ -600,7 +605,7 @@ namespace tfel::math::ieee754 {
    * \return true if the given quantity is finite.
    * \param[in] q: value to be tested
    */
-  template <QuantityConcept QuantityType>
+  template <ImmutableQuantityConcept QuantityType>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr bool isfinite(
       const QuantityType& q) noexcept {
     static_assert(std::is_floating_point_v<base_type<QuantityType>>,

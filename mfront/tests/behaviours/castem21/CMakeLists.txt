@@ -246,6 +246,7 @@ function(test_castem21 test_arg)
     else(_NO_XML_OUTPUT)
       list(APPEND _mtest_args --xml-output=true)
     endif(_NO_XML_OUTPUT)
+    list(APPEND _mtest_args --xml-output-file=${test}.xml)
     add_test(NAME ${test} COMMAND mtest ${_mtest_args} ${file})
     if(_WILL_FAIL)
       set_tests_properties(${test} PROPERTIES WILL_FAIL true)
@@ -431,7 +432,7 @@ test_castem21(chaboche2 REFERENCE_FILE chaboche2-aster.ref)
 test_castem21(viscochaboche REFERENCE_FILE ViscoChaboche.ref)
 test_castem21(monocrystal REFERENCE_FILE monocrystal.ref)
 test_castem21(monocrystal-2)
-test_castem21(implicitmonocrystal REFERENCE_FILE monocrystal.ref)
+test_castem21(implicitmonocrystal REFERENCE_FILE implicitmonocrystal.ref)
 test_castem21(implicitmonocrystal-2)
 test_castem21(monocrystal_dd_cfc
   REFERENCE_FILE monocrystal_dd_cfc.ref)
@@ -630,15 +631,24 @@ test_castem21(incompressibleplanestressgornetdesmoratbehaviourbiaxialtesting)
 test_castem21(implicitsimomieheelastoplasticity REFERENCE_FILE implicitsimomieheelastoplasticity.ref)
 test_castem21(T91-satohtest REFERENCE_FILE T91-satohtest.ref)
 test_castem21(T91-viscositytest)
-test_castem21(finitestrainsinglecrystal-001)
-test_castem21(finitestrainsinglecrystal-012)
-test_castem21(finitestrainsinglecrystal-012-2)
-test_castem21(finitestrainsinglecrystal-159)
-test_castem21(finitestrainsinglecrystal_numericaljacobian-001)
-test_castem21(finitestrainsinglecrystal_numericaljacobian-012)
-test_castem21(finitestrainsinglecrystal_numericaljacobian-012-2)
-test_castem21(finitestrainsinglecrystal_numericaljacobian-159)
-test_castem21(finitestrainsinglecrystal2-001)
+test_castem21(finitestrainsinglecrystal-001
+  REFERENCE_FILE finitestrainsinglecrystal-001.ref)
+test_castem21(finitestrainsinglecrystal-012
+  REFERENCE_FILE finitestrainsinglecrystal-012.ref)
+test_castem21(finitestrainsinglecrystal-012-2
+  REFERENCE_FILE finitestrainsinglecrystal-012.ref)
+test_castem21(finitestrainsinglecrystal-159
+  REFERENCE_FILE finitestrainsinglecrystal-159.ref)
+test_castem21(finitestrainsinglecrystal_numericaljacobian-001
+  REFERENCE_FILE finitestrainsinglecrystal-001.ref)
+test_castem21(finitestrainsinglecrystal_numericaljacobian-012
+  REFERENCE_FILE finitestrainsinglecrystal-012.ref)
+test_castem21(finitestrainsinglecrystal_numericaljacobian-012-2
+  REFERENCE_FILE finitestrainsinglecrystal-012.ref)
+test_castem21(finitestrainsinglecrystal_numericaljacobian-159
+  REFERENCE_FILE finitestrainsinglecrystal-159.ref)
+test_castem21(finitestrainsinglecrystal2-001
+  REFERENCE_FILE finitestrainsinglecrystal2-001.ref)
 test_castem21(anistropiclemaitreviscoplasticbehaviour
   REFERENCE_FILE AnistropicLemaitreViscoplasticBehaviour.ref) 
 test_castem21(tssf REFERENCE_FILE tssf.ref)

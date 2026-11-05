@@ -103,19 +103,19 @@ namespace mfront {
             "allow to define options passed to domain specific languages",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-material-property-option",
+        "--material-property-dsl-option",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to material properties",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-behaviour-option",
+        "--behaviour-dsl-option",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to behaviours",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-model-option",
+        "--model-dsl-option",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to models",
@@ -127,26 +127,50 @@ namespace mfront {
             "thanks to an external file in a JSON-like format",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-material-property-options-file",
+        "--material-property-dsl-options-file",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to material properties thanks to an external file in "
             "a JSON-like format",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-behaviour-options-file",
+        "--behaviour-dsl-options-file",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to behaviours thanks to an external file in a "
             "JSON-like format",
             []() noexcept {}, true));
     this->registerCallBack(
-        "--dsl-model-options-file",
+        "--model-dsl-options-file",
         CallBack(
             "allow to define options passed to domain specific languages "
             "related to models thanks to an external file in a JSON-like "
             "format",
             []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-material-property-option",
+        CallBack(
+            "same as --material-property-dsl-option", []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-behaviour-option",
+        CallBack("same as --behaviour-dsl-option", []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-model-option",
+        CallBack("same as --model-dsl-option", []() noexcept {}, true));
+    this->registerCallBack("--dsl-material-property-options-file",
+                           CallBack(
+                               "same as --material-property-dsl-options-file",
+                               []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-behaviour-options-file",
+        CallBack(
+            "same as --behaviour-dsl-options-file", []() noexcept {}, true));
+    this->registerCallBack(
+        "--dsl-model-options-file",
+        CallBack("same as --model-dsl-options-file", []() noexcept {}, true));
+    this->registerCallBack(
+        "--configuration-file",
+        CallBack("define a configuration file", []() noexcept {}, true));
     this->registerNewCallBack(
         "--include", "-I", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
@@ -247,6 +271,9 @@ namespace mfront {
                                            "do not display errors using "
                                            "a message box (windows only)",
                                            []() noexcept {}, false));
+    this->registerCallBack(
+        "--no-terminate-handler",
+        CallBack("don't set a terminate handler", []() noexcept {}, false));
   }
 
   std::function<void()> QueryHandlerBase::generateGeneratedSourcesQuery(
@@ -321,7 +348,7 @@ namespace mfront {
   std::function<void()>
   QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery(
       const std::string& n) const {
-    if (!n.empty()) {
+    if (n.empty()) {
       tfel::raise(
           "QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery: "
           "no option given for command line argument "
@@ -369,10 +396,10 @@ namespace mfront {
         std::cout << t.first << " : ";
         std::copy(std::begin(t.second.deps), std::end(t.second.deps),
                   std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl << "> rule : ";
-        std::copy(std::begin(t.second.cmds), std::end(t.second.cmds),
-                  std::ostream_iterator<std::string>(std::cout, "\n> rule : "));
-        std::cout << std::endl;
+        std::cout << '\n';
+        for (const auto& c : t.second.cmds) {
+          std::cout << "> rule : " << c << '\n';
+        }
       }
     };
   }  // end of generateSpecificTargetsQuery

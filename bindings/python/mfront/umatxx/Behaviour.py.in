@@ -51,8 +51,14 @@ class Behaviour:
     def getInternalStateVariablesTypes(self):
         """
         return the types of the internal state variables in an array
-        of integers sorted in the same order than the array of names
-        returned by the getInternalStateVariablesNames.
+        of strings sorted in the same order than the array of names
+        returned by the getInternalStateVariablesNames: 'Scalar',
+        'Stensor', 'TVector', 'Tensor', 'Derivative' or 'Array'.
+        Only the kind of each variable is given: the space dimension
+        of a tensorial object, when it does not depend on the modelling
+        hypothesis, and the types of the operands of a derivative or of
+        the elements of an array are encoded in the integers returned
+        by ExternalLibraryManager.getUMATInternalStateVariablesTypes.
         """
         elm = ExternalLibraryManager.getExternalLibraryManager()
         ts = elm.getUMATInternalStateVariablesTypes(self.library,
@@ -60,17 +66,22 @@ class Behaviour:
 	self.hypothesis)
         types = []
         for t in ts:
-            if(t==0):
+            k = t & 7
+            if(k==0):
                 types.append("Scalar")
-            elif(t==1):
+            elif(k==1):
                 types.append("Stensor")
-            elif(t==2):
+            elif(k==2):
                 types.append("TVector")
-            elif(t==3):
+            elif(k==3):
                 types.append("Tensor")
+            elif(k==4):
+                types.append("Derivative")
+            elif(k==5):
+                types.append("Array")
             else:
-                raise("Behaviour.getInternalStateVariablesTypes :"
-                      "unsupported state variable type '"+str(t)+"'")
+                raise RuntimeError("Behaviour.getInternalStateVariablesTypes :"
+                                   "unsupported state variable type '"+str(t)+"'")
         return types
                 
     def getExternalStateVariablesNames(self):
@@ -113,8 +124,8 @@ class Behaviour:
             elif(t==2):
                 types.append("UShort")
             else:
-                raise("Behaviour.getParametersTypes :"
-                      "unsupported state variable type '"+str(t)+"'")
+                raise RuntimeError("Behaviour.getParametersTypes :"
+                                   "unsupported parameter type '"+str(t)+"'")
         return types
 
     def getRealParameterDefaultValue(self,n):
@@ -150,16 +161,16 @@ class Behaviour:
         return true if the material is isotropic
         """
         elm = ExternalLibraryManager.getExternalLibraryManager()
-        return elm.getUMATBehaviourType(self.library,
-                                        self.behaviour)==0
+        return elm.getUMATSymmetryType(self.library,
+                                       self.behaviour)==0
 
     def isOrthotropic(self):
         """
         return true if the material is orthotropic
         """
         elm = ExternalLibraryManager.getExternalLibraryManager()
-        return elm.getUMATBehaviourType(self.library,
-                                        self.behaviour)==1
+        return elm.getUMATSymmetryType(self.library,
+                                       self.behaviour)==1
 
     def requiresStiffnessTensor(self):
         """
@@ -176,9 +187,9 @@ class Behaviour:
         coefficient tensor
         """
         elm = ExternalLibraryManager.getExternalLibraryManager()
-        return elm.requiresThermalExpansionCoefficientTensor(self.library,
-                                                             self.behaviour,
-                                                             self.hypothesis)==1
+        return elm.getUMATRequiresThermalExpansionCoefficientTensor(self.library,
+                                                                    self.behaviour,
+                                                                    self.hypothesis)==1
     
     def setParameter(self,n,v):
         """

@@ -271,8 +271,14 @@ namespace tfel::math {
             BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
             numeric_type<MappedType>>()) {
       static_assert(!is_const, "invalid call");
-      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(1 /
-                                                                            s);
+      using base = base_type<numeric_type<MappedType>>;
+      if constexpr (std::is_integral_v<base>) {
+        // the reciprocal of an integer is zero in general
+        selectViewArrayBase<MappedType, IndexingPolicyType>::divideByScalar(s);
+      } else {
+        selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(
+            base{1} / s);
+      }
       return *this;
     }  // end of operator/=
 
@@ -317,7 +323,7 @@ namespace tfel::math {
     struct ScalarViewImplementation<ScalarType, true> {
       using type = std::conditional_t<
           std::is_const_v<ScalarType>,
-          const qt_ref<
+          const_qt_ref<
               typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
               typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>,
           qt_ref<typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,

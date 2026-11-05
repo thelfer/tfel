@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Aster/AsterInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_ASTER_CALL_HXX
+#include "MFront/Aster/AsterInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_ASTER_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ASTER_CALL_HXX */
 
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/t2tost2.hxx"
@@ -209,7 +211,7 @@ namespace aster {
                                         const AsterReal* const props) {
         const unsigned short o = AsterTraits<BV>::elasticPropertiesOffset;
         AsterComputeThermalExpansionCoefficientTensor<AsterTraits<BV>::btype, H,
-                                                      AsterTraits<BV>::stype>::
+                                                      AsterTraits<BV>::type>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
@@ -339,7 +341,11 @@ namespace aster {
             throwPredictionComputationFailedException(Traits::getName());
           }
         } else {
-          if ((-0.25 < *DDSOE) && (*DDSOE < 0.25)) {
+          auto tsf =
+              this->behaviour.computeAPrioriTimeStepScalingFactor(AsterReal(1));
+          if (!tsf.first) {
+            r = BV::FAILURE;
+          } else if ((-0.25 < *DDSOE) && (*DDSOE < 0.25)) {
             r = this->behaviour.integrate(smflag, BV::NOSTIFFNESSREQUESTED);
           } else if ((0.75 < *DDSOE) && (*DDSOE < 1.25)) {
             r = this->behaviour.integrate(smflag, BV::ELASTIC);
@@ -352,6 +358,13 @@ namespace aster {
                                           BV::CONSISTENTTANGENTOPERATOR);
           } else {
             throwInvalidDDSOEException(Traits::getName(), *DDSOE);
+          }
+          if (r != BV::FAILURE) {
+            tsf = this->behaviour.computeAPosterioriTimeStepScalingFactor(
+                tsf.second);
+            if (!tsf.first) {
+              r = BV::FAILURE;
+            }
           }
           if (r == BV::FAILURE) {
             throwBehaviourIntegrationFailedException(Traits::getName());
@@ -481,3 +494,5 @@ namespace aster {
 #include "MFront/Aster/AsterOrthotropicBehaviourHandler.hxx"
 
 #endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_ASTER_CALL_HXX */

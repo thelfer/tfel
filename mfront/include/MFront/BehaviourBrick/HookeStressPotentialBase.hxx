@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIALBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIALBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 
 namespace mfront {
@@ -29,7 +30,7 @@ namespace mfront::bbrick {
    * \brief class describing the computation of the stress through the
    * standard Hooke law.
    */
-  struct HookeStressPotentialBase : StressPotential {
+  struct MFRONT_VISIBILITY_EXPORT HookeStressPotentialBase : StressPotential {
     //! \brief name of the parameter holding the factor used to determine the
     //! residual stiffness
     static const char* const residualStiffnessFactor;
@@ -188,9 +189,9 @@ namespace mfront::bbrick {
         BehaviourDescription&) const = 0;
     //! \brief plane stress support;
     bool pss = true;
-    //! \brief generic prediction operator support
-    bool gto = true;
     //! \brief generic tangent operator support
+    bool gto = true;
+    //! \brief generic prediction operator support
     bool gpo = true;
   };  // end of struct HookeStressPotentialBase
 

@@ -11,6 +11,7 @@
 };
 
 @ModellingHypothesis 'GeneralisedPlaneStrain';
+@AccelerationAlgorithm 'UAnderson';
 @Behaviour<umat> @library@ 'umatsaintvenantkirchhoffelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

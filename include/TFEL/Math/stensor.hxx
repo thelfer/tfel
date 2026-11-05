@@ -78,7 +78,8 @@ namespace tfel::math {
     enum EigenSolver {
       //! \brief historical native and homemade algorithm
       TFELEIGENSOLVER,
-      //! \brief non iterative solver from Joachim Kopp,
+      //! \brief analytical solver from Joachim Kopp (the eigenvectors are
+      //! computed as by the hybrid solver)
       FSESANALYTICALEIGENSOLVER,
       //! \brief Jacobi iterative solver from Joachim Kopp
       FSESJACOBIEIGENSOLVER,
@@ -316,34 +317,6 @@ namespace tfel::math {
         N,
         base_type<ValueType>>
     Id() noexcept;
-
-    /*!
-     * \brief This function set the component (i,j) of a `stensor` to
-     * a value `Aij`, using the function `VoigtIndex`.
-     * \return void
-     * \tparam NumType: type of the values of the `stensor`
-     * \tparam T : type of the value `Aij` to set must be same as
-     * the type of the values of the `stensor`.
-     * \param[in] A: `stensor`
-     * \param[in] i,j: `unsigned short`
-     * \param[in] Aij: value that we want for \f[A_{ij}\f]
-     */
-    template <typename NumType, typename T>
-    TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto&,
-                                                 unsigned short,
-                                                 unsigned short,
-                                                 const T&) noexcept
-        requires(isAssignableTo<NumType, T>());
-
-    /*!
-     * \brief This function returns the component (i,j) of a `stensor`,
-     * using the function `VoigtIndex`.
-     * \return the value \f[A_{ij}\f]
-     * \param[in] A: `stensor`
-     * \param[in] i,j: `unsigned short`
-     */
-    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getComponent(
-        const StensorConcept auto&, unsigned short, unsigned short);
 
     /*!
      * copy the value from a container
@@ -616,8 +589,10 @@ namespace tfel::math {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <typename T1, typename T2>
     [[nodiscard]] TFEL_HOST_DEVICE static auto
@@ -633,8 +608,10 @@ namespace tfel::math {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type, typename T1, typename T2>
     TFEL_HOST_DEVICE static void computeIsotropicFunctionDerivative(
@@ -646,7 +623,7 @@ namespace tfel::math {
         const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                                   (isAssignableTo<
                                       BinaryOperationResult<
-                                          base_type<ValueType>,
+                                          ValueType,
                                           ValueType,
                                           OpDiv>,
                                       numeric_type<ST2toST2Type>>()));
@@ -657,8 +634,10 @@ namespace tfel::math {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <typename Function, typename FunctionDerivative>
     [[nodiscard]] TFEL_HOST_DEVICE static auto
@@ -674,8 +653,10 @@ namespace tfel::math {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename Function,
@@ -689,7 +670,7 @@ namespace tfel::math {
         const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                                   (isAssignableTo<
                                       BinaryOperationResult<
-                                          base_type<ValueType>,
+                                          ValueType,
                                           ValueType,
                                           OpDiv>,
                                       numeric_type<ST2toST2Type>>()));
@@ -705,8 +686,10 @@ namespace tfel::math {
      * \return the derivative of an isotropic function
      * \param[in] f:   function
      * \param[in] df:  derivative of the function
-     * \param[in] eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in] eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      * \param[in] b:   if true, refinement of eigen values is performed
      */
     template <EigenSolver = TFELEIGENSOLVER,
@@ -721,8 +704,10 @@ namespace tfel::math {
      * \return the derivative of an isotropic function
      * \param[in] f:   function
      * \param[in] df:  derivative of the function
-     * \param[in] eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in] eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      * \param[in] b:   if true, refinement of eigen values is performed
      */
     template <EigenSolver = TFELEIGENSOLVER,
@@ -754,6 +739,35 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T>
   using ConstStensorView = ConstView<stensor<N, T>>;
+
+  /*!
+   * \brief This function set the component (i,j) of a `stensor` to
+   * a value `Aij`, using the function `VoigtIndex`.
+   * \return void
+   * \tparam NumType: type of the values of the `stensor`
+   * \tparam T : type of the value `Aij` to set must be same as
+   * the type of the values of the `stensor`.
+   * \param[in] A: `stensor`
+   * \param[in] i,j: `unsigned short`
+   * \param[in] Aij: value that we want for \f[A_{ij}\f]
+   */
+  template <typename NumType, typename T>
+  TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto&,
+                                               unsigned short,
+                                               unsigned short,
+                                               const T&) noexcept
+      requires(isAssignableTo<NumType, T>());
+
+  /*!
+   * \brief This function returns the component (i,j) of a `stensor`,
+   * using the function `VoigtIndex`.
+   * \return the value \f[A_{ij}\f]
+   * \param[in] A: `stensor`
+   * \param[in] i,j: `unsigned short`
+   */
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getComponent(
+      const StensorConcept auto&, unsigned short, unsigned short);
+
   /*!
    * \brief export the given vector to an array
    */
@@ -891,8 +905,10 @@ namespace tfel::math {
    * \param[in] f:   function
    * \param[in] df:  derivative of the function
    * \param[in] s:   symmetric tensor
-   * \param[in] eps: criterion value used to judge if two eigenvalues are
-   * equals
+   * \param[in] eps: absolute threshold below which two eigenvalues are
+   * considered equal. It must be well above the rounding errors of the
+   * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+   * eigenvalue (see the documentation of tensors)
    * \param[in] b:   if true, refinement of eigen values is performed
    */
   template <
@@ -911,8 +927,10 @@ namespace tfel::math {
    * \param[in] f:   function
    * \param[in] df:  derivative of the function
    * \param[in] s:   symmetric tensor
-   * \param[in] eps: criterion value used to judge if two eigenvalues are
-   * equals
+   * \param[in] eps: absolute threshold below which two eigenvalues are
+   * considered equal. It must be well above the rounding errors of the
+   * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+   * eigenvalue (see the documentation of tensors)
    * \param[in] b:   if true, refinement of eigen values is performed
    */
   template <
@@ -965,7 +983,7 @@ namespace tfel::math {
   /*!
    * \brief return the symmetric product of two stensors as a symmetric tensor:
    * \f[
-   * s1 * s2 + s2 * s1
+   * \frac{1}{2}\left(s1 * s2 + s2 * s1\right)
    * \f]
    * \param[in] s1: first  tensor
    * \param[in] s2: second tensor

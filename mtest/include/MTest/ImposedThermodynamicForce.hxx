@@ -15,6 +15,7 @@
 #define LIB_MTEST_MTESTIMPOSEDTHERMODYNAMICFORCE_HXX
 
 #include <memory>
+#include <vector>
 #include "TFEL/Math/matrix.hxx"
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
@@ -86,6 +87,8 @@ namespace mtest {
     const std::shared_ptr<Evolution> sev;
     //! \brief component value
     unsigned short c;
+    //! \brief rows of the residual associated with the component
+    std::vector<unsigned short> rows;
   };  // end of struct ImposedThermodynamicForce
 
 }  // end of namespace mtest

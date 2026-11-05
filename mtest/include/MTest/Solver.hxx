@@ -31,7 +31,7 @@ namespace mtest {
   /*!
    *
    */
-  struct Solver {
+  struct MTEST_VISIBILITY_EXPORT Solver {
     /*!
      * \brief find the current state of the structure at the end of the
      * time step

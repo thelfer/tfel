@@ -130,7 +130,7 @@ namespace tfel::system {
 
   template <typename Child, typename Traits>
   basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::operator<<(
-      const void*& p) {
+      const void* p) {
     int fd = static_cast<const Child*>(this)->getFileDescriptor();
     basic_wstream<Child, Traits>::write(fd, &p, sizeof(p));
     return *this;

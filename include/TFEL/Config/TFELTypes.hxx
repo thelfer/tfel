@@ -191,7 +191,7 @@ namespace tfel::config {
     using PositionType =
         typename tfel::config::internals::PositionType<N, T, false>::type;
     using SpatialGradType =
-        typename tfel::config::internals::SpatialGradType<N, T, true>::type;
+        typename tfel::config::internals::SpatialGradType<N, T, false>::type;
     using JacobianType =
         typename tfel::config::internals::JacobianType<N, T, false>::type;
     using InvJacobianType =

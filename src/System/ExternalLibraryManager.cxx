@@ -22,6 +22,12 @@
 #include <windows.h>
 #else
 #include <dlfcn.h>
+#if defined(__GLIBC__) || defined(RTLD_DI_LINKMAP)
+#include <link.h>
+#elif defined(__APPLE__) && defined(__MACH__)
+#include <cstdint>
+#include <mach-o/dyld.h>
+#endif /* defined(__GLIBC__) || defined(RTLD_DI_LINKMAP) */
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
 #include <iterator>
@@ -81,6 +87,7 @@ namespace tfel::system {
                        "'. The following "
                        "hypotheses are supported:\n"
                        "- AxisymmetricalGeneralisedPlaneStrain\n"
+                       "- AxisymmetricalGeneralisedPlaneStress\n"
                        "- Axisymmetrical\n"
                        "- PlaneStress\n"
                        "- PlaneStrain\n"
@@ -102,10 +109,11 @@ namespace tfel::system {
     }
     auto r = std::string{n.cbegin(), p};
     ++p;
-    throw_if(p == pe, "unexpected end of string 'n'");
-    throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
+    throw_if(p == pe, "unexpected end of string '" + n + "'");
+    throw_if(!std::isdigit(static_cast<unsigned char>(*p)),
+             "unexpected a digit '" + n + "'");
     r += "_mfront_index_";
-    while ((p != pe) && (std::isdigit(*p))) {
+    while ((p != pe) && (std::isdigit(static_cast<unsigned char>(*p)))) {
       r.push_back(*p);
       ++p;
     }
@@ -229,6 +237,35 @@ namespace tfel::system {
     if (lib.first == nullptr) {
       raise("can't load library '" + l + "'");
     }
+#if defined(__GLIBC__) || defined(RTLD_DI_LINKMAP)
+    // path of the file actually loaded by the dynamic loader
+    struct link_map* lm = nullptr;
+    if ((::dlinfo(lib.first, RTLD_DI_LINKMAP, &lm) == 0) && (lm != nullptr) &&
+        (lm->l_name != nullptr) && (lm->l_name[0] != '\0')) {
+      return lm->l_name;
+    }
+#elif defined(__APPLE__) && defined(__MACH__)
+    // path of the image loaded by dyld: each loaded image is opened again
+    // with RTLD_NOLOAD and its handle is compared to the one of the library,
+    // the two lowest bits of a handle holding the opening mode
+    const auto id =
+        reinterpret_cast<std::intptr_t>(lib.first) & ~std::intptr_t{3};
+    for (auto i = static_cast<std::int64_t>(::_dyld_image_count()) - 1; i >= 0;
+         --i) {
+      const auto n = ::_dyld_get_image_name(static_cast<std::uint32_t>(i));
+      if (n == nullptr) {
+        continue;
+      }
+      const auto h = ::dlopen(n, RTLD_LAZY | RTLD_NOLOAD);
+      if (h == nullptr) {
+        continue;
+      }
+      ::dlclose(h);
+      if ((reinterpret_cast<std::intptr_t>(h) & ~std::intptr_t{3}) == id) {
+        return n;
+      }
+    }
+#endif /* defined(__GLIBC__) || defined(RTLD_DI_LINKMAP) */
     // check if file exists
     if (exists(lib.second)) {
       return lib.second;
@@ -520,11 +557,12 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::setParameter: "
              "can't get the '" +
-                 f + "_setParameter' function (" + getErrorMessage() + ")");
+                 f + "_setIntegerParameter' function (" + getErrorMessage() +
+                 ")");
     raise_if(!fct(p.c_str(), v),
              "ExternalLibraryManager::setParameter: "
              "call to the '" +
-                 f + "_setParameter' function failed");
+                 f + "_setIntegerParameter' function failed");
   }  // end of setParameter
 
   void ExternalLibraryManager::setParameter(const std::string& l,
@@ -538,11 +576,12 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::setParameter: "
              "can't get the '" +
-                 f + "_setParameter' function (" + getErrorMessage() + ")");
+                 f + "_setUnsignedShortParameter' function (" +
+                 getErrorMessage() + ")");
     raise_if(!fct(p.c_str(), v),
              "ExternalLibraryManager::setParameter: "
              "call to the '" +
-                 f + "_setParameter' function failed");
+                 f + "_setUnsignedShortParameter' function failed");
   }  // end of setParameter
 
   void ExternalLibraryManager::setParameter(const std::string& l,
@@ -583,11 +622,12 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::setParameter: "
              "can't get the '" +
-                 f + "_setParameter' function (" + getErrorMessage() + ")");
+                 f + "_setIntegerParameter' function (" + getErrorMessage() +
+                 ")");
     raise_if(!fct(p.c_str(), v),
              "ExternalLibraryManager::setParameter: "
              "call to the '" +
-                 f + "_setParameter' function failed");
+                 f + "_setIntegerParameter' function failed");
   }  // end of setParameter
 
   void ExternalLibraryManager::setParameter(const std::string& l,
@@ -606,11 +646,12 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::setParameter: "
              "can't get the '" +
-                 f + "_setParameter' function (" + getErrorMessage() + ")");
+                 f + "_setUnsignedShortParameter' function (" +
+                 getErrorMessage() + ")");
     raise_if(!fct(p.c_str(), v),
              "ExternalLibraryManager::setParameter: "
              "call to the '" +
-                 f + "_setParameter' function failed");
+                 f + "_setUnsignedShortParameter' function failed");
   }  // end of setParameter
 
   double ExternalLibraryManager::getRealParameterDefaultValue(
@@ -1129,7 +1170,7 @@ namespace tfel::system {
         lib, (f + "_InitializeFunction_" + i).c_str());
     raise_if(fct == nullptr,
              "ExternalLibraryManager::getGenericBehaviourInitializeFunction: "
-             "could not load post-processing function '" +
+             "could not load initialize function '" +
                  i + "' for generic behaviour function '" + f + "' (" +
                  getErrorMessage() + ")");
     return fct;

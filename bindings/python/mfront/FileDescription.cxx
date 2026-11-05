@@ -22,6 +22,7 @@ void declareFileDescription(pybind11::module_& m) {
   pybind11::class_<mfront::FileDescription>(
       m, "FileDescription",
       "This class gathers some information about the MFront file being treated")
+      .def(pybind11::init<>())
       .def_readwrite("fileName", &mfront::FileDescription::fileName,
                      "Name of the MFront file")
       .def_readwrite("authorName", &mfront::FileDescription::authorName,

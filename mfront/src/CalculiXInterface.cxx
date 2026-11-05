@@ -290,15 +290,15 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CalculiXInterface::treatKeyword: " + m);
     };
-    auto check_interface_restriction = [&i, &k] {
+    auto check_interface_restriction = [this, &i, &k] {
       if (i.empty()) {
-        reportWarning(
-            "keyword '" + k +
-            "' is used without being restricted "
-            "to the `generic` interface, which could be a portability "
-            "issue. Please add [generic] after the "
-            "keyword (i.e. replace '" +
-            k + "' by '" + k + "[generic]')");
+        reportWarning("keyword '" + k +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      k + "' by '" + k + "[" + this->getName() + "]')");
       }
     };
     if (!i.empty()) {
@@ -331,8 +331,11 @@ namespace mfront {
       if (k == "@CalculiXGenerateMTestFileOnFailure") {
         check_interface_restriction();
       }
-      this->setGenerateMTestFileOnFailureAttribute(
-          bd, this->readBooleanValue(k, current, end));
+      // the MTest file generators of UMATInterfaceBase use the arguments of
+      // the UMAT entry points, which the calculix entry points do not have
+      throw_if(this->readBooleanValue(k, current, end),
+               "the generation of MTest files on failure is not supported "
+               "by the calculix interface");
       return {true, current};
     }
     return {false, current};
@@ -358,6 +361,13 @@ namespace mfront {
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
              "by CalculiX's native interface");
+    // CalculiX only gives the temperature at the end of the time step: the
+    // increment of a stress-free expansion can't be computed
+    throw_if(mb.requiresStressFreeExpansionTreatment(h),
+             "stress-free expansions are not supported "
+             "by CalculiX's native interface, which does not give the "
+             "temperature at the beginning of the time step. The thermal "
+             "expansion shall be declared in CalculiX");
     // get the modelling hypotheses to be treated
     const auto name = mb.getLibrary() + mb.getClassName();
     // output directories
@@ -583,7 +593,7 @@ namespace mfront {
         << "stensor<3u,real> pk2;\n"
         << "pk2.importTab(STRESS);\n"
         << "auto s = "
-           "convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);\n";
+           "convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F0);\n";
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       out << "const auto rF0 = change_basis(F0,r);\n"
           << "const auto rF1 = change_basis(F1,r);\n"
@@ -649,9 +659,6 @@ namespace mfront {
           << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
-    }
-    if (this->shallGenerateMTestFileOnFailure(mb)) {
-      this->generateMTestFile1(out, mb);
     }
     out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
@@ -736,10 +743,6 @@ namespace mfront {
           << "}\n"
           << "std::cout << std::endl;\n";
     }
-    if (this->shallGenerateMTestFileOnFailure(mb)) {
-      out << "} else {\n";
-      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
-    }
     out << "}\n";
     out << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
   }
@@ -780,9 +783,6 @@ namespace mfront {
         << "using namespace tfel::math;\n"
         << "using namespace tfel::material;\n"
         << "using real = calculix::CalculiXReal;\n";
-    if (this->shallGenerateMTestFileOnFailure(mb)) {
-      this->generateMTestFile1(out, mb);
-    }
     out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
@@ -810,7 +810,7 @@ namespace mfront {
              "STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
           << "stensor<3u,real> eto0(ivs0+" << nivs << ");\n"
           << "stensor<3u,real> T;\n"
-          << "tfel::fsalgo::copy<6u>::exe(ivs1+" << nivs + 6
+          << "tfel::fsalgo::copy<6u>::exe(ivs0+" << nivs + 6
           << ",T.begin());\n";
     }
     out << "auto eto1 = lsh1.getHenckyLogarithmicStrain();\n";
@@ -858,16 +858,15 @@ namespace mfront {
     }
     out << "// stress at the end of the time step\n";
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "auto s = lsh1.convertToSecondPiolaKirchhoffStress(T);\n"
-          << "s.changeBasis(rb);\n";
-    } else {
-      out << "const auto s = lsh1.convertToSecondPiolaKirchhoffStress(T);\n";
+      // the dual stress and the tangent operator are rotated back to the
+      // global frame before being converted by the logarithmic strain
+      // handler, which is built with the global deformation gradient
+      out << "T.changeBasis(rb);\n"
+          << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
     }
-    out << "D = lsh1.convertToMaterialTangentModuli(st2tost2<3u,real>(D),T);\n";
-    if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
-    }
-    out << "// converting the stress\n"
+    out << "const auto s = lsh1.convertToSecondPiolaKirchhoffStress(T);\n"
+        << "D = lsh1.convertToMaterialTangentModuli(st2tost2<3u,real>(D),T);\n"
+        << "// converting the stress\n"
         << "s.exportTab(STRESS);\n"
         << "// converting the consistent tangent operator\n"
         << "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D.begin());"
@@ -882,10 +881,6 @@ namespace mfront {
           << "std::cout << std::endl;\n"
           << "}\n"
           << "std::cout << std::endl;\n";
-    }
-    if (this->shallGenerateMTestFileOnFailure(mb)) {
-      out << "} else {\n";
-      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
     }
     out << "}\n"
         << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
@@ -986,10 +981,6 @@ namespace mfront {
               "$(shell " + tfel_config + " --library-path)");
     insert_if(l.link_libraries,
               tfel::getLibraryInstallName("CalculiXInterface"));
-    if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(l.link_libraries,
-                tfel::getLibraryInstallName("MTestFileGenerator"));
-    }
     insert_if(l.link_libraries, "$(shell " + tfel_config +
                                     " --library-dependency "
                                     "--material --mfront-profiling)");
@@ -1147,8 +1138,12 @@ namespace mfront {
       if (mb.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
+        // the thermal expansion coefficient tensor has the symmetry of
+        // the behaviour
         out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 1u;\n";
+            << " unsigned short thermalExpansionPropertiesOffset = "
+            << ((mb.getSymmetryType() == mfront::ORTHOTROPIC) ? "3u" : "1u")
+            << ";\n";
       } else {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
@@ -1168,8 +1163,12 @@ namespace mfront {
       if (mb.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
+        // the thermal expansion coefficient tensor has the symmetry of
+        // the behaviour
         out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 3u;\n";
+            << " unsigned short thermalExpansionPropertiesOffset = "
+            << ((mb.getSymmetryType() == mfront::ORTHOTROPIC) ? "3u" : "1u")
+            << ";\n";
       } else {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";

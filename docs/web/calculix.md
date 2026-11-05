@@ -160,6 +160,18 @@ external behaviour:
 200000,0.3
 ~~~~
 
+### Thermal expansion
+
+The `CalculiX` native interface only gives the temperature at the end
+of the time step to the behaviour, so the increment of a stress-free
+expansion over the time step can't be computed. The `calculix`
+interface thus rejects behaviours declaring a stress-free expansion
+(`@ComputeThermalExpansion`, `@Swelling`, `@AxialGrowth`,
+`@Relocation`, `@ComputeStressFreeExpansion`). The thermal expansion
+shall be declared in `CalculiX` (`*EXPANSION` keyword), which
+subtracts the thermal strain from the total strain before calling the
+behaviour.
+
 ### Using a small strain behaviour in finite strain analysis
 
 In finite strain, `CalculiX` replaces the linearised strain by the

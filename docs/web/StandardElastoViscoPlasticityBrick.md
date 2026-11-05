@@ -306,6 +306,13 @@ The viscoplastic flow is defined by:
 - one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
 - one isotropic hardening rule (optional), denoted \(R_{i}\)
 
+#### Newton steps rejection
+
+The exponential nature of the hyperbolic sinus function may lead to
+divergence of the Newton method. To avoid this, one may specify a
+relative threshold denoted \(K_{sf}\): if the stress estimate is greater
+than \(K_{sf}\,K\), the step is rejected.
+
 ### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow 
 
 The equivalent viscoplastic strain rate \(\dot{p}\) is defined as:
@@ -340,13 +347,6 @@ in which appear:
   }
 };
 ~~~~
-
-#### Newton steps rejection
-
-The exponential nature of the hyperbolic sinus function may lead to
-divergence of the Newton method. To avoid this, one may specify a
-relative threshold denoted \(K_{sf}\): if the stress estimate is greater
-than \(K_{sf}\,K\), the step is rejected.
 
 ### The `UserDefinedViscoplasticity` inelastic flow
 
@@ -383,7 +383,10 @@ threshold.
 If those derivatives are not provided, automatic differentiation will be
 used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
-code.
+code. The functions `tgamma` and `lgamma` can't be differentiated: the
+derivatives must be provided if `vp` uses them. The functions `abs`,
+`max`, `min` and `H` are differentiated piecewise, the derivative of `H`
+being null.
 
 #### Example of usage {.unnumbered}
 
@@ -663,7 +666,7 @@ have been proposed by Cazacu and Barlat (see
   &\frac{1}{27}\,(b_1+b_2)\,s_{xx}^3+\frac{1}{27}\,(b_3+b_4)\,s_{yy}^3+\frac{1}{27}\,(2\,(b_1+b_4)-b_2-b_3)\,s_{zz}^3\\
   &-\frac{1}{9}\,(b_1\,s_{yy}+b_2s_{zz})\,s_{xx}^2\\
   &-\frac{1}{9}\,(b_3\,s_{zz}+b_4\,s_{xx})\,s_{yy}^2\\
-  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b3+b_4)\,s_{yy})\,s_{zz}^3\\
+  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b_3+b_4)\,s_{yy})\,s_{zz}^2\\
   &+\frac{2}{9}\,(b_1+b_4)\,s_{xx}\,s_{yy}\,s_{zz}\\
   &-\frac{s_{xz}^2}{3}\,(2\,b_9\,s_{yy}-b_8\,s_{zz}-(2\,b_9-b_8)\,s_{xx})\\
   &-\frac{s_{xy}^2}{3}\,(2\,b_{10}\,s_{zz}-b_5\,s_{yy}-(2\,b_{10}-b_5)\,s_{xx})\\
@@ -1054,7 +1057,10 @@ variable `R`.
 If this derivative is not provided, automatic differentiation will be
 used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
-code.
+code. The functions `tgamma` and `lgamma` can't be differentiated: the
+derivative must be provided if `R` uses them. The functions `abs`,
+`max`, `min` and `H` are differentiated piecewise, the derivative of `H`
+being null.
 
 #### Example of usage {.unnumbered}
 
@@ -1088,8 +1094,9 @@ This isotropic hardening rule can be parametrised using three entries:
 - `interpolation`: which allows to select the interpolation type.
   Possible values are `linear` (default choice) and `cubic_spline`.
 - `extrapolation`: which allows to select the extrapolation type.
-  Possible values are `bound_to_last_value` (or `constant`) and
-  `extrapolation` (default choice).
+  Possible values are `bound_to_last_value` (or `constant`, or the
+  boolean value `false`) and `extrapolation` (or the boolean value
+  `true`, default choice).
 
 #### Example of usage
 
@@ -1310,7 +1317,7 @@ The following code can be added in a block defining an inelastic flow:
       C : 250e7,
       D : 100,
       m : 2,
-      w : 0.6,
+      w : 0.6
     }
 ~~~~
 
@@ -1335,6 +1342,9 @@ same structure as the Hill tensors and are defined by \(6\) components
 (see [this page](tensors.html) for details).
 
 The `f` and `a0` parameters are optional and defaults to \(1\).
+
+This kinematic hardening rule requires the behaviour to be orthotropic
+(see the `@OrthotropicBehaviour` keyword).
 
 #### Example
 

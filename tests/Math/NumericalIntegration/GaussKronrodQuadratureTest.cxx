@@ -49,7 +49,13 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     const auto or1 = tfel::math::gauss_kronrod_integrate(
         [](const double x) noexcept { return std::sin(x); }, a, b);
     TFEL_TESTS_ASSERT(or1.has_value());
+    TFEL_TESTS_ASSERT(std::abs(std::get<0>(*or1) + std::cos(b) - 1) < 1e-14);
     TFEL_TESTS_ASSERT(std::abs(std::get<1>(*or1)) < 1e-14);
+    // no refinement is needed
+    const auto oi = tfel::math::gauss_kronrod_integrate(
+        [](const double x) noexcept { return std::sin(x); }, a, b,
+        {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 0});
+    TFEL_TESTS_ASSERT(oi.has_value());
   }  // end of test1
   void test2() {
     constexpr auto a = double{};
@@ -109,6 +115,14 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(local_abs(*or4 - std::numbers::pi_v<double>) <
                              1e-12);
 #endif
+    // left unbounded integral without refinement
+    const auto or5 = tfel::math::gauss_kronrod_integrate(
+        f1, -std::numeric_limits<double>::max(), double{});
+    TFEL_TESTS_ASSERT(or5.has_value());
+    if (or5.has_value()) {
+      const auto [i, e] = *or5;
+      TFEL_TESTS_ASSERT(local_abs(i - std::numbers::pi_v<double> / 2) < e);
+    }
   }  // end of test3
   void test4() {
     constexpr auto a = double{};
@@ -154,6 +168,15 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     if (or1.has_value()) {
       const auto v = c * b * b / 2;
       TFEL_TESTS_ASSERT(tfel::math::abs(std::get<0>(*or1) - v) < strain{1e-12});
+    }
+    // adaptative version: the tolerance has the unit of the integral
+    const auto oi = tfel::math::gauss_kronrod_integrate(
+        [c](const time t) noexcept { return c * t; }, a, b,
+        {.absolute_tolerance = strain{1e-12},
+         .maximum_number_of_refinements = 8});
+    TFEL_TESTS_ASSERT(oi.has_value());
+    if (oi.has_value()) {
+      TFEL_TESTS_ASSERT(tfel::math::abs(*oi - c * b * b / 2) < strain{1e-12});
     }
   }  // end of test6
 };

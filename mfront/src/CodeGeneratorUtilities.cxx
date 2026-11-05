@@ -237,6 +237,18 @@ namespace mfront {
     }
   }  // end of writeBoundsSymbol
 
+  /*!
+   * \return if the given bounds describe the whole variable. The exported
+   * symbols describe the bounds of the whole variable: bounds on a single
+   * component of a non scalar variable are only checked by the behaviour.
+   * \param[in] v: variable
+   * \param[in] b: bounds
+   */
+  static bool areBoundsExported(const VariableDescription& v,
+                                const VariableBoundsDescription& b) {
+    return (b.component == -1) || (v.isScalar());
+  }  // end of areBoundsExported
+
   void writeBoundsSymbols(std::ostream& os,
                           const std::string_view n,
                           const VariableDescriptionContainer& vc) {
@@ -244,20 +256,21 @@ namespace mfront {
     os.precision(14);
     for (const auto& v : vc) {
       if (v.arraySize == 1u) {
-        if (!v.hasBounds()) {
+        if ((!v.hasBounds()) || (!areBoundsExported(v, v.getBounds()))) {
           continue;
         }
         mfront::writeBoundsSymbol(os, n, v.getExternalName(), "",
                                   v.getBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasBounds(idx)) {
+          if ((!v.hasBounds(idx)) ||
+              (!areBoundsExported(v, v.getBounds(idx)))) {
             continue;
           }
-          mfront::writeBoundsSymbol(os, n,
-                                    v.getExternalName() + "_mfront_index_" +
-                                        std::to_string(idx) + "_",
-                                    "", v.getBounds(idx));
+          mfront::writeBoundsSymbol(
+              os, n,
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx), "",
+              v.getBounds(idx));
         }
       }
     }
@@ -271,20 +284,22 @@ namespace mfront {
     os.precision(14);
     for (const auto& v : vc) {
       if (v.arraySize == 1u) {
-        if (!v.hasPhysicalBounds()) {
+        if ((!v.hasPhysicalBounds()) ||
+            (!areBoundsExported(v, v.getPhysicalBounds()))) {
           continue;
         }
         mfront::writeBoundsSymbol(os, n, v.getExternalName(), "Physical",
                                   v.getPhysicalBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasPhysicalBounds(idx)) {
+          if ((!v.hasPhysicalBounds(idx)) ||
+              (!areBoundsExported(v, v.getPhysicalBounds(idx)))) {
             continue;
           }
-          mfront::writeBoundsSymbol(os, n,
-                                    v.getExternalName() + "_mfront_index_" +
-                                        std::to_string(idx) + "_",
-                                    "Physical", v.getPhysicalBounds(idx));
+          mfront::writeBoundsSymbol(
+              os, n,
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx),
+              "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
@@ -309,8 +324,8 @@ namespace mfront {
         }
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          const auto n = v.getExternalName() + "_mfront_index_" +
-                         std::to_string(idx) + "_";
+          const auto n =
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx);
           if (v.hasBounds(idx)) {
             writeBoundsSymbol(out, name, n, "", v.getBounds(idx));
           }
@@ -579,28 +594,28 @@ namespace mfront {
 
   static void writeBoundsChecks(std::ostream& os,
                                 const VariableDescription& v,
+                                const VariableBoundsDescription& bounds,
                                 const std::string_view n,
                                 const std::string_view space_dimension,
                                 const std::string_view policy,
                                 const bool addThis,
                                 const bool checkEndOfTimeStepValue,
                                 const bool physicalBounds) {
-    if (physicalBounds) {
-      if (!v.hasPhysicalBounds()) {
-        return;
-      }
-    } else {
-      if (!v.hasBounds()) {
-        return;
-      }
-    }
-    const auto& bounds = physicalBounds ? v.getPhysicalBounds() : v.getBounds();
     const auto numeric_type = [&v] {
       if (v.isScalar()) {
         return v.type;
       }
       return "tfel::math::numeric_type<" + v.type + ">";
     }();
+    // bounds set on a component of a non scalar variable only apply to this
+    // component
+    const auto c = ((bounds.component != -1) && (!v.isScalar()))
+                       ? std::to_string(bounds.component)
+                       : std::string{};
+    const auto name =
+        c.empty() ? std::string{n} : std::string{n} + '(' + c + ')';
+    const auto value =
+        c.empty() ? std::string{n} : std::string{n} + '[' + c + ']';
     const auto this_pointer = addThis ? "this->" : "";
     const auto policy_argument = [&physicalBounds, &policy]() -> std::string {
       if (!physicalBounds) {
@@ -610,39 +625,41 @@ namespace mfront {
     }();
     if (bounds.boundsType == VariableBoundsDescription::LOWER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::lowerBoundCheck(\"" << n << "\", " << this_pointer << n << ","
+         << ">::lowerBoundCheck(\"" << name << "\", " << this_pointer << value
+         << ","
          << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::lowerBoundCheck(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::lowerBoundCheck(\"" << name << "+d" << name << "\", "
+           << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << ")"
            << policy_argument << ");\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::upperBoundCheck(\"" << n << "\", " << this_pointer << n << ","
+         << ">::upperBoundCheck(\"" << name << "\", " << this_pointer << value
+         << ","
          << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::upperBoundCheck(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::upperBoundCheck(\"" << name << "+d" << name << "\", "
+           << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
            << policy_argument << ");\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::lowerAndUpperBoundsChecks(\"" << n << "\", " << this_pointer
-         << n << ","
+         << ">::lowerAndUpperBoundsChecks(\"" << name << "\", " << this_pointer
+         << value << ","
          << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
          << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::lowerAndUpperBoundsChecks(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::lowerAndUpperBoundsChecks(\"" << name << "+d" << name
+           << "\", " << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
            << "),"
            << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
@@ -661,7 +678,22 @@ namespace mfront {
                          const std::string_view policy,
                          const bool addThis,
                          const bool checkEndOfTimeStepValue) {
-    writeBoundsChecks(os, v, n, space_dimension, policy, addThis,
+    if (!v.hasBounds()) {
+      return;
+    }
+    writeBoundsChecks(os, v, v.getBounds(), n, space_dimension, policy, addThis,
+                      checkEndOfTimeStepValue);
+  }  // end of writeBoundsChecks
+
+  void writeBoundsChecks(std::ostream& os,
+                         const VariableDescription& v,
+                         const VariableBoundsDescription& bounds,
+                         const std::string_view n,
+                         const std::string_view space_dimension,
+                         const std::string_view policy,
+                         const bool addThis,
+                         const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, bounds, n, space_dimension, policy, addThis,
                       checkEndOfTimeStepValue, false);
   }  // end of writeBoundsChecks
 
@@ -671,7 +703,21 @@ namespace mfront {
                                  const std::string_view space_dimension,
                                  const bool addThis,
                                  const bool checkEndOfTimeStepValue) {
-    writeBoundsChecks(os, v, n, space_dimension, "", addThis,
+    if (!v.hasPhysicalBounds()) {
+      return;
+    }
+    writePhysicalBoundsChecks(os, v, v.getPhysicalBounds(), n, space_dimension,
+                              addThis, checkEndOfTimeStepValue);
+  }  // end of writePhysicalBoundsChecks
+
+  void writePhysicalBoundsChecks(std::ostream& os,
+                                 const VariableDescription& v,
+                                 const VariableBoundsDescription& bounds,
+                                 const std::string_view n,
+                                 const std::string_view space_dimension,
+                                 const bool addThis,
+                                 const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, bounds, n, space_dimension, "", addThis,
                       checkEndOfTimeStepValue, true);
   }  // end of writePhysicalBoundsChecks
 

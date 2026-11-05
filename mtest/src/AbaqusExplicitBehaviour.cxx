@@ -18,6 +18,7 @@
 #include <algorithm>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -115,9 +116,6 @@ namespace mtest {
       if (this->requiresStiffnessTensor) {
         tmp.insert(tmp.end(), {"YoungModulus", "PoissonRatio"});
       }
-      if (this->requiresThermalExpansionCoefficientTensor) {
-        tmp.push_back("ThermalExpansion");
-      }
     } else if (this->etype == 1u) {
       if ((h == ModellingHypothesis::PLANESTRESS) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
@@ -129,20 +127,12 @@ namespace mtest {
                       "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
                       "ShearModulus12"});
         }
-        if (this->requiresThermalExpansionCoefficientTensor) {
-          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
-                                 "ThermalExpansion3"});
-        }
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         if (this->requiresStiffnessTensor) {
           tmp.insert(tmp.end(),
                      {"YoungModulus1", "YoungModulus2", "YoungModulus3",
                       "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
                       "ShearModulus12", "ShearModulus23", "ShearModulus13"});
-        }
-        if (this->requiresThermalExpansionCoefficientTensor) {
-          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
-                                 "ThermalExpansion3"});
         }
       } else {
         tfel::raise(
@@ -154,6 +144,16 @@ namespace mtest {
           "AbaqusExplicitBehaviour::AbaqusExplicitBehaviour : "
           "unsupported behaviour type "
           "(neither isotropic nor orthotropic)");
+    }
+    if (this->requiresThermalExpansionCoefficientTensor) {
+      // the thermal expansion coefficient tensor has the symmetry of the
+      // behaviour
+      if (this->stype == 0u) {
+        tmp.push_back("ThermalExpansion");
+      } else {
+        tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
+                               "ThermalExpansion3"});
+      }
     }
     this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }
@@ -208,18 +208,7 @@ namespace mtest {
                   ModellingHypothesis::toString(h) + ")");
     }
     const AbaqusInt nblock = 1;
-    const AbaqusInt ndir = [&h] {
-      switch (h) {
-        case ModellingHypothesis::PLANESTRESS:
-          return 2;
-        case ModellingHypothesis::AXISYMMETRICAL:
-        case ModellingHypothesis::PLANESTRAIN:
-        case ModellingHypothesis::TRIDIMENSIONAL:
-          return 3;
-      }
-      tfel::raise("unsupported hypothesis (" +
-                  ModellingHypothesis::toString(h) + ")");
-    }();
+    const AbaqusInt ndir = 3;
     const AbaqusInt nshr = [&h] {
       switch (h) {
         case ModellingHypothesis::PLANESTRESS:
@@ -287,11 +276,10 @@ namespace mtest {
                   wk.evs.size() == 1 ? nullptr : &(wk.evs[0]) + 1, stressNew,
                   nstatv == 0 ? nullptr : &(s.iv1[0]), &s.se1, &s.de1, 0);
       if (h == ModellingHypothesis::PLANESTRESS) {
-        const auto idx = (i == 2) ? 3 : i;
-        K(0, idx) = stressNew[0];
-        K(1, idx) = stressNew[1];
-        K(2, idx) = 0;
-        K(3, idx) = stressNew[3];
+        K(0, i) = stressNew[0];
+        K(1, i) = stressNew[1];
+        K(2, i) = 0;
+        K(3, i) = stressNew[3];
       } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
                  (h == ModellingHypothesis::PLANESTRAIN)) {
         K(0, i) = stressNew[0];
@@ -299,12 +287,14 @@ namespace mtest {
         K(2, i) = stressNew[2];
         K(3, i) = stressNew[3];
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        K(0, i) = stressNew[0];
-        K(1, i) = stressNew[1];
-        K(2, i) = stressNew[2];
-        K(3, i) = stressNew[3];
-        K(4, i) = stressNew[5];
-        K(5, i) = stressNew[4];
+        // column of the strain component i in the TFEL order
+        const auto c = (i == 4) ? 5 : ((i == 5) ? 4 : i);
+        K(0, c) = stressNew[0];
+        K(1, c) = stressNew[1];
+        K(2, c) = stressNew[2];
+        K(3, c) = stressNew[3];
+        K(4, c) = stressNew[5];
+        K(5, c) = stressNew[4];
       } else {
         tfel::raise("unsupported hypothesis (" +
                     ModellingHypothesis::toString(h) + ")");
@@ -326,20 +316,24 @@ namespace mtest {
     const std::string n = "InitialElasticStiffness";
     s.packaging_info.insert({n, matrix<real>()});
     auto& m = s.packaging_info.at(n).get<matrix<real>>();
-    const real cste = std::sqrt(real{2});
+    constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     if ((h == ModellingHypothesis::PLANESTRESS) ||
         (h == ModellingHypothesis::AXISYMMETRICAL) ||
         (h == ModellingHypothesis::PLANESTRAIN)) {
       m.resize(4u, 5u);
       for (unsigned short i = 0; i != 4; ++i) {
-        K(i, 3) /= 2 * cste;
+        K(i, 3) /= cste;
+        K(3, i) *= cste;
       }
     } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       m.resize(6u, 9u);
       for (unsigned short i = 0; i != 6; ++i) {
-        K(i, 3) /= 2 * cste;
-        K(i, 4) /= 2 * cste;
-        K(i, 5) /= 2 * cste;
+        K(i, 3) /= cste;
+        K(i, 4) /= cste;
+        K(i, 5) /= cste;
+        K(3, i) *= cste;
+        K(4, i) *= cste;
+        K(5, i) *= cste;
       }
     } else {
       tfel::raise(
@@ -356,12 +350,16 @@ namespace mtest {
           D(i, j) = K(i, j);
         }
       }
-      const auto D2 = tfel::math::change_basis(D, tfel::math::transpose(s.r));
+      // with the MFront orthotropy management policy, the behaviour
+      // works in the global frame
+      const auto D2 = (this->omp == 2u) ? D
+                                        : tfel::math::change_basis(
+                                              D, tfel::math::transpose(s.r));
       for (unsigned short i = 0; i != 4; ++i) {
         for (unsigned short j = 0; j != 3; ++j) {
           m(i, j) = D2(i, j);
         }
-        m(i, 3) = m(i, 4) = D2(i, 3);
+        m(i, 3) = m(i, 4) = D2(i, 3) / cste;
       }
     } else {
       tfel::math::st2tost2<3, real> D;
@@ -370,14 +368,18 @@ namespace mtest {
           D(i, j) = K(i, j);
         }
       }
-      const auto D2 = tfel::math::change_basis(D, tfel::math::transpose(s.r));
+      // with the MFront orthotropy management policy, the behaviour
+      // works in the global frame
+      const auto D2 = (this->omp == 2u) ? D
+                                        : tfel::math::change_basis(
+                                              D, tfel::math::transpose(s.r));
       for (unsigned short i = 0; i != 6; ++i) {
         for (unsigned short j = 0; j != 3; ++j) {
           m(i, j) = D2(i, j);
         }
-        m(i, 3) = m(i, 4) = D2(i, 3);
-        m(i, 5) = m(i, 6) = D2(i, 4);
-        m(i, 7) = m(i, 8) = D2(i, 5);
+        m(i, 3) = m(i, 4) = D2(i, 3) / cste;
+        m(i, 5) = m(i, 6) = D2(i, 4) / cste;
+        m(i, 7) = m(i, 8) = D2(i, 5) / cste;
       }
     }
     return true;

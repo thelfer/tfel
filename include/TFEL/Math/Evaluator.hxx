@@ -137,11 +137,11 @@ namespace tfel::math {
      * \param[in] v: value
      */
     explicit Evaluator(const double);
-    //! \brief efault constructor
+    //! \brief default constructor
     Evaluator();
-    //! \brief opy constructor
+    //! \brief copy constructor
     Evaluator(const Evaluator&);
-    //! \brief ssignement operator constructor
+    //! \brief assignment operator
     Evaluator& operator=(const Evaluator&);
     /*!
      * \param const std::string&, function definition
@@ -233,6 +233,12 @@ namespace tfel::math {
      */
     [[nodiscard]] virtual std::string getCxxFormula(
         const std::map<std::string, std::string>& = {}) const;
+    /*!
+     * \return the names of the variables, ordered by their positions: the
+     * index of a name in the returned vector is the position of the variable,
+     * i.e. the order of the variables given to the constructor, or the order
+     * of their first appearance in the expression otherwise
+     */
     [[nodiscard]] virtual std::vector<std::string> getVariablesNames() const;
     virtual void checkCyclicDependency() const;
     virtual void removeDependencies();

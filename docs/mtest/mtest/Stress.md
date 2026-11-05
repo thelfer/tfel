@@ -1,4 +1,4 @@
-The `@Stress` let the user specifiy the inital value of the stresses.
+The `@Stress` let the user specify the initial value of the stresses.
 
 This keyword is followed by an array. The size of this array must be
 equal to the number of components of symmetric tensors for the

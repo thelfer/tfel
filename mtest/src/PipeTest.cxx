@@ -97,7 +97,7 @@ namespace mtest {
       try {
         const auto rv = this->reference_values_evaluator(s, t, dt, p);
         const real err = std::abs(uv - rv);
-        if (err > this->eps) {
+        if (!(err <= this->eps)) {
           std::ostringstream msg;
           msg << "IntegralTest::check : comparison for variable '" << this->name
               << "' failed for time '" << t + dt << "' "
@@ -201,7 +201,7 @@ namespace mtest {
           this->results.append(tfel::tests::TestResult(false, msg.str()));
         } else {
           const real err = std::abs(v - this->values[dp]);
-          if (err > this->eps) {
+          if (!(err <= this->eps)) {
             std::ostringstream msg;
             msg << "ProfileTest::check : comparison for variable '"
                 << this->name << "' failed for time '" << t + dt << "' "
@@ -556,6 +556,10 @@ namespace mtest {
           "PipeTest::completeInitialisation: "
           "can't impose the evolution of the radius of the mandrel and "
           "the evolution of the inner or outer radius of the pipe");
+      tfel::raise_if(this->rl == TIGHTPIPE,
+                     "PipeTest::completeInitialisation: "
+                     "can't impose the evolution of the radius of the "
+                     "mandrel of a tight pipe");
     }
     if (this->rl == IMPOSEDOUTERRADIUS) {
       tfel::raise_if(this->outer_radius_evolution == nullptr,
@@ -915,7 +919,7 @@ namespace mtest {
                                            std::vector{this->P0, this->P0}));
       }
     }
-    if ((this->al == IMPOSEDAXIALFORCE) ||
+    if ((this->al == IMPOSEDAXIALGROWTH) ||
         (this->mandrel_axial_growth_evolution != nullptr)) {
       if (!state.containsEvolution("AxialForce")) {
         // first call with this study state
@@ -1118,8 +1122,9 @@ namespace mtest {
           const auto Pc = state.getEvolution("InnerPressure")(t + dt);
           impose_inner_pressure(Pi, Pc);
         } else {
-          const auto Pi = state.getEvolution("InnerPressure")(t + dt);
-          impose_inner_pressure(Pi, 0);
+          // the contact pressure does not act on the end caps
+          const auto Pc = state.getEvolution("InnerPressure")(t + dt);
+          impose_inner_pressure(0, Pc);
         }
       } else {
         if ((this->rl == IMPOSEDPRESSURE) &&
@@ -1194,7 +1199,8 @@ namespace mtest {
           if (this->al == ENDCAPEFFECT) {
             r(n) -= pi * Ri_ * Ri_ * Pi;
             if (mt != StiffnessMatrixType::NOSTIFFNESS) {
-              k(n, n) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, 0) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, n) -= pi * Ri_ * Ri_ * dP_dV * dV_dezz;
             }
           }
         }
@@ -1303,6 +1309,9 @@ namespace mtest {
     using size_type = tfel::math::vector<real>::size_type;
     auto n = real(0);
     for (size_type i = 0; i != s; ++i) {
+      if (!tfel::math::ieee754::isfinite(v(i))) {
+        return v(i);
+      }
       n = std::max(n, std::abs(v(i)));
     }
     return n;
@@ -1539,7 +1548,7 @@ namespace mtest {
       const real cv = Pi(t + dt);
       Pi.setValue(t + dt, cv - (cue - iue) / due_dp);
     }
-    auto impose_inner_radius = [&](const real iu) {
+    auto impose_inner_radius = [&](const real iu, const bool end_cap_effect) {
       // computed external displacement
       const real cu = state.u1[0];
       std::fill(du.begin(), du.end(), real(0));
@@ -1550,7 +1559,7 @@ namespace mtest {
       } else {
         du(0) += 2 * pi * (1 + ezz) * Ri_;
       }
-      if (this->al == ENDCAPEFFECT) {
+      if (end_cap_effect) {
         du(n) += pi * Ri_ * Ri_;
       }
       setRoundingMode();
@@ -1565,12 +1574,13 @@ namespace mtest {
     if (this->rl == IMPOSEDINNERRADIUS) {
       // imposed displacement
       const real iu = (*(this->inner_radius_evolution))(t + dt) - Ri;
-      impose_inner_radius(iu);
+      impose_inner_radius(iu, this->al == ENDCAPEFFECT);
     }
     if (this->mandrel_radius_evolution != nullptr) {
       if (state.getParameter<bool>("MandrelContactState")) {
         const auto Rm = (*(this->mandrel_radius_evolution))(t + dt);
-        impose_inner_radius(Rm - Ri);
+        // the contact pressure does not act on the end caps
+        impose_inner_radius(Rm - Ri, false);
       }
     }
     // imposed axial growth
@@ -2177,11 +2187,13 @@ namespace mtest {
       ao.f(out, state);
     }
     if (this->inner_boundary_oxidation_model.model != nullptr) {
-      this->out << getOxidationLength(state,
+      this->out << " "
+                << getOxidationLength(state,
                                       this->inner_boundary_oxidation_model);
     }
     if (this->outer_boundary_oxidation_model.model != nullptr) {
-      this->out << getOxidationLength(state,
+      this->out << " "
+                << getOxidationLength(state,
                                       this->outer_boundary_oxidation_model);
     }
     for (std::size_t i = 0; i != this->failure_criteria.size(); ++i) {

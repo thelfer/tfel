@@ -86,7 +86,12 @@ namespace tfel::system {
       if (::close(toFather[0]) == -1) {
         exit(EXIT_FAILURE);
       }
-      childProcess->execute(toChild[0], toFather[1]);
+      try {
+        childProcess->execute(toChild[0], toFather[1]);
+      } catch (...) {
+        // no exception shall leave the child
+        exit(EXIT_FAILURE);
+      }
       exit(EXIT_SUCCESS);
     }
     childProcess->setPid(pid);

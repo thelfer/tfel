@@ -111,15 +111,14 @@ namespace lsdyna {
   }
 
   static std::string strim_back(const std::string& s) {
-    std::string::size_type b = 0u;
     std::string::size_type e = s.size();
-    while (b != e) {
-      if (std::isspace(s[b])) {
-        return s.substr(0, b);
+    while (e != 0) {
+      if (!std::isspace(s[e - 1])) {
+        return s.substr(0, e);
       }
-      ++b;
+      --e;
     }
-    return s;
+    return "";
   }
 
   static std::string strim(const std::string& s) {

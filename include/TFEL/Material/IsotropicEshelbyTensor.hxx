@@ -141,7 +141,8 @@ namespace tfel::material::homogenization::elasticity {
    * preventing the numerical instability of the formula when the ellipsoid
    * is almost a sphere. When the absolute value of (e-1) is below precf
    * (resp. precd, precld) for real=float (resp. real= double, long double),
-   * the returned tensor is computeSphereEshelbyTensor(nu).
+   * the returned tensor is computeSphereEshelbyTensor(nu). Otherwise, in
+   * single precision, the tensor is computed in double precision.
    *
    * The expressions can be found in Torquato, Random Heterogeneous
    * Materials (2002).
@@ -215,9 +216,11 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] precision: default
    * arguments which aim at preventing the numerical instability of the
    * formula when the ellipsoid is almost axisymmetrical. When the absolute
-   * value of (a-b)/c (or (a-c)/b or (b-c)/a) is below precf (resp. precd,
-   * precld) for real=float (resp. real= double, long double), the returned
-   * tensor is computeAxisymmetricalEshelbyTensor.
+   * value of the difference of two semi-axes, divided by the smallest
+   * semi-axis, is below precf (resp. precd, precld) for real=float (resp.
+   * real= double, long double), the returned tensor is
+   * computeAxisymmetricalEshelbyTensor. In single precision, the tensor is
+   * computed in double precision.
    *
    * The expressions for the case of three distinct semi-axes can be found
    * in Eshelby (1957).
@@ -249,9 +252,10 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] precision: default
    * arguments which aim at preventing the numerical instability of the
    * formula when the ellipsoid is almost axisymmetrical. When the absolute
-   * value of (a-b)/c (or (a-c)/b or (b-c)/a) is below precf (resp. precd,
-   * precld) for real=float (resp. real= double, long double), the returned
-   * tensor is computeAxisymmetricalHillTensor.
+   * value of the difference of two semi-axes, divided by the smallest
+   * semi-axis, is below precf (resp. precd, precld) for real=float (resp.
+   * real= double, long double), the returned tensor is
+   * computeAxisymmetricalHillTensor.
    *
    */
   template <tfel::math::ScalarConcept StressType>
@@ -283,9 +287,10 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] precision: default
    * arguments which aim at preventing the numerical instability of the
    * formula when the ellipsoid is almost axisymmetrical. When the absolute
-   * value of (a-b)/c (or (a-c)/b or (b-c)/a) is below precf (resp. precd,
-   * precld) for real=float (resp. real= double, long double), the returned
-   * tensor is computeAxisymmetricalHillTensor.
+   * value of the difference of two semi-axes, divided by the smallest
+   * semi-axis, is below precf (resp. precd, precld) for real=float (resp.
+   * real= double, long double), the returned tensor is
+   * computeAxisymmetricalHillTensor.
    */
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<

@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_HXX
 #define LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_HXX
 
+#include <type_traits>
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 
@@ -196,9 +197,19 @@ namespace tfel::math {
      *
      * This method is not used directly used by the
      * `TinyNonLinearSolverBase`. It is only defined to name an appropriate
-     * method which shall be used in derived class if required.
+     * method which shall be used in derived class if required, through the
+     * `callUpdateOrCheckJacobian` method.
+     *
+     * The derived class may define this method so that it returns a
+     * boolean: `false` reports that the jacobian could not be computed.
      */
     TFEL_HOST_DEVICE constexpr void updateOrCheckJacobian() noexcept {}
+    /*!
+     * \brief call the `updateOrCheckJacobian` method of the derived class.
+     * \return false if this method returns a boolean equal to `false`, true
+     * otherwise
+     */
+    [[nodiscard]] TFEL_HOST_DEVICE bool callUpdateOrCheckJacobian();
     /*!
      * \brief method meant to set bounds on some components of the current
      * correction or to implement a line search or to implement static
@@ -214,7 +225,11 @@ namespace tfel::math {
     /*!
      * \brief method meant to process the new estimate.
      *
-     * This method may be called to apply bounds on the estimate.
+     * This method may be called to apply bounds on the estimate. When this
+     * method is called after the update of the estimate by a new correction,
+     * any modification of the estimate is added to this correction
+     * (`delta_zeros`), which thus remains the step actually taken: this method
+     * shall not modify the correction itself.
      */
     TFEL_HOST_DEVICE constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins

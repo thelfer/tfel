@@ -17,8 +17,10 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <cstring>
 #include <utility>
 #include <iostream>
+#include <exception>
 
 #if defined _WIN32 || defined _WIN64
 #ifndef NOMINMAX
@@ -77,6 +79,7 @@ namespace mtest {
     void treatVerbose();
     void treatScheme();
     void treatXMLOutput();
+    void treatXMLOutputFile();
     void treatResultFileOutput();
     void treatResidualFileOutput();
     [[noreturn]] void treatHelpCommandsList();
@@ -135,6 +138,8 @@ namespace mtest {
 #endif /* MTEST_HAVE_MADNEX */
     // xml output
     bool xml_output = false;
+    // xml output file defined by the `--xml-output-file` option
+    std::shared_ptr<tfel::tests::TestOutput> xml_output_file;
     // generate result file
     bool result_file_output = true;
     // generate residual file
@@ -151,12 +156,20 @@ namespace mtest {
   }
 
   void MTestMain::registerArgumentCallBacks() {
+    this->registerCallBack(
+        "--no-terminate-handler",
+        CallBack("don't set a terminate handler", []() noexcept {}, false));
     this->registerNewCallBack("--verbose", &MTestMain::treatVerbose,
                               "set verbose output", true);
     this->registerNewCallBack("--scheme", &MTestMain::treatScheme, "set scheme",
                               true);
     this->registerNewCallBack("--xml-output", &MTestMain::treatXMLOutput,
                               "control xml output (default no)", true);
+    this->registerNewCallBack(
+        "--xml-output-file", &MTestMain::treatXMLOutputFile,
+        "set the xml output file, overriding the @XMLOutputFile keyword "
+        "(only meaningful with the --xml-output option)",
+        true);
     this->registerNewCallBack("--result-file-output",
                               &MTestMain::treatResultFileOutput,
                               "control result output (default yes)", true);
@@ -317,10 +330,13 @@ namespace mtest {
     using namespace tfel::system;
     // posix signals
     auto& sm = SignalManager::getSignalManager();
-    // blocking all signals during treatment of signals SIGSEGV, SIGFPE
+    // blocking all signals during treatment of signals SIGSEGV, SIGFPE. As
+    // in SignalManager::registerHandler, the default action is restored
+    // when the signal is caught, so that the process ends after the
+    // backtrace is printed
     struct sigaction action;
     sigfillset(&(action.sa_mask));
-    action.sa_flags = 0;
+    action.sa_flags = SA_RESETHAND;
     sm.registerHandler(SIGSEGV, sigPtrFun(SignalManager::printBackTrace),
                        action);
     sm.registerHandler(SIGFPE, sigPtrFun(SignalManager::printBackTrace),
@@ -354,6 +370,15 @@ namespace mtest {
       }
     }
   }  // end of MTestMain::treatXMLOutput
+
+  void MTestMain::treatXMLOutputFile() {
+    const auto& option = this->currentArgument->getOption();
+    tfel::raise_if(option.empty(),
+                   "MTestMain::treatXMLOutputFile: "
+                   "no option given");
+    this->xml_output_file =
+        std::make_shared<tfel::tests::XMLTestOutput>(option);
+  }  // end of MTestMain::treatXMLOutputFile
 
   void MTestMain::treatResultFileOutput() {
     if (this->currentArgument->getOption().empty()) {
@@ -404,7 +429,7 @@ namespace mtest {
     if ((this->scheme == MTEST) || (this->scheme == DEFAULT)) {
       MTestParser().displayKeyWordsHelp();
     } else if (this->scheme == PTEST) {
-      PipeTestParser().displayKeyWordsList();
+      PipeTestParser().displayKeyWordsHelp();
     }
     ::exit(EXIT_SUCCESS);
   }  // end of MTestMain::treatHelpCommands
@@ -609,13 +634,12 @@ namespace mtest {
     std::regex r(this->test);
     auto found = false;
     const auto m = this->material == "<none>" ? "" : this->material;
-    for (const auto& tname :
-         d.getAvailableMTestTests(this->material, this->behaviour)) {
+    for (const auto& tname : d.getAvailableMTestTests(m, this->behaviour)) {
       if (!std::regex_match(tname, r)) {
         continue;
       }
       found = true;
-      this->appendTestFromMadnexFile(i, this->material, this->behaviour, tname);
+      this->appendTestFromMadnexFile(i, m, this->behaviour, tname);
     }
     if (!found) {
       tfel::raise(
@@ -704,7 +728,9 @@ namespace mtest {
     tm.addTest("MTest/" + n, t);
     if (this->xml_output) {
       std::shared_ptr<tfel::tests::TestOutput> o;
-      if (!t->isXMLOutputFileNameDefined()) {
+      if (this->xml_output_file != nullptr) {
+        o = this->xml_output_file;
+      } else if (!t->isXMLOutputFileNameDefined()) {
         o = std::make_shared<tfel::tests::XMLTestOutput>(n + ".xml");
       } else {
         o = std::make_shared<tfel::tests::XMLTestOutput>(
@@ -719,8 +745,38 @@ namespace mtest {
 
 }  // end of namespace mtest
 
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+[[noreturn]] static void mtest_terminate_handler() {
+  if (auto pe = std::current_exception()) {
+    // we have an exception
+    try {
+      std::rethrow_exception(pe);
+    } catch (const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch (...) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, v) == 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+  if (!find("--no-terminate-handler")) {
+    std::set_terminate(mtest_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
   int r = EXIT_FAILURE;
 #if not defined(__GLIBCXX__)
   try {

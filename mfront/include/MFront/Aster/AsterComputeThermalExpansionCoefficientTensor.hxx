@@ -164,6 +164,33 @@ namespace aster {
                         ThermalExpansionCoefficientTensor&);
   };  // end of struct AsterComputeThermalExpansionCoefficientTensor
 
+  /*!
+   * Partial specialisation for finite strain behaviours
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            AsterSymmetryType stype>
+  struct TFEL_VISIBILITY_LOCAL AsterComputeThermalExpansionCoefficientTensor<
+      aster::STANDARDFINITESTRAINBEHAVIOUR,
+      H,
+      stype> {
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    /*!
+     * \brief compute the thermal expansion coefficient tensor.
+     * \param[in]  props : material properties
+     * \param[out] A     : thermal expansion coefficient tensor
+     */
+    static void exe(
+        const AsterReal* const props,
+        typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,
+                                     AsterReal,
+                                     false>::ThermalExpansionCoefficientTensor&
+            A) {
+      AsterComputeThermalExpansionCoefficientTensor<
+          aster::STANDARDSTRAINBASEDBEHAVIOUR, H, stype>::exe(props, A);
+    }
+  };  // end of struct AsterComputeThermalExpansionCoefficientTensor
+
 }  // end of namespace aster
 
 #endif /* LIB_MFRONT_ASTERCOMPUTETHERMALEXPANSIONTENSOR_HXX */

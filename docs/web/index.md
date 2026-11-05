@@ -54,7 +54,7 @@ knowledge:
   Young's modulus, the thermal conductivity, etc.)
 - [mechanical behaviours](behaviours.html). Numerical performance of
   generated mechanical behaviours was given particular
-  attention. [Various benchmarks](benchmarks.html) show that `MFront`
+  attention. [Various benchmarks](benchmark.html) show that `MFront`
   implementations are competitive with native implementations
   available in the `Cast3M`, `Code-Aster`, `Abaqus Standard` and
   `Cyrano3` solvers.

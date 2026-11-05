@@ -123,6 +123,18 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(mu_L - mu_Lbis) < seps);
     TFEL_TESTS_ASSERT(my_abs(K_U - K_Ubis) < seps);
     TFEL_TESTS_ASSERT(my_abs(mu_U - mu_Ubis) < seps);
+    // phases that are not well ordered: the shear bounds still use H1 and H2
+    std::vector<stress> tab_mu2 = {mu2, mu1};
+    const auto pair2 = computeIsotropicHashinShtrikmanBounds<3u, stress>(
+        tab_f, tab_K, tab_mu2);
+    const auto mu_Lter = phi1 * mu2 + phi2 * mu1 -
+                         phi1 * phi2 * (mu1 - mu2) * (mu1 - mu2) /
+                             (phi1 * mu1 + phi2 * mu2 + H1);
+    const auto mu_Uter = phi1 * mu2 + phi2 * mu1 -
+                         phi1 * phi2 * (mu1 - mu2) * (mu1 - mu2) /
+                             (phi1 * mu1 + phi2 * mu2 + H2);
+    TFEL_TESTS_ASSERT(my_abs(std::get<1>(std::get<0>(pair2)) - mu_Lter) < seps);
+    TFEL_TESTS_ASSERT(my_abs(std::get<1>(std::get<1>(pair2)) - mu_Uter) < seps);
 #endif /* _LIBCPP_VERSION */
   }
 

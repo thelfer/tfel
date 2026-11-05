@@ -23,6 +23,7 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+#include "MFront/BehaviourDSLDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
 struct BehaviourDescriptionTest final : public tfel::tests::TestCase {
@@ -52,6 +53,28 @@ struct BehaviourDescriptionTest final : public tfel::tests::TestCase {
     this->test3(&BehaviourDescription::addLocalVariable);
     this->test3(&BehaviourDescription::addParameter);
     this->test4();
+    {
+      const auto h1 = ModellingHypothesis::TRIDIMENSIONAL;
+      const auto h2 = ModellingHypothesis::PLANESTRAIN;
+      const auto h3 = ModellingHypothesis::AXISYMMETRICAL;
+      auto bd = BehaviourDescription{};
+      bd.setModellingHypotheses({h1, h2});
+      TFEL_TESTS_CHECK_THROW(bd.setModellingHypotheses({h2, h3}),
+                             std::runtime_error);
+      bd.setModellingHypotheses({h2, h3}, true);
+      TFEL_TESTS_ASSERT(bd.getModellingHypotheses() ==
+                        std::set<Hypothesis>{h2});
+    }
+    {
+      auto d = mfront::getDefaultStrainBasedBehaviourDSLDescription();
+      TFEL_TESTS_ASSERT(mfront::supportAllModellingHypothes(d));
+      d.supportedModellingHypotheses = {ModellingHypothesis::TRIDIMENSIONAL};
+      TFEL_TESTS_ASSERT(!mfront::supportAllModellingHypothes(d));
+      auto c = mfront::StaticVariableDescriptionContainer{};
+      c.push_back(StaticVariableDescription{"real", "p", 0u, 1.e-4});
+      TFEL_TESTS_ASSERT(c.contains("p") && !c.contains("q"));
+      TFEL_TESTS_ASSERT(c.get("p").name == "p");
+    }
     this->test5();
     this->test6(&BehaviourDescription::addMaterialProperty);
     this->test6(&BehaviourDescription::addStateVariable);

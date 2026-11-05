@@ -15,6 +15,7 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   Test13
   Test14
   Test15
+  Test16
   NortonTest
   NortonTest_nj
   NortonTest2
@@ -101,6 +102,8 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   PlasticityTest23_nj
   PlasticityTest24
   PlasticityTest24_nj
+  PlasticityTest26
+  PlasticityTest27
   IsotropicDamageHookeLaw
   IsotropicDamageHookeLaw_nj
   IsotropicDamageHookeLaw2
@@ -113,6 +116,7 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   HarmonicSumOfNortonHoffViscoplasticFlowsTest_nj
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2_nj
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest3
   ChuNeedleman1980StrainBasedNucleationModelTest
   ChuNeedleman1980StressBasedNucleationModelTest
   PowerLawStrainBasedNucleationModelTest
@@ -133,6 +137,10 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
 if(enable-mfront-quantity-tests)
   mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBehaviours3
     StandardElastoViscoPlasticity generic
+    PlasticityTest12_qt
+    PlasticityTest13_qt
+    PlasticityTest14_qt
+    PlasticityTest15_qt
     PlasticityTest18_qt
     PlasticityTest18_qt_nj
     PlasticityTest19_qt
@@ -146,7 +154,13 @@ if(enable-mfront-quantity-tests)
     PlasticityTest23_qt
     PlasticityTest23_qt_nj
     PlasticityTest24_qt
-    PlasticityTest24_qt_nj)
+    PlasticityTest24_qt_nj
+    PlasticityTest25_qt
+    MohrCoulombTest_qt
+    MichelAndSuquet1992HollowSphereTest_qt
+    GursonTvergaardNeedleman1982_qt
+    RousselierTanguyBesson2002_qt)
+
 endif(enable-mfront-quantity-tests)
 
 function(generictest_standardelastovicoplasticitybrick test_name test_file library_name behaviour_name)
@@ -176,6 +190,7 @@ function(generictest_standardelastovicoplasticitybrick test_name test_file libra
                  --@ModellingHypothesis="${mh}"
                  --@library@="$<TARGET_FILE:${library_name}>"
                  --@behaviour@="${behaviour_name}"
+                 --xml-output-file=brick${test_name}_${behaviour_name}_${mh}_${rm}_generic_mtest.xml
                  --@xml_output@="${test_name}-${behaviour_name}-${rm}.xml" ${file})
       else(NOT _REFERENCE_FILE)
         set(rfile "${top_srcdir}/mfront/tests/behaviours/StandardElastoViscoPlasticity/references/${_REFERENCE_FILE}")
@@ -184,6 +199,7 @@ function(generictest_standardelastovicoplasticitybrick test_name test_file libra
                  --@ModellingHypothesis="${mh}"
           	     --@library@="$<TARGET_FILE:${library_name}>"
                  --@behaviour@="${behaviour_name}"
+          	     --xml-output-file=brick${test_name}_${behaviour_name}_${mh}_${rm}_generic_mtest.xml
           	     --@xml_output@="${test_name}-${behaviour_name}-${rm}.xml"
           	     --@reference_file@="${rfile}" ${file})
       endif(NOT _REFERENCE_FILE)
@@ -220,6 +236,30 @@ generictest_standardelastovicoplasticitybrick(Test13
     test13 MFrontStandardElastoViscoPlasticityBrickBehaviours Test13)
 generictest_standardelastovicoplasticitybrick(Test15
     test15 MFrontStandardElastoViscoPlasticityBrickBehaviours Test15)
+generictest_standardelastovicoplasticitybrick(Test16
+    test16 MFrontStandardElastoViscoPlasticityBrickBehaviours Test16)
+
+foreach(variant "" _nj _na _nanj)
+  generictest_standardelastovicoplasticitybrick(PlasticityTest9${variant}
+    plasticitytest9 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest9${variant})
+endforeach()
+generictest_standardelastovicoplasticitybrick(PlasticityTest26
+    plasticitytest26 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest26)
+generictest_standardelastovicoplasticitybrick(PlasticityTest27
+    plasticitytest27 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest27)
+
+generictest_standardelastovicoplasticitybrick(HarmonicSumOfNortonHoffViscoplasticFlowsTest3
+    HarmonicSumOfNortonHoffViscoplasticFlowsTest3
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    HarmonicSumOfNortonHoffViscoplasticFlowsTest3)
+
+generictest_standardelastovicoplasticitybrick(ElasticContributionToPorosityGrowth-compaction
+    ElasticContributionToPorosityGrowth-compaction
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    ElasticContributionToPorosityGrowth)
 
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
     GursonTvergaardNeedleman1982-test1
@@ -266,16 +306,18 @@ foreach(final_time 0.05 0.5 5 50 500 5000)
      MFrontStandardElastoViscoPlasticityBrickBehaviours
      "PlasticityTest22_nj"
      "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
-  generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt-${final_time}"
-     "RateSensitivityFactorTest-${final_time}"
-     MFrontStandardElastoViscoPlasticityBrickBehaviours3
-     "PlasticityTest22_qt"
-     "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
-  generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt_nj-${final_time}"
-     "RateSensitivityFactorTest-${final_time}"
-     MFrontStandardElastoViscoPlasticityBrickBehaviours3
-     "PlasticityTest22_qt_nj"
-     "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+  if(enable-mfront-quantity-tests)
+    generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt-${final_time}"
+       "RateSensitivityFactorTest-${final_time}"
+       MFrontStandardElastoViscoPlasticityBrickBehaviours3
+       "PlasticityTest22_qt"
+       "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+    generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt_nj-${final_time}"
+       "RateSensitivityFactorTest-${final_time}"
+       MFrontStandardElastoViscoPlasticityBrickBehaviours3
+       "PlasticityTest22_qt_nj"
+       "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+  endif(enable-mfront-quantity-tests)
   generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor-${final_time}"
      "RateSensitivityFactorTest-${final_time}"
      MFrontStandardElastoViscoPlasticityBrickBehaviours
@@ -286,15 +328,17 @@ foreach(final_time 0.05 0.5 5 50 500 5000)
      MFrontStandardElastoViscoPlasticityBrickBehaviours
      "PlasticityTest24_nj"
      "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
-  generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt-${final_time}"
-     "RateSensitivityFactorTest-${final_time}"
-     MFrontStandardElastoViscoPlasticityBrickBehaviours3
-     "PlasticityTest24_qt"
-     "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
-  generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt_nj-${final_time}"
-     "RateSensitivityFactorTest-${final_time}"
-     MFrontStandardElastoViscoPlasticityBrickBehaviours3
-     "PlasticityTest24_qt_nj"
-     "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+  if(enable-mfront-quantity-tests)
+    generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt-${final_time}"
+       "RateSensitivityFactorTest-${final_time}"
+       MFrontStandardElastoViscoPlasticityBrickBehaviours3
+       "PlasticityTest24_qt"
+       "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+    generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt_nj-${final_time}"
+       "RateSensitivityFactorTest-${final_time}"
+       MFrontStandardElastoViscoPlasticityBrickBehaviours3
+       "PlasticityTest24_qt_nj"
+       "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+  endif(enable-mfront-quantity-tests)
 endforeach()
 

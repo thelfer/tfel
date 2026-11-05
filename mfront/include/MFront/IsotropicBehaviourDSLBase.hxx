@@ -73,6 +73,13 @@ namespace mfront {
     virtual std::size_t getNumberOfFlowRules() const;
     //! \brief return the default value of the theta parameter
     virtual double getDefaultThetaValue() const;
+    /*!
+     * \return the expression of the value of the theta parameter used to
+     * evaluate the isotropic hardening rules associated with a flow rule
+     * \param[in] id: flow id
+     */
+    virtual std::string getIsotropicHardeningRulesTheta(
+        const std::size_t) const;
     //! \brief treat the `@FlowRule` keyword
     virtual void treatFlowRule();
     //! \brief treat the `@Theta` keyword

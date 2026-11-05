@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_ANSYS_ANSYSDATA_HXX
 #define LIB_MFRONT_ANSYS_ANSYSDATA_HXX
 
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/Ansys/Ansys.hxx"
 
 namespace ansys {

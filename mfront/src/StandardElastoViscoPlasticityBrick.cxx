@@ -282,10 +282,10 @@ namespace mfront {
       }
       return ds.get<tfel::utilities::DataStructure>();
     };  // end of getDataStructure
-    if (!e.is<DataMap>()) {
+    if ((!e.empty()) && (!e.is<DataMap>())) {
       raise("invalid data type for entry 'porosity_evolution'");
     }
-    const auto ed = e.get<DataMap>();
+    const auto ed = e.empty() ? DataMap{} : e.get<DataMap>();
     if (ed.count("save_individual_porosity_increase") != 0) {
       const auto b = ed.at("save_individual_porosity_increase");
       if (!b.is<bool>()) {
@@ -516,6 +516,7 @@ namespace mfront {
     auto m = std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>{};
     for (const auto& f : this->flows) {
       m.insert({getId(i, this->flows.size()), f});
+      ++i;
     }
     return m;
   }  // end of StandardElastoViscoPlasticityBrick::buildInelasticFlowsMap()
@@ -640,6 +641,7 @@ namespace mfront {
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
               tfel::glossary::Glossary::Porosity);
       const auto f_ = f.name + "_";
+      mfront::bbrick::checkNoNormalisationFactor(bd, f.name);
       // value of the porosity at t+theta*dt
       CodeBlock ib;
       ib.code += "const auto " + f_ + " = ";
@@ -649,6 +651,9 @@ namespace mfront {
                  ") * " + std::string(porosityUpperBound) + "), real(0));\n ";
       ib.code += "static_cast<void>(" + f_ + ");\n";
       if (this->elastic_contribution) {
+        // jacobian blocks computed by the elastic contribution
+        mfront::bbrick::checkNoImplicitEquationNormalisationFactor(
+            bd, this->dsl, f.name);
         if (this->porosity_evolution_algorithm ==
             mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
           ib.code += "if(";
@@ -698,7 +703,7 @@ namespace mfront {
         ib.code = "if(this->" + f.name + " + this->d" + f.name +  //
                   " - f" + f.name + " < 0){\n";
         ib.code += "f" + f.name + " = " +  //
-                   "this->d" + f.name + " - this->" + f.name + ";\n";
+                   "this->d" + f.name + " + this->" + f.name + ";\n";
         if (requiresAnalyticalJacobian) {
           ib.code +=
               "for(unsigned short idx = 0; idx!= "  //
@@ -903,10 +908,10 @@ namespace mfront {
             bd, this->buildInelasticFlowsMap(), id);
         ++nucleation_id;
       }
-      auto apply_next_estimate_bounds = [&os, f_ets] {
+      auto apply_next_estimate_bounds = [&os, &f, f_ets] {
         // next estimate of the porosity at the end of the time step
         os << "{\n"
-           << "const auto " << f_ets << " = this->f + "
+           << "const auto " << f_ets << " = this->" << f.name << " + "
            << nextEstimateOfThePorosityIncrement << ";\n";
         // Treat the case when the newly computed porosity exceeds the
         // porosity upper bounds.
@@ -919,8 +924,8 @@ namespace mfront {
            << " ) * ( this->" << porosityUpperBound << ")){\n"
            << nextEstimateOfThePorosityIncrement << " = "
            << "(this->" << currentEstimateOfThePorosityIncrement << " + (this->"
-           << porosityUpperBound
-           << " - this->f))/2;\n"
+           << porosityUpperBound << " - this->" << f.name
+           << "))/2;\n"
            // Treat the case when the newly computed porosity is negative
            //
            // The maximum allowed increment is the opposite of the initial
@@ -930,8 +935,8 @@ namespace mfront {
            // allowed increment
            << "} else if(" << f_ets << " < 0){\n"
            << nextEstimateOfThePorosityIncrement << " = "
-           << "(" << currentEstimateOfThePorosityIncrement
-           << " - (this->f))/2;\n"
+           << "(" << currentEstimateOfThePorosityIncrement << " - (this->"
+           << f.name << "))/2;\n"
            << "}\n"
            << "}\n";
       };
@@ -947,9 +952,10 @@ namespace mfront {
       os << "if(" + std::string(fixedPointConverged) + "){\n";
       generate_debug_message(true);
       // try to dectect failure
-      os << "if (this->f + this->" << currentEstimateOfThePorosityIncrement
-         << " > (this->" << porosityUpperBoundSafetyFactorForFractureDetection
-         << ") * (this->" << porosityUpperBound << ")){\n"
+      os << "if (this->" << f.name << " + this->"
+         << currentEstimateOfThePorosityIncrement << " > (this->"
+         << porosityUpperBoundSafetyFactorForFractureDetection << ") * (this->"
+         << porosityUpperBound << ")){\n"
          << "this->" << broken.name << "= 1;\n"
          << "}\n"
          // makes one more iteration to compute the exact consistent tangent
@@ -1003,6 +1009,9 @@ namespace mfront {
         (this->porosity_evolution_algorithm ==
          mfront::bbrick::PorosityEvolutionAlgorithm::
              STANDARD_IMPLICIT_SCHEME)) {
+      const auto& f =
+          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+              tfel::glossary::Glossary::Porosity);
       const auto& broken =
           bd.getBehaviourData(uh)
               .getAuxiliaryStateVariableDescriptionByExternalName(
@@ -1012,7 +1021,7 @@ namespace mfront {
           "(this->" +
           std::string(porosityUpperBoundSafetyFactorForFractureDetection) +
           ") * " + std::string(porosityUpperBound);
-      uasv.code += "if(this->f > " + fmax + "){\n";
+      uasv.code += "if(this->" + f.name + " > " + fmax + "){\n";
       uasv.code += "this->" + broken.name + " = true;\n";
       uasv.code += "}\n";
       bd.setCode(uh, BehaviourData::UpdateAuxiliaryStateVariables, uasv,

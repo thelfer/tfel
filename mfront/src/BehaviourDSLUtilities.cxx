@@ -11,9 +11,15 @@
  * project under specific licensing conditions.
  */
 
+#include <cmath>
+#include <vector>
+#include <optional>
+
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/BehaviourDSLUtilities.hxx"
 
@@ -79,7 +85,11 @@ namespace mfront {
       const auto n = "initial_geometry_reference_temperature";
       const auto v = [&d, &n] {
         if (d.count(n) != 0) {
-          return d.at(n).get<double>();
+          const auto Ti = d.at(n);
+          if (Ti.is<int>()) {
+            return static_cast<double>(Ti.get<int>());
+          }
+          return Ti.get<double>();
         } else {
           return 293.15;
         }
@@ -91,8 +101,10 @@ namespace mfront {
       bd.setParameterDefaultValue(uh, n, v);
       bd.setEntryName(uh, n, "ReferenceTemperatureForInitialGeometry");
     };  // end of addTi
-    auto addTref = [&bd, &d, &Tref1, &Tref2]() {
-      const auto v = [&d, &Tref1, &Tref2] {
+    using MaterialProperties =
+        std::vector<BehaviourDescription::MaterialProperty>;
+    auto addTref = [&bd, &d, &Tref1, &Tref2](const MaterialProperties& mps) {
+      auto ov = [&d, &Tref1, &Tref2]() -> std::optional<double> {
         if (d.count(Tref1) != 0) {
           const auto Tref = d.at(Tref1);
           if (Tref.is<int>()) {
@@ -105,10 +117,31 @@ namespace mfront {
             return static_cast<double>(Tref.get<int>());
           }
           return Tref.get<double>();
-        } else {
-          return 293.15;
         }
+        return {};
       }();
+      // reference temperature declared by external material property files
+      for (const auto& mp : mps) {
+        using ExternalMFrontMaterialProperty =
+            BehaviourDescription::ExternalMFrontMaterialProperty;
+        if (!mp.is<ExternalMFrontMaterialProperty>()) {
+          continue;
+        }
+        const auto& mpd = *(mp.get<ExternalMFrontMaterialProperty>().mpd);
+        if (!mpd.staticVars.contains("ReferenceTemperature")) {
+          continue;
+        }
+        const auto Tref = static_cast<double>(
+            mpd.staticVars.get("ReferenceTemperature").value);
+        if (!ov.has_value()) {
+          ov = Tref;
+        } else if (tfel::math::ieee754::fpclassify(*ov - Tref) != FP_ZERO) {
+          tfel::raise(
+              "addThermalExpansionCoefficientsIfDefined: "
+              "inconsistent reference temperature");
+        }
+      }
+      const auto v = ov.has_value() ? *ov : 293.15;
       VariableDescription Tref("temperature", Tref1, 1u, 0u);
       Tref.description =
           "reference value for the the thermal expansion coefficient";
@@ -132,9 +165,10 @@ namespace mfront {
       check_not("thermal_expansion1");
       check_not("thermal_expansion2");
       check_not("thermal_expansion3");
+      const auto alpha = get_mp("thermal_expansion");
       addTi();
-      addTref();
-      bd.setThermalExpansionCoefficient(get_mp("thermal_expansion"));
+      addTref({alpha});
+      bd.setThermalExpansionCoefficient(alpha);
       if (get_if(d, "save_thermal_expansion", false)) {
         VariableDescription a("strain", "mfront_thermal_expansion", 1u, 0u);
         a.setEntryName("ComputedThermalExpansion");
@@ -152,11 +186,12 @@ namespace mfront {
             "the mechanical behaviour must be orthotropic "
             "to give more than one thermal expansion coefficient.");
       }
+      const auto alpha1 = get_mp("thermal_expansion1");
+      const auto alpha2 = get_mp("thermal_expansion2");
+      const auto alpha3 = get_mp("thermal_expansion3");
       addTi();
-      addTref();
-      bd.setThermalExpansionCoefficients(get_mp("thermal_expansion1"),
-                                         get_mp("thermal_expansion2"),
-                                         get_mp("thermal_expansion3"));
+      addTref({alpha1, alpha2, alpha3});
+      bd.setThermalExpansionCoefficients(alpha1, alpha2, alpha3);
       if (get_if(d, "save_thermal_expansion", false)) {
         VariableDescription a("strain", "mfront_thermal_expansion", 3u, 0u);
         a.setEntryName("ComputedThermalExpansion");
@@ -168,6 +203,7 @@ namespace mfront {
     } else {
       check_not("initial_geometry_reference_temperature");
       check_not("thermal_expansion_reference_temperature");
+      check_not("reference_temperature");
       check_not("save_thermal_expansion");
     }
   }  // end of addThermalExpansionCoefficientsIfDefined

@@ -30,7 +30,7 @@ namespace mfront {
     auto p = n.begin();
     auto p2 = s.begin();
     for (; p != n.end(); ++p, ++p2) {
-      *p2 = static_cast<char>(toupper(*p));
+      *p2 = static_cast<char>(toupper(static_cast<unsigned char>(*p)));
     }
     return s;
   }  // end of makeUpperCase
@@ -40,7 +40,7 @@ namespace mfront {
     auto p = n.begin();
     auto p2 = s.begin();
     for (; p != n.end(); ++p, ++p2) {
-      *p2 = static_cast<char>(tolower(*p));
+      *p2 = static_cast<char>(tolower(static_cast<unsigned char>(*p)));
     }
     return s;
   }  // end of makeLowerCase
@@ -129,9 +129,10 @@ namespace mfront {
     }
     auto r = std::string{n.cbegin(), p};
     ++p;
-    throw_if(p == pe, "unexpected end of string 'n'");
-    throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
-    while ((p != pe) && (std::isdigit(*p))) {
+    throw_if(p == pe, "unexpected end of string '" + n + "'");
+    throw_if(!std::isdigit(static_cast<unsigned char>(*p)),
+             "expected a digit in '" + n + "'");
+    while ((p != pe) && (std::isdigit(static_cast<unsigned char>(*p)))) {
       i *= 10;
       i += *p - '0';
       ++p;

@@ -114,6 +114,7 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
       TFEL_TESTS_CHECK_EQUAL(mfront::SupportedTypes::getTypeFlag(v), f);
     };
     check("Stensor", mfront::SupportedTypes::STENSOR);
+    check("ThermalExpansionCoefficientTensor", mfront::SupportedTypes::STENSOR);
     check("stensor<N,real>", mfront::SupportedTypes::STENSOR);
     check("tensor<N,real>", mfront::SupportedTypes::TENSOR);
     for (const auto& m :
@@ -200,6 +201,9 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("derivative_type<tvector<N,stress>,stress>", mid);
     check("derivative_type<stensor<N,stress>, stensor<N,stress>>",
           4 + (1 << 3) + (1 << 8));
+    check("derivative_type<StressStensor, StrainStensor>", sid);
+    check("derivative_type<Tensor, StrainStensor>", 4 + (3 << 3) + (1 << 8));
+    check("derivative_type<StressStensor, temperature>", 4 + (1 << 3));
     //
     check("tvector<3u, st2tost2<N,stress>>",
           5 + (1 << 3) + (3 << 6) + (sid << 13));

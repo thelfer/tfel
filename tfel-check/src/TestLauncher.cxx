@@ -239,12 +239,12 @@ namespace tfel::check {
     const auto value = option.get<bool>();
     return [value](const std::vector<std::string>& output)
                -> std::tuple<bool, std::string> {
-      if ((value) && (output.empty())) {
+      if (output.empty() == value) {
         return {true, ""};
       }
       auto msg = std::string{"Unexpected command output "};
       if (value) {
-        msg += "(empty output expected)";
+        msg += "(empty output expected)\n";
         msg += "# Command output:\n\n";
         for (const auto& l : output) {
           msg += "'" + l + "'\n";
@@ -396,7 +396,8 @@ namespace tfel::check {
      * - `expected_numerical_output`: if specified, a test is added to which
      *   compares the command output to the expected value.
      * - `shall_fail`: if specified and set to true, the command shall return an
-     *   invalid exit status.
+     *   invalid exit status. The output check, if any, is then applied to the
+     *   output of the failed command.
      * - `timeout`: the maximum duration allowed for a test.
      */
     auto parseCommandOptions = [&c](const tfel::utilities::DataMap& options) {
@@ -464,6 +465,7 @@ namespace tfel::check {
   }  // end of treatCommand
 
   void TestLauncher::treatTestType() {
+    this->checkNotEndOfFile("TestLauncher::treatTestType");
     if (this->current->value == "Absolute") {
       this->comparison.reset(new AbsoluteComparison());
     } else if (this->current->value == "Relative") {
@@ -522,6 +524,7 @@ namespace tfel::check {
 
   void TestLauncher::treatTest() {
     auto getColumn = [this] {
+      this->checkNotEndOfFile("TestLauncher::treatTest");
       // fetching the column's name to compare
       if ((this->current->flag == tfel::utilities::Token::String) ||
           (this->current->flag == tfel::utilities::Token::Char)) {
@@ -596,6 +599,7 @@ namespace tfel::check {
         test->setFileA(f1);
         test->setFileB(f2);
         this->comparisons.push_back(*test);
+        this->checkNotEndOfFile("TestLauncher::treatTest");
       }
     }
     this->readSpecifiedToken("TestLauncher::treatTest", ";");
@@ -756,6 +760,28 @@ namespace tfel::check {
                              const Command& c,
                              const std::string& output_file,
                              const std::string& step) {
+    // treatment of a failed command: the test succeeds if the command was
+    // expected to fail and, if an output check is defined, if its output
+    // passes this check
+    auto on_failure = [this, &c, &output_file, &step](const std::string& m) {
+      if ((c.shall_fail) && (c.output_check)) {
+        auto success = false;
+        auto msg = std::string{};
+        try {
+          std::tie(success, msg) = c.output_check(getFileContent(output_file));
+        } catch (std::exception& e) {
+          msg = e.what();
+        } catch (...) {
+          msg = "unhandled exception thrown";
+        }
+        this->log.addTestResult(this->testname, step, c.command, 0.0, success,
+                                success ? m : msg);
+        return success;
+      }
+      this->log.addTestResult(this->testname, step, c.command, 0.0,
+                              c.shall_fail, m);
+      return c.shall_fail;
+    };
     try {
       tfel::system::ProcessManager manager;
       this->ClockAction(START);
@@ -775,6 +801,12 @@ namespace tfel::check {
         manager.execute(this->directory, c.command, "", output_file, envs);
       }
       this->ClockAction(STOP);
+      if (c.shall_fail) {
+        this->log.addTestResult(this->testname, step, c.command,
+                                this->ClockAction(GET), false,
+                                "the command was expected to fail");
+        return false;
+      }
       if (c.output_check) {
         const auto output = getFileContent(output_file);
         const auto [success, msg] = c.output_check(output);
@@ -791,13 +823,9 @@ namespace tfel::check {
                                 this->ClockAction(GET), true);
       }
     } catch (std::exception& e) {
-      this->log.addTestResult(this->testname, step, c.command, 0.0,
-                              c.shall_fail, e.what());
-      return c.shall_fail;
+      return on_failure(e.what());
     } catch (...) {
-      this->log.addTestResult(this->testname, step, c.command, 0.0,
-                              c.shall_fail, "unhandled exception thrown");
-      return c.shall_fail;
+      return on_failure("unhandled exception thrown");
     }
     return true;
   }  // end of execute

@@ -1,0 +1,30 @@
+@DSL Implicit;
+@Behaviour PlasticityTest27;
+@Description {
+  "Mohr-Coulomb stress and flow criteria, as in the example of the "
+  "documentation of the Mohr-Coulomb model."
+}
+
+@ModellingHypotheses {".+"};
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150.e3, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "MohrCoulomb" {
+      c : 3.e1,                   // cohesion
+      phi : 0.523598775598299,    // friction angle
+      lodeT : 0.506145483078356,  // transition angle (Abbo and Sloan)
+      a : 1e1                     // tension cut-off parameter
+    },
+    flow_criterion : "MohrCoulomb" {
+      c : 3.e1,                   // cohesion
+      phi : 0.174532925199433,    // dilatancy angle
+      lodeT : 0.506145483078356,  // transition angle (Abbo and Sloan)
+      a : 3e1                     // tension cut-off parameter
+    },
+    isotropic_hardening : "Linear" {R0 : "0"}
+  }
+};

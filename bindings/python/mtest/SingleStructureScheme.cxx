@@ -115,33 +115,14 @@ static void SingleStructureScheme_setInternalStateVariableInitialValue1(
     mtest::SingleStructureScheme& s,
     const std::string& n,
     const mtest::real v) {
-  s.setScalarInternalStateVariableInitialValue(n, v);
+  s.setInternalStateVariableInitialValue(n, v);
 }
 
 static void SingleStructureScheme_setInternalStateVariableInitialValue2(
     mtest::SingleStructureScheme& s,
     const std::string& n,
     const std::vector<mtest::real>& v) {
-  const auto& b = *(s.getBehaviour());
-  const auto type = b.getInternalStateVariableType(n);
-  if (type == 0) {
-    tfel::raise_if(v.size() != 1u,
-                   "SingleStructureScheme::"
-                   "setInternalStateVariableInitialValue: "
-                   "unsupported number of values for scalar internal "
-                   "state variable '" +
-                       n + "'");
-    s.setScalarInternalStateVariableInitialValue(n, v[0]);
-  } else if (type == 1) {
-    s.setStensorInternalStateVariableInitialValues(n, v);
-  } else if (type == 3) {
-    s.setTensorInternalStateVariableInitialValues(n, v);
-  } else {
-    tfel::raise(
-        "SingleStructureScheme::setInternalStateVariableInitialValue: "
-        "unsupported type for internal state variable '" +
-        n + "'");
-  }
+  s.setInternalStateVariableInitialValue(n, v);
 }
 
 static void SingleStructureScheme_setBehaviour(mtest::SingleStructureScheme& s,
@@ -197,6 +178,22 @@ static int SingleStructureScheme_getBehaviourKinematic(
   }
   return 4;
 }  // end of SingleStructureScheme_getBehaviourKinematic
+
+static void SingleStructureScheme_setOutOfBoundsPolicy(
+    mtest::SingleStructureScheme& s, const std::string& p) {
+  if (p == "None") {
+    s.setOutOfBoundsPolicy(tfel::material::None);
+  } else if (p == "Warning") {
+    s.setOutOfBoundsPolicy(tfel::material::Warning);
+  } else if (p == "Strict") {
+    s.setOutOfBoundsPolicy(tfel::material::Strict);
+  } else {
+    tfel::raise(
+        "SingleStructureScheme::setOutOfBoundsPolicy: "
+        "invalid policy '" +
+        p + "'");
+  }
+}  // end of SingleStructureScheme_setOutOfBoundsPolicy
 
 void declareSingleStructureScheme(pybind11::module_&);
 
@@ -297,7 +294,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            pybind11::arg("p"),
            "This method let the user to precise the out "
            "of bounds policy.\n"
-           "* The argument (OutOfBoundsPolicy) is the selected "
+           "* The argument (OutOfBoundsPolicy or string) is the selected "
            "policy. Three policies are available:\n"
            "- 'None' : nothing is done when a variable is out of "
            "bounds.\n"
@@ -307,6 +304,8 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "is out of bounds. Most mechanical behaviours "
            "implementations throw an exception which is caught "
            "by 'MTest'.")
+      .def("setOutOfBoundsPolicy", SingleStructureScheme_setOutOfBoundsPolicy,
+           pybind11::arg("p"))
       .def("setMaterialProperty", SingleStructureScheme_setMaterialProperty,
            "name"_a, "value"_a, "check"_a = true,
            "This method defines a constant material property.\n"

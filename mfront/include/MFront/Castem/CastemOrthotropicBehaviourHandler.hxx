@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Castem/CastemBehaviourHandler.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
+#include "MFront/Castem/CastemBehaviourHandler.hxx"
+#else
+
 #ifndef LIB_MFRONT_CASTEM_CASTEMORTHOTROPICBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CASTEM_CASTEMORTHOTROPICBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX */
 
 #include "MFront/Castem/CastemRotationMatrix.hxx"
 
@@ -645,7 +647,6 @@ namespace castem {
       CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
-      ThermalExpansionCoefficientCheck::exe(PROPS[12]);
       m.rotateStressesForward(STRESS, s);
       m.rotateDeformationGradientForward(F0, F0m);
       m.rotateDeformationGradientForward(F1, F1m);
@@ -738,3 +739,5 @@ namespace castem {
 }  // end of namespace castem
 
 #endif /* LIB_MFRONT_CASTEM_CASTEMORTHOTROPICBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX */
