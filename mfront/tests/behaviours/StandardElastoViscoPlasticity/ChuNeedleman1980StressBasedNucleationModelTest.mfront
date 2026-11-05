@@ -15,8 +15,8 @@
   porosity_evolution : {
     nucleation_model : "Chu-Needleman 1980 (stress)" {
       fn : 0.1,
-      sigm : 20e6,
-      sn : 10e6,
+      sigm : 260,
+      sn : 10,
       fmax : 0.1
     }
   }

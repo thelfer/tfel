@@ -1,0 +1,21 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// non proportional multiaxial strain
+@ImposedStrain 'EXX' {0 : 0, 1 : 12e-3, 2 : 3e-3};
+@ImposedStrain 'EYY' {0 : 0, 1 : 3e-3, 2 : 15e-3};
+@ImposedStrain 'EZZ' {0 : 0, 1 : -6e-3, 2 : -9e-3};
+@ImposedStrain 'EXY' {0 : 0, 1 : 6e-3, 2 : -9e-3};
+@ImposedStrain 'EXZ' {0 : 0, 1 : 3e-3, 2 : 6e-3};
+@ImposedStrain 'EYZ' {0 : 0, 1 : -3e-3, 2 : 6e-3};
+@Times{0, 1 in 40, 2 in 40};
+
+// The reference is an implicit Euler integration of the documented equations in
+// Python (NumPy), independent of TFEL, with the same time steps.
+@Test<file> @reference_file@ {
+  'SXX' : 2, 'SYY' : 3, 'SZZ' : 4, 'SXY' : 5, 'SXZ' : 6, 'SYZ' : 7
+} 1;
+@Test<file> @reference_file@ 'EquivalentPlasticStrain' 8 1e-10;
