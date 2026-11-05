@@ -77,5 +77,8 @@ int main() {
   cout << "res : ";
   copy(p.begin(), p.end(), ostream_iterator<double>(cout, " "));
   cout << endl;
-  return EXIT_SUCCESS;
+  // reference values obtained with scipy.optimize.least_squares
+  return ((abs(p(0) - 1.0018987) < 1.e-6) && (abs(p(1) - 1.0028177) < 1.e-6))
+             ? EXIT_SUCCESS
+             : EXIT_FAILURE;
 }  // end of main
