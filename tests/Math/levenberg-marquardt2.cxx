@@ -75,6 +75,10 @@ int main() {
   // execute
   p = levmar.execute();
   cout << "res : " << p << endl;
+  // reference values obtained with scipy.optimize.least_squares
+  if ((abs(p(0) - 1.0018987) > 1.e-6) || (abs(p(1) - 1.0028177) > 1.e-6)) {
+    return EXIT_FAILURE;
+  }
   // fit of a model with only one parameter
   FSLevenbergMarquardt<1u, 1u> levmar2(test2);
   for (i = 0; i != 10; ++i) {
