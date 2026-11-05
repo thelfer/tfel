@@ -358,9 +358,9 @@ namespace tfel::material::homogenization::elasticity {
       if (tfel::math::ieee754::fpclassify(semiL[1] - semiL[2]) == FP_ZERO) {
         const auto e = real(semiL[0] / semiL[1]);
         return DerivativesOfMeanLocalisator<3u, StressType>(
-            IM0, KGi, e, real(1. / 3.) * tfel::math::stensor<3u, real>::Id(),
-            real(1. / 3.) * tfel::math::st2tost2<3u, real>::J() +
-                real(2. / 15.) * tfel::math::st2tost2<3u, real>::K(),
+            IM0, KGi, e, real(1) / 3 * tfel::math::stensor<3u, real>::Id(),
+            real(1) / 3 * tfel::math::st2tost2<3u, real>::J() +
+                real(2) / 15 * tfel::math::st2tost2<3u, real>::K(),
             dKG);
       } else {
         tfel::reportContractViolation(
@@ -481,8 +481,8 @@ namespace tfel::material::homogenization::elasticity {
           const auto Fd =
               tfel::math::TransverseIsotropicWalpoleBasis<real>::F(nd);
           return DerivativesOfMeanLocalisator<3u, StressType>(
-              IM0, KGi, e, real(1. / 2.) * qd,
-              real(1. / 2.) * E2d + real(1. / 4.) * Fd, dKG);
+              IM0, KGi, e, real(1) / 2 * qd,
+              real(1) / 2 * E2d + real(1) / 4 * Fd, dKG);
         } else {
           const tfel::math::stensor<3u, real> pd =
               tfel::math::TransverseIsotropicWalpoleBasis<real>::p(nd);

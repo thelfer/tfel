@@ -18,6 +18,7 @@
 #include <algorithm>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -315,7 +316,7 @@ namespace mtest {
     const std::string n = "InitialElasticStiffness";
     s.packaging_info.insert({n, matrix<real>()});
     auto& m = s.packaging_info.at(n).get<matrix<real>>();
-    const real cste = std::sqrt(real{2});
+    constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     if ((h == ModellingHypothesis::PLANESTRESS) ||
         (h == ModellingHypothesis::AXISYMMETRICAL) ||
         (h == ModellingHypothesis::PLANESTRAIN)) {

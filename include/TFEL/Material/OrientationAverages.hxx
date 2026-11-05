@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_ORIENTATIONAVERAGES_HXX
 
 #include "TFEL/Math/General/Compare.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
 #include "TFEL/Material/EshelbyTolerances.hxx"
@@ -354,8 +355,8 @@ namespace tfel::material::homogenization::elasticity {
         const auto A2i = A2 ^ id;
         const auto iA2 = id ^ A2;
         const auto E2_ = 0.5 * (3 * J + A4 - A2i - iA2);
-        const auto E3_ = 1 / sqrt(2) * (A2i - A4);
-        const auto E4_ = 1 / sqrt(2) * (iA2 - A4);
+        const auto E3_ = tfel::math::Cste<real>::isqrt2 * (A2i - A4);
+        const auto E4_ = tfel::math::Cste<real>::isqrt2 * (iA2 - A4);
         const auto F_ =
             I - TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id, A2) -
             TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2, id) -
@@ -403,8 +404,8 @@ namespace tfel::material::homogenization::elasticity {
     const auto A2i = A2 ^ id;
     const auto iA2 = id ^ A2;
     const auto E2_ = 0.5 * (3 * J + A4 - A2i - iA2);
-    const auto E3_ = 1 / sqrt(2) * (A2i - A4);
-    const auto E4_ = 1 / sqrt(2) * (iA2 - A4);
+    const auto E3_ = tfel::math::Cste<real>::isqrt2 * (A2i - A4);
+    const auto E4_ = tfel::math::Cste<real>::isqrt2 * (iA2 - A4);
     const auto F_ = I -
                     TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id, A2) -
                     TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2, id) -
