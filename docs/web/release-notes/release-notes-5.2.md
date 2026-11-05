@@ -138,6 +138,20 @@ library, see below.
   the elasticity of the inclusion as well, as documented. The results of
   the dilute, Mori-Tanaka and self-consistent schemes with such phases
   change.
+- The `FiniteStrainSingleCrystal` brick takes into account, in the
+  jacobian and the consistent tangent operator, the derivatives of the
+  normalisation of the inverse of the plastic deformation gradient
+  increment (see Issues #1309 and #1359). These derivatives were
+  explicitly neglected, as numerical tests showed (or at least seemed to
+  show) that they were negligible. The residual is unchanged, so the
+  results only change within the convergence criteria, unless the
+  sub-stepping changes: the number of local and global iterations
+  changes, and decreases significantly when the deformation gradient is
+  not fully imposed. The boolean option
+  `plastic_deformation_gradient_normalisation_corrections` of the brick,
+  which is `true` by default, allows users to easily test if this
+  correction affects their results: setting it to `false` restores the
+  previous derivatives.
 
 # Improvements to the build system
 
@@ -756,6 +770,38 @@ In Version 5.1, the variable name `KHRR` is declared twice. `Cast3M`
 does not generate an error although duplicated names leads to erroneous
 results. Version 5.2 avoids this pitfall.
 
+## The `plastic_deformation_gradient_normalisation_corrections` option of the `FiniteStrainSingleCrystal` brick
+
+The `FiniteStrainSingleCrystal` brick normalises the inverse of the
+plastic deformation gradient increment by the cubic root of its
+determinant. The derivatives of this normalisation with respect to the
+plastic slips were explicitly neglected in the jacobian and in the
+consistent tangent operator, as numerical tests showed (or at least
+seemed to show) that they were negligible.
+
+These derivatives are now taken into account by default (see Issue
+#1359). The results are not affected, up to the convergence criteria,
+but the convergence is when the deformation gradient is not fully
+imposed: the global iterations recover their quadratic convergence. The
+boolean option
+`plastic_deformation_gradient_normalisation_corrections` allows to
+neglect them:
+
+~~~~{.cpp}
+@Brick FiniteStrainSingleCrystal{
+  plastic_deformation_gradient_normalisation_corrections : false
+};
+~~~~
+
+The same derivatives are explicitly neglected in the
+`FiniteStrainSingleCrystal`, `FiniteStrainSingleCrystal2` and
+`FiniteStrainSingleCrystal_NumericalJacobian` test behaviours. Versions
+taking them into account are provided by the
+`FiniteStrainSingleCrystal_WithCorrections`,
+`FiniteStrainSingleCrystal2_WithCorrections` and
+`FiniteStrainSingleCrystal_NumericalJacobian_WithCorrections` test
+behaviours.
+
 # Documentation
 
 ## New coding guidelines page
@@ -782,6 +828,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1359: [mfront] FiniteStrainSingleCrystal: corrections of the derivatives of the normalised plastic deformation gradient increment, test behaviours and option of the brick
+
+For more details, see <https://github.com/thelfer/tfel/issues/1359>
 
 ## Issue 1332: [mfront] type identifiers of the derivatives of tensorial type aliases (derivative_type<StressStensor, StrainStensor>) are decoded as another type by MTest and MGIS
 
