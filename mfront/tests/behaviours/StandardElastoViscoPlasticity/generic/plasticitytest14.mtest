@@ -1,6 +1,7 @@
 @MaximumNumberOfSubSteps 1;
 @XMLOutputFile @xml_output@;
 @Behaviour<generic> @library@ @behaviour@;
+@StressEpsilon 1e-1;
 
 @ExternalStateVariable 'Temperature' 293.15;
 
