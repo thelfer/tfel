@@ -21,9 +21,19 @@
 namespace mfront {
 
   std::vector<std::string> PowellDogLegAlgorithmBase::getReservedNames() {
-    return {"pdl_g",     "pdl_g2",   "pdl_0",
-            "pdl_1",     "pdl_2",    "pdl_3",
-            "pdl_alpha", "pdl_cste", "powell_dogleg_trust_region_size_inv"};
+    return {"pdl_g",
+            "pdl_g2",
+            "pdl_0",
+            "pdl_1",
+            "pdl_2",
+            "pdl_3",
+            "pdl_alpha",
+            "pdl_cste",
+            "powell_dogleg_trust_region_size_inv",
+            "powell_dogleg_radius",
+            "powell_dogleg_accept_correction",
+            "powell_dogleg_jacobian_1",
+            "powell_dogleg_fzeros_1"};
   }  // end of PowellDogLegAlgorithmBase::getReservedNames
 
   std::pair<bool, PowellDogLegAlgorithmBase::tokens_iterator>

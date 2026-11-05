@@ -39,7 +39,8 @@ namespace tfel::math {
   /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)
    * to solve system of non linear equations using the
-   * Newton-Raphson algorithm coupled with the Powell' dog leg algorithm.
+   * Broyden algorithm coupled with the Powell' dog leg algorithm and the
+   * classical trust region method.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
@@ -48,9 +49,9 @@ namespace tfel::math {
    *
    * By default, the `Child` class must:
    *
-   * 1. Set the values of `epsilon` and `iterMax` data members and the initial
-   * guess of the unknowns, i.e. by setting the value of the `zeros` data
-   * member.
+   * 1. Set the values of `epsilon`, `iterMax` and
+   * `powell_dogleg_trust_region_size` data members and the initial guess of the
+   * unknowns, i.e. by setting the value of the `zeros` data member.
    * 2. Provide a method called `computeResidual` which must computes
    * the residual, i.e. the data member `fzeros` and the jacobian matrix, i.e.
    * the data member `jacobian` using the current estimate of the solution, i.e.
@@ -84,6 +85,22 @@ namespace tfel::math {
     //! \brief destructor
     ~TinyPowellDogLegBroydenSolver() noexcept = default;
     /*!
+     * \brief this method is called at the beginning of the
+     * `solveNonLinearSystem` method.
+     */
+    TFEL_HOST_DEVICE constexpr void
+    executeInitialisationTaskBeforeResolution() noexcept {
+      this->powell_dogleg_radius = this->powell_dogleg_trust_region_size;
+    }
+    /*!
+     * \brief this method is called at the beginning of the
+     * `solveNonLinearSystem2` method.
+     */
+    TFEL_HOST_DEVICE constexpr void
+    executeInitialisationTaskBeforeBeginningOfCoreAlgorithm() noexcept {
+      this->powell_dogleg_accept_correction = true;
+    }
+    /*!
      * \brief update the jacobian matrix
      *
      * This method is called by `computeNewCorrection` before the
@@ -94,8 +111,14 @@ namespace tfel::math {
     TFEL_HOST_DEVICE bool computeNewCorrection();
 
    protected:
-    //! \brief size of the trust region
+    //! \brief radius of the trust region at the beginning of the resolution
     NumericType powell_dogleg_trust_region_size;
+
+   private:
+    //! \brief current radius of the trust region
+    NumericType powell_dogleg_radius;
+    //! \brief boolean stating if the next correction is accepted unchecked
+    bool powell_dogleg_accept_correction;
   };
 
 }  // end of namespace tfel::math

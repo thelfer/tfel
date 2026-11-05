@@ -114,6 +114,39 @@ struct PowellDogLegNewtonRaphsonSolver3
   }  // end of computFdF
 };   // end of struct PowellDogLegNewtonRaphsonSolver3
 
+// With a trust region radius of 5, starting from 3, the second correction goes
+// from -2 back to 3. This correction shall be rejected, the next one being
+// computed from -2 with a radius of 5 / 4. Otherwise, the estimates cycle
+// between 3 and -2.
+struct PowellDogLegNewtonRaphsonSolver4
+    : public tfel::math::TinyPowellDogLegNewtonRaphsonSolver<
+          1u,
+          double,
+          PowellDogLegNewtonRaphsonSolver4> {
+  PowellDogLegNewtonRaphsonSolver4() {
+    this->zeros = {3};
+    this->epsilon = 1.e-12;
+    this->iterMax = 20;
+    this->powell_dogleg_trust_region_size = 5;
+  }
+
+  bool solve() { return this->solveNonLinearSystem(); }
+
+  auto getCurrentEstimate() const noexcept { return this->zeros(0); }
+
+  bool computeResidual() noexcept {
+    const auto x = this->zeros(0);
+    if (this->iter == 3) {
+      this->estimate_after_rejection = x;
+    }
+    this->fzeros(0) = std::atan(x);
+    this->jacobian(0, 0) = 1 / (1 + x * x);
+    return true;
+  }  // end of computeResidual
+
+  double estimate_after_rejection = 0;
+};  // end of struct PowellDogLegNewtonRaphsonSolver4
+
 struct TinyPowellDogLegNewtonRaphsonSolverTest final
     : public tfel::tests::TestCase {
   TinyPowellDogLegNewtonRaphsonSolverTest()
@@ -124,6 +157,7 @@ struct TinyPowellDogLegNewtonRaphsonSolverTest final
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }  // end of execute
  private:
@@ -148,6 +182,12 @@ struct TinyPowellDogLegNewtonRaphsonSolverTest final
     const auto x = nr.getCurrentEstimate();
     TFEL_TESTS_ASSERT(std::abs(x(0) - 1) < 1e-14);
     TFEL_TESTS_ASSERT(std::abs(x(1) - 1) < 1e-14);
+  }
+  void test4() {
+    auto nr = PowellDogLegNewtonRaphsonSolver4{};
+    TFEL_TESTS_ASSERT(nr.solve());
+    TFEL_TESTS_ASSERT(std::abs(nr.getCurrentEstimate()) < 1e-12);
+    TFEL_TESTS_ASSERT(std::abs(nr.estimate_after_rejection + 0.75) < 1e-14);
   }
 };
 

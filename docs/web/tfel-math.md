@@ -909,6 +909,13 @@ The solvers available are based on the following algorithms:
 - The Levenberg-Marquardt algorithm is implemented in the
   `TinyLevenbergMarquardtSolver` class.
 
+The solvers based on Powell' dog leg step implement the classical trust
+region method: the radius of the trust region is updated at each
+iteration from the ratio of the actual and predicted reductions of the
+squared norm of the residual, and a correction which does not reduce it
+enough is rejected. The derived class must set the initial radius of
+each resolution in the `powell_dogleg_trust_region_size` data member.
+
 Those classes implements the curiously recurring template pattern (CRTP)
 to avoid the use of virtual calls [@coplien_curiously_1995]. The derived
 class must provide a method called `computeResidual` which must compute

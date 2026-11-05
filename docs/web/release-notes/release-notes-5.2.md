@@ -109,6 +109,19 @@ library, see below.
   (respectively `TinyBroyden2Solver`), the update is performed by the
   `updateJacobian` (respectively `updateJacobianInvert`) method, which
   replaces their `updateOrCheckJacobian` method.
+- The `PowellDogLeg_NewtonRaphson`,
+  `PowellDogLeg_NewtonRaphson_NumericalJacobian` and
+  `PowellDogLeg_Broyden` algorithms of the `Implicit` DSLs, and the
+  `TinyPowellDogLegNewtonRaphsonSolver` and
+  `TinyPowellDogLegBroydenSolver` classes, implement the classical trust
+  region method (see Issue #1357): the radius is updated at each
+  iteration and a correction may be rejected. The trust region size
+  (`@PowellDogLegTrustRegionSize`, `powell_dogleg_trust_region_size`),
+  which was a fixed limit of the corrections, is now the initial radius.
+  The number of iterations of the behaviours using them changes, and so
+  do their results within the convergence criterion. An external
+  workspace of `TinyPowellDogLegNewtonRaphsonSolver` must provide the
+  `powell_dogleg_jacobian_1` and `powell_dogleg_fzeros_1` members.
 - The integer values read by `CxxTokenizer::readInt` and
   `CxxTokenizer::readUnsignedInt`, i.e. the integers of the `MTest`,
   `MFront` and `tfel-check` files (numbers of iterations and of
