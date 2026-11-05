@@ -185,6 +185,7 @@ install_mfront_desc2(RungeKuttaModel UpdateAuxiliaryStateVariables)
 
 install_mfront_desc2(bricks StandardElasticity)
 install_mfront_desc2(bricks DDIF2)
+install_mfront_desc2(bricks FiniteStrainSingleCrystal)
 
 install_mfront_desc2(stress-potentials Hooke)
 install_mfront_desc2(stress-potentials DDIF2)
