@@ -862,6 +862,9 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1273: [tfel-check] Warning when @Precision with one value keeps the second precision of a previous @Precision
+
+For more details, see <https://github.com/thelfer/tfel/issues/1273>
 ## Issue 1371: [mtest] Generalised plane strain elastic stiffness used with the generic plane stress algorithm of the castem wrappers
 
 For more details, see <https://github.com/thelfer/tfel/issues/1371>

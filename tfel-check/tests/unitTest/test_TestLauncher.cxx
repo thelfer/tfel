@@ -246,6 +246,34 @@ struct test_TestLauncher final : public tfel::tests::TestCase {
                           "@Command \"echo hello\"{empty_output: false};\n"));
     TFEL_TESTS_ASSERT(!run("test_TestLauncher_empty_output2",
                            "@Command \"true\"{empty_output: false};\n"));
+    // a warning is written when a comparison requiring two precisions uses the
+    // second precision of a previous `@Precision` keyword
+    const auto warns = [](const std::string& name,
+                          const std::string& keywords) {
+      tfel::raise_if(!run(name, keywords + "@Test 'test_TestLauncher_B.res' "
+                                           "'test_TestLauncher_B.res' 2;\n"),
+                     "test_TestLauncher::execute: test '" + name + "' failed");
+      return contains(name + ".checklog", "warning: the last '@Precision'");
+    };
+    TFEL_TESTS_ASSERT(warns("test_TestLauncher_precision1",
+                            "@TestType Mixed;\n"
+                            "@Precision 1.e-3 1.e-2;\n"
+                            "@Precision 1.e-6;\n"));
+    TFEL_TESTS_ASSERT(warns("test_TestLauncher_precision2",
+                            "@Precision 1.e-3 1.e-2;\n"
+                            "@Precision 1.e-6;\n"
+                            "@TestType RelativeAndAbsolute;\n"));
+    TFEL_TESTS_ASSERT(!warns("test_TestLauncher_precision3",
+                             "@TestType Mixed;\n"
+                             "@Precision 1.e-6;\n"));
+    TFEL_TESTS_ASSERT(!warns("test_TestLauncher_precision4",
+                             "@TestType Mixed;\n"
+                             "@Precision 1.e-3 1.e-2;\n"
+                             "@Precision 1.e-6 1.e-2;\n"));
+    TFEL_TESTS_ASSERT(!warns("test_TestLauncher_precision5",
+                             "@TestType Absolute;\n"
+                             "@Precision 1.e-3 1.e-2;\n"
+                             "@Precision 1.e-6;\n"));
     return this->result;
   }
 
