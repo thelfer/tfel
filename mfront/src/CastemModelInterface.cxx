@@ -335,7 +335,8 @@ namespace mfront {
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include \"TFEL/Math/Array/View.hxx\"\n"
-       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n"
+       << "#include\"MFront/Castem/CastemOutOfBoundsPolicy.hxx\"\n";
     if (useQuantities(md)) {
       os << "#include\"TFEL/Math/qt.hxx\"\n"
          << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
@@ -366,11 +367,9 @@ namespace mfront {
     exportUnsignedShortSymbol(os, fn + "_nThermodynamicForces", 0);
     exportArrayOfIntegersSymbol(os, fn + "_ThermodynamicForcesTypes", {});
     exportArrayOfStringsSymbol(os, fn + "_ThermodynamicForces", {""});
-    // policy initialised with the default policy of the model, as for the
-    // generic models (the castem behaviours also read the policy from the
-    // environment, which requires the castem interface library)
-    i.BehaviourInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation(
-        os, bd, name);
+    // policy read from the environment, as for the castem behaviours
+    const BehaviourInterfaceBase& bi = i;
+    bi.writeGetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if (!md.sources.empty()) {
       os << md.sources << "\n\n";
@@ -838,6 +837,7 @@ namespace mfront {
     td.headers.push_back("MFront/CastemModel/" + name + "-castem.hxx");
     insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
+    insert_if(l.link_libraries, tfel::getLibraryInstallName("CastemInterface"));
     insert_if(l.link_libraries, "$(shell " + tfel_config +
                                     " --library-dependency "
                                     "--material --mfront-profiling)");
