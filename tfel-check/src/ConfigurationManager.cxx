@@ -32,11 +32,11 @@ namespace tfel::check {
       }
       return 0;
     }();
-    const auto pos = n.find_first_of(tfel::system::dirSeparator());
+    const auto pos = n.find_first_of(tfel::system::dirSeparator(), b);
     if (pos == std::string::npos) {
       return {n.substr(b), ""};
     }
-    return {n.substr(b, pos), n.substr(pos + 1)};
+    return {n.substr(b, pos - b), n.substr(pos + 1)};
   }  // end of extract
 
   ConfigurationManager::ConfigurationManager() = default;

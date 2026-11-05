@@ -24,8 +24,9 @@ namespace mfront {
    * \brief a class handling global options passed to domain specific languages.
    * Those global options are generally defined by command-line arguments
    *
-   * \note direct usage of this class is deprecated in favour of the
-   * `ConfigurationManager` class.
+   * \note this class can't be instantiated directly: it is a base class of
+   * the `ConfigurationManager` class, whose unique instance is returned by
+   * `ConfigurationManager::get`.
    */
   struct MFRONT_VISIBILITY_EXPORT GlobalDomainSpecificLanguageOptionsManager {
     /*!

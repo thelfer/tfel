@@ -303,7 +303,7 @@ the manipulation of isotropic materials easier. See `TFEL/Material/IsotropicModu
 
 ### Eshelby and Hill tensors in isotropic and anisotropic matrix
 
-The [Eshelby and Hill tensors](tfel-material.html#eshelby-hill-and-localisation-tensors)
+The [Eshelby and Hill tensors](tfel-material-homogenization.html#eshelby-hill-and-localisation-tensors)
 which were available in isotropic medium
 are now also available in anisotropic medium. See `TFEL/Material/IsotropicEshelbyTensor.hxx`
 for isotropic medium and `TFEL/Material/AnisotropicEshelbyTensor.hxx` for anisotropic
@@ -337,7 +337,7 @@ The creation of `ParticulateMicrostructure` objects is possible
 and permits to consider very general microstructures,
 with an arbitrary number of phases, each phase being a distribution
 of ellipsoidal inclusions with very general properties.
-The construction of such [particulate microstructures](tfel-material.html#homogenization-of-general-microstructures)
+The construction of such [particulate microstructures](tfel-material-homogenization.html#polyphasic-microstructures)
 is detailed in the documentation of the `TFEL/Material` library.
  
 Moreover, three classical schemes are implemented for these microstructures:

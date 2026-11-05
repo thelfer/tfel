@@ -27,16 +27,17 @@ namespace tfel::math {
    * \param[in] s: value
    */
   template <ScalarConcept NumericType>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto abs(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto abs(
       const NumericType& s) noexcept {
-    return (s < NumericType(0)) ? -s : s;
+    using result_type = std::decay_t<decltype(-s)>;
+    return (s < result_type(0)) ? -s : result_type(s);
   }
   /*!
    * \return the norm of a complex
    * \param[in] s: value
    */
   template <ScalarConcept NumericType>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto abs(
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr auto abs(
       const Complex<NumericType>& s) {
     return s.norm();
   }

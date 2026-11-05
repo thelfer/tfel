@@ -11,7 +11,11 @@
  * project under specific licensing conditions.
  */
 
+#include <cerrno>
+#include <cmath>
+#include <cstdlib>
 #include <sstream>
+#include <algorithm>
 #include <concepts>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
@@ -33,7 +37,9 @@ namespace tfel::utilities {
                                     const char c,
                                     const bool keep_empty_strings) {
     std::vector<std::string> res;
-    auto b = std::string::size_type{};
+    // leading delimiters give empty strings, which are kept only on demand
+    auto b =
+        keep_empty_strings ? std::string::size_type{} : s.find_first_not_of(c);
     auto e = s.find_first_of(c, b);
     while (std::string::npos != e || std::string::npos != b) {
       // Found a token, add it to the vector.
@@ -53,7 +59,8 @@ namespace tfel::utilities {
     const auto sl = s.length();
     const auto dl = d.length();
     auto b = std::string::size_type{};
-    auto e = s.find(d, b);
+    // an empty delimiter is never found, as in replace_all
+    auto e = d.empty() ? std::string::npos : s.find(d, b);
     while (e != std::string::npos) {
       res.emplace_back(s.substr(b, e - b));
       b = e + dl;
@@ -81,9 +88,10 @@ namespace tfel::utilities {
                    const std::string::size_type ps) {
     using namespace std;
     string::size_type rs;
-    string::size_type pos = ps;
+    string::size_type pos = min(ps, s.size());
     string::size_type p;
-    r.clear();
+    // the characters before the beginning of the search are kept
+    r.assign(s.substr(0, pos));
     if (s.empty()) {
       return;
     }
@@ -140,14 +148,16 @@ namespace tfel::utilities {
                                           "to double");
     };
     throw_if(s.empty());
-    auto p = std::size_t{};
-    auto r = double{};
-    try {
-      r = std::stod(s, &p);
-    } catch (std::exception&) {
-      throw_if(true);
-    }
-    throw_if(p != s.size());
+    // std::stod is not used since it rejects the numbers which underflow,
+    // including the subnormal ones: as the standard streams, only the
+    // numbers which overflow are rejected
+    const auto errno_value = errno;
+    errno = 0;
+    char* pe = nullptr;
+    const auto r = std::strtod(s.c_str(), &pe);
+    const auto overflow = (errno == ERANGE) && (std::isinf(r));
+    errno = errno_value;
+    throw_if((pe != s.c_str() + s.size()) || overflow);
     return r;
   }
 
@@ -162,14 +172,14 @@ namespace tfel::utilities {
                                           "to long double");
     };
     throw_if(s.empty());
-    auto p = std::size_t{};
-    auto r = static_cast<long double>(0);
-    try {
-      r = std::stold(s, &p);
-    } catch (std::exception&) {
-      throw_if(true);
-    }
-    throw_if(p != s.size());
+    // see convert<double>
+    const auto errno_value = errno;
+    errno = 0;
+    char* pe = nullptr;
+    const auto r = std::strtold(s.c_str(), &pe);
+    const auto overflow = (errno == ERANGE) && (std::isinf(r));
+    errno = errno_value;
+    throw_if((pe != s.c_str() + s.size()) || overflow);
     return r;
   }
 

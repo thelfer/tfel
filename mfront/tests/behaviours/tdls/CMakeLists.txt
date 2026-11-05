@@ -40,6 +40,7 @@ function(test_tdls test_arg)
     list(APPEND mtest_args --@library@="$<TARGET_FILE:MFrontTDLSBehaviours>")
     list(APPEND mtest_args --@xml_output@="${test_arg}-${rm}.xml")
     list(APPEND mtest_args ${file})
+    list(APPEND mtest_args --xml-output-file=tdls-${test_arg}_${rm}_mtest.xml)
     add_test(NAME tdls-${test_arg}_${rm}_mtest
              COMMAND mtest ${mtest_args})
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))

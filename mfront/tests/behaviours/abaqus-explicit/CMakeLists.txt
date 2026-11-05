@@ -94,6 +94,7 @@ function(test_abaqus_explicit test_arg)
     else(_NO_XML_OUTPUT)
       list(APPEND _mtest_args --xml-output=true)
     endif(_NO_XML_OUTPUT)
+    list(APPEND _mtest_args --xml-output-file=${test}.xml)
     add_test(NAME ${test} COMMAND mtest ${_mtest_args} ${file})
     if(_WILL_FAIL)
       set_tests_properties(${test} PROPERTIES WILL_FAIL true)
@@ -120,7 +121,12 @@ function(test_abaqus_explicit test_arg)
 endfunction(test_abaqus_explicit)
 
 test_abaqus_explicit(initializationfailuretest
-  NO_XML_OUTPUT WILL_FAIL)
+  NO_XML_OUTPUT)
+foreach(rm ${IEEE754_ROUNDING_MODES})
+  set_tests_properties(abaqusexplicitinitializationfailuretest_${rm}_mtest
+    PROPERTIES PASS_REGULAR_EXPRESSION
+    "InitializationFailureTest: elastic loading failed")
+endforeach(rm ${IEEE754_ROUNDING_MODES})
 
 test_abaqus_explicit(saintvenantkirchhoffelasticity-uniaxialloading-sig11-2D)
 test_abaqus_explicit(saintvenantkirchhoffelasticity-uniaxialloading-sig22-2D)

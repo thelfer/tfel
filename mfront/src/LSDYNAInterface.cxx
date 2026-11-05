@@ -289,6 +289,13 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "LSDYNAInterface::endTreatment: " + m);
     };
+    // the entry points (lsdyna<name>.hxx and lsdyna<name>.cxx) and the
+    // constructors that they call are not written yet (see the code commented
+    // out below and in writeBehaviourConstructorHeader): the generated code
+    // would not compile
+    throw_if(true,
+             "the lsdyna interface is not functional yet "
+             "(the entry points called by LS-DYNA are not generated)");
     this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     //    checkOrthotropyManagementPolicyConsistency(mb);
     throw_if(!((mb.getBehaviourType() ==

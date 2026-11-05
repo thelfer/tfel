@@ -71,7 +71,7 @@ namespace mfmtg::mtest {
     if (times.times.is<unsigned int>()) {
       os << times.times.get<unsigned int>();
     } else if (times.times.is<std::string>()) {
-      os << times.times.get<std::string>();
+      os << "'" << times.times.get<std::string>() << "'";
     } else {
       tfel::raise(
           "mfmtg::mtest::writeTimes: "
@@ -245,7 +245,7 @@ namespace mfmtg::mtest {
     if (t.element_type == ClosedPipeTest::LINEAR) {
       os << "@ElementType 'Linear';\n";
     } else if (t.element_type == ClosedPipeTest::QUADRATIC) {
-      os << "@ElementType 'Quadratic'\n";
+      os << "@ElementType 'Quadratic';\n";
     } else {
       tfel::raise(
           "mfmtg::mtest::generateClosedPipeTest: "

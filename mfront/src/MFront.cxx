@@ -288,18 +288,18 @@ namespace mfront {
   void MFront::treatSetRPATH() {
     const auto& o = this->currentArgument->getOption();
     tfel::raise_if(o.empty(),
-                   "MFront::treatSetRAPTH: "
+                   "MFront::treatSetRPATH: "
                    "no argument given to the "
-                   "--silentBuild option");
+                   "--set-rpath option");
     if ((o == "on") || (o == "true")) {
       this->opts.setRPATH = true;
     } else if ((o == "off") || (o == "false")) {
       this->opts.setRPATH = false;
     } else {
       tfel::raise(
-          "MFront::treatSetRAPTH: "
+          "MFront::treatSetRPATH: "
           "unsupported argument '" +
-          o + "' given to the --set-path option");
+          o + "' given to the --set-rpath option");
     }
   }  // end of MFront::treatSetRPATH
 

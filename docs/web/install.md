@@ -56,11 +56,14 @@ page dedicated to `FreeBSD` is available [here](install-freebsd.html).
 The installation on [Windows platform](http://windows.microsoft.com)
 is described in the following pages:
 
-- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
-- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html). This
-  tutorial can easily be adapted to other versions of `MinGW`, without
-  requiring `Cast3M` to be installed.
 - [Installation on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment](install-windows-msys.html).
+- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
+  This tutorial was written for `TFEL` 3.x: `TFEL` 5 requires
+  `Visual Studio` `2022` or later.
+- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html).
+  This tutorial was written for `TFEL` 3.x: the `MinGW` compiler
+  packaged with `Cast3M` `2017` does not support `C++-20` and can not
+  build `TFEL` 5.
 
 The creation of binary packages is detailed [here](packages.html). 
 
@@ -72,7 +75,7 @@ Intel and AMD processors, either 32 or 64 bits. As no specific
 instructions relative to the underlying architecture are used in the
 code, other architectures shall work as well.
 
-You must have the `cmake` build system (version greater than \(2.8\))
+You must have the `cmake` build system (version \(3.20\) or later)
 installed on your system, installing ̀`TFEL` basically boils down to the
 following simple commands:
 
@@ -114,6 +117,17 @@ suites are officially supported:
 - The
   [Intel compilers suite](https://software.intel.com/en-us/c-compilers).
 
+The required `C++` standard depends on the major version of `TFEL`.
+The following table gives, for each major version, the minimal
+versions checked at configuration time or required by the sources, and
+the compilers listed in the release notes:
+
+| `TFEL` | Standard   | Minimal versions                     | Compilers listed in the release notes                                                                 |
+| :----: | :--------: | :----------------------------------: | :---------------------------------------------------------------------------------------------------- |
+| 3.x    | `C++-11`   | `gcc` 4.7, `clang` 3.4               | `Visual Studio` 2015, `MinGW` packaged with `Cast3M` 2017                                             |
+| 4.x    | `C++-17`   |                                      | `gcc` 8.3 and 10.3, `clang` 11.0.1, Intel oneAPI 2023.2 (Linux, Windows), `MinGW` 10.3 (`TFEL` 4.2)   |
+| 5.x    | `C++-20`   | `gcc` 11 ([`std::bit_cast`](https://github.com/thelfer/tfel/issues/918)) | `gcc` 11.4 to 15.1, `clang` 14 to 21, Intel 2024.2, `Visual Studio` 2022 (17.4), `MinGW` 14.2         |
+
 ## Third party libraries
 
 `TFEL` has been designed to have no dependencies on third-party
@@ -126,7 +140,7 @@ optional bindings for the [`Python`](https://www.python.org/) language.
 The best way to build the `TFEL` is to use the
 [`cmake`](http://www.cmake.org/) build system (see this
 [section](#using-the-cmake-build-system)). *We only support `cmake`
-versions greater than \(2.8\)*.
+versions \(3.20\) or later*.
 
 To build `TFEL` documentation, one may need:
 
@@ -164,12 +178,15 @@ Both `<srcdir>` and `<install_prefix>` must contain an *absolute* path.
 
 The use of the `cmake` build system is described in depth in the
 `INSTALL-cmake` file that is located in the top directory of `TFEL`
-sources. *We only support `cmake` versions greater than \(2.8\)*, so
+sources. *We only support `cmake` versions \(3.20\) or later*, so
 please check the version available on your system:
 
 ~~~~ {#cmake-version .bash}
 $ cmake --version
 ~~~~
+
+On older systems (`Ubuntu` 20.04, `Debian` 11), a recent version of
+`cmake` can be installed with `python3 -m pip install --user cmake`.
 
 A typical usage of `cmake` is the following:
 
@@ -217,6 +234,53 @@ For example, we can use the following command to select the
 $ CXX=icpc CC=icc FC=ifort F77=ifort cmake <srcdir> -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=<install_prefix>
 ~~~~
 
+### Sanitizers and hardening options
+
+The `enable-sanitize-options` option takes the list of the sanitizers to
+enable, for instance:
+
+~~~~ {#sanitizers .bash}
+$ cmake <srcdir> -Denable-sanitize-options="address;undefined"
+~~~~
+
+As for any `cmake` list, the sanitizers are separated by semicolons. As a
+convenience, commas may also be used as separators, which avoids to quote
+the separator on some shells:
+
+~~~~ {#sanitizers-comma .bash}
+$ cmake <srcdir> -Denable-sanitize-options=address,undefined
+~~~~
+
+The available sanitizers depend on the compiler and on its version. The
+`address`, `thread` and `memory` sanitizers cannot be used simultaneously.
+
+Each sanitizer can also be enabled individually using the dedicated option
+whose name is obtained from the sanitizer name:
+`enable-<name>-sanitizer`, for instance:
+
+~~~~ {#address-sanitizer .bash}
+$ cmake <srcdir> -Denable-sanitize-options="undefined" -Denable-bounds-strict-sanitizer=ON
+~~~~
+
+Such options can be combined with the `enable-sanitize-options` option: the
+enabled sanitizers are the sanitizers listed in the `enable-sanitize-options`
+option and the sanitizers whose dedicated option is enabled.
+
+Some sanitizers require specific settings to be fully effective (the link
+time optimization for `cfi`, instrumentation of all the linked code for
+`memory`, etc.), as described in the `gcc` and `clang` documentations.
+
+Note that passing a boolean value to the `enable-sanitize-options` option is
+no longer supported: this option used to enable a set of sanitizers at once,
+which is meaningless as most sanitizers cannot be combined.
+
+Standard library hardening can be combined with the sanitizers: the
+`enable-glibcxx-debug` option enables the debug mode of the standard library
+of the GNU C++ library in debug builds and the `enable-libcxx-hardening-mode`
+option enables the hardening mode of `libc++`. How to build and run the tests
+with the sanitizers is described in
+[a dedicated page](sanitizers.html).
+
 ### Controlling the generation of the documentation
 
 Generation of the documentation can be controlled by the following
@@ -225,8 +289,7 @@ boolean options:
 - `enable-doxygen-doc`, which enables or disables the generation of the
   doxygen documentation (disabled by default)
 - `enable-reference-doc`, which enables or disables the reference
-  documentation generation (enabled by default if `latex` or `pandoc` is
-  found)
+  documentation generation (disabled by default)
 - `enable-website`, which enables or disables the generation of the
   `TFEL` website (enabled by default if `pandoc` is found)
 
@@ -290,11 +353,11 @@ used to build the `pip` package, which can't store symbolic links.
 
 ### Selecting the `python` version
 
-A specific `python` version can be selected by setting the
-`Python_ADDITIONAL_VERSIONS`, as follows:
+A specific `python` interpreter can be selected by setting
+`Python_EXECUTABLE` (or `Python_ROOT_DIR`), as follows:
 
 ~~~~{.bash}
-cmake ../master/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
+cmake ../master/ -Denable-python-bindings=ON -DPython_EXECUTABLE=/usr/bin/python3.12 ...
 ~~~~
 
 # Building

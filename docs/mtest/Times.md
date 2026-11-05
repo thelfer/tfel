@@ -35,7 +35,7 @@ the `@ImposedStress` and the `@ExternalStateVariable` keywords).
 ## Note
 
 In case of non convergence, the algorithm handles time sub
-steppings. See the `@MaximumNumberOfSubSteps` for details.
+stepping. See the `@MaximumNumberOfSubSteps` for details.
 
 ## Example
 

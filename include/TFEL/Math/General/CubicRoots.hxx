@@ -128,15 +128,10 @@ namespace tfel::math {
         if (tfel::math::abs(cbrt_q) < prec) {
           x1 = x2 = x3 = -tmp3;
           return 3u;
-        } else if (q > 0) {
-          x1 = -tmp3 + cbrt_q;
+        } else {
+          x1 = -tmp3 - cbrt_q;
           x2 = -tmp3 + C_1_2 * cbrt_q;
           x3 = -tmp3 + C_1_2 * cbrt_q;
-          return 1u;
-        } else {
-          x3 = -tmp3 + cbrt_q;
-          x1 = -tmp3 + C_1_2 * cbrt_q;
-          x2 = -tmp3 + C_1_2 * cbrt_q;
           return 1u;
         }
       }

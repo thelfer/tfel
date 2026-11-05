@@ -1,3 +1,11 @@
+# compiler and platforms reported by MFrontHeader::getHeader
+set(CXX "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+set(build_cpu "${CMAKE_HOST_SYSTEM_PROCESSOR}")
+set(build_os "${CMAKE_HOST_SYSTEM_NAME}")
+set(host_cpu "${CMAKE_SYSTEM_PROCESSOR}")
+set(host_os "${CMAKE_SYSTEM_NAME}")
+set(target_cpu "${CMAKE_SYSTEM_PROCESSOR}")
+set(target_os "${CMAKE_SYSTEM_NAME}")
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -297,6 +305,9 @@ if(HAVE_PYTHON)
     set(TFELMFront_SOURCES
 	PythonMaterialPropertyInterface.cxx
 	${TFELMFront_SOURCES})
+    # paths of python, see the main CMakeLists.txt
+    set_source_files_properties(PythonMaterialPropertyInterface.cxx
+      PROPERTIES COMPILE_DEFINITIONS "${TFEL_PYTHON_DEFINITIONS}")
 endif(HAVE_PYTHON)
 
 if(HAVE_JAVA)
@@ -541,18 +552,6 @@ if(enable-static)
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
     $<INSTALL_INTERFACE:include>)
 endif(enable-static)
-if(HAVE_CASTEM)
-  if(CASTEHOME)
-    target_include_directories(TFELMFront 
-      PRIVATE "${CASTEMHOME}/include"
-      PRIVATE "${CASTEMHOME}/include/c")
-    if(enable-static)
-      target_include_directories(TFELMFront-static 
-        PRIVATE "${CASTEMHOME}/include"
-        PRIVATE "${CASTEMHOME}/include/c")
-    endif(enable-static)
-  endif(CASTEHOME)
-endif(HAVE_CASTEM)
 target_link_libraries(TFELMFront
   PUBLIC
   tfel::MFrontLogStream

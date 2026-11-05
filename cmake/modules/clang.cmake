@@ -87,16 +87,55 @@ if(enable-libcxx)
   tfel_add_cxx_compiler_flag_if_available(COMPILER_CXXFLAGS "stdlib=libc++")
 endif(enable-libcxx)
 
-option(enable-sanitize-options "enable various clang sanitize options (undefined, address,...)" OFF)
-
-if(enable-sanitize-options)
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=address")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=thread")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=memory")
-  # tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=undefined")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=cfi")
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=safe-stack")
-endif(enable-sanitize-options)
+# sanitizers, handled by cmake/modules/sanitizers.cmake
+# note: other sanitizers are made available by the clang documentation: the
+# sanitizers declared below are the sanitizers supported by the versions of
+# clang tested by the continuous integration.
+# - cfi and shadow-call-stack require the link time optimization to be
+#   fully effective
+# - memory and safe-stack require all the linked code to be instrumented
+include(cmake/modules/sanitizers.cmake)
+tfel_declare_sanitizer(address)
+tfel_declare_sanitizer(thread)
+tfel_declare_sanitizer(leak)
+tfel_declare_sanitizer(memory fsanitize=memory fsanitize-memory-track-origins=2)
+tfel_declare_sanitizer(cfi fsanitize=cfi flto)
+tfel_declare_sanitizer(cfi-icall fsanitize=cfi-icall flto)
+tfel_declare_sanitizer(safe-stack)
+tfel_declare_sanitizer(shadow-call-stack)
+tfel_declare_sanitizer(dataflow)
+tfel_declare_sanitizer(hwaddress)
+tfel_declare_sanitizer(undefined)
+tfel_declare_sanitizer(float-divide-by-zero)
+tfel_declare_sanitizer(float-cast-overflow)
+tfel_declare_sanitizer(signed-integer-overflow)
+tfel_declare_sanitizer(unsigned-integer-overflow)
+tfel_declare_sanitizer(integer)
+tfel_declare_sanitizer(bounds)
+tfel_declare_sanitizer(alignment)
+tfel_declare_sanitizer(object-size)
+tfel_declare_sanitizer(null)
+tfel_declare_sanitizer(return)
+tfel_declare_sanitizer(bool)
+tfel_declare_sanitizer(enum)
+tfel_declare_sanitizer(shift)
+tfel_declare_sanitizer(shift-base)
+tfel_declare_sanitizer(shift-exponent)
+tfel_declare_sanitizer(vptr)
+# sanitizers requiring the address sanitizer and the link time optimization
+tfel_declare_sanitizer(pointer-compare fsanitize=pointer-compare fsanitize=address flto)
+tfel_declare_sanitizer(pointer-subtract fsanitize=pointer-subtract fsanitize=address flto)
+# sanitizers which are not supported by the current version of clang: the
+# dedicated options are still defined (and ignored) so that the same
+# options can be used whatever the version of clang is
+tfel_declare_unavailable_sanitizer(bounds-strict)
+tfel_declare_unavailable_sanitizer(vpt)
+# hardening flags, which can be combined with the sanitizers above
+tfel_declare_sanitizer(address-use-after-scope fsanitize-address-use-after-scope)
+tfel_declare_sanitizer(fstack-check fstack-check)
+tfel_declare_sanitizer(fstack-protector-all fstack-protector-all)
+tfel_declare_sanitizer(fno-omit-frame-pointer fno-omit-frame-pointer)
+tfel_setup_sanitize_options()
 
 option(enable-libcxx-hardening-mode "enable LLVM C++ Standard library hardening mode" OFF)
 

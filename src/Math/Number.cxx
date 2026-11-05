@@ -12,6 +12,9 @@
  * project under specific licensing conditions.
  */
 
+#include <cctype>
+#include <iterator>
+#include <algorithm>
 #include "TFEL/Math/Parser/Number.hxx"
 
 namespace tfel::math::parser {
@@ -34,6 +37,15 @@ namespace tfel::math::parser {
   }  // end of dependsOnVariable
 
   std::string Number::getCxxFormula(const std::vector<std::string>&) const {
+    const auto b = (!this->str.empty()) && (this->str[0] == '-')
+                       ? std::next(this->str.begin())
+                       : this->str.begin();
+    if ((b != this->str.end()) &&
+        std::all_of(b, this->str.end(), [](const char c) {
+          return std::isdigit(static_cast<unsigned char>(c)) != 0;
+        })) {
+      return this->str + '.';
+    }
     return this->str;
   }  // end of getCxxFormula
 

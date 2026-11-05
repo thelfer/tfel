@@ -15,6 +15,11 @@
 #define LIB_TFEL_MATH_STENSORPRODUCTLEFTDERIVATIVEEXPR_HXX
 
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/ExpressionTemplates/Expr.hxx"
+#include "TFEL/Math/ST2toT2/ST2toT2Concept.hxx"
+#include "TFEL/Math/fsarray.hxx"
+#include "TFEL/Math/Stensor/StensorConcept.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 namespace tfel::math {
 
@@ -334,7 +339,8 @@ namespace tfel::math {
           (C(5, 4) * b(5) + C(4, 4) * b(4)) * one_half + C(2, 4) * b(2);
       this->v[17u] =
           (C(5, 5) * b(5) + C(4, 5) * b(4)) * one_half + C(2, 5) * b(2);
-      this->v[18u] = (C(4, 0) * b(5) + C(0, 0) * b(3) + C(3, 0) * b(1)) * icste;
+      this->v[18u] = (C(4, 0) * b(5)) * one_half +
+                     (C(0, 0) * b(3) + C(3, 0) * b(1)) * icste;
       this->v[19u] = (C(4, 1) * b(5)) * one_half +
                      (C(0, 1) * b(3) + C(3, 1) * b(1)) * icste;
       this->v[20u] = (C(4, 2) * b(5)) * one_half +

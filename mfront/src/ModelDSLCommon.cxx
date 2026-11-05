@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <locale>
 #include <sstream>
+#include <utility>
 #include <stdexcept>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
@@ -65,7 +65,7 @@ namespace mfront {
   }  // end of is()
 
   bool isValidModelName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
   ModelDSLCommon::ModelDSLCommon(const DSLOptions& opts) : DSLBase(opts) {
@@ -114,8 +114,13 @@ namespace mfront {
         "unimplemented feature");
   }  // end of getOverridableVariableNameByExternalName
 
-  void ModelDSLCommon::overrideByAParameter(const std::string&, const double){
+  void ModelDSLCommon::overrideByAParameter(const std::string& n,
+                                            const double) {
 #pragma message("unimplemented")
+    tfel::raise("ModelDSLCommon::overrideByAParameter: overriding variable '" +
+                n +
+                "' by a parameter is not supported by models "
+                "(unimplemented feature)");
   }  // end of overrideByAParameter
 
   std::map<std::string, double> ModelDSLCommon::getOverridenParameters() const {
@@ -200,7 +205,7 @@ namespace mfront {
   void ModelDSLCommon::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
       this->throwRuntimeError("ModelDSLCommon::setMaterial",
-                              "material name alreay defined");
+                              "material name already defined");
     }
     if (!isValidMaterialName(m)) {
       this->throwRuntimeError("ModelDSLCommon::setMaterial",
@@ -442,7 +447,7 @@ namespace mfront {
   void ModelDSLCommon::readFunction(const std::string& fn) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
-        this->throwRuntimeError("ModelDSLCommon::rreatFunction", m);
+        this->throwRuntimeError("ModelDSLCommon::readFunction", m);
       }
     };
     auto isStaticMemberName = [](const ModelDescription& d,
@@ -478,7 +483,7 @@ namespace mfront {
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     f.useTimeIncrement = false;
-    throw_if(!this->isValidIdentifier(fn),
+    throw_if(!this->isValidIdentifier(fn, false),
              "function name '" + fn + "' is not valid");
     f.name = fn;
     f.line = this->current->line;
@@ -518,6 +523,9 @@ namespace mfront {
         throw_if(openedParenthesis == 0, "unbalanced parenthesis");
         --openedParenthesis;
         f.body += ")";
+        // a variable directly following a closing parenthesis starts the
+        // body of an if, for or while statement
+        newInstruction = (openedParenthesis == 0);
       } else if (this->current->value == ";") {
         f.body += ";";
         newInstruction = true;
@@ -568,6 +576,11 @@ namespace mfront {
                                    "' in the body of function '" + f.name +
                                    "'");
               f.body += c + " " + op + " ";
+              // a compound assignment reads the initial value of the
+              // variable only if it is its first modification in the function
+              if ((op != "=") && (f.modifiedVariables.count(c) == 0)) {
+                f.compoundAssignedVariables.insert(c);
+              }
               f.modifiedVariables.insert(c);
               auto p6 = f.depths.find(c);
               if (p6 == f.depths.end()) {
@@ -633,7 +646,7 @@ namespace mfront {
             f.body += c;
           }
         }
-        newInstruction = false;
+        newInstruction = (c == "else") || (c == "do");
       }
       newLine = false;
     }
@@ -647,6 +660,24 @@ namespace mfront {
              "function " + f.name + " does not change any variable.");
     for (const auto& df : this->md.functions) {
       throw_if(df.name == f.name, "function " + f.name + " already declared.");
+      for (const auto& v : f.modifiedVariables) {
+        throw_if(df.modifiedVariables.count(v) != 0,
+                 "output '" + v + "' is modified by functions '" + df.name +
+                     "' and '" + f.name + "'");
+      }
+    }
+    // an output updated by a compound assignment starts from its value at
+    // the beginning of the time step, which requires a depth of at least one
+    for (const auto& v : f.compoundAssignedVariables) {
+      const auto& output = this->md.outputs.getVariable(v);
+      throw_if(
+          output.getAttribute<unsigned short>(VariableDescription::depth, 0) ==
+              0,
+          "output '" + v +
+              "' is updated by a compound assignment in function '" + f.name +
+              "', which requires its value at the beginning of the time step, "
+              "but its depth is 0 (use '" +
+              v + ".setDepth(1);')");
     }
     for (auto p2 = f.modifiedVariables.begin(); p2 != f.modifiedVariables.end();
          ++p2) {
@@ -772,17 +803,25 @@ namespace mfront {
     } else if (mn == "setDepth") {
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
                               "Expected depth value.");
-      unsigned short value;
-      std::istringstream converter(this->current->value);
-      converter.imbue(std::locale::classic());
-      converter >> value;
-      if (!converter || (!converter.eof())) {
+      // checked conversion: negative, non integer and out of range values
+      // are rejected
+      auto p = this->current;
+      auto value = static_cast<unsigned int>(0);
+      try {
+        value = CxxTokenizer::readUnsignedInt(p, this->tokens.end());
+      } catch (std::exception&) {
+        this->throwRuntimeError(
+            "ModelDSLCommon::treatOutputMethod",
+            "Could not read depth value of field '" + this->currentVar + "'");
+      }
+      if (!std::in_range<unsigned short>(value)) {
         this->throwRuntimeError(
             "ModelDSLCommon::treatOutputMethod",
             "Could not read depth value of field '" + this->currentVar + "'");
       }
       auto& v = this->md.outputs.getVariable(this->currentVar);
-      v.setAttribute(VariableDescription::depth, value, false);
+      v.setAttribute(VariableDescription::depth,
+                     static_cast<unsigned short>(value), false);
       for (unsigned short i = 1; i <= value; ++i) {
         const auto vn = this->currentVar + "_" + std::to_string(i);
         this->md.registerMemberName(vn);
@@ -828,16 +867,25 @@ namespace mfront {
     } else if (mn == "setDepth") {
       this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
                               "Expected depth value.");
-      unsigned short value;
-      std::istringstream converter(this->current->value);
-      converter >> value;
-      if (!converter || (!converter.eof())) {
+      // checked conversion: negative, non integer and out of range values
+      // are rejected
+      auto p = this->current;
+      auto value = static_cast<unsigned int>(0);
+      try {
+        value = CxxTokenizer::readUnsignedInt(p, this->tokens.end());
+      } catch (std::exception&) {
         this->throwRuntimeError(
             "ModelDSLCommon::treatInputMethod",
-            "Could not read initial value of field '" + this->currentVar + "'");
+            "Could not read depth value of field '" + this->currentVar + "'");
+      }
+      if (!std::in_range<unsigned short>(value)) {
+        this->throwRuntimeError(
+            "ModelDSLCommon::treatInputMethod",
+            "Could not read depth value of field '" + this->currentVar + "'");
       }
       auto& v = this->md.inputs.getVariable(this->currentVar);
-      v.setAttribute(VariableDescription::depth, value, false);
+      v.setAttribute(VariableDescription::depth,
+                     static_cast<unsigned short>(value), false);
       for (unsigned short i = 1; i <= value; ++i) {
         const auto vn = this->currentVar + "_" + std::to_string(i);
         this->md.registerMemberName(vn);
@@ -867,7 +915,7 @@ namespace mfront {
                               "parameter type'" + type + "' is not valid.");
     }
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
-      if (!this->isValidIdentifier(this->current->value)) {
+      if (!this->isValidIdentifier(this->current->value, false)) {
         this->throwRuntimeError("DSLBase::handleParameter : ",
                                 "variable given is not valid (read '" +
                                     this->current->value + "').");
@@ -887,6 +935,8 @@ namespace mfront {
           v.setAttribute(VariableDescription::defaultValue, op->second, false);
         }
       }
+      this->checkNotEndOfFile("DSLBase::handleParameter",
+                              "expected ',' or ';'");
       if (this->current->value == ",") {
         ++(this->current);
       } else if (this->current->value == ";") {
@@ -1019,7 +1069,7 @@ namespace mfront {
       v.setAttribute(VariableDescription::defaultValue, values, false);
     } else if (v.type == "StringArray") {
       const auto values =
-          this->readArrayOfDouble("ModelDSLCommon::readDefaultValue");
+          this->readArrayOfString("ModelDSLCommon::readDefaultValue");
       v.setAttribute(VariableDescription::defaultValue, values, false);
     } else if ((v.type == "double") || (v.type == "real")) {
       const auto value = this->readDouble();
@@ -1101,10 +1151,12 @@ namespace mfront {
   /*!
    * \brief various checks on variables
    * \param[in] v  : variables
+   * \param[in] b  : check if bounds are declared
    */
   static void performPedanticChecks(const VariableDescriptionContainer& vc,
                                     const std::map<std::string, std::size_t>& f,
-                                    const std::string& t) {
+                                    const std::string& t,
+                                    const bool b = true) {
     auto& log = getLogStream();
     auto& glossary = tfel::glossary::Glossary::getGlossary();
     for (const auto& v : vc) {
@@ -1126,10 +1178,10 @@ namespace mfront {
         if ((!v.hasGlossaryName()) && (!v.hasEntryName())) {
           log << "- " << t << " '" << v.name << "' has no external name.\n";
         }
-        if (!v.hasPhysicalBounds()) {
+        if ((b) && (!v.hasPhysicalBounds())) {
           log << "- " << t << " '" << v.name << "' has no physical bounds.\n";
         }
-        if (!v.hasBounds()) {
+        if ((b) && (!v.hasBounds())) {
           log << "- " << t << " '" << v.name << "' has no bounds.\n";
         }
         if (v.description.empty()) {
@@ -1187,7 +1239,8 @@ namespace mfront {
     }
 
     performPedanticChecks(this->md.outputs, members, "output");
-    performPedanticChecks(this->md.parameters, members, "parameter");
+    // bounds can't be declared for parameters
+    performPedanticChecks(this->md.parameters, members, "parameter", false);
     performPedanticChecks(this->md.inputs, members, "input");
     log << "\n# End of pedantic checks\n";
   }  // end of doPedanticChecks

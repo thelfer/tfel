@@ -61,8 +61,16 @@ namespace mfront::gb::logarithmic_strain {
                   (hypothesis ==
                    ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
       if constexpr (Traits::has_axial_strain_offset) {
-        lgh0.updateAxialDeformationGradient(std::exp(
-            d.s0.internal_state_variables[Traits::axial_strain_offset]));
+        // the axial deformation gradient computed by the behaviour replaces
+        // the one of the caller
+        const auto F0zz = std::exp(
+            d.s0.internal_state_variables[Traits::axial_strain_offset]);
+        lgh0.updateAxialDeformationGradient(F0zz);
+        if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
+          F0[2] = F0zz;
+        } else {
+          F0[1] = F0zz;
+        }
       } else {
         reportError(d,
                     "The behaviour does not declare the axial strain "
@@ -180,8 +188,16 @@ namespace mfront::gb::logarithmic_strain {
                   (hypothesis ==
                    ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
       if constexpr (Traits::has_axial_strain_offset) {
-        lgh0.updateAxialDeformationGradient(std::exp(
-            d.s0.internal_state_variables[Traits::axial_strain_offset]));
+        // the axial deformation gradient computed by the behaviour replaces
+        // the one of the caller
+        const auto F0zz = std::exp(
+            d.s0.internal_state_variables[Traits::axial_strain_offset]);
+        lgh0.updateAxialDeformationGradient(F0zz);
+        if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
+          F0[2] = F0zz;
+        } else {
+          F0[1] = F0zz;
+        }
       } else {
         reportError(d,
                     "The behaviour does not declare the axial strain "
@@ -270,8 +286,14 @@ namespace mfront::gb::logarithmic_strain {
                        ModellingHypothesis::
                            AXISYMMETRICALGENERALISEDPLANESTRESS)) {
           if constexpr (Traits::has_axial_strain_offset) {
-            lgh1.updateAxialDeformationGradient(std::exp(
-                d.s1.internal_state_variables[Traits::axial_strain_offset]));
+            const auto F1zz = std::exp(
+                d.s1.internal_state_variables[Traits::axial_strain_offset]);
+            lgh1.updateAxialDeformationGradient(F1zz);
+            if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
+              F1[2] = F1zz;
+            } else {
+              F1[1] = F1zz;
+            }
           } else {
             reportError(d,
                         "The behaviour does not declare the axial strain "
@@ -388,10 +410,21 @@ namespace mfront::gb::logarithmic_strain {
                   (hypothesis ==
                    ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
       if constexpr (Traits::has_axial_strain_offset) {
-        lgh0.updateAxialDeformationGradient(std::exp(
-            d.s0.internal_state_variables[Traits::axial_strain_offset]));
-        lgh1.updateAxialDeformationGradient(std::exp(
-            d.s1.internal_state_variables[Traits::axial_strain_offset]));
+        // the axial deformation gradients computed by the behaviour replace
+        // the ones of the caller
+        const auto F0zz = std::exp(
+            d.s0.internal_state_variables[Traits::axial_strain_offset]);
+        const auto F1zz = std::exp(
+            d.s1.internal_state_variables[Traits::axial_strain_offset]);
+        lgh0.updateAxialDeformationGradient(F0zz);
+        lgh1.updateAxialDeformationGradient(F1zz);
+        if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
+          F0[2] = F0zz;
+          F1[2] = F1zz;
+        } else {
+          F0[1] = F0zz;
+          F1[1] = F1zz;
+        }
       } else {
         reportError(d,
                     "The behaviour does not declare the axial strain "

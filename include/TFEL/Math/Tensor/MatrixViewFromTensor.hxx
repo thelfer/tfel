@@ -17,6 +17,7 @@
 #include "TFEL/Math/Forward/tmatrix.hxx"
 #include "TFEL/Math/Forward/tensor.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
+#include "TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel::math {
 
@@ -41,7 +42,7 @@ namespace tfel::math {
     typedef unsigned short IndexType;
     typedef EmptyRunTimeProperties RunTimeProperties;
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return RunTimeProperties();
     }

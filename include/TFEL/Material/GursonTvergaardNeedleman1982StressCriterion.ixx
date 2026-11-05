@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <tuple>
+#include <limits>
 #include <ostream>
 #include <algorithm>
 #include "TFEL/Math/power.hxx"
@@ -44,7 +45,7 @@ namespace tfel::material {
       const GursonTvergaardNeedleman1982StressCriterionParameters<
           StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
-    using istress = GursonTvergaardNeedleman1982InvertStressType<StressStensor>;
+    using stress = GursonTvergaardNeedleman1982StressType<StressStensor>;
     using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
     using size_type = unsigned short;
     using namespace tfel::math;
@@ -70,14 +71,17 @@ namespace tfel::material {
      */
     const auto seq = sigmaeq(sig);
     const auto pr = trace(sig) / 3;
-    const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+    const auto fult = (p.q_1 - std::sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
     const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
     const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
     // square of the positive value
     const auto seq2 = seq * seq;
     const auto pr2 = pr * pr;
     // special cases
-    if (tfel::math::abs(pr) < seps) {
+    // when q1 f* vanishes (no porosity), the equivalent stress does not
+    // depend on the mean stress
+    if ((tfel::math::abs(pr) < seps) ||
+        (tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)) {
       const auto iomf =
           1 /
           std::max(1 - 2 * p.q_1 * fstar + p.q_3 * fstar * fstar, real(1.e-12));
@@ -87,25 +91,37 @@ namespace tfel::material {
       const auto argach = (1 + p.q_3 * fstar * fstar) /
                           std::max(2 * p.q_1 * fstar, real(1.e-12));
       const auto den = 2 * std::acosh(argach);
-      return (3 * p.q_2 * pr) / den;
+      return (3 * p.q_2 * tfel::math::abs(pr)) / den;
     }
     // Second order approximation (development of the hyperbolic cosine to the
-    // second order)
-    const auto x0 =
-        std::sqrt((4 * (1 + p.q_3 * fstar * fstar - 2 * p.q_1 * fstar)) /
-                  (4 * seq2 + 9 * p.q_1 * p.q_2 * p.q_2 * fstar * pr2));
-    //
-    const auto SdS = [seq2, pr, fstar, p](const istress x) {
+    // second order), bounded by the solution for a vanishing von Mises stress
+    // so that the Newton-Raphson algorithm does not start far in the
+    // exponential branch of the hyperbolic cosine
+    auto x0 = tfel::math::power<1, 2>(
+        (4 * (1 + p.q_3 * fstar * fstar - 2 * p.q_1 * fstar)) /
+        (4 * seq2 + 9 * p.q_1 * p.q_2 * p.q_2 * fstar * pr2));
+    if (p.q_1 * fstar > 0) {
+      x0 = std::min(
+          x0,
+          2 * std::acosh((1 + p.q_3 * fstar * fstar) / (2 * p.q_1 * fstar)) /
+              (3 * p.q_2 * tfel::math::abs(pr)));
+    }
+    // The Newton-Raphson algorithm works on the base numeric type, since the
+    // unknown and S do not have the same unit
+    const auto bseq2 = base_type_cast(seq2);
+    const auto bpr = base_type_cast(pr);
+    const auto bseps = base_type_cast(seps);
+    const auto SdS = [bseq2, bpr, fstar, p](const real x) {
       const auto fstar2 = fstar * fstar;
-      const auto e = std::exp(3 * p.q_2 * pr * (x / 2));
+      const auto e = std::exp(3 * p.q_2 * bpr * (x / 2));
       const auto ch = (e + 1 / e) / 2;
       const auto sh = (e - 1 / e) / 2;
-      const auto S = seq2 * x * x + 2 * p.q_1 * fstar * ch - 1 - p.q_3 * fstar2;
-      const auto dS = 2 * seq2 * x + 3 * p.q_1 * p.q_2 * fstar * pr * sh;
+      const auto S = bseq2 * x * x + 2 * p.q_1 * fstar * ch - 1 - p.q_3 * fstar2;
+      const auto dS = 2 * bseq2 * x + 3 * p.q_1 * p.q_2 * fstar * bpr * sh;
       return std::make_tuple(S, dS);
     };
-    const auto c = [&p, seps](const real S, const istress dx, const istress x,
-                              const size_type) {
+    const auto c = [&p, bseps](const real S, const real dx, const real x,
+                               const size_type) {
       // First criterion based on the value of the yield surface
       if (std::abs(S) < p.eps) {
         return true;
@@ -117,13 +133,21 @@ namespace tfel::material {
       // d(1/y) = -dy/(y*y) => y*y*d(1/y) = -dy
       // so if I want |dy|<eps, |y*y*d(1/y)| must be lower than eps
       // Here, x is the inverse of the equivalent stress, so
-      return 10 * tfel::math::abs(dx) < seps * tfel::math::abs(x * x);
+      if (10 * tfel::math::abs(dx) < bseps * tfel::math::abs(x * x)) {
+        return true;
+      }
+      // Third criterion based on the relative stationnarity of the solution,
+      // which can be reached in single precision, contrary to the previous
+      // ones
+      return tfel::math::abs(dx) <
+             10 * std::numeric_limits<real>::epsilon() * tfel::math::abs(x);
     };
-    const auto r = tfel::math::scalarNewtonRaphson(SdS, c, x0, size_type{100});
+    const auto r = tfel::math::scalarNewtonRaphson(SdS, c, base_type_cast(x0),
+                                                   size_type{100});
     if (!std::get<0>(r)) {
       throw(DivergenceException());
     }
-    return 1 / std::get<1>(r);
+    return stress(1 / std::get<1>(r));
   }  // end of computeGursonTvergaardNeedleman1982Stress
 
   template <typename StressStensor>
@@ -138,6 +162,9 @@ namespace tfel::material {
       const GursonTvergaardNeedleman1982StressCriterionParameters<
           StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
+    using stress = GursonTvergaardNeedleman1982StressType<StressStensor>;
+    using istress = GursonTvergaardNeedleman1982InvertStressType<StressStensor>;
+    using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
     using result = std::tuple<
         GursonTvergaardNeedleman1982StressType<StressStensor>,
@@ -150,21 +177,30 @@ namespace tfel::material {
     const auto iss = 1 / std::max(ss, seps);
     const auto seq = sigmaeq(sig);
     const auto pr = trace(sig) / 3;
-    const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+    const auto fult = (p.q_1 - std::sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
     const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
     const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
-    const auto dfstar = (f < p.f_c) ? 1. : delta;
-    const auto e = std::exp(3 * p.q_2 * pr * iss / 2);
+    const auto dfstar = (f < p.f_c) ? real(1) : delta;
+    // when q1 f* vanishes, the hyperbolic functions only appear in the
+    // derivative with respect to the porosity, which is unbounded for a
+    // nearly hydrostatic stress: their argument is bounded, as in the
+    // Rousselier criterion, to avoid an overflow
+    const real a = 3 * p.q_2 * pr * iss / 2;
+    const auto e = std::exp(
+        (tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)
+            ? std::clamp(a, real(-40), real(40))
+            : a);
     const auto ch = (e + 1 / e) / 2;
     const auto sh = (e - 1 / e) / 2;
     const auto q1q2 = p.q_1 * p.q_2;
     // normal
     const auto dS_dss =
         (-2 * power<2>(seq) * iss - 3 * q1q2 * fstar * pr * sh) * power<2>(iss);
-    const auto sgn = (dS_dss < 0) ? -1 : 1;
+    const auto sgn = (dS_dss < istress(0)) ? -1 : 1;
     const auto idS_dss =
-        sgn * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
-                   ? 1 / seps
+        sgn * ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) ==
+                FP_ZERO)
+                   ? stress(1 / base_type_cast(seps))
                    : 1 / tfel::math::abs(dS_dss));
     const auto dS_dsig = 3 * power<2>(iss) * deviator(sig) +  //
                          q1q2 * fstar * iss * sh * id;
@@ -193,6 +229,9 @@ namespace tfel::material {
           StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
     using namespace tfel::math;
+    using stress = GursonTvergaardNeedleman1982StressType<StressStensor>;
+    using istress = GursonTvergaardNeedleman1982InvertStressType<StressStensor>;
+    using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
     using result = std::tuple<
         GursonTvergaardNeedleman1982StressType<StressStensor>,
@@ -203,7 +242,7 @@ namespace tfel::material {
         GursonTvergaardNeedleman1982NormalDerivativeWithRespectToPorosityType<
             StressStensor>>;
     constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
-    const auto M = tfel::math::st2tost2<N, double>::M();
+    const auto M = tfel::math::st2tost2<N, real>::M();
     const auto id = normal::Id();
     const auto s = deviator(sig);
     const auto ss = computeGursonTvergaardNeedleman1982Stress(sig, f, p, seps);
@@ -211,21 +250,30 @@ namespace tfel::material {
     const auto seq = sigmaeq(sig);
     const auto seq2 = seq * seq;
     const auto pr = trace(sig) / 3;
-    const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+    const auto fult = (p.q_1 - std::sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
     const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
     const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
-    const auto dfstar = (f < p.f_c) ? 1. : delta;
-    const auto e = std::exp(3 * p.q_2 * pr * iss / 2);
+    const auto dfstar = (f < p.f_c) ? real(1) : delta;
+    // when q1 f* vanishes, the hyperbolic functions only appear in the
+    // derivative with respect to the porosity, which is unbounded for a
+    // nearly hydrostatic stress: their argument is bounded, as in the
+    // Rousselier criterion, to avoid an overflow
+    const real a = 3 * p.q_2 * pr * iss / 2;
+    const auto e = std::exp(
+        (tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)
+            ? std::clamp(a, real(-40), real(40))
+            : a);
     const auto ch = (e + 1 / e) / 2;
     const auto sh = (e - 1 / e) / 2;
     const auto q1q2 = p.q_1 * p.q_2;
     // normal
     const auto dS_dss =
         (-2 * power<2>(seq) * iss - 3 * q1q2 * fstar * pr * sh) * power<2>(iss);
-    const auto sgn = (dS_dss < 0) ? -1 : 1;
+    const auto sgn = (dS_dss < istress(0)) ? -1 : 1;
     const auto idS_dss =
-        sgn * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
-                   ? 1 / seps
+        sgn * ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) ==
+                FP_ZERO)
+                   ? stress(1 / base_type_cast(seps))
                    : 1 / tfel::math::abs(dS_dss));
     const auto dS_dsig = 3 * power<2>(iss) * deviator(sig) +  //
                          q1q2 * fstar * iss * sh * id;
@@ -233,10 +281,9 @@ namespace tfel::material {
 
     // second derivative of the normal
     const auto d2S_dsig2 =
-        (2. * M + (q1q2 * p.q_2 * (fstar / 2) * ch * (id ^ id))) *
-        power<2>(iss);
+        (2 * M + (q1q2 * p.q_2 * (fstar / 2) * ch * (id ^ id))) * power<2>(iss);
     const auto d2S_dsigdss =
-        (-6. * s * iss - q1q2 * fstar * sh * id -  //
+        (-6 * s * iss - q1q2 * fstar * sh * id -  //
          3 * q1q2 * p.q_2 * (fstar / 2) * pr * iss * ch * id) *
         power<2>(iss);
     const auto d2S_dss2 =
@@ -250,7 +297,7 @@ namespace tfel::material {
     // derivatives with respect to \(f\)
     const auto dS_df = (2 * p.q_1 * ch - 2 * p.q_3 * fstar) * dfstar;
     const auto dss_df = -dS_df * idS_dss;
-    const auto d2S_dssdf = (-3. * q1q2 * pr * power<2>(iss) * sh) * dfstar;
+    const auto d2S_dssdf = (-3 * q1q2 * pr * power<2>(iss) * sh) * dfstar;
     const auto d2S_dsigdf = (q1q2 * iss * sh * id) * dfstar;
     const auto dn_df =
         -idS_dss * (d2S_dsigdf + (d2S_dssdf * n)) +  //

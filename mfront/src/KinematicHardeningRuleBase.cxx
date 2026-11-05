@@ -82,14 +82,16 @@ namespace mfront::bbrick {
                                                 const std::string& fid,
                                                 const std::string& kid) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    auto mts = getMiddleOfTimeStepModifier(bd);
+    checkNoNormalisationFactor(
+        bd, KinematicHardeningRule::getVariableId("a", fid, kid));
+    // jacobian blocks computed by buildBackStrainImplicitEquations
+    checkNoImplicitEquationNormalisationFactor(
+        bd, dsl, KinematicHardeningRule::getVariableId("a", fid, kid));
     if (!this->C.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       CodeBlock i;
       std::ostringstream mps;
-      mps << "this->" + Cn + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, this->C, mts);
-      mps << ";\n";
+      mps << generateMaterialPropertyInitializationCode(dsl, bd, Cn, this->C);
       i.code += mps.str();
       bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);

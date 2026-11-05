@@ -168,7 +168,7 @@ namespace tfel::math {
      * be greater than than the logical number of elements contained in the
      * array which is returned by `IndexingPolicy::size`.
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr
         typename GenericFixedSizeArray<Child, ArrayPolicy, N>::size_type
         getContainerSize() const noexcept;
     // inheriting MutableFixedSizeArrayBase' assignement operator
@@ -204,11 +204,11 @@ namespace tfel::math {
             isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
                            value_type>());
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr
         typename GenericFixedSizeArray<Child, ArrayPolicy, N>::pointer
         data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr
         typename GenericFixedSizeArray<Child, ArrayPolicy, N>::const_pointer
         data() const noexcept;
 

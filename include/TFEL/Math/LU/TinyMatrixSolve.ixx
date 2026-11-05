@@ -212,7 +212,7 @@ namespace tfel::math {
         return false;
       }
     }
-    return LUDecomp<false>::exe(m, p, eps).first;
+    return LUDecomp<use_exceptions>::exe(m, p, eps).first;
   }  // end of TinyMatrixSolve<N,T>::exe
 
   template <unsigned short N,

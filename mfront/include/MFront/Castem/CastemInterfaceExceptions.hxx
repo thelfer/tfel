@@ -19,6 +19,7 @@
 
 #include "TFEL/Exception/TFELException.hxx"
 #include "TFEL/Material/MaterialException.hxx"
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 
 #include "MFront/Castem/Castem.hxx"
 #include "MFront/Castem/CastemTraits.hxx"
@@ -51,6 +52,8 @@ namespace castem {
                                  CastemReal* const,
                                  const CastemInt* const,
                                  CastemReal* const,
+                                 CastemReal* const,
+                                 const tfel::material::OutOfBoundsPolicy,
                                  const StressFreeExpansionHandler&);
   };  // end of struct CastemUnSupportedCaseHandler
 

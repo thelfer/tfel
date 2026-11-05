@@ -132,7 +132,7 @@ namespace tfel::material {
                "the small strain deformation";
       case FiniteStrainBehaviourTangentOperatorBase::DTAU_DF:
         return "derivative of the Kirchhoff stress with respect to "
-               "the deformation gradient increment ";
+               "the deformation gradient";
       case FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF:
         return "derivative of the Kirchhoff stress with respect to "
                "the deformation gradient increment";
@@ -153,7 +153,7 @@ namespace tfel::material {
                "with respect to the lagrangian Hencky strain tensor";
       case FiniteStrainBehaviourTangentOperatorBase::DPK1_DF:
         return "derivative of the first Piola-Kirchhoff stress "
-               "with respect to the deformation gradident";
+               "with respect to the deformation gradient";
       default:
         break;
     }

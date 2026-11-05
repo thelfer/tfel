@@ -242,7 +242,7 @@ void declareExternalLibraryManager(pybind11::module_& m) {
            "This function looks for the symbol s+'_mfront_interface' in "
            "the library\n"
            "and expect it to a pointer to characters.\n"
-           "If the symbol is not found, an empty string is returned.")
+           "An exception is thrown if the symbol is not found.")
       .def("setUShortParameter", ELM_setUShortParameter,
            pybind11::arg("l"), pybind11::arg("s"), pybind11::arg("p"),
            pybind11::arg("v"),
@@ -549,14 +549,31 @@ void declareExternalLibraryManager(pybind11::module_& m) {
       .def("getUMATInternalStateVariablesTypes",
            &ELM::getUMATInternalStateVariablesTypes,
            pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("h"),
-           "A type is associated to an integer as follows:\n"
+           "A type is associated to an integer whose three lowest bits\n"
+           "give the kind of the variable:\n"
            "- 0: scalar\n"
            "- 1: symmetric tensor\n"
-           "- 2: vector (size of the space dimension)\n"
+           "- 2: vector\n"
            "- 3: unsymmetric tensor\n"
+           "- 4: derivative\n"
+           "- 5: array\n"
+           "The following bits give the space dimension of a tensorial\n"
+           "object (0 if it is the one of the modelling hypothesis), the\n"
+           "types of the two variables of a derivative and the sizes and\n"
+           "the type of the elements of an array (see the `mfront-types`\n"
+           "page of the documentation). For instance, 2 denotes a vector\n"
+           "of the size of the space dimension and 26 a vector of size 3.\n"
            "l: name of the library\n"
            "f: law name\n"
            "h: modelling hypothesis")
+      .def("hasTemperatureBeenRemovedFromExternalStateVariables",
+           &ELM::hasTemperatureBeenRemovedFromExternalStateVariables,
+           pybind11::arg("l"), pybind11::arg("f"),
+           "Return true if the temperature has been removed from the list "
+           "of\nthe external state variables. This is the default behaviour "
+           "of `MFront`.\n"
+           "l: name of the library\n"
+           "f: law name")
       .def("getUMATExternalStateVariablesNames",
            &ELM::getUMATExternalStateVariablesNames,
            pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("h"),
@@ -574,11 +591,20 @@ void declareExternalLibraryManager(pybind11::module_& m) {
       .def("getUMATExternalStateVariablesTypes",
            &ELM::getUMATExternalStateVariablesTypes,
            pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("h"),
-           "A type is associated to an integer as follows:\n"
+           "A type is associated to an integer whose three lowest bits\n"
+           "give the kind of the variable:\n"
            "- 0: scalar\n"
            "- 1: symmetric tensor\n"
-           "- 2: vector (size of the space dimension)\n"
+           "- 2: vector\n"
            "- 3: unsymmetric tensor\n"
+           "- 4: derivative\n"
+           "- 5: array\n"
+           "The following bits give the space dimension of a tensorial\n"
+           "object (0 if it is the one of the modelling hypothesis), the\n"
+           "types of the two variables of a derivative and the sizes and\n"
+           "the type of the elements of an array (see the `mfront-types`\n"
+           "page of the documentation). For instance, 2 denotes a vector\n"
+           "of the size of the space dimension and 26 a vector of size 3.\n"
            "l: name of the library\n"
            "f: law name\n"
            "h: modelling hypothesis")

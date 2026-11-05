@@ -16,6 +16,7 @@
 
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Material/IsotropicPlasticity.hxx"
 
 namespace tfel::material {
 
@@ -48,7 +49,7 @@ namespace tfel::material {
    * \sigma_{\mathrm{eq}}^{D}=
    * \sqrt{3}\,\sqrt[6]{J_{2}^{3} - c\,J_{3}^{2}}
    * \f]
-   * where \(J_{2}\) and \(J_{3}\) are the first and second invariants
+   * where \(J_{2}\) and \(J_{3}\) are the second and third invariants
    * of the deviatoric part of the stress tensor
    * \tparam StressStensor: type of the stress tensor
    * \param[in] sig: stress tensor

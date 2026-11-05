@@ -100,11 +100,12 @@ namespace mfront {
       throw_if(!this->package.empty(), "package name already defined");
       throw_if(current == end, "unexpected end of file");
       const auto p = current->value;
-      throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, true),
+      throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false),
                "invalid package name '" + p + "'");
       for (const auto c : p) {
-        if (isalpha(c)) {
-          throw_if(!islower(c), "invalid package name '" + p + "'");
+        const auto uc = static_cast<unsigned char>(c);
+        if (isalpha(uc)) {
+          throw_if(!islower(uc), "invalid package name '" + p + "'");
         }
       }
       throw_if(++current == end, "unexpected end of file");
@@ -133,8 +134,8 @@ namespace mfront {
                           ? mpd.className
                           : mpd.material + "_" + mpd.className;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-#if !((defined _WIN32) && (defined _MSC_VER))
     auto& l = d.getLibrary(lib);
+#if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     // the jni part
@@ -349,7 +350,7 @@ namespace mfront {
     writeTFELVersionSymbol(srcFile, name);
     writeUnitSystemSymbol(srcFile, name, mpd);
     writeInterfaceSymbol(srcFile, name, "Java");
-    writeLawSymbol(srcFile, name, mpd.material);
+    writeLawSymbol(srcFile, name, mpd.law);
     writeMaterialSymbol(srcFile, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile, name,
                                      MaterialKnowledgeType::MATERIALPROPERTY);

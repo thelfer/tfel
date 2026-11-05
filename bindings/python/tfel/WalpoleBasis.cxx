@@ -23,50 +23,34 @@ void declareWalpoleBasis(pybind11::module_& m) {
       "This file enables some operations in different Walpole bases relative\n"
       "to different cases of symmetry for st2tost2")
       .def(pybind11::init<>())
-      .def("p",
-           +[](const TIBasis&, const tvector<3u, double>& n) {
-             return TIBasis::p(n);
-           },
-           pybind11::arg("n"))
-      .def("q",
-           +[](const TIBasis&, const tvector<3u, double>& n) {
-             return TIBasis::q(n);
-           },
-           pybind11::arg("n"))
-      .def("E1",
-           +[](const TIBasis&, const tvector<3u, double>& n) {
-             return TIBasis::E1(n);
-           },
-           pybind11::arg("n"))
-      .def("E2",
-           +[](const TIBasis&, const tvector<3u, double>& n) {
-             return TIBasis::E2(n);
-           },
-           pybind11::arg("n"))
-      .def("E3",
-           +[](const TIBasis&, const tvector<3u, double>& n) {
-             return TIBasis::E3(n);
-           },
-           pybind11::arg("n"))
-      .def("E4",
-           +[](const TIBasis&, const tvector<3u, double>& n) {
-             return TIBasis::E4(n);
-           },
-           pybind11::arg("n"))
-      .def("F",
-           +[](const TIBasis&, const tvector<3u, double>& n) {
-             return TIBasis::F(n);
-           },
-           pybind11::arg("n"))
-      .def("G",
-           +[](const TIBasis&, const tvector<3u, double>& n) {
-             return TIBasis::G(n);
-           },
-           pybind11::arg("n"))
-      .def("components",
-           +[](const TIBasis&,
-               const tvector<3u, double>& n, const st2tost2<3u, double>& P) {
-             return TIBasis::components(n, P);
-           },
-           pybind11::arg("n"), pybind11::arg("P"));
+      .def_static(
+          "p", +[](const tvector<3u, double>& n) { return TIBasis::p(n); },
+          pybind11::arg("n"))
+      .def_static(
+          "q", +[](const tvector<3u, double>& n) { return TIBasis::q(n); },
+          pybind11::arg("n"))
+      .def_static(
+          "E1", +[](const tvector<3u, double>& n) { return TIBasis::E1(n); },
+          pybind11::arg("n"))
+      .def_static(
+          "E2", +[](const tvector<3u, double>& n) { return TIBasis::E2(n); },
+          pybind11::arg("n"))
+      .def_static(
+          "E3", +[](const tvector<3u, double>& n) { return TIBasis::E3(n); },
+          pybind11::arg("n"))
+      .def_static(
+          "E4", +[](const tvector<3u, double>& n) { return TIBasis::E4(n); },
+          pybind11::arg("n"))
+      .def_static(
+          "F", +[](const tvector<3u, double>& n) { return TIBasis::F(n); },
+          pybind11::arg("n"))
+      .def_static(
+          "G", +[](const tvector<3u, double>& n) { return TIBasis::G(n); },
+          pybind11::arg("n"))
+      .def_static(
+          "components",
+          +[](const tvector<3u, double>& n, const st2tost2<3u, double>& P) {
+            return TIBasis::components(n, P);
+          },
+          pybind11::arg("n"), pybind11::arg("P"));
 }

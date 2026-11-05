@@ -15,6 +15,10 @@
 #define LIB_MFRONT_ABAQUS_ABAQUSCONVERT_HXX
 
 #include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/Abaqus/Abaqus.hxx"
 
 namespace abaqus {
 

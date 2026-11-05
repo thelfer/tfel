@@ -1,0 +1,18 @@
+@DSL Implicit;
+@Behaviour DDIF2StressPotentialTest;
+@Description {
+  "The DDIF2 stress potential of the StandardElastoViscoPlasticity brick."
+}
+
+@ModellingHypotheses {".+"};
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "DDIF2" {
+    young_modulus : 150e9,
+    poisson_ratio : 0.3,
+    fracture_stresses : {150e6, 1e11, 150e6},
+    softening_slopes : {-75e9, -50e9, -25e9}
+  }
+};

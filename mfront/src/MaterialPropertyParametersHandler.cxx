@@ -93,10 +93,11 @@ namespace mfront {
          << "  errno = mfront_errno_old;\n"
          << "  return;\n"
          << "}\n"
-         << "size_t ln = 1u;\n"
+         << "size_t ln = 0u;\n"
          << "while(!pfile.eof()){\n"
          << "  auto line = std::string{};\n"
          << "  std::getline(pfile,line);\n"
+         << "  ++ln;\n"
          << "  auto tokens = tokenize(line);\n"
          << "  auto set_msg = [this,ln,line](const std::string& m){\n"
          << "    this->msg = \"" << args.material_property_name
@@ -151,9 +152,11 @@ namespace mfront {
       }
       os << "else {\n"
          << "set_msg(\"invalid parameter '\"+tokens[0]+\"'\");\n"
+         << "errno = mfront_errno_old;\n"
          << "return;\n"
          << "}\n"
-         << "}\n";
+         << "}\n"
+         << "errno = mfront_errno_old;\n";
     }
     os << "this->ok=true;\n"
        << "}\n"

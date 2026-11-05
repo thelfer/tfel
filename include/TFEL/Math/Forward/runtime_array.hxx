@@ -1,5 +1,5 @@
 /*!
- * \file  include/TFEL/Math/Forward/fsarray.hxx
+ * \file  include/TFEL/Math/Forward/runtime_array.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 19 sept. 2011
@@ -11,11 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_FORWARD_FSARRAY_HXX
-#define LIB_TFEL_MATH_FORWARD_FSARRAY_HXX
+#ifndef LIB_TFEL_MATH_FORWARD_RUNTIME_ARRAY_HXX
+#define LIB_TFEL_MATH_FORWARD_RUNTIME_ARRAY_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
+#include "TFEL/Math/Array/RuntimeArrayPolicies.hxx"
 
 namespace tfel::math {
 
@@ -36,4 +37,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_FORWARD_FSARRAY_HXX */
+#endif /* LIB_TFEL_MATH_FORWARD_RUNTIME_ARRAY_HXX */

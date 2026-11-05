@@ -1,0 +1,27 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// multiaxial expansion at a constant rate
+@InternalStateVariable 'Porosity' 1.e-2;
+@ImposedStrain 'EXX' {0 : 0, 1 : 3e-3};
+@ImposedStrain 'EYY' {0 : 0, 1 : -1e-3};
+@ImposedStrain 'EZZ' {0 : 0, 1 : 2e-3};
+@ImposedStrain 'EXY' {0 : 0, 1 : 1e-3};
+@ImposedStrain 'EXZ' {0 : 0, 1 : -5e-4};
+@ImposedStrain 'EYZ' {0 : 0, 1 : 2e-4};
+@Times{0, 1 in 10};
+
+// The implicit scheme gives df = (1 - f) * tr(de), so that
+// 1 - f = (1 - f0) / (1 + tr(de)) ** (number of steps)
+@Real 'dtr' '4e-3 / 10';
+@Test<function> 'Porosity' '1 - (1 - 1e-2) / (1 + dtr) ** (10 * t)' 1e-12;
+
+// the stress does not depend on the porosity
+@Real 'l' '200e9 * 0.3 / ((1 + 0.3) * (1 - 2 * 0.3))';
+@Real 'm' '200e9 / (2 * (1 + 0.3))';
+@Test<function> 'SXX' 'l * (EXX + EYY + EZZ) + 2 * m * EXX' 1e-1;
+@Test<function> 'SYY' 'l * (EXX + EYY + EZZ) + 2 * m * EYY' 1e-1;
+@Test<function> 'SXY' '2 * m * EXY' 1e-1;

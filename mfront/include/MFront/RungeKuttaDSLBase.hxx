@@ -22,8 +22,6 @@ namespace mfront {
   struct RungeKuttaDSLBase : public BehaviourDSLBase<RungeKuttaDSLBase> {
     //! \brief code block name
     static const char* const RungeKuttaUpdateAuxiliaryStateVariables;
-    //! \return a generic description of DSL based on this class
-    static std::string getDescription();
     /*!
      * \brief constructor
      *\param[in] opts: options passed to the DSL

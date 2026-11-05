@@ -390,6 +390,9 @@ namespace mtest {
           log << "** prediction using elastic stiffness computed from material "
                  "properties\n";
         } else if (this->options.ppolicy ==
+                   PredictionPolicy::SECANTOPERATORPREDICTION) {
+          log << "** prediction using secant operator\n";
+        } else if (this->options.ppolicy ==
                    PredictionPolicy::TANGENTOPERATORPREDICTION) {
           log << "** prediction using tangent operator\n";
         } else {
@@ -440,7 +443,7 @@ namespace mtest {
 
   void SchemeBase::setOutputFilePrecision(const unsigned int p) {
     tfel::raise_if(this->oprec != -1,
-                   "SchemeBase::setOutputFileName: "
+                   "SchemeBase::setOutputFilePrecision: "
                    "output file precision already defined");
     this->oprec = static_cast<int>(p);
   }
@@ -458,7 +461,7 @@ namespace mtest {
 
   void SchemeBase::setResidualFilePrecision(const unsigned int p) {
     tfel::raise_if(this->rprec != -1,
-                   "SchemeBase::setResidualFileName: "
+                   "SchemeBase::setResidualFilePrecision: "
                    "residual file precision already defined");
     this->rprec = static_cast<int>(p);
   }

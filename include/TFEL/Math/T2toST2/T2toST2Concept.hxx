@@ -81,7 +81,7 @@ namespace tfel::math {
    * \param[in] t: linear application transforming a symmetric tensor in an
    * unsymmetric tensor
    */
-  TFEL_HOST_DEVICE constexpr void abs(const T2toST2Concept auto&) noexcept;
+  TFEL_HOST_DEVICE constexpr auto abs(const T2toST2Concept auto&) noexcept;
   /*!
    * \brief compute de derivative of the push-forward of a symmetric
    * second order tensor with respect to the deformation gradient, i.e.

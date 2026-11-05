@@ -58,7 +58,7 @@ void declareStudyCurrentState(pybind11::module_& m) {
            pybind11::arg("n"), pybind11::arg("t"))
       .def("getStructureCurrentState", getStructureCurrentState,
            pybind11::arg("n"),
-           pybind11::return_value_policy::reference)
+           pybind11::return_value_policy::reference_internal)
       .def("getFailureStatus", &mtest::StudyCurrentState::getFailureStatus)
       .def("getFailureCriterionStatus",
            &mtest::StudyCurrentState::getFailureCriterionStatus)

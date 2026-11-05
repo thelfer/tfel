@@ -42,6 +42,11 @@ struct ScalarNewtonRaphsonTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::get<0>(r));
     TFEL_TESTS_ASSERT(std::abs(std::get<1>(r) - std::sqrt(double(13))) <
                       1.e-13);
+    // the estimate given by the last allowed iteration is checked
+    auto fdf2 = [](const double x) { return std::make_tuple(x - 1, 1.); };
+    const auto r2 = tfel::math::scalarNewtonRaphson(fdf2, c, 0., 1);
+    TFEL_TESTS_ASSERT(std::get<0>(r2));
+    TFEL_TESTS_ASSERT(std::abs(std::get<1>(r2) - 1) < 1.e-14);
     return this->result;
   }  // end of execute
 };

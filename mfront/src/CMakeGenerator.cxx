@@ -86,25 +86,60 @@ namespace mfront {
       getLogStream() << "generating 'src/CMakeList.txt'\n";
     }
     auto& cm = ConfigurationManager::get();
+    // compilers and flags defined in configuration files are only supported
+    // by the make generator
+    for (const auto l :
+         {ConfigurationManager::CXX, ConfigurationManager::C,
+          ConfigurationManager::CUDA, ConfigurationManager::HIP}) {
+      throw_if(cm.getCompiler(l).has_value(),
+               "compilers defined in configuration files are not supported "
+               "by the cmake generator, use the make generator "
+               "(--generator=make)");
+      for (const auto c : {ConfigurationManager::PREPROCESSOR_FLAGS,
+                           ConfigurationManager::COMPILATION_FLAGS}) {
+        throw_if(cm.getCompilationOptions(l, c).has_value(),
+                 "compilation options defined in configuration files are not "
+                 "supported by the cmake generator, use the make generator "
+                 "(--generator=make)");
+      }
+    }
+    throw_if(
+        cm.getLinkerOptions(ConfigurationManager::LINKER_FLAGS).has_value(),
+        "linker flags defined in configuration files are not supported "
+        "by the cmake generator, use the make generator "
+        "(--generator=make)");
     MFrontLockGuard lock;
     std::ofstream m("src/CMakeLists.txt");
     m.exceptions(std::ios::badbit | std::ios::failbit);
     throw_if(!m, "can't open file 'src/CMakeList.txt'");
-    auto append = [&m](const std::string& n, const std::string& v) {
-      if ((tfel::utilities::starts_with(v, "$(shell ")) ||
+    // command of a $(shell ...) value, in which tfel-config is replaced by
+    // the executable found by find_program
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
+    auto spawned_command = [&tfel_config](const std::string& v) {
+      const auto c = v.substr(8, v.size() - 9);
+      if (tfel::utilities::starts_with(c, tfel_config + ' ')) {
+        return "${TFEL_CONFIG}" + c.substr(tfel_config.size());
+      }
+      return c;
+    };
+    auto append = [&m, &spawned_command](const std::string& n,
+                                         const std::string& v) {
+      if ((tfel::utilities::starts_with(v, "$(shell ")) &&
           (tfel::utilities::ends_with(v, ")"))) {
-        m << "append_spawn(" << n << " " << v.substr(8, v.size() - 9) << ")\n";
+        m << "append_spawn(" << n << " " << spawned_command(v) << ")\n";
       } else {
         m << "list(APPEND " << n << " " << v << ")\n";
       }
     };
     // spawn without calling seperate_arguments
-    auto append2 = [&m](const std::string& n, const std::string& v) {
-      if ((tfel::utilities::starts_with(v, "$(shell ")) ||
+    auto append2 = [&m, &spawned_command](const std::string& n,
+                                          const std::string& v) {
+      if ((tfel::utilities::starts_with(v, "$(shell ")) &&
           (tfel::utilities::ends_with(v, ")"))) {
-        m << "append_spawn2(" << n << " " << v.substr(8, v.size() - 9) << ")\n";
+        m << "append_spawn2(" << n << " " << spawned_command(v) << ")\n";
       } else {
-        m << "list(APPEND " << n << " " << v << ")\n";
+        // bracket argument, so that spaces and semicolons are kept
+        m << "list(APPEND " << n << " [==[" << v << "]==])\n";
       }
     };
     // some target' names are reserved by CMake
@@ -156,8 +191,9 @@ namespace mfront {
       << "  set(TFELHOME [==[" + tfel::getInstallPath() + "]==])\n"
       << "endif(TFEL_INSTALL_PATH)\n"
       << "\n"
-      << "find_program(TFEL_CONFIG  " << tfel::getTFELConfigExecutableName()
-      << " [==[${TFELHOME}/bin]==])\n"
+      << "find_program(TFEL_CONFIG " << tfel_config
+      << " PATHS \"${TFELHOME}/bin\" NO_DEFAULT_PATH)\n"
+      << "find_program(TFEL_CONFIG " << tfel_config << ")\n"
       << "message(STATUS \"tfel-config         : ${TFEL_CONFIG}\")\n"
       << "\n";
     switch (o.olevel) {
@@ -213,7 +249,7 @@ namespace mfront {
       return r;
     }();
     if (include_directories.size() == 1) {
-      m << "include_directories(" << include_directories[0] << ")\n";
+      m << "include_directories([==[" << include_directories[0] << "]==])\n";
     } else {
       m << "set(INCLUDE_DIRECTORIES)\n";
       for (const auto& d : include_directories) {

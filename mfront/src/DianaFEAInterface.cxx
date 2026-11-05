@@ -167,8 +167,6 @@ namespace mfront {
     systemCall::mkdir("include/MFront/DianaFEA");
     systemCall::mkdir("dianafea");
 
-    //
-    systemCall::mkdir("abaqus");
     try {
       // copy umat.cpp locally
       MFrontLockGuard lock;
@@ -256,9 +254,6 @@ namespace mfront {
         << "#include\"TFEL/Material/" << bd.getClassName() << ".hxx\"\n";
     if (bd.getAttribute(BehaviourData::profiling, false)) {
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
-    }
-    if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "#include\"MFront/DianaFEA/DianaFEARotationMatrix.hxx\"\n";
     }
     out << "#include\"MFront/DianaFEA/"
            "DianaFEAStressFreeExpansionHandler.hxx\"\n\n"
@@ -522,11 +517,10 @@ namespace mfront {
             "unsupported behaviour type");
       }
       out << "//! space dimension\n"
-          << "static " << constexpr_c << " unsigned short N "
-          << "= "
-             "tfel::material::ModellingHypothesisToSpaceDimension<tfel::"
-             "material:"
-             ":ModellingHypothesis::TRIDIMENSIONAL>::value;\n"
+          << "static " << constexpr_c << " unsigned short N = "
+          << "tfel::material::ModellingHypothesisToSpaceDimension<"
+          << "tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ">::value;\n"
           << "// tiny vector size\n"
           << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
           << "// symmetric tensor size\n"
@@ -606,8 +600,12 @@ namespace mfront {
         if (bd.getAttribute(
                 BehaviourDescription::requiresThermalExpansionCoefficientTensor,
                 false)) {
+          // the thermal expansion coefficient tensor has the symmetry of
+          // the behaviour
           out << "static " << constexpr_c
-              << " unsigned short thermalExpansionPropertiesOffset = 1u;\n";
+              << " unsigned short thermalExpansionPropertiesOffset = "
+              << ((bd.getSymmetryType() == mfront::ORTHOTROPIC) ? "3u" : "1u")
+              << ";\n";
         } else {
           out << "static " << constexpr_c
               << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
@@ -627,8 +625,12 @@ namespace mfront {
         if (bd.getAttribute(
                 BehaviourDescription::requiresThermalExpansionCoefficientTensor,
                 false)) {
+          // the thermal expansion coefficient tensor has the symmetry of
+          // the behaviour
           out << "static " << constexpr_c
-              << " unsigned short thermalExpansionPropertiesOffset = 3u;\n";
+              << " unsigned short thermalExpansionPropertiesOffset = "
+              << ((bd.getSymmetryType() == mfront::ORTHOTROPIC) ? "3u" : "1u")
+              << ";\n";
         } else {
           out << "static " << constexpr_c
               << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";

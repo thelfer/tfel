@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include <utility>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/FSAlgorithm/inner_product.hxx"
@@ -25,7 +26,7 @@
 #include "TFEL/Math/General/RunTimeCheck.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/tvector.hxx"
-#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel::math {
 
@@ -49,7 +50,7 @@ namespace tfel::math {
     //
     TVectorTMatrixExpr() = delete;
     //
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return RunTimeProperties();
     }
@@ -94,9 +95,8 @@ namespace tfel::math {
       size_type i;
     };  // end of struc VectorConstIterator
 
-    TFEL_HOST_DEVICE constexpr TVectorTMatrixExpr(const A& l,
-                                                  const B& r) noexcept
-        : a(l), b(r) {}
+    TFEL_HOST_DEVICE constexpr TVectorTMatrixExpr(A l, B r) noexcept
+        : a(std::forward<A>(l)), b(std::forward<B>(r)) {}
 
     TFEL_HOST_DEVICE constexpr auto operator()(
         const IndexType i) const noexcept {

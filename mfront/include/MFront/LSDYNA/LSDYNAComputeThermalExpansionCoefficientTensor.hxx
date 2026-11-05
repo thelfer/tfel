@@ -200,6 +200,34 @@ namespace lsdyna {
                         ThermalExpansionCoefficientTensor&);
   };  // end of struct LSDYNAComputeThermalExpansionCoefficientTensor
 
+  /*!
+   * Partial specialisation for finite strain behaviours
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            LSDYNASymmetryType stype>
+  struct TFEL_VISIBILITY_LOCAL LSDYNAComputeThermalExpansionCoefficientTensor<
+      lsdyna::STANDARDFINITESTRAINBEHAVIOUR,
+      H,
+      stype> {
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    /*!
+     * \brief compute the thermal expansion coefficient tensor.
+     * \param[in]  props : material properties
+     * \param[out] A     : thermal expansion coefficient tensor
+     */
+    template <typename real>
+    static void exe(
+        const real* const props,
+        typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,
+                                     real,
+                                     false>::ThermalExpansionCoefficientTensor&
+            A) {
+      LSDYNAComputeThermalExpansionCoefficientTensor<
+          lsdyna::STANDARDSTRAINBASEDBEHAVIOUR, H, stype>::exe(props, A);
+    }
+  };  // end of struct LSDYNAComputeThermalExpansionCoefficientTensor
+
 }  // end of namespace lsdyna
 
 #endif /* LIB_MFRONT_LSDYNACOMPUTETHERMALEXPANSIONTENSOR_HXX */

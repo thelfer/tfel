@@ -27,7 +27,7 @@ extern "C" {
  * a simple alias. This is the prototype of the external
  * behaviours used by the `Cyrano` fuel performance code.
  */
-typedef void(TFEL_ADDCALL_PTR CyranoBehaviourPtr)(
+typedef void(CYRANO_ADDCALL_PTR CyranoBehaviourPtr)(
     const CyranoIntegerType* const, /* nombre de composantes des contraintes  */
     const CyranoRealType* const, /* incrément de temps                     */
     const CyranoRealType* const, /* matrice de passage du repère élement

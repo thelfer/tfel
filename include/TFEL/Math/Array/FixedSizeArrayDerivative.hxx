@@ -232,10 +232,10 @@ namespace tfel::math {
    public:
     //! \brief result
     using type = std::conditional_t<
-        areCompatible && isInvalid<NumType>(),
+        (!areCompatible) || isInvalid<NumType>(),
         tfel::meta::InvalidType,
         FixedSizeArrayDerivative<result_type<Array11, Array21, OpPlus>,
-                                 result_type<Array11, Array21, OpPlus>>>;
+                                 result_type<Array12, Array22, OpPlus>>>;
   };
   /*!
    * \brief partial specialisation for the addition of two array derivatives.
@@ -275,10 +275,10 @@ namespace tfel::math {
    public:
     //! \brief result
     using type = std::conditional_t<
-        areCompatible && isInvalid<NumType>(),
+        (!areCompatible) || isInvalid<NumType>(),
         tfel::meta::InvalidType,
         FixedSizeArrayDerivative<result_type<Array11, Array21, OpMinus>,
-                                 result_type<Array11, Array21, OpPlus>>>;
+                                 result_type<Array12, Array22, OpPlus>>>;
   };
   //   /*!
   //    * \brief partial specialisation for the addition of two array

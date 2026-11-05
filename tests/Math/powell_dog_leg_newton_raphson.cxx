@@ -23,6 +23,8 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
+// included first to check that both solvers can be used in the same file
+#include "TFEL/Math/TinyNewtonRaphsonSolver.hxx"
 #include "TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"
 
 struct PowellDogLegNewtonRaphsonSolver

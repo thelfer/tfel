@@ -39,7 +39,7 @@ namespace tfel::math {
     //! a simple alias
     using NumType = numeric_type<A>;
     //! \return the runtime properties
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
         const noexcept {
       return EmptyRunTimeProperties();
     }
@@ -63,7 +63,7 @@ namespace tfel::math {
      * \param[in] i: row number
      * \param[in] j: column number
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr NumType operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr NumType operator()(
         const IndexType i, const IndexType j) const noexcept {
       return this->a(j, i);
     }  // end of operator()

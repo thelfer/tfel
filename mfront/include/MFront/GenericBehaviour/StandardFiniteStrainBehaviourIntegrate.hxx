@@ -17,6 +17,7 @@
 
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include "MFront/GenericBehaviour/GenericBehaviourTraits.hxx"
 #include "MFront/GenericBehaviour/Integrate.hxx"
 
 namespace mfront::gb::finite_strain {
@@ -64,9 +65,9 @@ namespace mfront::gb::finite_strain {
           const auto F0zz = d.s0.internal_state_variables
                                 [Traits::axial_deformation_gradient_offset];
           if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
-            F0[2] += F0zz;
+            F0[2] = F0zz;
           } else {
-            F0[1] += F0zz;
+            F0[1] = F0zz;
           }
         } else {
           reportError(d,
@@ -157,9 +158,9 @@ namespace mfront::gb::finite_strain {
           const auto F0zz = d.s0.internal_state_variables
                                 [Traits::axial_deformation_gradient_offset];
           if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
-            F0[2] += F0zz;
+            F0[2] = F0zz;
           } else {
-            F0[1] += F0zz;
+            F0[1] = F0zz;
           }
         } else {
           reportError(d,
@@ -200,9 +201,9 @@ namespace mfront::gb::finite_strain {
             const auto F1zz = d.s1.internal_state_variables
                                   [Traits::axial_deformation_gradient_offset];
             if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
-              F1[2] += F1zz;
+              F1[2] = F1zz;
             } else {
-              F1[1] += F1zz;
+              F1[1] = F1zz;
             }
           } else {
             reportError(d,
@@ -278,11 +279,11 @@ namespace mfront::gb::finite_strain {
           const auto F1zz = d.s1.internal_state_variables
                                 [Traits::axial_deformation_gradient_offset];
           if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
-            F0[2] += F0zz;
-            F1[2] += F1zz;
+            F0[2] = F0zz;
+            F1[2] = F1zz;
           } else {
-            F0[1] += F0zz;
-            F1[1] += F1zz;
+            F0[1] = F0zz;
+            F1[1] = F1zz;
           }
         } else {
           reportError(d,

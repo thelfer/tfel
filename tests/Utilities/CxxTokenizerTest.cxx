@@ -58,6 +58,7 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::Standard);
     TFEL_TESTS_ASSERT(t[0].value == "test");
+    TFEL_TESTS_ASSERT(t[0].comment == "a comment \"with string\"");
     t.clear();
     t.parseString("//!< a comment \"with string\"");
     TFEL_TESTS_ASSERT(t.size() == 1u);
@@ -101,6 +102,7 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::Standard);
     TFEL_TESTS_ASSERT(t[0].value == "test");
+    TFEL_TESTS_ASSERT(t[0].comment == "a comment // C++ comment");
     /* strings */
     t.clear();
     t.parseString("a b c d");
@@ -254,12 +256,18 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_THROW(t.parseString("-2LLU"), std::runtime_error);
     // binary integer
     this->check("0b0101");
+    this->check("0b0101u");
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("0b"), std::runtime_error);
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("0b2"), std::runtime_error);
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("0b020"), std::runtime_error);
+    // hexadecimal integer
+    this->check("0x1F");
+    this->check("0X1fUL");
+    t.clear();
+    TFEL_TESTS_CHECK_THROW(t.parseString("0x1p3"), std::runtime_error);
     return this->result;
   }  // end of execute()
  private:

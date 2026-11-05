@@ -538,14 +538,16 @@ namespace mfront {
       if (mb.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
+        // the thermal expansion coefficient tensor has the symmetry of
+        // the behaviour
         out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 1u;\n";
+            << " unsigned short thermalExpansionPropertiesOffset = "
+            << ((mb.getSymmetryType() == mfront::ORTHOTROPIC) ? "3u" : "1u")
+            << ";\n";
       } else {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
       }
-      out << "static " << constexpr_c
-          << " unsigned short orthotropicAxesOffset = 0u;\n";
     } else if (mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
       out << "static " << constexpr_c
           << " AnsysSymmetryType etype = ansys::ORTHOTROPIC;\n";
@@ -561,21 +563,30 @@ namespace mfront {
       if (mb.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
+        // the thermal expansion coefficient tensor has the symmetry of
+        // the behaviour
         out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 3u;\n";
+            << " unsigned short thermalExpansionPropertiesOffset = "
+            << ((mb.getSymmetryType() == mfront::ORTHOTROPIC) ? "3u" : "1u")
+            << ";\n";
       } else {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
       }
-      out << "static " << constexpr_c
-          << " unsigned short orthotropicAxesOffset = "
-             "AnsysOrthotropicAxesOffset<N>::value;\n";
     } else {
       tfel::raise(
           "AnsysInterface::writeAnsysBehaviourTraits: "
           "unsupported behaviour type.\n"
           "The ansys interface only support isotropic or "
           "orthotropic behaviour at this time.");
+    }
+    if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
+      out << "static " << constexpr_c
+          << " unsigned short orthotropicAxesOffset = "
+             "AnsysOrthotropicAxesOffset<N>::value;\n";
+    } else {
+      out << "static " << constexpr_c
+          << " unsigned short orthotropicAxesOffset = 0u;\n";
     }
     out << "}; // end of class AnsysTraits\n\n";
   }
@@ -584,6 +595,35 @@ namespace mfront {
       std::ostream& out) const {
     out << "mg.setModellingHypothesis(h);\n";
   }  // end of AnsysInterface::writeMTestFileGeneratorSetModellingHypothesis
+
+  void AnsysInterface::writeMTestFileGeneratorSetStrainAndStressTensors(
+      std::ostream& out, const Hypothesis h) const {
+    if (h == ModellingHypothesis::PLANESTRESS) {
+      // only the in-plane components are given (11, 22 and 12)
+      out << "const double mg_eto[4] = {STRAN[0], STRAN[1], 0, STRAN[2]};\n"
+          << "const double mg_deto[4] = "
+          << "{DSTRAN[0], DSTRAN[1], 0, DSTRAN[2]};\n"
+          << "const double mg_sig[4] = "
+          << "{mg_STRESS[0], mg_STRESS[1], 0, mg_STRESS[2]};\n"
+          << "mg.setStrainTensor(mg_eto);\n"
+          << "mg.setStrainTensorIncrement(mg_deto);\n"
+          << "mg.setStressTensor(mg_sig);\n";
+    } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      // the shear components are given in the order 12, 23, 13
+      out << "const double mg_eto[6] = {STRAN[0], STRAN[1], STRAN[2], "
+          << "STRAN[3], STRAN[5], STRAN[4]};\n"
+          << "const double mg_deto[6] = {DSTRAN[0], DSTRAN[1], DSTRAN[2], "
+          << "DSTRAN[3], DSTRAN[5], DSTRAN[4]};\n"
+          << "const double mg_sig[6] = {mg_STRESS[0], mg_STRESS[1], "
+          << "mg_STRESS[2], mg_STRESS[3], mg_STRESS[5], mg_STRESS[4]};\n"
+          << "mg.setStrainTensor(mg_eto);\n"
+          << "mg.setStrainTensorIncrement(mg_deto);\n"
+          << "mg.setStressTensor(mg_sig);\n";
+    } else {
+      UMATInterfaceBase::writeMTestFileGeneratorSetStrainAndStressTensors(out,
+                                                                          h);
+    }
+  }  // end of AnsysInterface::writeMTestFileGeneratorSetStrainAndStressTensors
 
   void AnsysInterface::writeInputFileExample(const BehaviourDescription& mb,
                                              const FileDescription& fd) const {
@@ -616,14 +656,27 @@ namespace mfront {
           msize = m.offset;
           msize += SupportedTypes::getTypeSize(m.type, m.arraySize);
         }
+        // orthotropic axes, given after the elastic and thermal expansion
+        // material properties
+        auto axes = std::vector<std::string>{};
+        if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
+          if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+              (h == ModellingHypothesis::PLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRESS)) {
+            axes = {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2"};
+          } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+            axes = {"FirstOrthotropicAxis_1",  "FirstOrthotropicAxis_2",
+                    "FirstOrthotropicAxis_3",  "SecondOrthotropicAxis_1",
+                    "SecondOrthotropicAxis_2", "SecondOrthotropicAxis_3"};
+          }
+        }
         // internal state variables
         const auto& persistentVarsHolder = d.getPersistentVariables();
         auto vs = SupportedTypes::TypeSize{};
         for (const auto& v : persistentVarsHolder) {
           vs += SupportedTypes::getTypeSize(v.type, v.arraySize);
         }
-        const auto vsize = vs.getValueForModellingHypothesis(h) +
-                           this->getStateVariablesOffset(mb, h);
+        const auto vsize = vs.getValueForModellingHypothesis(h);
         // external state variables
         const auto& externalStateVarsHolder = d.getExternalStateVariables();
         throw_if(
@@ -633,11 +686,31 @@ namespace mfront {
         out << "/com, Example for the '" << ModellingHypothesis::toString(h)
             << "' modelling hypothesis\n";
         out << "/com, List of material properties\n";
-        for (const auto& mp : mps.first) {
-          out << "/com, -" << mp.getExternalName() << "\n";
+        // one entry per element of an array of material properties
+        auto write_mp = [&out](const BehaviourMaterialProperty& m) {
+          if (m.arraySize == 1u) {
+            out << "/com, -" << m.getExternalName() << "\n";
+          } else {
+            for (unsigned short a = 0; a != m.arraySize; ++a) {
+              out << "/com, -" << m.getExternalName() << "[" << a << "]\n";
+            }
+          }
+        };
+        const auto pmp = std::next(
+            mps.first.begin(), mps.second.getValueForModellingHypothesis(h));
+        for (auto pm = mps.first.begin(); pm != pmp; ++pm) {
+          write_mp(*pm);
+        }
+        for (const auto& a : axes) {
+          out << "/com, -" << a << "\n";
+        }
+        for (auto pm = pmp; pm != mps.first.end(); ++pm) {
+          write_mp(*pm);
         }
         out << "tb,user,<mat_id>,<number of temperatures>,"
-            << msize.getValueForModellingHypothesis(h) << "\n"
+            << msize.getValueForModellingHypothesis(h) +
+                   static_cast<int>(axes.size())
+            << "\n"
             << "/com, you shall now declare your material properties\n"
             << "/com, using the tbtemp an tbdata commands.\n"
             << "/com, See the \"ANSYS USER Material Subroutine\" "
@@ -754,10 +827,11 @@ namespace mfront {
       return {true, current};
     } else if (key == "@AnsysStrainPerturbationValue") {
       check_interface_restriction();
-      throw_if(!this->compareToNumericalTangentOperator,
-               "time stepping is not enabled at this stage.\n"
-               "Use the @AnsysUseTimeSubStepping directive before "
-               "@AnsysStrainPerturbationValue");
+      throw_if(
+          !this->compareToNumericalTangentOperator,
+          "comparison to tangent operator is not enabled at this stage.\n"
+          "Use the @AnsysCompareToNumericalTangentOperator directive before "
+          "@AnsysStrainPerturbationValue");
       throw_if(current == end, "unexpected end of file");
       this->strainPerturbationValue = CxxTokenizer::readDouble(current, end);
       throw_if(current == end, "unexpected end of file");
@@ -999,9 +1073,11 @@ namespace mfront {
         auto o = size_t{};
         if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                             false)) {
-          if ((h == ModellingHypothesis::PLANESTRESS) ||
-              (h == ModellingHypothesis::AXISYMMETRICAL) ||
-              (h == ModellingHypothesis::PLANESTRAIN)) {
+          if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
+            o += 2u;
+          } else if ((h == ModellingHypothesis::PLANESTRESS) ||
+                     (h == ModellingHypothesis::AXISYMMETRICAL) ||
+                     (h == ModellingHypothesis::PLANESTRAIN)) {
             o += ansys::AnsysOrthotropicElasticPropertiesOffset<2u>::value;
           } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
             o += ansys::AnsysOrthotropicElasticPropertiesOffset<3u>::value;
@@ -1010,13 +1086,9 @@ namespace mfront {
         if (mb.getAttribute(
                 BehaviourDescription::requiresThermalExpansionCoefficientTensor,
                 false)) {
-          if ((h == ModellingHypothesis::PLANESTRESS) ||
-              (h == ModellingHypothesis::AXISYMMETRICAL) ||
-              (h == ModellingHypothesis::PLANESTRAIN)) {
-            o += ansys::AnsysOrthotropicElasticPropertiesOffset<2u>::value;
-          } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-            o += 3u;
-          }
+          // the thermal expansion coefficient tensor has the symmetry of the
+          // behaviour, which is orthotropic here
+          o += 3u;
         }
         return o;
       }();
@@ -1080,7 +1152,7 @@ namespace mfront {
                      "+6u)){\n"
               << "std::cerr << \"" << name
               << this->getFunctionNameForHypothesis("", h) << ": \"\n"
-              << "          << \"invalid number of state variables\\n\";\n"
+              << "          << \"invalid number of material properties\\n\";\n"
               << "*keycut = 1;\n"
               << "return;\n"
               << "}\n"
@@ -1124,7 +1196,7 @@ namespace mfront {
                      "+6u)){\n"
               << "std::cerr << \"" << name
               << this->getFunctionNameForHypothesis("", h) << ": \"\n"
-              << "          << \"invalid number of state variables\\n\";\n"
+              << "          << \"invalid number of material properties\\n\";\n"
               << "*keycut = 1;\n"
               << "return;\n"
               << "}\n"
@@ -1284,9 +1356,14 @@ namespace mfront {
         << " EPSPL,PROPS,coords,DROT,F0,F1,tsstif,EPSZZ,\n"
         << " var1,var2,var3,var4,var5,var6,var7,var8);\n";
     if (this->shallGenerateMTestFileOnFailure(mb)) {
+      // the entry point of the modelling hypothesis is named after the
+      // behaviour followed by the suffix of the hypothesis
+      // (getFunctionNameForHypothesis("", h) returns this suffix preceded by
+      // an underscore)
+      const auto suffix = this->getFunctionNameForHypothesis("", h).substr(1);
       out << "if(*keycut!=0){\n";
       this->generateMTestFileForHypothesis(out, mb, mb.getBehaviourType(), name,
-                                           "", h);
+                                           suffix, h);
       out << "}\n";
     }
     if (this->compareToNumericalTangentOperator) {
@@ -1322,17 +1399,19 @@ namespace mfront {
           << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
           << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
           << "deto[i] -= " << this->strainPerturbationValue << ";\n"
-          << "ansys::AnsysData d3 = {&sigf[0],&D[0],&sv[0],\n"
+          << "ansys::AnsysData d3 = {&sigb[0],&D[0],&sv[0],\n"
           << "                         SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
           << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
           << "                         STRAN,&deto[0],TEMP,DTEMP,PROPS,"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+          << sfeh << "};\n"
           << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ","
           << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
           << "return;\n"
           << "}\n"
           << "for(ansys::AnsysInt j=0;j!=*NTENS;++j){\n"
-          << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*"
+          << "nD[i*(*NTENS)+j] = (sigf[j]-sigb[j])/(2.*"
           << this->strainPerturbationValue << ");\n"
           << "}\n"
           << "}\n"
@@ -1340,7 +1419,7 @@ namespace mfront {
           << "m=0.;\n"
           << "mDt=0.;\n"
           << "mnDt=0.;\n"
-          << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
+          << "for(ansys::AnsysInt i=0;i!=(*NTENS)*(*NTENS);++i){\n"
           << "mDt=std::max(mDt,*(DDSDDE+i));\n"
           << "mnDt=std::max(mnDt,nD[i]);\n"
           << "m=std::max(m,std::abs(nD[i]-*(DDSDDE+i)));\n"
@@ -1365,12 +1444,6 @@ namespace mfront {
           << "std::cout << std::endl;\n"
           << "}\n";
     }
-    // if(AnsysInterface::hasFiniteStrainStrategy(mb)){
-    //   if(AnsysInterface::getFiniteStrainStrategy(mb)=="Native"){
-    // 	out <<
-    // "ansys::AnsysFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
-    //   }
-    // }
     out << "}\n\n";
   }
 
@@ -1424,7 +1497,7 @@ namespace mfront {
     out << name << "_base" << this->getFunctionNameForHypothesis("", h)
         << "(matId,elemId,kDomIntPt,kLayer,kSectPt,ldsetp,isubst,keycut,\n"
         << " nDirect,nShear,NTENS,NSTATV,NPROPS,TIME,DTIME,TEMP,DTEMP,\n"
-        << " STRESS,STATEV,DDSDDE,SEDEL,SEDPL,EPSEQ,eto,deto,\n"
+        << " STRESS,STATEV,CSE,SEDEL,SEDPL,EPSEQ,eto,deto,\n"
         << " EPSPL,PROPS,coords,DROT,F0,F1,tsstif,EPSZZ,\n"
         << " var1,var2,var3,var4,var5,var6,var7,var8);\n"
         << "if(*keycut==0){\n";
@@ -1502,7 +1575,7 @@ namespace mfront {
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       out << "// conversion to Ansys' convention\n"
           << "std::swap(eto[4],eto[5]);\n"
-          << "std::swap(eto[4],eto[5]);\n"
+          << "std::swap(deto[4],deto[5]);\n"
           << "// conversion to Abaqus conventions\n"
           << "std::swap(STRESS[4],STRESS[5]);\n";
     }
@@ -1550,17 +1623,22 @@ namespace mfront {
           << "T.importTab(STRESS);\n";
     }
     out << "const auto D = lsh1.convertToAbaqusTangentModuli(C,T);\n"
-        << "// converting the stress\n"
-        << "lsh1.convertToCauchyStress(STRESS);\n";
+        << "// converting the stress\n";
+    if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      out << "std::swap(STRESS[4],STRESS[5]);\n";
+    }
+    out << "lsh1.convertToCauchyStress(STRESS);\n";
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       out << "std::swap(STRESS[4],STRESS[5]);\n"
           << "tfel::math::ST2toST2View<3u,AnsysReal> Dt(DDSDDE);\n"
           << "Dt=D;\n"
-          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n"
+          << "AnsysTangentOperator<AnsysReal>::transpose(Dt);\n";
     } else {
       out << "tfel::math::ST2toST2View<2u,AnsysReal> Dt(DDSDDE);\n"
           << "Dt=D;\n"
-          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+          << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n"
+          << "AnsysTangentOperator<AnsysReal>::transpose(Dt);\n";
     }
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";

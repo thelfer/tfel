@@ -23,12 +23,12 @@ void declareMaterialPropertyDSL(pybind11::module_&);
 void declareMaterialPropertyDSL(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<MaterialPropertyDSL, AbstractDSL,
-                    std::shared_ptr<MaterialPropertyDSL>>(
-      m, "MaterialPropertyDSL",
+                   std::shared_ptr<MaterialPropertyDSL>>(
+      m, "MaterialPropertyDSL", pybind11::multiple_inheritance(),
       "Domain specific language handling material properties")
       .def("getMaterialPropertyDescription",
            &MaterialPropertyDSL::getMaterialPropertyDescription,
-           pybind11::return_value_policy::reference,
+           pybind11::return_value_policy::reference_internal,
            "Return the description of the material property treated by the "
            "DSL");
 }

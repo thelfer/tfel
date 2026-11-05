@@ -65,7 +65,7 @@ namespace mfront {
       const tokens_iterator) {
     tfel::raise_if((std::find(i.begin(), i.end(), "castem") != i.end()) ||
                        (std::find(i.begin(), i.end(), "Castem") != i.end()) ||
-                       (std::find(i.begin(), i.end(), "Cast3m") != i.end()),
+                       (std::find(i.begin(), i.end(), "Cast3M") != i.end()),
                    "CastemMaterialPropertyInterface::treatKeyword: "
                    "unsupported keyword '" +
                        k + "'");
@@ -143,7 +143,8 @@ namespace mfront {
       out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
           << "))||"
           << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
-          << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\\n\";\n"
@@ -192,6 +193,9 @@ namespace mfront {
           << ")){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
+          << "cerr << \"" << name << ": " << v.name
+          << " is below its lower bound (\"\n << " << v.name << " << \"<"
+          << b.lowerBound << ").\\n\";\n"
           << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name

@@ -35,13 +35,13 @@ namespace mfront {
       if (this->current->value == "(") {
         ci = ")";
       }
-      this->readSpecifiedToken("DSLBase::readInitialisationValue", "=");
+      ++(this->current);
       this->checkNotEndOfFile(
           "DSLBase::readInitialisationValue",
           "Expected to read the value of variable '" + n + "'");
       std::istringstream tmp(this->current->value);
       tmp >> value.second;
-      if (!tmp && (!tmp.eof())) {
+      if ((tmp.fail()) || (!tmp.eof())) {
         this->throwRuntimeError(
             "DSLBase::readInitialisationValue",
             "Could not read value of variable '" + n + "'.");

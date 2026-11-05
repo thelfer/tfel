@@ -318,6 +318,10 @@ namespace mfront::bbrick {
       getLogStream() << "DDIF2StressPotential::endTreatment: begin\n";
     }
     HookeStressPotential::endTreatment(bd, dsl);
+    checkNoNormalisationFactor(bd, "ef");
+    // jacobian blocks computed below
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, "eel");
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, "ef");
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "DDIF2StressPotential::endTreatment: " + m);
     };
@@ -581,6 +585,20 @@ namespace mfront::bbrick {
       }
       bd.setCode(h, BehaviourData::UpdateAuxiliaryStateVariables, uasv,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+    }
+    /* tangent operator */
+    if (this->gto) {
+      for (const auto h : bd.getModellingHypotheses()) {
+        if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+          continue;
+        }
+        CodeBlock to;
+        to.code =
+            "// change to cartesian coordinates\n"
+            "DDIF2Base::cyl2cart(this->Dt,this->angl);\n";
+        bd.setCode(h, BehaviourData::ComputeTangentOperator, to,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+      }
     }
   }  // end of endTreatment
 

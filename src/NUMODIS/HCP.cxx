@@ -102,7 +102,7 @@ namespace numodis {
 
   HCP::HCP(const HCP&) = default;
 
-  int HCP::getNsymmetries() const { return 96; }
+  int HCP::getNsymmetries() const { return 24; }
 
   int HCP::getNindices() const { return 4; }
 
@@ -148,17 +148,16 @@ namespace numodis {
     for (int i = 0; i != 3; i++)
       permutation[i] = (p / 3 == 0 ? (i + p) % 3 : (p - i) % 3);
 
-    // signes
-    int s = (k % 48) / 6;
+    // sign of the three first indices (rotation of pi around c)
+    const int s = ((k / 6) % 2 == 0) ? 1 : -1;
+    // sign of the fourth index (mirror orthogonal to c)
+    const int c = (k / 12 == 0) ? 1 : -1;
 
     std::vector<int> symmetry(4);
-    symmetry[0] =
-        (s / 4 == 0 ? indices[permutation[0]] : -indices[permutation[0]]);
-    symmetry[1] =
-        ((s / 2) % 2 == 0 ? indices[permutation[1]] : -indices[permutation[1]]);
-    symmetry[2] =
-        (s % 2 == 0 ? indices[permutation[2]] : -indices[permutation[2]]);
-    symmetry[3] = (k / 48 == 0 ? indices[3] : -indices[3]);
+    symmetry[0] = s * indices[permutation[0]];
+    symmetry[1] = s * indices[permutation[1]];
+    symmetry[2] = s * indices[permutation[2]];
+    symmetry[3] = c * indices[3];
 
     return symmetry;
   }
@@ -375,6 +374,17 @@ namespace numodis {
       if (isNew) planes.push_back(newPlane);
 
     } while (next_permutation(indices.begin(), indices.begin() + 3));
+
+    // opposite sign for c axis (if needed): only adds the planes which are
+    // not equivalent to the previous ones, e.g. for the {11-22} planes
+    if (indices[3] != 0) {
+      indices[3] = -indices[3];
+      do {
+        IPlane newPlane(indices);
+        if (std::find(planes.begin(), planes.end(), newPlane) == planes.end())
+          planes.push_back(newPlane);
+      } while (next_permutation(indices.begin(), indices.begin() + 3));
+    }
   }
 
   //=====================================================================
@@ -447,27 +457,15 @@ namespace numodis {
   */
   //===============================================================
   void HCP::GenerateOrthogonalVector(const IPlane& u, IDirection& v) const {
-    //---------------
-    // intialization
-    //---------------
-    int norm2 = 0;
-    std::vector<int> vrandom(4);
-
-    //--------------------
-    // while not found...
-    //--------------------
-    while (norm2 == 0) {
-      // generate a random vector
-      for (unsigned i = 0; i < 4; i++) vrandom[i] = rand();
-
-      // compute a vector normal to plane and vrandom
-      CrossProduct(IPlane(vrandom), u, v);
-
-      // norm of this vector
-      norm2 = v.getIndex()[0] * v.getIndex()[0] +
-              v.getIndex()[1] * v.getIndex()[1] +
-              v.getIndex()[2] * v.getIndex()[2] +
-              v.getIndex()[3] * v.getIndex()[3];
+    // intersection of u with the planes (1-100), (01-10) and (0001): the
+    // first non null one is a low-index direction contained in u
+    const std::vector<int> planes[3] = {
+        {1, -1, 0, 0}, {0, 1, -1, 0}, {0, 0, 0, 1}};
+    for (const auto& p : planes) {
+      CrossProduct(IPlane(p), u, v);
+      if (!v.IsNull()) {
+        return;
+      }
     }
   }
 

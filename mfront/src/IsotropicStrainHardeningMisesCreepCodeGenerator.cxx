@@ -46,7 +46,9 @@ namespace mfront {
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
     if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule)) {
-      os << this->bd.getCode(h, BehaviourData::BeforeFlowRule);
+      // not profiled: the variables declared by this code block are used by
+      // the flow rule
+      os << this->bd.getCodeBlock(h, BehaviourData::BeforeFlowRule).code;
     }
     os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n"
        << "}\n\n"
@@ -125,7 +127,7 @@ namespace mfront {
        << "}\n"
        << "}\n"
        << "}\n"
-       << "if(iter==this->iterMax){\n";
+       << "if(!converge){\n";
     if (getDebugMode()) {
       os << "std::cout << \"" << this->bd.getClassName()
          << "::NewtonIntegration() : no convergence after \" "

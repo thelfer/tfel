@@ -13,11 +13,13 @@
 
 #include <memory>
 #include <stdexcept>
+#include "TFEL/Raise.hxx"
 #include "TFEL/System/ThreadPool.hxx"
 
 namespace tfel::system {
 
   ThreadPool::ThreadPool(const size_t n) {
+    raise_if(n == 0, "ThreadPool::ThreadPool: invalid number of threads (0)");
     this->statuses.resize(n, ThreadPool::Status::IDLE);
     for (size_t i = 0; i < n; ++i) {
       auto f = [this, i] {

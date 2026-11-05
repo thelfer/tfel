@@ -439,7 +439,7 @@ que en el caso de `@MaterialLaw`.
 ### Instrucciones de compilación de librerías
 
 Hay tres instrucciones relacionadas con la compilación de fuentes. Las
-instrucciones `@Include` y `@Link` tienen una importancia particular
+instrucciones `@Includes` y `@Link` tienen una importancia particular
 debido a que permiten utilizar características definidas en librerías
 `C++` externas.
 
@@ -527,12 +527,12 @@ fc.setDefaultValue(1.e-2);
 ~~~~
 
 Para el analizador `Model` unas instrucciones específicas,
-`@GlobalParameter` para definir los parámetros del modelo que se
+`@Parameter` para definir los parámetros del modelo que se
 podrán usar en otros modelos, y `@LocalParameter` para definir
 parámetros especializados del modelo actual.
 
 ~~~~{.cpp}
-@GlobalParameter real a;
+@Parameter real a;
 a.setDefaultValue(1.23);
 @LocalParameter real b;
 b.setDefaultValue(1.23);
@@ -620,7 +620,7 @@ constante. Esta instrucción es sinónima de la instrucción
 `@StaticVariable` para una variable real.
 
 ~~~~{.cpp}
-@Constant A 1.234e56;
+@Constant A = 1.234e56;
 ~~~~
 
 Modelos puntuales simples
@@ -744,14 +744,14 @@ propiedades de material extra y serán usadas por la interfaz antes de la
 integración del comportamiento.
 
 ~~~~{.cpp}
-@RequireStiffnessTensor true;
+@RequireStiffnessTensor;
 ~~~~
 
 `@RequireThermalExpansionCoefficientTensor` requiere que el código
 calcule el tensor del coeficiente de expansión térmica.
 
 ~~~~{.cpp}
-@RequireThermalExpansionCoefficientTensor true;
+@RequireThermalExpansionCoefficientTensor;
 ~~~~
 
 `@MaterialProperty` permite al usuario una varias propiedades del
@@ -1021,6 +1021,8 @@ Siendo las siguientes opciones disponibles:
 - `--version`: muestra la versión instalada. También se puede usar como
   `–v`.
 - `--xml-output`: salida xml de control ('No' por defecto).
+- `--xml-output-file`: nombre del archivo de salida xml, que prevalece
+  sobre la palabra clave `@XMLOutputFile`.
 
 ![Ilustración 6: --commands-list, instrucciones de `MTest`](img/tutorial-spanish-6.png){width="4.975250437445319in" height="9.10625in"}
 
@@ -1132,8 +1134,8 @@ por la variable `t`.
 //Evolución lineal
 @Evolution 'Pressure' {0:0.,1.:1.e5};
 //Función
-@Real P0 2.e5
-@Real P1 4.e5
+@Real 'P0' 2.e5;
+@Real 'P1' 4.e5;
 @Evolution<function> 'Pressure' 'P0+(P1-P0)\*t\*\*2';
 ~~~~
 
@@ -1151,8 +1153,8 @@ se aceptan dos valores, evolution y function.
 //Evolución lineal
 @ExternalStateVariable 'Temperature' {0:293.15,1.:800};
 //Función
-@Real T0 293.15
-@Real T1 400.15
+@Real 'T0' 293.15;
+@Real 'T1' 400.15;
 @ExternalStateVariable<function>'Temperature''T0+(T1-T0)\*t\*\*2';
 ~~~~
 
@@ -1288,7 +1290,7 @@ se reduce se da por el número máximo de sub-pasos.
 @MaximumNumberOsSubSteps 10;
 ~~~~
 
-`@ModellingHypotesis` permite al usuario elegir la hipótesis de
+`@ModellingHypothesis` permite al usuario elegir la hipótesis de
 modelado a utilizar. Se admiten los siguientes valores dados como una
 cadena:
 
@@ -1321,12 +1323,12 @@ imprimir los resultados en el archivo de salida.
 `@PredictionPolicy` le permite al usuario definir cómo se obtendrá la
 estimación inicial de la solución, pudiendo ser:
 
-- `Noprediction`
+- `NoPrediction`
 - `LinearPrediction`
 - `ElasticPrediction`
 - `ElasticPredictionFromMaterialProperties`
-- `SecantPrediction`
-- `TangentPrediction`
+- `SecantOperatorPrediction`
+- `TangentOperatorPrediction`
 
 ~~~~{.cpp}
 @PredictionPolicy 'ElasticPrediction';

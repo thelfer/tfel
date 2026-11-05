@@ -27,7 +27,7 @@ void declareSearchPathsHandler(pybind11::module_& m) {
       .def_static("addSearchPaths", &SearchPathsHandler::addSearchPaths,
                    pybind11::arg("p"),
                    "Add new search paths.\n"
-                   "Multiple paths are separated by commas under unices "
+                   "Multiple paths are separated by colons under unices "
                    "systems and by semicolons under Windows systems.\n"
                    "p: new search paths")
       .def_static("search", &SearchPathsHandler::search,

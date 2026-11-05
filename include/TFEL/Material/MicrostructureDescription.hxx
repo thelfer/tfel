@@ -295,7 +295,8 @@ namespace tfel::material::homogenization::elasticity {
         return 0;
       } else if ((this->number_of_grains) < i + 1) {
         return 0;
-      } else if (this->total_fraction + f > real(1)) {
+      } else if (this->total_fraction - (*(this->grains[i])).fraction + f >
+                 real(1)) {
         return 0;
       } else {
         (this->total_fraction) -= (*(this->grains[i])).fraction;

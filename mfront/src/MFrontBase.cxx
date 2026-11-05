@@ -70,7 +70,7 @@ namespace mfront {
         }
         ++pt;
         throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
-        throw_if(pt->value == ";", "unexepected token '" + pt->value +
+        throw_if(pt->value == ";", "unexpected token '" + pt->value +
                                        "'.\n"
                                        "Error at line " +
                                        std::to_string(pt->line));
@@ -95,7 +95,7 @@ namespace mfront {
           ++pt;
           throw_if(pt == pte,
                    "unexpected end of file (exepected library name)");
-          throw_if(pt->value == ";", "unexepected token '" + pt->value +
+          throw_if(pt->value == ";", "unexpected token '" + pt->value +
                                          "'.\n"
                                          "Error at line " +
                                          std::to_string(pt->line));
@@ -655,7 +655,7 @@ namespace mfront {
 
   void MFrontBase::setInterface(const std::string& i) {
     tfel::raise_if(!this->interfaces.insert(i).second,
-                   "MFrontBase::sInterface : "
+                   "MFrontBase::setInterface: "
                    "the interface '" +
                        i +
                        "' has "

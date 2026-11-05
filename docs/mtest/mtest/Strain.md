@@ -1,4 +1,4 @@
-The `@Strain` let the user specifiy the inital value of the strains.
+The `@Strain` let the user specify the initial value of the strains.
 
 This keyword is followed by an array. The size of this array must be
 equal to the number of components of symmetric tensors for the

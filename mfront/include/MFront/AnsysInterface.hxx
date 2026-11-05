@@ -76,6 +76,8 @@ namespace mfront {
         const BehaviourDescription&) const override;
     void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream&) const override;
+    void writeMTestFileGeneratorSetStrainAndStressTensors(
+        std::ostream&, const Hypothesis) const override;
     void writeBehaviourDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const override;
     void writeBehaviourDataGradientSetter(

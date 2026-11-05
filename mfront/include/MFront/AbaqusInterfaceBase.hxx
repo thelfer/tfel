@@ -27,10 +27,23 @@ namespace mfront {
    * - the Abaqus Explicit finite element solver (see `AbaqusExplicitInterface`)
    */
   struct AbaqusInterfaceBase : public UMATInterfaceBase {
-    //! name of finite strain strategy attribute
-    static const char* const finiteStrainStrategy;
-    //! name of the orthotropy management policy attribute
-    static const char* const orthotropyManagementPolicy;
+    /*!
+     * \return the name of the attribute storing the finite strain strategy
+     * selected for the given interface
+     * \param[in] i: name of the interface, as returned by `getInterfaceName`
+     *
+     * \note the `abaqus` and `abaqusexplicit` interfaces may be used in the
+     * same call to `mfront`: each interface stores its own options.
+     */
+    [[nodiscard]] static std::string getFiniteStrainStrategyAttributeName(
+        const std::string&);
+    /*!
+     * \return the name of the attribute storing the orthotropy management
+     * policy selected for the given interface
+     * \param[in] i: name of the interface, as returned by `getInterfaceName`
+     */
+    [[nodiscard]] static std::string getOrthotropyManagementPolicyAttributeName(
+        const std::string&);
     /*!
      * \param[in] bd: behaviour description
      * \param[in] fs: finite strain strategy
@@ -44,40 +57,50 @@ namespace mfront {
     static void checkFiniteStrainStrategyDefinitionConsistency(
         const BehaviourDescription&, const std::string&);
     /*!
+     * \param[in] i: name of the interface
      * \param[in] bd: behaviour description.
      *
      * If a strain measure and a finite strain strategy are defined,
      * this method checks they are compatible.
      */
     static void checkFiniteStrainStrategyDefinitionConsistency(
-        const BehaviourDescription&);
+        const std::string&, const BehaviourDescription&);
     /*!
      * \brief check if the behaviour has been associated to a strain
      * measure or if a finite strain strategy has been defined.
+     * \param[in] i: name of the interface
      * \param[in] bd: behaviour description.
      */
     [[nodiscard]] static bool hasFiniteStrainStrategy(
-        const BehaviourDescription&);
+        const std::string&, const BehaviourDescription&);
     /*!
      * \brief check if the behaviour has been associated to a strain
      * measure or if a finite strain strategy has been defined.
+     * \param[in] i: name of the interface
      * \param[in] bd: behaviour description.
      */
     [[nodiscard]] static std::string getFiniteStrainStrategy(
-        const BehaviourDescription&);
+        const std::string&, const BehaviourDescription&);
     /*!
      * \brief check if the orthotropy management policy defined is
      * consistent with the behaviour.
+     * \param[in] i: name of the interface
      * \param[in] bd: behaviour description.
      */
     static void checkOrthotropyManagementPolicyConsistency(
-        const BehaviourDescription&);
-
+        const std::string&, const BehaviourDescription&);
+    /*!
+     * \param[in] i: name of the interface
+     * \param[in] bd: behaviour description.
+     */
     [[nodiscard]] static bool hasOrthotropyManagementPolicy(
-        const BehaviourDescription&);
-
+        const std::string&, const BehaviourDescription&);
+    /*!
+     * \param[in] i: name of the interface
+     * \param[in] bd: behaviour description.
+     */
     [[nodiscard]] static std::string getOrthotropyManagementPolicy(
-        const BehaviourDescription&);
+        const std::string&, const BehaviourDescription&);
     //! \brief destructor
     ~AbaqusInterfaceBase() override;
 

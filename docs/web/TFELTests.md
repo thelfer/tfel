@@ -88,6 +88,8 @@ TFEL_TESTS_GENERATE_PROXY(MyTest, "MyTestSuite");
 For simple test functions, the `TestFunctionWrapper` can be used:
 
 ~~~~{.cpp}
+#include <memory>
+#include "TFEL/Tests/TestSuite.hxx"
 #include "TFEL/Tests/TestFunctionWrapper.hxx"
 
 bool myTestFunction() {

@@ -45,7 +45,7 @@ namespace tfel::math {
         throw(LUMatrixNotSquare());
       }
       if ((m.getNbRows() != b.size()) || (m.getNbRows() != p.size()) ||
-          (m.getNbRows() != p.size())) {
+          (m.getNbRows() != x.size())) {
         throw(LUUnmatchedSize());
       }
       if (m.getNbRows() == 0) {
@@ -66,7 +66,7 @@ namespace tfel::math {
         throw(LUMatrixNotSquare());
       }
       if ((m.getNbRows() != b.size()) || (m.getNbRows() != p.size()) ||
-          (m.getNbRows() != p.size())) {
+          (m.getNbRows() != x.size())) {
         throw(LUUnmatchedSize());
       }
       if (m.getNbRows() == 0) {

@@ -81,5 +81,23 @@ int main() {
   static_assert(m6(0, 1) == 2);
   static_assert(m6(1, 0) == 4);
   static_assert(m6(1, 1) == 6);
+  // products with an expression operand
+  constexpr auto m7 = [] {
+    const auto m = tfel::math::tmatrix<2, 2, int>{{0, 1},  //
+                                                  {2, 3}};
+    return tfel::math::tmatrix<2, 2, int>(m * m * m + (m + m) * m);
+  }();
+  static_assert(m7(0, 0) == 10);
+  static_assert(m7(0, 1) == 17);
+  static_assert(m7(1, 0) == 34);
+  static_assert(m7(1, 1) == 61);
+  constexpr auto v7 = [] {
+    const auto m = tfel::math::tmatrix<2, 2, int>{{0, 1},  //
+                                                  {2, 3}};
+    const auto v = tfel::math::tvector<2, int>{1, 1};
+    return tfel::math::tvector<2, int>(v * (m * m));
+  }();
+  static_assert(v7(0) == 8);
+  static_assert(v7(1) == 14);
   return EXIT_SUCCESS;
 }
