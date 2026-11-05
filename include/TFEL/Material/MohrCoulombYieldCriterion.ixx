@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_MOHRCOULOMBYIELDCRITERION_IXX
 
 #include <cmath>
+#include <numbers>
 #include "TFEL/Math/General/Abs.hxx"
 
 namespace tfel::material {
@@ -70,7 +71,7 @@ namespace tfel::material {
       const MohrCoulombBaseType<StressStensor> lodeT,
       const MohrCoulombStressType<StressStensor> a) {
     using real = MohrCoulombBaseType<StressStensor>;
-    constexpr real pi = real(3.14159265358979323846);
+    constexpr real pi = std::numbers::pi_v<real>;
     if (u == MohrCoulombParameters<StressStensor>::DEGREE) {
       const auto angle_c = angle * pi / 180;
       const auto lodeT_c = lodeT * pi / 180;
