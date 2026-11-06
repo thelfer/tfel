@@ -365,9 +365,16 @@ if(enable-python-bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS  core mfront mtest)
   tfel_add_c_cxx_definitions("TFEL_PYTHON_BINDINGS")
   option(enable-pybind11-stubgen "generates stubs for python extensions" ON)
-  find_program(pybind11_stubgen pybind11-stubgen)
-  if(pybind11_stubgen)
-    message(STATUS "Found pybind11-stubgen: ${pybind11_stubgen}")
+  if(enable-pybind11-stubgen)
+    # The modules are imported to generate their stubs: pybind11-stubgen shall
+    # be available for the python interpreter they are built for.
+    execute_process(COMMAND "${Python_EXECUTABLE}" -c "import pybind11_stubgen"
+      RESULT_VARIABLE pybind11_stubgen_import_status
+      OUTPUT_QUIET ERROR_QUIET)
+    if(pybind11_stubgen_import_status EQUAL 0)
+      set(pybind11_stubgen ON)
+      message(STATUS "Found pybind11-stubgen for ${Python_EXECUTABLE}")
+    endif()
   endif()
 endif(enable-python-bindings)
 

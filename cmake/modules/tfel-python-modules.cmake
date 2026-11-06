@@ -116,7 +116,7 @@ for _directory in dict.fromkeys((r\"${tfel_stubgen_library_directories}\", )):
     add_custom_command(OUTPUT "${stub_file}"
       COMMAND "${CMAKE_COMMAND}" -E env
               "PYTHONPATH=${tfel_stubgen_pythonpath}"
-              "${pybind11_stubgen}" "${module}"
+              "${Python_EXECUTABLE}" -m pybind11_stubgen "${module}"
               "--output-dir" "${TFEL_PYTHON_MODULES_BUILD_DIR}"
       DEPENDS ${pybind11_stubgen_dependencies}
       COMMENT "Generating stub for python module ${module}"
