@@ -111,8 +111,8 @@ be applied to the pipe in radial direction.
 
 This keyword is followed by a string. The following loading are supported:
 
-- `ImposedPressure`: the inner pressure is specified by the user. This
-  is default.
+- `ImposedPressure`: the inner and outer pressures are specified by the
+  user. This is the default.
 - `TightPipe`: the total amount of substance of the gas is constant.
 - `ImposedOuterRadius`: the evolution of the outer radius is specified
   by the user.
