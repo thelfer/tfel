@@ -273,7 +273,7 @@ If the evolution of the axial growth of the mandrel is defined using the
 `@MandrelAxialGrowthEvolution` keyword, an axial binding between the
 mandrel and the pipe is assumed, i.e. the difference between the axial
 growth of the pipe \(\varepsilon^{p}_{zz}\) and the axial growth of the
-mandrel \(\varepsilon^{p}_{zz}\) is assumed to be constant to its value
+mandrel \(\varepsilon^{m}_{zz}\) is assumed to be constant to its value
 when the contact between the mandrel and the pipe is detected:
 
 \[
