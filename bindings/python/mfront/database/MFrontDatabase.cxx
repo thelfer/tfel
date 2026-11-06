@@ -158,10 +158,12 @@ PYBIND11_MODULE(_mfront_database, m) {
 
   pybind11::class_<MFrontDatabase>(m, "MFrontDatabase")
       .def(pybind11::init<>())
-      .def("analyseLibrary", &MFrontDatabase::analyseLibrary)
-      .def("analyseLibraries", &MFrontDatabase::analyseLibraries)
-      .def("analyseDirectory", pybind11::overload_cast<const std::string&>(
-                                   &MFrontDatabase::analyseDirectory))
+      .def("analyseLibrary", &MFrontDatabase::analyseLibrary, "library"_a)
+      .def("analyseLibraries", &MFrontDatabase::analyseLibraries, "libraries"_a)
+      .def("analyseDirectory",
+           pybind11::overload_cast<const std::string&>(
+               &MFrontDatabase::analyseDirectory),
+           "directory"_a)
       .def("analyseDirectory", MFrontDatabase_analyseDirectory, "directory"_a,
            "ignore_errors"_a = false,
            "library_prefix"_a = std::optional<std::string>{},
@@ -172,7 +174,8 @@ PYBIND11_MODULE(_mfront_database, m) {
            "library_suffix"_a = std::optional<std::string>{})
       .def("analyseDirectories",
            pybind11::overload_cast<const std::vector<std::string>&>(
-               &MFrontDatabase::analyseDirectories))
+               &MFrontDatabase::analyseDirectories),
+           "directories"_a)
       .def("analyseDirectoriesListedInEnvironmentVariable",
            MFrontDatabase_analyseDirectoriesListedInEnvironmentVariable,
            "directories"_a, "ignore_errors"_a = false,
@@ -180,7 +183,8 @@ PYBIND11_MODULE(_mfront_database, m) {
            "library_suffix"_a = std::optional<std::string>{})
       .def("analyseDirectoriesListedInEnvironmentVariable",
            pybind11::overload_cast<const std::string&>(
-               &MFrontDatabase::analyseDirectoriesListedInEnvironmentVariable))
+               &MFrontDatabase::analyseDirectoriesListedInEnvironmentVariable),
+           "directories"_a)
       .def("getEntryPoints", MFrontDatabase_getEntryPoints,
            "type"_a = std::optional<std::string>{},
            "name"_a = std::optional<std::string>{},
