@@ -126,7 +126,25 @@ detailed below in a dedicated section.
 
 ## Imposed inner pressure loading
 
+The `@InnerPressureEvolution` keyword defines the pressure applied to the
+inner surface of the pipe. It is followed by a value, or by an evolution:
+
+~~~~{.cxx}
+@InnerPressureEvolution<evolution> {0 : 0, 1 : 1.5e6};
+~~~~
+
 ## Imposed outer pressure loading
+
+The `@OuterPressureEvolution` keyword defines the pressure applied to the
+outer surface of the pipe. It is followed by a value, or by an evolution:
+
+~~~~{.cxx}
+@OuterPressureEvolution 1.e5;
+~~~~
+
+At least one of these two evolutions must be defined, unless the axial
+loading is `ImposedAxialForce` or `ImposedAxialGrowth`, or a mandrel is
+modeled.
 
 ## Imposed inner radius loading
 
