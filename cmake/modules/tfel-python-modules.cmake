@@ -154,6 +154,12 @@ function(python_module_base fullname name)
   set_target_properties(py_${fullname} PROPERTIES
     CXX_VISIBILITY_PRESET "hidden"
     CUDA_VISIBILITY_PRESET "hidden")
+  # The modules shall be next to the __init__.py script of their package, which
+  # imports them. Multi-configuration generators append the name of the
+  # configuration to the output directory, unless it holds a generator
+  # expression.
+  set_target_properties(py_${fullname} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "$<1:${CMAKE_CURRENT_BINARY_DIR}>")
 endfunction(python_module_base)
 
 function(python_lib_module name package)
@@ -175,7 +181,7 @@ function(tfel_python_module name)
   if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
     set_target_properties(py_tfel_${name} PROPERTIES
                           LIBRARY_OUTPUT_DIRECTORY
-                          ${PROJECT_BINARY_DIR}/bindings/python/tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES})
+                          "$<1:${PROJECT_BINARY_DIR}/bindings/python/tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}>")
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 endfunction(tfel_python_module)
 
@@ -193,7 +199,7 @@ function(tfel_material_python_module name)
   if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
     set_target_properties(py_tfel_material_${name} PROPERTIES
                           LIBRARY_OUTPUT_DIRECTORY
-                          ${PROJECT_BINARY_DIR}/bindings/python/tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/material)
+                          "$<1:${PROJECT_BINARY_DIR}/bindings/python/tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/material>")
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
   python_module_stubgen(py_tfel_material_${name} tfel/material ${name})
 endfunction(tfel_material_python_module)
@@ -206,7 +212,7 @@ function(mfront_python_module name)
   if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
     set_target_properties(py_mfront_${name} PROPERTIES
                           LIBRARY_OUTPUT_DIRECTORY
-                          ${PROJECT_BINARY_DIR}/bindings/python/mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES})
+                          "$<1:${PROJECT_BINARY_DIR}/bindings/python/mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}>")
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 endfunction(mfront_python_module)
 
@@ -228,7 +234,7 @@ function(mfront_database_python_module name)
   if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
     set_target_properties(py_mfront_database_${name} PROPERTIES
                           LIBRARY_OUTPUT_DIRECTORY
-                          ${PROJECT_BINARY_DIR}/bindings/python/mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/database)
+                          "$<1:${PROJECT_BINARY_DIR}/bindings/python/mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/database>")
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
   python_module_stubgen(py_mfront_database_${name} mfront/database ${name})
 endfunction(mfront_database_python_module)
@@ -242,7 +248,7 @@ function(mtest_python_module name)
   if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
     set_target_properties(py_mtest_${name} PROPERTIES
                           LIBRARY_OUTPUT_DIRECTORY
-                          ${PROJECT_BINARY_DIR}/bindings/python/mtest_${TFEL_SUFFIX_FOR_PYTHON_MODULES})
+                          "$<1:${PROJECT_BINARY_DIR}/bindings/python/mtest_${TFEL_SUFFIX_FOR_PYTHON_MODULES}>")
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 endfunction(mtest_python_module)
 
@@ -256,7 +262,7 @@ function(mfm_test_generator_python_module name)
   if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
     set_target_properties(py_mfm_test_generator_${name} PROPERTIES
                           LIBRARY_OUTPUT_DIRECTORY
-                          ${PROJECT_BINARY_DIR}/bindings/python/mfm_test_generator_${TFEL_SUFFIX_FOR_PYTHON_MODULES})
+                          "$<1:${PROJECT_BINARY_DIR}/bindings/python/mfm_test_generator_${TFEL_SUFFIX_FOR_PYTHON_MODULES}>")
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 endfunction(mfm_test_generator_python_module)
 
