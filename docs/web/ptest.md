@@ -61,38 +61,31 @@ unknowns are:
 
 # Behaviours
 
-<!--
-## Issue 20: [mtest] Declaration of a behaviour wrapper in python module
+The behaviour is declared with the `@Behaviour` keyword. It is integrated
+under the axisymmetrical generalised plane strain hypothesis, and it must
+be consistent with the type of analysis:
 
-As described in Section @sec:tfel_4.1:pymtest:behaviour_constructor,
-named parameters are now supported in the constructor of the `Behaviour`
-class. The (optional) `wrapper` argument can now be used to specify a
-behaviour wrapper.
+- In a small strain analysis, it must be a small strain behaviour. The
+  `@PerformSmallStrainAnalysis` keyword must then be placed before the
+  `@Behaviour` keyword.
+- In a finite strain analysis, it must be a finite strain behaviour
+  following the `ETO-PK1` kinematic assumption.
 
-Currently, two behaviours wrappers are available:
+Other behaviours can be used with a wrapper, specified after the name of
+the interface:
 
-- `LogarithmicStrain1D`: which turns a small strain behaviour in
-  axisymmetrical generalised plane strain into a finite strain behaviour
-  in the logarithmic strain framework following the ETO-PK1 kinematic
-  assumption used by the `MTest` for the simulation of pipe in finite
-  strain.
-- `SmallStrainTridimensionalBehaviourWrapper` which allows to use a
-  small strain tridimensional behaviour under the following modelling
-  hypotheses: axisymmetrical generalised plane strain, plane strain,
-  axisymmetry.
+- `LogarithmicStrain1D` turns a small strain behaviour in axisymmetrical
+  generalised plane strain into a finite strain behaviour in the
+  logarithmic strain framework, following the `ETO-PK1` kinematic
+  assumption.
+- `SmallStrainTridimensionalBehaviourWrapper` allows using a small strain
+  tridimensional behaviour.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/20>.
+## Example of usage
 
-## Issue 18: [mtest] Usage of a `3D` behaviour in `ptest`
-
-Thanks the `SmallStrainTridimensionalBehaviourWrapper` class detailled
-in Section
-@sec:tfel_4.1:mtest:small_strain_tridimensional_behaviour_wrapper,
-tridimensional behaviours can be used under the following modelling
-hypotheses: generalised plane strain, plane strain, axisymmetrical
-generalised plane strain
-
--->
+~~~~{.cxx}
+@Behaviour<generic, LogarithmicStrain1D> 'src/libBehaviour.so' 'Elasticity';
+~~~~
 
 # Geometry and finite element discretization
 
