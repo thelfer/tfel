@@ -1,13 +1,13 @@
 The `RadialLoading` keyword let the user choose the kind of loading to
 be applied to the pipe in radial direction.
 
-This keyword is followed by a string. The following values are
-allowed:
+This keyword is followed by a string. The following values are allowed:
 
-- `ImposedPressure`: the inner pressure is specified by the user. See
-  the `@InnerPressureEvolution` for details. This is default.
-- `TightPipe`: the total amount of substance of the gas is
-  constant. The gas is perfect which allows:
+- `ImposedPressure`: the inner and outer pressures are specified by the
+  user. See the `@InnerPressureEvolution` and `@OuterPressureEvolution`
+  keywords for details. This is the default.
+- `TightPipe`: the total amount of substance of the gas is constant. The
+  gas is perfect which allows:
 	- the computation of the amount of substance using the filling
 	  pressure and temperature. See the `@FillingPressure` and the
 	  `@FillingTemperature` keywords for details.	
