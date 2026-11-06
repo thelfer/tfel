@@ -40,7 +40,7 @@ example:
 
 ~~~{.bash}
 mtest --scheme=ptest --help-keyword=@RadialLoading
-~~~~
+~~~
 
 ## A simple tutorial
 
@@ -106,10 +106,11 @@ switching to a resolution under the infinitesimal strain hypothesis.
 
 # Radial loadings
 
-The `RadialLoading` keyword let the user choose the kind of loading to
+The `@RadialLoading` keyword lets the user choose the kind of loading to
 be applied to the pipe in radial direction.
 
-This keyword is followed by a string. The following loading are supported:
+This keyword is followed by a string. The following loadings are
+supported:
 
 - `ImposedPressure`: the inner and outer pressures are specified by the
   user. This is the default.
@@ -129,8 +130,7 @@ detailed below in a dedicated section.
 
 ## Imposed inner radius loading
 
-`PTest` now supports imposing the evolution of the inner radius of the
-pipe. In this case, `PTest` adds the inner pressure as an unknown and
+`PTest` can impose the evolution of the inner radius of the pipe. In this case, `PTest` adds the inner pressure as an unknown and
 reports it in the output file.
 
 ### Example of usage
@@ -156,7 +156,7 @@ perfect gas is used.
 The equation of state of the gas can be specified using the
 `@GasEquationOfState` keyword.
 
-This keywords expects a function \(f\paren{P,V,T}\) such that the
+This keyword expects a function \(f\paren{P,V,T,n}\) such that the
 equation of state is:
 
 \[
@@ -215,16 +215,16 @@ but one can consider a case where the gas only occupies a fraction
 
 # Axial loadings
 
-The `AxialLoading` keyword let the user choose the kind of loading to
+The `@AxialLoading` keyword lets the user choose the kind of loading to
 be applied to the pipe in the axial direction.
 
 This keyword is followed by a string. The following loadings are
 supported:
 
 - `None`: no loading is applied to the pipe.
-- `EndCapEffect`: loading applied to the pipe model the inner and outer
-  pressure effects on a closed pipe. This is the default.
-- `ImposedAxialForce`: the axial force acting of the pipe is specified
+- `EndCapEffect`: the loading applied to the pipe models the effects of
+  the inner and outer pressures on a closed pipe. This is the default.
+- `ImposedAxialForce`: the axial force acting on the pipe is specified
   by the user.
 - `ImposedAxialGrowth`: the axial growth of the pipe is specified by
   the user.
@@ -330,9 +330,9 @@ oxidation length at either the inner boundary or the outer boundary of
 the pipe. This keyword must be followed by a data map with the following
 entries:
 
-- `model`: the name of model.
+- `model`: the name of the model.
 - `library`: the name of the library in which the model is available.
-- `boundary`: the name of boundary on which the model is defined. This
+- `boundary`: the name of the boundary on which the model is defined. This
   variable must be equal to `inner_boundary` or `outer_boundary`.
 
 An oxidation model must define an internal state variable named
@@ -359,9 +359,8 @@ is inside an oxidation layer.
 ## The `computeIntegralValue` and `computeMeanValue` post-processings
 
 The `computeIntegralValue` and `computeMeanValue` post-processings
-allows calculating the integral and the average of a scalar value in the
-thickness of the pipe. Those functions allows to calculating those
-quantities in the current or initial configurations
+allow calculating the integral and the average of a scalar value in the
+thickness of the pipe, in the current or in the initial configuration.
 
 ### Example of usage
 
