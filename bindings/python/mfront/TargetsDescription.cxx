@@ -58,7 +58,7 @@ void declareTargetsDescription(pybind11::module_& m) {
         os << l;
         return os.str();
       });
-  m.def("describes", mfront::describes);
+  m.def("describes", mfront::describes, pybind11::arg("t"), pybind11::arg("n"));
   m.def("mergeTargetsDescription", mfront::mergeTargetsDescription,
         pybind11::arg("d"), pybind11::arg("s"), pybind11::arg("b"));
 }

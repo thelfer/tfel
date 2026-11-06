@@ -81,8 +81,8 @@ PYBIND11_MODULE(_mfront, m) {
   GetImplementationsPathsPtr ptr = mfront::getImplementationsPaths;
   m.def("initDSLs", mfront::initDSLs);
   m.def("initInterfaces", mfront::initInterfaces);
-  m.def("setDebugMode", mfront::setDebugMode);
-  m.def("getDSL", getDSL);
+  m.def("setDebugMode", mfront::setDebugMode, "b"_a);
+  m.def("getDSL", getDSL, "file"_a);
   m.def("getImplementationsPaths", ptr, "file"_a, "material"_a = "",
         "material_property"_a = "", "behaviour"_a = "", "model"_a = "");
   declareMadnexSupport(m);

@@ -364,6 +364,18 @@ if(enable-python-bindings)
     "Contains the python bindings for TFEL, MFront and MTest")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS  core mfront mtest)
   tfel_add_c_cxx_definitions("TFEL_PYTHON_BINDINGS")
+  option(enable-pybind11-stubgen "generates stubs for python extensions" ON)
+  if(enable-pybind11-stubgen)
+    # The modules are imported to generate their stubs: pybind11-stubgen shall
+    # be available for the python interpreter they are built for.
+    execute_process(COMMAND "${Python_EXECUTABLE}" -c "import pybind11_stubgen"
+      RESULT_VARIABLE pybind11_stubgen_import_status
+      OUTPUT_QUIET ERROR_QUIET)
+    if(pybind11_stubgen_import_status EQUAL 0)
+      set(pybind11_stubgen ON)
+      message(STATUS "Found pybind11-stubgen for ${Python_EXECUTABLE}")
+    endif()
+  endif()
 endif(enable-python-bindings)
 
 option(enable-java "enable java support" OFF)
@@ -427,6 +439,13 @@ if(enable-testing)
 endif()
 add_subdirectory(mfm-test-generator)
 add_subdirectory(env)
+
+# Generation of the stubs of the python modules using pybind11-stubgen.
+# This call is placed at the end of the file as it requires that all the
+# python modules and all the TFEL libraries have been declared.
+if(enable-python-bindings)
+  generate_python_stubs()
+endif(enable-python-bindings)
 
 #documentations
 add_custom_target(doc)

@@ -213,6 +213,10 @@ Various other options can be passed to `cmake`:
   language, notably for the `MTest` tool, one may use the
   `-Denable-python-bindings=ON` option. This requires
   [pybind11](https://github.com/pybind/pybind11) to be available.
+  Stubs (`.pyi` files) of the python modules are generated and installed
+  if the [pybind11-stubgen](https://github.com/pybind/pybind11-stubgen)
+  tool is available. This behaviour can be turned off using the
+  `-Denable-pybind11-stubgen=OFF` option.
 
 Some default compiler settings are detected by `cmake`, depending on
 your system. To explicitly specify the compilers to be used, one may
@@ -463,6 +467,43 @@ directory:
 > Those variables are not required if `TFEL` is installed
 > system-wide (for instance in `/usr/local`) and that the `TFEL`'s
 > binaries are not relocated.
+
+# Installing using `pip`
+
+The `tfel-mfront` wheel provides the `python` bindings, the executables,
+the headers and the libraries of `TFEL`:
+
+~~~~{.bash}
+$ pip install tfel-mfront
+~~~~
+
+## Using the headers and the libraries in a `C++` project
+
+The headers and the libraries are installed in the `tfel` directory of
+the `python` package, whose paths are given by `tfel-config`. The libraries
+are not in the default search path of the dynamic loader, hence the
+`rpath` option below:
+
+~~~~{.bash}
+$ g++ -std=c++20 $(tfel-config --includes) main.cxx -o main \
+    $(tfel-config --libs --material) \
+    -Wl,-rpath,$(tfel-config --library-path)
+~~~~
+
+A `cmake` project uses the exported targets, as described in [this
+page](libraries_usage.html):
+
+~~~~{.cmake}
+find_package(TFELMaterial REQUIRED)
+add_executable(main main.cxx)
+target_link_libraries(main PRIVATE tfel::TFELMaterial)
+~~~~
+
+The location of these targets is given by `tfel-config`:
+
+~~~~{.bash}
+$ cmake -S . -B build -DCMAKE_PREFIX_PATH=$(tfel-config --cmake-prefix-path)
+~~~~
 
 # A Quick installation procedure on `Ubuntu` {#sec:QuickUbuntu}
 

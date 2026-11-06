@@ -102,6 +102,22 @@ static std::shared_ptr<mtest::Behaviour> getBehaviour6(const std::string& l,
                                  Behaviour::ModellingHypothesis::fromString(h));
 }  // end of std::shared_ptr<Behaviour> getBehaviour1
 
+static std::shared_ptr<mtest::Behaviour> getBehaviour7(
+    const std::string& l,
+    const std::string& f,
+    const mtest::Behaviour::Parameters& p,
+    const std::string& h,
+    const std::string& w) {
+  return getBehaviour1("", l, f, p, h, w);
+}  // end of std::shared_ptr<Behaviour> getBehaviour7
+
+static std::shared_ptr<mtest::Behaviour> getBehaviour8(const std::string& l,
+                                                       const std::string& f,
+                                                       const std::string& h,
+                                                       const std::string& w) {
+  return getBehaviour3("", l, f, h, w);
+}  // end of std::shared_ptr<Behaviour> getBehaviour8
+
 static int Behaviour_getBehaviourType(const mtest::Behaviour& b) {
   using tfel::material::MechanicalBehaviourBase;
   const auto bt = b.getBehaviourType();
@@ -150,10 +166,17 @@ void declareBehaviour(pybind11::module_& m) {
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def(pybind11::init(&getBehaviour1), "interface"_a = "", "library"_a,
+      .def(pybind11::init(&getBehaviour1), "interface"_a, "library"_a,
            "function"_a, "parameters"_a, "hypothesis"_a, "wrapper"_a = "",
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
+           "- l(std::string): library\n"
+           "- f(std::string): function\n"
+           "- d(tfel::utilities::Data): parameters\n"
+           "- h(std::string): modelling hypothesis\n")
+      .def(pybind11::init(&getBehaviour7), "library"_a, "function"_a,
+           "parameters"_a, "hypothesis"_a, "wrapper"_a = "",
+           "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
@@ -164,10 +187,17 @@ void declareBehaviour(pybind11::module_& m) {
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def(pybind11::init(&getBehaviour3), "interface"_a = "", "library"_a,
+      .def(pybind11::init(&getBehaviour3), "interface"_a, "library"_a,
            "function"_a, "hypothesis"_a, "wrapper"_a = "",
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
+           "- l(std::string): library\n"
+           "- f(std::string): function\n"
+           "- h(std::string): modelling hypothesis\n"
+           "- w(std::string): wrapper\n")
+      .def(pybind11::init(&getBehaviour8), "library"_a, "function"_a,
+           "hypothesis"_a, "wrapper"_a = "",
+           "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- h(std::string): modelling hypothesis\n"
@@ -229,13 +259,14 @@ void declareBehaviour(pybind11::module_& m) {
            &Behaviour::getThermodynamicForcesComponents,
            "Return the components of the thermodynamic forces")
       .def("getGradientComponentPosition",
-           &Behaviour::getGradientComponentPosition,
+           &Behaviour::getGradientComponentPosition, pybind11::arg("c"),
            "Return the position of the component of a driving variable")
       .def("getDrivingVariableComponentPosition",
-           &Behaviour::getGradientComponentPosition,
+           &Behaviour::getGradientComponentPosition, pybind11::arg("c"),
            "Return the position of the component of a driving variable")
       .def("getThermodynamicForceComponentPosition",
            &Behaviour::getThermodynamicForceComponentPosition,
+           pybind11::arg("c"),
            "Return the position of the component of a "
            "thermodynamic force")
       .def("getSymmetryType", &Behaviour::getSymmetryType,
@@ -259,7 +290,7 @@ void declareBehaviour(pybind11::module_& m) {
            &Behaviour::getInternalStateVariablesDescriptions,
            "Return the descriptions the internal variables")
       .def("getInternalStateVariableType",
-           &Behaviour::getInternalStateVariableType,
+           &Behaviour::getInternalStateVariableType, pybind11::arg("n"),
            "Return the type of an internal variable, encoded as an integer\n"
            "whose three lowest bits give the kind of the variable:\n"
            "- 0 means that the internal state variable is a scalar\n"
@@ -275,7 +306,7 @@ void declareBehaviour(pybind11::module_& m) {
            "page of the documentation). For instance, 2 denotes a vector\n"
            "of the size of the space dimension and 26 a vector of size 3.\n")
       .def("getInternalStateVariablePosition",
-           &Behaviour::getInternalStateVariablePosition,
+           &Behaviour::getInternalStateVariablePosition, pybind11::arg("n"),
            "Return the internal state variable position")
       .def("getExternalStateVariablesNames",
            &Behaviour::getExternalStateVariablesNames,
@@ -286,7 +317,7 @@ void declareBehaviour(pybind11::module_& m) {
            "into account the suffixes for vectors, symmetric "
            "tensors and tensors")
       .def("getExternalStateVariableType",
-           &Behaviour::getExternalStateVariableType,
+           &Behaviour::getExternalStateVariableType, pybind11::arg("n"),
            "Return the type of an external variable, encoded as an integer\n"
            "whose three lowest bits give the kind of the variable:\n"
            "- 0 means that the external state variable is a scalar\n"
@@ -302,7 +333,7 @@ void declareBehaviour(pybind11::module_& m) {
            "page of the documentation). For instance, 2 denotes a vector\n"
            "of the size of the space dimension and 26 a vector of size 3.\n")
       .def("getExternalStateVariablePosition",
-           &Behaviour::getExternalStateVariablePosition,
+           &Behaviour::getExternalStateVariablePosition, pybind11::arg("n"),
            "Return the external state variable position")
       .def("getParametersNames", &Behaviour::getParametersNames,
            "Return the names of the floating point parameters")
@@ -312,40 +343,49 @@ void declareBehaviour(pybind11::module_& m) {
            &Behaviour::getUnsignedShortParametersNames,
            "Return the names of the unsigned short parameters")
       .def("getRealParameterDefaultValue",
-           &Behaviour::getRealParameterDefaultValue,
+           &Behaviour::getRealParameterDefaultValue, pybind11::arg("n"),
            "return the default value of a parameter")
       .def("getIntegerParameterDefaultValue",
-           &Behaviour::getIntegerParameterDefaultValue,
+           &Behaviour::getIntegerParameterDefaultValue, pybind11::arg("n"),
            "return the default value of an integer parameter")
       .def("getUnsignedShortParameterDefaultValue",
            &Behaviour::getUnsignedShortParameterDefaultValue,
+           pybind11::arg("n"),
            "return the default value of an unsigned short parameter")
-      .def("setParameter", &Behaviour::setParameter,
+      .def("setParameter", &Behaviour::setParameter, pybind11::arg("n"),
+           pybind11::arg("v"),
            "set the given parameter' value")
       .def("setIntegerParameter", &Behaviour::setIntegerParameter,
+           pybind11::arg("n"), pybind11::arg("v"),
            "set the given parameter' value")
       .def("setUnsignedIntegerParameter",
-           &Behaviour::setUnsignedIntegerParameter,
+           &Behaviour::setUnsignedIntegerParameter, pybind11::arg("n"),
+           pybind11::arg("v"),
            "set the given parameter' value")
-      .def("hasBounds", &Behaviour::hasBounds,
+      .def("hasBounds", &Behaviour::hasBounds, pybind11::arg("n"),
            "return true if the given variable has bounds")
-      .def("hasLowerBound", &Behaviour::hasLowerBound,
+      .def("hasLowerBound", &Behaviour::hasLowerBound, pybind11::arg("n"),
            "return true if the given variable has a lower bound")
-      .def("hasUpperBound", &Behaviour::hasUpperBound,
+      .def("hasUpperBound", &Behaviour::hasUpperBound, pybind11::arg("n"),
            "return true if the given variable has an upper bound")
-      .def("getLowerBound", &Behaviour::getLowerBound,
+      .def("getLowerBound", &Behaviour::getLowerBound, pybind11::arg("n"),
            "return the lower bound of the given variable")
-      .def("getUpperBound", &Behaviour::getUpperBound,
+      .def("getUpperBound", &Behaviour::getUpperBound, pybind11::arg("n"),
            "return the uppert bound of the given variable")
       .def("hasPhysicalBounds", &Behaviour::hasPhysicalBounds,
+           pybind11::arg("n"),
            "return true if the given variable has physical bounds")
       .def("hasLowerPhysicalBound", &Behaviour::hasLowerPhysicalBound,
+           pybind11::arg("n"),
            "return true if the given variable has a physical lower bound")
       .def("hasUpperPhysicalBound", &Behaviour::hasUpperPhysicalBound,
+           pybind11::arg("n"),
            "return true if the given variable has a physical upper bound")
       .def("getLowerPhysicalBound", &Behaviour::getLowerPhysicalBound,
+           pybind11::arg("n"),
            "return the lower bound of the given variable")
       .def("getUpperPhysicalBound", &Behaviour::getUpperPhysicalBound,
+           pybind11::arg("n"),
            "return the upper bound of the given variable");
 
 }  // end of declareBehaviour()

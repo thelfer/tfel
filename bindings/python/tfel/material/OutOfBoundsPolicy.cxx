@@ -22,5 +22,5 @@ void declareOutOfBoundsPolicy(pybind11::module_& m) {
   pybind11::enum_<OutOfBoundsPolicy>(m, "OutOfBoundsPolicy")
       .value("Strict", Strict)
       .value("Warning", Warning)
-      .value("None", None);
+      .value("None_", None);
 }
