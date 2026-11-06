@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/LSDYNA/LSDYNAInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_LSDYNA_CALL_HXX
+#include "MFront/LSDYNA/LSDYNAInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_LSDYNA_LSDYNABEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_LSDYNA_LSDYNABEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_LSDYNA_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_LSDYNA_CALL_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -54,7 +56,7 @@ namespace lsdyna {
     typedef tfel::material::TangentOperatorTraits<
         MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
         TangentOperatorTraits;
-    static constexpr auto value = TangentOperatorTraits::LSDYNA;
+    static constexpr auto value = TangentOperatorTraits::ABAQUS;
   };
 
   template <tfel::material::ModellingHypothesis::Hypothesis H>
@@ -101,10 +103,27 @@ namespace lsdyna {
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
         typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
         const LSDYNAInt N = ModellingHypothesisToSpaceDimension<H>::value;
+        // in plane stress, LS-DYNA gives the three strain components (e11,
+        // e22, gamma12) whereas the stress-free expansion handler works on
+        // the four components (xx, yy, zz, xy)
+        constexpr auto ps =
+            (H == ModellingHypothesis::PLANESTRESS) &&
+            (LSDYNATraits<BV>::btype == lsdyna::STANDARDSTRAINBASEDBEHAVIOUR);
         LSDYNAReal dv0[LSDYNATraits<BV>::GradientSize];
         LSDYNAReal dv1[LSDYNATraits<BV>::GradientSize];
-        copy<LSDYNATraits<BV>::GradientSize>::exe(STRAN, dv0);
-        copy<LSDYNATraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        if constexpr (ps) {
+          dv0[0] = STRAN[0];
+          dv0[1] = STRAN[1];
+          dv0[2] = LSDYNAReal{0};
+          dv0[3] = STRAN[2];
+          dv1[0] = DSTRAN[0];
+          dv1[1] = DSTRAN[1];
+          dv1[2] = LSDYNAReal{0};
+          dv1[3] = DSTRAN[2];
+        } else {
+          copy<LSDYNATraits<BV>::GradientSize>::exe(STRAN, dv0);
+          copy<LSDYNATraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        }
         // check that the function pointer are not null
         if (sfeh == nullptr) {
           throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -114,6 +133,11 @@ namespace lsdyna {
         const auto& s0 = s.first;
         const auto& s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], N);
+        if constexpr (ps) {
+          // back to the three components given by LS-DYNA
+          dv0[2] = dv0[3];
+          dv1[2] = dv1[3];
+        }
         b.setLSDYNABehaviourDataGradients(dv0);
         b.setLSDYNAIntegrationDataGradients(dv1);
       }  // end of exe
@@ -166,7 +190,7 @@ namespace lsdyna {
                                          const LSDYNAReal* const props) {
         const unsigned short o = LSDYNATraits<BV>::elasticPropertiesOffset;
         LSDYNAComputeThermalExpansionCoefficientTensor<
-            LSDYNATraits<BV>::btype, H, LSDYNATraits<BV>::stype>::
+            LSDYNATraits<BV>::btype, H, LSDYNATraits<BV>::type>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
@@ -242,7 +266,7 @@ namespace lsdyna {
           r = BV::FAILURE;
         } else {
           try {
-            r = this->this->behaviour.integrate(smflag,
+            r = this->behaviour.integrate(smflag,
                                                 BV::CONSISTENTTANGENTOPERATOR);
           } catch (DivergenceException&) {
             r = BV::FAILURE;
@@ -315,7 +339,7 @@ namespace lsdyna {
       constexpr const bool is_defined_ = Traits::is_defined;
       // Test if the nb of state variables matches Behaviour requirements
       if ((ntens != size) && is_defined_) {
-        throwInvalidTensorSize(Traits::getName(), ntens, size);
+        throwInvalidTensorSize(Traits::getName(), size, ntens);
       }
     }  // end of checkNSTATV
 
@@ -324,3 +348,5 @@ namespace lsdyna {
 }  // end of namespace lsdyna
 
 #endif /* LIB_MFRONT_LSDYNA_LSDYNABEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_LSDYNA_CALL_HXX */

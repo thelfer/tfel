@@ -52,8 +52,6 @@ namespace tfel::math::parser {
 
   double ExternalFunctionExpr::getValue() const {
     using namespace tfel::math::parser;
-    std::vector<std::shared_ptr<Expr>>::const_iterator p;
-    std::vector<std::shared_ptr<Expr>>::size_type i;
     auto p2 = this->manager->find(this->name);
     raise_if(p2 == this->manager->end(),
              "ExternalFunctionExpr::getValue: "
@@ -68,9 +66,15 @@ namespace tfel::math::parser {
                  std::to_string(this->args.size()) + " given, " +
                  std::to_string(p2->second->getNumberOfVariables()) +
                  " required)");
-    for (p = this->args.begin(), i = 0u; p != this->args.end(); ++p, ++i) {
-      const auto val = (*p)->getValue();
-      p2->second->setVariableValue(i, val);
+    // the arguments are evaluated before setting the variables of the
+    // function, since an argument may call the same function
+    auto values = std::vector<double>{};
+    values.reserve(this->args.size());
+    for (const auto& a : this->args) {
+      values.push_back(a->getValue());
+    }
+    for (decltype(values.size()) i = 0; i != values.size(); ++i) {
+      p2->second->setVariableValue(i, values[i]);
     }
     return p2->second->getValue();
   }  // end of getValue

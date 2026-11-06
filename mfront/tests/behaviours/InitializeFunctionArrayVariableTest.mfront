@@ -1,0 +1,22 @@
+@DSL Default;
+@Behaviour InitializeFunctionArrayVariableTest;
+@Description {
+  "Test of the initialize functions of the generic interface with an "
+  "array of initialize function variables."
+}
+
+@ModellingHypothesis Tridimensional;
+
+@ProvidesSymmetricTangentOperator;
+@Integrator {
+  sig = 150e9 * (eto + deto);
+  if (computeTangentOperator_) {
+    Dt = 150e9 * Stensor4::Id();
+  }
+}
+
+@InitializeFunctionVariable stress pr[2];
+//! \brief initialize the stress from two pressures
+@InitializeFunction StressFromPressures {
+  sig = (pr[0] + 2 * pr[1]) * Stensor::Id();
+}

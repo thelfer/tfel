@@ -59,10 +59,11 @@ namespace tfel::math {
       proxy(proxy&&) = default;
       //! \brief copy construtor
       proxy(const proxy&) = default;
-      //! \brief move assignement
-      proxy& operator=(proxy&&) = default;
       //! \brief standard assignement
-      proxy& operator=(const proxy&) = default;
+      proxy& operator=(const proxy& src) {
+        *(p.current) = *(src.p.current);
+        return *this;
+      }
       //! \brief assignement
       template <typename T>
       proxy& operator=(const T& v) {

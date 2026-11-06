@@ -41,6 +41,7 @@ void declareVariableBoundsDescription(pybind11::module_&);
 
 void declareVariableDescription(pybind11::module_&);
 void declareMaterialKnowledgeAttribute(pybind11::module_&);
+void declareMaterialKnowledgeDescription(pybind11::module_&);
 void declareBehaviourData(pybind11::module_&);
 void declareMaterialPropertyDescription(pybind11::module_&);
 void declareBehaviourDescription(pybind11::module_&);
@@ -49,9 +50,9 @@ void declareGeneratorOptions(pybind11::module_&);
 void declareMakefileGenerator(pybind11::module_&);
 void declareCMakeGenerator(pybind11::module_&);
 void declareOverridableImplementation(pybind11::module_&);
+pybind11::object castDSL(std::shared_ptr<mfront::AbstractDSL>);
 
-static pybind11::object getDSL(const std::string& f) {
-  auto dsl = mfront::MFrontBase::getDSL(f);
+pybind11::object castDSL(std::shared_ptr<mfront::AbstractDSL> dsl) {
   if (dsl->getTargetType() == mfront::AbstractDSL::MATERIALPROPERTYDSL) {
     auto b = std::dynamic_pointer_cast<mfront::MaterialPropertyDSL>(dsl);
     tfel::raise_if(b.get() == nullptr, "getDSL: invalid dsl implementation");
@@ -62,6 +63,10 @@ static pybind11::object getDSL(const std::string& f) {
     return pybind11::cast(b);
   }
   return pybind11::cast(dsl);
+}
+
+static pybind11::object getDSL(const std::string& f) {
+  return castDSL(mfront::MFrontBase::getDSL(f));
 }
 
 #ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
@@ -81,6 +86,8 @@ PYBIND11_MODULE(_mfront, m) {
   m.def("getImplementationsPaths", ptr, "file"_a, "material"_a = "",
         "material_property"_a = "", "behaviour"_a = "", "model"_a = "");
   declareMadnexSupport(m);
+  declareMaterialKnowledgeAttribute(m);
+  declareMaterialKnowledgeDescription(m);
   declareAbstractDSL(m);
   declareDSLFactory(m);
   declareFileDescription(m);
@@ -88,7 +95,6 @@ PYBIND11_MODULE(_mfront, m) {
   declareLibraryDescription(m);
   declareTargetsDescription(m);
   declareOverridableImplementation(m);
-  declareMaterialKnowledgeAttribute(m);
   // material properties
   declareMaterialPropertyDSL(m);
   declareMaterialPropertyDescription(m);

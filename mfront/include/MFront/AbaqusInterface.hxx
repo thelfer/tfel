@@ -76,6 +76,8 @@ namespace mfront {
         const SupportedTypes::TypeSize) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
+    void writeMTestFileGeneratorSetStrainAndStressTensors(
+        std::ostream&, const Hypothesis) const override;
     void writeBehaviourDataThermodynamicForceSetter(
         std::ostream&,
         const ThermodynamicForce&,

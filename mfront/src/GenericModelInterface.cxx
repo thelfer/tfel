@@ -157,6 +157,9 @@ namespace mfront {
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
 
+    GenericBehaviourInterface bi;
+    bi.writeSetOutOfBoundsPolicyFunctionDeclaration(os, name);
+
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
       os << "/*!\n"
@@ -226,6 +229,7 @@ namespace mfront {
        << "#include <cmath>\n"
        << "#include <cstring>\n"
        << "#include <sstream>\n"
+       << "#include <iostream>\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include \"TFEL/Math/Array/View.hxx\"\n"
@@ -250,6 +254,8 @@ namespace mfront {
     sg.generateGeneralSymbols(os, bi, bd, fd, hypotheses, name);
     os << '\n';
     sg.generateSymbols(os, bi, bd, fd, name, uh);
+    //
+    bi.writeGetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if (!md.sources.empty()) {
       os << md.sources << "\n\n";
@@ -322,6 +328,7 @@ namespace mfront {
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using namespace tfel::material;\n";
+      writeMaterialLaws(os, md.materialLaws);
       if (useQuantities(md)) {
         os << "using PhysicalConstants [[maybe_unused]] = "
            << "tfel::PhysicalConstants<NumericType, true>;\n";
@@ -329,9 +336,8 @@ namespace mfront {
         os << "using PhysicalConstants [[maybe_unused]] = "
            << "tfel::PhysicalConstants<NumericType, false>;\n";
       }
-      const auto policy = getDefaultOutOfBoundsPolicyAsString(md);
-      os << "[[maybe_unused]] constexpr const auto policy = "
-         << "tfel::material::" << policy << ";\n";
+      os << "[[maybe_unused]] const auto policy = ::" << name
+         << "_getOutOfBoundsPolicy();\n";
       if (f.useTimeIncrement) {
         os << "const auto dt = time{mfront_model_data.dt};\n";
       }
@@ -376,10 +382,9 @@ namespace mfront {
           raise("error while treating physical bounds of variable '" + v.name +
                 "' (only scalar variable are supported)");
         }
-        writePhysicalBoundsChecks(os, v, n, "1u", false, false);
-        if (vdepth == 1u) {
-          writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
-        }
+        // the variable is checked under the name it is declared with
+        const auto vn = (vdepth == 1u) ? n + "_1" : n;
+        writePhysicalBoundsChecks(os, v, vn, "1u", false, false);
       };
       if (!areRuntimeChecksDisabled(md)) {
         for (const auto& mv : f.usedVariables) {
@@ -408,10 +413,9 @@ namespace mfront {
           raise("error while treating bounds of variable '" + v.name +
                 "' (only scalar variable are supported)");
         }
-        writeBoundsChecks(os, v, n, "1u", "policy", false, false);
-        if (vdepth == 1u) {
-          writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false, false);
-        }
+        // the variable is checked under the name it is declared with
+        const auto vn = (vdepth == 1u) ? n + "_1" : n;
+        writeBoundsChecks(os, v, vn, "1u", "policy", false, false);
       };
       if (!areRuntimeChecksDisabled(md)) {
         for (const auto& mv : f.usedVariables) {
@@ -431,6 +435,14 @@ namespace mfront {
       }
       //
       os << f.body << '\n';
+      // bounds of the outputs computed by the function
+      if (!areRuntimeChecksDisabled(md)) {
+        for (const auto& mv : f.modifiedVariables) {
+          const auto& v = md.outputs.getVariable(mv);
+          write_physical_bounds(v, v.name, 0u);
+          write_bounds(v, v.name, 0u);
+        }
+      }
       for (const auto& mv : f.modifiedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
         const auto& v = md.outputs.getVariable(mv);
@@ -512,6 +524,8 @@ namespace mfront {
        << "}\n\n";
     os << "} // end of anonymous namespace\n\n"
        << "} // end of namespace mfront::gm\n\n";
+    //
+    bi.writeSetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {

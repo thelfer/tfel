@@ -1,0 +1,11 @@
+test_case: "UniaxialTensileTest",
+name: "uniaxialtensiletest",
+behaviour: {
+  library: @library@,
+  function: "Elasticity3",
+  material_properties: {YoungModulus: 150e9, PoissonRatio: 0.3},
+  external_state_variables: {Temperature: 293.15}
+},
+// times read from a file: the formula multiplies the first column by 2
+times: {file: "uniaxialtensiletest-times.txt", values: "$1*2"},
+imposed_strain: {0: 0, 2: 1.e-3}

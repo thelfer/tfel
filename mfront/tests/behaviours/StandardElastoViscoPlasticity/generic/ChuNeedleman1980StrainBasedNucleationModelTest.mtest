@@ -1,0 +1,33 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// proportional multiaxial stress driven by EXX
+@Real 'ryy' 0.35;
+@Real 'rzz' -0.25;
+@Real 'rxy' 0.3;
+@NonLinearConstraint<Stress> 'SYY - ryy * SXX';
+@NonLinearConstraint<Stress> 'SZZ - rzz * SXX';
+@NonLinearConstraint<Stress> 'SXY - rxy * SXX';
+@ImposedStrain 'EXX' {0 : 0, 1 : 2.5e-2};
+@Times{0, 1 in 40};
+
+// perfect plasticity: SXX is constant once yielding. q is the von Mises
+// stress by unit of SXX (with Sij = sqrt(2) * sigma_ij for i != j)
+@Real 'q' 'sqrt(((1 - ryy) ** 2 + (ryy - rzz) ** 2 + (rzz - 1) ** 2) / 2 + 3 * rxy ** 2 / 2)';
+@Real 'R0' 274;
+@Real 'E' 200e3;
+@Real 'cxx' '(1 - 0.3 * (ryy + rzz)) / E';
+@Real 'SXXy' 'R0 / q';
+@Evolution<function> 'p' 'max(EXX - cxx * SXXy, 0) * 2 * q / (2 - ryy - rzz)';
+@Test<function> 'SXX' 'min(EXX / cxx, SXXy)' 1e-8;
+@Test<function> 'EquivalentPlasticStrain' 'p' 1e-10;
+
+// exact integral of the nucleation rate: the criterion does not depend on
+// the porosity and the plastic flow is deviatoric
+@Real 'fn' 0.1;
+@Real 'en' 1e-2;
+@Real 'sn' 1e-3;
+@Test<function> 'Porosity' 'fn * (erf((p - en) / (sqrt(2) * sn)) + erf(en / (sqrt(2) * sn))) / 2' 1e-10;

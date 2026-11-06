@@ -188,7 +188,7 @@ namespace mfront {
      * \param[in] l: language
      * \param[in] c: category
      */
-    [[nodiscard]] std::optional<std::set<std::string>> getCompilationOptions(
+    [[nodiscard]] std::optional<std::vector<std::string>> getCompilationOptions(
         const Language, const LanguageOptionCategory) const;
     /*!
      * \brief add a linker option
@@ -210,7 +210,7 @@ namespace mfront {
      *
      * \param[in] c: category
      */
-    [[nodiscard]] std::optional<std::set<std::string>> getLinkerOptions(
+    [[nodiscard]] std::optional<std::vector<std::string>> getLinkerOptions(
         const LinkerOptionCategory) const;
     /*!
      * \brief add a include path
@@ -246,12 +246,13 @@ namespace mfront {
     //! \brief list of compilers
     std::map<Language, std::string> compilers;
     //! \brief list of compilation options
-    std::map<Language, std::map<LanguageOptionCategory, std::set<std::string>>>
+    std::map<Language,
+             std::map<LanguageOptionCategory, std::vector<std::string>>>
         compilation_options;
     //! \brief list of include paths
     std::set<std::string> include_paths;
     //! \brief list of compilation options
-    std::map<LinkerOptionCategory, std::set<std::string>> linker_options;
+    std::map<LinkerOptionCategory, std::vector<std::string>> linker_options;
   };
 
   //! \brief return the options used to read a configuration file

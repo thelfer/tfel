@@ -21,12 +21,8 @@
 namespace tfel::material {
 
   /*!
-   * \brief parameters of the strain version of the nucleation model
-   * proposed by Chu and Needleman.
-   *
-   * Chu, C. C., and A. Needleman. .
-   * “Void Nucleation Effects in Biaxially Stretched Sheets.”
-   * Journal of Engineering Materials and Technology 102 (3): 249–56
+   * \brief parameters of the strain version of the power law nucleation
+   * model.
    *
    * \tparam real: numeric type
    */

@@ -77,7 +77,7 @@ The following tangent operators are available:
 
 Orthotropic behaviours require to:
 
-- rotate the gradients in the material frame to the global frame before
+- rotate the gradients from the global frame to the material frame before
   the behaviour integration.
 - rotate the thermodynamic forces and the tangent operator blocks from
   the material frame to the global frame.
@@ -99,12 +99,17 @@ They all take three arguments:
 
 - a pointer to the location where the rotated variables will be stored.
 - a pointer to the location where the original variables are stored.
-- a pointer to the rotation matrix from the global frame to the material
-  frame. The rotation matrix has 9 components stored in column-major
-  format. For the function handling the thermodynamic forces and the
-  tangent operators blocks, this rotation matrix is transposed
-  internally to get the rotation matrix from the material frame to the
-  global frame.
+- a pointer to the rotation matrix \(R\) from the global frame to the
+  material frame. This matrix is the one of the `@RotationMatrix`
+  keyword of `MTest`: its columns are the material axes expressed in the
+  global frame, and its 9 components are stored row by row, so they are
+  the first components of the three material axes, then their second
+  components, then their third components. The gradients are rotated to
+  the material frame by \(R^{T}\,.\,\epsilon\,.\,R\) (the
+  `change_basis` function of `TFEL/Math`). For the function handling the
+  thermodynamic forces and the tangent operators blocks, this rotation
+  matrix is transposed internally to get the rotation matrix from the
+  material frame to the global frame.
 
 In place rotations are explicitly allowed, i.e. the first and second
 arguments can be a pointer to the same location.

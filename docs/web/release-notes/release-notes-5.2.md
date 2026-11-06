@@ -47,7 +47,118 @@ library, see below.
 
 # Known incompatibilities
 
+- The `enable-sanitize-options` option is no longer a boolean option: it
+  now takes the list of the sanitizers to enable, e.g.
+  `-Denable-sanitize-options="address;undefined"`. Enabling all the
+  sanitizers at once was indeed meaningless as most sanitizers cannot be
+  combined (for instance `address`, `thread` and `memory`). Each
+  sanitizer can also be enabled individually using its dedicated
+  `enable-<name>-sanitizer` option, see below.
+- `cmake` \(3.20\) or later is now required to build `TFEL`.
 - `MFront`' interfaces have to implement a method named `setOptions`.
+- The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
+  as documented, if `C++` keywords are allowed (see Issue #964): its
+  meaning has been inverted. With the default value (`true`), `C++`
+  keywords are now considered as valid identifiers.
+- The static method `get` of the
+  `GlobalDomainSpecificLanguageOptionsManager` class has been removed.
+  The global options passed to domain specific languages are now handled
+  by the `ConfigurationManager` class, which derives from the
+  `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
+  instance is returned by `ConfigurationManager::get()`.
+- `@RotationMatrix<Euler>` of `MTest` now gives the rotation described
+  by the Euler angles in the convention of Bunge, as the polycrystal
+  classes of `MFront` (see Issue #1270): the rotation matrix was the
+  Bunge matrix instead of its transpose, i.e. the inverse rotation was
+  applied.
+- `Evaluator::getVariablesNames` returns the names of the variables
+  ordered by their positions (the order given to the constructor, or the
+  order of their first appearance in the expression), instead of the
+  alphabetical order (see Issue #1209).
+- `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
+  expansion coefficients is now an error (except `ThermalExpansion1` and
+  `ThermalExpansion2` in plane stress).
+- `MTest` assembles the equations associated with the off-diagonal
+  components of the deformation gradient of finite strain behaviours
+  with the off-diagonal stresses, and applies the imposed off-diagonal
+  Cauchy stresses to both of their rows (see Issue #1290): computations
+  leaving one of these components free, which failed or converged to a
+  wrong state, converge to the right state, and the number of
+  iterations of the other ones may change.
+- `abaqusexplicit` interface (see Issue #1274): the results of
+  orthotropic behaviours using the `MFront` orthotropy management policy
+  change when the material frame is not symmetric with respect to the
+  global frame: the integration applied the inverse rotation, and the
+  second material axis was read beyond the orientation in 2D.
+- `computeDeterminantSecondDerivative` of a non-symmetric tensor now
+  returns the second derivative of the determinant in 2D and 3D (see
+  Issue #1262): the rows of the off-diagonal components differ from the
+  previous results, which were the derivative of the adjugate.
+- The tiny non-linear solvers (and the `Implicit` DSLs) evaluate the
+  estimate given by the last allowed correction (see Issue #1288): an
+  integration that converges with exactly `iterMax` corrections now
+  succeeds, and a failing one evaluates its residual once more.
+- The Levenberg-Marquardt minimisers (`LevenbergMarquardt`,
+  `FSLevenbergMarquardt`) reject the steps that increase the cost (see
+  Issue #1288): the iterates of every fit change.
+- Inputs that were silently ignored are now rejected (see Issue #1256):
+  the `overriding_parameters` option of the model DSLs, `@Bounds` and
+  `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
+  component of a scalar variable, and the `Ksf` option of the
+  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
+- The Broyden algorithms of the `Implicit` DSLs (`Broyden`,
+  `PowellDogLeg_Broyden` and `Broyden2`) update the jacobian, or its
+  inverse, again (see Issue #1295): since `TFEL-4.0`, the update was
+  hidden by the `updateOrCheckJacobian` method generated in every
+  behaviour. The number of iterations of the behaviours using them
+  changes, and so do their results within the convergence criterion.
+  In `TinyBroydenSolver` and `TinyPowellDogLegBroydenSolver`
+  (respectively `TinyBroyden2Solver`), the update is performed by the
+  `updateJacobian` (respectively `updateJacobianInvert`) method, which
+  replaces their `updateOrCheckJacobian` method.
+- The integer values read by `CxxTokenizer::readInt` and
+  `CxxTokenizer::readUnsignedInt`, i.e. the integers of the `MTest`,
+  `MFront` and `tfel-check` files (numbers of iterations and of
+  sub-steps, columns, array sizes of the DSLs, ...), shall be written
+  without decimal point nor exponent: `3.0`, `3.` or `3e0` are now
+  rejected (see Issue #1326).
+- The type identifiers exported by `MFront` for the variables whose
+  type is the derivative of a tensorial type alias (such as
+  `StressStensor`, `Stensor`, `TVector` or `Tensor`) with respect to a
+  non-scalar type follow the encoding described in the documentation:
+  for instance, `derivative_type<StressStensor, StrainStensor>` is
+  exported as `268`, like `Stensor4`, instead of `76`, which `MTest` and
+  `MGIS` decode as `derivative_type<stensor<1, real>, real>`. Behaviours
+  declaring such variables must be generated again (see Issue #1332).
+- The array sizes of the variables of `MFront` and the integer
+  formulas evaluated by `IntegerEvaluator` (for instance the
+  `tile_size` option of the `TDLS` linear solver) shall only contain
+  integers: a number with a decimal point or an exponent, such as `2.5`
+  (which was truncated to `2`), `1e1` or `2.0`, is now rejected (see
+  Issue #1321).
+- In the homogenisation schemes of `TFEL/Material`, the elasticity of an
+  anisotropic `OrientedDistribution` or `Grain`, given in the local basis
+  of its inclusions, is rotated to the global basis (see Issue #1299):
+  it was used as a global elasticity, so that the orientation of these
+  phases was ignored. `computeEllipsoidLocalisationTensor` and
+  `computePlaneStrainLocalisationTensor` with an isotropic matrix rotate
+  the elasticity of the inclusion as well, as documented. The results of
+  the dilute, Mori-Tanaka and self-consistent schemes with such phases
+  change.
+- The `FiniteStrainSingleCrystal` brick takes into account, in the
+  jacobian and the consistent tangent operator, the derivatives of the
+  normalisation of the inverse of the plastic deformation gradient
+  increment (see Issues #1309 and #1359). These derivatives were
+  explicitly neglected, as numerical tests showed (or at least seemed to
+  show) that they were negligible. The residual is unchanged, so the
+  results only change within the convergence criteria, unless the
+  sub-stepping changes: the number of local and global iterations
+  changes, and decreases significantly when the deformation gradient is
+  not fully imposed. The boolean option
+  `plastic_deformation_gradient_normalisation_corrections` of the brick,
+  which is `true` by default, allows users to easily test if this
+  correction affects their results: setting it to `false` restores the
+  previous derivatives.
 
 # Improvements to the build system
 
@@ -58,6 +169,78 @@ library, see below.
 - `enable-tdls-as-default-linear-system-solver-in-mfront`: use `TDLS`
   as the default linear solver. Requires `enable-tdls` to be `ON`.
   `OFF` by default.
+
+## Sanitizers and hardening options
+
+The support for sanitizers has been modularised: the `enable-sanitize-options`
+option takes the list of the sanitizers to enable (a comma may be used as a
+separator instead of a semicolon), for instance:
+
+~~~~{.bash}
+$ cmake <srcdir> -Denable-sanitize-options="address;undefined"
+~~~~
+
+The available sanitizers depend on the compiler and on its version. The
+`address`, `thread` and `memory` sanitizers cannot be used simultaneously.
+
+Each sanitizer also has a dedicated option, whose name is obtained from the
+sanitizer name: `enable-<name>-sanitizer`, e.g.
+`-Denable-bounds-strict-sanitizer=ON`. Such options can be combined with the
+`enable-sanitize-options` option: the enabled sanitizers are the sanitizers
+listed in the `enable-sanitize-options` option and the sanitizers whose
+dedicated option is enabled. Dedicated options are also defined for the
+sanitizers which are not supported by the current compiler (enabling them
+issues a warning and they are ignored), so that the same options can be
+used whatever the compiler is.
+
+The following sanitizers are declared for `gcc` (the sanitizers corresponding
+to a subset of the undefined behaviour sanitizer can be enabled
+individually):
+
+- `address`, `thread`, `leak`, `hwaddress`,
+- `undefined` and its subsets: `alignment`, `bool`, `bounds`,
+  `bounds-strict`, `builtin`, `enum`, `float-cast-overflow`,
+  `float-divide-by-zero`, `null`, `object-size`, `return`, `shift`,
+  `shift-base`, `shift-exponent`, `signed-integer-overflow`, `vptr`,
+- `pointer-compare`, `pointer-subtract` (the address sanitizer and the link
+  time optimization are required and added automatically),
+- hardening flags, which can be combined with the sanitizers above:
+  `fstack-check`, `fstack-protector-all`, `fno-omit-frame-pointer`.
+
+The following sanitizers are declared for `clang`:
+
+- `address`, `thread`, `memory` (the memory sanitizer also enables
+  `-fsanitize-memory-track-origins=2`), `leak`, `hwaddress`,
+- `cfi`, `cfi-icall`, `safe-stack`, `shadow-call-stack`, `dataflow`,
+- `undefined` and its subsets: `alignment`, `bool`, `bounds`, `builtin`,
+  `enum`, `float-cast-overflow`, `float-divide-by-zero`, `integer`,
+  `unsigned-integer-overflow`, `null`, `object-size`, `return`, `shift`,
+  `shift-base`, `shift-exponent`, `signed-integer-overflow`, `vptr`,
+- `pointer-compare`, `pointer-subtract` (the address sanitizer and the link
+  time optimization are required and added automatically),
+- hardening flags, which can be combined with the sanitizers above:
+  `address-use-after-scope` (`-fsanitize-address-use-after-scope`),
+  `fstack-check`, `fstack-protector-all`, `fno-omit-frame-pointer`.
+
+Some sanitizers require specific settings to be fully effective (the link
+time optimization for `cfi` and `shadow-call-stack`, instrumentation of all
+the linked code for `memory` and `safe-stack`, etc.), as described in the
+`gcc` and `clang` documentations.
+
+Note that the `vptr` check, which is part of the `undefined` sanitizer,
+may lead to pathologically long compilation times with `gcc` for some
+files of `MFront`, which implement heavy template code: it takes more
+than ninety minutes to compile
+`mfront/src/GenericMaterialPropertyInterfaceBase.cxx` with
+`-fsanitize=undefined` (`-O2`), whereas a few minutes are needed when the
+`vptr` check is disabled. This check can be excluded by listing
+individually the sanitizers of interest, using the corresponding
+dedicated options (`alignment`, `bool`, `bounds`, `builtin`, `enum`,
+etc.) instead of the `undefined` sanitizer.
+
+When at least one sanitizer is enabled, the `-fno-omit-frame-pointer` flag is
+added automatically to ease the interpretation of the reports emitted by the
+sanitizers.
 
 ## User-defined `cmake` variables
 
@@ -98,6 +281,10 @@ The following configurations are supported for parallel computations:
   policy and NVIDIA's `nvhpc` compiler with offloading on the GPU.
 - `sycl-default-icpx`: configuration associated with `SYCL` programming
   model INTEL's `icpx` compiler.
+- `sycl-default-acpp`: configuration associated with `SYCL` programming
+  model and AdaptativeCpp's `acpp` compiler.
+- `sycl-gpu-acpp`: configuration associated with `SYCL` programming
+  model and AdaptativeCpp's `acpp` compiler, with offloading on the GPU.
 
 ## Add a `build-tests` target
 
@@ -119,9 +306,11 @@ page](tfel-config.html).
 
 ## TFEL's default substitutions
 
-The `getDefaultSubstitutions` function returns some default
+The `getTFELDefaultSubstitutions` function returns some default
 substitutions used by `MFront` when reading configuration files and
-`tfel-check` when analysing `.check` files.
+`tfel-check` when analysing `.check` files. The keys listed below are
+delimited by the `@` character in those files and in the map returned
+by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 ### General substitutions
 
@@ -166,8 +355,8 @@ substitutions used by `MFront` when reading configuration files and
   1. by passing the variable `TFEL_NVHPC_COMPILER` during the invocation of
   `cmake`,
   2. by using `nvhpc` as the main compiler to compile `TFEL`,
-  3. by searching `nvhpc` using `cmake`'s `find_program` function.
-- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvhcp` as found by
+  3. by searching `nvc++` using `cmake`'s `find_program` function.
+- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvcc` as found by
   `FindCUDAToolkit`.
 - `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value
   associated with this key is determined as follows, by order of
@@ -179,7 +368,7 @@ substitutions used by `MFront` when reading configuration files and
 
 ### Substitutions related to the `HIPCC` compiler
 
-- `TFEL_HIPCC_FLAGS: additional flags to be passed to the `hipcc`
+- `TFEL_HIPCC_FLAGS`: additional flags to be passed to the `hipcc`
   compiler.
 - `TFEL_HIP_INCLUDE_DIR`: paths to `HIP` headers
 
@@ -236,6 +425,22 @@ Quantities were deeply refactored to:
 - improve error message,
 - reduce size of the generated symbols.
 
+## Adjugate of a tensor and its derivative
+
+The `computeAdjugateDeterminantDerivative` function returns the
+adjugate of a tensor, \(\det\left(F\right)\,F^{-1}\), i.e. the
+transpose of the derivative of the determinant returned by
+`computeDeterminantDerivative`. The
+`computeAdjugateDeterminantSecondDerivative` function returns its
+derivative, which `computeDeterminantSecondDerivative` returned in 2D
+and 3D before Issue #1262 (it now returns the second derivative of the
+determinant).
+
+~~~~{.cxx}
+const auto adj = computeAdjugateDeterminantDerivative(F);
+const auto dadj = computeAdjugateDeterminantSecondDerivative(F);
+~~~~
+
 # New `TFEL/Material` features
 
 ## Homogenization
@@ -257,12 +462,14 @@ The `Polycrystal` object has been added to deal with
 homogenization schemes which do not assume that there is a matrix phase.
 An object `Grain` was created for this class of microstructures.
 
-The `computeSelfConsistentScheme` has been modified in order to be
+The `computeSelfConsistent` function (`computeSelfConsistentScheme` in
+the `Python` bindings) has been modified in order to be
 more consistent with the literature. Now, This scheme takes a `Polycrystal`
 in which no matrix phase exists. For the `ParticulateMicrostructure`,
-the function `computeAsymmetricSelfConsistentScheme` has been introduced,
-which corresponds to a variant of the Self-Consistent scheme for which
-the matrix phase plays a particular role.
+the function `computeAsymmetricSelfConsistent`
+(`computeAsymmetricSelfConsistentScheme` in the `Python` bindings) has
+been introduced, which corresponds to a variant of the Self-Consistent
+scheme for which the matrix phase plays a particular role.
 
 In the homogenization schemes relative to the `ParticulateMicrostructure`,
 the computation of the derivatives of the homogenized stiffness tensor
@@ -341,7 +548,7 @@ generated files and directories listed by the `@CleanFiles` and
 default) or not in case of success.
 
 ~~~~{.bash}
-$ tfel-check --clean-up
+$ tfel-check --clean-up=false
 ~~~~
 
 The `--discard-clean-up-on-failure` command line argument allows to
@@ -350,7 +557,7 @@ choose whether the generated files and directories listed by the
 (this is the case by default) in case of failure.
 
 ~~~~{.bash}
-$ tfel-check --clean-up
+$ tfel-check --discard-clean-up-on-failure=false
 ~~~~
 
 ## Timeout for commands
@@ -512,7 +719,11 @@ the following sections:
 - `behaviour_dsl_options`
 - `model_dsl_options`
 - `interfaces_options`
+- `material_property_interfaces_options`
+- `behaviour_interfaces_options`
+- `model_interfaces_options`
 - `compilation_options`
+- `linking_options`
 
 None of those sections is required. All those sections must introduce a
 dictionary.
@@ -532,14 +743,25 @@ dictionary.
 ~~~~{.json}
 interfaces_options: {
   generic-parallel: {
-    backend: {"stlpar", execution_policy: "par_unseq"}
+    backend: {stlpar: {execution_policy: "par_unseq"}}
   }
 }
 ~~~~
 
 ### The `interfaces_options` section
 
+The `interfaces_options` section associates to the name of an interface
+a dictionary of options passed to this interface, as in the previous
+example. The `material_property_interfaces_options`,
+`behaviour_interfaces_options` and `model_interfaces_options` sections
+have the same syntax, but their options are only passed to the
+interfaces dedicated to material properties, behaviours and models
+respectively.
+
 ### The `compilation_options` section
+
+The `compilation_options` section associates to a language (`c`,
+`cxx`, `cuda` or `hip`) a dictionary of options, as follows:
 
 ~~~~{.json}
 compilation_options : {
@@ -552,11 +774,32 @@ compilation_options : {
 
 #### The `compiler` option
 
+The `compiler` option specifies the compiler used for the given
+language. The environment variables `CC`, `CXX`, `CUDA_COMPILER` and
+`HIP_COMPILER` take precedence over this option.
+
 #### The `compilation_flags` option
+
+The `compilation_flags` option specifies the compilation flags used for
+the given language, as a string or as an array of strings. The
+environment variables `CFLAGS`, `CXXFLAGS`, `CUDAFLAGS` and `HIPFLAGS`
+take precedence over this option.
+
+#### The `preprocessor_flags` option
+
+The `preprocessor_flags` option specifies the preprocessor flags used
+for the given language, as a string or as an array of strings. Those
+flags are written before the compilation flags.
 
 ### The `linking_options` section
 
+The `linking_options` section defines the options passed to the linker.
+
 #### The `linker_flags` option
+
+The `linker_flags` option specifies the flags passed to the linker, as a
+string or as an array of strings. The environment variable `LDFLAGS`
+takes precedence over this option.
 
 ## Passing options to interfaces on the command line
 
@@ -606,6 +849,38 @@ In Version 5.1, the variable name `KHRR` is declared twice. `Cast3M`
 does not generate an error although duplicated names leads to erroneous
 results. Version 5.2 avoids this pitfall.
 
+## The `plastic_deformation_gradient_normalisation_corrections` option of the `FiniteStrainSingleCrystal` brick
+
+The `FiniteStrainSingleCrystal` brick normalises the inverse of the
+plastic deformation gradient increment by the cubic root of its
+determinant. The derivatives of this normalisation with respect to the
+plastic slips were explicitly neglected in the jacobian and in the
+consistent tangent operator, as numerical tests showed (or at least
+seemed to show) that they were negligible.
+
+These derivatives are now taken into account by default (see Issue
+#1359). The results are not affected, up to the convergence criteria,
+but the convergence is when the deformation gradient is not fully
+imposed: the global iterations recover their quadratic convergence. The
+boolean option
+`plastic_deformation_gradient_normalisation_corrections` allows to
+neglect them:
+
+~~~~{.cpp}
+@Brick FiniteStrainSingleCrystal{
+  plastic_deformation_gradient_normalisation_corrections : false
+};
+~~~~
+
+The same derivatives are explicitly neglected in the
+`FiniteStrainSingleCrystal`, `FiniteStrainSingleCrystal2` and
+`FiniteStrainSingleCrystal_NumericalJacobian` test behaviours. Versions
+taking them into account are provided by the
+`FiniteStrainSingleCrystal_WithCorrections`,
+`FiniteStrainSingleCrystal2_WithCorrections` and
+`FiniteStrainSingleCrystal_NumericalJacobian_WithCorrections` test
+behaviours.
+
 # Documentation
 
 ## New coding guidelines page
@@ -619,7 +894,7 @@ agents: [coding guidelines](coding-guidelines.html).
 ## Github actions
 
 Github actions have been updated to supported a wider range of
-configurations, including testing based on `Visual Studio 2024` and
+configurations, including testing based on `Visual Studio 2022` and
 `Visual Studio 2026`.
 
 # Acknowledgements
@@ -632,6 +907,453 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1376: [mfront-doc] Formula of the Chaboche 2012 kinematic hardening rule differs from the code for m != 1
+
+For more details, see <https://github.com/thelfer/tfel/issues/1376>
+## Issue 1359: [mfront] FiniteStrainSingleCrystal: corrections of the derivatives of the normalised plastic deformation gradient increment, test behaviours and option of the brick
+
+For more details, see <https://github.com/thelfer/tfel/issues/1359>
+## Issue 1273: [tfel-check] Warning when @Precision with one value keeps the second precision of a previous @Precision
+
+For more details, see <https://github.com/thelfer/tfel/issues/1273>
+## Issue 1371: [mtest] Generalised plane strain elastic stiffness used with the generic plane stress algorithm of the castem wrappers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1371>
+
+## Issue 1332: [mfront] type identifiers of the derivatives of tensorial type aliases (derivative_type<StressStensor, StrainStensor>) are decoded as another type by MTest and MGIS
+
+For more details, see <https://github.com/thelfer/tfel/issues/1332>
+
+## Issue 1330: [docs] StrainMeasure options, MTest prediction policies and keywords, implicit DSL tangent operator, tfel-check options, crystal plasticity, acceleration algorithms, cyrano generalised plane stress
+
+For more details, see <https://github.com/thelfer/tfel/issues/1330>
+
+## Issue 1326: [mfront] behaviour interfaces: Hencky strain in plane stress, calculix orthotropic logarithmic strain, MTest files of abaqus and ansys, cyrano NTENS, castem and abaqus examples, negative unsigned values of the DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1326>
+
+## Issue 1324: [tfel-material] GTN equivalent stress for small porosities, Norton-Hoff harmonic sum derivative, criteria with quantities, Schmid factors of cubic crystals, documentation of criteria and nucleation models
+
+For more details, see <https://github.com/thelfer/tfel/issues/1324>
+
+## Issue 1321: [tfel-math, tfel-system] formula parsers, raw streams, recursiveFind, ThreadPool, Python tfel.system: non-integer sizes, missing derivatives, nested external functions, ln and H in C++, pointers, short writes, symbolic links
+
+For more details, see <https://github.com/thelfer/tfel/issues/1321>
+
+## Issue 1319: [mfront] RungeKuttaFiniteStrain with the deformation gradient, truncated files, command-line keywords of mtest, unsigned parameters, MaterialLaw bounds, Python mfront module, empty configuration options, tfel-config of the CMake generator
+
+For more details, see <https://github.com/thelfer/tfel/issues/1319>
+
+## Issue 1317: [tfel-math] Include guard of runtime_array, assignment from views arrays, strided indexing, Runge-Kutta final time and null step, scalarNewtonRaphson last iterate, QRDecomp of wide matrices, Levenberg-Marquardt with one parameter, abs of vector expressions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1317>
+
+## Issue 1313: [mtest] Prediction of finite strain behaviours, derivative types with a scalar side, plane stress messages, time step scaling of generic behaviours, UAnderson, PTest mandrel, mfm-test-generator
+
+For more details, see <https://github.com/thelfer/tfel/issues/1313>
+
+## Issue 1311: [mfront] Material properties given by formulas or external laws do not compile with @UseQt
+
+For more details, see <https://github.com/thelfer/tfel/issues/1311>
+
+## Issue 1309: [mfront] Bricks: staggered porosity scheme, ScalarDamage plane stress, DDIF2 tangent operator, FiniteStrainSingleCrystal derivatives, saved criteria, Data extrapolation, untested components
+
+For more details, see <https://github.com/thelfer/tfel/issues/1309>
+
+## Issue 1307: [mfront] UMAT-like interfaces: Ansys finite strain shear components, plane stress expansions, time step scaling factors, ZMAT bounds, Ansys energies, Abaqus/Explicit exceptions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1307>
+
+## Issue 1305: [mfront] Material property and model interfaces: validator symbols, octave static parameters, castem bounds and models, gnuplot @Graph, java with MSVC, bounds of model outputs, out of bounds policy of generic models
+
+For more details, see <https://github.com/thelfer/tfel/issues/1305>
+
+## Issue 1303: [mfront] Implicit DSLs: inverse jacobian blocks, normalisation factors, reference temperature of external files, UserDefined and Broyden2 algorithms, reserved names
+
+For more details, see <https://github.com/thelfer/tfel/issues/1303>
+
+## Issue 1301: Fixes of the 5.2 review: incomplete fixes and regressions in merged code
+
+For more details, see <https://github.com/thelfer/tfel/issues/1301>
+
+## Issue 1299: TFEL/Material homogenisation: the stiffness of oriented anisotropic inclusions and grains, given in their local basis, is used as a global stiffness
+
+For more details, see <https://github.com/thelfer/tfel/issues/1299>
+
+## Issue 1295: [tfel-math] The Broyden solvers never update the jacobian in MFront behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/1295>
+
+## Issue 1292: [tfel-material] LogarithmicStrainHandler: wrong tangent moduli in 3D when two eigenvalues of C are equal
+
+For more details, see <https://github.com/thelfer/tfel/issues/1292>
+
+## Issue 1290: [mtest] Off-diagonal deformation gradient equations and imposed off-diagonal stresses at finite strain, Broyden test behaviours overwriting the decomposed jacobian, implicitmonocrystal tests running MonoCrystal, elastic stiffness of the castem generic plane stress algorithm
+
+For more details, see <https://github.com/thelfer/tfel/issues/1290>
+
+## Issue 1288: [tfel-math] Adaptive Gauss-Kronrod integration with quantities, last correction of the tiny non-linear solvers, Levenberg-Marquardt steps increasing the cost, ExternalLibraryManager library path, contract violations aborting Python
+
+For more details, see <https://github.com/thelfer/tfel/issues/1288>
+
+## Issue 1285: [mfront] generic interface, finite strain in plane stress: the Green-Lagrange and standard finite strain families add the axial deformation gradient to the one of the caller
+
+For more details, see <https://github.com/thelfer/tfel/issues/1285>
+
+## Issue 1283: [mfront] MTest files generated on failure by the generic interface cannot be replayed in plane stress, and in plane strain at finite strain
+
+For more details, see <https://github.com/thelfer/tfel/issues/1283>
+
+## Issue 1281: [mfront] The generated Makefile adds the calling directory, not src, to LD_LIBRARY_PATH
+
+For more details, see <https://github.com/thelfer/tfel/issues/1281>
+
+## Issue 1274: [mfront] abaqusexplicit, MFront orthotropy policy: the integration applies the inverse rotation, second axis read beyond the orientation in 2D
+
+For more details, see <https://github.com/thelfer/tfel/issues/1274>
+
+## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
+
+For more details, see <https://github.com/thelfer/tfel/issues/1270>
+
+## Issue 1264: [tfel] Installed headers that cannot be compiled, 2D microstructure-based homogenisation, Windows installation pages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1264>
+
+## Issue 1262: [tfel-math] Second derivative of the determinant of a non-symmetric tensor, const scalar views of quantities, truncated exponent in the derivative of a**b
+
+For more details, see <https://github.com/thelfer/tfel/issues/1262>
+
+## Issue 1260: [mtest] Abaqus/Explicit stiffness in a rotated frame, incomplete orthotropic thermal expansion, tfel-check second precision, failed tangent operator comparison, overwritten JUnit reports
+
+For more details, see <https://github.com/thelfer/tfel/issues/1260>
+
+## Issue 1258: [mfront] generic MTest files of finite strain behaviours, cpptest and gnuplot interfaces, calculix MieheApelLambrechtLogarithmicStrainII strategy, dianafea failures and orthotropic behaviours, abaqus glue lock on Windows
+
+For more details, see <https://github.com/thelfer/tfel/issues/1258>
+
+## Issue 1256: [mfront] Model overriding parameters, bounds on main variables and on components, ScalarDamage in axisymmetrical generalised plane stress, keyword pages, Ksf of the harmonic sum flow, brick base classes exports, mfront-doc/mfront-query global options, MFrontLock
+
+For more details, see <https://github.com/thelfer/tfel/issues/1256>
+
+## Issue 1254: [tfel-math] Eigen solvers of symmetric tensors: wrong eigenvectors for equal or close eigenvalues, Cardano eigenvalues of syevc3, derivatives of isotropic functions of quantities, ConvertLogarithmicStrainTangentOperator
+
+For more details, see <https://github.com/thelfer/tfel/issues/1254>
+
+## Issue 1251: [cmake] Installed executables, libraries and Python modules without RUNPATH on Linux, madnex library not found, empty entries added by env.sh
+
+For more details, see <https://github.com/thelfer/tfel/issues/1251>
+
+## Issue 1242: [tests] Twenty-one C++ unit tests check no result
+
+For more details, see <https://github.com/thelfer/tfel/issues/1242>
+
+## Issue 1241: [ptest] Thirty of the 42 PTest pipe tests compare nothing
+
+For more details, see <https://github.com/thelfer/tfel/issues/1241>
+
+## Issue 1239: [cmake] Obsolete packaging files, TFEL_OPTIMISATION_FLAGS0, Debug flags, checks that never act, Cast3M 2026 header, minimum CMake version, exports of libTFELMFront
+
+For more details, see <https://github.com/thelfer/tfel/issues/1239>
+
+## Issue 1237: [cmake] Compiler printed by mfront --version, installed headers of the isotropic DSLs and of TFELCheck, dependencies of the installed CMake packages, static TFELMFrontDatabase package, CPack components
+
+For more details, see <https://github.com/thelfer/tfel/issues/1237>
+
+## Issue 1235: [tests] Copy-paste slips and vacuous checks in unit tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1235>
+
+## Issue 1233: [mfront] MFront DSL unit tests accept any exception
+
+For more details, see <https://github.com/thelfer/tfel/issues/1233>
+
+## Issue 1231: [tests] Commented-out cases in the Cazacu, LocalDataStructure, CxxTokenizerOffset and eigenvectors unit tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1231>
+
+## Issue 1229: [mfront] Expected-failure tests that fail for an unrelated reason
+
+For more details, see <https://github.com/thelfer/tfel/issues/1229>
+
+## Issue 1227: [mfront] Comparisons of the finite strain single crystal tests are commented out
+
+For more details, see <https://github.com/thelfer/tfel/issues/1227>
+
+## Issue 1225: [mtest] The fanderson and uanderson tests do not select their acceleration algorithm
+
+For more details, see <https://github.com/thelfer/tfel/issues/1225>
+
+## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
+
+For more details, see <https://github.com/thelfer/tfel/issues/1223>
+
+## Issue 1221: [mfront] Logarithmic strain shear tests: the shear-FZY-3D tests impose FZX, and the transposed cases compare too few stresses
+
+For more details, see <https://github.com/thelfer/tfel/issues/1221>
+
+## Issue 1219: [mfront] Strain tolerance of the axisymmetric shear tests of orthotropic elasticity
+
+For more details, see <https://github.com/thelfer/tfel/issues/1219>
+
+## Issue 1217: [tfel-glossary] Types, units and short descriptions of some glossary entries
+
+For more details, see <https://github.com/thelfer/tfel/issues/1217>
+
+## Issue 1215: [mfront] Installed GenericData and LSDYNA explicit headers, undefined declarations of the code generator and specific targets, madnex search paths documentation, pedantic bounds of parameters, castem21 keyword restrictions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1215>
+
+## Issue 1213: [mfront] @RequireThermalExpansionCoefficientTensor is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
+
+For more details, see <https://github.com/thelfer/tfel/issues/1213>
+
+## Issue 1211: [tfel-system] Undefined SignalManager and NUMODIS declarations, MTestParser and ProcessManagerCommand constructors, mtest reference file generator, terminate handler of the tools, BurnUp glossary name in the docs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1211>
+
+## Issue 1209: [tfel-math] Variable positions of Evaluator in diff() and tfel-check, fses::sort, vector::copy, GenType output, GTN flow stress, Mohr-Coulomb second derivative, eigen solvers on GPUs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1209>
+
+## Issue 1207: [mfront] Logarithm of the stress-free expansion stretch (abaqus, ansys, calculix, lsdyna), castem tangent operators in 1D and with FiniteRotationSmallStrain, cyrano hypothesis identifier, repeated @Test keys
+
+For more details, see <https://github.com/thelfer/tfel/issues/1207>
+
+## Issue 1205: [mfront] comsol error codes and initialisation, aster orthotropic cohesive zone models, bounds symbols of array elements, cyrano plane stress header, zmat arrays of tensors
+
+For more details, see <https://github.com/thelfer/tfel/issues/1205>
+
+## Issue 1203: [tfel-math] Isotropic moduli assignment, stensor products on GPUs, Gauss-Kronrod half-infinite error estimate, QR with more rows than columns, Levenberg-Marquardt factor, physical constants digits
+
+For more details, see <https://github.com/thelfer/tfel/issues/1203>
+
+## Issue 1201: [tfel-utilities] CxxTokenizer numbers and integers, string algorithms, TextData comments and infinities, ProcessManager and SignalManager children, tfel-doc --split
+
+For more details, see <https://github.com/thelfer/tfel/issues/1201>
+
+## Issue 1199: [mfront] Code block option ".+", @PhysicalBounds on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/1199>
+
+## Issue 1197: [mtest] Acceleration algorithm parameters, Anderson method orders above 22, castem_umat optional material properties, mtest Python options
+
+For more details, see <https://github.com/thelfer/tfel/issues/1197>
+
+## Issue 1195: [mfront] madnex search paths: file extension, behaviours and models, knowledge type; madnex export of shared dependencies
+
+For more details, see <https://github.com/thelfer/tfel/issues/1195>
+
+## Issue 1193: [mtest] End of input in the MTest and PTest parsers, ansys input file example of orthotropic behaviours, misleading interface messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1193>
+
+## Issue 1191: [mfront-query] Names of the DSL options in the help, strain measure output, specific targets rules and help texts
+
+For more details, see <https://github.com/thelfer/tfel/issues/1191>
+
+## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1189>
+
+## Issue 1187: [mfront] castem logarithmic strain helpers, stensor absolute value, DSLBase helpers, FSES return codes, TestDescription constructor, exported constants precision, tfel-check columns and ABAQUSEXPLICIT_NTHREADS
+
+For more details, see <https://github.com/thelfer/tfel/issues/1187>
+
+## Issue 1185: [mtest] dianafea wrapper shear order, tfel-check JUnit escaping, raw stream readers, Python docstrings, documentation links and tutorial examples
+
+For more details, see <https://github.com/thelfer/tfel/issues/1185>
+
+## Issue 1183: [cmake] Static library names, test dependencies, C++ standard, static MFront package, environment scripts, Doxygen install, installed MFront headers and exports
+
+For more details, see <https://github.com/thelfer/tfel/issues/1183>
+
+## Issue 1181: [python] mfront.database entry points, mtest initial values and depths, tfel.material imports, mfm-test-generator, mfm --filter-by-type and MTest files on failure
+
+For more details, see <https://github.com/thelfer/tfel/issues/1181>
+
+## Issue 1179: [mfront] Wrong or misleading error messages and documentation of DSLs, tools, material property interfaces, stress criteria, MTest bindings and tfel-check
+
+For more details, see <https://github.com/thelfer/tfel/issues/1179>
+
+## Issue 1177: [mfront] ansys, comsol, dianafea, castem, aster and cyrano interfaces: material properties layout, tangent operator conventions, 2D sizes, plane stress checks, Gibiane examples and messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1177>
+
+## Issue 1175: [installation] Doxygen deployment, keyword descriptions, installation pages, maintainer scripts, generic interface and math docs, quantity tests option, physical constants and glossary generators
+
+For more details, see <https://github.com/thelfer/tfel/issues/1175>
+
+## Issue 1173: [mfront] abaqus and amitex input examples, cyrano header, ansys/lsdyna/dianafea example files and zmat interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/1173>
+
+## Issue 1171: [mfront-query] File extensions of mfront.write and mtest.write, mfront-query lookups, bounds and specific targets, mfront-doc descriptions and constants, InelasticFlowBase include
+
+For more details, see <https://github.com/thelfer/tfel/issues/1171>
+
+## Issue 1169: [tfel-tests] tfel-doc output, log and colors, TFEL/Tests XML output and exports, copy-paste slips, JUnit report names, TextData::skipLines, FSAlgorithm loop and strided iterator assignment
+
+For more details, see <https://github.com/thelfer/tfel/issues/1169>
+
+## Issue 1167: [tfel-utilities] CxxTokenizer, Data arrays, reserved keywords, systemCall::copy, wfstream, TFEL/System messages and tfel-check end of file and empty_output
+
+For more details, see <https://github.com/thelfer/tfel/issues/1167>
+
+## Issue 1165: [tfel-math] Headers and parser: parenthesised conditions, stensor setComponent/getComponent, isqrt3 with MSVC, square_root of quantities, GPU attribute, ATLAS binding, HasRandomAccessIterator, self-contained material headers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1165>
+
+## Issue 1163: [python] Bindings: CurrentStateVector, tfel.math operators, versioned packages, CMakeGenerator, return value policies, Hill tensors, DSLFactory and mergeTargetsDescription
+
+For more details, see <https://github.com/thelfer/tfel/issues/1163>
+
+## Issue 1161: [mtest] MTest and PTest: ptest keywords help, array component names, orthotropic generic stress, mistral defaults, PTest output and jacobian, algorithm names, installed and exported classes
+
+For more details, see <https://github.com/thelfer/tfel/issues/1161>
+
+## Issue 1159: [tfel-material] Finite strain tangent operators, logarithmic strain handler, Hosford/Barlat with quantities, bounds checks, Gauss-Kronrod, broyden, parser and LU messages
+
+For more details, see <https://github.com/thelfer/tfel/issues/1159>
+
+## Issue 1157: [mfront] castem, aster, abaqus, ansys and abaqusexplicit interfaces: LogarithmicStrain1D, sub-stepping, 2D finite strain fallbacks, tangent operator layouts and numerical comparison
+
+For more details, see <https://github.com/thelfer/tfel/issues/1157>
+
+## Issue 1155: [mfront] DSLs and generated code: modelling hypotheses intersection, braceless assignments, output operators, brick symmetries, code blocks, error messages and debug comments
+
+For more details, see <https://github.com/thelfer/tfel/issues/1155>
+
+## Issue 1153: [tfel-math] Quantities and views: qt_ref assignment, change_basis, positive parts, runtime matrix views, arrays of views, tmatrix products, FSES NaN, Hashin-Shtrikman shear bounds, Anderson weights
+
+For more details, see <https://github.com/thelfer/tfel/issues/1153>
+
+## Issue 1151: [mfront] Generated code: integration variable derivatives, tangent operator blocks, generic gradients, relocation model, brick arrays, MultipleIsotropicMisesFlows, behaviour variables and ℝ₊ bounds
+
+For more details, see <https://github.com/thelfer/tfel/issues/1151>
+
+## Issue 1149: [mtest] Initial elastic stiffness of Abaqus/Explicit behaviours: halved shear terms and 3D shear columns
+
+For more details, see <https://github.com/thelfer/tfel/issues/1149>
+
+## Issue 1147: [tfel-math] Formula parsers, kriging and LUSolve: copy and arguments of diff, Cast3M functions without argument, integer division by zero, rebuilt and empty kriging, work vector size
+
+For more details, see <https://github.com/thelfer/tfel/issues/1147>
+
+## Issue 1145: [tfel-math] Headers: abs of t2tost2, st2tost2 conversion in 1D, eigen tensors of quantities, tmatrix, array derivatives, copy, strided maps and indexing policies
+
+For more details, see <https://github.com/thelfer/tfel/issues/1145>
+
+## Issue 1143: [mfront] DSLs: bricks, behaviour variables, @TangentOperator, initialisation values, targets.lst, overriding increments and bounds
+
+For more details, see <https://github.com/thelfer/tfel/issues/1143>
+
+## Issue 1141: [tfel-utilities] tfel-check shall_fail and directory configurations, rstream::getLine, CxxTokenizer, Data reading and comparison, ArgumentParser
+
+For more details, see <https://github.com/thelfer/tfel/issues/1141>
+
+## Issue 1139: [python] Bindings: evtypes, ST2toST2 subscripts, homogenisation bounds, setRotationMatrix, setStrainMeasure, umatxx, Anderson algorithms and Data
+
+For more details, see <https://github.com/thelfer/tfel/issues/1139>
+
+## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, @Relocation, rotation functions and MTest files on failure
+
+For more details, see <https://github.com/thelfer/tfel/issues/1137>
+
+## Issue 1135: [tfel-material] NUMODIS and slip systems: Schmid factors, installed headers, exports, HCP families and symmetries
+
+For more details, see <https://github.com/thelfer/tfel/issues/1135>
+
+## Issue 1133: [tfel-math] Powell dog leg solvers, scalar Newton-Raphson, TinyMatrixSolve/Invert, CubicRoots, runtime_array output and Fischer-Burmeister derivatives
+
+For more details, see <https://github.com/thelfer/tfel/issues/1133>
+
+## Issue 1131: [mfront] Hooke stress potentials: plane stress jacobian, generic_prediction_operator option and broken state tests
+
+For more details, see <https://github.com/thelfer/tfel/issues/1131>
+
+## Issue 1129: [mtest] Wrappers of the generic, aster, castem, ansys, abaqusexplicit and castem_umat behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/1129>
+
+## Issue 1127: [tfel-system] rmdir following symbolic links, mkdir, binary_read, ThreadPool, ThreadedTaskResult, pipes and ELF symbols
+
+For more details, see <https://github.com/thelfer/tfel/issues/1127>
+
+## Issue 1125: [mfront] Tangent operators of cohesive zone models (castem, aster, MTest) and calculix interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/1125>
+
+## Issue 1123: [mfront] StandardElastoViscoPlasticity brick: flow identifiers, flow criteria coefficients, theta factors and hardening rules
+
+For more details, see <https://github.com/thelfer/tfel/issues/1123>
+
+## Issue 1121: [tfel-material] Hill tensors, orientation averages, Plate convention and altered stiffness tensors in axisymmetrical generalised plane stress
+
+For more details, see <https://github.com/thelfer/tfel/issues/1121>
+
+## Issue 1119: [mfront] ansys and abaqusexplicit interfaces: finite strain strategies, plane stress, packaging and parallelisation
+
+For more details, see <https://github.com/thelfer/tfel/issues/1119>
+
+## Issue 1117: [mfront] Interfaces of material properties and models: exports, one-line functions, bounds, temperature of castem models and comsol
+
+For more details, see <https://github.com/thelfer/tfel/issues/1117>
+
+## Issue 1115: [tfel-math] Eigenvalue sorting, Harari solver, positive/negative parts, convert, tpld and fromRotationMatrix on GPU
+
+For more details, see <https://github.com/thelfer/tfel/issues/1115>
+
+## Issue 1113: [mfront] StandardElastoViscoPlasticity brick: nucleation, porosity name, porosity jacobian and porous stress criteria
+
+For more details, see <https://github.com/thelfer/tfel/issues/1113>
+
+## Issue 1111: [mtest] Crash without behaviour, time step at the end of a period, events, NaN results and cubic pipe elements
+
+For more details, see <https://github.com/thelfer/tfel/issues/1111>
+
+## Issue 1109: [mfront] Runge-Kutta DSLs and solvers: rk4 last stage, external models, error estimates and final time
+
+For more details, see <https://github.com/thelfer/tfel/issues/1109>
+
+## Issue 1107: [mfront] Normalisation factors, physical bounds and MultipleIsotropicMisesFlows in the implicit and isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/1107>
+
+## Issue 1105: [docs] Examples rejected by mfront and mtest, wrong keyword names and broken links
+
+For more details, see <https://github.com/thelfer/tfel/issues/1105>
+
+## Issue 1103: [tfel-math] Crash, operator precedence, derivative and integer literal errors of the formula parsers
+
+For more details, see <https://github.com/thelfer/tfel/issues/1103>
+
+## Issue 1101: [tfel-material] Wrong second derivatives, NaN and single precision build errors of several stress criteria
+
+For more details, see <https://github.com/thelfer/tfel/issues/1101>
+
+## Issue 1099: [mfront] Wrong shear components of stress-free expansions in several behaviour interfaces
+
+For more details, see <https://github.com/thelfer/tfel/issues/1099>
+
+## Issue 1097: [tfel-math] `x /= 2` sets every component of arrays and views to zero
+
+For more details, see <https://github.com/thelfer/tfel/issues/1097>
+
+## Issue 1095: [mfront] `rk54` and `rk4` compute the final stress with the stiffness tensor of the middle of the time step
+
+For more details, see <https://github.com/thelfer/tfel/issues/1095>
+
+## Issue 1093: [5.2] Regressions since TFEL 5.1
+
+For more details, see <https://github.com/thelfer/tfel/issues/1093>
+
+## Issue 1089: Add debug mode + hardening in the test matrix
+
+The sanitizers options have been modularised to allow the continuous
+integration to enable sanitizers individually. For more details, see
+<https://github.com/thelfer/tfel/issues/1089>
 
 ## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
 
@@ -660,18 +1382,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/1014>
 ## Issue 1013: [tfel-math] Refine `QuantityConcept` to take mutability into account
 
 For more details, see <https://github.com/thelfer/tfel/issues/1013>
-￼
 
 ## Issue 1012: [github-actions] Add testing of `TFEL` with `madnex`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1012>
-￼
 
 ## Issue 1010: [clang-tidy] fix warnings related to the google-explicit-constructor check
 
 For more details, see <https://github.com/thelfer/tfel/issues/1010>
 
-￼
 ## Issue 1007: [github-actions] Add continuous integration for the generic-parallel interface with CUDA backend
 
 For more details, see <https://github.com/thelfer/tfel/issues/1007>
@@ -684,7 +1403,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/1006>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1004>
 
-￼
 ## Issue 1003:[tfel-math] Improve error messages when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/1003>
@@ -710,7 +1428,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/926>
 For more details, see <https://github.com/thelfer/tfel/issues/925>
 
 ## Issue 922: [tfel-math] two functions have no GPU device support
-￼
 
 For more details, see <https://github.com/thelfer/tfel/issues/922>
 

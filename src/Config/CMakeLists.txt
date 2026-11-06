@@ -20,11 +20,18 @@ if(enable-static)
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 endif(enable-static)
 
-get_property(tfel-substitutions CACHE tfel-substitutions PROPERTY STRINGS)
-string(REPLACE ";" "@" TFEL_SUBSTITUTIONS_VALUE "${tfel-substitutions}")
-target_compile_definitions(TFELConfig
-  PRIVATE "TFEL_SUBSTITUTIONS=\"${TFEL_SUBSTITUTIONS_VALUE}\"")
-if(enable-static)
-  target_compile_definitions(TFELConfig-static
-    PRIVATE "TFEL_SUBSTITUTIONS=\"${TFEL_SUBSTITUTIONS_VALUE}\"")
-endif(enable-static)
+# the substitutions declared by add_tfel_substitution are written as
+# string literals in a generated header, the backslashes and the double
+# quotes of the values being escaped
+set(TFEL_SUBSTITUTIONS_INITIALIZERS "")
+get_property(tfel-substitutions-keys GLOBAL PROPERTY TFEL_SUBSTITUTIONS_KEYS)
+foreach(key ${tfel-substitutions-keys})
+  get_property(value GLOBAL PROPERTY TFEL_SUBSTITUTION_${key})
+  string(REPLACE "\\" "\\\\" value "${value}")
+  string(REPLACE "\"" "\\\"" value "${value}")
+  string(APPEND TFEL_SUBSTITUTIONS_INITIALIZERS
+    "      {\"${key}\", \"${value}\"},\n")
+endforeach()
+configure_file(${PROJECT_SOURCE_DIR}/src/Config/Substitutions-defines.hxx.in
+               ${PROJECT_BINARY_DIR}/include/TFEL/Config/Substitutions-defines.hxx
+               @ONLY)

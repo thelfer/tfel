@@ -33,13 +33,16 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
-  computeNumericalJacobian(this->jacobian);
   if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
      computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
   } else if (smt==CONSISTENTTANGENTOPERATOR){
     StiffnessTensor De;
     Stensor4 Je;
     computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);
+    // The jacobian is the Broyden approximation of the last iteration:
+    // the tangent operator is only an approximation of the consistent
+    // tangent operator. computeNumericalJacobian must not be called in
+    // this block (see the documentation of the Implicit DSL).
     getPartialJacobianInvert(Je);
     Dt = De*Je;
   } else {

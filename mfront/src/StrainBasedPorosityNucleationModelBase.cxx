@@ -53,10 +53,9 @@ namespace mfront::bbrick {
     addLocalVariable(bd, mn + "Parameters<real>", parameters);
     if (this->requiresLimitOnNucleationPorosity()) {
       const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
-      tfel::raise_if(
-          d.count("fmax") == 0,
-          "ChuNeedleman1980StressBasedPorosityNucleationModel::initialize: "
-          "material property 'fmax' is not defined");
+      tfel::raise_if(d.count("fmax") == 0,
+                     "StrainBasedPorosityNucleationModelBase::initialize: "
+                     "material property 'fmax' is not defined");
       this->fmax =
           getBehaviourDescriptionMaterialProperty(dsl, "fmax", d.at("fmax"));
       declareParameterOrLocalVariable(bd, this->fmax, "real", fmax_n);
@@ -121,7 +120,7 @@ namespace mfront::bbrick {
         if (!first) {
           v += " + ";
         }
-        v += "std::max(this->dp" + flow.first + ", real(0))";
+        v += "std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;
@@ -151,7 +150,8 @@ namespace mfront::bbrick {
       const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
       i.code += "if(this->fn" + id + " + this->dfn" + id + " >= this->" +
                 fmax_n + "){\n";
-      i.code += "this->dfn" + id + " = this->" + fmax_n + " - this->fn;\n";
+      i.code +=
+          "this->dfn" + id + " = this->" + fmax_n + " - this->fn" + id + ";\n";
       i.code += "f" + f.name + " -= this->dfn" + id + ";\n";
       i.code += "} else {\n";
     }
@@ -206,7 +206,7 @@ namespace mfront::bbrick {
         if (!first) {
           v += " + ";
         }
-        v += "std::max(this->dp" + flow.first + ", real(0))";
+        v += "std::max(real(this->dp" + flow.first + "), real(0))";
         first = false;
       }
       return v;
@@ -220,7 +220,8 @@ namespace mfront::bbrick {
       c += "compute" + mn + "PorosityIncrement" +  //
            "(this->" + parameters + "," + p + "," + dp + ");\n";
       c += "this->dfn" + id + " = ";
-      c += "std::min(" + dfn_n + ", this->" + fmax_n + " - this->fn);\n";
+      c += "std::min(" + dfn_n + ", this->" + fmax_n + " - this->fn" + id +
+           ");\n";
     } else {
       c += "this->dfn" + id + " = compute" + mn + "PorosityIncrement" +  //
            "(this->" + parameters + "," + p + "," + dp + ");\n";

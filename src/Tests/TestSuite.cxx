@@ -14,6 +14,7 @@
 #include <chrono>
 #include <stdexcept>
 
+#include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestSuite.hxx"
 
 namespace tfel::tests {
@@ -42,6 +43,8 @@ namespace tfel::tests {
       const auto start = high_resolution_clock::now();
       try {
         r1 = t->execute();
+      } catch (TestAssertionFailure& e) {
+        r1 = e.result;
       } catch (std::exception& e) {
         r1 = TestResult(false, "test '" + t->name() +
                                    "' has thrown "
@@ -73,6 +76,9 @@ namespace tfel::tests {
         if (!r1.success()) {
           success = false;
         }
+      } catch (TestAssertionFailure& e) {
+        r1 = e.result;
+        success = false;
       } catch (std::exception& e) {
         r1 = TestResult(false,
                         "test '" + t->name() + "' failed due to an exception");

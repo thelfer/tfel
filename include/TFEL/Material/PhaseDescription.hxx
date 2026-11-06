@@ -113,7 +113,7 @@ namespace tfel::material::homogenization::elasticity {
     Phase(real f, const tfel::math::st2tost2<N, StressType>& C)
         : fraction(f), stiffness(C), isotropic(false) {}
 
-    Phase(real f, const IsotropicModuli<StressType>& IM)
+    Phase(real f, const IsotropicModuli<StressType>& IM) requires(N == 3)
         : fraction(f),
           stiffness(computeIsotropicStiffnessTensor<StressType>(IM)),
           isotropic(true) {}
@@ -128,7 +128,8 @@ namespace tfel::material::homogenization::elasticity {
       this->stiffness = C;
       this->isotropic = false;
     }
-    void changeElasticityOfPhase(const IsotropicModuli<StressType>& IM) {
+    void changeElasticityOfPhase(const IsotropicModuli<StressType>& IM)
+        requires(N == 3) {
       this->stiffness = computeIsotropicStiffnessTensor<StressType>(IM);
       this->isotropic = true;
     }
@@ -176,6 +177,16 @@ namespace tfel::material::homogenization::elasticity {
 
     [[nodiscard]] virtual std::unique_ptr<InclusionDistribution<N, StressType>>
     clone() const = 0;
+
+    /*!
+     * \return the elasticity of the phase in the global basis. The elasticity
+     * of an `OrientedDistribution` is given in the local basis of its
+     * inclusions.
+     */
+    [[nodiscard]] virtual tfel::math::st2tost2<N, StressType>
+    getElasticityOfPhaseInGlobalBasis() const {
+      return this->getElasticityOfPhase();
+    }
 
     [[nodiscard]] virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
         const tfel::math::st2tost2<N, StressType>& C0,
@@ -347,9 +358,9 @@ namespace tfel::material::homogenization::elasticity {
       if (tfel::math::ieee754::fpclassify(semiL[1] - semiL[2]) == FP_ZERO) {
         const auto e = real(semiL[0] / semiL[1]);
         return DerivativesOfMeanLocalisator<3u, StressType>(
-            IM0, KGi, e, real(1. / 3.) * tfel::math::stensor<3u, real>::Id(),
-            real(1. / 3.) * tfel::math::st2tost2<3u, real>::J() +
-                real(2. / 15.) * tfel::math::st2tost2<3u, real>::K(),
+            IM0, KGi, e, real(1) / 3 * tfel::math::stensor<3u, real>::Id(),
+            real(1) / 3 * tfel::math::st2tost2<3u, real>::J() +
+                real(2) / 15 * tfel::math::st2tost2<3u, real>::K(),
             dKG);
       } else {
         tfel::reportContractViolation(
@@ -470,8 +481,8 @@ namespace tfel::material::homogenization::elasticity {
           const auto Fd =
               tfel::math::TransverseIsotropicWalpoleBasis<real>::F(nd);
           return DerivativesOfMeanLocalisator<3u, StressType>(
-              IM0, KGi, e, real(1. / 2.) * qd,
-              real(1. / 2.) * E2d + real(1. / 4.) * Fd, dKG);
+              IM0, KGi, e, real(1) / 2 * qd,
+              real(1) / 2 * E2d + real(1) / 4 * Fd, dKG);
         } else {
           const tfel::math::stensor<3u, real> pd =
               tfel::math::TransverseIsotropicWalpoleBasis<real>::p(nd);
@@ -515,11 +526,7 @@ namespace tfel::material::homogenization::elasticity {
                          const tfel::math::tvector<3u, real>& n_b_)
         : InclusionDistribution<3u, StressType>(ell, frac, C),
           n_a(n_a_),
-          n_b(n_b_) {
-      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
-    }
+          n_b(internals::orthogonaliseEllipsoidAxes(n_a_, n_b_)) {}
 
     OrientedDistribution(const Ellipsoid<LengthType>& ell,
                          real frac,
@@ -528,15 +535,30 @@ namespace tfel::material::homogenization::elasticity {
                          const tfel::math::tvector<3u, real>& n_b_)
         : InclusionDistribution<3u, StressType>(ell, frac, IM),
           n_a(n_a_),
-          n_b(n_b_) {
-      if (!(std::abs(n_a | n_b) < std::numeric_limits<real>::epsilon())) {
-        tfel::reportContractViolation("n_a and n_b not normals");
-      }
-    }
+          n_b(internals::orthogonaliseEllipsoidAxes(n_a_, n_b_)) {}
 
     [[nodiscard]] std::unique_ptr<InclusionDistribution<3u, StressType>> clone()
         const override {
       return std::make_unique<OrientedDistribution<StressType>>(*this);
+    }
+
+    [[nodiscard]] tfel::math::st2tost2<3u, StressType>
+    getElasticityOfPhaseInGlobalBasis() const override {
+      if (this->isIsotropic()) {
+        return this->getElasticityOfPhase();
+      }
+      using namespace tfel::math;
+      // the elasticity is given in the basis (n_a, n_b, n_c)
+      const auto n_a_ = this->n_a / norm(this->n_a);
+      const auto n_b_ = this->n_b / norm(this->n_b);
+      const auto n_c_ = cross_product<real>(n_a_, n_b_);
+      const rotation_matrix<real> r_glob_loc = {n_a_[0], n_b_[0], n_c_[0],
+                                                n_a_[1], n_b_[1], n_c_[1],
+                                                n_a_[2], n_b_[2], n_c_[2]};
+      const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
+      return change_basis(this->getElasticityOfPhase() / StressType(1),
+                          r_loc_glob) *
+             StressType(1);
     }
 
     [[nodiscard]] tfel::math::st2tost2<3u, real> computeMeanLocalisator(

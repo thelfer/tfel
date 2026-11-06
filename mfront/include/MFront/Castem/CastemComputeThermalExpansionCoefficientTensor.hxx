@@ -164,6 +164,33 @@ namespace castem {
                         ThermalExpansionCoefficientTensor&);
   };  // end of struct CastemComputeThermalExpansionCoefficientTensor
 
+  /*!
+   * Partial specialisation for finite strain behaviours
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            CastemSymmetryType stype>
+  struct TFEL_VISIBILITY_LOCAL CastemComputeThermalExpansionCoefficientTensor<
+      castem::STANDARDFINITESTRAINBEHAVIOUR,
+      H,
+      stype> {
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    /*!
+     * \brief compute the thermal expansion coefficient tensor.
+     * \param[in]  props : material properties
+     * \param[out] A     : thermal expansion coefficient tensor
+     */
+    static void exe(
+        const CastemReal* const props,
+        typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,
+                                     CastemReal,
+                                     false>::ThermalExpansionCoefficientTensor&
+            A) {
+      CastemComputeThermalExpansionCoefficientTensor<
+          castem::STANDARDSTRAINBASEDBEHAVIOUR, H, stype>::exe(props, A);
+    }
+  };  // end of struct CastemComputeThermalExpansionCoefficientTensor
+
 }  // end of namespace castem
 
 #endif /* LIB_MFRONT_CASTEMCOMPUTETHERMALEXPANSIONTENSOR_HXX */

@@ -52,6 +52,7 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
   void test(const double* values) {
     this->template test2<N>(values);
     this->template test3<N>(values);
+    this->template test4<N>(values);
   }
   template <unsigned short N>
   void test2(const double* values) {
@@ -66,9 +67,9 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
     for (size_type i = 0; i != s.size(); ++i) {
       tensor<N> s_e(s);
       s_e[i] += eps;
-      const tensor<N> dJp = det(s_e) * invert(s_e);
+      const tensor<N> dJp = computeDeterminantDerivative(s_e);
       s_e[i] -= 2 * eps;
-      const tensor<N> dJm = det(s_e) * invert(s_e);
+      const tensor<N> dJm = computeDeterminantDerivative(s_e);
       for (size_type j = 0; j != s.size(); ++j) {
         ndJ2(j, i) = (dJp(j) - dJm(j)) / (2 * eps);
       }
@@ -101,9 +102,10 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
     const Tensor c = s3 - i1 * s2 + i2 * s - i3 * Tensor::Id();
     const auto dJ2 = computeDeterminantSecondDerivative(s);
     const Tensor id = Tensor::Id();
-    const t2tot2<N, double> dJ2_2 = Tensor4::tpld(s) + Tensor4::tprd(s) -
-                                    (s ^ id) - i1 * Tensor4::Id() +
-                                    (id ^ (i1 * id - transpose(s)));
+    const t2tot2<N, double> dJ2_2 =
+        Tensor4::transpose_derivative() *
+        (Tensor4::tpld(s) + Tensor4::tprd(s) - (s ^ id) - i1 * Tensor4::Id() +
+         (id ^ (i1 * id - transpose(s))));
     for (size_type i = 0; i != s.size(); ++i) {
       TFEL_TESTS_ASSERT(std::abs(c(i)) <
                         100 * std::numeric_limits<double>::epsilon());
@@ -115,6 +117,41 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
                     << "]: " << dJ2_2(i, j) << " vs " << dJ2(i, j) << " "
                     << std::abs(dJ2_2(i, j) - dJ2(i, j)) << std::endl;
         }
+      }
+    }
+  }
+  // adjugate, det(s) * invert(s), and its derivative
+  template <unsigned short N>
+  void test4(const double* values) {
+    using namespace tfel::math;
+    using Tensor = tensor<N, double>;
+    using Tensor4 = t2tot2<N, double>;
+    using size_type = typename tensor<N, double>::size_type;
+    const double eps = 1.e-5;
+    const double prec = 1.e-10;
+    const Tensor s(values);
+    const auto adj = computeAdjugateDeterminantDerivative(s);
+    const Tensor adj_2 = det(s) * invert(s);
+    const Tensor tdJ = transpose(computeDeterminantDerivative(s));
+    for (size_type i = 0; i != s.size(); ++i) {
+      TFEL_TESTS_ASSERT(std::abs(adj(i) - adj_2(i)) < prec);
+      TFEL_TESTS_ASSERT(std::abs(adj(i) - tdJ(i)) < prec);
+    }
+    const auto dadj = computeAdjugateDeterminantSecondDerivative(s);
+    const auto i1 = trace(s);
+    const Tensor id = Tensor::Id();
+    const Tensor4 dadj_2 = Tensor4::tpld(s) + Tensor4::tprd(s) - (s ^ id) -
+                           i1 * Tensor4::Id() + (id ^ (i1 * id - transpose(s)));
+    for (size_type i = 0; i != s.size(); ++i) {
+      Tensor s_e(s);
+      s_e[i] += eps;
+      const Tensor adjp = computeAdjugateDeterminantDerivative(s_e);
+      s_e[i] -= 2 * eps;
+      const Tensor adjm = computeAdjugateDeterminantDerivative(s_e);
+      for (size_type j = 0; j != s.size(); ++j) {
+        const auto ndadj = (adjp(j) - adjm(j)) / (2 * eps);
+        TFEL_TESTS_ASSERT(std::abs(ndadj - dadj(j, i)) < prec);
+        TFEL_TESTS_ASSERT(std::abs(dadj_2(j, i) - dadj(j, i)) < prec);
       }
     }
   }

@@ -19,6 +19,7 @@
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
+#include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::math {
 
@@ -66,7 +67,7 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];
     }  // end of operator()
@@ -122,7 +123,7 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 5 + j];
     }  // end of operator()
@@ -206,7 +207,7 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 9 + j];
     }  // end of operator()

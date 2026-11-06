@@ -31,7 +31,8 @@ namespace tfel::math {
       const FunctionType& f,                                     //
       const real a,                                              //
       const real b,                                              //
-      const NumericalParameters<real> params) const              //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
@@ -60,8 +61,10 @@ namespace tfel::math {
     auto is_infinite = [](const real x) {
       if constexpr (ImmutableQuantityConcept<real>) {
         return (ieee754::fpclassify(base_type_cast(x)) == FP_INFINITE) ||
-               (x >= std::numeric_limits<base_type<real>>::max()) ||
-               (x <= -std::numeric_limits<base_type<real>>::max());
+               (base_type_cast(x) >=
+                std::numeric_limits<base_type<real>>::max()) ||
+               (base_type_cast(x) <=
+                -std::numeric_limits<base_type<real>>::max());
       } else {
         return (ieee754::fpclassify(x) == FP_INFINITE) ||
                (x >= std::numeric_limits<real>::max()) ||
@@ -146,9 +149,15 @@ namespace tfel::math {
     }
     auto is_infinite = [](const real x) {
       if constexpr (ImmutableQuantityConcept<real>) {
-        return ieee754::fpclassify(base_type_cast(x)) == FP_INFINITE;
+        return (ieee754::fpclassify(base_type_cast(x)) == FP_INFINITE) ||
+               (base_type_cast(x) >=
+                std::numeric_limits<base_type<real>>::max()) ||
+               (base_type_cast(x) <=
+                -std::numeric_limits<base_type<real>>::max());
       } else {
-        return ieee754::fpclassify(x) == FP_INFINITE;
+        return (ieee754::fpclassify(x) == FP_INFINITE) ||
+               (x >= std::numeric_limits<real>::max()) ||
+               (x <= -std::numeric_limits<real>::max());
       }
     };
     //
@@ -191,20 +200,27 @@ namespace tfel::math {
       const FunctionType& f,
       const real a,
       const real b,
-      const NumericalParameters<real>& params) const             //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
                                   std::invoke_result_t<FunctionType, real>,
                                   OpMult>>  //
   requires(std::is_invocable_v<FunctionType, real>) {
-    if (params.maximum_number_of_refinements == 0) {
-      return {};
-    }
     const auto [i, e] = this->integrate(f, a, b);
     if (e > params.absolute_tolerance) {
+      if (params.maximum_number_of_refinements == 0) {
+        return {};
+      }
       const auto n = params.maximum_number_of_refinements - 1;
-      const auto c = std::midpoint(a, b);
+      const auto c = [a, b] {
+        if constexpr (ImmutableQuantityConcept<real>) {
+          return real{std::midpoint(base_type_cast(a), base_type_cast(b))};
+        } else {
+          return std::midpoint(a, b);
+        }
+      }();
       const auto oi1 =
           this->integrate(f, a, c,
                           {.absolute_tolerance = params.absolute_tolerance / 2,
@@ -348,11 +364,9 @@ namespace tfel::math {
       constexpr auto one = real{1};
       const auto z = 1 / (t + 1);
       const auto arg = (2 * z - 1) * one;
-      return f(b - arg) * z * z * one;
+      return f(b - arg) * 2 * z * z * one;
     };
-    const auto [i, e] =
-        this->integrate(u, base_type<real>{-1}, base_type<real>{1});
-    return std::make_tuple(2 * i, e);
+    return this->integrate(u, base_type<real>{-1}, base_type<real>{1});
   }  // end of computeLeftUnboundedIntegral
 
   template <ScalarConcept real, typename FunctionType>
@@ -366,17 +380,16 @@ namespace tfel::math {
       constexpr auto one = real{1};
       const auto z = 1 / (t + 1);
       const auto arg = (2 * z - 1) * one + a;
-      return f(arg) * z * z * one;
+      return f(arg) * 2 * z * z * one;
     };
-    const auto [i, e] =
-        this->integrate(u, base_type<real>{-1}, base_type<real>{1});
-    return std::make_tuple(2 * i, e);
+    return this->integrate(u, base_type<real>{-1}, base_type<real>{1});
   }  // end of computeRightUnboundedIntegral
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeUnboundedIntegral(
       const FunctionType& f,
-      const NumericalParameters<real>& params) const             //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [f](const base_type<real> t) noexcept(
@@ -395,7 +408,8 @@ namespace tfel::math {
   constexpr auto GaussKronrodQuadrature::computeLeftUnboundedIntegral(
       const FunctionType& f,
       const real b,
-      const NumericalParameters<real>& params) const             //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
@@ -407,21 +421,17 @@ namespace tfel::math {
       constexpr auto one = real{1};
       const auto z = 1 / (t + 1);
       const auto arg = (2 * z - 1) * one;
-      return eval_if_required(f(b - arg) * z * z * one);
+      return eval_if_required(f(b - arg) * 2 * z * z * one);
     };
-    const auto ores =
-        this->integrate(u, base_type<real>{-1}, base_type<real>{1}, params);
-    if (ores.has_value()) {
-      return 2 * (*ores);
-    }
-    return {};
+    return this->integrate(u, base_type<real>{-1}, base_type<real>{1}, params);
   }  // end of computeLeftUnboundedIntegral
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::computeRightUnboundedIntegral(
       const FunctionType& f,
       const real a,
-      const NumericalParameters<real>& params) const             //
+      const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>&
+          params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
           tfel::math::result_type<real,
@@ -433,14 +443,9 @@ namespace tfel::math {
       constexpr auto one = real{1};
       const auto z = 1 / (t + 1);
       const auto arg = (2 * z - 1) * one + a;
-      return eval_if_required(f(arg) * z * z * one);
+      return eval_if_required(f(arg) * 2 * z * z * one);
     };
-    const auto ores =
-        this->integrate(u, base_type<real>{-1}, base_type<real>{1}, params);
-    if (ores.has_value()) {
-      return 2 * (*ores);
-    }
-    return {};
+    return this->integrate(u, base_type<real>{-1}, base_type<real>{1}, params);
   }  // end of computeRightUnboundedIntegral
 
 }  // end of namespace tfel::math

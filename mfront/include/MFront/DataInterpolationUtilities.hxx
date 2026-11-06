@@ -12,6 +12,9 @@
  * project under specific licensing conditions.
  */
 
+#ifndef LIB_MFRONT_DATAINTERPOLATIONUTILITIES_HXX
+#define LIB_MFRONT_DATAINTERPOLATIONUTILITIES_HXX
+
 #include <map>
 #include <string>
 #include "TFEL/Utilities/Data.hxx"
@@ -87,3 +90,5 @@ namespace mfront {
       const SingleVariableInterpolatedData::WriteCollocationPointsArguments&);
 
 }  // end of namespace mfront
+
+#endif /* LIB_MFRONT_DATAINTERPOLATIONUTILITIES_HXX */

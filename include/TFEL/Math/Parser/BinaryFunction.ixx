@@ -18,6 +18,9 @@
 #include <string>
 #include <cstring>
 #include <cerrno>
+#include <cmath>
+#include "TFEL/Math/Evaluator.hxx"
+#include "TFEL/Math/Parser/Number.hxx"
 
 namespace tfel::math::parser {
 
@@ -92,13 +95,54 @@ namespace tfel::math::parser {
   }  // end of StandardBinaryFunction<f>::getParametersNames
 
   template <double (*f)(const double, const double)>
-  std::shared_ptr<Expr> StandardBinaryFunction<f>::differentiate(
-      const std::vector<double>::size_type, const std::vector<double>&) const {
+  std::shared_ptr<Expr> differentiateBinaryFunction(
+      const std::shared_ptr<Expr> a,
+      const std::shared_ptr<Expr> b,
+      const std::vector<double>::size_type pos,
+      const std::vector<double>&) {
+    if ((!a->dependsOnVariable(pos)) && (!b->dependsOnVariable(pos))) {
+      return Number::zero();
+    }
     StandardBinaryFunctionBase::
         throwUnimplementedDifferentiateFunctionException();
 #ifndef _MSC_VER
     return {};
 #endif
+  }  // end of differentiateBinaryFunction
+
+  template <>
+  std::shared_ptr<Expr> differentiateBinaryFunction<Evaluator::max>(
+      const std::shared_ptr<Expr>,
+      const std::shared_ptr<Expr>,
+      const std::vector<double>::size_type,
+      const std::vector<double>&);
+
+  template <>
+  std::shared_ptr<Expr> differentiateBinaryFunction<Evaluator::min>(
+      const std::shared_ptr<Expr>,
+      const std::shared_ptr<Expr>,
+      const std::vector<double>::size_type,
+      const std::vector<double>&);
+
+  template <>
+  std::shared_ptr<Expr> differentiateBinaryFunction<std::hypot>(
+      const std::shared_ptr<Expr>,
+      const std::shared_ptr<Expr>,
+      const std::vector<double>::size_type,
+      const std::vector<double>&);
+
+  template <>
+  std::shared_ptr<Expr> differentiateBinaryFunction<std::atan2>(
+      const std::shared_ptr<Expr>,
+      const std::shared_ptr<Expr>,
+      const std::vector<double>::size_type,
+      const std::vector<double>&);
+
+  template <double (*f)(const double, const double)>
+  std::shared_ptr<Expr> StandardBinaryFunction<f>::differentiate(
+      const std::vector<double>::size_type pos,
+      const std::vector<double>& v) const {
+    return differentiateBinaryFunction<f>(this->expr1, this->expr2, pos, v);
   }  // end of StandardBinaryFunction<f>::differentiate
 
   template <double (*f)(const double, const double)>

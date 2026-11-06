@@ -25,7 +25,7 @@
 #include "TFEL/Math/General/RunTimeCheck.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/tvector.hxx"
-#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel::math {
 
@@ -45,7 +45,7 @@ namespace tfel::math {
     //! \brief a simple alias
     using RunTimeProperties = EmptyRunTimeProperties;
     //! \brief return the runtime properties
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr RunTimeProperties
     getRunTimeProperties() const {
       return {};
     }  // end of getRunTimeProperties

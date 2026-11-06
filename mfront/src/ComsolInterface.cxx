@@ -99,6 +99,12 @@ namespace mfront {
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
              "by comsol interface");
+    // the temperature is only given as the last material property: the
+    // increment of a stress-free expansion can't be computed
+    throw_if(bd.requiresStressFreeExpansionTreatment(h),
+             "stress-free expansions are not supported "
+             "by comsol interface, which does not give the "
+             "temperature at the beginning of the time step");
     // get the modelling hypotheses to be treated
     const auto name = bd.getLibrary() + bd.getClassName();
     // output directories
@@ -233,10 +239,6 @@ namespace mfront {
         << "using Behaviour = tfel::material::" << bd.getClassName()
         << "<ModellingHypothesis::TRIDIMENSIONAL, double, "
            "false>;\n";
-    if (bd.requiresStressFreeExpansionTreatment(h)) {
-      out << "using StressFreeExpansionType = "
-             "Behaviour::StressFreeExpansionType;\n";
-    }
     out << "constexpr auto cste = tfel::math::Cste<double>::sqrt2;\n";
     // inputs checks
     const auto nprops =
@@ -254,12 +256,16 @@ namespace mfront {
           << "return 2;\n"
           << "}\n";
     }
+    // return values of the eval function (COMSOL Multiphysics Reference
+    // Manual, "Accepted return values for the EVAL function"): 0 for a
+    // normal exit, -1 for a normal exit with a warning (since COMSOL 5.5),
+    // any value other than 0, 1, 2, -1 and -2 for an error (3 is used here)
     out << "auto rdt = double{1};\n"
         << "try{\n"
         << "const auto p = " << this->getFunctionNameBasis(name)
         << "_getOutOfBoundsPolicy();\n"
         << "const auto dt = double{0};\n"
-        << "const auto T  = mprops[" << nprops << "];\n"
+        << "const auto T  = mprops[" << nprops - 1 << "];\n"
         << "const tfel::math::stensor<3u,double> e0(stran);\n"
         << "tfel::math::stensor<3u,double> e1(e);\n"
         << "tfel::math::stensor<3u,double> eto;\n"
@@ -273,20 +279,10 @@ namespace mfront {
         << "e1[3] *= cste;\n"
         << "e1[4] *= cste;\n"
         << "e1[5] *= cste;\n"
-        << "std::swap(e1[3],e1[5]);\n";
-    if (bd.requiresStressFreeExpansionTreatment(h)) {
-      out << "// stress free expansion\n"
-          << "auto s = StressFreeExpansionType{};\n"
-          << "b.computeStressFreeExpansion(s);\n"
-          << "const auto& s0 = s.first;\n"
-          << "const auto& s1 = s.second;\n"
-          << "eto  = e0-s0;\n"
-          << "deto = e1-e0-(s1-s0);\n";
-    } else {
-      out << "eto  = e0;\n"
-          << "deto = e1-e0;\n";
-    }
-    out << "// to Voigt conventions\n"
+        << "std::swap(e1[3],e1[5]);\n"
+        << "eto  = e0;\n"
+        << "deto = e1-e0;\n"
+        << "// to Voigt conventions\n"
         << "eto[3] *= cste;\n"
         << "eto[4] *= cste;\n"
         << "eto[5] *= cste;\n"
@@ -296,23 +292,25 @@ namespace mfront {
         << "b.setCOMSOLBehaviourDataGradients(eto.begin());\n"
         << "b.setCOMSOLIntegrationDataGradients(deto.begin());\n"
         << "b.setOutOfBoundsPolicy(p);\n"
-        << "b.initialize();\n"
+        << "if (!b.initialize()) {\n"
+        << "  return 3;\n"
+        << "}\n"
         << "b.checkBounds();\n"
         << "const auto smflag = Behaviour::STANDARDTANGENTOPERATOR;\n"
         << "const auto smt = Behaviour::CONSISTENTTANGENTOPERATOR;\n"
         << "auto tsf = b.computeAPrioriTimeStepScalingFactor(rdt);\n"
         << "rdt = tsf.second;\n"
         << "if (!tsf.first) {\n"
-        << "  return -1;\n"
+        << "  return 3;\n"
         << "}\n"
         << "const auto r = b.integrate(smflag, smt);\n"
         << "if (r == Behaviour::FAILURE) {\n"
-        << "  return -1;\n"
+        << "  return 3;\n"
         << "}\n"
         << "const auto atsf = "
            "b.computeAPosterioriTimeStepScalingFactor(rdt);\n"
         << "if (!atsf.first) {\n"
-        << "  return -1;\n"
+        << "  return 3;\n"
         << "}\n"
         << "rdt = std::min(atsf.second, rdt);\n";
     if (!d.getPersistentVariables().empty()) {
@@ -321,11 +319,24 @@ namespace mfront {
       out << "b.COMSOLexportStateData(s,nullptr);\n";
     }
     out << "std::swap(s[3],s[5]);\n"
-        << "const auto& K = b.getTangentOperator();\n"
+        << "// convert the tangent operator to COMSOL conventions\n"
+        << "auto K = b.getTangentOperator();\n"
+        << "for (unsigned short i = 0; i != 3; ++i) {\n"
+        << "  for (unsigned short j = 3; j != 6; ++j) {\n"
+        << "    K(i, j) *= cste;\n"
+        << "    K(j, i) /= cste;\n"
+        << "  }\n"
+        << "}\n"
+        << "for (unsigned short i = 0; i != 6; ++i) {\n"
+        << "  std::swap(K(i, 3), K(i, 5));\n"
+        << "}\n"
+        << "for (unsigned short i = 0; i != 6; ++i) {\n"
+        << "  std::swap(K(3, i), K(5, i));\n"
+        << "}\n"
         << "std::copy(K.begin(),K.end(), D);\n"
         << "tfel::fsalgo::copy<6>::exe(e1.begin(),stran);\n"
         << "} catch(...){\n"
-        << "return -1;\n"
+        << "return 3;\n"
         << "}\n"
         << "return rdt < 0.99 ? -1 : 0;\n"
         << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";

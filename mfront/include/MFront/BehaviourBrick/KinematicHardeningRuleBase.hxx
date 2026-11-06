@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_KINEMATICHARDENINGRULEBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_KINEMATICHARDENINGRULEBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRule.hxx"
 
@@ -22,7 +23,8 @@ namespace mfront::bbrick {
   /*!
    * \brief class describing the Prager kinematic hardening rule
    */
-  struct KinematicHardeningRuleBase : KinematicHardeningRule {
+  struct MFRONT_VISIBILITY_EXPORT KinematicHardeningRuleBase
+      : KinematicHardeningRule {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,

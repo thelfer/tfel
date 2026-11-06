@@ -43,6 +43,15 @@ namespace mfront {
           "FiniteStrainSingleCrystalBrick::shifted_elastic_deformation_"
           "gradient";
 
+  const char* const
+      FiniteStrainSingleCrystalBrick::normalisationCorrectionsOption =
+          "plastic_deformation_gradient_normalisation_corrections";
+
+  const char* const
+      FiniteStrainSingleCrystalBrick::normalisationCorrectionsAttribute =
+          "FiniteStrainSingleCrystalBrick::plastic_deformation_gradient_"
+          "normalisation_corrections";
+
   FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick(
       AbstractBehaviourDSL& dsl_, BehaviourDescription& mb_)
       : BehaviourBrickBase(dsl_, mb_) {
@@ -76,6 +85,13 @@ namespace mfront {
     opts.emplace_back(
         FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption, "",
         bbrick::OptionDescription::BOOLEAN);
+    opts.emplace_back(
+        FiniteStrainSingleCrystalBrick::normalisationCorrectionsOption,
+        "if true (default value), the jacobian and the consistent tangent "
+        "operator take into account the normalisation of the inverse of the "
+        "plastic deformation gradient increment. Otherwise, the derivatives "
+        "of this normalisation are neglected.",
+        bbrick::OptionDescription::BOOLEAN);
     return opts;
   }  // end of FiniteStrainSingleCrystalBrick::getOptions
 
@@ -101,7 +117,7 @@ namespace mfront {
     }
     throw_if(this->bd.getBehaviourType() !=
                  BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
-             "this BehaviourBrick is only usable for small strain behaviours");
+             "this BehaviourBrick is only usable for finite strain behaviours");
     throw_if(
         this->bd.getIntegrationScheme() != BehaviourDescription::IMPLICITSCHEME,
         "this BehaviourBrick is only usable in implicit schemes");
@@ -158,6 +174,20 @@ namespace mfront {
           FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption);
       const auto an = std::string(
           FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute);
+      const auto& b = d.at(on);
+      throw_if(!b.is<bool>(), "invalid type for option '" + on + "'");
+      throw_if(this->bd.hasAttribute(an),
+               "attribute '" + an + "' already used");
+      this->bd.setAttribute(an, b.get<bool>(), false);
+    }
+    // corrections related to the normalisation of the inverse of the plastic
+    // deformation gradient increment
+    if (d.count(
+            FiniteStrainSingleCrystalBrick::normalisationCorrectionsOption)) {
+      const auto on = std::string(
+          FiniteStrainSingleCrystalBrick::normalisationCorrectionsOption);
+      const auto an = std::string(
+          FiniteStrainSingleCrystalBrick::normalisationCorrectionsAttribute);
       const auto& b = d.at(on);
       throw_if(!b.is<bool>(), "invalid type for option '" + on + "'");
       throw_if(this->bd.hasAttribute(an),
@@ -221,6 +251,9 @@ namespace mfront {
     this->bd.reserveName(h, "fsscb_data");
     this->bd.reserveName(h, "fsscb_tprd");
     this->bd.reserveName(h, "fsscb_dfeel_dinv_dFp");
+    this->bd.reserveName(h, "fsscb_c");
+    this->bd.reserveName(h, "fsscb_iinv_dFp_t");
+    this->bd.reserveName(h, "fsscb_mu");
     this->bd.reserveName(h, "fsscb_dC_dFe");
     this->bd.reserveName(h, "fsscb_dS_dFe");
     this->bd.reserveName(h, "fsscb_dtau_dFe");
@@ -276,6 +309,14 @@ namespace mfront {
   void FiniteStrainSingleCrystalBrick::endTreatment() const {
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto cn = this->bd.getClassName() + "SlipSystems<real>";
+    const auto normalisation_corrections = this->bd.getAttribute<bool>(
+        FiniteStrainSingleCrystalBrick::normalisationCorrectionsAttribute,
+        true);
+    bbrick::checkNoNormalisationFactor(this->bd, "eel");
+    bbrick::checkNoNormalisationFactor(this->bd, "g");
+    // the jacobian blocks dfeel_ddg are computed below
+    bbrick::checkNoImplicitEquationNormalisationFactor(this->bd, this->dsl,
+                                                       "eel");
     // local data values initialisation
     CodeBlock init;
     if (this->bd.getAttribute<bool>(
@@ -329,12 +370,33 @@ namespace mfront {
           "const auto fsscb_tprd = "
           "t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr);\n"
           "const auto fsscb_dfeel_dinv_dFp = "
-          "t2tost2<N,real>::dCdF(this->Fe)*fsscb_tprd;\n"
-          "for(unsigned short i=0;i!=" +
-          cn +
-          "::Nss;++i){\n"
-          "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*ss.mu[i]/2;\n"
-          "}\n";
+          "t2tost2<N,real>::dCdF(this->Fe)*fsscb_tprd;\n";
+      if (normalisation_corrections) {
+        integrator.code +=
+            "// derivatives of the normalised inverse of the plastic\n"
+            "// deformation gradient increment with respect to dg\n"
+            "const auto fsscb_c = "
+            "CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
+            "const auto fsscb_iinv_dFp_t = "
+            "transpose(invert(this->fsscb_data.inv_dFp));\n"
+            "for(unsigned short i=0;i!=" +
+            cn +
+            "::Nss;++i){\n"
+            "  const auto fsscb_mu = "
+            "eval((ss.mu[i] - ((fsscb_iinv_dFp_t | ss.mu[i]) / 3) * "
+            "(this->fsscb_data.inv_dFp)) / fsscb_c);\n"
+            "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*fsscb_mu/2;\n"
+            "}\n";
+      } else {
+        integrator.code +=
+            "// the derivatives of the normalisation of the inverse of the\n"
+            "// plastic deformation gradient increment are neglected\n"
+            "for(unsigned short i=0;i!=" +
+            cn +
+            "::Nss;++i){\n"
+            "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*ss.mu[i]/2;\n"
+            "}\n";
+      }
     }
     integrator.members = {"eel", "Fe", "D"};
     this->bd.setCode(h, BehaviourData::Integrator, integrator,
@@ -410,14 +472,36 @@ namespace mfront {
         "tvector<" +
         cn +
         "::Nss,Stensor> fsscb_Jg;\n"
-        "getPartialJacobianInvert(fsscb_Je,fsscb_Jg);\n"
-        "t2tot2<N,real> fsscb_dinv_Fp_dDF = "
-        "(ss.mu[0])^(fsscb_Jg[0]|fsscb_dfeel_dDF);\n"
-        "for(unsigned short i=1;i!=" +
-        cn +
-        "::Nss;++i){\n"
-        "  fsscb_dinv_Fp_dDF += (ss.mu[i])^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
-        "}\n"
+        "getPartialJacobianInvert(fsscb_Je,fsscb_Jg);\n";
+    if (normalisation_corrections) {
+      to.code +=
+          "// derivatives of the normalised inverse of the plastic\n"
+          "// deformation gradient increment with respect to dg\n"
+          "const auto fsscb_c = "
+          "CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
+          "const auto fsscb_iinv_dFp_t = "
+          "transpose(invert(this->fsscb_data.inv_dFp));\n"
+          "t2tot2<N,real> fsscb_dinv_Fp_dDF(real(0));\n"
+          "for(unsigned short i=0;i!=" +
+          cn +
+          "::Nss;++i){\n"
+          "  const auto fsscb_mu = "
+          "eval((ss.mu[i] - ((fsscb_iinv_dFp_t | ss.mu[i]) / 3) * "
+          "(this->fsscb_data.inv_dFp)) / fsscb_c);\n"
+          "  fsscb_dinv_Fp_dDF += (fsscb_mu)^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
+          "}\n";
+    } else {
+      to.code +=
+          "// the derivatives of the normalisation of the inverse of the\n"
+          "// plastic deformation gradient increment are neglected\n"
+          "t2tot2<N,real> fsscb_dinv_Fp_dDF(real(0));\n"
+          "for(unsigned short i=0;i!=" +
+          cn +
+          "::Nss;++i){\n"
+          "  fsscb_dinv_Fp_dDF += (ss.mu[i])^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
+          "}\n";
+    }
+    to.code +=
         "const auto fsscb_dFe_dDF=\n"
         "  "
         "fsscb_dFe_dDF_tot+t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr,fsscb_"

@@ -58,7 +58,8 @@ namespace mfront::bbrick {
     using namespace tfel::glossary;
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto raise = [](const std::string& m) {
-      tfel::raise("InelasticFlowBase::initialize: " + m);
+      tfel::raise("StrainRateSensitiveIsotropicHardeningRule::initialize: " +
+                  m);
     };  // end of raise
     auto getDataStructure = [&raise](const std::string& n, const Data& ds) {
       if (ds.is<std::string>()) {
@@ -114,13 +115,11 @@ namespace mfront::bbrick {
                          << std::endl;
         }
         if (this->rsf != nullptr) {
-          raise(
-              "a rate independant isotropic hardening rule "
-              "has already been defined");
+          raise("a rate sensitivity factor has already been defined");
         }
         auto& rf = StrainRateSensitivityFactorFactory::getFactory();
         this->rsf = rf.generate(ds.name);
-        this->rsf->initialize(bd, dsl, id, "", ds.data);
+        this->rsf->initialize(bd, dsl, fid, id, ds.data);
       } else {
         raise("invalid option '" + e.first + "'");
       }
@@ -168,11 +167,12 @@ namespace mfront::bbrick {
   std::string StrainRateSensitiveIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription& bd,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     auto c = std::string{};
     for (int idx = 0; const auto& ihr : this->ihrs) {
-      c += ihr->computeElasticLimit(bd, fid,
-                                    getIsotropicHardeningRuleId(id, idx));
+      c += ihr->computeElasticLimit(
+          bd, fid, getIsotropicHardeningRuleId(id, idx), theta);
       ++idx;
     }
     c += this->rsf->computeStrainRateSensitivityFactor(bd, fid, id);
@@ -198,11 +198,12 @@ namespace mfront::bbrick {
   StrainRateSensitiveIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription& bd,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     auto c = std::string{};
     for (int idx = 0; const auto& ihr : this->ihrs) {
       c += ihr->computeElasticLimitAndDerivative(
-          bd, fid, getIsotropicHardeningRuleId(id, idx));
+          bd, fid, getIsotropicHardeningRuleId(id, idx), theta);
       ++idx;
     }
     c +=
@@ -245,7 +246,7 @@ namespace mfront::bbrick {
       c += Rid;
       first = false;
     }
-    c += ") * " + dRs + ";\n";
+    c += ") * " + dRs + " / (" + theta + ");\n";
     return c;
   }  // end of computeElasticLimitAndDerivative
 

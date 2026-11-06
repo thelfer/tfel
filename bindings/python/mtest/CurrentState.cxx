@@ -50,20 +50,7 @@ static pybind11::object getInternalStateVariableValue(
            "variable named '" +
                n + "'");
   const auto type = s.behaviour->getInternalStateVariableType(n);
-  const auto size = [&s, throw_if,
-                     type]() -> std::vector<mtest::real>::size_type {
-    if (type == 0) {
-      return 1;
-    } else if (type == 1) {
-      return tfel::material::getStensorSize(s.behaviour->getHypothesis());
-    } else if (type == 2) {
-      return tfel::material::getSpaceDimension(s.behaviour->getHypothesis());
-    } else if (type == 3) {
-      return tfel::material::getTensorSize(s.behaviour->getHypothesis());
-    }
-    throw_if(true, "unsupported variable type");
-    return 0;
-  }();
+  const auto size = mtest::getVariableSize(type, s.behaviour->getHypothesis());
   const auto pos = s.behaviour->getInternalStateVariablePosition(n);
   throw_if((s.iv_1.size() < pos + size) || (s.iv0.size() < pos + size) ||
                (s.iv1.size() < pos + size),
@@ -205,8 +192,8 @@ void declareCurrentState(pybind11::module_& m) {
            })
       .def(
           "__getitem__",
-          [](const tfel::math::vector<mtest::CurrentState>& v,
-             const unsigned short idx) {
+          [](tfel::math::vector<mtest::CurrentState>& v,
+             const unsigned short idx) -> mtest::CurrentState& {
             if (idx >= v.size()) {
               tfel::raise<std::range_error>(
                   "invalid index '" + std::to_string(static_cast<int>(idx)) +
@@ -214,7 +201,7 @@ void declareCurrentState(pybind11::module_& m) {
             }
             return v[idx];
           },
-          pybind11::return_value_policy::reference)
+          pybind11::return_value_policy::reference_internal)
       .def(
           "__iter__",
           [](const tfel::math::vector<mtest::CurrentState>& v) {

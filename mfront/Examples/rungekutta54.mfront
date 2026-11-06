@@ -36,7 +36,7 @@ nu.setGlossaryName("PoissonRatio");
     return false;
   }
   const auto iseq = 1 / max(seq, real(1e-7) * young);
-  const atuo n = 3 * deviator(sig) * (iseq / 2);
+  const auto n = 3 * deviator(sig) * (iseq / 2);
   dp   = A*pow(seq,E);
   devp = dp * n;
   deel = deto - devp;

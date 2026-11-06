@@ -17,6 +17,7 @@
 #endif /* NDEBUG */
 
 #include <cmath>
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include "TFEL/Tests/TestCase.hxx"
@@ -48,6 +49,40 @@ struct BroydenSolver
 
 };  // end of struct BroydenSolver
 
+/*!
+ * \brief solver of x * x - 4 = 0 from x = 3, where the estimate is bounded
+ * by 1 in `processNewEstimate`: the first correction (-5) is bounded to -2.
+ */
+struct BoundedBroydenSolver
+    : public tfel::math::TinyBroydenSolver<1u, double, BoundedBroydenSolver> {
+  BoundedBroydenSolver() {
+    this->zeros = {3.};
+    this->epsilon = 1.e-14;
+    this->iterMax = 20;
+    this->jacobian = {1};
+  }
+
+  bool solve() { return this->solveNonLinearSystem(); }
+
+  bool computeResidual() noexcept {
+    this->fzeros = {this->zeros(0) * this->zeros(0) - 4};
+    return true;
+  }  // end of computeResidual
+
+  void processNewEstimate() noexcept {
+    this->zeros(0) = std::max(this->zeros(0), 1.);
+  }  // end of processNewEstimate
+
+  void updateOrCheckJacobian() noexcept {
+    if (this->iter == 1) {
+      this->first_update = this->jacobian(0, 0);
+    }
+  }  // end of updateOrCheckJacobian
+
+  //! \brief jacobian after the first Broyden update
+  double first_update = 0;
+};  // end of struct BoundedBroydenSolver
+
 struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
   TinyBroydenSolverTest()
       : tfel::tests::TestCase("TFEL/Math", "TinyBroydenSolverTest") {
@@ -57,6 +92,7 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
     return this->result;
   }  // end of execute
  private:
@@ -108,6 +144,8 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(norm(vf) < 1.e-11);
     TFEL_TESTS_ASSERT(std::abs(x(0) - 2) < 1.e-11);
     TFEL_TESTS_ASSERT(std::abs(x(1)) < 1.e-11);
+    // convergence at the last allowed iteration
+    TFEL_TESTS_ASSERT((broyden<2, double, f2>(x0, 1.e-11, 16).first));
   }
 
   void test4() {
@@ -116,6 +154,15 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
     const auto x = s.getCurrentEstimate();
     TFEL_TESTS_ASSERT(std::abs(x(0)) < 1.e-11);
     TFEL_TESTS_ASSERT(std::abs(x(1) - 1) < 1.e-11);
+  }
+
+  void test5() {
+    // the Broyden update uses the step actually taken, i.e. the bounded
+    // one: after the first update, the jacobian is the secant slope
+    // (F(1) - F(3)) / (1 - 3) = 4
+    BoundedBroydenSolver s;
+    TFEL_TESTS_ASSERT(s.solve());
+    TFEL_TESTS_ASSERT(std::abs(s.first_update - 4) < 1.e-12);
   }
 };
 

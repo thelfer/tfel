@@ -53,7 +53,7 @@ namespace mfront::bbrick {
     if (std::find(variables.begin(), variables.end(), "p") == variables.end()) {
       tfel::raise(
           "UserDefinedIsotropicHardeningRule::initialize: "
-          "the strain rate does not depend on "
+          "the yield radius does not depend on "
           "the equivalent plastic strain 'p'");
     }
     const auto& opts = this->getOptions();
@@ -80,7 +80,7 @@ namespace mfront::bbrick {
       auto mp =
           getBehaviourDescriptionMaterialProperty(dsl, opt.first, opt.second);
       declareParameterOrLocalVariable(bd, mp, "real", opt_id);
-      this->mps.insert({opt.first + id, mp});
+      this->mps.insert({opt.first, mp});
     }
     //
     if (d.count("dR_dp") != 0) {
@@ -176,11 +176,12 @@ namespace mfront::bbrick {
   std::string UserDefinedIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription& bd,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R_id = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto m = getVariablesMap(
         this->R, this->mps, bd, fid, id,
-        "(this->p" + fid + "+(this->theta) * (this->dp" + fid + "))");
+        "(this->p" + fid + "+(" + theta + ") * (this->dp" + fid + "))");
     return "const auto " + R_id + " = " + this->R.getCxxFormula(m) + ";\n";
   }  // end of computeElasticLimit
 
@@ -188,14 +189,15 @@ namespace mfront::bbrick {
   UserDefinedIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription& bd,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto R_id = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR_id = "d" + R_id + "_dp" + fid;
     const auto m = getVariablesMap(
         this->R, this->mps, bd, fid, id,
-        "(this->p" + fid + "+(this->theta) * (this->dp" + fid + "))");
+        "(this->p" + fid + "+(" + theta + ") * (this->dp" + fid + "))");
     auto c = "const auto " + R_id + " = " + this->R.getCxxFormula(m) + ";\n";
-    c += "const auto " + dR_id + " = theta * ";
+    c += "const auto " + dR_id + " = ";
     if (this->dR_dp.has_value()) {
       auto m2 = std::map<std::string, std::string>{};
       for (const auto& v : this->dR_dp->getVariablesNames()) {
@@ -205,7 +207,8 @@ namespace mfront::bbrick {
         }
         if (m.count(v) == 0) {
           tfel::raise(
-              "UserDefinedViscoplasticFlow::computeFlowRateAndDerivative: "
+              "UserDefinedIsotropicHardeningRule::"
+              "computeElasticLimitAndDerivative: "
               "internal error (unexpected variable '" +
               v + "' in derivative)");
         }

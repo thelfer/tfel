@@ -137,7 +137,22 @@ namespace mfront {
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type
         APOSTERIORITIMESTEPSCALINGFACTOR = 21;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type TOTALTIME = 22;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type
+        COMPUTESTRESSFREEEXPANSION = 22;
+    //! code block index in the measures array
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type
+        COMPUTEINTERNALENERGY = 23;
+    //! code block index in the measures array
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type
+        COMPUTEDISSIPATEDENERGY = 24;
+    //! code block index in the measures array
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type
+        COMPUTESPEEDOFSOUND = 25;
+    //! code block index in the measures array
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type
+        INITIALIZEJACOBIANINVERT = 26;
+    //! code block index in the measures array
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER index_type TOTALTIME = 27;
     //! destructor
     ~BehaviourProfiler();
 
@@ -145,7 +160,7 @@ namespace mfront {
     //! name of the behaviour
     const std::string name;
     //! time spend in each code block (nanoseconds)
-    std::array<std::atomic<intmax_t>, 23> measures;
+    std::array<std::atomic<intmax_t>, 28> measures;
   };  // end of BehaviourProfiler
 
 }  // end of namespace mfront

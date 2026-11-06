@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Castem/CastemInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CASTEM_CALL_HXX
+#include "MFront/Castem/CastemInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CASTEM_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CASTEM_CALL_HXX */
 
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
@@ -947,3 +949,5 @@ namespace castem {
 #include "MFront/Castem/CastemOrthotropicBehaviourHandler.hxx"
 
 #endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CASTEM_CALL_HXX */

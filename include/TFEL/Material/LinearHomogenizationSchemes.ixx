@@ -466,10 +466,8 @@ namespace tfel::material::homogenization::elasticity {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
-    if (not(std::abs(D.n_a | D.n_b) < std::numeric_limits<real>::epsilon())) {
-      tfel::reportContractViolation(
-          "n_a and n_b of the distribution are not normals");
-    }
+    const auto n_b_o = internals::orthogonaliseEllipsoidAxes(
+        D.n_a, D.n_b, "n_a and n_b of the distribution are not normals");
     tfel::math::st2tost2<3u, StressType> C_0;
     static constexpr auto value =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -481,7 +479,7 @@ namespace tfel::material::homogenization::elasticity {
                                                                    nu_i);
 
     const auto n_a_d_ = D.n_a / norm(D.n_a);
-    const auto n_b_d_ = D.n_b / norm(D.n_b);
+    const auto n_b_d_ = n_b_o / norm(n_b_o);
     const auto n_c_d_ = tfel::math::cross_product<real>(n_a_d_, n_b_d_);
     const std::array<LengthType, 3> abc_ = {D.a, D.b, D.c};
     const auto sig = internals::sortEllipsoidLengths<LengthType>(D.a, D.b, D.c);

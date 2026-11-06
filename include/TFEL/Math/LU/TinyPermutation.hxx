@@ -39,7 +39,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr void swap(const unsigned short,
                                          const unsigned short);
 
-    TFEL_HOST_DEVICE [[nodiscard]] constexpr bool isIdentity() const;
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr bool isIdentity() const;
 
    protected:
     bool is_identity = true;

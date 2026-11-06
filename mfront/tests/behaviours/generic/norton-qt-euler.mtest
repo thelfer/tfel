@@ -1,0 +1,26 @@
+@Author Tristan Chenaille;
+@Date 03/11/2026;
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> @library@ 'Norton_euler_qt';
+// the behaviour only provides the elastic operator
+@StiffnessMatrixType 'Elastic';
+
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+@ExternalStateVariable 'Temperature' 293.15;
+
+// uniaxial creep test: the stress is applied during a first time step
+// short enough for the viscoplastic strain to be negligible, then kept
+// constant, so that the viscoplastic strain rate is constant
+@Real 'seq' 35e6;
+@ImposedStress 'SXX' {0 : 0, 1e-6 : 'seq', 1 : 'seq'};
+@Times {0, 1e-6, 1 in 10};
+
+// equivalent viscoplastic strain rate given by the Norton law of the
+// behaviour (the creep during the first time step is below the tolerance)
+@Real 'dp' '0.31848573644279365 * (seq / 100e6) ** 8.2';
+@Test<function> 'p' 'dp * t' 1e-10;
+@Test<function> 'EXX' 'seq / YoungModulus + dp * t' 1e-10;
+@Test<function> 'EYY' '-PoissonRatio * seq / YoungModulus - dp * t / 2' 1e-10;

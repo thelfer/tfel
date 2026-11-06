@@ -77,6 +77,11 @@ namespace tfel::system {
 
 #if !(defined _WIN32 || defined _WIN64)
     static void write(const int, const void* const, size_t);
+    /*!
+     * \brief read exactly the given number of bytes
+     * \throw SystemError at the end of file
+     */
+    static void read(const int, void* const, size_t);
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
     /*!
      * copy a file or a directory.

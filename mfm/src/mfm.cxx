@@ -13,6 +13,7 @@
 
 #include <regex>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
@@ -101,7 +102,7 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     };
     auto type_filter = [this] {
       const auto t = this->currentArgument->getOption();
-      if (t == "material_property") {
+      if ((t == "material_property") || (t == "material-property")) {
         this->query.type = EntryPoint::MATERIALPROPERTY;
       } else if (t == "behaviour") {
         this->query.type = EntryPoint::BEHAVIOUR;
@@ -120,6 +121,9 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     auto interface_filter = [this] {
       this->query.interface_filter = this->currentArgument->getOption();
     };
+    this->registerCallBack(
+        "--no-terminate-handler",
+        CallBack("don't set a terminate handler", []() noexcept {}, false));
     this->registerCallBack("--regex-syntax",
                            CallBack("select the syntax used by "
                                     "regular expressions. "
@@ -139,7 +143,7 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
         "--filter-by-type",
         CallBack(
             "filter entry points by material knowledge type. Valid types are "
-            "material-property, behaviour or model",
+            "material_property, behaviour or model",
             type_filter, true));
     this->registerCallBack(
         "--verbose", CallBack("set verbose output", set_verbose_level, true));
@@ -238,7 +242,37 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
   bool show_sources = false;
 };
 
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+[[noreturn]] static void mfm_terminate_handler() {
+  if (auto pe = std::current_exception()) {
+    // we have an exception
+    try {
+      std::rethrow_exception(pe);
+    } catch (const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch (...) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 int main(const int argc, const char* const* const argv) {
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, v) == 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+  if (!find("--no-terminate-handler")) {
+    std::set_terminate(mfm_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
 #if !defined(__GLIBCXX__)
   try {
 #endif /* not defined(__GLIBCXX__) */

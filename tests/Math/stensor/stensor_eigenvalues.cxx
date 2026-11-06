@@ -47,6 +47,12 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     this->test3<float, EigenSolver::HARARIEIGENSOLVER>();
     this->test3<double, EigenSolver::HARARIEIGENSOLVER>();
     this->test4();
+    this->test5();
+    this->test6<EigenSolver::FSESQLEIGENSOLVER>();
+    this->test6<EigenSolver::FSESCUPPENEIGENSOLVER>();
+    this->test6<EigenSolver::FSESANALYTICALEIGENSOLVER>();
+    this->test6<EigenSolver::FSESHYBRIDEIGENSOLVER>();
+    this->test6<EigenSolver::HARARIEIGENSOLVER>();
     return this->result;
   }  // end of execute
 
@@ -95,6 +101,12 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT((std::abs(vp3(0) - T(4.16709379934921)) < prec) ||
                       (std::abs(vp3(1) - T(4.16709379934921)) < prec) ||
                       (std::abs(vp3(2) - T(4.16709379934921)) < prec));
+    // the determinant of the deviator is null
+    const auto vp4 = stensor{T(1), T(2), T(3), T(0), T(0), T(0)}
+                         .template computeEigenValues<es>(stensor::ASCENDING);
+    TFEL_TESTS_ASSERT(std::abs(vp4(0) - T(1)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp4(1) - T(2)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp4(2) - T(3)) < prec);
   }
   template <typename T, tfel::math::stensor_common::EigenSolver es>
   void test3() {
@@ -124,6 +136,53 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(vp3[0] == 1);
     TFEL_TESTS_STATIC_ASSERT(vp3[1] == 0);
     TFEL_TESTS_STATIC_ASSERT(vp3[2] == -1);
+    // double eigenvalue
+    constexpr auto vp4 =
+        tfel::math::sortEigenValues(tfel::math::tvector<3u, int>{0, 0, 1},
+                                    tfel::math::stensor_common::ASCENDING);
+    constexpr auto vp5 =
+        tfel::math::sortEigenValues(tfel::math::tvector<3u, int>{1, 1, 0},
+                                    tfel::math::stensor_common::DESCENDING);
+    TFEL_TESTS_STATIC_ASSERT(vp4[2] == 1);
+    TFEL_TESTS_STATIC_ASSERT(vp5[2] == 0);
+  }
+  //! \brief zero tensor and pure shear with the FSESQLEIGENSOLVER solver
+  void test5() {
+    using stensor = tfel::math::stensor<3u, double>;
+    using EigenSolver = tfel::math::stensor_common::EigenSolver;
+    constexpr auto eps = 1e-14;
+    const auto vp =
+        stensor(0.).computeEigenValues<EigenSolver::FSESQLEIGENSOLVER>(
+            stensor::ASCENDING);
+    const auto vp2 = stensor{0., 0., 0., std::sqrt(2.), 0., 0.}
+                         .computeEigenValues<EigenSolver::FSESQLEIGENSOLVER>(
+                             stensor::ASCENDING);
+    for (unsigned short i = 0; i != 3; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(vp(i)) < eps);
+      TFEL_TESTS_ASSERT(std::abs(vp2(i) - (i - 1.)) < eps);
+    }
+  }
+  /*!
+   * \brief single precision, magnitudes of small strains and of stresses
+   * in Pa
+   */
+  template <tfel::math::stensor_common::EigenSolver es>
+  void test6() {
+    using stensor = tfel::math::stensor<3u, float>;
+    constexpr const auto prec = 20 * std::numeric_limits<float>::epsilon();
+    const float vp_ref[3] = {-1.68923153093191f, 1.50793773158270f,
+                             4.16709379934921f};
+    for (const auto scale : {1e-10f, 1e10f}) {
+      const stensor s =
+          scale * stensor{1.232f, 2.5198f, 0.234f, 1.5634f, 3.3425f, 0.9765f};
+      const auto vp = s.template computeEigenValues<es>(stensor::ASCENDING);
+      const auto [vp2, m] =
+          s.template computeEigenVectors<es>(stensor::ASCENDING);
+      for (unsigned short i = 0; i != 3; ++i) {
+        TFEL_TESTS_ASSERT(std::abs(vp(i) / scale - vp_ref[i]) < prec);
+        TFEL_TESTS_ASSERT(std::abs(vp2(i) / scale - vp_ref[i]) < prec);
+      }
+    }
   }
 };
 

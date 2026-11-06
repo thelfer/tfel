@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_ROUSSELIER_TANGUY_BESSON_2002_IXX
 
 #include <cmath>
+#include <limits>
 #include <ostream>
 #include <algorithm>
 #include "TFEL/Math/power.hxx"
@@ -42,9 +43,12 @@ namespace tfel::material {
       const RousselierTanguyBesson2002StressCriterionParameters<StressStensor>&
           p,
       const RousselierTanguyBesson2002StressType<StressStensor> seps) {
-    using istress = RousselierTanguyBesson2002InvertStressType<StressStensor>;
+    using stress = RousselierTanguyBesson2002StressType<StressStensor>;
+    using stress2 =
+        tfel::math::result_type<stress, stress, tfel::math::OpMult>;
     using real = RousselierTanguyBesson2002BaseType<StressStensor>;
     using size_type = unsigned short;
+    using tfel::math::base_type_cast;
     /*
      * The RousselierTanguyBesson equivalent $\sigma^{\star}$ stress
      * satisfies:
@@ -78,12 +82,16 @@ namespace tfel::material {
     }
     if (seq < seps) {
       const auto lf = std::log(3 / (2 * f * p.DR));
-      const auto ilf = 1 / std::max(lf, seps);
+      const auto ilf = 1 / std::max(lf, base_type_cast(seps));
       return (3 * p.qR * (pr / 2) * iomf * ilf);
     }
     // First order approximation
     const auto A = iomf * seq;
     const auto B = 2 * f * (p.DR / 3);
+    // without porosity, the criterion reduces to seq / (1 - f)
+    if (tfel::math::ieee754::fpclassify(B) == FP_ZERO) {
+      return seq * iomf;
+    }
     const auto C = 3 * p.qR * pr * iomf / 2;
     const auto a = B * C * C / 2;
     const auto b = A + B * C;
@@ -91,37 +99,54 @@ namespace tfel::material {
 
     const auto x01 = [&] {
       const auto d = b * b - 4 * a * c;
-      if ((d < 0) || (tfel::math::ieee754::fpclassify(a) == FP_ZERO)) {
+      if ((d < stress2(0)) ||
+          (tfel::math::ieee754::fpclassify(base_type_cast(a)) == FP_ZERO)) {
         return std::min(-c / b, iseq);
       }
-      return std::min(
-          std::max((-b + sqrt(d)) / (2 * a), (-b - sqrt(d)) / (2 * a)), iseq);
+      return std::min(std::max((-b + tfel::math::power<1, 2>(d)) / (2 * a),
+                               (-b - tfel::math::power<1, 2>(d)) / (2 * a)),
+                      iseq);
     }();
     // const auto lf = std::log(3 / (2 * f * p.DR));
     // const auto ilf = 1 / std::max(lf, seps);
     // const auto x0 = (x01 + 1 / (3 * p.qR * (pr / 2) * iomf * ilf)) / 2;
-    const auto x0 = x01;
+    // under tension, the starting point is bounded by the solution for a
+    // vanishing von Mises stress, so that the Newton-Raphson algorithm does
+    // not start far in the exponential branch
+    const auto x0 =
+        (pr > stress(0)) ? std::min(x01, std::log(1 / B) / C) : x01;
     // const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
-    const auto SdS = [seq, pr, f, iomf, p](const istress x) {
-      const auto e = std::exp(3 * p.qR * pr * iomf * tfel::math::abs(x) / 2);
+    // The Newton-Raphson algorithm works on the base numeric type, since the
+    // unknown and S do not have the same unit
+    const auto bseq = base_type_cast(seq);
+    const auto bpr = base_type_cast(pr);
+    const auto bseps = base_type_cast(seps);
+    const auto SdS = [bseq, bpr, f, iomf, p](const real x) {
+      const auto e = std::exp(3 * p.qR * bpr * iomf * tfel::math::abs(x) / 2);
       const auto S =
-          seq * iomf * tfel::math::abs(x) + 2 * f * (p.DR / 3) * e - 1;
-      const auto dS = seq * iomf + f * p.qR * p.DR * iomf * pr * e;
+          bseq * iomf * tfel::math::abs(x) + 2 * f * (p.DR / 3) * e - 1;
+      const auto dS = bseq * iomf + f * p.qR * p.DR * iomf * bpr * e;
       return std::make_tuple(S, dS);
     };
-    const auto criterion = [seps](const real, const istress dx, const istress x,
-                                  const size_type) {
+    const auto criterion = [bseps](const real, const real dx, const real x,
+                                   const size_type) {
       // d(1/y) = -dy/(y*y) => y*y*d(1/y) = -dy
       // so if I want |dy|<eps, |y*y*d(1/y)| must be lower than eps
       // Here, x is the inverse of the equivalent stress, so
-      return 10 * tfel::math::abs(dx) < seps * tfel::math::abs(x * x);
+      if (10 * tfel::math::abs(dx) < bseps * tfel::math::abs(x * x)) {
+        return true;
+      }
+      // relative stationnarity of the solution, which can be reached in
+      // single precision, contrary to the previous criterion
+      return tfel::math::abs(dx) <
+             10 * std::numeric_limits<real>::epsilon() * tfel::math::abs(x);
     };
-    const auto r =
-        tfel::math::scalarNewtonRaphson(SdS, criterion, x0, size_type{100});
+    const auto r = tfel::math::scalarNewtonRaphson(
+        SdS, criterion, base_type_cast(x0), size_type{100});
     if (!std::get<0>(r)) {
       throw(DivergenceException());
     }
-    return 1 / std::get<1>(r);
+    return stress(1 / std::get<1>(r));
   }  // end of computeRousselierTanguyBesson2002YieldStress
 
   template <typename StressStensor>
@@ -136,6 +161,8 @@ namespace tfel::material {
       const RousselierTanguyBesson2002StressCriterionParameters<StressStensor>&
           p,
       const RousselierTanguyBesson2002StressType<StressStensor> seps) {
+    using stress = RousselierTanguyBesson2002StressType<StressStensor>;
+    using istress = RousselierTanguyBesson2002InvertStressType<StressStensor>;
     using real = RousselierTanguyBesson2002BaseType<StressStensor>;
     using normal = RousselierTanguyBesson2002StressNormalType<StressStensor>;
     using result = std::tuple<
@@ -143,6 +170,7 @@ namespace tfel::material {
         RousselierTanguyBesson2002StressNormalType<StressStensor>,
         RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
             StressStensor>>;
+    using tfel::math::base_type_cast;
 
     const auto id = normal::Id();
 
@@ -156,7 +184,7 @@ namespace tfel::material {
     const auto iomf2 = iomf * iomf;
     const auto sm = trace(sig) / 3;
     const auto e =
-        std::exp(std::min((3 * p.qR * sm * iomf * iss) / 2, real(40.)));
+        std::exp(std::min(real((3 * p.qR * sm * iomf * iss) / 2), real(40.)));
 
     const auto dS_dsig = (3 * deviator(sig) * iomf * iseq * iss) / 2 +  //
                          fDq * iss * iomf * e * (id / 3);
@@ -164,11 +192,12 @@ namespace tfel::material {
     const auto dS_df = seq * iss * iomf2 +  //
                        e * (((2 * p.DR) / 3) + fDq * sm * iomf2 * iss);
 
-    const auto sgn_dS_dss = (dS_dss > 0) ? 1 : -1;
+    const auto sgn_dS_dss = (dS_dss > istress(0)) ? 1 : -1;
     const auto idS_dss =
-        sgn_dS_dss * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
-                          ? 1 / seps
-                          : 1 / tfel::math::abs(dS_dss));
+        sgn_dS_dss *
+        ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) == FP_ZERO)
+             ? stress(1 / base_type_cast(seps))
+             : 1 / tfel::math::abs(dS_dss));
     const auto dss_dsig = -dS_dsig * idS_dss;
     const auto dss_df = -dS_df * idS_dss;
 
@@ -191,10 +220,9 @@ namespace tfel::material {
           p,
       const RousselierTanguyBesson2002StressType<StressStensor> seps) {
     constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
-    // using stress = RousselierTanguyBesson2002StressType<StressStensor>;
+    using stress = RousselierTanguyBesson2002StressType<StressStensor>;
+    using istress = RousselierTanguyBesson2002InvertStressType<StressStensor>;
     using real = RousselierTanguyBesson2002BaseType<StressStensor>;
-    // using istress = tfel::math::result_type<real, stress,
-    // tfel::math::OpDiv>;
     using normal = RousselierTanguyBesson2002StressNormalType<StressStensor>;
     using result = std::tuple<
         RousselierTanguyBesson2002StressType<StressStensor>,
@@ -220,7 +248,7 @@ namespace tfel::material {
     const auto iomf2 = iomf * iomf;
     const auto sm = trace(sig) / 3;
     const auto e =
-        std::exp(std::min((3 * p.qR * sm * iomf * iss) / 2, real(40.)));
+        std::exp(std::min(real((3 * p.qR * sm * iomf * iss) / 2), real(40.)));
 
     const auto dS_dsig = (3 * deviator(sig) * iomf * iseq * iss) / 2 +  //
                          fDq * iss * iomf * e * (id / 3);
@@ -228,11 +256,12 @@ namespace tfel::material {
     const auto dS_df = seq * iss * iomf2 +  //
                        e * (((2 * p.DR) / 3) + fDq * sm * iomf2 * iss);
 
-    const auto sgn_dS_dss = (dS_dss > 0) ? 1 : -1;
+    const auto sgn_dS_dss = (dS_dss > istress(0)) ? 1 : -1;
     const auto idS_dss =
-        sgn_dS_dss * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
-                          ? 1 / seps
-                          : 1 / tfel::math::abs(dS_dss));
+        sgn_dS_dss *
+        ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) == FP_ZERO)
+             ? stress(1 / base_type_cast(seps))
+             : 1 / tfel::math::abs(dS_dss));
     const auto n = -dS_dsig * idS_dss;
     const auto dss_df = -dS_df * idS_dss;
 
@@ -251,7 +280,7 @@ namespace tfel::material {
     const auto d2S_dssdf =
         -seq * iomf2 * iss2 -                  //
         p.DR * p.qR * sm * iomf2 * iss2 * e -  //
-        (1.5 * fDq) * p.qR * iomf * iomf2 * iss2 * iss * sm * sm * e;
+        (3 * fDq / 2) * p.qR * iomf * iomf2 * iss2 * iss * sm * sm * e;
     const auto d2S_dss2 =
         2 * seq * iomf * iss * iss2 +           //
         2 * fDq * sm * iomf * iss * iss2 * e +  //

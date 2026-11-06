@@ -44,6 +44,7 @@ void declareTargetsDescription(pybind11::module_& m) {
       "MFront file. This structure is used to build the compilation\n"
       "rules for the libraries and specific targets defined by MFront\n"
       "interfaces")
+      .def(pybind11::init<>())
       .def("getLibrary",
            static_cast<LibraryAccess>(&TargetsDescription::getLibrary),
            pybind11::arg("n"))
@@ -58,5 +59,6 @@ void declareTargetsDescription(pybind11::module_& m) {
         return os.str();
       });
   m.def("describes", mfront::describes);
-  m.def("mergeTargetsDescription", mfront::describes);
+  m.def("mergeTargetsDescription", mfront::mergeTargetsDescription,
+        pybind11::arg("d"), pybind11::arg("s"), pybind11::arg("b"));
 }

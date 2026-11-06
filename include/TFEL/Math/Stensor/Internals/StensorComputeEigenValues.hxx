@@ -21,6 +21,8 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/CubicRoots.hxx"
 #include "TFEL/Exception/TFELException.hxx"
+#include "TFEL/Math/Forward/stensor.hxx"
+#include "TFEL/FSAlgorithm/max_element.hxx"
 
 namespace tfel::math::internals {
 
@@ -31,7 +33,7 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenValues<1u> {
     template <typename T>
-    static TFEL_MATH_INLINE2 void exe(
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 void exe(
         const T* const v, T& vp1, T& vp2, T& vp3, const bool) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
@@ -44,7 +46,7 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenValues<2u> {
     template <typename T>
-    static TFEL_MATH_INLINE2 void exe(
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 void exe(
         const T* const v, T& vp1, T& vp2, T& vp3, const bool) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
@@ -65,7 +67,7 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenValues<3u> {
     template <typename T>
-    static TFEL_MATH_INLINE2 void exe(
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 void exe(
         const T* const v, T& vp1, T& vp2, T& vp3, const bool b) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);

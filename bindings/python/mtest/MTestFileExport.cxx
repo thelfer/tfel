@@ -36,7 +36,8 @@ void declareMTestFileExport(pybind11::module_& m) {
       .def_readwrite("date", &mtest::TestDescription::date)
       .def_readwrite("description", &mtest::TestDescription::description)
       .def_readwrite("behaviour", &mtest::TestDescription::behaviour)
-      .def_readwrite("material", &mtest::TestDescription::material);
+      .def_readwrite("material", &mtest::TestDescription::material)
+      .def_readwrite("content", &mtest::TestDescription::content);
   //
   m.def("loadMTestFileContent", mtest_loadMTestFileContent,
         pybind11::arg("d"), pybind11::arg("f"));

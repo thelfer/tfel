@@ -61,9 +61,9 @@ namespace tfel::utilities {
         try {
           Parser(name).addDocumentation(tests);
         } catch (std::exception& e) {
-          log << TerminalColors::Reset;
+          log.write(TerminalColors::Red, sizeof(TerminalColors::Red));
           log << "treatment of file '" + f + "' failed: " << e.what() << '\n';
-          log << TerminalColors::Reset;
+          log.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
         }
       }
     }
@@ -72,7 +72,7 @@ namespace tfel::utilities {
   static std::string getOutputDirectory(const std::string& f) {
     const auto pos = f.rfind('/');
     if (pos == std::string::npos) {
-      return "";
+      return ".";
     }
     return f.substr(0, pos);
   }  // end of getOutputDirectory
@@ -109,7 +109,7 @@ namespace tfel::utilities {
              "'" +
                  this->outputFile + '\'');
     if (!this->logFile.empty()) {
-      this->logptr = std::make_shared<std::ofstream>(argv[2]);
+      this->logptr = std::make_shared<std::ofstream>(this->logFile);
       raise_if(!(*(this->logptr)),
                "TestDocMain: can't open log file "
                "'" +
@@ -148,6 +148,9 @@ namespace tfel::utilities {
   }  // end of TestDocMain::treatUnknownArgument
 
   void TestDocMain::registerArgumentCallBacks() {
+    this->registerCallBack(
+        "--no-terminate-handler",
+        CallBack("don't set a terminate handler", []() noexcept {}, false));
     this->registerNewCallBack("--lang", &TestDocMain::treatLang,
                               "specify output language (french,english)", true);
     this->registerNewCallBack("--fragment", "-f", &TestDocMain::treatFragment,

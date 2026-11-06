@@ -40,6 +40,10 @@ struct test_Column final : public tfel::tests::TestCase {
     c.setFilename(f);
     TFEL_TESTS_ASSERT(std::abs(3. - c.getValues().at(1)) < eps);
     TFEL_TESTS_ASSERT(c.getName() == "B");
+    // quoted column number
+    tfel::check::Column c2("3");
+    c2.setFilename(f);
+    TFEL_TESTS_ASSERT(std::abs(1. - c2.getValues().at(1)) < eps);
     return this->result;
   }
 };

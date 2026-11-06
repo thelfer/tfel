@@ -9,7 +9,9 @@ mfront_behaviour_brick_check_library(MFrontGenericIsotropicDSLsTestsBehaviours
    Plasticity7
    MultipleFlows1
    MultipleFlows2
-   MultipleFlows3)
+   MultipleFlows3
+   MultipleFlows4
+   MultipleFlows5)
 
 macro(generictestisotropic_dsls test_arg behaviour)
     set(_REFERENCE_FILE )
@@ -22,12 +24,14 @@ macro(generictestisotropic_dsls test_arg behaviour)
 	add_test(NAME isotropic_dsls_${test_arg}${behaviour}_${rm}_mtest
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
 	  --@library@="$<TARGET_FILE:MFrontGenericIsotropicDSLsTestsBehaviours>" --@behaviour@="${behaviour}"
+	  --xml-output-file=isotropic_dsls_${test_arg}${behaviour}_${rm}_mtest.xml
 	  --@xml_output@="${test_arg}-${behaviour}-${rm}.xml" ${file})
       else(NOT _REFERENCE_FILE)
 	add_test(NAME isotropic_dsls_${test_arg}${behaviour}_${rm}_mtest
 
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
 	  --@library@="$<TARGET_FILE:MFrontGenericIsotropicDSLsTestsBehaviours>" --@behaviour@="${behaviour}"
+	  --xml-output-file=isotropic_dsls_${test_arg}${behaviour}_${rm}_mtest.xml
 	  --@xml_output@="${test_arg}-${behaviour}-${rm}.xml"
 	  --@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
       endif(NOT _REFERENCE_FILE)
@@ -55,4 +59,6 @@ endmacro(generictestisotropic_dsls)
 
 generictestisotropic_dsls(plasticity  Plasticity6 plasticity.ref)
 generictestisotropic_dsls(plasticity2 Plasticity7 plasticity.ref)
+generictestisotropic_dsls(multipleflows MultipleFlows4 plasticity.ref)
+generictestisotropic_dsls(multipleflows MultipleFlows5 plasticity.ref)
 

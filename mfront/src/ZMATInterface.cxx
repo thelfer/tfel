@@ -297,12 +297,14 @@ namespace mfront {
                     << "[" << currentOffset << "+idx] = this->" << v.name
                     << "[idx];\n";
               }
-            } else if ((flag == SupportedTypes::TVECTOR) ||
-                       (flag == SupportedTypes::STENSOR) ||
-                       (flag == SupportedTypes::TENSOR)) {
+            } else if (flag == SupportedTypes::STENSOR) {
               out << "zmat::ZMATInterface::convert(&ZMATstatev"
                   << "[" << currentOffset << "+idx*StensorSize],this->"
                   << v.name << "[idx]);\n";
+            } else if (flag == SupportedTypes::TENSOR) {
+              out << "zmat::ZMATInterface::convert(&ZMATstatev"
+                  << "[" << currentOffset << "+idx*TensorSize],this->" << v.name
+                  << "[idx]);\n";
             } else {
               tfel::raise(
                   "ZMATInterface::exportMechanicalData: "
@@ -522,9 +524,12 @@ namespace mfront {
               // 	<< n << "[idx].begin());\n";
               //   break;
               case SupportedTypes::STENSOR:
-              case SupportedTypes::TENSOR:
                 out << "zmat::ZMATInterface::convert(" << n
                     << "[idx],&ZMATstatev[" << o << "+idx*StensorSize]);\n";
+                break;
+              case SupportedTypes::TENSOR:
+                out << "zmat::ZMATInterface::convert(" << n
+                    << "[idx],&ZMATstatev[" << o << "+idx*TensorSize]);\n";
                 break;
               default:
                 tfel::raise(
@@ -803,7 +808,7 @@ namespace mfront {
               out << "for(unsigned short idx=0;idx!=" << ev.arraySize
                   << ";++idx){\n";
               out << "this->d" << ev.name
-                  << "[idx] = ZMATextvars_td-[ZMATevs_pos[" << o
+                  << "[idx] = ZMATextvars_tdt[ZMATevs_pos[" << o
                   << "+idx]]-ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];\n";
               out << "}\n";
               o += this->getTypeSize(ev.type, ev.arraySize);
@@ -1394,7 +1399,7 @@ namespace mfront {
         } else {
           for (unsigned short i = 0; i != isv.arraySize; ++i) {
             out << "this->" << isv.name << "[" << i << "].initialize(this,\""
-                << name << std::to_string(i) << "\",this->uts(),1);\n";
+                << name << std::to_string(i) << "\",this->utsz(),1);\n";
           }
         }
       } else {
@@ -1735,13 +1740,32 @@ namespace mfront {
       out << "zmat::ZMATInterface::convert(b.getStiffnessTensor(),this->get_"
              "elasticity_matrix(mdat,1.));\n";
     }
-    out << "b.initialize();\n"
+    out << "b.setOutOfBoundsPolicy(this->obp);\n"
+        << "if(!b.initialize()){\n"
+        << "static INTEGRATION_RESULT bad_result;\n"
+        << "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
+        << "return &bad_result;\n"
+        << "}\n"
+        << "b.checkBounds();\n"
+        << "auto tsf = b.computeAPrioriTimeStepScalingFactor(1);\n"
+        << "if(!tsf.first){\n"
+        << "static INTEGRATION_RESULT bad_result;\n"
+        << "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
+        << "return &bad_result;\n"
+        << "}\n"
         << "if(b.integrate(smflag,smtype)!=" << mb.getClassName()
         << "::SUCCESS){\n"
         << "static INTEGRATION_RESULT bad_result;\n"
         << "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
         << "return &bad_result;\n"
         << "}\n"
+        << "tsf = b.computeAPosterioriTimeStepScalingFactor(tsf.second);\n"
+        << "if(!tsf.first){\n"
+        << "static INTEGRATION_RESULT bad_result;\n"
+        << "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
+        << "return &bad_result;\n"
+        << "}\n"
+        << "b.checkBounds();\n"
         << "b.ZMATexportStateData(this->sig,mdat);\n"
         << "if(smtype!=" << mb.getClassName() << "::NOSTIFFNESSREQUESTED){\n";
     if (mb.getBehaviourType() ==

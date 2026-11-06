@@ -37,10 +37,11 @@ namespace tfel::math::anderson {
   void CovarianceMatrix<real>::resize(const size_type n) {
     this->Nmax = n;
     if (this->Nmax) {
-      this->C.resize(
-          static_cast<size_type>((this->Nmax * (this->Nmax + 1)) / 2));
-      this->a.resize(
-          static_cast<size_type>((this->Nmax * (this->Nmax - 1)) / 2));
+      // the sizes of the triangular storages may exceed the maximum value of
+      // size_type
+      const auto s = static_cast<std::size_t>(this->Nmax);
+      this->C.resize((s * (s + 1)) / 2);
+      this->a.resize((s * (s - 1)) / 2);
       this->ne.resize(this->Nmax);
     }
   }
@@ -142,6 +143,13 @@ namespace tfel::math::anderson {
   void CovarianceMatrix<real>::weightsGSchmidtD(std::vector<real>& w) {
     this->GSFactorD();
     auto rw = w.rbegin() + (this->Nmax - this->N);
+    if (!(ne[0] > 0)) {
+      // the last residual is negligible: the last field is kept
+      for (size_type i = 0; i != this->N; ++i) {
+        rw[i] = (i == 0) ? real{1} : real{0};
+      }
+      return;
+    }
     for (size_type i = 0; i != this->N; ++i) {
       if (ne[i] > 0) {
         rw[i] = 1;

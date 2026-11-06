@@ -68,5 +68,7 @@ int main() {
   // execute
   p = levmar.execute();
   cout << p << endl;
-  return EXIT_SUCCESS;
+  return ((abs(p(0) - 2.1033) < 1.e-5) && (abs(p(1) - 403.02) < 1.e-3))
+             ? EXIT_SUCCESS
+             : EXIT_FAILURE;
 }  // end of main

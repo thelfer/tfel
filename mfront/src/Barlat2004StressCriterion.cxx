@@ -29,7 +29,8 @@ namespace mfront::bbrick {
                       OptionDescription::MATERIALPROPERTY);
     opts.emplace_back(
         "eigen_solver",
-        "Choice of the eigen solver. Valid value are 'default' and 'Jacoby'.",
+        "Choice of the eigen solver. Valid value are 'default' (or 'TFEL') and "
+        "'Jacobi'.",
         OptionDescription::STRING);
     return opts;
   }  // end of getOptions
@@ -118,7 +119,7 @@ namespace mfront::bbrick {
           tfel::raise_if(mh != ModellingHypothesis::TRIDIMENSIONAL,
                          "Barlat2004StressCriterion::endTreatment: "
                          "an orthotropic axes convention must be choosen when "
-                         "defining a stress free expansion in behaviours "
+                         "using the Barlat 2004 stress criterion in behaviours "
                          "which shall be valid in other modelling hypothesis "
                          "than 'Tridimensional'.\n"
                          "Either restrict the validity of the behaviour to "
@@ -180,17 +181,14 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const StressPotential& sp,
       const Role r) const {
-    const auto an = StressCriterion::getVariableId(
-        "a", id, StressCriterion::STRESSCRITERION);
-    const auto l1n = StressCriterion::getVariableId(
-        "l1", id, StressCriterion::STRESSCRITERION);
-    const auto l2n = StressCriterion::getVariableId(
-        "l2", id, StressCriterion::STRESSCRITERION);
+    const auto an = StressCriterion::getVariableId("a", id, r);
+    const auto l1n = StressCriterion::getVariableId("l1", id, r);
+    const auto l2n = StressCriterion::getVariableId("l2", id, r);
     auto c = std::string{};
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
       c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + "] = ";
       c += "computeBarlatStressNormal" + this->getTemplateParameters() + "(s" +
-           id + ",this->" + l1n + ",this->" + l2n + "," + an + "," +
+           id + ",this->" + l1n + ",this->" + l2n + ",this->" + an + "," +
            sp.getEquivalentStressLowerBound(bd) + ");\n";
     }
     if (r == STRESSANDFLOWCRITERION) {
@@ -210,12 +208,9 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const StressPotential& sp,
       const Role r) const {
-    const auto an = StressCriterion::getVariableId(
-        "a", id, StressCriterion::STRESSCRITERION);
-    const auto l1n = StressCriterion::getVariableId(
-        "l1", id, StressCriterion::STRESSCRITERION);
-    const auto l2n = StressCriterion::getVariableId(
-        "l2", id, StressCriterion::STRESSCRITERION);
+    const auto an = StressCriterion::getVariableId("a", id, r);
+    const auto l1n = StressCriterion::getVariableId("l1", id, r);
+    const auto l2n = StressCriterion::getVariableId("l2", id, r);
     auto c = std::string{};
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
       c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" + id +

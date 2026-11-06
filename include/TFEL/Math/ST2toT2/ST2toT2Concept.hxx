@@ -21,6 +21,7 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
+#include "TFEL/Math/types.hxx"
 
 namespace tfel::math {
 

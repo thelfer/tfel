@@ -27,7 +27,7 @@ namespace mtest {
    * \brief structure in charge of representing the evolution of the oxidation
    * status.
    */
-  struct OxidationStatusEvolution : Evolution {
+  struct MTEST_VISIBILITY_EXPORT OxidationStatusEvolution : Evolution {
     /*!
      * \brief constructor
      * \param[in] mesh: mesh description

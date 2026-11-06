@@ -15,6 +15,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_STRESSBASEDPOROSITYNUCLEATIONMODELBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_STRESSBASEDPOROSITYNUCLEATIONMODELBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourBrick/PorosityNucleationModelBase.hxx"
 
 namespace mfront::bbrick {
@@ -28,7 +29,8 @@ namespace mfront::bbrick {
    * - \f$f\f$ is the nucleated porosity.
    * - \f$p\f$ is the total equivalent plastic strain.
    */
-  struct StressBasedPorosityNucleationModelBase : PorosityNucleationModelBase {
+  struct MFRONT_VISIBILITY_EXPORT StressBasedPorosityNucleationModelBase
+      : PorosityNucleationModelBase {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,

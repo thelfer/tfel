@@ -84,7 +84,8 @@ namespace mtest {
       return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
     }
     // compute the stiffness operator from material properties
-    this->computeElasticStiffness(wk.kt, s.mprops1, transpose(s.r));
+    this->buildMaterialProperties(wk, s);
+    this->computeElasticStiffness(wk.kt, wk.mps, transpose(s.r));
     return {true, 1};
   }  // end of CastemSmallStrainBehaviour::computePredictionOperator
 
@@ -187,7 +188,7 @@ namespace mtest {
     // tangent operator (...)
     if (ktype != StiffnessMatrixType::NOSTIFFNESS) {
       if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
-        this->computeElasticStiffness(Kt, s.mprops1, drot);
+        this->computeElasticStiffness(Kt, wk.mps, drot);
       } else {
         UmatNormaliseTangentOperator::exe(&Kt(0, 0), wk.D, dimension);
       }
@@ -208,7 +209,9 @@ namespace mtest {
       const tfel::math::tmatrix<3u, 3u, real>& drot) const {
     using namespace tfel::math;
     using castem::CastemComputeStiffnessTensor;
-    const auto h = this->getHypothesis();
+    const auto h = this->usesGenericPlaneStressAlgorithm
+                       ? ModellingHypothesis::PLANESTRESS
+                       : this->getHypothesis();
     if (this->stype == 0u) {
       if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
         st2tost2<1u, real> De;

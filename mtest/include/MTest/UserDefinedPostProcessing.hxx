@@ -14,18 +14,25 @@
 #ifndef LIB_MTEST_USERDEFINEDPOSTPROCESSING_HXX
 #define LIB_MTEST_USERDEFINEDPOSTPROCESSING_HXX
 
+#include <map>
 #include <memory>
 #include <vector>
+#include <string>
 #include <fstream>
+#include <functional>
 #include "TFEL/Math/Evaluator.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Types.hxx"
 
 namespace mtest {
 
   // forward declaration
   struct Behaviour;
+  // forward declaration
+  struct CurrentState;
 
   //! \brief class handling a user defined postprocessing
-  struct UserDefinedPostProcessing {
+  struct MTEST_VISIBILITY_EXPORT UserDefinedPostProcessing {
     /*!
      * \brief constructor
      * \param[in] b: behaviour

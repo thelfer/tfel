@@ -11,9 +11,19 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by TFEL/Math/stensor.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_TFEL_MATH_STENSOR_HXX
+#include "TFEL/Math/stensor.hxx"
+#else
+
 #ifndef LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX
 #define LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX
 
+#include <cmath>
+#include <limits>
+#include <algorithm>
+#include <type_traits>
 #include "TFEL/Math/Stensor/Internals/FSESSymmetricEigenSolver.hxx"
 #include "TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.hxx"
 #include "TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx"
@@ -53,6 +63,69 @@ namespace tfel::math::internals {
           base_type_cast(v[5]) * icste,  //
           base_type_cast(v[2])};
     }  // end of as_base_matrix
+    /*!
+     * \brief in single precision, divide a matrix by the smallest power of
+     * four greater than its largest absolute component.
+     *
+     * The FSES and Harari solvers compute powers of the components up to
+     * the sixth, which overflow or underflow in single precision for
+     * ordinary magnitudes (stresses in Pa, small strains). The scaling is
+     * exact, even through the square roots of the solvers: the
+     * eigenvectors of the scaled matrix are the ones of the original
+     * matrix and its eigenvalues are the ones of the original matrix
+     * divided by `2^e`, where `e` is the returned exponent (see
+     * `unscale`). In double and long double precisions, whose ranges are
+     * wide enough, the matrix is left unchanged.
+     *
+     * \return the exponent `e`
+     * \param[in,out] m: matrix
+     */
+    TFEL_HOST_DEVICE static int scale(
+        tmatrix<3u, 3u, base_type<NumType>>& m) noexcept {
+      using real = base_type<NumType>;
+      if constexpr (std::is_same_v<real, float>) {
+        auto mx = real{0};
+        for (unsigned short i = 0; i != 3; ++i) {
+          for (unsigned short j = 0; j != 3; ++j) {
+            mx = std::max(mx, tfel::math::abs(m(i, j)));
+          }
+        }
+        if (!((mx > real{0}) && (mx <= std::numeric_limits<real>::max()))) {
+          return 0;
+        }
+        int e;
+        std::frexp(mx, &e);
+        if (e % 2 != 0) {
+          ++e;
+        }
+        for (unsigned short i = 0; i != 3; ++i) {
+          for (unsigned short j = 0; j != 3; ++j) {
+            m(i, j) = std::ldexp(m(i, j), -e);
+          }
+        }
+        return e;
+      } else {
+        static_cast<void>(m);
+        return 0;
+      }
+    }  // end of scale
+    /*!
+     * \brief multiply the eigenvalues of a matrix scaled by `scale` by
+     * `2^e`
+     * \param[in,out] vp: eigenvalues
+     * \param[in] e: exponent returned by `scale`
+     */
+    TFEL_HOST_DEVICE static void unscale(tvector<3u, base_type<NumType>>& vp,
+                                         const int e) noexcept {
+      if constexpr (std::is_same_v<base_type<NumType>, float>) {
+        for (unsigned short i = 0; i != 3; ++i) {
+          vp[i] = std::ldexp(vp[i], e);
+        }
+      } else {
+        static_cast<void>(vp);
+        static_cast<void>(e);
+      }
+    }  // end of unscale
   };   // end of StensorEigenSolverBase<3u, NumType>
 
   /*!
@@ -76,11 +149,12 @@ namespace tfel::math::internals {
      * \param[in]  v:   stensor values
      * \param[in]  b:   refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenValues(NumType& vp0,
-                                                    NumType& vp1,
-                                                    NumType& vp2,
-                                                    const NumType* const v,
-                                                    const bool b) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenValues(
+        NumType& vp0,
+        NumType& vp1,
+        NumType& vp2,
+        const NumType* const v,
+        const bool b) {
       real values[StensorDimeToSize<N>::value];
       real eigen_values[3];
       tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
@@ -97,10 +171,11 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
-                                                     tmatrix<3u, 3u, real>& vec,
-                                                     const NumType* const v,
-                                                     const bool b) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenVectors(
+        tvector<3u, NumType>& vp,
+        tmatrix<3u, 3u, real>& vec,
+        const NumType* const v,
+        const bool b) {
       real values[StensorDimeToSize<N>::value];
       tvector<3u, real> eigen_values;
       tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
@@ -129,15 +204,19 @@ namespace tfel::math::internals {
      * \param[in]  v:   stensor values
      * \param[in]  b:   refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenValues(NumType& vp0,
-                                                    NumType& vp1,
-                                                    NumType& vp2,
-                                                    const NumType* const v,
-                                                    const bool) {
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenValues(
+        NumType& vp0,
+        NumType& vp1,
+        NumType& vp2,
+        const NumType* const v,
+        const bool) {
+      using Base = StensorEigenSolverBase<3u, NumType>;
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
       auto vp = tvector<3u, real>{};
       HarariEigensolver3x3<real>::computeEigenValues(
           vp, sm(0, 0), sm(1, 1), sm(2, 2), sm(0, 1), sm(0, 2), sm(1, 2));
+      Base::unscale(vp, e);
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -148,14 +227,18 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
-                                                     tmatrix<3u, 3u, real>& m,
-                                                     const NumType* const v,
-                                                     const bool) {
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenVectors(
+        tvector<3u, NumType>& vp,
+        tmatrix<3u, 3u, real>& m,
+        const NumType* const v,
+        const bool) {
+      using Base = StensorEigenSolverBase<3u, NumType>;
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
       auto vp2 = tvector<3u, real>{};
       HarariEigensolver3x3<real>::computeEigenVectors(
           vp2, m, sm(0, 0), sm(1, 1), sm(2, 2), sm(0, 1), sm(0, 2), sm(1, 2));
+      Base::unscale(vp2, e);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
@@ -179,11 +262,12 @@ namespace tfel::math::internals {
      * \param[in]  v:   stensor values
      * \param[in]  b:   refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenValues(NumType& vp0,
-                                                    NumType& vp1,
-                                                    NumType& vp2,
-                                                    const NumType* const v,
-                                                    const bool b) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenValues(
+        NumType& vp0,
+        NumType& vp1,
+        NumType& vp2,
+        const NumType* const v,
+        const bool b) {
       constexpr auto icste = Cste<real>::isqrt2;
       auto vp = tvector<3u, real>{};
       auto m = tmatrix<3u, 3u, real>{};
@@ -201,10 +285,11 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
-                                                     tmatrix<3u, 3u, real>& m,
-                                                     const NumType* const v,
-                                                     const bool b) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static void computeEigenVectors(
+        tvector<3u, NumType>& vp,
+        tmatrix<3u, 3u, real>& m,
+        const NumType* const v,
+        const bool b) {
       constexpr auto icste = Cste<real>::isqrt2;
       auto vp2 = tvector<3u, real>{};
       GteSymmetricEigensolver3x3<real>::exe(
@@ -214,6 +299,10 @@ namespace tfel::math::internals {
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
+
+  // The following specialisations rely on the `FSES` library, whose
+  // routines are only available on the host: they are not declared
+  // `TFEL_HOST_DEVICE`.
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -294,9 +383,12 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      using Base = StensorEigenSolverBase<3u, NumType>;
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
       auto vp = tvector<3u, real>{};
       FSESAnalyticalSymmetricEigensolver3x3<real>::computeEigenValues(vp, sm);
+      Base::unscale(vp, e);
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -311,10 +403,13 @@ namespace tfel::math::internals {
                                                      tmatrix<3u, 3u, real>& m,
                                                      const NumType* const v,
                                                      const bool) {
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      using Base = StensorEigenSolverBase<3u, NumType>;
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
       auto vp2 = tvector<3u, real>{};
       FSESAnalyticalSymmetricEigensolver3x3<real>::computeEigenVectors(vp2, m,
                                                                        sm);
+      Base::unscale(vp2, e);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
@@ -356,8 +451,11 @@ namespace tfel::math::internals {
                                                     const bool) {
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp = tvector<3u, real>{};
-      auto m = tmatrix<3u, 3u>{};
-      fses::syevj3(m, vp, sm);
+      auto m = tmatrix<3u, 3u, real>{};
+      if (fses::syevj3(m, vp, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -374,7 +472,11 @@ namespace tfel::math::internals {
                                                      const bool) {
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp2 = tvector<3u, real>{};
-      fses::syevj3(m, vp2, sm);
+      if (fses::syevj3(m, vp2, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp2 = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+        m = tmatrix<3u, 3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
@@ -413,10 +515,16 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      using Base = StensorEigenSolverBase<3u, NumType>;
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
       auto vp = tvector<3u, real>{};
-      auto m = tmatrix<3u, 3u>{};
-      fses::syevq3(m, vp, sm);
+      auto m = tmatrix<3u, 3u, real>{};
+      if (fses::syevq3(m, vp, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
+      Base::unscale(vp, e);
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -431,9 +539,16 @@ namespace tfel::math::internals {
                                                      tmatrix<3u, 3u, real>& m,
                                                      const NumType* const v,
                                                      const bool) {
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      using Base = StensorEigenSolverBase<3u, NumType>;
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
       auto vp2 = tvector<3u, real>{};
-      fses::syevq3(m, vp2, sm);
+      if (fses::syevq3(m, vp2, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp2 = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+        m = tmatrix<3u, 3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
+      Base::unscale(vp2, e);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
@@ -472,10 +587,16 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
+      using Base = StensorEigenSolverBase<3u, NumType>;
       auto vp = tvector<3u, real>{};
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
-      auto m = tmatrix<3u, 3u>{};
-      fses::syevd3(m, vp, sm);
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
+      auto m = tmatrix<3u, 3u, real>{};
+      if (fses::syevd3(m, vp, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
+      Base::unscale(vp, e);
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -490,9 +611,16 @@ namespace tfel::math::internals {
                                                      tmatrix<3u, 3u, real>& m,
                                                      const NumType* const v,
                                                      const bool) {
+      using Base = StensorEigenSolverBase<3u, NumType>;
       auto vp2 = tvector<3u, real>{};
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
-      fses::syevd3(m, vp2, sm);
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
+      if (fses::syevd3(m, vp2, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp2 = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+        m = tmatrix<3u, 3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
+      Base::unscale(vp2, e);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
@@ -532,9 +660,12 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      using Base = StensorEigenSolverBase<3u, NumType>;
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
       auto vp = tvector<3u, real>{};
       fses::syevc3(vp, sm);
+      Base::unscale(vp, e);
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -549,9 +680,16 @@ namespace tfel::math::internals {
                                                      tmatrix<3u, 3u, real>& m,
                                                      const NumType* const v,
                                                      const bool) {
-      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      using Base = StensorEigenSolverBase<3u, NumType>;
+      auto sm = Base::as_base_matrix(v);
+      const auto e = Base::scale(sm);
       auto vp2 = tvector<3u, real>{};
-      fses::syevh3(m, vp2, sm);
+      if (fses::syevh3(m, vp2, sm) != 0) {
+        // no convergence: report it as for the other solvers
+        vp2 = tvector<3u, real>(std::numeric_limits<real>::quiet_NaN());
+        m = tmatrix<3u, 3u, real>(std::numeric_limits<real>::quiet_NaN());
+      }
+      Base::unscale(vp2, e);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
@@ -559,3 +697,5 @@ namespace tfel::math::internals {
 }  // namespace tfel::math::internals
 
 #endif /* LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX */
+
+#endif /* LIB_TFEL_MATH_STENSOR_HXX */

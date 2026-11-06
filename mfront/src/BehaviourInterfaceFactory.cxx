@@ -48,10 +48,10 @@ namespace mfront {
       const std::string& n) const {
     auto p = this->getAliasesMap().find(n);
     if (p == this->getAliasesMap().end()) {
-      auto msg = std::string(
-          "MaterialPropertyInterfaceFactory::getUniqueNameFromAlias: ");
+      auto msg =
+          std::string("BehaviourInterfaceFactory::getUniqueNameFromAlias: ");
       msg += "no interface named '" + n + "'.\n";
-      msg += "Available interface are : \n";
+      msg += "Available interfaces are : \n";
       for (p = this->getAliasesMap().begin(); p != this->getAliasesMap().end();
            ++p) {
         msg += p->first + " ";

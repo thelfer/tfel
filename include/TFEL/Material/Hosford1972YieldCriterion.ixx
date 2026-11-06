@@ -249,7 +249,7 @@ namespace tfel::material {
     tfel::math::tvector<3u, stress> vp;
     tfel::math::tmatrix<3u, 3u, real> m;
     std::tie(vp, m) = s.template computeEigenVectors<es>();
-    const auto n = tfel::math::stensor<N, stress>::computeEigenTensors(m);
+    const auto n = tfel::math::stensor<N, real>::computeEigenTensors(m);
     // eigenvalues are normalised by the Von Mises stress to avoid
     // overflow
     const auto rvp = vp * iseq;
@@ -258,7 +258,7 @@ namespace tfel::material {
                          std::pow(tfel::math::abs(rvp[1] - rvp[2]), a)) /
                         2;
     // Hosford equivalent stress
-    const real Psi = seq * std::pow(rPsi_a, 1 / real(a));
+    const stress Psi = seq * std::pow(rPsi_a, 1 / real(a));
     // For the derivatives, the stress eigenvalues are normalised by
     // the Hosford equivalent stress
     const auto rvp2 = vp / Psi;
@@ -306,7 +306,7 @@ namespace tfel::material {
     tfel::math::tvector<3u, stress> vp;
     tfel::math::tmatrix<3u, 3u, real> m;
     std::tie(vp, m) = s.template computeEigenVectors<es>();
-    const auto n = tfel::math::stensor<N, stress>::computeEigenTensors(m);
+    const auto n = tfel::math::stensor<N, real>::computeEigenTensors(m);
     // eigenvalues are normalised by the Von Mises stress to avoid
     // overflow
     const auto rvp = vp * iseq;
@@ -315,7 +315,7 @@ namespace tfel::material {
                          std::pow(tfel::math::abs(rvp[1] - rvp[2]), a)) /
                         2;
     // Hosford equivalent stress
-    const real Psi = seq * std::pow(rPsi_a, 1 / real(a));
+    const stress Psi = seq * std::pow(rPsi_a, 1 / real(a));
     // For the derivatives, the stress eigenvalues are normalised by
     // the Hosford equivalent stress
     const auto rvp2 = vp / Psi;

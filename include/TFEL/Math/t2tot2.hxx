@@ -256,11 +256,21 @@ namespace tfel::math {
       const TensorConcept auto&) noexcept;
   /*!
    * \brief compute the second derivative of the determinant of a
-   * symmetric tensor
+   * tensor
    * \param[in] s: tensor
    */
   template <TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto computeDeterminantSecondDerivative(
+      const TensorType&) noexcept
+      requires(isScalar<numeric_type<TensorType>>());
+  /*!
+   * \brief compute the derivative of the adjugate of a tensor,
+   * \f$\det\left(F\right)\,F^{-1}\f$, i.e. of the result of
+   * `computeAdjugateDeterminantDerivative`
+   * \param[in] s: tensor
+   */
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantSecondDerivative(
       const TensorType&) noexcept
       requires(isScalar<numeric_type<TensorType>>());
 

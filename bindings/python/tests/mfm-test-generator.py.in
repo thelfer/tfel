@@ -1,0 +1,23 @@
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+
+import @mfm_test_generator_python_module@ as mfmtg
+
+class MFMTestGeneratorTest(unittest.TestCase):
+
+    def test_load_mfm_test_generator_file_content(self):
+        f = '@top_srcdir@/mfm-test-generator/tests/uniaxialtensiletest.mfmtg'
+        d = mfmtg.TestDescription()
+        d.name = 'uniaxialtensiletest'
+        d.behaviour = 'Elasticity'
+        self.assertEqual(d.content, '')
+        mfmtg.loadMFMTestGeneratorFileContent(d, f)
+        with open(f) as file:
+            self.assertEqual(d.content, file.read())
+        self.assertEqual(d.name, 'uniaxialtensiletest')
+        self.assertEqual(d.behaviour, 'Elasticity')
+
+if __name__ == '__main__':
+    unittest.main()

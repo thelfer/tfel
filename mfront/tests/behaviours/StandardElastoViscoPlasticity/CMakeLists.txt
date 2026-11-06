@@ -30,6 +30,10 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   Test14.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test15.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test16.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	NortonTest.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	NortonTest_nj.mfront)
@@ -185,6 +189,14 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	PlasticityTest17_nj.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+	PlasticityTest26.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+	PlasticityTest27.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+	PlasticityTest28.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+	PlasticityTest29.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest_nj.mfront)
@@ -192,6 +204,8 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2_nj.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest3.mfront)
 
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	 IsotropicDamageHookeLaw.mfront)
@@ -216,6 +230,12 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
         GursonTvergaardNeedleman1982.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
         RousselierTanguyBesson2002.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        MichelAndSuquet1992HollowSphereTest.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        DDIF2StressPotentialTest.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        DDIF2BrickTest.mfront)
 
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
         UserDefinedViscoplasticityTest.mfront)

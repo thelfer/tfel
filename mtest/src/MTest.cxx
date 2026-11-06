@@ -76,8 +76,8 @@ namespace mtest {
       }
       if (getSpaceDimension(b.getHypothesis()) > 1u) {
         for (size_type i = 0; i != nth - 3u; ++i) {
-          r(2 * i + 3u) += s(i);
-          r(2 * i + 3u + 1) += s(i);
+          r(2 * i + 3u) += s(i + 3u);
+          r(2 * i + 3u + 1) += s(i + 3u);
           for (size_type j = 0; j != ndv; ++j) {
             k(2 * i + 3u, j) += kt(i + 3u, j);
             k(2 * i + 3u + 1, j) += kt(i + 3u, j);
@@ -196,6 +196,9 @@ namespace mtest {
   }
 
   void MTest::setGradientsInitialValues(const std::vector<real>& v) {
+    tfel::raise_if(this->b == nullptr,
+                   "MTest::setGradientsInitialValues: "
+                   "no behaviour defined");
     tfel::raise_if(!this->e_t0.empty(),
                    "MTest::setGradientsInitialValues: "
                    "the initial values of the strains have "
@@ -209,6 +212,9 @@ namespace mtest {
   }
 
   void MTest::setThermodynamicForcesInitialValues(const std::vector<real>& v) {
+    tfel::raise_if(this->b == nullptr,
+                   "MTest::setThermodynamicForcesInitialValues: "
+                   "no behaviour defined");
     tfel::raise_if(!this->s_t0.empty(),
                    "MTest::setThermodynamicForcesInitialValues: "
                    "the initial values of the strains have "
@@ -227,6 +233,9 @@ namespace mtest {
 
   void MTest::completeInitialisation() {
     using namespace tfel::material;
+    tfel::raise_if(this->b == nullptr,
+                   "MTest::completeInitialisation: "
+                   "no behaviour defined");
     // additional constraints
     // must be set *before* `SingleStructureScheme::completeInitialisation`
     if (this->hypothesis == ModellingHypothesis::PLANESTRAIN) {
@@ -577,6 +586,7 @@ namespace mtest {
       const auto ndv = this->b->getGradientsSize();
       for (unsigned short i = 0; i != ndv; ++i) {
         s.e0[i] = state.u0[i];
+        s.e1[i] = state.u0[i];
       }
     }
     return SingleStructureScheme::prepare(state, t, dt);
@@ -807,6 +817,9 @@ namespace mtest {
     using size_type = tfel::math::vector<real>::size_type;
     auto n = real(0);
     for (size_type i = 0; i != s; ++i) {
+      if (!tfel::math::ieee754::isfinite(v(i))) {
+        return v(i);
+      }
       n = std::max(n, std::abs(v(i)));
     }
     return n;

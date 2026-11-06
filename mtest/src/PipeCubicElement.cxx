@@ -238,8 +238,8 @@ namespace mtest {
       auto& s = scs.istates[4 * i + g];
       // radial position of the Gauss point
       const auto rg = s.position;
-      const real sfv[4] = {sf0(rg), sf1(rg), sf2(rg), sf3(rg)};
-      const real dsfv[4] = {dsf0(rg), dsf1(rg), dsf2(rg), dsf3(rg)};
+      const real sfv[4] = {sf0(pg), sf1(pg), sf2(pg), sf3(pg)};
+      const real dsfv[4] = {dsf0(pg), dsf1(pg), dsf2(pg), dsf3(pg)};
       // jacobian of the transformation
       const auto J = PipeCubicElement::jacobian(r0, r1, r2, r3, pg);
       setRoundingMode();

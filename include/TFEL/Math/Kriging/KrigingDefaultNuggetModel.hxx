@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_KRIGINGDEFAULTNUGGETMODEL_HXX
 
 #include "TFEL/Math/Kriging/KrigingVariable.hxx"
+#include "TFEL/Math/vector.hxx"
 
 namespace tfel::math {
 

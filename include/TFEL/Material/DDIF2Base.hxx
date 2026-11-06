@@ -19,6 +19,7 @@
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 
 namespace tfel::material {
 
@@ -83,12 +84,19 @@ namespace tfel::material {
      * \tparam strain: type of strain variables
      * \tparam stress: type of stress variables
      *
+     * \param[in,out] fe: implicit equation associated with the crack strain
+     * \param[in,out] dfe_dde: derivative of the implicit equation with respect
+     * to the increment of the crack strain
+     * \param[in,out] dfe_ddeel: derivative of the implicit equation with
+     * respect to the increment of the elastic strain
      * \param[in] s: current estimation of the state.
      * \param[in] sig: current estimate of the stress tensor at the end of the
      * time step.
      * \param[in] n: crack direction
      * \param[in] em:  maximum crack strain at the beginning of the time step
-     * \param[in] e: current estimate of the crack strain
+     * \param[in] e: crack strain at the beginning of the time step
+     * \param[in] de: current estimate of the increment of the crack strain
+     * \param[in] yg: Young modulus, used to normalise the implicit equation
      * \param[in] l: first Lamé coefficient
      * \param[in] m: second Lamé coefficient (shear modulus)
      * \param[in] smax: elastic limit
@@ -154,7 +162,7 @@ namespace tfel::material {
      * matrix.
      */
     template <typename Stensor2Type1, typename Stensor, typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void treatFracture(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void treatFracture(
         Stensor2Type1&,
         real&,
         real&,
@@ -174,7 +182,7 @@ namespace tfel::material {
      * in explicit integration.
      */
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void rk(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void rk(
         tfel::math::tmatrix<3, 3, real>&,
         tfel::math::tvector<3, real>&,
         real&,
@@ -190,31 +198,38 @@ namespace tfel::material {
         const unsigned short);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cart2cyl(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cart2cyl(
         tfel::math::stensor<1u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cart2cyl(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cart2cyl(
         tfel::math::stensor<2u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cart2cyl(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cart2cyl(
         tfel::math::stensor<3u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cyl2cart(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
         tfel::math::stensor<1u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cyl2cart(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
         tfel::math::stensor<2u, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void cyl2cart(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
         tfel::math::stensor<3u, real>&, const real);
+    /*!
+     * \brief change a fourth order tensor, mapping symmetric tensors
+     * expressed in the cylindrical frame, to the cartesian frame
+     */
+    template <unsigned short N, typename real>
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void cyl2cart(
+        tfel::math::st2tost2<N, real>&, const real);
 
     template <typename real>
-    TFEL_HOST_DEVICE TFEL_VISIBILITY_LOCAL static void invmat(
+    TFEL_VISIBILITY_LOCAL TFEL_HOST_DEVICE static void invmat(
         tfel::math::tmatrix<3, 3, real>&,
         tfel::math::tmatrix<3, 3, real>&,
         tfel::math::tvector<3, real>&);

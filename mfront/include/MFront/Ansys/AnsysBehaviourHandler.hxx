@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Ansys/AnsysInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_ANSYS_ANSYSINTERFACE_HXX
+#include "MFront/Ansys/AnsysInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_ANSYS_ANSYSINTERFACE_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ANSYS_ANSYSINTERFACE_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -91,10 +93,27 @@ namespace ansys {
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
         typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
         const AnsysInt N = ModellingHypothesisToSpaceDimension<H>::value;
+        // in plane stress, Ansys gives the three strain components (e11,
+        // e22, gamma12) whereas the stress-free expansion handler works on
+        // the four components (xx, yy, zz, xy)
+        constexpr auto ps =
+            (H == ModellingHypothesis::PLANESTRESS) &&
+            (AnsysTraits<BV>::btype == ansys::STANDARDSTRAINBASEDBEHAVIOUR);
         AnsysReal dv0[AnsysTraits<BV>::GradientSize];
         AnsysReal dv1[AnsysTraits<BV>::GradientSize];
-        copy<AnsysTraits<BV>::GradientSize>::exe(STRAN, dv0);
-        copy<AnsysTraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        if constexpr (ps) {
+          dv0[0] = STRAN[0];
+          dv0[1] = STRAN[1];
+          dv0[2] = AnsysReal{0};
+          dv0[3] = STRAN[2];
+          dv1[0] = DSTRAN[0];
+          dv1[1] = DSTRAN[1];
+          dv1[2] = AnsysReal{0};
+          dv1[3] = DSTRAN[2];
+        } else {
+          copy<AnsysTraits<BV>::GradientSize>::exe(STRAN, dv0);
+          copy<AnsysTraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        }
         // check that the function pointer are not null
         if (sfeh == nullptr) {
           throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -104,6 +123,11 @@ namespace ansys {
         const auto& s0 = s.first;
         const auto& s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], N);
+        if constexpr (ps) {
+          // back to the three components given by Ansys
+          dv0[2] = dv0[3];
+          dv1[2] = dv1[3];
+        }
         b.setANSYSBehaviourDataGradients(dv0);
         b.setANSYSIntegrationDataGradients(dv1);
       }  // end of exe
@@ -156,7 +180,7 @@ namespace ansys {
                                         const AnsysReal* const props) {
         const unsigned short o = AnsysTraits<BV>::elasticPropertiesOffset;
         AnsysComputeThermalExpansionCoefficientTensor<AnsysTraits<BV>::btype, H,
-                                                      AnsysTraits<BV>::stype>::
+                                                      AnsysTraits<BV>::type>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
@@ -212,6 +236,14 @@ namespace ansys {
             Traits::hasConsistentTangentOperator,
             ExtractAndConvertTangentOperator<H>,
             ConsistentTangentOperatorIsNotAvalaible>::type;
+        using IEnergyComputer =
+            typename std::conditional<Traits::hasComputeInternalEnergy,
+                                      InternalEnergyComputer,
+                                      DoNothingEnergyComputer>::type;
+        using DEnergyComputer =
+            typename std::conditional<Traits::hasComputeDissipatedEnergy,
+                                      DissipatedEnergyComputer,
+                                      DoNothingEnergyComputer>::type;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
         }
@@ -221,14 +253,26 @@ namespace ansys {
         this->behaviour.checkBounds();
         const auto smflag =
             AnsysTangentOperatorFlag<AnsysTraits<BV>::btype>::value;
+        auto tsf =
+            this->behaviour.computeAPrioriTimeStepScalingFactor(AnsysReal(1));
+        if (!tsf.first) {
+          return false;
+        }
         const auto r =
             this->behaviour.integrate(smflag, BV::CONSISTENTTANGENTOPERATOR);
         if (r == BV::FAILURE) {
           return false;
         }
+        tsf =
+            this->behaviour.computeAPosterioriTimeStepScalingFactor(tsf.second);
+        if (!tsf.first) {
+          return false;
+        }
         this->behaviour.checkBounds();
         this->behaviour.ANSYSexportStateData(d.STRESS, d.STATEV);
         ConsistentTangentOperatorHandler::exe(this->behaviour, d.DDSDDE);
+        IEnergyComputer::exe(*(d.SEDEL), this->behaviour);
+        DEnergyComputer::exe(*(d.SEDPL), this->behaviour);
         return true;
       }  // end of Integrator::exe
 
@@ -240,6 +284,25 @@ namespace ansys {
           throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
         }  // end of exe
       };
+      //! structure in charge of calling the computeInternalEnergy method
+      struct InternalEnergyComputer {
+        typedef Behaviour<H, AnsysReal, false> BV;
+        static void exe(AnsysReal& Psi_s, const BV& b) {
+          b.computeInternalEnergy(Psi_s);
+        }  // end of exe
+      };  // end of struct InternalEnergyComputer
+      //! structure in charge of calling the computeDissipatedEnergy method
+      struct DissipatedEnergyComputer {
+        typedef Behaviour<H, AnsysReal, false> BV;
+        static void exe(AnsysReal& Psi_d, const BV& b) {
+          b.computeDissipatedEnergy(Psi_d);
+        }  // end of exe
+      };  // end of struct DissipatedEnergyComputer
+      //! place holder for tag dispatching
+      struct DoNothingEnergyComputer {
+        typedef Behaviour<H, AnsysReal, false> BV;
+        static void exe(AnsysReal&, const BV&) {}
+      };  // end of struct DoNothingEnergyComputer
 
       typedef Behaviour<H, AnsysReal, false> BV;
       BV behaviour;
@@ -280,3 +343,5 @@ namespace ansys {
 }  // end of namespace ansys
 
 #endif /* LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_ANSYS_ANSYSINTERFACE_HXX */

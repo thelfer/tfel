@@ -60,7 +60,7 @@ By default, `tfel-check` uses a single process.
 ### Controlling parallel execution
 
 The `--jobs` (`-j`) option specifies the number of parallel jobs.
-If not provided, `tfel-check` uses the number of available CPU cores.
+If no value is given, `tfel-check` uses the number of available CPU cores.
 
 #### Job limit
 
@@ -124,9 +124,8 @@ To run this file:
 $ tfel-check --@python@=python3.5 madnex.check
 entering directory '/tmp/madnex'
 * beginning of test './madnex.check'
-** Exec-1 python3.5 MadnexTest.py                                      [SUCCESS]
-** Exec-2 python3.5 OverridableImplementation.py                       [SUCCESS]
-** Exec-3 mfront-query --author --material=A316LN --behaviour=Plast... [SUCCESS]
+** Exec-1 python3.5 OverridableImplementation.py                       [SUCCESS]
+** Exec-2 mfront-query --author --material=A316LN --behaviour=Plast... [SUCCESS]
 * end of test './madnex.check'                                         [SUCCESS]
 ======
 ~~~~
@@ -135,7 +134,7 @@ This generates the following files:
 
 - `tfel-check.log`: Global log file in the invocation directory.
 - `madnex.checklog`: Summary of command executions and tests for `madnex.check`.
-- `madnex-Exec-1.out`, `madnex-Exec-2.out`, `madnex-Exec-3.out`: Output and execution time for each command.
+- `madnex-Exec-1.out`, `madnex-Exec-2.out`: Output and execution time for each command.
 - `TEST-madnex.xml`: JUnit-compatible XML file for integration with [Jenkins](https://www.jenkins.io/).
 
 If requirements are unmet, tests are skipped:
@@ -144,9 +143,8 @@ If requirements are unmet, tests are skipped:
 $ tfel-check
 entering directory '/tmp/madnex'
 * beginning of test './madnex.check'
-** Exec-1 @python@ MadnexTest.py                                       [SKIPPED]
-** Exec-2 @python@ OverridableImplementation.py                        [SKIPPED]
-** Exec-3 mfront-query --author --material=A316LN --behaviour=Plast... [SKIPPED]
+** Exec-1 @python@ OverridableImplementation.py                        [SKIPPED]
+** Exec-2 mfront-query --author --material=A316LN --behaviour=Plast... [SKIPPED]
 * end of test './madnex.check'                                         [SUCCESS]
 ======
 ~~~~
@@ -157,9 +155,8 @@ Command failures are reported as follows:
 $ tfel-check --@python@=python2.7
 entering directory '/tmp/madnex'
 * beginning of test './madnex.check'
-** Exec-1 toto MadnexTest.py                                           [ FAILED]
-** Exec-2 toto OverridableImplementation.py                            [ FAILED]
-** Exec-3 mfront-query --author --material=A316LN --behaviour=Plast... [ FAILED]
+** Exec-1 toto OverridableImplementation.py                            [ FAILED]
+** Exec-2 mfront-query --author --material=A316LN --behaviour=Plast... [ FAILED]
 * end of test './madnex.check'                                         [ FAILED]
 ======
 ~~~~
@@ -252,6 +249,10 @@ The `@Environment` keyword defines environment variables for commands:
 @Environment {"VAR1": "value1", "VAR2": "value2"};
 ~~~~
 
+If a variable is already defined, in the environment of `tfel-check`
+or earlier in the test file, the value is prepended to it, separated by
+`:`, as for search paths (`PATH`, `LD_LIBRARY_PATH`, etc.).
+
 ### The `@Command` keyword
 
 The `@Command` keyword executes a command. It supports the following options:
@@ -264,6 +265,10 @@ The `@Command` keyword executes a command. It supports the following options:
 - `output_validation_regex`: Regular expression to validate the command output.
   The output is concatenated into a single string for validation.
 - `shall_fail`: Boolean. If `true`, the command must fail for the test to pass.
+  If an output check (`expected_output`, `expected_numerical_output`,
+  `empty_output`, `output_validation_regex`) is also given, it is applied
+  to the output of the failed command, so that the test also checks the
+  reason of the failure.
 - `timeout`: Integer. Maximum allowed duration in seconds.
 
 Example:
@@ -293,6 +298,10 @@ Example:
 @Precision 1.e-6;       // single precision for Absolute/Relative
 @Precision 1.e-3 1.;    // relative and absolute precision for Mixed
 ~~~~
+
+`@Precision` with one value keeps the second value of a previous
+`@Precision`. A warning is written in the log file of the test (`.checklog`)
+when a `RelativeAndAbsolute` or `Mixed` comparison uses this second value.
 
 ### The `@Test` keyword
 
@@ -724,6 +733,9 @@ environment_variables: {"CXXFLAGS": "-Wall", "MPI_ROOT": "/path/to/mpi"};
 - Environment variables can only be defined **once** across all configuration files.
 - If an environment variable is defined in both a configuration file and a test file
   (via `@Environment`), the test file's definition takes precedence.
+- Unlike the `@Environment` keyword, the values given in configuration files are
+  used as given: they are not prepended to the value of the variable in the
+  environment of `tfel-check`.
 
 # Default components {#sec:tfel_check:default_components}
 
@@ -759,7 +771,7 @@ $ tfel-check --list-default-components
 - `@mfront-doc@`
 - `@mfm-test-generator@`
 
-If Python bindings are enabled, `@python` is also declared.
+If Python bindings are enabled, `@python@` is also declared.
 
 These default substitutions are applied **after** reading configuration files
 and command-line arguments, so they can be overridden by the user.
@@ -774,18 +786,22 @@ $ tfel-check --help
 
 ## Summary of options
 
+The options whose value is noted `<boolean>` require the value `true`
+or `false` after an equal sign, for example
+`--discard-jobs-limit=true`: they are rejected without value.
+
 | Option | Description |
 |--------|-------------|
-| `--clean-up` | clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of success. |
-| `--discard-clean-up-on-failure` | don't clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of failure (true by default). |
+| `--clean-up=<boolean>` | clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of success (default: `true`). |
+| `--discard-clean-up-on-failure=<boolean>` | don't clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of failure (default: `true`). |
 | `--config, -c` | Add a configuration file. |
-| `--discard-commands-failure` | Ignore command failures if comparisons pass (default: `true`). If no comparisons are defined, failures are never ignored. |
-| `--discard-jobs-limit` | Disable the limit on parallel jobs (default: enforced). |
+| `--discard-commands-failure=<boolean>` | Ignore command failures if comparisons pass (default: `true`). If no comparisons are defined, failures are never ignored. |
+| `--discard-jobs-limit=<boolean>` | Disable the limit on parallel jobs (default: `false`). |
 | `--help, -h` | Display help message. |
-| `--jobs, -j` | Number of parallel jobs (default: number of CPU cores). |
+| `--jobs, -j` | Number of parallel jobs (default: 1; number of CPU cores if no value is given). Without value, `-j` must be the last argument or be followed by another option: `tfel-check -j a.check` reads `a.check` as the number of jobs, whereas `tfel-check --jobs a.check` and `tfel-check a.check -j` use the number of CPU cores. |
 | `--list-default-components` | List all default components. |
-| `--synchronize-terminal-output` | Synchronize terminal output in parallel (default: `false`). |
-| `--use-terminal-colors` | Use terminal colors for output. |
+| `--synchronize-terminal-output=<boolean>` | Synchronize terminal output in parallel (default: `false`). |
+| `--use-terminal-colors=<boolean>` | Use terminal colors for output (default: `true`). |
 | `--version, -v` | Display version information. |
 
 ## Usage examples

@@ -45,8 +45,9 @@ namespace tfel::material::homogenization::elasticity {
   }  // namespace internals
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
+  requires((N == 3) &&
+           (tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                               StressType>()))
       HomogenizationScheme<N, StressType> computeDilute(
           ParticulateMicrostructure<N, StressType>& micro,
           int max_iter_anisotropic_integration,
@@ -92,7 +93,7 @@ namespace tfel::material::homogenization::elasticity {
 
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.getInclusionPhase(i);
-      auto Ci = (*phasei).getElasticityOfPhase();
+      auto Ci = (*phasei).getElasticityOfPhaseInGlobalBasis();
       if (!((*phasei).isIsotropic()) && with_Chom_derivatives) {
         tfel::reportContractViolation(
             "I cannot compute the derivatives of the homogenized stiffness "
@@ -149,8 +150,9 @@ namespace tfel::material::homogenization::elasticity {
   };
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
+  requires((N == 3) &&
+           (tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                               StressType>()))
       HomogenizationScheme<N, StressType> computeMoriTanaka(
           ParticulateMicrostructure<N, StressType>& micro,
           int max_iter_anisotropic_integration,
@@ -218,7 +220,7 @@ namespace tfel::material::homogenization::elasticity {
 
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.getInclusionPhase(i);
-      auto Ci = (*phasei).getElasticityOfPhase();
+      auto Ci = (*phasei).getElasticityOfPhaseInGlobalBasis();
       auto fi = (*phasei).fraction;
       auto taui = polarisations_[i + 1];
       localisators[i + 1] = localisators[i + 1] * A0;
@@ -288,8 +290,9 @@ namespace tfel::material::homogenization::elasticity {
   };  // end of computeMoriTanaka
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
+  requires((N == 3) &&
+           (tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                               StressType>()))
       HomogenizationScheme<N, StressType> computeAsymmetricSelfConsistent(
           ParticulateMicrostructure<N, StressType>& micro,
           const tfel::types::real<StressType>& tolerance,
@@ -355,7 +358,7 @@ namespace tfel::material::homogenization::elasticity {
     // beginning of while loop
     while (rel_err > tolerance) {
       std::vector<tfel::math::st2tost2<N, real>> localisators_ = {
-          tfel::math::st2tost2<N, real>::Id()};
+          tfel::math::st2tost2<N, real>::Id() / f0};
 
       for (std::size_t i = 0; i < np - 1; i++) {
         auto phasei = micro.getInclusionPhase(i);
@@ -368,6 +371,7 @@ namespace tfel::material::homogenization::elasticity {
               Chom, max_iter_anisotropic_integration);
         }
         localisators_.push_back(Ai);
+        localisators_[0] -= (*phasei).fraction * Ai / f0;
       }
 
       tfel::math::st2tost2<N, StressType> Ch = C0;
@@ -387,7 +391,7 @@ namespace tfel::material::homogenization::elasticity {
 
       for (std::size_t i = 0; i < np - 1; i++) {
         auto phasei = micro.getInclusionPhase(i);
-        auto Ci = (*phasei).getElasticityOfPhase();
+        auto Ci = (*phasei).getElasticityOfPhaseInGlobalBasis();
         auto fi = (*phasei).fraction;
         auto Ai = localisators_[i + 1];
         Ch += fi * (Ci - C0) * Ai;
@@ -491,8 +495,9 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeAsymmetricSelfConsistent
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
+  requires((N == 3) &&
+           (tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                               StressType>()))
       HomogenizationScheme<N, StressType> computeSelfConsistent(
           Polycrystal<StressType>& poly,
           const tfel::types::real<StressType>& tolerance,
@@ -558,7 +563,7 @@ namespace tfel::material::homogenization::elasticity {
         }
         Ai_mean += fi * Ai;
         if (with_Chom_derivatives && (N == 3)) {
-          auto Ci = (*graini).getElasticityOfPhase();
+          auto Ci = (*graini).getElasticityOfPhaseInGlobalBasis();
           CDSC += fi * Ci * Ai;
         }
         localisators_try.push_back(Ai);
@@ -572,7 +577,7 @@ namespace tfel::material::homogenization::elasticity {
 
       for (std::size_t i = 0; i < ng; i++) {
         auto graini = poly.getGrain(i);
-        auto Ci = (*graini).getElasticityOfPhase();
+        auto Ci = (*graini).getElasticityOfPhaseInGlobalBasis();
         auto fi = (*graini).fraction;
         localisators_try[i] = localisators_try[i] * Ai_mean;
         auto Ai = localisators_try[i];

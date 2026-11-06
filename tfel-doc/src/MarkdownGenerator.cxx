@@ -104,13 +104,13 @@ namespace tfel::utilities {
       if (t.models.size() == 1) {
         const auto& m = *(t.models.begin());
         out << "### " << getTranslation("Tested model", l) << "\n\n"
-            << getTranslation("The model tested is:", l) << '`' << m.first
+            << getTranslation("The model tested is:", l) << " `" << m.first
             << "`.\n\n";
       } else {
         out << "### " << getTranslation("List of tested models", l) << "\n\n"
             << " " << getTranslation("The models tested are:", l) << "\n\n";
         for (const auto& m : t.models) {
-          out << "- `" << m.first.front() << "`\n";
+          out << "- `" << m.first << "`\n";
         }
         out << '\n';
       }
@@ -140,16 +140,18 @@ namespace tfel::utilities {
       std::ostream& out,
       const std::map<std::string, std::vector<TestDocumentation>>& tests,
       const GeneratorOptions& o) {
-    if (!(o.split) && (o.standAlone)) {
+    if (o.standAlone) {
       writeMarkdownHeader(out, tests, o.lang);
     }
     for (const auto& td : tests) {
       if (o.split) {
-        const auto& tf = replace_all(td.first, ' ', '_') + ".tex";
+        const auto& tf = replace_all(td.first, ' ', '_') + ".md";
         const auto& file = o.outputDirectory + "/" + tf;
         std::ofstream f(file);
         raise_if(!f, "writeMarkdownFile : can't open file '" + file + "'");
         writeMarkdownSection(f, td.first, td.second, o);
+        out << "- [" << capitalize(getTranslation("text in category", o.lang))
+            << " " << td.first << "](" << tf << ")\n";
       } else {
         writeMarkdownSection(out, td.first, td.second, o);
       }

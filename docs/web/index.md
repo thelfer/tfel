@@ -54,7 +54,7 @@ knowledge:
   Young's modulus, the thermal conductivity, etc.)
 - [mechanical behaviours](behaviours.html). Numerical performance of
   generated mechanical behaviours was given particular
-  attention. [Various benchmarks](benchmarks.html) show that `MFront`
+  attention. [Various benchmarks](benchmark.html) show that `MFront`
   implementations are competitive with native implementations
   available in the `Cast3M`, `Code-Aster`, `Abaqus Standard` and
   `Cyrano3` solvers.
@@ -123,7 +123,9 @@ For developers and contributors.
 | [Compiling MFront Shared Libraries](compiling-mfront-shared-libraries.html) | Guide for building shared libraries. |
 | [CMake Options](https://github.com/thelfer/tfel/blob/master/CMakeLists.txt) | Advanced CMake configuration. |
 | [Coverity Scan](coverity-scan.html) | Static analysis for TFEL. |
+| [Running Sanitized Tests](sanitizers.html) | Building and testing TFEL/MFront with sanitizers. |
 | [Packages](packages.html) | Creating binary packages for TFEL. |
+| [Release How-To](release-howto.html) | Preparing a TFEL/MFront release. |
 | [TFEL System](TFELSystem.html) | Overview of TFEL's architecture. |
 
 # Release Notes & History

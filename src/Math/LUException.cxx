@@ -68,7 +68,7 @@ namespace tfel::math {
   LUNullDeterminant::LUNullDeterminant(const LUNullDeterminant&) = default;
 
   const char* LUNullDeterminant::what() const noexcept {
-    return "LUDecomp::back_substitute : null pivot";
+    return "TinyMatrixSolve::exe: null determinant";
   }  // end of LUNullDeterminant::LUNullDeterminant
 
   LUNullDeterminant::~LUNullDeterminant() noexcept = default;

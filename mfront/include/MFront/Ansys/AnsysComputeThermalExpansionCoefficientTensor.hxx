@@ -200,6 +200,34 @@ namespace ansys {
                         ThermalExpansionCoefficientTensor&);
   };  // end of struct AnsysComputeThermalExpansionCoefficientTensor
 
+  /*!
+   * Partial specialisation for finite strain behaviours
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            AnsysSymmetryType stype>
+  struct TFEL_VISIBILITY_LOCAL AnsysComputeThermalExpansionCoefficientTensor<
+      ansys::STANDARDFINITESTRAINBEHAVIOUR,
+      H,
+      stype> {
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    /*!
+     * \brief compute the thermal expansion coefficient tensor.
+     * \param[in]  props : material properties
+     * \param[out] A     : thermal expansion coefficient tensor
+     */
+    template <typename real>
+    static void exe(
+        const real* const props,
+        typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,
+                                     real,
+                                     false>::ThermalExpansionCoefficientTensor&
+            A) {
+      AnsysComputeThermalExpansionCoefficientTensor<
+          ansys::STANDARDSTRAINBASEDBEHAVIOUR, H, stype>::exe(props, A);
+    }
+  };  // end of struct AnsysComputeThermalExpansionCoefficientTensor
+
 }  // end of namespace ansys
 
 #endif /* LIB_MFRONT_ANSYSCOMPUTETHERMALEXPANSIONTENSOR_HXX */
