@@ -25,6 +25,11 @@ namespace mfront::generic_parallel::material_property {
   /*!
    * \brief base class of the CUDA and HIP backends: each point is evaluated
    * by one thread of the device
+   *
+   * Options:
+   *
+   * - `number_of_threads_per_block`: number of threads per block, rounded up
+   *   to a multiple of the warp size (128 by default).
    */
   struct MFRONT_VISIBILITY_EXPORT CUDABackendBase : BackendBase {
     //! \brief default constructor
@@ -61,10 +66,19 @@ namespace mfront::generic_parallel::material_property {
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&,
         const FileDescription&) const override;
+    [[nodiscard]] std::string getMemorySpace() const override;
+    [[nodiscard]] std::string getExecutionPolicyType() const override;
+    [[nodiscard]] std::string getExecutionPolicyHeader() const override;
     //! \brief destructor
     ~CUDABackendBase() noexcept override;
 
    protected:
+    //! \brief the statuses of the points are merged with atomic operations
+    [[nodiscard]] bool mergesPointStatusesInKernels() const override;
+    [[nodiscard]] std::string getAtomicIncrement(
+        const std::string_view) const override;
+    [[nodiscard]] std::string getAtomicMinimum(
+        const std::string_view, const std::string_view) const override;
     //! \return the programming model (`hip` or `cuda`)
     [[nodiscard]] virtual std::string getProgrammingModel() const noexcept = 0;
     /*!
@@ -74,8 +88,8 @@ namespace mfront::generic_parallel::material_property {
      * \param[in] i: interface
      * \param[in] mpd: material property description
      * \param[in] fd: file description
-     * \param[in] treatStrides: if true, the kernel handles the strides of the
-     * output and of the arguments. Otherwise, the name of the kernel ends
+     * \param[in] handleStrides: if true, the kernel handles the strides of
+     * the output and of the arguments. Otherwise, the name of the kernel ends
      * with `_without_strides`.
      */
     virtual void writeGlobalFunctions2(
@@ -85,39 +99,21 @@ namespace mfront::generic_parallel::material_property {
         const FileDescription&,
         const bool) const;
     /*!
-     * \brief write the C implementations of the material property
+     * \brief write the calls to the kernels inside the body of the material
+     * property (see `writeKernelSelection`)
      *
      * \param[in] os: output stream
      * \param[in] i: interface
      * \param[in] mpd: material property description
-     * \param[in] fd: file description
-     * \param[in] treatStrides: if true, the function handles the strides of
-     * the output and of the arguments. Otherwise, the arguments and the
-     * output are contiguous arrays and the name of the function ends with
-     * `2`.
-     */
-    virtual void writeCImplementations2(
-        std::ostream&,
-        const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&,
-        const FileDescription&,
-        const bool) const;
-    /*!
-     * \brief write the call to the kernel inside the body of the material
-     * property
-     *
-     * \param[in] os: output stream
-     * \param[in] i: interface
-     * \param[in] mpd: material property description
-     * \param[in] treatStrides: boolean stating if strides are treated (see
-     * `writeCImplementations2`)
      */
     virtual void writeKernelCall(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&,
-        const bool) const;
-    //! \brief number of threads per block
+        const MaterialPropertyDescription&) const;
+    /*!
+     * \brief number of threads per block, rounded up to a multiple of the
+     * warp size at runtime (128 by default)
+     */
     std::optional<int> number_of_threads_per_block;
   };  // end of CUDABackendBase
 

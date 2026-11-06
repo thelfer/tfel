@@ -136,6 +136,7 @@ static bool mfront = false;
 static bool mfrontDatabase = false;
 static bool mfrontLogStream = false;
 static bool mfrontProfiling = false;
+static bool mfrontGenericParallelRuntime = false;
 static bool mtest = false;
 #ifdef HAVE_CASTEM
 static bool castem = false;
@@ -338,6 +339,7 @@ static void listLibraries(const char* p) {
   display_if(mfrontDatabase, "TFELMFrontDatabase");
   display_if(mfrontLogStream, "MFrontLogStream");
   display_if(mfrontProfiling, "MFrontProfiling");
+  display_if(mfrontGenericParallelRuntime, "MFrontGenericParallelRuntime");
   display_if(mtest, "TFELMTest");
   display_if(material, "TFELMaterial");
   display_if(mathParser, "TFELMathParser");
@@ -526,12 +528,18 @@ int main(const int argc, const char* const* const argv) {
         "--mfront-profiling", [] { mfrontProfiling = true; },
         "request flags for MFrontProfiling.");
     registerCallBack(
+        "--mfront-generic-parallel-runtime",
+        [] { mfrontGenericParallelRuntime = true; },
+        "request flags for MFrontGenericParallelRuntime (execution policies "
+        "of the generic-parallel interfaces).");
+    registerCallBack(
         "--all",
         [] {
           config = exceptions = math = numodis = material = true;
           utilities = glossary = lsystem = tests = true;
           unicodeSupport = true;
           mfrontProfiling = true;
+          mfrontGenericParallelRuntime = true;
           mfrontLogStream = true;
           mfront = mtest = true;
         },

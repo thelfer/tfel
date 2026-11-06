@@ -40,7 +40,7 @@ namespace mtest {
   }  // end of GenericMaterialProperty
 
   real GenericMaterialProperty::getValue() const {
-    ::mfront_gmp_OutputStatus s;
+    auto s = ::mfront_gmp_OutputStatus{};
     const auto v = (*this->fct)(
         &s, this->arguments_values.data(),
         static_cast<mfront_gmp_size_type>(this->arguments_values.size()),

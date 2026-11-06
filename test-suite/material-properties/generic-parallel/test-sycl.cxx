@@ -12,6 +12,8 @@
  */
 
 #include <array>
+#include <cmath>
+#include <memory>
 #include <vector>
 #include <iostream>
 #include <sycl/sycl.hpp>
@@ -21,7 +23,9 @@
 #include "TFEL/Tests/TestManager.hxx"
 
 #include "MFront/GenericMaterialProperty/MaterialProperty.h"
+#include "MFront/GenericParallel/SyclBackendExecutionPolicy.hxx"
 #include "PoissonRatioTest-generic-parallel-sycl.hxx"
+#include "BoundsOrderTest-generic-parallel-sycl.hxx"
 #include "Inconel600_YoungModulus-generic-parallel-sycl.hxx"
 #include "Inconel600_YoungModulus_qt-generic-parallel-sycl.hxx"
 #include "UO2_YoungModulus_Martin1989-generic-parallel-sycl.hxx"
@@ -39,26 +43,59 @@
 #define TFEL_SYCL_DEVICE_SELECTOR sycl::cpu_selector_v
 #endif
 
-struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
-  Iconel600YoungModulusTest()
+//! \brief name of the backend
+#define MFRONT_GPMP_TEST_BACKEND_NAME "sycl"
+
+//! \brief array of values given to the material properties (host memory)
+template <typename T>
+using test_vector = std::vector<T>;
+
+//! \return the queue of the synchronous evaluations
+static sycl::queue& getTestQueue() {
+  static auto q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
+  return q;
+}  // end of getTestQueue
+
+//! \return the execution policy of the synchronous evaluations
+static const mfront::generic_parallel::SyclBackendExecutionPolicy&
+getTestPolicy() {
+  static const auto p =
+      mfront::generic_parallel::makeSyclBackendExecutionPolicy(getTestQueue());
+  return p;
+}  // end of getTestPolicy
+
+#include "batch.hxx"
+
+//! \return the execution of a synchronous evaluation
+static TestExecution testExecution() {
+  return TestExecution{.policy = &getTestPolicy()};
+}  // end of testExecution
+
+/*!
+ * \return an execution policy of the `sycl` backend on the queue of the
+ * tests
+ * \param[in] o: common options
+ */
+static std::unique_ptr<mfront::generic_parallel::AbstractBackendExecutionPolicy>
+makeTestPolicy(
+    const mfront::generic_parallel::BackendExecutionCommonPolicy& o) {
+  return std::make_unique<mfront::generic_parallel::SyclBackendExecutionPolicy>(
+      getTestQueue(), o);
+}  // end of makeTestPolicy
+
+#include "tests.hxx"
+
+//! \brief tests specific to the `sycl` backend
+struct SYCLTest : public tfel::tests::TestCase {
+  SYCLTest()
       : tfel::tests::TestCase("MFront/MaterialProperty/GenericParallel",
-                              "Iconel600YoungModulusTest") {
-  }  // end of Iconel600YoungModulusTest
+                              "SYCLTest") {}  // end of SYCLTest
 
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
     this->test3();
     this->test4();
-    this->test5();
-    this->test6();
-    this->test7();
-    this->test8();
-    this->test9();
-    this->test10();
-    this->test11();
-    this->test12();
-    this->test13();
     return this->result;
   }  // end of execute
 
@@ -69,342 +106,127 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
   }  // end of fct
 
   void test1() {
-    constexpr auto eps = double{1e-2};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
+    // SYCL has no default queue: an execution policy holding a queue must be
+    // given
+    auto output = mfront_gpmp_OutputStatus{};
     auto E = std::vector<double>(4);
-    auto E_qt = std::vector<double>(4);
     const auto T = std::vector<double>{300, 500, 300, 800};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus(&output, E.data(), 1, &Q, args.data(),
-                            args_strides.data(), 1, 4, policy);
-    Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 1, &Q, args.data(),
-                               args_strides.data(), 1, 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.bounds_status, 0);
-    for (std::size_t i = 0; i != E.size(); ++i) {
-      TFEL_TESTS_ASSERT(std::abs(E[i] - fct(T[i])) < eps);
-      TFEL_TESTS_ASSERT(std::abs(E_qt[i] - fct(T[i])) < eps);
-    }
+    TFEL_TESTS_CHECK_EQUAL(
+        evaluate(Inconel600_YoungModulus_generic_parallel, output, E.data(), 1,
+                 args, contiguous<1>(), 4, mfront_gmp_OutOfBoundsPolicy{}),
+        -5);
+    TFEL_TESTS_CHECK_EQUAL(
+        std::string(output.msg),
+        "no execution policy given: the sycl backend requires a queue");
   }
 
   void test2() {
+    // asynchronous evaluation: the values and the statistics are in shared
+    // memory (no value is copied), and the statistics are reported once the
+    // queue is synchronized. The second temperature is out of its physical
+    // bounds.
     constexpr auto eps = double{1e-2};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(4);
-    auto E_qt = std::vector<double>(4);
-    const auto T = std::vector<double>{300};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 1u>{T.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{0};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus(&output, E.data(), 1, &Q, args.data(),
-                            args_strides.data(), 1, 4, policy);
-    Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 1, &Q, args.data(),
-                               args_strides.data(), 1, 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.bounds_status, 0);
-    for (std::size_t i = 0; i != E.size(); ++i) {
-      TFEL_TESTS_ASSERT(std::abs(E[i] - fct(T[0])) < eps);
-      TFEL_TESTS_ASSERT(std::abs(E_qt[i] - fct(T[0])) < eps);
+    // an asynchronous evaluation requires an in-order queue
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR,
+                         sycl::property::queue::in_order{}};
+    auto* const statistics = sycl::malloc_shared<mfront_gpmp_Statistics>(1, Q);
+    auto* const T = sycl::malloc_shared<double>(4, Q);
+    auto* const E = sycl::malloc_shared<double>(4, Q);
+    mfront_gpmp_initializeStatistics(statistics);
+    const auto values = std::array<double, 4u>{300, -1, 500, 800};
+    std::copy(values.begin(), values.end(), T);
+    const auto args = std::array<const double*, 1u>{T};
+    const auto execution_policy =
+        mfront::generic_parallel::makeSyclBackendExecutionPolicy(
+            Q, {.asynchronous = true});
+    const auto options =
+        TestExecution{.statistics = statistics, .policy = &execution_policy};
+    auto output = mfront_gpmp_OutputStatus{};
+    TFEL_TESTS_CHECK_EQUAL(
+        evaluate(Inconel600_YoungModulus_generic_parallel, output, E, 1, args,
+                 contiguous<1>(), 4, mfront_gmp_OutOfBoundsPolicy{}, options),
+        0);
+    Q.wait();
+    TFEL_TESTS_CHECK_EQUAL(
+        Inconel600_YoungModulus_generic_parallel_report(&output, statistics),
+        -1);
+    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, -1);
+    TFEL_TESTS_CHECK_EQUAL(output.number_of_failures, mfront_gmp_size_type{1});
+    TFEL_TESTS_CHECK_EQUAL(output.first_failure_index, mfront_gmp_size_type{1});
+    TFEL_TESTS_ASSERT(std::isnan(E[1]));
+    for (const auto i : {0, 2, 3}) {
+      TFEL_TESTS_ASSERT(std::abs(E[i] - fct(values[i])) < eps);
     }
+    sycl::free(statistics, Q);
+    sycl::free(T, Q);
+    sycl::free(E, Q);
   }
 
   void test3() {
-    constexpr auto eps = double{1e-2};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(1);
-    auto E_qt = std::vector<double>(1);
-    const auto T = std::vector<double>{300};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 1u>{T.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{0};
+    // an asynchronous evaluation is refused with an out-of-order queue
     auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus(&output, E.data(), 0, &Q, args.data(),
-                            args_strides.data(), 1, 1, policy);
-    Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 0, &Q, args.data(),
-                               args_strides.data(), 1, 1, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.bounds_status, 0);
-    TFEL_TESTS_ASSERT(std::abs(E[0] - fct(T[0])) < eps);
-    TFEL_TESTS_ASSERT(std::abs(E_qt[0] - fct(T[0])) < eps);
+    TFEL_TESTS_ASSERT(!Q.is_in_order());
+    auto* const statistics = sycl::malloc_shared<mfront_gpmp_Statistics>(1, Q);
+    mfront_gpmp_initializeStatistics(statistics);
+    auto* const T = sycl::malloc_shared<double>(4, Q);
+    auto* const E = sycl::malloc_shared<double>(4, Q);
+    std::fill(T, T + 4, 300.);
+    const auto args = std::array<const double*, 1u>{T};
+    const auto execution_policy =
+        mfront::generic_parallel::makeSyclBackendExecutionPolicy(
+            Q, {.asynchronous = true});
+    const auto options =
+        TestExecution{.statistics = statistics, .policy = &execution_policy};
+    auto output = mfront_gpmp_OutputStatus{};
+    TFEL_TESTS_CHECK_EQUAL(
+        evaluate(Inconel600_YoungModulus_generic_parallel, output, E, 1, args,
+                 contiguous<1>(), 4, mfront_gmp_OutOfBoundsPolicy{}, options),
+        -5);
+    sycl::free(statistics, Q);
+    sycl::free(T, Q);
+    sycl::free(E, Q);
   }
 
   void test4() {
+    // asynchronous evaluation with the values and the statistics in host
+    // memory. With automatic data transfers on a GPU, they are copied in
+    // device memory and copied back, and the evaluation is synchronous. As
+    // with the `generic` interface, the output is `NaN` at the point where
+    // the evaluation fails.
     constexpr auto eps = double{1e-2};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(4);
-    auto E_qt = std::vector<double>(4);
-    const auto T = std::vector<double>{300, 500, 300, 800};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR,
+                         sycl::property::queue::in_order{}};
+    auto statistics = std::vector<mfront_gpmp_Statistics>(1);
+    mfront_gpmp_initializeStatistics(statistics.data());
+    const auto T = std::vector<double>{300, -1, 500, 800};
+    auto E = std::vector<double>(4, -12.);
     const auto args = std::array<const double *, 1u>{T.data()};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus2(&output, E.data(), &Q, args.data(), 1, 4, policy);
-    Inconel600_YoungModulus_qt2(&output_qt, E_qt.data(), &Q, args.data(), 1, 4,
-                                policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.bounds_status, 0);
-    for (std::size_t i = 0; i != E.size(); ++i) {
-      TFEL_TESTS_ASSERT(std::abs(E[i] - fct(T[i])) < eps);
-      TFEL_TESTS_ASSERT(std::abs(E_qt[i] - fct(T[i])) < eps);
-    }
-  }
-  // check detection of physical bounds violation
-  void test5() {
-    constexpr auto eps = double{1e-2};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(4);
-    auto E_qt = std::vector<double>(4);
-    const auto T = std::vector<double>{-300, 500, 300, 800};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 1u>{T.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus(&output, E.data(), 1, &Q, args.data(),
-                            args_strides.data(), 1, 4, policy);
-    Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 1, &Q, args.data(),
-                               args_strides.data(), 1, 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, -1);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
+    const auto execution_policy =
+        mfront::generic_parallel::makeSyclBackendExecutionPolicy(
+            Q, {.asynchronous = true});
+    const auto options = TestExecution{.statistics = statistics.data(),
+                                       .policy = &execution_policy};
+    auto output = mfront_gpmp_OutputStatus{};
+    TFEL_TESTS_CHECK_EQUAL(evaluate(Inconel600_YoungModulus_generic_parallel,
+                                    output, E.data(), 1, args, contiguous<1>(),
+                                    4, mfront_gmp_OutOfBoundsPolicy{}, options),
+                           0);
+    Q.wait_and_throw();
+    TFEL_TESTS_CHECK_EQUAL(Inconel600_YoungModulus_generic_parallel_report(
+                               &output, statistics.data()),
+                           -1);
     TFEL_TESTS_CHECK_EQUAL(output.bounds_status, -1);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.status, -1);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.bounds_status, -1);
-    TFEL_TESTS_ASSERT(std::abs(E[0]) < eps);
-    TFEL_TESTS_ASSERT(std::abs(E_qt[0]) < eps);
-    for (std::size_t i = 1; i != E.size(); ++i) {
+    TFEL_TESTS_CHECK_EQUAL(output.number_of_failures, mfront_gmp_size_type{1});
+    TFEL_TESTS_CHECK_EQUAL(output.first_failure_index, mfront_gmp_size_type{1});
+    for (const auto i : {0, 2, 3}) {
       TFEL_TESTS_ASSERT(std::abs(E[i] - fct(T[i])) < eps);
-      TFEL_TESTS_ASSERT(std::abs(E_qt[i] - fct(T[i])) < eps);
     }
-  }
-
-  void test6() {
-    constexpr auto eps = double{1e-2};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(4);
-    auto E_qt = std::vector<double>(4);
-    const auto T = std::vector<double>{-300, 500, 300, 800};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 1u>{T.data()};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus2(&output, E.data(), &Q, args.data(), 1, 4, policy);
-    Inconel600_YoungModulus_qt2(&output_qt, E_qt.data(), &Q, args.data(), 1, 4,
-                                policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, -1);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, -1);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.status, -1);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.bounds_status, -1);
-    TFEL_TESTS_ASSERT(std::abs(E[0]) < eps);
-    TFEL_TESTS_ASSERT(std::abs(E_qt[0]) < eps);
-    for (std::size_t i = 1; i != E.size(); ++i) {
-      TFEL_TESTS_ASSERT(std::abs(E[i] - fct(T[i])) < eps);
-      TFEL_TESTS_ASSERT(std::abs(E_qt[i] - fct(T[i])) < eps);
-    }
-  }
-
-  void test7() {
-    constexpr auto eps = double{1e-2};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(4 * 3);
-    auto E_qt = std::vector<double>(4 * 3);
-    const auto T =
-        std::vector<double>{300, -300, 500, -500, 300, -300, 800, -800};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 1u>{T.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{2};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus(&output, E.data(), 3, &Q, args.data(),
-                            args_strides.data(), 1, 4, policy);
-    Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 3, &Q, args.data(),
-                               args_strides.data(), 1, 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output_qt.bounds_status, 0);
-    for (std::size_t i = 0; i != 4; ++i) {
-      TFEL_TESTS_ASSERT(std::abs(E[i * 3] - fct(T[i * 2])) < eps);
-      TFEL_TESTS_ASSERT(std::abs(E_qt[i * 3] - fct(T[i * 2])) < eps);
-    }
-  }
-
-  void test8() {
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(1);
-    const auto T = std::vector<double>{300};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 1u>{T.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus(&output, E.data(), 1, &Q, args.data(),
-                            args_strides.data(), 3, 1, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, -5);
-    TFEL_TESTS_CHECK_EQUAL(std::string(output.msg),
-                           "invalid number of arguments (3 given, 1 expected)");
-    //
-    Inconel600_YoungModulus(&output, E.data(), 0, &Q, args.data(),
-                            args_strides.data(), 1, 1, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, -7);
-    TFEL_TESTS_CHECK_EQUAL(std::string(output.msg),
-                           "if the output is uniform, all the arguments must "
-                           "be uniform (i.e. their strides must be null)");
-    //
-    const auto args_strides2 = std::array<mfront_gmp_size_type, 1u>{0};
-    Inconel600_YoungModulus(&output, E.data(), 0, &Q, args.data(),
-                            args_strides2.data(), 1, 10, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, -7);
-    TFEL_TESTS_CHECK_EQUAL(std::string(output.msg),
-                           "if the output is uniform, the number of points "
-                           "must be equal to one (10 given)");
-  }
-
-  void test9() {
-    constexpr auto eps = double{1e-14};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto nu = std::vector<double>(4);
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    PoissonRatioTest(&output, nu.data(), 1, &Q, nullptr, nullptr, 0, 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    for (std::size_t i = 0; i != nu.size(); ++i) {
-      TFEL_TESTS_ASSERT(std::abs(nu[i] - 0.39991) < eps);
-    }
-    nu.resize(1);
-    nu.at(0) = 0;
-    PoissonRatioTest(&output, nu.data(), 0, &Q, nullptr, nullptr, 0, 1, policy);
-    TFEL_TESTS_ASSERT(std::abs(nu[0] - 0.39991) < eps);
-  }
-
-  void test10() {
-    constexpr auto eps = double{1e-14};
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto nu = std::vector<double>(4);
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    PoissonRatioTest2(&output, nu.data(), &Q, nullptr, 0, 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    for (std::size_t i = 0; i != nu.size(); ++i) {
-      TFEL_TESTS_ASSERT(std::abs(nu[i] - 0.39991) < eps);
-    }
-    nu.resize(1);
-    nu.at(0) = 0;
-    PoissonRatioTest2(&output, nu.data(), &Q, nullptr, 0, 1, policy);
-    TFEL_TESTS_ASSERT(std::abs(nu[0] - 0.39991) < eps);
-  }
-
-  void test11() {
-    constexpr auto eps = double{1e-2};
-    //
-    auto young = [](const double T, const double f) {
-      constexpr auto E0 = 2.2693e11;
-      constexpr auto dE_dT = -1.53994698e7;
-      constexpr auto d2E_dT2 = -1.9198278e4;
-      constexpr auto f0 = 0.4;
-      return (1 - f / f0) * (E0 + dE_dT * T + (d2E_dT2 / 2) * T * T);
-    };
-    //
-    auto output = mfront_gmp_OutputStatus{};
-    auto output_qt = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(4);
-    const auto T = std::vector<double>{300, 500, 300, 800};
-    const auto f = std::vector<double>{0, 0.1, 0.15, 0.12};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 2u>{T.data(), f.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1, 1};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    UO2_YoungModulus_Martin1989(&output, E.data(), 1, &Q, args.data(),
-                                args_strides.data(), args.size(), 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    for (std::size_t i = 0; i != E.size(); ++i) {
-      TFEL_TESTS_ASSERT(std::abs(E[i] - young(T[i], f[i])) < eps);
-    }
-  }
-
-  // material property defined by the linear interpolation of data
-  void test12() {
-    constexpr auto eps = double{1e-2};
-    auto output = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(4);
-    const auto T = std::vector<double>{293.15, 493.15, 793.15, 893.15};
-    const auto E_ref = std::vector<double>{240e9, 210e9, 175e9, 170e9};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 1u>{T.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    LinearDataInterpolationTest(&output, E.data(), 1, &Q, args.data(),
-                                args_strides.data(), args.size(), 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
-    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
-    for (std::size_t i = 0; i != E.size(); ++i) {
-      TFEL_TESTS_ASSERT(std::abs(E[i] - E_ref[i]) < eps);
-    }
-  }
-
-  // strided output: the values between two values of the output and the
-  // values after the last one are not modified
-  void test13() {
-    constexpr auto eps = double{1e-2};
-    constexpr auto v = double{-1};
-    auto output = mfront_gmp_OutputStatus{};
-    auto E = std::vector<double>(4 * 3, v);
-    const auto T = std::vector<double>{300, 500, 300, 800};
-    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    const auto args = std::array<const double *, 1u>{T.data()};
-    const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
-    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
-    Inconel600_YoungModulus(&output, E.data(), 3, &Q, args.data(),
-                            args_strides.data(), 1, 4, policy);
-    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
-    for (std::size_t i = 0; i != E.size(); ++i) {
-      if (i % 3 == 0) {
-        TFEL_TESTS_ASSERT(std::abs(E[i] - fct(T[i / 3])) < eps);
-      } else {
-        TFEL_TESTS_CHECK_EQUAL(E[i], v);
-      }
-    }
+    TFEL_TESTS_ASSERT(std::isnan(E[1]));
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(Iconel600YoungModulusTest,
-                          "Iconel600YoungModulusTest");
+TFEL_TESTS_GENERATE_PROXY(SYCLTest, "SYCLTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char *const *argv) {

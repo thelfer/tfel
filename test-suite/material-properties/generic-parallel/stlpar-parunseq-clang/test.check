@@ -2,13 +2,19 @@
 
 @Environment {"LD_LIBRARY_PATH": "src"};
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-clang.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-clang.json ../BoundsOrderTest.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-clang.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-clang.json ../Inconel600_YoungModulus-qt.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-clang.json ../UO2_YoungModulus_Martin1989.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-clang.json ../LinearDataInterpolationTest.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-stlpar-parunseq-clang.json";
-@Command "@TFEL_CLANGXX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-stlpar.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelUO2-stlpar -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
+@Command "@TFEL_CLANGXX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-cxx.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -lMFrontGenericParallelRuntime -L src -lGenericParallelUO2-stlpar -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
 @Command "./test-stlpar test-stlpar-parunseq-clang";
 
-@CleanFiles {"test-stlpar"};
+// comparison with the `generic` interface (see compare.cxx)
+@Command "sh ../build-libraries.sh @mfront@ config-stlpar-parunseq-clang.json";
+@Command "@TFEL_CLANGXX_COMPILER@ -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ -I @TFEL_INCLUDE_DIR@ ../compare.cxx -o compare -L@TFEL_LIBRARY_DIR@ -lMFrontGenericParallelRuntime -ldl";
+@Command "sh ../compare-all.sh ./compare stlpar";
+
+@CleanFiles {"test-stlpar", "compare"};
 @CleanDirectories {"include", "src"};
