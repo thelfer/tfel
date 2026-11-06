@@ -253,6 +253,18 @@ detailed below in a dedicated section.
 
 ## End-cap effect
 
+The pipe is considered closed. The pressures apply to it the axial force:
+
+\[
+F_{z} = \pi\,\paren{R_{i}^{2}\,P_{i} - R_{e}^{2}\,P_{e}}
+\]
+
+where:
+
+- \(P_{i}\) and \(P_{e}\) are the inner and outer pressures.
+- \(R_{i}\) and \(R_{e}\) are the inner and outer radii. The current radii
+  are used in finite strain analyses, and the initial radii in small strain
+  analyses.
 
 ## Imposed axial growth
 
