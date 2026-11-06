@@ -48,6 +48,16 @@ mtest --scheme=ptest --help-keyword=@RadialLoading
 
 # Overview and modeling hypotheses
 
+`PTest` models a pipe of unit height under the axisymmetrical generalised
+plane strain hypothesis, which is the only supported modeling hypothesis.
+
+The thickness of the pipe is discretized by a one-dimensional mesh. The
+unknowns are:
+
+- the radial displacements of the nodes,
+- the axial strain, which is uniform in the thickness,
+- when required, additional unknowns such as the inner pressure when a
+  radius is imposed, or the contact pressure with a mandrel.
 
 # Behaviours
 
