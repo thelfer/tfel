@@ -97,6 +97,11 @@ namespace mfront {
   NewtonRaphsonNumericalJacobianSolver::
       ~NewtonRaphsonNumericalJacobianSolver() = default;
 
+  std::vector<std::string> PowellDogLegNewtonRaphsonSolver::getReservedNames()
+      const {
+    return PowellDogLegAlgorithmBase::getReservedNames();
+  }  // end of getReservedNames
+
   std::vector<std::string> PowellDogLegNewtonRaphsonSolver::getSpecificHeaders()
       const {
     return {"TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"};
@@ -141,6 +146,11 @@ namespace mfront {
   }
 
   PowellDogLegNewtonRaphsonSolver::~PowellDogLegNewtonRaphsonSolver() = default;
+
+  std::vector<std::string>
+  PowellDogLegNewtonRaphsonNumericalJacobianSolver::getReservedNames() const {
+    return PowellDogLegAlgorithmBase::getReservedNames();
+  }  // end of getReservedNames
 
   std::vector<std::string>
   PowellDogLegNewtonRaphsonNumericalJacobianSolver::getSpecificHeaders() const {

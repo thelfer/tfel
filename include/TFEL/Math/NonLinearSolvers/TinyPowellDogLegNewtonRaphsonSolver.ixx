@@ -24,23 +24,42 @@ namespace tfel::math {
             typename Child,
             template <unsigned short, typename>
             typename ExternalWorkSpace>
-  bool TinyPowellDogLegNewtonRaphsonSolver<
+  TFEL_HOST_DEVICE bool TinyPowellDogLegNewtonRaphsonSolver<
       N,
       NumericType,
       Child,
       ExternalWorkSpace>::computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
-    if (!this->callUpdateOrCheckJacobian()) {
-      return false;
+    if (this->powell_dogleg_accept_correction ||
+        updatePowellDogLegTrustRegionRadius(
+            this->powell_dogleg_radius, this->delta_zeros,
+            this->powell_dogleg_jacobian_1, this->powell_dogleg_fzeros_1,
+            this->fzeros)) {
+      // accepting the step
+      if (!this->callUpdateOrCheckJacobian()) {
+        return false;
+      }
+      // if the convergence criterion is met, additional checks made by the
+      // derived class changed the system: the next residual can't be compared
+      // to the current one
+      this->powell_dogleg_accept_correction =
+          child.computeResidualNorm() < this->epsilon;
+      this->powell_dogleg_jacobian_1 = this->jacobian;
+      this->powell_dogleg_fzeros_1 = this->fzeros;
+    } else {
+      // rejecting the step
+      child.rejectCurrentCorrection();
+      this->zeros -= this->delta_zeros;
+      this->jacobian = this->powell_dogleg_jacobian_1;
+      this->fzeros = this->powell_dogleg_fzeros_1;
     }
-    const auto tjacobian = this->jacobian;
-    const auto tfzeros = this->fzeros;
     if (!child.solveLinearSystem(this->jacobian, this->fzeros)) {
       return false;
     }
     this->delta_zeros = -this->fzeros;
-    applyPowellDogLegAlgorithm(this->delta_zeros, tjacobian, tfzeros,
-                               this->powell_dogleg_trust_region_size);
+    applyPowellDogLegAlgorithm(
+        this->delta_zeros, this->powell_dogleg_jacobian_1,
+        this->powell_dogleg_fzeros_1, this->powell_dogleg_radius);
     return true;
   }  // end of computeNewCorrection
 

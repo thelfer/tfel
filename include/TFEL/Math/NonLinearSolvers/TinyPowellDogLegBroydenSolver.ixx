@@ -25,7 +25,8 @@ namespace tfel::math {
             typename Child,
             template <unsigned short, typename>
             typename ExternalWorkSpace>
-  void TinyPowellDogLegBroydenSolver<N, NumericType, Child, ExternalWorkSpace>::
+  TFEL_HOST_DEVICE void
+  TinyPowellDogLegBroydenSolver<N, NumericType, Child, ExternalWorkSpace>::
       updateJacobian() {
     if (this->iter == 0) {
       return;
@@ -44,22 +45,50 @@ namespace tfel::math {
             typename Child,
             template <unsigned short, typename>
             typename ExternalWorkSpace>
-  bool TinyPowellDogLegBroydenSolver<N, NumericType, Child, ExternalWorkSpace>::
+  TFEL_HOST_DEVICE bool
+  TinyPowellDogLegBroydenSolver<N, NumericType, Child, ExternalWorkSpace>::
       computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
-    this->updateJacobian();
-    if (!this->callUpdateOrCheckJacobian()) {
-      return false;
+    // a rejected step usually updates the jacobian, as in the `hybrd` routine
+    // of MINPACK: otherwise, no step could be accepted if the approximation of
+    // the jacobian does not give a descent direction. However, the secant
+    // equation would spoil the jacobian for a much larger residual, obtained
+    // too far from the current estimate. This can't last as the radius is
+    // reduced.
+    constexpr auto maximal_residual_growth = NumericType(10);
+    const auto accepted = this->powell_dogleg_accept_correction ||
+                          updatePowellDogLegTrustRegionRadius(
+                              this->powell_dogleg_radius, this->delta_zeros,
+                              this->jacobian, this->fzeros_1, this->fzeros);
+    if (accepted ||
+        (norm(this->fzeros) < maximal_residual_growth * norm(this->fzeros_1))) {
+      this->updateJacobian();
+      if (!this->callUpdateOrCheckJacobian()) {
+        return false;
+      }
     }
     auto tmp_jacobian = this->jacobian;
-    auto tmp_fzeros = this->fzeros;
+    auto tmp_fzeros = accepted ? this->fzeros : this->fzeros_1;
     if (!child.solveLinearSystem(tmp_jacobian, tmp_fzeros)) {
       return false;
     }
+    if (accepted) {
+      // if the convergence criterion is met, additional checks made by the
+      // derived class changed the system: the next residual can't be compared
+      // to the current one
+      this->powell_dogleg_accept_correction =
+          child.computeResidualNorm() < this->epsilon;
+      this->fzeros_1 = this->fzeros;
+    } else {
+      // rejecting the step. This is done after the resolution of the linear
+      // system, as `solveNonLinearSystem` halves the last step on failure
+      child.rejectCurrentCorrection();
+      this->zeros -= this->delta_zeros;
+      this->fzeros = this->fzeros_1;
+    }
     this->delta_zeros = -tmp_fzeros;
-    this->fzeros_1 = this->fzeros;
     applyPowellDogLegAlgorithm(this->delta_zeros, this->jacobian, this->fzeros,
-                               this->powell_dogleg_trust_region_size);
+                               this->powell_dogleg_radius);
     return true;
   }  // end of computeNewCorrection
 

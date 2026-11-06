@@ -90,6 +90,7 @@ namespace mfront {
     using NonLinearSystemSolverBase::CxxTokenizer;
     //! a simple alias
     using NonLinearSystemSolverBase::tokens_iterator;
+    [[nodiscard]] std::vector<std::string> getReservedNames() const override;
     [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
     void initializeNumericalParameters(std::ostream&,
                                        const BehaviourDescription&,
@@ -119,6 +120,7 @@ namespace mfront {
     using NonLinearSystemSolverBase::CxxTokenizer;
     //! a simple alias
     using NonLinearSystemSolverBase::tokens_iterator;
+    [[nodiscard]] std::vector<std::string> getReservedNames() const override;
     [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
     void initializeNumericalParameters(std::ostream&,
                                        const BehaviourDescription&,
