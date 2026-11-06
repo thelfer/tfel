@@ -14,9 +14,6 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-\newcommand{\paren}[1]{{\left(#1\right)}}
-\newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
-
 # Overview
 
 `MFront` comes with a handy and easy-to-use tool called `MTest`. This

@@ -14,6 +14,9 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+\newcommand{\paren}[1]{{\left(#1\right)}}
+\newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
+
 # Usage
 
 `MTest` can also be used to model a pipe subjected to various loadings.
