@@ -105,6 +105,7 @@ for _directory in dict.fromkeys((r\"${tfel_stubgen_library_directories}\", )):
            "${tfel_stubgen_sitecustomize_directory};${TFEL_PYTHON_MODULES_BUILD_DIR}")
   endif(WIN32)
   set(pybind11_stubgen_files)
+  set(pybind11_stubgen_packages)
   foreach(entry ${TFEL_PYTHON_STUBGEN_MODULES})
     string(REGEX REPLACE "^[^:]*:" "" module "${entry}")
     string(REPLACE "." "/" module_path "${module}")
@@ -122,10 +123,22 @@ for _directory in dict.fromkeys((r\"${tfel_stubgen_library_directories}\", )):
       COMMENT "Generating stub for python module ${module}"
       VERBATIM)
     list(APPEND pybind11_stubgen_files "${stub_file}")
+    string(REGEX REPLACE "/.*$" "" package "${module_path}")
+    list(APPEND pybind11_stubgen_packages "${package}")
     install(FILES "${stub_file}"
       DESTINATION "${TFEL_PYTHON_SITE_PACKAGES_DIR}/${install_directory}"
       COMPONENT python_bindings)
   endforeach(entry ${TFEL_PYTHON_STUBGEN_MODULES})
+  # According to PEP 561, type checkers only use the stubs of an installed
+  # package if it holds a py.typed marker.
+  list(REMOVE_DUPLICATES pybind11_stubgen_packages)
+  foreach(package ${pybind11_stubgen_packages})
+    set(marker "${TFEL_PYTHON_MODULES_BUILD_DIR}/${package}/py.typed")
+    file(TOUCH "${marker}")
+    install(FILES "${marker}"
+      DESTINATION "${TFEL_PYTHON_SITE_PACKAGES_DIR}/${package}"
+      COMPONENT python_bindings)
+  endforeach(package ${pybind11_stubgen_packages})
   add_custom_target(python-stubs ALL
     DEPENDS ${pybind11_stubgen_files})
 endfunction(generate_python_stubs)
