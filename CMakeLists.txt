@@ -368,7 +368,6 @@ if(enable-python-bindings)
   find_program(pybind11_stubgen pybind11-stubgen)
   if(pybind11_stubgen)
     message(STATUS "Found pybind11-stubgen: ${pybind11_stubgen}")
-  else()
   endif()
 endif(enable-python-bindings)
 
