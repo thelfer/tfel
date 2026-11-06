@@ -29,6 +29,15 @@ expected_includes = os.path.realpath(os.path.join(tfelhome, "include"))
 if os.path.realpath(includes[2:]) != expected_includes:
     sys.exit("tfel-config does not point to " + expected_includes)
 
+# the stubs of the python modules are installed next to them
+for package, module in ((tfel, "_tfel"), (tfel, "math"),
+                        (tfel.material, "_material"), (mfront, "_mfront"),
+                        (mtest, "_mtest"),
+                        (mfm_test_generator, "_mfm_test_generator")):
+    stub = os.path.join(os.path.dirname(package.__file__), module + ".pyi")
+    if not os.path.isfile(stub):
+        sys.exit("missing stub " + stub)
+
 if os.name == "nt":
     sys.exit(0)
 
