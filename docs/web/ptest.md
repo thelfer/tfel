@@ -95,8 +95,8 @@ keywords `@InnerRadius` and `@OuterRadius`.
 
 The finite element discretization is specified using the
 self-explanatory keywords `@ElementType` and `@NumberOfElements`. The
-following element types are supported: `Linear` and `Quadratic`. By
-default, quadratic elements are used.
+following element types are supported: `Linear`, `Quadratic` and `Cubic`.
+By default, quadratic elements are used.
 
 ## Type of analysis
 
