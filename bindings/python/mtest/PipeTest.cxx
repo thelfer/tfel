@@ -193,22 +193,32 @@ void declarePipeTest(pybind11::module_& m) {
              mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION);
   pybind11::class_<PipeTest, SingleStructureScheme>(m, "PipeTest")
       .def(pybind11::init<>())
-      .def("setInnerRadius", &PipeTest::setInnerRadius)
-      .def("setOuterRadius", &PipeTest::setOuterRadius)
-      .def("setNumberOfElements", &PipeTest::setNumberOfElements)
+      .def("setInnerRadius", &PipeTest::setInnerRadius, pybind11::arg("r"))
+      .def("setOuterRadius", &PipeTest::setOuterRadius, pybind11::arg("r"))
+      .def("setNumberOfElements", &PipeTest::setNumberOfElements,
+           pybind11::arg("n"))
       .def("getNumberOfUnknowns", &PipeTest::getNumberOfUnknowns)
       .def("completeInitialisation", &PipeTest::completeInitialisation)
       .def("execute", pm)
-      .def("execute", pm2)
-      .def("initializeCurrentState", &PipeTest::initializeCurrentState)
-      .def("initializeWorkSpace", &PipeTest::initializeWorkSpace)
-      .def("setInnerPressureEvolution", &PipeTest_setInnerPressureEvolution)
-      .def("setInnerPressureEvolution", &PipeTest_setInnerPressureEvolution2)
-      .def("setOuterPressureEvolution", &PipeTest_setOuterPressureEvolution)
-      .def("setOuterPressureEvolution", &PipeTest_setOuterPressureEvolution2)
+      .def("execute", pm2, pybind11::arg("s"), pybind11::arg("wk"),
+           pybind11::arg("ti"), pybind11::arg("te"))
+      .def("initializeCurrentState", &PipeTest::initializeCurrentState,
+           pybind11::arg("s"))
+      .def("initializeWorkSpace", &PipeTest::initializeWorkSpace,
+           pybind11::arg("wk"))
+      .def("setInnerPressureEvolution", &PipeTest_setInnerPressureEvolution,
+           pybind11::arg("v"))
+      .def("setInnerPressureEvolution", &PipeTest_setInnerPressureEvolution2,
+           pybind11::arg("v"))
+      .def("setOuterPressureEvolution", &PipeTest_setOuterPressureEvolution,
+           pybind11::arg("v"))
+      .def("setOuterPressureEvolution", &PipeTest_setOuterPressureEvolution2,
+           pybind11::arg("v"))
       .def("setMandrelRadiusEvolution", &PipeTest_setMandrelRadiusEvolution,
+           pybind11::arg("v"),
            "This method specify the value of the radius of the mandrel.")
       .def("setMandrelRadiusEvolution", &PipeTest_setMandrelRadiusEvolution2,
+           pybind11::arg("v"),
            "This method specify the linear evolution of the radius of the "
            "mandrel.\n"
            "* The parameter (map<double, double>) specify a linear "
@@ -218,10 +228,10 @@ void declarePipeTest(pybind11::module_& m) {
            "in the array. Should a time be out of the array, the returned "
            "value will be the one from the nearest association available.")
       .def("setMandrelAxialGrowthEvolution",
-           &PipeTest_setMandrelAxialGrowthEvolution,
+           &PipeTest_setMandrelAxialGrowthEvolution, pybind11::arg("v"),
            "This method specify the value of the axial growth of the mandrel.")
       .def("setMandrelAxialGrowthEvolution",
-           &PipeTest_setMandrelAxialGrowthEvolution2,
+           &PipeTest_setMandrelAxialGrowthEvolution2, pybind11::arg("v"),
            "This method specify the linear evolution of the mandra axial "
            "growth.\n"
            "* The parameter (map<double, double>) specify a linear "
@@ -231,9 +241,11 @@ void declarePipeTest(pybind11::module_& m) {
            "in the array. Should a time be out of the array, the returned "
            "value will be the one from the nearest association available.")
       .def("setAxialForceEvolution", &PipeTest_setAxialForceEvolution,
+           pybind11::arg("v"),
            "This method specify the constant evolution of the axial force.\n"
            "* The parameter (double) is the constant evolution value.")
       .def("setAxialForceEvolution", &PipeTest_setAxialForceEvolution2,
+           pybind11::arg("v"),
            "This method specify the linear evolution of the axial force.\n"
            "* The parameter (map<double, double>) specify a linear "
            "evolution: the associative array of time-value is used "
@@ -242,9 +254,11 @@ void declarePipeTest(pybind11::module_& m) {
            "in the array. Should a time be out of the array, the returned "
            "value will be the one from the nearest association available.")
       .def("setAxialGrowthEvolution", &PipeTest_setAxialGrowthEvolution,
+           pybind11::arg("v"),
            "This method specify the constant evolution of the axial growth.\n"
            "* The parameter (double) is the constant evolution value.")
       .def("setAxialGrowthEvolution", &PipeTest_setAxialGrowthEvolution2,
+           pybind11::arg("v"),
            "This method specify the linear evolution of the axial growth.\n"
            "* The parameter (map<double, double>) specify a linear "
            "evolution: the associative array of time-value is used "
@@ -252,14 +266,20 @@ void declarePipeTest(pybind11::module_& m) {
            "performed between the minimum and maximum times given "
            "in the array. Should a time be out of the array, the returned "
            "value will be the one from the nearest association available.")
-      .def("setOuterRadiusEvolution", &PipeTest_setOuterRadiusEvolution)
-      .def("setOuterRadiusEvolution", &PipeTest_setOuterRadiusEvolution2)
-      .def("setFillingPressure", &PipeTest::setFillingPressure)
-      .def("setFillingTemperature", &PipeTest::setFillingTemperature)
+      .def("setOuterRadiusEvolution", &PipeTest_setOuterRadiusEvolution,
+           pybind11::arg("v"))
+      .def("setOuterRadiusEvolution", &PipeTest_setOuterRadiusEvolution2,
+           pybind11::arg("v"))
+      .def("setFillingPressure", &PipeTest::setFillingPressure,
+           pybind11::arg("p"))
+      .def("setFillingTemperature", &PipeTest::setFillingTemperature,
+           pybind11::arg("T"))
       .def("performSmallStrainAnalysis", &PipeTest::performSmallStrainAnalysis)
-      .def("setDisplacementEpsilon", &PipeTest::setDisplacementEpsilon)
-      .def("setResidualEpsilon", &PipeTest::setResidualEpsilon)
-      .def("setAxialLoading", &PipeTest_setAxialLoading,
+      .def("setDisplacementEpsilon", &PipeTest::setDisplacementEpsilon,
+           pybind11::arg("e"))
+      .def("setResidualEpsilon", &PipeTest::setResidualEpsilon,
+           pybind11::arg("e"))
+      .def("setAxialLoading", &PipeTest_setAxialLoading, pybind11::arg("h"),
            "This method specify the kind of loading to apply to "
            "the pipe in the axial direction.\n"
            "* The parameter (string) is the choosen kind of loading "
@@ -275,7 +295,7 @@ void declarePipeTest(pybind11::module_& m) {
            "- 'ImposedAxialGrowth': the axial growth of the pipe is "
            "specified by the user. See the 'setAxialGrowthEvolution' "
            "method for details.")
-      .def("setRadialLoading", &PipeTest_setRadialLoading,
+      .def("setRadialLoading", &PipeTest_setRadialLoading, pybind11::arg("h"),
            "This method specify the kind of loading to apply to "
            "the pipe in radial direction.\n"
            "* The parameter (string) is the choosen kind of loading "
@@ -293,41 +313,49 @@ void declarePipeTest(pybind11::module_& m) {
            "- 'ImposedOuterRadius': the evolution of the outer radius "
            "is user-specified. See the 'setOuterRadiusEvolution' "
            "method for details.\n")
-      .def("setElementType", &PipeTest_setElementType)
-      .def("addProfile", &PipeTest::addProfile)
+      .def("setElementType", &PipeTest_setElementType, pybind11::arg("e"))
+      .def("addProfile", &PipeTest::addProfile, pybind11::arg("f"),
+           pybind11::arg("cn"))
       .def("computeMinimumValue",
            static_cast<real (PipeTest::*)(const StudyCurrentState&,
                                           const std::string&) const>(
                &PipeTest::computeMinimumValue),
+           pybind11::arg("s"), pybind11::arg("n"),
            "compute the minimum value of a scalar variable")
       .def("computeMaximumValue",
            static_cast<real (PipeTest::*)(const StudyCurrentState&,
                                           const std::string&) const>(
                &PipeTest::computeMaximumValue),
+           pybind11::arg("s"), pybind11::arg("n"),
            "compute the maximum value of a scalar variable")
       .def("computeMeanValue",
            static_cast<real (PipeTest::*)(const StudyCurrentState&,
                                           const std::string&,
                                           const PipeTest::Configuration) const>(
                &PipeTest::computeMeanValue),
+           pybind11::arg("s"), pybind11::arg("n"), pybind11::arg("c"),
            "compute the mean value of a scalar variable")
       .def("computeIntegralValue",
            static_cast<real (PipeTest::*)(const StudyCurrentState&,
                                           const std::string&,
                                           const PipeTest::Configuration) const>(
                &PipeTest::computeIntegralValue),
+           pybind11::arg("s"), pybind11::arg("n"), pybind11::arg("c"),
            "compute the integral value of a scalar variable")
       .def("computeMinimumAndMaximumValues",
-           PipeTest_computeMinimumAndMaximumValues)
-      .def("setGasEquationOfState", &PipeTest::setGasEquationOfState)
+           PipeTest_computeMinimumAndMaximumValues, pybind11::arg("s"),
+           pybind11::arg("n"))
+      .def("setGasEquationOfState", &PipeTest::setGasEquationOfState,
+           pybind11::arg("e"))
       .def("getMesh", &PipeTest::getMesh,
            "This method returns the underlying mesh")
       .def("completeInitialisation", &PipeTest::completeInitialisation,
            "complete the initialisation. This method must be called once. This "
            "method may be called automatically by the execute method.")
       .def("addFailureCriterion", &PipeTest::addFailureCriterion,
+           pybind11::arg("n"), pybind11::arg("m"),
            "add a failure criterion.")
-      .def("setFailurePolicy", &PipeTest::setFailurePolicy,
+      .def("setFailurePolicy", &PipeTest::setFailurePolicy, pybind11::arg("p"),
            "set the failure policy.")
       .def("addOxidationModel", &PipeTest::addOxidationModel, "library"_a,
            "model"_a, "boundary"_a, "add an oxidation model.");

@@ -226,6 +226,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            pybind11::arg("w"), pybind11::arg("i"), pybind11::arg("l"),
            pybind11::arg("f"), pybind11::arg("p"))
       .def("setBehaviour", SingleStructureScheme_setBehaviour,
+           pybind11::arg("i"), pybind11::arg("l"), pybind11::arg("f"),
            "This method declares the behaviour used for the "
            "test.\n"
            "* The first argument (string) specify a wrapper "
@@ -239,6 +240,8 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "dynamic library which implement the selected behaviour.\n"
            "* The third argument (string) is the name of the function.")
       .def("setBehaviour", SingleStructureScheme_setBehaviour2,
+           pybind11::arg("w"), pybind11::arg("i"), pybind11::arg("l"),
+           pybind11::arg("f"),
            "This method declares the behaviour used for the "
            "test.\n"
            "* The first argument (string) specify the interface "
@@ -250,11 +253,15 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "* The second argument (string) is the path to the "
            "dynamic library which implement the selected behaviour.\n"
            "* The third argument (string) is the name of the function.")
-      .def("setModel", ptr1)
-      .def("setModel", ptr2)
-      .def("setModel", SingleStructureScheme_setBehaviour,
+      .def("setModel", ptr1, pybind11::arg("i"), pybind11::arg("l"),
+           pybind11::arg("f"), pybind11::arg("p"))
+      .def("setModel", ptr2, pybind11::arg("w"), pybind11::arg("i"),
+           pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("p"))
+      .def("setModel", SingleStructureScheme_setBehaviour, pybind11::arg("i"),
+           pybind11::arg("l"), pybind11::arg("f"),
            "see the documentation of the setBehaviour method")
-      .def("setModel", SingleStructureScheme_setBehaviour2,
+      .def("setModel", SingleStructureScheme_setBehaviour2, pybind11::arg("w"),
+           pybind11::arg("i"), pybind11::arg("l"), pybind11::arg("f"),
            "see the documentation of the setBehaviour method")
       .def("handleThermalExpansion",
            &SingleStructureScheme::setHandleThermalExpansion,
@@ -422,10 +429,12 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "internal state variable.")
       .def("setStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue1,
+           pybind11::arg("n"), pybind11::arg("v"),
            "see the doumentation of the "
            "setInternalStateVariableInitialValue method")
       .def("setStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue2,
+           pybind11::arg("n"), pybind11::arg("v"),
            "see the doumentation of the "
            "setInternalStateVariableInitialValue method");
 }

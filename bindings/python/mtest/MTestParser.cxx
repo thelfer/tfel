@@ -50,6 +50,7 @@ void declareMTestParser(pybind11::module_& m) {
       .def("execute", execute3,
           pybind11::arg("m"), pybind11::arg("f"), pybind11::arg("e"),
           pybind11::arg("s"))
-      .def("parseString", &MTestParser::parseString);
+      .def("parseString", &MTestParser::parseString, pybind11::arg("m"),
+           pybind11::arg("f"));
 
 }  // end of declareExternalLibraryManager
