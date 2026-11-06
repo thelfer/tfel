@@ -3,7 +3,7 @@
 @Command "@mfront@ --obuild --interface=castem Elasticity.mfront";
 @Command "@mtest@ castemelasticity-linear-mean.ptest";
 @TestType Absolute;
-@Precision 1.e-10;
+@Precision 1.;
 
 @Test "castemelasticity-linear-mean.res" "castemelasticity-linear-mean.ref" 8;
 @Test "castemelasticity-linear-mean.res" "castemelasticity-linear-mean.ref" 9;

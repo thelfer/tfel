@@ -924,6 +924,11 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 ## Issue 1357: [tfel-math, mfront] Powell dog leg algorithms: classical trust region method (update of the radius, rejection of the correction)
 
 For more details, see <https://github.com/thelfer/tfel/issues/1357>
+
+## Issue 932: [mtest] Document modeling of pipes
+
+For more details, see <https://github.com/thelfer/tfel/issues/932>
+
 ## Issue 1376: [mfront-doc] Formula of the Chaboche 2012 kinematic hardening rule differs from the code for m != 1
 
 For more details, see <https://github.com/thelfer/tfel/issues/1376>
