@@ -102,6 +102,22 @@ static std::shared_ptr<mtest::Behaviour> getBehaviour6(const std::string& l,
                                  Behaviour::ModellingHypothesis::fromString(h));
 }  // end of std::shared_ptr<Behaviour> getBehaviour1
 
+static std::shared_ptr<mtest::Behaviour> getBehaviour7(
+    const std::string& l,
+    const std::string& f,
+    const mtest::Behaviour::Parameters& p,
+    const std::string& h,
+    const std::string& w) {
+  return getBehaviour1("", l, f, p, h, w);
+}  // end of std::shared_ptr<Behaviour> getBehaviour7
+
+static std::shared_ptr<mtest::Behaviour> getBehaviour8(const std::string& l,
+                                                       const std::string& f,
+                                                       const std::string& h,
+                                                       const std::string& w) {
+  return getBehaviour3("", l, f, h, w);
+}  // end of std::shared_ptr<Behaviour> getBehaviour8
+
 static int Behaviour_getBehaviourType(const mtest::Behaviour& b) {
   using tfel::material::MechanicalBehaviourBase;
   const auto bt = b.getBehaviourType();
@@ -150,10 +166,17 @@ void declareBehaviour(pybind11::module_& m) {
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def(pybind11::init(&getBehaviour1), "interface"_a = "", "library"_a,
+      .def(pybind11::init(&getBehaviour1), "interface"_a, "library"_a,
            "function"_a, "parameters"_a, "hypothesis"_a, "wrapper"_a = "",
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
+           "- l(std::string): library\n"
+           "- f(std::string): function\n"
+           "- d(tfel::utilities::Data): parameters\n"
+           "- h(std::string): modelling hypothesis\n")
+      .def(pybind11::init(&getBehaviour7), "library"_a, "function"_a,
+           "parameters"_a, "hypothesis"_a, "wrapper"_a = "",
+           "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
@@ -164,10 +187,17 @@ void declareBehaviour(pybind11::module_& m) {
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def(pybind11::init(&getBehaviour3), "interface"_a = "", "library"_a,
+      .def(pybind11::init(&getBehaviour3), "interface"_a, "library"_a,
            "function"_a, "hypothesis"_a, "wrapper"_a = "",
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
+           "- l(std::string): library\n"
+           "- f(std::string): function\n"
+           "- h(std::string): modelling hypothesis\n"
+           "- w(std::string): wrapper\n")
+      .def(pybind11::init(&getBehaviour8), "library"_a, "function"_a,
+           "hypothesis"_a, "wrapper"_a = "",
+           "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- h(std::string): modelling hypothesis\n"
