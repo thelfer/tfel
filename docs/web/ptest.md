@@ -44,7 +44,62 @@ mtest --scheme=ptest --help-keyword=@RadialLoading
 
 ## A simple tutorial
 
+This tutorial simulates a closed elastic pipe subjected to an inner
+pressure, in small strain.
 
+The behaviour is described in the `Elasticity.mfront` file:
+
+~~~~{.cxx}
+@DSL Implicit;
+@Behaviour Elasticity;
+@Brick StandardElasticity;
+@ElasticMaterialProperties {150e9, 0.3};
+~~~~
+
+It is compiled as follows:
+
+~~~{.bash}
+mfront --obuild --interface=generic Elasticity.mfront
+~~~
+
+The simulation is described in the `pipe.ptest` file:
+
+~~~~{.cxx}
+@InnerRadius 4.2e-3;
+@OuterRadius 4.7e-3;
+@NumberOfElements 10;
+@PerformSmallStrainAnalysis true;
+
+@Behaviour<generic> 'src/libBehaviour.so' 'Elasticity';
+@ExternalStateVariable 'Temperature' 293.15;
+
+@InnerPressureEvolution<evolution> {0 : 0, 1 : 1.5e6};
+
+@Times {0, 1 in 10};
+@Profile 'pipe-profile.res' {'SRR', 'STT', 'SZZ'};
+~~~~
+
+It is run as follows:
+
+~~~{.bash}
+mtest pipe.ptest
+~~~
+
+This generates two files:
+
+- `pipe.res` gives the evolution of the radii and of the displacements.
+  Its first lines describe its columns.
+- `pipe-profile.res` gives the stresses in the thickness of the pipe at
+  each time step.
+
+For this closed elastic pipe, the axial stress is uniform:
+
+\[
+\sigma_{zz} = \dfrac{P_{i}\,R_{i}^{2}}{R_{e}^{2} - R_{i}^{2}}
+\]
+
+At the end of the simulation, this gives \(5.946\,\mathrm{MPa}\), which
+is the value of the fourth column of `pipe-profile.res`.
 
 # Overview and modeling hypotheses
 
