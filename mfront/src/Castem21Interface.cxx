@@ -40,7 +40,7 @@ namespace mfront {
            BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
           (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL))) {
       tfel::raise(
-          "CastemInterface::getDefaultMaterialPropertiesList: "
+          "Castem21Interface::getDefaultMaterialPropertiesList: "
           "unsupported behaviour type");
     }
     auto mprops = CastemInterface::getDefaultMaterialPropertiesList(mb, h);

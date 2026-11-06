@@ -253,7 +253,7 @@ current behaviour.
 
 The following snippet declares a variable named `b1` associated with a
 behaviour `Plasticity` defined in the file
-`BehaviourVariablePlasticity.mfront`.
+`Plasticity.mfront`.
 
 ~~~~{.cpp}
 @BehaviourVariable b1 {
@@ -342,8 +342,8 @@ Dt = b1.getTangentOperator();
 - `shared_external_state_variables`: list of regular expressions used to
   select shared external state variables. This list is empty by default.
 - `automatically_save_associated_auxiliary_state_variables`: flag
-  stating if the persistent variables, gradients (if `stored_gradients`
-  is true) or thermodynamic forces (if `stored_thermodynamic_forces` is
+  stating if the persistent variables, gradients (if `store_gradients`
+  is true) or thermodynamic forces (if `store_thermodynamic_forces` is
   true) of the behaviour variable shall automatically be saved in the
   `updateAuxiliaryStateVariables` method of the calling behaviour. This
   flag is `true` by default.
@@ -1372,18 +1372,18 @@ the `--interaction-matrix` query:
 
 ~~~~{.sh}
 $ mfront-query --interaction-matrix SlipSystemGenerationTest.mfront 
-| 0 1 2 2 3 4 5 6 5 6 4 3 |
-| 1 0 2 2 6 5 4 3 4 3 5 6 |
-| 2 2 0 1 5 6 3 4 6 5 3 4 |
-| 2 2 1 0 4 3 6 5 3 4 6 5 |
-| 3 4 5 6 0 1 2 2 6 5 4 3 |
-| 6 5 4 3 1 0 2 2 3 4 5 6 |
-| 5 6 3 4 2 2 0 1 5 6 3 4 |
-| 4 3 6 5 2 2 1 0 4 3 6 5 |
-| 5 6 4 3 4 3 5 6 0 1 2 2 |
-| 4 3 5 6 5 6 4 3 1 0 2 2 |
-| 6 5 3 4 6 5 3 4 2 2 0 1 |
-| 3 4 6 5 3 4 6 5 2 2 1 0 |
+| 0 1 1 2 3 4 5 6 6 2 4 3 |
+| 1 0 1 3 2 4 4 2 3 6 5 6 |
+| 1 1 0 6 6 5 4 3 2 3 4 2 |
+| 2 3 4 0 1 1 2 4 3 5 6 6 |
+| 3 2 4 1 0 1 6 5 6 4 2 3 |
+| 6 6 5 1 1 0 3 4 2 4 3 2 |
+| 5 6 6 2 4 3 0 1 1 2 3 4 |
+| 4 2 3 6 5 6 1 0 1 3 2 4 |
+| 4 3 2 3 4 2 1 1 0 6 6 5 |
+| 2 4 3 5 6 6 2 3 4 0 1 1 |
+| 6 5 6 4 2 3 3 2 4 1 0 1 |
+| 3 4 2 4 3 2 6 6 5 1 1 0 |
 ~~~~
 
 Here only \(7\) coefficients are needed. The number corresponding to a
@@ -1401,8 +1401,19 @@ $ mfront-query --interaction-matrix-structure SlipSystemGenerationTest.mfront
 .....
 ~~~~
 
-In this example, the rank \(0\) contains all the interactions of a
-slip system with itself.
+In this example, the ranks correspond to the following interactions
+between the first system of a pair (the row of the matrix) and the
+second one (the column of the matrix):
+
+- rank \(0\): interaction of a slip system with itself,
+- rank \(1\): coplanar systems (same slip plane),
+- rank \(2\): Hirth lock (orthogonal Burgers vectors),
+- rank \(3\): Lomer lock (junction whose Burgers vector lies in neither
+  slip plane),
+- ranks \(4\) and \(6\): glissile junction, whose Burgers vector lies
+  in the slip plane of the first system (rank \(4\)) or of the second
+  system (rank \(6\)),
+- rank \(5\): collinear systems (same Burgers vector).
 
 ## Definition of the interaction matrix
 
@@ -1820,9 +1831,11 @@ represented by the '*' character.
 
 ## Effect
 
-In implicit schemes, if physical bounds are set on an integration
-variable, this variable is bounded to satisfy them during the internal
-iterations.
+In implicit schemes, if physical bounds are set on a state variable,
+or on some elements of an array of state variables, this variable is
+bounded to satisfy them during the internal iterations. Physical bounds
+set on an integration variable which is not a state variable (see
+`@IntegrationVariable`) are ignored.
 
 If a variable is found to be out of its physical bounds, the
 computations are stopped. The tests are performed at different stages
@@ -2040,6 +2053,10 @@ behaviour. For example, for an isotropic behaviour, the thermal
 expansion tensor will be proportional to the identity. For an
 orthotropic behaviour, the thermal expansion tensor is diagonal and
 expressed in the material frame.
+
+The thermal expansion coefficient tensor is available in the code
+blocks as the variable `A`, which can't be used as the name of another
+variable.
 
 ~~~~{.cpp}
 @RequireThermalExpansionCoefficientTensor;
@@ -2316,7 +2333,7 @@ also defines the meaning of the stress tensor by energetic duality.
 
 The following values are supported:
 
-- `LINEARISED` (or `LINEARISED`, or `HPP`): the behaviour is meant to
+- `Linearised` (or `Linearized`): the behaviour is meant to
   be used in a small strain analysis.
 - `GreenLagrange`: the behaviour is meant to be used in a finite
   strain analysis. The dual stress is the second Piola-Kirchhoff
@@ -2327,7 +2344,7 @@ The following values are supported:
 Two options can be specified:
 
 - `save_strain`: save the strain in a dedicated auxiliary state variable
-  called `DualStrain`. Internally, the name of this auxiliary state
+  called `StrainMeasure`. Internally, the name of this auxiliary state
   variable is `saved_strain_measure`.
 - `save_stress`: save the stress in a dedicated auxiliary state variable
   called `DualStress`. Internally, the name of this auxiliary state
@@ -2576,42 +2593,28 @@ and the porosity is automatic if the `SI` unit system is used.
 
 # The `@UpdateAuxiliaryStateVariables` keyword
 
-The `UpdateAuxiliaryStateVariables` introduces a code block meant to
+The `@UpdateAuxiliaryStateVariables` introduces a code block meant to
 update the auxiliary state variables after integration.
 
-In implicit domain specific languages, the code declared by
-`UpdateAuxiliaryStateVariables` is called once the integration
-variables (including state variables) and stresses (see the
-`@ComputeFinalStress` keyword) have been updated. The external state
-variables are not updated.
+The code declared by `@UpdateAuxiliaryStateVariables` is called at the
+end of each successful step of the Runge-Kutta algorithm, after the
+update of the state variables. Keep in mind that most Runge-Kutta
+algorithms perform internal substepping: in this case, the code
+declared by `@UpdateAuxiliaryStateVariables` may be called several
+times during the behaviour integration. An additional variable called
+`dt_`, which is lower than the total time step increment `dt` if
+substepping is performed, gives the current time increment.
 
-In Runge-Kutta domain specific languages, the code declared by
-`UpdateAuxiliaryStateVariables` is called after each successful time
-step. Keep in mind that most Runge-Kutta algorithms performs internal
-substepping: in this case, the code declared by
-`UpdateAuxiliaryStateVariables` may be called several time during the
-behaviour integration. An additional variable called `dt_`, which is
-lower than the total time step increment `dt` if substepping is
-performed, gives the current time increment. The external state
-variables are set to their values at the current date.
+The external state variables and the auxiliary state variables
+computed by external point-wise models (see the `@Model` keyword) are
+set to their values at the current date: for instance, `T` is the
+temperature at the current date.
 
-## Example (Implicit dsl)
+## Example
 
 ~~~~{.cpp}
 @UpdateAuxiliaryStateVariables{
-  // valeur de milieu de pas, q ayant
-  // déjà été mis à jour
-  const real q_ = q-(1-theta)*dq;
-  const real Q = Q0 + (Qm - Q0) * (1 - exp(-2 * Mu * q_) );
-  R+=b*(Q-R)*dp;
-}
-~~~~
-
-## Example (Runge-Kutta dsl)
-
-~~~~{.cpp}
-@UpdateAuxiliaryStateVariables{
-  sigeq = sqrt(sig|sig);
+  Tmax = max(Tmax, T);
 }
 ~~~~
 

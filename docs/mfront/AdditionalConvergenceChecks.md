@@ -8,6 +8,12 @@ One possible usage of this code block is multi-surfaces' plasticity
 treated by activating or desactivating statuses, as described by Simo
 and Hughes.
 
+If a normalisation factor `nf` was given to the integration variable
+`v` (see the `setNormalisationFactor` method), `dv` is, in this code
+block, the normalised increment used by the solver: the updated value
+of `v` is `v + nf * dv`, whereas `dv` is the physical increment in the
+`@Integrator` code block.
+
 # Example
 
 Consider a two surfaces plastic behaviour. We will use an array of

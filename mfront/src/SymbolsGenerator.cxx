@@ -305,6 +305,9 @@ namespace mfront {
       std::ostream& out,
       const BehaviourInterfaceBase& i,
       const std::string& n) const {
+    // this method is also used by the generic and castem model interfaces:
+    // point-wise models are exported as behaviours, which is what MGIS
+    // expects when loading a model (mgis::model::load)
     mfront::writeMaterialKnowledgeTypeSymbol(out, i.getFunctionNameBasis(n),
                                              MaterialKnowledgeType::BEHAVIOUR);
   }  // end of writeEntryPointSymbol

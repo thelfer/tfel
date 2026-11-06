@@ -48,7 +48,7 @@ namespace mtest {
           ++pn;
           bool ok = true;
           while ((pn != pne) && (ok)) {
-            ok = ::isdigit(*pn) != 0;
+            ok = ::isdigit(static_cast<unsigned char>(*pn)) != 0;
             ++pn;
           }
           if (ok) {
@@ -163,6 +163,8 @@ namespace mtest {
       if (p->value == ",") {
         this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",
                                  ",", p, this->tokens.end());
+        this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",
+                                p, this->tokens.end());
         w = p->value;
         ++p;
       }

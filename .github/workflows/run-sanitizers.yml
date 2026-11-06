@@ -1,0 +1,130 @@
+name: Run sanitizers
+
+# Manual workflow, meant to be run before a release: it builds TFEL with the
+# sanitizers and the standard library hardening and runs the whole test suite
+# (tests, installation and tfel-check). It is only executed when triggered
+# from the Actions tab of the repository or using the GitHub CLI:
+#
+#   gh workflow run run-sanitizers.yml --ref <branch or tag>
+#
+# See docs/web/release-howto.md for details.
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'CMake build type'
+        type: choice
+        options:
+          - Debug
+          - RelWithDebInfo
+          - Release
+        default: Debug
+      compiler:
+        description: 'C++ compiler'
+        type: choice
+        options:
+          - gcc
+          - clang
+        default: gcc
+      sanitize_options:
+        description: >-
+          semicolon separated list of the sanitizers to enable (e.g.
+          address;undefined). Note that the vptr check, which is part of the
+          undefined sanitizer, can lead to pathologically long compilation
+          times with gcc: prefer listing the checks of the undefined
+          behaviour sanitizer individually (see the release howto)
+        required: false
+        default: 'address'
+      glibcxx_debug:
+        description: 'enable the debug mode of the standard library of the GNU C++ library'
+        type: boolean
+        default: true
+
+jobs:
+  build:
+
+    strategy:
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        path: tfel
+
+    - name: Prepare the build environment
+      run: |
+        if [ '${{ inputs.compiler }}' == 'clang' ]; then
+          echo 'COMPILER_ENV=CC=clang CXX=clang++' >> "$GITHUB_ENV"
+        else
+          echo 'COMPILER_ENV=' >> "$GITHUB_ENV"
+        fi
+        if [ '${{ inputs.glibcxx_debug }}' == 'true' ]; then
+          echo 'GLIBCXX_DEBUG_OPTION=ON' >> "$GITHUB_ENV"
+        else
+          echo 'GLIBCXX_DEBUG_OPTION=OFF' >> "$GITHUB_ENV"
+        fi
+
+    - name: Configure CMake
+      run: |
+        ${{ env.COMPILER_ENV }} \
+        cmake ${{github.workspace}}/tfel                           \
+              -B ${{github.workspace}}/build                       \
+              -DCMAKE_BUILD_TYPE=${{ inputs.build_type }}          \
+              -Denable-sanitize-options='${{ inputs.sanitize_options }}' \
+              -Denable-glibcxx-debug=${{ env.GLIBCXX_DEBUG_OPTION }} \
+              -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
+
+    - name: Build
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{ inputs.build_type }} -j $(nproc)
+
+    - name: Test
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{ inputs.build_type }} --target build-tests -j $(nproc)
+        ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=print_stacktrace=1 \
+          ctest --test-dir ${{github.workspace}}/build --build-config ${{ inputs.build_type }} -j $(nproc)
+
+    - name: Collect test results
+      run: |
+        mkdir ${{github.workspace}}/tests-results
+        cp --parents $(find ${{github.workspace}}/build -path ${{github.workspace}}/build/Testing -prune -o -type f  -name "*.xml" -print) ${{github.workspace}}/tests-results
+
+    - name: Install
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{ inputs.build_type }} --target install -j $(nproc)
+
+    - name: Print test log on failure
+      if: ${{ failure() }}
+      run: |
+        cat ${{github.workspace}}/build/Testing/Temporary/*.log
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v6
+      if: ${{ success() || failure() }} # always run even if the previous step fails
+      with:
+        report_paths: '**/tests-results/**/*.xml'
+
+    - name: Running tfel-check
+      run: |
+        source ${{github.workspace}}/install/share/tfel/env/env.sh
+        cd ${{github.workspace}}/install/share/tfel/test-suite
+        tfel-check -j $(nproc)
+
+    - name: Print tfel-check logs on failure
+      if: ${{ failure() }}
+      run: |
+        [ -d ${{github.workspace}}/install/share/tfel/test-suite ] || exit 0
+        cd ${{github.workspace}}/install/share/tfel/test-suite
+        for f in $(grep -rli 'failed' --include='*.checklog' .); do
+          d=$(dirname "$f")
+          echo "==== $f"
+          cat "$f"
+          for o in "$d"/*.out; do
+            [ -e "$o" ] || continue
+            echo "---- $o"
+            cat "$o"
+          done
+        done

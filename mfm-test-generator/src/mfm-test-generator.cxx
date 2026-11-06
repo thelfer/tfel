@@ -288,7 +288,7 @@ namespace mfmtg {
           return;
         }
       }
-      if ((a[0] == '-') || (a[0] == '/')) {
+      if (a[0] == '-') {
         tfel::utilities::ArgumentParserBase<
             MFMTestGenerator>::treatUnknownArgument();
       }
@@ -372,8 +372,8 @@ namespace mfmtg {
       std::regex r(this->test);
       const auto m = this->material == "<none>" ? "" : this->material;
       auto tests = std::vector<std::string>{};
-      for (const auto& tname : d.getAvailableMFMTestGeneratorTests(
-               this->material, this->behaviour)) {
+      for (const auto& tname :
+           d.getAvailableMFMTestGeneratorTests(m, this->behaviour)) {
         if (std::regex_match(tname, r)) {
           tests.push_back(tname);
         }
@@ -386,7 +386,7 @@ namespace mfmtg {
             this->test + "'");
       }
       for (const auto& t : tests) {
-        this->treatMadnexTest(this->material, this->behaviour, t, i);
+        this->treatMadnexTest(m, this->behaviour, t, i);
       }
     }  // end of treatMadnexInputFile
 

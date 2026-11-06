@@ -82,6 +82,16 @@ namespace tfel::math {
     return a.result;
   }
 
+  template <unsigned short N, typename T, typename Operation>
+  TFEL_HOST_DEVICE constexpr auto abs(
+      const Expr<tvector<N, T>, Operation>& e) noexcept {
+    AbsSum<T> a;
+    for (unsigned short i = 0; i != N; ++i) {
+      a(e(i));
+    }
+    return a.result;
+  }
+
   template <typename T>
   TFEL_HOST_DEVICE constexpr tvector<1u, T> makeTVector1D(const T v) noexcept {
     return {v};
@@ -255,7 +265,7 @@ namespace tfel::math {
             unsigned short stride,
             unsigned short N>
   TFEL_HOST_DEVICE constexpr auto map(
-      tvector<N, ViewsArrayNumericType<MappedType>>& v) noexcept
+      tvector<N, ViewsArrayStorageType<MappedType>>& v) noexcept
       requires(!std::is_const_v<MappedType>) {
     constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
@@ -271,7 +281,7 @@ namespace tfel::math {
             unsigned short stride,
             unsigned short N>
   TFEL_HOST_DEVICE constexpr auto map(
-      const tvector<N, ViewsArrayNumericType<MappedType>>& v) {
+      const tvector<N, ViewsArrayStorageType<MappedType>>& v) {
     constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
     static_assert(N >= offset + (M - 1) * stride + mstride,

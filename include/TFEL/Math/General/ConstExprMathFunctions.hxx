@@ -39,8 +39,8 @@ namespace tfel::math::constexpr_fct {
    * \brief compute the square root of a number using the Heron
    * algorithm using a TFEL_HOST_DEVICE constexpr function.
    *
-   * This function is meant to compute some usefull constant such as
-   * sqrt(2) and sqrt(3) at compile-time.
+   * This function is meant to compute some usefull constant at compile-time
+   * (see `Cste` for sqrt(2) and sqrt(3)).
    * \tparam T : numerical type
    * \pre T must be a floatting point type
    * \pre std::numeric_limits<T>::epsilon must be defined

@@ -51,6 +51,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     this->template test_Eshelby_limits<float, true>();
     this->template test_Eshelby_limits<double, true>();
     this->template test_Eshelby_limits<long double, true>();
+    this->template test_Eshelby_near_limits<true>();
     this->template test_localisation_tensors<double, true>();
     this->template test_hill_tensors<double, true>();
     this->template test_Eshelby_2d<double, false>();
@@ -60,6 +61,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     this->template test_Eshelby_limits<float, false>();
     this->template test_Eshelby_limits<double, false>();
     this->template test_Eshelby_limits<long double, false>();
+    this->template test_Eshelby_near_limits<false>();
     this->template test_localisation_tensors<double, false>();
     this->template test_hill_tensors<double, false>();
     return this->result;
@@ -263,13 +265,14 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(10));
       tfel::math::st2tost2<3u, real> SAxis_lim_2;
       if (std::same_as<real, float>) {
-        SAxis_lim_2 = computeEshelbyTensor<stress>(nu, lg{1.05}, lg{1}, lg{10});
+        SAxis_lim_2 =
+            computeEshelbyTensor<stress>(nu, lg{1.005}, lg{1}, lg{10});
       } else if (std::same_as<real, double>) {
         SAxis_lim_2 =
-            computeEshelbyTensor<stress>(nu, lg{1.0005}, lg{1}, lg{10});
+            computeEshelbyTensor<stress>(nu, lg{1.0001}, lg{1}, lg{10});
       } else if (std::same_as<real, long double>) {
         SAxis_lim_2 =
-            computeEshelbyTensor<stress>(nu, lg{1.00005}, lg{1}, lg{10});
+            computeEshelbyTensor<stress>(nu, lg{1.000005}, lg{1}, lg{10});
       }
 
       for (int i : {0, 1, 2, 3, 4, 5}) {
@@ -278,6 +281,49 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
                             eps);
           // std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
         }
+      }
+    }
+#endif /* _LIBCPP_VERSION */
+  }
+
+  /*!
+   * \brief nearly spherical spheroids and nearly axisymmetrical ellipsoids
+   * just above the tolerances: the single precision tensors must agree with
+   * the double precision ones, and the axisymmetrical formula must not be
+   * used for an ellipsoid whose semi-axes differ by more than the
+   * tolerance
+   */
+  template <bool use_qt>
+  void test_Eshelby_near_limits() {
+#ifndef _LIBCPP_VERSION
+    using stressf = typename tfel::config::Types<1u, float, use_qt>::stress;
+    using lgf = typename tfel::config::Types<1u, float, use_qt>::length;
+    using stressd = typename tfel::config::Types<1u, double, use_qt>::stress;
+    using lgd = typename tfel::config::Types<1u, double, use_qt>::length;
+    using namespace tfel::material::homogenization::elasticity;
+    static constexpr auto epsf =
+        static_cast<double>(std::numeric_limits<float>::epsilon());
+    const auto Sf1 = computeAxisymmetricalEshelbyTensor(0.3f, 1.0084f);
+    const auto Sd1 =
+        computeAxisymmetricalEshelbyTensor(0.3, static_cast<double>(1.0084f));
+    const auto Sf2 =
+        computeEshelbyTensor<stressf>(0.3f, lgf{3}, lgf{1.02f}, lgf{1});
+    const auto Sd2 = computeEshelbyTensor<stressd>(
+        0.3, lgd{3}, lgd{static_cast<double>(1.02f)}, lgd{1});
+    // reference without switch to the axisymmetrical formula
+    const auto Sd3 =
+        computeEshelbyTensor<stressd>(0.3, lgd{1000}, lgd{1.1}, lgd{1}, 0);
+    const auto Sd4 =
+        computeEshelbyTensor<stressd>(0.3, lgd{1000}, lgd{1.1}, lgd{1});
+    const auto distance = [](const auto& x, const auto& y) {
+      return std::abs(static_cast<double>(tfel::math::base_type_cast(x)) -
+                      static_cast<double>(tfel::math::base_type_cast(y)));
+    };
+    for (int i : {0, 1, 2, 3, 4, 5}) {
+      for (int j : {0, 1, 2, 3, 4, 5}) {
+        TFEL_TESTS_ASSERT(distance(Sf1(i, j), Sd1(i, j)) < 10 * epsf);
+        TFEL_TESTS_ASSERT(distance(Sf2(i, j), Sd2(i, j)) < 10 * epsf);
+        TFEL_TESTS_ASSERT(distance(Sd3(i, j), Sd4(i, j)) < 1e-10);
       }
     }
 #endif /* _LIBCPP_VERSION */
@@ -469,6 +515,39 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       // std::cout << Ptttt(0).getValue() << Pnnnn(0).getValue()
       //           << Pttnn(0).getValue() << std::endl;
       TFEL_TESTS_ASSERT(5 * Pnnnn(0) - Ptttt(0) < compliance(0));
+    }
+    // directions given by the first two rows of the rotation matrix
+    // associated with Bunge Euler angles: they are only orthogonal up to
+    // rounding errors, and need not be unit vectors
+    for (const auto& angles :
+         {std::array<real, 3>{2.990583854430175, 1.3529919793251031,
+                              2.1478637702682351},
+          std::array<real, 3>{6.2045771589047067, 1.4635658814732575,
+                              5.3737889848776303}}) {
+      const auto c1 = std::cos(angles[0]);
+      const auto s1 = std::sin(angles[0]);
+      const auto c = std::cos(angles[1]);
+      const auto s = std::sin(angles[1]);
+      const auto c2 = std::cos(angles[2]);
+      const auto s2 = std::sin(angles[2]);
+      const tfel::math::tvector<3u, real> n_1 = {c1 * c2 - s1 * s2 * c,
+                                                 s1 * c2 + c1 * s2 * c, s2 * s};
+      const tfel::math::tvector<3u, real> n_2 = {
+          -c1 * s2 - s1 * c2 * c, -s1 * s2 + c1 * c2 * c, c2 * s};
+      const auto PAxis_1 = computeAxisymmetricalHillPolarisationTensor<stress>(
+          young, nu, n_1, lg{20} / lg{2.0001});
+      for (const auto scale : {real(1), real(10)}) {
+        const tfel::math::tvector<3u, real> m_1 = scale * n_1;
+        const tfel::math::tvector<3u, real> m_2 = scale * n_2;
+        const auto PAxis_2 = computeHillPolarisationTensor<stress>(
+            young, nu, m_1, lg{20}, m_2, lg{2}, lg{2.0001});
+        for (int i : {0, 1, 2, 3, 4, 5}) {
+          for (int j : {0, 1, 2, 3, 4, 5}) {
+            TFEL_TESTS_ASSERT(my_abs(PAxis_1(i, j) - PAxis_2(i, j)) <
+                              compliance(eps));
+          }
+        }
+      }
     }
 #endif /* _LIBCPP_VERSION */
   }

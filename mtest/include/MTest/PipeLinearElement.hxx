@@ -18,7 +18,7 @@
 
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Math/matrix.hxx"
-#include "TFEL/Math/General/ConstExprMathFunctions.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 #include "MTest/Types.hxx"
 #include "MTest/SolverOptions.hxx"
 #include "MTest/PipeMesh.hxx"
@@ -36,8 +36,7 @@ namespace mtest {
   struct PipeLinearElement {
     // absolute value of the Gauss points position in the reference
     // element
-    static constexpr real abs_pg =
-        real(1) / tfel::math::constexpr_fct::sqrt(real(3));
+    static constexpr real abs_pg = tfel::math::Cste<real>::isqrt3;
     // value of the Gauss points position in the reference element
     static constexpr real pg_radii[2] = {-abs_pg, abs_pg};
     // Gauss point weight

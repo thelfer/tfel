@@ -295,14 +295,18 @@ strain. Using the previous equations, the implicit equation associated
 with this unknown is:
 
 \[
+\ets{T_{zz}}=
 \exp\paren{
 \bts{\left(\tepsilonto_{\text{log}}\right)_{zz}}+
 \Delta\,\left(\tepsilonto_{\text{log}}\right)_{zz}
 }
-\,\ets{T_{zz}}= \ets{\Pi_{zz}^{(i)}}
+\,\ets{\Pi_{zz}^{(i)}}
 \]
 
-where \(\Pi_{zz}^{(i)}\) is the prescribed axial stress.
+where \(\Pi_{zz}^{(i)}\) is the prescribed axial stress. For behaviours
+based on the Hencky strain measure, the `AxialStress` external state
+variable, which gives this prescribed value to the behaviour, is thus
+the axial component of the first Piola-Kirchhoff (nominal) stress.
 
 This equation is automatically added by the Hooke stress potential used
 by the `StandardElasticity` and `StandardViscoplasticity` bricks.
@@ -314,10 +318,11 @@ by the `StandardElasticity` and `StandardViscoplasticity` bricks.
 > logarithmic strain, this method becomes non-linear. The total axial
 > logarithmic strain is computed so that:
 > \[
+> \ets{T_{zz}^{el}}=
 > \exp\paren{
 > \bts{\left(\tepsilonto_{\text{log}}\right)_{zz}}+
 > \Delta\,\left(\tepsilonto_{\text{log}}\right)_{zz}}
-> \,\ets{T_{zz}^{el}}= \ets{\Pi_{zz}^{(i)}}
+> \,\ets{\Pi_{zz}^{(i)}}
 > \] 
 > where \(\ets{T_{zz}^{el}}\) is the elastic prediction of the stress,
 > computed as a function of

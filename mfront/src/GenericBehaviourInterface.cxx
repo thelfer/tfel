@@ -1491,6 +1491,12 @@ namespace mfront {
       }
       if (this->shallGenerateMTestFileOnFailure(bd)) {
         out << "using mfront::SupportedTypes;\n";
+        if ((type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
+            (is_finite_strain_through_strain_measure)) {
+          // the stress measure is read before the integration, which may
+          // overwrite d->K with the tangent operator
+          out << "const auto mg_sm = mfront::gb::getStressMeasure(d->K);\n";
+        }
       }
       if ((type == BehaviourDescription::GENERALBEHAVIOUR) ||
           (type == BehaviourDescription::COHESIVEZONEMODEL)) {
@@ -1738,8 +1744,8 @@ namespace mfront {
             (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
           const auto* const F0zz =
               (h == ModellingHypothesis::PLANESTRESS) ? "mg_F0[2]" : "mg_F0[1]";
-          // the logarithmic strain integrate function converts the stress
-          // with the deformation gradient given by the caller
+          // the integrate functions convert the stress with the axial
+          // deformation gradient computed by the behaviour
           if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
             if (this->checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
                         bd, h)
@@ -1754,10 +1760,16 @@ namespace mfront {
                  << "d->s0.internal_state_variables"
                  << "[mg_Traits::axial_strain_offset]);\n";
             }
+          } else if (bd.getStrainMeasure() == BehaviourDescription::HENCKY) {
+            if (this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd, h).first) {
+              os << F0zz << " = std::exp("
+                 << "d->s0.internal_state_variables"
+                 << "[mg_Traits::axial_strain_offset]);\n";
+            }
           }
         }
+        // mg_sm, the stress measure, is read before the integration
         os << "auto mg_s0 = tfel::math::stensor<mg_Traits::N, real>{};\n"
-           << "const auto mg_sm = mfront::gb::getStressMeasure(d->K);\n"
            << "if (mg_sm == mfront::gb::StressMeasure::PK1) {\n"
            << "mg_s0 = "
            << "tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress("

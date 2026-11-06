@@ -21,13 +21,22 @@ namespace tfel::material {
   template <typename StressStensor>
   Drucker1949StressType<StressStensor> computeDrucker1949StressCriterion(
       const StressStensor& sig, const Drucker1949BaseType<StressStensor> c) {
+    using stress = Drucker1949StressType<StressStensor>;
     using real = Drucker1949BaseType<StressStensor>;
     constexpr const auto e = real(1) / 6;
     constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
-    const auto s = deviator(sig);
+    // the criterion is positively homogeneous of degree 1: it is evaluated
+    // on the stress normalised by the von Mises stress to avoid overflows in
+    // single precision
+    const auto vm = sigmaeq(sig);
+    if (vm <= stress{0}) {
+      return stress{0};
+    }
+    const auto sig_n = eval(sig / vm);
+    const auto s = deviator(sig_n);
     const auto J2 = (s | s) / 2;
     const auto J3 = det(s);
-    return sqrt3 * std::pow(J2 * J2 * J2 - c * J3 * J3, e);
+    return vm * sqrt3 * std::pow(J2 * J2 * J2 - c * J3 * J3, e);
   }  // end of computeDrucker1949StressCriterion
 
   template <typename StressStensor>
@@ -41,21 +50,26 @@ namespace tfel::material {
     using real = Drucker1949BaseType<StressStensor>;
     constexpr const auto e = real(1) / 6;
     constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
-    const auto s = deviator(sig);
-    const auto J2 = (s | s) / 2;
-    if (J2 > seps * seps) {
+    // the criterion is positively homogeneous of degree 1: it is evaluated
+    // on the stress normalised by the von Mises stress to avoid overflows in
+    // single precision
+    const auto vm = sigmaeq(sig);
+    if (vm > sqrt3 * seps) {
+      const auto sig_n = eval(sig / vm);
+      const auto s = deviator(sig_n);
+      const auto J2 = (s | s) / 2;
       const auto J2_2 = J2 * J2;
       const auto J2_3 = J2_2 * J2;
       const auto J3 = det(s);
       const auto J3_2 = J3 * J3;
       const auto& dJ2 = s;
-      const auto dJ3 = computeJ3Derivative(sig);
+      const auto dJ3 = computeJ3Derivative(sig_n);
       const auto s6 = J2_3 - c * J3_2;
       const auto seq = sqrt3 * std::pow(s6, e);
       const auto dseq_dJ2 = J2_2 / (2 * s6) * seq;
       const auto dseq_dJ3 = -c * J3 / (3 * s6) * seq;
       const auto n = eval(dseq_dJ2 * dJ2 + dseq_dJ3 * dJ3);
-      return std::make_tuple(seq, n);
+      return std::make_tuple(vm * seq, n);
     }
     return std::make_tuple(Drucker1949StressType<StressStensor>{stress{0}},
                            Drucker1949StressNormalType<StressStensor>{real{0}});
@@ -75,9 +89,14 @@ namespace tfel::material {
     constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
     constexpr const auto e = real(1) / 6;
     constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
-    const auto s = deviator(sig);
-    const auto J2 = (s | s) / 2;
-    if (J2 > seps * seps) {
+    // the criterion is positively homogeneous of degree 1: it is evaluated
+    // on the stress normalised by the von Mises stress to avoid overflows in
+    // single precision
+    const auto vm = sigmaeq(sig);
+    if (vm > sqrt3 * seps) {
+      const auto sig_n = eval(sig / vm);
+      const auto s = deviator(sig_n);
+      const auto J2 = (s | s) / 2;
       const auto J2_2 = J2 * J2;
       const auto J2_3 = J2_2 * J2;
       const auto J2_4 = J2_2 * J2_2;
@@ -85,8 +104,8 @@ namespace tfel::material {
       const auto J3_2 = J3 * J3;
       const auto& dJ2 = s;
       const auto d2J2 = tfel::math::st2tost2<N, real>::K();
-      const auto dJ3 = computeJ3Derivative(sig);
-      const auto d2J3 = computeJ3SecondDerivative(sig);
+      const auto dJ3 = computeJ3Derivative(sig_n);
+      const auto d2J3 = computeJ3SecondDerivative(sig_n);
       const auto s6 = J2_3 - c * J3_2;
       const auto seq = sqrt3 * std::pow(s6, e);
       const auto dseq_dJ2 = J2_2 / (2 * s6) * seq;
@@ -101,7 +120,7 @@ namespace tfel::material {
       const auto dn = eval(d2seq_dJ2dJ2 * (dJ2 ^ dJ2) + dseq_dJ2 * d2J2 +
                            d2seq_dJ2dJ3 * ((dJ2 ^ dJ3) + (dJ3 ^ dJ2)) +
                            d2seq_dJ3dJ3 * (dJ3 ^ dJ3) + dseq_dJ3 * d2J3);
-      return std::make_tuple(seq, n, dn);
+      return std::make_tuple(vm * seq, n, eval(dn / vm));
     }
     return std::make_tuple(
         Drucker1949StressType<StressStensor>{stress{0}},

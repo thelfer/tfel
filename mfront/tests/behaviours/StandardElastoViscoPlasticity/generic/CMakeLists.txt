@@ -15,6 +15,7 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   Test13
   Test14
   Test15
+  Test16
   NortonTest
   NortonTest_nj
   NortonTest2
@@ -101,6 +102,10 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   PlasticityTest23_nj
   PlasticityTest24
   PlasticityTest24_nj
+  PlasticityTest26
+  PlasticityTest27
+  PlasticityTest28
+  PlasticityTest29
   IsotropicDamageHookeLaw
   IsotropicDamageHookeLaw_nj
   IsotropicDamageHookeLaw2
@@ -113,13 +118,17 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   HarmonicSumOfNortonHoffViscoplasticFlowsTest_nj
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2
   HarmonicSumOfNortonHoffViscoplasticFlowsTest2_nj
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest3
   ChuNeedleman1980StrainBasedNucleationModelTest
   ChuNeedleman1980StressBasedNucleationModelTest
   PowerLawStrainBasedNucleationModelTest
   PowerLawStressBasedNucleationModelTest
   ElasticContributionToPorosityGrowth
   GursonTvergaardNeedleman1982
-  RousselierTanguyBesson2002)
+  RousselierTanguyBesson2002
+  MichelAndSuquet1992HollowSphereTest
+  DDIF2StressPotentialTest
+  DDIF2BrickTest)
 
 mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBehaviours2
   StandardElastoViscoPlasticity generic
@@ -133,6 +142,10 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
 if(enable-mfront-quantity-tests)
   mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBehaviours3
     StandardElastoViscoPlasticity generic
+    PlasticityTest12_qt
+    PlasticityTest13_qt
+    PlasticityTest14_qt
+    PlasticityTest15_qt
     PlasticityTest18_qt
     PlasticityTest18_qt_nj
     PlasticityTest19_qt
@@ -146,7 +159,13 @@ if(enable-mfront-quantity-tests)
     PlasticityTest23_qt
     PlasticityTest23_qt_nj
     PlasticityTest24_qt
-    PlasticityTest24_qt_nj)
+    PlasticityTest24_qt_nj
+    PlasticityTest25_qt
+    MohrCoulombTest_qt
+    MichelAndSuquet1992HollowSphereTest_qt
+    GursonTvergaardNeedleman1982_qt
+    RousselierTanguyBesson2002_qt)
+
 endif(enable-mfront-quantity-tests)
 
 function(generictest_standardelastovicoplasticitybrick test_name test_file library_name behaviour_name)
@@ -222,6 +241,108 @@ generictest_standardelastovicoplasticitybrick(Test13
     test13 MFrontStandardElastoViscoPlasticityBrickBehaviours Test13)
 generictest_standardelastovicoplasticitybrick(Test15
     test15 MFrontStandardElastoViscoPlasticityBrickBehaviours Test15)
+generictest_standardelastovicoplasticitybrick(Test16
+    test16 MFrontStandardElastoViscoPlasticityBrickBehaviours Test16)
+
+foreach(id 9 10 12 13 14 15)
+  foreach(variant "" _nj _na _nanj)
+    generictest_standardelastovicoplasticitybrick(PlasticityTest${id}${variant}
+      plasticitytest${id} MFrontStandardElastoViscoPlasticityBrickBehaviours
+      PlasticityTest${id}${variant})
+  endforeach()
+endforeach()
+if(enable-mfront-quantity-tests)
+  foreach(id 12 13 14 15)
+    generictest_standardelastovicoplasticitybrick(PlasticityTest${id}_qt
+      plasticitytest${id} MFrontStandardElastoViscoPlasticityBrickBehaviours3
+      PlasticityTest${id}_qt)
+  endforeach()
+endif(enable-mfront-quantity-tests)
+generictest_standardelastovicoplasticitybrick(PlasticityTest26
+    plasticitytest26 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest26)
+generictest_standardelastovicoplasticitybrick(PlasticityTest27
+    plasticitytest27 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest27)
+
+foreach(variant "" _nj _na _nanj)
+  generictest_standardelastovicoplasticitybrick(OrthotropicNortonTest${variant}
+    orthotropicnortontest MFrontStandardElastoViscoPlasticityBrickBehaviours
+    OrthotropicNortonTest${variant})
+  generictest_standardelastovicoplasticitybrick(PlasticityTest11${variant}
+    plasticitytest11-multiaxial MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest11${variant} plasticitytest11-multiaxial.ref)
+endforeach()
+foreach(variant "" _nj)
+  generictest_standardelastovicoplasticitybrick(NortonTest3${variant}
+    nortontest3 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    NortonTest3${variant})
+  generictest_standardelastovicoplasticitybrick(HyperbolicSineTest2${variant}
+    hyperbolicsinetest2 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    HyperbolicSineTest2${variant})
+  generictest_standardelastovicoplasticitybrick(IsotropicDamageHookeLaw${variant}
+    isotropicdamagehookelaw MFrontStandardElastoViscoPlasticityBrickBehaviours
+    IsotropicDamageHookeLaw${variant})
+  generictest_standardelastovicoplasticitybrick(IsotropicDamageHookeLaw2${variant}
+    isotropicdamagehookelaw2 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    IsotropicDamageHookeLaw2${variant})
+  generictest_standardelastovicoplasticitybrick(PlasticityTest3${variant}
+    plasticitytest3 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest3${variant})
+  generictest_standardelastovicoplasticitybrick(PlasticityTest16${variant}
+    plasticitytest16 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest16${variant})
+  generictest_standardelastovicoplasticitybrick(PlasticityTest6${variant}
+    plasticitytest6-multiaxial MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest6${variant} plasticitytest6-multiaxial.ref)
+endforeach()
+generictest_standardelastovicoplasticitybrick(PlasticityTest28
+    plasticitytest28 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest28 plasticitytest28.ref)
+generictest_standardelastovicoplasticitybrick(PlasticityTest29
+    plasticitytest29 MFrontStandardElastoViscoPlasticityBrickBehaviours
+    PlasticityTest29 plasticitytest29.ref)
+foreach(variant "" _nj 2 2_nj)
+  generictest_standardelastovicoplasticitybrick(UserDefinedViscoplasticityTest${variant}
+    UserDefinedViscoplasticityTest MFrontStandardElastoViscoPlasticityBrickBehaviours2
+    UserDefinedViscoplasticityTest${variant})
+endforeach()
+foreach(variant "" _nj)
+  generictest_standardelastovicoplasticitybrick(UserDefinedViscoplasticityTest3${variant}
+    UserDefinedViscoplasticityTest3 MFrontStandardElastoViscoPlasticityBrickBehaviours2
+    UserDefinedViscoplasticityTest3${variant} UserDefinedViscoplasticityTest3.ref)
+endforeach()
+foreach(behaviour DDIF2StressPotentialTest DDIF2BrickTest)
+  generictest_standardelastovicoplasticitybrick(${behaviour}
+    DDIF2StressPotentialTest MFrontStandardElastoViscoPlasticityBrickBehaviours
+    ${behaviour})
+endforeach()
+
+generictest_standardelastovicoplasticitybrick(HarmonicSumOfNortonHoffViscoplasticFlowsTest3
+    HarmonicSumOfNortonHoffViscoplasticFlowsTest3
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    HarmonicSumOfNortonHoffViscoplasticFlowsTest3)
+
+generictest_standardelastovicoplasticitybrick(HarmonicSumOfNortonHoffViscoplasticFlowsTest3-creep
+    HarmonicSumOfNortonHoffViscoplasticFlowsTest3-creep
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    HarmonicSumOfNortonHoffViscoplasticFlowsTest3)
+
+generictest_standardelastovicoplasticitybrick(ElasticContributionToPorosityGrowth-compaction
+    ElasticContributionToPorosityGrowth-compaction
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    ElasticContributionToPorosityGrowth)
+generictest_standardelastovicoplasticitybrick(ElasticContributionToPorosityGrowth-expansion
+    ElasticContributionToPorosityGrowth-expansion
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    ElasticContributionToPorosityGrowth)
+
+foreach(model ChuNeedleman1980Strain ChuNeedleman1980Stress PowerLawStrain PowerLawStress)
+  generictest_standardelastovicoplasticitybrick(${model}BasedNucleationModelTest
+    ${model}BasedNucleationModelTest
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    ${model}BasedNucleationModelTest)
+endforeach()
 
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
     GursonTvergaardNeedleman1982-test1
@@ -231,6 +352,25 @@ generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test2
     GursonTvergaardNeedleman1982-test2
     MFrontStandardElastoViscoPlasticityBrickBehaviours
     GursonTvergaardNeedleman1982 GursonTvergaardNeedleman1982-test2.ref)
+
+generictest_standardelastovicoplasticitybrick(RousselierTanguyBesson2002-proportional
+    RousselierTanguyBesson2002-proportional
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    RousselierTanguyBesson2002 RousselierTanguyBesson2002-proportional.ref)
+generictest_standardelastovicoplasticitybrick(MichelAndSuquet1992HollowSphereTest
+    MichelAndSuquet1992HollowSphereTest
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    MichelAndSuquet1992HollowSphereTest MichelAndSuquet1992HollowSphereTest.ref)
+if(enable-mfront-quantity-tests)
+  generictest_standardelastovicoplasticitybrick(RousselierTanguyBesson2002-proportional_qt
+    RousselierTanguyBesson2002-proportional
+    MFrontStandardElastoViscoPlasticityBrickBehaviours3
+    RousselierTanguyBesson2002_qt RousselierTanguyBesson2002-proportional.ref)
+  generictest_standardelastovicoplasticitybrick(MichelAndSuquet1992HollowSphereTest_qt
+    MichelAndSuquet1992HollowSphereTest
+    MFrontStandardElastoViscoPlasticityBrickBehaviours3
+    MichelAndSuquet1992HollowSphereTest_qt MichelAndSuquet1992HollowSphereTest.ref)
+endif(enable-mfront-quantity-tests)
 
 foreach(id RANGE 18 21)
   generictest_standardelastovicoplasticitybrick("DataIsotropicHardeningRuleTest-${id}"

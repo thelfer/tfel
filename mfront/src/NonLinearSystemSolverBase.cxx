@@ -25,8 +25,8 @@ namespace mfront {
   }  // end of getMemberNames
 
   std::vector<std::string> NonLinearSystemSolverBase::getMemberNames() const {
-    // iter, epsilon, iterMax, zeros, fzeros, delta_zeros, jacobian are declared
-    // by ImplicitDSLBase
+    // iter, epsilon, iterMax, is_delta_zeros_defined, zeros, fzeros,
+    // delta_zeros, jacobian are declared by ImplicitDSLBase
     return {};
   }  // end of getMemberNames
 
@@ -130,7 +130,8 @@ namespace mfront {
     out << "tfel::math::tmatrix<" << n << "," << n
         << ",real> tjacobian(this->jacobian);\n"
         << "tfel::math::tvector<" << n << ",real> tfzeros(this->fzeros);\n"
-        << "tfel::math::tvector<" << n << ",real> zeros_safe(this->zeros);\n";
+        << "tfel::math::tvector<" << n << ",real> zeros_safe(this->zeros);\n"
+        << "auto mfront_success = true;\n";
     bool first = true;
     for (const auto& b : blocs) {
       auto getPositionAndSize = [&ivs](const std::string& v)
@@ -169,14 +170,19 @@ namespace mfront {
           }
         }
       };
+      // if the evaluation of the residual fails for one of the two
+      // perturbed estimates, a one-sided difference based on the other one
+      // and on the residual at the current estimate is used
       auto compute_perturbation = [&out, &update_jacobian, &d,
                                    &n](const std::string& j) {
-        out << "this->zeros(" << j
+        out << "if(mfront_success){\n"
+            << "this->zeros(" << j
             << ") -= this->numerical_jacobian_epsilon;\n";
         if (d.hasCode(BehaviourData::ComputeThermodynamicForces)) {
           out << "this->computeThermodynamicForces();\n";
         }
-        out << "this->computeFdF(true);\n"
+        out << "const auto mfront_backward_evaluation = "
+               "this->computeFdF(true);\n"
             << "this->zeros = zeros_safe;\n"
             << "tfel::math::tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
             << "this->zeros(" << j
@@ -184,13 +190,28 @@ namespace mfront {
         if (d.hasCode(BehaviourData::ComputeThermodynamicForces)) {
           out << "this->computeThermodynamicForces();\n";
         }
-        out << "this->computeFdF(true);\n"
+        out << "const auto mfront_forward_evaluation = "
+               "this->computeFdF(true);\n"
             << "this->zeros  = zeros_safe;\n"
+            << "if((mfront_backward_evaluation) && "
+               "(mfront_forward_evaluation)){\n"
             << "this->fzeros = "
                "(this->fzeros-tfzeros2)/"
                "(2*(this->numerical_jacobian_epsilon));\n"
+            << "} else if(mfront_forward_evaluation){\n"
+            << "this->fzeros = "
+               "(this->fzeros-tfzeros)/(this->numerical_jacobian_epsilon);\n"
+            << "} else if(mfront_backward_evaluation){\n"
+            << "this->fzeros = "
+               "(tfzeros-tfzeros2)/(this->numerical_jacobian_epsilon);\n"
+            << "} else {\n"
+            << "mfront_success = false;\n"
+            << "}\n"
+            << "if(mfront_success){\n"
             << "// update jacobian\n";
         update_jacobian(j);
+        out << "}\n"
+            << "}\n";
       };
       if (!first) {
         out << "// restore residual values\n"
@@ -215,7 +236,10 @@ namespace mfront {
     out << "// update jacobian\n"
         << "this->jacobian = tjacobian;\n"
         << "// restore residual values\n"
-        << "this->fzeros = tfzeros;\n";
+        << "this->fzeros = tfzeros;\n"
+        << "if(!mfront_success){\n"
+        << "return false;\n"
+        << "}\n";
   }  // end of
      // NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks
 
@@ -228,8 +252,8 @@ namespace mfront {
       return;
     }
     const auto& d = mb.getBehaviourData(h);
-    out << "auto jacobian_error = real{};"
-        << "this->computeNumericalJacobian(" << nj << ");\n";
+    out << "if(this->computeNumericalJacobian(" << nj << ")){\n"
+        << "auto jacobian_error = real{};\n";
     auto n = SupportedTypes::TypeSize();
     for (const auto& v : d.getIntegrationVariables()) {
       if (v.arraySize == 1) {
@@ -338,6 +362,7 @@ namespace mfront {
         }
       }
     }
+    out << "}\n";
   }  // end of writeComparisonToNumericalJacobian
 
   void NonLinearSystemSolverBase::writeLimitsOnIncrementValues(
@@ -355,9 +380,8 @@ namespace mfront {
         if (mb.hasAttribute(h, iv.name + "_normalisation_factor")) {
           const auto& nf = mb.getAttribute<std::string>(
               h, iv.name + "_normalisation_factor");
-          out << "if(std::abs(" << v << "[" << n << "+idx])>" << nf
-              << "*(this->" << iv.name
-              << "_maximum_increment_value_per_iteration)){\n";
+          out << "if(std::abs(" << v << "[" << n << "+idx])>(this->" << iv.name
+              << "_maximum_increment_value_per_iteration)/(" << nf << ")){\n";
         } else {
           out << "if(std::abs(" << v << "[" << n << "+idx])>this->" << iv.name
               << "_maximum_increment_value_per_iteration){\n";
@@ -366,8 +390,8 @@ namespace mfront {
         if (mb.hasAttribute(h, iv.name + "_normalisation_factor")) {
           const auto& nf = mb.getAttribute<std::string>(
               h, iv.name + "_normalisation_factor");
-          out << "" << v << "[" << n << "+idx] = -" << nf << "*(this->"
-              << iv.name << "_maximum_increment_value_per_iteration);\n";
+          out << "" << v << "[" << n << "+idx] = -(this->" << iv.name
+              << "_maximum_increment_value_per_iteration)/(" << nf << ");\n";
         } else {
           out << "" << v << "[" << n << "+idx] = -this->" << iv.name
               << "_maximum_increment_value_per_iteration;\n";
@@ -376,8 +400,8 @@ namespace mfront {
         if (mb.hasAttribute(h, iv.name + "_normalisation_factor")) {
           const auto& nf = mb.getAttribute<std::string>(
               h, iv.name + "_normalisation_factor");
-          out << "" << v << "[" << n << "+idx] = " << nf << "*(this->"
-              << iv.name << "_maximum_increment_value_per_iteration);\n";
+          out << "" << v << "[" << n << "+idx] = (this->" << iv.name
+              << "_maximum_increment_value_per_iteration)/(" << nf << ");\n";
         } else {
           out << "" << v << "[" << n << "+idx] =  this->" << iv.name
               << "_maximum_increment_value_per_iteration;\n";
@@ -413,8 +437,81 @@ namespace mfront {
           const BehaviourDescription& mb,
           const Hypothesis h) {
     const auto& d = mb.getBehaviourData(h);
+    // write the code bounding the scalar value `value + zero` (or
+    // `value + nf * zero` if a normalisation factor `nf` is defined) by
+    // modifying `zero`, `op` being '<' for a lower bound and '>' for an upper
+    // bound
+    auto write_bound = [&out, &mb, h](const VariableDescription& v,
+                                      const std::string& value,
+                                      const std::string& zero,
+                                      const long double bound, const char op) {
+      const auto nf = [&mb, &v, h]() -> std::string {
+        if (mb.hasAttribute(h, v.name + "_normalisation_factor")) {
+          return mb.getAttribute<std::string>(h,
+                                              v.name + "_normalisation_factor");
+        }
+        return "";
+      }();
+      if (nf.empty()) {
+        out << "if(" << value << "+" << zero << op << bound << "){\n";
+      } else {
+        out << "if(" << value << "+(" << nf << ")*(" << zero << ")" << op
+            << bound << "){\n";
+      }
+      if (std::abs(bound) > std::numeric_limits<long double>::min()) {
+        if (nf.empty()) {
+          out << zero << " = " << bound << "- (" << value << ");\n";
+        } else {
+          out << zero << " = (" << bound << "- (" << value << "))/(" << nf
+              << ");\n";
+        }
+      } else {
+        out << zero << " = - (" << value << ")";
+        if (!nf.empty()) {
+          out << "/(" << nf << ")";
+        }
+        out << ";\n";
+      }
+      out << "}\n";
+    };
     auto n = SupportedTypes::TypeSize{};
     for (const auto& v : d.getIntegrationVariables()) {
+      if ((d.isStateVariableName(v.name)) && (v.arraySize != 1u) &&
+          (!v.hasPhysicalBounds())) {
+        // physical bounds set on some elements of an array
+        const auto n2 = mb.getTypeSize(v.type, 1u);
+        for (unsigned short i = 0; i != v.arraySize; ++i) {
+          if (!v.hasPhysicalBounds(i)) {
+            continue;
+          }
+          const auto& b = v.getPhysicalBounds(i);
+          const auto value = "this->" + v.name + "[" + std::to_string(i) + "]";
+          auto ni = n;
+          ni += n2 * i;
+          const auto zero = "this->zeros[" + to_string(ni);
+          auto write_bounds = [&b, &v, &write_bound](const std::string& vi,
+                                                     const std::string& zi) {
+            if ((b.boundsType == VariableBoundsDescription::LOWER) ||
+                (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
+              write_bound(v, vi, zi, b.lowerBound, '<');
+            }
+            if ((b.boundsType == VariableBoundsDescription::UPPER) ||
+                (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
+              write_bound(v, vi, zi, b.upperBound, '>');
+            }
+          };
+          if (mb.getTypeFlag(v.type) == SupportedTypes::SCALAR) {
+            write_bounds(value, zero + "]");
+          } else if (b.component == -1) {
+            out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n";
+            write_bounds(value + "[idx]", zero + "+idx]");
+            out << "}\n";
+          } else {
+            const auto c = std::to_string(b.component);
+            write_bounds(value + "[" + c + "]", zero + "+" + c + "]");
+          }
+        }
+      }
       if ((!d.isStateVariableName(v.name)) || (!v.hasPhysicalBounds())) {
         n += mb.getTypeSize(v.type, v.arraySize);
         continue;

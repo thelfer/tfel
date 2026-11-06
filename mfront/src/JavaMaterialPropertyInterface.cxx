@@ -103,8 +103,9 @@ namespace mfront {
       throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false),
                "invalid package name '" + p + "'");
       for (const auto c : p) {
-        if (isalpha(c)) {
-          throw_if(!islower(c), "invalid package name '" + p + "'");
+        const auto uc = static_cast<unsigned char>(c);
+        if (isalpha(uc)) {
+          throw_if(!islower(uc), "invalid package name '" + p + "'");
         }
       }
       throw_if(++current == end, "unexpected end of file");
@@ -133,8 +134,8 @@ namespace mfront {
                           ? mpd.className
                           : mpd.material + "_" + mpd.className;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-#if !((defined _WIN32) && (defined _MSC_VER))
     auto& l = d.getLibrary(lib);
+#if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     // the jni part

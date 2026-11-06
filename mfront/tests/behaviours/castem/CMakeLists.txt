@@ -88,6 +88,7 @@ set(mfront_tests_SOURCES
   MonoCrystal_DD_CC_Irradiation_NumericalJacobian
   FiniteStrainSingleCrystal
   FiniteStrainSingleCrystal2
+  FiniteStrainSingleCrystal2_WithCorrections
   FiniteStrainSingleCrystal_NumericalJacobian
   PolyCrystals
   PolyCrystals_DD_CC
@@ -440,7 +441,7 @@ test_castem(chaboche2 REFERENCE_FILE chaboche2-aster.ref)
 test_castem(viscochaboche REFERENCE_FILE ViscoChaboche.ref)
 test_castem(monocrystal REFERENCE_FILE monocrystal.ref)
 test_castem(monocrystal-2)
-test_castem(implicitmonocrystal REFERENCE_FILE monocrystal.ref)
+test_castem(implicitmonocrystal REFERENCE_FILE implicitmonocrystal.ref)
 test_castem(implicitmonocrystal-2)
 test_castem(monocrystal_dd_cfc
   REFERENCE_FILE monocrystal_dd_cfc.ref)
@@ -656,6 +657,8 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-012-2
 test_castem(finitestrainsinglecrystal_numericaljacobian-159
   REFERENCE_FILE finitestrainsinglecrystal-159.ref)
 test_castem(finitestrainsinglecrystal2-001
+  REFERENCE_FILE finitestrainsinglecrystal2-001.ref)
+test_castem(finitestrainsinglecrystal2_withcorrections-001
   REFERENCE_FILE finitestrainsinglecrystal2-001.ref)
 test_castem(anistropiclemaitreviscoplasticbehaviour
   REFERENCE_FILE AnistropicLemaitreViscoplasticBehaviour.ref) 

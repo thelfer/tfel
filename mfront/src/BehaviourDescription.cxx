@@ -1735,6 +1735,13 @@ namespace mfront {
             bn + "' already defined");
       }
     }
+    // the names of the blocks between main variables are registered by the
+    // addMainVariable2 method
+    if (!((this->isThermodynamicForceName(b.first.name)) &&
+          (this->isGradientName(b.second.name)))) {
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                               block_name);
+    }
     this->additionalTangentOperatorBlocks.push_back(b);
   }  // end of addTangentOperatorBlock
 
@@ -3824,6 +3831,9 @@ namespace mfront {
                    "BehaviourDescription::setSaveStrainMeasure: "
                    "this method has already been called");
     this->saveStrainMeasureValue = b;
+    if (!b) {
+      return;
+    }
     auto v =
         VariableDescription("StrainStensor", "saved_strain_measure", 1u, 0u);
     v.setGlossaryName(tfel::glossary::Glossary::StrainMeasure);
@@ -3839,12 +3849,15 @@ namespace mfront {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(this->getBehaviourType() !=
                        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
-                   "BehaviourDescription::setSaveStrainMeasure: "
+                   "BehaviourDescription::setSaveDualStress: "
                    "invalid behaviour type");
     tfel::raise_if(this->saveDualStressValue.has_value(),
                    "BehaviourDescription::setSaveDualStress: "
                    "this method has already been called");
     this->saveDualStressValue = b;
+    if (!b) {
+      return;
+    }
     auto v = VariableDescription("StressStensor", "saved_dual_stress", 1u, 0u);
     v.setGlossaryName(tfel::glossary::Glossary::DualStress);
     this->addAuxiliaryStateVariable(uh, v, BehaviourData::UNREGISTRED);

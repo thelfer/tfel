@@ -316,6 +316,29 @@ the interaction matrix.
 
 The plastic slip \(g\) are automatically defined.
 
+## Options
+
+The `FiniteStrainSingleCrystal` brick supports the following boolean
+options:
+
+- `shifted_elastic_deformation_gradient`: if `true`, the auxiliary state
+  variable `Fe` stores the elastic part of the deformation gradient minus
+  the identity. This option is `false` by default.
+- `plastic_deformation_gradient_normalisation_corrections`: if `true`,
+  the jacobian and the consistent tangent operator take into account the
+  normalisation of the inverse of the increment of the plastic part of
+  the deformation gradient, as detailed below. If `false`, the
+  derivatives of this normalisation are neglected. This option is `true`
+  by default. The residual and the converged results do not depend on
+  this option, up to the convergence criteria: it only allows to test if
+  those corrections affect the results.
+
+~~~~{.cpp}
+@Brick FiniteStrainSingleCrystal{
+  plastic_deformation_gradient_normalisation_corrections : false
+};
+~~~~
+
 ## Implementation of the implicit system
 
 Le second tenseur de Piola-Kirchhoff est défini par la loi élastique de
@@ -327,6 +350,9 @@ Nous calculons (une approximation) de l'inverse de l'incrément de la
 partie plastique du gradient de la transformation\textasciitilde{}: \[
 \paren{\Delta\,\tns{F}_{p}}^{-1} = \tns{I}-\sum_{i=1}^{12}\Delta\,g_{i}\,\tns{\mu}_{i}
 \]
+
+Ce tenseur est ensuite normalisé par la racine cubique de son déterminant
+\(J\).
 
 Nous calculons la partie élastique de gradient de la transformation
 \(\tns{F}_{e}\) en fin de pas de temps en fin de pas de
@@ -368,18 +394,28 @@ tenseur \(\tns{F}_{e}\)\textasciitilde{}: \[
 \partial^{r}_{\star}\paren{\tns{F}_{e}^{\mathrm{tr}}}
 \]
 
-En négligeant la correction plastique, la dérivée
-\(\deriv{\paren{\Delta\,\tns{F}_{p}}^{-1}}{\Delta\,g_{i}}\) s'écrit
-simplement\textasciitilde{}: \[
-\deriv{\paren{\Delta\,\tns{F}_{p}}^{-1}}{\Delta\,g_{i}} = -\tns{\mu}_{i}
+Du fait de la normalisation par la racine cubique de \(J\), la dérivée
+\(\deriv{\paren{\Delta\,\tns{F}_{p}}^{-1}}{\Delta\,g_{i}}\)
+s'écrit\textasciitilde{}: \[
+\deriv{\paren{\Delta\,\tns{F}_{p}}^{-1}}{\Delta\,g_{i}} = -\tns{\mu}^{n}_{i}
+\quad\text{avec}\quad
+\tns{\mu}^{n}_{i}=
+\Frac{1}{J^{1/3}}\,\paren{\tns{\mu}_{i}-
+\Frac{1}{3}\,\paren{\paren{\Delta\,\tns{F}_{p}}^{T}\,\colon\,\tns{\mu}_{i}}\,
+\paren{\Delta\,\tns{F}_{p}}^{-1}}
 \]
+
+Si l'option `plastic_deformation_gradient_normalisation_corrections` vaut
+`false`, ces corrections sont explicitement négligées:
+\(\tns{\mu}^{n}_{i}\) est remplacé par \(\tns{\mu}_{i}\) dans le jacobien
+et dans l'opérateur tangent.
 
 Nous obtenons finalement l'expression la dérivée
 \(\deriv{f}{\Delta\,g_{i}}\)\textasciitilde{}: \[
 \deriv{f_{\tepsilonel}}{\Delta\,g_{i}}=
 -\Frac{1}{2}\,\deriv{\tenseur{C}_{e}}{\tns{F}_{e}}\,.\,
 \partial^{r}_{\star}\paren{\tns{F}_{e}^{\mathrm{tr}}}\,.\,
-\tns{\mu}_{i}
+\tns{\mu}^{n}_{i}
 \]
 
 ## Implementation of the consistent tangent operator
@@ -427,10 +463,10 @@ est aisé\textasciitilde{}: \[
 
 Pour le calcul de la dérivée
 \(\deriv{\paren{\Delta\,\tns{F}_{p}}^{-1}}{\Delta\,\tns{F}}\), nous
-pouvons nous baser sur l'approximation faite lors de l'intégration. Nous
+pouvons nous baser sur l'expression utilisée lors de l'intégration. Nous
 avons alors directement\textasciitilde{}: \[
 \deriv{\paren{\Delta\,\tns{F}_{p}}^{-1}}{\Delta\,\tns{F}}=
--\sum_{i=1}^{12}\tns{\mu}_{i}\,\otimes\,\deriv{\Delta\,g_{i}}{\Delta\,\tns{F}}
+-\sum_{i=1}^{12}\tns{\mu}^{n}_{i}\,\otimes\,\deriv{\Delta\,g_{i}}{\Delta\,\tns{F}}
 \]
 
 Le calcul de \(\deriv{\Delta\,g_{i}}{\Delta\,\tns{F}}\) représente la

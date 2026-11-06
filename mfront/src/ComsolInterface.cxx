@@ -99,6 +99,12 @@ namespace mfront {
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
              "by comsol interface");
+    // the temperature is only given as the last material property: the
+    // increment of a stress-free expansion can't be computed
+    throw_if(bd.requiresStressFreeExpansionTreatment(h),
+             "stress-free expansions are not supported "
+             "by comsol interface, which does not give the "
+             "temperature at the beginning of the time step");
     // get the modelling hypotheses to be treated
     const auto name = bd.getLibrary() + bd.getClassName();
     // output directories
@@ -233,10 +239,6 @@ namespace mfront {
         << "using Behaviour = tfel::material::" << bd.getClassName()
         << "<ModellingHypothesis::TRIDIMENSIONAL, double, "
            "false>;\n";
-    if (bd.requiresStressFreeExpansionTreatment(h)) {
-      out << "using StressFreeExpansionType = "
-             "Behaviour::StressFreeExpansionType;\n";
-    }
     out << "constexpr auto cste = tfel::math::Cste<double>::sqrt2;\n";
     // inputs checks
     const auto nprops =
@@ -277,20 +279,10 @@ namespace mfront {
         << "e1[3] *= cste;\n"
         << "e1[4] *= cste;\n"
         << "e1[5] *= cste;\n"
-        << "std::swap(e1[3],e1[5]);\n";
-    if (bd.requiresStressFreeExpansionTreatment(h)) {
-      out << "// stress free expansion\n"
-          << "auto s = StressFreeExpansionType{};\n"
-          << "b.computeStressFreeExpansion(s);\n"
-          << "const auto& s0 = s.first;\n"
-          << "const auto& s1 = s.second;\n"
-          << "eto  = e0-s0;\n"
-          << "deto = e1-e0-(s1-s0);\n";
-    } else {
-      out << "eto  = e0;\n"
-          << "deto = e1-e0;\n";
-    }
-    out << "// to Voigt conventions\n"
+        << "std::swap(e1[3],e1[5]);\n"
+        << "eto  = e0;\n"
+        << "deto = e1-e0;\n"
+        << "// to Voigt conventions\n"
         << "eto[3] *= cste;\n"
         << "eto[4] *= cste;\n"
         << "eto[5] *= cste;\n"

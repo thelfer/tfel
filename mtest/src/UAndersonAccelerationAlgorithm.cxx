@@ -81,7 +81,9 @@ namespace mtest {
       const real,
       const unsigned short iter) {
     if (iter == 1u) {
-      *(this->uO) = u1 - du;
+      // the correction du has already been subtracted from u1: u1 + du is
+      // the iterate the fixed-point step started from
+      *(this->uO) = u1 + du;
     }
     *(this->uN) = u1;
     this->a->newIter(this->uO, this->uN);

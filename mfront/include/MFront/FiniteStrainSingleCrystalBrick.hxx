@@ -30,6 +30,8 @@ namespace mfront {
   struct FiniteStrainSingleCrystalBrick : public BehaviourBrickBase {
     static const char* const shiftedDeformationGradientOption;
     static const char* const shiftedDeformationGradientAttribute;
+    static const char* const normalisationCorrectionsOption;
+    static const char* const normalisationCorrectionsAttribute;
     /*!
      * \brief constructor
      * \param[in] dsl_ : calling domain specific language

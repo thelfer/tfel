@@ -147,6 +147,8 @@ install_mfront_desc(UseQt)
 
 install_mfront_desc2(Implicit HillTensor)
 
+install_mfront_desc2(MultipleIsotropicMisesFlows FlowRule)
+
 install_mfront_desc3(MaterialLaw MaterialProperty Constant)
 install_mfront_desc3(MaterialLaw MaterialProperty Data)
 install_mfront_desc3(MaterialLaw MaterialProperty Function)
@@ -175,8 +177,15 @@ install_mfront_desc2(Model Integrator)
 install_mfront_desc2(ImplicitCZM Integrator)
 install_mfront_desc2(DefaultFiniteStrain Integrator)
 
+install_mfront_desc3(DefaultModel ImplicitModel UpdateAuxiliaryStateVariables)
+install_mfront_desc2(RungeKutta UpdateAuxiliaryStateVariables)
+install_mfront_desc2(RungeKuttaFiniteStrain UpdateAuxiliaryStateVariables)
+install_mfront_desc2(RungeKuttaGenericBehaviour UpdateAuxiliaryStateVariables)
+install_mfront_desc2(RungeKuttaModel UpdateAuxiliaryStateVariables)
+
 install_mfront_desc2(bricks StandardElasticity)
 install_mfront_desc2(bricks DDIF2)
+install_mfront_desc2(bricks FiniteStrainSingleCrystal)
 
 install_mfront_desc2(stress-potentials Hooke)
 install_mfront_desc2(stress-potentials DDIF2)

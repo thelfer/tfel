@@ -128,7 +128,7 @@ namespace tfel::material {
                                        lower_bound_as_string);
       }
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static inline void lowerBoundCheck(
         const std::string_view name,
         const QuantityType& value,
@@ -167,7 +167,7 @@ namespace tfel::material {
                                        upper_bound_as_string);
       }
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static inline void upperBoundCheck(
         const std::string_view name,
         const QuantityType value,
@@ -210,7 +210,7 @@ namespace tfel::material {
                                   upper_bound_as_string);
       }
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static inline void lowerAndUpperBoundsChecks(
         const std::string_view name,
         const QuantityType value,
@@ -275,7 +275,7 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(2)", s(2), lBound,
                                                  uBound, p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void lowerBoundCheck(
         const std::string& name,
         const tfel::math::stensor<1u, QuantityType>& s,
@@ -288,7 +288,7 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(2)", s(2).getValue(), lBound,
                                        p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void upperBoundCheck(
         const std::string& name,
         const tfel::math::stensor<1u, QuantityType>& s,
@@ -301,7 +301,7 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(2)", s(2).getValue(), uBound,
                                        p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
         const tfel::math::stensor<1u, QuantityType>& s,
@@ -357,7 +357,7 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(3)", s(3), lBound,
                                                  uBound, p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void lowerBoundCheck(
         const std::string& name,
         const tfel::math::stensor<2u, QuantityType>& s,
@@ -372,7 +372,7 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(3)", s(3).getValue(), lBound,
                                        p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void upperBoundCheck(
         const std::string& name,
         const tfel::math::stensor<2u, QuantityType>& s,
@@ -387,7 +387,7 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(3)", s(3).getValue(), uBound,
                                        p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
         const tfel::math::stensor<2u, QuantityType>& s,
@@ -453,7 +453,7 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(5)", s(5), lBound,
                                                  uBound, p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void lowerBoundCheck(
         const std::string& name,
         const tfel::math::stensor<3u, QuantityType>& s,
@@ -472,7 +472,7 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(5)", s(5).getValue(), lBound,
                                        p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void upperBoundCheck(
         const std::string& name,
         const tfel::math::stensor<3u, QuantityType>& s,
@@ -491,7 +491,7 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(5)", s(5).getValue(), uBound,
                                        p);
     }
-    template <tfel::math::QuantityConcept QuantityType>
+    template <tfel::math::ImmutableQuantityConcept QuantityType>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
         const tfel::math::stensor<3u, QuantityType>& s,

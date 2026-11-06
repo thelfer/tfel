@@ -50,20 +50,7 @@ static pybind11::object getInternalStateVariableValue(
            "variable named '" +
                n + "'");
   const auto type = s.behaviour->getInternalStateVariableType(n);
-  const auto size = [&s, throw_if,
-                     type]() -> std::vector<mtest::real>::size_type {
-    if (type == 0) {
-      return 1;
-    } else if (type == 1) {
-      return tfel::material::getStensorSize(s.behaviour->getHypothesis());
-    } else if (type == 2) {
-      return tfel::material::getSpaceDimension(s.behaviour->getHypothesis());
-    } else if (type == 3) {
-      return tfel::material::getTensorSize(s.behaviour->getHypothesis());
-    }
-    throw_if(true, "unsupported variable type");
-    return 0;
-  }();
+  const auto size = mtest::getVariableSize(type, s.behaviour->getHypothesis());
   const auto pos = s.behaviour->getInternalStateVariablePosition(n);
   throw_if((s.iv_1.size() < pos + size) || (s.iv0.size() < pos + size) ||
                (s.iv1.size() < pos + size),

@@ -54,7 +54,7 @@ namespace tfel::math {
       return false;
     }
     is >> res;
-    return !(!is && (!is.eof()));
+    return (!is.fail()) && (is.eof());
   }  // end of convert
 
   bool IntegerEvaluator::isNumber(const std::string& value) {
@@ -69,7 +69,8 @@ namespace tfel::math {
     while (*p != ">") {
       // check parameter validity
       for (const auto c : tfel::unicode::getMangledString(*p)) {
-        raise_if(!(isalpha(c) || isdigit(c)) || (c == '_') || (c == '-'),
+        const auto uc = static_cast<unsigned char>(c);
+        raise_if(!(isalpha(uc) || isdigit(uc)) || (c == '_') || (c == '-'),
                  "IntegerEvaluator::analyseParameters: "
                  "invalid parameter '" +
                      *p + "'");
@@ -242,6 +243,8 @@ namespace tfel::math {
       } else if (*p == "/") {
         g->add(std::make_shared<TOperator>("/"));
       } else {
+        throw_if(std::isdigit(static_cast<unsigned char>(p->front())) != 0,
+                 "invalid integer '" + *p + "'");
         auto pt = p;
         ++pt;
         throw_if((pt != pe) && (*pt == "("), "unknown function '" + *p + "'");

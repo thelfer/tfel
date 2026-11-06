@@ -86,6 +86,8 @@ set(mfront_tests_SOURCES
   OrthotropicCreep_rkCastem
   RungeKuttaElasticity
   RungeKuttaElasticity_rk4
+  RungeKuttaFiniteStrainElasticity_rk2
+  RungeKuttaFiniteStrainElasticity_rk54
   ImplicitOrthotropicCreep
   ImplicitOrthotropicCreep2
   StrainHardeningCreep
@@ -111,8 +113,11 @@ set(mfront_tests_SOURCES
   MonoCrystal_DD_CC_Irradiation
   MonoCrystal_DD_CC_Irradiation_NumericalJacobian
   FiniteStrainSingleCrystal
+  FiniteStrainSingleCrystal_WithCorrections
   FiniteStrainSingleCrystal2
+  FiniteStrainSingleCrystal2_WithCorrections
   FiniteStrainSingleCrystal_NumericalJacobian
+  FiniteStrainSingleCrystal_NumericalJacobian_WithCorrections
   BerveillerZaouiPolyCrystal
   BerveillerZaouiPolyCrystal_DD_CC
   BerveillerZaouiPolyCrystal_DD_CFC
@@ -204,6 +209,13 @@ if(enable-mfront-quantity-tests)
        ode_implicit
        BarBehaviour2
        BarBehaviour4
+       Norton_euler_qt
+       Norton_rk2_qt
+       Norton_rk42_qt
+       Norton_rk4_qt
+       Norton_rk54_qt
+       Norton_rkCastem_qt
+       ImplicitNorton2_qt
 )
 endif(enable-mfront-quantity-tests)
 
@@ -253,12 +265,6 @@ mfront_behaviour_check_library(MFrontGenericBehaviours generic
 
 if(enable-mfront-quantity-tests)
   mfront_behaviour_check_library(MFrontGenericBehaviours2 generic
-    Norton_euler_qt
-    Norton_rk2_qt
-    Norton_rk42_qt
-    Norton_rk4_qt
-    Norton_rk54_qt
-    Norton_rkCastem_qt
     ImplicitNorton7
     ImplicitOrthotropicCreep3
     ImplicitOrthotropicCreep4)
@@ -277,7 +283,8 @@ mfront_behaviour_check_library(MFrontGenericIntegrationDriversBehaviours generic
   InternalStateVariablePostProcessingTest
   FiniteStrainInitializeFunctionTest
   GreenLagrangeInitializeFunctionTest
-  HenckyInitializeFunctionTest)
+  HenckyInitializeFunctionTest
+  InitializeFunctionArrayVariableTest)
 
 add_executable(generic-IntegrationDriversTest EXCLUDE_FROM_ALL
   IntegrationDriversTest.cxx)
@@ -544,8 +551,8 @@ test_generic(implicitnorton-planestress)
 test_generic(implicitnorton5)
 test_generic(implicitnorton6)
 test_generic(implicitnorton-smallstraintridimensionbehaviourwrapper)
-test_generic(implicitnorton-broyden)
-test_generic(implicitnorton-powelldoglegbroyden)
+test_generic(implicitnorton-broyden implicitnorton-uniaxialstrain.ref)
+test_generic(implicitnorton-powelldoglegbroyden implicitnorton-uniaxialstrain.ref)
 test_generic(implicitnorton-broyden2)
 # test_generic(implicitnorton-levenbergmarquardt)
 # test_generic(implicitnorton4-planestress)
@@ -614,6 +621,8 @@ test_generic(orthotropiccreep-rk42)
 test_generic(orthotropiccreep-rkCastem)
 test_generic(rungekuttaelasticity)
 test_generic(rungekuttaelasticity-rk4)
+test_generic(rungekuttafinitestrainelasticity-rk2)
+test_generic(rungekuttafinitestrainelasticity-rk54)
 test_generic(strainhardeningcreep)
 test_generic(strainhardeningcreep2)
 test_generic(strainhardeningcreep3)
@@ -656,6 +665,7 @@ test_generic_fs(saintvenantkirchhoffelasticity-uniaxialloading-sig33-2D)
 test_generic_fs(saintvenantkirchhoffelasticity-uniaxialloading-sig11-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-uniaxialloading-sig22-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-uniaxialloading-sig33-3D)
+test_generic_fs(saintvenantkirchhoffelasticity-elasticprediction-uniaxialloading-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-uniaxialloading-1-1D)
 test_generic_fs(saintvenantkirchhoffelasticity-uniaxialloading-2-1D)
 test_generic_fs(saintvenantkirchhoffelasticity-uniaxialloading-3-1D)
@@ -805,6 +815,14 @@ test_generic_fs(finitestrainsinglecrystal_numericaljacobian-001 finitestrainsing
 test_generic_fs(finitestrainsinglecrystal_numericaljacobian-012 finitestrainsinglecrystal-012.ref)
 test_generic_fs(finitestrainsinglecrystal_numericaljacobian-012-2 finitestrainsinglecrystal-012.ref)
 test_generic_fs(finitestrainsinglecrystal_numericaljacobian-159 finitestrainsinglecrystal-159.ref)
+test_generic_fs(finitestrainsinglecrystal_withcorrections-001 finitestrainsinglecrystal-001.ref)
+test_generic_fs(finitestrainsinglecrystal_withcorrections-012 finitestrainsinglecrystal-012.ref)
+test_generic_fs(finitestrainsinglecrystal_withcorrections-012-2 finitestrainsinglecrystal-012.ref)
+test_generic_fs(finitestrainsinglecrystal_withcorrections-159 finitestrainsinglecrystal-159.ref)
+test_generic_fs(finitestrainsinglecrystal_numericaljacobian_withcorrections-001 finitestrainsinglecrystal-001.ref)
+test_generic_fs(finitestrainsinglecrystal_numericaljacobian_withcorrections-012 finitestrainsinglecrystal-012.ref)
+test_generic_fs(finitestrainsinglecrystal_numericaljacobian_withcorrections-012-2 finitestrainsinglecrystal-012.ref)
+test_generic_fs(finitestrainsinglecrystal_numericaljacobian_withcorrections-159 finitestrainsinglecrystal-159.ref)
 # test_generic(anistropiclemaitreviscoplasticbehaviour)
 # test_generic(tssf)
 test_generic(computestressfreeexpansion)
@@ -855,6 +873,13 @@ if(enable-mfront-quantity-tests)
   test_generic(ode_default ode_default.ref)
   test_generic(ode_implicit ode_implicit.ref)
   test_generic(ode_rk54 ode_rk54.ref)
+  test_generic(norton-qt-euler)
+  test_generic(norton-qt-rk2)
+  test_generic(norton-qt-rk4)
+  test_generic(norton-qt-rk42)
+  test_generic(norton-qt-rk54)
+  test_generic(norton-qt-rkCastem)
+  test_generic(implicitnorton2-qt)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-2D logarithmicstrainelasticity-shear.ref)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D logarithmicstrainelasticity-shear.ref)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D logarithmicstrainelasticity-shear.ref)

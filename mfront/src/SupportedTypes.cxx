@@ -438,12 +438,14 @@ namespace mfront {
       switch (p->second) {
         case SupportedTypes::SCALAR:
           return {0, 3};
+        // tensorial objects use two more bits for the space dimension, which
+        // is zero here since it depends on the modelling hypothesis
         case SupportedTypes::STENSOR:
-          return {1, 3};
+          return {1, 5};
         case SupportedTypes::TVECTOR:
-          return {2, 3};
+          return {2, 5};
         case SupportedTypes::TENSOR:
-          return {3, 3};
+          return {3, 5};
         default:
           break;
       }
@@ -926,7 +928,7 @@ namespace mfront {
       ++p;
     }
     for (; p != s2.end(); ++p) {
-      if (!std::isdigit(*p)) {
+      if (!std::isdigit(static_cast<unsigned char>(*p))) {
         return {};
       }
     }

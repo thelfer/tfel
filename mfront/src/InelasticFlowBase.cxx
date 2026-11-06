@@ -518,14 +518,6 @@ namespace mfront::bbrick {
       i.code += this->sc->computeElasticPrediction(id, bd, sp);
       i.code += computeElasticLimitInitialValue(bd, this->ihrs, id);
       i.code += "this->bpl" + id + " = seqel" + id + " > Rel" + id + ";\n";
-      if (this->save_stress_criterion) {
-        i.code += "this->mfront_" + stress_criterion_external_name +
-                  " = seqel" + id + ";\n";
-      }
-      if (this->save_yield_surface_radius) {
-        i.code += "this->mfront_" + yield_surface_radius_external_name +
-                  " = Rel" + id + ";\n";
-      }
       bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                  BehaviourData::BeforeInitializeLocalVariables, i,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
@@ -563,6 +555,11 @@ namespace mfront::bbrick {
                                        const std::string& id) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+    checkNoNormalisationFactor(bd, "p" + id);
+    // jacobian blocks computed below (see also the contribution to the
+    // porosity evolution)
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, "eel");
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, "p" + id);
     if (this->fc != nullptr) {
       this->sc->endTreatment(bd, dsl, id, StressCriterion::STRESSCRITERION);
       this->fc->endTreatment(bd, dsl, id, StressCriterion::FLOWCRITERION);
@@ -624,7 +621,9 @@ namespace mfront::bbrick {
             this->fc->computeNormal(id, bd, sp, StressCriterion::FLOWCRITERION);
       }
     }
-    if (this->save_stress_criterion) {
+    if ((this->save_stress_criterion) && (this->ihrs.empty())) {
+      // with isotropic hardening rules, the stress criterion is saved once
+      // the convergence is reached, see the additional convergence checks
       ib.code += "this->mfront_" + stress_criterion_external_name + " = seq" +
                  id + ";\n";
     }
@@ -750,12 +749,70 @@ namespace mfront::bbrick {
       }
     }
     if (!this->ihrs.empty()) {
+      // hardening rules: terms of the implicit equations associated with the
+      // back-strains which do not depend on the increment of the equivalent
+      // plastic strain (static recovery)
+      auto inactive = std::string{};
+      kid = decltype(khrs.size()){};
+      for (const auto& khr : khrs) {
+        if (this->fc != nullptr) {
+          inactive += khr->buildBackStrainImplicitEquationsForAnInactiveFlow(
+              bd, sp, *(this->fc), this->khrs, id, std::to_string(kid),
+              requiresAnalyticalJacobian);
+        } else {
+          inactive += khr->buildBackStrainImplicitEquationsForAnInactiveFlow(
+              bd, sp, *(this->sc), this->khrs, id, std::to_string(kid),
+              requiresAnalyticalJacobian);
+        }
+        ++kid;
+      }
+      if (!inactive.empty()) {
+        ib.code += "} else {\n";
+        ib.code += inactive;
+      }
       ib.code += "} // end if(this->bpl" + id + ")\n";
     }
     bd.setCode(uh, BehaviourData::Integrator, ib, BehaviourData::CREATEORAPPEND,
                BehaviourData::AT_BEGINNING);
     // additional checks
     if (!this->ihrs.empty()) {
+      const auto save_values =
+          (this->save_stress_criterion) || (this->save_yield_surface_radius);
+      // stress criterion and elastic limit at t + theta * dt
+      const auto compute_criterion_and_elastic_limit =
+          [this, &bd, &sp, &id](const bool criterion, const bool limit) {
+            auto c = std::string{};
+            if (criterion) {
+              if (this->isCoupledWithPorosityEvolution()) {
+                const auto& f = bd.getBehaviourData(uh)
+                                    .getStateVariableDescriptionByExternalName(
+                                        tfel::glossary::Glossary::Porosity);
+                c += "const auto " + f.name + "_ = ";
+                c += "this->" + f.name + " + (" + bd.getClassName() +
+                     "::theta) * (this->d" + f.name + ");\n";
+              }
+              c += this->computeEffectiveStress(id);
+              c += this->sc->computeCriterion(id, bd, sp);
+            }
+            if (limit) {
+              c += computeElasticLimit(bd, this->ihrs, id);
+            }
+            return c;
+          };
+      // the saved values are the ones of the solution, whether the flow is
+      // active or not
+      const auto save = [this, &id] {
+        auto c = std::string{};
+        if (this->save_stress_criterion) {
+          c += "this->mfront_" + stress_criterion_external_name + " = seq" +
+               id + ";\n";
+        }
+        if (this->save_yield_surface_radius) {
+          c += "this->mfront_" + yield_surface_radius_external_name + " = R" +
+               id + ";\n";
+        }
+        return c;
+      };
       CodeBlock acc;
       acc.code += "if (converged) {\n";
       acc.code += "// checking status consistency\n";
@@ -763,22 +820,23 @@ namespace mfront::bbrick {
       acc.code += "if (this->dp" + id + " < -2*this->epsilon) {\n";
       acc.code += "// desactivating this system\n";
       acc.code += "converged = this->bpl" + id + " = false;\n";
+      if (save_values) {
+        acc.code += "} else {\n";
+        // only the saved values are computed
+        acc.code += compute_criterion_and_elastic_limit(
+            this->save_stress_criterion, this->save_yield_surface_radius);
+        acc.code += save();
+      }
       acc.code += "}\n";
       acc.code += "} else {\n";
-      if (this->isCoupledWithPorosityEvolution()) {
-        const auto& f =
-            bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
-                tfel::glossary::Glossary::Porosity);
-        acc.code += "const auto " + f.name + "_ = ";
-        acc.code += "this->" + f.name + " + (" + bd.getClassName() +
-                    "::theta) * (this->d" + f.name + ");\n";
-      }
-      acc.code += this->computeEffectiveStress(id);
-      acc.code += this->sc->computeCriterion(id, bd, sp);
-      acc.code += computeElasticLimit(bd, this->ihrs, id);
+      acc.code += compute_criterion_and_elastic_limit(true, true);
       acc.code += "if(seq" + id + " > R" + id + ") {\n";
       acc.code += "converged = false;\n";
       acc.code += "this->bpl" + id + " = true;\n";
+      if (save_values) {
+        acc.code += "} else {\n";
+        acc.code += save();
+      }
       acc.code += "}\n";
       acc.code += "}\n";
       acc.code += "} // end of if(converged)\n";
@@ -832,11 +890,11 @@ namespace mfront::bbrick {
           nextEstimateOfThePorosityIncrement;
       c += " += " + df + ";\n";
     }
-    if (this->save_porosity_increase) {
-      c += "} else {\n";
-      c += "this->dfg" + id + " = real{};\n";
-    }
     if (!this->ihrs.empty()) {
+      if (this->save_porosity_increase) {
+        c += "} else {\n";
+        c += "this->dfg" + id + " = real{};\n";
+      }
       c += "}\n";
     }
     return c;
@@ -864,6 +922,8 @@ namespace mfront::bbrick {
         bd.getBehaviourData(uh)
             .getAuxiliaryStateVariableDescriptionByExternalName(
                 tfel::glossary::Glossary::Broken);
+    // jacobian blocks computed below
+    checkNoImplicitEquationNormalisationFactor(bd, dsl, f.name);
     const auto f_ = f.name + "_";
     ib.code += "if(2 * (this->" + broken.name + ") > 1){\n";
     if (this->save_porosity_increase) {

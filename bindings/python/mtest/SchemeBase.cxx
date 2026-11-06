@@ -203,8 +203,17 @@ void declareSchemeBase(pybind11::module_& m) {
            "The following algorithms are available:\n"
            "- 'Cast3M'\n"
            "- 'Secant'\n"
+           "- 'AlternateSecant'\n"
+           "- 'AlternateDelta2'\n"
+           "- 'Alternate2Delta'\n"
+           "- 'CrossedSecant'\n"
+           "- 'CrossedDelta2'\n"
+           "- 'Crossed2Delta'\n"
+           "- 'Crossed2Deltabis'\n"
            "- 'Steffensen'\n"
-           "- 'Irons-Tuck'")
+           "- 'IronsTuck'\n"
+           "- 'UAnderson'\n"
+           "- 'FAnderson'")
       .def("setAccelerationParameter",
            &SchemeBase::setAccelerationAlgorithmParameter,
            pybind11::arg("n"), pybind11::arg("v"),

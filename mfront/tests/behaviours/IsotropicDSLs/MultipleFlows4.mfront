@@ -1,0 +1,19 @@
+@DSL MultipleIsotropicMisesFlows;
+@Behaviour MultipleFlows4;
+@Description {
+  "Behaviour Plasticity6 written with the MultipleIsotropicMisesFlows DSL"
+}
+
+@Epsilon 1e-15;
+@UseQt true;
+@Theta 1;
+
+@ElasticMaterialProperties{150.e9, 0.3};
+
+@IsotropicHardeningRule "Linear" {flow_id : 0, R0 : 102e6, H : 102e9};
+
+@FlowRule Plasticity {
+  f = seq - R;
+  df_dseq = 1;
+  df_dp = -dR_dp;
+}

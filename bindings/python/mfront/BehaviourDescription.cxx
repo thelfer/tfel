@@ -172,8 +172,8 @@ void declareBehaviourDescription(pybind11::module_&);
 
 void declareBehaviourDescription(pybind11::module_& m) {
   using namespace mfront;
-  pybind11::class_<BehaviourDescription>(
-      m, "BehaviourDescription",
+  pybind11::class_<BehaviourDescription, MaterialKnowledgeDescription>(
+      m, "BehaviourDescription", pybind11::multiple_inheritance(),
       "This structure describes a mechanical behaviour\n"
       "\n"
       "This class handles the fact that the mechanical behaviour\n"
@@ -183,6 +183,7 @@ void declareBehaviourDescription(pybind11::module_& m) {
       "This class thus stores a default mechanical behaviour data\n"
       "which is intendend to be valid for most hypotheses, and specific\n"
       "mechanical behaviour datas when required.")
+      .def(pybind11::init<>())
       .def("setBehaviourName", &BehaviourDescription::setBehaviourName)
       .def("getBehaviourName", &BehaviourDescription::getBehaviourName)
       .def("setDSLName", &BehaviourDescription::setDSLName)

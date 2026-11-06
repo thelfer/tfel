@@ -182,6 +182,7 @@ Tools and guides for testing your implementations.
 | Resource | Description |
 |----------|-------------|
 | [MTest](mtest.html) | TFEL's testing tool for material point simulations. |
+| [Simulation of pipes](ptest.html) | Simulation of pipes in MTest. |
 | [MTest Nonlinear Constraints](mtest-nonlinear-constraints.html) | Advanced constraints in MTest. |
 | [TFEL-Check](tfel-check.html) | Validation suite for TFEL. |
 | [MTest Keywords](MTest-keywords.html) | Keywords reference for MTest. |

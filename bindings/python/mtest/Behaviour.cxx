@@ -260,11 +260,20 @@ void declareBehaviour(pybind11::module_& m) {
            "Return the descriptions the internal variables")
       .def("getInternalStateVariableType",
            &Behaviour::getInternalStateVariableType,
-           "Return the type of an internal variable:\n"
+           "Return the type of an internal variable, encoded as an integer\n"
+           "whose three lowest bits give the kind of the variable:\n"
            "- 0 means that the internal state variable is a scalar\n"
            "- 1 means that the internal state variable is a symmetric tensor\n"
            "- 2 means that the internal state variable is a vector\n"
-           "- 3 means that the internal state variable is a tensor\n")
+           "- 3 means that the internal state variable is a tensor\n"
+           "- 4 means that the internal state variable is a derivative\n"
+           "- 5 means that the internal state variable is an array\n"
+           "The following bits give the space dimension of a tensorial\n"
+           "object (0 if it is the one of the modelling hypothesis), the\n"
+           "types of the two variables of a derivative and the sizes and\n"
+           "the type of the elements of an array (see the `mfront-types`\n"
+           "page of the documentation). For instance, 2 denotes a vector\n"
+           "of the size of the space dimension and 26 a vector of size 3.\n")
       .def("getInternalStateVariablePosition",
            &Behaviour::getInternalStateVariablePosition,
            "Return the internal state variable position")
@@ -278,11 +287,20 @@ void declareBehaviour(pybind11::module_& m) {
            "tensors and tensors")
       .def("getExternalStateVariableType",
            &Behaviour::getExternalStateVariableType,
-           "Return the type of an external variable:\n"
+           "Return the type of an external variable, encoded as an integer\n"
+           "whose three lowest bits give the kind of the variable:\n"
            "- 0 means that the external state variable is a scalar\n"
            "- 1 means that the external state variable is a symmetric tensor\n"
            "- 2 means that the external state variable is a vector\n"
-           "- 3 means that the external state variable is a tensor\n")
+           "- 3 means that the external state variable is a tensor\n"
+           "- 4 means that the external state variable is a derivative\n"
+           "- 5 means that the external state variable is an array\n"
+           "The following bits give the space dimension of a tensorial\n"
+           "object (0 if it is the one of the modelling hypothesis), the\n"
+           "types of the two variables of a derivative and the sizes and\n"
+           "the type of the elements of an array (see the `mfront-types`\n"
+           "page of the documentation). For instance, 2 denotes a vector\n"
+           "of the size of the space dimension and 26 a vector of size 3.\n")
       .def("getExternalStateVariablePosition",
            &Behaviour::getExternalStateVariablePosition,
            "Return the external state variable position")

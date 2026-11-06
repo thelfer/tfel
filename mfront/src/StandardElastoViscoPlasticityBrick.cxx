@@ -641,6 +641,7 @@ namespace mfront {
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
               tfel::glossary::Glossary::Porosity);
       const auto f_ = f.name + "_";
+      mfront::bbrick::checkNoNormalisationFactor(bd, f.name);
       // value of the porosity at t+theta*dt
       CodeBlock ib;
       ib.code += "const auto " + f_ + " = ";
@@ -650,6 +651,9 @@ namespace mfront {
                  ") * " + std::string(porosityUpperBound) + "), real(0));\n ";
       ib.code += "static_cast<void>(" + f_ + ");\n";
       if (this->elastic_contribution) {
+        // jacobian blocks computed by the elastic contribution
+        mfront::bbrick::checkNoImplicitEquationNormalisationFactor(
+            bd, this->dsl, f.name);
         if (this->porosity_evolution_algorithm ==
             mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
           ib.code += "if(";
@@ -699,7 +703,7 @@ namespace mfront {
         ib.code = "if(this->" + f.name + " + this->d" + f.name +  //
                   " - f" + f.name + " < 0){\n";
         ib.code += "f" + f.name + " = " +  //
-                   "this->d" + f.name + " - this->" + f.name + ";\n";
+                   "this->d" + f.name + " + this->" + f.name + ";\n";
         if (requiresAnalyticalJacobian) {
           ib.code +=
               "for(unsigned short idx = 0; idx!= "  //

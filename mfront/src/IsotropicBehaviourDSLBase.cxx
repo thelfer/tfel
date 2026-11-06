@@ -174,6 +174,11 @@ namespace mfront {
 
   double IsotropicBehaviourDSLBase::getDefaultThetaValue() const { return 0.5; }
 
+  std::string IsotropicBehaviourDSLBase::getIsotropicHardeningRulesTheta(
+      const std::size_t) const {
+    return "this->theta";
+  }  // end of getIsotropicHardeningRulesTheta
+
   void IsotropicBehaviourDSLBase::treatTheta() {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatTheta",
@@ -688,9 +693,10 @@ namespace mfront {
       auto add_ihrs = [this, h](
                           const std::string& cname, const std::string& id,
                           const std::vector<std::shared_ptr<
-                              mfront::bbrick::IsotropicHardeningRule>>& lihrs) {
+                              mfront::bbrick::IsotropicHardeningRule>>& lihrs,
+                          const std::string& theta) {
         auto i = CodeBlock{};
-        i.code = computeElasticLimitAndDerivative(this->mb, lihrs, id);
+        i.code = computeElasticLimitAndDerivative(this->mb, lihrs, id, theta);
         if (!id.empty()) {
           i.code += "const auto R = R" + id + ";\n";
           i.code += "const auto dR_dp = dR" + id + "_dp" + id + ";\n";
@@ -718,7 +724,8 @@ namespace mfront {
             }
           }
           const auto cname = BehaviourData::BeforeFlowRule + std::to_string(id);
-          add_ihrs(cname, std::to_string(id), lihrs);
+          add_ihrs(cname, std::to_string(id), lihrs,
+                   this->getIsotropicHardeningRulesTheta(id));
         }
       } else {
         if (this->ihrs.size() != 0) {
@@ -741,7 +748,8 @@ namespace mfront {
                 "IsotropicBehaviourDSLBase::endsInputFileProcessing",
                 "no flow rule defined");
           }
-          add_ihrs(BehaviourData::BeforeFlowRule, "", this->ihrs.at(0));
+          add_ihrs(BehaviourData::BeforeFlowRule, "", this->ihrs.at(0),
+                   this->getIsotropicHardeningRulesTheta(0));
         }
       }
     }

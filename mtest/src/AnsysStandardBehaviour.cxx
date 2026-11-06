@@ -77,9 +77,6 @@ namespace mtest {
       if (this->requiresStiffnessTensor) {
         tmp.insert(tmp.end(), {"YoungModulus", "PoissonRatio"});
       }
-      if (this->requiresThermalExpansionCoefficientTensor) {
-        tmp.push_back("ThermalExpansion");
-      }
     } else if (this->etype == 1u) {
       if ((h == ModellingHypothesis::PLANESTRESS) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
@@ -90,12 +87,6 @@ namespace mtest {
                       "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
                       "ShearModulus12"});
         }
-        if (this->requiresThermalExpansionCoefficientTensor) {
-          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
-                                 "ThermalExpansion3"});
-        }
-        tmp.insert(tmp.end(),
-                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2"});
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         if (this->requiresStiffnessTensor) {
           tmp.insert(tmp.end(),
@@ -103,14 +94,6 @@ namespace mtest {
                       "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
                       "ShearModulus12", "ShearModulus23", "ShearModulus13"});
         }
-        if (this->requiresThermalExpansionCoefficientTensor) {
-          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
-                                 "ThermalExpansion3"});
-        }
-        tmp.insert(tmp.end(),
-                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2",
-                    "FirstOrthotropicAxis_3", "SecondOrthotropicAxis_1",
-                    "SecondOrthotropicAxis_2", "SecondOrthotropicAxis_3"});
       } else {
         throw_if(true, "unsupported modelling hypothesis");
       }
@@ -118,6 +101,33 @@ namespace mtest {
       throw_if(true,
                "unsupported behaviour type "
                "(neither isotropic nor orthotropic)");
+    }
+    if (this->requiresThermalExpansionCoefficientTensor) {
+      // the thermal expansion coefficient tensor has the symmetry of the
+      // behaviour
+      if (this->stype == 0u) {
+        tmp.push_back("ThermalExpansion");
+      } else {
+        tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
+                               "ThermalExpansion3"});
+      }
+    }
+    if (this->stype == 1u) {
+      // orthotropic axes, after the elastic properties and the thermal
+      // expansion coefficients, as in the generated code
+      if ((h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::PLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        tmp.insert(tmp.end(),
+                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2"});
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        tmp.insert(tmp.end(),
+                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2",
+                    "FirstOrthotropicAxis_3", "SecondOrthotropicAxis_1",
+                    "SecondOrthotropicAxis_2", "SecondOrthotropicAxis_3"});
+      } else {
+        throw_if(true, "unsupported modelling hypothesis");
+      }
     }
     this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }

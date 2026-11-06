@@ -237,6 +237,18 @@ namespace mfront {
     }
   }  // end of writeBoundsSymbol
 
+  /*!
+   * \return if the given bounds describe the whole variable. The exported
+   * symbols describe the bounds of the whole variable: bounds on a single
+   * component of a non scalar variable are only checked by the behaviour.
+   * \param[in] v: variable
+   * \param[in] b: bounds
+   */
+  static bool areBoundsExported(const VariableDescription& v,
+                                const VariableBoundsDescription& b) {
+    return (b.component == -1) || (v.isScalar());
+  }  // end of areBoundsExported
+
   void writeBoundsSymbols(std::ostream& os,
                           const std::string_view n,
                           const VariableDescriptionContainer& vc) {
@@ -244,14 +256,15 @@ namespace mfront {
     os.precision(14);
     for (const auto& v : vc) {
       if (v.arraySize == 1u) {
-        if (!v.hasBounds()) {
+        if ((!v.hasBounds()) || (!areBoundsExported(v, v.getBounds()))) {
           continue;
         }
         mfront::writeBoundsSymbol(os, n, v.getExternalName(), "",
                                   v.getBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasBounds(idx)) {
+          if ((!v.hasBounds(idx)) ||
+              (!areBoundsExported(v, v.getBounds(idx)))) {
             continue;
           }
           mfront::writeBoundsSymbol(
@@ -271,14 +284,16 @@ namespace mfront {
     os.precision(14);
     for (const auto& v : vc) {
       if (v.arraySize == 1u) {
-        if (!v.hasPhysicalBounds()) {
+        if ((!v.hasPhysicalBounds()) ||
+            (!areBoundsExported(v, v.getPhysicalBounds()))) {
           continue;
         }
         mfront::writeBoundsSymbol(os, n, v.getExternalName(), "Physical",
                                   v.getPhysicalBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasPhysicalBounds(idx)) {
+          if ((!v.hasPhysicalBounds(idx)) ||
+              (!areBoundsExported(v, v.getPhysicalBounds(idx)))) {
             continue;
           }
           mfront::writeBoundsSymbol(

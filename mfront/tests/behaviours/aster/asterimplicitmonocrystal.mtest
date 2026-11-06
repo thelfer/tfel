@@ -32,7 +32,7 @@
 
 @Times {0.,0.1 in 10, 2.E5 in 90};
 
-// @Test<file> @reference_file@ {'SZZ':10} 1.e-3 ; 
+@Test<file> @reference_file@ {'SZZ':10} 1.e-3 ;
 @Test<function>  {'SXX':'0','SYY':'0',
                   'SXY':'0','SXZ':'0',
                   'SYZ':'0'} 1.e-3 ;

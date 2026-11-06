@@ -1104,6 +1104,33 @@ the stensor class. \(\deriv{f}{\tenseur{s}}\) can be computed with
 templated by the name of the eigen solver (if no template parameter is
 given, the `TFELEIGENSOLVER` is used).
 
+The methods computing \(\deriv{f}{\tenseur{s}}\) take an argument
+\(\varepsilon\): two eigenvalues \(\lambda_{i}\) and
+\(\lambda_{j}\) are considered equal if
+\(\left|\lambda_{i}-\lambda_{j}\right|<\varepsilon\). In this case,
+the divided difference
+\(\Frac{f\paren{\lambda_{i}}-f\paren{\lambda_{j}}}{\lambda_{i}-\lambda_{j}}\)
+is replaced by the mean of the derivatives of \(f\) and, in three
+dimensions, when the third eigenvalue \(\lambda_{k}\) is not
+considered equal to them, the divided differences involving
+\(\lambda_{k}\) are computed with the mean of \(\lambda_{i}\) and
+\(\lambda_{j}\) and the mean of \(f\paren{\lambda_{i}}\) and
+\(f\paren{\lambda_{j}}\). This threshold is absolute. It must be well
+above the rounding errors of the eigenvalues: computed in floating
+point arithmetic, two mathematically equal eigenvalues generally
+differ by a few units in the last place, and the divided difference
+has an error of about
+\(u\,\left|f\right|/\left|\lambda_{i}-\lambda_{j}\right|\), where
+\(u\) is the machine precision, whereas those replacements have an
+error of order \(\left|\lambda_{i}-\lambda_{j}\right|\). For a
+function whose derivatives vary on the scale of the eigenvalues, such
+as the logarithm, a value of \(\varepsilon\) of order
+\(\sqrt{u}\,\max_{i}\left|\lambda_{i}\right|\) bounds both errors
+by about \(\sqrt{u}\) relatively: in double precision, the relative
+errors observed on the derivative of the logarithm with this threshold
+stay below \(2\,10^{-8}\), including for nearly isotropic tensors whose
+three eigenvalues differ by a few \(\varepsilon\).
+
 Various new overloaded versions of those methods have been
 introduced. Those overloaded methods are meant to:
 
@@ -1364,7 +1391,6 @@ The linear transformations \(\tenseurq{C}'\) and \(\tenseurq{C}''\) of
 the deviator stress are defined as follows:
 \[
 \tenseurq{C}'=
-\Frac{1}{3}\,
 \begin{pmatrix}
 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
 -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
@@ -1447,7 +1473,7 @@ const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
 > 
 > ~~~~{.cpp}
 > const auto l1 = makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
->                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
+>                                                   cB_23,cB_32,cB_66,cB_55,cB_44);
 > ~~~~
 
 The `TFEL/Material` library also provide an overload of the

@@ -19,15 +19,14 @@
 namespace mfront::bbrick {
 
   /*!
-   * \brief This class describes the Cazacu2004 orthotropic stress criterion
+   * \brief This class describes the Cazacu2004 isotropic stress criterion
    * defined by:
    * \f[
    * \sigma_{\mathrm{eq}}^{C}=
-   * \sqrt[3]{\left(J_{2}^{O}\right)^{3/2} - c\,\left(J_{3}^{O}\right)}
+   * \sqrt[3]{J_{2}^{3/2} - c\,J_{3}}
    * \f]
-   * where \(J_{2}^{O}\) and \(J_{3}^{O}\) are the orthotropic generalizations
-   * of the first and second invariants of the deviatoric part of the stress
-   * tensor \f$\underline{\sigma}\f$.
+   * where \(J_{2}\) and \(J_{3}\) are the second and third invariants of the
+   * deviatoric part of the stress tensor \f$\underline{\sigma}\f$.
    *
    * Cazacu, Oano and Barlat, Frédéric. 2004.
    * “A Criterion for Description of Anisotropy and Yield Differential

@@ -83,7 +83,7 @@ namespace mfront {
       const std::string& n) const {
     auto p = this->getAliasesMap().find(n);
     if (p == this->getAliasesMap().end()) {
-      auto msg = std::string("ModelFactory::getUniqueNameFromAlias: ");
+      auto msg = std::string("ModelInterfaceFactory::getUniqueNameFromAlias: ");
       msg += "no interface named '" + n + "'.\n";
       msg += "Available interface are : \n";
       for (p = this->getAliasesMap().begin(); p != this->getAliasesMap().end();

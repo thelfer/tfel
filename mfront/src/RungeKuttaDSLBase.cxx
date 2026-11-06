@@ -13,6 +13,7 @@
 
 #include <string>
 #include <sstream>
+#include <utility>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
@@ -40,6 +41,23 @@ namespace std {
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 namespace mfront {
+
+  /*!
+   * \return if the given name is the one of the rate of a gradient whose
+   * increment is not known, such as `dF` for the deformation gradient `F`.
+   * \param[in] bd: behaviour description
+   * \param[in] n: name
+   */
+  static bool isRateOfAGradientWithUnknownIncrement(
+      const BehaviourDescription& bd, const std::string& n) {
+    for (const auto& v : bd.getMainVariables()) {
+      const auto& g = v.first;
+      if ((!Gradient::isIncrementKnown(g)) && ("d" + g.name == n)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isRateOfAGradientWithUnknownIncrement
 
   const char* const RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables =
       "RungeKuttaUpdateAuxiliaryStateVariables";
@@ -148,8 +166,27 @@ namespace mfront {
   }  // end of getCodeBlockTemplate
 
   void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
+    // the gradients, the external state variables and the auxiliary state
+    // variables computed by an external model are replaced by their values
+    // at the current date, which the code generator writes in the
+    // associated local variables before each call of this code block
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          const auto& d = this->mb.getBehaviourData(h);
+          const auto is_current_value = [&d, &sv, this] {
+            if ((this->mb.isGradientName(sv)) ||
+                (d.isExternalStateVariableName(sv))) {
+              return true;
+            }
+            if (d.isAuxiliaryStateVariableName(sv)) {
+              const auto& v = d.getAuxiliaryStateVariables().getVariable(sv);
+              return v.getAttribute<bool>("ComputedByExternalModel", false);
+            }
+            return false;
+          }();
+          if (is_current_value) {
+            return b ? "this->" + sv + "_" : sv + "_";
+          }
           return this->standardModifier(h, sv, b);
         };
     this->treatCodeBlock(
@@ -171,6 +208,7 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     if ((this->mb.isGradientName(var)) ||
         (this->mb.isGradientIncrementName(var)) ||
+        (isRateOfAGradientWithUnknownIncrement(this->mb, var)) ||
         (d.isIntegrationVariableName(var)) ||
         (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
@@ -232,6 +270,15 @@ namespace mfront {
   std::string RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
+    if ((this->mb.isGradientName(var)) &&
+        (!Gradient::isIncrementKnown(
+            std::as_const(this->mb).getGradient(var)))) {
+      if (addThisPtr) {
+        return "this->" + var + "1";
+      } else {
+        return var + "1";
+      }
+    }
     if ((this->mb.isGradientName(var)) ||
         (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
@@ -258,6 +305,13 @@ namespace mfront {
         } else {
           return "(" + var + ")/(this->dt)";
         }
+      }
+    }
+    if (isRateOfAGradientWithUnknownIncrement(this->mb, var)) {
+      if (addThisPtr) {
+        return "this->" + var + "_";
+      } else {
+        return var + "_";
       }
     }
     if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT") ||
@@ -719,7 +773,11 @@ namespace mfront {
         for (const auto& vm : this->mb.getMainVariables()) {
           const auto& dv = vm.first;
           if (uvs.find(dv.name) != uvs.end()) {
-            ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
+            if (Gradient::isIncrementKnown(dv)) {
+              ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
+            } else {
+              ib.code += "this->" + dv.name + "_ = this->" + dv.name + "0;\n";
+            }
           }
         }
       }

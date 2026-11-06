@@ -47,7 +47,7 @@ namespace tfel::math {
     const auto& child = static_cast<const Child&>(*this);
     Scalar t = this->ti;  // current time
     this->dt = std::min(this->dt, this->tf - this->ti);
-    if (this->dt < 0) {
+    if ((this->dt < 0) || ((this->tf > this->ti) && !(this->dt > 0))) {
       tfel::raise<InvalidTimeStepException>();
     }
     while (t < this->tf) {

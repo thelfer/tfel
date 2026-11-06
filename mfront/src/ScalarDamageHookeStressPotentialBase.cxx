@@ -77,6 +77,12 @@ namespace mfront::bbrick {
     bd.setEntryName(uh, dc_n, "DamageThresold");
   }  // end of initialize
 
+  void ScalarDamageHookeStressPotentialBase::endTreatment(
+      BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
+    checkNoNormalisationFactor(bd, "d");
+    HookeStressPotentialBase::endTreatment(bd, dsl);
+  }  // end of endTreatment
+
   void
   ScalarDamageHookeStressPotentialBase::declareComputeElasticPredictionMethod(
       BehaviourDescription& bd) const {
@@ -255,7 +261,7 @@ namespace mfront::bbrick {
                 b ? "this->sebdata.lambda" : "this->lambda";
             const std::string mu = b ? "this->sebdata.mu" : "this->mu";
             m += "StressStensor prediction_stress;\n";
-            m += "StressStensor prediction_strain = "
+            m += "StrainStensor prediction_strain = "
                  "this->eel+(this->theta)*this->deto;\n";
             m += "prediction_stress(0) = " + gde + "*2*(" + mu + ")*((" +
                  lambda + ")/(" + lambda + "+2*(" + mu +

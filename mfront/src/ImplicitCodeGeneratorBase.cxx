@@ -307,7 +307,16 @@ namespace mfront {
   void ImplicitCodeGeneratorBase::writeBehaviourParserSpecificMembers(
       std::ostream& os, const Hypothesis h) const {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
+    Modifier mts = [this, h](const MaterialPropertyInput& i) -> std::string {
+      if ((i.category == MaterialPropertyInput::STATEVARIABLE) &&
+          (this->bd.hasAttribute(h, i.name + "_normalisation_factor"))) {
+        // the increment of a normalised state variable is normalised
+        // during the resolution
+        const auto& nf = this->bd.getAttribute<std::string>(
+            h, i.name + "_normalisation_factor");
+        return "this->" + i.name + " + (this->theta) * ((" + nf +
+               ") * (this->d" + i.name + "))";
+      }
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category ==
            MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
@@ -326,7 +335,13 @@ namespace mfront {
             "unsupported input type for variable '" + i.name + "'");
       }
     };
-    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
+    Modifier ets = [this, h](const MaterialPropertyInput& i) -> std::string {
+      if ((i.category == MaterialPropertyInput::STATEVARIABLE) &&
+          (this->bd.hasAttribute(h, i.name + "_normalisation_factor"))) {
+        const auto& nf = this->bd.getAttribute<std::string>(
+            h, i.name + "_normalisation_factor");
+        return "this->" + i.name + "+(" + nf + ")*(this->d" + i.name + ")";
+      }
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category ==
            MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
@@ -678,6 +693,7 @@ namespace mfront {
                              return (derivative.first.name == iv1.name) &&
                                     (derivative.second.name == iv2.name);
                            }) == invert_jacobian_blocks.end()) {
+            cc += mfront::getTypeSize(iv2);
             continue;
           }
           auto derivative_view = DerivativeViewDescription{};
@@ -1106,7 +1122,17 @@ namespace mfront {
     const auto& d = this->bd.getBehaviourData(h);
     const auto n = d.getIntegrationVariables().getTypeSize();
     this->checkBehaviourFile(os);
-    os << "TFEL_HOST_DEVICE void computeNumericalJacobian("
+    os << "/*!\n"
+       << " * \\brief compute a numerical approximation of the jacobian by a\n"
+       << " * centered finite difference. If the evaluation of the residual\n"
+       << " * fails for one of the two perturbed estimates, a one-sided\n"
+       << " * difference based on the other one and on the residual at the\n"
+       << " * current estimate (`fzeros`) is used.\n"
+       << " * \\return false if the evaluation of the residual fails for both\n"
+       << " * perturbed estimates of an unknown.\n"
+       << " * \\param[out] njacobian: numerical approximation of the jacobian\n"
+       << " */\n"
+       << "TFEL_HOST_DEVICE bool computeNumericalJacobian("
        << "tfel::math::tmatrix<" << n << "," << n
        << ", NumericType>& njacobian)\n"
        << "{\n"
@@ -1116,33 +1142,50 @@ namespace mfront {
        << "tvector<" << n << ", NumericType> tfzeros(this->fzeros);\n"
        << "tmatrix<" << n << "," << n
        << ", NumericType> tjacobian(this->jacobian);\n"
+       << "auto mfront_success = true;\n"
        << "for(ushort mfront_idx = 0; mfront_idx != " << n
        << "; ++mfront_idx){\n"
        << "this->zeros(mfront_idx) -= this->numerical_jacobian_epsilon;\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
     }
-    os << "this->computeFdF(true);\n"
+    os << "const auto mfront_backward_evaluation = this->computeFdF(true);\n"
        << "this->zeros = tzeros;\n"
        << "tvector<" << n << ", NumericType> tfzeros2(this->fzeros);\n"
        << "this->zeros(mfront_idx) += this->numerical_jacobian_epsilon;\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
     }
-    os << "this->computeFdF(true);\n"
+    os << "const auto mfront_forward_evaluation = this->computeFdF(true);\n"
+       << "if((mfront_backward_evaluation) && (mfront_forward_evaluation)){\n"
        << "this->fzeros = "
           "(this->fzeros-tfzeros2) / (2 * "
           "(this->numerical_jacobian_epsilon));\n"
+       << "} else if(mfront_forward_evaluation){\n"
+       << "this->fzeros = "
+          "(this->fzeros-tfzeros) / (this->numerical_jacobian_epsilon);\n"
+       << "} else if(mfront_backward_evaluation){\n"
+       << "this->fzeros = "
+          "(tfzeros-tfzeros2) / (this->numerical_jacobian_epsilon);\n"
+       << "} else {\n"
+       << "mfront_success = false;\n"
+       << "}\n"
+       << "if(mfront_success){\n"
        << "for(ushort mfront_idx2 = 0; mfront_idx2!= " << n
        << "; ++mfront_idx2){\n"
        << "njacobian(mfront_idx2,mfront_idx) = this->fzeros(mfront_idx2);\n"
        << "}\n"
+       << "}\n"
        << "this->zeros    = tzeros;\n"
        << "this->fzeros   = tfzeros;\n"
+       << "if(!mfront_success){\n"
+       << "break;\n"
+       << "}\n"
        << "}\n"
        << "if(&njacobian!=&(this->jacobian)){\n"
        << "this->jacobian = tjacobian;\n"
        << "}\n"
+       << "return mfront_success;\n"
        << "}\n\n";
   }  // end of writeComputeNumericalJacobian
 
@@ -1222,7 +1265,15 @@ namespace mfront {
     // that a user may use a numerical jacobian and provide an
     // analytic definition of the tangent operator
     os << "if (this->stiffness_matrix_type != NOSTIFFNESSREQUESTED){\n"
-       << "this->updateOrCheckJacobian();\n"
+       << "if(!this->updateOrCheckJacobian()){\n";
+    if (this->bd.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
+    }
+    os << "}\n"
        << "}\n";
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingEnd(os);
@@ -1327,10 +1378,13 @@ namespace mfront {
        << " * of the jacobian numerically. If the jacobian was computed\n"
        << " * in `computeResidual`, this method can be used to compare it\n"
        << " * to a numerical approximation.\n"
+       << " *\n"
+       << " * \\return false if the numerical part of the jacobian could\n"
+       << " * not be computed.\n"
        << " */\n"
-       << "TFEL_HOST_DEVICE void updateOrCheckJacobian(){\n";
+       << "TFEL_HOST_DEVICE bool updateOrCheckJacobian(){\n";
     if (this->solver.requiresNumericalJacobian()) {
-      os << "this->computeNumericalJacobian(this->jacobian);\n";
+      os << "return this->computeNumericalJacobian(this->jacobian);\n";
     } else {
       NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(
           os, this->bd, h);
@@ -1340,6 +1394,7 @@ namespace mfront {
         NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(
             os, this->bd, h, "njacobian");
       }
+      os << "return true;\n";
     }
     os << "}\n"
        << "/*!\n"
