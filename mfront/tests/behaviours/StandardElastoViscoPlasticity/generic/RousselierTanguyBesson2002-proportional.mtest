@@ -1,0 +1,22 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// proportional multiaxial stress driven by EXX, with an initial porosity
+@InternalStateVariable 'Porosity' 2e-3;
+@NonLinearConstraint<Stress> 'SYY - 0.4 * SXX';
+@NonLinearConstraint<Stress> 'SZZ - 0.3 * SXX';
+@NonLinearConstraint<Stress> 'SXY - 0.2 * SXX';
+@ImposedStrain 'EXX' {0 : 0, 1 : 0.1};
+@Times{0, 1 in 50};
+
+// The reference is an implicit Euler integration of the documented equations in
+// Python (NumPy), independent of TFEL, with the same time steps.
+@Test<file> @reference_file@ {
+  'EYY' : 3, 'EZZ' : 4, 'EXY' : 5, 'EXZ' : 6, 'EYZ' : 7
+} 1e-8;
+@Test<file> @reference_file@ 'SXX' 8 1e-3;
+@Test<file> @reference_file@ 'EquivalentPlasticStrain' 14 1e-8;
+@Test<file> @reference_file@ 'Porosity' 15 1e-8;

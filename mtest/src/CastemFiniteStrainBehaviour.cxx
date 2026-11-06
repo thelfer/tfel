@@ -249,7 +249,8 @@ namespace mtest {
     if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
       // compute the stiffness operator from material properties
       const auto rt = transpose(s.r);
-      this->computeElasticStiffness(wk.kt, s.mprops1, rt);
+      this->buildMaterialProperties(wk, s);
+      this->computeElasticStiffness(wk.kt, wk.mps, rt);
       return {true, 1};
     }
     tfel::raise(
@@ -397,7 +398,7 @@ namespace mtest {
     // tangent operator (...)
     if (ktype != StiffnessMatrixType::NOSTIFFNESS) {
       if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
-        this->computeElasticStiffness(wk.k, s.mprops1, drot);
+        this->computeElasticStiffness(wk.k, wk.mps, drot);
       } else {
         // from C_TRUESDELL rate to DSIG_DF
         if (ntens == 3) {
@@ -421,7 +422,9 @@ namespace mtest {
       const tfel::math::vector<real>& mp,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     using namespace tfel::math;
-    const auto h = this->getHypothesis();
+    const auto h = this->usesGenericPlaneStressAlgorithm
+                       ? ModellingHypothesis::PLANESTRESS
+                       : this->getHypothesis();
     if (this->stype == 0u) {
       if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
         T2toST2View<1u, real> De(&Kt(0, 0));

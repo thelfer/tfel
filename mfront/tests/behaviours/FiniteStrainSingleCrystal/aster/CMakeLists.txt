@@ -3,6 +3,7 @@ if(HAVE_ASTER)
     FiniteStrainSingleCrystal aster
     FiniteStrainSingleCrystal
     FiniteStrainSingleCrystal_NumericalJacobian
+    FiniteStrainSingleCrystal_WithoutCorrections
     )
   target_link_libraries(MFrontAsterFiniteStrainSingleCrystalBrickBehaviours
     PRIVATE AsterInterface)
@@ -59,3 +60,7 @@ astertest_finitestrainsinglecrystalbrick(finitestrainsinglecrystal-012
   asterfinitestrainsinglecrystal_numericaljacobian finitestrainsinglecrystal-012.ref)
 astertest_finitestrainsinglecrystalbrick(finitestrainsinglecrystal-159
   asterfinitestrainsinglecrystal_numericaljacobian finitestrainsinglecrystal-159.ref)
+astertest_finitestrainsinglecrystalbrick(finitestrainsinglecrystal-012
+  asterfinitestrainsinglecrystal_withoutcorrections finitestrainsinglecrystal-012.ref)
+astertest_finitestrainsinglecrystalbrick(finitestrainsinglecrystal-159
+  asterfinitestrainsinglecrystal_withoutcorrections finitestrainsinglecrystal-159.ref)
