@@ -24,7 +24,7 @@ tool handles two types of computations:
 
 - the description of a single material point,
 - the description of a pipe, subjected to various kinds of loadings.
-  This feature is detailed in [a dedicated page](`ptest.md`).
+  This feature is detailed in [a dedicated page](ptest.html).
 
 From various benchmarks, this tool has been found much faster (from
 ten to several hundred times depending on the test case) than using a
