@@ -85,31 +85,39 @@ void declareBehaviourData(pybind11::module_& m) {
            &BehaviourData::getAuxiliaryStateVariables,
            pybind11::return_value_policy::reference_internal)
       .def("getPersistentVariableDescription",
-           &BehaviourData::getPersistentVariableDescription,
+           &BehaviourData::getPersistentVariableDescription, pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getIntegrationVariableDescription",
            &BehaviourData::getIntegrationVariableDescription,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getStateVariableDescription",
-           &BehaviourData::getStateVariableDescription,
+           &BehaviourData::getStateVariableDescription, pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
-      .def("isMemberUsedInCodeBlocks", &BehaviourData::isMemberUsedInCodeBlocks)
-      .def("isMaterialPropertyName", &BehaviourData::isMaterialPropertyName)
-      .def("isLocalVariableName", &BehaviourData::isLocalVariableName)
-      .def("isPersistentVariableName", &BehaviourData::isPersistentVariableName)
+      .def("isMemberUsedInCodeBlocks", &BehaviourData::isMemberUsedInCodeBlocks,
+           pybind11::arg("n"))
+      .def("isMaterialPropertyName", &BehaviourData::isMaterialPropertyName,
+           pybind11::arg("n"))
+      .def("isLocalVariableName", &BehaviourData::isLocalVariableName,
+           pybind11::arg("n"))
+      .def("isPersistentVariableName", &BehaviourData::isPersistentVariableName,
+           pybind11::arg("n"))
       .def("isIntegrationVariableName",
-           &BehaviourData::isIntegrationVariableName)
+           &BehaviourData::isIntegrationVariableName, pybind11::arg("n"))
       .def("isIntegrationVariableIncrementName",
-           &BehaviourData::isIntegrationVariableIncrementName)
-      .def("isStateVariableName", &BehaviourData::isStateVariableName)
+           &BehaviourData::isIntegrationVariableIncrementName,
+           pybind11::arg("n"))
+      .def("isStateVariableName", &BehaviourData::isStateVariableName,
+           pybind11::arg("n"))
       .def("isStateVariableIncrementName",
-           &BehaviourData::isStateVariableIncrementName)
+           &BehaviourData::isStateVariableIncrementName, pybind11::arg("n"))
       .def("isAuxiliaryStateVariableName",
-           &BehaviourData::isAuxiliaryStateVariableName)
+           &BehaviourData::isAuxiliaryStateVariableName, pybind11::arg("n"))
       .def("isExternalStateVariableName",
-           &BehaviourData::isExternalStateVariableName)
+           &BehaviourData::isExternalStateVariableName, pybind11::arg("n"))
       .def("isExternalStateVariableIncrementName",
-           &BehaviourData::isExternalStateVariableIncrementName)
+           &BehaviourData::isExternalStateVariableIncrementName,
+           pybind11::arg("n"))
       .def("getVariableDescription", ptr,
            pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
@@ -118,50 +126,68 @@ void declareBehaviourData(pybind11::module_& m) {
            pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getPersistentVariableDescription",
-           &BehaviourData::getPersistentVariableDescription,
+           &BehaviourData::getPersistentVariableDescription, pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getPersistentVariableDescriptionByExternalName",
            &BehaviourData::getPersistentVariableDescriptionByExternalName,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getIntegrationVariableDescription",
            &BehaviourData::getIntegrationVariableDescription,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getIntegrationVariableDescriptionByExternalName",
            &BehaviourData::getIntegrationVariableDescriptionByExternalName,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getStateVariableDescription",
-           &BehaviourData::getStateVariableDescription,
+           &BehaviourData::getStateVariableDescription, pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getStateVariableDescriptionByExternalName",
            &BehaviourData::getStateVariableDescriptionByExternalName,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getAuxiliaryStateVariableDescription",
            &BehaviourData::getAuxiliaryStateVariableDescription,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getAuxiliaryStateVariableDescriptionByExternalName",
            &BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getExternalStateVariableDescription",
            &BehaviourData::getExternalStateVariableDescription,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getExternalStateVariableDescriptionByExternalName",
            &BehaviourData::getExternalStateVariableDescriptionByExternalName,
+           pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
-      .def("isParameterName", &BehaviourData::isParameterName)
-      .def("isStaticVariableName", &BehaviourData::isStaticVariableName)
-      .def("hasGlossaryName", &BehaviourData::hasGlossaryName)
-      .def("hasEntryName", &BehaviourData::hasEntryName)
-      .def("getExternalName", &BehaviourData::getExternalName)
+      .def("isParameterName", &BehaviourData::isParameterName,
+           pybind11::arg("n"))
+      .def("isStaticVariableName", &BehaviourData::isStaticVariableName,
+           pybind11::arg("n"))
+      .def("hasGlossaryName", &BehaviourData::hasGlossaryName,
+           pybind11::arg("n"))
+      .def("hasEntryName", &BehaviourData::hasEntryName, pybind11::arg("n"))
+      .def("getExternalName", &BehaviourData::getExternalName,
+           pybind11::arg("n"))
       .def("getExternalNames",
            static_cast<std::vector<std::string> (BehaviourData::*)(
                const VariableDescriptionContainer&) const>(
-               &BehaviourData::getExternalNames))
-      .def("setGlossaryName", &BehaviourData::setGlossaryName)
-      .def("isGlossaryNameUsed", &BehaviourData::isGlossaryNameUsed)
-      .def("setEntryName", &BehaviourData::setEntryName)
-      .def("isUsedAsEntryName", &BehaviourData::isUsedAsEntryName)
+               &BehaviourData::getExternalNames),
+           pybind11::arg("v"))
+      .def("setGlossaryName", &BehaviourData::setGlossaryName,
+           pybind11::arg("n"), pybind11::arg("g"))
+      .def("isGlossaryNameUsed", &BehaviourData::isGlossaryNameUsed,
+           pybind11::arg("n"))
+      .def("setEntryName", &BehaviourData::setEntryName, pybind11::arg("n"),
+           pybind11::arg("e"))
+      .def("isUsedAsEntryName", &BehaviourData::isUsedAsEntryName,
+           pybind11::arg("n"))
       .def("getVariableNameFromGlossaryNameOrEntryName",
-           &BehaviourData::getVariableNameFromGlossaryNameOrEntryName)
+           &BehaviourData::getVariableNameFromGlossaryNameOrEntryName,
+           pybind11::arg("n"))
       .def("hasAttribute", &BehaviourData::hasAttribute,
           pybind11::arg("n"))
       .def("setAttribute", &BehaviourData::setAttribute,
@@ -198,11 +224,13 @@ void declareBehaviourData(pybind11::module_& m) {
       .def("setFloattingPointParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&,
                                                const double)>(
-               &BehaviourData::setParameterDefaultValue))
+               &BehaviourData::setParameterDefaultValue),
+           pybind11::arg("n"), pybind11::arg("v"))
       .def("setFloattingPointParameterDefaultValue",
            static_cast<void (BehaviourData::*)(
                const std::string&, const unsigned short, const double)>(
-               &BehaviourData::setParameterDefaultValue))
+               &BehaviourData::setParameterDefaultValue),
+           pybind11::arg("n"), pybind11::arg("i"), pybind11::arg("v"))
       .def("setUnsignedShortParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&,
                                                const unsigned short)>(

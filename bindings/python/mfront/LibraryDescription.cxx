@@ -52,8 +52,9 @@ void declareLibraryDescription(pybind11::module_& m) {
   w.def_property("epts", LibraryDescription_get_epts,
                   LibraryDescription_set_epts);
 
-  m.def("convert", convert);
-  m.def("mergeLibraryDescription", mergeLibraryDescription);
+  m.def("convert", convert, pybind11::arg("t"));
+  m.def("mergeLibraryDescription", mergeLibraryDescription, pybind11::arg("d"),
+        pybind11::arg("s"));
 
   //   class_<std::vector<LibraryDescription>>("LibraryDescriptionVector")
   //       .def("__iter__", iterator<std::vector<LibraryDescription>>())
