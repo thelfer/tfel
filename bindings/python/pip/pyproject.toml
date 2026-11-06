@@ -9,7 +9,7 @@ requires = [
   "setuptools>=64",
   "cmake>=3.20",
   "pybind11>=2.12",
-  "pybind11-stubgen>=2.12",
+  "pybind11-stubgen>=3.0",
   "numpy>=2.0",
   "patchelf; sys_platform == 'linux'",
 ]
