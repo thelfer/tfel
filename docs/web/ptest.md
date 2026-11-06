@@ -119,7 +119,7 @@ This keyword is followed by a string. The following loading are supported:
 - `ImposedInnerRadius`: the evolution of the inner radius is specified
   by the user.
 
-Note that the modeling of a mandrel may affect the axial loading once
+Note that the modeling of a mandrel may affect the radial loading once
 the pipe and the mandrel are in contact. Modeling of a mandrel is
 detailed below in a dedicated section.
 
