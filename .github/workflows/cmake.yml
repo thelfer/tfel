@@ -19,6 +19,12 @@ jobs:
         include:
           - os: ubuntu-latest
             jobs_flag: '-j $(nproc)'
+            # the tests of the solver interfaces and the Fortran tests
+            options: >-
+              -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON
+              -Denable-abaqus=ON -Denable-ansys=ON -Denable-calculix=ON
+              -Denable-cyrano=ON -Denable-diana-fea=ON -Denable-lsdyna=ON
+              -Denable-comsol=ON
           - os: macos-latest
             jobs_flag: '-j $(sysctl -n hw.ncpu)'
 
@@ -41,6 +47,7 @@ jobs:
               -B ${{github.workspace}}/build                       \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}               \
               -Denable-portable-build=ON                           \
+              ${{ matrix.options }}                                \
               -DCMAKE_C_COMPILER_LAUNCHER=ccache                   \
               -DCMAKE_CXX_COMPILER_LAUNCHER=ccache                 \
               -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
