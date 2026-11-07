@@ -908,6 +908,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1379: [mfront] Chaboche 2012 kinematic hardening rule: are the differences with the literature for m != 1 intended?
+
+For more details, see <https://github.com/thelfer/tfel/issues/1379>
+
 ## Issue 932: [mtest] Document modeling of pipes
 
 For more details, see <https://github.com/thelfer/tfel/issues/932>
