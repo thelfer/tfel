@@ -2202,7 +2202,7 @@ namespace mfront {
                  << v.name << "_dd" << givd.name << "_view;\n";
             } else {
               os << "for(typename " << rhs_type
-                 << "::size_type idx; idx!=" << v.arraySize << "; ++idx){\n"
+                 << "::size_type idx = 0; idx!=" << v.arraySize << "; ++idx){\n"
                  << "integration_variable_derivative_d" << v.name << "_dd"
                  << givd.name << "(idx) = integration_variable_derivative_d"
                  << v.name << "_dd" << givd.name << "_view(idx);"
