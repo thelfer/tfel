@@ -4929,12 +4929,9 @@ namespace mfront {
 
   static void writeBoundsChecks(std::ostream& os,
                                 const VariableDescription& v,
+                                const VariableBoundsDescription& bounds,
                                 const std::string& n,
                                 const bool b) {
-    if (!v.hasBounds()) {
-      return;
-    }
-    const auto& bounds = v.getBounds();
     const auto numeric_type = [&v] {
       if (v.isScalar()) {
         return v.type;
@@ -4986,23 +4983,25 @@ namespace mfront {
                                              const VariableDescription& v,
                                              const bool b) const {
     if (v.arraySize == 1u) {
-      mfront::writeBoundsChecks(os, v, v.name, b);
+      if (v.hasBounds()) {
+        mfront::writeBoundsChecks(os, v, v.getBounds(), v.name, b);
+      }
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writeBoundsChecks(os, v, v.name + '[' + std::to_string(i) + ']',
-                                  b);
+        if (v.hasBounds(i)) {
+          mfront::writeBoundsChecks(os, v, v.getBounds(i),
+                                    v.name + '[' + std::to_string(i) + ']', b);
+        }
       }
     }
   }  // end of writeBoundsChecks
 
-  static void writePhysicalBoundsChecks(std::ostream& os,
-                                        const VariableDescription& v,
-                                        const std::string& n,
-                                        const bool b) {
-    if (!v.hasPhysicalBounds()) {
-      return;
-    }
-    const auto& bounds = v.getPhysicalBounds();
+  static void writePhysicalBoundsChecks(
+      std::ostream& os,
+      const VariableDescription& v,
+      const VariableBoundsDescription& bounds,
+      const std::string& n,
+      const bool b) {
     const auto numeric_type = [&v] {
       if (v.isScalar()) {
         return v.type;
@@ -5053,11 +5052,17 @@ namespace mfront {
   void BehaviourDSLCommon::writePhysicalBoundsChecks(
       std::ostream& os, const VariableDescription& v, const bool b) const {
     if (v.arraySize == 1u) {
-      mfront::writePhysicalBoundsChecks(os, v, v.name, b);
+      if (v.hasPhysicalBounds()) {
+        mfront::writePhysicalBoundsChecks(os, v, v.getPhysicalBounds(), v.name,
+                                          b);
+      }
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writePhysicalBoundsChecks(
-            os, v, v.name + '[' + std::to_string(i) + ']', b);
+        if (v.hasPhysicalBounds(i)) {
+          mfront::writePhysicalBoundsChecks(
+              os, v, v.getPhysicalBounds(i),
+              v.name + '[' + std::to_string(i) + ']', b);
+        }
       }
     }
   }  // end of writePhysicalBoundsChecks
