@@ -20,6 +20,7 @@ void declareFileDescription(pybind11::module_&);
 void declareFileDescription(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<mfront::FileDescription>(m, "FileDescription")
+      .def(pybind11::init<>())
       .def_readwrite("fileName", &mfront::FileDescription::fileName)
       .def_readwrite("authorName", &mfront::FileDescription::authorName)
       .def_readwrite("date", &mfront::FileDescription::date)

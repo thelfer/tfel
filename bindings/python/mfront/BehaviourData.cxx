@@ -59,6 +59,7 @@ void declareBehaviourData(pybind11::module_& m) {
       &BehaviourData::getVariableDescription;
 
   pybind11::class_<BehaviourData>(m, "BehaviourData")
+      .def(pybind11::init<>())
       .def("getMaterialProperties", &BehaviourData::getMaterialProperties,
            pybind11::return_value_policy::reference)
       .def("getPersistentVariables", &BehaviourData::getPersistentVariables,

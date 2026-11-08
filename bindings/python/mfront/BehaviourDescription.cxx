@@ -173,6 +173,7 @@ void declareBehaviourDescription(pybind11::module_&);
 void declareBehaviourDescription(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<BehaviourDescription>(m, "BehaviourDescription")
+      .def(pybind11::init<>())
       .def("setBehaviourName", &BehaviourDescription::setBehaviourName)
       .def("getBehaviourName", &BehaviourDescription::getBehaviourName)
       .def("setDSLName", &BehaviourDescription::setDSLName)
