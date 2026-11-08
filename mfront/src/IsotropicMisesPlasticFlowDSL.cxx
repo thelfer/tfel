@@ -120,8 +120,8 @@ namespace mfront {
                ModellingHypothesis::toString(h) + "'.";
       }();
       this->throwRuntimeError(
-          "IsotropicBehaviourDSLBase::"
-          "endsInputFileProcessing: ",
+          "IsotropicMisesPlasticFlowDSL::"
+          "writeBehaviourParserSpecificMembers",
           msg);
     }
     os << "bool computeFlow(){\n"
