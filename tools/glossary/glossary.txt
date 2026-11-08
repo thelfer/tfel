@@ -5,7 +5,7 @@
 };
 
 "DualStress" {
- unit: "stress";
+ unit: "Pa";
  type: "tensor";
  short_description: "dual stress of the strain measure";
 };
@@ -171,7 +171,7 @@
 };
 
 "TemperatureGradient"{
- unit : "T.m^{-1}";
+ unit : "K.m^{-1}";
  type : "vector";
  short_description : "le gradient de température";
 };
@@ -374,7 +374,7 @@
 };
 
 "CohesiveForce"{
- unit : "Newton";
+ unit : "Pa";
  type : "vector";
  short_description : "cohesive force for cohesize zone models";
 };
@@ -388,7 +388,7 @@
 
 "HillStress"{
  unit : "Pa";
- type : "tensor";
+ type : "scalar";
  short_description : "la contrainte équivalente au sens de Hill";
 };
 
@@ -406,7 +406,7 @@
 
 "HydrostaticPressure"{
  unit : "Pa";
- type : "tensor";
+ type : "scalar";
  short_description : "la pression hydrostatique (égale au tiers de la trace du tenseur des contraintes)";
 };
 
@@ -635,31 +635,31 @@
 "PlateWidth"{
  unit : "??";
  type : "scalar";
- short_description : "??";
+ short_description : "the out-of-plane width of a plate";
 };
 
 "CrossSectionArea"{
  unit : "??";
  type : "scalar";
- short_description : "??";
+ short_description : "the area of the cross section of a beam";
 };
 
 "FirstAxisSecondMomentArea"{
  unit : "??";
  type : "scalar";
- short_description : "??";
+ short_description : "the second moment of area of the cross section of a beam about its first axis";
 };
 
 "SecondAxisSecondMomentArea"{
  unit : "??";
  type : "scalar";
- short_description : "??";
+ short_description : "the second moment of area of the cross section of a beam about its second axis";
 };
 
 "TorsionConstant"{
- unit : "??";
+ unit : "m^{4}";
  type : "scalar";
- short_description : "??";
+ short_description : "the torsion constant of the cross section of a beam";
 };
 
 "NumberOfMoles"{
