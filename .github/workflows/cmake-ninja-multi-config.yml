@@ -1,0 +1,48 @@
+name: CMake with the Ninja Multi-Config generator
+
+on:
+  push:
+    branches: [ rliv-5.1 ]
+  pull_request:
+    branches: [ rliv-5.1 ]
+
+# without cache, a run is long: a new push cancels the one in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        path: tfel
+
+    - name: Install ninja
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build
+
+    - name: Configure CMake
+      run: |
+        cmake -G "Ninja Multi-Config" ${{github.workspace}}/tfel   \
+              -B ${{github.workspace}}/build                       \
+              -Denable-portable-build=ON
+
+    - name: Build
+      run: |
+        cmake --build ${{github.workspace}}/build --config Release
+
+    # on this branch, the tests are built by the check target, which runs ctest
+    - name: Test
+      run: |
+        export CTEST_PARALLEL_LEVEL=$(nproc)
+        cmake --build ${{github.workspace}}/build --config Release --target check
+
+    - name: Print test log on failure
+      if: ${{ failure() }}
+      run: |
+        cat ${{github.workspace}}/build/Testing/Temporary/*.log
