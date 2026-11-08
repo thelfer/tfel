@@ -252,14 +252,23 @@ static void generate_python(const std::vector<Constant>& cs) {
      << " * project under specific licensing conditions. \n"
      << " */\n"
      << "\n"
-     << "#include <pybind11/pybind11.h>\n"
-     << "#include <pybind11/stl.h>\n"
+     << "#include<boost/python.hpp>\n"
      << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
      << "\n"
-     << "void declarePhysicalConstants(pybind11::module_& m);\n"
+     << "void declarePhysicalConstants();\n"
      << "\n"
      << "struct TFEL_VISIBILITY_LOCAL PhysicalConstants{\n";
   for (const auto& c : cs) {
+    if ((!c.description.empty()) || (!c.unit.empty())) {
+      os << "//!";
+      if (!c.description.empty()) {
+        os << ' ' << c.description;
+      }
+      if (!c.unit.empty()) {
+        os << " (" << c.unit << ')';
+      }
+      os << '\n';
+    }
     os << "static const double " << c.name << ";\n";
   }
   os << "};\n\n";
@@ -268,17 +277,33 @@ static void generate_python(const std::vector<Constant>& cs) {
        << c.value << ");\n";
   }
   os << "\n"
-     << "void declarePhysicalConstants(pybind11::module_& m)\n"
+     << "void declarePhysicalConstants()\n"
      << "{\n"
-     << "  pybind11::class_<PhysicalConstants> w(m, \"PhysicalConstants\", "
-        "\"Physical constants\");\n"
-     << "  w";
+     << "  boost::python::class_<PhysicalConstants>(\"PhysicalConstants\")\n";
   for (const auto& c : cs) {
-    os << ".def_readonly_static(\"" << c.name
-       << "\", &PhysicalConstants::" << c.name << ")\n";
+    auto write_comments = [&os, &c] {
+      if ((!c.description.empty()) || (!c.unit.empty())) {
+        os << ",\n\"";
+        if (!c.description.empty()) {
+          os << c.description;
+        }
+        if (!c.unit.empty()) {
+          if (!c.description.empty()) {
+            os << ' ';
+          }
+          os << "(" << c.unit << ')';
+        }
+        os << '"';
+      }
+    };
+    os << ".def_readonly(\"" << c.name << "\",PhysicalConstants::" << c.name;
+    write_comments();
+    os << ")\n";
     if (!c.short_name.empty()) {
-      os << ".def_readonly_static(\"" << c.short_name
-         << "\", &PhysicalConstants::" << c.name << ")\n";
+      os << ".def_readonly(\"" << c.short_name
+         << "\",PhysicalConstants::" << c.name;
+      write_comments();
+      os << ")\n";
     }
   }
   os << ";\n\n"
