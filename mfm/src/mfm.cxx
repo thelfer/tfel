@@ -166,7 +166,7 @@ struct MFM : public tfel::utilities::ArgumentParserBase<MFM> {
     };
     auto type_filter = [](const EntryPoint& e, const std::string& t) {
       using tfel::system::ExternalLibraryManager;
-      if (t == "material_property") {
+      if ((t == "material_property") || (t == "material-property")) {
         return e.type == EntryPoint::MATERIALPROPERTY;
       } else if (t == "behaviour") {
         return e.type == EntryPoint::BEHAVIOUR;
@@ -191,7 +191,7 @@ struct MFM : public tfel::utilities::ArgumentParserBase<MFM> {
     this->add_filter(
         "--filter-by-type",
         "filter entry points by material knowledge type. Valid types are "
-        "material-property, behaviour or model",
+        "material_property, behaviour or model",
         type_filter);
     this->registerCallBack(
         "--verbose", CallBack("set verbose output", set_verbose_level, true));

@@ -16,6 +16,7 @@
 
 #include <tuple>
 #include <limits>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::math {
 

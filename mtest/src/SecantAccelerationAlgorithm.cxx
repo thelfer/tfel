@@ -35,7 +35,7 @@ namespace mtest {
       const auto i = AccelerationAlgorithm::convertToUnsignedShort(m, v);
       tfel::raise_if(this->sat != -1, m + ": the acceleration trigger "
                                           "has already been defined");
-      tfel::raise_if(i < 3, "m : invalid acceleration trigger value.");
+      tfel::raise_if(i < 3, m + ": invalid acceleration trigger value.");
       this->sat = i;
     } else {
       tfel::raise(m + ": invalid parameter '" + p + "'.");

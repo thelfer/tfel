@@ -107,7 +107,7 @@ struct MTestParserTest final : public tfel::tests::TestCase {
 #endif
 #ifdef HAVE_ASTER
     this->check("@MFrontAsterBehavioursBuildPath@", "aster");
-    this->check2("@MFrontCastemBehavioursBuildPath@", "umat");
+    this->check2("@MFrontAsterBehavioursBuildPath@", "aster");
 #endif
 #ifdef HAVE_CYRANO
     this->check("@MFrontCyranoBehavioursBuildPath@", "cyrano",

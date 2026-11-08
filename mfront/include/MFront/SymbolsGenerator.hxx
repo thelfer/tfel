@@ -26,6 +26,7 @@ namespace mfront {
   struct MaterialKnowledgeDescription;
   struct BehaviourDescription;
   struct FileDescription;
+  struct VariableDescriptionContainer;
 
   /*!
    * This class provides some helper function for behaviour

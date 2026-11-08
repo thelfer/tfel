@@ -109,7 +109,7 @@ namespace mfront {
     for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
       if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
         this->throwRuntimeError(
-            "IsotropicMisesCreepDSL::"
+            "IsotropicMisesPlasticFlowDSL::"
             "endsInputFileProcessing",
             "no flow rule defined");
       }

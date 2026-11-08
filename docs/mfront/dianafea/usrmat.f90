@@ -18,7 +18,7 @@ subroutine USRMAT(eps0, deps, ns, age0, dtime, temp0, &
   character(len=6), intent(in) :: usrmod
   real(kind=8), intent(in) :: usrval(nuv)
   integer, intent(in) :: nuv
-  real(kind=8), intent(out) :: usrsta(nus)
+  real(kind=8), intent(inout) :: usrsta(nus)
   integer, intent(in) :: nus
   integer, intent(in) :: usrind(nui)
   integer, intent(in) :: nui
@@ -34,7 +34,7 @@ subroutine USRMAT(eps0, deps, ns, age0, dtime, temp0, &
          implicit none
          real(kind=c_double), intent(out) :: sig(ntens)
          real(kind=c_double), intent(out) :: ddsdde(ntens, ntens)
-         real(kind=c_double), intent(out) :: statev(nstatv)
+         real(kind=c_double), intent(inout) :: statev(nstatv)
          character(len=1, kind=c_char), intent(in) :: cname(6)
          integer(kind=c_int), intent(in), value :: ntens
          integer(kind=c_int), intent(in), value :: nprops
@@ -48,14 +48,14 @@ subroutine USRMAT(eps0, deps, ns, age0, dtime, temp0, &
        end subroutine dianafea_external_behaviour_call
     end interface
 
-! if no material properties are defined, DIANA sets nuv to -1 where MFront would expect 0
+! if no state variables are defined, DIANA sets nus to -1 where MFront would expect 0
     if (nus .eq. -1) then
        nus2 = 0
     else
        nus2 = nus
     endif
     
-! if no state variables are defined, DIANA sets nus to -1 where MFront would expect 0
+! if no material properties are defined, DIANA sets nuv to -1 where MFront would expect 0
     if (nuv .eq. -1) then
        nuv2 = 0
     else
@@ -64,7 +64,7 @@ subroutine USRMAT(eps0, deps, ns, age0, dtime, temp0, &
 
     ! write(*,*) "eto: ", eps0
     ! write(*,*) "deto: ", deps
-    write(*,*) "ns: ", ns
+    ! write(*,*) "ns: ", ns
     
     call dianafea_external_behaviour_call(sig, stiff, usrsta, usrmod, &
          ns, nuv2, nus2, eps0, deps, dtime, usrval, temp0, dtemp)

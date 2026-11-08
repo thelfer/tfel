@@ -37,7 +37,8 @@ namespace tfel::math {
     static constexpr real isqrt2 = 0.70710678118654752440;
     static constexpr real sqrt3 =
         1.7320508075688772935274463415058723669428052538103806280;
-    static constexpr real isqrt3 = 0.57735026919;
+    static constexpr real isqrt3 =
+        0.57735026918962576450914878050195745564760175127;
 #endif
   };
 

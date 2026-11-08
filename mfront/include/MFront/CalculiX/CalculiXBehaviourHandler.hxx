@@ -102,8 +102,8 @@ namespace calculix {
        */
       TFEL_CALCULIX_INLINE static void exe(
           BV& b,
-          const CalculiXReal* const DV1,
           const CalculiXReal* const DV0,
+          const CalculiXReal* const DV1,
           const StressFreeExpansionHandler& sfeh) {
         using std::pair;
         using tfel::fsalgo::copy;
