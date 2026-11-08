@@ -58,11 +58,11 @@ namespace std {
 namespace mfront {
 
   bool isValidMaterialName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
   bool isValidLibraryName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
   DSLBase::VariableModifier::~VariableModifier() = default;
@@ -108,7 +108,7 @@ namespace mfront {
 
   std::string DSLBase::getTemporaryVariableName(
       std::vector<std::string>& tmpnames, const std::string& p) const {
-    if (!this->isValidIdentifier(p)) {
+    if (!this->isValidIdentifier(p, false)) {
       this->throwRuntimeError("DSLBase::getTemporaryVariableName",
                               "invalid variable prefix '" + p + "'");
     }
@@ -538,7 +538,7 @@ namespace mfront {
   void DSLBase::registerIntegerConstant(const std::string& n,
                                         const size_t l,
                                         const int v) {
-    if (!this->isValidIdentifier(n)) {
+    if (!this->isValidIdentifier(n, false)) {
       this->throwRuntimeError("DSLBase::registerIntegerConstant",
                               "Variable name '" + n + "' is not valid.");
     }
@@ -608,7 +608,7 @@ namespace mfront {
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
       const auto sname = this->current->value;
       const auto vname = tfel::unicode::getMangledString(sname);
-      throw_if(!this->isValidIdentifier(vname),
+      throw_if(!this->isValidIdentifier(vname, false),
                "variable given is not valid (read '" + sname + "').");
       auto lineNumber = this->current->line;
       ++(this->current);
@@ -1142,7 +1142,7 @@ namespace mfront {
                             "Cannot read variable name.");
     const auto sname = this->current->value;
     const auto vname = tfel::unicode::getMangledString(sname);
-    if (!this->isValidIdentifier(vname)) {
+    if (!this->isValidIdentifier(vname, false)) {
       this->throwRuntimeError("DSLBase::treatStaticVar",
                               "Variable name '" + sname + "' is not valid.");
     }

@@ -95,7 +95,7 @@ namespace mfront {
   BehaviourDSLCommon::StandardWordAnalyser::~StandardWordAnalyser() = default;
 
   bool isValidBehaviourName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
   BehaviourDSLCommon::BehaviourDSLCommon()
@@ -382,7 +382,7 @@ namespace mfront {
                               "invalid material name '" + m + "'");
     }
     this->mb.setMaterialName(m);
-    if (!isValidIdentifier(this->mb.getClassName())) {
+    if (!isValidIdentifier(this->mb.getClassName(), false)) {
       this->throwRuntimeError("BehaviourDSLCommon::setMaterial",
                               "resulting class name is not valid (read '" +
                                   this->mb.getClassName() + "')");
@@ -2647,7 +2647,7 @@ namespace mfront {
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatModellingHypothesis");
     // variable name
-    if (!this->isValidIdentifier(this->current->value)) {
+    if (!this->isValidIdentifier(this->current->value, false)) {
       this->throwRuntimeError("BehaviourDSLCommon::treatHillTensor: ",
                               "variable name is not valid "
                               "(read '" +
@@ -2816,7 +2816,7 @@ namespace mfront {
     }
     const auto& e =
         this->current->value.substr(1, this->current->value.size() - 2);
-    if (!this->isValidIdentifier(e)) {
+    if (!this->isValidIdentifier(e, false)) {
       this->throwRuntimeError("BehaviourDSLCommon::treatSetEntryNameMethod: ",
                               "invalid entry name '" + e + "'");
     }
@@ -3184,7 +3184,7 @@ namespace mfront {
           "invalid behaviour name '" + i + "'");
     }
     this->mb.setBehaviourName(i);
-    if (!isValidIdentifier(this->mb.getClassName())) {
+    if (!isValidIdentifier(this->mb.getClassName(), false)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::setMaterialKnowledgeIdentifier",
           "resulting class name is not valid (read '" +
@@ -3209,7 +3209,7 @@ namespace mfront {
     auto endOfTreatment = false;
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
       const auto s = this->current->value;
-      if (!isValidIdentifier(s)) {
+      if (!isValidIdentifier(s, false)) {
         --(this->current);
         this->throwRuntimeError(
             "BehaviourDSLCommon::readStringList",
@@ -4525,7 +4525,7 @@ namespace mfront {
     if (t.value == "0") {
       return {BehaviourData::NullExpansion{}};
     }
-    throw_if(!CxxTokenizer::isValidIdentifier(t.value, true),
+    throw_if(!CxxTokenizer::isValidIdentifier(t.value, false),
              "unexpected token '" + t.value +
                  "', expected "
                  "external state variable name");
@@ -8503,7 +8503,7 @@ namespace mfront {
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       const auto sname = this->current->value;
       const auto vname = tfel::unicode::getMangledString(sname);
-      throw_if(!isValidIdentifier(vname),
+      throw_if(!isValidIdentifier(vname, false),
                "variable given is not valid (read "
                "'" +
                    sname + "').");
@@ -8733,7 +8733,7 @@ namespace mfront {
       const auto& opt = *po;
       if (!ModellingHypothesis::isModellingHypothesis(opt.value)) {
         id = opt.value;
-        if (!isValidIdentifier(id)) {
+        if (!isValidIdentifier(id, false)) {
           this->throwRuntimeError(
               "BehaviourDSLCommon::treatInitialize",
               "initialize function identifier is invalid (read '" + id + "').");

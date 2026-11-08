@@ -62,7 +62,7 @@ namespace mfront {
   }  // end of is()
 
   bool isValidModelName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
   ModelDSLCommon::ModelDSLCommon() {
@@ -385,7 +385,7 @@ namespace mfront {
                                 std::to_string(this->md.functions.size()));
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
     f.name = this->current->value;
-    throw_if(!this->isValidIdentifier(f.name),
+    throw_if(!this->isValidIdentifier(f.name, false),
              "function name '" + f.name + "' is not valid");
     this->md.registerMemberName(f.name);
     this->reserveName(f.name + ".Domain");
@@ -727,7 +727,7 @@ namespace mfront {
   void ModelDSLCommon::treatParameter() {
     auto endOfTreatment = false;
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
-      if (!this->isValidIdentifier(this->current->value)) {
+      if (!this->isValidIdentifier(this->current->value, false)) {
         this->throwRuntimeError("DSLBase::handleParameter : ",
                                 "variable given is not valid (read '" +
                                     this->current->value + "').");
