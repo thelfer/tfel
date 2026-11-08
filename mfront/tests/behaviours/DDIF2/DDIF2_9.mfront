@@ -1,0 +1,10 @@
+@DSL Implicit;
+@Behaviour DDIF2_9;
+@Description {
+  One non constant fracture stress, used in the three directions.
+}
+
+@Brick DDIF2 {
+ fracture_stress : "150e6+0*T",
+ softening_slope : -75e9
+};

@@ -1456,6 +1456,12 @@ namespace mfront {
       }
       if (this->shallGenerateMTestFileOnFailure(bd)) {
         out << "using mfront::SupportedTypes;\n";
+        if ((type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
+            (is_finite_strain_through_strain_measure)) {
+          // the stress measure is read before the integration, which may
+          // overwrite d->K with the tangent operator
+          out << "const auto mg_sm = mfront::gb::getStressMeasure(d->K);\n";
+        }
       }
       if ((type == BehaviourDescription::GENERALBEHAVIOUR) ||
           (type == BehaviourDescription::COHESIVEZONEMODEL)) {
@@ -1692,13 +1698,60 @@ namespace mfront {
            << "d->s0.gradients);\n"
            << "mg.setDeformationGradientTensorAtTheEndOfTheTimeStep("
            << "d->s1.gradients);\n";
+        // MTest expects the Cauchy stress: the stress measure selected by
+        // the caller is converted as in the integrate functions
+        os << "using mg_Traits = "
+           << "mfront::gb::GenericBehaviourTraits<Behaviour>;\n"
+           << "auto mg_F0 = tfel::math::tensor<mg_Traits::N, real>{};\n"
+           << "std::copy(d->s0.gradients, "
+           << "d->s0.gradients + mg_Traits::TensorSize, mg_F0.begin());\n";
+        if ((h == ModellingHypothesis::PLANESTRESS) ||
+            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+          const auto* const F0zz =
+              (h == ModellingHypothesis::PLANESTRESS) ? "mg_F0[2]" : "mg_F0[1]";
+          // the logarithmic strain integrate function converts the stress
+          // with the deformation gradient given by the caller
+          if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+            if (this->checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
+                        bd, h)
+                    .first) {
+              os << F0zz << " += d->s0.internal_state_variables"
+                 << "[mg_Traits::axial_deformation_gradient_offset];\n";
+            }
+          } else if (bd.getStrainMeasure() ==
+                     BehaviourDescription::GREENLAGRANGE) {
+            if (this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd, h).first) {
+              os << F0zz << " += std::sqrt(1 + 2 * "
+                 << "d->s0.internal_state_variables"
+                 << "[mg_Traits::axial_strain_offset]);\n";
+            }
+          }
+        }
+        // mg_sm, the stress measure, is read before the integration
+        os << "auto mg_s0 = tfel::math::stensor<mg_Traits::N, real>{};\n"
+           << "if (mg_sm == mfront::gb::StressMeasure::PK1) {\n"
+           << "mg_s0 = "
+           << "tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress("
+           << "tfel::math::ConstTensorView<mg_Traits::N, real>("
+           << "d->s0.thermodynamic_forces), mg_F0);\n"
+           << "} else if (mg_sm == mfront::gb::StressMeasure::PK2) {\n"
+           << "mg_s0 = "
+           << "tfel::math::convertSecondPiolaKirchhoffStressToCauchyStress("
+           << "tfel::math::ConstStensorView<mg_Traits::N, real>("
+           << "d->s0.thermodynamic_forces), mg_F0);\n"
+           << "} else {\n"
+           << "std::copy(d->s0.thermodynamic_forces, "
+           << "d->s0.thermodynamic_forces + mg_Traits::StensorSize, "
+           << "mg_s0.begin());\n"
+           << "}\n"
+           << "mg.setStressTensor(mg_s0.begin());\n";
       } else {
         os << "mg.setStrainTensorAtTheBeginningOfTheTimeStep("
            << "d->s0.gradients);\n"
            << "mg.setStrainTensorAtTheEndOfTheTimeStep("
-           << "d->s1.gradients);\n";
+           << "d->s1.gradients);\n"
+           << "mg.setStressTensor(d->s0.thermodynamic_forces);\n";
       }
-      os << "mg.setStressTensor(d->s0.thermodynamic_forces);\n";
     }
     for (const auto& m : mprops.first) {
       tfel::raise_if(!m.isScalar(),
@@ -1884,7 +1937,7 @@ namespace mfront {
       for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
         if (v.isScalar()) {
           if (bd.useQt()) {
-            os << "this-> " << n << " = " <<  //
+            os << "this-> " << n << "[" << idx << "] = " <<  //
                 v.type << "(" << src << "[" << odv << "]);\n";
           } else {
             os << "this->" << n << "[" << idx << "] = " << src << "[" << odv

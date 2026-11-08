@@ -272,7 +272,7 @@ namespace mfront {
           m << "\\\n";
           first = false;
         }
-        m << "\t     -I" << dir;
+        m << "\t     -I\"" << dir << '"';
       }
     }
     //

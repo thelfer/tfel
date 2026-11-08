@@ -724,13 +724,28 @@ namespace tfel::check {
     tfel::raise("TestLauncher::ClockAction: invalid clockevent");
   }
 
-  bool TestLauncher::execute(const Command& c,
+  bool TestLauncher::execute(const Configuration& configuration,
+                             const Command& c,
                              const std::string& output_file,
                              const std::string& step) {
     try {
       tfel::system::ProcessManager manager;
       this->ClockAction(START);
-      manager.execute(c.command, "", output_file, this->environments);
+      auto envs = this->environments;
+      for (const auto& kv : configuration.environments) {
+        if (!envs.insert(kv).second) {
+          this->log.addMessage("environment variable '" + kv.first +
+                               "' multiply defined: using the value defined in "
+                               "the test file");
+        }
+      }
+      if (c.timeout.has_value()) {
+        const auto tc =
+            "timeout -v -k 1 " + std::to_string(*(c.timeout)) + " " + c.command;
+        manager.execute(tc, "", output_file, envs);
+      } else {
+        manager.execute(c.command, "", output_file, envs);
+      }
       this->ClockAction(STOP);
       if (c.shall_fail) {
         this->log.addTestResult(this->testname, step, c.command,
@@ -792,7 +807,7 @@ namespace tfel::check {
     for (const auto& c : this->commands) {
       const auto step = "Exec-" + std::to_string(i);
       const auto output_file = this->testname + "-" + step + ".out";
-      const auto success = this->execute(c, output_file, step);
+      const auto success = this->execute(configuration, c, output_file, step);
       this->glog.addSimpleTestResult("** " + step + " " + c.command, success);
       if (!success) {
         if (!configuration.discard_commands_failure) {

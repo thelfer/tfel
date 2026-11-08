@@ -39,5 +39,6 @@ void declareProcessManagerCommand(pybind11::module_& m) {
   using namespace tfel::system;
   pybind11::class_<ProcessManager::Command, ProcessManagerCommandWrapper>(
       m, "ProcessManagerCommand")
+      .def(pybind11::init<>())
       .def("execute", &ProcessManager::Command::execute);
 }  // end of declarestensor

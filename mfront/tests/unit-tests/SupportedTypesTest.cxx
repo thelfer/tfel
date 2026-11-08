@@ -114,6 +114,7 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
       TFEL_TESTS_CHECK_EQUAL(mfront::SupportedTypes::getTypeFlag(v), f);
     };
     check("Stensor", mfront::SupportedTypes::STENSOR);
+    check("ThermalExpansionCoefficientTensor", mfront::SupportedTypes::STENSOR);
     check("stensor<N,real>", mfront::SupportedTypes::STENSOR);
     check("tensor<N,real>", mfront::SupportedTypes::TENSOR);
     for (const auto& m :

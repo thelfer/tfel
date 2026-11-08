@@ -42,6 +42,7 @@ static void execute3(mtest::MTestParser& p,
 void declareMTestParser(pybind11::module_& m) {
   using namespace mtest;
   pybind11::class_<MTestParser>(m, "MTestParser")
+      .def(pybind11::init<>())
       .def("execute", execute)
       .def("execute", execute2)
       .def("execute", execute3)

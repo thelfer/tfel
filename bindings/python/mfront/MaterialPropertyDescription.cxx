@@ -57,6 +57,7 @@ void declareMaterialPropertyDescription(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<MaterialPropertyDescription>(m,
                                                 "MaterialPropertyDescription")
+      .def(pybind11::init<>())
       .def("getInputs", MaterialPropertyDescription_getInputs,
            pybind11::return_value_policy::reference,
            "returns the inputs of the material property")

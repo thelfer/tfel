@@ -39,6 +39,7 @@ void declareTargetsDescription(pybind11::module_& m) {
   using LibraryAccess =
       LibraryDescription& (TargetsDescription::*)(const std::string&);
   pybind11::class_<mfront::TargetsDescription>(m, "TargetsDescription")
+      .def(pybind11::init<>())
       .def("getLibrary",
            static_cast<LibraryAccess>(&TargetsDescription::getLibrary),
            pybind11::arg("library"))

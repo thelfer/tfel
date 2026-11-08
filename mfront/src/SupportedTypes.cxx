@@ -925,7 +925,7 @@ namespace mfront {
       ++p;
     }
     for (; p != s2.end(); ++p) {
-      if (!std::isdigit(*p)) {
+      if (!std::isdigit(static_cast<unsigned char>(*p))) {
         return {};
       }
     }
@@ -1562,8 +1562,13 @@ namespace mfront {
   }  // end of getTinyVectorTypeAliases
 
   std::vector<std::string> getStensorTypeAliases() {
-    return {"Stensor",       "StressStensor",     "StressRateStensor",
-            "StrainStensor", "StrainRateStensor", "FrequencyStensor"};
+    return {"Stensor",
+            "StressStensor",
+            "StressRateStensor",
+            "StrainStensor",
+            "StrainRateStensor",
+            "FrequencyStensor",
+            "ThermalExpansionCoefficientTensor"};
   }
 
   std::vector<std::string> getTensorTypeAliases() {

@@ -103,8 +103,9 @@ namespace mfront {
       throw_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false),
                "invalid package name '" + p + "'");
       for (const auto c : p) {
-        if (isalpha(c)) {
-          throw_if(!islower(c), "invalid package name '" + p + "'");
+        const auto uc = static_cast<unsigned char>(c);
+        if (isalpha(uc)) {
+          throw_if(!islower(uc), "invalid package name '" + p + "'");
         }
       }
       throw_if(++current == end, "unexpected end of file");

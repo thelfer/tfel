@@ -1,0 +1,26 @@
+@DSL DefaultFiniteStrain;
+@Behaviour FiniteStrainInitializeFunctionTest;
+@Description {
+  "Test of the initialize functions of the generic interface for "
+  "finite strain behaviours: the Cauchy stress computed by the "
+  "initialize function must be returned in the stress measure of "
+  "the caller."
+}
+
+@ModellingHypothesis Tridimensional;
+
+@Integrator {
+  const auto e = computeGreenLagrangeTensor(F1);
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(150e9 * e, F1);
+}
+
+@TangentOperator<DS_DEGL> {
+  static_cast<void>(smt);
+  Dt = 150e9 * Stensor4::Id();
+}
+
+@InitializeFunctionVariable stress pr;
+//! \brief initialize the Cauchy stress from a pressure
+@InitializeFunction StressFromPressure {
+  sig = pr * Stensor::Id();
+}

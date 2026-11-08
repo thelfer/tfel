@@ -159,8 +159,8 @@ content:
 @Command "@castem@ ImplicitSimoMieheElastoPlasticityUniaxialTesting.dgibi";
 
 @Precision 100; // criterion for the check, here a difference of 100Pa is allowed
-@Test "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.res"
-      "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.ref" 2;
+@Test "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.ref"
+      "ImplicitSimoMieheElastoPlasticityUniaxialTesting-castem.res" 2;
 ~~~~
 
 The first line specifies that the `Cast3M` component must be available
@@ -172,8 +172,8 @@ substitution string for the `@castem@` pattern has been defined.
 
 The fifth line specifies an absolute criterion to compare the current
 results to the reference ones. The last line defines the test to be
-performed: the values of the second column of the two specified files
-are compared using an absolute criteria.
+performed: the values of the second column of the reference and result
+files are compared using an absolute criteria.
 
 To trigger those tests, the following config file, called
 `castem.config` can be used:
@@ -260,6 +260,16 @@ This keyword has the following options:
   expression which shall validate the output of the command. The output
   of the command is concatenated in a single string for the test.
 - `shall_fail`: a boolean stating if the command shall succeed or fail.
+- `timeout`: Integer. Maximum allowed duration in seconds. This option
+  requires the `timeout` utility to be available.
+
+Example:
+
+~~~~{.cxx}
+@Command "sleep 10"{
+ timeout: 1
+};
+~~~~
 
 ### The `@Precision` keyword
 
@@ -272,31 +282,287 @@ compare the current values and the reference ones.
 
 ### The `@Test` keyword
 
-The `@Test` keyword specifies two files to compare which represents
-respectively the current simulated values and the reference ones.
+The `@Test` keyword compares two files (reference and current results).
+
+Syntax:
+
+~~~~{.cxx}
+@Test <reference_file> <results_file> <columns>;
+~~~~
+
+- `reference_file`: Path to the file containing reference values.
+- `results_file`: Path to the file containing current results.
+- `columns`: List of column numbers or names to compare. At least one
+  column is required. Each column defines a separate test.
+
+The order of the files matters:
+
+- with an interpolation (see the `@Interpolation` keyword), the values
+  of the second file are interpolated at the abscissas of the first one,
+- the `AllowLessResults` option allows the second file to have fewer
+  values than the first one,
+- the `Area` comparison is normalized by the values of the first file,
+- the relative tolerance of the `Mixed` comparison is scaled by the
+  values of the second file.
+
+Columns can be designated by their names only if the first line of the
+file gives the names of the columns. This line must not start with `#`:
+a line starting with `#` is a comment. A column can also be given by a
+formula of column numbers, such as `'$2*1.e-6'`.
+
+Examples:
+
+~~~~{.cxx}
+@Test 'reference.res' 'results.res' 2;        // compare column 2
+@Test 'reference.res' 'results.res' 'B';     // compare column named 'B'
+@Test 'reference.res' 'results.res' 1 3 5;   // compare columns 1, 3, and 5
+@Test 'reference.res' 'results.res' 'A' 'B'; // compare columns named 'A' and 'B'
+~~~~
+
+Different columns can be compared with the following syntax:
+
+~~~~{.cxx}
+// compare column 2 of 'reference.res' with column 3 of 'results.res'
+@Test {'reference.res' : 2} {'results.res' : 3};
+~~~~
 
 ### The `@TestType` keyword
 
-The `@TestType` keyword specifies how the comparison between the
-simulated values and the reference values shall be performed.
+The `@TestType` keyword defines the comparison method for values.
+Available types:
 
-The following kind of comparison are available:
+- `Absolute`: Absolute difference between values must be ≤ precision.
+- `Relative`: Relative difference between values must be ≤ precision.
+- `RelativeAndAbsolute`: Combines relative and absolute criteria. Requires two precision values.
+- `Mixed`: Mixed relative/absolute comparison. Requires two precision values.
+- `Area`: Integral of the absolute difference between the two curves,
+  normalized by the maximum absolute value of the reference. Requires a
+  single precision value. See Section @sec:tfel_check:area_comparison.
+- `L2`: Same as `Area`, with the L2 norm of the difference instead of
+  the integral of its absolute value. See Section
+  @sec:tfel_check:l2_comparison.
 
-- `Absolute`:
-- `Relative`:
-- `RelativeAndAbsolute`:
-- `Mixed`:
-- `Area`:
+For all types, a NaN value makes the test fail.
+
+Example:
+
+~~~~{.cxx}
+@TestType Absolute;
+@Precision 1.e-6;
+@Test 'reference.res' 'results.res' 1;
+
+@TestType RelativeAndAbsolute;
+@Precision 1.e-3 1.e-6; // relative and absolute tolerances
+@Test 'reference.res' 'results.res' 2;
+~~~~
 
 ### The `@Interpolation` keyword
 
-The `@Interpolation` keyword specifies how the reference values can be
-interpolated. The following interpolations are available:
+The `@Interpolation` keyword specifies how the values of the results are
+interpolated at the abscissas of the reference. This is useful when the
+reference and result files have different abscissa values (e.g., time
+steps).
 
-- `None`:
-- `Linear`:
-- `Spline`:
-- `LocalSpline`:
+Available interpolation methods:
+
+- `None`: No interpolation. The values are compared line by line: both
+  files must have the same number of values. If a column is given with
+  `using`, the abscissas of both files must be the same. Otherwise, they
+  are not checked.
+- `Linear`: Linear interpolation between reference points.
+- `Spline`: Cubic spline interpolation.
+- `LocalSpline`: Local spline interpolation (avoids global smoothness constraints).
+
+The `using` clause specifies the column to use as the interpolation abscissa.
+
+If the results have at least as many distinct abscissas as the
+reference, they are interpolated at the abscissas of the reference.
+Otherwise, the `AllowLessResults` option is required, and the values of
+the reference are interpolated at the abscissas of the results. In both
+cases, the results must reach the bounds of the abscissas of the
+reference: results stopping early make the test fail.
+
+No extrapolation is made: the abscissas of the interpolated file must
+cover the abscissas at which it is evaluated, otherwise the test fails.
+Both files must have values. The abscissas are sorted and, if an
+abscissa appears more than once in a file, only its first point is
+used.
+
+Examples:
+
+~~~~{.cxx}
+@Interpolation Linear using 'time';
+@Interpolation Spline using 'tps' AllowLessResults;
+@Interpolation LocalSpline using 'x';
+~~~~
+
+#### Interpolation for integration
+
+For `Area` and `L2` comparisons, the interpolation and the abscissa
+column used for the integration are given by the `@TestType` keyword:
+
+~~~~{.cxx}
+@TestType <Area|L2> interpolation <None|Linear|Spline|LocalSpline> using <column>;
+~~~~
+
+For example:
+
+~~~~{.cxx}
+@TestType Area interpolation Linear using 'time';
+@Precision 1.e-2;
+@Test 'reference.res' 'results.res' 'y';
+~~~~
+
+This interpolation is independent of the one given by the
+`@Interpolation` keyword. See Section @sec:tfel_check:area_comparison.
+
+### The `@CleanFiles` and `@CleanDirectories` keywords
+
+The `@CleanFiles` and `@CleanDirectories` keywords specify, as arrays
+of strings, the files and the directories generated by the commands
+that shall be removed at the end of the test:
+
+~~~~{.cxx}
+@CleanFiles {"results.res"};
+@CleanDirectories {"src", "include"};
+~~~~
+
+By default, they are removed in case of success and kept in case of
+failure. This can be changed with the `--clean-up` and
+`--discard-clean-up-on-failure` command line arguments (see Section
+@sec:tfel_check:command_line_arguments):
+
+~~~~{.bash}
+$ tfel-check --clean-up=false
+$ tfel-check --discard-clean-up-on-failure=false
+~~~~
+
+# Comparing values between files
+
+`tfel-check` provides powerful tools to compare numerical results against reference data.
+This section details the available comparison types.
+
+## Comparison types {#sec:tfel_check:comparison_types}
+
+The `@TestType` keyword defines how values are compared. Each type has specific use cases:
+
+### Absolute comparison
+
+Checks if the absolute difference between corresponding values is within the specified precision.
+
+~~~~{.cxx}
+@TestType Absolute;
+@Precision 1.e-6;
+@Test 'reference.res' 'results.res' 1;
+~~~~
+
+**Use case**: Suitable for quantities with a known absolute tolerance (e.g., stress in Pa).
+
+### Relative comparison
+
+Checks if the relative difference between corresponding values is within the specified precision.
+
+~~~~{.cxx}
+@TestType Relative;
+@Precision 1.e-3; // 0.1% tolerance
+@Test 'reference.res' 'results.res' 1;
+~~~~
+
+**Use case**: Ideal for quantities where relative accuracy matters (e.g., normalized values).
+
+### Relative and Absolute comparison
+
+Combines both criteria: the test passes if **either** the relative **or** the absolute difference is within tolerance.
+
+~~~~{.cxx}
+@TestType RelativeAndAbsolute;
+@Precision 1.e-3 1.e-6; // relative and absolute tolerances
+@Test 'reference.res' 'results.res' 1;
+~~~~
+
+**Use case**: Flexible comparison for quantities that may have small absolute values (where relative comparison fails) or large values (where absolute comparison is too strict).
+
+### Mixed comparison
+
+Combines both tolerances: the test passes if
+\(\left|a-b\right| \leq p_{r}\,\left|b\right| + p_{a}\), where \(a\)
+and \(b\) are the values of the first and second files, and \(p_{r}\)
+and \(p_{a}\) the relative and absolute precisions.
+
+~~~~{.cxx}
+@TestType Mixed;
+@Precision 1.e-3 1.e-6; // relative and absolute tolerances
+@Test 'reference.res' 'results.res' 1;
+~~~~
+
+**Use case**: Tolerance with a relative part and an absolute part, the
+latter being useful for values close to zero.
+
+### Area comparison {#sec:tfel_check:area_comparison}
+
+Computes the area between the two curves, i.e. the integral of the
+absolute value of their difference, normalized by the maximum absolute
+value of the reference:
+
+\[
+e = \frac{1}{\max_{i}\left|y^{\mathrm{ref}}_{i}\right|}\int\left|y^{\mathrm{ref}}\left(x\right)-y^{\mathrm{res}}\left(x\right)\right|\,\mathrm{d}x
+\]
+
+where \(x\) is the abscissa column given after the `using` keyword.
+The test succeeds if \(e\) is lower than the precision. This error is
+a normalized \(L^{1}\) norm of the difference.
+
+The integral is computed by the trapezoidal rule on the union of the
+abscissas of both files. Each curve is evaluated:
+
+- at its own abscissas, with its own values,
+- between them, with the chosen interpolation,
+- outside its range, with its first or last value.
+
+Abscissas are sorted. If an abscissa appears more than once in a file,
+only its first point is used. At least two distinct abscissas are
+required. With the `None` interpolation, both files must have the same
+abscissas.
+
+If all the values of the reference are null, the area is not normalized.
+
+The error \(e\) has the unit of the abscissa: it is the product of the
+length of the range of the abscissas and the mean deviation relative to
+the maximum of the reference. For example, for a test lasting 100 s, a
+precision of 1 corresponds to a mean deviation of 1 % of the maximum of
+the reference.
+
+~~~~{.cxx}
+@TestType Area interpolation Linear using 'time';
+@Precision 1; // time range of 100 s: mean deviation of 1 %
+@Test 'reference.res' 'results.res' 'stress';
+~~~~
+
+**Use case**: Global comparison of two curves, possibly sampled
+differently, when local differences (for instance a slight time shift
+of a sharp transition) are acceptable.
+
+### L2 comparison {#sec:tfel_check:l2_comparison}
+
+Same as the `Area` comparison, with the L2 norm of the difference
+between the two curves:
+
+\[
+e = \frac{1}{\max_{i}\left|y^{\mathrm{ref}}_{i}\right|}\sqrt{\int\left(y^{\mathrm{ref}}\left(x\right)-y^{\mathrm{res}}\left(x\right)\right)^{2}\,\mathrm{d}x}
+\]
+
+The integral is computed by the trapezoidal rule on the same points as
+for the `Area` comparison, with the same rules. The error \(e\) has the
+unit of the square root of the abscissa.
+
+~~~~{.cxx}
+@TestType L2 interpolation Linear using 'time';
+@Precision 1.e-2;
+@Test 'reference.res' 'results.res' 'stress';
+~~~~
+
+**Use case**: Same as the `Area` comparison, with more weight given to
+large local differences.
 
 # Description of the configuration files{#sec:tfel_check:configuration_files}
 
@@ -304,6 +570,7 @@ Configuration files can be used to define:
 
 - substitution strings
 - available components
+- environment variables
 
 The syntax of configuration file is loosely inspired by the `JSON`
 format and looks like:
@@ -312,6 +579,23 @@ format and looks like:
 components : {"pleiades::python"};
 substitutions : {"python" : "python3.5"};
 ~~~~
+
+## Defining environment variables in configuration files
+
+The `environment_variables` section defines a map of environment variables:
+
+~~~~{.cxx}
+environment_variables: {"CXXFLAGS": "-Wall", "MPI_ROOT": "/path/to/mpi"};
+~~~~
+
+### Caution
+
+- Environment variables can only be defined **once** across all configuration files.
+- If an environment variable is defined in both a configuration file and a test file
+  (via `@Environment`), the test file's definition takes precedence.
+- Unlike the `@Environment` keyword, the values given in configuration files are
+  used as given: they are not prepended to the value of the variable in the
+  environment of `tfel-check`.
 
 # Default components {#sec:tfel_check:default_components}
 
@@ -373,3 +657,29 @@ automatically declared.
 Those substitutions are declared after reading the configuration files
 and after parsing the command line arguments, so those default
 substitutions can be overridden by the user.
+
+# Command line arguments {#sec:tfel_check:command_line_arguments}
+
+For a full list of command-line options, run:
+
+~~~~{.bash}
+$ tfel-check --help
+~~~~
+
+## Summary of options
+
+The options whose value is noted `<boolean>` require the value `true`
+or `false` after an equal sign, for example `--clean-up=false`: they
+are rejected without value.
+
+| Option | Description |
+|--------|-------------|
+| `--clean-up=<boolean>` | clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of success (default: `true`). |
+| `--discard-clean-up-on-failure=<boolean>` | don't clean generated files and directories listed by the `@CleanFiles` and `@CleanDirectories` keywords in case of failure (default: `true`). |
+| `--config, -c` | Add a configuration file. |
+| `--discard-commands-failure=<boolean>` | Ignore command failures if comparisons pass (default: `true`). If no comparisons are defined, failures are never ignored. |
+| `--help, -h` | Display help message. |
+| `--list-default-components` | List all default components. |
+| `--list-default-substitutions` | List all default substitutions. |
+| `--use-terminal-colors=<boolean>` | Use terminal colors for output (default: `true`). |
+| `--version, -v` | Display version information. |

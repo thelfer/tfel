@@ -120,6 +120,7 @@ set(mfront_tests_SOURCES
   ExternalModelCaller2
   ExternalModelCaller3
   ExternalModelCaller4
+  TimeDependantYoungModulus
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC
@@ -168,7 +169,10 @@ set(mfront_tests_SOURCES
   ArrayOfScalarGradients
   ArrayOfStensorGradients
   PoroElasticity
-  PoroPlasticity)
+  PoroPlasticity
+  BarBehaviour
+  BarBehaviour3
+)
 
 if(enable-mfront-quantity-tests)
   list(APPEND mfront_tests_SOURCES
@@ -189,6 +193,7 @@ if(enable-mfront-quantity-tests)
        Plasticity5
        Plasticity6
        Plasticity7
+       Plasticity8
        PlasticityWithoutAutomaticTemperatureDeclaration
        StrainHardeningCreep3
        StrainHardeningCreep5
@@ -196,7 +201,10 @@ if(enable-mfront-quantity-tests)
        TensorialExternalStateVariableTest
        ode_default
        ode_rk54
-       ode_implicit)
+       ode_implicit
+       BarBehaviour2
+       BarBehaviour4
+)
 endif(enable-mfront-quantity-tests)
 
 mfront_dependencies(MFrontGenericBehaviours
@@ -261,6 +269,27 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
   ElasticityParametersAsStaticVariables
   RungeKuttaElasticityParametersAsStaticVariables
   ImplicitElasticityParametersAsStaticVariables)
+
+# behaviours used to test the integration drivers in cases which
+# can't be checked by MTest
+mfront_behaviour_check_library(MFrontGenericIntegrationDriversBehaviours generic
+  HenckyTimeStepScalingFactorTest
+  InternalStateVariablePostProcessingTest
+  FiniteStrainInitializeFunctionTest
+  GreenLagrangeInitializeFunctionTest
+  HenckyInitializeFunctionTest)
+
+add_executable(generic-IntegrationDriversTest EXCLUDE_FROM_ALL
+  IntegrationDriversTest.cxx)
+target_link_libraries(generic-IntegrationDriversTest
+  TFELSystem TFELUtilities TFELTests TFELException)
+add_dependencies(generic-IntegrationDriversTest MFrontGenericIntegrationDriversBehaviours)
+add_dependencies(check generic-IntegrationDriversTest)
+add_test(NAME generic-IntegrationDriversTest
+  COMMAND generic-IntegrationDriversTest)
+set_property(TEST generic-IntegrationDriversTest
+  PROPERTY ENVIRONMENT
+  MFrontGenericIntegrationDriversBehavioursBuildPath=$<TARGET_FILE:MFrontGenericIntegrationDriversBehaviours>)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -618,6 +647,12 @@ test_generic_fs(saintvenantkirchhoffelasticity-shear-5-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-shear-6-3D)
 
 test_generic(saintvenantkirchhoffelasticity4-uniaxialloading-1-3D)
+test_generic(bar)
+test_generic(bar3)
+if(enable-mfront-quantity-tests)
+  test_generic(bar2)
+  test_generic(bar4)
+endif(enable-mfront-quantity-tests)
 
 # test_generic(elasticity_frst-uniaxialloading-1-1D)
 # test_generic(elasticity_frst-uniaxialloading-2-1D)
@@ -762,6 +797,7 @@ test_generic(externalmodelcaller3 ExternalModelCallerTest.ref)
 # test_generic(parametertest)
 # test_generic(parametertest2)
 test_generic(norton5)
+test_generic(TimeDependantYoungModulus)
 
 test_generic(PoroElasticity)
 test_generic(PoroPlasticity PoroPlasticity.ref)
@@ -811,6 +847,7 @@ if(enable-mfront-quantity-tests)
   test_generic(plasticity5 plasticity.ref)
   test_generic(plasticity6)
   test_generic(plasticity7 plasticity.ref)
+  test_generic(plasticity8)
   test_generic(plasticity_without_temperature_declaration plasticity.ref)
   test_generic(TensorialExternalStateVariableTest)
 endif(enable-mfront-quantity-tests)

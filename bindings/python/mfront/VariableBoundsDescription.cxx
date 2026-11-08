@@ -26,6 +26,7 @@ void declareVariableBoundsDescription(pybind11::module_& m) {
       .value("LOWERANDUPPER", VariableBoundsDescription::LOWERANDUPPER);
 
   pybind11::class_<VariableBoundsDescription>(m, "VariableBoundsDescription")
+      .def(pybind11::init<>())
       .def_readwrite("boundsType", &VariableBoundsDescription::boundsType)
       .def_readwrite("lineNumber", &VariableBoundsDescription::lineNumber)
       .def_readwrite("component", &VariableBoundsDescription::component)

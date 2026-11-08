@@ -1515,8 +1515,12 @@ expansion tensor will be proportional to the identity. For an
 orthotropic behaviour, the thermal expansion tensor is diagonal and
 expressed in the material frame.
 
+The thermal expansion coefficient tensor is available in the code
+blocks as the variable `A`, which can't be used as the name of another
+variable.
+
 ~~~~{.cpp}
-@RequireThermalExpansionCoefficientTensor true;
+@RequireThermalExpansionCoefficientTensor;
 ~~~~
 
 # The `@SlidingSystem` keyword

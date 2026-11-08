@@ -759,9 +759,16 @@ namespace mfront {
   void BehaviourDSLCommon::appendToHypothesesList(std::set<Hypothesis>& h,
                                                   const std::string& v) const {
     if (v == ".+") {
-      const auto& ash = ModellingHypothesis::getModellingHypotheses();
-      for (const auto& lh : ash) {
-        this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+      if (this->mb.areModellingHypothesesDefined()) {
+        // all the hypotheses supported by the behaviour
+        for (const auto& lh : this->mb.getModellingHypotheses()) {
+          this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+        }
+      } else {
+        const auto& ash = ModellingHypothesis::getModellingHypotheses();
+        for (const auto& lh : ash) {
+          this->appendToHypothesesList(h, ModellingHypothesis::toString(lh));
+        }
       }
     } else {
       const auto nh = ModellingHypothesis::fromString(v);
@@ -877,9 +884,14 @@ namespace mfront {
         cposition = true;
         o.p = BehaviourData::AT_END;
       } else if ((t.flag == Token::String) &&
-                 (t.value.substr(1, t.value.size() - 2) == "+")) {
-        this->appendToHypothesesList(o.hypotheses,
-                                     t.value.substr(1, t.value.size() - 2));
+                 (t.value.substr(1, t.value.size() - 2) == ".+")) {
+        if (this->mb.areModellingHypothesesDefined()) {
+          this->appendToHypothesesList(o.hypotheses, ".+");
+        } else {
+          // the modelling hypotheses are not known yet: same meaning as no
+          // hypothesis given
+          o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+        }
       } else if (ModellingHypothesis::isModellingHypothesis(t.value)) {
         this->appendToHypothesesList(o.hypotheses, t.value);
       } else {
@@ -2101,9 +2113,13 @@ namespace mfront {
                "the only data expected is "
                "'reference_temperature' (read '" +
                    pd->first + "')");
-      throw_if(!pd->second.is<double>(),
-               "invalid type for data 'reference_temperature'");
-      addTref(pd->second.get<double>());
+      if (pd->second.is<int>()) {
+        addTref(static_cast<double>(pd->second.get<int>()));
+      } else {
+        throw_if(!pd->second.is<double>(),
+                 "invalid type for data 'reference_temperature'");
+        addTref(pd->second.get<double>());
+      }
     }
     this->readSpecifiedToken(m, ";");
     throw_if((acs.size() != 1u) && (acs.size() != 3u),
@@ -2912,12 +2928,20 @@ namespace mfront {
   }  // end of treatRequireStiffnessTensor
 
   void BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor() {
+    if (this->mb.areThermalExpansionCoefficientsDefined()) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor",
+          "@RequireThermalExpansionCoefficientTensor can not be used along "
+          "with @ComputeThermalExpansion");
+    }
     this->readSpecifiedToken(
         "BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor",
         ";");
     this->mb.setAttribute(
         BehaviourDescription::requiresThermalExpansionCoefficientTensor, true,
         false);
+    // thermal expansion coefficient tensor
+    this->mb.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "A");
   }  // end of treatRequireThermalExpansionCoefficientTensor
 
   void BehaviourDSLCommon::setMaterialKnowledgeIdentifier(
@@ -3195,10 +3219,15 @@ namespace mfront {
     this->readList(values, "BehaviourDSLCommon::readHypothesesList", "<", ">",
                    true);
     for (const auto& v : values) {
-      if (v.flag == tfel::utilities::Token::String) {
-        this->appendToHypothesesList(h, v.value.substr(1, v.value.size() - 2));
+      const auto s = (v.flag == tfel::utilities::Token::String)
+                         ? v.value.substr(1, v.value.size() - 2)
+                         : v.value;
+      if ((s == ".+") && (!this->mb.areModellingHypothesesDefined())) {
+        // the modelling hypotheses are not known yet: same meaning as no
+        // hypothesis given
+        h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       } else {
-        this->appendToHypothesesList(h, v.value);
+        this->appendToHypothesesList(h, s);
       }
     }
     if (h.empty()) {

@@ -192,6 +192,17 @@ namespace tfel::math {
                                   typename ArrayPolicyType::value_type,
                                   OpMult>,
             typename ArrayPolicyType::value_type>());
+    /*!
+     * \brief division by a scalar
+     * \param[in] s: scalar value
+     */
+    template <typename ValueType2>
+    TFEL_HOST_DEVICE constexpr void divideByScalar(const ValueType2&)
+      requires(isAssignableTo<
+               BinaryOperationResult<typename ArrayPolicyType::value_type,
+                                     ValueType2,
+                                     OpDiv>,
+               typename ArrayPolicyType::value_type>());
   };
 
 }  // end of namespace tfel::math

@@ -200,6 +200,34 @@ namespace abaqus {
                         ThermalExpansionCoefficientTensor&);
   };  // end of struct AbaqusComputeThermalExpansionCoefficientTensor
 
+  /*!
+   * Partial specialisation for finite strain behaviours
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            AbaqusSymmetryType stype>
+  struct TFEL_VISIBILITY_LOCAL AbaqusComputeThermalExpansionCoefficientTensor<
+      abaqus::STANDARDFINITESTRAINBEHAVIOUR,
+      H,
+      stype> {
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    /*!
+     * \brief compute the thermal expansion coefficient tensor.
+     * \param[in]  props : material properties
+     * \param[out] A     : thermal expansion coefficient tensor
+     */
+    template <typename real>
+    static void exe(
+        const real* const props,
+        typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,
+                                     real,
+                                     false>::ThermalExpansionCoefficientTensor&
+            A) {
+      AbaqusComputeThermalExpansionCoefficientTensor<
+          abaqus::STANDARDSTRAINBASEDBEHAVIOUR, H, stype>::exe(props, A);
+    }
+  };  // end of struct AbaqusComputeThermalExpansionCoefficientTensor
+
 }  // end of namespace abaqus
 
 #endif /* LIB_MFRONT_ABAQUSCOMPUTETHERMALEXPANSIONTENSOR_HXX */

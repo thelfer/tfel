@@ -115,9 +115,6 @@ namespace mtest {
       if (this->requiresStiffnessTensor) {
         tmp.insert(tmp.end(), {"YoungModulus", "PoissonRatio"});
       }
-      if (this->requiresThermalExpansionCoefficientTensor) {
-        tmp.push_back("ThermalExpansion");
-      }
     } else if (this->etype == 1u) {
       if ((h == ModellingHypothesis::PLANESTRESS) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
@@ -129,20 +126,12 @@ namespace mtest {
                       "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
                       "ShearModulus12"});
         }
-        if (this->requiresThermalExpansionCoefficientTensor) {
-          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
-                                 "ThermalExpansion3"});
-        }
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         if (this->requiresStiffnessTensor) {
           tmp.insert(tmp.end(),
                      {"YoungModulus1", "YoungModulus2", "YoungModulus3",
                       "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
                       "ShearModulus12", "ShearModulus23", "ShearModulus13"});
-        }
-        if (this->requiresThermalExpansionCoefficientTensor) {
-          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
-                                 "ThermalExpansion3"});
         }
       } else {
         tfel::raise(
@@ -154,6 +143,16 @@ namespace mtest {
           "AbaqusExplicitBehaviour::AbaqusExplicitBehaviour : "
           "unsupported behaviour type "
           "(neither isotropic nor orthotropic)");
+    }
+    if (this->requiresThermalExpansionCoefficientTensor) {
+      // the thermal expansion coefficient tensor has the symmetry of the
+      // behaviour
+      if (this->stype == 0u) {
+        tmp.push_back("ThermalExpansion");
+      } else {
+        tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
+                               "ThermalExpansion3"});
+      }
     }
     this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }
