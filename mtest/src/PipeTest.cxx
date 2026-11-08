@@ -737,7 +737,7 @@ namespace mtest {
                                vector{ti, te}, vector{this->P0, this->P0}));
       }
     }
-    if (this->al == IMPOSEDAXIALFORCE) {
+    if (this->al == IMPOSEDAXIALGROWTH) {
       if (!state.containsEvolution("AxialForce")) {
         // first call with this study state
         state.addEvolution("AxialForce",
