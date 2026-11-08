@@ -315,7 +315,7 @@ namespace mfront {
       tokens_iterator& current,
       const tokens_iterator end) const {
     auto throw_if = [&key](const bool b, const std::string& m) {
-      tfel::raise_if(b, "UMATInterfaceBase::readBooleanValue: " + m +
+      tfel::raise_if(b, "StandardBehaviourInterface::readBooleanValue: " + m +
                             ".\nError while treating key (" + key + ")\n");
     };
     throw_if(current == end, "unexpected end of file");
