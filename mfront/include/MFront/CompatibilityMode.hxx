@@ -24,9 +24,9 @@ namespace mfront {
   /*!
    * \brief struct describing the various compatibility modes available
    *
-   * Compability modes are made for introducing breaking changes in the results
-   * or in the behaviour of MFront. Two examples motivated the introduction of
-   * this concept:
+   * Compatibility modes are made for introducing breaking changes in the
+   * results or in the behaviour of MFront. Two examples motivated the
+   * introduction of this concept:
    *
    * - the modification of the values defined in the PhysicalConstants library
    *   to be more accurate and up-to-date.
@@ -35,7 +35,7 @@ namespace mfront {
    *
    * Those evolutions do not correct bugs, but changes the default MFront's
    * behaviour and the results of the generated code for the better.
-   * Compatibility modes are menat to restore the behaviour of previous versions
+   * Compatibility modes are meant to restore the behaviour of previous versions
    * when needed for backward compatibility.
    *
    * Note that such evolutions of the default MFront's behaviour shall only be
