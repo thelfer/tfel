@@ -32,7 +32,8 @@ void declareMFMTestGeneratorFileExport(pybind11::module_& m) {
       .def_readwrite("date", &mfmtg::TestDescription::date)
       .def_readwrite("description", &mfmtg::TestDescription::description)
       .def_readwrite("behaviour", &mfmtg::TestDescription::behaviour)
-      .def_readwrite("material", &mfmtg::TestDescription::material);
+      .def_readwrite("material", &mfmtg::TestDescription::material)
+      .def_readwrite("content", &mfmtg::TestDescription::content);
   //
   m.def("loadMFMTestGeneratorFileContent",
         mfmtg_loadMFMTestGeneratorFileContent);
