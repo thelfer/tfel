@@ -71,15 +71,15 @@ namespace mfront {
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
 
   bool isValidMaterialName(std::string_view n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
   bool isValidLibraryName(std::string_view n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
   bool isValidUserDefinedVariableName(std::string_view n) {
-    return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) &&
+    return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, false)) &&
            (!tfel::utilities::starts_with(n, "mfront_"));
   }  // end of isValidUserDefinedVariableName
 
@@ -650,7 +650,7 @@ namespace mfront {
   void DSLBase::registerIntegerConstant(const std::string& n,
                                         const size_t l,
                                         const int v) {
-    if (!this->isValidIdentifier(n)) {
+    if (!this->isValidIdentifier(n, false)) {
       this->throwRuntimeError("DSLBase::registerIntegerConstant",
                               "Variable name '" + n + "' is not valid.");
     }

@@ -64,7 +64,7 @@ namespace mfront {
   }  // end of is()
 
   bool isValidModelName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
   ModelDSLCommon::ModelDSLCommon(const DSLOptions& opts) : DSLBase(opts) {
@@ -468,7 +468,7 @@ namespace mfront {
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     f.useTimeIncrement = false;
-    throw_if(!this->isValidIdentifier(fn),
+    throw_if(!this->isValidIdentifier(fn, false),
              "function name '" + fn + "' is not valid");
     f.name = fn;
     f.line = this->current->line;
@@ -862,7 +862,7 @@ namespace mfront {
                               "parameter type'" + type + "' is not valid.");
     }
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
-      if (!this->isValidIdentifier(this->current->value)) {
+      if (!this->isValidIdentifier(this->current->value, false)) {
         this->throwRuntimeError("DSLBase::handleParameter : ",
                                 "variable given is not valid (read '" +
                                     this->current->value + "').");
