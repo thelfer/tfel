@@ -260,6 +260,16 @@ This keyword has the following options:
   expression which shall validate the output of the command. The output
   of the command is concatenated in a single string for the test.
 - `shall_fail`: a boolean stating if the command shall succeed or fail.
+- `timeout`: Integer. Maximum allowed duration in seconds. This option
+  requires the `timeout` utility to be available.
+
+Example:
+
+~~~~{.cxx}
+@Command "sleep 10"{
+ timeout: 1
+};
+~~~~
 
 ### The `@Precision` keyword
 

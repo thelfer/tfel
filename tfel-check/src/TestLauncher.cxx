@@ -739,7 +739,13 @@ namespace tfel::check {
                                "the test file");
         }
       }
-      manager.execute(c.command, "", output_file, envs);
+      if (c.timeout.has_value()) {
+        const auto tc =
+            "timeout -v -k 1 " + std::to_string(*(c.timeout)) + " " + c.command;
+        manager.execute(tc, "", output_file, envs);
+      } else {
+        manager.execute(c.command, "", output_file, envs);
+      }
       this->ClockAction(STOP);
       if (c.shall_fail) {
         this->log.addTestResult(this->testname, step, c.command,
