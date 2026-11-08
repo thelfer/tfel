@@ -218,7 +218,9 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE std::tuple<stensor<N, T>, stensor<N, T>, stensor<N, T>>
+  TFEL_HOST_DEVICE std::tuple<stensor<N, base_type<T>>,
+                              stensor<N, base_type<T>>,
+                              stensor<N, base_type<T>>>
   stensor<N, T>::computeEigenValuesDerivatives(
       const tmatrix<3u, 3u, base_type<T>>& m) {
     return stensor<N, T>::computeEigenTensors(m);
@@ -240,7 +242,9 @@ namespace tfel::math {
   }  // end of stensor<N,T>::computeEigenValuesDerivatives
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE std::tuple<stensor<N, T>, stensor<N, T>, stensor<N, T>>
+  TFEL_HOST_DEVICE std::tuple<stensor<N, base_type<T>>,
+                              stensor<N, base_type<T>>,
+                              stensor<N, base_type<T>>>
   stensor<N, T>::computeEigenTensors(const tmatrix<3u, 3u, base_type<T>>& m) {
     using real = base_type<T>;
     std::tuple<stensor<N, real>, stensor<N, real>, stensor<N, real>> r;
