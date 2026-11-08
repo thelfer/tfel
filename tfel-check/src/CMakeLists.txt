@@ -61,7 +61,7 @@ endif(tfel-check-components)
 
 if(enable-python OR enable-python-bindings)
   target_compile_definitions(tfel-check
-    PRIVATE TFEL_PYTHON_EXECUTABLE="${PYTHON_EXECUTABLE}")
+    PRIVATE TFEL_PYTHON_EXECUTABLE="${Python_EXECUTABLE}")
 endif(enable-python OR enable-python-bindings)
 
 target_link_libraries(tfel-check
