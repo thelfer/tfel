@@ -1910,6 +1910,36 @@ namespace mfront {
     const auto& isvs = d.getIntegrationVariables();
     const auto nivs = mfront::getTypeSize(isvs);
     const auto& cb = this->mb.getCodeBlock(h, n);
+    // scaling of the rows of the matrix `m`, having `nc` columns, associated
+    // with the normalised integration variables (`p` is empty) or with the
+    // normalised implicit equations (`p` is "f"). `b` gives access to the
+    // members of the behaviour used as normalisation factors.
+    auto write_rows_scaling = [this, &os, h, &isvs](
+                                  const std::string& m,
+                                  const SupportedTypes::TypeSize& nc,
+                                  const std::string& p, const std::string& op,
+                                  const std::string& b) {
+      auto cr = SupportedTypes::TypeSize{};  // current row
+      for (const auto& iv : isvs) {
+        auto nr = cr;  // next row
+        nr += mfront::getTypeSize(iv);
+        if (this->mb.hasAttribute(h, p + iv.name + "_normalisation_factor")) {
+          auto nf = this->mb.getAttribute<std::string>(
+              h, p + iv.name + "_normalisation_factor");
+          if (tfel::utilities::starts_with(nf, "this->")) {
+            nf = b + nf.substr(6);
+          }
+          os << "for(unsigned short mfront_idx = " << cr
+             << "; mfront_idx != " << nr << "; ++mfront_idx){\n"
+             << "for(unsigned short mfront_idx2 = 0; mfront_idx2 != " << nc
+             << "; ++mfront_idx2){\n"
+             << m << "(mfront_idx, mfront_idx2) " << op << " " << nf << ";\n"
+             << "}\n"
+             << "}\n";
+        }
+        cr = nr;
+      }
+    };
     if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
       os << "TinyPermutation<" << nivs << "> jacobian_permutation;\n"
          << "TinyMatrixSolve<" << nivs << ", NumericType>"
@@ -1928,9 +1958,11 @@ namespace mfront {
          << "for(typename tfel::math::tmatrix<" << nivs << ", " << nivs
          << ", NumericType>::size_type idx=0;idx != " << nivs << "; ++idx){\n"
          << "jacobian_invert(idx, idx) = NumericType(1);\n"
-         << "}\n"
-         << "TinyMatrixSolve<" << nivs << ", NumericType>::back_substitute("
+         << "}\n";
+      write_rows_scaling("jacobian_invert", nivs, "f", "/=", "this->");
+      os << "TinyMatrixSolve<" << nivs << ", NumericType>::back_substitute("
          << "this->jacobian, jacobian_permutation, jacobian_invert);\n";
+      write_rows_scaling("jacobian_invert", nivs, "", "*=", "this->");
       auto cr = SupportedTypes::TypeSize{};  // current row
       auto cc = SupportedTypes::TypeSize{};  // current column
       for (const auto& iv1 : isvs) {
@@ -2139,11 +2171,12 @@ namespace mfront {
               os << ",\n";
             }
           }
-          os << "){\n"
-             << rhs_type << " lhs(-(this->rhs));\n"
-             << "tfel::math::TinyMatrixSolve<" << nivs << ", NumericType>"
+          os << "){\n" << rhs_type << " lhs(-(this->rhs));\n";
+          write_rows_scaling("lhs", nc, "f", "/=", "this->behaviour.");
+          os << "tfel::math::TinyMatrixSolve<" << nivs << ", NumericType>"
              << "::back_substitute(this->behaviour.jacobian, "
              << "this->permutation, lhs);\n";
+          write_rows_scaling("lhs", nc, "", "*=", "this->behaviour.");
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (size_type i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
@@ -2271,7 +2304,13 @@ namespace mfront {
         if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
           const auto& nf = this->mb.getAttribute<std::string>(
               h, v.name + "_normalisation_factor");
-          os << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
+          os << "partial_jacobian_" << v.name << " *= " << nf << ";\n";
+        }
+        if (this->mb.hasAttribute(
+                h, 'f' + isvs[0].name + "_normalisation_factor")) {
+          const auto& fnf = this->mb.getAttribute<std::string>(
+              h, 'f' + isvs[0].name + "_normalisation_factor");
+          os << "partial_jacobian_" << v.name << " /= " << fnf << ";\n";
         }
       }
       os << "}\n\n";
