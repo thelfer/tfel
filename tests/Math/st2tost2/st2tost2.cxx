@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <cassert>
 #include <type_traits>
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
