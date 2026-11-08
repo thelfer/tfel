@@ -51,7 +51,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     using namespace tfel::material;
     const auto params =
         GursonTvergaardNeedleman1982StressCriterionParameters<Stensor>{
-            .f_c = 0.05, .f_r = 0.2, .q_1 = 1.5, .q_2 = 1, .q_3 = 2.25};
+            0.05, 0.2, 1.5, 1, 2.25};  // f_c, f_r, q_1, q_2, q_3
     const auto [s1, n1, ds1_df] =
         computeGursonTvergaardNeedleman1982StressNormal(
             Stensor{{100., 100., 100., 0., 0., 0.}}, 0.01, params, 1e-8);
@@ -67,7 +67,7 @@ struct StressCriteriaTest final : public tfel::tests::TestCase {
     using namespace tfel::material;
     const auto params =
         GursonTvergaardNeedleman1982StressCriterionParameters<Stensor>{
-            .f_c = 0.05, .f_r = 0.2, .q_1 = 1.5, .q_2 = 1, .q_3 = 2.25};
+            0.05, 0.2, 1.5, 1, 2.25};  // f_c, f_r, q_1, q_2, q_3
     const auto sig = Stensor{{100.1, 100., 99.9, 0., 0., 0.}};
     const auto s1 = computeFlowStressGTN(tfel::math::sigmaeq(sig),
                                          tfel::math::trace(sig), 0.01, 1.5, 1.);
