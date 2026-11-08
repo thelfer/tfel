@@ -1,0 +1,21 @@
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour @library@ 'TimeDependantYoungModulus';
+@Real 'E0' 'TimeDependantYoungModulus::InitialYoungModulus';
+@Real 'nu' 'TimeDependantYoungModulus::PoissonRatio';
+@Real 't0' 'TimeDependantYoungModulus::CharacteristicYoungModulusDecayTime';
+@Real 's0' '200e6';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Real 'EXX0' 's0 / E0';
+@Strain{'EXX0', '-nu * EXX0', '-nu * EXX0', 0, 0, 0};
+@InternalStateVariable 'ElasticStrain' {
+    'EXX0', '-nu * EXX0', '-nu * EXX0', 0, 0, 0};
+@ImposedStress 'SXX' 's0';
+
+@Times{0, 10 in 100};
+
+@Test<function> 'EXX' 's0 / (E0 * exp(-t / t0))' 1e-14;
+@Test<function> 'EYY' '-nu * s0 / (E0 * exp(-t / t0))' 1e-14;
+@Test<function> 'EZZ' '-nu * s0 / (E0 * exp(-t / t0))' 1e-14;

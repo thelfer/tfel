@@ -120,6 +120,7 @@ set(mfront_tests_SOURCES
   ExternalModelCaller2
   ExternalModelCaller3
   ExternalModelCaller4
+  TimeDependantYoungModulus
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC
@@ -796,6 +797,7 @@ test_generic(externalmodelcaller3 ExternalModelCallerTest.ref)
 # test_generic(parametertest)
 # test_generic(parametertest2)
 test_generic(norton5)
+test_generic(TimeDependantYoungModulus)
 
 test_generic(PoroElasticity)
 test_generic(PoroPlasticity PoroPlasticity.ref)
