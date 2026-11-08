@@ -116,8 +116,10 @@ namespace tfel::math {
      */
     template <typename ValueType,
               typename std::enable_if<
-                  isAssignableTo<ValueType,
-                                 typename GenericFixedSizeArray::value_type>(),
+                  isAssignableTo<
+                      ValueType,
+                      typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
+                          value_type>(),
                   bool>::type = true>
     TFEL_HOST_DEVICE constexpr explicit GenericFixedSizeArray(
         const ValueType&) noexcept;
@@ -127,8 +129,10 @@ namespace tfel::math {
      */
     template <typename ValueType2,
               typename std::enable_if<
-                  isAssignableTo<ValueType2,
-                                 typename GenericFixedSizeArray::value_type>(),
+                  isAssignableTo<
+                      ValueType2,
+                      typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
+                          value_type>(),
                   bool>::type = true>
     TFEL_HOST_DEVICE constexpr GenericFixedSizeArray(
         const std::initializer_list<ValueType2>& values) noexcept;
@@ -142,7 +146,9 @@ namespace tfel::math {
               std::enable_if_t<
                   std::is_same_v<
                       typename std::iterator_traits<InputIterator>::value_type,
-                      base_type<typename GenericFixedSizeArray::value_type>>,
+                      base_type<typename GenericFixedSizeArray<Child,
+                                                               ArrayPolicy,
+                                                               N>::value_type>>,
                   bool> = true>
     TFEL_HOST_DEVICE constexpr explicit GenericFixedSizeArray(
         const InputIterator);
@@ -163,8 +169,9 @@ namespace tfel::math {
      * be greater than than the logical number of elements contained in the
      * array which is returned by `IndexingPolicy::size`.
      */
-    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::size_type
-    getContainerSize() const noexcept;
+    TFEL_HOST_DEVICE constexpr
+        typename GenericFixedSizeArray<Child, ArrayPolicy, N>::size_type
+        getContainerSize() const noexcept;
     // inheriting MutableFixedSizeArrayBase' assignement operator
     using MutableFixedSizeArrayBase<
         GenericFixedSizeArray<Child, ArrayPolicy, N>,
@@ -193,27 +200,35 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<
             BinaryOperationResult<ValueType2,
-                                  typename GenericFixedSizeArray::value_type,
+                                  typename GenericFixedSizeArray<Child,
+                                                                 ArrayPolicy,
+                                                                 N>::value_type,
                                   OpMult>,
-            typename GenericFixedSizeArray::value_type>(),
+            typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
+                value_type>(),
         Child&>
     operator*=(const ValueType2&) noexcept;
     //
     template <typename ValueType2>
     TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<
-            BinaryOperationResult<typename GenericFixedSizeArray::value_type,
+            BinaryOperationResult<typename GenericFixedSizeArray<Child,
+                                                                 ArrayPolicy,
+                                                                 N>::value_type,
                                   ValueType2,
                                   OpDiv>,
-            typename GenericFixedSizeArray::value_type>(),
+            typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
+                value_type>(),
         Child&>
     operator/=(const ValueType2&) noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::pointer
-    data() noexcept;
+    TFEL_HOST_DEVICE constexpr
+        typename GenericFixedSizeArray<Child, ArrayPolicy, N>::pointer
+        data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::const_pointer
-    data() const noexcept;
+    TFEL_HOST_DEVICE constexpr
+        typename GenericFixedSizeArray<Child, ArrayPolicy, N>::const_pointer
+        data() const noexcept;
 
    protected:
     //! \brief assignement operator

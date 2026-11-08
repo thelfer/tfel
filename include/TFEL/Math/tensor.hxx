@@ -118,21 +118,21 @@ namespace tfel::math {
      * \param[in] i: index
      */
     TFEL_HOST_DEVICE constexpr ValueType operator()(
-        const typename tensor::size_type) const;
+        const typename tensor<N, ValueType>::size_type) const;
     /*!
      * \brief access operator
      * \param[in] i: index
      */
     TFEL_HOST_DEVICE constexpr ValueType& operator()(
-        const typename tensor::size_type);
+        const typename tensor<N, ValueType>::size_type);
     /*!
      * \brief matrix-like access operator
      * \param[in] i: row number
      * \param[in] j: column number
      */
     TFEL_HOST_DEVICE ValueType
-    operator()(const typename tensor::size_type,
-               const typename tensor::size_type) const;
+    operator()(const typename tensor<N, ValueType>::size_type,
+               const typename tensor<N, ValueType>::size_type) const;
     //! \brief write to an external memory location
     TFEL_MATH_INLINE2 void write(base_type<ValueType>* const) const;
     //! \brief import values from an external memory location
