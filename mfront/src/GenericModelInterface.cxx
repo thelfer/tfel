@@ -298,7 +298,8 @@ namespace mfront {
         first = false;
       }
       for (const auto& p : md.parameters) {
-        if (!isRealParameter(p)) {
+        // parameters treated as static variables are not members
+        if ((!isRealParameter(p)) || (!hasRealParameters(md))) {
           continue;
         }
         os << (first ? "" : ",\n");
