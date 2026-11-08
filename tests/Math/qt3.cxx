@@ -83,6 +83,10 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(stress_values[3] - 3) < eps);
     TFEL_TESTS_ASSERT(my_abs(stress_values[4] - 4) < eps);
     TFEL_TESTS_ASSERT(my_abs(stress_values[5] - 5) < eps);
+    // assignment of an element of a view to another one
+    auto s = map<stensor<3u, qt<Stress, double>>>(stress_values);
+    s(0) = s(1);
+    TFEL_TESTS_ASSERT(my_abs(stress_values[0] - 1) < eps);
   }  // end of test3
 };
 
