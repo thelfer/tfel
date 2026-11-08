@@ -12,7 +12,6 @@
  */
 
 #include <fstream>
-#include <filesystem>
 
 #ifdef MFRONT_HAVE_MADNEX
 #include "Madnex/File.hxx"
@@ -168,8 +167,14 @@ namespace mfront {
 
   void write(const OverridableImplementation& i, const std::string& f) {
     const auto ext = [&f]() -> std::string {
-      const auto e = std::filesystem::path{f}.extension().string();
-      return e.empty() ? e : e.substr(1);
+      // extension of the file name (the directory part is skipped)
+      const auto s = f.find_last_of("/\\");
+      const auto b = (s == std::string::npos) ? 0 : s + 1;
+      const auto p = f.rfind('.');
+      if ((p != std::string::npos) && (p > b)) {
+        return f.substr(p + 1);
+      }
+      return "";
     }();
 #ifdef MFRONT_HAVE_MADNEX
     if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {
