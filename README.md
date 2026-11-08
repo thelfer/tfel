@@ -33,7 +33,7 @@ distributions of TFEL.
 
 TFEL versions 1.x were developed by CEA within the PLEIADES
 project. Since svn revision 584, TFEL was part of the pleiades
-architecture projet.
+architecture project.
 
 Starting from versions 2.x, TFEL has been publicly released under either
 the GPL or the CECILL-A licence. A copy of those licences are delivered
