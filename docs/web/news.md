@@ -1438,6 +1438,8 @@ phenomena involving structures and fluids in interaction.
   </video>
 </div>
 
+See the [dedicated page](epx.html) for more information.
+
 # `tfel-doc` `github` repository. Talks of the Second MFront Users Day (27 May 2016)
 
 A `github` repository has been set up to store various documents
@@ -1654,9 +1656,9 @@ New documentation pages were added to describe the `MTest` and
 `MFront` keywords:
 
 - `MFront` keywords, sorted by domain specific languages:
-    + [DefaultDSL](Default-keywords.html) 
-    + [DefaultCZMDSL](DefaultCZM-keywords.html) 
-    + [DefaultFiniteStrainDSL](DefaultFiniteStrain-keywords.html) 
+    + [DefaultDSL](DefaultDSL-keywords.html) 
+    + [DefaultCZMDSL](DefaultCZMDSL-keywords.html) 
+    + [DefaultFiniteStrainDSL](DefaultFiniteStrainDSL-keywords.html) 
     + [Implicit](Implicit-keywords.html) 
     + [ImplicitFiniteStrain](ImplicitFiniteStrain-keywords.html) 
     + [ImplicitII](ImplicitII-keywords.html) 
