@@ -269,8 +269,14 @@ namespace tfel::math {
             BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
             numeric_type<MappedType>>()) {
       static_assert(!is_const, "invalid call");
-      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(
-          base_type<numeric_type<MappedType>>{1} / s);
+      using base = base_type<numeric_type<MappedType>>;
+      if constexpr (std::is_integral_v<base>) {
+        // the reciprocal of an integer is zero in general
+        selectViewArrayBase<MappedType, IndexingPolicyType>::divideByScalar(s);
+      } else {
+        selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(
+            base{1} / s);
+      }
       return *this;
     }  // end of operator/=
 
