@@ -36,7 +36,7 @@ namespace tfel::check {
     if (pos == std::string::npos) {
       return {n.substr(b), ""};
     }
-    return {n.substr(b, pos), n.substr(pos + 1)};
+    return {n.substr(b, pos - b), n.substr(pos + 1)};
   }  // end of ConfigurationManager::extract
 
   ConfigurationManager::ConfigurationManager() = default;
