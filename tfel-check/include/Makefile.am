@@ -5,7 +5,6 @@ nobase_noinst_HEADERS = TFEL/Check/Configuration.hxx	             \
 			TFEL/Check/PCJUnitDriver.hxx                 \
 			TFEL/Check/PCLogger.hxx	                     \
 			TFEL/Check/TestLauncher.hxx	             \
-			TFEL/Check/TestLauncherV1.hxx	             \
 			TFEL/Check/PCTextDriver.hxx	             \
 			TFEL/Check/Interpolation.hxx	             \
 			TFEL/Check/SplineInterpolation.hxx	     \
