@@ -71,7 +71,7 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
       std::vector<std::string> notes;
       std::vector<std::string> aliases;
       key = CxxTokenizer::readString(p, pe);
-      tfel::raise_if(!this->isValidIdentifier(key, false),
+      tfel::raise_if(!this->isValidIdentifier(key, true),
                      "GlossaryTokenizer: invalid glossary key '" + key + "'");
       tfel::raise_if(!keys.insert(key).second,
                      "GlossaryTokenizer::execute: "
@@ -261,9 +261,11 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights\n"
       << " * reserved.\n"
       << " * This project is publicly released under either the GNU GPL "
-         "Licence\n"
-      << " * or the CECILL-A licence. A copy of thoses licences are delivered\n"
-      << " * with the sources of TFEL. CEA or EDF may also distribute this\n"
+         "Licence with\n"
+      << " * linking exception or the CECILL-A licence. A copy of thoses "
+         "licences are\n"
+      << " * delivered with the sources of TFEL. CEA or EDF may also "
+         "distribute this\n"
       << " * project under specific licensing conditions.\n"
       << " */\n"
       << '\n'

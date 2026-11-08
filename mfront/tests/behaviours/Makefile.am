@@ -74,6 +74,8 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicCreep.mfront                                           \
          OrthotropicCreep_rk42.mfront                                      \
          OrthotropicCreep_rkCastem.mfront                                  \
+         RungeKuttaElasticity.mfront                                       \
+         RungeKuttaElasticity_rk4.mfront                                   \
          ImplicitOrthotropicCreep.mfront                                   \
          ImplicitOrthotropicCreep2.mfront                                  \
          ImplicitOrthotropicCreep3.mfront                                  \

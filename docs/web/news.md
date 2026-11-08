@@ -332,7 +332,7 @@ have been proposed by Cazacu and Barlat (see
   &\frac{1}{27}\,(b_1+b_2)\,s_{xx}^3+\frac{1}{27}\,(b_3+b_4)\,s_{yy}^3+\frac{1}{27}\,(2\,(b_1+b_4)-b_2-b_3)\,s_{zz}^3\\
   &-\frac{1}{9}\,(b_1\,s_{yy}+b_2s_{zz})\,s_{xx}^2\\
   &-\frac{1}{9}\,(b_3\,s_{zz}+b_4\,s_{xx})\,s_{yy}^2\\
-  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b3+b_4)\,s_{yy})\,s_{zz}^3\\
+  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b_3+b_4)\,s_{yy})\,s_{zz}^2\\
   &+\frac{2}{9}\,(b_1+b_4)\,s_{xx}\,s_{yy}\,s_{zz}\\
   &-\frac{s_{xz}^2}{3}\,(2\,b_9\,s_{yy}-b_8\,s_{zz}-(2\,b_9-b_8)\,s_{xx})\\
   &-\frac{s_{xy}^2}{3}\,(2\,b_{10}\,s_{zz}-b_5\,s_{yy}-(2\,b_{10}-b_5)\,s_{xx})\\
@@ -1919,9 +1919,6 @@ Installing this version requires a functional installation of
 libraries) and the `MSYS` shell (It is recommended not to install
 `mingw` compilers along with the `MSYS` shell as [`Cast3M`](http://www-cast3m.cea.fr) provides its
 own version of those compilers).
-
-Installation instructions of those requirements are available
-[here](install-windows.html).
 
 Any feedback would be gratefully acknowledge.
 

@@ -11,7 +11,6 @@ libTFELCheck_la_SOURCES = Configuration.cxx     \
 		          PCLogger.cxx		            \
 			  PCTextDriver.cxx	            \
 			  TestLauncher.cxx	            \
-			  TestLauncherV1.cxx	            \
 			  SplineInterpolation.cxx	    \
 			  SplineLocalInterpolation.cxx	    \
 			  Interpolation.cxx	            \
@@ -25,6 +24,7 @@ libTFELCheck_la_SOURCES = Configuration.cxx     \
 			  RelativeAndAbsoluteComparison.cxx \
 			  MixedComparison.cxx		    \
 			  AreaComparison.cxx		    \
+			  Curve.cxx			            \
 			  Test.cxx
 
 libTFELCheck_la_LDFLAGS  = -L$(top_builddir)/src/System  -lTFELSystem       \

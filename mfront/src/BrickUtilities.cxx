@@ -2,9 +2,16 @@
  * \file   BrickUtilities.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
+#include <limits>
 #include <utility>
 #include <sstream>
 #include "TFEL/Raise.hxx"
@@ -150,24 +157,27 @@ namespace mfront::bbrick {
       tfel::raise_if(b, "addMaterialPropertyIfNotDefined: " + m);
     };
     // treating material properties
+    // `second` is true if the variable is declared for at least one
+    // specialisation of the behaviour, `first` if it is declared for all of
+    // them
     const auto b = bd.checkVariableExistence(n);
-    if (b.first) {
-      throw_if(!b.second, "variable '" + n +
-                              "' is not declared for all specialisations "
-                              "of the behaviour");
+    if (b.second) {
+      throw_if(!b.first, "variable '" + n +
+                             "' is not declared for all specialisations "
+                             "of the behaviour");
       auto r = bd.checkVariableExistence(n, "Parameter", false);
-      if (r.first) {
-        throw_if(!r.second, "parameter '" + n +
-                                "' is not declared for all specialisations "
-                                "of the behaviour");
+      if (r.second) {
+        throw_if(!r.first, "parameter '" + n +
+                               "' is not declared for all specialisations "
+                               "of the behaviour");
       } else {
         r = bd.checkVariableExistence(n, "MaterialProperty", false);
-        throw_if(!r.first, "variable '" + n +
-                               "' is neither declared as a parameter nor "
-                               "a material property");
-        throw_if(!r.second, "material property '" + n +
-                                "' is not declared"
-                                "for all specialisations of the behaviour");
+        throw_if(!r.second, "variable '" + n +
+                                "' is neither declared as a parameter nor "
+                                "a material property");
+        throw_if(!r.first, "material property '" + n +
+                               "' is not declared "
+                               "for all specialisations of the behaviour");
       }
       bd.checkVariableGlossaryName(n, g);
     } else {
@@ -187,24 +197,27 @@ namespace mfront::bbrick {
       tfel::raise_if(b, "addMaterialPropertyIfNotDefined: " + m);
     };
     // treating material properties
+    // `second` is true if the variable is declared for at least one
+    // specialisation of the behaviour, `first` if it is declared for all of
+    // them
     const auto b = bd.checkVariableExistence(n);
-    if (b.first) {
-      throw_if(!b.second, "variable '" + n +
-                              "' is not declared for all specialisations "
-                              "of the behaviour");
+    if (b.second) {
+      throw_if(!b.first, "variable '" + n +
+                             "' is not declared for all specialisations "
+                             "of the behaviour");
       auto r = bd.checkVariableExistence(n, "Parameter", false);
-      if (r.first) {
-        throw_if(!r.second, "parameter '" + n +
-                                "' is not declared for all specialisations "
-                                "of the behaviour");
+      if (r.second) {
+        throw_if(!r.first, "parameter '" + n +
+                               "' is not declared for all specialisations "
+                               "of the behaviour");
       } else {
         r = bd.checkVariableExistence(n, "MaterialProperty", false);
-        throw_if(!r.first, "variable '" + n +
-                               "' is neither declared as a parameter nor "
-                               "a material property");
-        throw_if(!r.second, "material property '" + n +
-                                "' is not declared"
-                                "for all specialisations of the behaviour");
+        throw_if(!r.second, "variable '" + n +
+                                "' is neither declared as a parameter nor "
+                                "a material property");
+        throw_if(!r.first, "material property '" + n +
+                               "' is not declared "
+                               "for all specialisations of the behaviour");
       }
       bd.checkVariableEntryName(n, e);
     } else {
@@ -443,7 +456,10 @@ namespace mfront::bbrick {
                     const std::vector<double>& p) {
     using tfel::material::ModellingHypothesis;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    VariableDescription v("real", n, 1u, 0u);
+    tfel::raise_if(p.size() != s,
+                   "addParameter: "
+                   "invalid number of default parameters values");
+    VariableDescription v("real", n, s, 0u);
     bd.addParameter(h, v);
     bd.setGlossaryName(h, n, g);
     for (unsigned short i = 0; i != s; ++i) {
@@ -598,10 +614,10 @@ namespace mfront::bbrick {
     if (pev != esvs.end()) {
       const auto& name = pev->name;
       if (b) {
-        return "2 * (this->" + name + " + (this->d " + name + ")) > 1";
+        return "2 * (this->" + name + " + (this->d" + name + ")) > 1";
       } else {
         return "2 * (this->" + name + " + (" + bd.getClassName() +
-               "::theta) * (this->d " + name + ")) > 1";
+               "::theta) * (this->d" + name + ")) > 1";
       }
     }
     return "";
@@ -709,8 +725,10 @@ namespace mfront::bbrick {
         } else {
           const auto& cmp =
               mp.template get<BehaviourDescription::ConstantMaterialProperty>();
-          c += "this->" + vn + " = " + std::to_string(i) +
-               "] = " + std::to_string(cmp.value) + ";\n";
+          std::ostringstream os;
+          os.precision(std::numeric_limits<double>::max_digits10);
+          os << "this->" << vn << " = " << cmp.value << ";\n";
+          c += os.str();
         }
       }
     }

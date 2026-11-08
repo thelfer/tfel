@@ -647,20 +647,20 @@ namespace mfront {
     if (d.isIntegrationVariableIncrementName(var)) {
       const auto v = var.substr(1);
       if (this->mb.hasAttribute(h, v + "_normalisation_factor")) {
-        const auto& s = d.getStateVariableDescription(v);
+        const auto& s = d.getIntegrationVariableDescription(v);
         const auto& nf =
             this->mb.getAttribute<std::string>(h, v + "_normalisation_factor");
         if (s.arraySize == 1u) {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }
@@ -677,20 +677,20 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     if (d.isIntegrationVariableIncrementName(var)) {
       if (this->mb.hasAttribute(h, var.substr(1) + "_normalisation_factor")) {
-        const auto& s = d.getStateVariableDescription(var.substr(1));
+        const auto& s = d.getIntegrationVariableDescription(var.substr(1));
         const auto& nf = this->mb.getAttribute<std::string>(
             h, var.substr(1) + "_normalisation_factor");
         if (s.arraySize == 1u) {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }
@@ -1173,14 +1173,16 @@ namespace mfront {
       auto add_lv = [this](BehaviourDescription& bd, const std::string& t,
                            const std::string& sn, const std::string& n,
                            const std::string& g, const std::string d) {
+        // `second` is true if the parameter is declared for at least one
+        // modelling hypothesis, `first` if it is declared for all of them
         auto r = bd.checkVariableExistence(n, "Parameter", false);
-        if (!r.first) {
+        if (!r.second) {
           auto v = (!sn.empty()) ? VariableDescription(t, sn, n, 1u, 0u)
                                  : VariableDescription(t, n, 1u, 0u);
           v.description = d;
           bd.addLocalVariable(uh, v, BehaviourData::UNREGISTRED);
         } else {
-          if (!r.second) {
+          if (!r.first) {
             this->throwRuntimeError(
                 "ImplicitDSLBase::completeVariableDeclaration",
                 "Parameter '" + n + "' is not defined for all hypotheses");
@@ -1383,7 +1385,7 @@ namespace mfront {
     }
     // create the compute final stress code is necessary
     this->setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
-    // correct prediction to take into account normalisation factors
+    // numerically computed jacobian blocks
     for (const auto& h : mh) {
       if (this->mb.hasAttribute(
               h, BehaviourData::numericallyComputedJacobianBlocks)) {
@@ -1426,42 +1428,6 @@ namespace mfront {
                        "'" +
                        nd.second + "' is not an integration variable");
         }
-      }
-      if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
-        CodeBlock predictor;
-        const auto& d = this->mb.getBehaviourData(h);
-        for (const auto& v : d.getIntegrationVariables()) {
-          if (this->integrationVariablesIncrementsUsedInPredictor.find(
-                  'd' + v.name) !=
-              this->integrationVariablesIncrementsUsedInPredictor.end()) {
-            if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
-              const auto& nf = this->mb.getAttribute<std::string>(
-                  h, v.name + "_normalisation_factor");
-              predictor.code += "this->d" + v.name + " /= " + nf + ";\n";
-            }
-          }
-        }
-        this->mb.setCode(h, BehaviourData::ComputePredictor, predictor,
-                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
-      }
-    }
-    if (!this->mb.areAllMechanicalDataSpecialised()) {
-      if (this->mb.hasCode(uh, BehaviourData::ComputePredictor)) {
-        CodeBlock predictor;
-        const auto& d = this->mb.getBehaviourData(uh);
-        for (const auto& v : d.getIntegrationVariables()) {
-          if (this->integrationVariablesIncrementsUsedInPredictor.find(
-                  'd' + v.name) !=
-              this->integrationVariablesIncrementsUsedInPredictor.end()) {
-            if (this->mb.hasAttribute(uh, v.name + "_normalisation_factor")) {
-              const auto& nf = this->mb.getAttribute<std::string>(
-                  uh, v.name + "_normalisation_factor");
-              predictor.code += "this->d" + v.name + " /= " + nf + ";\n";
-            }
-          }
-        }
-        this->mb.setCode(uh, BehaviourData::ComputePredictor, predictor,
-                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
     }
     // minimal tangent operator
@@ -1944,6 +1910,36 @@ namespace mfront {
     const auto& isvs = d.getIntegrationVariables();
     const auto nivs = mfront::getTypeSize(isvs);
     const auto& cb = this->mb.getCodeBlock(h, n);
+    // scaling of the rows of the matrix `m`, having `nc` columns, associated
+    // with the normalised integration variables (`p` is empty) or with the
+    // normalised implicit equations (`p` is "f"). `b` gives access to the
+    // members of the behaviour used as normalisation factors.
+    auto write_rows_scaling = [this, &os, h, &isvs](
+                                  const std::string& m,
+                                  const SupportedTypes::TypeSize& nc,
+                                  const std::string& p, const std::string& op,
+                                  const std::string& b) {
+      auto cr = SupportedTypes::TypeSize{};  // current row
+      for (const auto& iv : isvs) {
+        auto nr = cr;  // next row
+        nr += mfront::getTypeSize(iv);
+        if (this->mb.hasAttribute(h, p + iv.name + "_normalisation_factor")) {
+          auto nf = this->mb.getAttribute<std::string>(
+              h, p + iv.name + "_normalisation_factor");
+          if (tfel::utilities::starts_with(nf, "this->")) {
+            nf = b + nf.substr(6);
+          }
+          os << "for(unsigned short mfront_idx = " << cr
+             << "; mfront_idx != " << nr << "; ++mfront_idx){\n"
+             << "for(unsigned short mfront_idx2 = 0; mfront_idx2 != " << nc
+             << "; ++mfront_idx2){\n"
+             << m << "(mfront_idx, mfront_idx2) " << op << " " << nf << ";\n"
+             << "}\n"
+             << "}\n";
+        }
+        cr = nr;
+      }
+    };
     if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
       os << "TinyPermutation<" << nivs << "> jacobian_permutation;\n"
          << "TinyMatrixSolve<" << nivs << ", NumericType>"
@@ -1962,9 +1958,11 @@ namespace mfront {
          << "for(typename tfel::math::tmatrix<" << nivs << ", " << nivs
          << ", NumericType>::size_type idx=0;idx != " << nivs << "; ++idx){\n"
          << "jacobian_invert(idx, idx) = NumericType(1);\n"
-         << "}\n"
-         << "TinyMatrixSolve<" << nivs << ", NumericType>::back_substitute("
+         << "}\n";
+      write_rows_scaling("jacobian_invert", nivs, "f", "/=", "this->");
+      os << "TinyMatrixSolve<" << nivs << ", NumericType>::back_substitute("
          << "this->jacobian, jacobian_permutation, jacobian_invert);\n";
+      write_rows_scaling("jacobian_invert", nivs, "", "*=", "this->");
       auto cr = SupportedTypes::TypeSize{};  // current row
       auto cc = SupportedTypes::TypeSize{};  // current column
       for (const auto& iv1 : isvs) {
@@ -2173,11 +2171,12 @@ namespace mfront {
               os << ",\n";
             }
           }
-          os << "){\n"
-             << rhs_type << " lhs(-(this->rhs));\n"
-             << "tfel::math::TinyMatrixSolve<" << nivs << ", NumericType>"
+          os << "){\n" << rhs_type << " lhs(-(this->rhs));\n";
+          write_rows_scaling("lhs", nc, "f", "/=", "this->behaviour.");
+          os << "tfel::math::TinyMatrixSolve<" << nivs << ", NumericType>"
              << "::back_substitute(this->behaviour.jacobian, "
              << "this->permutation, lhs);\n";
+          write_rows_scaling("lhs", nc, "", "*=", "this->behaviour.");
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (size_type i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
@@ -2203,7 +2202,7 @@ namespace mfront {
                  << v.name << "_dd" << givd.name << "_view;\n";
             } else {
               os << "for(typename " << rhs_type
-                 << "::size_type idx; idx!=" << v.arraySize << "; ++idx){\n"
+                 << "::size_type idx = 0; idx!=" << v.arraySize << "; ++idx){\n"
                  << "integration_variable_derivative_d" << v.name << "_dd"
                  << givd.name << "(idx) = integration_variable_derivative_d"
                  << v.name << "_dd" << givd.name << "_view(idx);"
@@ -2305,7 +2304,13 @@ namespace mfront {
         if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
           const auto& nf = this->mb.getAttribute<std::string>(
               h, v.name + "_normalisation_factor");
-          os << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
+          os << "partial_jacobian_" << v.name << " *= " << nf << ";\n";
+        }
+        if (this->mb.hasAttribute(
+                h, 'f' + isvs[0].name + "_normalisation_factor")) {
+          const auto& fnf = this->mb.getAttribute<std::string>(
+              h, 'f' + isvs[0].name + "_normalisation_factor");
+          os << "partial_jacobian_" << v.name << " /= " << fnf << ";\n";
         }
       }
       os << "}\n\n";
@@ -2401,6 +2406,18 @@ namespace mfront {
     }
     if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
       os << this->mb.getCode(h, BehaviourData::ComputePredictor) << '\n';
+      // correct prediction to take into account normalisation factors
+      for (const auto& v : d.getIntegrationVariables()) {
+        if (this->integrationVariablesIncrementsUsedInPredictor.find('d' +
+                                                                     v.name) !=
+            this->integrationVariablesIncrementsUsedInPredictor.end()) {
+          if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
+            const auto& nf = this->mb.getAttribute<std::string>(
+                h, v.name + "_normalisation_factor");
+            os << "this->d" << v.name << " /= " << nf << ";\n";
+          }
+        }
+      }
     }
     if (this->mb.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingBegin(os, mb.getClassName(),
@@ -2622,7 +2639,7 @@ namespace mfront {
          << "::integrate() : convergence after \" "
          << "<< this->iter << \" iterations\\n\\n\";\n"
          << "}\n"
-         << "//! \brief method called when the resolution fails\n"
+         << "//! \\brief method called when the resolution fails\n"
          << "void reportFailure() const {\n"
          << "std::cout << \"" << this->mb.getClassName()
          << "::integrate() : no convergence after \" "
@@ -2640,7 +2657,8 @@ namespace mfront {
          << "two\\n\\n\";\n"
          << "}\n"
          << "/*!\n"
-         << " * \brief method called when the computation of a new correction\n"
+         << " * \\brief method called when the computation of a new "
+            "correction\n"
          << " * failed.\n"
          << " */\n"
          << "void reportNewCorrectionComputationFailure() const {\n"

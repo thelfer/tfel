@@ -167,8 +167,11 @@ namespace mfront {
 
   void write(const OverridableImplementation& i, const std::string& f) {
     const auto ext = [&f]() -> std::string {
-      const auto p = f.find(".");
-      if (p != std::string::npos) {
+      // extension of the file name (the directory part is skipped)
+      const auto s = f.find_last_of("/\\");
+      const auto b = (s == std::string::npos) ? 0 : s + 1;
+      const auto p = f.rfind('.');
+      if ((p != std::string::npos) && (p > b)) {
         return f.substr(p + 1);
       }
       return "";

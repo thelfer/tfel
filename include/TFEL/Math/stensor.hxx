@@ -283,6 +283,7 @@ namespace tfel::math {
     TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<ValueType>&);
     //! \return the identity
     TFEL_MATH_INLINE static constexpr stensor<N, base_type<ValueType>> Id();
+
     /*!
      * copy the value from a container
      */
@@ -450,9 +451,9 @@ namespace tfel::math {
      * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given
      * tensor.
      */
-    std::tuple<stensor<N, ValueType>,
-               stensor<N, ValueType>,
-               stensor<N, ValueType>>
+    std::tuple<stensor<N, base_type<ValueType>>,
+               stensor<N, base_type<ValueType>>,
+               stensor<N, base_type<ValueType>>>
     computeEigenValuesDerivatives(const rotation_matrix<ValueType>&);
     /*!
      * compute the eigenvalues derivatives with respect with this tensor
@@ -483,9 +484,9 @@ namespace tfel::math {
      * \param[out] n: derivativse of the eigenvalues
      * \param[in]  m: eigenvectors
      */
-    static std::tuple<stensor<N, ValueType>,
-                      stensor<N, ValueType>,
-                      stensor<N, ValueType>>
+    static std::tuple<stensor<N, base_type<ValueType>>,
+                      stensor<N, base_type<ValueType>>,
+                      stensor<N, base_type<ValueType>>>
     computeEigenTensors(const rotation_matrix<ValueType>&);
     /*!
      * compute the "eigentensors"

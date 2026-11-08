@@ -71,16 +71,18 @@ namespace mfront {
           << "return " << nbr << ";\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if(" << v.name << " > " << b.upperBound << "){\n"
           << get_out_of_bounds_policy  //
-          << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"
-          << "string msg(\"" << name << ": \"" << v.name
+          << "string msg(\"" << name << ": " << v.name
           << " is over its upper bound.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
           << "return -" << nbr << ";\n"
+          << "}\n"
+          << "if(mfront_policy.string_value()==\"WARNING\"){\n"
+          << "octave_stdout << msg << \"\\n\";\n"
           << "}\n"
           << "}\n"
           << "}\n"
@@ -291,8 +293,10 @@ namespace mfront {
           << "return value.range_value().elem(j);\n"
           << "} // end of get_range_value\n\n";
     }
-    out << "static double " << name << "_compute(";
+    out << "static double " << name
+        << "_compute(octave::interpreter& mfront_octave_interpreter";
     if (!mpd.inputs.empty()) {
+      out << ", ";
       for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
         if (useQuantities(mpd)) {
           out << "const double mfront_" << p3->name;
@@ -303,8 +307,6 @@ namespace mfront {
           out << ",";
         }
       }
-    } else {
-      out << "void";
     }
     out << ")\n{\n";
     writeBeginningOfMaterialPropertyBody(out, mpd, fd, "double", true);
@@ -424,7 +426,7 @@ namespace mfront {
     out << "return retval;\n";
     out << "}\n";
     if (mpd.inputs.size() == 0) {
-      out << "retval = " << name << "_compute();\n";
+      out << "retval = " << name << "_compute(mfront_octave_interpreter);\n";
     } else if (mpd.inputs.size() == 1) {
       out << "if(args(0).is_real_scalar()){\n";
       if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
@@ -433,7 +435,7 @@ namespace mfront {
         out << "return retval;\n";
         out << "}\n";
       }
-      out << "retval = " << name << "_compute(";
+      out << "retval = " << name << "_compute(mfront_octave_interpreter, ";
       out << "args(0).scalar_value());\n";
       out << "} else if(args(0).is_real_matrix()||args(0).is_range()){\n";
       out << "Matrix xin0(args(0).is_range() ? "
@@ -448,7 +450,7 @@ namespace mfront {
         out << "return retval;\n";
         out << "}\n";
       }
-      out << "xout(i,j) = " << name << "_compute(";
+      out << "xout(i,j) = " << name << "_compute(mfront_octave_interpreter, ";
       out << "xin0(i,j));\n";
       out << "}\n";
       out << "}\n";
@@ -513,7 +515,7 @@ namespace mfront {
         out << "return retval;\n";
         out << "}\n";
       }
-      out << "retval = " << name << "_compute(";
+      out << "retval = " << name << "_compute(mfront_octave_interpreter, ";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {
         out << "args(" << i << ").scalar_value(),";
       }
@@ -535,7 +537,7 @@ namespace mfront {
         out << "return retval;\n";
         out << "}\n";
       }
-      out << "xout(i,j) = " << name << "_compute(";
+      out << "xout(i,j) = " << name << "_compute(mfront_octave_interpreter, ";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {
         out << "xin" << i << "(i,j),";
       }
@@ -557,7 +559,7 @@ namespace mfront {
         out << "return retval;\n";
         out << "}\n";
       }
-      out << "xout(i,j) = " << name << "_compute(";
+      out << "xout(i,j) = " << name << "_compute(mfront_octave_interpreter, ";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {
         out << "(*(getfunction[" << i << "]))(args(" << i << "),i,j),\n";
       }

@@ -45,8 +45,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
-                                                        ForwardIterator q) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe_(ForwardIterator p, ForwardIterator q) {
       const auto r = (*p > *q) ? p : q;
       return max_element<N - 1>::exe_(++p, r);
     }
@@ -69,9 +69,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
-                                                        ForwardIterator q,
-                                                        BinaryPredicate comp) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe_(ForwardIterator p, ForwardIterator q, BinaryPredicate comp) {
       const auto r = (comp(*p, *q)) ? p : q;
       return max_element<N - 1>::exe_(++p, r, comp);
     }
@@ -94,7 +93,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe(ForwardIterator p) {
       ForwardIterator result = p;
       return max_element<N - 1>::exe_(++p, result);
     }
@@ -119,8 +119,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,
-                                                       BinaryPredicate comp) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe(ForwardIterator p, BinaryPredicate comp) {
       ForwardIterator result = p;
       return max_element<N - 1>::exe_(++p, result, comp);
     }
@@ -143,8 +143,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
-                                                        ForwardIterator q) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe_(ForwardIterator p, ForwardIterator q) {
       if (*p > *q) {
         return p;
       }
@@ -159,9 +159,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
-                                                        ForwardIterator q,
-                                                        BinaryPredicate comp) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe_(ForwardIterator p, ForwardIterator q, BinaryPredicate comp) {
       if (comp(*p, *q)) {
         return p;
       }
@@ -177,7 +176,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe(ForwardIterator p) {
       return p;
     }
 
@@ -189,8 +189,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,
-                                                       BinaryPredicate) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe(ForwardIterator p, BinaryPredicate) {
       return p;
     }
   };
@@ -212,7 +212,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe(ForwardIterator p) {
       return p;
     }
 
@@ -224,8 +225,8 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,
-                                                       BinaryPredicate) {
+    TFEL_HOST_DEVICE static TFEL_FSALGORITHM_INLINE ForwardIterator
+    exe(ForwardIterator p, BinaryPredicate) {
       return p;
     }
   };

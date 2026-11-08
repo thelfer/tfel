@@ -27,6 +27,7 @@ namespace mfront {
   struct BehaviourDescription;
   // forward declaration
   struct FileDescription;
+  struct VariableDescriptionContainer;
 
   /*!
    * This class provides some helper function for behaviour

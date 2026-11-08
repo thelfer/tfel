@@ -113,7 +113,7 @@ namespace tfel::math {
    */
   struct RuntimeRowMajorMatrixIndexingPolicy {
     //!
-    static constexpr auto hasFixedSizes = true;
+    static constexpr auto hasFixedSizes = false;
     //!
     static constexpr auto areDataContiguous = true;
     //!

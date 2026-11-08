@@ -146,20 +146,17 @@ namespace mfront {
    * the time step
    */
   static std::function<
-      std::string(const BehaviourDescription::MaterialPropertyInput&)>&
+      std::string(const BehaviourDescription::MaterialPropertyInput&)>
   modifyVariableForStiffnessTensorComputation(const std::string& cn) {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    static Modifier m =
+    const Modifier m =
         [cn](const BehaviourDescription::MaterialPropertyInput& i) {
           if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+              (i.category ==
+               MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
               (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
             return "this->" + i.name + "_";
-          } else if (i.category ==
-                     MaterialPropertyInput::
-                         AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) {
-            return "(this->" + i.name + "+(t/(this->dt))*(this->d" + i.name +
-                   "))";
           } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
                      (i.category == MaterialPropertyInput::PARAMETER)) {
             return "this->" + i.name;
@@ -181,11 +178,11 @@ namespace mfront {
    * the time step.
    */
   static std::function<
-      std::string(const BehaviourDescription::MaterialPropertyInput&)>&
+      std::string(const BehaviourDescription::MaterialPropertyInput&)>
   modifyVariableForStiffnessTensorComputation2(const std::string& cn) {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    static Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
+    const Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
                                  i) {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category ==
@@ -640,9 +637,9 @@ namespace mfront {
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::treatAlgorithm",
                               this->current->value +
-                                  " is not a valid algorithm name"
+                                  " is not a valid algorithm name. "
                                   "Supported algorithms are : 'euler', 'rk2',"
-                                  " 'rk4', 'rk42' , 'rk54' and 'rkCastem'");
+                                  " 'rk4', 'rk42', 'rk54' and 'rkCastem'");
     }
     ++this->current;
     this->readSpecifiedToken("RungeKuttaDSLBase::treatAlgorithm", ";");
@@ -802,6 +799,7 @@ namespace mfront {
                       // initialisation
       // creating local variables
       const auto& ivs = d.getStateVariables();
+      const auto& aivs = d.getAuxiliaryStateVariables();
       const auto& evs = d.getExternalStateVariables();
       for (const auto& iv : ivs) {
         if (uvs.find(iv.name) != uvs.end()) {
@@ -824,6 +822,21 @@ namespace mfront {
           if (uvs.find(dv.name) != uvs.end()) {
             ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
           }
+        }
+      }
+      // auxiliary state variables computed by an external model
+      for (const auto& iv : aivs) {
+        if ((!iv.getAttribute<bool>("ComputedByExternalModel", false)) ||
+            (uvs.find(iv.name) == uvs.end())) {
+          continue;
+        }
+        const auto currentVarName = iv.name + "_";
+        if (this->mb.useDynamicallyAllocatedVector(iv.arraySize)) {
+          icb.code += "this->" + currentVarName + ".resize(" +
+                      std::to_string(iv.arraySize) + ");\n";
+        }
+        if ((algorithm != "RungeKutta4/2") && (algorithm != "RungeKutta5/4")) {
+          icb.code += "this->" + currentVarName + " = this->" + iv.name + ";\n";
         }
       }
       for (const auto& ev : evs) {
@@ -1126,6 +1139,12 @@ namespace mfront {
       for (const auto& mv : this->mb.getMainVariables()) {
         const auto& dv = mv.first;
         if (uvs.find(dv.name) != uvs.end()) {
+          return true;
+        }
+      }
+      for (const auto& v : d.getAuxiliaryStateVariables()) {
+        if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
+            (uvs.find(v.name) != uvs.end())) {
           return true;
         }
       }
@@ -1507,7 +1526,7 @@ namespace mfront {
              << "+cste1_50*(this->d" << v.name << "_K5)"
              << "+cste2_55*(this->d" << v.name << "_K6)))";
           if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
-            os << "))/(" << get_enf(v) << ")";
+            os << ")/(" << get_enf(v) << ")";
           }
           os << ";\n";
         } else {
@@ -1543,7 +1562,7 @@ namespace mfront {
                       VariableDescription::errorNormalisationFactor)) {
                 os << "(";
               }
-              os << "tfel::math::base_type_case(tfel::math::abs("
+              os << "tfel::math::base_type_cast(tfel::math::abs("
                  << "cste1_360*(this->d" << v.name << "_K1[" << i << "])"
                  << "-cste128_4275*(this->d" << v.name << "_K3[" << i << "])"
                  << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
@@ -1651,7 +1670,7 @@ namespace mfront {
             BehaviourDescription::computesStiffnessTensor, false)) &&
         (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
       auto m =
-          modifyVariableForStiffnessTensorComputation(this->mb.getClassName());
+          modifyVariableForStiffnessTensorComputation2(this->mb.getClassName());
       os << "// updating stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
@@ -2106,7 +2125,7 @@ namespace mfront {
     if (getDebugMode()) {
       os << "cout << \"" << this->mb.getClassName()
          << "::integrate() : multiplying time step by a factor \" << 1/("
-         << this->mb.getClassName() << "::rkcastem_fac) << endl;\n";
+         << this->mb.getClassName() << "::rkcastem_div) << endl;\n";
     }
     os << "}\n"
        << "if(dt_<dtprec){\n"
@@ -2401,7 +2420,7 @@ namespace mfront {
          << "auto rk_update_error = [&error](const auto rk_error){\n"
          << "if(!ieee754::isfinite(error)){return;}\n"
          << "if(!ieee754::isfinite(rk_error)){\n"
-         << "error = rk_error;\n"
+         << "error = tfel::math::base_type_cast(rk_error);\n"
          << "return;\n"
          << "}\n"
          << "error = std::max(error, tfel::math::base_type_cast(rk_error));\n"
@@ -2631,6 +2650,15 @@ namespace mfront {
         os << "this->" << v.name << "_ = "
            << "this->" << v.name << "+ (this->d" << v.name << "_K3);\n";
       }
+    }
+    writeExternalVariablesCurrentValues2(os, this->mb, h, "1");
+    if ((this->mb.getAttribute<bool>(
+            BehaviourDescription::computesStiffnessTensor, false)) &&
+        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
+      auto m =
+          modifyVariableForStiffnessTensorComputation(this->mb.getClassName());
+      os << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "// update the thermodynamic forces\n"

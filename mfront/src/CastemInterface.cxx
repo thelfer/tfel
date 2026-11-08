@@ -1161,14 +1161,7 @@ namespace mfront {
             out << "MFRONT_SHAREDOBJ const char* " << fn
                 << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             if (fss.size() == 1u) {
-              sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
-              out << "MFRONT_SHAREDOBJ unsigned short "
-                  << this->getFunctionNameBasis(name)
-                  << "_nModellingHypotheses = " << 1u << "u;\n\n";
-              out << "MFRONT_SHAREDOBJ const char * \n"
-                  << this->getFunctionNameBasis(name)
-                  << "_ModellingHypotheses[1u] = {\""
-                  << ModellingHypothesis::toString(agps) << "\"};\n";
+              sg.generateGeneralSymbols(out, *this, mb, fd, {agps}, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
                 sg.generateSymbols(out, *this, mb, fd, name, uh);
@@ -2922,7 +2915,8 @@ namespace mfront {
       out << "false;\n";
     }
     out << "static " << constexpr_c << " bool doSubSteppingOnInvalidResults = ";
-    if (this->doSubSteppingOnInvalidResults) {
+    if (mb.getAttribute<bool>(CastemInterface::doSubSteppingOnInvalidResults,
+                              false)) {
       out << "true;\n";
     } else {
       out << "false;\n";

@@ -59,8 +59,8 @@ namespace tfel::math::st2tost2_internals {
     exe(const ST2toST2Type& s,
         const tfel::math::rotation_matrix<
             tfel::math::numeric_type<ST2toST2Type>>& r) {
-      using st2tost2 =
-          tfel::math::st2tost2<2u, tfel::math::numeric_type<ST2toST2Type>>;
+      using real = tfel::math::base_type<tfel::math::numeric_type<ST2toST2Type>>;
+      using st2tost2 = tfel::math::st2tost2<2u, real>;
       const auto sr = st2tost2::fromRotationMatrix(r);
       const auto sir = st2tost2::fromRotationMatrix(transpose(r));
       return sr * s * sir;
@@ -84,8 +84,8 @@ namespace tfel::math::st2tost2_internals {
     exe(const ST2toST2Type& s,
         const tfel::math::rotation_matrix<
             tfel::math::numeric_type<ST2toST2Type>>& r) {
-      using st2tost2 =
-          tfel::math::st2tost2<3u, tfel::math::numeric_type<ST2toST2Type>>;
+      using real = tfel::math::base_type<tfel::math::numeric_type<ST2toST2Type>>;
+      using st2tost2 = tfel::math::st2tost2<3u, real>;
       const auto sr = st2tost2::fromRotationMatrix(r);
       const auto sir = st2tost2::fromRotationMatrix(transpose(r));
       return sr * s * sir;

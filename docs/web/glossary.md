@@ -89,10 +89,10 @@ Cette entrée décrit le taux de combustion en MegaWattJour par tonne (métal).
 
 # L'entrée CohesiveForce
 
-Cette entrée décrit cohesive force for cohesize zone models.
+Cette entrée décrit cohesive force for cohesive zone models.
 
 * noms : CohesiveForce
-* unité: \(Newton\)
+* unité: \(Pa\)
 * type: vecteur 
 
 # L'entrée ConvectiveHeatTransferCoefficient
@@ -105,7 +105,7 @@ Cette entrée décrit le coefficient d'échange par convection.
 
 # L'entrée CrossSectionArea
 
-Cette entrée décrit ??.
+Cette entrée décrit the area of the cross section of a beam.
 
 * noms : CrossSectionArea
 * unité: \(??\)
@@ -148,7 +148,7 @@ Cette entrée décrit le déplacement.
 Cette entrée décrit dual stress of the strain measure.
 
 * noms : DualStress
-* unité: \(stress\)
+* unité: \(Pa\)
 * type: tenseur symétrique
 
 # L'entrée ElasticStrain
@@ -161,7 +161,7 @@ Cette entrée décrit The elastic strain.
 
 # L'entrée Emissivity
 
-Cette entrée décrit Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation.
+Cette entrée décrit Emissivity of the surface of a material, which is its effectiveness in emitting energy as thermal radiation.
 
 * noms : Emissivity
 * unité: sans unité
@@ -229,7 +229,7 @@ Cette entrée décrit le flux de neutron rapide.
 
 # L'entrée FirstAxisSecondMomentArea
 
-Cette entrée décrit ??.
+Cette entrée décrit the second moment of area of the cross section of a beam about its first axis.
 
 * noms : FirstAxisSecondMomentArea
 * unité: \(??\)
@@ -281,7 +281,7 @@ Cette entrée décrit le flux de chaleur..
 
 # L'entrée HeatTransferCoefficient
 
-Cette entrée décrit The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference.
+Cette entrée décrit The heat transfer coefficient, which is the proportionality constant between the heat flux and the temperature difference.
 
 * noms : HeatTransferCoefficient
 * unité: \(W.m^{-2}.K^{-1}\)
@@ -293,7 +293,7 @@ Cette entrée décrit la contrainte équivalente au sens de Hill.
 
 * noms : HillStress
 * unité: \(Pa\)
-* type: tenseur symétrique
+* type: scalaire 
 
 # L'entrée HydrostaticPressure
 
@@ -301,7 +301,7 @@ Cette entrée décrit la pression hydrostatique (égale au tiers de la trace du 
 
 * noms : HydrostaticPressure
 * unité: \(Pa\)
-* type: tenseur symétrique
+* type: scalaire 
 
 # L'entrée IrradiationDamage
 
@@ -554,7 +554,7 @@ Cette entrée décrit The plastic strain.
 
 # L'entrée PlateWidth
 
-Cette entrée décrit ??.
+Cette entrée décrit the out-of-plane width of a plate.
 
 * noms : PlateWidth
 * unité: \(??\)
@@ -602,7 +602,7 @@ Cette entrée décrit Porosity of the material.
 
 # L'entrée PorosityIncreaseDueToInelasticFlow
 
-Cette entrée décrit Part of the porosity increase du to inelastic flow.
+Cette entrée décrit Part of the porosity increase due to inelastic flow.
 
 * noms : PorosityIncreaseDueToInelasticFlow
 * unité: sans unité
@@ -610,7 +610,7 @@ Cette entrée décrit Part of the porosity increase du to inelastic flow.
 
 # L'entrée PorosityIncreaseDueToNucleation
 
-Cette entrée décrit Part of the porosity increase du to nucleation.
+Cette entrée décrit Part of the porosity increase due to nucleation.
 
 * noms : PorosityIncreaseDueToNucleation
 * unité: sans unité
@@ -670,7 +670,7 @@ Son sens est précisé dans la notice de l'opérateur ['PRIN'](http://www-cast3m
 
 # L'entrée SecondAxisSecondMomentArea
 
-Cette entrée décrit ??.
+Cette entrée décrit the second moment of area of the cross section of a beam about its second axis.
 
 * noms : SecondAxisSecondMomentArea
 * unité: \(??\)
@@ -793,7 +793,7 @@ Cette entrée décrit The temperature.
 Cette entrée décrit le gradient de température.
 
 * noms : TemperatureGradient
-* unité: \(T.m^{-1}\)
+* unité: \(K.m^{-1}\)
 * type: vecteur 
 
 # L'entrée ThermalConductivity
@@ -862,10 +862,10 @@ Cette entrée décrit le coefficient de dilatation linéique d'un matériau orth
 
 # L'entrée TorsionConstant
 
-Cette entrée décrit ??.
+Cette entrée décrit the torsion constant of the cross section of a beam.
 
 * noms : TorsionConstant
-* unité: \(??\)
+* unité: \(m^{4}\)
 * type: scalaire 
 
 # L'entrée TrescaStress
@@ -886,7 +886,7 @@ Cette entrée décrit la valeur maximale de la contrainte qu'un materiau peut su
 
 # L'entrée ViscoplasticStrain
 
-Cette entrée décrit The viscoplatic strain.
+Cette entrée décrit The viscoplastic strain.
 
 * noms : ViscoplasticStrain
 * unité: sans unité

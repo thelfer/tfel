@@ -96,7 +96,7 @@ namespace mfront {
     const auto& qn = q.as_string();
     const auto pn = q.getOption();
     tfel::raise_if(pn.empty(),
-                   "Behaviour::treatStandardQuery2 : "
+                   "MaterialPropertyQuery::treatParameterDefaultValue: "
                    "no option given to the '" +
                        qn + "' query");
     this->queries.push_back(
@@ -104,10 +104,10 @@ namespace mfront {
          [pn](const FileDescription&, const MaterialPropertyDescription& mpd) {
            const auto& p = findByExternalName(mpd.parameters, pn);
            if (p == mpd.parameters.end()) {
-             tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
-                            "no parameter named "
-                            "'" +
-                                pn + "'");
+             tfel::raise(
+                 "no parameter named "
+                 "'" +
+                 pn + "'");
            }
            tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
                           "no default value for parameter "

@@ -212,9 +212,9 @@ namespace tfel {
     const GlossaryEntry Glossary::CohesiveForce(
         "CohesiveForce",
         "CohesiveForce",
-        "Newton",
+        "Pa",
         "vector",
-        "cohesive force for cohesize zone models",
+        "cohesive force for cohesive zone models",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -232,7 +232,7 @@ namespace tfel {
         "CrossSectionArea",
         "??",
         "scalar",
-        "??",
+        "the area of the cross section of a beam",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -274,7 +274,7 @@ namespace tfel {
     const GlossaryEntry Glossary::DualStress(
         "DualStress",
         "DualStress",
-        "stress",
+        "Pa",
         "tensor",
         "dual stress of the strain measure",
         "" /* no 'description' defined */,
@@ -294,8 +294,8 @@ namespace tfel {
         "Emissivity",
         "no unit specified",
         "scalar",
-        "Emissivity of the surface of a material is its effectiveness in "
-        "emitting energy as thermal radiation",
+        "Emissivity of the surface of a material, which is its effectiveness "
+        "in emitting energy as thermal radiation",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -367,7 +367,8 @@ namespace tfel {
         "FirstAxisSecondMomentArea",
         "??",
         "scalar",
-        "??",
+        "the second moment of area of the cross section of a beam about its "
+        "first axis",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -420,8 +421,8 @@ namespace tfel {
         "HeatTransferCoefficient",
         "W.m^{-2}.K^{-1}",
         "scalar",
-        "The heat transfer coefficient is the proportionality constant between "
-        "the heat flux and the temperature difference",
+        "The heat transfer coefficient, which is the proportionality constant "
+        "between the heat flux and the temperature difference",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -429,7 +430,7 @@ namespace tfel {
         "HillStress",
         "HillStress",
         "Pa",
-        "tensor",
+        "scalar",
         "la contrainte équivalente au sens de Hill",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
@@ -438,7 +439,7 @@ namespace tfel {
         "HydrostaticPressure",
         "HydrostaticPressure",
         "Pa",
-        "tensor",
+        "scalar",
         "la pression hydrostatique (égale au tiers de la trace du tenseur des "
         "contraintes)",
         "" /* no 'description' defined */,
@@ -696,13 +697,14 @@ namespace tfel {
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
-    const GlossaryEntry Glossary::PlateWidth("PlateWidth",
-                                             "PlateWidth",
-                                             "??",
-                                             "scalar",
-                                             "??",
-                                             "" /* no 'description' defined */,
-                                             "" /* no 'notes' defined */);
+    const GlossaryEntry Glossary::PlateWidth(
+        "PlateWidth",
+        "PlateWidth",
+        "??",
+        "scalar",
+        "the out-of-plane width of a plate",
+        "" /* no 'description' defined */,
+        "" /* no 'notes' defined */);
 
     const GlossaryEntry Glossary::PoissonRatio(
         "PoissonRatio",
@@ -756,7 +758,7 @@ namespace tfel {
         "PorosityIncreaseDueToInelasticFlow",
         "",
         "scalar",
-        "Part of the porosity increase du to inelastic flow",
+        "Part of the porosity increase due to inelastic flow",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -765,7 +767,7 @@ namespace tfel {
         "PorosityIncreaseDueToNucleation",
         "",
         "scalar",
-        "Part of the porosity increase du to nucleation",
+        "Part of the porosity increase due to nucleation",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -824,7 +826,8 @@ namespace tfel {
         "SecondAxisSecondMomentArea",
         "??",
         "scalar",
-        "??",
+        "the second moment of area of the cross section of a beam about its "
+        "second axis",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -950,7 +953,7 @@ namespace tfel {
     const GlossaryEntry Glossary::TemperatureGradient(
         "TemperatureGradient",
         "TemperatureGradient",
-        "T.m^{-1}",
+        "K.m^{-1}",
         "vector",
         "le gradient de température",
         "" /* no 'description' defined */,
@@ -1037,9 +1040,9 @@ namespace tfel {
     const GlossaryEntry Glossary::TorsionConstant(
         "TorsionConstant",
         "TorsionConstant",
-        "??",
+        "m^{4}",
         "scalar",
-        "??",
+        "the torsion constant of the cross section of a beam",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -1067,7 +1070,7 @@ namespace tfel {
         "ViscoplasticStrain",
         "",
         "tensor",
-        "The viscoplatic strain",
+        "The viscoplastic strain",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 

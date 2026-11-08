@@ -124,7 +124,9 @@ static void generate_cxx(const std::vector<Constant>& cs) {
         os << ' ' << c.description;
       }
       if (!c.unit.empty()) {
-        os << " (" << c.unit << ')';
+        using tfel::utilities::replace_all;
+        os << " (" << replace_all(replace_all(c.unit, "^{", ""), "}", "")
+           << ')';
       }
       os << '\n';
     }
@@ -138,9 +140,11 @@ static void generate_cxx(const std::vector<Constant>& cs) {
      << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights\n"
      << " * reserved.\n"
      << " * This project is publicly released under either the GNU GPL "
-        "Licence\n"
-     << " * or the CECILL-A licence. A copy of thoses licences are delivered\n"
-     << " * with the sources of TFEL. CEA or EDF may also distribute this\n"
+        "Licence with\n"
+     << " * linking exception or the CECILL-A licence. A copy of thoses "
+        "licences are\n"
+     << " * delivered with the sources of TFEL. CEA or EDF may also distribute "
+        "this\n"
      << " * project under specific licensing conditions.\n"
      << " */\n"
      << "\n"

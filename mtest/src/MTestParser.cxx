@@ -145,8 +145,8 @@ namespace mtest {
       log << "MTestParser::execute : treating keyword '" << p->value
           << "' at line '" << p->line << "'\n";
     }
-    ++p;
     const auto line = p->line;
+    ++p;
     try {
       (this->*(pc->second))(t, p);
     } catch (std::exception& e) {
