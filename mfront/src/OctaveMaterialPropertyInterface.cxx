@@ -38,11 +38,18 @@ namespace mfront {
       const VariableDescription& v,
       const std::string& name,
       const VariableDescriptionContainer::size_type nbr,
-      const bool use_qt) {
+      const bool use_qt,
+      const bool return_status) {
     if (!v.hasBounds()) {
       return;
     }
     const auto& b = v.getBounds();
+    // <name>_checkBounds returns a status, <name>_compute returns the value
+    // of the material property
+    const auto strict_status =
+        return_status ? "return -" + std::to_string(nbr) + ";\n" : "";
+    const auto status =
+        return_status ? "return " + std::to_string(nbr) + ";\n" : "";
     const char* const get_out_of_bounds_policy =
         "#if OCTAVE_MAJOR_VERSION >= 6\n"
         "const octave_value mfront_policy = "
@@ -67,14 +74,14 @@ namespace mfront {
           << " is below its lower bound.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
-          << "return -" << nbr << ";\n"
+          << strict_status  //
           << "}\n"
           << "if(mfront_policy.string_value()==\"WARNING\"){\n"
           << "octave_stdout << msg << \"\\n\";\n"
           << "}\n"
           << "}\n"
           << "}\n"
-          << "return " << nbr << ";\n"
+          << status  //
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       if (use_qt) {
@@ -90,14 +97,14 @@ namespace mfront {
           << " is over its upper bound.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
-          << "return -" << nbr << ";\n"
+          << strict_status  //
           << "}\n"
           << "if(mfront_policy.string_value()==\"WARNING\"){\n"
           << "octave_stdout << msg << \"\\n\";\n"
           << "}\n"
           << "}\n"
           << "}\n"
-          << "return " << nbr << ";\n"
+          << status  //
           << "}\n";
     } else {
       if (use_qt) {
@@ -116,13 +123,13 @@ namespace mfront {
           << " is out of its bounds.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
-          << "return -" << nbr << ";\n"
+          << strict_status  //
           << "} if(mfront_policy.string_value()==\"WARNING\"){\n"
           << "octave_stdout << msg << \"\\n\";\n"
           << "}\n"
           << "}\n"
           << "}\n"
-          << "return " << nbr << ";\n"
+          << status  //
           << "}\n";
     }
   }  // end of writeBoundsChecks
@@ -385,7 +392,7 @@ namespace mfront {
         << "return 0;\n"
         << "}\n";
     writePhysicalBoundsChecks(out, mpd.output, name, 0, useQuantities(mpd));
-    writeBoundsChecks(out, mpd.output, name, 0, useQuantities(mpd));
+    writeBoundsChecks(out, mpd.output, name, 0, useQuantities(mpd), false);
     //
     if (useQuantities(mpd)) {
       out << "return " << mpd.output.name << ".getValue();\n";
@@ -417,7 +424,7 @@ namespace mfront {
         for (const auto& i : mpd.inputs) {
           const auto nbr =
               CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
-          writeBoundsChecks(out, i, name, nbr, false);
+          writeBoundsChecks(out, i, name, nbr, false, true);
         }
       }
       out << "return 0;\n"
