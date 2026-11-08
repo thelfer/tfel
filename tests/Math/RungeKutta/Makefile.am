@@ -10,7 +10,8 @@ testdir = $(pkgdatadir)/tests/Math/RungeKutta
 test_PROGRAMS = runge_kutta2 \
 		runge_kutta4 \
 		rk42         \
-		rk54
+		rk54         \
+		rk_final_time
 
 LDADD = -L$(top_builddir)/src/Math                  \
 	-L$(top_builddir)/src/Utilities             \
@@ -21,6 +22,7 @@ runge_kutta2_SOURCES = runge_kutta2.cxx
 runge_kutta4_SOURCES = runge_kutta4.cxx
 rk42_SOURCES         = rk42.cxx
 rk54_SOURCES         = rk54.cxx
+rk_final_time_SOURCES = rk_final_time.cxx
 
 TESTS=$(test_PROGRAMS)
 

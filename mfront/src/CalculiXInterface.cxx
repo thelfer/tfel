@@ -288,6 +288,17 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CalculiXInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [this, &i, &k] {
+      if (i.empty()) {
+        reportWarning("keyword '" + k +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      k + "' by '" + k + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         const auto keys =
@@ -301,6 +312,7 @@ namespace mfront {
       }
     }
     if (k == "@CalculiXFiniteStrainStrategy") {
+      check_interface_restriction();
       throw_if(bd.hasAttribute(CalculiXInterface::finiteStrainStrategy),
                "a finite strain strategy has already been defined");
       throw_if(current == end, "unexpected end of file");
@@ -313,6 +325,7 @@ namespace mfront {
       bd.setAttribute(CalculiXInterface::finiteStrainStrategy, fs, false);
       return {true, current};
     } else if (k == "@CalculiXGenerateMTestFileOnFailure") {
+      check_interface_restriction();
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));
       return {true, current};
@@ -565,7 +578,7 @@ namespace mfront {
         << "stensor<3u,real> pk2;\n"
         << "pk2.importTab(STRESS);\n"
         << "auto s = "
-           "convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);\n";
+           "convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F0);\n";
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       out << "const auto rF0 = change_basis(F0,r);\n"
           << "const auto rF1 = change_basis(F1,r);\n"

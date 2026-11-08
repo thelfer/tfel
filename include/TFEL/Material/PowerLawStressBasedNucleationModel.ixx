@@ -76,9 +76,10 @@ namespace tfel::material {
     if (rs1 < 0) {
       return std::make_tuple(real(0), Stensor(real(0)));
     }
-    const auto irs1 = std::max(rs1, 1e-12);
+    const auto irs1 = std::max(rs1, real(1e-12));
     const auto An = (params.fn) * std::pow(rs1, params.m);
-    const auto dAn_ds1 = (params.m / params.sn) * An * irs1;
+    // derivative of fn * rs1^m: (m / sn) * fn * rs1^(m - 1)
+    const auto dAn_ds1 = (params.m / params.sn) * An / irs1;
     //
     return std::make_tuple(An, dAn_ds1 * n1);
   }  // end of computePowerLawStressBasedNucleationModelPorosityRate

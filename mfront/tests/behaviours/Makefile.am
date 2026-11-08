@@ -192,6 +192,8 @@ MFRONTS= DSLOptionsTest.mfront                                             \
      ode_implicit.mfront                                               \
      TensorialExternalStateVariableTest.mfront                         \
      ElasticityParametersAsStaticVariables.mfront                      \
+     RungeKuttaElasticity.mfront                                     \
+     RungeKuttaElasticity_rk4.mfront                                 \
      RungeKuttaElasticityParametersAsStaticVariables.mfront            \
      ImplicitElasticityParametersAsStaticVariables.mfront              \
      InitializationFailureTest.mfront                                  \
@@ -239,6 +241,7 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/finitestrainsinglecrystal-001.ref			  \
 	   references/finitestrainsinglecrystal-012.ref			  \
 	   references/finitestrainsinglecrystal-159.ref                   \
+	   references/finitestrainsinglecrystal2-001.ref                  \
 	   references/AnistropicLemaitreViscoplasticBehaviour.ref         \
 	   references/ViscoChaboche.ref                                   \
 	   references/johnson-cook_ssrt.ref				  \

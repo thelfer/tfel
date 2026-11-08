@@ -23,7 +23,7 @@
 #endif
 #include <cstdlib>
 #include <algorithm>
-// #include <filesystem>
+#include <filesystem>
 #ifdef MFRONT_HAVE_MADNEX
 #include "Madnex/MFrontDataBase.hxx"
 #endif /* MFRONT_HAVE_MADNEX */
@@ -39,11 +39,8 @@ namespace mfront {
 #ifdef MFRONT_HAVE_MADNEX
 
   static std::string getFileExtension(const std::string& f) {
-    const auto pos = f.find(".");
-    if (pos != std::string::npos) {
-      return f.substr(pos + 1);
-    }
-    return "";
+    const auto e = std::filesystem::path{f}.extension().string();
+    return e.empty() ? e : e.substr(1);
   }  // end of getFileExtension
 
 #endif /* MFRONT_HAVE_MADNEX */
@@ -138,7 +135,7 @@ namespace mfront {
             ((madnex_path.mkt == MadnexPath::MADNEX_ALL) ||
              (madnex_path.mkt == MadnexPath::MADNEX_BEHAVIOUR))) {
           mpath = getMatchingMaterialKnoweldge<static_cast<ptr>(
-              &madnex::DataBase::getAvailableMaterialProperties)>(
+              &madnex::DataBase::getAvailableBehaviours)>(
               db, madnex_path.file_path, madnex_path.material, name,
               "Behaviour");
         }
@@ -146,7 +143,7 @@ namespace mfront {
             ((madnex_path.mkt == MadnexPath::MADNEX_ALL) ||
              (madnex_path.mkt == MadnexPath::MADNEX_MODEL))) {
           mpath = getMatchingMaterialKnoweldge<static_cast<ptr>(
-              &madnex::DataBase::getAvailableMaterialProperties)>(
+              &madnex::DataBase::getAvailableModels)>(
               db, madnex_path.file_path, madnex_path.material, name, "Model");
         }
         if (!mpath.empty()) {
@@ -191,7 +188,7 @@ namespace mfront {
       tfel::raise(
           "SearchPathsHandler::addMadnexSearchPaths: "
           "invalid path '" +
-          p + "' (invalid file extension for file '" + details[1] + "')");
+          p + "' (invalid file extension for file '" + file_path + "')");
     }
     if (details.size() > 1) {
       const auto mkt = [&p, &details] {
@@ -208,7 +205,7 @@ namespace mfront {
         tfel::raise(
             "SearchPathsHandler::addMadnexSearchPaths: "
             "invalid path '" +
-            p + "' (invalid file extension for file '" + details[1] + "')");
+            p + "' (invalid material knowledge type '" + details[1] + "')");
       }();
       const auto& material_id = [&details] {
         if (details.size() == 3) {
@@ -228,6 +225,7 @@ namespace mfront {
           MadnexPath path;
           path.file_path = file_path;
           path.material = material;
+          path.mkt = mkt;
           msf.paths.push_back(path);
         }
       }

@@ -60,7 +60,7 @@ value.
 ## Example
 
 ~~~~{.cpp}
-@Constant A 1.234e56;
+@Constant A = 1.234e56;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -410,7 +410,7 @@ fc.setDefaultValue(1.e-2);
 
 # The `@Parser` keyword
 
-The `@Paser` keyword is a deprecated synonymous of `@DSL`.
+The `@Parser` keyword is a deprecated synonymous of `@DSL`.
 
 # The `@PhysicalBounds` keyword
 

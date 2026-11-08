@@ -48,6 +48,7 @@ namespace mfront {
     auto mpd = MaterialPropertyDescription{};
     mpd.output = VariableDescription{"real", "res", 1u, 0u};
     std::ostringstream body;
+    body.precision(14);
     body << "res = " << mp.value << ";\n";
     mpd.law = prefix + n;
     mpd.className = prefix + n;
@@ -753,7 +754,7 @@ namespace mfront {
   void BehaviourDescription::setLibrary(const std::string& l) {
     tfel::raise_if(!this->library.empty(),
                    "BehaviourDescription::setLibrary: "
-                   "library alreay defined");
+                   "library already defined");
     this->library = l;
   }  // end of setLibrary
 
@@ -764,7 +765,7 @@ namespace mfront {
   void BehaviourDescription::setMaterialName(const std::string& m) {
     tfel::raise_if(!this->material.empty(),
                    "BehaviourDescription::setMaterialName: "
-                   "material name alreay defined");
+                   "material name already defined");
     this->material = m;
     this->updateClassName();
   }  // end of setMaterialName
@@ -776,7 +777,7 @@ namespace mfront {
   void BehaviourDescription::setClassName(const std::string& n) {
     tfel::raise_if(!this->className.empty(),
                    "BehaviourDescription::setClassName: "
-                   "class name alreay defined");
+                   "class name already defined");
     this->className = n;
   }  // end of setClassName
 
@@ -1242,7 +1243,7 @@ namespace mfront {
       return r;
     };
     tfel::raise_if(
-        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, true),
+        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, false),
         "BehaviourDSLCommon::addLocalDataStructure: "
         "invalid local structure name '" +
             lds.name + "'");
@@ -1917,9 +1918,6 @@ namespace mfront {
     // never ever trust a user
     throw_if(mhs.find(uh) != mhs.end(),
              "undefined modelling hypothesis specified");
-    // check that the user did not already set the modelling hypotheses
-    throw_if(!this->hypotheses.empty(),
-             "supported modelling hypotheses have already been declared");
     // check that if a specialised version of the behaviour
     // is defined, it is present in the set of hypotheses defined here
     for (const auto& ld : this->sd) {

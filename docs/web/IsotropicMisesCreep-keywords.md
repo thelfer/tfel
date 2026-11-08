@@ -36,9 +36,9 @@ name(s) of the variable(s) declared, separated by commas.
 
 ~~~~{.cpp}
 // scalar auxiliary state variable
-@AuxiliaryStateVariables strain p;
+@AuxiliaryStateVariable strain p;
 // symmetric tensors auxiliary state variable
-@AuxiliaryStateVariables StrainStensor evp,evp2;
+@AuxiliaryStateVariable StrainStensor evp,evp2;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # The `@Behaviour` keyword
@@ -615,7 +615,7 @@ fc.setDefaultValue(1.e-2);
 
 # The `@Parser` keyword
 
-The `@Paser` keyword is a deprecated synonymous of `@DSL`.
+The `@Parser` keyword is a deprecated synonymous of `@DSL`.
 
 # The `@PhysicalBounds` keyword
 
@@ -694,7 +694,7 @@ behaviour (see `@IsotropicElasticBehaviour` to change this in the case
 of an orthotropic behaviour).
 
 ~~~~{.cpp}
-@RequireStiffnessTensor true;
+@RequireStiffnessTensor;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -781,9 +781,9 @@ respectively.
 
 ~~~~{.cpp}
 // scalar state variable
-@StateVariables strain p;
+@StateVariable strain p;
 // symmetric tensors state variable
-@StateVariables StrainStensor evp,evp2;
+@StateVariable StrainStensor evp,evp2;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # The `@StaticVar` keyword
@@ -888,7 +888,7 @@ context) which may result in some gain in time and memory space.
 ## Example
 
 ~~~~{.cpp}
-@UsableInPurelyImplicitResolution true;
+@UsableInPurelyImplicitResolution;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

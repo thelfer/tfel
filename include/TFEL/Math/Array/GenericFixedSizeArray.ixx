@@ -217,8 +217,10 @@ namespace tfel::math {
       Child&>
   GenericFixedSizeArray<Child, ArrayPolicy, N>::operator/=(
       const ValueType2& s) noexcept {
+    using vt =
+        typename GenericFixedSizeArray<Child, ArrayPolicy, N>::value_type;
     auto& child = static_cast<Child&>(*this);
-    child.multiplyByScalar(1 / s);
+    child.multiplyByScalar(base_type<numeric_type<vt>>{1} / s);
     return child;
   }  // end of operator/=
 

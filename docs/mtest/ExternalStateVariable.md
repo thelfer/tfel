@@ -65,8 +65,8 @@ column.
 ## Example (function)
 
 ~~~~ {.cpp}
-@Real T0 293.15
-@Real T1 400.15
+@Real 'T0' 293.15;
+@Real 'T1' 400.15;
 @ExternalStateVariable<function> 'Temperature' 'T0+(T1-T0)*t**2';
 ~~~~~~~~
 
