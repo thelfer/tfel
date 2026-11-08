@@ -171,8 +171,8 @@ namespace calculix {
                                            const CalculiXReal* const props) {
         const auto o = CalculiXTraits<BV>::elasticPropertiesOffset;
         CalculiXComputeThermalExpansionCoefficientTensor<CalculiXTraits<
-            BV>::etype>::exe(props + o,
-                             data.getThermalExpansionCoefficientTensor());
+            BV>::type>::exe(props + o,
+                            data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
 

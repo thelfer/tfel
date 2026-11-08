@@ -51,9 +51,6 @@ namespace mtest {
       if (this->requiresStiffnessTensor) {
         tmp.insert(tmp.end(), {"YoungModulus", "PoissonRatio"});
       }
-      if (this->requiresThermalExpansionCoefficientTensor) {
-        tmp.push_back("ThermalExpansion");
-      }
     } else if (this->etype == 1u) {
       if (this->requiresStiffnessTensor) {
         tmp.insert(tmp.end(),
@@ -61,14 +58,20 @@ namespace mtest {
                     "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
                     "ShearModulus12", "ShearModulus23", "ShearModulus13"});
       }
-      if (this->requiresThermalExpansionCoefficientTensor) {
-        tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
-                               "ThermalExpansion3"});
-      }
     } else {
       throw_if(true,
                "unsupported behaviour type "
                "(neither isotropic nor orthotropic)");
+    }
+    if (this->requiresThermalExpansionCoefficientTensor) {
+      // the thermal expansion coefficient tensor has the symmetry of the
+      // behaviour
+      if (this->stype == 0u) {
+        tmp.push_back("ThermalExpansion");
+      } else {
+        tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
+                               "ThermalExpansion3"});
+      }
     }
     this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }
