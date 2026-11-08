@@ -214,7 +214,7 @@ namespace tfel {
         "CohesiveForce",
         "Pa",
         "vector",
-        "cohesive force for cohesize zone models",
+        "cohesive force for cohesive zone models",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -294,8 +294,8 @@ namespace tfel {
         "Emissivity",
         "no unit specified",
         "scalar",
-        "Emissivity of the surface of a material is its effectiveness in "
-        "emitting energy as thermal radiation",
+        "Emissivity of the surface of a material, which is its effectiveness "
+        "in emitting energy as thermal radiation",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -421,8 +421,8 @@ namespace tfel {
         "HeatTransferCoefficient",
         "W.m^{-2}.K^{-1}",
         "scalar",
-        "The heat transfer coefficient is the proportionality constant between "
-        "the heat flux and the temperature difference",
+        "The heat transfer coefficient, which is the proportionality constant "
+        "between the heat flux and the temperature difference",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -758,7 +758,7 @@ namespace tfel {
         "PorosityIncreaseDueToInelasticFlow",
         "",
         "scalar",
-        "Part of the porosity increase du to inelastic flow",
+        "Part of the porosity increase due to inelastic flow",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -767,7 +767,7 @@ namespace tfel {
         "PorosityIncreaseDueToNucleation",
         "",
         "scalar",
-        "Part of the porosity increase du to nucleation",
+        "Part of the porosity increase due to nucleation",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 
@@ -1070,7 +1070,7 @@ namespace tfel {
         "ViscoplasticStrain",
         "",
         "tensor",
-        "The viscoplatic strain",
+        "The viscoplastic strain",
         "" /* no 'description' defined */,
         "" /* no 'notes' defined */);
 

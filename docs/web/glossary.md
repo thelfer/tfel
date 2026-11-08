@@ -89,7 +89,7 @@ Cette entrée décrit le taux de combustion en MegaWattJour par tonne (métal).
 
 # L'entrée CohesiveForce
 
-Cette entrée décrit cohesive force for cohesize zone models.
+Cette entrée décrit cohesive force for cohesive zone models.
 
 * noms : CohesiveForce
 * unité: \(Pa\)
@@ -161,7 +161,7 @@ Cette entrée décrit The elastic strain.
 
 # L'entrée Emissivity
 
-Cette entrée décrit Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation.
+Cette entrée décrit Emissivity of the surface of a material, which is its effectiveness in emitting energy as thermal radiation.
 
 * noms : Emissivity
 * unité: sans unité
@@ -281,7 +281,7 @@ Cette entrée décrit le flux de chaleur..
 
 # L'entrée HeatTransferCoefficient
 
-Cette entrée décrit The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference.
+Cette entrée décrit The heat transfer coefficient, which is the proportionality constant between the heat flux and the temperature difference.
 
 * noms : HeatTransferCoefficient
 * unité: \(W.m^{-2}.K^{-1}\)
@@ -602,7 +602,7 @@ Cette entrée décrit Porosity of the material.
 
 # L'entrée PorosityIncreaseDueToInelasticFlow
 
-Cette entrée décrit Part of the porosity increase du to inelastic flow.
+Cette entrée décrit Part of the porosity increase due to inelastic flow.
 
 * noms : PorosityIncreaseDueToInelasticFlow
 * unité: sans unité
@@ -610,7 +610,7 @@ Cette entrée décrit Part of the porosity increase du to inelastic flow.
 
 # L'entrée PorosityIncreaseDueToNucleation
 
-Cette entrée décrit Part of the porosity increase du to nucleation.
+Cette entrée décrit Part of the porosity increase due to nucleation.
 
 * noms : PorosityIncreaseDueToNucleation
 * unité: sans unité
@@ -886,7 +886,7 @@ Cette entrée décrit la valeur maximale de la contrainte qu'un materiau peut su
 
 # L'entrée ViscoplasticStrain
 
-Cette entrée décrit The viscoplatic strain.
+Cette entrée décrit The viscoplastic strain.
 
 * noms : ViscoplasticStrain
 * unité: sans unité
