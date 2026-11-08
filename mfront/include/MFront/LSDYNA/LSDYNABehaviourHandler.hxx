@@ -166,7 +166,7 @@ namespace lsdyna {
                                          const LSDYNAReal* const props) {
         const unsigned short o = LSDYNATraits<BV>::elasticPropertiesOffset;
         LSDYNAComputeThermalExpansionCoefficientTensor<
-            LSDYNATraits<BV>::btype, H, LSDYNATraits<BV>::stype>::
+            LSDYNATraits<BV>::btype, H, LSDYNATraits<BV>::etype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer

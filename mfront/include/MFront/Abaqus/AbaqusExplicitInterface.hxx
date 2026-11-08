@@ -86,7 +86,7 @@ namespace abaqus {
         const unsigned short o = ATraits::elasticPropertiesOffset;
         AbaqusComputeThermalExpansionCoefficientTensor<
             ATraits::btype, H,
-            ATraits::stype>::exe(props + o,
+            ATraits::etype>::exe(props + o,
                                  data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
