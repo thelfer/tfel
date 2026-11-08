@@ -153,13 +153,10 @@ namespace mfront {
     const Modifier m =
         [cn](const BehaviourDescription::MaterialPropertyInput& i) {
           if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+              (i.category ==
+               MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
               (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
             return "this->" + i.name + "_";
-          } else if (i.category ==
-                     MaterialPropertyInput::
-                         AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) {
-            return "(this->" + i.name + "+(t/(this->dt))*(this->d" + i.name +
-                   "))";
           } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
                      (i.category == MaterialPropertyInput::PARAMETER)) {
             return "this->" + i.name;
@@ -1673,7 +1670,7 @@ namespace mfront {
             BehaviourDescription::computesStiffnessTensor, false)) &&
         (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
       auto m =
-          modifyVariableForStiffnessTensorComputation(this->mb.getClassName());
+          modifyVariableForStiffnessTensorComputation2(this->mb.getClassName());
       os << "// updating stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
@@ -2423,7 +2420,7 @@ namespace mfront {
          << "auto rk_update_error = [&error](const auto rk_error){\n"
          << "if(!ieee754::isfinite(error)){return;}\n"
          << "if(!ieee754::isfinite(rk_error)){\n"
-         << "error = rk_error;\n"
+         << "error = tfel::math::base_type_cast(rk_error);\n"
          << "return;\n"
          << "}\n"
          << "error = std::max(error, tfel::math::base_type_cast(rk_error));\n"
@@ -2653,6 +2650,15 @@ namespace mfront {
         os << "this->" << v.name << "_ = "
            << "this->" << v.name << "+ (this->d" << v.name << "_K3);\n";
       }
+    }
+    writeExternalVariablesCurrentValues2(os, this->mb, h, "1");
+    if ((this->mb.getAttribute<bool>(
+            BehaviourDescription::computesStiffnessTensor, false)) &&
+        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())) {
+      auto m =
+          modifyVariableForStiffnessTensorComputation(this->mb.getClassName());
+      os << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "// update the thermodynamic forces\n"
