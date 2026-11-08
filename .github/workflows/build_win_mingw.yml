@@ -5,6 +5,11 @@ on:
   pull_request:
     branches: [ rliv-3.3 ]
 
+# without cache, a run is long: a new push cancels the one in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   msys2-ucrt64:
     runs-on: windows-latest

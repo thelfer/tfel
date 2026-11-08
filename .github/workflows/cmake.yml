@@ -6,27 +6,74 @@ on:
   pull_request:
     branches: [ rliv-3.3 ]
 
+# without cache, a run is long: a new push cancels the one in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
 jobs:
   build:
+
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
+        include:
+          - os: ubuntu-latest
+            jobs_flag: '-j $(nproc)'
+            # the tests of the solver interfaces and the Fortran tests
+            options: >-
+              -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON
+              -Denable-abaqus=ON -Denable-ansys=ON -Denable-calculix=ON
+              -Denable-cyrano=ON -Denable-diana-fea=ON -Denable-lsdyna=ON
+              -Denable-comsol=ON -Denable-europlexus=ON
+
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
+      with:
+        path: tfel
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: |
+        cmake ${{github.workspace}}/tfel                           \
+              -B ${{github.workspace}}/build                       \
+              -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}               \
+              -Denable-portable-build=ON                           \
+              ${{ matrix.options }}                                \
+              -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} ${{ matrix.jobs_flag }}
 
-#    - name: Test
-#      working-directory: ${{github.workspace}}/build
-#      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check
-      
+    # on this branch, the tests are built by the check target, which runs ctest
+    - name: Test
+      run: |
+        export CTEST_PARALLEL_LEVEL=$(getconf _NPROCESSORS_ONLN)
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target check ${{ matrix.jobs_flag }}
+
+    - name: Collect test results
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: |
+        mkdir ${{github.workspace}}/tests-results
+        cp --parents $(find ${{github.workspace}}/build -path ${{github.workspace}}/build/Testing -prune -o -type f  -name "*.xml" -print) ${{github.workspace}}/tests-results
+
+    - name: Install
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install ${{ matrix.jobs_flag }}
+
+    - name: Print test log on failure
+      if: ${{ failure() }}
+      run: |
+        cat ${{github.workspace}}/build/Testing/Temporary/*.log
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v6
+      if: ${{ matrix.os == 'ubuntu-latest' && (success() || failure()) }} # always run even if the previous step fails
+      with:
+        report_paths: '**/tests-results/**/*.xml'
