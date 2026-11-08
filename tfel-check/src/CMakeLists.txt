@@ -19,7 +19,6 @@ tfel_library(TFELCheck
   RelativeAndAbsoluteComparison.cxx
   MixedComparison.cxx
   AreaComparison.cxx
-  L2Comparison.cxx
   Curve.cxx
   Test.cxx)
 target_include_directories(TFELCheck
