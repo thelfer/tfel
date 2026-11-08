@@ -70,10 +70,14 @@ paper:
 
 # Current versions
 
-The latest official version is `TFEL-4.2.0`.  It is built upon the
-`C++-17` standard.
+The latest official version is `TFEL-5.1.0`.  It is built upon the
+`C++-20` standard.
 
-The stable development branch is called `rliv-4.2`. It is the
+The stable development branch is called `rliv-5.1`. It is the
 recommended branch for most users.
 
-The current `master` branch will become `TFEL-5.0`.
+The current `master` branch will become `TFEL-5.2`.
+
+This branch, `rliv-5.0`, is the development branch of the `TFEL-5.0`
+series, built upon the `C++-20` standard. The latest release of this
+series is `TFEL-5.0.2`.
