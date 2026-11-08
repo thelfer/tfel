@@ -102,11 +102,13 @@ namespace tfel::math {
      * \brief constructor from a value
      * \param[in] value: value used to initialize the array
      */
-    template <typename ValueType,
-              typename std::enable_if<
-                  isAssignableTo<ValueType,
-                                 typename GenericRuntimeArray::value_type>(),
-                  bool>::type = true>
+    template <
+        typename ValueType,
+        typename std::enable_if<
+            isAssignableTo<
+                ValueType,
+                typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>(),
+            bool>::type = true>
     explicit GenericRuntimeArray(const typename ArrayPolicy::IndexingPolicy&,
                                  const ValueType&);
     /*!
@@ -117,12 +119,14 @@ namespace tfel::math {
         typename ValueType,
         typename std::enable_if<
             ((isAssignableTo<ValueType,
-                             typename GenericRuntimeArray::value_type>()) &&
+                             typename GenericRuntimeArray<Child, ArrayPolicy>::
+                                 value_type>()) &&
              (ArrayPolicy::IndexingPolicy::arity == 1) &&
              (ArrayPolicy::IndexingPolicy::areDataContiguous)),
             bool>::type = true>
-    GenericRuntimeArray(const typename GenericRuntimeArray::indexing_policy,
-                        const std::initializer_list<ValueType>&);
+    GenericRuntimeArray(
+        const typename GenericRuntimeArray<Child, ArrayPolicy>::indexing_policy,
+        const std::initializer_list<ValueType>&);
     /*!
      * \brief constructor from an initializer list
      * \param[in] values: values
@@ -131,7 +135,8 @@ namespace tfel::math {
         typename ValueType,
         typename std::enable_if<
             ((isAssignableTo<ValueType,
-                             typename GenericRuntimeArray::value_type>()) &&
+                             typename GenericRuntimeArray<Child, ArrayPolicy>::
+                                 value_type>()) &&
              (ArrayPolicy::IndexingPolicy::arity == 1) &&
              (ArrayPolicy::IndexingPolicy::areDataContiguous)),
             bool>::type = true>
@@ -148,9 +153,10 @@ namespace tfel::math {
                                       bool>::type = true>
     explicit GenericRuntimeArray(const OtherArray&);
     //! \return a pointer to the underlying array serving as element storage.
-    typename GenericRuntimeArray::pointer data() noexcept;
+    typename GenericRuntimeArray<Child, ArrayPolicy>::pointer data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    typename GenericRuntimeArray::const_pointer data() const noexcept;
+    typename GenericRuntimeArray<Child, ArrayPolicy>::const_pointer data()
+        const noexcept;
     //! \brief resize the array
     void resize(const typename ArrayPolicy::IndexingPolicy&);
     /*!
@@ -158,7 +164,8 @@ namespace tfel::math {
      * be greater than than the logical number of elements contained in the
      * array which is returned by `IndexingPolicy::size`.
      */
-    typename GenericRuntimeArray::size_type getContainerSize() const noexcept;
+    typename GenericRuntimeArray<Child, ArrayPolicy>::size_type
+    getContainerSize() const noexcept;
     // inheriting MutableRuntimeArrayBase' assignement operator
     using MutableRuntimeArrayBase<GenericRuntimeArray<Child, ArrayPolicy>,
                                   ArrayPolicy>::operator=;
@@ -182,20 +189,22 @@ namespace tfel::math {
     template <typename ValueType2>
     std::enable_if_t<
         isAssignableTo<
-            BinaryOperationResult<ValueType2,
-                                  typename GenericRuntimeArray::value_type,
-                                  OpMult>,
-            typename GenericRuntimeArray::value_type>(),
+            BinaryOperationResult<
+                ValueType2,
+                typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
+                OpMult>,
+            typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>(),
         Child&>
     operator*=(const ValueType2&) noexcept;
     //
     template <typename ValueType2>
     std::enable_if_t<
         isAssignableTo<
-            BinaryOperationResult<typename GenericRuntimeArray::value_type,
-                                  ValueType2,
-                                  OpDiv>,
-            typename GenericRuntimeArray::value_type>(),
+            BinaryOperationResult<
+                typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
+                ValueType2,
+                OpDiv>,
+            typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>(),
         Child&>
     operator/=(const ValueType2&) noexcept;
     //
