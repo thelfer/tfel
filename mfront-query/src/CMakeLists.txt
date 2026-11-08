@@ -19,8 +19,7 @@ endif(TFEL_APPEND_SUFFIX)
 if(TFEL_HAVE_MADNEX)
   target_compile_definitions(mfront-query
     PUBLIC MFRONT_QUERY_HAVE_MADNEX)
-  target_link_libraries(mfront-query
-    PRIVATE madnex::Madnex)
+  target_link_libraries(mfront-query madnex::Madnex)
 endif(TFEL_HAVE_MADNEX)
 
 install(TARGETS mfront-query DESTINATION bin

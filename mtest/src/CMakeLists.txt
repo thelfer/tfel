@@ -214,7 +214,7 @@ endif(WIN32 AND enable-static)
 
 if(TFEL_HAVE_MADNEX)
   target_compile_definitions(mtest PUBLIC MTEST_HAVE_MADNEX)
-  target_link_libraries(mtest PRIVATE madnex::Madnex)
+  target_link_libraries(mtest madnex::Madnex)
 endif(TFEL_HAVE_MADNEX)
 
 if(TFEL_APPEND_SUFFIX)
