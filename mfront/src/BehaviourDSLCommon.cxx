@@ -5828,12 +5828,25 @@ namespace mfront {
             os << "dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "dl0_l0[2]+=(this->" << vs << ")/2;\n";
           }
-          this->writeModelCall(os, tmpnames, h, md, vs, vs, "sfeh");
           if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "dl0_l0[1]+=(this->" << vs << ")/2;\n";
+          }
+          this->writeModelCall(os, tmpnames, h, md, vs, vs, "sfeh");
+          if ((h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
+              (h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)) {
+            os << "dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "dl1_l0[2]+=(this->" << vs << ")/2;\n";
+          }
+          if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRESS)) {
+            os << "dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "dl1_l0[1]+=(this->" << vs << ")/2;\n";
           }
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
