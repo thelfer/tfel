@@ -460,9 +460,9 @@ namespace tfel::math {
      * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given
      * tensor.
      */
-    TFEL_HOST_DEVICE std::tuple<stensor<N, ValueType>,
-                                stensor<N, ValueType>,
-                                stensor<N, ValueType>>
+    TFEL_HOST_DEVICE std::tuple<stensor<N, base_type<ValueType>>,
+                                stensor<N, base_type<ValueType>>,
+                                stensor<N, base_type<ValueType>>>
     computeEigenValuesDerivatives(const rotation_matrix<ValueType>&);
     /*!
      * compute the eigenvalues derivatives with respect with this tensor
@@ -493,9 +493,9 @@ namespace tfel::math {
      * \param[out] n: derivativse of the eigenvalues
      * \param[in]  m: eigenvectors
      */
-    TFEL_HOST_DEVICE static std::tuple<stensor<N, ValueType>,
-                                       stensor<N, ValueType>,
-                                       stensor<N, ValueType>>
+    TFEL_HOST_DEVICE static std::tuple<stensor<N, base_type<ValueType>>,
+                                       stensor<N, base_type<ValueType>>,
+                                       stensor<N, base_type<ValueType>>>
     computeEigenTensors(const rotation_matrix<ValueType>&);
     /*!
      * compute the "eigentensors"
