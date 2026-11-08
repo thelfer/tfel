@@ -1884,7 +1884,7 @@ namespace mfront {
       for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
         if (v.isScalar()) {
           if (bd.useQt()) {
-            os << "this-> " << n << " = " <<  //
+            os << "this-> " << n << "[" << idx << "] = " <<  //
                 v.type << "(" << src << "[" << odv << "]);\n";
           } else {
             os << "this->" << n << "[" << idx << "] = " << src << "[" << odv
