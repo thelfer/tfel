@@ -149,12 +149,14 @@ namespace tfel::math::internals {
     TFEL_HOST_DEVICE constexpr const ValueType& getValue() const noexcept {
       return this->value;
     }
-    //! \brief assignement operator
-    constexpr QuantityReferenceOwnershipPolicy& operator=(
-        const QuantityReferenceOwnershipPolicy&) noexcept = default;
-    //! \brief move assignement operator
-    constexpr QuantityReferenceOwnershipPolicy& operator=(
-        QuantityReferenceOwnershipPolicy&&) noexcept = default;
+    //! \brief copy assignement, writes through the reference
+    TFEL_HOST_DEVICE constexpr QuantityReferenceOwnershipPolicy& operator=(
+        const QuantityReferenceOwnershipPolicy& src) noexcept {
+      static_assert(!std::is_const_v<ValueType>,
+                    "assignment through a constant reference");
+      this->value = src.value;
+      return *this;
+    }
     /*!
      * \brief constructor from a value
      * \param src: the src.
