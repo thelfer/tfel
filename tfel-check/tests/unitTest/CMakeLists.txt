@@ -5,6 +5,7 @@ add_executable(tests_check EXCLUDE_FROM_ALL tests.cxx
   test_SplineLocalInterpolation.cxx
   test_SplineInterpolation.cxx
   test_Test.cxx
+  test_AreaComparison.cxx
   test_TestLauncher.cxx)
 target_link_libraries(tests_check TFELCheck
   TFELMathCubicSpline TFELSystem TFELUtilities TFELTests)
