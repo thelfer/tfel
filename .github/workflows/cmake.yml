@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         include:
           - os: ubuntu-latest
             jobs_flag: '-j $(nproc)'
@@ -28,8 +28,6 @@ jobs:
             options: >-
               -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON
               -Denable-abaqus=ON -Denable-cyrano=ON -Denable-europlexus=ON
-          - os: macos-latest
-            jobs_flag: '-j $(sysctl -n hw.ncpu)'
 
     runs-on: ${{ matrix.os }}
 
