@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         include:
           - os: ubuntu-latest
             jobs_flag: '-j $(nproc)'
@@ -30,6 +30,8 @@ jobs:
               -Denable-abaqus=ON -Denable-ansys=ON -Denable-calculix=ON
               -Denable-cyrano=ON -Denable-diana-fea=ON -Denable-lsdyna=ON
               -Denable-comsol=ON
+          - os: macos-latest
+            jobs_flag: '-j $(sysctl -n hw.ncpu)'
 
     runs-on: ${{ matrix.os }}
 
