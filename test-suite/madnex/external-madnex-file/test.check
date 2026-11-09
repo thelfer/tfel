@@ -11,7 +11,7 @@
     "@mfront-query@ --madnex-search-path=./MaterialProperties.mdnx "
     "--list-dependencies Test.mfront" {
       expected_output :
-          "mdnx:./MaterialProperties.mdnx:MaterialProperty::YoungModulusTest"
+          "madnex:./MaterialProperties.mdnx:MaterialProperty::YoungModulusTest"
     };
 @Command
     "@mfront@ --obuild --interface=generic "
