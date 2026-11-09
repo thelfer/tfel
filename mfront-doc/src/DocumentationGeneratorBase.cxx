@@ -81,6 +81,10 @@ namespace mfront {
                                 &DocumentationGeneratorBase::treatVerbose,
                                 "set verbose output", true);
     this->registerNewCallBack(
+        "--compatibility-mode",
+        &DocumentationGeneratorBase::treatCompatibilityMode,
+        "set the compatibility mode", true);
+    this->registerNewCallBack(
         "--dsl-option", &DocumentationGeneratorBase::treatDSLOption,
         "allow to define options passed to domain specific languages", true);
     this->registerNewCallBack(

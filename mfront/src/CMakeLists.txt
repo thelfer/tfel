@@ -296,6 +296,9 @@ set(TFELMFront_SOURCES
     KinematicHardeningRuleFactory.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
+set_source_files_properties(CompatibilityMode.cxx
+   PROPERTIES COMPILE_DEFINITIONS "TFEL_VERSION_MAJOR=${TFEL_VERSION_MAJOR};TFEL_VERSION_MINOR=${TFEL_VERSION_MINOR};TFEL_VERSION_PATCH=${TFEL_VERSION_PATCH}")
+
 if(HAVE_GNUPLOT)
     set(TFELMFront_SOURCES
 	GnuplotMaterialPropertyInterface.cxx

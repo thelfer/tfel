@@ -32,6 +32,8 @@ namespace mfront {
   const char* const MaterialKnowledgeDescription::validator = "validator";
   const char* const MaterialKnowledgeDescription::buildIdentifier =
       "build_identifier";
+  const char* const MaterialKnowledgeDescription::compatibilityMode =
+      "compatibility_mode";
 
   MaterialKnowledgeDescription::MaterialKnowledgeDescription() = default;
   MaterialKnowledgeDescription::MaterialKnowledgeDescription(
@@ -237,5 +239,15 @@ namespace mfront {
     return d.getAttribute<bool>(
         MaterialKnowledgeDescription::initializeParametersFromFile, true);
   }  // end of allowsParametersInitializationFromFile
+
+  CompatibilityMode::Version getCompatiblityMode(
+      const MaterialKnowledgeDescription& d) {
+    if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      const auto version = d.getAttribute<std::string>(
+          MaterialKnowledgeDescription::compatibilityMode);
+      return CompatibilityMode::fromString(version);
+    }
+    return getDefaultCompatibilityMode();
+  }  // end of getCompatiblityMode
 
 }  // end of namespace mfront

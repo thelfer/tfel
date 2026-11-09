@@ -89,6 +89,9 @@ namespace mfront {
   void QueryHandlerBase::registerCommandLineCallBacks() {
     this->registerNewCallBack("--verbose", &QueryHandlerBase::treatVerbose,
                               "set verbose output", true);
+    this->registerNewCallBack("--compatibility-mode",
+                              &QueryHandlerBase::treatCompatibilityMode,
+                              "set the compatibility mode", true);
     this->registerNewCallBack("--unicode-output",
                               &QueryHandlerBase::treatUnicodeOutput,
                               "allow/disallow unicode output", true);

@@ -15,8 +15,9 @@
 #ifndef LIB_MFRONT_COMPATIBILITYMODE_HXX
 #define LIB_MFRONT_COMPATIBILITYMODE_HXX
 
-#include <limits>
 #include <array>
+#include <limits>
+#include <string_view>
 #include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
@@ -59,6 +60,12 @@ namespace mfront {
       constexpr auto operator<=>(const Version&) const noexcept = default;
     };  // end of struct version
     /*!
+     * \brief convert the given string to a version
+     * \return the version read in the string
+     * \param[in] s: string
+     */
+    [[nodiscard]] static Version fromString(std::string_view);
+    /*!
      * \brief compatibility mode with the next (unpublished) major version
      */
     static inline constexpr auto future =
@@ -71,6 +78,37 @@ namespace mfront {
     //! \brief list of compatibility modes
     static inline auto known_compatibility_modes = std::array{v_5_2_0};
   };  // end of struct CompatibilityMode
+
+  /*!
+   * \brief set the default compatibility mode, stored in a global static
+   * variable.
+   * \param[in] v: version
+   *
+   * \throw if the version is lower than 5.2.0
+   */
+  MFRONT_VISIBILITY_EXPORT void setDefaultCompatibilityMode(
+      const CompatibilityMode::Version&);
+  /*!
+   * \brief set the default compatibility mode, stored in a global static
+   * variable.
+   * \param[in] v: version
+   *
+   * \throw if the version is lower than 5.2.0
+   */
+  MFRONT_VISIBILITY_EXPORT void setDefaultCompatibilityMode(std::string_view);
+  /*!
+   * \return the default compatibility mode
+   *
+   * \throw if the version is lower than 5.2.0
+   */
+  MFRONT_VISIBILITY_EXPORT [[nodiscard]] CompatibilityMode::Version
+  getDefaultCompatibilityMode() noexcept;
+  /*!
+   * \brief check if the given version is ok
+   * \param[in] v: version
+   */
+  MFRONT_VISIBILITY_EXPORT  void check(
+      const CompatibilityMode::Version&);
 
 }  // end of namespace mfront
 

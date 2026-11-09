@@ -1,4 +1,3 @@
-
 /*!
  * \file  mfront/include/MFront/MaterialKnowledgeDescription.hxx
  * \brief
@@ -24,6 +23,7 @@
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/MFrontConfig.hxx"
+#include "MFront/CompatibilityMode.hxx"
 #include "MFront/MaterialKnowledgeAttribute.hxx"
 
 namespace mfront {
@@ -46,6 +46,8 @@ namespace mfront {
     static const char* const validator;
     //! \brief attribute name
     static const char* const buildIdentifier;
+    //! \brief attribute name
+    static const char* const compatibilityMode;
     /*!
      * \brief throw an exception saying that no attribute with the given name
      * exists
@@ -243,7 +245,14 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT bool allowsParametersInitializationFromFile(
       const MaterialKnowledgeDescription&);
-
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::compatibilityMode`
+   * attribute if it is defined, or the default value otherwise.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT CompatibilityMode::Version getCompatiblityMode(
+      const MaterialKnowledgeDescription&);
 }  // end of namespace mfront
 
 #include "MFront/MaterialKnowledgeDescription.ixx"
