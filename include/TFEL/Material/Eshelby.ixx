@@ -17,6 +17,7 @@
 #include <numbers>
 #include <stdexcept>
 #include <typeinfo>
+#include "TFEL/ContractViolation.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -232,8 +233,16 @@ namespace tfel::material::homogenization::elasticity {
     const auto R = (1 - 2 * nu) / 8 / pi / (1 - nu);
     const auto k = std::sqrt((a2 - b2) / (a2 - c2));
     const auto theta = std::asin(std::sqrt(1 - c2 / a2));
+#ifdef _LIBCPP_VERSION
+    tfel::reportContractViolation(
+        "functions std::ellint_1 and std::ellint_2 are not implemented in the "
+        "current version of libc++ (LLVM 21.1, end of 2025)");
+    const auto F = real{};
+    const auto E = real{};
+#else
     const auto F = std::ellint_1(k, theta);
     const auto E = std::ellint_2(k, theta);
+#endif
 
     const auto Ia = 4 * pi * a_ * b_ * c_ / (a2 - b2) / a_ /
                     std::sqrt(1 - c2 / a2) * (F - E);

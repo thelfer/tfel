@@ -94,7 +94,9 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     }
 
     {
+#ifndef _LIBCPP_VERSION
       const auto S1 = computeEshelbyTensor(nu, lg{1}, lg{3}, lg{2});
+#endif /* _LIBCPP_VERSION */
       const auto S2 = computeEshelbyTensor(nu, lg{1}, lg{1}, lg{2});
       const auto S3 = computeEshelbyTensor(nu, lg{1}, lg{1}, lg{1});
     }
@@ -188,6 +190,7 @@ struct EshelbyTest final : public tfel::tests::TestCase {
       };
     }
 
+#ifndef _LIBCPP_VERSION
     // EshelbyTensor when a is near b must be near AxisymmetricalEshelbyTensor
     // (there is a numerical instability that we propose to manage)
     {
@@ -209,6 +212,7 @@ struct EshelbyTest final : public tfel::tests::TestCase {
         };
       };
     }
+#endif /* _LIBCPP_VERSION */
   };
 
   // tests compilation of localisation tensor functions
@@ -237,8 +241,10 @@ struct EshelbyTest final : public tfel::tests::TestCase {
       const auto A2 =
           computeAxisymmetricalEllipsoidLocalisationTensor<real, stress>(
               young, nu, young_i, nu_i, n_a, a / b);
+#ifndef _LIBCPP_VERSION
       const auto A3 = computeEllipsoidLocalisationTensor<real, stress, lg>(
           young, nu, young_i, nu_i, n_a, a, n_b, b, c);
+#endif /* _LIBCPP_VERSION */
     }
   };
 
