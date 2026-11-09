@@ -60,8 +60,11 @@ struct CompatibilityModeTest final : public tfel::tests::TestCase {
     try {
       // this version will never exist
       setDefaultCompatibilityMode(make_version(5, 3, 0));
-      const auto v = getDefaultCompatibilityMode(v);
-      TFEL_TESTS_CHECK_EQUAL(v, CompatibilityMode::v_5_2_0);
+      const auto v = getDefaultCompatibilityMode();
+      TFEL_TESTS_CHECK_EQUAL(v, CompatibilityMode::v5_2_0);
+      setDefaultCompatibilityMode("future");
+      const auto v2 = getDefaultCompatibilityMode();
+      TFEL_TESTS_CHECK_EQUAL(v2, CompatibilityMode::future);
     } catch (std::exception&) {
       this->registerResult("setting the default compatibility mode faile",
                            false);

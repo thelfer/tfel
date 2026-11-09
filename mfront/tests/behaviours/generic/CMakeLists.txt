@@ -274,7 +274,9 @@ mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
   DSLOptionsTest
   ElasticityParametersAsStaticVariables
   RungeKuttaElasticityParametersAsStaticVariables
-  ImplicitElasticityParametersAsStaticVariables)
+  ImplicitElasticityParametersAsStaticVariables
+  PhysicalConstants_v5_2_0
+  PhysicalConstants_v6_0_0)
 
 # behaviours used to test the integration drivers in cases which
 # can't be checked by MTest

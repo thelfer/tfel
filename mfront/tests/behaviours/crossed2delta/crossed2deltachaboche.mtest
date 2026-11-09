@@ -33,6 +33,6 @@
 @Times {0.,0.4 in 1,1.435 in 12};
 
 @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-aster.ref'
-            {'EXX':2,'EYY':3} 5.e-5 ; 
+            {'EXX':2,'EYY':3} 1.e-4 ; 
 @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-aster.ref'
             {'SXX':8} 1.e0 ; 

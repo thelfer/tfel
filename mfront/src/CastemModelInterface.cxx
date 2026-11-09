@@ -485,13 +485,8 @@ namespace mfront {
          << "using namespace tfel::math;\n"
          << "using namespace tfel::material;\n";
       writeMaterialLaws(os, md.materialLaws);
-      if (useQuantities(md)) {
-        os << "using PhysicalConstants [[maybe_unused]] = "
-           << "tfel::PhysicalConstants<NumericType, true>;\n";
-      } else {
-        os << "using PhysicalConstants [[maybe_unused]] = "
-           << "tfel::PhysicalConstants<NumericType, false>;\n";
-      }
+      writePhysicalConstantsAlias(os, md, "castem::CastemReal",
+                                  useQuantities(md));
       os << "[[maybe_unused]] const auto policy = ::" << fn
          << "_getOutOfBoundsPolicy();\n";
       if (f.useTimeIncrement) {

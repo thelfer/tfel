@@ -73,10 +73,10 @@ namespace mfront {
                 .minor = std::numeric_limits<std::size_t>::max(),
                 .patch = std::numeric_limits<std::size_t>::max()};
     // \brief first version in which compatiblity modes were introduced
-    static inline constexpr auto v_5_2_0 =
+    static inline constexpr auto v5_2_0 =
         Version{.major = 5, .minor = 2, .patch = 0};
     //! \brief list of compatibility modes
-    static inline auto known_compatibility_modes = std::array{v_5_2_0};
+    static inline auto known_compatibility_modes = std::array{v5_2_0};
   };  // end of struct CompatibilityMode
 
   /*!

@@ -747,4 +747,43 @@ namespace mfront {
 #endif
   }
 
+  void writePhysicalConstantsAlias(std::ostream& os,
+                                   const MaterialKnowledgeDescription& d,
+                                   std::string_view numeric_type,
+                                   const bool use_quantities) {
+    const auto v = getCompatiblityMode(d);
+    if (v == CompatibilityMode::future) {
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::future::PhysicalConstants<" << numeric_type
+           << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::future::PhysicalConstants<" << numeric_type
+           << ", false>;\n";
+      }
+      return;
+    }
+    if (v == CompatibilityMode::v5_2_0) {
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
+           << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
+           << ", false>;\n";
+      }
+      return;
+    }
+    if (use_quantities) {
+      os << "using PhysicalConstants [[maybe_unused]] = "
+         << "tfel::future::PhysicalConstants<" << numeric_type
+         << ", use_qt>;\n";
+    } else {
+      os << "using PhysicalConstants [[maybe_unused]] = "
+         << "tfel::future::PhysicalConstants<" << numeric_type << ", false>;\n";
+    }
+  }  // end of writePhysicalConstantsAlias
+
 }  // end of namespace mfront

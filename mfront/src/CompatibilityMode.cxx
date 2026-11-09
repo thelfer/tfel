@@ -42,7 +42,7 @@ namespace mfront {
   }  // end of convertToInteger
 
   void check(const CompatibilityMode::Version& v) {
-    if (v < CompatibilityMode::v_5_2_0) {
+    if (v < CompatibilityMode::v5_2_0) {
       tfel::raise("version must be greater than 5.2.0");
     }
   }
@@ -56,7 +56,11 @@ namespace mfront {
     const auto versions = std::set<CompatibilityMode::Version>{
         CompatibilityMode::known_compatibility_modes.begin(),
         CompatibilityMode::known_compatibility_modes.end()};
-    return *(versions.lower_bound(v));
+    const auto p = versions.lower_bound(v);
+    if (p == versions.end()) {
+      return *(versions.rbegin());
+    }
+    return *p;
   }  // end of getCompatibilityMode
 
   [[nodiscard]] static CompatibilityMode::Version& getCompatibilityMode() {
@@ -68,6 +72,9 @@ namespace mfront {
   }  // end of getCompatibilityMode
 
   CompatibilityMode::Version CompatibilityMode::fromString(std::string_view s) {
+    if (s == "future") {
+      return CompatibilityMode::future;
+    }
     const auto numbers = tfel::utilities::tokenize(s, ".");
     if (numbers.size() != 3) {
       tfel::raise("can't convert '" + std::string{s} + "' to a version");
