@@ -21,112 +21,97 @@ of a new version and the previous behaviour remains available for the
 users who need it. This policy is stated in the
 [coding guidelines](coding-guidelines.html#backward-compatibility).
 
+A compatibility mode is a version number: the mode associated with a
+change is the version in which this change becomes the default. Such
+evolutions of the default behaviour shall only be introduced on major
+versions. The `future` compatibility mode gathers the changes which are
+not the default yet but which shall be the default of the next major
+version, so that they can be tested and anticipated.
+
+The way `MFront` selects the compatibility mode of the code it
+generates, and the way this mode is recorded in the generated assets,
+are described in
+[this page](mfront-compatibility-modes.html).
+
+# Principle of the versioned entities
+
 Compatibility modes are a compile time mechanism in the `TFEL`
 libraries: the entities which are subject to such an evolution are
 duplicated, once per mode, in a header and in a namespace named after
-the version which introduced them. The names used by the current version
-of the library, those which do not mention a mode, refer to one of
-those, whereas the entities of the previous modes stay available.
+the version which introduced them. Both behaviours are thus compiled,
+once for each mode, and the user selects the one it needs by naming the
+mode it contains.
 
-The way `MFront` selects the compatibility mode of the code it
-generates is described in
-[this page](mfront-compatibility-modes.html).
+This mechanism relies on names, not on a preprocessor definition: the
+versioned entities are `constexpr` entities or templates which are
+resolved when the code using them is compiled, whatever the way this
+code has been generated.
 
-# Versioned physical constants
+The names which do not mention a mode, such as
+`tfel::PhysicalConstants`, refer to the entity of the mode of the
+current version of the library, whereas the entities of the previous
+modes stay available, as those of the next major version.
 
-The `TFEL/PhysicalConstants` library defines one header per version
-which introduced a change of those values, which all declare the same
-names:
+## Naming convention
 
-| Version | Header | `PhysicalConstants` class | Constants |
-|---|---|---|---|
-| `5.2.0` | `TFEL/PhysicalConstants-5.2.0.hxx` | `tfel::v5_2_0::PhysicalConstants` | `tfel::constants::v5_2_0` |
-| `6.0.0` | `TFEL/PhysicalConstants-6.0.0.hxx` | `tfel::v6_0_0::PhysicalConstants` | `tfel::constants::v6_0_0` |
+The names which a versioned entity gives rise to are gathered in the
+following table, where `<X>.<Y>.<Z>` is the compatibility mode which
+introduced the entity, `<Name>` is the name of the entity,
+`PhysicalConstants` in the case of the physical constants, and `<NS>` is
+the namespace which declares the variables of the entity,
+`tfel::constants` in the case of the physical constants:
 
-Each of these headers declares:
-
-- a template class `PhysicalConstants<NumericType, use_quantities>`,
-  with the same members, in the namespace `tfel::v<x>_<y>_<z>`,
-- a variable template per constant, in the namespace
-  `tfel::constants::v<x>_<y>_<z>`. Those variable templates have the
-  two template parameters `NumericType`, whose default type is
-  `double`, and `use_quantities`, whose default value is `false`.
-
-The header `TFEL/PhysicalConstants.hxx` includes all of them and defines
-the aliases giving access to the values of the current version, and to
-those of the next major version, without naming a mode explicitly:
-
-| Alias | Values |
+| Role | Name |
 |---|---|
-| `tfel::PhysicalConstants` | those of the current version, `5.2.0` in Version 5.2 |
-| `tfel::constants` | those of the current version, `5.2.0` in Version 5.2 |
-| `tfel::future::PhysicalConstants` | those of the next major version, `6.0.0` |
-| `tfel::constants::future` | those of the next major version, `6.0.0` |
+| Header of the mode | `TFEL/<Name>-<X>.<Y>.<Z>.hxx` |
+| Class of the mode | `tfel::v<x>_<y>_<z>::<Name>` |
+| Variables of the mode | `<NS>::v<x>_<y>_<z>` |
+| Header gathering all the modes | `TFEL/<Name>.hxx`, which includes all the previous ones |
+| Name of the current mode | `tfel::<Name>` and `<NS>`, which refer to the entity of the mode of the current version |
+| Name of the next major version | `tfel::future::<Name>` and `<NS>::future`, which refer to the entity of the mode of the next major version |
 
-In Version 5.2, `tfel::PhysicalConstants` is
-`tfel::v5_2_0::PhysicalConstants`: the unversioned names give the values
-of Version 5.1. The set of the next major version, `6.0.0`, uses the
-`CODATA` 2014 internationally recommended values with all the digits of
-the `double` representation, as described in the
-[documentation of the physical constants](physical-constants.html).
+The suffix `v<x>_<y>_<z>` used in the names above is the name of the
+version in which the mode was introduced, with underscores instead of
+dots. It is also the name under which the mode is declared in `MFront`,
+in the `known_compatibility_modes` array of the
+`CompatibilityMode` structure, as described in
+[this section](mfront-compatibility-modes.html#adding-a-new-compatibility-mode).
 
-## Example of usage
+## Example
 
-The following example shows that the default value of the molar gas
-constant and the value of the set of the next major version differ, and
-how both are accessed:
+The `TFEL/PhysicalConstants` library, which is at the time of writing
+the only versioned library of `TFEL`, illustrates this convention. The
+value of the molar gas constant is accessed in four different ways:
 
 ~~~~{.cxx}
-#include <iostream>
-#include <iomanip>
 #include "TFEL/PhysicalConstants.hxx"
 
-int main() {
-  // the values of the current version
-  constexpr auto r = tfel::constants::R<double>;
-  // a given compatibility mode
-  constexpr auto r520 = tfel::constants::v5_2_0::R<double>;
-  constexpr auto r600 = tfel::constants::v6_0_0::R<double>;
-  // the values of the next major version
-  constexpr auto rf = tfel::constants::future::R<double>;
-  std::cout << std::setprecision(17);
-  std::cout << r << ' ' << r520 << ' ' << r600 << ' ' << rf << '\n';
-}  // end of main
+// the value of the current version, 5.2.0 in Version 5.2
+constexpr auto r1 = tfel::constants::R<double>;
+// the value of a given mode
+constexpr auto r2 = tfel::constants::v5_2_0::R<double>;
+// the value of the next major version
+constexpr auto r3 = tfel::constants::future::R<double>;
+// so is the value of the mode of the next major version
+constexpr auto r4 = tfel::constants::v6_0_0::R<double>;
 ~~~~
 
-Since the `TFEL/PhysicalConstants` library is a header-only library,
-only the path to the headers is needed to compile this example:
+The same convention applies to the class which groups the constants of a
+mode: `tfel::PhysicalConstants`, `tfel::v5_2_0::PhysicalConstants` and
+`tfel::future::PhysicalConstants`.
 
-~~~~{.bash}
-$ g++ -std=c++20 $(tfel-config --includes) constants.cxx
-$ ./a.out
-8.3144600000000004 8.3144600000000004 8.3144597999999998 8.3144597999999998
-~~~~
+The page devoted to the
+[values of the physical constants](physical-constants.html) describes in
+detail how this library handles the compatibility modes, how those
+values are used in the `C++`, `Python` and `Fortran` interfaces and how
+a new set of values is introduced.
 
-The call to `std::setprecision` is required: `std::cout` prints only six
-significant digits by default, which is not enough to distinguish the
-values of two compatibility modes.
+# Versioned language bindings
 
-Quantities are used in the same way, by setting the second template
-argument to `true`:
-
-~~~~{.cxx}
-constexpr auto s = tfel::constants::future::s<double, true>;
-~~~~
-
-The class `tfel::PhysicalConstants` and the constants of the current
-version can also be used with quantities: `@UseQt` behaviours of
-`MFront` do so, as described in the
-[quantities section of the `TFEL/Math` documentation](tfel-math.html#sec:tfel_math:quantities).
-
-## Bindings
-
-### `Python` bindings
-
-The `tfel` module declares the physical constants of the current version
-as the read-only attributes of the class `tfel.PhysicalConstants`, as in
-previous versions. The constants of each compatibility mode are declared
-in a submodule of the same name:
+The language bindings follow the same convention: the entities which do
+not mention a mode give the values of the current version of `TFEL`,
+whereas the entities of the other modes are made available in a scope
+named after the mode, which is a submodule in `Python`:
 
 ~~~~{.python}
 >>> import tfel
@@ -134,135 +119,71 @@ in a submodule of the same name:
 8.31446
 >>> tfel.v5_2_0.PhysicalConstants.R
 8.31446
->>> tfel.v6_0_0.PhysicalConstants.R
-8.3144598
 >>> tfel.future.PhysicalConstants.R
 8.3144598
 ~~~~
 
-### `Fortran` bindings
+`tfel.PhysicalConstants` gives the values of the current version,
+`tfel.v5_2_0.PhysicalConstants` those of the `5.2.0` compatibility mode
+and `tfel.future.PhysicalConstants` those of the next major version.
 
-The `Fortran` bindings expose a single set of constants, which is not
-affected by compatibility modes at the time of writing.
+A binding which is not versioned yet, such as the `Fortran` one, exposes
+the values of the next major version.
 
 # Adding a new compatibility mode
 
-The list of the compatibility modes which affect the values of the
-physical constants and those values are those of the
-`tools/PhysicalConstants/physical_constants.json` file. A development
-which changes the values of the physical constants shall proceed as
-follows:
+A development which changes the results given by an entity of the `TFEL`
+libraries, without fixing an explicit bug, shall proceed as follows:
 
-1. Declare the new compatibility mode at the end of the list of the
-   compatibility modes, which are the first records of the
-   `tools/PhysicalConstants/physical_constants.json` file:
-
-   ~~~~{.json}
-   {
-     mode: "<X>.<Y>.<Z>";
-     description: "Compatibility module with version <X>.<Y>.<Z>.";
-   }
-   ~~~~
-
-   The compatibility modes are declared in increasing order. The values
-   of the last compatibility mode are those of the next major version of
-   `TFEL`, which are not used yet. Since the `Python` bindings select
-   the values to use with the `TFEL_VERSION_MAJOR` preprocessor variable
-   only, the major version of a new compatibility mode shall be greater
-   than that of the compatibility mode of the current version of `TFEL`.
-2. Give the values of the next major version in the `value` field of the
-   constants which change, and those of the compatibility mode those
-   values replace in the `values` field of the same records:
-
-   ~~~~{.json}
-   {
-    name: "StefanBoltzmannConstant";
-    short_name: "s";
-    description: "Stefan-Boltzmann constant";
-    unit: "W.m^{-2}.K^{-4}";
-    qt_unit:
-      [ 1, 0, -3, 0, -4, 0, 0 ];
-    value: 5.670367e-8;
-    values:
-    [
-      {
-        mode: "5.2.0";
-        value: 5.67037e-8;
-      }
-    ];
-   }
-   ~~~~
-
-   A compatibility mode which does not appear in the `values` field uses
-   the values of the `value` field. The latter are also those used by the
-   language bindings which are not versioned, such as the `Fortran` ones.
-   As the values of an already published compatibility mode shall never
-   change, the values of the mode of the current version of `TFEL` are
-   pinned in the `values` field of each constant whose values change:
-   without doing so, changing the values of the next major version would
-   change those of the published compatibility mode.
-3. Regenerate the headers, the `Python` bindings and the page describing
-   the library, then copy them to the source tree:
-
-   ~~~~{.shell}
-   g++ physical_constants.cxx -o physical_constants \
-       `tfel-config --compiler-flags --includes --libs --utilities`
-   ./physical_constants
-   cp PhysicalConstants-<X>.<Y>.<Z>.hxx PhysicalConstants.hxx \
-      ../../include/TFEL/
-   cp PhysicalConstants-python.cxx \
-      ../../bindings/python/tfel/PhysicalConstants.cxx
-   cp TFELPHYSICALCONSTANTS.INC ../../bindings/fortran77/
-   cp tfel_physical_constants.f90 ../../bindings/fortran90/
-   cp tfel-physical-constants.md ../../docs/web/
-   ~~~~
-
-   One header is generated per compatibility mode, together with the
-   `PhysicalConstants.hxx` header, which includes all of those headers
-   and redirects the names without suffix to the values of the
-   compatibility mode of the current version of `TFEL` and those of the
-   `tfel::future` and `tfel::constants::future` namespaces to the values
-   of the next major version. The `Fortran` bindings expose the values of
-   the next major version. Regenerated files are identical to the
-   committed ones, except for the values which have changed: checking
-   those differences is the way of checking that no value has been
-   changed by mistake.
-4. Install the new header in `include/CMakeLists.txt`:
+1. Duplicate the entity, giving the version which introduces the change:
+   the previous version keeps the names it has, whereas the new entity
+   is defined in the header and in the namespace of the new mode, as
+   described in [the previous section](#naming-convention). Both
+   entities declare the same names, so that switching from a mode to
+   another one does not require any other modification.
+2. Keep the names which do not mention a mode pointing to the entity of
+   the mode of the current version of `TFEL` and those of the
+   `tfel::future` namespace pointing to the entity of the next major
+   version.
+3. Install the new header in `include/CMakeLists.txt`:
 
    ~~~~{.cmake}
-   install_header(TFEL PhysicalConstants-<X>.<Y>.<Z>.hxx)
+   install_header(TFEL <Name>-<X>.<Y>.<Z>.hxx)
    ~~~~
 
-5. Describe the new values in the page devoted to
-   [values of the physical constants](physical-constants.html), which
-   tabulates the values of each compatibility mode.
-6. Declare the new mode in `MFront`, as described in the
-   [corresponding section](mfront-compatibility-modes.html#adding-a-new-compatibility-mode),
-   so that `MFront` generates code using the new values.
-7. Describe the change in the release notes of the version which
-   introduces it and mention the compatibility modes which are
-   affected.
+4. Give access to the new entity in the language bindings which are
+   versioned, following the convention of the language, as described in
+   [the corresponding section](#versioned-language-bindings).
+5. Declare the new mode in `MFront`, in the `CompatibilityMode`
+   structure, as described in
+   [this section](mfront-compatibility-modes.html#adding-a-new-compatibility-mode),
+   so that `MFront` can generate code using the entities of this mode.
+6. Test both behaviours: a test behaviour, model or material property,
+   generated with each mode and an `MTest` file checking the results it
+   gives. The `PhysicalConstants_v5_2_0` and `PhysicalConstants_v6_0_0`
+   test models, which return the value of the Stefan-Boltzmann constant,
+   and the `MTest` files `physical-constants-5.2.0.mtest` and
+   `physical-constants-6.0.0.mtest`, which check the value they give, are
+   the reference tests of this mechanism.
+7. Describe the change, and the compatibility mode which introduces it,
+   in the release notes of the version which introduces them.
 
-The two test models `PhysicalConstants_v5_2_0` and
-`PhysicalConstants_v6_0_0` of `MFront`, which return the value of the
-Stefan-Boltzmann constant, and the `MTest` files
-`physical-constants-5.2.0.mtest` and `physical-constants-6.0.0.mtest`,
-which check the value they give, are the reference tests of this
-mechanism: a new compatibility mode shall be tested in the same way.
+The
+[values of the physical constants](physical-constants.html#changing-the-values-of-the-physical-constants)
+page describes how this checklist is applied to the physical constants,
+whose values are generated from a single data file.
 
 # Known limitations
 
 - The `Fortran` bindings are not versioned yet: they expose a single set
   of constants, which is that of the next major version.
-- The page devoted to
-  [values of the physical constants](physical-constants.html), which
-  tabulates the values of the compatibility modes, is not generated:
-  those values are described there by hand.
 - Compatibility modes only cover the entities which are versioned in
-  this way at the time of writing. Extending them to other parts of the
-  `TFEL` libraries requires a mechanism which does not rely on a
-  preprocessor definition, since the values are `constexpr` entities
-  which are resolved when the generated code is compiled.
+  this way at the time of writing, that is to say the physical
+  constants. Extending them to other parts of the `TFEL` libraries
+  raises no fundamental difficulty, as long as the versioned entities
+  are `constexpr` entities or templates: the mechanism does not rely on
+  a preprocessor definition, since the values are resolved when the
+  generated code is compiled.
 
 # See also
 

@@ -49,7 +49,7 @@ namespace mfront {
    * Compatibility modes can be defined globally on the command line using
    * `--compatibility-mode` or in a file using the compatiblity_mode DSL option.
    */
-  struct CompatibilityMode {
+  struct MFRONT_VISIBILITY_EXPORT CompatibilityMode {
     /*!
      * \brief simple data structure describing a version with three numbers
      * named major, minor and patch
