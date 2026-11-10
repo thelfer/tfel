@@ -267,27 +267,22 @@ development proceeds as follows:
    [corresponding section](tfel-compatibility-modes.html#adding-a-new-compatibility-mode).
 
 3. Use the compatibility mode in the code generator, using the
-   `getCompatibilityMode` function, which returns the mode of the
-   material knowledge description, or an empty value if the file does not
-   declare any. Since an asset which declares no mode must follow the
-   current behaviour, the new behaviour is used when no mode is declared,
-   or when the declared mode is greater than, or equal to, the version
-   which introduces the change:
+  `getEffectiveCompatibilityMode` function, which returns the mode of
+  the material knowledge description, or the most recent compatibility
+  mode. Since an asset which declares no mode must follow the current
+  behaviour, the new behaviour is used when no mode is declared, or when
+  the declared mode is greater than, or equal to, the version which
+  introduces the change:
 
    ~~~~{.cxx}
-   const auto ov = getCompatibilityMode(d);
-   if ((not ov) || (*ov >= CompatibilityMode::v6_0_0)) {
+   const auto v = getEffectiveCompatibilityMode(d);
+   if (v <= CompatibilityMode::v5_2_0)) {
      // new behaviour
+   } else {
+     // old behaviour
    }
    ~~~~
 
-   Comparing the value returned by `getCompatibilityMode` directly to a
-   version, without checking that it is set, shall be avoided: an empty
-   value compares as lower than any version, so the assets which declare
-   no mode would keep the previous behaviour.
-
-   Code which is not gated this way is common to all the compatibility
-   modes.
 4. Test both behaviours: a test behaviour, or model, or material
    property, generated with each mode, and an `MTest` file checking the
    results it gives, as the `PhysicalConstants_v5_2_0` and
