@@ -1261,16 +1261,17 @@ namespace tfel::utilities {
     // std::from_chars does not accept an explicit plus sign
     const auto b = v.data() + (((!v.empty()) && (v[0] == '+')) ? 1 : 0);
     const auto e = v.data() + v.size();
-    auto i = static_cast<long long>(0);
+    // std::from_chars reports the values out of the range of the type
+    auto i = IntegerType{};
     const auto [pi, ec] = std::from_chars(b, e, i);
-    if ((ec != std::errc{}) || (!std::in_range<IntegerType>(i))) {
+    if (ec != std::errc{}) {
       return false;
     }
     const auto s = std::string_view(pi, e - pi);
     if (s.find_first_not_of("uUlL") != std::string_view::npos) {
       return false;
     }
-    r = static_cast<IntegerType>(i);
+    r = i;
     return true;
   }  // end of convertToInteger
 
