@@ -179,7 +179,7 @@ void declareExternalLibraryManager(pybind11::module_& m) {
            "if any.\n"
            "l: name of the library\n"
            "s: symbol name\n"
-           "If not compatiblity mode is defined, an empty string is returned")
+           "If no compatibility mode is defined, an empty string is returned")
       .def("getBuildId", &ELM::getBuildIdentifier, pybind11::arg("l"),
            pybind11::arg("s"),
            "Return the build id associated with the current symbol, if any.\n"
