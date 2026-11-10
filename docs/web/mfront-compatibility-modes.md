@@ -47,10 +47,7 @@ libraries is described in
 | `future` | Values and behaviours of the next major version, which is still under development. |
 
 A compatibility mode is a version: a mode will be added for each
-version introducing a change of the default behaviour. Note that
-`6.0.0` is not a compatibility mode yet: the values of the physical
-constants of the next major version are available through the `future`
-mode.
+version introducing a change of the default behaviour.
 
 ## Default compatibility mode
 
@@ -62,12 +59,12 @@ treated by a run of the tool, using the `--compatibility-mode` command
 line argument, as explained below.
 
 Declaring a compatibility mode makes the results of the generated code
-independent of the version of the `TFEL` libraries used to compile it:
-the generated code uses the entities of the mode it asks for, whatever
-this version is, as described
-[in the next section](#effect-on-the-generated-code). In Version 5.2,
-both approaches give the same results since the current values of the
-physical constants are those of the `5.2.0` mode.
+independent of the version of the `TFEL` libraries used to compile it
+(except for the `future` compatibility mode): the generated code uses
+the entities of the mode it asks for, whatever this version is, as
+described [in the next section](#effect-on-the-generated-code). In
+Version 5.2, both approaches give the same results since the current
+values of the physical constants are those of the `5.2.0` mode.
 
 # Setting the compatibility mode
 
