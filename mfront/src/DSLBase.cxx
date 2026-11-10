@@ -175,18 +175,25 @@ namespace mfront {
         MaterialKnowledgeDescription::buildIdentifier, "");
     const auto validator = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::validator, "");
-    return {{DSLBase::disableRuntimeChecksOption, areRuntimeChecksDisabled(d)},
-            {DSLBase::defaultOutOfBoundsPolicyOption, policy},
-            {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
-             allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
-            {DSLBase::parametersAsStaticVariablesOption,
-             areParametersTreatedAsStaticVariables(d)},
-            {DSLBase::initializationFromFileOption,
-             allowsParametersInitializationFromFile(d)},
-            {DSLBase::validatorOption, validator},
-            {DSLBase::buildIdentifierOption, build_id},
-            {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
-  }  // end of buildCommonOptions
+    auto opts = AbstractDSL::DSLOptions{
+        {DSLBase::disableRuntimeChecksOption, areRuntimeChecksDisabled(d)},
+        {DSLBase::defaultOutOfBoundsPolicyOption, policy},
+        {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
+         allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
+        {DSLBase::parametersAsStaticVariablesOption,
+         areParametersTreatedAsStaticVariables(d)},
+        {DSLBase::initializationFromFileOption,
+         allowsParametersInitializationFromFile(d)},
+        {DSLBase::validatorOption, validator},
+        {DSLBase::buildIdentifierOption, build_id},
+        {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
+    if (d.hasAttribute(
+            MaterialKnowledgeDescription::compatibilityMode)) {
+      opts.insert({DSLBase::compatibilityModeOption,
+                   d.getAttribute<std::string>(
+                       MaterialKnowledgeDescription::compatibilityMode)});
+    }
+  }  // end of buildCommonDSLOptions
 
   DSLBase::DSLBase(const DSLOptions& /* opts */) {
     this->addSeparator("\u2297");

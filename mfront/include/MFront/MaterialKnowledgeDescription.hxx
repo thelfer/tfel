@@ -251,7 +251,7 @@ namespace mfront {
    * attribute if it is defined, or the default value otherwise.
    * \param[in] d: material knowledge description
    */
-  MFRONT_VISIBILITY_EXPORT CompatibilityMode::Version getCompatiblityMode(
+  MFRONT_VISIBILITY_EXPORT CompatibilityMode::Version getCompatibilityMode(
       const MaterialKnowledgeDescription&);
 }  // end of namespace mfront
 

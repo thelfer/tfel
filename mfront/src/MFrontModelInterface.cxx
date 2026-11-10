@@ -296,7 +296,7 @@ namespace mfront {
              << "using namespace tfel::material;\n"
              << "using tfel::material::BoundsCheckBase;\n";
       writeMaterialLaws(header, md.materialLaws);
-      writePhysicalConstantsAlias(header, md, "double", useQuantities(md));
+      writePhysicalConstantsAlias(header, md, "NumericType", useQuantities(md));
       if (f.modifiedVariables.size() == 1) {
         const auto& vn = *(f.modifiedVariables.begin());
         const auto& output = md.outputs.getVariable(vn);

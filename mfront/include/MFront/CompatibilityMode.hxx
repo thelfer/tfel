@@ -76,7 +76,7 @@ namespace mfront {
     static inline constexpr auto v5_2_0 =
         Version{.major = 5, .minor = 2, .patch = 0};
     //! \brief list of compatibility modes
-    static inline auto known_compatibility_modes = std::array{v5_2_0};
+    static inline constexpr auto known_compatibility_modes = std::array{v5_2_0};
   };  // end of struct CompatibilityMode
 
   /*!
@@ -84,7 +84,7 @@ namespace mfront {
    * variable.
    * \param[in] v: version
    *
-   * \throw if the version is lower than 5.2.0
+   * \throw if the version is strictly lower than 5.2.0
    */
   MFRONT_VISIBILITY_EXPORT void setDefaultCompatibilityMode(
       const CompatibilityMode::Version&);
@@ -93,16 +93,16 @@ namespace mfront {
    * variable.
    * \param[in] v: version
    *
-   * \throw if the version is lower than 5.2.0
+   * \throw if the version is strictly lower than 5.2.0
    */
   MFRONT_VISIBILITY_EXPORT void setDefaultCompatibilityMode(std::string_view);
   /*!
    * \return the default compatibility mode
    *
-   * \throw if the version is lower than 5.2.0
+   * \throw if the version is strictly lower than 5.2.0
    */
   MFRONT_VISIBILITY_EXPORT [[nodiscard]] CompatibilityMode::Version
-  getDefaultCompatibilityMode() noexcept;
+  getDefaultCompatibilityMode();
   /*!
    * \brief check if the given version is ok
    * \param[in] v: version

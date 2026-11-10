@@ -648,13 +648,8 @@ namespace mfront {
                     << "using namespace tfel::math;\n"
                     << "using namespace tfel::material;\n"
                     << "using pleiades::field::real;\n";
-      if (useQuantities(md)) {
-        this->srcFile << "using PhysicalConstants [[maybe_unused]] = "
-                      << "tfel::PhysicalConstants<NumericType, true>;\n";
-      } else {
-        this->srcFile << "using PhysicalConstants [[maybe_unused]] = "
-                      << "tfel::PhysicalConstants<NumericType, false>;\n";
-      }
+      writePhysicalConstantsAlias(this->srcFile, md, "NumericType",
+                                  useQuantities(md));
       writeMaterialLaws(this->srcFile, md.materialLaws);
       if ((f.modifiedVariables.size() == 1) &&
           (f.usedVariables.size() <

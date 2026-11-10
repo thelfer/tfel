@@ -240,7 +240,7 @@ namespace mfront {
         MaterialKnowledgeDescription::initializeParametersFromFile, true);
   }  // end of allowsParametersInitializationFromFile
 
-  CompatibilityMode::Version getCompatiblityMode(
+  CompatibilityMode::Version getCompatibilityMode(
       const MaterialKnowledgeDescription& d) {
     if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
       const auto version = d.getAttribute<std::string>(

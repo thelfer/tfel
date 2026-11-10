@@ -751,7 +751,7 @@ namespace mfront {
                                    const MaterialKnowledgeDescription& d,
                                    std::string_view numeric_type,
                                    const bool use_quantities) {
-    const auto v = getCompatiblityMode(d);
+    const auto v = getCompatibilityMode(d);
     if (v == CompatibilityMode::future) {
       if (use_quantities) {
         os << "using PhysicalConstants [[maybe_unused]] = "

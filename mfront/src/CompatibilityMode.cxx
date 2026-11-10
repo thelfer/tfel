@@ -19,6 +19,18 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/CompatibilityMode.hxx"
 
+#ifndef TFEL_VERSION_MAJOR
+#error "TFEL_VERSION_MAJOR must be defined"
+#endif
+
+#ifndef TFEL_VERSION_MINOR
+#error "TFEL_VERSION_MINOR must be defined"
+#endif
+
+#ifndef TFEL_VERSION_PATCH
+#error "TFEL_VERSION_PATCH must be defined"
+#endif
+
 namespace mfront {
 
   /*!
@@ -27,7 +39,6 @@ namespace mfront {
    * \param[in] v: string
    */
   [[nodiscard]] static std::size_t convertToInteger(const std::string& v) {
-    // std::from_chars does not accept an explicit plus sign
     const auto b = v.data();
     const auto e = v.data() + v.size();
     auto i = static_cast<std::uint64_t>(0);
@@ -41,13 +52,19 @@ namespace mfront {
     return static_cast<std::size_t>(i);
   }  // end of convertToInteger
 
+  [[nodiscard]] static std::string to_string(const CompatibilityMode::Version& v) {
+    return std::to_string(v.major) + "." + std::to_string(v.minor) + "." +
+           std::to_string(v.patch);
+  }  // end of to_string
+
   void check(const CompatibilityMode::Version& v) {
     if (v < CompatibilityMode::v5_2_0) {
-      tfel::raise("version must be greater than 5.2.0");
+      tfel::raise("version '" + to_string(v) +
+                  "' is invalid: it must be greater or egal than 5.2.0");
     }
   }
 
-  [[nodiscard]] static CompatibilityMode::Version getClosetVersion(
+  [[nodiscard]] static CompatibilityMode::Version getClosestVersion(
       const CompatibilityMode::Version& v) {
     if (v == CompatibilityMode::future) {
       return v;
@@ -56,15 +73,18 @@ namespace mfront {
     const auto versions = std::set<CompatibilityMode::Version>{
         CompatibilityMode::known_compatibility_modes.begin(),
         CompatibilityMode::known_compatibility_modes.end()};
-    const auto p = versions.lower_bound(v);
-    if (p == versions.end()) {
-      return *(versions.rbegin());
+    const auto p = versions.upper_bound(v);
+    if (p == versions.begin()) {
+      // this shall have been catched by check, just a paranoiac check, that
+      // does not hurt
+      tfel::raise("version '" + to_string(v) +
+                  "' is invalid: it must be greater or egal than 5.2.0");
     }
-    return *p;
+    return *(std::prev(p));
   }  // end of getCompatibilityMode
 
   [[nodiscard]] static CompatibilityMode::Version& getCompatibilityMode() {
-    static CompatibilityMode::Version v = getClosetVersion(
+    static CompatibilityMode::Version v = getClosestVersion(
         CompatibilityMode::Version{.major = TFEL_VERSION_MAJOR,
                                    .minor = TFEL_VERSION_MINOR,
                                    .patch = TFEL_VERSION_PATCH});
@@ -79,7 +99,7 @@ namespace mfront {
     if (numbers.size() != 3) {
       tfel::raise("can't convert '" + std::string{s} + "' to a version");
     }
-    return getClosetVersion(
+    return getClosestVersion(
         CompatibilityMode::Version{.major = convertToInteger(numbers.at(0)),
                                    .minor = convertToInteger(numbers.at(1)),
                                    .patch = convertToInteger(numbers.at(2))});
@@ -87,7 +107,7 @@ namespace mfront {
 
 
   void setDefaultCompatibilityMode(const CompatibilityMode::Version& v) {
-    getCompatibilityMode() = getClosetVersion(v);
+    getCompatibilityMode() = getClosestVersion(v);
   }  // end of setDefaultCompatibilityMode
 
   void setDefaultCompatibilityMode(std::string_view v) {
@@ -95,7 +115,8 @@ namespace mfront {
     setDefaultCompatibilityMode(version);
   }  // end of setDefaultCompatibilityMode
 
-  CompatibilityMode::Version getDefaultCompatibilityMode() noexcept {
+  // can't be noexcept since getCompatibilityMode is not
+  CompatibilityMode::Version getDefaultCompatibilityMode() {
     return getCompatibilityMode();
   }  // end of getDefaultCompatibilityMode
 
