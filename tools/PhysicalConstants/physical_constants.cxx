@@ -425,7 +425,7 @@ static void generate_cxx(const std::vector<Constant>& cs, const std::size_t i) {
   // the already published compatibility modes are described as those which
   // are used up to the corresponding version
   const auto brief = (i == get_next_mode_index())
-                         ? std::string{}
+                         ? std::string{"Values of the next major version of TFEL"}
                          : "This file corresponds to the value of the "
                            "constants used up to\n * version " +
                                m.version;
