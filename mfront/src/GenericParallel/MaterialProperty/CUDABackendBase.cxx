@@ -175,12 +175,6 @@ namespace mfront::generic_parallel::material_property {
        << "const auto mfront_threads_per_block = static_cast<unsigned int>(("
        << threads_per_block
        << " + mfront_warp_size - 1) / mfront_warp_size * mfront_warp_size);\n";
-    if (isBoundsCheckingRequired(mpd)) {
-      writeStatisticsCopyToDevice(
-          os, pm + "MemcpyAsync(mfront_statistics, &mfront_host_statistics, " +
-                  "sizeof(mfront_gpmp_Statistics), " + pm +
-                  "MemcpyHostToDevice, mfront_stream) == " + pm + "Success");
-    }
     auto write_kernel_call = [&](const std::string_view npoints,
                                  const bool handleStrides) {
       const auto kernel = "mfront_" + name + "_kernel" +
@@ -217,6 +211,16 @@ namespace mfront::generic_parallel::material_property {
          << "if (!mfront_stack_size.succeeded()) {\n";
       writeBatchError(os, -7, "mfront_stack_size.getErrorMessage()");
       os << "}\n";
+      // the block of statistics of the pool is initialized after the checks:
+      // a copy still in progress when the block is given back to the pool
+      // would overwrite the statistics of the next call using it
+      if (isBoundsCheckingRequired(mpd)) {
+        writeStatisticsCopyToDevice(
+            os, pm +
+                    "MemcpyAsync(mfront_statistics, &mfront_host_statistics, " +
+                    "sizeof(mfront_gpmp_Statistics), " + pm +
+                    "MemcpyHostToDevice, mfront_stream) == " + pm + "Success");
+      }
       // an error left by a previous call of the calling code must not be
       // taken for an error of the launch
       os << "static_cast<void>(" << pm << "GetLastError());\n";
@@ -245,6 +249,14 @@ namespace mfront::generic_parallel::material_property {
          << "const auto mfront_" << pm << "_launch_error = " << pm
          << "GetLastError();\n"
          << "if (mfront_" << pm << "_launch_error != " << pm << "Success) {\n";
+      if (isBoundsCheckingRequired(mpd)) {
+        // the copy of the statistics must be completed before the block is
+        // given back to the pool
+        os << "if (!mfront_deferred_report) {\n"
+           << "static_cast<void>(" << pm
+           << "StreamSynchronize(mfront_stream));\n"
+           << "}\n";
+      }
       writeBatchError(os, -7,
                       pm + "GetErrorString(mfront_" + pm + "_launch_error)");
       // an asynchronous evaluation returns once the kernel is submitted
