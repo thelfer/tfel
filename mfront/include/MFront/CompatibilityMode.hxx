@@ -17,6 +17,7 @@
 
 #include <array>
 #include <limits>
+#include <optional>
 #include <string_view>
 #include "MFront/MFrontConfig.hxx"
 
@@ -45,8 +46,8 @@ namespace mfront {
    * compatibility mode allows changes that will be the default in the next
    * major version.
    *
-   * Compatiblity modes can be defined globally on the command line using
-   * `--compatibility-mode` or in a file using the @CompatiblityMode keyword.
+   * Compatibility modes can be defined globally on the command line using
+   * `--compatibility-mode` or in a file using the compatiblity_mode DSL option.
    */
   struct CompatibilityMode {
     /*!
@@ -72,7 +73,7 @@ namespace mfront {
         Version{.major = std::numeric_limits<std::size_t>::max(),
                 .minor = std::numeric_limits<std::size_t>::max(),
                 .patch = std::numeric_limits<std::size_t>::max()};
-    // \brief first version in which compatiblity modes were introduced
+    // \brief first version in which compatibility modes were introduced
     static inline constexpr auto v5_2_0 =
         Version{.major = 5, .minor = 2, .patch = 0};
     //! \brief list of compatibility modes
@@ -97,17 +98,23 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void setDefaultCompatibilityMode(std::string_view);
   /*!
-   * \return the default compatibility mode
+   * \return the default compatibility mode, if defined
    *
    * \throw if the version is strictly lower than 5.2.0
    */
-  MFRONT_VISIBILITY_EXPORT [[nodiscard]] CompatibilityMode::Version
-  getDefaultCompatibilityMode();
+  MFRONT_VISIBILITY_EXPORT
+  [[nodiscard]] std::optional<CompatibilityMode::Version>
+  getDefaultCompatibilityMode() noexcept;
   /*!
    * \brief check if the given version is ok
    * \param[in] v: version
    */
-  MFRONT_VISIBILITY_EXPORT  void check(
+  MFRONT_VISIBILITY_EXPORT void check(const CompatibilityMode::Version&);
+  /*!
+   * \return a string representation of the given version
+   * \param[in] v: version
+   */
+  MFRONT_VISIBILITY_EXPORT std::string to_string(
       const CompatibilityMode::Version&);
 
 }  // end of namespace mfront

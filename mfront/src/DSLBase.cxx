@@ -164,6 +164,12 @@ namespace mfront {
       check(CompatibilityMode::fromString(version));
       d.setAttribute(MaterialKnowledgeDescription::compatibilityMode, version,
                      false);
+    } else {
+      const auto ov = getDefaultCompatibilityMode();
+      if (ov.has_value()) {
+        d.setAttribute(MaterialKnowledgeDescription::compatibilityMode,
+                       to_string(*ov), false);
+      }
     }
   }  // end of handleDSLOptions
 
@@ -191,8 +197,9 @@ namespace mfront {
             MaterialKnowledgeDescription::compatibilityMode)) {
       opts.insert({DSLBase::compatibilityModeOption,
                    d.getAttribute<std::string>(
-                       MaterialKnowledgeDescription::compatibilityMode)});
+                       MaterialKnowledgeDescription::compatibilityMode)}); 
     }
+    return opts;
   }  // end of buildCommonDSLOptions
 
   DSLBase::DSLBase(const DSLOptions& /* opts */) {

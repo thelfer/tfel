@@ -173,19 +173,31 @@ static void declarePhysicalConstants_v6_0_0(pybind11::module_& m) {
                            &PhysicalConstants_v6_0_0::StefanBoltzmannConstant);
 }
 
+struct PhysicalConstants_future : PhysicalConstants_v6_0_0 {};
+
+#if TFEL_VERSION_MAJOR < 6
+struct PhysicalConstants : PhysicalConstants_v5_2_0 {};
+#else
+struct PhysicalConstants : PhysicalConstants_v6_0_0 {};
+#endif
+
 void declarePhysicalConstants(pybind11::module_& m) {  
   auto m_v5_2_0 =
       m.def_submodule("v5_2_0", "Compatibility module with version 5.2.0.");
   auto m_v6_0_0 =
       m.def_submodule("v6_0_0", "Compatibility module with version 6.0.0.");
-  auto m_future = m.def_submodule(
-      "future", "Compatibility module with unpublished versions of TFEL.");
   declarePhysicalConstants_v5_2_0(m_v5_2_0);
   declarePhysicalConstants_v6_0_0(m_v6_0_0);
-  declarePhysicalConstants_v6_0_0(m_future);
+  //
+  auto m_future = m.def_submodule(
+      "future", "Compatibility module with unpublished versions of TFEL.");
+  pybind11::class_<PhysicalConstants_future, PhysicalConstants_v6_0_0> w_future(
+      m_future, "PhysicalConstants", "Physical constants");
 #if TFEL_VERSION_MAJOR < 6
-  declarePhysicalConstants_v5_2_0(m);
+  pybind11::class_<PhysicalConstants, PhysicalConstants_v5_2_0>
+      w(m, "PhysicalConstants", "Physical constants");
 #else
-  declarePhysicalConstants_v6_0_0(m);
+  pybind11::class_<PhysicalConstants, PhysicalConstants_v6_0_0>
+      w(m, "PhysicalConstants", "Physical constants");
 #endif
 }  // end of declarePhysicalConstants
