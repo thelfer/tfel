@@ -141,6 +141,16 @@ namespace mfront {
       const std::string_view,
       const MaterialKnowledgeDescription&);
   /*!
+   * \brief write a symbol associated with the compatibility mode.
+   * \param[out] os: output stream
+   * \param[in]  n: entry point name
+   * \param[in] d: description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeCompatibilityModeSymbol(
+      std::ostream&,
+      const std::string_view,
+      const MaterialKnowledgeDescription&);
+  /*!
    * \brief write a symbol associated with the build identifier.
    * \param[out] os: output stream
    * \param[in]  n: entry point name

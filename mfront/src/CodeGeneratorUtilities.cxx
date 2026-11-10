@@ -376,7 +376,17 @@ namespace mfront {
     const auto validator = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::validator, "");
     exportStringSymbol(os, std::string{n} + "_validator", validator);
-  }  // end of writeValidatorSymbols
+  }  // end of writeValidatorSymbol
+
+  void writeCompatibilityModeSymbol(std::ostream& os,
+                            const std::string_view n,
+                            const MaterialKnowledgeDescription& d) {
+    if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      const auto version = d.getAttribute<std::string>(
+          MaterialKnowledgeDescription::compatibilityMode, "");
+      exportStringSymbol(os, std::string{n} + "_compatibility_mode", version);
+    }
+  }  // end of writeCompatibilityModeSymbol
 
   void writeBuildIdentifierSymbol(std::ostream& os,
                                   const std::string_view n,

@@ -393,6 +393,7 @@ namespace mfront {
     writeVariablesNamesSymbol(src, name, mpd);
     writeVariablesBoundsSymbols(src, name, mpd);
     writeValidatorSymbol(src, name, mpd);
+    writeCompatibilityModeSymbol(src, name, mpd);
     writeBuildIdentifierSymbol(src, name, mpd);
     writeEntryPointSymbol(src, name);
     writeLawSymbol(src, name, mpd.law);

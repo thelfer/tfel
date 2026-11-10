@@ -47,6 +47,7 @@ namespace mfront {
                                                 const std::string& name) const {
     this->writeFileDescriptionSymbols(out, i, fd, name);
     this->writeValidatorSymbol(out, i, bd, name);
+    this->writeCompatibilityModeSymbol(out, i, bd, name);
     this->writeBuildIdentifierSymbol(out, i, bd, name);
     this->writeEntryPointSymbol(out, i, name);
     this->writeTFELVersionSymbol(out, i, name);
@@ -81,6 +82,14 @@ namespace mfront {
                                               const std::string& n) const {
     mfront::writeValidatorSymbol(out, i.getFunctionNameBasis(n), d);
   }  // end of writeValidatorSymbol
+
+  void SymbolsGenerator::writeCompatibilityModeSymbol(
+      std::ostream& out,
+      const BehaviourInterfaceBase& i,
+      const BehaviourDescription& d,
+      const std::string& n) const {
+    mfront::writeCompatibilityModeSymbol(out, i.getFunctionNameBasis(n), d);
+  }  // end of writeCompatibilityModeSymbol
 
   void SymbolsGenerator::writeBuildIdentifierSymbol(
       std::ostream& out,
