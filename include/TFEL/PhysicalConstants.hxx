@@ -33,12 +33,12 @@ namespace tfel::future {
 
   using tfel::v6_0_0::PhysicalConstants;
 
-} // end of tfel::future
+}  // end of namespace tfel::future
 
 namespace tfel::constants::future {
 
   using namespace tfel::constants::v6_0_0;
 
-} // end of tfel::constants::future
+}  // end of namespace tfel::constants::future
 
 #endif /* LIB_TFEL_PHYSICALCONSTANTS_HXX */

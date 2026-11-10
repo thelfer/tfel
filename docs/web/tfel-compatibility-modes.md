@@ -147,33 +147,95 @@ affected by compatibility modes at the time of writing.
 
 # Adding a new compatibility mode
 
-A development which changes the values of the physical constants shall
-proceed as follows:
+The list of the compatibility modes which affect the values of the
+physical constants and those values are those of the
+`tools/PhysicalConstants/physical_constants.json` file. A development
+which changes the values of the physical constants shall proceed as
+follows:
 
-1. Copy the header of the most recent compatibility mode,
-   `include/TFEL/PhysicalConstants-<x>.<y>.<z>.hxx`, into a new header
-   named after the version introducing the change,
-   `include/TFEL/PhysicalConstants-<X>.<Y>.<Z>.hxx`, and update the
-   values in this new header. The names, the units and the organisation
-   of the file are left unchanged: only the values change. The include
-   guard and the namespaces `tfel::v<X>_<Y>_<Z>` and
-   `tfel::constants::v<X>_<Y>_<Z>` reflect the new version.
-2. Install the new header in `include/CMakeLists.txt`:
+1. Declare the new compatibility mode at the end of the list of the
+   compatibility modes, which are the first records of the
+   `tools/PhysicalConstants/physical_constants.json` file:
+
+   ~~~~{.json}
+   {
+     mode: "<X>.<Y>.<Z>";
+     description: "Compatibility module with version <X>.<Y>.<Z>.";
+   }
+   ~~~~
+
+   The compatibility modes are declared in increasing order. The values
+   of the last compatibility mode are those of the next major version of
+   `TFEL`, which are not used yet. Since the `Python` bindings select
+   the values to use with the `TFEL_VERSION_MAJOR` preprocessor variable
+   only, the major version of a new compatibility mode shall be greater
+   than that of the compatibility mode of the current version of `TFEL`.
+2. Give the values of the next major version in the `value` field of the
+   constants which change, and those of the compatibility mode those
+   values replace in the `values` field of the same records:
+
+   ~~~~{.json}
+   {
+    name: "StefanBoltzmannConstant";
+    short_name: "s";
+    description: "Stefan-Boltzmann constant";
+    unit: "W.m^{-2}.K^{-4}";
+    qt_unit:
+      [ 1, 0, -3, 0, -4, 0, 0 ];
+    value: 5.670367e-8;
+    values:
+    [
+      {
+        mode: "5.2.0";
+        value: 5.67037e-8;
+      }
+    ];
+   }
+   ~~~~
+
+   A compatibility mode which does not appear in the `values` field uses
+   the values of the `value` field. The latter are also those used by the
+   language bindings which are not versioned, such as the `Fortran` ones.
+   As the values of an already published compatibility mode shall never
+   change, the values of the mode of the current version of `TFEL` are
+   pinned in the `values` field of each constant whose values change:
+   without doing so, changing the values of the next major version would
+   change those of the published compatibility mode.
+3. Regenerate the headers, the `Python` bindings and the page describing
+   the library, then copy them to the source tree:
+
+   ~~~~{.shell}
+   g++ physical_constants.cxx -o physical_constants \
+       `tfel-config --compiler-flags --includes --libs --utilities`
+   ./physical_constants
+   cp PhysicalConstants-<X>.<Y>.<Z>.hxx PhysicalConstants.hxx \
+      ../../include/TFEL/
+   cp PhysicalConstants-python.cxx \
+      ../../bindings/python/tfel/PhysicalConstants.cxx
+   cp TFELPHYSICALCONSTANTS.INC ../../bindings/fortran77/
+   cp tfel_physical_constants.f90 ../../bindings/fortran90/
+   cp tfel-physical-constants.md ../../docs/web/
+   ~~~~
+
+   One header is generated per compatibility mode, together with the
+   `PhysicalConstants.hxx` header, which includes all of those headers
+   and redirects the names without suffix to the values of the
+   compatibility mode of the current version of `TFEL` and those of the
+   `tfel::future` and `tfel::constants::future` namespaces to the values
+   of the next major version. The `Fortran` bindings expose the values of
+   the next major version. Regenerated files are identical to the
+   committed ones, except for the values which have changed: checking
+   those differences is the way of checking that no value has been
+   changed by mistake.
+4. Install the new header in `include/CMakeLists.txt`:
 
    ~~~~{.cmake}
    install_header(TFEL PhysicalConstants-<X>.<Y>.<Z>.hxx)
    ~~~~
 
-3. Include it from `include/TFEL/PhysicalConstants.hxx` and redirect
-   the aliases of the default mode to the new set of constants.
-4. Update the `Python` bindings of
-   `bindings/python/tfel/PhysicalConstants.cxx`, which declare one
-   class per compatibility mode.
-5. Extend the generator `tools/PhysicalConstants/physical_constants.cxx`
-   so that it generates one header per compatibility mode and that a
-   regenerated header is identical to the committed one. At the time of
-   writing, this generator still writes a single header, whose values
-   are read from `tools/PhysicalConstants/physical_constants.json`.
+5. Describe the new values in the page devoted to
+   [values of the physical constants](physical-constants.html), which
+   tabulates the values of each compatibility mode.
 6. Declare the new mode in `MFront`, as described in the
    [corresponding section](mfront-compatibility-modes.html#adding-a-new-compatibility-mode),
    so that `MFront` generates code using the new values.
@@ -192,13 +254,10 @@ mechanism: a new compatibility mode shall be tested in the same way.
 
 - The `Fortran` bindings are not versioned yet: they expose a single set
   of constants, which is that of the next major version.
-- The generator `tools/PhysicalConstants/physical_constants.cxx` and the
-  page it generates,
-  [the `TFEL/PhysicalConstants` library](tfel-physical-constants.html),
-  are not versioned yet: a run of the generator would restore a single,
-  unversioned header and a page describing the values of the next major
-  version. The generator shall be extended before the values of a new
-  compatibility mode can be generated, as explained above.
+- The page devoted to
+  [values of the physical constants](physical-constants.html), which
+  tabulates the values of the compatibility modes, is not generated:
+  those values are described there by hand.
 - Compatibility modes only cover the entities which are versioned in
   this way at the time of writing. Extending them to other parts of the
   `TFEL` libraries requires a mechanism which does not rely on a

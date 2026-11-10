@@ -18,58 +18,58 @@
 void declareExternalLibraryManager(pybind11::module_&);
 
 static void ELM_loadLibrary(tfel::system::ExternalLibraryManager& elm,
-                             const std::string& name) {
+                            const std::string& name) {
   elm.loadLibrary(name);
 }
 
 static void ELM_setUShortParameter(tfel::system::ExternalLibraryManager& elm,
-                                    const std::string& l,
-                                    const std::string& s,
-                                    const std::string& p,
-                                    const unsigned short v) {
+                                   const std::string& l,
+                                   const std::string& s,
+                                   const std::string& p,
+                                   const unsigned short v) {
   elm.setParameter(l, s, p, v);
 }
 
 static void ELM_setIntParameter(tfel::system::ExternalLibraryManager& elm,
-                                 const std::string& l,
-                                 const std::string& s,
-                                 const std::string& p,
-                                 const int v) {
+                                const std::string& l,
+                                const std::string& s,
+                                const std::string& p,
+                                const int v) {
   elm.setParameter(l, s, p, v);
 }
 
 static void ELM_setDoubleParameter(tfel::system::ExternalLibraryManager& elm,
-                                    const std::string& l,
-                                    const std::string& s,
-                                    const std::string& p,
-                                    const double v) {
+                                   const std::string& l,
+                                   const std::string& s,
+                                   const std::string& p,
+                                   const double v) {
   elm.setParameter(l, s, p, v);
 }
 
 static void ELM_setUShortParameter2(tfel::system::ExternalLibraryManager& elm,
-                                     const std::string& l,
-                                     const std::string& s,
-                                     const std::string& h,
-                                     const std::string& p,
-                                     const unsigned short v) {
+                                    const std::string& l,
+                                    const std::string& s,
+                                    const std::string& h,
+                                    const std::string& p,
+                                    const unsigned short v) {
   elm.setParameter(l, s, h, p, v);
 }
 
 static void ELM_setIntParameter2(tfel::system::ExternalLibraryManager& elm,
-                                   const std::string& l,
-                                   const std::string& s,
-                                   const std::string& h,
-                                   const std::string& p,
-                                   const int v) {
+                                 const std::string& l,
+                                 const std::string& s,
+                                 const std::string& h,
+                                 const std::string& p,
+                                 const int v) {
   elm.setParameter(l, s, h, p, v);
 }
 
 static void ELM_setDoubleParameter2(tfel::system::ExternalLibraryManager& elm,
-                                     const std::string& l,
-                                     const std::string& s,
-                                     const std::string& h,
-                                     const std::string& p,
-                                     const double v) {
+                                    const std::string& l,
+                                    const std::string& s,
+                                    const std::string& h,
+                                    const std::string& p,
+                                    const double v) {
   elm.setParameter(l, s, h, p, v);
 }
 
@@ -78,22 +78,22 @@ void declareExternalLibraryManager(pybind11::module_& m) {
   using ELM = tfel::system::ExternalLibraryManager;
 
   bool (ELM::*hasBounds1)(const std::string&, const std::string&,
-                           const std::string&, const std::string&) =
+                          const std::string&, const std::string&) =
       &ELM::hasBounds;
   bool (ELM::*hasBounds2)(const std::string&, const std::string&,
-                           const std::string&) = &ELM::hasBounds;
+                          const std::string&) = &ELM::hasBounds;
 
   bool (ELM::*hasLowerBound1)(const std::string&, const std::string&,
-                               const std::string&, const std::string&) =
+                              const std::string&, const std::string&) =
       &ELM::hasLowerBound;
   bool (ELM::*hasLowerBound2)(const std::string&, const std::string&,
-                               const std::string&) = &ELM::hasLowerBound;
+                              const std::string&) = &ELM::hasLowerBound;
 
   bool (ELM::*hasUpperBound1)(const std::string&, const std::string&,
-                               const std::string&, const std::string&) =
+                              const std::string&, const std::string&) =
       &ELM::hasUpperBound;
   bool (ELM::*hasUpperBound2)(const std::string&, const std::string&,
-                               const std::string&) = &ELM::hasUpperBound;
+                              const std::string&) = &ELM::hasUpperBound;
 
   long double (ELM::*getLowerBound1)(const std::string&, const std::string&,
                                      const std::string&, const std::string&) =
@@ -108,11 +108,10 @@ void declareExternalLibraryManager(pybind11::module_& m) {
                                      const std::string&) = &ELM::getUpperBound;
 
   bool (ELM::*hasPhysicalBounds1)(const std::string&, const std::string&,
-                                   const std::string&, const std::string&) =
+                                  const std::string&, const std::string&) =
       &ELM::hasPhysicalBounds;
   bool (ELM::*hasPhysicalBounds2)(const std::string&, const std::string&,
-                                   const std::string&) =
-      &ELM::hasPhysicalBounds;
+                                  const std::string&) = &ELM::hasPhysicalBounds;
 
   bool (ELM::*hasLowerPhysicalBound1)(const std::string&, const std::string&,
                                       const std::string&, const std::string&) =

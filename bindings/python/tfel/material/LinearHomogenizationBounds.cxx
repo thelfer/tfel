@@ -44,13 +44,21 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 
 template <tfel::math::ScalarConcept StressType, std::size_t N>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>())
-    static std::pair<std::pair<StressType, StressType>,
-                     std::pair<StressType, StressType>>
-    computeIsotropicHashinShtrikmanBounds(
-        std::vector<tfel::types::real<StressType>>& tab_f,
-        std::vector<StressType>& tab_K,
-        std::vector<StressType>& tab_mu) {
+                                            StressType>()) static std::
+    pair<
+        std::pair<StressType, StressType>,
+        std::pair<
+            StressType,
+            StressType>> computeIsotropicHashinShtrikmanBounds(std::
+                                                                   vector<tfel::types::real<
+                                                                       StressType>>&
+                                                                       tab_f,
+                                                               std::vector<
+                                                                   StressType>&
+                                                                   tab_K,
+                                                               std::vector<
+                                                                   StressType>&
+                                                                   tab_mu) {
   tfel::raise_if(tab_f.empty() || (tab_f.size() != tab_K.size()) ||
                      (tab_f.size() != tab_mu.size()),
                  "computeIsotropicHashinShtrikmanBounds: the lists of volume "
@@ -82,7 +90,8 @@ static const char compute_hashin_shtrikman_bounds_doc[] =
     "d-dimensional isotropic composite composed of N isotropic phases.\n"
     "The formulas can be found in Torquato (2002).\n"
     "Return a\n"
-    "std::pair<std::pair<StressType,StressType>,std::pair<StressType,StressType>>.\n"
+    "std::pair<std::pair<StressType,StressType>,std::pair<StressType,"
+    "StressType>>.\n"
     "First element of the pair is the lower bound and second element is\n"
     "the upper bound. Each bound is a std::pair with bulk and shear\n"
     "moduli.\n"
@@ -91,28 +100,24 @@ static const char compute_hashin_shtrikman_bounds_doc[] =
     "tab_mu: std::span<StressType> of shear moduli of phases";
 
 void declareLinearHomogenizationBounds(pybind11::module_& m) {
-  m.def("computeVoigtStiffness3D",
-        &computeVoigtStiffness<double, 3>,
+  m.def("computeVoigtStiffness3D", &computeVoigtStiffness<double, 3>,
         pybind11::arg("tab_f"), pybind11::arg("tab_C"),
         compute_voigt_stiffness_doc);
-  m.def("computeReussStiffness3D",
-        &computeReussStiffness<double, 3>,
+  m.def("computeReussStiffness3D", &computeReussStiffness<double, 3>,
         pybind11::arg("tab_f"), pybind11::arg("tab_C"),
         compute_reuss_stiffness_doc);
   m.def("computeIsotropicHashinShtrikmanBounds3D",
         &computeIsotropicHashinShtrikmanBounds<double, 3>,
-        pybind11::arg("tab_f"), pybind11::arg("tab_K"),
-        pybind11::arg("tab_mu"), compute_hashin_shtrikman_bounds_doc);
-  m.def("computeVoigtStiffness2D",
-        &computeVoigtStiffness<double, 2>,
+        pybind11::arg("tab_f"), pybind11::arg("tab_K"), pybind11::arg("tab_mu"),
+        compute_hashin_shtrikman_bounds_doc);
+  m.def("computeVoigtStiffness2D", &computeVoigtStiffness<double, 2>,
         pybind11::arg("tab_f"), pybind11::arg("tab_C"),
         compute_voigt_stiffness_doc);
-  m.def("computeReussStiffness2D",
-        &computeReussStiffness<double, 2>,
+  m.def("computeReussStiffness2D", &computeReussStiffness<double, 2>,
         pybind11::arg("tab_f"), pybind11::arg("tab_C"),
         compute_reuss_stiffness_doc);
   m.def("computeIsotropicHashinShtrikmanBounds2D",
         &computeIsotropicHashinShtrikmanBounds<double, 2>,
-        pybind11::arg("tab_f"), pybind11::arg("tab_K"),
-        pybind11::arg("tab_mu"), compute_hashin_shtrikman_bounds_doc);
+        pybind11::arg("tab_f"), pybind11::arg("tab_K"), pybind11::arg("tab_mu"),
+        compute_hashin_shtrikman_bounds_doc);
 }

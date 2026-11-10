@@ -1,6 +1,6 @@
 /*!
  * \file   CompatibilityModeTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   08/11/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -34,9 +34,10 @@ struct CompatibilityModeTest final : public tfel::tests::TestCase {
   }
 
  private:
-  static inline constexpr auto make_version = [](const std::size_t major,
-                                            const std::size_t minor,
-                                            const std::size_t patch) constexpr {
+  static inline constexpr auto make_version =
+      [](const std::size_t major,
+         const std::size_t minor,
+         const std::size_t patch) constexpr {
     return mfront::CompatibilityMode::Version{
         .major = major, .minor = minor, .patch = patch};
   };

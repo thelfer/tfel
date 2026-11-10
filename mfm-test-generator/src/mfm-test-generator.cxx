@@ -122,7 +122,8 @@ namespace mfmtg {
     void registerCommandLineCallBacks() {
       this->registerCallBack(
           "--no-terminate-handler",
-          CallBack("don't set a terminate handler", []() noexcept {}, false));
+          CallBack(
+              "don't set a terminate handler", []() noexcept {}, false));
       this->registerCallBack(
           "--verbose", CallBack(
                            "set verbose output",

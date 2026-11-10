@@ -420,8 +420,8 @@ namespace tfel::system {
     return this->getStringIfDefined(l, s + "_validator");
   }  // end of getValidator
 
-  std::string ExternalLibraryManager::getCompatibilityMode(const std::string& l,
-                                                   const std::string& s) {
+  std::string ExternalLibraryManager::getCompatibilityMode(
+      const std::string& l, const std::string& s) {
     return this->getStringIfDefined(l, s + "_compatibility_mode");
   }  // end of getCompatibilityMode
 

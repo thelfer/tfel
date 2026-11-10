@@ -24,10 +24,9 @@ namespace tfel::system {
 
   template <typename T>
   template <typename... Args>
-  ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args)
-    requires((sizeof...(Args) != 1) ||
-             (!std::is_same_v<std::remove_cvref_t<Args>, ThreadedTaskResult> &&
-              ...))
+  ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args) requires(
+      (sizeof...(Args) != 1) ||
+      (!std::is_same_v<std::remove_cvref_t<Args>, ThreadedTaskResult> && ...))
       : result(std::in_place, std::forward<Args>(args)...) {
   }  // end of ThreadedTaskResult
 

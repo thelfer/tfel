@@ -70,8 +70,7 @@ namespace mfront {
       "parameters_as_static_variables";
   const char* const DSLBase::initializationFromFileOption =
       "parameters_initialization_from_file";
-  const char* const DSLBase::compatibilityModeOption =
-      "compatibility_mode";
+  const char* const DSLBase::compatibilityModeOption = "compatibility_mode";
   const char* const DSLBase::overridingParameters = "overriding_parameters";
   const char* const DSLBase::validatorOption = "validator";
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
@@ -193,11 +192,10 @@ namespace mfront {
         {DSLBase::validatorOption, validator},
         {DSLBase::buildIdentifierOption, build_id},
         {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
-    if (d.hasAttribute(
-            MaterialKnowledgeDescription::compatibilityMode)) {
+    if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
       opts.insert({DSLBase::compatibilityModeOption,
                    d.getAttribute<std::string>(
-                       MaterialKnowledgeDescription::compatibilityMode)}); 
+                       MaterialKnowledgeDescription::compatibilityMode)});
     }
     return opts;
   }  // end of buildCommonDSLOptions

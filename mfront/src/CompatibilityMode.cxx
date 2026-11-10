@@ -76,7 +76,7 @@ namespace mfront {
   std::string to_string(const CompatibilityMode::Version& v) {
     check(v);
     return internals::to_string(v);
-  } // end of to_string
+  }  // end of to_string
 
   [[nodiscard]] static CompatibilityMode::Version getClosestVersion(
       const CompatibilityMode::Version& v) {
@@ -103,40 +103,39 @@ namespace mfront {
     return selected_version;
   }  // end of getCompatibilityMode
 
-    [[nodiscard]] static std::optional<CompatibilityMode::Version>&
-    getCompatibilityMode() noexcept {
-      static auto v = std::optional<CompatibilityMode::Version>{};
-      return v;
-    }  // end of getCompatibilityMode
+  [[nodiscard]] static std::optional<CompatibilityMode::Version>&
+  getCompatibilityMode() noexcept {
+    static auto v = std::optional<CompatibilityMode::Version>{};
+    return v;
+  }  // end of getCompatibilityMode
 
-    CompatibilityMode::Version CompatibilityMode::fromString(
-        std::string_view s) {
-      if (s == "future") {
-        return CompatibilityMode::future;
-      }
-      const auto numbers = tfel::utilities::tokenize(s, ".");
-      if (numbers.size() != 3) {
-        tfel::raise("can't convert '" + std::string{s} + "' to a version");
-      }
-      return getClosestVersion(
-          CompatibilityMode::Version{.major = convertToInteger(numbers.at(0)),
-                                     .minor = convertToInteger(numbers.at(1)),
-                                     .patch = convertToInteger(numbers.at(2))});
-    }  // end of fromString
+  CompatibilityMode::Version CompatibilityMode::fromString(std::string_view s) {
+    if (s == "future") {
+      return CompatibilityMode::future;
+    }
+    const auto numbers = tfel::utilities::tokenize(s, ".");
+    if (numbers.size() != 3) {
+      tfel::raise("can't convert '" + std::string{s} + "' to a version");
+    }
+    return getClosestVersion(
+        CompatibilityMode::Version{.major = convertToInteger(numbers.at(0)),
+                                   .minor = convertToInteger(numbers.at(1)),
+                                   .patch = convertToInteger(numbers.at(2))});
+  }  // end of fromString
 
-    void setDefaultCompatibilityMode(const CompatibilityMode::Version& v) {
-      getCompatibilityMode() = getClosestVersion(v);
-    }  // end of setDefaultCompatibilityMode
+  void setDefaultCompatibilityMode(const CompatibilityMode::Version& v) {
+    getCompatibilityMode() = getClosestVersion(v);
+  }  // end of setDefaultCompatibilityMode
 
-    void setDefaultCompatibilityMode(std::string_view v) {
-      const auto version = CompatibilityMode::fromString(v);
-      setDefaultCompatibilityMode(version);
-    }  // end of setDefaultCompatibilityMode
+  void setDefaultCompatibilityMode(std::string_view v) {
+    const auto version = CompatibilityMode::fromString(v);
+    setDefaultCompatibilityMode(version);
+  }  // end of setDefaultCompatibilityMode
 
-    // can't be noexcept since getCompatibilityMode is not
-    std::optional<CompatibilityMode::Version>
-    getDefaultCompatibilityMode() noexcept {
-      return getCompatibilityMode();
-    }  // end of getDefaultCompatibilityMode
+  // can't be noexcept since getCompatibilityMode is not
+  std::optional<CompatibilityMode::Version>
+  getDefaultCompatibilityMode() noexcept {
+    return getCompatibilityMode();
+  }  // end of getDefaultCompatibilityMode
 
-  }  // end of namespace mfront
+}  // end of namespace mfront

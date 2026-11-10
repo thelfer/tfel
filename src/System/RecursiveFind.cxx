@@ -133,7 +133,7 @@ namespace tfel::system {
         throw_if(b, "can't stat file '" + file + "'");
       }
     }
-  }  // end of recursiveFind
+  }    // end of recursiveFind
 #endif /* !((defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)) */
 
   void recursiveFind(std::map<std::string, std::vector<std::string>>& r,

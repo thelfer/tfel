@@ -21,8 +21,7 @@ void declareModellingHypothesis(pybind11::module_&);
 void declareModellingHypothesis(pybind11::module_& m) {
   using namespace tfel::material;
   pybind11::enum_<ModellingHypothesis::Hypothesis>(
-      m, "ModellingHypothesis",
-      "The list of supported modelling hypothesis")
+      m, "ModellingHypothesis", "The list of supported modelling hypothesis")
       .value("AXISYMMETRICALGENERALISEDPLANESTRAIN",
              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)
       .value("AXISYMMETRICALGENERALISEDPLANESTRESS",

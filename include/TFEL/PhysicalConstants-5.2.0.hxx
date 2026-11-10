@@ -4,7 +4,7 @@
  * version 5.2.0
  *
  * \author Thomas Helfer
- * \date   18/08/2017
+ * \date 18/08/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -151,120 +151,117 @@ namespace tfel::v5_2_0 {
 
 }  // end of namespace tfel::v5_2_0
 
-namespace tfel::constants {
+namespace tfel::constants::v5_2_0 {
 
-  namespace v5_2_0 {
+  //! Atomic mass constant (kg)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto AtomicMassConstant =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::AtomicMassConstant;
+  //! Atomic mass constant (kg)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto mu =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::mu;
+  //! Avogadro constant (mol-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto AvogadroConstant =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::AvogadroConstant;
+  //! Avogadro constant (mol-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto Na =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::Na;
+  //! Boltzmann constant (J.K-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto BoltzmannConstant =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::BoltzmannConstant;
+  //! Boltzmann constant (J.K-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto kb =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::kb;
+  //! Conductance quantum (S)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto ConductanceQuantum =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::ConductanceQuantum;
+  //! Conductance quantum (S)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto G0 =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::G0;
+  //! Electric constant (F.m-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto ElectricConstant =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::ElectricConstant;
+  //! Electric constant (F.m-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto e0 =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::e0;
+  //! Electron mass (kg)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto ElectronMass =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::ElectronMass;
+  //! Electron mass (kg)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto me =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::me;
+  //! Electron volt (J)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto ElectronVolt =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::ElectronVolt;
+  //! Electron volt (J)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto eV =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::eV;
+  //! Elementary charge (C)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto ElementaryCharge =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::ElementaryCharge;
+  //! Elementary charge (C)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto e =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::e;
+  //! Faraday constant (C.mol-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto FaradayConstant =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::FaradayConstant;
+  //! Faraday constant (C.mol-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto F =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::F;
+  //! Fine-structure constant
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto FineStructureConstant =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::FineStructureConstant;
+  //! Fine-structure constant
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto a =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::a;
+  //! Molar gas constant (J.mol-1.K-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto MolarGasConstant =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::MolarGasConstant;
+  //! Molar gas constant (J.mol-1.K-1)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto R =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::R;
+  //! Stefan-Boltzmann constant (W.m-2.K-4)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto StefanBoltzmannConstant =
+      tfel::v5_2_0::PhysicalConstants<NumericType,
+                                      use_quantities>::StefanBoltzmannConstant;
+  //! Stefan-Boltzmann constant (W.m-2.K-4)
+  template <typename NumericType = double, bool use_quantities = false>
+  inline constexpr auto s =
+      tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::s;
 
-    //! Atomic mass constant (kg)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto AtomicMassConstant =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::AtomicMassConstant;
-    //! Atomic mass constant (kg)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto mu =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::mu;
-    //! Avogadro constant (mol-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto AvogadroConstant =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::AvogadroConstant;
-    //! Avogadro constant (mol-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto Na =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::Na;
-    //! Boltzmann constant (J.K-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto BoltzmannConstant =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::BoltzmannConstant;
-    //! Boltzmann constant (J.K-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto kb =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::kb;
-    //! Conductance quantum (S)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto ConductanceQuantum =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::ConductanceQuantum;
-    //! Conductance quantum (S)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto G0 =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::G0;
-    //! Electric constant (F.m-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto ElectricConstant =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::ElectricConstant;
-    //! Electric constant (F.m-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto e0 =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::e0;
-    //! Electron mass (kg)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto ElectronMass =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::ElectronMass;
-    //! Electron mass (kg)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto me =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::me;
-    //! Electron volt (J)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto ElectronVolt =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::ElectronVolt;
-    //! Electron volt (J)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto eV =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::eV;
-    //! Elementary charge (C)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto ElementaryCharge =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::ElementaryCharge;
-    //! Elementary charge (C)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto e =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::e;
-    //! Faraday constant (C.mol-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto FaradayConstant =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::FaradayConstant;
-    //! Faraday constant (C.mol-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto F =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::F;
-    //! Fine-structure constant
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto FineStructureConstant =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::FineStructureConstant;
-    //! Fine-structure constant
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto a =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::a;
-    //! Molar gas constant (J.mol-1.K-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto MolarGasConstant =
-        tfel::v5_2_0::PhysicalConstants<NumericType,
-                                        use_quantities>::MolarGasConstant;
-    //! Molar gas constant (J.mol-1.K-1)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto R =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::R;
-    //! Stefan-Boltzmann constant (W.m-2.K-4)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto StefanBoltzmannConstant = tfel::v5_2_0::
-        PhysicalConstants<NumericType, use_quantities>::StefanBoltzmannConstant;
-    //! Stefan-Boltzmann constant (W.m-2.K-4)
-    template <typename NumericType = double, bool use_quantities = false>
-    inline constexpr auto s =
-        tfel::v5_2_0::PhysicalConstants<NumericType, use_quantities>::s;
+}  // end of namespace tfel::constants::v5_2_0
 
-  }  // end of namespace v5_2_0
-
-}  // end of namespace tfel::constants
-
-#endif /* LIB_TFEL_PHYSICALCONSTANTS__5_2_0_HXX */
+#endif /* LIB_TFEL_PHYSICALCONSTANTS_5_2_0_HXX */

@@ -23,7 +23,7 @@ static std::vector<std::string> TargetsDescription_getHeaders(
 }
 
 static void TargetsDescription_setHeaders(mfront::TargetsDescription& t,
-                                           const std::vector<std::string>& h) {
+                                          const std::vector<std::string>& h) {
   t.headers = h;
 }
 
@@ -49,7 +49,7 @@ void declareTargetsDescription(pybind11::module_& m) {
            static_cast<LibraryAccess>(&TargetsDescription::getLibrary),
            pybind11::arg("n"))
       .def_property("headers", TargetsDescription_getHeaders,
-                     TargetsDescription_setHeaders)
+                    TargetsDescription_setHeaders)
       .def("getLibraries", TargetsDescription_getLibraries)
       .def_property_readonly("libraries", &TargetsDescription_getLibraries)
       .def_readwrite("specific_targets", &TargetsDescription::specific_targets)

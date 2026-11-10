@@ -458,7 +458,7 @@ namespace mfront {
   void MFrontBase::treatCompatibilityMode() {
     setDefaultCompatibilityMode(
         this->getCurrentCommandLineArgument().getOption());
-  } // end of treatCompatibilityMode
+  }  // end of treatCompatibilityMode
 
   void MFrontBase::treatUnicodeOutput() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();

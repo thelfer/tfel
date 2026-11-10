@@ -88,60 +88,64 @@ static const char compute_anisotropic_hill_tensor_doc[] =
     "max_it: maximal number of iterations for integration";
 
 void declareHillTensors(pybind11::module_& m) {
-  m.def("computeSphereHillTensor",
-        [](const double young, const double nu) {
-          return homogenization::elasticity::computeSphereHillPolarisationTensor<
-              double>(young, nu);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"),
-        compute_sphere_hill_tensor_doc);
-  m.def("computeSphereHillTensor",
-        [](const IsotropicModuli<double>& IM0) {
-          return homogenization::elasticity::computeSphereHillPolarisationTensor<
-              double>(IM0);
-        },
-        pybind11::arg("IM0"), compute_sphere_hill_tensor_IM_doc);
-  m.def("computeAxisymmetricalHillTensor",
-        [](const double young, const double nu,
-           const tfel::math::tvector<3u, double>& n_a, const double e) {
-          return homogenization::elasticity::
-              computeAxisymmetricalHillPolarisationTensor<double>(young, nu,
-                                                                  n_a, e);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("n_a"),
-        pybind11::arg("e"), compute_axisymmetrical_hill_tensor_doc);
-  m.def("computeAxisymmetricalHillTensor",
-        [](const IsotropicModuli<double>& IM0,
-           const tfel::math::tvector<3u, double>& n_a, const double e) {
-          return homogenization::elasticity::
-              computeAxisymmetricalHillPolarisationTensor<double>(IM0, n_a, e);
-        },
-        pybind11::arg("IM0"), pybind11::arg("n_a"), pybind11::arg("e"),
-        compute_axisymmetrical_hill_tensor_IM_doc);
-  m.def("computeHillTensor",
-        [](const double young, const double nu,
-           const tfel::math::tvector<3u, double>& n_a,
-           const double a,
-           const tfel::math::tvector<3u, double>& n_b,
-           const double b, const double c) {
-          return homogenization::elasticity::computeHillPolarisationTensor<double>(
-              young, nu, n_a, a, n_b, b, c);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("n_a"),
-        pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
-        pybind11::arg("c"), compute_hill_tensor_doc);
-  m.def("computeHillTensor",
-        [](const IsotropicModuli<double>& IM0,
-           const tfel::math::tvector<3u, double>& n_a,
-           const double a,
-           const tfel::math::tvector<3u, double>& n_b,
-           const double b, const double c) {
-          return homogenization::elasticity::computeHillPolarisationTensor<double>(
-              IM0, n_a, a, n_b, b, c);
-        },
-        pybind11::arg("IM0"), pybind11::arg("n_a"), pybind11::arg("a"),
-        pybind11::arg("n_b"), pybind11::arg("b"), pybind11::arg("c"),
-        compute_hill_tensor_IM_doc);
+  m.def(
+      "computeSphereHillTensor",
+      [](const double young, const double nu) {
+        return homogenization::elasticity::computeSphereHillPolarisationTensor<
+            double>(young, nu);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"),
+      compute_sphere_hill_tensor_doc);
+  m.def(
+      "computeSphereHillTensor",
+      [](const IsotropicModuli<double>& IM0) {
+        return homogenization::elasticity::computeSphereHillPolarisationTensor<
+            double>(IM0);
+      },
+      pybind11::arg("IM0"), compute_sphere_hill_tensor_IM_doc);
+  m.def(
+      "computeAxisymmetricalHillTensor",
+      [](const double young, const double nu,
+         const tfel::math::tvector<3u, double>& n_a, const double e) {
+        return homogenization::elasticity::
+            computeAxisymmetricalHillPolarisationTensor<double>(young, nu, n_a,
+                                                                e);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("n_a"),
+      pybind11::arg("e"), compute_axisymmetrical_hill_tensor_doc);
+  m.def(
+      "computeAxisymmetricalHillTensor",
+      [](const IsotropicModuli<double>& IM0,
+         const tfel::math::tvector<3u, double>& n_a, const double e) {
+        return homogenization::elasticity::
+            computeAxisymmetricalHillPolarisationTensor<double>(IM0, n_a, e);
+      },
+      pybind11::arg("IM0"), pybind11::arg("n_a"), pybind11::arg("e"),
+      compute_axisymmetrical_hill_tensor_IM_doc);
+  m.def(
+      "computeHillTensor",
+      [](const double young, const double nu,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c) {
+        return homogenization::elasticity::computeHillPolarisationTensor<
+            double>(young, nu, n_a, a, n_b, b, c);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("n_a"),
+      pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
+      pybind11::arg("c"), compute_hill_tensor_doc);
+  m.def(
+      "computeHillTensor",
+      [](const IsotropicModuli<double>& IM0,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c) {
+        return homogenization::elasticity::computeHillPolarisationTensor<
+            double>(IM0, n_a, a, n_b, b, c);
+      },
+      pybind11::arg("IM0"), pybind11::arg("n_a"), pybind11::arg("a"),
+      pybind11::arg("n_b"), pybind11::arg("b"), pybind11::arg("c"),
+      compute_hill_tensor_IM_doc);
   m.def(
       "computeAnisotropicHillTensor",
       [](const tfel::math::st2tost2<3u, double>& C,

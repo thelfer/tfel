@@ -30,14 +30,16 @@ requires(tfel::math::checkUnitCompatibility<
       "Ponte-Castaneda & Willis scheme")
       .def(pybind11::init<const D&>())
       .def(pybind11::init<>(
-          [](const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_a,
-             const tfel::types::length<StressType>& a,
-             const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_b,
-             const tfel::types::length<StressType>& b,
-             const tfel::types::length<StressType>& c) {
-            D D_ = {.n_a = n_a, .a = a, .n_b = n_b, .b = b, .c = c};
-            return D_;
-          }),
+               [](const tfel::math::tvector<3u, tfel::types::real<StressType>>&
+                      n_a,
+                  const tfel::types::length<StressType>& a,
+                  const tfel::math::tvector<3u, tfel::types::real<StressType>>&
+                      n_b,
+                  const tfel::types::length<StressType>& b,
+                  const tfel::types::length<StressType>& c) {
+                 D D_ = {.n_a = n_a, .a = a, .n_b = n_b, .b = b, .c = c};
+                 return D_;
+               }),
            pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
            pybind11::arg("b"), pybind11::arg("c"))
       .def_readwrite("n_a", &D::n_a)
@@ -364,161 +366,174 @@ static const char compute_mean_squared_hydrostatic_strain_doc[] =
 
 void declareLinearHomogenizationSchemes(pybind11::module_& m) {
   using namespace tfel::material;
-  m.def("computeSphereDiluteScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i) {
-          return homogenization::elasticity::computeSphereDiluteScheme(
-              young, nu, f, young_i, nu_i);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"),
-        compute_sphere_dilute_scheme_doc);
-  m.def("computeSphereDiluteScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i) {
-          return homogenization::elasticity::computeSphereDiluteScheme(
-              IM0, f, IM_i);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        compute_sphere_dilute_scheme_IM_doc);
-  m.def("computeSphereMoriTanakaScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i) {
-          return homogenization::elasticity::computeSphereMoriTanakaScheme(
-              young, nu, f, young_i, nu_i);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"),
-        compute_sphere_mori_tanaka_scheme_doc);
-  m.def("computeSphereMoriTanakaScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i) {
-          return homogenization::elasticity::computeSphereMoriTanakaScheme(
-              IM0, f, IM_i);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        compute_sphere_mori_tanaka_scheme_IM_doc);
-  m.def("computeIsotropicDiluteScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i, const double a,
-           const double b, const double c) {
-          return homogenization::elasticity::computeIsotropicDiluteScheme(
-              young, nu, f, young_i, nu_i, a, b, c);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("a"),
-        pybind11::arg("b"), pybind11::arg("c"),
-        compute_isotropic_dilute_scheme_doc);
-  m.def("computeIsotropicDiluteScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i, const double a, const double b,
-           const double c) {
-          return homogenization::elasticity::computeIsotropicDiluteScheme(
-              IM0, f, IM_i, a, b, c);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
-        compute_isotropic_dilute_scheme_IM_doc);
-  m.def("computeIsotropicMoriTanakaScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i, const double a,
-           const double b, const double c) {
-          return homogenization::elasticity::computeIsotropicMoriTanakaScheme(
-              young, nu, f, young_i, nu_i, a, b, c);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("a"),
-        pybind11::arg("b"), pybind11::arg("c"),
-        compute_isotropic_mori_tanaka_scheme_doc);
-  m.def("computeIsotropicMoriTanakaScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i, const double a, const double b,
-           const double c) {
-          return homogenization::elasticity::computeIsotropicMoriTanakaScheme(
-              IM0, f, IM_i, a, b, c);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
-        compute_isotropic_mori_tanaka_scheme_IM_doc);
+  m.def(
+      "computeSphereDiluteScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i) {
+        return homogenization::elasticity::computeSphereDiluteScheme(
+            young, nu, f, young_i, nu_i);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"),
+      compute_sphere_dilute_scheme_doc);
+  m.def(
+      "computeSphereDiluteScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i) {
+        return homogenization::elasticity::computeSphereDiluteScheme(IM0, f,
+                                                                     IM_i);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      compute_sphere_dilute_scheme_IM_doc);
+  m.def(
+      "computeSphereMoriTanakaScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i) {
+        return homogenization::elasticity::computeSphereMoriTanakaScheme(
+            young, nu, f, young_i, nu_i);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"),
+      compute_sphere_mori_tanaka_scheme_doc);
+  m.def(
+      "computeSphereMoriTanakaScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i) {
+        return homogenization::elasticity::computeSphereMoriTanakaScheme(IM0, f,
+                                                                         IM_i);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      compute_sphere_mori_tanaka_scheme_IM_doc);
+  m.def(
+      "computeIsotropicDiluteScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i, const double a,
+         const double b, const double c) {
+        return homogenization::elasticity::computeIsotropicDiluteScheme(
+            young, nu, f, young_i, nu_i, a, b, c);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("a"),
+      pybind11::arg("b"), pybind11::arg("c"),
+      compute_isotropic_dilute_scheme_doc);
+  m.def(
+      "computeIsotropicDiluteScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i, const double a, const double b,
+         const double c) {
+        return homogenization::elasticity::computeIsotropicDiluteScheme(
+            IM0, f, IM_i, a, b, c);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
+      compute_isotropic_dilute_scheme_IM_doc);
+  m.def(
+      "computeIsotropicMoriTanakaScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i, const double a,
+         const double b, const double c) {
+        return homogenization::elasticity::computeIsotropicMoriTanakaScheme(
+            young, nu, f, young_i, nu_i, a, b, c);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("a"),
+      pybind11::arg("b"), pybind11::arg("c"),
+      compute_isotropic_mori_tanaka_scheme_doc);
+  m.def(
+      "computeIsotropicMoriTanakaScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i, const double a, const double b,
+         const double c) {
+        return homogenization::elasticity::computeIsotropicMoriTanakaScheme(
+            IM0, f, IM_i, a, b, c);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
+      compute_isotropic_mori_tanaka_scheme_IM_doc);
 
   declareDistribution<double>(m, "Distribution");
-  m.def("computeIsotropicPCWScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i, const double a,
-           const double b, const double c,
-           const homogenization::elasticity::Distribution<double>& D) {
-          return homogenization::elasticity::computeIsotropicPCWScheme(
-              young, nu, f, young_i, nu_i, a, b, c, D);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("a"),
-        pybind11::arg("b"), pybind11::arg("c"), pybind11::arg("D"),
-        compute_isotropic_pcw_scheme_doc);
-  m.def("computeIsotropicPCWScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i, const double a, const double b,
-           const double c,
-           const homogenization::elasticity::Distribution<double>& D) {
-          return homogenization::elasticity::computeIsotropicPCWScheme(
-              IM0, f, IM_i, a, b, c, D);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
-        pybind11::arg("D"), compute_isotropic_pcw_scheme_IM_doc);
+  m.def(
+      "computeIsotropicPCWScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i, const double a,
+         const double b, const double c,
+         const homogenization::elasticity::Distribution<double>& D) {
+        return homogenization::elasticity::computeIsotropicPCWScheme(
+            young, nu, f, young_i, nu_i, a, b, c, D);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("a"),
+      pybind11::arg("b"), pybind11::arg("c"), pybind11::arg("D"),
+      compute_isotropic_pcw_scheme_doc);
+  m.def(
+      "computeIsotropicPCWScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i, const double a, const double b,
+         const double c,
+         const homogenization::elasticity::Distribution<double>& D) {
+        return homogenization::elasticity::computeIsotropicPCWScheme(
+            IM0, f, IM_i, a, b, c, D);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
+      pybind11::arg("D"), compute_isotropic_pcw_scheme_IM_doc);
 
   // TransverseIsotropic
-  m.def("computeTransverseIsotropicDiluteScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const double b, const double c) {
-          return homogenization::elasticity::
-              computeTransverseIsotropicDiluteScheme(young, nu, f, young_i,
-                                                     nu_i, n_a, a, b, c);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
-        pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
-        compute_transverse_isotropic_dilute_scheme_doc);
-  m.def("computeTransverseIsotropicDiluteScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const double b, const double c) {
-          return homogenization::elasticity::
-              computeTransverseIsotropicDiluteScheme(IM0, f, IM_i, n_a, a, b,
-                                                     c);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("b"),
-        pybind11::arg("c"), compute_transverse_isotropic_dilute_scheme_IM_doc);
+  m.def(
+      "computeTransverseIsotropicDiluteScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const double b, const double c) {
+        return homogenization::elasticity::
+            computeTransverseIsotropicDiluteScheme(young, nu, f, young_i, nu_i,
+                                                   n_a, a, b, c);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
+      pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
+      compute_transverse_isotropic_dilute_scheme_doc);
+  m.def(
+      "computeTransverseIsotropicDiluteScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const double b, const double c) {
+        return homogenization::elasticity::
+            computeTransverseIsotropicDiluteScheme(IM0, f, IM_i, n_a, a, b, c);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("b"),
+      pybind11::arg("c"), compute_transverse_isotropic_dilute_scheme_IM_doc);
 
-  m.def("computeTransverseIsotropicMoriTanakaScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const double b, const double c) {
-          return homogenization::elasticity::
-              computeTransverseIsotropicMoriTanakaScheme(young, nu, f, young_i,
-                                                         nu_i, n_a, a, b, c);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
-        pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
-        compute_transverse_isotropic_mori_tanaka_scheme_doc);
-  m.def("computeTransverseIsotropicMoriTanakaScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const double b, const double c) {
-          return homogenization::elasticity::
-              computeTransverseIsotropicMoriTanakaScheme(IM0, f, IM_i, n_a, a,
-                                                         b, c);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("b"),
-        pybind11::arg("c"),
-        compute_transverse_isotropic_mori_tanaka_scheme_IM_doc);
+  m.def(
+      "computeTransverseIsotropicMoriTanakaScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const double b, const double c) {
+        return homogenization::elasticity::
+            computeTransverseIsotropicMoriTanakaScheme(young, nu, f, young_i,
+                                                       nu_i, n_a, a, b, c);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
+      pybind11::arg("a"), pybind11::arg("b"), pybind11::arg("c"),
+      compute_transverse_isotropic_mori_tanaka_scheme_doc);
+  m.def(
+      "computeTransverseIsotropicMoriTanakaScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const double b, const double c) {
+        return homogenization::elasticity::
+            computeTransverseIsotropicMoriTanakaScheme(IM0, f, IM_i, n_a, a, b,
+                                                       c);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("b"),
+      pybind11::arg("c"),
+      compute_transverse_isotropic_mori_tanaka_scheme_IM_doc);
 
   m.def(
       "computeTransverseIsotropicPCWScheme",
@@ -550,88 +565,94 @@ void declareLinearHomogenizationSchemes(pybind11::module_& m) {
       compute_transverse_isotropic_pcw_scheme_IM_doc);
 
   // Oriented
-  m.def("computeOrientedDiluteScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const tfel::math::tvector<3u, double>& n_b, const double b,
-           const double c) {
-          return homogenization::elasticity::computeOrientedDiluteScheme(
-              young, nu, f, young_i, nu_i, n_a, a, n_b, b, c);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
-        pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
-        pybind11::arg("c"), compute_oriented_dilute_scheme_doc);
-  m.def("computeOrientedDiluteScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const tfel::math::tvector<3u, double>& n_b, const double b,
-           const double c) {
-          return homogenization::elasticity::computeOrientedDiluteScheme(
-              IM0, f, IM_i, n_a, a, n_b, b, c);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
-        pybind11::arg("b"), pybind11::arg("c"),
-        compute_oriented_dilute_scheme_IM_doc);
+  m.def(
+      "computeOrientedDiluteScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c) {
+        return homogenization::elasticity::computeOrientedDiluteScheme(
+            young, nu, f, young_i, nu_i, n_a, a, n_b, b, c);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
+      pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
+      pybind11::arg("c"), compute_oriented_dilute_scheme_doc);
+  m.def(
+      "computeOrientedDiluteScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c) {
+        return homogenization::elasticity::computeOrientedDiluteScheme(
+            IM0, f, IM_i, n_a, a, n_b, b, c);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
+      pybind11::arg("b"), pybind11::arg("c"),
+      compute_oriented_dilute_scheme_IM_doc);
 
-  m.def("computeOrientedMoriTanakaScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const tfel::math::tvector<3u, double>& n_b, const double b,
-           const double c) {
-          return homogenization::elasticity::computeOrientedMoriTanakaScheme(
-              young, nu, f, young_i, nu_i, n_a, a, n_b, b, c);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
-        pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
-        pybind11::arg("c"), compute_oriented_mori_tanaka_scheme_doc);
-  m.def("computeOrientedMoriTanakaScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const tfel::math::tvector<3u, double>& n_b, const double b,
-           const double c) {
-          return homogenization::elasticity::computeOrientedMoriTanakaScheme(
-              IM0, f, IM_i, n_a, a, n_b, b, c);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
-        pybind11::arg("b"), pybind11::arg("c"),
-        compute_oriented_mori_tanaka_scheme_IM_doc);
+  m.def(
+      "computeOrientedMoriTanakaScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c) {
+        return homogenization::elasticity::computeOrientedMoriTanakaScheme(
+            young, nu, f, young_i, nu_i, n_a, a, n_b, b, c);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
+      pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
+      pybind11::arg("c"), compute_oriented_mori_tanaka_scheme_doc);
+  m.def(
+      "computeOrientedMoriTanakaScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c) {
+        return homogenization::elasticity::computeOrientedMoriTanakaScheme(
+            IM0, f, IM_i, n_a, a, n_b, b, c);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
+      pybind11::arg("b"), pybind11::arg("c"),
+      compute_oriented_mori_tanaka_scheme_IM_doc);
 
-  m.def("computeOrientedPCWScheme",
-        [](const double young, const double nu, const double f,
-           const double young_i, const double nu_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const tfel::math::tvector<3u, double>& n_b, const double b,
-           const double c,
-           const homogenization::elasticity::Distribution<double>& D) {
-          return homogenization::elasticity::computeOrientedPCWScheme(
-              young, nu, f, young_i, nu_i, n_a, a, n_b, b, c, D);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
-        pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
-        pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
-        pybind11::arg("c"), pybind11::arg("D"), compute_oriented_pcw_scheme_doc);
-  m.def("computeOrientedPCWScheme",
-        [](const IsotropicModuli<double>& IM0, const double f,
-           const IsotropicModuli<double>& IM_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const tfel::math::tvector<3u, double>& n_b, const double b,
-           const double c,
-           const homogenization::elasticity::Distribution<double>& D) {
-          return homogenization::elasticity::computeOrientedPCWScheme(
-              IM0, f, IM_i, n_a, a, n_b, b, c, D);
-        },
-        pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
-        pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
-        pybind11::arg("b"), pybind11::arg("c"), pybind11::arg("D"),
-        compute_oriented_pcw_scheme_IM_doc);
+  m.def(
+      "computeOrientedPCWScheme",
+      [](const double young, const double nu, const double f,
+         const double young_i, const double nu_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c,
+         const homogenization::elasticity::Distribution<double>& D) {
+        return homogenization::elasticity::computeOrientedPCWScheme(
+            young, nu, f, young_i, nu_i, n_a, a, n_b, b, c, D);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("f"),
+      pybind11::arg("young_i"), pybind11::arg("nu_i"), pybind11::arg("n_a"),
+      pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
+      pybind11::arg("c"), pybind11::arg("D"), compute_oriented_pcw_scheme_doc);
+  m.def(
+      "computeOrientedPCWScheme",
+      [](const IsotropicModuli<double>& IM0, const double f,
+         const IsotropicModuli<double>& IM_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c,
+         const homogenization::elasticity::Distribution<double>& D) {
+        return homogenization::elasticity::computeOrientedPCWScheme(
+            IM0, f, IM_i, n_a, a, n_b, b, c, D);
+      },
+      pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IM_i"),
+      pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
+      pybind11::arg("b"), pybind11::arg("c"), pybind11::arg("D"),
+      compute_oriented_pcw_scheme_IM_doc);
   m.def("computeMeanSquaredEquivalentStrain",
         &homogenization::elasticity::computeMeanSquaredEquivalentStrain<double>,
         pybind11::arg("IM0"), pybind11::arg("f"), pybind11::arg("IMi"),

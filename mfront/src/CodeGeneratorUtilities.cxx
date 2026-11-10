@@ -790,8 +790,7 @@ namespace mfront {
     }
     if (use_quantities) {
       os << "using PhysicalConstants [[maybe_unused]] = "
-         << "tfel::PhysicalConstants<" << numeric_type
-         << ", use_qt>;\n";
+         << "tfel::PhysicalConstants<" << numeric_type << ", use_qt>;\n";
     } else {
       os << "using PhysicalConstants [[maybe_unused]] = "
          << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";

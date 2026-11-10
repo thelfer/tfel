@@ -156,10 +156,12 @@ namespace mfront {
             "same as --material-property-dsl-option", []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-behaviour-option",
-        CallBack("same as --behaviour-dsl-option", []() noexcept {}, true));
+        CallBack(
+            "same as --behaviour-dsl-option", []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-model-option",
-        CallBack("same as --model-dsl-option", []() noexcept {}, true));
+        CallBack(
+            "same as --model-dsl-option", []() noexcept {}, true));
     this->registerCallBack("--dsl-material-property-options-file",
                            CallBack(
                                "same as --material-property-dsl-options-file",
@@ -170,10 +172,12 @@ namespace mfront {
             "same as --behaviour-dsl-options-file", []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-model-options-file",
-        CallBack("same as --model-dsl-options-file", []() noexcept {}, true));
+        CallBack(
+            "same as --model-dsl-options-file", []() noexcept {}, true));
     this->registerCallBack(
         "--configuration-file",
-        CallBack("define a configuration file", []() noexcept {}, true));
+        CallBack(
+            "define a configuration file", []() noexcept {}, true));
     this->registerNewCallBack(
         "--include", "-I", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
@@ -276,7 +280,8 @@ namespace mfront {
                                            []() noexcept {}, false));
     this->registerCallBack(
         "--no-terminate-handler",
-        CallBack("don't set a terminate handler", []() noexcept {}, false));
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
   }
 
   std::function<void()> QueryHandlerBase::generateGeneratedSourcesQuery(

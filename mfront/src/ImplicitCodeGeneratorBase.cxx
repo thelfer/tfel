@@ -980,7 +980,8 @@ namespace mfront {
         }
         os << "//! \\brief false if one of the calls failed\n"
            << "bool mfront_success = true;\n"
-           << "private:\n" << this->bd.getClassName() << "& behaviour;\n";
+           << "private:\n"
+           << this->bd.getClassName() << "& behaviour;\n";
         for (const auto& v : decomposition_results.variables) {
           os << "const " << v.type
              << "& mfront_get_integration_variables_derivatives_" << v.name

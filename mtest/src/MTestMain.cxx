@@ -158,7 +158,8 @@ namespace mtest {
   void MTestMain::registerArgumentCallBacks() {
     this->registerCallBack(
         "--no-terminate-handler",
-        CallBack("don't set a terminate handler", []() noexcept {}, false));
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
     this->registerNewCallBack("--verbose", &MTestMain::treatVerbose,
                               "set verbose output", true);
     this->registerNewCallBack("--scheme", &MTestMain::treatScheme, "set scheme",

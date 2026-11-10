@@ -40,7 +40,8 @@ namespace mfront {
        << "using tfel::math::invert_type;\n"
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
-    os << "[[maybe_unused]] constexpr auto use_qt = " << (use_qt ? "true" : "false") << ";\n";
+    os << "[[maybe_unused]] constexpr auto use_qt = "
+       << (use_qt ? "true" : "false") << ";\n";
     writePhysicalConstantsAlias(os, mpd, numeric_type, use_qt);
     os << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
        << "{ return a < b ? a : b; };\n"
