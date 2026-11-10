@@ -16,22 +16,26 @@
 #define LIB_MFRONT_GENERICPARALLEL_STATISTICSKEYS_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
+#include "MFront/GenericParallel/Types.h"
 
 namespace mfront::generic_parallel {
 
+  //! \brief a simple alias
+  using atomic_size_type = ::mfront_gp_atomic_size_type;
+
   //! \brief value of a key meaning that no event occurred
-  inline constexpr unsigned long long no_event = ~0ull;
+  inline constexpr atomic_size_type no_event = ~atomic_size_type{0};
   /*!
    * \brief number of bits of the identifier of a check in a key. The other
    * bits hold the index of the point.
    */
   inline constexpr unsigned int check_bits = 16;
   //! \brief maximal number of checks
-  inline constexpr unsigned long long maximal_number_of_checks =
-      (1ull << check_bits) - 1;
+  inline constexpr atomic_size_type maximal_number_of_checks =
+      (atomic_size_type{1} << check_bits) - 1;
   //! \brief maximal number of points of a batch
-  inline constexpr unsigned long long maximal_number_of_points =
-      (1ull << (64 - check_bits)) - 1;
+  inline constexpr atomic_size_type maximal_number_of_points =
+      (atomic_size_type{1} << (64 - check_bits)) - 1;
 
   /*!
    * \return the key of an event: the minimum of the keys gives the first
@@ -39,20 +43,20 @@ namespace mfront::generic_parallel {
    * \param[in] i: index of the point
    * \param[in] c: identifier of the check retained at this point
    */
-  [[nodiscard]] TFEL_HOST_DEVICE constexpr unsigned long long makeKey(
-      const unsigned long long i, const unsigned long long c) noexcept {
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr atomic_size_type makeKey(
+      const atomic_size_type i, const atomic_size_type c) noexcept {
     return (i << check_bits) | c;
   }  // end of makeKey
 
   //! \return the index of the point of a key
-  [[nodiscard]] TFEL_HOST_DEVICE constexpr unsigned long long getPointIndex(
-      const unsigned long long k) noexcept {
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr atomic_size_type getPointIndex(
+      const atomic_size_type k) noexcept {
     return k >> check_bits;
   }  // end of getPointIndex
 
   //! \return the identifier of the check of a key
-  [[nodiscard]] TFEL_HOST_DEVICE constexpr unsigned long long getCheck(
-      const unsigned long long k) noexcept {
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr atomic_size_type getCheck(
+      const atomic_size_type k) noexcept {
     return k & maximal_number_of_checks;
   }  // end of getCheck
 

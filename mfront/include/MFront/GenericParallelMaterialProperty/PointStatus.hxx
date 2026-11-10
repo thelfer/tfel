@@ -21,6 +21,7 @@
 namespace mfront::gpmp {
 
   // keys of the statistics (see `MFront/GenericParallel/StatisticsKeys.hxx`)
+  using ::mfront::generic_parallel::atomic_size_type;
   using ::mfront::generic_parallel::check_bits;
   using ::mfront::generic_parallel::getCheck;
   using ::mfront::generic_parallel::getPointIndex;
@@ -49,14 +50,14 @@ namespace mfront::gpmp {
      */
     int status = 0;
     //! \brief identifier of the check retained at this point
-    unsigned long long check = no_event;
+    atomic_size_type check = no_event;
     /*!
      * \brief report a violated bound
      * \param[in] c: identifier of the check
      * \param[in] f: true if the evaluation fails, false if the result is
      * computed but must be used with caution
      */
-    TFEL_HOST_DEVICE constexpr void report(const unsigned long long c,
+    TFEL_HOST_DEVICE constexpr void report(const atomic_size_type c,
                                            const bool f) noexcept {
       this->status = f ? -1 : 1;
       this->check = c;
@@ -66,7 +67,7 @@ namespace mfront::gpmp {
      * \param[in] c: identifier of the check
      */
     TFEL_HOST_DEVICE constexpr void reportInvalidResult(
-        const unsigned long long c) noexcept {
+        const atomic_size_type c) noexcept {
       this->status = -4;
       this->check = c;
     }  // end of reportInvalidResult
@@ -87,13 +88,15 @@ namespace mfront::gpmp {
    * \param[in] s: status of the point
    */
   [[nodiscard]] TFEL_HOST_DEVICE constexpr Statistics makeStatistics(
-      const unsigned long long i, const PointStatus& s) noexcept {
+      const atomic_size_type i, const PointStatus& s) noexcept {
     const auto failure = s.isFailure();
     const auto unreliable = s.status == 1;
     return Statistics{
-        .number_of_failures = failure ? 1ull : 0ull,
+        .number_of_failures =
+            failure ? atomic_size_type{1} : atomic_size_type{0},
         .first_failure = failure ? makeKey(i, s.check) : no_event,
-        .number_of_unreliable_results = unreliable ? 1ull : 0ull,
+        .number_of_unreliable_results =
+            unreliable ? atomic_size_type{1} : atomic_size_type{0},
         .first_unreliable_result = unreliable ? makeKey(i, s.check) : no_event};
   }  // end of makeStatistics
 

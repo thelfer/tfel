@@ -157,14 +157,15 @@ namespace mfront::generic_parallel::material_property {
    * \param[in] c: counter
    */
   static std::string getSYCLAtomicReference(const std::string_view c) {
-    return "::sycl::atomic_ref<unsigned long long, "
+    return "::sycl::atomic_ref<::mfront::gpmp::atomic_size_type, "
            "::sycl::memory_order::relaxed, ::sycl::memory_scope::device, "
            "::sycl::access::address_space::global_space>(" +
            std::string{c} + ")";
   }  // end of getSYCLAtomicReference
 
   std::string SYCLBackend::getAtomicIncrement(const std::string_view c) const {
-    return getSYCLAtomicReference(c) + ".fetch_add(1ull)";
+    return getSYCLAtomicReference(c) +
+           ".fetch_add(::mfront::gpmp::atomic_size_type{1})";
   }  // end of getAtomicIncrement
 
   std::string SYCLBackend::getAtomicMinimum(const std::string_view c,

@@ -276,7 +276,8 @@ namespace mfront::generic_parallel::material_property {
 
   std::string CUDABackendBase::getAtomicIncrement(
       const std::string_view c) const {
-    return "atomicAdd(&(" + std::string{c} + "), 1ull)";
+    return "atomicAdd(&(" + std::string{c} +
+           "), ::mfront::gpmp::atomic_size_type{1})";
   }  // end of getAtomicIncrement
 
   std::string CUDABackendBase::getAtomicMinimum(

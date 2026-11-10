@@ -125,8 +125,8 @@ struct NoRuntimeChecksTest : public tfel::tests::TestCase {
     for (std::size_t i = 0; i != E.size(); ++i) {
       TFEL_TESTS_ASSERT(std::abs(E[i] - fct(T[i])) < eps);
     }
-    TFEL_TESTS_CHECK_EQUAL(statistics[0].number_of_failures, 0ull);
-    TFEL_TESTS_CHECK_EQUAL(statistics[0].number_of_unreliable_results, 0ull);
+    TFEL_TESTS_CHECK_EQUAL(statistics[0].number_of_failures, 0u);
+    TFEL_TESTS_CHECK_EQUAL(statistics[0].number_of_unreliable_results, 0u);
     TFEL_TESTS_CHECK_EQUAL(Inconel600_YoungModulus_generic_parallel_report(
                                &output, statistics.data()),
                            0);

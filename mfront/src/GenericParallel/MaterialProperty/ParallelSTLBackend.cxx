@@ -106,8 +106,8 @@ namespace mfront::generic_parallel::material_property {
          << "}, "
          << "[" << kernel << "](const mfront_index_type mfront_i) {\n"
          << "return ::mfront::gpmp::makeStatistics("
-         << "static_cast<unsigned long long>(mfront_i), " << kernel
-         << "(mfront_i));\n"
+         << "static_cast<::mfront::gpmp::atomic_size_type>(mfront_i), "
+         << kernel << "(mfront_i));\n"
          << "});\n"
          << "*mfront_statistics = ::mfront::gpmp::merge(*mfront_statistics, "
          << "mfront_reduced_statistics);\n";

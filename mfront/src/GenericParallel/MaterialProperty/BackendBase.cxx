@@ -37,20 +37,19 @@ namespace mfront::generic_parallel::material_property {
   using GenericBase = ::mfront::GenericMaterialPropertyInterfaceBase;
 
   //! \brief identifier of the check of the finiteness of the result
-  static constexpr unsigned long long invalid_result_check =
+  static constexpr std::size_t invalid_result_check =
       GenericBase::invalid_result_check;
 
   //! \return the identifier of the check of a physical bound
-  static unsigned long long getPhysicalBoundCheck(const std::size_t i,
-                                                  const bool upper) {
+  static std::size_t getPhysicalBoundCheck(const std::size_t i,
+                                           const bool upper) {
     return GenericBase::getPhysicalBoundCheck(i, upper);
   }  // end of getPhysicalBoundCheck
 
   //! \return the identifier of the check of a bound
-  static unsigned long long getBoundCheck(
-      const MaterialPropertyDescription& mpd,
-      const std::size_t i,
-      const bool upper) {
+  static std::size_t getBoundCheck(const MaterialPropertyDescription& mpd,
+                                   const std::size_t i,
+                                   const bool upper) {
     return GenericBase::getBoundCheck(mpd, i, upper);
   }  // end of getBoundCheck
 
@@ -90,7 +89,7 @@ namespace mfront::generic_parallel::material_property {
         useQuantities(mpd) ? mpd.output.name + ".getValue()" : mpd.output.name;
     os << "if(!tfel::math::ieee754::isfinite(" << v << ")){\n"
        << "mfront_status.reportInvalidResult(" << invalid_result_check
-       << "ull);\n"
+       << "u);\n"
        << "}\n";
   }  // end of writeInvalidResultCheck
 
@@ -145,7 +144,7 @@ namespace mfront::generic_parallel::material_property {
        << "std::to_string(mfront_number_of_failures) + \" failure(s), \" + "
        << "std::to_string(mfront_number_of_unreliable_results) + "
        << "\" unreliable result(s))\";\n"
-       << "if (mfront_check == " << invalid_result_check << "ull) {\n"
+       << "if (mfront_check == " << invalid_result_check << "u) {\n"
        << "mfront_output_status->status = -4;\n"
        << "mfront_report(\"invalid result\" + mfront_points);\n"
        << "return -4;\n"
@@ -153,9 +152,9 @@ namespace mfront::generic_parallel::material_property {
     // as with the `generic` interface, the status and the bounds status are
     // negative if the evaluation failed (physical bound, or bound with the
     // strict policy), positive otherwise (bound with the warning policy)
-    auto write_check = [&os](const unsigned long long c, const std::string& msg,
+    auto write_check = [&os](const std::size_t c, const std::string& msg,
                              const std::size_t rank) {
-      os << "if (mfront_check == " << c << "ull) {\n"
+      os << "if (mfront_check == " << c << "u) {\n"
          << "const auto mfront_status = mfront_failure ? -1 : 1;\n"
          << "mfront_output_status->status = mfront_status;\n"
          << "mfront_output_status->bounds_status = mfront_status * " << rank
@@ -644,13 +643,13 @@ namespace mfront::generic_parallel::material_property {
                 [&failure](std::ostream& out,
                            const GenericBase::BoundCheck& c) {
                   out << "mfront_status.report(" << c.identifier
-                      << "ull, true);\n"
+                      << "u, true);\n"
                       << failure;
                 },
             .warning =
                 [](std::ostream& out, const GenericBase::BoundCheck& c) {
                   out << "mfront_status.report(" << c.identifier
-                      << "ull, false);\n";
+                      << "u, false);\n";
                 }});
     if (checks) {
       writeInvalidResultCheck(os, mpd);
@@ -684,7 +683,7 @@ namespace mfront::generic_parallel::material_property {
     };
     os << "if (mfront_point_status.hasEvent()) {\n"
        << "const auto mfront_key = ::mfront::gpmp::makeKey("
-       << "static_cast<unsigned long long>(mfront_idx), "
+       << "static_cast<::mfront::gpmp::atomic_size_type>(mfront_idx), "
        << "mfront_point_status.check);\n"
        << "if (mfront_point_status.isFailure()) {\n"
        << increment("number_of_failures") << ";\n"

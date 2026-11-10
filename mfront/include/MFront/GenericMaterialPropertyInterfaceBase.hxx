@@ -88,7 +88,7 @@ namespace mfront {
        * \brief identifier of the check (see `getPhysicalBoundCheck` and
        * `getBoundCheck`)
        */
-      unsigned long long identifier;
+      std::size_t identifier;
     };
     //! \brief options of the code evaluating a material property at a point
     struct PointEvaluationOptions {
@@ -132,18 +132,18 @@ namespace mfront {
      * \param[in] i: index of the variable (the output is after the inputs)
      * \param[in] upper: true for the upper bound
      */
-    [[nodiscard]] static unsigned long long getPhysicalBoundCheck(
-        const std::size_t, const bool);
+    [[nodiscard]] static std::size_t getPhysicalBoundCheck(const std::size_t,
+                                                           const bool);
     /*!
      * \return the identifier of the check of a bound
      * \param[in] mpd: material property description
      * \param[in] i: index of the variable (the output is after the inputs)
      * \param[in] upper: true for the upper bound
      */
-    [[nodiscard]] static unsigned long long getBoundCheck(
+    [[nodiscard]] static std::size_t getBoundCheck(
         const MaterialPropertyDescription&, const std::size_t, const bool);
     //! \brief identifier of the check of the finiteness of the result
-    static constexpr unsigned long long invalid_result_check = 0;
+    static constexpr std::size_t invalid_result_check = 0;
     //! \brief destructor
     ~GenericMaterialPropertyInterfaceBase() override;
 

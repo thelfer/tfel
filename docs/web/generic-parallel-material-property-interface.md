@@ -235,7 +235,10 @@ operations (`CUDA`, `HIP` and `SYCL` backends), or by a reduction (C++
 parallel algorithms). With the atomic operations, the reporting of the errors costs
 nothing when the evaluation succeeds. A reduction combines the statuses of
 all the points and copies its result, a few integers, to the host at each
-call.
+call. The members of the statistics have the type
+`mfront_gp_atomic_size_type`, an alias of `unsigned long long`: it is the
+only 64 bits integer type for which `CUDA` provides the `atomicAdd` and
+`atomicMin` functions.
 
 ## Output status
 

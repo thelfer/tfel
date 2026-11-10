@@ -188,16 +188,16 @@ namespace mfront::generic_parallel::material_property {
     [[nodiscard]] virtual bool mergesPointStatusesInKernels() const;
     /*!
      * \return the code atomically incrementing a counter of the statistics
-     * (`unsigned long long`), for the backends merging the statuses in the
-     * kernels
+     * (`mfront::gpmp::atomic_size_type`), for the backends merging the
+     * statuses in the kernels
      * \param[in] c: counter
      */
     [[nodiscard]] virtual std::string getAtomicIncrement(
         const std::string_view) const;
     /*!
      * \return the code atomically replacing a counter of the statistics
-     * (`unsigned long long`) by the minimum of its value and of a given
-     * value, for the backends merging the statuses in the kernels
+     * (`mfront::gpmp::atomic_size_type`) by the minimum of its value and of a
+     * given value, for the backends merging the statuses in the kernels
      * \param[in] c: counter
      * \param[in] v: value
      */

@@ -108,13 +108,12 @@ namespace mfront {
     return name + "-" + i + ".cxx";
   }
 
-  unsigned long long
-  GenericMaterialPropertyInterfaceBase::getPhysicalBoundCheck(
+  std::size_t GenericMaterialPropertyInterfaceBase::getPhysicalBoundCheck(
       const std::size_t i, const bool upper) {
     return 1 + 2 * i + (upper ? 0 : 1);
   }  // end of getPhysicalBoundCheck
 
-  unsigned long long GenericMaterialPropertyInterfaceBase::getBoundCheck(
+  std::size_t GenericMaterialPropertyInterfaceBase::getBoundCheck(
       const MaterialPropertyDescription& mpd,
       const std::size_t i,
       const bool upper) {
