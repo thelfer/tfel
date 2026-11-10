@@ -298,6 +298,18 @@ set_property(TEST generic-IntegrationDriversTest
   PROPERTY ENVIRONMENT
   MFrontGenericIntegrationDriversBehavioursBuildPath=$<TARGET_FILE:MFrontGenericIntegrationDriversBehaviours>)
 
+add_executable(generic-CompatibilityModeTest EXCLUDE_FROM_ALL
+  CompatibilityModeTest.cxx)
+target_link_libraries(generic-CompatibilityModeTest
+  TFELSystem TFELUtilities TFELTests TFELException)
+add_dependencies(generic-CompatibilityModeTest MFrontGenericBehaviours)
+add_dependencies(build-tests generic-CompatibilityModeTest)
+add_test(NAME generic-CompatibilityModeTest
+  COMMAND generic-CompatibilityModeTest)
+set_property(TEST generic-CompatibilityModeTest
+  PROPERTY ENVIRONMENT
+  MFrontGenericBehavioursBuildPath=$<TARGET_FILE:MFrontGenericBehaviours>)
+
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontGenericBehaviours
