@@ -761,39 +761,37 @@ namespace mfront {
                                    const MaterialKnowledgeDescription& d,
                                    std::string_view numeric_type,
                                    const bool use_quantities) {
-    const auto ov = getCompatibilityMode(d);
-    if (ov.has_value()) {
-      if (*ov == CompatibilityMode::future) {
-        if (use_quantities) {
-          os << "using PhysicalConstants [[maybe_unused]] = "
-             << "tfel::future::PhysicalConstants<" << numeric_type
-             << ", use_qt>;\n";
-        } else {
-          os << "using PhysicalConstants [[maybe_unused]] = "
-             << "tfel::future::PhysicalConstants<" << numeric_type
-             << ", false>;\n";
-        }
-        return;
+    const auto v = getEffectiveCompatibilityMode(d);
+    if (v == CompatibilityMode::future) {
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::future::PhysicalConstants<" << numeric_type
+           << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::future::PhysicalConstants<" << numeric_type
+           << ", false>;\n";
       }
-      if (*ov == CompatibilityMode::v5_2_0) {
-        if (use_quantities) {
-          os << "using PhysicalConstants [[maybe_unused]] = "
-             << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
-             << ", use_qt>;\n";
-        } else {
-          os << "using PhysicalConstants [[maybe_unused]] = "
-             << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
-             << ", false>;\n";
-        }
-        return;
+    } else if (v == CompatibilityMode::v5_2_0) {
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
+           << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
+           << ", false>;\n";
       }
-    }
-    if (use_quantities) {
-      os << "using PhysicalConstants [[maybe_unused]] = "
-         << "tfel::PhysicalConstants<" << numeric_type << ", use_qt>;\n";
+      return;
     } else {
-      os << "using PhysicalConstants [[maybe_unused]] = "
-         << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
+      // use the current version of the physical constants
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::PhysicalConstants<" << numeric_type << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
+      }
     }
   }  // end of writePhysicalConstantsAlias
 

@@ -250,4 +250,13 @@ namespace mfront {
     return getDefaultCompatibilityMode();
   }  // end of getCompatibilityMode
 
+  MFRONT_VISIBILITY_EXPORT CompatibilityMode::Version
+  getEffectiveCompatibilityMode(const MaterialKnowledgeDescription& d) {
+    const auto ov = getCompatibilityMode(d);
+    if (ov.has_value()) {
+      return *ov;
+    }
+    return getGreatestCompatibilityMode();
+  }  // end of getEffectiveCompatibilityMode
+
 }  // end of namespace mfront

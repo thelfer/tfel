@@ -15,22 +15,11 @@
 #include <set>
 #include <cstdint>
 #include <charconv>
+#include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/CompatibilityMode.hxx"
-
-#ifndef TFEL_VERSION_MAJOR
-#error "TFEL_VERSION_MAJOR must be defined"
-#endif
-
-#ifndef TFEL_VERSION_MINOR
-#error "TFEL_VERSION_MINOR must be defined"
-#endif
-
-#ifndef TFEL_VERSION_PATCH
-#error "TFEL_VERSION_PATCH must be defined"
-#endif
 
 namespace mfront {
 
@@ -131,6 +120,13 @@ namespace mfront {
     const auto version = CompatibilityMode::fromString(v);
     setDefaultCompatibilityMode(version);
   }  // end of setDefaultCompatibilityMode
+
+  CompatibilityMode::Version getGreatestCompatibilityMode() noexcept {
+    const auto pm = std::max_element(
+        CompatibilityMode::known_compatibility_modes.begin(),
+        CompatibilityMode::known_compatibility_modes.end());
+    return *pm;
+  } // end of getGreatestCompatibilityMode
 
   // can't be noexcept since getCompatibilityMode is not
   std::optional<CompatibilityMode::Version>

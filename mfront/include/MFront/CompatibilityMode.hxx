@@ -99,13 +99,16 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void setDefaultCompatibilityMode(std::string_view);
   /*!
-   * \return the default compatibility mode, if defined
-   *
+   * \return the default compatibility mode, if defined   *
    * \throw if the version is strictly lower than 5.2.0
    */
   MFRONT_VISIBILITY_EXPORT
   [[nodiscard]] std::optional<CompatibilityMode::Version>
   getDefaultCompatibilityMode() noexcept;
+  //! \return the greatest known compatibility mode
+  MFRONT_VISIBILITY_EXPORT
+  [[nodiscard]] CompatibilityMode::Version
+  getGreatestCompatibilityMode() noexcept;
   /*!
    * \brief check if the given version is ok
    * \param[in] v: version

@@ -253,6 +253,15 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT std::optional<CompatibilityMode::Version>
   getCompatibilityMode(const MaterialKnowledgeDescription&);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::compatibilityMode`
+   * attribute if it is defined or the maximum known compatibility mode.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT CompatibilityMode::Version
+  getEffectiveCompatibilityMode(const MaterialKnowledgeDescription&);
+
 }  // end of namespace mfront
 
 #include "MFront/MaterialKnowledgeDescription.ixx"
