@@ -489,7 +489,8 @@ namespace tfel::system {
      */
     std::string getValidator(const std::string&, const std::string&);
     /*!
-     * \return the validator associated with the current symbol, if any.
+     * \return the compatibility mode associated with the current symbol, if
+     * any.
      * \param[in] l : name of the library
      * \param[in] s : symbol name
      * \note an empty string is returned if no compatibility mode is defined
