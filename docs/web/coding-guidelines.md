@@ -38,6 +38,7 @@ effect.
 | `static constexpr` constants | `UpperCamelCase`, with a short lowercase alias for physical constants |
 | Entity kinds | `struct` (never `class`), public members first |
 | Data members and methods | always qualified by `this->` |
+| Integer types | no `long` nor `long long`, except for the API of a third-party library |
 | Documentation | every member, function and method documented with `doxygen` |
 | Error handling | `tfel::raise`, `tfel::raise_if`, exception classes, no macro |
 | Closing comments | `}  // end of <name>` on namespaces, types, functions and enumerations |
@@ -551,6 +552,14 @@ the definitions:
 Local variables are `const` by default: `const auto` is far more
 frequent than `auto`, and `for (const auto& x : ...)` far more
 frequent than `for (auto& x : ...)`.
+
+## Integer types
+
+Variables, members and parameters are not declared `long` or
+`long long`, unless the API of a third-party library requires it. For
+instance, the 64 bits atomic operations of `CUDA` only accept
+`unsigned long long`. Such a type is then hidden behind an alias,
+documented with the reason.
 
 ## Attributes
 
