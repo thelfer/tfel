@@ -981,8 +981,6 @@ namespace tfel::utilities {
     if (this->rawStringOpened) {
       const auto delimiter = ")" + this->currentRawStringDelimiter + '\"';
       const auto pos3 = line.find(delimiter);
-      if (pos3 == std::string::npos) {
-      }
       if (tokens.empty()) {
         this->tokens.emplace_back("", n, o, Token::String);
       }
