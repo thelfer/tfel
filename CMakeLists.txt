@@ -132,6 +132,11 @@ if(enable-testing)
   endif(CMAKE_CONFIGURATION_TYPES)
 endif()
 
+# libFuzzer based tests. Such tests are neither built nor run by 'make check':
+# the duration of a fuzzing analysis is a priori unlimited, so that dedicated
+# targets are used to build and run them.
+option(enable-libfuzzer-tests "enable libFuzzer based tests. Those tests are neither built nor run by 'make check': the 'build-cxxtokenzier-libfuzzer-tests' target builds them and the 'cxxtokenzier-libfuzzer-tests' target runs the analyses" OFF)
+
 option(enable-cppcheck "analyse targets with cppcheck" OFF)
 if(enable-cppcheck)
   message(STATUS "cppcheck support enabled")
@@ -426,6 +431,9 @@ if(enable-testing)
   add_subdirectory(tests)
 endif()
 add_subdirectory(mfm-test-generator)
+if(enable-libfuzzer-tests)
+  add_subdirectory(additional-tests/fuzzing/CxxTokenizer)
+endif(enable-libfuzzer-tests)
 add_subdirectory(env)
 
 #documentations
