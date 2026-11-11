@@ -128,7 +128,6 @@ namespace mfront {
     return *pm;
   } // end of getGreatestCompatibilityMode
 
-  // can't be noexcept since getCompatibilityMode is not
   std::optional<CompatibilityMode::Version>
   getDefaultCompatibilityMode() noexcept {
     return getCompatibilityMode();
