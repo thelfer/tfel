@@ -267,19 +267,19 @@ development proceeds as follows:
    [corresponding section](tfel-compatibility-modes.html#adding-a-new-compatibility-mode).
 
 3. Use the compatibility mode in the code generator, using the
-  `getEffectiveCompatibilityMode` function, which returns the mode of
-  the material knowledge description, or the most recent compatibility
-  mode. Since an asset which declares no mode must follow the current
-  behaviour, the new behaviour is used when no mode is declared, or when
-  the declared mode is greater than, or equal to, the version which
-  introduces the change:
+   `getEffectiveCompatibilityMode` function, which returns the mode
+   declared by the material knowledge description or, if it declares
+   none, the greatest known compatibility mode, that is to say the mode
+   of the current version. An asset which declares no mode thus keeps
+   the behaviour of the current version. A change which becomes the
+   default in the next major version is gated as follows:
 
    ~~~~{.cxx}
    const auto v = getEffectiveCompatibilityMode(d);
-   if (v <= CompatibilityMode::v5_2_0)) {
-     // new behaviour
+   if (v > CompatibilityMode::v5_2_0) {
+     // new behaviour: `future` mode, then default of Version 6.0
    } else {
-     // old behaviour
+     // previous behaviour: `5.2.0` mode, or no mode in Version 5.2
    }
    ~~~~
 
