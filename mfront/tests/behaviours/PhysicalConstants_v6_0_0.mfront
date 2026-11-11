@@ -1,0 +1,14 @@
+@DSL DefaultModel{
+  compatibility_mode : "future",
+  automatic_declaration_of_the_temperature_as_first_external_state_variable :
+      false
+};
+@Model PhysicalConstants_v6_0_0;
+@Author Thomas Helfer;
+@Date 9/11/2026;
+
+@AuxiliaryStateVariable real x;
+
+@Integrator {
+  x = PhysicalConstants::StefanBoltzmannConstant;
+}

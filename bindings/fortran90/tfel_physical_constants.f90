@@ -2,7 +2,7 @@
 !> \brief  physical constants from CODATA Internationally recommended values,
 !           http://physics.nist.gov/cuu/Constants/index.html
 !> \author Thomas Helfer
-!> \date   18 août 2017
+!> \date 18/08/2017
 !> \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights 
 !  reserved. 
 !  This project is publicly released under either the GNU GPL Licence with linking exception 

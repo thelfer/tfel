@@ -74,7 +74,7 @@ struct ConvertLogarithmicStrainTangentOperatorTest
       }
     }
   }  // end of test1
-};  // end of ConvertLogarithmicStrainTangentOperatorTest
+};   // end of ConvertLogarithmicStrainTangentOperatorTest
 
 TFEL_TESTS_GENERATE_PROXY(ConvertLogarithmicStrainTangentOperatorTest,
                           "ConvertLogarithmicStrainTangentOperatorTest");

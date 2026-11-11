@@ -177,7 +177,8 @@ set(mfront_tests_SOURCES
   PoroPlasticity
   BarBehaviour
   BarBehaviour3
-)
+  PhysicalConstants_v5_2_0
+  PhysicalConstants_v6_0_0)
 
 if(enable-mfront-quantity-tests)
   list(APPEND mfront_tests_SOURCES
@@ -215,8 +216,7 @@ if(enable-mfront-quantity-tests)
        Norton_rk4_qt
        Norton_rk54_qt
        Norton_rkCastem_qt
-       ImplicitNorton2_qt
-)
+       ImplicitNorton2_qt)
 endif(enable-mfront-quantity-tests)
 
 mfront_dependencies(MFrontGenericBehaviours
@@ -297,6 +297,18 @@ add_test(NAME generic-IntegrationDriversTest
 set_property(TEST generic-IntegrationDriversTest
   PROPERTY ENVIRONMENT
   MFrontGenericIntegrationDriversBehavioursBuildPath=$<TARGET_FILE:MFrontGenericIntegrationDriversBehaviours>)
+
+add_executable(generic-CompatibilityModeTest EXCLUDE_FROM_ALL
+  CompatibilityModeTest.cxx)
+target_link_libraries(generic-CompatibilityModeTest
+  TFELSystem TFELUtilities TFELTests TFELException)
+add_dependencies(generic-CompatibilityModeTest MFrontGenericBehaviours)
+add_dependencies(build-tests generic-CompatibilityModeTest)
+add_test(NAME generic-CompatibilityModeTest
+  COMMAND generic-CompatibilityModeTest)
+set_property(TEST generic-CompatibilityModeTest
+  PROPERTY ENVIRONMENT
+  MFrontGenericBehavioursBuildPath=$<TARGET_FILE:MFrontGenericBehaviours>)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -692,23 +704,6 @@ if(enable-mfront-quantity-tests)
   test_generic(bar4)
 endif(enable-mfront-quantity-tests)
 
-# test_generic(elasticity_frst-uniaxialloading-1-1D)
-# test_generic(elasticity_frst-uniaxialloading-2-1D)
-# test_generic(elasticity_frst-uniaxialloading-3-1D)
-# test_generic(elasticity_frst-uniaxialloading-1-2D)
-# test_generic(elasticity_frst-uniaxialloading-2-2D)
-# test_generic(elasticity_frst-uniaxialloading-3-2D)
-# test_generic(elasticity_frst-shear-1-2D)
-# test_generic(elasticity_frst-shear-2-2D)
-# test_generic(elasticity_frst-uniaxialloading-1-3D)
-# test_generic(elasticity_frst-uniaxialloading-2-3D)
-# test_generic(elasticity_frst-uniaxialloading-3-3D)
-# test_generic(elasticity_frst-shear-1-3D)
-# test_generic(elasticity_frst-shear-2-3D)
-# test_generic(elasticity_frst-shear-3-3D)
-# test_generic(elasticity_frst-shear-4-3D)
-# test_generic(elasticity_frst-shear-5-3D)
-# test_generic(elasticity_frst-shear-6-3D)
 test_generic_fs(finiterotationsmallstrainelasticity-uniaxialloading-1-1D)
 test_generic_fs(finiterotationsmallstrainelasticity-uniaxialloading-2-1D)
 test_generic_fs(finiterotationsmallstrainelasticity-uniaxialloading-3-1D)
@@ -765,39 +760,6 @@ test_generic_fs(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2
 test_generic_fs(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D logarithmicstrainnortoncreepuniaxialtesting.ref)
 test_generic_fs(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D logarithmicstrainnortoncreepuniaxialtesting.ref)
 test_generic_fs(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D logarithmicstrainnortoncreepuniaxialtesting.ref)
-
-# test_generic(elasticity_log1D-uniaxialloading-1-1D)
-# test_generic(elasticity_log1D-uniaxialloading-2-1D)
-# test_generic(elasticity_log1D-uniaxialloading-3-1D)
-# test_generic(norton_log1D-uniaxialloading-1-1D)
-# test_generic(norton_log1D-uniaxialloading-2-1D)
-# test_generic(norton_log1D-uniaxialloading-3-1D)
-# test_generic(elasticity_LogarithmicStrain1DWrapper-uniaxialloading-1-1D)
-# test_generic(elasticity_LogarithmicStrain1DWrapper-uniaxialloading-2-1D)
-# test_generic(elasticity_LogarithmicStrain1DWrapper-uniaxialloading-3-1D)
-# test_generic(elasticity_LogarithmicStrain1DWrapper-thermalstrain)
-# test_generic(elasticity_LogarithmicStrain1DWrapper-thermalstrain2)
-# test_generic(norton_LogarithmicStrain1DWrapper-uniaxialloading-1-1D)
-# test_generic(norton_LogarithmicStrain1DWrapper-uniaxialloading-2-1D)
-# test_generic(norton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D)
-# test_generic(elasticity_malls-uniaxialloading-1-1D)
-# test_generic(elasticity_malls-uniaxialloading-1-2D)
-# test_generic(elasticity_malls-uniaxialloading-1-3D)
-# test_generic(elasticity_malls-uniaxialloading-2-1D)
-# test_generic(elasticity_malls-uniaxialloading-2-2D)
-# test_generic(elasticity_malls-uniaxialloading-2-3D)
-# test_generic(elasticity_malls-uniaxialloading-3-1D)
-# test_generic(elasticity_malls-uniaxialloading-3-2D)
-# test_generic(elasticity_malls-uniaxialloading-3-3D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-1D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-1D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
-# test_generic(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D)
 # test_generic(incompressiblemooneyrivlinbehaviour)
 # test_generic(incompressibleplanestressgornetdesmoratbehavioursheartesting)
 # test_generic(incompressibleplanestressgornetdesmoratbehaviouruniaxialtesting)
@@ -823,8 +785,6 @@ test_generic_fs(finitestrainsinglecrystal_numericaljacobian_withcorrections-001 
 test_generic_fs(finitestrainsinglecrystal_numericaljacobian_withcorrections-012 finitestrainsinglecrystal-012.ref)
 test_generic_fs(finitestrainsinglecrystal_numericaljacobian_withcorrections-012-2 finitestrainsinglecrystal-012.ref)
 test_generic_fs(finitestrainsinglecrystal_numericaljacobian_withcorrections-159 finitestrainsinglecrystal-159.ref)
-# test_generic(anistropiclemaitreviscoplasticbehaviour)
-# test_generic(tssf)
 test_generic(computestressfreeexpansion)
 test_generic(isotropiclinearswelling)
 test_generic(isotropiclinearswelling2)
@@ -840,17 +800,12 @@ test_generic(relocationtest)
 test_generic(externalmodelcaller ExternalModelCallerTest.ref)
 test_generic(externalmodelcaller2 ExternalModelCallerTest.ref)
 test_generic(externalmodelcaller3 ExternalModelCallerTest.ref)
-# test_generic(parametertest)
-# test_generic(parametertest2)
 test_generic(norton5)
 test_generic(TimeDependantYoungModulus)
-
 test_generic(PoroElasticity)
 test_generic(PoroPlasticity PoroPlasticity.ref)
-
-# test_generic(elasticmaterialpropertiesboundschecktest
-#   NO_XML_OUTPUT WILL_FAIL)
-# test_generic(temperatureupdateonsubsteppingcheck)
+test_generic(physical-constants-5.2.0)
+test_generic(physical-constants-6.0.0)
 
 test_generic(LogarithmicStrainPlasticity2)
 test_generic(ThermoElasticity)

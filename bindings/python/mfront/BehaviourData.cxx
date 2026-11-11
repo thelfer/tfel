@@ -19,17 +19,17 @@
 #include "MFront/BehaviourData.hxx"
 
 static std::string getStringAttribute(const mfront::BehaviourData& d,
-                                       const std::string& n) {
+                                      const std::string& n) {
   return d.getAttribute<std::string>(n);
 }
 
 static unsigned short getUnsignedShortAttribute(const mfront::BehaviourData& d,
-                                                 const std::string& n) {
+                                                const std::string& n) {
   return d.getAttribute<unsigned short>(n);
 }
 
 static bool getBooleanAttribute(const mfront::BehaviourData& d,
-                                 const std::string& n) {
+                                const std::string& n) {
   return d.getAttribute<bool>(n);
 }
 
@@ -110,8 +110,7 @@ void declareBehaviourData(pybind11::module_& m) {
            &BehaviourData::isExternalStateVariableName)
       .def("isExternalStateVariableIncrementName",
            &BehaviourData::isExternalStateVariableIncrementName)
-      .def("getVariableDescription", ptr,
-           pybind11::arg("n"),
+      .def("getVariableDescription", ptr, pybind11::arg("n"),
            pybind11::return_value_policy::reference_internal)
       .def("getVariableDescriptionByExternalName",
            &BehaviourData::getVariableDescriptionByExternalName,
@@ -162,28 +161,23 @@ void declareBehaviourData(pybind11::module_& m) {
       .def("isUsedAsEntryName", &BehaviourData::isUsedAsEntryName)
       .def("getVariableNameFromGlossaryNameOrEntryName",
            &BehaviourData::getVariableNameFromGlossaryNameOrEntryName)
-      .def("hasAttribute", &BehaviourData::hasAttribute,
-          pybind11::arg("n"))
-      .def("setAttribute", &BehaviourData::setAttribute,
-          pybind11::arg("n"), pybind11::arg("a"), pybind11::arg("b"))
+      .def("hasAttribute", &BehaviourData::hasAttribute, pybind11::arg("n"))
+      .def("setAttribute", &BehaviourData::setAttribute, pybind11::arg("n"),
+           pybind11::arg("a"), pybind11::arg("b"))
       .def("getUnsignedShortAttribute", getUnsignedShortAttribute,
-          pybind11::arg("n"))
-      .def("getStringAttribute", getStringAttribute,
-          pybind11::arg("n"))
-      .def("getBooleanAttribute", getBooleanAttribute,
-          pybind11::arg("n"))
+           pybind11::arg("n"))
+      .def("getStringAttribute", getStringAttribute, pybind11::arg("n"))
+      .def("getBooleanAttribute", getBooleanAttribute, pybind11::arg("n"))
       .def("getAttributes", &BehaviourData::getAttributes)
-      .def("reserveName", &BehaviourData::reserveName,
-          pybind11::arg("n"))
+      .def("reserveName", &BehaviourData::reserveName, pybind11::arg("n"))
       .def("registerMemberName", &BehaviourData::registerMemberName,
-          pybind11::arg("n"))
+           pybind11::arg("n"))
       .def("registerStaticMemberName", &BehaviourData::registerStaticMemberName,
-          pybind11::arg("n"))
+           pybind11::arg("n"))
       .def("getRegistredMembersNames", getRegistredMembersNames)
       .def("getRegistredStaticMembersNames", getRegistredStaticMembersNames)
       .def("getVariablesNames", getVariablesNames)
-      .def("hasParameter", &BehaviourData::hasParameter,
-          pybind11::arg("n"))
+      .def("hasParameter", &BehaviourData::hasParameter, pybind11::arg("n"))
       .def("hasParameters", &BehaviourData::hasParameters)
       .def("setFloatingPointParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&,
@@ -240,8 +234,7 @@ void declareBehaviourData(pybind11::module_& m) {
                &BehaviourData::getIntegerParameterDefaultValue),
            pybind11::arg("n"))
       .def("getCodeBlockNames", &BehaviourData::getCodeBlockNames)
-      .def("getCode", &BehaviourData::getCode,
-          pybind11::arg("n"), pybind11::arg("cn"), pybind11::arg("b"))
-      .def("hasCode", &BehaviourData::hasCode,
-          pybind11::arg("n"));
+      .def("getCode", &BehaviourData::getCode, pybind11::arg("n"),
+           pybind11::arg("cn"), pybind11::arg("b"))
+      .def("hasCode", &BehaviourData::hasCode, pybind11::arg("n"));
 }

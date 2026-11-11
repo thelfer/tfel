@@ -300,6 +300,18 @@ namespace mfront {
                     areParametersTreatedAsStaticVariables(md), false);
     bd.setAttribute(MaterialKnowledgeDescription::initializeParametersFromFile,
                     allowsParametersInitializationFromFile(md), false);
+    if (md.hasAttribute(MaterialKnowledgeDescription::validator)) {
+      bd.setAttribute(
+          MaterialKnowledgeDescription::validator,
+          md.getAttribute<std::string>(MaterialKnowledgeDescription::validator),
+          false);
+    }
+    if (md.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      bd.setAttribute(MaterialKnowledgeDescription::compatibilityMode,
+                      md.getAttribute<std::string>(
+                          MaterialKnowledgeDescription::compatibilityMode),
+                      false);
+    }
     // exernal files
     for (const auto& efiles : md.getExternalMFrontFiles()) {
       bd.addExternalMFrontFile(efiles.first, std::get<0>(efiles.second),

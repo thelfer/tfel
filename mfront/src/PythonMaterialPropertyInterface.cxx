@@ -372,6 +372,7 @@ namespace mfront {
     // mfront metadata
     writeFileDescriptionSymbols(srcFile, name, fd);
     writeValidatorSymbol(srcFile, name, mpd);
+    writeCompatibilityModeSymbol(srcFile, name, mpd);
     writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);

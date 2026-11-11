@@ -312,9 +312,8 @@ namespace tfel::math {
       const tvector<3u, T>& vp,
       const rotation_matrix<T>& m,
       const T eps) requires((getSpaceDimension<ST2toST2Type>() == N) &&
-                            (isAssignableTo<
-                                BinaryOperationResult<T, T, OpDiv>,
-                                numeric_type<ST2toST2Type>>())) {
+                            (isAssignableTo<BinaryOperationResult<T, T, OpDiv>,
+                                            numeric_type<ST2toST2Type>>())) {
     tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe2(
         d, f, df, vp, m, eps);
   }  // end of computeIsotropicFunctionDerivative
@@ -341,9 +340,8 @@ namespace tfel::math {
       const tvector<3u, T>& vp,
       const rotation_matrix<T>& m,
       const T eps) requires((getSpaceDimension<ST2toST2Type>() == N) &&
-                            (isAssignableTo<
-                                BinaryOperationResult<T, T, OpDiv>,
-                                numeric_type<ST2toST2Type>>())) {
+                            (isAssignableTo<BinaryOperationResult<T, T, OpDiv>,
+                                            numeric_type<ST2toST2Type>>())) {
     tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe(
         d, f, df, vp, m, eps);
   }

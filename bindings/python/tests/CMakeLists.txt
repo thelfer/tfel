@@ -16,6 +16,7 @@ configure_file(behaviour-constructors.py.in behaviour-constructors.py @ONLY)
 configure_file(small-strain-tridimensional-behaviour-wrapper.py.in
                small-strain-tridimensional-behaviour-wrapper.py @ONLY)
 configure_file(material-properties.py.in material-properties.py @ONLY)
+configure_file(compatibility_mode.py.in compatibility_mode.py @ONLY)
 
 function(test_pymfront test)
   if(NOT CMAKE_CONFIGURATION_TYPES)
@@ -51,6 +52,17 @@ function(test_pymtest_bv file library)
   endif(NOT CMAKE_CONFIGURATION_TYPES)
 endfunction(test_pymtest_bv)
 
+function(test_externallibrarymanager file library)
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    add_test(NAME pytfel_system_externallibrarymanager_${file}_py
+      COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${file}.py)
+    set_property(TEST pytfel_system_externallibrarymanager_${file}_py
+      PROPERTY ENVIRONMENT
+      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python
+      MFRONT_BEHAVIOUR_LIBRARY=${library})      
+  endif(NOT CMAKE_CONFIGURATION_TYPES)
+endfunction(test_externallibrarymanager)
+
 if(HAVE_ASTER)
   test_pymfront(test1)
 endif(HAVE_ASTER)
@@ -64,6 +76,9 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
   set_tests_properties(pymfm_test_generator_py
     PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
 endif(NOT CMAKE_CONFIGURATION_TYPES)
+
+test_externallibrarymanager("compatibility_mode" "$<TARGET_FILE:MFrontGenericBehaviours>")
+
 
 test_pymfront_mp("generic" "$<TARGET_FILE:MFrontMaterialProperties-generic>" "VanadiumAlloy_YoungModulus_SRMA")
 test_pymfront_mp("c" "$<TARGET_FILE:MFrontMaterialProperties>" "VanadiumAlloy_YoungModulus_SRMA")

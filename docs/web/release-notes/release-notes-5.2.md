@@ -45,6 +45,61 @@ designed for maximum GPU performance:
 When compiling `TFEL`, one must explicitly enable support for the `TDLS`
 library, see below.
 
+## Compatibility modes
+
+The behaviour of `MFront` and the results of the code it generates are
+now governed by a compatibility mode, which is a version number. A
+development which does not fix an explicit bug, but changes the results
+of the `TFEL` libraries or the results or the behaviour of `MFront` and
+of the assets it generates, such as a new default value of an option or
+a new default behaviour of a working keyword, is associated with the
+version which makes it the default. Users who need the previous
+behaviour restore it by selecting an older compatibility mode.
+
+Version 5.2 provides two compatibility modes:
+
+- `5.2.0`, the values and behaviours of Version 5.2,
+- `future`, which introduces the changes which shall be the default of
+  the next major version.
+
+By default, no compatibility mode is declared: the generated code uses
+the entities and the algorithms of the version of the `TFEL` libraries
+which compiles it. Declaring a compatibility mode makes the results of
+the generated code independent of this version.
+
+The compatibility mode of a file is defined by the `compatibility_mode`
+option of its domain specific language, which is available for all the
+DSLs, whereas the `--compatibility-mode` command line argument declares
+the mode of all the files treated by a run of `mfront` which do not
+declare their own mode:
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic --compatibility-mode=5.2.0 Norton.mfront
+~~~~
+
+The compatibility mode of an asset which declares one is recorded in its
+generated code as the `<entry point>_compatibility_mode` symbol, which is
+returned by the `ExternalLibraryManager::getCompatibilityMode` method,
+available both in `C++` and in `Python`.
+
+The values of the physical constants are the first entities to be
+versioned this way. The `TFEL/PhysicalConstants` library now provides
+one set of constants per compatibility mode, in namespaces named after
+the version which introduced them (`tfel::v5_2_0::`, `tfel::v6_0_0::`,
+...), whereas the names used by the previous versions,
+`tfel::PhysicalConstants` and the variables of `tfel::constants`, keep
+referring to the values of the current version. The current values of
+Version 5.2 are those of the `5.2.0` mode, so the physical constants of
+version 5.2 are those of version 5.1: the use of the values of the
+`CODATA` 2014 adjustment with all the digits of the `double`
+representation is postponed to version 6.0, where it is available
+through the `6.0.0` set of constants.
+
+Compatibility modes are described in the pages devoted to
+[compatibility modes in the `TFEL` libraries](tfel-compatibility-modes.html)
+and to
+[compatibility modes in `MFront`](mfront-compatibility-modes.html).
+
 # Known incompatibilities
 
 - The `enable-sanitize-options` option is no longer a boolean option: it
@@ -924,6 +979,14 @@ behaviours.
 A new page describes the coding conventions of the `C` and `C++`
 sources of the project, for new developers as well as for coding
 agents: [coding guidelines](coding-guidelines.html).
+
+## New compatibility modes pages
+
+Two new pages describe how compatibility modes are implemented in the
+`TFEL` libraries ([compatibility modes in the `TFEL`
+libraries](tfel-compatibility-modes.html)) and how they are used by
+`MFront` ([compatibility modes in
+`MFront`](mfront-compatibility-modes.html)).
 
 # Continuous integration
 

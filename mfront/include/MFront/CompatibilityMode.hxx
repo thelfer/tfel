@@ -15,8 +15,10 @@
 #ifndef LIB_MFRONT_COMPATIBILITYMODE_HXX
 #define LIB_MFRONT_COMPATIBILITYMODE_HXX
 
-#include <limits>
 #include <array>
+#include <limits>
+#include <optional>
+#include <string_view>
 #include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
@@ -44,10 +46,11 @@ namespace mfront {
    * compatibility mode allows changes that will be the default in the next
    * major version.
    *
-   * Compatiblity modes can be defined globally on the command line using
-   * `--compatibility-mode` or in a file using the @CompatiblityMode keyword.
+   * Compatibility modes can be defined globally on the command line using
+   * `--compatibility-mode` or in a file using the `compatibility_mode` DSL
+   * option.
    */
-  struct CompatibilityMode {
+  struct MFRONT_VISIBILITY_EXPORT CompatibilityMode {
     /*!
      * \brief simple data structure describing a version with three numbers
      * named major, minor and patch
@@ -59,18 +62,65 @@ namespace mfront {
       constexpr auto operator<=>(const Version&) const noexcept = default;
     };  // end of struct version
     /*!
+     * \brief convert the given string to a version
+     * \return the version read in the string
+     * \param[in] s: string
+     */
+    [[nodiscard]] static Version fromString(std::string_view);
+    /*!
      * \brief compatibility mode with the next (unpublished) major version
      */
     static inline constexpr auto future =
         Version{.major = std::numeric_limits<std::size_t>::max(),
                 .minor = std::numeric_limits<std::size_t>::max(),
                 .patch = std::numeric_limits<std::size_t>::max()};
-    // \brief first version in which compatiblity modes were introduced
-    static inline constexpr auto v_5_2_0 =
+    // \brief first version in which compatibility modes were introduced
+    static inline constexpr auto v5_2_0 =
         Version{.major = 5, .minor = 2, .patch = 0};
     //! \brief list of compatibility modes
-    static inline auto known_compatibility_modes = std::array{v_5_2_0};
+    static inline constexpr auto known_compatibility_modes = std::array{v5_2_0};
   };  // end of struct CompatibilityMode
+
+  /*!
+   * \brief set the default compatibility mode, stored in a global static
+   * variable.
+   * \param[in] v: version
+   *
+   * \throw if the version is strictly lower than 5.2.0
+   */
+  MFRONT_VISIBILITY_EXPORT void setDefaultCompatibilityMode(
+      const CompatibilityMode::Version&);
+  /*!
+   * \brief set the default compatibility mode, stored in a global static
+   * variable.
+   * \param[in] v: version
+   *
+   * \throw if the version is strictly lower than 5.2.0
+   */
+  MFRONT_VISIBILITY_EXPORT void setDefaultCompatibilityMode(std::string_view);
+  /*!
+   * \return the default compatibility mode, if defined
+   *
+   * \throw if the version is strictly lower than 5.2.0
+   */
+  MFRONT_VISIBILITY_EXPORT
+  [[nodiscard]] std::optional<CompatibilityMode::Version>
+  getDefaultCompatibilityMode() noexcept;
+  //! \return the greatest known compatibility mode
+  MFRONT_VISIBILITY_EXPORT
+  [[nodiscard]] CompatibilityMode::Version
+  getGreatestCompatibilityMode() noexcept;
+  /*!
+   * \brief check if the given version is ok
+   * \param[in] v: version
+   */
+  MFRONT_VISIBILITY_EXPORT void check(const CompatibilityMode::Version&);
+  /*!
+   * \return a string representation of the given version
+   * \param[in] v: version
+   */
+  MFRONT_VISIBILITY_EXPORT std::string to_string(
+      const CompatibilityMode::Version&);
 
 }  // end of namespace mfront
 

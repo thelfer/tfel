@@ -1069,6 +1069,7 @@ namespace mfront {
     const auto zcn = "ZMAT" + mb.getClassName();
     writeFileDescriptionSymbols(out, zcn, fd);
     writeValidatorSymbol(out, zcn, mb);
+    writeCompatibilityModeSymbol(out, zcn, mb);
     writeBuildIdentifierSymbol(out, zcn, mb);
     writeEntryPointSymbol(out, zcn);
     writeTFELVersionSymbol(out, zcn);

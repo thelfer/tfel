@@ -208,8 +208,7 @@ namespace tfel::math {
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
     [[nodiscard]] TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept
-      requires(!is_const)
-    {
+        requires(!is_const) {
       return this->data_pointer;
     }  // end of data
 

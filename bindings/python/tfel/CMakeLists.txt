@@ -6,6 +6,8 @@ tfel_python_module(_tfel
   PhysicalConstants.cxx)
 target_link_libraries(py_tfel__tfel
   PRIVATE TFELConfig ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
+set_source_files_properties(PhysicalConstants.cxx
+   PROPERTIES COMPILE_DEFINITIONS "TFEL_VERSION_MAJOR=${TFEL_VERSION_MAJOR}")
 
 tfel_python_module(tests tests.cxx
   TestResult.cxx

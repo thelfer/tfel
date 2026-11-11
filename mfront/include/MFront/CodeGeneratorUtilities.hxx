@@ -141,6 +141,16 @@ namespace mfront {
       const std::string_view,
       const MaterialKnowledgeDescription&);
   /*!
+   * \brief write a symbol associated with the compatibility mode.
+   * \param[out] os: output stream
+   * \param[in]  n: entry point name
+   * \param[in] d: description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeCompatibilityModeSymbol(
+      std::ostream&,
+      const std::string_view,
+      const MaterialKnowledgeDescription&);
+  /*!
    * \brief write a symbol associated with the build identifier.
    * \param[out] os: output stream
    * \param[in]  n: entry point name
@@ -419,6 +429,18 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT std::string printLinePragma(const std::size_t,
                                                        std::string_view);
+  /*!
+   * \brief declare an alias to the PhysicalConstant class
+   * \param[in] os: output stream
+   * \param[in] d: material knowledge description
+   * \param[in] numeric_type: numeric type
+   * \param[in] use_quantities: boolean stating if quantities are used
+   */
+  MFRONT_VISIBILITY_EXPORT void writePhysicalConstantsAlias(
+      std::ostream&,
+      const MaterialKnowledgeDescription&,
+      std::string_view,
+      const bool);
 
 }  // end of namespace mfront
 

@@ -393,6 +393,7 @@ namespace mfront {
     writeVariablesNamesSymbol(src, name, mpd);
     writeVariablesBoundsSymbols(src, name, mpd);
     writeValidatorSymbol(src, name, mpd);
+    writeCompatibilityModeSymbol(src, name, mpd);
     writeBuildIdentifierSymbol(src, name, mpd);
     writeEntryPointSymbol(src, name);
     writeLawSymbol(src, name, mpd.law);
@@ -457,13 +458,7 @@ namespace mfront {
         << "using tfel::math::invert_type;\n"
         << "using tfel::math::result_type;\n"
         << "using tfel::math::derivative_type;\n";
-    if (useQuantities(mpd)) {
-      src << "using PhysicalConstants [[maybe_unused]] = "
-          << "tfel::PhysicalConstants<double, true>;\n";
-    } else {
-      src << "using PhysicalConstants [[maybe_unused]] = "
-          << "tfel::PhysicalConstants<double, false>;\n";
-    }
+    writePhysicalConstantsAlias(src, mpd, "double", useQuantities(mpd));
     src << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
         << "{ return a < b ? a : b; };\n"
         << "[[maybe_unused]] auto max = [](const auto a, const auto b) "

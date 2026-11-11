@@ -40,6 +40,7 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/CompatibilityMode.hxx"
 #include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/StaticVariableDescription.hxx"
@@ -69,6 +70,7 @@ namespace mfront {
       "parameters_as_static_variables";
   const char* const DSLBase::initializationFromFileOption =
       "parameters_initialization_from_file";
+  const char* const DSLBase::compatibilityModeOption = "compatibility_mode";
   const char* const DSLBase::overridingParameters = "overriding_parameters";
   const char* const DSLBase::validatorOption = "validator";
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
@@ -97,6 +99,7 @@ namespace mfront {
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
         .addDataTypeValidator<bool>(DSLBase::disableRuntimeChecksOption)
         .addDataTypeValidator<std::string>(DSLBase::validatorOption)
+        .addDataTypeValidator<std::string>(DSLBase::compatibilityModeOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)
         .addDataTypeValidator<tfel::utilities::DataMap>(
             DSLBase::overridingParameters);
@@ -154,6 +157,19 @@ namespace mfront {
           opts.at(DSLBase::buildIdentifierOption).get<std::string>();
       d.setAttribute(MaterialKnowledgeDescription::buildIdentifier, id, false);
     }
+    if (opts.count(DSLBase::compatibilityModeOption) != 0) {
+      const auto version =
+          opts.at(DSLBase::compatibilityModeOption).get<std::string>();
+      // the resolved compatibility mode is stored, as the default one
+      d.setAttribute(MaterialKnowledgeDescription::compatibilityMode,
+                     to_string(CompatibilityMode::fromString(version)), false);
+    } else {
+      const auto ov = getDefaultCompatibilityMode();
+      if (ov.has_value()) {
+        d.setAttribute(MaterialKnowledgeDescription::compatibilityMode,
+                       to_string(*ov), false);
+      }
+    }
   }  // end of handleDSLOptions
 
   AbstractDSL::DSLOptions DSLBase::buildCommonDSLOptions(
@@ -164,18 +180,25 @@ namespace mfront {
         MaterialKnowledgeDescription::buildIdentifier, "");
     const auto validator = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::validator, "");
-    return {{DSLBase::disableRuntimeChecksOption, areRuntimeChecksDisabled(d)},
-            {DSLBase::defaultOutOfBoundsPolicyOption, policy},
-            {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
-             allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
-            {DSLBase::parametersAsStaticVariablesOption,
-             areParametersTreatedAsStaticVariables(d)},
-            {DSLBase::initializationFromFileOption,
-             allowsParametersInitializationFromFile(d)},
-            {DSLBase::validatorOption, validator},
-            {DSLBase::buildIdentifierOption, build_id},
-            {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
-  }  // end of buildCommonOptions
+    auto opts = AbstractDSL::DSLOptions{
+        {DSLBase::disableRuntimeChecksOption, areRuntimeChecksDisabled(d)},
+        {DSLBase::defaultOutOfBoundsPolicyOption, policy},
+        {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
+         allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
+        {DSLBase::parametersAsStaticVariablesOption,
+         areParametersTreatedAsStaticVariables(d)},
+        {DSLBase::initializationFromFileOption,
+         allowsParametersInitializationFromFile(d)},
+        {DSLBase::validatorOption, validator},
+        {DSLBase::buildIdentifierOption, build_id},
+        {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
+    if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      opts.insert({DSLBase::compatibilityModeOption,
+                   d.getAttribute<std::string>(
+                       MaterialKnowledgeDescription::compatibilityMode)});
+    }
+    return opts;
+  }  // end of buildCommonDSLOptions
 
   DSLBase::DSLBase(const DSLOptions& /* opts */) {
     this->addSeparator("\u2297");
@@ -207,7 +230,9 @@ namespace mfront {
              "specified on the command line"},
             {DSLBase::overridingParameters,
              "map allowing to override material properties, parameters and "
-             "external state variables by parameters"}};
+             "external state variables by parameters"},
+            {DSLBase::compatibilityModeOption,
+             "string giving the version to which the MFront file shall comply"}};
   }  // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {

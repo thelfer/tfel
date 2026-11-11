@@ -131,6 +131,10 @@ namespace mfront {
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeValidatorSymbol
 
+  void MFrontMaterialPropertyInterface::writeCompatibilityModeSymbol(
+      std::ostream&, const MaterialPropertyDescription&) const {
+  }  // end of writeCompatibilityModeSymbol
+
   void MFrontMaterialPropertyInterface::writeBuildIdentifierSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeBuildIdentifierSymbol
