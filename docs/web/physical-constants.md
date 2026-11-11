@@ -257,6 +257,7 @@ follows:
    g++ physical_constants.cxx -o physical_constants \
        `tfel-config --compiler-flags --includes --libs --utilities`
    ./physical_constants
+   clang-format -i PhysicalConstants*.hxx PhysicalConstants-python.cxx
    cp PhysicalConstants-<X>.<Y>.<Z>.hxx PhysicalConstants.hxx \
       ../../include/TFEL/
    cp PhysicalConstants-python.cxx \
