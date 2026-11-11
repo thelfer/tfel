@@ -1035,47 +1035,57 @@ namespace tfel::utilities {
   }  // end of CxxTokenizer::splitLine
 
   void CxxTokenizer::stripComments() {
-    for (auto p = this->tokens.begin(); p != this->tokens.end();) {
-      if (p->flag == Token::Comment) {
+    // The tokens which are kept are gathered in a second container instead of
+    // being built in place by erasing the comment tokens one at a time: erasing
+    // a token moves all the tokens which follow it, which makes the cost of
+    // this function quadratic in the size of the file, see issue #1409
+    auto t = TokensContainer{};
+    t.reserve(this->tokens.size());
+    for (size_type i = 0u; i != this->tokens.size(); ++i) {
+      const auto& p = this->tokens[i];
+      if (p.flag == Token::Comment) {
         // the comments of a line are gathered, separated by a space character.
         // The value of an empty comment is empty: it brings nothing and is then
         // neither gathered nor responsible for a separator
-        if (!p->value.empty()) {
-          const auto it = this->comments.insert({p->line, std::string{}}).first;
+        if (!p.value.empty()) {
+          const auto it = this->comments.insert({p.line, std::string{}}).first;
           if (!it->second.empty()) {
             it->second += ' ';
           }
-          it->second += p->value;
+          it->second += p.value;
         }
-        p = this->tokens.erase(p);
-      } else if (p->flag == Token::DoxygenComment) {
-        auto p2 = p;
-        ++p2;
-        if (p2 != this->tokens.end()) {
-          if (p2->flag == Token::Standard) {
-            if (!p2->comment.empty()) {
-              p2->comment += '\n';
+      } else if (p.flag == Token::DoxygenComment) {
+        // the token which follows a comment is not a part of the stripped
+        // sequence yet: it is that which follows it in the sequence of the
+        // tokens of the file
+        if ((i + 1u) < this->tokens.size()) {
+          auto& p2 = this->tokens[i + 1u];
+          if (p2.flag == Token::Standard) {
+            if (!p2.comment.empty()) {
+              p2.comment += '\n';
             }
-            p2->comment += p->value;
+            p2.comment += p.value;
           }
-          if (p2->flag == Token::DoxygenComment) {
-            p2->value = p->value + "\n" + p2->value;
-          }
-        }
-        p = this->tokens.erase(p);
-      } else if (p->flag == Token::DoxygenBackwardComment) {
-        if (p != this->tokens.begin()) {
-          auto p2 = p;
-          --p2;
-          if (p2->flag == Token::Standard) {
-            p2->comment += p->value;
+          if (p2.flag == Token::DoxygenComment) {
+            p2.value = p.value + "\n" + p2.value;
           }
         }
-        p = this->tokens.erase(p);
+      } else if (p.flag == Token::DoxygenBackwardComment) {
+        // the comments which precede a backward comment have already been
+        // removed: the token to consider is the last token of the stripped
+        // sequence, which is not that which precedes the comment in the
+        // sequence of the tokens of the file
+        if (!t.empty()) {
+          auto& p2 = t.back();
+          if (p2.flag == Token::Standard) {
+            p2.comment += p.value;
+          }
+        }
       } else {
-        ++p;
+        t.push_back(std::move(this->tokens[i]));
       }
     }
+    this->tokens = std::move(t);
   }  // end of CxxTokenizer::stripComments
 
   void CxxTokenizer::printFileTokens(std::ostream& out) const {
