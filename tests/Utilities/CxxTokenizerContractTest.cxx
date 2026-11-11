@@ -39,6 +39,7 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
 
   tfel::tests::TestResult execute() override {
     this->testRawStrings();
+    this->testUnclosedTokens();
     this->testEmptyComments();
     this->testCommentsOfALine();
     this->testNumbersWithDigitSeparators();
@@ -148,6 +149,70 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("s = 'a\n"), std::runtime_error);
   }  // end of testRawStrings
+
+  /*!
+   * \brief tokens which are not closed at the end of the file.
+   *
+   * A quoted string and a character literal which are not closed in their line
+   * are rejected. A `C` style comment and a raw string literal may on the
+   * contrary span several lines: contents which end inside such a token is
+   * accepted and leaves the state of the tokenizer open, since the tokenizer
+   * is designed so that a file may be tokenized line by line. The caller is
+   * therefore responsible for checking the state of the tokenizer when the end
+   * of the file is reached, see issue #1395.
+   */
+  void testUnclosedTokens() {
+    auto t = tfel::utilities::CxxTokenizer{};
+    // a C style comment which is not closed is accepted and leaves the
+    // tokenizer in the state comment opened
+    t.parseString("s = /* text");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[2].value == "text");
+    TFEL_TESTS_ASSERT(t.isCStyleCommentOpened());
+    TFEL_TESTS_ASSERT(!t.isRawStringOpened());
+    // a doxygen comment of the `// !` kind is a line comment: it is closed at
+    // the end of its line whatever the state it is left in
+    t.clear();
+    t.parseString("//! doc");
+    TFEL_TESTS_ASSERT(t.size() == 1u);
+    TFEL_TESTS_ASSERT(!t.isCStyleCommentOpened());
+    // a raw string literal which is not closed is accepted too, the delimiter
+    // of the opened literal being kept by the tokenizer
+    t.clear();
+    t.parseString("s = R\"x(text");
+    TFEL_TESTS_ASSERT(t.isRawStringOpened());
+    TFEL_TESTS_ASSERT(t.getCurrentRawStringDelimiter() == "x");
+    TFEL_TESTS_ASSERT(!t.isCStyleCommentOpened());
+    // a quoted string and a character literal which are not closed in their
+    // line are on the contrary rejected
+    t.clear();
+    TFEL_TESTS_CHECK_THROW(t.parseString("s = \"text\n"), std::runtime_error);
+    t.clear();
+    TFEL_TESTS_CHECK_THROW(t.parseString("s = 'a\n"), std::runtime_error);
+    // the state of the tokenizer is left from one call to parseString to the
+    // next one, which is what allows tokenizing a file line by line: the lines
+    // which follow the opening of a comment are gathered in the value of the
+    // comment token until the comment is closed
+    t.clear();
+    t.parseString("a;");
+    TFEL_TESTS_ASSERT(t.size() == 2u);
+    TFEL_TESTS_ASSERT(!t.isCStyleCommentOpened());
+    t.parseString("/* c1");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].value == "c1");
+    TFEL_TESTS_ASSERT(t.isCStyleCommentOpened());
+    t.parseString("c2");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].value == "c1\nc2");
+    TFEL_TESTS_ASSERT(t.isCStyleCommentOpened());
+    t.parseString("d2 */ int b;");
+    TFEL_TESTS_ASSERT(t.size() == 6u);
+    TFEL_TESTS_ASSERT(t[2].value == "c1\nc2\nd2 ");
+    TFEL_TESTS_ASSERT(t[3].value == "int");
+    TFEL_TESTS_ASSERT(t[5].value == ";");
+    TFEL_TESTS_ASSERT(!t.isCStyleCommentOpened());
+  }  // end of testUnclosedTokens
 
   /*!
    * \brief empty comments.
