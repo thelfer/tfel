@@ -262,6 +262,12 @@ prediction of the stresses, in particular at the second iteration, the
 robust algorithms (`PowellDogLeg`, `LevenbergMarquardt`). Otherwise,
 you must check your units.
 
+Note that, in the `5.2.0` compatibility mode, which is the default of
+Version 5.2, the `PowellDogLeg` algorithms limit the progress per
+iteration to about the size given by the `@PowellDogLegTrustRegionSize`
+keyword (\(10^{-4}\) by default), which must thus be adapted to the
+expected increments of the integration variables.
+
 #### Divergence spurious oscillations in the residual
 
 In the second case, the trouble may be related to your implementation

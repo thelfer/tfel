@@ -909,12 +909,20 @@ The solvers available are based on the following algorithms:
 - The Levenberg-Marquardt algorithm is implemented in the
   `TinyLevenbergMarquardtSolver` class.
 
-The solvers based on Powell' dog leg step implement the classical trust
-region method: the radius of the trust region is updated at each
-iteration from the ratio of the actual and predicted reductions of the
-squared norm of the residual, and a correction which does not reduce it
-enough is rejected. The derived class must set the initial radius of
-each resolution in the `powell_dogleg_trust_region_size` data member.
+The solvers based on Powell' dog leg step are versioned entities, as
+described in the page devoted to
+[compatibility modes](tfel-compatibility-modes.html). The classes of the
+`tfel::math::future` namespace, which are those of the `6.0.0` mode
+(`tfel::math::v6_0_0`), implement the classical trust region method:
+the radius of the trust region is updated at each iteration from the
+ratio of the actual and predicted reductions of the squared norm of the
+residual, and a correction which does not reduce it enough is rejected.
+The derived class must set the initial radius of each resolution in the
+`powell_dogleg_trust_region_size` data member. The names which do not
+mention a mode, such as `tfel::math::TinyPowellDogLegNewtonRaphsonSolver`,
+refer to the classes of the `5.2.0` mode (`tfel::math::v5_2_0`), for
+which the `powell_dogleg_trust_region_size` data member is a fixed limit
+of the corrections.
 
 Those classes implements the curiously recurring template pattern (CRTP)
 to avoid the use of virtual calls [@coplien_curiously_1995]. The derived
