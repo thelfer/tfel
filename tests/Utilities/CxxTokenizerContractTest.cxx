@@ -208,10 +208,9 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
 
   /*!
    * \brief comments of a line, which are gathered by stripComments in the
-   * `comments` data member of the tokenizer.
-   *
-   * Only the last comment of a line is kept, whatever the number of comments
-   * this line contains, which is a known defect reported in issue #1387.
+   * `comments` data member of the tokenizer: a line may hold several comments,
+   * which are gathered in the order they appear in the line, separated by a
+   * space character, see issue #1392.
    */
   void testCommentsOfALine() {
     using tfel::utilities::Token;
@@ -225,8 +224,8 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
     TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c");
-    // two comments in a line: the tokens are both removed but only the last
-    // comment is kept in the comments of the line
+    // two comments in a line: the two tokens are removed and the two comments
+    // are gathered, in the order they appear in the line
     t.clear();
     t.parseString("/* c1 */ int a; /* c2 */");
     TFEL_TESTS_ASSERT(t.size() == 5u);
@@ -242,7 +241,60 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t[0].offset == 9u);
     TFEL_TESTS_ASSERT(t[2].value == ";");
     TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1 c2");
+    // three comments in a line
+    t.clear();
+    t.parseString("/* c1 */ int /* c2 */ a; /* c3 */\n");
+    TFEL_TESTS_ASSERT(t.size() == 6u);
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1 c2 c3");
+    // an empty comment does not add a separator, whatever the place it holds in
+    // the line. An empty ‘//’ comment is necessarily the last comment of a
+    // line, since such a comment runs to the end of the line
+    t.clear();
+    t.parseString("/* c1 */ int a; //\n");
+    TFEL_TESTS_ASSERT(t.size() == 5u);
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1");
+    // an empty ‘/**/’ comment gives a comment token with an empty value: the
+    // comments of the line are those which follow it
+    t.clear();
+    t.parseString("/**/ int a; /* c2 */\n");
+    TFEL_TESTS_ASSERT(t.size() == 5u);
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
     TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c2");
+    // the comments of several lines are gathered separately
+    t.clear();
+    t.parseString("/* c1 */ int a;\n/* c2 */ int b;\n");
+    TFEL_TESTS_ASSERT(t.size() == 8u);
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.size() == 6u);
+    TFEL_TESTS_ASSERT(t.getComments().size() == 2u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1");
+    TFEL_TESTS_ASSERT(t.getComments().at(2u) == "c2");
+    // a comment spanning several lines is gathered on the line it starts on.
+    // The spaces which precede the end of such a comment are not removed,
+    // contrary to those which precede the end of a comment of a single line
+    t.clear();
+    t.parseString("/* c1\nc2 */ int a;\n");
+    TFEL_TESTS_ASSERT(t.size() == 4u);
+    TFEL_TESTS_ASSERT(t[0].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[0].line == 1u);
+    TFEL_TESTS_ASSERT(t[0].value == "c1\nc2 ");
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1\nc2 ");
+    // a line whose only comment is empty gives no comment at all
+    t.clear();
+    t.parseString("a; //\n");
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.size() == 2u);
+    TFEL_TESTS_ASSERT(t.getComments().empty());
   }  // end of testCommentsOfALine
 
   /*!
