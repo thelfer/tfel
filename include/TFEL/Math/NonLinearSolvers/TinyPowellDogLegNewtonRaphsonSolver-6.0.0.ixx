@@ -1,6 +1,6 @@
 /*!
  * \file
- * include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegNewtonRaphsonSolver.ixx
+ * include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegNewtonRaphsonSolver-6.0.0.ixx
  * \brief  This file implements the TinyPowellDogLegNewtonMatrix class
  * \author Thomas Helfer
  * \date   02/07/2021
@@ -12,12 +12,12 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX
-#define LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX
+#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_6_0_0_IXX
+#define LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_6_0_0_IXX
 
-#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
+#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase-6.0.0.hxx"
 
-namespace tfel::math {
+namespace tfel::math::v6_0_0 {
 
   template <unsigned short N,
             typename NumericType,
@@ -30,8 +30,9 @@ namespace tfel::math {
       Child,
       ExternalWorkSpace>::computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
+    // qualified call: an unqualified one may be ambiguous through ADL
     if (this->powell_dogleg_accept_correction ||
-        updatePowellDogLegTrustRegionRadius(
+        tfel::math::v6_0_0::updatePowellDogLegTrustRegionRadius(
             this->powell_dogleg_radius, this->delta_zeros,
             this->powell_dogleg_jacobian_1, this->powell_dogleg_fzeros_1,
             this->fzeros)) {
@@ -57,12 +58,13 @@ namespace tfel::math {
       return false;
     }
     this->delta_zeros = -this->fzeros;
-    applyPowellDogLegAlgorithm(
+    // qualified call: an unqualified one may be ambiguous through ADL
+    tfel::math::v6_0_0::applyPowellDogLegAlgorithm(
         this->delta_zeros, this->powell_dogleg_jacobian_1,
         this->powell_dogleg_fzeros_1, this->powell_dogleg_radius);
     return true;
   }  // end of computeNewCorrection
 
-}  // end of namespace tfel::math
+}  // end of namespace tfel::math::v6_0_0
 
-#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX */
+#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_6_0_0_IXX */

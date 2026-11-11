@@ -19,6 +19,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <type_traits>
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
@@ -115,15 +116,13 @@ struct PowellDogLegNewtonRaphsonSolver3
 };   // end of struct PowellDogLegNewtonRaphsonSolver3
 
 // With a trust region radius of 5, starting from 3, the second correction goes
-// from -2 back to 3. This correction shall be rejected, the next one being
-// computed from -2 with a radius of 5 / 4. Otherwise, the estimates cycle
-// between 3 and -2.
-struct PowellDogLegNewtonRaphsonSolver4
-    : public tfel::math::TinyPowellDogLegNewtonRaphsonSolver<
-          1u,
-          double,
-          PowellDogLegNewtonRaphsonSolver4> {
-  PowellDogLegNewtonRaphsonSolver4() {
+// from -2 back to 3. With the classical trust region method (`v6_0_0`), this
+// correction shall be rejected, the next one being computed from -2 with a
+// radius of 5 / 4. With the fixed trust region size (`v5_2_0`), the estimates
+// cycle between 3 and -2 and the resolution fails.
+template <typename Solver>
+struct ArcTangentProblem : public Solver {
+  ArcTangentProblem() {
     this->zeros = {3};
     this->epsilon = 1.e-12;
     this->iterMax = 20;
@@ -145,7 +144,45 @@ struct PowellDogLegNewtonRaphsonSolver4
   }  // end of computeResidual
 
   double estimate_after_rejection = 0;
+};  // end of struct ArcTangentProblem
+
+struct PowellDogLegNewtonRaphsonSolver4
+    : public ArcTangentProblem<
+          tfel::math::v6_0_0::TinyPowellDogLegNewtonRaphsonSolver<
+              1u,
+              double,
+              PowellDogLegNewtonRaphsonSolver4>> {
 };  // end of struct PowellDogLegNewtonRaphsonSolver4
+
+struct PowellDogLegNewtonRaphsonSolver5
+    : public ArcTangentProblem<
+          tfel::math::v5_2_0::TinyPowellDogLegNewtonRaphsonSolver<
+              1u,
+              double,
+              PowellDogLegNewtonRaphsonSolver5>> {
+};  // end of struct PowellDogLegNewtonRaphsonSolver5
+
+// the names which do not mention a compatibility mode refer to the solver of
+// the 5.2.0 mode, those of the `future` namespace to the one of the next major
+// version
+static_assert(
+    std::is_same_v<tfel::math::TinyPowellDogLegNewtonRaphsonSolver<
+                       1u,
+                       double,
+                       PowellDogLegNewtonRaphsonSolver5>,
+                   tfel::math::v5_2_0::TinyPowellDogLegNewtonRaphsonSolver<
+                       1u,
+                       double,
+                       PowellDogLegNewtonRaphsonSolver5>>);
+static_assert(
+    std::is_same_v<tfel::math::future::TinyPowellDogLegNewtonRaphsonSolver<
+                       1u,
+                       double,
+                       PowellDogLegNewtonRaphsonSolver4>,
+                   tfel::math::v6_0_0::TinyPowellDogLegNewtonRaphsonSolver<
+                       1u,
+                       double,
+                       PowellDogLegNewtonRaphsonSolver4>>);
 
 struct TinyPowellDogLegNewtonRaphsonSolverTest final
     : public tfel::tests::TestCase {
@@ -158,6 +195,7 @@ struct TinyPowellDogLegNewtonRaphsonSolverTest final
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
     return this->result;
   }  // end of execute
  private:
@@ -188,6 +226,10 @@ struct TinyPowellDogLegNewtonRaphsonSolverTest final
     TFEL_TESTS_ASSERT(nr.solve());
     TFEL_TESTS_ASSERT(std::abs(nr.getCurrentEstimate()) < 1e-12);
     TFEL_TESTS_ASSERT(std::abs(nr.estimate_after_rejection + 0.75) < 1e-14);
+  }
+  void test5() {
+    auto nr = PowellDogLegNewtonRaphsonSolver5{};
+    TFEL_TESTS_ASSERT(!nr.solve());
   }
 };
 

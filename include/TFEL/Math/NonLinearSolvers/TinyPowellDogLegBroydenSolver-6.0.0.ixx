@@ -1,6 +1,6 @@
 /*!
  * \file
- * include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegBroydenSolver.ixx
+ * include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegBroydenSolver-6.0.0.ixx
  * \brief  This file implements the TinyPowellDogLegNewtonMatrix class
  * \author Thomas Helfer
  * \date   02/07/2021
@@ -12,13 +12,13 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX
-#define LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX
+#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_6_0_0_IXX
+#define LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_6_0_0_IXX
 
 #include "TFEL/Math/General/IEEE754.hxx"
-#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
+#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase-6.0.0.hxx"
 
-namespace tfel::math {
+namespace tfel::math::v6_0_0 {
 
   template <unsigned short N,
             typename NumericType,
@@ -56,10 +56,12 @@ namespace tfel::math {
     // too far from the current estimate. This can't last as the radius is
     // reduced.
     constexpr auto maximal_residual_growth = NumericType(10);
-    const auto accepted = this->powell_dogleg_accept_correction ||
-                          updatePowellDogLegTrustRegionRadius(
-                              this->powell_dogleg_radius, this->delta_zeros,
-                              this->jacobian, this->fzeros_1, this->fzeros);
+    // qualified call: an unqualified one may be ambiguous through ADL
+    const auto accepted =
+        this->powell_dogleg_accept_correction ||
+        tfel::math::v6_0_0::updatePowellDogLegTrustRegionRadius(
+            this->powell_dogleg_radius, this->delta_zeros, this->jacobian,
+            this->fzeros_1, this->fzeros);
     if (accepted ||
         (norm(this->fzeros) < maximal_residual_growth * norm(this->fzeros_1))) {
       this->updateJacobian();
@@ -87,11 +89,13 @@ namespace tfel::math {
       this->fzeros = this->fzeros_1;
     }
     this->delta_zeros = -tmp_fzeros;
-    applyPowellDogLegAlgorithm(this->delta_zeros, this->jacobian, this->fzeros,
-                               this->powell_dogleg_radius);
+    // qualified call: an unqualified one may be ambiguous through ADL
+    tfel::math::v6_0_0::applyPowellDogLegAlgorithm(this->delta_zeros,
+                                                   this->jacobian, this->fzeros,
+                                                   this->powell_dogleg_radius);
     return true;
   }  // end of computeNewCorrection
 
-}  // end of namespace tfel::math
+}  // end of namespace tfel::math::v6_0_0
 
-#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_IXX */
+#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_6_0_0_IXX */

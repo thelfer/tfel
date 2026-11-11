@@ -1920,8 +1920,6 @@ include/TFEL/Math/NonLinearSolvers/TinyNewtonRaphsonSolver.ixx -text
 include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.hxx -text
 include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.ixx -text
 include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx -text
-include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegBroydenSolver.ixx -text
-include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegNewtonRaphsonSolver.ixx -text
 include/TFEL/Math/Parser/BinaryFunction.hxx -text
 include/TFEL/Math/Parser/BinaryFunction.ixx -text
 include/TFEL/Math/Parser/BinaryOperator.hxx -text

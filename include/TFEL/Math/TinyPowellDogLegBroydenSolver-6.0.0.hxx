@@ -1,0 +1,128 @@
+/*!
+ * \file include/TFEL/Math/TinyPowellDogLegBroydenSolver-6.0.0.hxx
+ * \brief
+ * \author Thomas Helfer
+ * \date 02/07/2021
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ */
+
+#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_6_0_0_HXX
+#define LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_6_0_0_HXX
+
+#include <type_traits>
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.hxx"
+
+namespace tfel::math::v6_0_0 {
+
+  /*!
+   * \brief class allocating on the stack a workspace usable by the
+   * `TinyPowellDogLegBroydenSolver` class.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   */
+  template <unsigned short N, typename NumericType>
+  struct StackAllocatedTinyPowellDogLegBroydenSolverWorkspace
+      : public StackAllocatedTinyNonLinearSolverWorkspace<N, NumericType> {
+    //! \brief approximation of the invert of the jacobian matrix
+    tmatrix<N, N, NumericType> jacobian;
+    //! \brief residual of the previous iterations
+    tvector<N, NumericType> fzeros_1;
+  };
+
+  /*!
+   * \brief A class based on the curiously recurring template pattern (CRTP)
+   * to solve system of non linear equations using the
+   * Broyden algorithm coupled with the Powell' dog leg algorithm and the
+   * classical trust region method.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   * \tparam Child: base class.
+   * \tparam ExternalWorkSpace: class containing data members used by the
+   * solver.
+   *
+   * By default, the `Child` class must:
+   *
+   * 1. Set the values of `epsilon`, `iterMax` and
+   * `powell_dogleg_trust_region_size` data members and the initial guess of the
+   * unknowns, i.e. by setting the value of the `zeros` data member.
+   * 2. Provide a method called `computeResidual` which must computes
+   * the residual, i.e. the data member `fzeros` and the jacobian matrix, i.e.
+   * the data member `jacobian` using the current estimate of the solution, i.e.
+   * the data member `zeros`.
+   */
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename> typename ExternalWorkSpace =
+                StackAllocatedTinyPowellDogLegBroydenSolverWorkspace>
+  struct TinyPowellDogLegBroydenSolver
+      : TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace> {
+    //
+    static_assert(N != 0, "invalid size");
+    static_assert(std::is_floating_point_v<NumericType>,
+                  "invalid numeric type");
+    //! \brief default constructor
+    TinyPowellDogLegBroydenSolver() = default;
+    //! \brief default constructor
+    TinyPowellDogLegBroydenSolver(TinyPowellDogLegBroydenSolver&) noexcept =
+        default;
+    //! \brief default constructor
+    TinyPowellDogLegBroydenSolver(TinyPowellDogLegBroydenSolver&&) noexcept =
+        default;
+    //! \brief default constructor
+    TinyPowellDogLegBroydenSolver& operator=(
+        TinyPowellDogLegBroydenSolver&&) noexcept = default;
+    //! \brief default constructor
+    TinyPowellDogLegBroydenSolver& operator=(
+        const TinyPowellDogLegBroydenSolver&) noexcept = default;
+    //! \brief destructor
+    ~TinyPowellDogLegBroydenSolver() noexcept = default;
+    /*!
+     * \brief this method is called at the beginning of the
+     * `solveNonLinearSystem` method.
+     */
+    TFEL_HOST_DEVICE constexpr void
+    executeInitialisationTaskBeforeResolution() noexcept {
+      this->powell_dogleg_radius = this->powell_dogleg_trust_region_size;
+    }
+    /*!
+     * \brief this method is called at the beginning of the
+     * `solveNonLinearSystem2` method.
+     */
+    TFEL_HOST_DEVICE constexpr void
+    executeInitialisationTaskBeforeBeginningOfCoreAlgorithm() noexcept {
+      this->powell_dogleg_accept_correction = true;
+    }
+    /*!
+     * \brief update the jacobian matrix
+     *
+     * This method is called by `computeNewCorrection` before the
+     * `updateOrCheckJacobian` method of the derived class.
+     */
+    TFEL_HOST_DEVICE void updateJacobian();
+    //! \brief compute a new correction to the unknowns
+    TFEL_HOST_DEVICE bool computeNewCorrection();
+
+   protected:
+    //! \brief radius of the trust region at the beginning of the resolution
+    NumericType powell_dogleg_trust_region_size;
+
+   private:
+    //! \brief current radius of the trust region
+    NumericType powell_dogleg_radius;
+    //! \brief boolean stating if the next correction is accepted unchecked
+    bool powell_dogleg_accept_correction;
+  };
+
+}  // end of namespace tfel::math::v6_0_0
+
+#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegBroydenSolver-6.0.0.ixx"
+
+#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_6_0_0_HXX */
