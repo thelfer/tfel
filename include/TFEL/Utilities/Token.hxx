@@ -59,11 +59,37 @@ namespace tfel::utilities {
     Token& operator=(Token&&) noexcept;
     //! \brief destructor
     ~Token() noexcept;
-    //! \brief string holded by the token
+    /*!
+     * \brief string holded by the token
+     *
+     * The value of a comment, that is of a token whose flag is Comment,
+     * DoxygenComment or DoxygenBackwardComment, is the contents of the comment:
+     * the delimiters of the comment and the spaces which surround its contents
+     * are not a part of the value. An empty comment, as `//` or a `C` style
+     * comment without any contents, thus gives a token with an empty value.
+     */
     std::string value;
     //! \brief line number
     size_type line = 0u;
-    //! \brief offset in the line
+    /*!
+     * \brief offset in the line
+     *
+     * The offset of a token is the position, in the line the token starts on,
+     * of the first character the token stands for. The offset of a token whose
+     * value is empty, which is only possible for a comment and for a raw string
+     * literal, is that of the delimiter which opens it. The offset of a comment
+     * is therefore always strictly smaller than the size of the line the
+     * comment starts on, see issue #1391. The raw string literals are the
+     * exception: the value and the offset of such a token are those of its
+     * contents, not those of the literal itself, which is the defect reported
+     * in issue #1390.
+     *
+     * A token may span several lines, which is the case of a comment and of a
+     * raw string literal: the line and the offset of such a token are those of
+     * its first line, whereas its value gathers the lines it spans. The offset
+     * of a comment without contents on the line it starts on, as the offset of
+     * an empty comment, is that of the delimiter which opens it.
+     */
     size_type offset = 0u;
     //! \brief comment
     std::string comment;
