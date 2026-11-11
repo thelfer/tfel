@@ -273,10 +273,10 @@ follows:
    compatibility mode of the current version of `TFEL` and those of the
    `tfel::future` and `tfel::constants::future` namespaces to the values
    of the next major version. The `Fortran` bindings expose the values of
-   the next major version. Regenerated files are identical to the
-   committed ones, except for the values which have changed: checking
-   those differences is the way of checking that no value has been
-   changed by mistake.
+   the next major version. Once formatted by `clang-format`, the
+   regenerated files are identical to the committed ones, except for the
+   values which have changed: checking those differences is the way of
+   checking that no value has been changed by mistake.
 4. Install the new header in `include/CMakeLists.txt`:
 
    ~~~~{.cmake}
