@@ -232,7 +232,7 @@ namespace mfront {
              "map allowing to override material properties, parameters and "
              "external state variables by parameters"},
             {DSLBase::compatibilityModeOption,
-             "string given the version to which the MFront file shall comply"}};
+             "string giving the version to which the MFront file shall comply"}};
   }  // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
