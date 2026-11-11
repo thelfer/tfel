@@ -648,6 +648,8 @@ namespace mfront {
                     << "using namespace tfel::math;\n"
                     << "using namespace tfel::material;\n"
                     << "using pleiades::field::real;\n";
+      this->srcFile << "[[maybe_unused]] constexpr auto use_qt = "
+                    << (useQuantities(md) ? "true" : "false") << ";\n";
       writePhysicalConstantsAlias(this->srcFile, md, "NumericType",
                                   useQuantities(md));
       writeMaterialLaws(this->srcFile, md.materialLaws);
