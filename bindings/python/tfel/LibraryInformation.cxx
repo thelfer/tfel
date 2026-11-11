@@ -29,8 +29,7 @@ void declareLibraryInformation(pybind11::module_& m) {
       "information from a library or binary file.\n"
       "Currently understands ELF, MACH-O and PE formats on all the\n"
       "platforms.")
-      .def(pybind11::init<std::string>(),
-           pybind11::arg("f"),
+      .def(pybind11::init<std::string>(), pybind11::arg("f"),
            "Opens file with specified path and prepares for\n"
            "information extraction\n"
            "f: path to the binary file from which the info must be extracted")
@@ -39,8 +38,7 @@ void declareLibraryInformation(pybind11::module_& m) {
       .def("symbols", ptr1,
            "List of all the exportable symbols from all the\n"
            "sections that exist in binary file")
-      .def("symbols", ptr2,
-           pybind11::arg("n"),
+      .def("symbols", ptr2, pybind11::arg("n"),
            "The list of symbols from the specified section\n"
            "n: name of the section from which symbol names must be returned");
 }

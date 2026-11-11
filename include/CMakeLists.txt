@@ -3,6 +3,8 @@ install_header(TFEL ContractViolation.hxx)
 install_header(TFEL Raise.hxx)
 install_header(TFEL Raise.ixx)
 install_header(TFEL PhysicalConstants.hxx)
+install_header(TFEL PhysicalConstants-5.2.0.hxx)
+install_header(TFEL PhysicalConstants-6.0.0.hxx)
 
 install_header(TFEL/Config/Internals TFELTypesInternals.hxx)
 install_header(TFEL/Config TFEL_MATH_Config.hxx)

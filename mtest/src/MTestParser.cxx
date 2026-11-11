@@ -79,12 +79,21 @@ namespace mtest {
     const auto pe = s.end();
     for (auto& token : this->tokens) {
       if (token.flag == tfel::utilities::Token::String) {
-        auto delim = token.value.at(0);
-        auto contents = token.value.substr(1, token.value.size() - 2);
+        // the value of a string token holds the whole literal: the
+        // substitutions are performed on its contents, which is written back
+        // with the same delimiters
+        const auto raw = tfel::utilities::isRawString(token);
+        const auto delim = tfel::utilities::getRawStringDelimiter(token);
+        auto contents = tfel::utilities::getContents(token);
         for (const auto& [k, v] : s) {
           contents = tfel::utilities::replace_all(contents, k, v);
         }
-        token.value = delim + contents + delim;
+        if (raw) {
+          token.value = "R\"" + delim + "(" + contents + ")" + delim + "\"";
+        } else {
+          const auto quote = token.value.at(0);
+          token.value = quote + contents + quote;
+        }
       } else {
         auto p = s.find(token.value);
         if (p != pe) {
@@ -437,7 +446,7 @@ namespace mtest {
           this->checkNotEndOfLine("MTestParser::handleTest", p,
                                   this->tokens.end());
           if (p->flag == tfel::utilities::Token::String) {
-            const auto c = p->value.substr(1, p->value.size() - 2);
+            const auto c = tfel::utilities::getContents(*p);
             warn_if(!columns.insert({v, gentype(c)}).second, pv, v);
             ++p;
           } else {

@@ -44,8 +44,7 @@ namespace tfel::material {
           p,
       const RousselierTanguyBesson2002StressType<StressStensor> seps) {
     using stress = RousselierTanguyBesson2002StressType<StressStensor>;
-    using stress2 =
-        tfel::math::result_type<stress, stress, tfel::math::OpMult>;
+    using stress2 = tfel::math::result_type<stress, stress, tfel::math::OpMult>;
     using real = RousselierTanguyBesson2002BaseType<StressStensor>;
     using size_type = unsigned short;
     using tfel::math::base_type_cast;
@@ -113,8 +112,7 @@ namespace tfel::material {
     // under tension, the starting point is bounded by the solution for a
     // vanishing von Mises stress, so that the Newton-Raphson algorithm does
     // not start far in the exponential branch
-    const auto x0 =
-        (pr > stress(0)) ? std::min(x01, std::log(1 / B) / C) : x01;
+    const auto x0 = (pr > stress(0)) ? std::min(x01, std::log(1 / B) / C) : x01;
     // const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
     // The Newton-Raphson algorithm works on the base numeric type, since the
     // unknown and S do not have the same unit

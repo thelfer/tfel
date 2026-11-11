@@ -145,19 +145,35 @@ namespace tfel::utilities {
     auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseStream: " + m);
     };
+    auto tokenize_line = [this, &n, &from](const std::string& line) {
+      ++n;
+      try {
+        this->splitLine(line, n);
+      } catch (std::runtime_error& e) {
+        raise(std::string(e.what()) + ".\n" +
+              "Error at line: " + std::to_string(n) + from);
+      }
+    };
     try {
-      while (!in.eof()) {
-        throw_if(!in.good(), "error while parsing stream");
-        throw_if(!in.good(), "error while parsing stream");
-        auto line = std::string{};
-        std::getline(in, line);
-        ++n;
-        try {
-          this->splitLine(line, n);
-        } catch (std::runtime_error& e) {
-          raise(std::string(e.what()) + ".\n" +
-                "Error at line: " + std::to_string(n) + from);
-        }
+      auto line = std::string{};
+      while (std::getline(in, line)) {
+        tokenize_line(line);
+        // std::getline does not clear the line when the extraction fails, so
+        // that the content of the last line is not kept for the test below
+        line.clear();
+      }
+      throw_if(in.bad(), "error while parsing stream");
+      // The extraction may fail although some characters have been extracted,
+      // which is the case of the last line of a stream which is not terminated
+      // by an end of line character: such a line still has to be tokenized. On
+      // the contrary, an extraction which extracts nothing means that the end
+      // of the stream is reached: such an empty line shall not be tokenized as
+      // it would add a spurious end of line character at the end of the value
+      // of a token which spans several lines, as an unterminated comment for
+      // instance. Tokenizing a stream line by line gives then the same result
+      // as tokenizing its whole contents
+      if (!line.empty()) {
+        tokenize_line(line);
       }
     } catch (...) {
       this->clear();
@@ -560,25 +576,28 @@ namespace tfel::utilities {
       }
       return pe;
     };
-    auto next_token = [this, &p, &o] {
-      if (this->bKeepCommentBoundaries) {
-        ++p;
-      } else {
-        advance(o, p, 1u);
-      }
-    };
     const auto b = p;
+    // The offset of the delimiter which opens the comment. It is kept before
+    // the delimiters are read, as o is increased while reading the line. It is
+    // that of the token in two cases:
+    //
+    // - when the comment is empty, since such a token has no contents to point
+    //   to, see issue #1391,
+    //
+    // - when the boundaries of the comment are a part of its value, since such
+    //   a value starts with that delimiter, see issue #1407
+    const auto bo = o;
     throw_if((p == pe) || (*p != '/'), "invalid call");
-    next_token();
+    advance(o, p, 1u);
     throw_if((p == pe) || (*p != '*'), "invalid call");
-    next_token();
+    advance(o, p, 1u);
     auto flag = Token::Comment;
     if ((p != pe) && (*p == '!')) {
-      next_token();
+      advance(o, p, 1u);
       if ((p != pe) && (*p == '<')) {
         flag = this->tokens.empty() ? Token::Comment
                                     : Token::DoxygenBackwardComment;
-        next_token();
+        advance(o, p, 1u);
       } else {
         flag = this->tokens.empty() ? Token::Comment : Token::DoxygenComment;
       }
@@ -588,22 +607,35 @@ namespace tfel::utilities {
     }
     auto e = get_end(p);
     if (this->bKeepCommentBoundaries) {
+      // the value of the token is the whole comment, whose delimiters are a
+      // part of it, so that the offset of the token is that of the delimiter
+      // which opens it. Reading the delimiters advances the offset along with
+      // the iterator, whatever the options are, so that the tokens which follow
+      // the comment on the same line keep the offsets of the line, see issue
+      // #1407
       if (e == pe) {
-        this->tokens.emplace_back(std::string{b, e}, n, o, flag);
+        this->tokens.emplace_back(std::string{b, e}, n, bo, flag);
       } else {
-        this->tokens.emplace_back(std::string{b, e + 2}, n, o, flag);
+        this->tokens.emplace_back(std::string{b, e + 2}, n, bo, flag);
       }
     } else {
+      auto value = std::string{};
       if (p != e) {
         auto ps = std::prev(e);
         while ((is_space(*ps)) && (ps != p)) {
           --ps;
         }
         ++ps;
-        this->tokens.emplace_back(std::string{p, ps}, n, o, flag);
+        value = std::string{p, ps};
       } else {
-        this->tokens.emplace_back(std::string{p, e}, n, o, flag);
+        value = std::string{p, e};
       }
+      // A comment without contents on this line, as /**/ or /*   */, or as a
+      // `C` style comment opened at the end of a line and whose contents starts
+      // on a later line, gives a token with an empty value: the offset of such
+      // a token is that of the delimiter which opens it, since it has no
+      // contents to point to, see issue #1391
+      this->tokens.emplace_back(value, n, (value.empty() ? bo : o), flag);
     }
     advance(o, p, e - p);
     if (e == pe) {
@@ -620,34 +652,46 @@ namespace tfel::utilities {
     auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseCxxComment: " + m);
     };
-    auto next_token = [this, &p, &o] {
-      if (this->bKeepCommentBoundaries) {
-        ++p;
-      } else {
-        advance(o, p, 1u);
-      }
-    };
     const auto b = p;
+    // The offset of the delimiter which opens the comment. It is kept before
+    // the delimiters are read, as o is increased while reading the line. It is
+    // that of the token in two cases:
+    //
+    // - when the comment is empty, since such a token has no contents to point
+    //   to, see issue #1391,
+    //
+    // - when the boundaries of the comment are a part of its value, since such
+    //   a value starts with that delimiter, see issue #1407
+    const auto bo = o;
     throw_if((p == pe) || (*p != '/'), "invalid call");
-    next_token();
+    advance(o, p, 1u);
     throw_if((p == pe) || (*p != '/'), "invalid call");
-    next_token();
+    advance(o, p, 1u);
     auto flag = Token::Comment;
     if ((p != pe) && (*p == '!')) {
-      next_token();
+      advance(o, p, 1u);
       if ((p != pe) && (*p == '<')) {
         flag = this->tokens.empty() ? Token::Comment
                                     : Token::DoxygenBackwardComment;
-        next_token();
+        advance(o, p, 1u);
       } else {
         flag = this->tokens.empty() ? Token::Comment : Token::DoxygenComment;
       }
     }
     if (this->bKeepCommentBoundaries) {
-      this->tokens.emplace_back(std::string{b, pe}, n, o, flag);
+      // the value of the token is the whole comment, whose delimiters are a
+      // part of it, so that the offset of the token is that of the delimiter
+      // which opens it. Reading the delimiters advances the offset along with
+      // the iterator, whatever the options are, so that the offsets of the
+      // lines which follow are those of the lines, see issue #1407
+      this->tokens.emplace_back(std::string{b, pe}, n, bo, flag);
     } else {
       ignore_space(o, p, pe);
-      this->tokens.emplace_back(std::string{p, pe}, n, o, flag);
+      // An empty comment, as `//`, gives a token with an empty value: the
+      // offset of such a token is that of the delimiter which opens it, since
+      // it has no contents to point to, see issue #1391
+      this->tokens.emplace_back(std::string{p, pe}, n, (p == pe) ? bo : o,
+                                flag);
     }
     advance(o, p, pe - p);
   }
@@ -655,7 +699,8 @@ namespace tfel::utilities {
   void CxxTokenizer::parseRawString(Token::size_type& o,
                                     std::string::const_iterator& p,
                                     const std::string::const_iterator pe,
-                                    const Token::size_type n) {
+                                    const Token::size_type n,
+                                    const Token::size_type ro) {
     auto findDelimiter = [this, pe](std::string::const_iterator c) {
       if (*c != ')') {
         return false;
@@ -676,10 +721,18 @@ namespace tfel::utilities {
       }
       return *c == '\"';
     };
-    this->tokens.emplace_back("", n, o, Token::String);
+    // the value of a raw string token holds the whole literal, from the `R`
+    // delimiter to the closing `"` included, as for a quoted string, and its
+    // offset is that of the `R`, see issue #1390. The opening `R"delim(`
+    // prefix is restored from the delimiter of the literal, which the caller
+    // has read and kept in `currentRawStringDelimiter`
+    this->tokens.emplace_back("R\"" + this->currentRawStringDelimiter + "(", n,
+                              ro, Token::String);
     auto& value = this->tokens.back().value;
     while (p != pe) {
       if (findDelimiter(p)) {
+        // the closing `)delim"` suffix is a part of the value
+        value += std::string{p, p + this->currentRawStringDelimiter.size() + 2};
         advance(o, p, this->currentRawStringDelimiter.size() + 2);
         this->rawStringOpened = false;
         this->currentRawStringDelimiter.clear();
@@ -778,6 +831,9 @@ namespace tfel::utilities {
       } else if ((*p == 'R') &&
                  ((std::next(p) != pe) && ((*(std::next(p)) == '\"')))) {
         // raw strings litteral
+        // the offset of the `R` delimiter: it is that of the token, whose
+        // value holds the whole literal, see issue #1390
+        const auto ro = o;
         advance(o, p, 2u);
         this->currentRawStringDelimiter.clear();
         this->rawStringOpened = true;
@@ -792,7 +848,7 @@ namespace tfel::utilities {
               "invalid end of line, expected to read the raw string delimiter");
         }
         advance(o, p, 1u);
-        this->parseRawString(o, p, pe, n);
+        this->parseRawString(o, p, pe, n, ro);
       } else if (*p == '\"') {
         // c-strings
         if (this->treatStrings) {
@@ -944,10 +1000,11 @@ namespace tfel::utilities {
     if (this->rawStringOpened) {
       const auto delimiter = ")" + this->currentRawStringDelimiter + '\"';
       const auto pos3 = line.find(delimiter);
-      if (pos3 == std::string::npos) {
-      }
       if (tokens.empty()) {
-        this->tokens.emplace_back("", n, o, Token::String);
+        // the opening `R"delim(` prefix is restored from the delimiter of the
+        // literal, which the tokenizer has kept
+        this->tokens.emplace_back("R\"" + this->currentRawStringDelimiter + "(",
+                                  n, o, Token::String);
       }
       throw_if((this->tokens.back().flag != Token::String),
                "internal error (previous token is not a string)");
@@ -959,7 +1016,8 @@ namespace tfel::utilities {
         advance(o, p, line.size());
         return;
       }
-      this->tokens.back().value += std::string{p, p + pos3};
+      // the closing `)delim"` suffix is a part of the value
+      this->tokens.back().value += std::string{p, p + pos3 + delimiter.size()};
       advance(o, p, pos3 + delimiter.size());
       this->rawStringOpened = false;
       this->currentRawStringDelimiter.clear();
@@ -979,10 +1037,16 @@ namespace tfel::utilities {
   void CxxTokenizer::stripComments() {
     for (auto p = this->tokens.begin(); p != this->tokens.end();) {
       if (p->flag == Token::Comment) {
-        if (this->comments.find(p->line) != this->comments.end()) {
-          this->comments[p->line] += ' ';
+        // the comments of a line are gathered, separated by a space character.
+        // The value of an empty comment is empty: it brings nothing and is then
+        // neither gathered nor responsible for a separator
+        if (!p->value.empty()) {
+          const auto it = this->comments.insert({p->line, std::string{}}).first;
+          if (!it->second.empty()) {
+            it->second += ' ';
+          }
+          it->second += p->value;
         }
-        this->comments[p->line] = p->value;
         p = this->tokens.erase(p);
       } else if (p->flag == Token::DoxygenComment) {
         auto p2 = p;
@@ -1204,7 +1268,7 @@ namespace tfel::utilities {
     raise_if(p->value.size() < 2,
              "CxxTokenizer::readString: "
              "internal error (invalid string size)");
-    const auto value = p->value.substr(1, p->value.size() - 2);
+    const auto value = getContents(*p);
     ++p;
     return value;
   }  // end of CxxTokenizer::readString
@@ -1261,16 +1325,17 @@ namespace tfel::utilities {
     // std::from_chars does not accept an explicit plus sign
     const auto b = v.data() + (((!v.empty()) && (v[0] == '+')) ? 1 : 0);
     const auto e = v.data() + v.size();
-    auto i = static_cast<long long>(0);
+    // std::from_chars reports the values out of the range of the type
+    auto i = IntegerType{};
     const auto [pi, ec] = std::from_chars(b, e, i);
-    if ((ec != std::errc{}) || (!std::in_range<IntegerType>(i))) {
+    if (ec != std::errc{}) {
       return false;
     }
     const auto s = std::string_view(pi, e - pi);
     if (s.find_first_not_of("uUlL") != std::string_view::npos) {
       return false;
     }
-    r = static_cast<IntegerType>(i);
+    r = i;
     return true;
   }  // end of convertToInteger
 

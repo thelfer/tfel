@@ -192,7 +192,7 @@ namespace mfront {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     const Modifier m = [cn](const BehaviourDescription::MaterialPropertyInput&
-                                 i) {
+                                i) {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category ==
            MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||

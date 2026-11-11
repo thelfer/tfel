@@ -348,6 +348,7 @@ namespace mfront {
     writeVariablesNamesSymbol(os, name, mpd);
     writeVariablesBoundsSymbols(os, name, mpd);
     writeValidatorSymbol(os, name, mpd);
+    writeCompatibilityModeSymbol(os, name, mpd);
     writeBuildIdentifierSymbol(os, name, mpd);
     writeEntryPointSymbol(os, name);
     writeTFELVersionSymbol(os, name);

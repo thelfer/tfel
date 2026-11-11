@@ -32,12 +32,12 @@ void declareExternalMaterialPropertyDescription(pybind11::module_&);
 void declareExternalMaterialPropertyDescription(pybind11::module_& m) {
   using namespace tfel::system;
   pybind11::class_<ExternalMaterialPropertyDescription,
-                    ExternalMaterialKnowledgeDescription>(
+                   ExternalMaterialKnowledgeDescription>(
       m, "ExternalMaterialPropertyDescription",
       "A structure containing the information about a given material property")
       .def(pybind11::init<>(), "Default constructor")
-      .def(pybind11::init<std::string, std::string>(),
-           pybind11::arg("l"), pybind11::arg("m"),
+      .def(pybind11::init<std::string, std::string>(), pybind11::arg("l"),
+           pybind11::arg("m"),
            "l: library\n"
            "m: material property")
       .def_readonly("law", &ExternalMaterialPropertyDescription::law,

@@ -40,7 +40,7 @@ namespace tfel::utilities {
     raise_if(p->flag != tfel::utilities::Token::String,
              "TestParser::readString: "
              "expected to read a string");
-    s = p->value.substr(1, p->value.size() - 2);
+    s = tfel::utilities::getContents(*p);
     ++p;
   }  // end of ParserBase::readString
 

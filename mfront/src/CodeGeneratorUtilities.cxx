@@ -376,7 +376,17 @@ namespace mfront {
     const auto validator = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::validator, "");
     exportStringSymbol(os, std::string{n} + "_validator", validator);
-  }  // end of writeValidatorSymbols
+  }  // end of writeValidatorSymbol
+
+  void writeCompatibilityModeSymbol(std::ostream& os,
+                                    const std::string_view n,
+                                    const MaterialKnowledgeDescription& d) {
+    if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      const auto version = d.getAttribute<std::string>(
+          MaterialKnowledgeDescription::compatibilityMode, "");
+      exportStringSymbol(os, std::string{n} + "_compatibility_mode", version);
+    }
+  }  // end of writeCompatibilityModeSymbol
 
   void writeBuildIdentifierSymbol(std::ostream& os,
                                   const std::string_view n,
@@ -746,5 +756,43 @@ namespace mfront {
     os << "#line " << ln << " \"" << f << "\"\n";
 #endif
   }
+
+  void writePhysicalConstantsAlias(std::ostream& os,
+                                   const MaterialKnowledgeDescription& d,
+                                   std::string_view numeric_type,
+                                   const bool use_quantities) {
+    const auto v = getEffectiveCompatibilityMode(d);
+    if (v == CompatibilityMode::future) {
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::future::PhysicalConstants<" << numeric_type
+           << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::future::PhysicalConstants<" << numeric_type
+           << ", false>;\n";
+      }
+    } else if (v == CompatibilityMode::v5_2_0) {
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
+           << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
+           << ", false>;\n";
+      }
+      return;
+    } else {
+      // use the current version of the physical constants
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::PhysicalConstants<" << numeric_type << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
+      }
+    }
+  }  // end of writePhysicalConstantsAlias
 
 }  // end of namespace mfront

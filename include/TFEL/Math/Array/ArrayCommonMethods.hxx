@@ -197,12 +197,12 @@ namespace tfel::math {
      * \param[in] s: scalar value
      */
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr void divideByScalar(const ValueType2&)
-      requires(isAssignableTo<
-               BinaryOperationResult<typename ArrayPolicyType::value_type,
-                                     ValueType2,
-                                     OpDiv>,
-               typename ArrayPolicyType::value_type>());
+    TFEL_HOST_DEVICE constexpr void divideByScalar(const ValueType2&) requires(
+        isAssignableTo<
+            BinaryOperationResult<typename ArrayPolicyType::value_type,
+                                  ValueType2,
+                                  OpDiv>,
+            typename ArrayPolicyType::value_type>());
   };
 
 }  // end of namespace tfel::math

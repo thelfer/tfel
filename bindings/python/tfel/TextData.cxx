@@ -23,20 +23,17 @@ void declareTextData(pybind11::module_& m) {
   std::vector<double> (TextData::*getColumn)(const Token::size_type) const =
       &TextData::getColumn;
 
-  pybind11::class_<TextData>(
-      m, "TextData",
-      "Class in charge of reading data in a text file")
-      .def(pybind11::init<std::string>(),
-           pybind11::arg("file"),
+  pybind11::class_<TextData>(m, "TextData",
+                             "Class in charge of reading data in a text file")
+      .def(pybind11::init<std::string>(), pybind11::arg("file"),
            "Constructor\n"
            "file: file name")
-      .def(pybind11::init<std::string, std::string>(),
-           pybind11::arg("file"), pybind11::arg("format") = "",
+      .def(pybind11::init<std::string, std::string>(), pybind11::arg("file"),
+           pybind11::arg("format") = "",
            "Constructor\n"
            "file: file name\n"
            "format: file format")
-      .def("getColumn", getColumn,
-           pybind11::arg("i"),
+      .def("getColumn", getColumn, pybind11::arg("i"),
            "Return the specified column, converting all values to double\n"
            "i: column number");
 

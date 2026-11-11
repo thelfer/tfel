@@ -126,33 +126,36 @@ static const char compute_anisotropic_localisation_tensor_doc[] =
     "max_it: maximal number of iterations for integration";
 
 void declareLocalisationTensors(pybind11::module_& m) {
-  m.def("computeSphereLocalisationTensor",
-        [](const double young, const double nu, const double young_i,
-           const double nu_i) {
-          return homogenization::elasticity::computeSphereLocalisationTensor(
-              young, nu, young_i, nu_i);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("young_i"),
-        pybind11::arg("nu_i"), compute_sphere_localisation_tensor_doc);
-  m.def("computeSphereLocalisationTensor",
-        [](const IsotropicModuli<double>& IM0,
-           const IsotropicModuli<double>& IM_i) {
-          return homogenization::elasticity::computeSphereLocalisationTensor(
-              IM0, IM_i);
-        },
-        pybind11::arg("IM0"), pybind11::arg("IM_i"),
-        compute_sphere_localisation_tensor_IM_doc);
-  m.def("computeAxisymmetricalLocalisationTensor",
-        [](const double young, const double nu, const double young_i,
-           const double nu_i, const tfel::math::tvector<3u, double>& n_a,
-           const double e) {
-          return homogenization::elasticity::
-              computeAxisymmetricalEllipsoidLocalisationTensor(
-                  young, nu, young_i, nu_i, n_a, e);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("young_i"),
-        pybind11::arg("nu_i"), pybind11::arg("n_a"), pybind11::arg("e"),
-        compute_axisymmetrical_localisation_tensor_doc);
+  m.def(
+      "computeSphereLocalisationTensor",
+      [](const double young, const double nu, const double young_i,
+         const double nu_i) {
+        return homogenization::elasticity::computeSphereLocalisationTensor(
+            young, nu, young_i, nu_i);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("young_i"),
+      pybind11::arg("nu_i"), compute_sphere_localisation_tensor_doc);
+  m.def(
+      "computeSphereLocalisationTensor",
+      [](const IsotropicModuli<double>& IM0,
+         const IsotropicModuli<double>& IM_i) {
+        return homogenization::elasticity::computeSphereLocalisationTensor(
+            IM0, IM_i);
+      },
+      pybind11::arg("IM0"), pybind11::arg("IM_i"),
+      compute_sphere_localisation_tensor_IM_doc);
+  m.def(
+      "computeAxisymmetricalLocalisationTensor",
+      [](const double young, const double nu, const double young_i,
+         const double nu_i, const tfel::math::tvector<3u, double>& n_a,
+         const double e) {
+        return homogenization::elasticity::
+            computeAxisymmetricalEllipsoidLocalisationTensor(young, nu, young_i,
+                                                             nu_i, n_a, e);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("young_i"),
+      pybind11::arg("nu_i"), pybind11::arg("n_a"), pybind11::arg("e"),
+      compute_axisymmetrical_localisation_tensor_doc);
   m.def(
       "computeAxisymmetricalLocalisationTensor",
       [](const IsotropicModuli<double>& IM0,
@@ -163,18 +166,19 @@ void declareLocalisationTensors(pybind11::module_& m) {
       },
       pybind11::arg("IM0"), pybind11::arg("IM_i"), pybind11::arg("n_a"),
       pybind11::arg("e"), compute_axisymmetrical_localisation_tensor_IM_doc);
-  m.def("computeLocalisationTensor",
-        [](const double young, const double nu, const double young_i,
-           const double nu_i, const tfel::math::tvector<3u, double>& n_a,
-           const double a, const tfel::math::tvector<3u, double>& n_b,
-           const double b, const double c) {
-          return homogenization::elasticity::computeEllipsoidLocalisationTensor(
-              young, nu, young_i, nu_i, n_a, a, n_b, b, c);
-        },
-        pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("young_i"),
-        pybind11::arg("nu_i"), pybind11::arg("n_a"), pybind11::arg("a"),
-        pybind11::arg("n_b"), pybind11::arg("b"), pybind11::arg("c"),
-        compute_localisation_tensor_young_nu_doc);
+  m.def(
+      "computeLocalisationTensor",
+      [](const double young, const double nu, const double young_i,
+         const double nu_i, const tfel::math::tvector<3u, double>& n_a,
+         const double a, const tfel::math::tvector<3u, double>& n_b,
+         const double b, const double c) {
+        return homogenization::elasticity::computeEllipsoidLocalisationTensor(
+            young, nu, young_i, nu_i, n_a, a, n_b, b, c);
+      },
+      pybind11::arg("young"), pybind11::arg("nu"), pybind11::arg("young_i"),
+      pybind11::arg("nu_i"), pybind11::arg("n_a"), pybind11::arg("a"),
+      pybind11::arg("n_b"), pybind11::arg("b"), pybind11::arg("c"),
+      compute_localisation_tensor_young_nu_doc);
   m.def(
       "computeLocalisationTensor",
       [](const IsotropicModuli<double>& IM0,
@@ -188,18 +192,19 @@ void declareLocalisationTensors(pybind11::module_& m) {
       pybind11::arg("IM0"), pybind11::arg("IM_i"), pybind11::arg("n_a"),
       pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
       pybind11::arg("c"), compute_localisation_tensor_IM_doc);
-  m.def("computeLocalisationTensor",
-        [](const IsotropicModuli<double>& IM0,
-           const tfel::math::st2tost2<3u, double>& C_i,
-           const tfel::math::tvector<3u, double>& n_a, const double a,
-           const tfel::math::tvector<3u, double>& n_b, const double b,
-           const double c) {
-          return homogenization::elasticity::computeEllipsoidLocalisationTensor(
-              IM0, C_i, n_a, a, n_b, b, c);
-        },
-        pybind11::arg("IM0"), pybind11::arg("C_i"), pybind11::arg("n_a"),
-        pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
-        pybind11::arg("c"), compute_localisation_tensor_doc);
+  m.def(
+      "computeLocalisationTensor",
+      [](const IsotropicModuli<double>& IM0,
+         const tfel::math::st2tost2<3u, double>& C_i,
+         const tfel::math::tvector<3u, double>& n_a, const double a,
+         const tfel::math::tvector<3u, double>& n_b, const double b,
+         const double c) {
+        return homogenization::elasticity::computeEllipsoidLocalisationTensor(
+            IM0, C_i, n_a, a, n_b, b, c);
+      },
+      pybind11::arg("IM0"), pybind11::arg("C_i"), pybind11::arg("n_a"),
+      pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
+      pybind11::arg("c"), compute_localisation_tensor_doc);
   m.def(
       "computeAnisotropicLocalisationTensor",
       [](const tfel::math::st2tost2<3u, double>& C_0_glob,
@@ -210,8 +215,8 @@ void declareLocalisationTensors(pybind11::module_& m) {
         return homogenization::elasticity::computeAnisotropicLocalisationTensor(
             C_0_glob, C_i_loc, n_a, a, n_b, b, c, max_it);
       },
-      pybind11::arg("C_0_glob"), pybind11::arg("C_i_loc"),
-      pybind11::arg("n_a"), pybind11::arg("a"), pybind11::arg("n_b"),
-      pybind11::arg("b"), pybind11::arg("c"), pybind11::arg("max_it") = 12,
+      pybind11::arg("C_0_glob"), pybind11::arg("C_i_loc"), pybind11::arg("n_a"),
+      pybind11::arg("a"), pybind11::arg("n_b"), pybind11::arg("b"),
+      pybind11::arg("c"), pybind11::arg("max_it") = 12,
       compute_anisotropic_localisation_tensor_doc);
 }

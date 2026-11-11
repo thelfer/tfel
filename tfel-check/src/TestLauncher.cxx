@@ -147,8 +147,7 @@ namespace tfel::check {
       this->throwRuntimeError(
           m, "expected a string, read '" + this->current->value + "'");
     }
-    const auto v =
-        this->current->value.substr(1, this->current->value.size() - 2);
+    const auto v = tfel::utilities::getContents(*this->current);
     ++(this->current);
     return v;
   }

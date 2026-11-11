@@ -1,3 +1,20 @@
+// Compatibility modes, in increasing order. The values of the last
+// compatibility mode are those of the next major version of `TFEL`, which
+// are not used yet: this is the value of the `value` field of the constants,
+// which is also the value used by the language bindings which are not
+// versioned, such as the `Fortran` ones. The values of the other
+// compatibility modes are given in the `values` field of the constants,
+// which is only used when those values differ from the values of the next
+// major version.
+{
+  mode: "5.2.0";
+  description: "Compatibility module with version 5.2.0.";
+}
+{
+  mode: "6.0.0";
+  description: "Compatibility module with version 6.0.0.";
+}
+
 {
  name: "AtomicMassConstant";
  short_name: "mu";
@@ -6,7 +23,15 @@
  qt_unit:
    [ 1, 0, 0, 0, 0, 0, 0 ];
  value: 1.660539040e-27;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 1.66054e-27;
+   }
+ ];
 }
+
 {
  name: "AvogadroConstant";
  short_name: "Na";
@@ -15,7 +40,15 @@
  qt_unit:
    [ 0, 0, 0, 0, 0, 0, -1 ];
  value: 6.022140857e23;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 6.02214e23;
+   }
+ ];
 }
+
 {
  name: "BoltzmannConstant";
  short_name: "kb";
@@ -24,7 +57,15 @@
  qt_unit:
    [ 1, 2, -2, 0, -1, 0, 0 ];
  value: 1.38064852e-23;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 1.38065e-23;
+   }
+ ];
 }
+
 {
  name: "ConductanceQuantum";
  short_name : "G0";
@@ -32,7 +73,15 @@
  unit: "S";
  qt_unit: [ -1, -2, 3, 2, 0, 0, 0 ];
  value:7.7480917310e-5;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 7.74809e-5;
+   }
+ ];
 }
+
 {
  name: "ElectricConstant";
  short_name : "e0";
@@ -41,7 +90,15 @@
  qt_unit:
    [ -1, -3, 4, 2, 0, 0, 0 ];
  value:8.854187817e-12;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 8.85419e-12;
+   }
+ ];
 }
+
 {
  name: "ElectronMass";
  short_name : "me";
@@ -50,7 +107,15 @@
  qt_unit:
    [ 1, 0, 0, 0, 0, 0, 0 ];
  value:9.10938356e-31;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 9.10938e-31;
+   }
+ ];
 }
+
 {
  name: "ElectronVolt";
  short_name : "eV";
@@ -59,7 +124,15 @@
  qt_unit:
    [ 1, 2, -2, 0, 0, 0, 0 ];
  value:1.6021766208e-19;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 1.60218e-19;
+   }
+ ];
 }
+
 {
  name: "ElementaryCharge";
  short_name : "e";
@@ -68,7 +141,15 @@
  qt_unit:
    [ 0, 0, 1, 1, 0, 0, 0 ];
  value:1.6021766208e-19;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 1.60218e-19;
+   }
+ ];
 }
+
 {
  name: "FaradayConstant";
  short_name : "F";
@@ -77,13 +158,29 @@
  qt_unit:
    [ 0, 0, 1, 1, 0, 0, -1 ];
  value:96485.33289;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 96485.3;
+   }
+ ];
 }
+
 {
  name: "FineStructureConstant";
  short_name : "a";
  description: "Fine-structure constant";
  value:7.2973525664e-3;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 0.00729735;
+   }
+ ];
 }
+
 {
  name: "MolarGasConstant";
  short_name : "R";
@@ -92,7 +189,15 @@
  qt_unit:
    [ 1, 2, -2, 0, -1, 0, -1 ];
  value:8.3144598;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 8.31446;
+   }
+ ];
 }
+
 {
  name: "StefanBoltzmannConstant";
  short_name : "s";
@@ -101,4 +206,12 @@
  qt_unit:
    [ 1, 0, -3, 0, -4, 0, 0 ];
  value:5.670367e-8;
+ values:
+ [
+   {
+     mode: "5.2.0";
+     value: 5.67037e-8;
+   }
+ ];
 }
+

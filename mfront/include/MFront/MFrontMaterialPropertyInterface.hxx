@@ -65,6 +65,8 @@ namespace mfront {
                                      const FileDescription&) const override;
     void writeValidatorSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
+    void writeCompatibilityModeSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
     void writeBuildIdentifierSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeEntryPointSymbol(

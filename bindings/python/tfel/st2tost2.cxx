@@ -40,18 +40,19 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
       })
       .def(pybind11::init<>(), "Default constructor")
       .def(pybind11::init<>(
-          [S](pybind11::array_t<double, pybind11::array::c_style |
-                                            pybind11::array::forcecast>& u) {
-            if ((u.shape(0) != S) || (u.shape(1) != S)) {
-              tfel::raise<std::range_error>("invalid shape of ST2toST2");
-            }
-            st2tost2 t;
-            for (std::size_t i = 0; i < S; i++)
-              for (std::size_t j = 0; j < S; j++) {
-                t(i, j) = u.unchecked<2>()(i, j);
-              }
-            return t;
-          }),
+               [S](pybind11::array_t<double, pybind11::array::c_style |
+                                                 pybind11::array::forcecast>&
+                       u) {
+                 if ((u.shape(0) != S) || (u.shape(1) != S)) {
+                   tfel::raise<std::range_error>("invalid shape of ST2toST2");
+                 }
+                 st2tost2 t;
+                 for (std::size_t i = 0; i < S; i++)
+                   for (std::size_t j = 0; j < S; j++) {
+                     t(i, j) = u.unchecked<2>()(i, j);
+                   }
+                 return t;
+               }),
            pybind11::arg("u"))
       .def("__repr__",
            [](const st2tost2& s) {
