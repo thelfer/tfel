@@ -160,9 +160,9 @@ namespace mfront {
     if (opts.count(DSLBase::compatibilityModeOption) != 0) {
       const auto version =
           opts.at(DSLBase::compatibilityModeOption).get<std::string>();
-      check(CompatibilityMode::fromString(version));
-      d.setAttribute(MaterialKnowledgeDescription::compatibilityMode, version,
-                     false);
+      // the resolved compatibility mode is stored, as the default one
+      d.setAttribute(MaterialKnowledgeDescription::compatibilityMode,
+                     to_string(CompatibilityMode::fromString(version)), false);
     } else {
       const auto ov = getDefaultCompatibilityMode();
       if (ov.has_value()) {
