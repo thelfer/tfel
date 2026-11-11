@@ -62,11 +62,26 @@ namespace tfel::utilities {
     /*!
      * \brief string holded by the token
      *
-     * The value of a comment, that is of a token whose flag is Comment,
-     * DoxygenComment or DoxygenBackwardComment, is the contents of the comment:
-     * the delimiters of the comment and the spaces which surround its contents
-     * are not a part of the value. An empty comment, as `//` or a `C` style
-     * comment without any contents, thus gives a token with an empty value.
+     * The value of a token is the spelling of the token in the file, that is
+     * the substring of the line taken at the offset of the token, excepted for
+     * comments and for numbers:
+     *
+     * - the value of a comment, that is of a token whose flag is Comment,
+     *   DoxygenComment or DoxygenBackwardComment, is the contents of the
+     *   comment: the delimiters of the comment and the spaces which surround
+     *   its contents are not a part of the value. An empty comment, as `//` or
+     *   a `C` style comment without any contents, thus gives a token with an
+     *   empty value,
+     *
+     * - the value of a string token holds the whole literal: the double quotes
+     *   of a quoted string as well as the `R"delim(` prefix and the `)delim"`
+     *   suffix of a raw string literal are a part of the value, so that the
+     *   contents of a string token can be read back without relying on the
+     *   flag of the token only, see issue #1390,
+     *
+     * - the value of a number does not hold the digit separators of the
+     *   `C++14` integer literals, see the description of the CxxTokenizer
+     *   class.
      */
     std::string value;
     //! \brief line number
@@ -75,14 +90,12 @@ namespace tfel::utilities {
      * \brief offset in the line
      *
      * The offset of a token is the position, in the line the token starts on,
-     * of the first character the token stands for. The offset of a token whose
-     * value is empty, which is only possible for a comment and for a raw string
-     * literal, is that of the delimiter which opens it. The offset of a comment
-     * is therefore always strictly smaller than the size of the line the
-     * comment starts on, see issue #1391. The raw string literals are the
-     * exception: the value and the offset of such a token are those of its
-     * contents, not those of the literal itself, which is the defect reported
-     * in issue #1390.
+     * of the first character the token stands for, so that it is always
+     * strictly smaller than the size of that line. This is the case of a raw
+     * string token, whose offset is that of its `R` delimiter as the offset of
+     * a quoted string token is that of its opening quote, see issue #1390. The
+     * offset of a token whose value is empty, which is only possible for a
+     * comment, is that of the delimiter which opens it, see issue #1391.
      *
      * A token may span several lines, which is the case of a comment and of a
      * raw string literal: the line and the offset of such a token are those of
@@ -102,6 +115,36 @@ namespace tfel::utilities {
    * \param[in] t: token
    */
   TFELUTILITIES_VISIBILITY_EXPORT bool isComment(const Token&);
+
+  /*!
+   * \return true if the token holds a raw string literal, that is a literal
+   * of the `R"delim(contents)delim"` form, whatever the contents of the token.
+   * \param[in] t: token
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT bool isRawString(const Token&);
+
+  /*!
+   * \return the delimiter of the raw string literal held by the given token,
+   * that is the sequence of characters between the `R"` and the `(` of its
+   * value, which is empty for a literal of the `R"(contents)"` form. An empty
+   * string is also returned if the token does not hold a raw string literal.
+   * \param[in] t: token
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT std::string getRawStringDelimiter(
+      const Token&);
+
+  /*!
+   * \return the contents of the literal held by the given token: its value
+   * without the double quotes of a quoted string, without the single quotes of
+   * a character literal and without the `R"delim(` prefix and the `)delim"`
+   * suffix of a raw string literal.
+   *
+   * The consumers which strip the quotes of a string token shall use this
+   * method instead of removing the first and last characters of the value,
+   * which truncates a raw string literal, see issue #1390.
+   * \param[in] t: token
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT std::string getContents(const Token&);
 
 }  // end of namespace tfel::utilities
 

@@ -64,38 +64,43 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
   /*!
    * \brief raw string literals.
    *
-   * The value of a raw string token is the contents of the literal: the
-   * `R"delim(` prefix and the `)delim"` suffix are not included, so the value
-   * of a raw string token does not follow the convention of the value of a
-   * string token, which includes its quotes. The consumers of the tokens which
-   * remove the quotes of a string token shall then not rely on the flag of the
-   * token only. See issue #1387.
+   * The value of a raw string token holds the whole literal: the `R"delim(`
+   * prefix and the `)delim"` suffix are a part of the value, as the quotes are
+   * a part of the value of a quoted string, and the offset of the token is
+   * that of its `R` delimiter, as for a quoted string, see issue #1390. The
+   * `getContents` function gives the contents of the literal, whatever the
+   * spelling of the string.
    */
   void testRawStrings() {
     using tfel::utilities::Token;
     auto t = tfel::utilities::CxxTokenizer{};
-    // a raw string literal with no delimiter
+    // a raw string literal with no delimiter: the value holds the whole
+    // literal and the offset is that of its `R` delimiter
     t.parseString("R\"(text)\"");
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[0].value == "text");
-    // the offset of the token is that of its contents, not that of the literal
+    TFEL_TESTS_ASSERT(t[0].value == "R\"(text)\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::isRawString(t[0]));
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[0]) == "text");
     TFEL_TESTS_ASSERT(t[0].line == 1u);
-    TFEL_TESTS_ASSERT(t[0].offset == 3u);
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
     // a raw string literal with a delimiter
     t.clear();
     t.parseString("R\"del(text)del\"");
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[0].value == "text");
-    TFEL_TESTS_ASSERT(t[0].offset == 6u);
+    TFEL_TESTS_ASSERT(t[0].value == "R\"del(text)del\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::getRawStringDelimiter(t[0]) == "del");
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[0]) == "text");
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
     // the escape sequences of a raw string literal are not interpreted
     t.clear();
     t.parseString("s = R\"(a\\nb)\";");
     TFEL_TESTS_ASSERT(t.size() == 4u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[2].value == "a\\nb");
-    TFEL_TESTS_ASSERT(t[2].offset == 7u);
+    TFEL_TESTS_ASSERT(t[2].value == "R\"(a\\nb)\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[2]) == "a\\nb");
+    TFEL_TESTS_ASSERT(t[2].offset == 4u);
     TFEL_TESTS_ASSERT(t[3].value == ";");
     TFEL_TESTS_ASSERT(t[3].offset == 13u);
     // a raw string literal spanning several lines: the value of the token
@@ -105,19 +110,21 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     t.parseString("s = R\"(line1\nline2)\";\n");
     TFEL_TESTS_ASSERT(t.size() == 4u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[2].value == "line1\nline2");
+    TFEL_TESTS_ASSERT(t[2].value == "R\"(line1\nline2)\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[2]) == "line1\nline2");
     TFEL_TESTS_ASSERT(t[2].line == 1u);
-    TFEL_TESTS_ASSERT(t[2].offset == 7u);
+    TFEL_TESTS_ASSERT(t[2].offset == 4u);
     TFEL_TESTS_ASSERT(t[3].value == ";");
     TFEL_TESTS_ASSERT(t[3].line == 2u);
     TFEL_TESTS_ASSERT(t[3].offset == 7u);
-    // a raw string literal with an empty contents gives a token with an empty
-    // value, which is a known defect reported in issue #1387
+    // a raw string literal with an empty contents gives a token whose value
+    // holds the whole literal, as a quoted string between its quotes does
     t.clear();
     t.parseString("R\"x()x\"");
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[0].value.empty());
+    TFEL_TESTS_ASSERT(t[0].value == "R\"x()x\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[0]).empty());
     // the state of the tokenizer when a raw string literal is not closed: the
     // tokenizer is designed so that a file may be tokenized line by line
     t.clear();
@@ -140,9 +147,11 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     t.parseString("s = R\"(text\n");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::String);
-    // the value of the token is the contents of the literal: the end of line
-    // character which terminates the line is not a part of it, see issue #1396
-    TFEL_TESTS_ASSERT(t[2].value == "text");
+    // the value of the token holds the whole literal read so far: the opening
+    // `R"(` prefix is a part of it, whereas the end of line character which
+    // terminates the line is not, see issues #1390 and #1396
+    TFEL_TESTS_ASSERT(t[2].value == "R\"(text");
+    TFEL_TESTS_ASSERT(t[2].offset == 4u);
     TFEL_TESTS_ASSERT(t.isRawStringOpened());
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("s = \"text\n"), std::runtime_error);

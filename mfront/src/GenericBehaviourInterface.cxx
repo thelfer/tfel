@@ -1106,7 +1106,7 @@ namespace mfront {
         for (const auto& v : values) {
           if (v.flag == Token::String) {
             hypotheses.insert(ModellingHypothesis::fromString(
-                v.value.substr(1, v.value.size() - 2)));
+                tfel::utilities::getContents(v)));
           } else {
             hypotheses.insert(ModellingHypothesis::fromString(v.value));
           }
