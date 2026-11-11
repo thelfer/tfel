@@ -28,8 +28,16 @@
 namespace tfel::utilities {
 
   /*!
-   * class in charge of reading a C++-style file and converting it
+   * \brief class in charge of reading a C++-style file and converting it
    * in tokens.
+   *
+   * The value of a number token does not hold the digit separators of the
+   * `C++14` integer literals: `@IterMax 1'000;` gives the number token
+   * `1000`, whose value is therefore not the substring of the line taken at
+   * the offset of this token. The offsets of the tokens remain those of the
+   * file, whatever the numbers which precede them, so that a source code can
+   * be rewritten from the offsets of its tokens, as the `MFront` interfaces
+   * for `Abaqus`, `Aster` and `CalculiX` do.
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer
       : protected CxxTokenizerOptions {
@@ -447,6 +455,18 @@ namespace tfel::utilities {
                           const Token::size_type,
                           const char,
                           const char);
+    /*!
+     * \brief read a number
+     *
+     * The digit separators of the `C++14` integer literals are removed from
+     * the value of the token: `1'000` gives the value `1000`, see the
+     * description of the class.
+     *
+     * \param[in,out] o:  offset in the line
+     * \param[in,out] p:  iterator to the current character
+     * \param[in]     pe: iterator past the end of the line
+     * \param[in]     n:  line number
+     */
     virtual void parseNumber(Token::size_type &,
                              std::string::const_iterator &,
                              const std::string::const_iterator,

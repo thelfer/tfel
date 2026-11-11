@@ -359,7 +359,8 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
    * The digit separators of the `C++14` literals are removed from the value of
    * the token, whereas the offsets of the tokens are those of the file: the
    * value of a number token is thus not the spelling of this number in the
-   * file, which is documented in issue #1387.
+   * file. This is a documented design choice, stated in the description of the
+   * `CxxTokenizer` class, and not a defect.
    */
   void testNumbersWithDigitSeparators() {
     using tfel::utilities::Token;
