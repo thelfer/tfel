@@ -316,8 +316,7 @@ namespace mfront {
         this->checkNotEndOfFile("ModelDSLCommon::treatUnknownKeyword");
         const auto t = [this]() -> std::string {
           if (this->current->flag == tfel::utilities::Token::String) {
-            return this->current->value.substr(1,
-                                               this->current->value.size() - 2);
+            return tfel::utilities::getContents(*this->current);
           }
           return this->current->value;
         }();
@@ -394,8 +393,7 @@ namespace mfront {
         this->current->flag != tfel::utilities::Token::String,
         "Expected to read a string (read '" + this->current->value + "').");
     throw_if(this->current->value.size() < 2, "domain name too short.");
-    this->md.domains.insert(
-        this->current->value.substr(1, this->current->value.size() - 2));
+    this->md.domains.insert(tfel::utilities::getContents(*this->current));
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatDomain", ";");
   }  // end of treatDomain()

@@ -68,7 +68,7 @@ namespace tfel::utilities {
       const auto t = tokenize_line(l);
       std::for_each(t.begin(), t.end(), [&r](const Token& w) {
         if (w.flag == Token::String) {
-          r.push_back(w.value.substr(1, w.value.size() - 2));
+          r.push_back(getContents(w));
         } else {
           r.push_back(w.value);
         }

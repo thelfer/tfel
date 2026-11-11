@@ -177,7 +177,8 @@ struct CxxTokenizerLineByLineTest final : public tfel::tests::TestCase {
       const auto tokens = tokenize("s = R\"(line1\nline2)\";\n");
       TFEL_TESTS_ASSERT(tokens.size() == 4u);
       TFEL_TESTS_ASSERT(tokens[2].flag == Token::String);
-      TFEL_TESTS_ASSERT(tokens[2].value == "line1\nline2");
+      // the value of a raw string token holds the whole literal, see #1390
+      TFEL_TESTS_ASSERT(tokens[2].value == "R\"(line1\nline2)\"");
       // the tokens which follow a raw string literal belong to its last line
       TFEL_TESTS_ASSERT(tokens[3].line == 2u);
     }

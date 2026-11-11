@@ -519,15 +519,25 @@ namespace tfel::utilities {
                                    const std::string::const_iterator,
                                    const Token::size_type);
     /*!
-     * \brief parse a raw string
-     * \param[in,out] o: current offset in line
-     * \param[in,out] p: current iterator
-     * \param[in,out] pe: iterator past the last character in the line
-     * \param[in,out] n: current line number
+     * \brief read the contents of a raw string literal, which starts at the
+     * current iterator, past the opening `R"delim(` prefix
+     *
+     * The value of the token holds the whole literal, from the `R` delimiter
+     * to the closing `"` included, as for a quoted string, and its offset is
+     * that of the `R`, see issue #1390. The opening prefix is restored from the
+     * delimiter of the literal, which the caller has read and kept in
+     * `currentRawStringDelimiter`.
+     *
+     * \param[in,out] o:  current offset in line
+     * \param[in,out] p:  current iterator
+     * \param[in]     pe: iterator past the last character in the line
+     * \param[in]     n:  current line number
+     * \param[in]     ro: offset of the `R` which opens the literal
      */
     virtual void parseRawString(Token::size_type &,
                                 std::string::const_iterator &,
                                 const std::string::const_iterator,
+                                const Token::size_type,
                                 const Token::size_type);
     std::vector<std::string> additional_separators;
     //! list of tokens read
