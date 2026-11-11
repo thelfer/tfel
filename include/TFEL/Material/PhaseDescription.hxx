@@ -128,8 +128,8 @@ namespace tfel::material::homogenization::elasticity {
       this->stiffness = C;
       this->isotropic = false;
     }
-    void changeElasticityOfPhase(const IsotropicModuli<StressType>& IM)
-        requires(N == 3) {
+    void changeElasticityOfPhase(
+        const IsotropicModuli<StressType>& IM) requires(N == 3) {
       this->stiffness = computeIsotropicStiffnessTensor<StressType>(IM);
       this->isotropic = true;
     }

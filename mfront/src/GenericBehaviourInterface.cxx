@@ -826,8 +826,8 @@ namespace mfront {
       const auto o = getOffset(args);
       args.os << "mfront::gb::rotateTangentOperatorBlock<"
               << getRotatedObjectType(f1, d) << ", "
-              << getRotatedObjectType(f2, d) << ">(dest + " << o
-              << ", src + " << o << ", r);\n";
+              << getRotatedObjectType(f2, d) << ">(dest + " << o << ", src + "
+              << o << ", r);\n";
     }
   }  // end of writeTangentOperatorBlockRotation
 
@@ -843,12 +843,12 @@ namespace mfront {
       const auto& v2 = b.second;
       const auto f1 = SupportedTypes::getTypeFlag(v1.type);
       const auto f2 = SupportedTypes::getTypeFlag(v2.type);
-      const auto s1 = static_cast<size_type>(
-          SupportedTypes::getTypeSize(v1.type, 1u)
-              .getValueForModellingHypothesis(h));
-      const auto s2 = static_cast<size_type>(
-          SupportedTypes::getTypeSize(v2.type, 1u)
-              .getValueForModellingHypothesis(h));
+      const auto s1 =
+          static_cast<size_type>(SupportedTypes::getTypeSize(v1.type, 1u)
+                                     .getValueForModellingHypothesis(h));
+      const auto s2 =
+          static_cast<size_type>(SupportedTypes::getTypeSize(v2.type, 1u)
+                                     .getValueForModellingHypothesis(h));
       // a block associated with arrays of variables is made of one
       // sub-block for each pair of entries, stored contiguously
       for (unsigned short idx1 = 0; idx1 != v1.arraySize; ++idx1) {
@@ -1106,7 +1106,7 @@ namespace mfront {
         for (const auto& v : values) {
           if (v.flag == Token::String) {
             hypotheses.insert(ModellingHypothesis::fromString(
-                v.value.substr(1, v.value.size() - 2)));
+                tfel::utilities::getContents(v)));
           } else {
             hypotheses.insert(ModellingHypothesis::fromString(v.value));
           }

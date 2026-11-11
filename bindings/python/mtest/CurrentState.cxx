@@ -110,8 +110,8 @@ void declareCurrentState(pybind11::module_& m) {
       .def_property_readonly("evs0", CurrentState_getesv0)
       .def_property_readonly("desv", CurrentState_getdesv)
       .def_readonly("position", &mtest::CurrentState::position)
-      .def("setInternalStateVariableValue", ptr,
-           pybind11::arg("n"), pybind11::arg("v"),
+      .def("setInternalStateVariableValue", ptr, pybind11::arg("n"),
+           pybind11::arg("v"),
            "set the value of a scalar internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -121,8 +121,8 @@ void declareCurrentState(pybind11::module_& m) {
            "- at the beginning of the previous time step\n"
            "- at the beginning of the current time step\n"
            "- at the end of the current time step")
-      .def("setInternalStateVariableValue", ptr2,
-           pybind11::arg("n"), pybind11::arg("v"),
+      .def("setInternalStateVariableValue", ptr2, pybind11::arg("n"),
+           pybind11::arg("v"),
            "set the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -132,8 +132,8 @@ void declareCurrentState(pybind11::module_& m) {
            "- at the beginning of the previous time step\n"
            "- at the beginning of the current time step\n"
            "- at the end of the current time step")
-      .def("setInternalStateVariableValue", ptr3,
-           pybind11::arg("n"), pybind11::arg("v"), pybind11::arg("d"),
+      .def("setInternalStateVariableValue", ptr3, pybind11::arg("n"),
+           pybind11::arg("v"), pybind11::arg("d"),
            "set the value of a scalar internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -147,8 +147,8 @@ void declareCurrentState(pybind11::module_& m) {
            "  at the beginning of the current time step\n"
            "- 1 means that we are modifying the internal state variable value\n"
            "  at the end of the current time step")
-      .def("setInternalStateVariableValue", ptr4,
-           pybind11::arg("n"), pybind11::arg("v"), pybind11::arg("d"),
+      .def("setInternalStateVariableValue", ptr4, pybind11::arg("n"),
+           pybind11::arg("v"), pybind11::arg("d"),
            "set the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -162,15 +162,14 @@ void declareCurrentState(pybind11::module_& m) {
            "  at the beginning of the current time step\n"
            "- 1 means that we are modifying the internal state variable value\n"
            "  at the end of the current time step")
-      .def("getInternalStateVariableValue", ptr5,
-           pybind11::arg("n"),
+      .def("getInternalStateVariableValue", ptr5, pybind11::arg("n"),
            "get the value of an internal state variable at the end of the time "
            "\n"
            "step\n"
            "\n"
            "param[in]  n: variable name")
-      .def("getInternalStateVariableValue", ptr6,
-           pybind11::arg("n"), pybind11::arg("d"),
+      .def("getInternalStateVariableValue", ptr6, pybind11::arg("n"),
+           pybind11::arg("d"),
            "get the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"

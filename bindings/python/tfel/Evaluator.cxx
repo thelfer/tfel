@@ -28,9 +28,10 @@ void declareEvaluator(pybind11::module_& m) {
       &Evaluator::getValue;
   void (Evaluator::*ptr5)(const std::string&, const double) =
       &Evaluator::setVariableValue;
-  pybind11::class_<Evaluator>(m, "Evaluator",
-                              "Class in charge of handling a function defined by a\n"
-                              "string")
+  pybind11::class_<Evaluator>(
+      m, "Evaluator",
+      "Class in charge of handling a function defined by a\n"
+      "string")
       .def(pybind11::init<std::string>(), pybind11::arg("f"))
       .def("__call__", ptr1,
            "Evaluate the formula\n"
@@ -56,8 +57,8 @@ void declareEvaluator(pybind11::module_& m) {
            "Return the result of the evaluation\n"
            "The values of the variables not given in argument shall\n"
            "have been set with the `setVariableValue` method")
-      .def("setVariableValue", ptr5,
-           pybind11::arg("vname"), pybind11::arg("value"))
+      .def("setVariableValue", ptr5, pybind11::arg("vname"),
+           pybind11::arg("value"))
       .def("getVariablesNames", &Evaluator::getVariablesNames)
       .def("removeDependencies", &Evaluator::removeDependencies);
 }

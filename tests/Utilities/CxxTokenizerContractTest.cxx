@@ -39,6 +39,7 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
 
   tfel::tests::TestResult execute() override {
     this->testRawStrings();
+    this->testUnclosedTokens();
     this->testEmptyComments();
     this->testCommentsOfALine();
     this->testNumbersWithDigitSeparators();
@@ -63,38 +64,43 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
   /*!
    * \brief raw string literals.
    *
-   * The value of a raw string token is the contents of the literal: the
-   * `R"delim(` prefix and the `)delim"` suffix are not included, so the value
-   * of a raw string token does not follow the convention of the value of a
-   * string token, which includes its quotes. The consumers of the tokens which
-   * remove the quotes of a string token shall then not rely on the flag of the
-   * token only. See issue #1387.
+   * The value of a raw string token holds the whole literal: the `R"delim(`
+   * prefix and the `)delim"` suffix are a part of the value, as the quotes are
+   * a part of the value of a quoted string, and the offset of the token is
+   * that of its `R` delimiter, as for a quoted string, see issue #1390. The
+   * `getContents` function gives the contents of the literal, whatever the
+   * spelling of the string.
    */
   void testRawStrings() {
     using tfel::utilities::Token;
     auto t = tfel::utilities::CxxTokenizer{};
-    // a raw string literal with no delimiter
+    // a raw string literal with no delimiter: the value holds the whole
+    // literal and the offset is that of its `R` delimiter
     t.parseString("R\"(text)\"");
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[0].value == "text");
-    // the offset of the token is that of its contents, not that of the literal
+    TFEL_TESTS_ASSERT(t[0].value == "R\"(text)\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::isRawString(t[0]));
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[0]) == "text");
     TFEL_TESTS_ASSERT(t[0].line == 1u);
-    TFEL_TESTS_ASSERT(t[0].offset == 3u);
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
     // a raw string literal with a delimiter
     t.clear();
     t.parseString("R\"del(text)del\"");
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[0].value == "text");
-    TFEL_TESTS_ASSERT(t[0].offset == 6u);
+    TFEL_TESTS_ASSERT(t[0].value == "R\"del(text)del\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::getRawStringDelimiter(t[0]) == "del");
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[0]) == "text");
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
     // the escape sequences of a raw string literal are not interpreted
     t.clear();
     t.parseString("s = R\"(a\\nb)\";");
     TFEL_TESTS_ASSERT(t.size() == 4u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[2].value == "a\\nb");
-    TFEL_TESTS_ASSERT(t[2].offset == 7u);
+    TFEL_TESTS_ASSERT(t[2].value == "R\"(a\\nb)\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[2]) == "a\\nb");
+    TFEL_TESTS_ASSERT(t[2].offset == 4u);
     TFEL_TESTS_ASSERT(t[3].value == ";");
     TFEL_TESTS_ASSERT(t[3].offset == 13u);
     // a raw string literal spanning several lines: the value of the token
@@ -104,19 +110,21 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     t.parseString("s = R\"(line1\nline2)\";\n");
     TFEL_TESTS_ASSERT(t.size() == 4u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[2].value == "line1\nline2");
+    TFEL_TESTS_ASSERT(t[2].value == "R\"(line1\nline2)\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[2]) == "line1\nline2");
     TFEL_TESTS_ASSERT(t[2].line == 1u);
-    TFEL_TESTS_ASSERT(t[2].offset == 7u);
+    TFEL_TESTS_ASSERT(t[2].offset == 4u);
     TFEL_TESTS_ASSERT(t[3].value == ";");
     TFEL_TESTS_ASSERT(t[3].line == 2u);
     TFEL_TESTS_ASSERT(t[3].offset == 7u);
-    // a raw string literal with an empty contents gives a token with an empty
-    // value, which is a known defect reported in issue #1387
+    // a raw string literal with an empty contents gives a token whose value
+    // holds the whole literal, as a quoted string between its quotes does
     t.clear();
     t.parseString("R\"x()x\"");
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[0].value.empty());
+    TFEL_TESTS_ASSERT(t[0].value == "R\"x()x\"");
+    TFEL_TESTS_ASSERT(tfel::utilities::getContents(t[0]).empty());
     // the state of the tokenizer when a raw string literal is not closed: the
     // tokenizer is designed so that a file may be tokenized line by line
     t.clear();
@@ -139,7 +147,11 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     t.parseString("s = R\"(text\n");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[2].value == "text\n");
+    // the value of the token holds the whole literal read so far: the opening
+    // `R"(` prefix is a part of it, whereas the end of line character which
+    // terminates the line is not, see issues #1390 and #1396
+    TFEL_TESTS_ASSERT(t[2].value == "R\"(text");
+    TFEL_TESTS_ASSERT(t[2].offset == 4u);
     TFEL_TESTS_ASSERT(t.isRawStringOpened());
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("s = \"text\n"), std::runtime_error);
@@ -148,44 +160,111 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
   }  // end of testRawStrings
 
   /*!
+   * \brief tokens which are not closed at the end of the file.
+   *
+   * A quoted string and a character literal which are not closed in their line
+   * are rejected. A `C` style comment and a raw string literal may on the
+   * contrary span several lines: contents which end inside such a token is
+   * accepted and leaves the state of the tokenizer open, since the tokenizer
+   * is designed so that a file may be tokenized line by line. The caller is
+   * therefore responsible for checking the state of the tokenizer when the end
+   * of the file is reached, see issue #1395.
+   */
+  void testUnclosedTokens() {
+    auto t = tfel::utilities::CxxTokenizer{};
+    // a C style comment which is not closed is accepted and leaves the
+    // tokenizer in the state comment opened
+    t.parseString("s = /* text");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[2].value == "text");
+    TFEL_TESTS_ASSERT(t.isCStyleCommentOpened());
+    TFEL_TESTS_ASSERT(!t.isRawStringOpened());
+    // a doxygen comment of the `// !` kind is a line comment: it is closed at
+    // the end of its line whatever the state it is left in
+    t.clear();
+    t.parseString("//! doc");
+    TFEL_TESTS_ASSERT(t.size() == 1u);
+    TFEL_TESTS_ASSERT(!t.isCStyleCommentOpened());
+    // a raw string literal which is not closed is accepted too, the delimiter
+    // of the opened literal being kept by the tokenizer
+    t.clear();
+    t.parseString("s = R\"x(text");
+    TFEL_TESTS_ASSERT(t.isRawStringOpened());
+    TFEL_TESTS_ASSERT(t.getCurrentRawStringDelimiter() == "x");
+    TFEL_TESTS_ASSERT(!t.isCStyleCommentOpened());
+    // a quoted string and a character literal which are not closed in their
+    // line are on the contrary rejected
+    t.clear();
+    TFEL_TESTS_CHECK_THROW(t.parseString("s = \"text\n"), std::runtime_error);
+    t.clear();
+    TFEL_TESTS_CHECK_THROW(t.parseString("s = 'a\n"), std::runtime_error);
+    // the state of the tokenizer is left from one call to parseString to the
+    // next one, which is what allows tokenizing a file line by line: the lines
+    // which follow the opening of a comment are gathered in the value of the
+    // comment token until the comment is closed
+    t.clear();
+    t.parseString("a;");
+    TFEL_TESTS_ASSERT(t.size() == 2u);
+    TFEL_TESTS_ASSERT(!t.isCStyleCommentOpened());
+    t.parseString("/* c1");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].value == "c1");
+    TFEL_TESTS_ASSERT(t.isCStyleCommentOpened());
+    t.parseString("c2");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].value == "c1\nc2");
+    TFEL_TESTS_ASSERT(t.isCStyleCommentOpened());
+    t.parseString("d2 */ int b;");
+    TFEL_TESTS_ASSERT(t.size() == 6u);
+    TFEL_TESTS_ASSERT(t[2].value == "c1\nc2\nd2 ");
+    TFEL_TESTS_ASSERT(t[3].value == "int");
+    TFEL_TESTS_ASSERT(t[5].value == ";");
+    TFEL_TESTS_ASSERT(!t.isCStyleCommentOpened());
+  }  // end of testUnclosedTokens
+
+  /*!
    * \brief empty comments.
    *
-   * An empty comment gives a comment token whose value is empty and whose
-   * offset is the size of the line, that is one past the end of the line. Those
-   * two behaviours are known defects reported in issue #1387: a token with an
-   * empty value surprises the consumers of the tokens, which generally assume
-   * that the value of a token is not empty.
+   * An empty comment gives a comment token whose value is empty, since the
+   * value of a comment is the contents of the comment, and whose offset is that
+   * of the delimiter which opens it, since such a token has no contents to
+   * point to, see issue #1391. The same applies to a comment which has no
+   * contents on the line it starts on, whether it is closed on that line or on
+   * a later one.
    */
   void testEmptyComments() {
     using tfel::utilities::Token;
     auto t = tfel::utilities::CxxTokenizer{};
-    // an empty C++ style comment
+    // an empty C++ style comment: the offset of the token is that of its
+    // delimiter
     t.parseString("a; //");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
     TFEL_TESTS_ASSERT(t[2].value.empty());
-    TFEL_TESTS_ASSERT(t[2].offset == 5u);
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
     // an empty C style comment
     t.clear();
     t.parseString("a; /**/");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
     TFEL_TESTS_ASSERT(t[2].value.empty());
-    TFEL_TESTS_ASSERT(t[2].offset == 5u);
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
     // an empty doxygen comment
     t.clear();
     t.parseString("a; /*!*/");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::DoxygenComment);
     TFEL_TESTS_ASSERT(t[2].value.empty());
-    TFEL_TESTS_ASSERT(t[2].offset == 6u);
-    // the spaces which follow an empty C++ style comment are ignored
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
+    // the spaces which follow an empty C++ style comment are ignored: they do
+    // not drive the offset of the token out of the line
     t.clear();
     t.parseString("  //   ");
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::Comment);
     TFEL_TESTS_ASSERT(t[0].value.empty());
-    TFEL_TESTS_ASSERT(t[0].offset == 7u);
+    TFEL_TESTS_ASSERT(t[0].offset == 2u);
     // an empty comment is removed by stripComments as any other comment
     t.clear();
     t.parseString("a; //\nb; /**/\n");
@@ -202,14 +281,68 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
     TFEL_TESTS_ASSERT(t[2].value.empty());
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
+    // an empty doxygen comment of the `// !` kind
+    t.clear();
+    t.parseString("a; //!");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].flag == Token::DoxygenComment);
+    TFEL_TESTS_ASSERT(t[2].value.empty());
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
+    // the offset of an empty comment is that of its delimiter, whether it is at
+    // the beginning or at the end of a line
+    t.clear();
+    t.parseString("//\nint a;\n");
+    TFEL_TESTS_ASSERT(t.size() == 4u);
+    TFEL_TESTS_ASSERT(t[0].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[0].value.empty());
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
+    t.clear();
+    t.parseString("int a;  //\n");
+    TFEL_TESTS_ASSERT(t.size() == 4u);
+    TFEL_TESTS_ASSERT(t[3].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[3].value.empty());
+    TFEL_TESTS_ASSERT(t[3].offset == 8u);
+    // the spaces which surround the contents of a comment are removed from its
+    // value, whereas the offset of the token is that of the first character of
+    // its contents
+    t.clear();
+    t.parseString("a; /*  c  */");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[2].value == "c");
+    TFEL_TESTS_ASSERT(t[2].offset == 7u);
+    // a comment which is empty on the first line it spans keeps the offset of
+    // its delimiter, whereas its value gathers the lines it spans
+    t.clear();
+    t.parseString("/*\nc */ int a;\n");
+    TFEL_TESTS_ASSERT(t.size() == 4u);
+    TFEL_TESTS_ASSERT(t[0].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[0].line == 1u);
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
+    TFEL_TESTS_ASSERT(t[0].value == "c ");
+    // the keepCommentBoundaries option gives the delimiters themselves as the
+    // value of an empty comment. The offset of the token is that of the first
+    // delimiter, whatever the contents of the comment
+    t.clear();
+    t.keepCommentBoundaries(true);
+    t.parseString("a; //");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[2].value == "//");
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
+    t.clear();
+    t.parseString("a; /* c */");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].value == "/* c */");
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
   }  // end of testEmptyComments
 
   /*!
    * \brief comments of a line, which are gathered by stripComments in the
-   * `comments` data member of the tokenizer.
-   *
-   * Only the last comment of a line is kept, whatever the number of comments
-   * this line contains, which is a known defect reported in issue #1387.
+   * `comments` data member of the tokenizer: a line may hold several comments,
+   * which are gathered in the order they appear in the line, separated by a
+   * space character, see issue #1392.
    */
   void testCommentsOfALine() {
     using tfel::utilities::Token;
@@ -223,8 +356,8 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
     TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c");
-    // two comments in a line: the tokens are both removed but only the last
-    // comment is kept in the comments of the line
+    // two comments in a line: the two tokens are removed and the two comments
+    // are gathered, in the order they appear in the line
     t.clear();
     t.parseString("/* c1 */ int a; /* c2 */");
     TFEL_TESTS_ASSERT(t.size() == 5u);
@@ -240,7 +373,60 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t[0].offset == 9u);
     TFEL_TESTS_ASSERT(t[2].value == ";");
     TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1 c2");
+    // three comments in a line
+    t.clear();
+    t.parseString("/* c1 */ int /* c2 */ a; /* c3 */\n");
+    TFEL_TESTS_ASSERT(t.size() == 6u);
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1 c2 c3");
+    // an empty comment does not add a separator, whatever the place it holds in
+    // the line. An empty ‘//’ comment is necessarily the last comment of a
+    // line, since such a comment runs to the end of the line
+    t.clear();
+    t.parseString("/* c1 */ int a; //\n");
+    TFEL_TESTS_ASSERT(t.size() == 5u);
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1");
+    // an empty ‘/**/’ comment gives a comment token with an empty value: the
+    // comments of the line are those which follow it
+    t.clear();
+    t.parseString("/**/ int a; /* c2 */\n");
+    TFEL_TESTS_ASSERT(t.size() == 5u);
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
     TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c2");
+    // the comments of several lines are gathered separately
+    t.clear();
+    t.parseString("/* c1 */ int a;\n/* c2 */ int b;\n");
+    TFEL_TESTS_ASSERT(t.size() == 8u);
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.size() == 6u);
+    TFEL_TESTS_ASSERT(t.getComments().size() == 2u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1");
+    TFEL_TESTS_ASSERT(t.getComments().at(2u) == "c2");
+    // a comment spanning several lines is gathered on the line it starts on.
+    // The spaces which precede the end of such a comment are not removed,
+    // contrary to those which precede the end of a comment of a single line
+    t.clear();
+    t.parseString("/* c1\nc2 */ int a;\n");
+    TFEL_TESTS_ASSERT(t.size() == 4u);
+    TFEL_TESTS_ASSERT(t[0].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[0].line == 1u);
+    TFEL_TESTS_ASSERT(t[0].value == "c1\nc2 ");
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t.getComments().size() == 1u);
+    TFEL_TESTS_ASSERT(t.getComments().at(1u) == "c1\nc2 ");
+    // a line whose only comment is empty gives no comment at all
+    t.clear();
+    t.parseString("a; //\n");
+    t.stripComments();
+    TFEL_TESTS_ASSERT(t.size() == 2u);
+    TFEL_TESTS_ASSERT(t.getComments().empty());
   }  // end of testCommentsOfALine
 
   /*!
@@ -249,7 +435,8 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
    * The digit separators of the `C++14` literals are removed from the value of
    * the token, whereas the offsets of the tokens are those of the file: the
    * value of a number token is thus not the spelling of this number in the
-   * file, which is documented in issue #1387.
+   * file. This is a documented design choice, stated in the description of the
+   * `CxxTokenizer` class, and not a defect.
    */
   void testNumbersWithDigitSeparators() {
     using tfel::utilities::Token;

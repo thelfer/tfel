@@ -156,22 +156,21 @@ of the `tfel::utilities::Token` class, which the methods of `MFront` rely on:
 
 - the lines of the successive tokens are non decreasing,
 - the offsets of the tokens of a given line are strictly increasing,
-- the offset of a token is not past the end of the line the token starts on,
+- the offset of a token is the position of a character of the line the token
+  starts on,
 - a token which cannot span several lines, that is a standard token, a number or
   a character literal, is contained in its line,
-- a token which is neither a comment nor a string has a non empty value,
+- a token which is not a comment has a non empty value,
 - no comment token is kept by the `stripComments` method.
 
-Two known defects of the tokenizer, both reported in issue #1387, oblige to
-weaken two of those invariants: an empty comment (`//` or `/**/`) gives a
-comment token whose value is empty and whose offset is the size of its line, and
-an empty raw string literal gives a string token whose value is empty. Empty
-values and offsets equal to the size of a line are therefore tolerated for the
-comments and the strings only, and shall be rejected again when those defects are
-fixed. The digit separators of the `C++14` integer literals, which are removed
-from the value of a number, are on the contrary compatible with those
-invariants, as the value of such a token is only shorter than its spelling in the
-file.
+Those invariants hold for every token, without exception: the value of a raw
+string literal holds the whole literal, as a quoted string holds its quotes, so
+that its value is never empty and its offset is that of its `R` delimiter, see
+issue #1390, and the offset of an empty comment is that of the delimiter which
+opens it, see issue #1391. Two kinds of tokens have a value shorter than their
+spelling in the file, which does not harm those invariants: a comment, whose
+value leaves out its delimiters, and a number, whose value leaves out the digit
+separators of the `C++14` integer literals.
 
 The lexical constructs those invariants and those exceptions come from are covered
 by the `CxxTokenizerContractTest` unit test of `tests/Utilities`.

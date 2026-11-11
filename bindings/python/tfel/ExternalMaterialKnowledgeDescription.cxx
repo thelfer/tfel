@@ -24,8 +24,8 @@ void declareExternalMaterialKnowledgeDescription(pybind11::module_& m) {
       m, "ExternalMaterialKnowledgeDescription",
       "A structure containing the information about a given material knowledge")
       .def(pybind11::init<>(), "Default constructor")
-      .def(pybind11::init<std::string, std::string>(),
-           pybind11::arg("l"), pybind11::arg("f"),
+      .def(pybind11::init<std::string, std::string>(), pybind11::arg("l"),
+           pybind11::arg("f"),
            "l: library\n"
            "f: entry point corresponding to the material knowledge")
       .def_readonly("library", &ExternalMaterialKnowledgeDescription::library,

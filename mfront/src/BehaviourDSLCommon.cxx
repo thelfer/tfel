@@ -885,7 +885,7 @@ namespace mfront {
         cposition = true;
         o.p = BehaviourData::AT_END;
       } else if ((t.flag == Token::String) &&
-                 (t.value.substr(1, t.value.size() - 2) == ".+")) {
+                 (tfel::utilities::getContents(t) == ".+")) {
         if (this->mb.areModellingHypothesesDefined()) {
           this->appendToHypothesesList(o.hypotheses, ".+");
         } else {
@@ -2204,7 +2204,7 @@ namespace mfront {
                                               const tfel::utilities::Token& t) {
     if (t.flag == tfel::utilities::Token::String) {
       // file name of formula
-      const auto f = t.value.substr(1, t.value.size() - 2);
+      const auto f = tfel::utilities::getContents(t);
       if (tfel::utilities::ends_with(f, ".mfront")) {
         // file name
         BehaviourDescription::ExternalMFrontMaterialProperty mp;
@@ -2458,7 +2458,7 @@ namespace mfront {
     for (const auto& v : values) {
       if (v.flag == Token::String) {
         this->appendToHypothesesList(hypotheses,
-                                     v.value.substr(1, v.value.size() - 2));
+                                     tfel::utilities::getContents(v));
       } else {
         this->appendToHypothesesList(hypotheses, v.value);
       }
@@ -2551,8 +2551,7 @@ namespace mfront {
       this->throwRuntimeError("BehaviourDSLCommon::treatSetGlossaryMethod: ",
                               "expected to read a string");
     }
-    const auto& g =
-        this->current->value.substr(1, this->current->value.size() - 2);
+    const auto g = tfel::utilities::getContents(*this->current);
     if (!glossary.contains(g)) {
       this->throwRuntimeError("BehaviourDSLCommon::treatSetGlossaryMethod: ",
                               "'" + g + "' is not a glossary name");
@@ -2576,8 +2575,7 @@ namespace mfront {
       this->throwRuntimeError("BehaviourDSLCommon::treatSetEntryNameMethod: ",
                               "expected to read a string");
     }
-    const auto& e =
-        this->current->value.substr(1, this->current->value.size() - 2);
+    const auto e = tfel::utilities::getContents(*this->current);
     if (!this->isValidIdentifier(e, false)) {
       this->throwRuntimeError("BehaviourDSLCommon::treatSetEntryNameMethod: ",
                               "invalid entry name '" + e + "'");
@@ -2755,8 +2753,7 @@ namespace mfront {
           this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
           const auto t = [this]() -> std::string {
             if (this->current->flag == tfel::utilities::Token::String) {
-              return this->current->value.substr(
-                  1, this->current->value.size() - 2);
+              return tfel::utilities::getContents(*this->current);
             }
             return this->current->value;
           }();
@@ -3222,7 +3219,7 @@ namespace mfront {
                    true);
     for (const auto& v : values) {
       const auto s = (v.flag == tfel::utilities::Token::String)
-                         ? v.value.substr(1, v.value.size() - 2)
+                         ? tfel::utilities::getContents(v)
                          : v.value;
       if ((s == ".+") && (!this->mb.areModellingHypothesesDefined())) {
         // the modelling hypotheses are not known yet: same meaning as no
@@ -3687,7 +3684,7 @@ namespace mfront {
     if (t.flag == tfel::utilities::Token::String) {
       // using an external model
       const auto md =
-          this->getModelDescription(t.value.substr(1, t.value.size() - 2));
+          this->getModelDescription(tfel::utilities::getContents(t));
       // check that the variable
       auto ptr = std::make_shared<ModelDescription>(md);
       return {ptr};

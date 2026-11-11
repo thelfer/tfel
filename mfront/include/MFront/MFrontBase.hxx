@@ -135,6 +135,8 @@ namespace mfront {
     virtual void treatUnicodeOutput();
     //! \brief treat the `--search-path` command line option
     virtual void treatSearchPath();
+    //! \brief treat the `--compatibility-mode` command line option
+    virtual void treatCompatibilityMode();
     //! \brief treat the `--madnex-search-path` command line option
     virtual void treatMadnexSearchPath();
     /*!

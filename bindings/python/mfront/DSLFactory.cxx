@@ -36,8 +36,8 @@ void declareDSLFactory(pybind11::module_& m) {
       "An abstract factory for the domain specific languages supported by\n"
       "MFront implemented using the singleton pattern")
       .def_static("getDSLFactory", DSLFactory::getDSLFactory,
-                   pybind11::return_value_policy::reference,
-                   "Return the unique instance of the DSLFactory class")
+                  pybind11::return_value_policy::reference,
+                  "Return the unique instance of the DSLFactory class")
       .def("createNewParser", &createNewDSL, pybind11::arg("n"),
            "Return an instance of the DSL with the given name\n"
            "n: name of the DSL to be generated")

@@ -41,9 +41,9 @@ struct ExternalLibraryManagerTest final : public tfel::tests::TestCase {
     } catch (std::exception& e) {
       std::cerr << e.what() << '\n';
     }
-    TFEL_TESTS_ASSERT((p.size() > l.size()) &&
-                      (p.compare(p.size() - l.size() - 1, l.size() + 1,
-                                 '/' + l) == 0));
+    TFEL_TESTS_ASSERT(
+        (p.size() > l.size()) &&
+        (p.compare(p.size() - l.size() - 1, l.size() + 1, '/' + l) == 0));
 #endif
     return this->result;
   }  // end of execute

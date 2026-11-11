@@ -38,7 +38,8 @@ struct GenericBehaviourRotationFunctionsTest final
       : tfel::tests::TestCase("MFront",
                               "GenericBehaviourRotationFunctionsTest"),
         library([] {
-          const auto e = ::getenv("MFrontGenericRotationFunctionsBehavioursBuildPath");
+          const auto e =
+              ::getenv("MFrontGenericRotationFunctionsBehavioursBuildPath");
           return e == nullptr ? std::string{} : e;
         }()) {
     using namespace tfel::math;

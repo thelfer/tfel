@@ -184,29 +184,33 @@ requires(tfel::math::checkUnitCompatibility<
       .def_readwrite("inclusion", &SD::inclusion)
       .def_readwrite("fraction", &SD::fraction)
       .def("getElasticityOfPhase", &SD::getElasticityOfPhase)
-      .def("changeElasticityOfPhase",
-           [](SD& sd, const tfel::math::st2tost2<3u, StressType>& C) {
-             return sd.changeElasticityOfPhase(C);
-           },
-           pybind11::arg("C"))
-      .def("changeElasticityOfPhase",
-           [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM) {
-             return sd.changeElasticityOfPhase(IM);
-           },
-           pybind11::arg("IM"))
+      .def(
+          "changeElasticityOfPhase",
+          [](SD& sd, const tfel::math::st2tost2<3u, StressType>& C) {
+            return sd.changeElasticityOfPhase(C);
+          },
+          pybind11::arg("C"))
+      .def(
+          "changeElasticityOfPhase",
+          [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM) {
+            return sd.changeElasticityOfPhase(IM);
+          },
+          pybind11::arg("IM"))
       .def("is_isotropic", &SD::isIsotropic)
       .def("isIsotropic", &SD::isIsotropic)
-      .def("computeMeanLocalisator",
-           [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM0) {
-             return sd.computeMeanLocalisator(IM0);
-           },
-           pybind11::arg("IM0"))
-      .def("computeDerivativesOfMeanLocalisator",
-           [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM0,
-              const std::array<real, 4>& dKG) {
-             return sd.computeDerivativesOfMeanLocalisator(IM0, dKG);
-           },
-           pybind11::arg("IM0"), pybind11::arg("dKG"))
+      .def(
+          "computeMeanLocalisator",
+          [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM0) {
+            return sd.computeMeanLocalisator(IM0);
+          },
+          pybind11::arg("IM0"))
+      .def(
+          "computeDerivativesOfMeanLocalisator",
+          [](SD& sd, const tfel::material::IsotropicModuli<StressType>& IM0,
+             const std::array<real, 4>& dKG) {
+            return sd.computeDerivativesOfMeanLocalisator(IM0, dKG);
+          },
+          pybind11::arg("IM0"), pybind11::arg("dKG"))
       .def(
           "computeMeanLocalisator",
           [](SD& sd, const tfel::math::st2tost2<3u, StressType>& C0,
@@ -247,30 +251,32 @@ requires(
            pybind11::arg("ell"), pybind11::arg("frac"), pybind11::arg("IMi"))
       .def(pybind11::init<const Sphe&, real,
                           const tfel::material::IsotropicModuli<StressType>&>(),
-           pybind11::arg("sphero"), pybind11::arg("frac"),
-           pybind11::arg("IMi"))
+           pybind11::arg("sphero"), pybind11::arg("frac"), pybind11::arg("IMi"))
       .def_readwrite("inclusion", &IsoD::inclusion)
       .def_readwrite("fraction", &IsoD::fraction)
       .def("getElasticityOfPhase", &IsoD::getElasticityOfPhase)
-      .def("changeElasticityOfPhase",
-           [](IsoD& isod, const tfel::math::st2tost2<3u, StressType>& C) {
-             return isod.changeElasticityOfPhase(C);
-           },
-           pybind11::arg("C"))
-      .def("changeElasticityOfPhase",
-           [](IsoD& isod,
-              const tfel::material::IsotropicModuli<StressType>& IM) {
-             return isod.changeElasticityOfPhase(IM);
-           },
-           pybind11::arg("IM"))
+      .def(
+          "changeElasticityOfPhase",
+          [](IsoD& isod, const tfel::math::st2tost2<3u, StressType>& C) {
+            return isod.changeElasticityOfPhase(C);
+          },
+          pybind11::arg("C"))
+      .def(
+          "changeElasticityOfPhase",
+          [](IsoD& isod,
+             const tfel::material::IsotropicModuli<StressType>& IM) {
+            return isod.changeElasticityOfPhase(IM);
+          },
+          pybind11::arg("IM"))
       .def("is_isotropic", &IsoD::isIsotropic)
       .def("isIsotropic", &IsoD::isIsotropic)
-      .def("computeMeanLocalisator",
-           [](IsoD& isod,
-              const tfel::material::IsotropicModuli<StressType>& IM0) {
-             return isod.computeMeanLocalisator(IM0);
-           },
-           pybind11::arg("IM0"))
+      .def(
+          "computeMeanLocalisator",
+          [](IsoD& isod,
+             const tfel::material::IsotropicModuli<StressType>& IM0) {
+            return isod.computeMeanLocalisator(IM0);
+          },
+          pybind11::arg("IM0"))
       .def(
           "computeDerivativesOfMeanLocalisator",
           [](IsoD& isod, const tfel::material::IsotropicModuli<StressType>& IM0,
@@ -316,9 +322,10 @@ requires(
       "transverse isotropy (axis which does not rotate). This index can "
       "hence be 0, 1 or 2.")
       .def(pybind11::init<const TID&>())
-      .def(pybind11::init<
-           const Ell&, real, const tfel::material::IsotropicModuli<StressType>&,
-           const tfel::math::tvector<3, real>&, unsigned short int&>(),
+      .def(pybind11::init<const Ell&, real,
+                          const tfel::material::IsotropicModuli<StressType>&,
+                          const tfel::math::tvector<3, real>&,
+                          unsigned short int&>(),
            pybind11::arg("ell"), pybind11::arg("frac"), pybind11::arg("IM"),
            pybind11::arg("n_"), pybind11::arg("ind"))
       .def(pybind11::init<const Sphe&, real,
@@ -330,11 +337,12 @@ requires(
       .def_readwrite("inclusion", &TID::inclusion)
       .def_readwrite("fraction", &TID::fraction)
       .def("getElasticityOfPhase", &TID::getElasticityOfPhase)
-      .def("changeElasticityOfPhase",
-           [](TID& tid, const tfel::math::st2tost2<3u, StressType>& C) {
-             return tid.changeElasticityOfPhase(C);
-           },
-           pybind11::arg("C"))
+      .def(
+          "changeElasticityOfPhase",
+          [](TID& tid, const tfel::math::st2tost2<3u, StressType>& C) {
+            return tid.changeElasticityOfPhase(C);
+          },
+          pybind11::arg("C"))
       .def(
           "changeElasticityOfPhase",
           [](TID& tid, const tfel::material::IsotropicModuli<StressType>& IM) {
@@ -349,12 +357,13 @@ requires(
             return tid.computeMeanLocalisator(IM0);
           },
           pybind11::arg("IM0"))
-      .def("computeDerivativesOfMeanLocalisator",
-           [](TID& tid, const tfel::material::IsotropicModuli<StressType>& IM0,
-              const std::array<real, 4>& dKG) {
-             return tid.computeDerivativesOfMeanLocalisator(IM0, dKG);
-           },
-           pybind11::arg("IM0"), pybind11::arg("dKG"))
+      .def(
+          "computeDerivativesOfMeanLocalisator",
+          [](TID& tid, const tfel::material::IsotropicModuli<StressType>& IM0,
+             const std::array<real, 4>& dKG) {
+            return tid.computeDerivativesOfMeanLocalisator(IM0, dKG);
+          },
+          pybind11::arg("IM0"), pybind11::arg("dKG"))
       .def(
           "computeMeanLocalisator",
           [](TID& tid, const tfel::math::st2tost2<3u, StressType>& C0,
@@ -420,29 +429,33 @@ requires(
       .def("getElasticityOfPhase", &OD::getElasticityOfPhase)
       .def("getElasticityOfPhaseInGlobalBasis",
            &OD::getElasticityOfPhaseInGlobalBasis)
-      .def("changeElasticityOfPhase",
-           [](OD& od, const tfel::math::st2tost2<3u, StressType>& C) {
-             return od.changeElasticityOfPhase(C);
-           },
-           pybind11::arg("C"))
-      .def("changeElasticityOfPhase",
-           [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM) {
-             return od.changeElasticityOfPhase(IM);
-           },
-           pybind11::arg("IM"))
+      .def(
+          "changeElasticityOfPhase",
+          [](OD& od, const tfel::math::st2tost2<3u, StressType>& C) {
+            return od.changeElasticityOfPhase(C);
+          },
+          pybind11::arg("C"))
+      .def(
+          "changeElasticityOfPhase",
+          [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM) {
+            return od.changeElasticityOfPhase(IM);
+          },
+          pybind11::arg("IM"))
       .def("is_isotropic", &OD::isIsotropic)
       .def("isIsotropic", &OD::isIsotropic)
-      .def("computeMeanLocalisator",
-           [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM0) {
-             return od.computeMeanLocalisator(IM0);
-           },
-           pybind11::arg("IM0"))
-      .def("computeDerivativesOfMeanLocalisator",
-           [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM0,
-              const std::array<real, 4>& dKG) {
-             return od.computeDerivativesOfMeanLocalisator(IM0, dKG);
-           },
-           pybind11::arg("IM0"), pybind11::arg("dKG"))
+      .def(
+          "computeMeanLocalisator",
+          [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM0) {
+            return od.computeMeanLocalisator(IM0);
+          },
+          pybind11::arg("IM0"))
+      .def(
+          "computeDerivativesOfMeanLocalisator",
+          [](OD& od, const tfel::material::IsotropicModuli<StressType>& IM0,
+             const std::array<real, 4>& dKG) {
+            return od.computeDerivativesOfMeanLocalisator(IM0, dKG);
+          },
+          pybind11::arg("IM0"), pybind11::arg("dKG"))
       .def(
           "computeMeanLocalisator",
           [](OD& od, const tfel::math::st2tost2<3u, StressType>& C0,
@@ -486,25 +499,28 @@ requires(
       .def_readwrite("inclusion", &UDDS::inclusion)
       .def_readwrite("fraction", &UDDS::fraction)
       .def("getElasticityOfPhase", &UDDS::getElasticityOfPhase)
-      .def("changeElasticityOfPhase",
-           [](UDDS& udds, const tfel::math::st2tost2<3u, StressType>& C) {
-             return udds.changeElasticityOfPhase(C);
-           },
-           pybind11::arg("C"))
-      .def("changeElasticityOfPhase",
-           [](UDDS& udds,
-              const tfel::material::IsotropicModuli<StressType>& IM) {
-             return udds.changeElasticityOfPhase(IM);
-           },
-           pybind11::arg("IM"))
+      .def(
+          "changeElasticityOfPhase",
+          [](UDDS& udds, const tfel::math::st2tost2<3u, StressType>& C) {
+            return udds.changeElasticityOfPhase(C);
+          },
+          pybind11::arg("C"))
+      .def(
+          "changeElasticityOfPhase",
+          [](UDDS& udds,
+             const tfel::material::IsotropicModuli<StressType>& IM) {
+            return udds.changeElasticityOfPhase(IM);
+          },
+          pybind11::arg("IM"))
       .def("is_isotropic", &UDDS::is_isotropic)
       .def("isIsotropic", &UDDS::isIsotropic)
-      .def("computeMeanLocalisator",
-           [](UDDS& udds,
-              const tfel::material::IsotropicModuli<StressType>& IM0) {
-             return udds.computeMeanLocalisator(IM0);
-           },
-           pybind11::arg("IM0"))
+      .def(
+          "computeMeanLocalisator",
+          [](UDDS& udds,
+             const tfel::material::IsotropicModuli<StressType>& IM0) {
+            return udds.computeMeanLocalisator(IM0);
+          },
+          pybind11::arg("IM0"))
       .def(
           "computeDerivativesOfMeanLocalisator",
           [](UDDS& udds, const tfel::material::IsotropicModuli<StressType>& IM0,
@@ -560,28 +576,32 @@ requires(tfel::math::checkUnitCompatibility<
       .def("getElasticityOfPhase", &Gr::getElasticityOfPhase)
       .def("getElasticityOfPhaseInGlobalBasis",
            &Gr::getElasticityOfPhaseInGlobalBasis)
-      .def("changeElasticityOfPhase",
-           [](Gr& gr, const tfel::math::st2tost2<3u, StressType>& C) {
-             return gr.changeElasticityOfPhase(C);
-           },
-           pybind11::arg("C"))
-      .def("changeElasticityOfPhase",
-           [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM) {
-             return gr.changeElasticityOfPhase(IM);
-           },
-           pybind11::arg("IM"))
+      .def(
+          "changeElasticityOfPhase",
+          [](Gr& gr, const tfel::math::st2tost2<3u, StressType>& C) {
+            return gr.changeElasticityOfPhase(C);
+          },
+          pybind11::arg("C"))
+      .def(
+          "changeElasticityOfPhase",
+          [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM) {
+            return gr.changeElasticityOfPhase(IM);
+          },
+          pybind11::arg("IM"))
       .def("isIsotropic", &Gr::isIsotropic)
-      .def("computeMeanLocalisator",
-           [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM0) {
-             return gr.computeMeanLocalisator(IM0);
-           },
-           pybind11::arg("IM0"))
-      .def("computeDerivativesOfMeanLocalisator",
-           [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM0,
-              const std::array<real, 4>& dKG) {
-             return gr.computeDerivativesOfMeanLocalisator(IM0, dKG);
-           },
-           pybind11::arg("IM0"), pybind11::arg("dKG"))
+      .def(
+          "computeMeanLocalisator",
+          [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM0) {
+            return gr.computeMeanLocalisator(IM0);
+          },
+          pybind11::arg("IM0"))
+      .def(
+          "computeDerivativesOfMeanLocalisator",
+          [](Gr& gr, const tfel::material::IsotropicModuli<StressType>& IM0,
+             const std::array<real, 4>& dKG) {
+            return gr.computeDerivativesOfMeanLocalisator(IM0, dKG);
+          },
+          pybind11::arg("IM0"), pybind11::arg("dKG"))
       .def(
           "computeMeanLocalisator",
           [](Gr& gr, const tfel::math::st2tost2<3u, StressType>& C0,
@@ -623,28 +643,32 @@ requires(
            pybind11::arg("inclusionPhase"))
       .def("removeInclusionPhase", &PM::removeInclusionPhase,
            pybind11::arg("i"))
-      .def("changeElasticityOfMatrixPhase",
-           [](PM& pm, const tfel::math::st2tost2<N, StressType>& C0) {
-             return pm.changeElasticityOfMatrixPhase(C0);
-           },
-           pybind11::arg("C0"))
-      .def("changeElasticityOfMatrixPhase",
-           [](PM& pm, const tfel::material::IsotropicModuli<StressType>& IM0) {
-             return pm.changeElasticityOfMatrixPhase(IM0);
-           },
-           pybind11::arg("IM0"))
-      .def("changeElasticityOfInclusionPhase",
-           [](PM& pm, unsigned int i,
-              const tfel::math::st2tost2<N, StressType>& C) {
-             return pm.changeElasticityOfInclusionPhase(i, C);
-           },
-           pybind11::arg("i"), pybind11::arg("C"))
-      .def("changeElasticityOfInclusionPhase",
-           [](PM& pm, unsigned int i,
-              const tfel::material::IsotropicModuli<StressType>& IM) {
-             return pm.changeElasticityOfInclusionPhase(i, IM);
-           },
-           pybind11::arg("i"), pybind11::arg("IM"))
+      .def(
+          "changeElasticityOfMatrixPhase",
+          [](PM& pm, const tfel::math::st2tost2<N, StressType>& C0) {
+            return pm.changeElasticityOfMatrixPhase(C0);
+          },
+          pybind11::arg("C0"))
+      .def(
+          "changeElasticityOfMatrixPhase",
+          [](PM& pm, const tfel::material::IsotropicModuli<StressType>& IM0) {
+            return pm.changeElasticityOfMatrixPhase(IM0);
+          },
+          pybind11::arg("IM0"))
+      .def(
+          "changeElasticityOfInclusionPhase",
+          [](PM& pm, unsigned int i,
+             const tfel::math::st2tost2<N, StressType>& C) {
+            return pm.changeElasticityOfInclusionPhase(i, C);
+          },
+          pybind11::arg("i"), pybind11::arg("C"))
+      .def(
+          "changeElasticityOfInclusionPhase",
+          [](PM& pm, unsigned int i,
+             const tfel::material::IsotropicModuli<StressType>& IM) {
+            return pm.changeElasticityOfInclusionPhase(i, IM);
+          },
+          pybind11::arg("i"), pybind11::arg("IM"))
       .def("changeFractionOfInclusionPhase",
            &PM::changeFractionOfInclusionPhase, pybind11::arg("i"),
            pybind11::arg("f"))
@@ -656,16 +680,18 @@ requires(
       .def("getMatrixElasticity", &PM::getMatrixElasticity)
       .def("is_isotropic_matrix", &PM::isIsotropicMatrix)
       .def("isIsotropicMatrix", &PM::isIsotropicMatrix)
-      .def("get_inclusionPhase",
-           [](PM& pm, unsigned int i) {
-             return std::shared_ptr<ID>(pm.getInclusionPhase(i));
-           },
-           pybind11::arg("i"))
-      .def("getInclusionPhase",
-           [](PM& pm, unsigned int i) {
-             return std::shared_ptr<ID>(pm.getInclusionPhase(i));
-           },
-           pybind11::arg("i"));
+      .def(
+          "get_inclusionPhase",
+          [](PM& pm, unsigned int i) {
+            return std::shared_ptr<ID>(pm.getInclusionPhase(i));
+          },
+          pybind11::arg("i"))
+      .def(
+          "getInclusionPhase",
+          [](PM& pm, unsigned int i) {
+            return std::shared_ptr<ID>(pm.getInclusionPhase(i));
+          },
+          pybind11::arg("i"));
 }
 
 template <tfel::math::ScalarConcept StressType>
@@ -686,27 +712,30 @@ requires(tfel::math::checkUnitCompatibility<
       .def(pybind11::init<>())
       .def("addGrain", &Po::addGrain, pybind11::arg("grain"))
       .def("removeGrain", &Po::removeGrain, pybind11::arg("i"))
-      .def("changeElasticityOfGrain",
-           [](Po& po, unsigned int i,
-              const tfel::math::st2tost2<3u, StressType>& C) {
-             return po.changeElasticityOfGrain(i, C);
-           },
-           pybind11::arg("i"), pybind11::arg("C"))
-      .def("changeElasticityOfGrain",
-           [](Po& po, unsigned int i,
-              const tfel::material::IsotropicModuli<StressType>& IM) {
-             return po.changeElasticityOfGrain(i, IM);
-           },
-           pybind11::arg("i"), pybind11::arg("IM"))
+      .def(
+          "changeElasticityOfGrain",
+          [](Po& po, unsigned int i,
+             const tfel::math::st2tost2<3u, StressType>& C) {
+            return po.changeElasticityOfGrain(i, C);
+          },
+          pybind11::arg("i"), pybind11::arg("C"))
+      .def(
+          "changeElasticityOfGrain",
+          [](Po& po, unsigned int i,
+             const tfel::material::IsotropicModuli<StressType>& IM) {
+            return po.changeElasticityOfGrain(i, IM);
+          },
+          pybind11::arg("i"), pybind11::arg("IM"))
       .def("changeFractionOfGrain", &Po::changeFractionOfGrain,
            pybind11::arg("i"), pybind11::arg("f"))
       .def("getNumberOfGrains", &Po::getNumberOfGrains)
       .def("getTotalFraction", &Po::getTotalFraction)
-      .def("getGrain",
-           [](Po& po, unsigned int i) {
-             return std::shared_ptr<Gr>(po.getGrain(i));
-           },
-           pybind11::arg("i"));
+      .def(
+          "getGrain",
+          [](Po& po, unsigned int i) {
+            return std::shared_ptr<Gr>(po.getGrain(i));
+          },
+          pybind11::arg("i"));
 }
 
 void declareMicrostructure(pybind11::module_&);

@@ -482,8 +482,7 @@ namespace mfront {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInterface",
                             "Expected interface name.");
     if (this->current->flag == tfel::utilities::Token::String) {
-      this->addInterface(
-          this->current->value.substr(1, this->current->value.size() - 2));
+      this->addInterface(tfel::utilities::getContents(*this->current));
     } else {
       this->addInterface(this->current->value);
     }
@@ -812,8 +811,7 @@ namespace mfront {
       throw_if(this->current->flag != Token::String,
                "expected a string as glossary name");
       throw_if(this->current->value.size() < 3, "glossary name too short");
-      const auto gn =
-          this->current->value.substr(1, this->current->value.size() - 2);
+      const auto gn = tfel::utilities::getContents(*this->current);
       throw_if(!glossary.contains(gn),
                "'" + gn + "' is not a valid glossary name");
       this->md.setGlossaryName(this->currentVar, gn);
@@ -824,8 +822,7 @@ namespace mfront {
       throw_if(this->current->flag != Token::String,
                "expected a string as entry file name");
       throw_if(this->current->value.size() < 3, "entry file name too short");
-      const auto en =
-          this->current->value.substr(1, this->current->value.size() - 2);
+      const auto en = tfel::utilities::getContents(*this->current);
       if (glossary.contains(en)) {
         std::ostringstream msg;
         msg << "'" << en << "' is a glossary name. Please use "
@@ -1099,8 +1096,7 @@ namespace mfront {
         this->checkNotEndOfFile("MaterialPropertyDSL::treatUnknownKeyword");
         const auto t = [this]() -> std::string {
           if (this->current->flag == tfel::utilities::Token::String) {
-            return this->current->value.substr(1,
-                                               this->current->value.size() - 2);
+            return tfel::utilities::getContents(*this->current);
           }
           return this->current->value;
         }();

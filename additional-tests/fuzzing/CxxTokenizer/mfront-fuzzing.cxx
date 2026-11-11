@@ -90,14 +90,14 @@ namespace {
       }
       previous_line = token.line;
       previous_offset = token.offset;
-      // a token which is not a comment nor a string has a non empty value. The
-      // empty value of an empty comment (`//` or `/**/`) and of a raw string
-      // with an empty content are known defects of the tokenizer, see issue
-      // #1387, so those tokens are not rejected until those defects are fixed
+      // a token which is not a comment has a non empty value: the value of a
+      // comment is empty when the comment is empty, which is the wanted
+      // behaviour, see issue #1391. A raw string literal with an empty
+      // contents holds the whole literal as its value, as a quoted string
+      // holds its quotes, see issue #1390
       if (token.value.empty() && (token.flag != Token::Comment) &&
           (token.flag != Token::DoxygenComment) &&
-          (token.flag != Token::DoxygenBackwardComment) &&
-          (token.flag != Token::String)) {
+          (token.flag != Token::DoxygenBackwardComment)) {
         std::cerr << "empty token obtained tokenizing " << size << " bytes\n";
         std::abort();
       }
@@ -108,10 +108,12 @@ namespace {
         continue;
       }
       const auto& line = lines[token.line - 1u];
-      // the offset of a token is not past the end of its line. An offset equal
-      // to the size of the line is authorised since an empty comment gives such
-      // an offset, which is a known defect of the tokenizer, see issue #1387
-      if (token.offset > line.size()) {
+      // the offset of a token is the position of a character of the line the
+      // token starts on, so that it is strictly smaller than the size of that
+      // line, even for a token whose value is empty: the offset of an empty
+      // comment is that of its delimiter, see issue #1391, and the offset of a
+      // raw string token is that of its `R` delimiter, see issue #1390
+      if (token.offset >= line.size()) {
         std::cerr << "offset out of the line obtained tokenizing " << size
                   << " bytes\n";
         std::abort();

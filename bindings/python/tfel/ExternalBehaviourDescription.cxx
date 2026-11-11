@@ -57,7 +57,7 @@ void declareExternalBehaviourDescription(pybind11::module_& m) {
   using namespace tfel::system;
 
   pybind11::class_<ExternalBehaviourDescription,
-                    ExternalMaterialKnowledgeDescription>(
+                   ExternalMaterialKnowledgeDescription>(
       m, "ExternalBehaviourDescription",
       "A structure containing the information that could be retrieved\n"
       "by the ExternalLibraryManager class about a given behaviour for\n"
@@ -210,8 +210,7 @@ void declareExternalBehaviourDescription(pybind11::module_& m) {
            "Return the upper bound of the given variable\n"
            "v: variable name")
       .def("hasPhysicalBounds",
-           &ExternalBehaviourDescription::hasPhysicalBounds,
-           pybind11::arg("v"),
+           &ExternalBehaviourDescription::hasPhysicalBounds, pybind11::arg("v"),
            "Return true if the given variable has bounds\n"
            "v: variable name")
       .def("hasLowerPhysicalBound",
