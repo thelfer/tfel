@@ -214,10 +214,10 @@ An empty string is returned when no compatibility mode is declared for
 the asset: it then uses the greatest compatibility mode known by the
 version of `MFront` which generated it.
 
-The `compatibility_mode` attribute of an `MFront` file is reported by the
+The `compatibility_mode` attribute of a behaviour is reported by the
 `--attributes` query of `mfront-query`, which lists the names of the
-attributes of a material knowledge, when this attribute is defined by the
-file itself:
+attributes of a behaviour, when a compatibility mode is declared, by the
+file or by the `--compatibility-mode` argument:
 
 ~~~~{.bash}
 $ mfront-query --attributes Norton.mfront
