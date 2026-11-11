@@ -154,9 +154,9 @@ For instance, the alias giving access to the physical constants in the
 generated code is:
 
 ~~~~{.cxx}
-// no compatibility mode declared
+// no compatibility mode declared, in Version 5.2
 using PhysicalConstants [[maybe_unused]] =
-    tfel::PhysicalConstants<NumericType, false>;
+    tfel::v5_2_0::PhysicalConstants<NumericType, false>;
 ~~~~
 
 ~~~~{.cxx}
