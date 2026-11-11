@@ -43,8 +43,7 @@ the default:
 | \(s\)     | Stefan-Boltzmann constant | \(5.67037\,.10^{-8}\)        | \(5.670367\,.10^{-8}\)       | \(W.m^{-2}.K^{-4}\)    |
 
 The set of the next major version, `6.0.0`, uses the `CODATA` 2014
-internationally recommended values with all the digits of the `double`
-representation.
+internationally recommended values with all their published digits.
 
 # Versioned values
 
