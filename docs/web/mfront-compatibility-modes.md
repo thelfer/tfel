@@ -146,9 +146,9 @@ the `TFEL` libraries, as described in
 [this page](tfel-compatibility-modes.html). The results it gives do not
 depend on the version of the `TFEL` libraries used to compile it, except
 for bug fixes. When no compatibility mode is declared, the generated
-code refers to the entities of the version of the `TFEL` libraries which
-compiles it, and follows therefore the current behaviour of that
-version.
+code refers to the entities of the greatest compatibility mode known by
+`MFront`, that is to say the mode of the current version, and follows
+therefore the current behaviour of that version.
 
 For instance, the alias giving access to the physical constants in the
 generated code is:
