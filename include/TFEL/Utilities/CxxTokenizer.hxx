@@ -293,7 +293,17 @@ namespace tfel::utilities {
      * \return is a C-style comment is opened at the
      * the end of the processing.
      * This is usefull when parsing a file line by line
-     * \param[in] b: boolean
+     *
+     * A `C` style comment may span several lines: a comment which is not
+     * closed on the line where it opens does not make the tokenizer throw.
+     * The state of the tokenizer is left open and the lines which follow are
+     * gathered in the value of the comment token until the comment is closed,
+     * which is what allows tokenizing a file line by line. A file which ends
+     * inside a comment is thus accepted, on the contrary to a quoted string or
+     * to a character literal which are rejected when they are not closed in
+     * their line: the caller is responsible for checking the state of the
+     * tokenizer when the end of the file is reached, as this method does. See
+     * issue #1395.
      */
     [[nodiscard]] bool isCStyleCommentOpened() const;
     /*!
@@ -322,7 +332,14 @@ namespace tfel::utilities {
      * \return is a raw string is opened at the
      * the end of the processing.
      * This is usefull when parsing a file line by line
-     * \param[in] b: boolean
+     *
+     * The raw string literals behave as the `C` style comments: a literal
+     * which is not closed when the end of the contents is reached does not
+     * make the tokenizer throw and leaves the state of the tokenizer open. A
+     * file which ends inside a raw string literal is thus accepted: the caller
+     * is responsible for checking the state of the tokenizer when the end of
+     * the file is reached, as this method does, `getCurrentRawStringDelimiter`
+     * giving the delimiter of the opened literal. See issue #1395.
      */
     [[nodiscard]] bool isRawStringOpened() const;
     /*!
