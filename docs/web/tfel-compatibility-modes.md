@@ -42,10 +42,11 @@ the version which introduced them. Both behaviours are thus compiled,
 once for each mode, and the user selects the one it needs by naming the
 mode it contains.
 
-This mechanism relies on names, not on a preprocessor definition: the
-versioned entities are `constexpr` entities or templates which are
-resolved when the code using them is compiled, whatever the way this
-code has been generated.
+This mechanism relies on names: the versioned entities are `constexpr`
+entities or templates which are resolved when the code using them is
+compiled, whatever the way this code has been generated. Only the
+`Python` bindings use a preprocessor definition, `TFEL_VERSION_MAJOR`,
+to select the values of the current version.
 
 The names which do not mention a mode, such as
 `tfel::PhysicalConstants`, refer to the entity of the mode of the
