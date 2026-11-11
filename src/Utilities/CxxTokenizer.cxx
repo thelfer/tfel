@@ -56,17 +56,56 @@ namespace tfel::utilities {
     return std::isalpha(static_cast<unsigned char>(c)) != 0;
   }  // end of is_alpha
 
+  /*!
+   * \brief search the additional separator which appears first in the line
+   * \param[in] p: first character to search
+   * \param[in] pw: first character which cannot be a part of the token which
+   * starts at p, see `parseStandardLine`
+   * \param[in] pe: end of the line
+   * \param[in] separators: additional separators
+   * \return the position and the value of the first separator, `pe` and an
+   * empty string if the line holds none which begins before `pw`
+   *
+   * Only the separators which begin before `pw` are searched: the caller builds
+   * the token which starts at `p`, which stops at `pw` if no separator begins
+   * before it, so that a separator which begins at `pw` or after it cannot
+   * change the token nor the position the tokenizer reads next. The search is
+   * thus bounded by the length of the token and of the longest separator, and
+   * not by the length of the line, which keeps the cost of the tokenizer linear
+   * in the length of a line, see issue #1410. The characters of the line are
+   * read through a view of them, as copying the rest of the line at each call,
+   * as the previous implementation did, is as expensive as the search itself.
+   */
   static std::pair<std::string::const_iterator, std::string> findSeparator(
       const std::string::const_iterator p,
+      const std::string::const_iterator pw,
       const std::string::const_iterator pe,
       const std::vector<std::string>& separators) {
-    const auto w = std::string{p, pe};
     std::pair<std::string::const_iterator, std::string> r = {pe, ""};
+    if (separators.empty()) {
+      // the search can only fail: it is the case of a tokenizer which uses the
+      // default options, which is that of most of the consumers of the library
+      return r;
+    }
+    if (p == pe) {
+      // the rest of the line is empty, the search can only fail. This test
+      // keeps the following view of the line well defined
+      return r;
+    }
+    auto n = std::size_t{0u};
+    for (const auto& s : separators) {
+      n = std::max(n, s.size());
+    }
+    // a separator which begins before `pw` is entirely held by the range which
+    // ends at `pw` plus its own length, whatever the separator is
+    const auto e = std::min(pe, pw + n);
+    const auto w = std::string_view{&*p, static_cast<std::size_t>(e - p)};
     for (const auto& s : separators) {
       const auto pos = w.find(s);
-      if (pos != std::string::npos) {
-        if (p + pos < r.first) {
-          r = {p + pos, s};
+      if (pos != std::string_view::npos) {
+        const auto q = p + pos;
+        if ((q < pw) && (q < r.first)) {
+          r = {q, s};
         }
       }
     }
@@ -931,12 +970,12 @@ namespace tfel::utilities {
       } else if (*p == '|') {
         this->try_join(o, p, pe, n, '|', '=');
       } else {
-        const auto as = findSeparator(p, pe, this->additional_separators);
         const auto pw = std::find_if(
             p, pe,
             is_separator_or_space(this->dotAsSeparator, this->plusAsSeparator,
                                   this->minusAsSeparator,
                                   this->graveAccentAsSeparator));
+        const auto as = findSeparator(p, pw, pe, this->additional_separators);
         if (as.first < pw) {
           if (as.first == p) {
             this->tokens.emplace_back(as.second, n, o, Token::Standard);
