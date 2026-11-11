@@ -145,19 +145,35 @@ namespace tfel::utilities {
     auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseStream: " + m);
     };
+    auto tokenize_line = [this, &n, &from](const std::string& line) {
+      ++n;
+      try {
+        this->splitLine(line, n);
+      } catch (std::runtime_error& e) {
+        raise(std::string(e.what()) + ".\n" +
+              "Error at line: " + std::to_string(n) + from);
+      }
+    };
     try {
-      while (!in.eof()) {
-        throw_if(!in.good(), "error while parsing stream");
-        throw_if(!in.good(), "error while parsing stream");
-        auto line = std::string{};
-        std::getline(in, line);
-        ++n;
-        try {
-          this->splitLine(line, n);
-        } catch (std::runtime_error& e) {
-          raise(std::string(e.what()) + ".\n" +
-                "Error at line: " + std::to_string(n) + from);
-        }
+      auto line = std::string{};
+      while (std::getline(in, line)) {
+        tokenize_line(line);
+        // std::getline does not clear the line when the extraction fails, so
+        // that the content of the last line is not kept for the test below
+        line.clear();
+      }
+      throw_if(in.bad(), "error while parsing stream");
+      // The extraction may fail although some characters have been extracted,
+      // which is the case of the last line of a stream which is not terminated
+      // by an end of line character: such a line still has to be tokenized. On
+      // the contrary, an extraction which extracts nothing means that the end
+      // of the stream is reached: such an empty line shall not be tokenized as
+      // it would add a spurious end of line character at the end of the value
+      // of a token which spans several lines, as an unterminated comment for
+      // instance. Tokenizing a stream line by line gives then the same result
+      // as tokenizing its whole contents
+      if (!line.empty()) {
+        tokenize_line(line);
       }
     } catch (...) {
       this->clear();
