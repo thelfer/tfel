@@ -171,6 +171,15 @@ struct CompatibilityModeTest final : public tfel::tests::TestCase {
     // compatibility modes were introduced
     TFEL_TESTS_CHECK_EQUAL(CompatibilityMode::known_compatibility_modes.front(),
                            CompatibilityMode::v5_2_0);
+    // a file which declares no compatibility mode uses the greatest known
+    // compatibility mode, `5.2.0` in Version 5.2, which preserves the
+    // compatibility with Version 5.1. This test shall only change when the
+    // compatibility mode of a new major version is introduced.
+    TFEL_TESTS_CHECK(mfront::getGreatestCompatibilityMode() ==
+                     CompatibilityMode::v5_2_0);
+    TFEL_TESTS_CHECK(mfront::getEffectiveCompatibilityMode(
+                         mfront::MaterialPropertyDescription{}) ==
+                     CompatibilityMode::v5_2_0);
   }  // end of testKnownCompatibilityModes
   //
   void testCheck() {
