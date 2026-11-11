@@ -124,6 +124,7 @@ For developers and contributors.
 | [CMake Options](https://github.com/thelfer/tfel/blob/master/CMakeLists.txt) | Advanced CMake configuration. |
 | [Coverity Scan](coverity-scan.html) | Static analysis for TFEL. |
 | [Running Sanitized Tests](sanitizers.html) | Building and testing TFEL/MFront with sanitizers. |
+| [Fuzz Testing The Tokenizer](testing-fuzzing.html) | Running libFuzzer based analyses of the tokenizer of MFront files. |
 | [Packages](packages.html) | Creating binary packages for TFEL. |
 | [Release How-To](release-howto.html) | Preparing a TFEL/MFront release. |
 | [TFEL System](TFELSystem.html) | Overview of TFEL's architecture. |
