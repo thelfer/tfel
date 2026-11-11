@@ -152,7 +152,7 @@ namespace mtest {
         currentLine = p->line;
       }
       if (p->flag == Token::String) {
-        description += p->value.substr(1, p->value.size() - 2);
+        description += tfel::utilities::getContents(*p);
       } else {
         description += p->value;
       }

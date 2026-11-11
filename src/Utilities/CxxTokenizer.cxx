@@ -692,7 +692,8 @@ namespace tfel::utilities {
   void CxxTokenizer::parseRawString(Token::size_type& o,
                                     std::string::const_iterator& p,
                                     const std::string::const_iterator pe,
-                                    const Token::size_type n) {
+                                    const Token::size_type n,
+                                    const Token::size_type ro) {
     auto findDelimiter = [this, pe](std::string::const_iterator c) {
       if (*c != ')') {
         return false;
@@ -713,10 +714,18 @@ namespace tfel::utilities {
       }
       return *c == '\"';
     };
-    this->tokens.emplace_back("", n, o, Token::String);
+    // the value of a raw string token holds the whole literal, from the `R`
+    // delimiter to the closing `"` included, as for a quoted string, and its
+    // offset is that of the `R`, see issue #1390. The opening `R"delim(`
+    // prefix is restored from the delimiter of the literal, which the caller
+    // has read and kept in `currentRawStringDelimiter`
+    this->tokens.emplace_back("R\"" + this->currentRawStringDelimiter + "(", n,
+                              ro, Token::String);
     auto& value = this->tokens.back().value;
     while (p != pe) {
       if (findDelimiter(p)) {
+        // the closing `)delim"` suffix is a part of the value
+        value += std::string{p, p + this->currentRawStringDelimiter.size() + 2};
         advance(o, p, this->currentRawStringDelimiter.size() + 2);
         this->rawStringOpened = false;
         this->currentRawStringDelimiter.clear();
@@ -815,6 +824,9 @@ namespace tfel::utilities {
       } else if ((*p == 'R') &&
                  ((std::next(p) != pe) && ((*(std::next(p)) == '\"')))) {
         // raw strings litteral
+        // the offset of the `R` delimiter: it is that of the token, whose
+        // value holds the whole literal, see issue #1390
+        const auto ro = o;
         advance(o, p, 2u);
         this->currentRawStringDelimiter.clear();
         this->rawStringOpened = true;
@@ -829,7 +841,7 @@ namespace tfel::utilities {
               "invalid end of line, expected to read the raw string delimiter");
         }
         advance(o, p, 1u);
-        this->parseRawString(o, p, pe, n);
+        this->parseRawString(o, p, pe, n, ro);
       } else if (*p == '\"') {
         // c-strings
         if (this->treatStrings) {
@@ -982,7 +994,10 @@ namespace tfel::utilities {
       const auto delimiter = ")" + this->currentRawStringDelimiter + '\"';
       const auto pos3 = line.find(delimiter);
       if (tokens.empty()) {
-        this->tokens.emplace_back("", n, o, Token::String);
+        // the opening `R"delim(` prefix is restored from the delimiter of the
+        // literal, which the tokenizer has kept
+        this->tokens.emplace_back("R\"" + this->currentRawStringDelimiter + "(",
+                                  n, o, Token::String);
       }
       throw_if((this->tokens.back().flag != Token::String),
                "internal error (previous token is not a string)");
@@ -994,7 +1009,8 @@ namespace tfel::utilities {
         advance(o, p, line.size());
         return;
       }
-      this->tokens.back().value += std::string{p, p + pos3};
+      // the closing `)delim"` suffix is a part of the value
+      this->tokens.back().value += std::string{p, p + pos3 + delimiter.size()};
       advance(o, p, pos3 + delimiter.size());
       this->rawStringOpened = false;
       this->currentRawStringDelimiter.clear();
@@ -1245,7 +1261,7 @@ namespace tfel::utilities {
     raise_if(p->value.size() < 2,
              "CxxTokenizer::readString: "
              "internal error (invalid string size)");
-    const auto value = p->value.substr(1, p->value.size() - 2);
+    const auto value = getContents(*p);
     ++p;
     return value;
   }  // end of CxxTokenizer::readString
