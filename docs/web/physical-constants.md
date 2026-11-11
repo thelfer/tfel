@@ -17,8 +17,9 @@ The physical constants are extracted from: <http://physics.nist.gov/cuu/Constant
 
 Their values are subject to compatibility modes: the values which are
 used by default are those of the compatibility mode of the version,
-whereas the values of the next major version, which use all the digits
-of the `double` representation, are available in a specific namespace.
+whereas the values of the next major version, which use all the
+published digits of the `CODATA` 2014 values, are available in a
+specific namespace.
 Compatibility modes are described in the page devoted to
 [compatibility modes in the `TFEL` libraries](tfel-compatibility-modes.html).
 
