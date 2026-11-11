@@ -81,7 +81,7 @@ namespace mfront {
       // this shall have been catched by check, just a paranoiac check, that
       // does not hurt
       tfel::raise("version '" + internals::to_string(v) +
-                  "' is invalid: it must be greater than or egal to 5.2.0");
+                  "' is invalid: it must be greater than or equal to 5.2.0");
     }
     const auto selected_version = *(std::prev(p));
     if (v != selected_version) {
