@@ -88,6 +88,22 @@ namespace mfront {
     os << n << "::" << radius << "= this->" << radius << ";\n";
   }  // end of initializeNumericalParameters
 
+  std::string PowellDogLegAlgorithmBase::buildExternalAlgorithmClassName(
+      const BehaviourDescription& bd,
+      const Hypothesis h,
+      const std::string& n) {
+    const auto v = getEffectiveCompatibilityMode(bd);
+    if (v == CompatibilityMode::future) {
+      return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+          bd, h, "future::" + n);
+    } else if (v == CompatibilityMode::v5_2_0) {
+      return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+          bd, h, "v5_2_0::" + n);
+    }
+    // use the current version of the solver
+    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(bd, h, n);
+  }  // end of buildExternalAlgorithmClassName
+
   void PowellDogLegAlgorithmBase::writePowellDogLegStep(
       std::ostream& out,
       const BehaviourDescription& mb,

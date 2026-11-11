@@ -1,0 +1,30 @@
+@DSL ImplicitModelDSL{
+  compatibility_mode : "5.2.0",
+  automatic_declaration_of_the_temperature_as_first_external_state_variable :
+      false
+};
+@Model PowellDogLegNewtonRaphson_v5_2_0;
+@Author Tristan Chenaille;
+@Date 11/11/2026;
+@Description {
+  This model checks that the `PowellDogLeg_NewtonRaphson` algorithm uses
+  a trust region of fixed size in the "5.2.0" compatibility mode. The
+  number of iterations is stored in the `n` auxiliary state variable.
+}
+
+@Algorithm PowellDogLeg_NewtonRaphson;
+@PowellDogLegTrustRegionSize 0.1;
+@Epsilon 1.e-12;
+@IterMax 100;
+
+@StateVariable real x;
+@AuxiliaryStateVariable real n;
+
+@Integrator {
+  fx = atan(x + dx);
+  dfx_ddx = 1 / (1 + (x + dx) * (x + dx));
+}
+
+@UpdateAuxiliaryStateVariables {
+  n = this->iter;
+}

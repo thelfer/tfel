@@ -4,7 +4,7 @@
 // This test checks that the jacobian is updated at each iteration of
 // the PowellDogLeg_Broyden algorithm: with the maximum number of
 // iterations given below, the integration fails otherwise (it then
-// takes at most 15 iterations per time step, against 7). See Issue 1295.
+// takes at most 15 iterations per time step, against 6). See Issue 1295.
 
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;

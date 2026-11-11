@@ -109,7 +109,7 @@ namespace mfront {
 
   std::string PowellDogLegNewtonRaphsonSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+    return PowellDogLegAlgorithmBase::buildExternalAlgorithmClassName(
         bd, h, "TinyPowellDogLegNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
@@ -160,23 +160,8 @@ namespace mfront {
   std::string PowellDogLegNewtonRaphsonNumericalJacobianSolver::
       getExternalAlgorithmClassName(const BehaviourDescription& bd,
                                     const Hypothesis h) const {
-    const auto hn = [&h]() -> std::string {
-      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        return "hypothesis";
-      }
-      return "ModellingHypothesis::" +
-             tfel::material::ModellingHypothesis::toUpperCaseString(h);
-    }();
-    const auto n =
-        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-    const auto cn =
-        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyPowellDogLegNewtonRaphsonSolver<" +  //
-           n + ", NumericType, " + cn + ">";
+    return PowellDogLegAlgorithmBase::buildExternalAlgorithmClassName(
+        bd, h, "TinyPowellDogLegNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
   void PowellDogLegNewtonRaphsonNumericalJacobianSolver::
