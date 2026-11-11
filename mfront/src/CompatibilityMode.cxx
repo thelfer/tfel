@@ -58,7 +58,7 @@ namespace mfront {
   void check(const CompatibilityMode::Version& v) {
     if (v < CompatibilityMode::v5_2_0) {
       tfel::raise("version '" + internals::to_string(v) +
-                  "' is invalid: it must be greater than or egal to 5.2.0");
+                  "' is invalid: it must be greater than or equal to 5.2.0");
     }
   }
 
