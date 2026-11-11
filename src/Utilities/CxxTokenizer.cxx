@@ -576,30 +576,28 @@ namespace tfel::utilities {
       }
       return pe;
     };
-    auto next_token = [this, &p, &o] {
-      if (this->bKeepCommentBoundaries) {
-        ++p;
-      } else {
-        advance(o, p, 1u);
-      }
-    };
     const auto b = p;
-    // The offset of the delimiter which opens the comment: it is that of the
-    // token when the comment is empty, since such a token has no contents to
-    // point to. It is kept before the delimiters are read, as o is increased
-    // while reading the line
+    // The offset of the delimiter which opens the comment. It is kept before
+    // the delimiters are read, as o is increased while reading the line. It is
+    // that of the token in two cases:
+    //
+    // - when the comment is empty, since such a token has no contents to point
+    //   to, see issue #1391,
+    //
+    // - when the boundaries of the comment are a part of its value, since such
+    //   a value starts with that delimiter, see issue #1407
     const auto bo = o;
     throw_if((p == pe) || (*p != '/'), "invalid call");
-    next_token();
+    advance(o, p, 1u);
     throw_if((p == pe) || (*p != '*'), "invalid call");
-    next_token();
+    advance(o, p, 1u);
     auto flag = Token::Comment;
     if ((p != pe) && (*p == '!')) {
-      next_token();
+      advance(o, p, 1u);
       if ((p != pe) && (*p == '<')) {
         flag = this->tokens.empty() ? Token::Comment
                                     : Token::DoxygenBackwardComment;
-        next_token();
+        advance(o, p, 1u);
       } else {
         flag = this->tokens.empty() ? Token::Comment : Token::DoxygenComment;
       }
@@ -609,10 +607,16 @@ namespace tfel::utilities {
     }
     auto e = get_end(p);
     if (this->bKeepCommentBoundaries) {
+      // the value of the token is the whole comment, whose delimiters are a
+      // part of it, so that the offset of the token is that of the delimiter
+      // which opens it. Reading the delimiters advances the offset along with
+      // the iterator, whatever the options are, so that the tokens which follow
+      // the comment on the same line keep the offsets of the line, see issue
+      // #1407
       if (e == pe) {
-        this->tokens.emplace_back(std::string{b, e}, n, o, flag);
+        this->tokens.emplace_back(std::string{b, e}, n, bo, flag);
       } else {
-        this->tokens.emplace_back(std::string{b, e + 2}, n, o, flag);
+        this->tokens.emplace_back(std::string{b, e + 2}, n, bo, flag);
       }
     } else {
       auto value = std::string{};
@@ -648,36 +652,39 @@ namespace tfel::utilities {
     auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseCxxComment: " + m);
     };
-    auto next_token = [this, &p, &o] {
-      if (this->bKeepCommentBoundaries) {
-        ++p;
-      } else {
-        advance(o, p, 1u);
-      }
-    };
     const auto b = p;
-    // The offset of the delimiter which opens the comment: it is that of the
-    // token when the comment is empty, since such a token has no contents to
-    // point to. It is kept before the delimiters are read, as o is increased
-    // while reading the line
+    // The offset of the delimiter which opens the comment. It is kept before
+    // the delimiters are read, as o is increased while reading the line. It is
+    // that of the token in two cases:
+    //
+    // - when the comment is empty, since such a token has no contents to point
+    //   to, see issue #1391,
+    //
+    // - when the boundaries of the comment are a part of its value, since such
+    //   a value starts with that delimiter, see issue #1407
     const auto bo = o;
     throw_if((p == pe) || (*p != '/'), "invalid call");
-    next_token();
+    advance(o, p, 1u);
     throw_if((p == pe) || (*p != '/'), "invalid call");
-    next_token();
+    advance(o, p, 1u);
     auto flag = Token::Comment;
     if ((p != pe) && (*p == '!')) {
-      next_token();
+      advance(o, p, 1u);
       if ((p != pe) && (*p == '<')) {
         flag = this->tokens.empty() ? Token::Comment
                                     : Token::DoxygenBackwardComment;
-        next_token();
+        advance(o, p, 1u);
       } else {
         flag = this->tokens.empty() ? Token::Comment : Token::DoxygenComment;
       }
     }
     if (this->bKeepCommentBoundaries) {
-      this->tokens.emplace_back(std::string{b, pe}, n, o, flag);
+      // the value of the token is the whole comment, whose delimiters are a
+      // part of it, so that the offset of the token is that of the delimiter
+      // which opens it. Reading the delimiters advances the offset along with
+      // the iterator, whatever the options are, so that the offsets of the
+      // lines which follow are those of the lines, see issue #1407
+      this->tokens.emplace_back(std::string{b, pe}, n, bo, flag);
     } else {
       ignore_space(o, p, pe);
       // An empty comment, as `//`, gives a token with an empty value: the
