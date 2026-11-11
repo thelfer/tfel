@@ -211,8 +211,8 @@ std::cout << elms.getCompatibilityMode("libBehaviour.so", "Norton")
 ~~~~
 
 An empty string is returned when no compatibility mode is declared for
-the asset, which means that it follows the current behaviour of the
-version of the `TFEL` libraries which compiles it.
+the asset: it then uses the greatest compatibility mode known by the
+version of `MFront` which generated it.
 
 The `compatibility_mode` attribute of an `MFront` file is reported by the
 `--attributes` query of `mfront-query`, which lists the names of the
