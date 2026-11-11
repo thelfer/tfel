@@ -140,7 +140,9 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     t.parseString("s = R\"(text\n");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::String);
-    TFEL_TESTS_ASSERT(t[2].value == "text\n");
+    // the value of the token is the contents of the literal: the end of line
+    // character which terminates the line is not a part of it, see issue #1396
+    TFEL_TESTS_ASSERT(t[2].value == "text");
     TFEL_TESTS_ASSERT(t.isRawStringOpened());
     t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("s = \"text\n"), std::runtime_error);
