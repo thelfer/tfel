@@ -252,6 +252,15 @@ namespace tfel::utilities {
     /*!
      * \brief analyse the string given
      * all previous tokens are erased
+     *
+     * The line numbers of the tokens of the string start at the first line:
+     * tokenizing a file with several calls to this method, a call per line,
+     * gives the same tokens as tokenizing its whole contents with a single
+     * call, but the lines of those tokens are those of the line the call is
+     * given. A caller who wants to keep the line numbering of a file shall use
+     * the parseStream method, which takes the current line number as an
+     * argument.
+     *
      * \param[in] s : string to be parsed
      */
     void parseString(const std::string &);
@@ -400,6 +409,17 @@ namespace tfel::utilities {
     [[nodiscard]] static bool isValidFunctionIdentifier(const std::string &,
                                                         const bool = true);
     /*!
+     * \brief tokenize the lines of a stream
+     *
+     * The lines are tokenized from the current position of the stream and n is
+     * increased by the number of lines which have been tokenized. The last line
+     * of a stream may not be terminated by an end of line character: such a
+     * line is tokenized as the others. On the contrary, an end of line
+     * character at the very end of a stream does not introduce an additional
+     * empty line, so that tokenizing a stream gives the same tokens as
+     * tokenizing its contents line by line, up to the line numbers, which are
+     * those of the stream.
+     *
      * \param[in]     in:   input stream
      * \param[in,out] n:    line number
      * \param[in]     from: origin of the stream
