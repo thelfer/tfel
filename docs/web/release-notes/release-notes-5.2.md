@@ -160,6 +160,41 @@ library, see below.
   correction affects their results: setting it to `false` restores the
   previous derivatives.
 
+- The value of a raw string literal token given by `CxxTokenizer` holds the
+  whole literal, from the `R` delimiter to the closing `"` included, and its
+  offset is that of the `R`, as for a quoted string (see Issue #1390): the
+  value was the contents of the literal only and the offset that of those
+  contents, so that the consumers which stripped the first and last characters
+  of the value of the string tokens, as the parsers of `MFront`, `MTest` and
+  `tfel-check` did, truncated the raw string literals. Those parsers read the
+  right contents now: `@Date R"(23/11/06)";` gave the date `3/11/0` and
+  `@Author R"(Helfer "Thomas")";` the author `elfer "Thomas"`. Code which
+  reads the contents of a string token shall use the new
+  `tfel::utilities::getContents` function rather than removing the first and
+  last characters of the value.
+- The offset of a comment token which has no contents on the line it starts on
+  is that of the delimiter which opens the comment (see Issue #1391): it was
+  the offset reached after the delimiters and the spaces which would have
+  surrounded the contents, so that it pointed past the end of the line for an
+  empty `C++` style comment, as `a; //`, and beyond the opening delimiter for an
+  empty `C` style comment or for a comment opened at the end of a line, as the
+  header comments of the `MFront` files starting with `/*!`. The flags, the
+  lines and the values of the tokens are unaffected.
+- `CxxTokenizer::stripComments` gathers all the comments of a line, separated
+  by a space character, instead of keeping only the last one (see Issue
+  #1392): the comments of a line holding `//! first` and `//! second` are
+  `first second`, not `second`. The empty comments bring nothing and give no
+  separator, so that a line whose only comment is empty gives no entry in the
+  comments of the tokenizer.
+- Tokenizing a file line by line, with a call to `CxxTokenizer::parseString`
+  per line, gives the same tokens as giving the whole contents to a single call
+  (see Issue #1396): a file whose last line is terminated by an end of line
+  character gave an additional empty line, which is not a line of the file, so
+  that the value of a comment or of a raw string literal which is not closed at
+  the end of the file held an additional end of line character, and the last
+  line of a file which is not terminated by an end of line character was
+  tokenized twice. The line numbers are unaffected.
+
 # Improvements to the build system
 
 ## New `cmake` options
@@ -334,6 +369,34 @@ beyond the absence of any sanitizer report. The `all` value of the
 
 For more details, see the documentation on [fuzz testing the
 tokenizer](testing-fuzzing.html).
+
+# New features in `TFEL/Utilities`
+
+## Contents of the string tokens
+
+The `getContents` function returns the contents of the literal held by a
+`Token`: its value without the double quotes of a quoted string, without the
+single quotes of a character literal and without the `R"delim(` prefix and the
+`)delim"` suffix of a raw string literal. The `isRawString` and
+`getRawStringDelimiter` functions tell if a token holds a raw string literal
+and give its delimiter. Those functions allow a consumer to read the contents
+of a string token without relying on the flag of the token only, as removing
+the first and last characters of the value truncates a raw string literal (see
+Issue #1390).
+
+## Documented contract of the tokens
+
+The contract of the tokens given by `CxxTokenizer` is documented now, on the
+`Token` class for the value, the line and the offset of a token, and on the
+`CxxTokenizer` class for the exceptions: the value of a number does not hold
+the digit separators of the `C++14` integer literals, whereas the offsets
+remain those of the file, so that a source code can be rewritten from the
+offsets of its tokens (see Issue #1393); a `C` style comment and a raw string
+literal which are not closed at the end of a file are on the contrary accepted,
+and leave the state of the tokenizer open, on the contrary to a quoted string
+and a character literal, which are rejected (see Issue #1395). Checking that
+the tokens describe the file they come from is what the fuzz testing analysis
+of the tokenizer does, see above.
 
 # New `TFEL/Config` features
 
