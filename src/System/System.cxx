@@ -476,7 +476,7 @@ namespace tfel::system {
       r = static_cast<size_t>(r - w);
       b += w;
     }
-  }    // end of systemCall::write
+  }  // end of systemCall::write
 
   void systemCall::read(const int f, void* const v, size_t s) {
     auto b = static_cast<unsigned char*>(v);
@@ -495,7 +495,7 @@ namespace tfel::system {
       r = static_cast<size_t>(r - n);
       b += n;
     }
-  }  // end of systemCall::read
+  }    // end of systemCall::read
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
 
   std::string systemCall::fileType(const mode_t mode) {

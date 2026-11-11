@@ -1137,13 +1137,8 @@ namespace mfront {
            << ";\n";
     }
     // physical constants
-    if (this->bd.useQt()) {
-      file << "using PhysicalConstants = "
-           << "tfel::PhysicalConstants<NumericType, use_qt>;\n";
-    } else {
-      file << "using PhysicalConstants = "
-           << "tfel::PhysicalConstants<NumericType, false>;\n";
-    }
+    writePhysicalConstantsAlias(file, this->bd, "NumericType",
+                                this->bd.useQt());
   }  // end of writeTypeAliases
 
   bool BehaviourCodeGeneratorBase::usesStateVariableTimeDerivative() const {

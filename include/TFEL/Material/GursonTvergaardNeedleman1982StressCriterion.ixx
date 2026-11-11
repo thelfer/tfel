@@ -116,7 +116,8 @@ namespace tfel::material {
       const auto e = std::exp(3 * p.q_2 * bpr * (x / 2));
       const auto ch = (e + 1 / e) / 2;
       const auto sh = (e - 1 / e) / 2;
-      const auto S = bseq2 * x * x + 2 * p.q_1 * fstar * ch - 1 - p.q_3 * fstar2;
+      const auto S =
+          bseq2 * x * x + 2 * p.q_1 * fstar * ch - 1 - p.q_3 * fstar2;
       const auto dS = 2 * bseq2 * x + 3 * p.q_1 * p.q_2 * fstar * bpr * sh;
       return std::make_tuple(S, dS);
     };
@@ -186,10 +187,10 @@ namespace tfel::material {
     // nearly hydrostatic stress: their argument is bounded, as in the
     // Rousselier criterion, to avoid an overflow
     const real a = 3 * p.q_2 * pr * iss / 2;
-    const auto e = std::exp(
-        (tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)
-            ? std::clamp(a, real(-40), real(40))
-            : a);
+    const auto e =
+        std::exp((tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)
+                     ? std::clamp(a, real(-40), real(40))
+                     : a);
     const auto ch = (e + 1 / e) / 2;
     const auto sh = (e - 1 / e) / 2;
     const auto q1q2 = p.q_1 * p.q_2;
@@ -198,10 +199,10 @@ namespace tfel::material {
         (-2 * power<2>(seq) * iss - 3 * q1q2 * fstar * pr * sh) * power<2>(iss);
     const auto sgn = (dS_dss < istress(0)) ? -1 : 1;
     const auto idS_dss =
-        sgn * ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) ==
-                FP_ZERO)
-                   ? stress(1 / base_type_cast(seps))
-                   : 1 / tfel::math::abs(dS_dss));
+        sgn *
+        ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) == FP_ZERO)
+             ? stress(1 / base_type_cast(seps))
+             : 1 / tfel::math::abs(dS_dss));
     const auto dS_dsig = 3 * power<2>(iss) * deviator(sig) +  //
                          q1q2 * fstar * iss * sh * id;
     const auto n = eval(-dS_dsig * idS_dss);
@@ -259,10 +260,10 @@ namespace tfel::material {
     // nearly hydrostatic stress: their argument is bounded, as in the
     // Rousselier criterion, to avoid an overflow
     const real a = 3 * p.q_2 * pr * iss / 2;
-    const auto e = std::exp(
-        (tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)
-            ? std::clamp(a, real(-40), real(40))
-            : a);
+    const auto e =
+        std::exp((tfel::math::ieee754::fpclassify(p.q_1 * fstar) == FP_ZERO)
+                     ? std::clamp(a, real(-40), real(40))
+                     : a);
     const auto ch = (e + 1 / e) / 2;
     const auto sh = (e - 1 / e) / 2;
     const auto q1q2 = p.q_1 * p.q_2;
@@ -271,10 +272,10 @@ namespace tfel::material {
         (-2 * power<2>(seq) * iss - 3 * q1q2 * fstar * pr * sh) * power<2>(iss);
     const auto sgn = (dS_dss < istress(0)) ? -1 : 1;
     const auto idS_dss =
-        sgn * ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) ==
-                FP_ZERO)
-                   ? stress(1 / base_type_cast(seps))
-                   : 1 / tfel::math::abs(dS_dss));
+        sgn *
+        ((tfel::math::ieee754::fpclassify(base_type_cast(dS_dss)) == FP_ZERO)
+             ? stress(1 / base_type_cast(seps))
+             : 1 / tfel::math::abs(dS_dss));
     const auto dS_dsig = 3 * power<2>(iss) * deviator(sig) +  //
                          q1q2 * fstar * iss * sh * id;
     const auto n = eval(-dS_dsig * idS_dss);

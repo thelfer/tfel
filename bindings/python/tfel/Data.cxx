@@ -106,10 +106,8 @@ void declareData(pybind11::module_& m) {
       "\n"
       "See the `DataTypes` list of types for all the values that a\n"
       "Data can contain.");
-  w.def("get", convert_data_to_python_object,
-        "Convert to a Python object");
-  w.def(pybind11::init(&convert_python_object_to_data_ptr),
-        pybind11::arg("o"),
+  w.def("get", convert_data_to_python_object, "Convert to a Python object");
+  w.def(pybind11::init(&convert_python_object_to_data_ptr), pybind11::arg("o"),
         "Constructor from a value");
   data_add_def<int>(w, "Int");
   data_add_def<double>(w, "Double");

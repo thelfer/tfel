@@ -282,7 +282,8 @@ namespace tfel::check {
                  true));
     this->registerCallBack(
         "--no-terminate-handler",
-        CallBack("don't set a terminate handler", []() noexcept {}, false));
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
     this->registerCallBack(
         "--clean-up", CallBack(
                           "clean generated files and directories listed by "

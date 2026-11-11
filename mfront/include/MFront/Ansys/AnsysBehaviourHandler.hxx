@@ -290,14 +290,14 @@ namespace ansys {
         static void exe(AnsysReal& Psi_s, const BV& b) {
           b.computeInternalEnergy(Psi_s);
         }  // end of exe
-      };  // end of struct InternalEnergyComputer
+      };   // end of struct InternalEnergyComputer
       //! structure in charge of calling the computeDissipatedEnergy method
       struct DissipatedEnergyComputer {
         typedef Behaviour<H, AnsysReal, false> BV;
         static void exe(AnsysReal& Psi_d, const BV& b) {
           b.computeDissipatedEnergy(Psi_d);
         }  // end of exe
-      };  // end of struct DissipatedEnergyComputer
+      };   // end of struct DissipatedEnergyComputer
       //! place holder for tag dispatching
       struct DoNothingEnergyComputer {
         typedef Behaviour<H, AnsysReal, false> BV;

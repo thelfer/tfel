@@ -22,11 +22,11 @@ struct CMakeGenerator {
   void exe1(const mfront::TargetsDescription&, const mfront::GeneratorOptions&);
   void exe2(const mfront::TargetsDescription&, const std::string&);
   void exe3(const mfront::TargetsDescription&,
-             const mfront::GeneratorOptions&,
-             const std::string&);
+            const mfront::GeneratorOptions&,
+            const std::string&);
   void generate0(const mfront::TargetsDescription&);
   void generate1(const mfront::TargetsDescription&,
-                  const mfront::GeneratorOptions&);
+                 const mfront::GeneratorOptions&);
   void callCMake0();
   void callCMake1(const std::string&);
 };
@@ -36,18 +36,18 @@ void CMakeGenerator::exe0(const mfront::TargetsDescription& t) {
 }
 
 void CMakeGenerator::exe1(const mfront::TargetsDescription& t,
-                           const mfront::GeneratorOptions& o) {
+                          const mfront::GeneratorOptions& o) {
   this->exe3(t, o, "all");
 }
 
 void CMakeGenerator::exe2(const mfront::TargetsDescription& t,
-                           const std::string& tn) {
+                          const std::string& tn) {
   this->exe3(t, mfront::GeneratorOptions(), tn);
 }
 
 void CMakeGenerator::exe3(const mfront::TargetsDescription& t,
-                           const mfront::GeneratorOptions& o,
-                           const std::string& tn) {
+                          const mfront::GeneratorOptions& o,
+                          const std::string& tn) {
   mfront::generateCMakeListsFile(t, o);
   mfront::callCMake(tn);
 }
@@ -57,7 +57,7 @@ void CMakeGenerator::generate0(const mfront::TargetsDescription& t) {
 }
 
 void CMakeGenerator::generate1(const mfront::TargetsDescription& t,
-                                const mfront::GeneratorOptions& o) {
+                               const mfront::GeneratorOptions& o) {
   mfront::generateCMakeListsFile(t, o);
 }
 
@@ -74,16 +74,14 @@ void declareCMakeGenerator(pybind11::module_& m) {
   pybind11::class_<CMakeGenerator>(m, "CMakeGenerator")
       .def(pybind11::init<>())
       .def("generate", &CMakeGenerator::generate0, pybind11::arg("t"))
-      .def("generate", &CMakeGenerator::generate1,
-          pybind11::arg("t"), pybind11::arg("o"))
+      .def("generate", &CMakeGenerator::generate1, pybind11::arg("t"),
+           pybind11::arg("o"))
       .def("callCMake", &CMakeGenerator::callCMake0)
       .def("callCMake", &CMakeGenerator::callCMake1, pybind11::arg("tn"))
       .def("exe", &CMakeGenerator::exe0, pybind11::arg("t"))
-      .def("exe", &CMakeGenerator::exe1,
-          pybind11::arg("t"), pybind11::arg("o"))
-      .def("exe", &CMakeGenerator::exe2,
-          pybind11::arg("t"), pybind11::arg("tn"))
-      .def("exe", &CMakeGenerator::exe3,
-          pybind11::arg("t"), pybind11::arg("o"), pybind11::arg("tn"));
-
+      .def("exe", &CMakeGenerator::exe1, pybind11::arg("t"), pybind11::arg("o"))
+      .def("exe", &CMakeGenerator::exe2, pybind11::arg("t"),
+           pybind11::arg("tn"))
+      .def("exe", &CMakeGenerator::exe3, pybind11::arg("t"), pybind11::arg("o"),
+           pybind11::arg("tn"));
 }

@@ -1,5 +1,5 @@
 ---
-title: The TFEL/PhysicalConstants library
+title: The `TFEL/PhysicalConstants` library
 author: Thomas Helfer
 date: 17/08/2021
 lang: en-EN
@@ -27,6 +27,13 @@ The `TFEL/PhysicalConstants` library is header-only which provides:
 
 The values of the physical constants are extracted from: <http://physics.nist.gov/cuu/Constants/index.html>
 
+The values of the physical constants depend on the compatibility
+modes: those of the current version of `TFEL` are those exposed by
+the names without suffix, whereas those of the next major version
+are those of the `tfel::future` and `tfel::constants::future`
+namespaces, as described in the page devoted to
+[compatibility modes in the `TFEL` libraries](tfel-compatibility-modes.html).
+
 ## Bindings
 
 ### `Fortran` bindings
@@ -35,9 +42,12 @@ A include file named `TFELPHYSICALCONSTANTS.INC` is provided for `fortran77`. Th
 
 A module named `TFEL_PHYSICAL_CONSTANTS` is provided for `fortran95`. This module exposes the physical constants as `real64` parameters.
 
+The `Fortran` bindings are not versioned: they expose the values of
+the next major version of `TFEL`.
+
 ### `Python` bindings
 
-The `tfel` module exposes the class `PhysicalConstants` which declares the physical constants as read-only attributes.
+The `tfel` module exposes the class `PhysicalConstants` which declares the physical constants as read-only attributes. The constants of a given compatibility mode are exposed by a submodule of the same name.
 
 # Physical constants
 

@@ -5,9 +5,9 @@
 
 @Output k;  //< changing the name of output
 
-@Input T, p, Bu;                   //< inputs of the law
-T.setGlossaryName("Temperature");  //< pleiades name
-p.setGlossaryName("Porosity");     //< pleiades name
+@Input T, p, Bu;                      //< inputs of the law
+T.setGlossaryName("Temperature");     //< pleiades name
+p.setGlossaryName("Porosity");        //< pleiades name
 Bu.setGlossaryName("BurnUp (at.%)");  //< pleiades name
 
 @PhysicalBounds T in [0:*[;  //< temperature physical bounds

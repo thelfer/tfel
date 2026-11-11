@@ -123,7 +123,8 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     };
     this->registerCallBack(
         "--no-terminate-handler",
-        CallBack("don't set a terminate handler", []() noexcept {}, false));
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
     this->registerCallBack("--regex-syntax",
                            CallBack("select the syntax used by "
                                     "regular expressions. "

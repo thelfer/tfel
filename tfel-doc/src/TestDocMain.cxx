@@ -150,7 +150,8 @@ namespace tfel::utilities {
   void TestDocMain::registerArgumentCallBacks() {
     this->registerCallBack(
         "--no-terminate-handler",
-        CallBack("don't set a terminate handler", []() noexcept {}, false));
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
     this->registerNewCallBack("--lang", &TestDocMain::treatLang,
                               "specify output language (french,english)", true);
     this->registerNewCallBack("--fragment", "-f", &TestDocMain::treatFragment,

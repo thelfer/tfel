@@ -59,9 +59,8 @@ void declarePiPlane(pybind11::module_& m) {
       tfel::material::projectOnPiPlane;
   m.def("buildFromPiPlane", &tfel::material::buildFromPiPlane<double>,
         pybind11::arg("s0"), pybind11::arg("s1"), build_from_pi_plane_doc);
-  m.def("projectOnPiPlane", p1,
-        pybind11::arg("s0"), pybind11::arg("s1"), pybind11::arg("s2"),
-        project_on_pi_plane_scalar_doc);
+  m.def("projectOnPiPlane", p1, pybind11::arg("s0"), pybind11::arg("s1"),
+        pybind11::arg("s2"), project_on_pi_plane_scalar_doc);
   m.def("projectOnPiPlane", projectOnPiPlane<1u>, pybind11::arg("s"),
         project_on_pi_plane_stensor_doc);
   m.def("projectOnPiPlane", projectOnPiPlane<2u>, pybind11::arg("s"),

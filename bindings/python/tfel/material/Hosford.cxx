@@ -32,16 +32,10 @@ static const char compute_hosford_stress_doc[] =
     "e: criterion used to check if the stress are null";
 
 void declareHosford(pybind11::module_& m) {
-  m.def("computeHosfordStress",
-        &computeHosfordStress<1u>,
-        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"),
-        compute_hosford_stress_doc);
-  m.def("computeHosfordStress",
-        &computeHosfordStress<2u>,
-        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"),
-        compute_hosford_stress_doc);
-  m.def("computeHosfordStress",
-        &computeHosfordStress<3u>,
-        pybind11::arg("s"), pybind11::arg("a"), pybind11::arg("e"),
-        compute_hosford_stress_doc);
+  m.def("computeHosfordStress", &computeHosfordStress<1u>, pybind11::arg("s"),
+        pybind11::arg("a"), pybind11::arg("e"), compute_hosford_stress_doc);
+  m.def("computeHosfordStress", &computeHosfordStress<2u>, pybind11::arg("s"),
+        pybind11::arg("a"), pybind11::arg("e"), compute_hosford_stress_doc);
+  m.def("computeHosfordStress", &computeHosfordStress<3u>, pybind11::arg("s"),
+        pybind11::arg("a"), pybind11::arg("e"), compute_hosford_stress_doc);
 }

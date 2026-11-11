@@ -76,10 +76,15 @@ namespace mfront {
         tfel::utilities::ArgumentParserBase<DocumentationGeneratorBase>;
     Parser::registerCallBack(
         "--no-terminate-handler",
-        CallBack("don't set a terminate handler", []() noexcept {}, false));
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
     Parser::registerNewCallBack("--verbose",
                                 &DocumentationGeneratorBase::treatVerbose,
                                 "set verbose output", true);
+    this->registerNewCallBack(
+        "--compatibility-mode",
+        &DocumentationGeneratorBase::treatCompatibilityMode,
+        "set the compatibility mode", true);
     this->registerNewCallBack(
         "--dsl-option", &DocumentationGeneratorBase::treatDSLOption,
         "allow to define options passed to domain specific languages", true);
