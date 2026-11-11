@@ -29,6 +29,7 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "MFront/CompatibilityMode.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 
