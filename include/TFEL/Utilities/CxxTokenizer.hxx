@@ -315,6 +315,11 @@ namespace tfel::utilities {
     [[nodiscard]] std::string getCurrentRawStringDelimiter() const noexcept;
     /*!
      * \brief remove all comment tokens
+     *
+     * The values of the removed comments of the kind Token::Comment are
+     * gathered in the comments data member: a line may hold several such
+     * comments, which are gathered in the order they appear in the line,
+     * separated by a space character.
      */
     void stripComments();
     /*!
@@ -470,7 +475,16 @@ namespace tfel::utilities {
     std::vector<std::string> additional_separators;
     //! list of tokens read
     TokensContainer tokens;
-    //! store all the comments of a line
+    /*!
+     * \brief store the comments which have been removed by the stripComments
+     * method. The key of the map is the line a comment starts on and the value
+     * is the values of the comments of this line, in the order they appear in
+     * the line, separated by a space character.
+     *
+     * The empty comments, that is a `//` comment or a `C` style comment whose
+     * contents is empty, bring nothing and are then not stored: a line whose
+     * only comment is empty gives no entry in this map.
+     */
     std::map<Token::size_type, std::string> comments;
     /*!
      * \brief if true, a cStyle comment what opened when the last line

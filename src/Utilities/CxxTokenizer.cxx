@@ -977,10 +977,16 @@ namespace tfel::utilities {
   void CxxTokenizer::stripComments() {
     for (auto p = this->tokens.begin(); p != this->tokens.end();) {
       if (p->flag == Token::Comment) {
-        if (this->comments.find(p->line) != this->comments.end()) {
-          this->comments[p->line] += ' ';
+        // the comments of a line are gathered, separated by a space character.
+        // The value of an empty comment is empty: it brings nothing and is then
+        // neither gathered nor responsible for a separator
+        if (!p->value.empty()) {
+          const auto it = this->comments.insert({p->line, std::string{}}).first;
+          if (!it->second.empty()) {
+            it->second += ' ';
+          }
+          it->second += p->value;
         }
-        this->comments[p->line] = p->value;
         p = this->tokens.erase(p);
       } else if (p->flag == Token::DoxygenComment) {
         auto p2 = p;
