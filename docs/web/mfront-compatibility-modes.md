@@ -52,11 +52,11 @@ version introducing a change of the default behaviour.
 ## Default compatibility mode
 
 By default, no compatibility mode is declared: the generated code uses
-the entities and the algorithms of the version of the `TFEL` libraries
-which compiles it, that is to say the current behaviour of that
-version. A default mode can be declared globally, for all the files
-treated by a run of the tool, using the `--compatibility-mode` command
-line argument, as explained below.
+the greatest compatibility mode known by `MFront`, that is to say the
+mode of the current version (`5.2.0` in Version 5.2). A default mode
+can be declared globally, for all the files treated by a run of the
+tool, using the `--compatibility-mode` command line argument, as
+explained below.
 
 Declaring a compatibility mode makes the results of the generated code
 independent of the version of the `TFEL` libraries used to compile it
