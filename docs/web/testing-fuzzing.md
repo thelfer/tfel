@@ -156,22 +156,27 @@ of the `tfel::utilities::Token` class, which the methods of `MFront` rely on:
 
 - the lines of the successive tokens are non decreasing,
 - the offsets of the tokens of a given line are strictly increasing,
-- the offset of a token is not past the end of the line the token starts on,
+- the offset of a token is the position of a character of the line the token
+  starts on,
 - a token which cannot span several lines, that is a standard token, a number or
   a character literal, is contained in its line,
 - a token which is neither a comment nor a string has a non empty value,
 - no comment token is kept by the `stripComments` method.
 
-Two known defects of the tokenizer, both reported in issue #1387, oblige to
-weaken two of those invariants: an empty comment (`//` or `/**/`) gives a
-comment token whose value is empty and whose offset is the size of its line, and
-an empty raw string literal gives a string token whose value is empty. Empty
-values and offsets equal to the size of a line are therefore tolerated for the
-comments and the strings only, and shall be rejected again when those defects are
-fixed. The digit separators of the `C++14` integer literals, which are removed
-from the value of a number, are on the contrary compatible with those
-invariants, as the value of such a token is only shorter than its spelling in the
-file.
+Two known defects of the tokenizer, reported in issues #1387 and #1390, oblige
+to weaken two of those invariants. An empty raw string literal gives a string
+token whose value is empty, and the value and the offset of such a token are
+those of its contents rather than those of the literal itself, so that a literal
+which holds no contents on the line it opens, as `R"(` alone in a line, gives an
+offset equal to the size of that line. Empty values and offsets equal to the size
+of a line are therefore tolerated for the strings only, and shall be rejected
+again when the defect of issue #1390 is fixed, the offset of a raw string token
+being then that of its `R` delimiter. Empty comments, on the contrary, are
+compatible with those invariants since the offset of an empty comment is that of
+its delimiter, see issue #1391. The digit separators of the `C++14` integer
+literals, which are removed from the value of a number, are compatible with those
+invariants too, as the value of such a token is only shorter than its spelling in
+the file.
 
 The lexical constructs those invariants and those exceptions come from are covered
 by the `CxxTokenizerContractTest` unit test of `tests/Utilities`.

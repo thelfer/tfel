@@ -584,6 +584,11 @@ namespace tfel::utilities {
       }
     };
     const auto b = p;
+    // The offset of the delimiter which opens the comment: it is that of the
+    // token when the comment is empty, since such a token has no contents to
+    // point to. It is kept before the delimiters are read, as o is increased
+    // while reading the line
+    const auto bo = o;
     throw_if((p == pe) || (*p != '/'), "invalid call");
     next_token();
     throw_if((p == pe) || (*p != '*'), "invalid call");
@@ -610,16 +615,23 @@ namespace tfel::utilities {
         this->tokens.emplace_back(std::string{b, e + 2}, n, o, flag);
       }
     } else {
+      auto value = std::string{};
       if (p != e) {
         auto ps = std::prev(e);
         while ((is_space(*ps)) && (ps != p)) {
           --ps;
         }
         ++ps;
-        this->tokens.emplace_back(std::string{p, ps}, n, o, flag);
+        value = std::string{p, ps};
       } else {
-        this->tokens.emplace_back(std::string{p, e}, n, o, flag);
+        value = std::string{p, e};
       }
+      // A comment without contents on this line, as /**/ or /*   */, or as a
+      // `C` style comment opened at the end of a line and whose contents starts
+      // on a later line, gives a token with an empty value: the offset of such
+      // a token is that of the delimiter which opens it, since it has no
+      // contents to point to, see issue #1391
+      this->tokens.emplace_back(value, n, (value.empty() ? bo : o), flag);
     }
     advance(o, p, e - p);
     if (e == pe) {
@@ -644,6 +656,11 @@ namespace tfel::utilities {
       }
     };
     const auto b = p;
+    // The offset of the delimiter which opens the comment: it is that of the
+    // token when the comment is empty, since such a token has no contents to
+    // point to. It is kept before the delimiters are read, as o is increased
+    // while reading the line
+    const auto bo = o;
     throw_if((p == pe) || (*p != '/'), "invalid call");
     next_token();
     throw_if((p == pe) || (*p != '/'), "invalid call");
@@ -663,7 +680,11 @@ namespace tfel::utilities {
       this->tokens.emplace_back(std::string{b, pe}, n, o, flag);
     } else {
       ignore_space(o, p, pe);
-      this->tokens.emplace_back(std::string{p, pe}, n, o, flag);
+      // An empty comment, as `//`, gives a token with an empty value: the
+      // offset of such a token is that of the delimiter which opens it, since
+      // it has no contents to point to, see issue #1391
+      this->tokens.emplace_back(std::string{p, pe}, n, (p == pe) ? bo : o,
+                                flag);
     }
     advance(o, p, pe - p);
   }

@@ -152,42 +152,45 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
   /*!
    * \brief empty comments.
    *
-   * An empty comment gives a comment token whose value is empty and whose
-   * offset is the size of the line, that is one past the end of the line. Those
-   * two behaviours are known defects reported in issue #1387: a token with an
-   * empty value surprises the consumers of the tokens, which generally assume
-   * that the value of a token is not empty.
+   * An empty comment gives a comment token whose value is empty, since the
+   * value of a comment is the contents of the comment, and whose offset is that
+   * of the delimiter which opens it, since such a token has no contents to
+   * point to, see issue #1391. The same applies to a comment which has no
+   * contents on the line it starts on, whether it is closed on that line or on
+   * a later one.
    */
   void testEmptyComments() {
     using tfel::utilities::Token;
     auto t = tfel::utilities::CxxTokenizer{};
-    // an empty C++ style comment
+    // an empty C++ style comment: the offset of the token is that of its
+    // delimiter
     t.parseString("a; //");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
     TFEL_TESTS_ASSERT(t[2].value.empty());
-    TFEL_TESTS_ASSERT(t[2].offset == 5u);
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
     // an empty C style comment
     t.clear();
     t.parseString("a; /**/");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
     TFEL_TESTS_ASSERT(t[2].value.empty());
-    TFEL_TESTS_ASSERT(t[2].offset == 5u);
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
     // an empty doxygen comment
     t.clear();
     t.parseString("a; /*!*/");
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::DoxygenComment);
     TFEL_TESTS_ASSERT(t[2].value.empty());
-    TFEL_TESTS_ASSERT(t[2].offset == 6u);
-    // the spaces which follow an empty C++ style comment are ignored
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
+    // the spaces which follow an empty C++ style comment are ignored: they do
+    // not drive the offset of the token out of the line
     t.clear();
     t.parseString("  //   ");
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::Comment);
     TFEL_TESTS_ASSERT(t[0].value.empty());
-    TFEL_TESTS_ASSERT(t[0].offset == 7u);
+    TFEL_TESTS_ASSERT(t[0].offset == 2u);
     // an empty comment is removed by stripComments as any other comment
     t.clear();
     t.parseString("a; //\nb; /**/\n");
@@ -204,6 +207,61 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 3u);
     TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
     TFEL_TESTS_ASSERT(t[2].value.empty());
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
+    // an empty doxygen comment of the `// !` kind
+    t.clear();
+    t.parseString("a; //!");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].flag == Token::DoxygenComment);
+    TFEL_TESTS_ASSERT(t[2].value.empty());
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
+    // the offset of an empty comment is that of its delimiter, whether it is at
+    // the beginning or at the end of a line
+    t.clear();
+    t.parseString("//\nint a;\n");
+    TFEL_TESTS_ASSERT(t.size() == 4u);
+    TFEL_TESTS_ASSERT(t[0].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[0].value.empty());
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
+    t.clear();
+    t.parseString("int a;  //\n");
+    TFEL_TESTS_ASSERT(t.size() == 4u);
+    TFEL_TESTS_ASSERT(t[3].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[3].value.empty());
+    TFEL_TESTS_ASSERT(t[3].offset == 8u);
+    // the spaces which surround the contents of a comment are removed from its
+    // value, whereas the offset of the token is that of the first character of
+    // its contents
+    t.clear();
+    t.parseString("a; /*  c  */");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[2].value == "c");
+    TFEL_TESTS_ASSERT(t[2].offset == 7u);
+    // a comment which is empty on the first line it spans keeps the offset of
+    // its delimiter, whereas its value gathers the lines it spans
+    t.clear();
+    t.parseString("/*\nc */ int a;\n");
+    TFEL_TESTS_ASSERT(t.size() == 4u);
+    TFEL_TESTS_ASSERT(t[0].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[0].line == 1u);
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
+    TFEL_TESTS_ASSERT(t[0].value == "c ");
+    // the keepCommentBoundaries option gives the delimiters themselves as the
+    // value of an empty comment. The offset of the token is that of the first
+    // delimiter, whatever the contents of the comment
+    t.clear();
+    t.keepCommentBoundaries(true);
+    t.parseString("a; //");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].flag == Token::Comment);
+    TFEL_TESTS_ASSERT(t[2].value == "//");
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
+    t.clear();
+    t.parseString("a; /* c */");
+    TFEL_TESTS_ASSERT(t.size() == 3u);
+    TFEL_TESTS_ASSERT(t[2].value == "/* c */");
+    TFEL_TESTS_ASSERT(t[2].offset == 3u);
   }  // end of testEmptyComments
 
   /*!
