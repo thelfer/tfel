@@ -90,7 +90,7 @@ namespace mfront {
                     internals::to_string(selected_version) + "'");
     }
     return selected_version;
-  }  // end of getCompatibilityMode
+  }  // end of getClosestVersion
 
   [[nodiscard]] static std::optional<CompatibilityMode::Version>&
   getCompatibilityMode() noexcept {
