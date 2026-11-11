@@ -169,6 +169,11 @@ library, see below.
 - `enable-tdls-as-default-linear-system-solver-in-mfront`: use `TDLS`
   as the default linear solver. Requires `enable-tdls` to be `ON`.
   `OFF` by default.
+- `enable-libfuzzer-tests`: configure the `libFuzzer` based analyses of
+  the `tfel::utilities::CxxTokenizer` class. `OFF` by default. Those
+  analyses can only be built with `clang` and are neither built nor run
+  by `make check`, see the `build-cxxtokenzier-libfuzzer-tests` and
+  `cxxtokenzier-libfuzzer-tests` targets described below.
 
 ## Sanitizers and hardening options
 
@@ -298,6 +303,37 @@ only compiles the tests. To run the tests, one may still call the
 
 If the `build-tests` target has not been called, the `check` target
 works as in previous versions.
+
+## Fuzz testing the tokenizer with `libFuzzer`
+
+The `tfel::utilities::CxxTokenizer` class, which `MFront` uses to read
+the files of its domain specific language, is now covered by coverage
+guided fuzz testing, gathered in the `additional-tests/fuzzing`
+directory of the sources. Those analyses are configured by the
+`enable-libfuzzer-tests` option, which is `OFF` by default, and can
+only be built with `clang`.
+
+Two targets are dedicated to them:
+
+- `build-cxxtokenzier-libfuzzer-tests` builds the fuzzing executables,
+- `cxxtokenzier-libfuzzer-tests` builds them and runs the analyses, for
+  the duration given by the `libfuzzer-tests-max-total-time` option.
+
+The fuzzing executables are excluded from the default target and no
+analysis is registered with `ctest`, so that neither `make all` nor
+`make check` builds or runs them: the duration of a fuzzing analysis is
+not bounded a priori. The corpus of an analysis and the inputs it
+generates which lead to a failure are kept in the build tree, so that a
+long campaign is a sequence of runs sharing the same corpus.
+
+The `mfront-fuzzing` analysis tokenizes `MFront` files with the options
+`MFront` itself uses, and checks the contract of the produced tokens
+beyond the absence of any sanitizer report. The `all` value of the
+`mfront-fuzzing-database` option uses all the `MFront` files of
+`mfront/tests/behaviours` as the database of the analysis.
+
+For more details, see the documentation on [fuzz testing the
+tokenizer](testing-fuzzing.html).
 
 # New `TFEL/Config` features
 
@@ -907,6 +943,17 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1387: [TFEL/Utilities] tests `CxxTokenizer` with `libFuzzer`
+
+The `tfel::utilities::CxxTokenizer` class is now covered by `libFuzzer`
+based analyses, which are enabled by the `enable-libfuzzer-tests`
+option, and by the `CxxTokenizerContractTest` unit test, which checks
+the contract of the tokens for the lexical constructs that were not
+covered by the existing tests of the tokenizer: raw string literals,
+empty comments, comments of a line and numbers with digit separators.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1387>
 
 ## Issue 1379: [mfront] Chaboche 2012 kinematic hardening rule: are the differences with the literature for m != 1 intended?
 
