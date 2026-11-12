@@ -39,7 +39,6 @@ namespace mfront::generic_parallel {
     void writeSpecificIncludes(std::ostream&) const override;
     [[nodiscard]] std::string getApply() const override;
     [[nodiscard]] std::string getMemorySpace() const override;
-    [[nodiscard]] std::string getExecutionPolicyType() const override;
     //! \brief destructor
     ~GPUBackend() noexcept override;
 
@@ -53,6 +52,7 @@ namespace mfront::generic_parallel {
     using GPUBackend::GPUBackend;
     [[nodiscard]] std::string getName() const override;
     [[nodiscard]] std::string getSourceFileExtension() const override;
+    [[nodiscard]] std::string getExecutionPolicyType() const override;
     //! \brief destructor
     ~CUDABackend() noexcept override;
   };  // end of CUDABackend
@@ -62,6 +62,7 @@ namespace mfront::generic_parallel {
     using GPUBackend::GPUBackend;
     [[nodiscard]] std::string getName() const override;
     [[nodiscard]] std::string getSourceFileExtension() const override;
+    [[nodiscard]] std::string getExecutionPolicyType() const override;
     void writeSpecificIncludes(std::ostream&) const override;
     //! \brief destructor
     ~HIPBackend() noexcept override;

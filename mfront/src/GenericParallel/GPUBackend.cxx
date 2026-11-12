@@ -40,23 +40,25 @@ namespace mfront::generic_parallel {
     return "mfront::generic_parallel::device_memory_space";
   }  // end of getMemorySpace
 
-  std::string GPUBackend::getExecutionPolicyType() const {
-    return this->getName() == "hip"
-               ? "::mfront::generic_parallel::HIPBackendExecutionPolicy"
-               : "::mfront::generic_parallel::CUDABackendExecutionPolicy";
-  }  // end of getExecutionPolicyType
-
   GPUBackend::~GPUBackend() noexcept = default;
 
   std::string CUDABackend::getName() const { return "cuda"; }
 
   std::string CUDABackend::getSourceFileExtension() const { return "cu"; }
 
+  std::string CUDABackend::getExecutionPolicyType() const {
+    return "::mfront::generic_parallel::CUDABackendExecutionPolicy";
+  }  // end of getExecutionPolicyType
+
   CUDABackend::~CUDABackend() noexcept = default;
 
   std::string HIPBackend::getName() const { return "hip"; }
 
   std::string HIPBackend::getSourceFileExtension() const { return "hip"; }
+
+  std::string HIPBackend::getExecutionPolicyType() const {
+    return "::mfront::generic_parallel::HIPBackendExecutionPolicy";
+  }  // end of getExecutionPolicyType
 
   void HIPBackend::writeSpecificIncludes(std::ostream& os) const {
     // selects the HIP runtime, even on NVIDIA GPUs
