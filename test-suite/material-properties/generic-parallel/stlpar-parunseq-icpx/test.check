@@ -2,13 +2,19 @@
 
 @Environment {"LD_LIBRARY_PATH": "src"};
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../BoundsOrderTest.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../Inconel600_YoungModulus-qt.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../UO2_YoungModulus_Martin1989.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../LinearDataInterpolationTest.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-stlpar-parunseq-icpx.json";
-@Command "@TFEL_ICPX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-stlpar.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src  -lGenericParallelUO2-stlpar -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
+@Command "@TFEL_ICPX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-cxx.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -lMFrontGenericParallelRuntime -L src  -lGenericParallelUO2-stlpar -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
 @Command "./test-stlpar test-stlpar-parunseq-icpx";
 
-@CleanFiles {"test-stlpar"};
+// comparison with the `generic` interface (see compare.cxx)
+@Command "sh ../build-libraries.sh @mfront@ config-stlpar-parunseq-icpx.json";
+@Command "@TFEL_ICPX_COMPILER@ -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ -I @TFEL_INCLUDE_DIR@ ../compare.cxx -o compare -L@TFEL_LIBRARY_DIR@ -lMFrontGenericParallelRuntime -ldl";
+@Command "sh ../compare-all.sh ./compare stlpar --tolerance=1e-13";
+
+@CleanFiles {"test-stlpar", "compare"};
 @CleanDirectories {"include", "src"};

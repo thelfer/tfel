@@ -3,12 +3,19 @@
 @Environment {"LD_LIBRARY_PATH": "src"};
 @Environment {"LD_LIBRARY_PATH": "src"};
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-clang-nvidia-platform.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-clang-nvidia-platform.json ../BoundsOrderTest.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-clang-nvidia-platform.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-clang-nvidia-platform.json ../Inconel600_YoungModulus-qt.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-clang-nvidia-platform.json ../UO2_YoungModulus_Martin1989.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-hip-clang-nvidia-platform.json ../LinearDataInterpolationTest.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-hip-clang-nvidia-platform.json";
-@Command "@TFEL_CLANGXX_COMPILER@ -D__HIP_PLATFORM_NVIDIA__ -O3 --std=c++@TFEL_CXX_STANDARD@ -march=native -x cuda --cuda-path=@TFEL_CUDA_PATH@ --cuda-compile-host-device --cuda-gpu-arch=native -I @TFEL_HIP_INCLUDE_DIR@ -I @TFEL_INCLUDE_DIR@ -I include ../test-hip.hip -o test-hip -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelUO2-hip -lGenericParallelInconel600-hip -lGenericParallelMaterialLaw-hip -L@TFEL_CUDA_LIBRARY_DIR@ -lcudart -ldl -lrt -pthread";
+@Command "@TFEL_CLANGXX_COMPILER@ -D__HIP_PLATFORM_NVIDIA__ -O3 --std=c++@TFEL_CXX_STANDARD@ -march=native -x cuda --cuda-path=@TFEL_CUDA_PATH@ -Wno-unknown-cuda-version --cuda-compile-host-device --cuda-gpu-arch=native -I@TFEL_HIP_INCLUDE_DIR@ -I @TFEL_INCLUDE_DIR@ -I include ../test-hip.hip -o test-hip -L @TFEL_LIBRARY_DIR@ -lTFELTests -lMFrontGenericParallelRuntime -L src -lGenericParallelUO2-hip -lGenericParallelInconel600-hip -lGenericParallelMaterialLaw-hip -L@TFEL_CUDA_LIBRARY_DIR@ -lcudart -ldl -lrt -pthread";
 @Command "./test-hip test-hip-hipcc";
 
+// comparison with the `generic` interface (see compare.cxx)
+@Command "sh ../build-libraries.sh @mfront@ config-hip-clang-nvidia-platform.json";
+@Command "@TFEL_CLANGXX_COMPILER@ -O2 -std=c++@TFEL_CXX_STANDARD@ -x cuda --cuda-gpu-arch=native --cuda-path=@TFEL_CUDA_PATH@ -Wno-unknown-cuda-version -I@TFEL_HIP_INCLUDE_DIR@ -D__HIP_PLATFORM_NVIDIA__ -DMFRONT_GPMP_COMPARE_USE_HIP -I @TFEL_INCLUDE_DIR@ ../compare.cxx -o compare -L@TFEL_LIBRARY_DIR@ -lMFrontGenericParallelRuntime -L@TFEL_CUDA_LIBRARY_DIR@ -lcudart -ldl";
+@Command "sh ../compare-all.sh ./compare hip --tolerance=1e-13";
+
+@CleanFiles {"compare"};
 @CleanDirectories {"include", "src"};
