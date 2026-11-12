@@ -36,8 +36,11 @@ for package, module in ((tfel, "_tfel"), (tfel, "math"),
                         (tfel.material, "_material"), (mfront, "_mfront"),
                         (mtest, "_mtest"),
                         (mfm_test_generator, "_mfm_test_generator")):
-    stub = os.path.join(os.path.dirname(package.__file__), module + ".pyi")
-    if not os.path.isfile(stub):
+    directory = os.path.dirname(package.__file__)
+    stub = os.path.join(directory, module + ".pyi")
+    # a module with submodules has a directory of stubs
+    package_stub = os.path.join(directory, module, "__init__.pyi")
+    if not (os.path.isfile(stub) or os.path.isfile(package_stub)):
         sys.exit("missing stub " + stub)
 
 # type checkers only use the stubs of the packages holding this marker, and

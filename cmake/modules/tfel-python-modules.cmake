@@ -115,30 +115,45 @@ for _directory in dict.fromkeys((r\"${tfel_stubgen_library_directories}\", )):
   # the paths of the PYTHONPATH variable are separated by a semicolon on windows
   string(REPLACE ";" "$<SEMICOLON>" tfel_stubgen_pythonpath
          "${tfel_stubgen_pythonpath}")
-  set(pybind11_stubgen_files)
+  set(pybind11_stubgen_stamps)
   set(pybind11_stubgen_packages)
+  set(pybind11_stubgen_stamps_directory "${PROJECT_BINARY_DIR}/bindings/stubgen")
+  file(MAKE_DIRECTORY "${pybind11_stubgen_stamps_directory}")
   foreach(entry ${TFEL_PYTHON_STUBGEN_MODULES})
     string(REGEX REPLACE "^[^:]*:" "" module "${entry}")
     string(REPLACE "." "/" module_path "${module}")
+    # pybind11-stubgen generates a single stub file for a module without
+    # submodules, and otherwise a directory holding an __init__.pyi file and
+    # the stubs of the submodules, as for tfel._tfel. Both are removed before
+    # the generation, so that no stub of a former build remains, and both
+    # are installed if present. A stamp file is the output of the command.
     set(stub_file "${TFEL_PYTHON_MODULES_BUILD_DIR}/${module_path}.pyi")
-    get_filename_component(stub_directory "${stub_file}" DIRECTORY)
-    file(MAKE_DIRECTORY "${stub_directory}")
+    set(stub_directory "${TFEL_PYTHON_MODULES_BUILD_DIR}/${module_path}")
+    set(stub_stamp "${pybind11_stubgen_stamps_directory}/${module}.stamp")
+    get_filename_component(package_directory "${stub_file}" DIRECTORY)
+    file(MAKE_DIRECTORY "${package_directory}")
     file(RELATIVE_PATH install_directory
-      "${TFEL_PYTHON_MODULES_BUILD_DIR}" "${stub_directory}")
-    add_custom_command(OUTPUT "${stub_file}"
+      "${TFEL_PYTHON_MODULES_BUILD_DIR}" "${package_directory}")
+    add_custom_command(OUTPUT "${stub_stamp}"
+      COMMAND "${CMAKE_COMMAND}" -E rm -rf "${stub_file}" "${stub_directory}"
       COMMAND "${CMAKE_COMMAND}" -E env
               "PYTHONPATH=${tfel_stubgen_pythonpath}"
               "${Python_EXECUTABLE}" -m pybind11_stubgen "${module}"
               "--output-dir" "${TFEL_PYTHON_MODULES_BUILD_DIR}"
+      COMMAND "${CMAKE_COMMAND}" -E touch "${stub_stamp}"
       DEPENDS ${pybind11_stubgen_dependencies}
       COMMENT "Generating stub for python module ${module}"
       VERBATIM)
-    list(APPEND pybind11_stubgen_files "${stub_file}")
+    list(APPEND pybind11_stubgen_stamps "${stub_stamp}")
     string(REGEX REPLACE "/.*$" "" package "${module_path}")
     list(APPEND pybind11_stubgen_packages "${package}")
     install(FILES "${stub_file}"
       DESTINATION "${TFEL_PYTHON_SITE_PACKAGES_DIR}/${install_directory}"
-      COMPONENT python_bindings)
+      COMPONENT python_bindings OPTIONAL)
+    install(DIRECTORY "${stub_directory}"
+      DESTINATION "${TFEL_PYTHON_SITE_PACKAGES_DIR}/${install_directory}"
+      COMPONENT python_bindings OPTIONAL
+      FILES_MATCHING PATTERN "*.pyi")
   endforeach(entry ${TFEL_PYTHON_STUBGEN_MODULES})
   # According to PEP 561, type checkers only use the stubs of an installed
   # package if it holds a py.typed marker.
@@ -151,7 +166,7 @@ for _directory in dict.fromkeys((r\"${tfel_stubgen_library_directories}\", )):
       COMPONENT python_bindings)
   endforeach(package ${pybind11_stubgen_packages})
   add_custom_target(python-stubs ALL
-    DEPENDS ${pybind11_stubgen_files})
+    DEPENDS ${pybind11_stubgen_stamps})
 endfunction(generate_python_stubs)
 
 function(python_module_base fullname name)
