@@ -78,6 +78,15 @@ namespace mfront {
     static void initializeNumericalParameters(std::ostream&,
                                               const std::string&);
     /*!
+     * \brief build a suitable specialisation of the class implementing the
+     * algorithm, in the namespace of the compatibility mode of the behaviour.
+     * \param[in] bd: behaviour description
+     * \param[in] h: hypothesis
+     * \param[in] n: class name
+     */
+    static std::string buildExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis, const std::string&);
+    /*!
      * destructor
      */
     ~PowellDogLegAlgorithmBase();

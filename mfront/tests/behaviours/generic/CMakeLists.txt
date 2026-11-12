@@ -178,7 +178,11 @@ set(mfront_tests_SOURCES
   BarBehaviour
   BarBehaviour3
   PhysicalConstants_v5_2_0
-  PhysicalConstants_v6_0_0)
+  PhysicalConstants_v6_0_0
+  PowellDogLegNewtonRaphson_v5_2_0
+  PowellDogLegNewtonRaphson_v6_0_0
+  PowellDogLegBroyden_v5_2_0
+  PowellDogLegBroyden_v6_0_0)
 
 if(enable-mfront-quantity-tests)
   list(APPEND mfront_tests_SOURCES
@@ -806,6 +810,10 @@ test_generic(PoroElasticity)
 test_generic(PoroPlasticity PoroPlasticity.ref)
 test_generic(physical-constants-5.2.0)
 test_generic(physical-constants-6.0.0)
+test_generic(powell-dog-leg-newton-raphson-5.2.0)
+test_generic(powell-dog-leg-newton-raphson-6.0.0)
+test_generic(powell-dog-leg-broyden-5.2.0)
+test_generic(powell-dog-leg-broyden-6.0.0)
 
 test_generic(LogarithmicStrainPlasticity2)
 test_generic(ThermoElasticity)

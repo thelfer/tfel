@@ -174,11 +174,30 @@ using PhysicalConstants [[maybe_unused]] =
 For an asset which uses quantities (`@UseQt`), the second template
 argument of the alias is `use_qt` instead of `false`.
 
-The physical constants are, at the time of writing, the only entities
-whose behaviour is subject to a compatibility mode. Any other entity,
-such as a brick or a non linear solver, shall be treated in the same
-way: the code generated for an asset which declares a compatibility mode
-uses the implementation designated by this mode.
+The Powell dog leg solvers are also versioned. A behaviour using the
+`PowellDogLeg_NewtonRaphson` or
+`PowellDogLeg_NewtonRaphson_NumericalJacobian` algorithm inherits from:
+
+~~~~{.cxx}
+// no compatibility mode declared, in Version 5.2, or compatibility mode 5.2.0
+tfel::math::v5_2_0::TinyPowellDogLegNewtonRaphsonSolver<...>
+~~~~
+
+~~~~{.cxx}
+// future compatibility mode
+tfel::math::future::TinyPowellDogLegNewtonRaphsonSolver<...>
+~~~~
+
+A behaviour using the `PowellDogLeg_Broyden` algorithm inherits from
+`tfel::math::v5_2_0::TinyPowellDogLegBroydenSolver` or from
+`tfel::math::future::TinyPowellDogLegBroydenSolver` in the same way.
+
+The physical constants and the Powell dog leg solvers are, at the time
+of writing, the only entities whose behaviour is subject to a
+compatibility mode. Any other entity, such as a brick or another non
+linear solver, shall be treated in the same way: the code generated for
+an asset which declares a compatibility mode uses the implementation
+designated by this mode.
 
 # Knowing the compatibility mode of an asset
 
@@ -282,6 +301,13 @@ development proceeds as follows:
      // previous behaviour: `5.2.0` mode, or no mode in Version 5.2
    }
    ~~~~
+
+   This comparison is meant for the changes of the code generator
+   itself. A versioned entity of the `TFEL` libraries is selected by one
+   explicit branch per mode (`v == CompatibilityMode::future`,
+   `v == CompatibilityMode::v5_2_0`), as in the
+   `writePhysicalConstantsAlias` function, so that the code generated in
+   a given mode keeps naming the entities of this mode.
 
 4. Test both behaviours: a test behaviour, or model, or material
    property, generated with each mode, and an `MTest` file checking the

@@ -97,6 +97,11 @@ namespace mfront {
   NewtonRaphsonNumericalJacobianSolver::
       ~NewtonRaphsonNumericalJacobianSolver() = default;
 
+  std::vector<std::string> PowellDogLegNewtonRaphsonSolver::getReservedNames()
+      const {
+    return PowellDogLegAlgorithmBase::getReservedNames();
+  }  // end of getReservedNames
+
   std::vector<std::string> PowellDogLegNewtonRaphsonSolver::getSpecificHeaders()
       const {
     return {"TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"};
@@ -104,7 +109,7 @@ namespace mfront {
 
   std::string PowellDogLegNewtonRaphsonSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+    return PowellDogLegAlgorithmBase::buildExternalAlgorithmClassName(
         bd, h, "TinyPowellDogLegNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
@@ -143,6 +148,11 @@ namespace mfront {
   PowellDogLegNewtonRaphsonSolver::~PowellDogLegNewtonRaphsonSolver() = default;
 
   std::vector<std::string>
+  PowellDogLegNewtonRaphsonNumericalJacobianSolver::getReservedNames() const {
+    return PowellDogLegAlgorithmBase::getReservedNames();
+  }  // end of getReservedNames
+
+  std::vector<std::string>
   PowellDogLegNewtonRaphsonNumericalJacobianSolver::getSpecificHeaders() const {
     return {"TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"};
   }  // end of NewtonRaphsonSolverBase::getSpecificHeaders
@@ -150,23 +160,8 @@ namespace mfront {
   std::string PowellDogLegNewtonRaphsonNumericalJacobianSolver::
       getExternalAlgorithmClassName(const BehaviourDescription& bd,
                                     const Hypothesis h) const {
-    const auto hn = [&h]() -> std::string {
-      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        return "hypothesis";
-      }
-      return "ModellingHypothesis::" +
-             tfel::material::ModellingHypothesis::toUpperCaseString(h);
-    }();
-    const auto n =
-        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-    const auto cn =
-        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyPowellDogLegNewtonRaphsonSolver<" +  //
-           n + ", NumericType, " + cn + ">";
+    return PowellDogLegAlgorithmBase::buildExternalAlgorithmClassName(
+        bd, h, "TinyPowellDogLegNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
   void PowellDogLegNewtonRaphsonNumericalJacobianSolver::

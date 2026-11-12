@@ -115,7 +115,8 @@ library](tfel-math.html). The main steps of those algorithms and the
 associated code blocks are depicted in Figure
 @fig:mfront:implicit-dsl:resolution_steps.
 
-The `PowellDogLeg_` algorithms limit the corrections of the underlying
+In the `5.2.0` compatibility mode, which is the default of Version 5.2,
+the `PowellDogLeg_` algorithms limit the corrections of the underlying
 algorithm using Powell's dog leg step: when the sum of the absolute
 values of the components of the correction exceeds \(N\) times the
 trust region size, \(N\) being the number of unknowns, the correction
@@ -132,6 +133,23 @@ progress per iteration is limited to about this size:
 @Algorithm PowellDogLeg_NewtonRaphson;
 @PowellDogLegTrustRegionSize 1.e-2;
 ~~~~
+
+In the `future` compatibility mode, the `PowellDogLeg_` algorithms
+couple the corrections of the underlying algorithm with the classical
+trust region method: a correction whose euclidean norm exceeds the
+trust region radius is replaced by Powell's dog leg step, of norm equal
+to this radius. The radius is updated at each iteration from the ratio
+of the actual and predicted reductions of the squared norm of the
+residual, and a correction which does not reduce it enough is rejected
+(see the [description of the algorithms](behaviours.html)). The initial
+radius of each resolution is set by the `@PowellDogLegTrustRegionSize`
+keyword, followed by a positive value, or by the
+`powell_dogleg_trust_region_size` parameter, and is equal to
+\(10^{-4}\) by default. A value close to the expected increments of the
+integration variables over a time step saves the first iterations,
+which enlarge the radius. The norm of the corrections is computed on the
+unknowns of the solver, i.e. the normalised increments of the
+integration variables having a normalisation factor.
 
 ## Notes about updating auxiliary state variable or local variables in the `Integrator` code blocks when the numerical evaluation of the jacobian is requested
 

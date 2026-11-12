@@ -78,10 +78,20 @@ in the `known_compatibility_modes` array of the
 `CompatibilityMode` structure, as described in
 [this section](mfront-compatibility-modes.html#adding-a-new-compatibility-mode).
 
+An entity declared in a nested namespace of `tfel` follows the same
+convention within this namespace. For instance, the Powell dog leg
+solvers of the `TFEL/Math` library, such as
+`TinyPowellDogLegNewtonRaphsonSolver`, are declared in the
+`TFEL/Math/<Name>-5.2.0.hxx` and `TFEL/Math/<Name>-6.0.0.hxx` headers,
+in the `tfel::math::v5_2_0` and `tfel::math::v6_0_0` namespaces, and
+gathered by the `TFEL/Math/<Name>.hxx` header: `tfel::math::<Name>`
+refers to the solver of the mode of the current version and
+`tfel::math::future::<Name>` to the solver of the next major version.
+
 ## Example
 
-The `TFEL/PhysicalConstants` library, which is at the time of writing
-the only versioned library of `TFEL`, illustrates this convention. The
+The `TFEL/PhysicalConstants` library, which is the first versioned
+library of `TFEL`, illustrates this convention. The
 value of the molar gas constant is accessed in four different ways:
 
 ~~~~{.cxx}
@@ -141,11 +151,20 @@ libraries, without fixing an explicit bug, shall proceed as follows:
    is defined in the header and in the namespace of the new mode, as
    described in [the previous section](#naming-convention). Both
    entities declare the same names, so that switching from a mode to
-   another one does not require any other modification.
+   another one does not require any other modification. When an entity
+   is versioned for the first time, its existing code is moved to the
+   header and to the namespace of the mode of the current version, and
+   its names are kept by using-declarations in the header gathering all
+   the modes.
 2. Keep the names which do not mention a mode pointing to the entity of
    the mode of the current version of `TFEL` and those of the
    `tfel::future` namespace pointing to the entity of the next major
-   version.
+   version. In the versioned code, a free function of a mode is called
+   by its qualified name, such as
+   `tfel::math::v6_0_0::applyPowellDogLegAlgorithm`: otherwise,
+   argument-dependent lookup may also find the function of another mode
+   through the names which do not mention a mode, and the call is
+   ambiguous.
 3. Install the new header in `include/CMakeLists.txt`:
 
    ~~~~{.cmake}
@@ -179,12 +198,12 @@ whose values are generated from a single data file.
 - The `Fortran` bindings are not versioned yet: they expose a single set
   of constants, which is that of the next major version.
 - Compatibility modes only cover the entities which are versioned in
-  this way at the time of writing, that is to say the physical
-  constants. Extending them to other parts of the `TFEL` libraries
-  raises no fundamental difficulty, as long as the versioned entities
-  are `constexpr` entities or templates: the mechanism does not rely on
-  a preprocessor definition, since the values are resolved when the
-  generated code is compiled.
+  this way at the time of writing, that is to say the physical constants
+  and the Powell dog leg solvers of `TFEL/Math`. Extending them to other
+  parts of the `TFEL` libraries raises no fundamental difficulty, as
+  long as the versioned entities are `constexpr` entities or templates:
+  the mechanism does not rely on a preprocessor definition, since the
+  values are resolved when the generated code is compiled.
 
 # See also
 

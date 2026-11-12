@@ -95,6 +95,28 @@ version 5.2 are those of version 5.1: the use of the values of the
 representation is postponed to version 6.0, where it is available
 through the `6.0.0` set of constants.
 
+The solvers based on Powell's dog leg step are the second entities to
+be versioned this way (see Issue #1357). The
+`TinyPowellDogLegNewtonRaphsonSolver` and
+`TinyPowellDogLegBroydenSolver` classes, which implement the
+`PowellDogLeg_NewtonRaphson`,
+`PowellDogLeg_NewtonRaphson_NumericalJacobian` and
+`PowellDogLeg_Broyden` algorithms of the `Implicit` DSLs, are defined in
+the `tfel::math::v5_2_0` and `tfel::math::v6_0_0` namespaces. The names
+which do not mention a mode, such as
+`tfel::math::TinyPowellDogLegNewtonRaphsonSolver`, refer to the `5.2.0`
+classes, which are used by default: the behaviour of Version 5.2 is
+unchanged. In the `5.2.0` mode, the trust region size
+(`@PowellDogLegTrustRegionSize`, `powell_dogleg_trust_region_size`) is
+a fixed limit of the corrections. In the `future` mode, the generated
+code uses the classes of the `tfel::math::future` namespace, i.e. the
+`6.0.0` classes, which implement the classical trust region method: the
+radius is updated at each iteration, a correction may be rejected, and
+the trust region size is the initial radius of each resolution. An
+external workspace of the `6.0.0` version of
+`TinyPowellDogLegNewtonRaphsonSolver` must provide the
+`powell_dogleg_jacobian_1` and `powell_dogleg_fzeros_1` members.
+
 Compatibility modes are described in the pages devoted to
 [compatibility modes in the `TFEL` libraries](tfel-compatibility-modes.html)
 and to
@@ -171,6 +193,10 @@ and to
   (respectively `TinyBroyden2Solver`), the update is performed by the
   `updateJacobian` (respectively `updateJacobianInvert`) method, which
   replaces their `updateOrCheckJacobian` method.
+- `powell_dogleg_radius`, `powell_dogleg_accept_correction`,
+  `powell_dogleg_jacobian_1` and `powell_dogleg_fzeros_1` are reserved
+  names of the `PowellDogLeg` algorithms of the `Implicit` DSLs,
+  whatever the compatibility mode (see Issue #1357).
 - The integer values read by `CxxTokenizer::readInt` and
   `CxxTokenizer::readUnsignedInt`, i.e. the integers of the `MTest`,
   `MFront` and `tfel-check` files (numbers of iterations and of
@@ -1069,6 +1095,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1357: [tfel-math, mfront] Powell dog leg algorithms: classical trust region method (update of the radius, rejection of the correction)
+
+For more details, see <https://github.com/thelfer/tfel/issues/1357>
 
 ## Issue 1387: [TFEL/Utilities] tests `CxxTokenizer` with `libFuzzer`
 

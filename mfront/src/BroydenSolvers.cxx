@@ -99,7 +99,7 @@ namespace mfront {
 
   std::string PowellDogLegBroydenSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+    return PowellDogLegAlgorithmBase::buildExternalAlgorithmClassName(
         bd, h, "TinyPowellDogLegBroydenSolver");
   }  // end of getExternalAlgorithmClassName
 

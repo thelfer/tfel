@@ -1,6 +1,6 @@
 /*!
  * \file
- * include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegNewtonRaphsonSolver.ixx
+ * include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegNewtonRaphsonSolver-5.2.0.ixx
  * \brief  This file implements the TinyPowellDogLegNewtonMatrix class
  * \author Thomas Helfer
  * \date   02/07/2021
@@ -12,12 +12,12 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX
-#define LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX
+#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_5_2_0_IXX
+#define LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_5_2_0_IXX
 
-#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
+#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase-5.2.0.hxx"
 
-namespace tfel::math {
+namespace tfel::math::v5_2_0 {
 
   template <unsigned short N,
             typename NumericType,
@@ -39,11 +39,13 @@ namespace tfel::math {
       return false;
     }
     this->delta_zeros = -this->fzeros;
-    applyPowellDogLegAlgorithm(this->delta_zeros, tjacobian, tfzeros,
-                               this->powell_dogleg_trust_region_size);
+    // qualified call: an unqualified one may be ambiguous through ADL
+    tfel::math::v5_2_0::applyPowellDogLegAlgorithm(
+        this->delta_zeros, tjacobian, tfzeros,
+        this->powell_dogleg_trust_region_size);
     return true;
   }  // end of computeNewCorrection
 
-}  // end of namespace tfel::math
+}  // end of namespace tfel::math::v5_2_0
 
-#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_IXX */
+#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGNEWTONRAPHSONSOLVER_5_2_0_IXX */
