@@ -267,7 +267,7 @@ namespace lsdyna {
         } else {
           try {
             r = this->behaviour.integrate(smflag,
-                                                BV::CONSISTENTTANGENTOPERATOR);
+                                          BV::CONSISTENTTANGENTOPERATOR);
           } catch (DivergenceException&) {
             r = BV::FAILURE;
           }

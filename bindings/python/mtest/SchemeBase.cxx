@@ -104,19 +104,16 @@ void declareSchemeBase(pybind11::module_&);
 void declareSchemeBase(pybind11::module_& m) {
   using namespace mtest;
   pybind11::class_<SchemeBase>(m, "SchemeBase")
-      .def("setDescription", &SchemeBase::setDescription,
-           pybind11::arg("d"),
+      .def("setDescription", &SchemeBase::setDescription, pybind11::arg("d"),
            "This method describes the test  which is implemented "
            "in a mtest file.\n"
            "* The parameter (string) is the description of the "
            "test.")
-      .def("setAuthor", &SchemeBase::setAuthor,
-           pybind11::arg("a"),
+      .def("setAuthor", &SchemeBase::setAuthor, pybind11::arg("a"),
            "This method is used give the name of the person who "
            "wrote the mtest file.\n"
            "* The parameter (string) is the author's name.")
-      .def("setDate", &SchemeBase::setDate,
-           pybind11::arg("d"),
+      .def("setDate", &SchemeBase::setDate, pybind11::arg("d"),
            "This method allows the user to precise when the mtest "
            "file was written.\n"
            "* The parameter (string) is the mtest's creation date.")
@@ -171,27 +168,23 @@ void declareSchemeBase(pybind11::module_& m) {
            "- 'TangentOperator'\n"
            "- 'ConsistentTangentOperator'")
       .def("setStiffnessUpdatingPolicy",
-           &SchemeBase::setStiffnessUpdatingPolicy,
-           pybind11::arg("p"))
+           &SchemeBase::setStiffnessUpdatingPolicy, pybind11::arg("p"))
       .def("setStiffnessUpdatingPolicy", setStiffnessUpdatingPolicy,
            pybind11::arg("p"))
       .def("setUseCastemAccelerationAlgorithm",
-           &SchemeBase::setUseCastemAccelerationAlgorithm,
-           pybind11::arg("b"),
+           &SchemeBase::setUseCastemAccelerationAlgorithm, pybind11::arg("b"),
            "This method specifies if the acceleration algorithm "
            "introduced by the resolution procedures of the castem "
            "finite element shall be used.\n"
            "* If the parameter (bool) is 'true', the algorithm "
            "will be used. Otherwise, it wont be.")
       .def("setCastemAccelerationTrigger",
-           &SchemeBase::setCastemAccelerationTrigger,
-           pybind11::arg("n"),
+           &SchemeBase::setCastemAccelerationTrigger, pybind11::arg("n"),
            "This method specifies iterations number "
            "before the first call to the acceleration algorithm.\n"
            "* The parameter (int) specify the iterations number.")
       .def("setCastemAccelerationPeriod",
-           &SchemeBase::setCastemAccelerationPeriod,
-           pybind11::arg("n"),
+           &SchemeBase::setCastemAccelerationPeriod, pybind11::arg("n"),
            "This method specifies iterations number "
            "between two calls to the acceleration algorithm.\n"
            "* The parameter (int) specify the iterations number.")
@@ -216,8 +209,8 @@ void declareSchemeBase(pybind11::module_& m) {
            "- 'UAnderson'\n"
            "- 'FAnderson'")
       .def("setAccelerationParameter",
-           &SchemeBase::setAccelerationAlgorithmParameter,
-           pybind11::arg("n"), pybind11::arg("v"),
+           &SchemeBase::setAccelerationAlgorithmParameter, pybind11::arg("n"),
+           pybind11::arg("v"),
            "This method fine-tune the acceleration algorithm "
            "used to reach equilibrium. "
            "* The first parameter (string) is the name of the "
@@ -225,8 +218,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "* The second parameter (string) is the value of "
            "this parameter.")
       .def("setMaximumNumberOfIterations",
-           &SchemeBase::setMaximumNumberOfIterations,
-           pybind11::arg("n"),
+           &SchemeBase::setMaximumNumberOfIterations, pybind11::arg("n"),
            "This method specify the maximum number of iterations "
            "allowed to the global algorithm to reach the equilibrium.\n"
            "* The parameter (uint) is the maximum number of iterations.\n"
@@ -234,8 +226,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "the time step is divided by two. The maximum number of sub-steps "
            "can be specified using the 'setMaximumNumberOfSubSteps' method.")
       .def("setMaximumNumberOfSubSteps",
-           &SchemeBase::setMaximumNumberOfSubSteps,
-           pybind11::arg("n"),
+           &SchemeBase::setMaximumNumberOfSubSteps, pybind11::arg("n"),
            "This method specify the maximum number of sub-steps allowed.\n"
            "* The parameter (uint) is the maximum number of sub-steps.\n"
            "When the global algorithm fails to reach equilibrium (see "
@@ -255,8 +246,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "- GeneralisedPlaneStrain               (2D) : EXX EYY EZZ EXY\n"
            "- Tridimensional                       (3D) : EXX EYY EZZ EXY EXZ "
            "EYZ")
-      .def("setTimes", &SchemeBase::setTimes,
-           pybind11::arg("t"),
+      .def("setTimes", &SchemeBase::setTimes, pybind11::arg("t"),
            "This method specify a list of times used for the "
            "computations.\n "
            "* The parameter (vector<double>) is the specified "
@@ -311,23 +301,20 @@ void declareSchemeBase(pybind11::module_& m) {
            "This method define the minimal time step allowed.\n"
            "* The parameter (double) specify the minimal time step.")
       .def("setMaximalTimeStepScalingFactor",
-           &SchemeBase::setMaximalTimeStepScalingFactor,
-           pybind11::arg("f"),
+           &SchemeBase::setMaximalTimeStepScalingFactor, pybind11::arg("f"),
            "This method define the maximal time step scaling factor "
            "allowed during automatic time step adaptation (see the "
            "'setDynamicTimeStepScaling' method for details).\n"
            "* The parameter (double) is the maximal time step "
            "scaling factor wich must be greater than one.")
       .def("setMinimalTimeStepScalingFactor",
-           &SchemeBase::setMinimalTimeStepScalingFactor,
-           pybind11::arg("f"),
+           &SchemeBase::setMinimalTimeStepScalingFactor, pybind11::arg("f"),
            "This method define the minimal time step scaling factor "
            "allowed during automatic time step adaptation (see the "
            "'setDynamicTimeStepScaling' method for details).\n"
            "* The parameter (double) is the minimal time step "
            "scaling factor wich must be positive and lower than one.")
-      .def("setOutputFrequency", setOutputFrequency,
-           pybind11::arg("v"),
+      .def("setOutputFrequency", setOutputFrequency, pybind11::arg("v"),
            "This method specify when the results are written in the "
            "output files.\n"
            "* The parameter (string) specify the choosen option. "

@@ -330,7 +330,7 @@ namespace tfel::math {
     template <MatrixConcept MatrixType>
     [[nodiscard]] TFEL_HOST_DEVICE static constexpr auto buildFromMatrix(
         const MatrixType&) noexcept
-      requires(isAssignableTo<numeric_type<MatrixType>, ValueType>());
+        requires(isAssignableTo<numeric_type<MatrixType>, ValueType>());
 
     /*!
      * build a symmetric tensor from the diadic product of a vector with
@@ -339,11 +339,10 @@ namespace tfel::math {
      */
     template <VectorConcept VectorType>
     [[nodiscard]] TFEL_HOST_DEVICE static constexpr auto
-    buildFromVectorDiadicProduct(const VectorType&) noexcept
-      requires(
-          isAssignableTo<typename ComputeUnaryResult<numeric_type<VectorType>,
-                                                     Power<2>>::Result,
-                         ValueType>());
+    buildFromVectorDiadicProduct(const VectorType&) noexcept requires(
+        isAssignableTo<typename ComputeUnaryResult<numeric_type<VectorType>,
+                                                   Power<2>>::Result,
+                       ValueType>());
 
     /*!
      * build a symmetric tensor from the symmetric diadic product of two
@@ -355,10 +354,10 @@ namespace tfel::math {
     [[nodiscard]] TFEL_HOST_DEVICE static constexpr auto
     buildFromVectorsSymmetricDiadicProduct(const VectorType&,
                                            const VectorType2&) noexcept
-      requires(isAssignableTo<BinaryOperationResult<numeric_type<VectorType>,
-                                                    numeric_type<VectorType2>,
-                                                    OpMult>,
-                              ValueType>());
+        requires(isAssignableTo<BinaryOperationResult<numeric_type<VectorType>,
+                                                      numeric_type<VectorType2>,
+                                                      OpMult>,
+                                ValueType>());
 
     /*!
      * build a symmetric tensor from its eigen values and vectors
@@ -622,10 +621,9 @@ namespace tfel::math {
         const rotation_matrix<ValueType>&,
         const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                                   (isAssignableTo<
-                                      BinaryOperationResult<
-                                          ValueType,
-                                          ValueType,
-                                          OpDiv>,
+                                      BinaryOperationResult<ValueType,
+                                                            ValueType,
+                                                            OpDiv>,
                                       numeric_type<ST2toST2Type>>()));
     /*!
      * compute the derivative of an isotropic function
@@ -669,10 +667,9 @@ namespace tfel::math {
         const rotation_matrix<ValueType>&,
         const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
                                   (isAssignableTo<
-                                      BinaryOperationResult<
-                                          ValueType,
-                                          ValueType,
-                                          OpDiv>,
+                                      BinaryOperationResult<ValueType,
+                                                            ValueType,
+                                                            OpDiv>,
                                       numeric_type<ST2toST2Type>>()));
     /*!
      * \return the value of an isotropic function

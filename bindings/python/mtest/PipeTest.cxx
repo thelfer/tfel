@@ -353,8 +353,7 @@ void declarePipeTest(pybind11::module_& m) {
            "complete the initialisation. This method must be called once. This "
            "method may be called automatically by the execute method.")
       .def("addFailureCriterion", &PipeTest::addFailureCriterion,
-           pybind11::arg("n"), pybind11::arg("m"),
-           "add a failure criterion.")
+           pybind11::arg("n"), pybind11::arg("m"), "add a failure criterion.")
       .def("setFailurePolicy", &PipeTest::setFailurePolicy, pybind11::arg("p"),
            "set the failure policy.")
       .def("addOxidationModel", &PipeTest::addOxidationModel, "library"_a,

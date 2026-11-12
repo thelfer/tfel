@@ -20,10 +20,10 @@ void declareOverridableImplementation(pybind11::module_&);
 void declareOverridableImplementation(pybind11::module_& m) {
   auto write_ptr =
       static_cast<void (*)(const mfront::OverridableImplementation&,
-                            const std::string&)>(mfront::write);
+                           const std::string&)>(mfront::write);
   auto write_ptr2 =
       static_cast<void (*)(const mfront::OverridableImplementation&,
-                            const std::string&, const std::string&)>(
+                           const std::string&, const std::string&)>(
           mfront::write);
 
   pybind11::class_<mfront::OverridableImplementation>(
@@ -31,7 +31,8 @@ void declareOverridableImplementation(pybind11::module_& m) {
       "A data structure representing the implementation of a material\n"
       "knowledge based on MFront.\n"
       "\n"
-      "This datastructure allows to take an MFront file, called the source file\n"
+      "This datastructure allows to take an MFront file, called the source "
+      "file\n"
       "and override:\n"
       "\n"
       "- some metadata, such as the author name, the date, the description\n"

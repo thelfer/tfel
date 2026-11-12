@@ -1298,10 +1298,10 @@ void declareMTest(pybind11::module_& m) {
            "- formulae used to extract the data from the file ($1 is the first "
            "column)\n"
            "- test criterion\n")
-      .def("addEvent", &MTest::addEvent, pybind11::arg("n"),
-           pybind11::arg("t"), "Add a new event")
-      .def("addEvent", MTest_addEvent, pybind11::arg("n"),
-           pybind11::arg("t"), "Add a new event")
+      .def("addEvent", &MTest::addEvent, pybind11::arg("n"), pybind11::arg("t"),
+           "Add a new event")
+      .def("addEvent", MTest_addEvent, pybind11::arg("n"), pybind11::arg("t"),
+           "Add a new event")
       .def("completeInitialisation", &MTest::completeInitialisation,
            "complete the initialisation. This method must be called once. This "
            "method may be called automatically by the execute method.")

@@ -219,12 +219,10 @@ void declareSingleStructureScheme(pybind11::module_& m) {
       .def("getBehaviourType", &SingleStructureScheme_getBehaviourType)
       .def("getBehaviourKinematic",
            &SingleStructureScheme_getBehaviourKinematic)
-      .def("setBehaviour", ptr1,
-           pybind11::arg("i"), pybind11::arg("l"), pybind11::arg("f"),
-           pybind11::arg("p"))
-      .def("setBehaviour", ptr2,
-           pybind11::arg("w"), pybind11::arg("i"), pybind11::arg("l"),
+      .def("setBehaviour", ptr1, pybind11::arg("i"), pybind11::arg("l"),
            pybind11::arg("f"), pybind11::arg("p"))
+      .def("setBehaviour", ptr2, pybind11::arg("w"), pybind11::arg("i"),
+           pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("p"))
       .def("setBehaviour", SingleStructureScheme_setBehaviour,
            pybind11::arg("i"), pybind11::arg("l"), pybind11::arg("f"),
            "This method declares the behaviour used for the "

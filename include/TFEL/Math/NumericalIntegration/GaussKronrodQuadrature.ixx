@@ -28,9 +28,9 @@ namespace tfel::math {
 
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::operator()(
-      const FunctionType& f,                                     //
-      const real a,                                              //
-      const real b,                                              //
+      const FunctionType& f,  //
+      const real a,           //
+      const real b,           //
       const NumericalParameters<AbsoluteToleranceType<real, FunctionType>>
           params) const                                          //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //

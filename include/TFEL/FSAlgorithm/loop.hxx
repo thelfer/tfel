@@ -54,7 +54,7 @@ namespace tfel::fsalgo {
        */
       template <typename F>
       TFEL_HOST_DEVICE constexpr static void exe(F&) {}  // end of exe
-    };                 // end of struct do_loop<N, N>
+    };  // end of struct do_loop<N, N>
 
   }  // namespace internals
 

@@ -47,13 +47,13 @@ static void setModellingHypotheses2(
 }
 
 static std::string getStringAttribute(const mfront::BehaviourDescription& d,
-                                       const std::string& n) {
+                                      const std::string& n) {
   return d.getAttribute<std::string>(n);
 }
 
 static std::string getStringAttribute2(const mfront::BehaviourDescription& d,
-                                        const std::string& n,
-                                        const std::string& v) {
+                                       const std::string& n,
+                                       const std::string& v) {
   return d.getAttribute<std::string>(n, v);
 }
 
@@ -70,13 +70,13 @@ static unsigned short getUnsignedShortAttribute2(
 }
 
 static bool getBooleanAttribute(const mfront::BehaviourDescription& d,
-                                 const std::string& n) {
+                                const std::string& n) {
   return d.getAttribute<bool>(n);
 }
 
 static bool getBooleanAttribute2(const mfront::BehaviourDescription& d,
-                                  const std::string& n,
-                                  const bool v) {
+                                 const std::string& n,
+                                 const bool v) {
   return d.getAttribute<bool>(n, v);
 }
 
@@ -126,13 +126,13 @@ static bool getBooleanAttribute4(
 }
 
 static bool hasAttribute(const mfront::BehaviourDescription& d,
-                          const mfront::BehaviourDescription::Hypothesis h,
-                          const std::string& n) {
+                         const mfront::BehaviourDescription::Hypothesis h,
+                         const std::string& n) {
   return d.hasAttribute(h, n);
 }
 
 static void setStrainMeasure(mfront::BehaviourDescription& d,
-                              const std::string& s) {
+                             const std::string& s) {
   if (s == "Linearised") {
     d.setStrainMeasure(mfront::BehaviourDescription::LINEARISED);
     return;
@@ -141,9 +141,9 @@ static void setStrainMeasure(mfront::BehaviourDescription& d,
     return;
   }
   tfel::raise_if(s != "Hencky",
-                  "BehaviourDescription::setStrainMeasure: "
-                  "unsupported strain measure '" +
-                      s + "'");
+                 "BehaviourDescription::setStrainMeasure: "
+                 "unsupported strain measure '" +
+                     s + "'");
   d.setStrainMeasure(mfront::BehaviourDescription::HENCKY);
 }
 
@@ -205,43 +205,41 @@ void declareBehaviourDescription(pybind11::module_& m) {
       .def("getModellingHypotheses", getModellingHypotheses)
       .def("getDistinctModellingHypotheses", getDistinctModellingHypotheses)
       .def("setModellingHypotheses", setModellingHypotheses1,
-          pybind11::arg("mh"))
+           pybind11::arg("mh"))
       .def("setModellingHypotheses", setModellingHypotheses2,
-          pybind11::arg("mh"), pybind11::arg("b"))
+           pybind11::arg("mh"), pybind11::arg("b"))
       .def("getBehaviourData", &BehaviourDescription::getBehaviourData,
            pybind11::arg("h"),
            pybind11::return_value_policy::reference_internal)
       .def("hasAttribute", &BehaviourDescription_hasAttribute,
-          pybind11::arg("s"))
+           pybind11::arg("s"))
       .def("getSymmetryType", &BehaviourDescription::getSymmetryType)
       .def("getElasticSymmetryType",
            &BehaviourDescription::getElasticSymmetryType)
-      .def("hasAttribute", ::hasAttribute,
-          pybind11::arg("h"), pybind11::arg("n"))
+      .def("hasAttribute", ::hasAttribute, pybind11::arg("h"),
+           pybind11::arg("n"))
       .def("getUnsignedShortAttribute", getUnsignedShortAttribute,
-          pybind11::arg("n"))
-      .def("getStringAttribute", getStringAttribute,
-          pybind11::arg("n"))
-      .def("getBooleanAttribute", getBooleanAttribute,
-          pybind11::arg("n"))
+           pybind11::arg("n"))
+      .def("getStringAttribute", getStringAttribute, pybind11::arg("n"))
+      .def("getBooleanAttribute", getBooleanAttribute, pybind11::arg("n"))
       .def("getUnsignedShortAttribute", getUnsignedShortAttribute2,
-          pybind11::arg("n"), pybind11::arg("v"))
-      .def("getStringAttribute", getStringAttribute2,
-          pybind11::arg("n"), pybind11::arg("v"))
-      .def("getBooleanAttribute", getBooleanAttribute2,
-          pybind11::arg("n"), pybind11::arg("v"))
+           pybind11::arg("n"), pybind11::arg("v"))
+      .def("getStringAttribute", getStringAttribute2, pybind11::arg("n"),
+           pybind11::arg("v"))
+      .def("getBooleanAttribute", getBooleanAttribute2, pybind11::arg("n"),
+           pybind11::arg("v"))
       .def("getUnsignedShortAttribute", getUnsignedShortAttribute3,
-          pybind11::arg("h"), pybind11::arg("n"))
-      .def("getStringAttribute", getStringAttribute3,
-          pybind11::arg("h"), pybind11::arg("n"))
-      .def("getBooleanAttribute", getBooleanAttribute3,
-          pybind11::arg("h"), pybind11::arg("n"))
+           pybind11::arg("h"), pybind11::arg("n"))
+      .def("getStringAttribute", getStringAttribute3, pybind11::arg("h"),
+           pybind11::arg("n"))
+      .def("getBooleanAttribute", getBooleanAttribute3, pybind11::arg("h"),
+           pybind11::arg("n"))
       .def("getUnsignedShortAttribute", getUnsignedShortAttribute4,
-          pybind11::arg("h"), pybind11::arg("n"), pybind11::arg("v"))
-      .def("getStringAttribute", getStringAttribute4,
-          pybind11::arg("h"), pybind11::arg("n"), pybind11::arg("v"))
-      .def("getBooleanAttribute", getBooleanAttribute4,
-          pybind11::arg("h"), pybind11::arg("n"), pybind11::arg("v"))
+           pybind11::arg("h"), pybind11::arg("n"), pybind11::arg("v"))
+      .def("getStringAttribute", getStringAttribute4, pybind11::arg("h"),
+           pybind11::arg("n"), pybind11::arg("v"))
+      .def("getBooleanAttribute", getBooleanAttribute4, pybind11::arg("h"),
+           pybind11::arg("n"), pybind11::arg("v"))
       .def("hasCrystalStructure", &BehaviourDescription::hasCrystalStructure)
       .def("getCrystalStructure", &BehaviourDescription::getCrystalStructure)
       .def("setCrystalStructure", &BehaviourDescription::setCrystalStructure,
@@ -249,7 +247,6 @@ void declareBehaviourDescription(pybind11::module_& m) {
       .def("getAttributes", &BehaviourDescription::getAttributes)
       .def("isStrainMeasureDefined",
            &BehaviourDescription::isStrainMeasureDefined)
-      .def("setStrainMeasure", setStrainMeasure,
-          pybind11::arg("s"))
+      .def("setStrainMeasure", setStrainMeasure, pybind11::arg("s"))
       .def("getStrainMeasure", getStrainMeasure);
 }

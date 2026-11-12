@@ -79,15 +79,15 @@ void declareMaterialProperty(pybind11::module_& m) {
            "return the names of the parameters of the function")
       .def("getOutputName", &MaterialProperty::getOutputName,
            "return the names of the output of the function")
-      .def("setVariableValue", setValue1, pybind11::arg("n"), pybind11::arg("v"),
-           "set the value of a variable")
-      .def("setVariableValue", setValue2, pybind11::arg("i"), pybind11::arg("v"),
-           "set the value of a variable")
-      .def("setParameter", &MaterialProperty::setParameter, pybind11::arg("n"), pybind11::arg("v"),
-           "set the value of a parameter")
+      .def("setVariableValue", setValue1, pybind11::arg("n"),
+           pybind11::arg("v"), "set the value of a variable")
+      .def("setVariableValue", setValue2, pybind11::arg("i"),
+           pybind11::arg("v"), "set the value of a variable")
+      .def("setParameter", &MaterialProperty::setParameter, pybind11::arg("n"),
+           pybind11::arg("v"), "set the value of a parameter")
       .def("getValue", &MaterialProperty::getValue,
            "evaluate the material property")
-    .def("getValue", MaterialProperty_getValue, pybind11::arg("values"),
+      .def("getValue", MaterialProperty_getValue, pybind11::arg("values"),
            "evaluate the material property")
       .def("getValue", getValue1, pybind11::arg("values"), pybind11::arg("b"),
            "evaluate the material property")
@@ -95,17 +95,12 @@ void declareMaterialProperty(pybind11::module_& m) {
            "evaluate the material property")
       .def("getValue", getValue3, pybind11::arg("v"),
            "evaluate the material property")
-      .def("getValue", getValue4,
-           "evaluate the material property")
-      .def("__call__", getValue1,
-           "evaluate the material property")
+      .def("getValue", getValue4, "evaluate the material property")
+      .def("__call__", getValue1, "evaluate the material property")
       .def("__call__", MaterialProperty_getValue,
            "evaluate the material property")
-      .def("__call__", getValue2,
-           "evaluate the material property")
-      .def("__call__", getValue3,
-           "evaluate the material property")
-      .def("__call__", getValue4,
-           "evaluate the material property");
+      .def("__call__", getValue2, "evaluate the material property")
+      .def("__call__", getValue3, "evaluate the material property")
+      .def("__call__", getValue4, "evaluate the material property");
 
 }  // end of declareMaterialProperty

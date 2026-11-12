@@ -353,15 +353,13 @@ void declareBehaviour(pybind11::module_& m) {
            pybind11::arg("n"),
            "return the default value of an unsigned short parameter")
       .def("setParameter", &Behaviour::setParameter, pybind11::arg("n"),
-           pybind11::arg("v"),
-           "set the given parameter' value")
+           pybind11::arg("v"), "set the given parameter' value")
       .def("setIntegerParameter", &Behaviour::setIntegerParameter,
            pybind11::arg("n"), pybind11::arg("v"),
            "set the given parameter' value")
       .def("setUnsignedIntegerParameter",
            &Behaviour::setUnsignedIntegerParameter, pybind11::arg("n"),
-           pybind11::arg("v"),
-           "set the given parameter' value")
+           pybind11::arg("v"), "set the given parameter' value")
       .def("hasBounds", &Behaviour::hasBounds, pybind11::arg("n"),
            "return true if the given variable has bounds")
       .def("hasLowerBound", &Behaviour::hasLowerBound, pybind11::arg("n"),
@@ -382,10 +380,8 @@ void declareBehaviour(pybind11::module_& m) {
            pybind11::arg("n"),
            "return true if the given variable has a physical upper bound")
       .def("getLowerPhysicalBound", &Behaviour::getLowerPhysicalBound,
-           pybind11::arg("n"),
-           "return the lower bound of the given variable")
+           pybind11::arg("n"), "return the lower bound of the given variable")
       .def("getUpperPhysicalBound", &Behaviour::getUpperPhysicalBound,
-           pybind11::arg("n"),
-           "return the upper bound of the given variable");
+           pybind11::arg("n"), "return the upper bound of the given variable");
 
 }  // end of declareBehaviour()
