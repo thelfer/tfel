@@ -18,6 +18,7 @@ if os.name == 'nt':
 
 import tfel.tests
 import tfel.math
+import tfel.material
 import tfel.utilities
 from ._mtest import *
 

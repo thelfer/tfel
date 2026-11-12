@@ -126,6 +126,11 @@ void declarestensor(pybind11::module_& m);
 
 void declarestensor(pybind11::module_& m) {
   using namespace tfel::math;
+  // the classes are declared before the functions using them, so that the
+  // signatures of these functions refer to the python names of the classes
+  declarestensor<1u>(m, "Stensor1D");
+  declarestensor<2u>(m, "Stensor2D");
+  declarestensor<3u>(m, "Stensor3D");
   double (*tresca1D)(const stensor<1u, double>&) = stensor_tresca<1u>;
   double (*tresca2D)(const stensor<2u, double>&) = stensor_tresca<2u>;
   double (*tresca3D)(const stensor<3u, double>&) = stensor_tresca<3u>;
@@ -153,7 +158,4 @@ void declarestensor(pybind11::module_& m) {
   m.def("makeStensor1D", makeStensor1D, pybind11::arg("s"));
   m.def("makeStensor2D", makeStensor2D, pybind11::arg("s"));
   m.def("makeStensor3D", makeStensor3D, pybind11::arg("s"));
-  declarestensor<1u>(m, "Stensor1D");
-  declarestensor<2u>(m, "Stensor2D");
-  declarestensor<3u>(m, "Stensor3D");
 }  // end of declarestensor
