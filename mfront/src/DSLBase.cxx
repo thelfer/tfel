@@ -207,32 +207,33 @@ namespace mfront {
 
   std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
       const {
-    return {{DSLBase::disableRuntimeChecksOption,
-             "boolean stating if interfaces shall remove as much runtime "
-             "checks as possible. Those checks include the treatment of "
-             "standard and physical bounds for instance."},
-            {DSLBase::defaultOutOfBoundsPolicyOption,
-             "string specifying the default out of bounds policy. Allowed "
-             "values are `None`, `Warning`, `Strict`"},
-            {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
-             "boolean stating if the runtime modification of the out of bounds "
-             "policy is allowed"},
-            {DSLBase::parametersAsStaticVariablesOption,
-             "boolean stating if parameters shall be treated as static "
-             "variables"},
-            {DSLBase::initializationFromFileOption,
-             "boolean stating if the values of parameters can be changed from "
-             "an external file"},
-            {DSLBase::validatorOption,
-             "string specifying the validator of the implementation"},
-            {DSLBase::buildIdentifierOption,
-             "string specifying a build identifier. This option shall only be "
-             "specified on the command line"},
-            {DSLBase::overridingParameters,
-             "map allowing to override material properties, parameters and "
-             "external state variables by parameters"},
-            {DSLBase::compatibilityModeOption,
-             "string giving the version to which the MFront file shall comply"}};
+    return {
+        {DSLBase::disableRuntimeChecksOption,
+         "boolean stating if interfaces shall remove as much runtime "
+         "checks as possible. Those checks include the treatment of "
+         "standard and physical bounds for instance."},
+        {DSLBase::defaultOutOfBoundsPolicyOption,
+         "string specifying the default out of bounds policy. Allowed "
+         "values are `None`, `Warning`, `Strict`"},
+        {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
+         "boolean stating if the runtime modification of the out of bounds "
+         "policy is allowed"},
+        {DSLBase::parametersAsStaticVariablesOption,
+         "boolean stating if parameters shall be treated as static "
+         "variables"},
+        {DSLBase::initializationFromFileOption,
+         "boolean stating if the values of parameters can be changed from "
+         "an external file"},
+        {DSLBase::validatorOption,
+         "string specifying the validator of the implementation"},
+        {DSLBase::buildIdentifierOption,
+         "string specifying a build identifier. This option shall only be "
+         "specified on the command line"},
+        {DSLBase::overridingParameters,
+         "map allowing to override material properties, parameters and "
+         "external state variables by parameters"},
+        {DSLBase::compatibilityModeOption,
+         "string giving the version to which the MFront file shall comply"}};
   }  // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {

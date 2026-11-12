@@ -79,7 +79,7 @@ namespace mfront::gpmp {
     [[nodiscard]] TFEL_HOST_DEVICE constexpr bool isFailure() const noexcept {
       return this->status < 0;
     }  // end of isFailure
-  };  // end of struct PointStatus
+  };   // end of struct PointStatus
 
   /*!
    * \return the statistics associated with the status of a point, as merged

@@ -122,11 +122,11 @@ namespace mfront {
   }  // end of setDefaultCompatibilityMode
 
   CompatibilityMode::Version getGreatestCompatibilityMode() noexcept {
-    const auto pm = std::max_element(
-        CompatibilityMode::known_compatibility_modes.begin(),
-        CompatibilityMode::known_compatibility_modes.end());
+    const auto pm =
+        std::max_element(CompatibilityMode::known_compatibility_modes.begin(),
+                         CompatibilityMode::known_compatibility_modes.end());
     return *pm;
-  } // end of getGreatestCompatibilityMode
+  }  // end of getGreatestCompatibilityMode
 
   std::optional<CompatibilityMode::Version>
   getDefaultCompatibilityMode() noexcept {

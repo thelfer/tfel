@@ -32,8 +32,9 @@
 #define MFRONT_GPMP_TEST_STRINGIFY2(x) #x
 #define MFRONT_GPMP_TEST_STRINGIFY(x) MFRONT_GPMP_TEST_STRINGIFY2(x)
 // clang-format off: the spaces would appear in the name of the header
-#define MFRONT_GPMP_TEST_HEADER(name) \
-  MFRONT_GPMP_TEST_STRINGIFY(name-generic-parallel-MFRONT_GPMP_TEST_BACKEND.hxx)
+#define MFRONT_GPMP_TEST_HEADER(name)                    \
+  MFRONT_GPMP_TEST_STRINGIFY(name - generic - parallel - \
+                             MFRONT_GPMP_TEST_BACKEND.hxx)
 // clang-format on
 
 #include MFRONT_GPMP_TEST_HEADER(UO2_YoungModulus_Martin1989)

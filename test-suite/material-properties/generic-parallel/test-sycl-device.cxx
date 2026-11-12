@@ -350,7 +350,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     auto d_nu = to_device(nu, Q);
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     evaluate(PoissonRatioTest_generic_parallel, output, d_nu.get(), 1,
-             std::array<const double*, 0u>{},
+             std::array<const double *, 0u>{},
              std::array<mfront_gmp_size_type, 0u>{}, 4, policy, options);
     TFEL_TESTS_CHECK_EQUAL(output.status, 0);
     TFEL_TESTS_CHECK_EQUAL(output.number_of_failures, mfront_gmp_size_type{0});
@@ -363,7 +363,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     nu.at(0) = 0;
     auto d_nu2 = to_device(nu, Q);
     evaluate(PoissonRatioTest_generic_parallel, output, d_nu2.get(), 0,
-             std::array<const double*, 0u>{},
+             std::array<const double *, 0u>{},
              std::array<mfront_gmp_size_type, 0u>{}, 1, policy, options);
     to_host(nu, d_nu2, Q);
     TFEL_TESTS_ASSERT(std::abs(nu[0] - 0.39991) < eps);
@@ -424,8 +424,8 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
    */
   void checkTemperatureDependentMaterialProperty(
       const mfront_gpmp_BatchMaterialPropertyPtr mp,
-      const std::array<double, 4u>& T_values,
-      const std::array<double, 4u>& references) {
+      const std::array<double, 4u> &T_values,
+      const std::array<double, 4u> &references) {
     constexpr auto eps = double{1e-2};
     auto output = mfront_gpmp_OutputStatus{};
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
@@ -437,7 +437,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     const auto T = usm_vector(T_values.begin(), T_values.end(), Q);
     auto d_v = to_device(v, Q);
     auto d_T = to_device(T, Q);
-    const auto args = std::array<const double*, 1u>{d_T.get()};
+    const auto args = std::array<const double *, 1u>{d_T.get()};
     const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
     evaluate(mp, output, d_v.get(), 1, args, args_strides, T.size(), policy,
              options);

@@ -114,13 +114,13 @@ makeTestPolicy(
 #include "tests.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(const int argc, const char *const *argv) {
+int main(const int argc, const char* const* argv) {
   if (argc != 2) {
     std::cerr << "no test name given on the command line (argc: " << argc
               << ")";
     return EXIT_FAILURE;
   }
-  auto &m = tfel::tests::TestManager::getTestManager();
+  auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput(std::string{argv[1]} + ".xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;

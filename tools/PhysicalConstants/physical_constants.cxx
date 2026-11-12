@@ -424,11 +424,12 @@ static void generate_cxx(const std::vector<Constant>& cs, const std::size_t i) {
   // are not those used by the current version of TFEL: only the values of
   // the already published compatibility modes are described as those which
   // are used up to the corresponding version
-  const auto brief = (i == get_next_mode_index())
-                         ? std::string{"Values of the next major version of TFEL"}
-                         : "This file corresponds to the value of the "
-                           "constants used up to\n * version " +
-                               m.version;
+  const auto brief =
+      (i == get_next_mode_index())
+          ? std::string{"Values of the next major version of TFEL"}
+          : "This file corresponds to the value of the "
+            "constants used up to\n * version " +
+                m.version;
   auto os = std::ofstream((get_header_name(m) + ".hxx").c_str());
   os.precision(std::numeric_limits<double>::max_digits10);
   write_header_comment(os, "include/TFEL/" + get_header_name(m) + ".hxx",

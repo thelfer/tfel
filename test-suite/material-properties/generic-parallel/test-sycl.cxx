@@ -111,7 +111,7 @@ struct SYCLTest : public tfel::tests::TestCase {
     auto output = mfront_gpmp_OutputStatus{};
     auto E = std::vector<double>(4);
     const auto T = std::vector<double>{300, 500, 300, 800};
-    const auto args = std::array<const double *, 1u>{T.data()};
+    const auto args = std::array<const double*, 1u>{T.data()};
     TFEL_TESTS_CHECK_EQUAL(
         evaluate(Inconel600_YoungModulus_generic_parallel, output, E.data(), 1,
                  args, contiguous<1>(), 4, mfront_gmp_OutOfBoundsPolicy{}),
@@ -201,7 +201,7 @@ struct SYCLTest : public tfel::tests::TestCase {
     mfront_gpmp_initializeStatistics(statistics.data());
     const auto T = std::vector<double>{300, -1, 500, 800};
     auto E = std::vector<double>(4, -12.);
-    const auto args = std::array<const double *, 1u>{T.data()};
+    const auto args = std::array<const double*, 1u>{T.data()};
     const auto execution_policy =
         mfront::generic_parallel::makeSyclBackendExecutionPolicy(
             Q, {.asynchronous = true});
@@ -229,13 +229,13 @@ struct SYCLTest : public tfel::tests::TestCase {
 TFEL_TESTS_GENERATE_PROXY(SYCLTest, "SYCLTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(const int argc, const char *const *argv) {
+int main(const int argc, const char* const* argv) {
   if (argc != 2) {
     std::cerr << "no test name given on the command line (argc: " << argc
               << ")";
     return EXIT_FAILURE;
   }
-  auto &m = tfel::tests::TestManager::getTestManager();
+  auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput(std::string{argv[1]} + ".xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;

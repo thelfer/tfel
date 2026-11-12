@@ -80,31 +80,23 @@ struct CxxTokenizerKeepCommentBoundariesTest final
    */
   void checkOffsets() {
     // a `C` style comment, whose opening delimiter holds two characters
-    this->check("/* c */ int a;",
-                {{"/* c */", 1u, 0u},
-                 {"int", 1u, 8u},
-                 {"a", 1u, 12u},
-                 {";", 1u, 13u}},
-                true);
-    this->check("/* c */ int a;",
-                {{"c", 1u, 3u},
-                 {"int", 1u, 8u},
-                 {"a", 1u, 12u},
-                 {";", 1u, 13u}},
-                false);
+    this->check(
+        "/* c */ int a;",
+        {{"/* c */", 1u, 0u}, {"int", 1u, 8u}, {"a", 1u, 12u}, {";", 1u, 13u}},
+        true);
+    this->check(
+        "/* c */ int a;",
+        {{"c", 1u, 3u}, {"int", 1u, 8u}, {"a", 1u, 12u}, {";", 1u, 13u}},
+        false);
     // a doxygen comment, whose opening delimiter holds three characters
-    this->check("/*! c */ int a;",
-                {{"/*! c */", 1u, 0u},
-                 {"int", 1u, 9u},
-                 {"a", 1u, 13u},
-                 {";", 1u, 14u}},
-                true);
-    this->check("/*! c */ int a;",
-                {{"c", 1u, 4u},
-                 {"int", 1u, 9u},
-                 {"a", 1u, 13u},
-                 {";", 1u, 14u}},
-                false);
+    this->check(
+        "/*! c */ int a;",
+        {{"/*! c */", 1u, 0u}, {"int", 1u, 9u}, {"a", 1u, 13u}, {";", 1u, 14u}},
+        true);
+    this->check(
+        "/*! c */ int a;",
+        {{"c", 1u, 4u}, {"int", 1u, 9u}, {"a", 1u, 13u}, {";", 1u, 14u}},
+        false);
     // two comments on the same line
     this->check("/* c */ /* d */ int a;",
                 {{"/* c */", 1u, 0u},
@@ -136,25 +128,18 @@ struct CxxTokenizerKeepCommentBoundariesTest final
                 true);
     // a backward doxygen comment, whose opening delimiter holds four
     // characters, is the last token of its line
-    this->check("int a; /*!< c */",
-                {{"int", 1u, 0u},
-                 {"a", 1u, 4u},
-                 {";", 1u, 5u},
-                 {"/*!< c */", 1u, 7u}},
-                true);
+    this->check(
+        "int a; /*!< c */",
+        {{"int", 1u, 0u}, {"a", 1u, 4u}, {";", 1u, 5u}, {"/*!< c */", 1u, 7u}},
+        true);
     // a `C++` style comment is the last token of its line, whether its
     // boundaries are kept or not
+    this->check(
+        "int a; // c",
+        {{"int", 1u, 0u}, {"a", 1u, 4u}, {";", 1u, 5u}, {"// c", 1u, 7u}},
+        true);
     this->check("int a; // c",
-                {{"int", 1u, 0u},
-                 {"a", 1u, 4u},
-                 {";", 1u, 5u},
-                 {"// c", 1u, 7u}},
-                true);
-    this->check("int a; // c",
-                {{"int", 1u, 0u},
-                 {"a", 1u, 4u},
-                 {";", 1u, 5u},
-                 {"c", 1u, 10u}},
+                {{"int", 1u, 0u}, {"a", 1u, 4u}, {";", 1u, 5u}, {"c", 1u, 10u}},
                 false);
     // a comment which spans several lines: its offset is that of the delimiter
     // which opens it and the tokens of the line which closes it are those of
@@ -188,9 +173,7 @@ struct CxxTokenizerKeepCommentBoundariesTest final
    * of each of them
    * \param[in] b: keep comment boundaries
    */
-  void check(const char* const s,
-             const std::vector<token>& et,
-             const bool b) {
+  void check(const char* const s, const std::vector<token>& et, const bool b) {
     tfel::utilities::CxxTokenizer tokenizer;
     tokenizer.keepCommentBoundaries(b);
     tokenizer.parseString(s);
@@ -207,9 +190,9 @@ struct CxxTokenizerKeepCommentBoundariesTest final
     for (; pt != tokenizer.end(); ++pt, ++pet) {
       const auto& [v, l, o] = *pet;
       if ((pt->value != v) || (pt->line != l) || (pt->offset != o)) {
-        std::cout << "'" << pt->value << "' at line " << pt->line
-                  << ", offset " << pt->offset << "\nexpected '" << v
-                  << "' at line " << l << ", offset " << o << "\n";
+        std::cout << "'" << pt->value << "' at line " << pt->line << ", offset "
+                  << pt->offset << "\nexpected '" << v << "' at line " << l
+                  << ", offset " << o << "\n";
       }
       TFEL_TESTS_ASSERT(pt->value == v);
       TFEL_TESTS_ASSERT(pt->line == l);
