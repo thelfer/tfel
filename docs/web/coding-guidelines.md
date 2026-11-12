@@ -766,7 +766,7 @@ as the abstract type, and named after the type it creates:
 `bbrick::IsotropicHardeningRuleFactory`, `bbrick::StressCriterionFactory`,
 `bbrick::StressPotentialFactory`, `bbrick::PorosityNucleationModelFactory`,
 `bbrick::StrainRateSensitivityFactorFactory`,
-`generic_parallel::material_property::BackendFactory`, ...
+`generic_parallel::BackendFactory`, ...
 
 All those factories follow the same pattern:
 
