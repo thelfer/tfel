@@ -80,11 +80,10 @@ static std::shared_ptr<mtest::Behaviour> getBehaviour4(
     const std::string& l,
     const std::string& f,
     const mtest::Behaviour::Parameters& p,
-    const std::string& h) {
-  using mtest::Behaviour;
-  return Behaviour::getBehaviour("", l, f, p,
-                                 Behaviour::ModellingHypothesis::fromString(h));
-}  // end of std::shared_ptr<Behaviour> getBehaviour1
+    const std::string& h,
+    const std::string& w) {
+  return getBehaviour1("", l, f, p, h, w);
+}  // end of std::shared_ptr<Behaviour> getBehaviour4
 
 static std::shared_ptr<mtest::Behaviour> getBehaviour5(
     const std::string& l,
@@ -96,27 +95,10 @@ static std::shared_ptr<mtest::Behaviour> getBehaviour5(
 
 static std::shared_ptr<mtest::Behaviour> getBehaviour6(const std::string& l,
                                                        const std::string& f,
-                                                       const std::string& h) {
-  using mtest::Behaviour;
-  return Behaviour::getBehaviour("", l, f, Behaviour::Parameters(),
-                                 Behaviour::ModellingHypothesis::fromString(h));
-}  // end of std::shared_ptr<Behaviour> getBehaviour1
-
-static std::shared_ptr<mtest::Behaviour> getBehaviour7(
-    const std::string& l,
-    const std::string& f,
-    const mtest::Behaviour::Parameters& p,
-    const std::string& h,
-    const std::string& w) {
-  return getBehaviour1("", l, f, p, h, w);
-}  // end of std::shared_ptr<Behaviour> getBehaviour7
-
-static std::shared_ptr<mtest::Behaviour> getBehaviour8(const std::string& l,
-                                                       const std::string& f,
                                                        const std::string& h,
                                                        const std::string& w) {
   return getBehaviour3("", l, f, h, w);
-}  // end of std::shared_ptr<Behaviour> getBehaviour8
+}  // end of std::shared_ptr<Behaviour> getBehaviour6
 
 static int Behaviour_getBehaviourType(const mtest::Behaviour& b) {
   using tfel::material::MechanicalBehaviourBase;
@@ -173,14 +155,8 @@ void declareBehaviour(pybind11::module_& m) {
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
-           "- h(std::string): modelling hypothesis\n")
-      .def(pybind11::init(&getBehaviour7), "library"_a, "function"_a,
-           "parameters"_a, "hypothesis"_a, "wrapper"_a = "",
-           "This constructor has the following arguments:\n"
-           "- l(std::string): library\n"
-           "- f(std::string): function\n"
-           "- d(tfel::utilities::Data): parameters\n"
-           "- h(std::string): modelling hypothesis\n")
+           "- h(std::string): modelling hypothesis\n"
+           "- w(std::string): wrapper\n")
       .def(pybind11::init(&getBehaviour2),
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
@@ -195,29 +171,26 @@ void declareBehaviour(pybind11::module_& m) {
            "- f(std::string): function\n"
            "- h(std::string): modelling hypothesis\n"
            "- w(std::string): wrapper\n")
-      .def(pybind11::init(&getBehaviour8), "library"_a, "function"_a,
+      .def(pybind11::init(&getBehaviour4), "library"_a, "function"_a,
+           "parameters"_a, "hypothesis"_a, "wrapper"_a = "",
+           "This constructor has the following arguments:\n"
+           "- l(std::string): library\n"
+           "- f(std::string): function\n"
+           "- d(tfel::utilities::Data): parameters\n"
+           "- h(std::string): modelling hypothesis\n"
+           "- w(std::string): wrapper\n")
+      .def(pybind11::init(&getBehaviour5),
+           "This constructor has the following arguments:\n"
+           "- l(std::string): library\n"
+           "- f(std::string): function\n"
+           "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
+      .def(pybind11::init(&getBehaviour6), "library"_a, "function"_a,
            "hypothesis"_a, "wrapper"_a = "",
            "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- h(std::string): modelling hypothesis\n"
            "- w(std::string): wrapper\n")
-      .def(pybind11::init(&getBehaviour4),
-           "This constructor has the following arguments:\n"
-           "- l(std::string): library\n"
-           "- f(std::string): function\n"
-           "- d(tfel::utilities::Data): parameters\n"
-           "- h(std::string): modelling hypothesis\n")
-      .def(pybind11::init(&getBehaviour5),
-           "This constructor has the following arguments:\n"
-           "- l(std::string): library\n"
-           "- f(std::string): function\n"
-           "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def(pybind11::init(&getBehaviour6),
-           "This constructor has the following arguments:\n"
-           "- l(std::string): library\n"
-           "- f(std::string): function\n"
-           "- h(std::string): modelling hypothesis\n")
       .def("getBehaviourType", &Behaviour_getBehaviourType,
            "Return the behaviour type.\n"
            "The value returned has the following meaning:\n"
