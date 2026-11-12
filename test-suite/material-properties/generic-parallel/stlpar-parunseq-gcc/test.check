@@ -2,16 +2,27 @@
 
 @Environment {"LD_LIBRARY_PATH": "src"};
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-gcc.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-gcc.json ../BoundsOrderTest.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-gcc.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-gcc.json ../Inconel600_YoungModulus-qt.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-gcc.json ../UO2_YoungModulus_Martin1989.mfront";
 @Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-gcc.json ../LinearDataInterpolationTest.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-stlpar-parunseq-gcc.json";
-@Command "@TFEL_GXX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-stlpar.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelUO2-stlpar -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
+@Command "@TFEL_GXX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-cxx.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -lMFrontGenericParallelRuntime -L src -lGenericParallelUO2-stlpar -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
 @Command "./test-stlpar test-stlpar-parunseq-gcc";
+// invalid file of parameters
+@Command "@TFEL_GXX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ -DMFRONT_GPMP_TEST_BACKEND=stlpar ../test-invalid-parameters.cxx -o test-invalid-parameters -L @TFEL_LIBRARY_DIR@ -lTFELTests -lMFrontGenericParallelRuntime -L src -lGenericParallelUO2-stlpar";
+@Command "./test-invalid-parameters test-invalid-parameters-stlpar-parunseq-gcc";
+// comparison with the `generic` interface (see compare.cxx)
+@Command "sh ../build-libraries.sh @mfront@ config-stlpar-parunseq-gcc.json";
+@Command "@TFEL_GXX_COMPILER@ -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ -I @TFEL_INCLUDE_DIR@ ../compare.cxx -o compare -L@TFEL_LIBRARY_DIR@ -lMFrontGenericParallelRuntime -ldl";
+@Command "sh ../compare-all.sh ./compare stlpar";
+
 // compilation with the runtime checks disabled
 @Command "@mfront@ --interface=generic-parallel --dsl-option=disable_runtime_checks:true --configuration-file=config-stlpar-parunseq-gcc.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --obuild --configuration-file=config-stlpar-parunseq-gcc.json";
+@Command "@TFEL_GXX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ -DMFRONT_GPMP_TEST_BACKEND=stlpar ../test-no-runtime-checks.cxx -o test-no-runtime-checks -L @TFEL_LIBRARY_DIR@ -lTFELTests -lMFrontGenericParallelRuntime -L src -lGenericParallelInconel600-stlpar -ldl";
+@Command "./test-no-runtime-checks test-no-runtime-checks-stlpar-parunseq-gcc";
 
-@CleanFiles {"test-stlpar"};
+@CleanFiles {"test-stlpar", "test-invalid-parameters", "compare", "UO2_YoungModulus_Martin1989-parameters.txt", "test-no-runtime-checks"};
 @CleanDirectories {"include", "src"};

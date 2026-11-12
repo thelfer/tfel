@@ -40,7 +40,7 @@ namespace mtest {
   }  // end of CyranoMaterialProperty
 
   real CyranoMaterialProperty::getValue() const {
-    ::CyranoOutputStatus s;
+    auto s = ::CyranoOutputStatus{};
     const auto v = (*this->fct)(
         &s, this->arguments_values.data(),
         static_cast<CyranoIntegerType>(this->arguments_values.size()),

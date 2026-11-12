@@ -59,7 +59,7 @@ namespace mfront {
        << " * using the Singleton pattern and optionaly overrides the values"
        << " * of the parameters from a text file\n"
        << " */\n"
-       << "struct " << args.material_property_name
+       << "struct TFEL_VISIBILITY_LOCAL " << args.material_property_name
        << "MaterialPropertyParametersHandler\n"
        << ": " << args.material_property_name << "MaterialPropertyParameters\n"
        << "{\n"
