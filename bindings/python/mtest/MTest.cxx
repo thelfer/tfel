@@ -863,6 +863,7 @@ void declareMTest(pybind11::module_& m) {
       .def_property_readonly("dt_1", MTestCurrentState_getdt_1)
       .def_property_readonly("Tref", MTestCurrentState_getTref)
       .def("setInternalStateVariableValue", ::setInternalStateVariableValue,
+           pybind11::arg("n"), pybind11::arg("v"),
            "set the value of a scalar internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -873,6 +874,7 @@ void declareMTest(pybind11::module_& m) {
            "- at the beginning of the current time step\n"
            "- at the end of the current time step")
       .def("setInternalStateVariableValue", ::setInternalStateVariableValue2,
+           pybind11::arg("n"), pybind11::arg("v"),
            "set the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -883,6 +885,7 @@ void declareMTest(pybind11::module_& m) {
            "- at the beginning of the current time step\n"
            "- at the end of the current time step")
       .def("setInternalStateVariableValue", ::setInternalStateVariableValue3,
+           pybind11::arg("n"), pybind11::arg("v"), pybind11::arg("d"),
            "set the value of a scalar internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -897,6 +900,7 @@ void declareMTest(pybind11::module_& m) {
            "- 1 means that we are modifying the internal state variable value\n"
            "  at the end of the current time step")
       .def("setInternalStateVariableValue", ::setInternalStateVariableValue4,
+           pybind11::arg("n"), pybind11::arg("v"), pybind11::arg("d"),
            "set the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -911,6 +915,7 @@ void declareMTest(pybind11::module_& m) {
            "- 1 means that we are modifying the internal state variable value\n"
            "  at the end of the current time step")
       .def("getInternalStateVariableValue", ::getInternalStateVariableValue2,
+           pybind11::arg("n"),
            "get the value of an internal state variable at the end of the time "
            "\n"
            "step\n"
@@ -943,24 +948,34 @@ void declareMTest(pybind11::module_& m) {
       .def("execute", pm3, pybind11::arg("s"), pybind11::arg("wk"),
            pybind11::arg("t"), pybind11::arg("dt"))
       .def("completeInitialisation", &MTest::completeInitialisation)
-      .def("initializeCurrentState", &MTest::initializeCurrentState)
-      .def("initializeWorkSpace", &MTest::initializeWorkSpace)
-      .def("setEvolutionValue", &MTest::setEvolutionValue)
-      .def("setGradientsInitialValues", &MTest::setGradientsInitialValues)
-      .def("setStrain", MTest_setStrain)
-      .def("setDeformationGradient", MTest_setDeformationGradient)
-      .def("setOpeningDisplacement", MTest_setOpeningDisplacement)
+      .def("initializeCurrentState", &MTest::initializeCurrentState,
+           pybind11::arg("s"))
+      .def("initializeWorkSpace", &MTest::initializeWorkSpace,
+           pybind11::arg("wk"))
+      .def("setEvolutionValue", &MTest::setEvolutionValue, pybind11::arg("n"),
+           pybind11::arg("t"), pybind11::arg("v"))
+      .def("setGradientsInitialValues", &MTest::setGradientsInitialValues,
+           pybind11::arg("v"))
+      .def("setStrain", MTest_setStrain, pybind11::arg("v"))
+      .def("setDeformationGradient", MTest_setDeformationGradient,
+           pybind11::arg("v"))
+      .def("setOpeningDisplacement", MTest_setOpeningDisplacement,
+           pybind11::arg("v"))
       .def("setThermodynamicForcesInitialValues",
-           &MTest::setThermodynamicForcesInitialValues)
-      .def("setCohesiveForce", MTest_setCohesiveForce)
-      .def("setStress", MTest_setStress)
-      .def("setGradientEpsilon", &MTest::setGradientEpsilon)
-      .def("setStrainEpsilon", MTest_setStrainEpsilon)
-      .def("setDeformationGradientEpsilon", MTest_setDeformationGradientEpsilon)
-      .def("setOpeningDisplacementEpsilon", MTest_setOpeningDisplacementEpsilon)
-      .def("setThermodynamicForceEpsilon", &MTest::setThermodynamicForceEpsilon)
-      .def("setStressEpsilon", MTest_setStressEpsilon)
-      .def("setCohesiveForceEpsilon", MTest_setCohesiveForceEpsilon)
+           &MTest::setThermodynamicForcesInitialValues, pybind11::arg("v"))
+      .def("setCohesiveForce", MTest_setCohesiveForce, pybind11::arg("v"))
+      .def("setStress", MTest_setStress, pybind11::arg("v"))
+      .def("setGradientEpsilon", &MTest::setGradientEpsilon, pybind11::arg("e"))
+      .def("setStrainEpsilon", MTest_setStrainEpsilon, pybind11::arg("e"))
+      .def("setDeformationGradientEpsilon", MTest_setDeformationGradientEpsilon,
+           pybind11::arg("e"))
+      .def("setOpeningDisplacementEpsilon", MTest_setOpeningDisplacementEpsilon,
+           pybind11::arg("e"))
+      .def("setThermodynamicForceEpsilon", &MTest::setThermodynamicForceEpsilon,
+           pybind11::arg("e"))
+      .def("setStressEpsilon", MTest_setStressEpsilon, pybind11::arg("e"))
+      .def("setCohesiveForceEpsilon", MTest_setCohesiveForceEpsilon,
+           pybind11::arg("e"))
       .def(
           "setImposedStress", MTest_setImposedStress1, "name"_a, "values"_a,
           "This method specify the constant evolution of a stresses "
@@ -1232,15 +1247,17 @@ void declareMTest(pybind11::module_& m) {
       .def("setImposedGradient", MTest_setImposedGradient2b, "name"_a,
            "values"_a, "options"_a)
       .def("setScalarInternalStateVariableInitialValue",
-           &MTest::setScalarInternalStateVariableInitialValue)
-      .def("setRotationMatrix", &MTest_setRotationMatrix1,
+           &MTest::setScalarInternalStateVariableInitialValue,
+           pybind11::arg("n"), pybind11::arg("v"))
+      .def("setRotationMatrix", &MTest_setRotationMatrix1, pybind11::arg("m"),
+           pybind11::arg("b"),
            "This method specify a rotation matrix, for the "
            "principal material directions to be different from "
            "those used for the resolution and the boundary "
            "conditions.\n"
            "* The parameter (vector<vector<double> >) specify the "
            "3x3 rotation matrix.")
-      .def("setRotationMatrix", &MTest_setRotationMatrix2,
+      .def("setRotationMatrix", &MTest_setRotationMatrix2, pybind11::arg("m"),
            "This method specify a rotation matrix, for the "
            "principal material directions to be different from "
            "those used for the resolution and the boundary "
@@ -1248,18 +1265,23 @@ void declareMTest(pybind11::module_& m) {
            "* The parameter (vector<vector<double> >) specify the "
            "3x3 rotation matrix.")
       .def("setScalarInternalStateVariableInitialValue",
-           &MTest::setScalarInternalStateVariableInitialValue)
+           &MTest::setScalarInternalStateVariableInitialValue,
+           pybind11::arg("n"), pybind11::arg("v"))
       .def("setStensorInternalStateVariableInitialValues",
-           &MTest::setStensorInternalStateVariableInitialValues)
+           &MTest::setStensorInternalStateVariableInitialValues,
+           pybind11::arg("n"), pybind11::arg("v"))
       .def("setTensorInternalStateVariableInitialValues",
-           &MTest::setTensorInternalStateVariableInitialValues)
-      .def("addAnalyticalTest", MTest_addAnalyticalTest,
+           &MTest::setTensorInternalStateVariableInitialValues,
+           pybind11::arg("n"), pybind11::arg("v"))
+      .def("addAnalyticalTest", MTest_addAnalyticalTest, pybind11::arg("c"),
+           pybind11::arg("f"), pybind11::arg("eps"),
            "Add a test comparing the results to an analytical solution:\n"
            "- result to be tested (strain, stress, internal state variable)\n"
            "- formulae giving the analytical solution\n"
            "- test criterion\n")
       .def("addReferenceFileComparisonTest",
-           MTest_addReferenceFileComparisonTest1,
+           MTest_addReferenceFileComparisonTest1, pybind11::arg("c"),
+           pybind11::arg("f"), pybind11::arg("cn"), pybind11::arg("eps"),
            "Add a test comparing the results to the one given in a reference "
            "file:\n"
            "- result to be tested (strain, stress, internal state variable)\n"
@@ -1267,7 +1289,8 @@ void declareMTest(pybind11::module_& m) {
            "- column number\n"
            "- test criterion\n")
       .def("addReferenceFileComparisonTest",
-           MTest_addReferenceFileComparisonTest2,
+           MTest_addReferenceFileComparisonTest2, pybind11::arg("c"),
+           pybind11::arg("f"), pybind11::arg("cn"), pybind11::arg("eps"),
            "Add a test comparing the results to the one given in a reference "
            "file:\n"
            "- result to be tested (strain, stress, internal state variable)\n"
@@ -1275,12 +1298,15 @@ void declareMTest(pybind11::module_& m) {
            "- formulae used to extract the data from the file ($1 is the first "
            "column)\n"
            "- test criterion\n")
-      .def("addEvent", &MTest::addEvent, "Add a new event")
-      .def("addEvent", MTest_addEvent, "Add a new event")
+      .def("addEvent", &MTest::addEvent, pybind11::arg("n"), pybind11::arg("t"),
+           "Add a new event")
+      .def("addEvent", MTest_addEvent, pybind11::arg("n"), pybind11::arg("t"),
+           "Add a new event")
       .def("completeInitialisation", &MTest::completeInitialisation,
            "complete the initialisation. This method must be called once. This "
            "method may be called automatically by the execute method.")
       .def("addUserDefinedPostProcessing", &MTest::addUserDefinedPostProcessing,
+           pybind11::arg("f"), pybind11::arg("p"),
            "add a new user defined post-processing.\n"
            "- the first argument is the name of the output file\n"
            "- the second argument gives a list of post-processings as an array "
@@ -1294,21 +1320,24 @@ void declareMTest(pybind11::module_& m) {
            "    - the behaviour' external state variables\n"
            "    - any evolution defined in the input file\n")
       .def("printLagrangeMultipliers", &MTest::printLagrangeMultipliers,
+           pybind11::arg("b"),
            "set if Lagrange multipliers shall be print in the output file")
       .def("setCompareToNumericalTangentOperator",
-           &MTest::setCompareToNumericalTangentOperator,
+           &MTest::setCompareToNumericalTangentOperator, pybind11::arg("b"),
            "set if a comparison of the tangent operator returned by the "
            "behaviour "
            "to a numerical approximation")
       .def("setTangentOperatorComparisonCriterion",
-           &MTest::setTangentOperatorComparisonCriterion,
+           &MTest::setTangentOperatorComparisonCriterion, pybind11::arg("v"),
            "set the criterion used to compare the tangent operator returned "
            "by the behaviour and its numerical approximation")
       .def("setNumericalTangentOperatorPerturbationValue",
            &MTest::setNumericalTangentOperatorPerturbationValue,
+           pybind11::arg("v"),
            "set the perburtation of the gradient used to compute a numerical "
            "approximation of the tangent operator")
       .def("printLagrangeMultipliers", &MTest::printLagrangeMultipliers,
+           pybind11::arg("b"),
            "if True, prints the Lagrange mulpliers in the output file");
 
 }  // end of declareExternalLibraryManager

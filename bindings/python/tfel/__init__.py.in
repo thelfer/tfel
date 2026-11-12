@@ -11,7 +11,9 @@ if os.name == 'nt':
         # remove \python...\site_packages\tfel\__init__.py
         tfelhome = pathlib.Path(*pathlib.Path(__file__).parts[0:-5])
         os.environ["TFELHOME"] = str(tfelhome)
-    os.add_dll_directory(str(tfelhome) + '\\bin')
+    dll_directory = os.path.join(str(tfelhome), 'bin')
+    if os.path.isdir(dll_directory):
+        os.add_dll_directory(dll_directory)
 
 from ._tfel import *
 
