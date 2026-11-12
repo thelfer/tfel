@@ -1,9 +1,9 @@
 /*!
- * \file   mfront/src/GenericParallel/MaterialProperty/BackendFactory.cxx
- *
- * \brief This file implements the `BackendFactory` class
+ * \file   mfront/src/GenericParallel/BackendFactory.cxx
+ * \brief  This file implements the `BackendFactory` class of the
+ * `generic-parallel` interfaces
  * \author Thomas Helfer
- * \date 15/04/2026
+ * \date   15/04/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,18 +14,17 @@
 
 #include <utility>
 #include "TFEL/Raise.hxx"
-#include "MFront/GenericParallel/MaterialProperty/CUDABackend.hxx"
-#include "MFront/GenericParallel/MaterialProperty/HIPBackend.hxx"
-#include "MFront/GenericParallel/MaterialProperty/SYCLBackend.hxx"
-#include "MFront/GenericParallel/MaterialProperty/ParallelSTLBackend.hxx"
-#include "MFront/GenericParallel/MaterialProperty/BackendFactory.hxx"
+#include "MFront/GenericParallel/GPUBackend.hxx"
+#include "MFront/GenericParallel/ParallelSTLBackend.hxx"
+#include "MFront/GenericParallel/SYCLBackend.hxx"
+#include "MFront/GenericParallel/BackendFactory.hxx"
 
-namespace mfront::generic_parallel::material_property {
+namespace mfront::generic_parallel {
 
   BackendFactory& BackendFactory::get() noexcept {
     static BackendFactory f;
     return f;
-  }
+  }  // end of get
 
   BackendFactory::BackendFactory() {
     this->add("cuda", [](const DataMap& opts) {
@@ -44,7 +43,7 @@ namespace mfront::generic_parallel::material_property {
 
   void BackendFactory::add(std::string_view n, Generator g) {
     if (!this->generators.insert({std::string{n}, std::move(g)}).second) {
-      tfel::raise("a backend named '" + std::string{n} +
+      tfel::raise("BackendFactory::add: a backend named '" + std::string{n} +
                   "' has already been registred");
     }
   }  // end of add
@@ -53,25 +52,21 @@ namespace mfront::generic_parallel::material_property {
       std::string_view n, const DataMap& opts) const {
     const auto p = this->generators.find(n);
     if (p == this->generators.end()) {
-      tfel::raise("no backend named '" + std::string{n} + "' registred");
-    }
-    const auto& g = p->second;
-    return [&g, &n, &opts]() -> std::unique_ptr<AbstractBackend> {
-      auto r = std::unique_ptr<AbstractBackend>{};
-      try {
-        r = g(opts);
-      } catch (std::exception& e) {
-        tfel::raise("Error while generating backend '" + std::string{n} +
-                    "' for the GenericParallelMaterialProperty interface\n" +
-                    std::string{e.what()});
-      } catch (...) {
-        tfel::raise("Error while generating backend '" + std::string{n} +
-                    "' for the GenericParallelMaterialProperty interface");
+      auto names = std::string{};
+      for (const auto& g : this->generators) {
+        names += (names.empty() ? "" : ", ") + g.first;
       }
-      return r;
-    }();
+      tfel::raise("BackendFactory::generate: no backend named '" +
+                  std::string{n} + "' (available backends: " + names + ")");
+    }
+    try {
+      return p->second(opts);
+    } catch (std::exception& e) {
+      tfel::raise("BackendFactory::generate: error while generating backend '" +
+                  std::string{n} + "'\n" + std::string{e.what()});
+    }
   }  // end of generate
 
   BackendFactory::~BackendFactory() = default;
 
-}  // end of namespace mfront::generic_parallel::material_property
+}  // end of namespace mfront::generic_parallel

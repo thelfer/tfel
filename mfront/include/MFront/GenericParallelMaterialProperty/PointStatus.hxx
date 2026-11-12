@@ -81,44 +81,6 @@ namespace mfront::gpmp {
     }  // end of isFailure
   };   // end of struct PointStatus
 
-  /*!
-   * \return the statistics associated with the status of a point, as merged
-   * by the backends based on reductions
-   * \param[in] i: index of the point
-   * \param[in] s: status of the point
-   */
-  [[nodiscard]] TFEL_HOST_DEVICE constexpr Statistics makeStatistics(
-      const atomic_size_type i, const PointStatus& s) noexcept {
-    const auto failure = s.isFailure();
-    const auto unreliable = s.status == 1;
-    return Statistics{
-        .number_of_failures =
-            failure ? atomic_size_type{1} : atomic_size_type{0},
-        .first_failure = failure ? makeKey(i, s.check) : no_event,
-        .number_of_unreliable_results =
-            unreliable ? atomic_size_type{1} : atomic_size_type{0},
-        .first_unreliable_result = unreliable ? makeKey(i, s.check) : no_event};
-  }  // end of makeStatistics
-
-  /*!
-   * \return the merge of two statistics
-   * \param[in] a: first statistics
-   * \param[in] b: second statistics
-   */
-  [[nodiscard]] TFEL_HOST_DEVICE constexpr Statistics merge(
-      const Statistics& a, const Statistics& b) noexcept {
-    return Statistics{
-        .number_of_failures = a.number_of_failures + b.number_of_failures,
-        .first_failure = (a.first_failure < b.first_failure) ? a.first_failure
-                                                             : b.first_failure,
-        .number_of_unreliable_results =
-            a.number_of_unreliable_results + b.number_of_unreliable_results,
-        .first_unreliable_result =
-            (a.first_unreliable_result < b.first_unreliable_result)
-                ? a.first_unreliable_result
-                : b.first_unreliable_result};
-  }  // end of merge
-
 }  // end of namespace mfront::gpmp
 
 #endif /* LIB_MFRONT_GENERICPARALLELMATERIALPROPERTY_POINTSTATUS_HXX */
