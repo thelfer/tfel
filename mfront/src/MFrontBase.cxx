@@ -31,6 +31,7 @@
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontWarningMode.hxx"
+#include "MFront/CompatibilityMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/DefaultDSL.hxx"
@@ -453,6 +454,11 @@ namespace mfront {
       setVerboseMode(o);
     }
   }  // end of treatVerbose
+
+  void MFrontBase::treatDefaultCompatibilityMode() {
+    setDefaultCompatibilityMode(
+        this->getCurrentCommandLineArgument().getOption());
+  }  // end of treatDefaultCompatibilityMode
 
   void MFrontBase::treatUnicodeOutput() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();

@@ -1308,15 +1308,6 @@ with:
 \frac{1}{\left(D\,J\left(\tenseur{a}\right)\right)^{m}}
 \)
 
-> **Note**
->
-> For \(m=1\), this is the rule used in @chaboche_cyclic_2012. For other
-> values of \(m\), this rule differs from equation 7 of this paper, which
-> has two exponents \(m_{1}\) and \(m_{2}\), and whose denominator is
-> \(D\,J\left(\tenseur{X}\right)^{m_{2}}\). Here, under monotonic loading,
-> \(J\left(\tenseur{X}\right)\) saturates at \(C/D\) whatever the value of
-> \(m\).
-
 #### Example
 
 The following code can be added in a block defining an inelastic flow:
@@ -1329,6 +1320,80 @@ The following code can be added in a block defining an inelastic flow:
       w : 0.6
     }
 ~~~~
+
+#### Properties of this rule
+
+In this section, \(\Phi=1\). The dynamic recovery only acts above the
+threshold \(J\left(\tenseur{X}\right)=\omega\,C/D\). Under a monotonic
+loading, \(J\left(\tenseur{X}\right)\) saturates at \(C/D\), whatever the
+values of \(m\) and \(\omega\).
+
+Two particular cases are worth noting:
+
+- For \(m=1\), this is the rule used in @chaboche_cyclic_2012.
+- For \(\omega=0\), \(\Psi=1\): the exponent \(m\) has no effect, and this
+  is the `Armstrong-Frederick` rule.
+
+The values of \(m\) and \(\omega\) (option `w`) are not checked: \(\omega=1\)
+leads to a division by zero, and for \(m<1\), the derivative of \(\Psi\) is
+singular at the threshold.
+
+#### Comparison with the literature
+
+For \(m\neq 1\), this rule is not the same as the ones found in the
+literature, so parameters identified for one of them can't be used as they
+are in another one.
+
+Under a uniaxial loading and with \(\Phi=1\), the kinematic variable evolves
+as:
+
+\[
+\dot{X}=C\,\dot{\varepsilon}^{p}-R\,\dot{p}\,\mathrm{sign}\left(X\right)
+\]
+
+The three forms below only differ by the dynamic recovery \(R\), given as a
+function of \(x=D\,\left|X\right|/C\). They are identical for \(m=1\).
+
+| Source | \(R/C\) |
+|---|---|
+| This rule | \(\left<\dfrac{x-\omega}{1-\omega}\right>^{m}\,x^{1-m}\) |
+| @chaboche_cyclic_2012, equation 7, with \(m_{1}=m_{2}=m\) | \(D^{m-1}\,\left<\dfrac{x-\omega}{1-\omega}\right>^{m}\,x^{1-m}\) |
+| @chaboche_review_2008, equation 124 | \(\left<\dfrac{x-\omega}{1-\omega}\right>^{m}\) |
+
+**Equation 7 of @chaboche_cyclic_2012.** This paper only uses
+\(m_{1}=m_{2}=1\). With \(m_{1}=m_{2}=m\), its equation describes the same
+family of laws as this rule, but with other values of the parameters: the
+values \(\left(D,\omega\right)\) of the paper correspond to the values
+\(\left(D',\omega'\right)\) of this rule such that:
+
+\[
+\dfrac{\omega'}{D'}=\dfrac{\omega}{D}
+\quad\text{and}\quad
+\dfrac{D'}{\left(1-\omega'\right)^{m}}=\left(\dfrac{D}{1-\omega}\right)^{m}
+\]
+
+This rule has a single exponent: the case \(m_{1}\neq m_{2}\) can't be
+expressed.
+
+**Equation 124 of @chaboche_review_2008.** No change of the parameters
+removes the factor \(x^{1-m}\). Both forms have the same threshold and the
+same saturation, and their tensile curves are close: for
+\(C=2.5\,10^{9}\,\mathrm{Pa}\), \(D=100\), \(m=2\) and \(\omega=0.6\), the
+largest difference on \(X\) is \(0.33\,\mathrm{MPa}\).
+
+The ratcheting differs. The following table gives the plastic strain per
+stabilized cycle, with one kinematic variable with the same values of \(C\)
+and \(D\), an elastic limit of \(120\,\mathrm{MPa}\) and a stress between
+\(-132\,\mathrm{MPa}\) and \(144\,\mathrm{MPa}\). This single loading only
+gives an order of magnitude.
+
+| \(\omega\) | \(m\) | This rule | Equation 124 | Ratio |
+|---|---|---|---|---|
+| 0.6 | 1 | \(6.643\,10^{-3}\) | \(6.643\,10^{-3}\) | 1.00 |
+| 0.6 | 2 | \(3.736\,10^{-3}\) | \(2.958\,10^{-3}\) | 1.26 |
+| 0.6 | 4 | \(1.802\,10^{-3}\) | \(1.163\,10^{-3}\) | 1.55 |
+| 0.3 | 2 | \(1.095\,10^{-2}\) | \(6.971\,10^{-3}\) | 1.57 |
+| 0 | 2 | \(2.284\,10^{-2}\) | \(1.105\,10^{-2}\) | 2.07 |
 
 ### Delobelle-Robinet-Schaffler (DRS) kinematic hardening rule
 

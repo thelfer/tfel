@@ -45,6 +45,61 @@ designed for maximum GPU performance:
 When compiling `TFEL`, one must explicitly enable support for the `TDLS`
 library, see below.
 
+## Compatibility modes
+
+The behaviour of `MFront` and the results of the code it generates are
+now governed by a compatibility mode, which is a version number. A
+development which does not fix an explicit bug, but changes the results
+of the `TFEL` libraries or the results or the behaviour of `MFront` and
+of the assets it generates, such as a new default value of an option or
+a new default behaviour of a working keyword, is associated with the
+version which makes it the default. Users who need the previous
+behaviour restore it by selecting an older compatibility mode.
+
+Version 5.2 provides two compatibility modes:
+
+- `5.2.0`, the values and behaviours of Version 5.2,
+- `future`, which introduces the changes which shall be the default of
+  the next major version.
+
+By default, no compatibility mode is declared: the generated code uses
+the entities and the algorithms of the version of the `TFEL` libraries
+which compiles it. Declaring a compatibility mode makes the results of
+the generated code independent of this version.
+
+The compatibility mode of a file is defined by the `compatibility_mode`
+option of its domain specific language, which is available for all the
+DSLs, whereas the `--default-compatibility-mode` command line argument declares
+the mode of all the files treated by a run of `mfront` which do not
+declare their own mode:
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic --default-compatibility-mode=5.2.0 Norton.mfront
+~~~~
+
+The compatibility mode of an asset which declares one is recorded in its
+generated code as the `<entry point>_compatibility_mode` symbol, which is
+returned by the `ExternalLibraryManager::getCompatibilityMode` method,
+available both in `C++` and in `Python`.
+
+The values of the physical constants are the first entities to be
+versioned this way. The `TFEL/PhysicalConstants` library now provides
+one set of constants per compatibility mode, in namespaces named after
+the version which introduced them (`tfel::v5_2_0::`, `tfel::v6_0_0::`,
+...), whereas the names used by the previous versions,
+`tfel::PhysicalConstants` and the variables of `tfel::constants`, keep
+referring to the values of the current version. The current values of
+Version 5.2 are those of the `5.2.0` mode, so the physical constants of
+version 5.2 are those of version 5.1: the use of the values of the
+`CODATA` 2014 adjustment with all the digits of the `double`
+representation is postponed to version 6.0, where it is available
+through the `6.0.0` set of constants.
+
+Compatibility modes are described in the pages devoted to
+[compatibility modes in the `TFEL` libraries](tfel-compatibility-modes.html)
+and to
+[compatibility modes in `MFront`](mfront-compatibility-modes.html).
+
 # Known incompatibilities
 
 - The `enable-sanitize-options` option is no longer a boolean option: it
@@ -164,6 +219,41 @@ library, see below.
   correction affects their results: setting it to `false` restores the
   previous derivatives.
 
+- The value of a raw string literal token given by `CxxTokenizer` holds the
+  whole literal, from the `R` delimiter to the closing `"` included, and its
+  offset is that of the `R`, as for a quoted string (see Issue #1390): the
+  value was the contents of the literal only and the offset that of those
+  contents, so that the consumers which stripped the first and last characters
+  of the value of the string tokens, as the parsers of `MFront`, `MTest` and
+  `tfel-check` did, truncated the raw string literals. Those parsers read the
+  right contents now: `@Date R"(23/11/06)";` gave the date `3/11/0` and
+  `@Author R"(Helfer "Thomas")";` the author `elfer "Thomas"`. Code which
+  reads the contents of a string token shall use the new
+  `tfel::utilities::getContents` function rather than removing the first and
+  last characters of the value.
+- The offset of a comment token which has no contents on the line it starts on
+  is that of the delimiter which opens the comment (see Issue #1391): it was
+  the offset reached after the delimiters and the spaces which would have
+  surrounded the contents, so that it pointed past the end of the line for an
+  empty `C++` style comment, as `a; //`, and beyond the opening delimiter for an
+  empty `C` style comment or for a comment opened at the end of a line, as the
+  header comments of the `MFront` files starting with `/*!`. The flags, the
+  lines and the values of the tokens are unaffected.
+- `CxxTokenizer::stripComments` gathers all the comments of a line, separated
+  by a space character, instead of keeping only the last one (see Issue
+  #1392): the comments of a line holding `//! first` and `//! second` are
+  `first second`, not `second`. The empty comments bring nothing and give no
+  separator, so that a line whose only comment is empty gives no entry in the
+  comments of the tokenizer.
+- Tokenizing a file line by line, with a call to `CxxTokenizer::parseString`
+  per line, gives the same tokens as giving the whole contents to a single call
+  (see Issue #1396): a file whose last line is terminated by an end of line
+  character gave an additional empty line, which is not a line of the file, so
+  that the value of a comment or of a raw string literal which is not closed at
+  the end of the file held an additional end of line character, and the last
+  line of a file which is not terminated by an end of line character was
+  tokenized twice. The line numbers are unaffected.
+
 # Improvements to the build system
 
 ## New `cmake` options
@@ -178,6 +268,11 @@ library, see below.
   used by python development environments to provide code completion and
   type checking. This option has no effect if the python bindings are not
   enabled or if the `pybind11-stubgen` tool is not found. `ON` by default.
+- `enable-libfuzzer-tests`: configure the `libFuzzer` based analyses of
+  the `tfel::utilities::CxxTokenizer` class. `OFF` by default. Those
+  analyses can only be built with `clang` and are neither built nor run
+  by `make check`, see the `build-cxxtokenzier-libfuzzer-tests` and
+  `cxxtokenzier-libfuzzer-tests` targets described below.
 
 ## Sanitizers and hardening options
 
@@ -328,6 +423,65 @@ The `python-stubs` target can be triggered explicitly:
 ```
 make python-stubs
 ```
+
+## Fuzz testing the tokenizer with `libFuzzer`
+
+The `tfel::utilities::CxxTokenizer` class, which `MFront` uses to read
+the files of its domain specific language, is now covered by coverage
+guided fuzz testing, gathered in the `additional-tests/fuzzing`
+directory of the sources. Those analyses are configured by the
+`enable-libfuzzer-tests` option, which is `OFF` by default, and can
+only be built with `clang`.
+
+Two targets are dedicated to them:
+
+- `build-cxxtokenzier-libfuzzer-tests` builds the fuzzing executables,
+- `cxxtokenzier-libfuzzer-tests` builds them and runs the analyses, for
+  the duration given by the `libfuzzer-tests-max-total-time` option.
+
+The fuzzing executables are excluded from the default target and no
+analysis is registered with `ctest`, so that neither `make all` nor
+`make check` builds or runs them: the duration of a fuzzing analysis is
+not bounded a priori. The corpus of an analysis and the inputs it
+generates which lead to a failure are kept in the build tree, so that a
+long campaign is a sequence of runs sharing the same corpus.
+
+The `mfront-fuzzing` analysis tokenizes `MFront` files with the options
+`MFront` itself uses, and checks the contract of the produced tokens
+beyond the absence of any sanitizer report. The `all` value of the
+`mfront-fuzzing-database` option uses all the `MFront` files of
+`mfront/tests/behaviours` as the database of the analysis.
+
+For more details, see the documentation on [fuzz testing the
+tokenizer](testing-fuzzing.html).
+
+# New features in `TFEL/Utilities`
+
+## Contents of the string tokens
+
+The `getContents` function returns the contents of the literal held by a
+`Token`: its value without the double quotes of a quoted string, without the
+single quotes of a character literal and without the `R"delim(` prefix and the
+`)delim"` suffix of a raw string literal. The `isRawString` and
+`getRawStringDelimiter` functions tell if a token holds a raw string literal
+and give its delimiter. Those functions allow a consumer to read the contents
+of a string token without relying on the flag of the token only, as removing
+the first and last characters of the value truncates a raw string literal (see
+Issue #1390).
+
+## Documented contract of the tokens
+
+The contract of the tokens given by `CxxTokenizer` is documented now, on the
+`Token` class for the value, the line and the offset of a token, and on the
+`CxxTokenizer` class for the exceptions: the value of a number does not hold
+the digit separators of the `C++14` integer literals, whereas the offsets
+remain those of the file, so that a source code can be rewritten from the
+offsets of its tokens (see Issue #1393); a `C` style comment and a raw string
+literal which are not closed at the end of a file are on the contrary accepted,
+and leave the state of the tokenizer open, on the contrary to a quoted string
+and a character literal, which are rejected (see Issue #1395). Checking that
+the tokens describe the file they come from is what the fuzz testing analysis
+of the tokenizer does, see above.
 
 # New `TFEL/Config` features
 
@@ -847,14 +1001,121 @@ $ mfront --obuild --interface='{generic-parallel:{backend:"stlpar"{execution_pol
 
 ## The `generic-parallel` interface for material properties
 
-See [this page for
-details](generic-parallel-material-property-interface.html).
+The `generic-parallel` interface generates functions evaluating a
+material property on a batch of points, on CPUs or on GPUs. See [this
+page for details](generic-parallel-material-property-interface.html).
 
 ### Available backends
 
-#### `STLPar`
+- `stlpar`: parallel algorithms of the C++ standard library, on CPUs or on
+  NVIDIA GPUs with `nvc++ -stdpar=gpu`;
+- `cuda` and `hip`;
+- `sycl`.
 
-#### `CUDA`
+### Generated functions
+
+The functions generated for a material property `S` are (version 1 of
+those functions, `MFRONT_GPMP_API_VERSION` macro, declared in
+`MFront/GenericParallelMaterialProperty/MaterialProperty.h`):
+
+~~~~{.cxx}
+int S_generic_parallel(mfront_gpmp_OutputStatus* const,
+                       const mfront_gpmp_BatchData* const);
+int S_generic_parallel_report(mfront_gpmp_OutputStatus* const,
+                              const mfront_gpmp_Statistics* const);
+~~~~
+
+- the data of a batch (`mfront_gpmp_BatchData`) give the number of
+  points, the output and the arguments (pointer and stride between two
+  points), the out of bounds policy, the optional statuses of the points,
+  the optional statistics and the execution policy (see the section on
+  the execution policies below). Contiguous arrays are treated as a
+  special case by the backends.
+- the names of the functions end with `_generic_parallel`, and the names
+  of the material properties can't contain `_generic_parallel`. A library
+  generated by this interface is recognized by the
+  `<name>_generic_parallel_api_version` symbol, next to the
+  `<name>_generic_parallel_backend`,
+  `<name>_generic_parallel_memory_space` and
+  `<name>_generic_parallel_execution_policy` symbols.
+- the evaluation at each point is the one of the `generic` interface:
+  same checks, same status at each point (`0`, `1`, `-1` or `-4`, written
+  in the optional array of the statuses of the points), same retained
+  check. The output is `NaN` where the evaluation fails, and the computed
+  value where it is not finite.
+- the output status (`mfront_gpmp_OutputStatus`) gives the numbers of
+  points where the evaluation failed and where a bound is violated with
+  the warning policy, and the first point of each kind. Its status is the
+  error of the batch, otherwise the status of the first point where the
+  evaluation failed, otherwise the status of the first point where the
+  result is unreliable. The errors of the batch are `-5` (invalid
+  arguments), `-6` (invalid parameters) and `-7` (runtime error of the
+  backend, including the exceptions thrown on the host by its runtime).
+  An empty batch is accepted without any check.
+- the kernels only update the statistics of the evaluation when an event
+  occurs at a point: with atomic operations (`cuda`, `hip` and `sycl`
+  backends), the cost of the error reporting is null when the evaluation
+  succeeds. The `stlpar` backend merges the statuses of the points by a
+  reduction.
+- with statistics given by the calling code, the output status only
+  reports the errors of the batch, and the result is given by the
+  `<name>_generic_parallel_report` function once the computations are
+  completed. If the execution policy requests an asynchronous evaluation,
+  the backends with a queue may return before the end of the
+  computations.
+- the `stlpar` and `sycl` backends have a `device_stack_size` option. The
+  `cuda` and `hip` backends increase the stack size of the threads if the
+  kernel requires it.
+- the automatic data transfers of the `sycl` backend also copy the
+  statuses of the points and the statistics.
+- the default number of threads per block of the `cuda` and `hip`
+  backends is `128`, rounded up to a multiple of the warp size.
+- the libraries of several backends for the same material property can be
+  loaded in the same process: each library has its own parameters.
+
+### Execution policies
+
+The generated functions receive an execution policy (`execution_policy`
+member of the data of a batch), or a null pointer for the default policy
+of the backend (default stream). The policies are `C++` classes of the
+`mfront::generic_parallel` namespace, one per backend, declared in the
+headers of `MFront/GenericParallel`:
+
+- `CUDABackendExecutionPolicy` and `HIPBackendExecutionPolicy`, which hold
+  a stream;
+- `SyclBackendExecutionPolicy`, which holds a queue. The `sycl` backend has
+  no default policy;
+- `ParallelSTLBackendExecutionPolicy`.
+
+All the policies have two common options (`BackendExecutionCommonPolicy`):
+`preserve_stack_size` (the stack size of the threads of the device is
+never modified) and `asynchronous` (the function may return once the
+computations are submitted). An asynchronous computation requires
+statistics. A policy of another backend is refused. A policy is created by
+a function taking its options, which can be given by designated
+initializers:
+
+~~~~{.cxx}
+#include "MFront/GenericParallel/CUDABackendExecutionPolicy.hxx"
+const auto policy = mfront::generic_parallel::makeCUDABackendExecutionPolicy(
+    {.common_options = {.asynchronous = true}, .stream = stream});
+d.statistics = statistics;
+d.execution_policy = &policy;
+~~~~
+
+Each generated library exports the identifier of the policy it expects
+(`<name>_generic_parallel_execution_policy` symbol). In `C`, the type of
+the policies is opaque (`mfront_gp_AbstractBackendExecutionPolicy`, see
+`MFront/GenericParallel/BackendExecutionPolicy.h`): a `C` code can only
+select the default policy. The base class of the policies,
+`AbstractBackendExecutionPolicy`, is defined by the new
+`MFrontGenericParallelRuntime` library (`--mfront-generic-parallel-runtime`
+option of `tfel-config`), which must be linked by the codes creating
+policies. The generated libraries do not need it. Its table of virtual
+functions starts with `getIdentifier` with the ABI of Visual Studio and
+with the Itanium ABI: a policy created by a program built by Visual
+Studio can be checked by a library generated by a `TFEL` built with
+MinGW, and the reverse.
 
 ## Improvements to the `Cast3M` interface
 
@@ -919,6 +1180,14 @@ A new page describes the coding conventions of the `C` and `C++`
 sources of the project, for new developers as well as for coding
 agents: [coding guidelines](coding-guidelines.html).
 
+## New compatibility modes pages
+
+Two new pages describe how compatibility modes are implemented in the
+`TFEL` libraries ([compatibility modes in the `TFEL`
+libraries](tfel-compatibility-modes.html)) and how they are used by
+`MFront` ([compatibility modes in
+`MFront`](mfront-compatibility-modes.html)).
+
 # Continuous integration
 
 ## Github actions
@@ -938,13 +1207,20 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
-## Issue 1072: Add support for `pybind11_stubgen`
+## Issue 1387: [TFEL/Utilities] tests `CxxTokenizer` with `libFuzzer`
 
-For more details, see <https://github.com/thelfer/tfel/issues/1072>
+The `tfel::utilities::CxxTokenizer` class is now covered by `libFuzzer`
+based analyses, which are enabled by the `enable-libfuzzer-tests`
+option, and by the `CxxTokenizerContractTest` unit test, which checks
+the contract of the tokens for the lexical constructs that were not
+covered by the existing tests of the tokenizer: raw string literals,
+empty comments, comments of a line and numbers with digit separators.
 
-## Issue 932: [mtest] Document modeling of pipes
+For more details, see <https://github.com/thelfer/tfel/issues/1387>
 
-For more details, see <https://github.com/thelfer/tfel/issues/932>
+## Issue 1379: [mfront] Chaboche 2012 kinematic hardening rule: are the differences with the literature for m != 1 intended?
+
+For more details, see <https://github.com/thelfer/tfel/issues/1379>
 
 ## Issue 1376: [mfront-doc] Formula of the Chaboche 2012 kinematic hardening rule differs from the code for m != 1
 
@@ -1386,6 +1662,18 @@ For more details, see <https://github.com/thelfer/tfel/issues/1095>
 ## Issue 1093: [5.2] Regressions since TFEL 5.1
 
 For more details, see <https://github.com/thelfer/tfel/issues/1093>
+
+## Issue 1074: [mfront] generic-parallel material properties: API of the generated functions
+
+For more details, see <https://github.com/thelfer/tfel/issues/1074>
+
+## Issue 1072: Add support for `pybind11_stubgen`
+
+For more details, see <https://github.com/thelfer/tfel/issues/1072>
+
+## Issue 932: [mtest] Document modeling of pipes
+
+For more details, see <https://github.com/thelfer/tfel/issues/932>
 
 ## Issue 1089: Add debug mode + hardening in the test matrix
 

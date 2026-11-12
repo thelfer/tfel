@@ -38,8 +38,10 @@ namespace mfront::generic_parallel::material_property {
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
       const MaterialPropertyDescription& mpd) const {
-    CUDABackendBase::writeSpecificIncludesInSourceFile(os, i, mpd);
+    // the HIP runtime must be included first, so that the headers of the
+    // interface use it (see `MFront/GenericParallel/GPUStackSize.hxx`)
     os << "#include \"hip/hip_runtime.h\"\n";
+    CUDABackendBase::writeSpecificIncludesInSourceFile(os, i, mpd);
   }  // end of writeSpecificIncludesInSourceFile
 
   HIPBackend::~HIPBackend() = default;

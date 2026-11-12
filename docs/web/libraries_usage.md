@@ -98,6 +98,10 @@ The following flags allow to select specific libraries:
 - `--exceptions`       : requests flags for the `TFELException` library.
 - `--glossary`         : requests flags for the `TFELGlossary` library.
 - `--mfront-profiling` : requests flags for the `libMFrontProfiling` library.
+- `--mfront-generic-parallel-runtime` : requests flags for the
+  `libMFrontGenericParallelRuntime` library, which defines the base class
+  of the execution policies of the `generic-parallel` interfaces. It must
+  be linked by the codes creating execution policies.
 
 ## Examples of usage
 

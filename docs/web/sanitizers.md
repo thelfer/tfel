@@ -156,3 +156,5 @@ does not show up there).
   `cmake/modules/clang.cmake` in the same way as the already declared ones.
 - See also the result of the [Coverity Scan](coverity-scan.html) static
   analysis, which is complementary to the sanitizers.
+- The `libFuzzer` based analyses of the tokenizer of `MFront` files are
+  described on a [dedicated page](testing-fuzzing.html).

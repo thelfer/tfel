@@ -864,6 +864,15 @@ Options can be passed to a DSL as follows:
 };
 ~~~~
 
+The `compatibility_mode` option, which is common to all DSLs, is
+specified in the same way:
+
+~~~~{.cxx}
+@DSL Default{
+  compatibility_mode : "5.2.0"
+};
+~~~~
+
 ### Defining `DSL` options on the command line:
 
 `MFront` have various command line arguments to define options passed to DSLs:
@@ -905,6 +914,22 @@ The following options are available for all DSLs:
 - `out_of_bounds_policy_runtime_modification` (boolean), which states if
   the out of bounds policy can be changed at runtime. By default, this
   option is `true`.
+- `compatibility_mode` (string), which selects the compatibility mode of
+  the file. The value is either a version, such as `5.2.0`, or `future`,
+  which gives the behaviour of the next major version. A version which is
+  not a known compatibility mode is associated with the greatest known
+  compatibility mode which does not exceed it, which is reported by a
+  warning. A version strictly lower than `5.2.0` is rejected. This option
+  has precedence over the default compatibility mode, which can be set
+  globally using the `--default-compatibility-mode` command line argument: when no
+  compatibility mode is declared, the generated code uses the entities and
+  the algorithms of the version of the `TFEL` libraries which compiles it.
+  The compatibility mode of a file is recorded in the generated code as
+  the `<entry point>_compatibility_mode` symbol, which is returned by the
+  `ExternalLibraryManager::getCompatibilityMode` method. This symbol is
+  only generated when a compatibility mode is declared. Compatibility
+  modes are described at
+  <https://thelfer.github.io/tfel/web/mfront-compatibility-modes.html>.
 
 
 ### Options common to all DSLs related to behaviours

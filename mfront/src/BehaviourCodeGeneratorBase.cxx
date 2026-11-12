@@ -1137,13 +1137,8 @@ namespace mfront {
            << ";\n";
     }
     // physical constants
-    if (this->bd.useQt()) {
-      file << "using PhysicalConstants = "
-           << "tfel::PhysicalConstants<NumericType, use_qt>;\n";
-    } else {
-      file << "using PhysicalConstants = "
-           << "tfel::PhysicalConstants<NumericType, false>;\n";
-    }
+    writePhysicalConstantsAlias(file, this->bd, "NumericType",
+                                this->bd.useQt());
   }  // end of writeTypeAliases
 
   bool BehaviourCodeGeneratorBase::usesStateVariableTimeDerivative() const {
@@ -6126,14 +6121,14 @@ namespace mfront {
       const std::string& cname,
       const std::string& type,
       const std::string& type2) {
-    // an unsigned short is read as a long, so that negative and out of range
+    // an unsigned short is read as an int, so that negative and out of range
     // values are rejected instead of being wrapped around
     const auto is_unsigned_short = type == "unsigned short";
     f << type << '\n'
       << cname << "::get" << type2 << "(const std::string& n,\n"
       << "const std::string& v)\n"
       << "{\n"
-      << (is_unsigned_short ? "long" : type) << " value;\n"
+      << (is_unsigned_short ? "int" : type) << " value;\n"
       << "std::istringstream converter(v);\n"
       << "converter.imbue(std::locale::classic());\n"
       << "converter >> value;\n"

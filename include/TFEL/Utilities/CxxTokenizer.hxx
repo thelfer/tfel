@@ -28,8 +28,16 @@
 namespace tfel::utilities {
 
   /*!
-   * class in charge of reading a C++-style file and converting it
+   * \brief class in charge of reading a C++-style file and converting it
    * in tokens.
+   *
+   * The value of a number token does not hold the digit separators of the
+   * `C++14` integer literals: `@IterMax 1'000;` gives the number token
+   * `1000`, whose value is therefore not the substring of the line taken at
+   * the offset of this token. The offsets of the tokens remain those of the
+   * file, whatever the numbers which precede them, so that a source code can
+   * be rewritten from the offsets of its tokens, as the `MFront` interfaces
+   * for `Abaqus`, `Aster` and `CalculiX` do.
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer
       : protected CxxTokenizerOptions {
@@ -252,6 +260,15 @@ namespace tfel::utilities {
     /*!
      * \brief analyse the string given
      * all previous tokens are erased
+     *
+     * The line numbers of the tokens of the string start at the first line:
+     * tokenizing a file with several calls to this method, a call per line,
+     * gives the same tokens as tokenizing its whole contents with a single
+     * call, but the lines of those tokens are those of the line the call is
+     * given. A caller who wants to keep the line numbering of a file shall use
+     * the parseStream method, which takes the current line number as an
+     * argument.
+     *
      * \param[in] s : string to be parsed
      */
     void parseString(const std::string &);
@@ -276,7 +293,17 @@ namespace tfel::utilities {
      * \return is a C-style comment is opened at the
      * the end of the processing.
      * This is usefull when parsing a file line by line
-     * \param[in] b: boolean
+     *
+     * A `C` style comment may span several lines: a comment which is not
+     * closed on the line where it opens does not make the tokenizer throw.
+     * The state of the tokenizer is left open and the lines which follow are
+     * gathered in the value of the comment token until the comment is closed,
+     * which is what allows tokenizing a file line by line. A file which ends
+     * inside a comment is thus accepted, on the contrary to a quoted string or
+     * to a character literal which are rejected when they are not closed in
+     * their line: the caller is responsible for checking the state of the
+     * tokenizer when the end of the file is reached, as this method does. See
+     * issue #1395.
      */
     [[nodiscard]] bool isCStyleCommentOpened() const;
     /*!
@@ -305,7 +332,14 @@ namespace tfel::utilities {
      * \return is a raw string is opened at the
      * the end of the processing.
      * This is usefull when parsing a file line by line
-     * \param[in] b: boolean
+     *
+     * The raw string literals behave as the `C` style comments: a literal
+     * which is not closed when the end of the contents is reached does not
+     * make the tokenizer throw and leaves the state of the tokenizer open. A
+     * file which ends inside a raw string literal is thus accepted: the caller
+     * is responsible for checking the state of the tokenizer when the end of
+     * the file is reached, as this method does, `getCurrentRawStringDelimiter`
+     * giving the delimiter of the opened literal. See issue #1395.
      */
     [[nodiscard]] bool isRawStringOpened() const;
     /*!
@@ -315,6 +349,11 @@ namespace tfel::utilities {
     [[nodiscard]] std::string getCurrentRawStringDelimiter() const noexcept;
     /*!
      * \brief remove all comment tokens
+     *
+     * The values of the removed comments of the kind Token::Comment are
+     * gathered in the comments data member: a line may hold several such
+     * comments, which are gathered in the order they appear in the line,
+     * separated by a space character.
      */
     void stripComments();
     /*!
@@ -400,6 +439,17 @@ namespace tfel::utilities {
     [[nodiscard]] static bool isValidFunctionIdentifier(const std::string &,
                                                         const bool = true);
     /*!
+     * \brief tokenize the lines of a stream
+     *
+     * The lines are tokenized from the current position of the stream and n is
+     * increased by the number of lines which have been tokenized. The last line
+     * of a stream may not be terminated by an end of line character: such a
+     * line is tokenized as the others. On the contrary, an end of line
+     * character at the very end of a stream does not introduce an additional
+     * empty line, so that tokenizing a stream gives the same tokens as
+     * tokenizing its contents line by line, up to the line numbers, which are
+     * those of the stream.
+     *
      * \param[in]     in:   input stream
      * \param[in,out] n:    line number
      * \param[in]     from: origin of the stream
@@ -442,6 +492,18 @@ namespace tfel::utilities {
                           const Token::size_type,
                           const char,
                           const char);
+    /*!
+     * \brief read a number
+     *
+     * The digit separators of the `C++14` integer literals are removed from
+     * the value of the token: `1'000` gives the value `1000`, see the
+     * description of the class.
+     *
+     * \param[in,out] o:  offset in the line
+     * \param[in,out] p:  iterator to the current character
+     * \param[in]     pe: iterator past the end of the line
+     * \param[in]     n:  line number
+     */
     virtual void parseNumber(Token::size_type &,
                              std::string::const_iterator &,
                              const std::string::const_iterator,
@@ -457,20 +519,39 @@ namespace tfel::utilities {
                                    const std::string::const_iterator,
                                    const Token::size_type);
     /*!
-     * \brief parse a raw string
-     * \param[in,out] o: current offset in line
-     * \param[in,out] p: current iterator
-     * \param[in,out] pe: iterator past the last character in the line
-     * \param[in,out] n: current line number
+     * \brief read the contents of a raw string literal, which starts at the
+     * current iterator, past the opening `R"delim(` prefix
+     *
+     * The value of the token holds the whole literal, from the `R` delimiter
+     * to the closing `"` included, as for a quoted string, and its offset is
+     * that of the `R`, see issue #1390. The opening prefix is restored from the
+     * delimiter of the literal, which the caller has read and kept in
+     * `currentRawStringDelimiter`.
+     *
+     * \param[in,out] o:  current offset in line
+     * \param[in,out] p:  current iterator
+     * \param[in]     pe: iterator past the last character in the line
+     * \param[in]     n:  current line number
+     * \param[in]     ro: offset of the `R` which opens the literal
      */
     virtual void parseRawString(Token::size_type &,
                                 std::string::const_iterator &,
                                 const std::string::const_iterator,
+                                const Token::size_type,
                                 const Token::size_type);
     std::vector<std::string> additional_separators;
     //! list of tokens read
     TokensContainer tokens;
-    //! store all the comments of a line
+    /*!
+     * \brief store the comments which have been removed by the stripComments
+     * method. The key of the map is the line a comment starts on and the value
+     * is the values of the comments of this line, in the order they appear in
+     * the line, separated by a space character.
+     *
+     * The empty comments, that is a `//` comment or a `C` style comment whose
+     * contents is empty, bring nothing and are then not stored: a line whose
+     * only comment is empty gives no entry in this map.
+     */
     std::map<Token::size_type, std::string> comments;
     /*!
      * \brief if true, a cStyle comment what opened when the last line

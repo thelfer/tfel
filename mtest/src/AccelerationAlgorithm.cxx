@@ -23,7 +23,7 @@ namespace mtest {
     // the value is read as a signed integer so that negative values are
     // detected, and only trailing white spaces are allowed after it
     std::istringstream converter(v);
-    auto res = long{};
+    auto res = int{};
     converter >> res;
     tfel::raise_if((!converter) || (!(converter >> std::ws).eof()) ||
                        (res < 0) ||

@@ -375,6 +375,11 @@ namespace mfront {
     mfront::writeValidatorSymbol(os, this->getSymbolName(mpd), mpd);
   }  // end of writeValidatorSymbol
 
+  void CMaterialPropertyInterfaceBase::writeCompatibilityModeSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    mfront::writeCompatibilityModeSymbol(os, this->getSymbolName(mpd), mpd);
+  }  // end of writeCompatibilityModeSymbol
+
   void CMaterialPropertyInterfaceBase::writeBuildIdentifierSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeBuildIdentifierSymbol(os, this->getSymbolName(mpd), mpd);
@@ -471,6 +476,7 @@ namespace mfront {
     this->writeVariablesNamesSymbol(os, mpd);
     this->writeVariablesBoundsSymbols(os, mpd);
     this->writeValidatorSymbol(os, mpd);
+    this->writeCompatibilityModeSymbol(os, mpd);
     this->writeBuildIdentifierSymbol(os, mpd);
     this->writeEntryPointSymbol(os, mpd);
     this->writeTFELVersionSymbol(os, mpd);

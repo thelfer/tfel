@@ -1,7 +1,7 @@
 C> \file   bindings/fortran77/TFELPHYSICALCONSTANTS.cxx
 C> \brief
 C> \author Thomas Helfer
-C> \date   18 août 2017
+C> \date 18/08/2017
 C> \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights 
 C> reserved. 
 C> This project is publicly released under either the GNU GPL Licence with linking exception 
