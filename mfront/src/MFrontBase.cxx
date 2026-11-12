@@ -455,10 +455,10 @@ namespace mfront {
     }
   }  // end of treatVerbose
 
-  void MFrontBase::treatCompatibilityMode() {
+  void MFrontBase::treatDefaultCompatibilityMode() {
     setDefaultCompatibilityMode(
         this->getCurrentCommandLineArgument().getOption());
-  }  // end of treatCompatibilityMode
+  }  // end of treatDefaultCompatibilityMode
 
   void MFrontBase::treatUnicodeOutput() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();

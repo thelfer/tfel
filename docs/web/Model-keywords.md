@@ -239,7 +239,7 @@ The following options are available for all DSLs:
   compatibility mode which does not exceed it, which is reported by a
   warning. A version strictly lower than `5.2.0` is rejected. This option
   has precedence over the default compatibility mode, which can be set
-  globally using the `--compatibility-mode` command line argument: when no
+  globally using the `--default-compatibility-mode` command line argument: when no
   compatibility mode is declared, the generated code uses the entities and
   the algorithms of the version of the `TFEL` libraries which compiles it.
   The compatibility mode of a file is recorded in the generated code as

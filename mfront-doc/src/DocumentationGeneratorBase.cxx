@@ -82,8 +82,8 @@ namespace mfront {
                                 &DocumentationGeneratorBase::treatVerbose,
                                 "set verbose output", true);
     this->registerNewCallBack(
-        "--compatibility-mode",
-        &DocumentationGeneratorBase::treatCompatibilityMode,
+        "--default-compatibility-mode",
+        &DocumentationGeneratorBase::treatDefaultCompatibilityMode,
         "set the compatibility mode", true);
     this->registerNewCallBack(
         "--dsl-option", &DocumentationGeneratorBase::treatDSLOption,

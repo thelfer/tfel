@@ -69,12 +69,12 @@ the generated code independent of this version.
 
 The compatibility mode of a file is defined by the `compatibility_mode`
 option of its domain specific language, which is available for all the
-DSLs, whereas the `--compatibility-mode` command line argument declares
+DSLs, whereas the `--default-compatibility-mode` command line argument declares
 the mode of all the files treated by a run of `mfront` which do not
 declare their own mode:
 
 ~~~~{.bash}
-$ mfront --obuild --interface=generic --compatibility-mode=5.2.0 Norton.mfront
+$ mfront --obuild --interface=generic --default-compatibility-mode=5.2.0 Norton.mfront
 ~~~~
 
 The compatibility mode of an asset which declares one is recorded in its

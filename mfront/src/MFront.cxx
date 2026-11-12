@@ -337,8 +337,8 @@ namespace mfront {
                               "does not report errors by a message box");
     this->registerNewCallBack("--verbose", &MFront::treatVerbose,
                               "set verbose output", true);
-    this->registerNewCallBack("--compatibility-mode",
-                              &MFront::treatCompatibilityMode,
+    this->registerNewCallBack("--default-compatibility-mode",
+                              &MFront::treatDefaultCompatibilityMode,
                               "set the compatibility mode", true);
     this->registerNewCallBack("--unicode-output", &MFront::treatUnicodeOutput,
                               "allow/disallow unicode output", true);

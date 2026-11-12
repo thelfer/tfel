@@ -55,7 +55,7 @@ By default, no compatibility mode is declared: the generated code uses
 the greatest compatibility mode known by `MFront`, that is to say the
 mode of the current version (`5.2.0` in Version 5.2). A default mode
 can be declared globally, for all the files treated by a run of the
-tool, using the `--compatibility-mode` command line argument, as
+tool, using the `--default-compatibility-mode` command line argument, as
 explained below.
 
 Declaring a compatibility mode makes the results of the generated code
@@ -68,14 +68,14 @@ values of the physical constants are those of the `5.2.0` mode.
 
 # Setting the compatibility mode
 
-## Globally: the `--compatibility-mode` argument
+## Globally: the `--default-compatibility-mode` argument
 
-The `--compatibility-mode` argument declares a compatibility mode for
+The `--default-compatibility-mode` argument declares a compatibility mode for
 all the files treated by a run of the tool. It is supported by `mfront`,
 `mfront-doc` and `mfront-query`, but only `mfront` generates code:
 
 ~~~~{.bash}
-$ mfront --obuild --interface=generic --compatibility-mode=5.2.0 *.mfront
+$ mfront --obuild --interface=generic --default-compatibility-mode=5.2.0 *.mfront
 ~~~~
 
 The accepted values are a version, such as `5.2.0` or `5.3.1`, or the
@@ -84,6 +84,11 @@ is associated with the greatest known compatibility mode which does not
 exceed it, which is reported by a warning: requesting `5.3.0` gives the
 `5.2.0` mode as long as no other mode has been introduced. A version
 strictly lower than `5.2.0` is rejected.
+
+> **Note**
+>
+> The default compatibility mode does not take precedence over
+> the `compatibility_mode` `DSL` option, see below.
 
 ## For a given file: the `compatibility_mode` `DSL` option
 
@@ -137,6 +142,16 @@ $ mfront --list-dsl-options=DefaultModel
 - compatibility_mode            : string giving the version to which the MFront file shall comply.
 ...
 ~~~~
+
+> **Note**
+>
+
+> To superseed to the compatibility mode declared by as a DSL option for
+> the command line, use the standard `--dsl-option` command as follows:
+>
+> ~~~~{.bash}
+> mfront --dsl-option=compatiblity_mode:6.0.0 ...
+> ~~~~
 
 # Effect on the generated code
 
@@ -192,7 +207,7 @@ MFRONT_EXPORT_SYMBOL(const char*, Norton_compatibility_mode, "5.2.0");
 
 This symbol is generated whatever the way the mode has been declared, by
 the `compatibility_mode` option of the `DSL` of the file or by the
-`--compatibility-mode` argument: it is not generated when no
+`--default-compatibility-mode` argument: it is not generated when no
 compatibility mode is declared. The `ExternalLibraryManager` class of the
 `TFEL/System` library returns it:
 
@@ -217,7 +232,7 @@ version of `MFront` which generated it.
 The `compatibility_mode` attribute of a behaviour is reported by the
 `--attributes` query of `mfront-query`, which lists the names of the
 attributes of a behaviour, when a compatibility mode is declared, by the
-file or by the `--compatibility-mode` argument:
+file or by the `--default-compatibility-mode` argument:
 
 ~~~~{.bash}
 $ mfront-query --attributes Norton.mfront
