@@ -634,6 +634,34 @@ function returns the Piola transformation of the identity matrix of the
 current configuration, i.e. the matrix
 \(\det\left(F\right)\,F^{-1}\,F^{-T}\) in the reference configuration.
 
+The `computePiolaTransform` function returns the Piola transformation
+\(\det\left(F\right)\,F^{-1}\,q\) of a vector \(q\) of the current
+configuration, such as the heat flux. The `computeInversePiolaTransform`
+function returns the vector of the current configuration from its Piola
+transformation.
+
+~~~~{.cxx}
+const auto Q = computePiolaTransform(q, F);
+const auto q2 = computeInversePiolaTransform(Q, F);
+~~~~
+
+### Nanson's transformation
+
+The `computeNansonTransform` function returns the vector
+\(\det\left(F\right)\,F^{-T}\,N\) given by Nanson's formula. If \(N\)
+is an oriented surface element of the reference configuration, the
+result is the oriented surface element of the current configuration.
+The `computeInverseNansonTransform` function returns the vector of the
+reference configuration.
+
+~~~~{.cxx}
+const auto n = computeNansonTransform(N, F);
+const auto N2 = computeInverseNansonTransform(n, F);
+~~~~
+
+Those functions are declared in the
+`TFEL/Math/Tensor/PiolaTransformation.hxx` header.
+
 # New `TFEL/Material` features
 
 ## Finite strain heat transfer
