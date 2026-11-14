@@ -1,13 +1,28 @@
 /*!
- * \file   FiniteStrainHeatTransferTest.cxx
- * \brief
+ * \file   tests/Material/FiniteStrainHeatTransfer.cxx
+ * \brief  This file tests the functions computing the thermal conductivity
+ * matrix in the reference configuration.
  * \author Thomas Helfer
  * \date   30/01/2026
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include <array>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "TFEL/Math/Tensor/PiolaTransformation.hxx"
 #include "TFEL/Material/FiniteStrainHeatTransfer.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
@@ -25,9 +40,134 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test<true>();
     this->test<false>();
+    this->test2<1u, true>();
+    this->test2<1u, false>();
+    this->test2<2u, true>();
+    this->test2<2u, false>();
+    this->test2<3u, true>();
+    this->test2<3u, false>();
     return this->result;
   }  // end of execute
+
  private:
+  //! \brief a simple alias
+  using Matrix = std::array<std::array<double, 3>, 3>;
+  /*!
+   * \return the matrix \(J\,F^{-1}\,k\,F^{-T}\), where \(k\) is a diagonal
+   * matrix.
+   * \param[in] F: deformation gradient
+   * \param[in] k: diagonal of the thermal conductivity matrix
+   */
+  static Matrix computeReferenceSolution(const Matrix& F,
+                                         const std::array<double, 3>& k) {
+    // adjugate of the deformation gradient
+    const auto a = Matrix{{{F[1][1] * F[2][2] - F[1][2] * F[2][1],
+                            F[0][2] * F[2][1] - F[0][1] * F[2][2],
+                            F[0][1] * F[1][2] - F[0][2] * F[1][1]},
+                           {F[1][2] * F[2][0] - F[1][0] * F[2][2],
+                            F[0][0] * F[2][2] - F[0][2] * F[2][0],
+                            F[0][2] * F[1][0] - F[0][0] * F[1][2]},
+                           {F[1][0] * F[2][1] - F[1][1] * F[2][0],
+                            F[0][1] * F[2][0] - F[0][0] * F[2][1],
+                            F[0][0] * F[1][1] - F[0][1] * F[1][0]}}};
+    const auto J = F[0][0] * a[0][0] + F[0][1] * a[1][0] + F[0][2] * a[2][0];
+    auto K = Matrix{};
+    for (unsigned short i = 0; i != 3; ++i) {
+      for (unsigned short j = 0; j != 3; ++j) {
+        K[i][j] = 0;
+        for (unsigned short l = 0; l != 3; ++l) {
+          K[i][j] += a[i][l] * k[l] * a[j][l] / J;
+        }
+      }
+    }
+    return K;
+  }  // end of computeReferenceSolution
+  /*!
+   * \brief compare a matrix to the reference solution
+   * \param[in] K: matrix
+   * \param[in] Kr: reference solution
+   */
+  template <unsigned short N, typename MatrixType>
+  void compare(const MatrixType& K, const Matrix& Kr) {
+    constexpr auto eps = 1e-13;
+    for (unsigned short i = 0; i != N; ++i) {
+      for (unsigned short j = 0; j != N; ++j) {
+        TFEL_TESTS_ASSERT(
+            std::abs(tfel::math::base_type_cast(K(i, j)) - Kr[i][j]) < eps);
+      }
+    }
+  }  // end of compare
+  /*!
+   * \brief compare the results of the functions to an independent
+   * computation for a deformation gradient different from the identity.
+   */
+  template <unsigned short N, bool use_qt>
+  void test2() {
+    using namespace tfel::math;
+    using namespace tfel::material;
+    using real = typename tfel::config::ScalarTypes<double, use_qt>::real;
+    using thermalconductivity = tfel::types::thermalconductivity<real>;
+    using thermalconductivity_derivative =
+        derivative_type<thermalconductivity, tfel::types::temperature<real>>;
+    const auto k = std::array<double, 3>{3, 5, 2};
+    const auto [F, Fm] = [] {
+      if constexpr (N == 1u) {
+        return std::pair{tensor<1u, real>{real(1.1), real(0.9), real(1.2)},
+                         Matrix{{{1.1, 0, 0}, {0, 0.9, 0}, {0, 0, 1.2}}}};
+      } else if constexpr (N == 2u) {
+        return std::pair{
+            tensor<2u, real>{real(1.1), real(0.9), real(1.2), real(0.15),
+                             real(-0.08)},
+            Matrix{{{1.1, 0.15, 0}, {-0.08, 0.9, 0}, {0, 0, 1.2}}}};
+      } else {
+        return std::pair{
+            tensor<3u, real>{real(1.1), real(0.9), real(1.2), real(0.15),
+                             real(-0.08), real(0.07), real(-0.12), real(0.05),
+                             real(0.11)},
+            Matrix{
+                {{1.1, 0.15, 0.07}, {-0.08, 0.9, 0.05}, {-0.12, 0.11, 1.2}}}};
+      }
+    }();
+    // isotropic case
+    const auto Kr = computeReferenceSolution(Fm, {k[0], k[0], k[0]});
+    this->template compare<N>(
+        computeThermalConductivyMatrixInReferenceConfiguration(
+            thermalconductivity{k[0]}, F),
+        Kr);
+    this->template compare<N>(
+        computeThermalConductivyMatrixInReferenceConfiguration(
+            thermalconductivity_derivative{k[0]}, F),
+        Kr);
+    // Piola transformation of the identity
+    this->template compare<N>(
+        computePiolaTransformOfIdentityMatrixInReferenceConfiguration(F),
+        computeReferenceSolution(Fm, {1, 1, 1}));
+    // orthotropic case
+    const auto Kr2 = computeReferenceSolution(Fm, k);
+    if constexpr (N == 2u) {
+      this->template compare<N>(
+          computeThermalConductivyMatrixInReferenceConfiguration(
+              thermalconductivity{k[0]}, thermalconductivity{k[1]}, F),
+          Kr2);
+      this->template compare<N>(
+          computeThermalConductivyMatrixInReferenceConfiguration(
+              thermalconductivity_derivative{k[0]},
+              thermalconductivity_derivative{k[1]}, F),
+          Kr2);
+    } else if constexpr (N == 3u) {
+      this->template compare<N>(
+          computeThermalConductivyMatrixInReferenceConfiguration(
+              thermalconductivity{k[0]}, thermalconductivity{k[1]},
+              thermalconductivity{k[2]}, F),
+          Kr2);
+      this->template compare<N>(
+          computeThermalConductivyMatrixInReferenceConfiguration(
+              thermalconductivity_derivative{k[0]},
+              thermalconductivity_derivative{k[1]},
+              thermalconductivity_derivative{k[2]}, F),
+          Kr2);
+    }
+  }  // end of test2
   template <bool use_qt>
   void test() noexcept {
     using namespace tfel::math;
