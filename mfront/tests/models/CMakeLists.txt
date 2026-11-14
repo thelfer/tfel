@@ -98,4 +98,24 @@ set_source_files_properties(test_model.cxx
 ## Testing the generic model interface
 
 mfront_model_check_library(MFrontGenericModels generic
-  ${mfront_tests_SOURCES})
+  ${mfront_tests_SOURCES}
+  ModelParametersFile)
+
+## Testing the initialization of the parameters of a model from a file
+
+# file read by the `ModelParametersFile` model in the current directory
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ModelParametersFile-parameters.txt"
+  ModelParametersFile-parameters.txt COPYONLY)
+add_test(NAME generic-model-parameters-file_mtest
+  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
+  --@library@="$<TARGET_FILE:MFrontGenericModels>"
+  --xml-output-file=generic-model-parameters-file_mtest.xml
+  "${CMAKE_CURRENT_SOURCE_DIR}/model-parameters-file.mtest")
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST generic-model-parameters-file_mtest
+    PROPERTY DEPENDS MFrontGenericModels mtest
+    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
+else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST generic-model-parameters-file_mtest
+    PROPERTY DEPENDS MFrontGenericModels mtest)
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
