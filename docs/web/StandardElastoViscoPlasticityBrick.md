@@ -190,8 +190,8 @@ The DDIF2 stress potential is fully described
 
 ### General form of an inelastic flow {#sec:StandardElastoViscoPlasticity:inelastic_flow_general_form}
 
-All the inelastic flows described on this page are written in the same
-way and use the same notations. The plastic strain rate \(\tdepsilonp\)
+All the inelastic flows described on this page have the same form. The
+plastic strain rate \(\tdepsilonp\)
 of a plastic flow, or the viscoplastic strain rate \(\tdepsilonvp\) of a
 viscoplastic flow, is given by:
 
@@ -236,8 +236,7 @@ g\paren{\tsigma}= \phi_{g}\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}
 \]
 
 If the `flow_criterion` option is not used, \(\phi_{g}\) is equal to
-\(\phi\) and the flow is associated: the flow direction \(\tenseur{n}\)
-is then the normal to the yield surface.
+\(\phi\) and the flow is associated.
 
 The inelastic flows only differ by the way the rate \(\dot{p}\) is
 determined:
@@ -366,16 +365,14 @@ the Norton law:
 f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
 \]
 
-in which appear, with the notations of Section
-@sec:StandardElastoViscoPlasticity:inelastic_flow_general_form:
+in which appear:
 
 - a stress criterion \(\phi\)
 - a viscoplastic potential \(g\)
 - one or more kinematic hardening rules (optional), denoted \(\tenseur{X}_{i}\)
 - one or more isotropic hardening rules (optional), denoted \(R_{i}\)
 - the coefficients \(A\), \(K\) and \(n\), given by the options `A`, `K`
-  and `n`. The option `A` is optional: \(A\) is equal to \(1\) by
-  default.
+  and `n`. `A` is optional and equal to \(1\) by default.
 
 #### Newton steps rejection
 
@@ -399,16 +396,14 @@ The rate \(\dot{p}\) of the equivalent viscoplastic strain is given by:
 f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
 \]
 
-in which appear, with the notations of Section
-@sec:StandardElastoViscoPlasticity:inelastic_flow_general_form:
+in which appear:
 
 - a stress criterion \(\phi\)
 - a viscoplastic potential \(g\)
 - one or more kinematic hardening rules (optional), denoted \(\tenseur{X}_{i}\)
 - one or more isotropic hardening rules (optional), denoted \(R_{i}\)
 - the coefficients \(A\), \(K\) and \(n\), given by the options `A`, `K`
-  and `n`. The options `A` and `n` are optional: \(A\) and \(n\) are
-  equal to \(1\) by default.
+  and `n`. `A` and `n` are optional and equal to \(1\) by default.
 
 #### Newton steps rejection
 
@@ -443,8 +438,7 @@ viscoplastic flow:
 f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{j}\tenseur{X}_{j}}-\sum_{j}R_{j}\paren{p}
 \]
 
-in which appear, with the notations of Section
-@sec:StandardElastoViscoPlasticity:inelastic_flow_general_form:
+in which appear:
 
 - a stress criterion \(\phi\)
 - a viscoplastic potential \(g\)
@@ -452,8 +446,7 @@ in which appear, with the notations of Section
 - one or more isotropic hardening rules (optional), denoted \(R_{j}\)
 - the coefficients \(A_{i}\), \(K_{i}\) and \(n_{i}\), given by the
   options `A`, `K` and `n`, which are arrays of the same size \(N\).
-  The option `A` is optional: the coefficients \(A_{i}\) are equal to
-  \(1\) by default.
+  `A` is optional and its values are equal to \(1\) by default.
 
 #### Example
 
@@ -477,9 +470,6 @@ The viscoplastic strain rate satisfies:
 \quad\text{with}\quad
 \tenseur{n}=\deriv{g}{\tsigma}
 \]
-
-with the notations of Section
-@sec:StandardElastoViscoPlasticity:inelastic_flow_general_form.
 
 The `UserDefinedViscoplasticity` inelastic flow allows the user to
 specify the rate \(\dot{p}\) of the equivalent viscoplastic strain,
