@@ -67,25 +67,26 @@ struct TFEL_VISIBILITY_LOCAL PhysicalConstants_v6_0_0 {
 };
 
 const double PhysicalConstants_v6_0_0::AtomicMassConstant =
-    double(1.66053904e-27);
+    double(1.66053906892e-27);
 const double PhysicalConstants_v6_0_0::AvogadroConstant =
-    double(6.022140857e+23);
-const double PhysicalConstants_v6_0_0::BoltzmannConstant =
-    double(1.38064852e-23);
+    double(6.02214076e+23);
+const double PhysicalConstants_v6_0_0::BoltzmannConstant = double(1.380649e-23);
 const double PhysicalConstants_v6_0_0::ConductanceQuantum =
-    double(7.748091731e-05);
+    double(7.7480917298636506e-05);
 const double PhysicalConstants_v6_0_0::ElectricConstant =
-    double(8.854187817e-12);
-const double PhysicalConstants_v6_0_0::ElectronMass = double(9.10938356e-31);
-const double PhysicalConstants_v6_0_0::ElectronVolt = double(1.6021766208e-19);
+    double(8.8541878188e-12);
+const double PhysicalConstants_v6_0_0::ElectronMass = double(9.1093837139e-31);
+const double PhysicalConstants_v6_0_0::ElectronVolt = double(1.602176634e-19);
 const double PhysicalConstants_v6_0_0::ElementaryCharge =
-    double(1.6021766208e-19);
-const double PhysicalConstants_v6_0_0::FaradayConstant = double(96485.33289);
+    double(1.602176634e-19);
+const double PhysicalConstants_v6_0_0::FaradayConstant =
+    double(96485.33212331002);
 const double PhysicalConstants_v6_0_0::FineStructureConstant =
-    double(0.0072973525664);
-const double PhysicalConstants_v6_0_0::MolarGasConstant = double(8.3144598);
+    double(0.0072973525643);
+const double PhysicalConstants_v6_0_0::MolarGasConstant =
+    double(8.31446261815324);
 const double PhysicalConstants_v6_0_0::StefanBoltzmannConstant =
-    double(5.670367e-08);
+    double(5.6703744191844295e-08);
 
 static void declarePhysicalConstants_v5_2_0(pybind11::module_& m) {
   pybind11::class_<PhysicalConstants_v5_2_0> w(m, "PhysicalConstants",

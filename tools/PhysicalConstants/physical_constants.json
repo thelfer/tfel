@@ -22,7 +22,7 @@
  unit: "kg";
  qt_unit:
    [ 1, 0, 0, 0, 0, 0, 0 ];
- value: 1.660539040e-27;
+ value: 1.66053906892e-27;
  values:
  [
    {
@@ -39,7 +39,7 @@
  unit: "mol^{-1}";
  qt_unit:
    [ 0, 0, 0, 0, 0, 0, -1 ];
- value: 6.022140857e23;
+ value: 6.02214076e23;
  values:
  [
    {
@@ -56,7 +56,7 @@
  unit: "J.K^{-1}";
  qt_unit:
    [ 1, 2, -2, 0, -1, 0, 0 ];
- value: 1.38064852e-23;
+ value: 1.380649e-23;
  values:
  [
    {
@@ -72,7 +72,7 @@
  description: "Conductance quantum";
  unit: "S";
  qt_unit: [ -1, -2, 3, 2, 0, 0, 0 ];
- value:7.7480917310e-5;
+ value:7.7480917298636506e-5;
  values:
  [
    {
@@ -89,7 +89,7 @@
  unit: "F.m^{-1}"; 
  qt_unit:
    [ -1, -3, 4, 2, 0, 0, 0 ];
- value:8.854187817e-12;
+ value:8.8541878188e-12;
  values:
  [
    {
@@ -106,7 +106,7 @@
  unit: "kg";
  qt_unit:
    [ 1, 0, 0, 0, 0, 0, 0 ];
- value:9.10938356e-31;
+ value:9.1093837139e-31;
  values:
  [
    {
@@ -123,7 +123,7 @@
  unit: "J";
  qt_unit:
    [ 1, 2, -2, 0, 0, 0, 0 ];
- value:1.6021766208e-19;
+ value:1.602176634e-19;
  values:
  [
    {
@@ -140,7 +140,7 @@
  unit: "C";
  qt_unit:
    [ 0, 0, 1, 1, 0, 0, 0 ];
- value:1.6021766208e-19;
+ value:1.602176634e-19;
  values:
  [
    {
@@ -157,7 +157,7 @@
  unit: "C.mol^{-1}";
  qt_unit:
    [ 0, 0, 1, 1, 0, 0, -1 ];
- value:96485.33289;
+ value:96485.33212331002;
  values:
  [
    {
@@ -171,7 +171,7 @@
  name: "FineStructureConstant";
  short_name : "a";
  description: "Fine-structure constant";
- value:7.2973525664e-3;
+ value:7.2973525643e-3;
  values:
  [
    {
@@ -188,7 +188,7 @@
  unit: "J.mol^{-1}.K^{-1}";
  qt_unit:
    [ 1, 2, -2, 0, -1, 0, -1 ];
- value:8.3144598;
+ value:8.31446261815324;
  values:
  [
    {
@@ -205,7 +205,7 @@
  unit: "W.m^{-2}.K^{-4}";
  qt_unit:
    [ 1, 0, -3, 0, -4, 0, 0 ];
- value:5.670367e-8;
+ value:5.6703744191844295e-8;
  values:
  [
    {
