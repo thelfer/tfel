@@ -1207,6 +1207,31 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 617: [mfront] add support for parameter override through a text file for Model DSL
+
+The parameters of a model written with the `Model` domain specific
+language can now be modified through an external file with the
+`generic`, `castem` and `castem21` interfaces, as the parameters of
+behaviours and material properties.
+
+For a model whose class name is `Swelling`, the file is named
+`Swelling-parameters.txt` and is read in the current directory at the
+first call of the model. Each line gives the name of a parameter and its
+value:
+
+~~~~{.txt}
+GrowthRate 3e-2
+~~~~
+
+The name of this file is returned by the new `--parameters-file` query
+of `mfront-query` for models.
+
+This feature is controlled by the `parameters_initialization_from_file`
+DSL option, which was already accepted by the `Model` domain specific
+language but had no effect.
+
+For more details, see <https://github.com/thelfer/tfel/issues/617>.
+
 ## Issue 796: Remarks on the documentation of the StandardElastoViscoPlasticity Brick of MFront
 
 The description of the inelastic flows of the

@@ -1,0 +1,11 @@
+@Author Tristan Chenaille;
+@Date 14 / 11 / 2026;
+@Description {
+  "This test checks that the default value of the `GrowthRate` "
+  "parameter (2) is overridden by the value given in the "
+  "`ModelParametersFile-parameters.txt` file (3)."
+};
+
+@Model @library@ 'ModelParametersFile';
+@Times{0, 1};
+@Test<function> 'x' '3 * t' 1e-14;
