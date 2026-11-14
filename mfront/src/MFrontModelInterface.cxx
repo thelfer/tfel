@@ -224,16 +224,38 @@ namespace mfront {
       throw_if(f.name.empty(), "unnamed function");
       throw_if(f.modifiedVariables.empty(),
                "no modified variable for function '" + f.name + "'");
-      // an output updated by a compound assignment starts from its value at
-      // the beginning of the time step, which is passed as argument
-      const auto& updatedOutputs = f.compoundAssignedVariables;
-      throw_if((f.usedVariables.empty()) && (updatedOutputs.empty()) &&
+      throw_if((f.usedVariables.empty()) &&
+                   (f.compoundAssignedVariables.empty()) &&
                    (!f.useTimeIncrement),
                "no used variable for function '" + f.name + "'");
-      const auto args = [&f, &updatedOutputs] {
+      // An output starts from its value at the beginning of the time step,
+      // which is passed as argument: it keeps this value if the function
+      // does not assign it, as with the `generic` and `castem` interfaces.
+      // This argument is named `<output>_1` if the depth of the output is at
+      // least one, as the function may already use this value.
+      const auto getInitialValueName = [&md](const std::string& n) {
+        const auto d = md.outputs.getVariable(n).getAttribute<unsigned short>(
+            VariableDescription::depth, 0);
+        return d == 0 ? "mfront_" + n + "_bts" : n + "_1";
+      };
+      const auto getArgumentDescription =
+          [&md, &f, &getInitialValueName](
+              const std::string& a) -> const VariableDescription& {
+        for (const auto& mv : f.modifiedVariables) {
+          if (a == getInitialValueName(mv)) {
+            return md.outputs.getVariable(mv);
+          }
+        }
+        const auto dv = md.decomposeVariableName(a);
+        if (md.outputs.contains(dv.first)) {
+          return md.outputs.getVariable(dv.first);
+        }
+        return md.inputs.getVariable(dv.first);
+      };
+      const auto args = [&f, &getInitialValueName] {
         auto vars = f.usedVariables;
-        for (const auto& v : updatedOutputs) {
-          vars.insert(v + "_1");
+        for (const auto& v : f.modifiedVariables) {
+          vars.insert(getInitialValueName(v));
         }
         auto a = std::vector<std::string>{};
         for (const auto& uv : vars) {
@@ -277,14 +299,7 @@ namespace mfront {
         if (*pa == "dt") {
           header << "const time " << *pa;
         } else {
-          const auto dv = md.decomposeVariableName(*pa);
-          const auto& v = [&md, &dv]() -> const VariableDescription& {
-            if (md.outputs.contains(dv.first)) {
-              return md.outputs.getVariable(dv.first);
-            }
-            return md.inputs.getVariable(dv.first);
-          }();
-          header << "const " << v.type << " " << *pa;
+          header << "const " << getArgumentDescription(*pa).type << " " << *pa;
         }
         if (++pa != std::end(args)) {
           header << ",";
@@ -300,14 +315,11 @@ namespace mfront {
       if (f.modifiedVariables.size() == 1) {
         const auto& vn = *(f.modifiedVariables.begin());
         const auto& output = md.outputs.getVariable(vn);
-        header << output.type << " " << vn;
-        if (updatedOutputs.count(vn) != 0) {
-          header << " = " << vn << "_1";
-        }
-        header << ";\n";
+        header << output.type << " " << vn << " = " << getInitialValueName(vn)
+               << ";\n";
       } else {
-        for (const auto& vn : updatedOutputs) {
-          header << vn << " = " << vn << "_1;\n";
+        for (const auto& vn : f.modifiedVariables) {
+          header << vn << " = " << getInitialValueName(vn) << ";\n";
         }
       }
       for (const auto& vn : f.usedVariables) {
