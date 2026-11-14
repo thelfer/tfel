@@ -1207,6 +1207,22 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 641: [Miscellaneous] Is a library a MFront library?
+
+`mfm` displayed nothing when its argument was not an existing file, for
+instance `Behaviour.dll` in place of `libBehaviour.dll` for a library
+built with `MinGW`. Such an argument is now reported on the standard
+error stream, unless the `quiet` verbosity level is selected:
+
+~~~~{.bash}
+$ mfm Behaviour.dll
+mfm: 'Behaviour.dll' is neither a regular file nor a directory
+~~~~
+
+The files which can't be analysed are still silently ignored.
+
+For more details, see <https://github.com/thelfer/tfel/issues/641>
+
 ## Issue 954: [msys2] the environment scripts are not the good ones (use `.sh.in`, not  `.bat.in` or `.ps1.in`)
 
 With a `MinGW` compiler, such as the ones provided by `MSYS2`, only the
