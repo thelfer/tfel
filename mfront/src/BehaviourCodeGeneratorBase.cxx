@@ -3232,6 +3232,17 @@ namespace mfront {
         const auto& s = d.get<BehaviourData::Relocation>();
         throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
                  "null swelling is not supported here");
+        // In the plane hypotheses, the orthoradial direction is the second
+        // one. With the `Pipe` convention, the relocation is added to the
+        // third direction of orthotropy, which is the orthoradial one: the
+        // conversion to the axes of the modelling hypothesis, made at the
+        // end of this method, exchanges the second and third components.
+        const auto* const od =
+            ((this->bd.getSymmetryType() == mfront::ORTHOTROPIC) &&
+             (this->bd.getOrthotropicAxesConvention() ==
+              OrthotropicAxesConvention::PIPE))
+                ? "2"
+                : "1";
         if (s.sfe.is<BehaviourData::SFED_ESV>()) {
           const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
           if ((h ==
@@ -3249,11 +3260,11 @@ namespace mfront {
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "mfront_dl0_l0[0]+=this->" << ev << "/2;\n"
-               << "mfront_dl0_l0[1]+=this->" << ev << "/2;\n"
+               << "mfront_dl0_l0[" << od << "]+=this->" << ev << "/2;\n"
                << "mfront_dl1_l0[0]+=(this->" << ev << "+this->d" << ev
                << ")/2;\n"
-               << "mfront_dl1_l0[1]+=(this->" << ev << "+this->d" << ev
-               << ")/2;\n";
+               << "mfront_dl1_l0[" << od << "]+=(this->" << ev << "+this->d"
+               << ev << ")/2;\n";
           }
         } else if (s.sfe.is<std::shared_ptr<ModelDescription>>()) {
           const auto& md = *(s.sfe.get<std::shared_ptr<ModelDescription>>());
@@ -3272,7 +3283,7 @@ namespace mfront {
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
-               << "mfront_dl0_l0[1]+=(this->" << vs << ")/2;\n";
+               << "mfront_dl0_l0[" << od << "]+=(this->" << vs << ")/2;\n";
           }
           this->writeModelCall(os, tmpnames, h, md,
                                std::vector<std::string>(1u, vs),
@@ -3288,7 +3299,7 @@ namespace mfront {
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
-               << "mfront_dl1_l0[1]+=(this->" << vs << ")/2;\n";
+               << "mfront_dl1_l0[" << od << "]+=(this->" << vs << ")/2;\n";
           }
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
