@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/copy.hxx
  * \brief  this file implements the copy class.
  * \author Thomas Helfer
- * \date   30 Jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,7 +29,7 @@ namespace tfel::fsalgo {
    * http://www.sgi.com/tech/stl/copy.html
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct copy {
@@ -51,7 +51,7 @@ namespace tfel::fsalgo {
      *   set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE constexpr static OutputIterator exe(
@@ -65,7 +65,7 @@ namespace tfel::fsalgo {
    * \brief partial specialisation of struct copy to end recursion.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<0u> {
@@ -74,7 +74,7 @@ namespace tfel::fsalgo {
      * \sa copy<N>::exe()
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE constexpr static OutputIterator exe(
@@ -92,7 +92,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<1u> {
@@ -101,7 +101,7 @@ namespace tfel::fsalgo {
      * \sa copy<N>::exe()
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE constexpr static OutputIterator exe(
@@ -118,7 +118,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<2u> {
@@ -139,7 +139,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE constexpr static auto exe(InputIterator p,
@@ -171,7 +171,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<3u> {
@@ -192,7 +192,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
@@ -228,7 +228,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<4u> {
@@ -249,7 +249,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
@@ -286,7 +286,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<5u> {
@@ -307,7 +307,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
@@ -345,7 +345,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<6u> {
@@ -366,7 +366,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
@@ -405,7 +405,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<7u> {
@@ -426,7 +426,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
@@ -466,7 +466,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<8u> {
@@ -487,7 +487,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
@@ -528,7 +528,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<9u> {
@@ -549,7 +549,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
@@ -591,7 +591,7 @@ namespace tfel::fsalgo {
    * \see NO_FSALGORITHM_SPECIALISATION
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct copy<10u> {
@@ -612,7 +612,7 @@ namespace tfel::fsalgo {
      * set of value types.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto

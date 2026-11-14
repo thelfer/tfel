@@ -37,7 +37,7 @@ namespace tfel::math::parser {
   void ExternalCyranoFunction::setVariableValue(
       const std::vector<double>::size_type pos, const double value) {
     raise_if(pos >= this->variables.size(),
-             "ExternalCFunctionBase::setVariableValue: "
+             "ExternalCyranoFunction::setVariableValue: "
              "invalid index " +
                  std::to_string(pos) + " (function has only " +
                  std::to_string(this->variables.size()) + " variables).");

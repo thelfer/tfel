@@ -8,6 +8,7 @@ install(FILES
         usrmat.f90
         test-usrmat.cxx
         test.f90
+        mfront-usrmat.dat
   DESTINATION ${tfel_dianafea_shared_dir}
   COMPONENT mfront)
 install(FILES CMakeLists-dianafea.txt

@@ -2,7 +2,7 @@
  * \file   mfront/src/DianaFEAComputeStiffnessTensor.cxx
  * \brief
  * \author Thomas Helfer
- * \date   18 mar 2008
+ * \date 18/03/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

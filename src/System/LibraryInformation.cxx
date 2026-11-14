@@ -2,7 +2,7 @@
  * \file   LibraryInformation.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28/03/2017
+ * \date 28/03/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -67,7 +67,8 @@ namespace tfel::system {
     auto throw_if_in_macos = [] {};
 #endif
     //
-    auto file = std::make_shared<std::ifstream>(f);
+    auto file = std::make_shared<std::ifstream>(
+        f, std::ios_base::in | std::ios_base::binary);
     throw_if(!(*file), "no library named '" + f + "' found");
     //
     if (details::elf_info32::parsing_supported(*file)) {
@@ -116,13 +117,14 @@ namespace tfel::system {
 
   LibraryInformation::LibraryInformation(const LibraryInformation&) = default;
 
-  LibraryInformation::LibraryInformation(LibraryInformation&&) = default;
+  LibraryInformation::LibraryInformation(LibraryInformation&&) noexcept =
+      default;
 
   LibraryInformation& LibraryInformation::operator=(const LibraryInformation&) =
       default;
 
-  LibraryInformation& LibraryInformation::operator=(LibraryInformation&&) =
-      default;
+  LibraryInformation& LibraryInformation::operator=(
+      LibraryInformation&&) noexcept = default;
 
   std::vector<std::string> LibraryInformation::sections() {
     return this->impl->sections();

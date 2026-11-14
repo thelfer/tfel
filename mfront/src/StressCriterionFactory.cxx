@@ -2,7 +2,7 @@
  * \file   mfront/src/StressCriterionFactory.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,6 +25,8 @@
 #include "MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx"
 #include "MFront/BehaviourBrick/GursonTvergaardNeedleman1982StressCriterion.hxx"
 #include "MFront/BehaviourBrick/RousselierTanguyBesson2002StressCriterion.hxx"
+#include "MFront/BehaviourBrick/GeneralisedGursonTvergaardNeedlemanStressCriterion.hxx"
+#include "MFront/BehaviourBrick/GeneralisedRousselierTanguyBessonStressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
 
 namespace mfront::bbrick {
@@ -146,6 +148,14 @@ namespace mfront::bbrick {
     this->addGenerator("RousselierTanguyBesson 2002", []() {
       return std::make_shared<
           bbrick::RousselierTanguyBesson2002StressCriterion>();
+    });
+    this->addGenerator("GeneralisedGursonTvergaardNeedleman", []() {
+      return std::make_shared<
+          bbrick::GeneralisedGursonTvergaardNeedlemanStressCriterion>();
+    });
+    this->addGenerator("GeneralisedRousselierTanguyBesson", []() {
+      return std::make_shared<
+          bbrick::GeneralisedRousselierTanguyBessonStressCriterion>();
     });
   }  // end of StressCriterionFactory
 

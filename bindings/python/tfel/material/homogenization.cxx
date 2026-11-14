@@ -14,6 +14,8 @@
 
 #include <pybind11/pybind11.h>
 #include "TFEL/Macros.hxx"
+#include "TFEL/Raise.hxx"
+#include "TFEL/ContractViolation.hxx"
 
 #define TFEL_MATERIAL_HOMOGENIZATION_MODULE_NAME \
   TFEL_PP_JOIN(homogenization_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
@@ -30,6 +32,9 @@ PYBIND11_MODULE(TFEL_MATERIAL_HOMOGENIZATION_MODULE_NAME, m) {
 #else
 PYBIND11_MODULE(homogenization, m) {
 #endif
+  // contract violations raise an exception instead of aborting the interpreter
+  tfel::setContractViolationHandler(
+      [](const char* const msg) { tfel::raise(msg); });
   declareHillTensors(m);
   declareLocalisationTensors(m);
   declareLinearHomogenizationSchemes(m);

@@ -287,7 +287,7 @@ TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DS_DF, DS_DEGL){
         const DeformationGradientTensor<N, stress>&,
         const DeformationGradientTensor<N, stress>& F1,
         const StressStensor<N, stress>&){
-        Kr = 2 * Ks * tfel::math::t2tost2<N, base_type<stress>>::dCdF(F1);
+        Kr = Ks * tfel::math::t2tost2<N, base_type<stress>>::dCdF(F1) / 2;
 }  // end of exe
 }
 ;  // end of struct FiniteStrainBehaviourTangentOperatorConverter

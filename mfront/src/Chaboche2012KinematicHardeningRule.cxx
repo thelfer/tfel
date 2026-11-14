@@ -2,7 +2,7 @@
  * \file   mfront/src/Chaboche2012KinematicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/04/2018
+ * \date 04/04/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -171,7 +171,7 @@ namespace mfront::bbrick {
       c += Phi_infn + " + ";
       c += "(1 - " + Phi_infn + ") * " + exp_mbpn + ";\n";
       c += "const auto " + dPhin + " = ";
-      c += "(this->" + bn + ") * (this->theta) *" + Phi_infn + " * " +
+      c += "-(this->" + bn + ") * (this->theta) * (1 - " + Phi_infn + ") * " +
            exp_mbpn + ";\n";
       c += "f" + an + " -= ";
       c += "(this->dp" + fid + ") * (n" + fid + " - (this->" + Dn + ") * " +
@@ -192,7 +192,7 @@ namespace mfront::bbrick {
         c += "df" + an + "_ddp" + fid + " += ";
         c += "(this->dp" + fid + ") *";
         c += "(this->" + Dn + ") * " + dPhin + " * " + Psin + " * " + an +
-             "_);\n";
+             "_;\n";
       } else {
         c += "df" + an + "_ddp" + fid + " = -(";
         c +=

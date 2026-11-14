@@ -3,7 +3,7 @@
  * \file   mfront/src/IsotropicMisesCreepDSL.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -34,7 +34,7 @@ namespace mfront {
   IsotropicMisesCreepDSL::IsotropicMisesCreepDSL(const DSLOptions& opts)
       : IsotropicBehaviourDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->mb.setDSLName("IsotropicMisesCreepDSL");
+    this->mb.setDSLName("IsotropicMisesCreep");
     //
     this->disableCallBack("@IsotropicHardeningRule");
     this->disableCallBack("@IsotropicHardeningRules");

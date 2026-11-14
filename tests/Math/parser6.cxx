@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   20 déc 2008
+ * \date 20/12/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -41,6 +41,12 @@ int main() {
   h->setVariableValue(0, 1.5);
   h->setVariableValue(1, 2.54);
   assert(abs(h->getValue() - sin(1.5 * 2.54)) < 1.e-14);
+  // derivative independent of the parameter
+  auto h2 = std::make_shared<Evaluator>(var, "sin(a*x)+diff(x*x,x)", manager)
+                ->createFunctionByChangingParametersIntoVariables(nvar);
+  h2->setVariableValue(0, 1.5);
+  h2->setVariableValue(1, 2.);
+  assert(abs(h2->getValue() - sin(3.) - 3.) < 1.e-14);
 
 #if __GNUC__ != 3
   auto dh_dx = h->differentiate(0);

@@ -2,7 +2,7 @@
  * \file   mfront/src/CastemInterfaceExceptions.cxx
  * \brief  This file implements the CastemInterfaceExceptions class.
  * \author Thomas Helfer
- * \date   12/12/2011
+ * \date 12/12/2011
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -273,21 +273,24 @@ namespace castem {
         "operator requested");
   }  // end of throwInvalidDDSDDEException
 
-  void CastemUnSupportedCaseHandler::exe(const CastemReal* const,
-                                         const CastemReal* const,
-                                         CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         const CastemInt* const,
-                                         const CastemReal* const,
-                                         const CastemReal* const,
-                                         CastemReal* const,
-                                         const CastemInt* const,
-                                         CastemReal* const,
-                                         const StressFreeExpansionHandler&) {
+  void CastemUnSupportedCaseHandler::exe(
+      const CastemReal* const,
+      const CastemReal* const,
+      CastemReal* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      const CastemInt* const,
+      const CastemReal* const,
+      const CastemReal* const,
+      CastemReal* const,
+      const CastemInt* const,
+      CastemReal* const,
+      CastemReal* const,
+      const tfel::material::OutOfBoundsPolicy,
+      const StressFreeExpansionHandler&) {
     tfel::raise(
         "CastemUnSupportedCaseHandler::exe : "
         "we fall in a case that the castem interface "

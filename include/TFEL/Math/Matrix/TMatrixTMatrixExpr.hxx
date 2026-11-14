@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   19/03/2024
+ * \date 19/03/2024
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include <utility>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/FSAlgorithm/inner_product.hxx"
@@ -25,7 +26,7 @@
 #include "TFEL/Math/General/RunTimeCheck.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/tvector.hxx"
-#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel::math {
 
@@ -51,14 +52,15 @@ namespace tfel::math {
     using const_reference = const NumType&;
     using size_type = IndexType;
     using difference_type = ptrdiff_t;
-
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    //
+    TMatrixTMatrixExpr() = delete;
+    //
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
 
    protected:
-    TMatrixTMatrixExpr() = delete;
-
     /*!
      * \brief a pseudo iterator allowing to iterate over values in the same
      * row
@@ -71,12 +73,12 @@ namespace tfel::math {
                                                   const unsigned short i_)
           : m(m_), i(i_) {}
       //! go to the next column
-      TFEL_HOST_DEVICE constexpr RowConstIterator& operator++() {
+      [[nodiscard]] TFEL_HOST_DEVICE constexpr RowConstIterator& operator++() {
         ++j;
         return *this;
       }  // end of operator++
       //! \return the current matrix value
-      TFEL_HOST_DEVICE constexpr NumType operator*() const {
+      [[nodiscard]] TFEL_HOST_DEVICE constexpr NumType operator*() const {
         return this->m(this->i, this->j);
       }
 
@@ -92,11 +94,12 @@ namespace tfel::math {
       TFEL_HOST_DEVICE constexpr ColumnConstIterator(const MType& m_,
                                                      const size_type j_)
           : m(m_), i(0), j(j_) {}
-      TFEL_HOST_DEVICE constexpr ColumnConstIterator& operator++() noexcept {
+      [[nodiscard]] TFEL_HOST_DEVICE constexpr ColumnConstIterator&
+      operator++() noexcept {
         ++i;
         return *this;
       }  // end of operator++
-      TFEL_HOST_DEVICE constexpr auto operator*() const noexcept {
+      [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator*() const noexcept {
         return m(i, j);
       }
 
@@ -106,11 +109,10 @@ namespace tfel::math {
       const size_type j;
     };  // end of struct ColumnConstIterator
 
-    TFEL_HOST_DEVICE constexpr TMatrixTMatrixExpr(const A& l,
-                                                  const B& r) noexcept
-        : a(l), b(r) {}
+    TFEL_HOST_DEVICE constexpr TMatrixTMatrixExpr(A l, B r) noexcept
+        : a(std::forward<A>(l)), b(std::forward<B>(r)) {}
 
-    TFEL_HOST_DEVICE constexpr auto operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator()(
         const IndexType i, const IndexType j) const noexcept {
       using namespace tfel::fsalgo;
       return inner_product<K>::template exe<NumType>(RowConstIterator(a, i),

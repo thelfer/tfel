@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx
  * \brief
  * \author Thomas Helfer
- * \date   13 oct. 2015
+ * \date 13/10/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -15,7 +15,7 @@
 #define LIB_TFEL_MATH_ST2TOST2_BUILDFROMROTATIONMATRIX_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/Forward/st2tost2.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
@@ -37,8 +37,8 @@ namespace tfel::math::st2tost2_internals {
      * \return the st2tost2 that has the same effect as applying
      * the rotation
      */
-    static TFEL_MATH_INLINE2 tfel::math::st2tost2<1u, T> exe(
-        const rotation_matrix<T>&) {
+    TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<1u, T> exe(
+        const rotation_matrix<T>&) noexcept {
       return tfel::math::st2tost2<1u, T>::Id();
     }
   };  // end of struct BuildFromRotationMatrix<1u>
@@ -52,8 +52,8 @@ namespace tfel::math::st2tost2_internals {
      * the rotation
      * \param[in] r : rotation matrix
      */
-    static TFEL_MATH_INLINE2 tfel::math::st2tost2<2u, T> exe(
-        const rotation_matrix<T>& r) {
+    TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<2u, T> exe(
+        const rotation_matrix<T>& r) noexcept {
       tfel::math::st2tost2<2u, T> s;
       constexpr auto cste = Cste<T>::sqrt2;
       constexpr T zero = T{0};
@@ -94,8 +94,8 @@ namespace tfel::math::st2tost2_internals {
      * the rotation
      * \param[in] r : rotation matrix
      */
-    static TFEL_MATH_INLINE2 tfel::math::st2tost2<3u, T> exe(
-        const rotation_matrix<T>& r) {
+    TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<3u, T> exe(
+        const rotation_matrix<T>& r) noexcept {
       constexpr auto cste = Cste<T>::sqrt2;
       tfel::math::st2tost2<3u, T> s;
       const T a = r(0, 0);

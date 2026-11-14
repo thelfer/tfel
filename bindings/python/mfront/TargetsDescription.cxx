@@ -2,7 +2,7 @@
  * \file   bindings/python/mfront/TargetsDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mai 2016
+ * \date 04/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -15,6 +15,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "MFront/LibraryDescription.hxx"
+#include "MFront/SpecificTargetDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 
 static std::vector<std::string> TargetsDescription_getHeaders(
@@ -38,10 +39,26 @@ void declareTargetsDescription(pybind11::module_& m) {
   using namespace mfront;
   using LibraryAccess =
       LibraryDescription& (TargetsDescription::*)(const std::string&);
-  pybind11::class_<mfront::TargetsDescription>(m, "TargetsDescription")
+  pybind11::class_<SpecificTargetDescription>(
+      m, "SpecificTargetDescription",
+      "Structure describing a specific target defined by an MFront\n"
+      "interface: its sources, its dependencies to other targets, its\n"
+      "dependencies to MFront generated libraries and its commands")
+      .def(pybind11::init<>())
+      .def_readwrite("sources", &SpecificTargetDescription::sources)
+      .def_readwrite("deps", &SpecificTargetDescription::deps)
+      .def_readwrite("libraries", &SpecificTargetDescription::libraries)
+      .def_readwrite("cmds", &SpecificTargetDescription::cmds);
+  pybind11::class_<mfront::TargetsDescription>(
+      m, "TargetsDescription",
+      "Structure containing the results of the analysis of a\n"
+      "MFront file. This structure is used to build the compilation\n"
+      "rules for the libraries and specific targets defined by MFront\n"
+      "interfaces")
+      .def(pybind11::init<>())
       .def("getLibrary",
            static_cast<LibraryAccess>(&TargetsDescription::getLibrary),
-           pybind11::arg("library"))
+           pybind11::arg("n"))
       .def_property("headers", TargetsDescription_getHeaders,
                     TargetsDescription_setHeaders)
       .def("getLibraries", TargetsDescription_getLibraries)
@@ -52,6 +69,7 @@ void declareTargetsDescription(pybind11::module_& m) {
         os << l;
         return os.str();
       });
-  m.def("describes", mfront::describes);
-  m.def("mergeTargetsDescription", mfront::describes);
+  m.def("describes", mfront::describes, pybind11::arg("t"), pybind11::arg("n"));
+  m.def("mergeTargetsDescription", mfront::mergeTargetsDescription,
+        pybind11::arg("d"), pybind11::arg("s"), pybind11::arg("b"));
 }

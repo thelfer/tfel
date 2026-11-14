@@ -2,7 +2,7 @@
  * \file   src/System/ProcessManager.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03 nov 2007
+ * \date 03/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -42,9 +42,51 @@ std::mutex processesAccess;
 
 namespace tfel::system {
 
+  namespace {
+
+    /*!
+     * \brief blocks all signals in the calling thread during its lifetime.
+     * A thread holding processesAccess must not handle SIGCHLD, since
+     * sigChildHandler also locks it.
+     */
+    struct SignalsBlocker {
+      SignalsBlocker() {
+        sigset_t nSigSet;
+        sigfillset(&nSigSet);
+        sigprocmask(SIG_BLOCK, &nSigSet, &(this->oSigSet));
+      }
+      ~SignalsBlocker() { sigprocmask(SIG_SETMASK, &(this->oSigSet), nullptr); }
+
+     private:
+      sigset_t oSigSet;
+    };
+
+    /*!
+     * \brief creates a pipe whose descriptors are closed on exec, so that
+     * they are not inherited by the processes created by other threads.
+     * Without pipe2, a short window remains between pipe and fcntl.
+     * \param[out] fd: descriptors of the pipe
+     * \return 0 on success, -1 on failure
+     */
+    int createPipe(int fd[2]) {
+#ifdef __linux__
+      return ::pipe2(fd, O_CLOEXEC);
+#else
+      // no pipe2 (macOS)
+      if (::pipe(fd) == -1) {
+        return -1;
+      }
+      ::fcntl(fd[0], F_SETFD, FD_CLOEXEC);
+      ::fcntl(fd[1], F_SETFD, FD_CLOEXEC);
+      return 0;
+#endif /* __linux__ */
+    }  // end of createPipe
+
+  }  // end of namespace
+
   ProcessManager::Command::~Command() = default;
 
-  ProcessManager::ProcessManager() : shallStopOnSignals(false) {
+  ProcessManager::ProcessManager() {
     auto& sm = SignalManager::getSignalManager();
     struct sigaction action;
     auto f = &ProcessManager::sigChildHandler;
@@ -155,7 +197,8 @@ namespace tfel::system {
         continue;
       }
       if (p->isRunning) {
-        this->sendSignal(p->id);
+        // not sendSignal: processesAccess is already locked
+        ::kill(p->id, SIGTERM);
         ::waitpid(p->id, nullptr, 0);
         this->closeProcessFiles(p->id);
       }
@@ -212,11 +255,11 @@ namespace tfel::system {
     sigset_t nSigSet;
     sigset_t oSigSet;
     // creating pipes
-    if (pipe(ffd) == -1) {
+    if (createPipe(ffd) == -1) {
       string msg("ProcessManager::createProcess : pipe creation failed");
       systemCall::throwSystemError(msg, errno);
     }
-    if (pipe(cfd) == -1) {
+    if (createPipe(cfd) == -1) {
       string msg("ProcessManager::createProcess : pipe creation failed");
       systemCall::throwSystemError(msg, errno);
     }
@@ -252,7 +295,12 @@ namespace tfel::system {
         }
       }
       assert(readChar == 2);
-      if (!cmd.execute(cfd[0], ffd[1])) {
+      try {
+        if (!cmd.execute(cfd[0], ffd[1])) {
+          exit(EXIT_FAILURE);
+        }
+      } catch (...) {
+        // no exception shall leave the child
         exit(EXIT_FAILURE);
       }
       exit(EXIT_SUCCESS);
@@ -307,11 +355,11 @@ namespace tfel::system {
     copy(istream_iterator<string>(args), istream_iterator<string>(),
          back_inserter(tmp));
     // creating pipes
-    if (pipe(ffd) == -1) {
+    if (createPipe(ffd) == -1) {
       string msg("ProcessManager::createProcess : pipe creation failed");
       systemCall::throwSystemError(msg, errno);
     }
-    if (pipe(cfd) == -1) {
+    if (createPipe(cfd) == -1) {
       string msg("ProcessManager::createProcess : pipe creation failed");
       systemCall::throwSystemError(msg, errno);
     }
@@ -370,13 +418,15 @@ namespace tfel::system {
       for (const auto& ev : e) {
         ::setenv(ev.first.c_str(), ev.second.c_str(), 1);
       }
-      if (!directory.empty()) {
-        systemCall::changeCurrentWorkingDirectory(directory);
+      if ((!directory.empty()) && (::chdir(directory.c_str()) == -1)) {
+        // changing directory failed, tells the father
+        write(ffd[1], "CD", 2u);
+      } else {
+        // calling the command
+        execvp(argv[0], argv);
+        // called failed, tells the father, free memory and quit
+        write(ffd[1], "NO", 2u);
       }
-      // calling the command
-      execvp(argv[0], argv);
-      // called failed, tells the father, free memory and quit
-      write(ffd[1], "NO", 2u);
       close(ffd[1]);
       p2 = argv;
       while (p2 != argv + tmp.size() + 1) {
@@ -427,11 +477,24 @@ namespace tfel::system {
       }
       waitpid(pid, &status, 0);
       sigprocmask(SIG_SETMASK, &oSigSet, nullptr);
+      if (string(buf) == "CD") {
+        tfel::raise<SystemError>(
+            "ProcessManager::createProcess : can't change to directory '" +
+            directory + "'");
+      }
       string msg("ProcessManager::createProcess : call to execvp failed ");
       msg += "(can't execute command '" + cmd + "')";
       throw(SystemError(msg));
     }
     // the pipe was broken, which means that exec succeed
+    // closing the ends of the pipes used by the child (for files, the
+    // descriptor is registered and closed with the process)
+    if ((in[0] != -1) && (in[0] != in[1])) {
+      close(in[0]);
+    }
+    if ((out[0] != -1) && (out[0] != out[1])) {
+      close(out[1]);
+    }
     sigprocmask(SIG_SETMASK, &oSigSet, nullptr);
     return pid;
   }  // end of ProcessManager::createProces
@@ -461,7 +524,7 @@ namespace tfel::system {
     fdOut[1] = -1;
     pid_t pid;
     if (in) {
-      fdIn[0] = open(inputFile.c_str(), O_RDONLY);
+      fdIn[0] = open(inputFile.c_str(), O_RDONLY | O_CLOEXEC);
       if (fdIn[0] == -1) {
         string msg("ProcessManager::createProcess : can't open file ");
         msg += inputFile;
@@ -470,9 +533,10 @@ namespace tfel::system {
       fdIn[1] = fdIn[0];
     }
     if (out) {
-      fdOut[0] = open(outputFile.c_str(),
-                      O_WRONLY | O_CREAT | O_TRUNC,  //< file open in write mode
-                      S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);  //< 0644
+      fdOut[0] = open(
+          outputFile.c_str(),
+          O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC,  //< file open in write mode
+          S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);    //< 0644
       if (fdOut[0] == -1) {
         if (in) {
           close(fdIn[0]);
@@ -512,14 +576,14 @@ namespace tfel::system {
     pid_t pid = -1;
     if ((flag == StdIn) || (flag == StdInAndOut)) {
       // creating the pipe
-      if (pipe(fdIn) == -1) {
+      if (createPipe(fdIn) == -1) {
         string msg("ProcessManager::createProcess : pipe failed");
         systemCall::throwSystemError(msg, errno);
       }
     }
     if ((flag == StdOut) || (flag == StdInAndOut)) {
       // creating the pipe
-      if (pipe(fdOut) == -1) {
+      if (createPipe(fdOut) == -1) {
         // cleaning up a bit
         if ((flag == StdIn) || (flag == StdInAndOut)) {
           close(fdIn[0]);
@@ -564,16 +628,22 @@ namespace tfel::system {
     auto p = this->findProcess(pid);
     if (p.get() == nullptr) {
       std::ostringstream msg;
-      msg << "ProcessManager::sendSignal : process " << pid
-          << " is not registred";
+      msg << "ProcessManager::wait : process " << pid << " is not registred";
       throw(SystemError(msg.str()));
     }
     if (!p->isRunning) {
       return;
     }
     int status;
-    ::waitpid(pid, &status, 0);
-    this->setProcessExitStatus(*p, status);
+    auto r = ::waitpid(pid, &status, 0);
+    while ((r == -1) && (errno == EINTR)) {
+      r = ::waitpid(pid, &status, 0);
+    }
+    // otherwise, sigChildHandler reaped the child: it has already set
+    // its exit status and closed its files
+    if (r == pid) {
+      this->setProcessExitStatus(*p, status);
+    }
   }  // end of ProcessManager::wait
 
   void ProcessManager::sendSignal(const ProcessId pid, const int signal) {
@@ -596,7 +666,6 @@ namespace tfel::system {
           << "to process " << pid << " failed";
       systemCall::throwSystemError(msg.str(), errno);
     }
-    p->isRunning = false;
   }  // end of ProcessManager::sendSignal
 
   ProcessManager::~ProcessManager() {
@@ -667,6 +736,8 @@ namespace tfel::system {
     // removing the handle
     sm.removeHandler(this->sHandler);
     if (this->shallStopOnSignals) {
+      sm.removeHandler(this->sHandlerSIGBUS);
+      sm.removeHandler(this->sHandlerSIGTERM);
       sm.removeHandler(this->sHandlerSIGSEGV);
       sm.removeHandler(this->sHandlerSIGFPE);
       sm.removeHandler(this->sHandlerSIGABRT);
@@ -692,7 +763,7 @@ namespace tfel::system {
     const auto p2 = this->inputs.find(id);
     throw_if(p2 == this->inputs.end(),
              "no stream associated with pid " + std::to_string(id));
-    return {p2->second};
+    return wstream{p2->second};
   }  // end of ProcessManager::getInputStream
 
   ProcessManager::rstream ProcessManager::getOutputStream(
@@ -710,7 +781,7 @@ namespace tfel::system {
     const auto p2 = this->outputs.find(id);
     throw_if(p2 == this->outputs.end(),
              "no stream associated with pid " + std::to_string(id));
-    return {p2->second};
+    return rstream{p2->second};
   }  // end of ProcessManager::getOutputStream
 
   void ProcessManager::execute(const std::string& cmd,
@@ -745,6 +816,7 @@ namespace tfel::system {
 
   std::shared_ptr<ProcessManager::Process> ProcessManager::findProcess(
       const ProcessId pid) {
+    const SignalsBlocker blocker;
     std::lock_guard<std::mutex> guard(processesAccess);
     auto p = this->processes.rbegin();
     const auto pe = this->processes.rend();
@@ -761,6 +833,7 @@ namespace tfel::system {
 
   std::shared_ptr<const ProcessManager::Process> ProcessManager::findProcess(
       const ProcessId pid) const {
+    const SignalsBlocker blocker;
     std::lock_guard<std::mutex> guard(processesAccess);
     auto p = this->processes.rbegin();
     const auto pe = this->processes.rend();

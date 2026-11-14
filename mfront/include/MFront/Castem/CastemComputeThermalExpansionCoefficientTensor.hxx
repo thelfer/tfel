@@ -4,7 +4,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   01 avr 2008
+ * \date 01/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -162,6 +162,33 @@ namespace castem {
     static void exe(const CastemReal* const,
                     tfel::config::Types<3u, CastemReal, false>::
                         ThermalExpansionCoefficientTensor&);
+  };  // end of struct CastemComputeThermalExpansionCoefficientTensor
+
+  /*!
+   * Partial specialisation for finite strain behaviours
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            CastemSymmetryType stype>
+  struct TFEL_VISIBILITY_LOCAL CastemComputeThermalExpansionCoefficientTensor<
+      castem::STANDARDFINITESTRAINBEHAVIOUR,
+      H,
+      stype> {
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    /*!
+     * \brief compute the thermal expansion coefficient tensor.
+     * \param[in]  props : material properties
+     * \param[out] A     : thermal expansion coefficient tensor
+     */
+    static void exe(
+        const CastemReal* const props,
+        typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,
+                                     CastemReal,
+                                     false>::ThermalExpansionCoefficientTensor&
+            A) {
+      CastemComputeThermalExpansionCoefficientTensor<
+          castem::STANDARDSTRAINBASEDBEHAVIOUR, H, stype>::exe(props, A);
+    }
   };  // end of struct CastemComputeThermalExpansionCoefficientTensor
 
 }  // end of namespace castem

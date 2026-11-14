@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/GenericMaterialPropertyInterface.hxx
  * \brief  This file declares the GenericMaterialPropertyInterface class
  * \author Thomas Helfer
- * \date   04/05/2022
+ * \date 04/05/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,12 +29,14 @@ namespace mfront {
     ~GenericMaterialPropertyInterface() override;
 
    protected:
-    TypesDescription getTypesDescription() const override;
-    std::vector<std::string> getInterfaceHeaderFiles() const override;
-    std::string getInterfaceName() const override;
-    std::string getInterfaceNameInCamelCase() const override;
-    std::string getInterfaceNameInUpperCase() const override;
-    std::string getOutOfBoundsPolicyEnumerationPrefix() const override;
+    [[nodiscard]] TypesDescription getTypesDescription() const override;
+    [[nodiscard]] std::vector<std::string> getInterfaceHeaderFiles()
+        const override;
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::string getInterfaceNameInCamelCase() const override;
+    [[nodiscard]] std::string getInterfaceNameInUpperCase() const override;
+    [[nodiscard]] std::string getOutOfBoundsPolicyEnumerationPrefix()
+        const override;
   };  // end of GenericMaterialPropertyInterface
 
 }  // end of namespace mfront

@@ -3,7 +3,7 @@
  * \brief  this file implements partial specialisations of the
  * ResultType class for t2tost2.
  * \author Thomas Helfer
- * \date   19 November 2013
+ * \date 19/11/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

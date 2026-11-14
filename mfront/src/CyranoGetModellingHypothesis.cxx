@@ -2,7 +2,7 @@
  * \file  mfront/src/CyranoGetModellingHypothesis.cxx
  * \brief
  * \author Thomas Helfer
- * \date   21 fév 2014
+ * \date 21/02/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,6 +32,21 @@ namespace cyrano {
     msg << "cyrano::getModellingHypothesis : "
         << "invalid argument ('" << ndi << "')";
     tfel::raise<CyranoException>(msg.str());
+  }
+
+  CyranoInt getModellingHypothesisIdentifier(
+      const tfel::material::ModellingHypothesis::Hypothesis& h) {
+    using namespace tfel::material;
+    switch (h) {
+      case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+        return 1;
+      case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS:
+        return 2;
+      default:;
+    }
+    tfel::raise<CyranoException>(
+        "cyrano::getModellingHypothesisIdentifier : "
+        "unsupported modelling hypothesis");
   }
 
 }  // end of namespace cyrano

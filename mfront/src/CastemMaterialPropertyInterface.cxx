@@ -2,7 +2,7 @@
  * \file   mfront/src/CastemMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -50,6 +50,13 @@ namespace mfront {
 
   CastemMaterialPropertyInterface::CastemMaterialPropertyInterface() = default;
 
+  void CastemMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, CastemMaterialPropertyInterface::tokens_iterator>
   CastemMaterialPropertyInterface::treatKeyword(
       const std::string& k,
@@ -58,7 +65,7 @@ namespace mfront {
       const tokens_iterator) {
     tfel::raise_if((std::find(i.begin(), i.end(), "castem") != i.end()) ||
                        (std::find(i.begin(), i.end(), "Castem") != i.end()) ||
-                       (std::find(i.begin(), i.end(), "Cast3m") != i.end()),
+                       (std::find(i.begin(), i.end(), "Cast3M") != i.end()),
                    "CastemMaterialPropertyInterface::treatKeyword: "
                    "unsupported keyword '" +
                        k + "'");
@@ -128,7 +135,7 @@ namespace mfront {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
           << ")){\n"
           << "cerr << \"" << name << ": " << v.name
-          << " is below its physical upper bound (\"\n << " << v.name
+          << " is over its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
           << "return std::nan(\"\");\n"
           << "}\n";
@@ -136,7 +143,8 @@ namespace mfront {
       out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
           << "))||"
           << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
-          << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\\n\";\n"
@@ -185,6 +193,9 @@ namespace mfront {
           << ")){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
+          << "cerr << \"" << name << ": " << v.name
+          << " is below its lower bound (\"\n << " << v.name << " << \"<"
+          << b.lowerBound << ").\\n\";\n"
           << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
@@ -256,6 +267,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     out << "/*!\n"
         << "* \\file   " << fn << "\n"
         << "* \\brief  "
@@ -267,7 +279,7 @@ namespace mfront {
       out << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      out << "* \\date   " << fd.date << '\n';
+      out << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       out << fd.description << '\n';
@@ -310,6 +322,7 @@ namespace mfront {
                    "unable to open '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
     const auto& date = fd.date;
@@ -327,7 +340,7 @@ namespace mfront {
       out << "* \\author " << author << '\n';
     }
     if (!date.empty()) {
-      out << "* \\date   " << date << '\n';
+      out << "* \\date " << date << '\n';
     }
     out << " */\n\n"
         << "#include<algorithm>\n"
@@ -364,6 +377,7 @@ namespace mfront {
     writeVariablesNamesSymbol(out, name, mpd);
     writeVariablesBoundsSymbols(out, name, mpd);
     writeValidatorSymbol(out, name, mpd);
+    writeCompatibilityModeSymbol(out, name, mpd);
     writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
@@ -374,10 +388,18 @@ namespace mfront {
     writeMaterialKnowledgeTypeSymbol(out, name,
                                      MaterialKnowledgeType::MATERIALPROPERTY);
     writeParametersSymbols(out, name, mpd);
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    exportStringSymbol(
+        out, name + "_src",
+        tfel::utilities::replace_all(
+            tfel::utilities::tokenize(file, tfel::system::dirSeparator())
+                .back(),
+            "\\", "\\\\"));
+#else
     exportStringSymbol(
         out, name + "_src",
         tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back());
-
+#endif
     if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "MFRONT_SHAREDOBJ int\n"

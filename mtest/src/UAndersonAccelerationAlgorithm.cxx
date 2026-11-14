@@ -36,13 +36,16 @@ namespace mtest {
     if (p == "MethodOrder") {
       throw_if(this->Nmax != -1, "the method order has already been defined");
       const auto i = AccelerationAlgorithm::convertToUnsignedShort(m, v);
-      throw_if(i == 0, "invalid method order value.");
+      // the Anderson algorithm stores the method order in an unsigned char
+      throw_if((i == 0) || (i > std::numeric_limits<unsigned char>::max()),
+               "invalid method order value.");
       this->Nmax = i;
     } else if (p == "AccelerationPeriod") {
       throw_if(this->alMax != -1,
                "the acceleration period has already been defined");
       const auto i = AccelerationAlgorithm::convertToUnsignedShort(m, v);
-      throw_if(i == 0, "invalid acceleration period value.");
+      throw_if((i == 0) || (i > std::numeric_limits<unsigned char>::max()),
+               "invalid acceleration period value.");
       this->alMax = i;
     } else {
       throw_if(true, "invalid parameter '" + p + "'.");
@@ -78,7 +81,9 @@ namespace mtest {
       const real,
       const unsigned short iter) {
     if (iter == 1u) {
-      *(this->uO) = u1 - du;
+      // the correction du has already been subtracted from u1: u1 + du is
+      // the iterate the fixed-point step started from
+      *(this->uO) = u1 + du;
     }
     *(this->uN) = u1;
     this->a->newIter(this->uO, this->uN);

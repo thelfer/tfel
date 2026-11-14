@@ -20,10 +20,10 @@ namespace ansys {
 
   template <typename real>
   static void AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const AnsysInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0] -= s0[0];
@@ -37,46 +37,50 @@ namespace ansys {
       de[3] -= (s1[3] - s0[3]) * cste;
     }
     if (d == 3) {
+      // e and de follow the Ansys order (XY, YZ, XZ)
       e[3] -= s0[3] * cste;
-      e[4] -= s0[3] * cste;
-      e[5] -= s0[5] * cste;
+      e[4] -= s0[5] * cste;
+      e[5] -= s0[4] * cste;
       de[3] -= (s1[3] - s0[3]) * cste;
-      de[4] -= (s1[4] - s0[4]) * cste;
-      de[5] -= (s1[5] - s0[5]) * cste;
+      de[4] -= (s1[5] - s0[5]) * cste;
+      de[5] -= (s1[4] - s0[4]) * cste;
     }
   }  // end of AnsysStandardSmallStrainStressFreeExpansionHandler
 
-  void AnsysStandardSmallStrainStressFreeExpansionHandler(float *const e,
-                                                          float *const de,
-                                                          const float *const s0,
-                                                          const float *const s1,
+  void AnsysStandardSmallStrainStressFreeExpansionHandler(float* const e,
+                                                          float* const de,
+                                                          const float* const s0,
+                                                          const float* const s1,
                                                           const AnsysInt d) {
     AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   void AnsysStandardSmallStrainStressFreeExpansionHandler(
-      double *const e,
-      double *const de,
-      const double *const s0,
-      const double *const s1,
+      double* const e,
+      double* const de,
+      const double* const s0,
+      const double* const s1,
       const AnsysInt d) {
     AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   template <typename real>
   static void AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const AnsysInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+    // logarithmic strain of the expansion stretch I + s, i.e. log1p
+    // applied to the eigenvalues of s
+    const auto f = [](const real x) { return std::log1p(x); };
     if (d == 2) {
       // s0 and s1 are given using TFEL conventions
       tfel::math::stensor<2u, real> e0(s0);
       tfel::math::stensor<2u, real> e1(s1);
-      const auto ln_e0 = tfel::math::logarithm(e0);
-      const auto ln_e1 = tfel::math::logarithm(e1);
+      const auto ln_e0 = e0.computeIsotropicFunction(f);
+      const auto ln_e1 = e1.computeIsotropicFunction(f);
       e[0] -= ln_e0[0];
       e[1] -= ln_e0[1];
       e[2] -= ln_e0[2];
@@ -88,35 +92,36 @@ namespace ansys {
     } else {
       tfel::math::stensor<3u, real> e0(s0);
       tfel::math::stensor<3u, real> e1(s1);
-      const auto ln_e0 = tfel::math::logarithm(e0);
-      const auto ln_e1 = tfel::math::logarithm(e1);
+      const auto ln_e0 = e0.computeIsotropicFunction(f);
+      const auto ln_e1 = e1.computeIsotropicFunction(f);
+      // e and de follow the Ansys order (XY, YZ, XZ)
       e[0] -= ln_e0[0];
       e[1] -= ln_e0[1];
       e[2] -= ln_e0[2];
       e[3] -= ln_e0[3] * cste;
-      e[4] -= ln_e0[3] * cste;
-      e[5] -= ln_e0[5] * cste;
+      e[4] -= ln_e0[5] * cste;
+      e[5] -= ln_e0[4] * cste;
       de[0] -= (ln_e1[0] - ln_e0[0]);
       de[1] -= (ln_e1[1] - ln_e0[1]);
       de[2] -= (ln_e1[2] - ln_e0[2]);
       de[3] -= (ln_e1[3] - ln_e0[3]) * cste;
-      de[4] -= (ln_e1[4] - ln_e0[4]) * cste;
-      de[5] -= (ln_e1[5] - ln_e0[5]) * cste;
+      de[4] -= (ln_e1[5] - ln_e0[5]) * cste;
+      de[5] -= (ln_e1[4] - ln_e0[4]) * cste;
     }
   }  // end of AnsysLogarithmicStrainStressFreeExpansionHandler
 
-  void AnsysLogarithmicStrainStressFreeExpansionHandler(float *const e,
-                                                        float *const de,
-                                                        const float *const s0,
-                                                        const float *const s1,
+  void AnsysLogarithmicStrainStressFreeExpansionHandler(float* const e,
+                                                        float* const de,
+                                                        const float* const s0,
+                                                        const float* const s1,
                                                         const AnsysInt d) {
     AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
-  void AnsysLogarithmicStrainStressFreeExpansionHandler(double *const e,
-                                                        double *const de,
-                                                        const double *const s0,
-                                                        const double *const s1,
+  void AnsysLogarithmicStrainStressFreeExpansionHandler(double* const e,
+                                                        double* const de,
+                                                        const double* const s0,
+                                                        const double* const s1,
                                                         const AnsysInt d) {
     AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }

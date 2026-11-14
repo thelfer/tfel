@@ -2,7 +2,7 @@
  * \file  CodeBlock.cxx
  * \brief
  * \author Thomas Helfer
- * \date   21 janv. 2015
+ * \date 21/01/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -50,9 +50,9 @@ namespace mfront {
   }  // end of CodeBlock::throwUndeclaredAttribute
 
   CodeBlock::CodeBlock() = default;
-  CodeBlock::CodeBlock(CodeBlock&&) = default;
+  CodeBlock::CodeBlock(CodeBlock&&) noexcept = default;
   CodeBlock::CodeBlock(const CodeBlock&) = default;
-  CodeBlock& CodeBlock::operator=(CodeBlock&&) = default;
+  CodeBlock& CodeBlock::operator=(CodeBlock&&) noexcept = default;
   CodeBlock& CodeBlock::operator=(const CodeBlock&) = default;
   CodeBlock::~CodeBlock() = default;
 

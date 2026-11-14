@@ -2,7 +2,7 @@
  * \file  MaterialPropertyDocumentationGenerator.hxx
  * \brief
  * \author Maxence Wangermez
- * \date   16 avril 2024
+ * \date 16/04/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -39,9 +39,9 @@ namespace mfront {
      * \param[in] f    : behaviour domain specific language
      */
     MaterialPropertyDocumentationGenerator(const int,
-                                           const char *const *const,
+                                           const char* const* const,
                                            std::shared_ptr<MaterialPropertyDSL>,
-                                           const std::string &);
+                                           const std::string&);
     //! treat the requests
     void exe() const override;
     //! destructor
@@ -50,20 +50,20 @@ namespace mfront {
     struct VariableInformation
         : DocumentationGeneratorBase::VariableInformationBase {
       VariableInformation();
-      VariableInformation(VariableInformation &&) noexcept;
-      VariableInformation(const VariableInformation &);
-      VariableInformation &operator=(VariableInformation &&);
-      VariableInformation &operator=(const VariableInformation &);
+      VariableInformation(VariableInformation&&) noexcept;
+      VariableInformation(const VariableInformation&);
+      VariableInformation& operator=(VariableInformation&&) noexcept;
+      VariableInformation& operator=(const VariableInformation&);
       ~VariableInformation() noexcept;
     };
 
    private:
-    void writeWebOutput(std::ostream &,
-                        const MaterialPropertyDescription &,
-                        const FileDescription &) const;
-    void writeFullOutput(std::ostream &,
-                         const MaterialPropertyDescription &,
-                         const FileDescription &) const;
+    void writeWebOutput(std::ostream&,
+                        const MaterialPropertyDescription&,
+                        const FileDescription&) const;
+    void writeFullOutput(std::ostream&,
+                         const MaterialPropertyDescription&,
+                         const FileDescription&) const;
     //! abstract behaviour dsl
     std::shared_ptr<MaterialPropertyDSL> dsl;
   };  // end of struct MaterialPropertyDocumentationGenerator

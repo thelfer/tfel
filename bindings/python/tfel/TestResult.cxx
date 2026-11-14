@@ -19,9 +19,11 @@ void declareTestResult(pybind11::module_&);
 
 void declareTestResult(pybind11::module_& m) {
   using namespace tfel::tests;
-  pybind11::class_<TestResult>(m, "TestResult")
-      .def(pybind11::init<>())
-      .def("success", &TestResult::success)
-      .def("duration", &TestResult::duration);
+  pybind11::class_<TestResult>(
+      m, "TestResult",
+      "Structure describing the result of a test or a test suite")
+      .def(pybind11::init<>(), "Default constructor")
+      .def("success", &TestResult::success, "Report success")
+      .def("duration", &TestResult::duration, "Return the test duration");
 
-}  // end of declareExternalLibraryManager
+}  // end of declareTestResult

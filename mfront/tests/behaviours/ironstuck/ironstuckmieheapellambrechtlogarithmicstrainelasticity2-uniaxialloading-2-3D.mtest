@@ -10,7 +10,7 @@
 @Behaviour<umat> @library@ 'umatlogarithmicstrainelasticity2';
 
 @DeformationGradientEpsilon 2.e-11;
-@StressEpsilon 7.e2;
+@StressEpsilon 1;
 @Parameter 'RelativePrecision' 1e6;
 
 @MaterialProperty<constant> 'YoungModulus'     215.e9;

@@ -2,7 +2,7 @@
  * \file   mfront/src/MaterialKnowledgeDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10/01/2022
+ * \date 10/01/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,16 +32,18 @@ namespace mfront {
   const char* const MaterialKnowledgeDescription::validator = "validator";
   const char* const MaterialKnowledgeDescription::buildIdentifier =
       "build_identifier";
+  const char* const MaterialKnowledgeDescription::compatibilityMode =
+      "compatibility_mode";
 
   MaterialKnowledgeDescription::MaterialKnowledgeDescription() = default;
   MaterialKnowledgeDescription::MaterialKnowledgeDescription(
-      MaterialKnowledgeDescription&&) = default;
+      MaterialKnowledgeDescription&&) noexcept = default;
   MaterialKnowledgeDescription::MaterialKnowledgeDescription(
       const MaterialKnowledgeDescription&) = default;
   MaterialKnowledgeDescription& MaterialKnowledgeDescription::operator=(
       const MaterialKnowledgeDescription&) = default;
   MaterialKnowledgeDescription& MaterialKnowledgeDescription::operator=(
-      MaterialKnowledgeDescription&&) = default;
+      MaterialKnowledgeDescription&&) noexcept = default;
 
   void MaterialKnowledgeDescription::throwUndefinedAttribute(
       const std::string_view n) {
@@ -105,12 +107,13 @@ namespace mfront {
           {std::string{f}, {interfaces, dsl_options}});
     } else {
 #pragma message("treat DSL options")
-      std::copy_if(interfaces.begin(), interfaces.end(),
-                   std::back_inserter(std::get<0>(p->second)),
-                   [&interfaces](const std::string& i) {
-                     return std::find(interfaces.begin(), interfaces.end(),
-                                      i) == interfaces.end();
-                   });
+      auto& registred_interfaces = std::get<0>(p->second);
+      for (const auto& i : interfaces) {
+        if (std::find(registred_interfaces.begin(), registred_interfaces.end(),
+                      i) == registred_interfaces.end()) {
+          registred_interfaces.push_back(i);
+        }
+      }
     }
   }  // end of addExternalMFrontFile
 
@@ -236,5 +239,24 @@ namespace mfront {
     return d.getAttribute<bool>(
         MaterialKnowledgeDescription::initializeParametersFromFile, true);
   }  // end of allowsParametersInitializationFromFile
+
+  std::optional<CompatibilityMode::Version> getCompatibilityMode(
+      const MaterialKnowledgeDescription& d) {
+    if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      const auto version = d.getAttribute<std::string>(
+          MaterialKnowledgeDescription::compatibilityMode);
+      return CompatibilityMode::fromString(version);
+    }
+    return getDefaultCompatibilityMode();
+  }  // end of getCompatibilityMode
+
+  MFRONT_VISIBILITY_EXPORT CompatibilityMode::Version
+  getEffectiveCompatibilityMode(const MaterialKnowledgeDescription& d) {
+    const auto ov = getCompatibilityMode(d);
+    if (ov.has_value()) {
+      return *ov;
+    }
+    return getGreatestCompatibilityMode();
+  }  // end of getEffectiveCompatibilityMode
 
 }  // end of namespace mfront

@@ -3,7 +3,7 @@
  * mfront/tests/models/interfaces/include/MFront/MFrontGerminalModelInterface.hxx
  * \brief  This file declares the MFrontGerminalModelInterface class
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,35 +32,26 @@ namespace mfront {
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool, tokens_iterator> treatKeyword(
+    std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
 
    private:
-    virtual void setOutputFileNames(const ModelDescription&) override;
-
-    virtual void writeGetConstantMaterialProperty(
-        const VarHandler&, const ModelDescription&) override;
-
-    virtual std::string getApplicationName() const override;
-
-    virtual void writeInitializeMethod(const ModelDescription&) override;
-
-    virtual void writeSpecificPrivateMethodDeclaration(
+    //
+    void setOutputFileNames(const ModelDescription&) override;
+    void writeGetConstantMaterialProperty(const VarHandler&,
+                                          const ModelDescription&) override;
+    std::string getApplicationName() const override;
+    void writeInitializeMethod(const ModelDescription&) override;
+    void writeSpecificPrivateMethodDeclaration(
         const FileDescription&, const ModelDescription&) override;
-
-    virtual void generateDomainsList(const ModelDescription&) override;
-
-    virtual void buildDomainName() override;
-
-    virtual bool initializeDefaultDomainListInConstrutor(
+    void generateDomainsList(const ModelDescription&) override;
+    void buildDomainName() override;
+    bool initializeDefaultDomainListInConstrutor(
         const ModelDescription&) const override;
-
-    virtual void writeInitializeParametersMethod(
-        const ModelDescription&) override;
-
+    void writeInitializeParametersMethod(const ModelDescription&) override;
   };  // end of class MFrontGerminalModelInterface
 
 }  // end of namespace mfront

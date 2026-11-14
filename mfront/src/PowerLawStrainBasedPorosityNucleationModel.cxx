@@ -2,7 +2,7 @@
  * \file   mfront/src/PowerLawStrainBasedPorosityNucleationModel.cxx
  * \brief
  * \author Thomas Helfer
- * \date   05/04/2020
+ * \date 05/04/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -33,7 +33,8 @@ namespace mfront::bbrick {
     auto mcs = StrainBasedPorosityNucleationModelBase::
         getMaterialCoefficientDescriptions();
     mcs.push_back({"real", "fn", "law coefficient"});
-    mcs.push_back({"strain", "en", "minimal value of equivalent pastic srain"});
+    mcs.push_back(
+        {"strain", "en", "minimal value of the equivalent plastic strain"});
     mcs.push_back({"real", "m", "exponent of the power law"});
     return mcs;
   }  // end of getMaterialCoefficientDescriptions

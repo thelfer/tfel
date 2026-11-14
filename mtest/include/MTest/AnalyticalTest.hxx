@@ -42,6 +42,9 @@ namespace mtest {
                    const std::function<real(const CurrentState&)>&,
                    const EvolutionManager&,
                    const real);
+    //
+    AnalyticalTest& operator=(const AnalyticalTest&) = delete;
+    AnalyticalTest& operator=(AnalyticalTest&&) = delete;
     /*!
      * \param[in] s: current material state
      * \param[in] t  : time
@@ -53,13 +56,11 @@ namespace mtest {
                const real,
                const unsigned int) override;
     //! \return the results of the test
-    tfel::tests::TestResult getResults() const override;
+    [[nodiscard]] tfel::tests::TestResult getResults() const override;
     //! destructor
     ~AnalyticalTest() override;
 
    protected:
-    AnalyticalTest& operator=(const AnalyticalTest&) = delete;
-    AnalyticalTest& operator=(AnalyticalTest&&) = delete;
     //! analytical solution
     tfel::math::Evaluator f;
     //! results of the test

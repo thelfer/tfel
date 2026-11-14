@@ -134,7 +134,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void tensor<N, T>::copy(const auto p) noexcept {
-    tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(p, *this);
+    tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(p, this->begin());
   }  // end of copy
 
   template <unsigned short N, typename T>
@@ -179,6 +179,17 @@ namespace tfel::math {
         dJ;
     computeDeterminantDerivative(dJ, F);
     return dJ;
+  }
+
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantDerivative(
+      const TensorConcept auto& F) noexcept {
+    using TensorType = decltype(F);
+    tensor<
+        getSpaceDimension<TensorType>(),
+        typename ComputeUnaryResult<numeric_type<TensorType>, Power<2>>::Result>
+        adj;
+    computeAdjugateDeterminantDerivative(adj, F);
+    return adj;
   }
 
   template <TensorConcept TensorType>

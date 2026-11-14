@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/LSDYNA/LSDYNAExplicitInterface.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19 mars 2016
+ * \date 19/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -86,8 +86,8 @@ namespace lsdyna {
         const unsigned short o = ATraits::elasticPropertiesOffset;
         LSDYNAComputeThermalExpansionCoefficientTensor<
             ATraits::btype, H,
-            ATraits::stype>::exe(props + o,
-                                 data.getThermalExpansionCoefficientTensor());
+            ATraits::type>::exe(props + o,
+                                data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
     //! place holder for tag dispatching
@@ -187,7 +187,7 @@ namespace lsdyna {
         return 1;
       }
       b.checkBounds();
-      const auto smf = TangentOperatorTraits::LSDYNA;
+      const auto smf = TangentOperatorTraits::ABAQUS;
       const auto r =
           b.computePredictionOperator(smf, Behaviour<H, T, false>::ELASTIC);
       ExtractAndConvertTangentOperator<H>::exe(b, D);
@@ -270,7 +270,7 @@ namespace lsdyna {
         return 1;
       }
       b.checkBounds();
-      const auto smf = TangentOperatorTraits::LSDYNA;
+      const auto smf = TangentOperatorTraits::ABAQUS;
       auto r_dt = std::numeric_limits<T>::max();
       auto tsf = b.computeAPrioriTimeStepScalingFactor(r_dt);
       if (!tsf.first) {

@@ -116,6 +116,7 @@ namespace mtest {
     using tfel::material::getSpaceDimension;
     using tfel::math::vector;
     constexpr auto sqrt2 = Cste<real>::sqrt2;
+    const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "DianaFEASmallStrainBehaviour::call_behaviour: " + m);
     };
@@ -149,6 +150,12 @@ namespace mtest {
       ue0(i) *= sqrt2;
       ude(i) *= sqrt2;
     }
+    // DIANA FEA conventions: 23 <-> 13
+    if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      std::swap(ue0(4), ue0(5));
+      std::swap(ude(4), ude(5));
+      std::swap(s.s1(4), s.s1(5));
+    }
     const auto nprops = static_cast<DianaFEAInt>(s.mprops1.size());
     const auto ntens =
         static_cast<DianaFEAInt>(this->getThermodynamicForcesSize());
@@ -162,9 +169,21 @@ namespace mtest {
     if (ktype != StiffnessMatrixType::NOSTIFFNESS) {
       UmatNormaliseTangentOperator::exe(
           &Kt(0, 0), wk.D, getSpaceDimension(this->getHypothesis()));
+      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        // back to TFEL conventions: 23 <-> 13
+        for (unsigned short i = 0; i != 6; ++i) {
+          std::swap(Kt(i, 4), Kt(i, 5));
+        }
+        for (unsigned short i = 0; i != 6; ++i) {
+          std::swap(Kt(4, i), Kt(5, i));
+        }
+      }
     }
     std::copy(wk.ivs.begin(), wk.ivs.end(), s.iv1.begin());
     // turning things in standard conventions
+    if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      std::swap(s.s1(4), s.s1(5));
+    }
     for (decltype(s.e1.size()) i = 3; i != this->getThermodynamicForcesSize();
          ++i) {
       s.s1(i) *= sqrt2;

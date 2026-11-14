@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/tensor.hxx
  * \brief
  * \author Thomas Helfer
- * \date   01 Déc 2013
+ * \date 01/12/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -102,8 +102,10 @@ namespace tfel::math {
     TFEL_HOST_DEVICE static constexpr tensor<N, ValueType>
     buildFromFortranMatrix(const base_type<ValueType>* const) noexcept;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tensor,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArray<
         tensor<N, ValueType>,
@@ -176,6 +178,13 @@ namespace tfel::math {
    * \param[in] F: tensor where the the determinant is evaluated
    */
   TFEL_HOST_DEVICE constexpr auto computeDeterminantDerivative(
+      const TensorConcept auto&) noexcept;
+  /*!
+   * \return the adjugate of a tensor, \f$\det\left(F\right)\,F^{-1}\f$,
+   * i.e. the transpose of the derivative of the determinant
+   * \param[in] F: tensor where the the adjugate is evaluated
+   */
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantDerivative(
       const TensorConcept auto&) noexcept;
   /*!
    * \brief rotate a tensor using a rotation matrix

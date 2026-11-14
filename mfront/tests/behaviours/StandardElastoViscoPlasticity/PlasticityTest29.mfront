@@ -1,0 +1,29 @@
+@DSL Implicit;
+@Behaviour PlasticityTest29;
+@Description {
+  "Delobelle-Robinet-Schaffler (DRS) kinematic hardening rule, with a static "
+  "recovery of the back strain."
+}
+
+@ModellingHypotheses {".+"};
+@OrthotropicBehaviour<Pipe>;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 100e6},
+    kinematic_hardening : "DRS" {
+      C : 15e9,
+      D : 1e2,
+      f : 1e-4,
+      a0 : 1e-3,
+      m : 3,
+      Ec : {0.33, 0.33, 0.33, 1, 1, 1},
+      Rs : {0.33, 0.63, 0.33, 1, 1, 1},
+      Rd : {0.33, 0.33, 0.33, 1, 1, 1}
+    }
+  }
+};

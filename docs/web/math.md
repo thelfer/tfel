@@ -49,7 +49,7 @@ The `Evaluator` class is used to interpret textual formula, as
 follows:
 
 ~~~~{.cxx}
-Evalutator ev("sin(x)");
+Evaluator ev("sin(x)");
 ev.setVariableValue("x",12);
 const auto s = ev.getValue();
 ~~~~
@@ -57,16 +57,16 @@ const auto s = ev.getValue();
 A shorthand for the previous code is the following:
 
 ~~~~{.cxx}
-Evalutator ev("sin(x)");
-const auto s = ev.getValue({{x:12}});
+Evaluator ev("sin(x)");
+const auto s = ev.getValue({{"x", 12}});
 ~~~~
 
 The `getValue` method can also be replaced by the call operator, as
 follows:
 
 ~~~~{.cxx}
-Evalutator ev("sin(x)");
-const auto s = ev({{x:12}});
+Evaluator ev("sin(x)");
+const auto s = ev({{"x", 12}});
 ~~~~
 
 ### Standard operations
@@ -82,6 +82,11 @@ Let `x` and `y` be two variables, then:
 The standard priority of those operators has been
 respected. Parenthesis may be used to define sub-expressions.
 
+As in `Fortran` and `Python`, the exponentiation is right-associative:
+`x**y**z` is \(x^{\left(y^{z}\right)}\), i.e. `x**(y**z)`, and has a
+higher priority than the unary minus: `-x**2` is \(-x^{2}\) and
+`x**-y**z` is `x**(-(y**z))`.
+
 ### Standard function and constants
 
 This paragraph gives a list of functions known by the `Evaluator`
@@ -94,7 +99,7 @@ The physical constants described in
 namespace, as follows:
 
 ~~~~{.cxx}
-Evalutator ev("exp(-Q/(Cste::R*T))");
+Evaluator ev("exp(-Q/(Cste::R*T))");
 ~~~~
 
 #### Unary functions
@@ -146,8 +151,8 @@ Additionally, the following functions have been introduced:
 
 #### Binary functions
 
-- `max`: returns the minimum of its two arguments.
-- `min`: returns the maximum of its two arguments.
+- `max`: returns the maximum of its two arguments.
+- `min`: returns the minimum of its two arguments.
 - `hypot`: returns the hypotenuse of a right-angled triangle whose
   legs are x and y, i.e. computes \(\sqrt{x^{2}+y^{2}}.
 - `atan2`: returns the principal value of the arc tangent of \(y/x\),

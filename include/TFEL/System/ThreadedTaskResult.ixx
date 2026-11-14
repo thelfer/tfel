@@ -24,11 +24,15 @@ namespace tfel::system {
 
   template <typename T>
   template <typename... Args>
-  ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args)
-      : result(args...) {}  // end of ThreadedTaskResult
+  ThreadedTaskResult<T>::ThreadedTaskResult(Args&&... args) requires(
+      (sizeof...(Args) != 1) ||
+      (!std::is_same_v<std::remove_cvref_t<Args>, ThreadedTaskResult> && ...))
+      : result(std::in_place, std::forward<Args>(args)...) {
+  }  // end of ThreadedTaskResult
 
   template <typename T>
-  ThreadedTaskResult<T>::ThreadedTaskResult(ThreadedTaskResult&&) = default;
+  ThreadedTaskResult<T>::ThreadedTaskResult(ThreadedTaskResult&&) noexcept =
+      default;
 
   template <typename T>
   ThreadedTaskResult<T>::ThreadedTaskResult(const ThreadedTaskResult&) =
@@ -36,7 +40,7 @@ namespace tfel::system {
 
   template <typename T>
   ThreadedTaskResult<T>& ThreadedTaskResult<T>::operator=(
-      ThreadedTaskResult&&) = default;
+      ThreadedTaskResult&&) noexcept = default;
 
   template <typename T>
   ThreadedTaskResult<T>& ThreadedTaskResult<T>::operator=(

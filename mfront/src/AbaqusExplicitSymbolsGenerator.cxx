@@ -2,7 +2,7 @@
  * \file   AbaqusExplicitSymbolsGenerator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   19/07/2018
+ * \date 19/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -40,12 +40,12 @@ namespace mfront {
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       const auto s =
           i.getFunctionNameBasis(name) + "_OrthotropyManagementPolicy";
-      if (!mb.hasAttribute(
-              AbaqusExplicitInterface::orthotropyManagementPolicy)) {
+      if (!AbaqusInterfaceBase::hasOrthotropyManagementPolicy(
+              i.getInterfaceName(), mb)) {
         exportUnsignedShortSymbol(out, s, 0u);
       } else {
-        const auto omp = mb.getAttribute<std::string>(
-            AbaqusExplicitInterface::orthotropyManagementPolicy);
+        const auto omp = AbaqusInterfaceBase::getOrthotropyManagementPolicy(
+            i.getInterfaceName(), mb);
         if (omp == "MFront") {
           exportUnsignedShortSymbol(out, s, 2u);
         } else if (omp == "Native") {
@@ -68,7 +68,8 @@ namespace mfront {
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       tfel::raise_if(
-          !AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
+          !AbaqusInterfaceBase::hasFiniteStrainStrategy(i.getInterfaceName(),
+                                                        mb),
           "AbaqusExplicitSymbolsGenerator::writeBehaviourTypeSymbols: "
           "behaviours written in the small strain framework "
           "must be embedded in a strain strategy");
@@ -92,7 +93,8 @@ namespace mfront {
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       tfel::raise_if(
-          !AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
+          !AbaqusInterfaceBase::hasFiniteStrainStrategy(i.getInterfaceName(),
+                                                        mb),
           "AbaqusExplicitSymbolsGenerator::writeBehaviourKinematicSymbols: "
           "behaviours written in the small strain framework "
           "must be embedded in a strain strategy");

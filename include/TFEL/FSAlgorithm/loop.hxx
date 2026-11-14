@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/loop.hxx
  * \brief  this file implements the loop class.
  * \author Thomas Helfer
- * \date   18/04/2018
+ * \date 18/04/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -35,7 +35,7 @@ namespace tfel::fsalgo {
        * \param[in,out] f: callable describing the body of the loop
        */
       template <typename F>
-      void exe(F& f) {
+      TFEL_HOST_DEVICE constexpr static void exe(F& f) {
         f(I);
         do_loop<I + 1, N>::exe(f);
       }  // end of exe
@@ -53,15 +53,15 @@ namespace tfel::fsalgo {
        * \tparam F: type of the callable
        */
       template <typename F>
-      void exe(F&) {}  // end of exe
-    };                 // end of struct do_loop<N, N>
+      TFEL_HOST_DEVICE constexpr static void exe(F&) {}  // end of exe
+    };  // end of struct do_loop<N, N>
 
   }  // namespace internals
 
   /*!
    * \class loop
    * \author Thomas Helfer
-   * \date   18/04/2018
+   * \date 18/04/2018
    * This class is meant to manually unroll a loop a compile time.
    * The body of the loop is passed as a callable taking the
    * current indice as argument.
@@ -73,7 +73,7 @@ namespace tfel::fsalgo {
      * \param[in,out] f: callable describing the body of the loop
      */
     template <typename F>
-    void exe(F& f) {
+    TFEL_HOST_DEVICE constexpr static void exe(F& f) {
       tfel::fsalgo::internals::do_loop<0, N>::exe(f);
     }  // end of exe
   };

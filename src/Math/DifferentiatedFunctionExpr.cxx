@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   02 oct 2007
+ * \date 02/10/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -133,6 +133,7 @@ namespace tfel::math::parser {
     auto p = nargs.begin();
     for (const auto& a : this->args) {
       *p = a->clone(v);
+      ++p;
     }
     return std::make_shared<DifferentiatedFunctionExpr>(this->f, nargs,
                                                         this->pvar);
@@ -153,8 +154,9 @@ namespace tfel::math::parser {
     vector<string>::size_type i;
     nf = this->f->createFunctionByChangingParametersIntoVariables(vnames, v,
                                                                   params, pos);
-    raise_if(nf->getNumberOfVariables() <= this->args.size(),
-             "ExternalFunctionExpr::getValue: "
+    raise_if(nf->getNumberOfVariables() < this->args.size(),
+             "DifferentiatedFunctionExpr::"
+             "createFunctionByChangingParametersIntoVariables: "
              "internal error (function has less variable after "
              "'createFunctionByChangingParametersIntoVariables' "
              "than before");

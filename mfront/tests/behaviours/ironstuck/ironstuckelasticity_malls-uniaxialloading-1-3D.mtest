@@ -9,7 +9,7 @@
 @AccelerationAlgorithm 'IronsTuck';
 @Behaviour<umat> @library@ 'umatelasticity_malls';
 @DeformationGradientEpsilon 5.e-11;
-@StressEpsilon 2.e3;
+@StressEpsilon 1;
 
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

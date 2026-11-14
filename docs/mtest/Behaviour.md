@@ -66,6 +66,6 @@ Currently, two behaviours wrappers are available:
 @Behaviour<castem_umat_small_strain> './libumat.so' 'umat_'{
  'NUME_LOI'   : 10,
  'SYMETRIE'   : 'ISOTROPE',
- 'C_MATERIAU' : {'YOUNG','NU'}
+ 'C_MATERIAU' : {'YOUN','NU'}
 };
 ~~~~~~~~

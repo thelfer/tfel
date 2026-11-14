@@ -2,7 +2,7 @@
  * \file   src/Utilities/CxxKeywords.cxx
  * \brief
  * \author Thomas Helfer
- * \date   16 Nov 2006
+ * \date 16/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,32 +18,27 @@
 
 namespace tfel::utilities {
 
-  static const char *reservedCxxKeywords[64] = {
-      "asm",          "auto",      "bool",
-      "break",        "case",      "catch",
-      "char ",        "class",     "const",
-      "const_cast",   "continue",  "default",
-      "delete",       "do",        "double",
-      "dynamic_cast", "else",      "enum",
-      "explicit",     "export",    "extern",
-      "false",        "float",     "for",
-      "friend",       "goto",      "if",
-      "inline",       "int",       "long",
-      "mutable",      "namespace", "new",
-      "operator",     "private",   "protected",
-      "public",       "register",  "reinterpret_cast",
-      "return",       "short",     "signed",
-      "sizeof",       "static",    "static_cast",
-      "struct",       "switch",    "template",
-      "this",         "throw",     "true",
-      "try",          "typedef",   "typeid",
-      "typename",     "union",     "unsigned",
-      "using",        "virtual",   "void",
-      "volatile",     "wchar_t",   "while",
-      "constexpr"};
+  static const char* reservedCxxKeywords[] = {
+      "asm", "auto", "bool", "break", "case", "catch", "char", "class", "const",
+      "const_cast", "continue", "default", "delete", "do", "double",
+      "dynamic_cast", "else", "enum", "explicit", "export", "extern", "false",
+      "float", "for", "friend", "goto", "if", "inline", "int", "long",
+      "mutable", "namespace", "new", "operator", "private", "protected",
+      "public", "register", "reinterpret_cast", "return", "short", "signed",
+      "sizeof", "static", "static_cast", "struct", "switch", "template", "this",
+      "throw", "true", "try", "typedef", "typeid", "typename", "union",
+      "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while",
+      // C++11 to C++20 keywords
+      "alignas", "alignof", "char8_t", "char16_t", "char32_t", "concept",
+      "consteval", "constexpr", "constinit", "co_await", "co_return",
+      "co_yield", "decltype", "noexcept", "nullptr", "requires",
+      "static_assert", "thread_local",
+      // alternative tokens
+      "and", "and_eq", "bitand", "bitor", "compl", "not", "not_eq", "or",
+      "or_eq", "xor", "xor_eq"};
 
   std::size_t getNumberOfCxxKeywords() {
-    return sizeof(reservedCxxKeywords) / sizeof(char *);
+    return sizeof(reservedCxxKeywords) / sizeof(char*);
   }
 
   bool isReservedCxxKeywords(std::string_view s) {

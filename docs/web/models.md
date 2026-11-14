@@ -1,6 +1,15 @@
-% Models
-% Helfer Thomas
-% October 6, 2014
+---
+title: Models
+author: Helfer Thomas
+date: 06/10/2014
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\deriv}[2]{\frac{\partial #1}{\partial #2}}
@@ -49,7 +58,7 @@ s.setDefaultInitialValue(0.);
 s.setDepth(1);
 
 @Input Bu;
-Bu.setGlossaryName("BurnUp");
+Bu.setGlossaryName("BurnUp (at.%)");
 Bu.setDepth(1);
 
 @Input f;

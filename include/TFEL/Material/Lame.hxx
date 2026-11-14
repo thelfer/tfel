@@ -6,7 +6,7 @@
  * \lambda*\mathrm{tr}\left(\underline{\epsilon}\right)\underline{I}+2\mu\underline{\epsilon}
  * \f]
  * \author Thomas Helfer
- * \date   31 Jul 2006
+ * \date 31/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -56,7 +56,7 @@ namespace tfel::material {
    * \param N : space dimension
    * \param T : numerical type
    * \author Thomas Helfer
-   * \date   12 Sep 2006
+   * \date 12/09/2006
    */
   template <unsigned short, typename>
   struct ComputeElasticStiffnessBase;
@@ -190,7 +190,7 @@ namespace tfel::material {
    * \param N : space dimension
    * \param T : numerical type
    * \author Thomas Helfer
-   * \date   12 Sep 2006
+   * \date 12/09/2006
    */
   template <unsigned short N, typename T>
   struct computeElasticStiffness
@@ -203,7 +203,7 @@ namespace tfel::material {
    * \param N : space dimension
    * \param T : numerical type
    * \author Thomas Helfer
-   * \date   12 Sep 2006
+   * \date 12/09/2006
    */
   template <unsigned short N, typename T>
   struct computeUnalteredElasticStiffness : computeElasticStiffness<N, T> {
@@ -215,7 +215,7 @@ namespace tfel::material {
    * \param H : modelling hypothesis
    * \param T : numerical type
    * \author Thomas Helfer
-   * \date   12 Sep 2006
+   * \date 12/09/2006
    */
   template <ModellingHypothesis::Hypothesis H, typename T>
   struct ComputeAlteredElasticStiffnessBase
@@ -235,10 +235,10 @@ namespace tfel::material {
       const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
       const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
       D(0, 0) = D1;
-      D(0, 1) = D2;
-      D(1, 0) = D2;
-      D(1, 1) = D1;
-      D(2, 2) = D(0, 2) = D(1, 2) = D(2, 0) = D(2, 1) = stress(T(0));
+      D(0, 2) = D2;
+      D(2, 0) = D2;
+      D(2, 2) = D1;
+      D(1, 1) = D(0, 1) = D(1, 0) = D(1, 2) = D(2, 1) = stress(T(0));
     }
     TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<1u, T, false>::StiffnessTensor& D,
@@ -248,10 +248,10 @@ namespace tfel::material {
       const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
       const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
       D(0, 0) = D1;
-      D(0, 1) = D2;
-      D(1, 0) = D2;
-      D(1, 1) = D1;
-      D(2, 2) = D(0, 2) = D(1, 2) = D(2, 0) = D(2, 1) = stress(T(0));
+      D(0, 2) = D2;
+      D(2, 0) = D2;
+      D(2, 2) = D1;
+      D(1, 1) = D(0, 1) = D(1, 0) = D(1, 2) = D(2, 1) = stress(T(0));
     }
   };  // end of struct ComputeAlteredElasticStiffnessBase
 
@@ -296,7 +296,7 @@ namespace tfel::material {
    * \param H : modelling hypothesis
    * \param T : numerical type
    * \author Thomas Helfer
-   * \date   12 Sep 2006
+   * \date 12/09/2006
    */
   template <ModellingHypothesis::Hypothesis H, typename T>
   struct computeAlteredElasticStiffness

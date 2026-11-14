@@ -1,0 +1,22 @@
+@Author Tristan Chenaille;
+@Date 14 / 11 / 2026;
+@Description {
+  "This test checks the consistent tangent operator of a behaviour "
+  "combining several flows. The loading is not proportional and mixes "
+  "imposed strains and imposed stresses. With the consistent tangent "
+  "operator, at most 5 iterations are required per time step. "
+  "With the elastic operator, 14 iterations are required."
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@MaximumNumberOfIterations 8;
+@StiffnessMatrixType 'ConsistentTangentOperator';
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStrain<function> 'EXX' '5e-3 * t';
+@ImposedStrain<function> 'EXY' '2e-3 * t * t';
+
+@Times{0., 1 in 20};

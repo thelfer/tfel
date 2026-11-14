@@ -1,0 +1,23 @@
+@DSL MaterialProperty;
+@Law LinearDataInterpolationTest;
+@Description {
+  "A material property defined by the linear interpolation of data. The "
+  "abscissae and the ordinates of the data are stored in arrays named "
+  "after the input and the output (`mfront_T_values` and "
+  "`mfront_E_values`), which must not conflict with the names used by the "
+  "generic-parallel interface."
+}
+
+@UseQt true;
+@UnitSystem SI;
+
+@Output stress E;
+E.setGlossaryName("YoungModulus");
+
+@StateVariable temperature T;
+T.setGlossaryName("Temperature");
+
+@Data {
+  values: { 293.15 : 240e9, 693.15 : 180e9, 893.15 : 170e9 },
+  interpolation : "linear"
+}

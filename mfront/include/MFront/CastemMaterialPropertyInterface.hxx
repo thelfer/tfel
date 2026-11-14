@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/CastemMaterialPropertyInterface.hxx
  * \brief  This file declares the CastemMaterialPropertyInterface class
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -30,9 +30,20 @@ namespace mfront {
 
   struct MFRONT_VISIBILITY_EXPORT CastemMaterialPropertyInterface
       : public AbstractMaterialPropertyInterface {
-    static std::string getName();
+    [[nodiscard]] static std::string getName();
 
     CastemMaterialPropertyInterface();
+    //
+    void setOptions(const DataMap&) override;
+    void getTargetsDescription(
+        TargetsDescription&, const MaterialPropertyDescription&) const override;
+    void writeOutputFiles(const MaterialPropertyDescription&,
+                          const FileDescription&) const override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief append the generated material property to the given library
      * description. This method allows to choose to which library is attached
@@ -46,28 +57,20 @@ namespace mfront {
         TargetsDescription& d,
         LibraryDescription&,
         const MaterialPropertyDescription&) const;
-    void getTargetsDescription(
-        TargetsDescription&, const MaterialPropertyDescription&) const override;
-    std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string&,
-        const std::vector<std::string>&,
-        tokens_iterator,
-        const tokens_iterator) override;
-    void writeOutputFiles(const MaterialPropertyDescription&,
-                          const FileDescription&) const override;
     /*!
      * \return the name of the generated function
      * \param[in] mpd : material property description
      */
-    virtual std::string getCastemFunctionName(
+    [[nodiscard]] virtual std::string getCastemFunctionName(
         const MaterialPropertyDescription&) const;
-    //! destructor
+    //! \brief destructor
     ~CastemMaterialPropertyInterface() override;
 
    protected:
-    virtual std::string getHeaderFileName(const std::string&) const;
-
-    virtual std::string getSourceFileName(const std::string&) const;
+    [[nodiscard]] virtual std::string getHeaderFileName(
+        const std::string&) const;
+    [[nodiscard]] virtual std::string getSourceFileName(
+        const std::string&) const;
 
    private:
     /*!

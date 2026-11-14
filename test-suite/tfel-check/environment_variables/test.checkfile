@@ -1,0 +1,3 @@
+@Command "printenv CXXFLAGS" {
+  expected_output : "-O2"
+};

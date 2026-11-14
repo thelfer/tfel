@@ -1,0 +1,30 @@
+@Author Tristan Chenaille;
+@Date 03/11/2026;
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'RungeKuttaFiniteStrainElasticity_rk54';
+
+@MaterialProperty<constant> 'YoungModulus' 215e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedDrivingVariable 'FXX' {0 : 1, 1 : 1.02};
+@ImposedDrivingVariable 'FYY' 1;
+@ImposedDrivingVariable 'FZZ' 1;
+@ImposedDrivingVariable 'FXY' 0;
+@ImposedDrivingVariable 'FYX' 0;
+@ImposedDrivingVariable 'FXZ' 0;
+@ImposedDrivingVariable 'FZX' 0;
+@ImposedDrivingVariable 'FYZ' 0;
+@ImposedDrivingVariable 'FZY' 0;
+
+@Times {0, 1 in 10};
+
+@Real 'lambda' 'PoissonRatio*YoungModulus/((1+PoissonRatio)*(1-2*PoissonRatio))';
+@Real 'mu' 'YoungModulus/(2*(1+PoissonRatio))';
+@Test<function> 'SXX' 'FXX*(lambda+2*mu)*(FXX**2-1)/2' 1e-2;
+@Test<function> {'SYY' : 'lambda*(FXX**2-1)/(2*FXX)',
+                 'SZZ' : 'lambda*(FXX**2-1)/(2*FXX)'} 1e-2;
+@Test<function> {'SXY' : '0', 'SXZ' : '0', 'SYZ' : '0'} 1e-2;
+// det(F)-1 = 0.02*t, integrated exactly by the algorithm
+@Test<function> 'a' '0.01*t**2' 1e-12;

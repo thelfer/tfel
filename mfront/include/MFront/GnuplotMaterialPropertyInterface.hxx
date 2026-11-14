@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/GnuplotMaterialPropertyInterface.hxx
  * \brief  This file declares the GnuplotMaterialPropertyInterface class
  * \author P. GOLDBRONN
- * \date   14 mai 2008
+ * \date 14/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,35 +32,18 @@ namespace mfront {
     static std::string getName();
 
     GnuplotMaterialPropertyInterface();
-    /*!
-     * \param[in] k  : keyword treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted
-     * \param[in] p  : iterator to the current token
-     * \param[in] pe : iterator past the end of the file
-     * \return a pair. The first entry is true if the keyword was
-     * treated by the interface. The second entry is an iterator after
-     * the last token treated.
-     */
+    //
+    void setOptions(const DataMap&) override;
     std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    /*!
-     * \brief : fill the target descripton
-     * \param[out] d   : target description
-     * \param[in]  mpd : material property description
-     */
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;
-    /*!
-     * \brief generate the output files
-     * \param[in] mpd : material property description
-     * \param[in] fd  : mfront file description
-     */
     void writeOutputFiles(const MaterialPropertyDescription&,
                           const FileDescription&) const override;
-    //! destructorx
+    //! \brief destructor
     ~GnuplotMaterialPropertyInterface() override;
 
    private:
@@ -77,17 +60,17 @@ namespace mfront {
                               const std::string& msg = "");
     // map : variable,datafile
     struct dataFile {
-      //! constructor
+      //! \brief constructor
       dataFile();
-      //! copy constructor
+      //! \brief copy constructor
       dataFile(const dataFile&);
-      //! move constructor
-      dataFile(dataFile&&);
-      //! copy assignement operator
+      //! \brief move constructor
+      dataFile(dataFile&&) noexcept;
+      //! \brief copy assignement operator
       dataFile& operator=(const dataFile&);
-      //! move assignement operator
-      dataFile& operator=(dataFile&&);
-      //! destructor
+      //! \brief move assignement operator
+      dataFile& operator=(dataFile&&) noexcept;
+      //! \brief destructor
       ~dataFile();
       std::string name;
       std::string legend;

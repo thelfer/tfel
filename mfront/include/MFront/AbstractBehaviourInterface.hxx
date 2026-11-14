@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   16 jan 2007
+ * \date 16/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX
-#define LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX
+#ifndef LIB_MFRONT_ABSTRACTBEHAVIOURINTERFACE_HXX
+#define LIB_MFRONT_ABSTRACTBEHAVIOURINTERFACE_HXX
 
 #include <map>
 #include <set>
@@ -21,7 +21,7 @@
 #include <vector>
 #include <memory>
 #include <utility>
-
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
@@ -29,23 +29,23 @@
 
 namespace mfront {
 
-  // forward declaration
+  // forward declarations
   struct BehaviourDescription;
-  // forward declaration
   struct FileDescription;
-  // forward declartion
   struct TargetsDescription;
 
   //! \brief abstract interface of all behaviour interfaces
   struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourInterface {
-    //! a simple alias
+    //! \brief a simple alias
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     typedef ModellingHypothesis::Hypothesis Hypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
-    //! a simple alias
+    //! \brief a simple alias
     using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
+    //! \brief a simple alias
+    using DataMap = tfel::utilities::DataMap;
     /*!
      * \brief the name of the interface is mostly used internally to build
      * - the name of the variable passed to the constructors.
@@ -53,9 +53,18 @@ namespace mfront {
      * - etc...
      * \return the name of the interface
      */
-    virtual std::string getInterfaceName() const = 0;
+    [[nodiscard]] virtual std::string getInterfaceName() const = 0;
     //! \return the version of the interface
-    virtual std::string getInterfaceVersion() const = 0;
+    [[nodiscard]] virtual std::string getInterfaceVersion() const = 0;
+    /*!
+     * \brief give options to the interface
+     *
+     * Those options may have been read from a configuration file or from the
+     * command line
+     *
+     * \param[in] opts: options
+     */
+    virtual void setOptions(const DataMap &) = 0;
     /*!
      * \brief treat a keyword
      * \param[in,out] bd: behaviour description
@@ -67,7 +76,7 @@ namespace mfront {
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] virtual std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription &,
         const std::string &,
         const std::vector<std::string> &,
@@ -79,14 +88,14 @@ namespace mfront {
      * \param[in] h  : modelling hypothesis
      * \param[in] mb : behaviour description
      */
-    virtual bool isBehaviourConstructorRequired(
+    [[nodiscard]] virtual bool isBehaviourConstructorRequired(
         const Hypothesis, const BehaviourDescription &) const = 0;
     /*!
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
-    virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const = 0;
+    [[nodiscard]] virtual std::set<Hypothesis>
+    getModellingHypothesesToBeTreated(const BehaviourDescription &) const = 0;
     /*!
      * \return a pair which first member gives the position of the
      * material properties in the values given through the interface
@@ -95,8 +104,8 @@ namespace mfront {
      * \param[in] mb: behaviour description
      * \param[in] h:  modelling hypothesis
      */
-    virtual std::pair<std::vector<BehaviourMaterialProperty>,
-                      SupportedTypes::TypeSize>
+    [[nodiscard]] virtual std::pair<std::vector<BehaviourMaterialProperty>,
+                                    SupportedTypes::TypeSize>
     buildMaterialPropertiesList(const BehaviourDescription &,
                                 const Hypothesis) const = 0;
     /*!
@@ -203,4 +212,4 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX */
+#endif /* LIB_MFRONT_ABSTRACTBEHAVIOURINTERFACE_HXX */

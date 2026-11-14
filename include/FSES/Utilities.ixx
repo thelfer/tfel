@@ -37,6 +37,7 @@
 #define LIB_FSES_UTILITIES_IXX
 
 #include <array>
+#include <limits>
 
 namespace fses {
 
@@ -53,8 +54,7 @@ namespace fses {
   struct GetVectorNumericType {
     //! the result
     using type =
-        typename std::decay<decltype(std::declval<VectorType>().operator()(
-            0))>::type;
+        std::decay_t<decltype(std::declval<VectorType>().operator()(0))>;
   };  // end of struct GetVectorNumericType
 
   /*!
@@ -82,8 +82,7 @@ namespace fses {
   struct GetMatrixNumericType {
     //! the result
     using type =
-        typename std::decay<decltype(std::declval<MatrixType>().operator()(
-            0, 0))>::type;
+        std::decay_t<decltype(std::declval<MatrixType>().operator()(0, 0))>;
   };  // end of struct GetMatrixNumericType
   /*!
    * \brief partial specialisation for pointers
@@ -99,7 +98,7 @@ namespace fses {
   template <typename MatrixNumericType, size_t N, size_t M>
   struct GetMatrixNumericType<MatrixNumericType[N][M]> {
     //! the result
-    using type = typename std::decay<MatrixNumericType>::type;
+    using type = std::decay_t<MatrixNumericType>;
   };  // end of struct GetMatrixNumericType
   /*!
    * \brief partial specialisation for pointers
@@ -107,7 +106,7 @@ namespace fses {
   template <typename MatrixNumericType, size_t N, size_t M>
   struct GetMatrixNumericType<const MatrixNumericType (&)[N][M]> {
     //! the result
-    using type = typename std::decay<MatrixNumericType>::type;
+    using type = std::decay_t<MatrixNumericType>;
   };  // end of struct GetMatrixNumericType
 
   template <typename VectorType>
@@ -127,44 +126,43 @@ namespace fses {
   template <typename T, size_t N>
   struct VectorAccess<T[N]> {
     template <typename IndexType>
-    static T& exe(T v[N], const IndexType& i) {
+    [[nodiscard]] static T& exe(T v[N], const IndexType& i) {
       return v[i];
     }
     template <typename IndexType>
-    static const T& exe(const T v[N], const IndexType& i) {
+    [[nodiscard]] static const T& exe(const T v[N], const IndexType& i) {
       return v[i];
     }
   };
 
   template <typename VectorType, typename IndexType>
-  GetVectorNumericType_t<VectorType>& at(VectorType& v, const IndexType& i) {
+  [[nodiscard]] GetVectorNumericType_t<VectorType>& at(VectorType& v,
+                                                       const IndexType& i) {
     return VectorAccess<VectorType>::exe(v, i);
   }
   template <typename VectorType, typename IndexType>
-  const GetVectorNumericType_t<VectorType>& at(const VectorType& v,
-                                               const IndexType& i) {
+  [[nodiscard]] const GetVectorNumericType_t<VectorType>& at(
+      const VectorType& v, const IndexType& i) {
     return VectorAccess<VectorType>::exe(v, i);
   }
 
   template <typename MatrixType>
   struct MatrixAccess {
     template <typename IndexType>
-    static GetMatrixNumericType_t<MatrixType>& exe(MatrixType& v,
-                                                   const IndexType& i,
-                                                   const IndexType& j) {
+    [[nodiscard]] static GetMatrixNumericType_t<MatrixType>& exe(
+        MatrixType& v, const IndexType& i, const IndexType& j) {
       return v(i, j);
     }
     template <typename IndexType>
-    static const GetMatrixNumericType_t<MatrixType>& exe(const MatrixType& v,
-                                                         const IndexType& i,
-                                                         const IndexType& j) {
+    [[nodiscard]] static const GetMatrixNumericType_t<MatrixType>& exe(
+        const MatrixType& v, const IndexType& i, const IndexType& j) {
       return v(i, j);
     }
   };
 
   template <typename T, size_t N, size_t M>
   struct MatrixAccess<T[N][M]>{
-      template <typename IndexType> static T &
+      template <typename IndexType> [[nodiscard]] static T &
       exe(T v[N][M], const IndexType& i, const IndexType& j){return v[i][j];
 }  // namespace fses
 template <typename IndexType>
@@ -197,10 +195,10 @@ void fill(MatrixType& m, const NumericType& v) {
 }  // end of fill
 
 template <typename real>
-inline bool is_negligible(const real& x, const real& y) {
+[[nodiscard]] inline bool is_negligible(const real& x, const real& y) {
   static constexpr real e = std::numeric_limits<real>::epsilon();
   // y+x==y;
-  return std::abs(x) < std::abs(y) * e;
+  return std::abs(x) <= std::abs(y) * e;
 }
 
 template <typename MatrixType, typename VectorType>
@@ -216,33 +214,33 @@ void sort(MatrixType& m, VectorType& v, const EigenValuesOrdering o) {
       at(m, 0, 0), at(m, 0, 1), at(m, 0, 2), at(m, 1, 0), at(m, 1, 1),
       at(m, 1, 2), at(m, 2, 0), at(m, 2, 1), at(m, 2, 2)};
   if (o == EigenValuesOrdering::ASCENDING) {
-    if ((at(v, 0) < at(v, 1)) && (at(v, 1) < at(v, 2))) {
+    if ((at(v, 0) <= at(v, 1)) && (at(v, 1) <= at(v, 2))) {
       idx = {zero, one, two};
-    } else if ((at(v, 0) < at(v, 2)) && (at(v, 2) < at(v, 1))) {
+    } else if ((at(v, 0) <= at(v, 2)) && (at(v, 2) <= at(v, 1))) {
       idx = {zero, two, one};
-    } else if ((at(v, 1) < at(v, 0)) && (at(v, 0) < at(v, 2))) {
+    } else if ((at(v, 1) <= at(v, 0)) && (at(v, 0) <= at(v, 2))) {
       idx = {one, zero, two};
-    } else if ((at(v, 1) < at(v, 2)) && (at(v, 2) < at(v, 0))) {
+    } else if ((at(v, 1) <= at(v, 2)) && (at(v, 2) <= at(v, 0))) {
       idx = {one, two, zero};
-    } else if ((at(v, 2) < at(v, 0)) && (at(v, 0) < at(v, 1))) {
+    } else if ((at(v, 2) <= at(v, 0)) && (at(v, 0) <= at(v, 1))) {
       idx = {two, zero, one};
     } else {
-      // ((at(v,2)<at(v,1))&&(at(v,1)<at(v,0))){
+      // ((at(v,2)<=at(v,1))&&(at(v,1)<=at(v,0))){
       idx = {two, one, zero};
     }
   } else if (o == EigenValuesOrdering::DESCENDING) {
-    if ((at(v, 0) > at(v, 1)) && (at(v, 1) > at(v, 2))) {
+    if ((at(v, 0) >= at(v, 1)) && (at(v, 1) >= at(v, 2))) {
       idx = {zero, one, two};
-    } else if ((at(v, 0) > at(v, 2)) && (at(v, 2) > at(v, 1))) {
+    } else if ((at(v, 0) >= at(v, 2)) && (at(v, 2) >= at(v, 1))) {
       idx = {zero, two, one};
-    } else if ((at(v, 1) > at(v, 0)) && (at(v, 0) > at(v, 2))) {
+    } else if ((at(v, 1) >= at(v, 0)) && (at(v, 0) >= at(v, 2))) {
       idx = {one, zero, two};
-    } else if ((at(v, 1) > at(v, 2)) && (at(v, 2) > at(v, 0))) {
+    } else if ((at(v, 1) >= at(v, 2)) && (at(v, 2) >= at(v, 0))) {
       idx = {one, two, zero};
-    } else if ((at(v, 2) > at(v, 0)) && (at(v, 0) > at(v, 1))) {
+    } else if ((at(v, 2) >= at(v, 0)) && (at(v, 0) >= at(v, 1))) {
       idx = {two, zero, one};
     } else {
-      // ((at(v,2)>at(v,1))&&(at(v,1)>at(v,0))){
+      // ((at(v,2)>=at(v,1))&&(at(v,1)>=at(v,0))){
       idx = {two, one, zero};
     }
   }

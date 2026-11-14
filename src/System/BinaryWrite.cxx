@@ -14,11 +14,9 @@
 #include <unistd.h>
 #include "TFEL/System/BinaryWrite.hxx"
 
-#define TFEL_SYSTEM_BINARY_WRITER_SRC(X)                             \
-  void BinaryWriter<X>::exe(const int f, const X& v) {               \
-    if (::write(f, static_cast<const void*>(&v), sizeof(X)) == -1) { \
-      systemCall::throwSystemError("binary_write<" #X ">", errno);   \
-    }                                                                \
+#define TFEL_SYSTEM_BINARY_WRITER_SRC(X)                           \
+  void BinaryWriter<X>::exe(const int f, const X& v) {             \
+    systemCall::write(f, static_cast<const void*>(&v), sizeof(X)); \
   }
 
 namespace tfel::system {
@@ -37,9 +35,7 @@ namespace tfel::system {
   TFEL_SYSTEM_BINARY_WRITER_SRC(long double)
 
   void BinaryWriter<const void*>::exe(const int f, const void* const v) {
-    if (::write(f, static_cast<const void*>(&v), sizeof(void*)) == -1) {
-      systemCall::throwSystemError("binary_write<void*>", errno);
-    }
+    systemCall::write(f, static_cast<const void*>(&v), sizeof(void*));
   }
 
 }  // end of namespace tfel::system

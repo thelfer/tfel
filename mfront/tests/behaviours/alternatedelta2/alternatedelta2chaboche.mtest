@@ -6,7 +6,7 @@
  */
 
 @AccelerationAlgorithm 'AlternateDelta2';
-@MaximumNumberOfSubSteps 1.;
+@MaximumNumberOfSubSteps 1;
 
 @Behaviour<umat> @library@ 'umatchaboche';
 @Parameter 'epsilon' 1e-16;

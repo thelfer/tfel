@@ -88,14 +88,14 @@ namespace tfel::utilities::internals {
      * get an object of type std::string.
      * \return std::string&
      */
-    TFEL_INLINE std::string& getString() {
+    [[nodiscard]] TFEL_INLINE std::string& getString() {
       return static_cast<Child*>(this)->template get<std::string>();
     }
     /*
      * get an object of type std::string (const version).
      * \return const std::string&
      */
-    TFEL_INLINE const std::string& getString() const {
+    [[nodiscard]] TFEL_INLINE const std::string& getString() const {
       return static_cast<const Child*>(this)->template get<std::string>();
     }
   };  // end of class GenTypeSpecializedAccessor

@@ -1,4 +1,4 @@
-The `@ConstantMaterialPropery` let the user define a specific kind of
+The `@ConstantMaterialProperty` let the user define a specific kind of
 input to a model which is meant to be constant and uniform during the
 computations. This allows the interfaces to optimize the generated
 code. This keyword is followed by the names of the material

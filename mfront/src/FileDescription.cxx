@@ -2,7 +2,7 @@
  * \file  FileDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03 mars 2015
+ * \date 03/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,9 +18,10 @@
 namespace mfront {
 
   FileDescription::FileDescription() = default;
-  FileDescription::FileDescription(FileDescription&&) = default;
+  FileDescription::FileDescription(FileDescription&&) noexcept = default;
   FileDescription::FileDescription(const FileDescription&) = default;
-  FileDescription& FileDescription::operator=(FileDescription&&) = default;
+  FileDescription& FileDescription::operator=(FileDescription&&) noexcept =
+      default;
   FileDescription& FileDescription::operator=(const FileDescription&) = default;
   FileDescription::~FileDescription() = default;
 

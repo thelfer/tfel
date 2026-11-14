@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   07 nov 2008
+ * \date 07/11/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -91,7 +91,7 @@ namespace mfront {
       if (c->flag != tfel::utilities::Token::String) {
         InterfaceBase::throwRuntimeError(c, ce, m, "expected a string");
       }
-      res.push_back(c->value.substr(1, c->value.size() - 2));
+      res.push_back(tfel::utilities::getContents(*c));
       ++c;
       InterfaceBase::checkNotEndOfFile(c, ce, m, "expected '}'");
       if (!((c->value == "}") || (c->value == ","))) {
@@ -124,7 +124,7 @@ namespace mfront {
     if (c->flag != tfel::utilities::Token::String) {
       InterfaceBase::throwRuntimeError(c, ce, m, "expected a string");
     }
-    res.push_back(c->value.substr(1, c->value.size() - 2));
+    res.push_back(tfel::utilities::getContents(*c));
     ++c;
     return res;
   }  // end of InterfaceBase::readStringOrArrayOfString

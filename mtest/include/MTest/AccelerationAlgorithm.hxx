@@ -30,12 +30,12 @@ namespace mtest {
      * \param[in] v : value
      * \return an unsigned short
      */
-    static unsigned short convertToUnsignedShort(const std::string&,
-                                                 const std::string&);
+    [[nodiscard]] static unsigned short convertToUnsignedShort(
+        const std::string&, const std::string&);
     /*!
      * \return the name of the acceleration algorithm
      */
-    virtual std::string getName() const = 0;
+    [[nodiscard]] virtual std::string getName() const = 0;
     /*!
      * \param[in] psz : total number of unknowns (problem size)
      */

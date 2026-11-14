@@ -11,6 +11,9 @@
  * project under specific licensing conditions.
  */
 
+#include <cmath>
+#include <cerrno>
+#include <limits>
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
@@ -19,6 +22,7 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
 struct StringAlgorithmsTest final : public tfel::tests::TestCase {
@@ -28,6 +32,7 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
     return this->result;
   }  // end of execute
  private:
@@ -39,6 +44,7 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "ar", "u"), "foo bu");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "foo ", ""), "bar");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "", "test"), "foo bar");
+    TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "o", "a", 2), "foa bar");
     TFEL_TESTS_ASSERT(starts_with("foobar", "foo"));
     TFEL_TESTS_ASSERT(!starts_with("foobar", "bar"));
     TFEL_TESTS_ASSERT(ends_with("foobar", "bar"));
@@ -48,6 +54,8 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
     const auto s = "a:bbc::d";
     const auto tokens1 = tfel::utilities::tokenize(s, ':');
     const auto tokens2 = tfel::utilities::tokenize(s, ':', true);
+    TFEL_TESTS_ASSERT(tfel::utilities::tokenize(":a", ':').size() == 1);
+    TFEL_TESTS_ASSERT(tfel::utilities::tokenize("a:b", "").size() == 1);
     TFEL_TESTS_ASSERT(tokens1.size() == 3);
     if (tokens1.size() == 3) {
       TFEL_TESTS_ASSERT(tokens1[0] == "a");
@@ -55,13 +63,38 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(tokens1[2] == "d");
     }
     TFEL_TESTS_ASSERT(tokens2.size() == 4);
-    if (tokens2.size() == 3) {
+    if (tokens2.size() == 4) {
       TFEL_TESTS_ASSERT(tokens2[0] == "a");
       TFEL_TESTS_ASSERT(tokens2[1] == "bbc");
-      TFEL_TESTS_ASSERT(tokens2[1] == "");
-      TFEL_TESTS_ASSERT(tokens2[2] == "d");
+      TFEL_TESTS_ASSERT(tokens2[2] == "");
+      TFEL_TESTS_ASSERT(tokens2[3] == "d");
     }
   }  // end of test2
+  //! \brief underflows are accepted, overflows rejected
+  void test3() {
+    using namespace tfel::utilities;
+    using tfel::math::ieee754::fpclassify;
+    // the classification of the numbers is based on their representation,
+    // so that those checks also hold when the subnormal numbers are treated
+    // as zeros by the processor, which is the case with -ffast-math
+    constexpr auto dmin = std::numeric_limits<double>::denorm_min();
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1.5") - 1.5) == FP_ZERO);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-310")) == FP_SUBNORMAL);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-310") - 1e-310) ==
+                      FP_ZERO);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("4.9e-324")) == FP_SUBNORMAL);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("4.9e-324") - dmin) ==
+                      FP_ZERO);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-400")) == FP_ZERO);
+    TFEL_TESTS_CHECK_THROW(convert<double>("1e400"), std::exception);
+    TFEL_TESTS_CHECK_THROW(convert<double>("1.5x"), std::exception);
+    TFEL_TESTS_ASSERT(fpclassify(convert<long double>("1e-5000")) == FP_ZERO);
+    TFEL_TESTS_CHECK_THROW(convert<long double>("1e5000"), std::exception);
+    // errno is preserved
+    errno = EDOM;
+    static_cast<void>(convert<double>("1e-400"));
+    TFEL_TESTS_ASSERT(errno == EDOM);
+  }  // end of test3
 };
 
 TFEL_TESTS_GENERATE_PROXY(StringAlgorithmsTest, "StringAlgorithms");

@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   12/01/2007
+ * \date 12/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * re served.
  * This project is publicly released under either the GNU GPL Licence with
@@ -84,12 +84,13 @@ namespace mfront {
   }  // end of isSupportedConstexprIntegerVariables
 
   SupportedTypes::TypeParsingOptions::TypeParsingOptions() = default;
-  SupportedTypes::TypeParsingOptions::TypeParsingOptions(TypeParsingOptions&&) =
-      default;
+  SupportedTypes::TypeParsingOptions::TypeParsingOptions(
+      TypeParsingOptions&&) noexcept = default;
   SupportedTypes::TypeParsingOptions::TypeParsingOptions(
       const TypeParsingOptions&) = default;
   SupportedTypes::TypeParsingOptions&
-  SupportedTypes::TypeParsingOptions::operator=(TypeParsingOptions&&) = default;
+  SupportedTypes::TypeParsingOptions::operator=(TypeParsingOptions&&) noexcept =
+      default;
   SupportedTypes::TypeParsingOptions&
   SupportedTypes::TypeParsingOptions::operator=(const TypeParsingOptions&) =
       default;
@@ -149,7 +150,7 @@ namespace mfront {
 
   SupportedTypes::TypeSize::TypeSize() = default;
 
-  SupportedTypes::TypeSize::TypeSize(TypeSize&&) = default;
+  SupportedTypes::TypeSize::TypeSize(TypeSize&&) noexcept = default;
 
   SupportedTypes::TypeSize::TypeSize(const TypeSize&) = default;
 
@@ -192,8 +193,8 @@ namespace mfront {
     }
   }  // end of TypeSize
 
-  SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(TypeSize&&) =
-      default;
+  SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(
+      TypeSize&&) noexcept = default;
 
   SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(
       const TypeSize&) = default;
@@ -437,12 +438,14 @@ namespace mfront {
       switch (p->second) {
         case SupportedTypes::SCALAR:
           return {0, 3};
+        // tensorial objects use two more bits for the space dimension, which
+        // is zero here since it depends on the modelling hypothesis
         case SupportedTypes::STENSOR:
-          return {1, 3};
+          return {1, 5};
         case SupportedTypes::TVECTOR:
-          return {2, 3};
+          return {2, 5};
         case SupportedTypes::TENSOR:
-          return {3, 3};
+          return {3, 5};
         default:
           break;
       }
@@ -509,7 +512,8 @@ namespace mfront {
       const auto types = mfront::getST2toST2TypeAliases();
       return std::find(types.begin(), types.end(), type) != types.end();
     };
-    if (t.type == "tfel::math::quantity") {
+    if ((t.type == "tfel::math::quantity") ||
+        (t.type == "tfel::math::quantity_or_base_type")) {
       return {0, 3};
     } else if (t.type == "tfel::math::fsarray") {
       return treatArray1D();
@@ -599,7 +603,8 @@ namespace mfront {
       SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
       return p->second;
     }
-    if (t.type == "tfel::math::quantity") {
+    if ((t.type == "tfel::math::quantity") ||
+        (t.type == "tfel::math::quantity_or_base_type")) {
       return SupportedTypes::SCALAR;
     } else if (t.type == "tfel::math::tvector") {
       return SupportedTypes::TVECTOR;
@@ -713,7 +718,7 @@ namespace mfront {
                                           const TypeFlag& f2) {
       auto N = getTensorialObjectSpaceDimension(t);
       if (N == 0) {
-        return TypeSize::getDerivativeSize(a, f1, f2);
+        return TypeSize::getDerivativeSize(a, TypeSize{f1}, TypeSize{f2});
       }
       const auto s1 = TypeSize(f1).getValueForDimension(N);
       const auto s2 = TypeSize(f2).getValueForDimension(N);
@@ -724,8 +729,8 @@ namespace mfront {
     if (std::find(st2tost2_alias.begin(), st2tost2_alias.end(), t.type) !=
         st2tost2_alias.end()) {
       SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
-      return TypeSize::getDerivativeSize(a, SupportedTypes::STENSOR,
-                                         SupportedTypes::STENSOR);
+      return TypeSize::getDerivativeSize(a, TypeSize{SupportedTypes::STENSOR},
+                                         TypeSize{SupportedTypes::STENSOR});
     }
     //
     if (t.type == "tfel::math::st2tost2") {
@@ -923,7 +928,7 @@ namespace mfront {
       ++p;
     }
     for (; p != s2.end(); ++p) {
-      if (!std::isdigit(*p)) {
+      if (!std::isdigit(static_cast<unsigned char>(*p))) {
         return {};
       }
     }
@@ -1037,7 +1042,8 @@ namespace mfront {
       for (decltype(args.size()) i = args.size(); i != 8u; ++i) {
         args.push_back(0);
       }
-      t.type = "tfel::math::quantity";
+      args.insert(args.begin(), {"use_qt"});
+      t.type = "tfel::math::quantity_or_base_type";
     } else {
       t.template_arguments.reset();
       t.type = "real";
@@ -1369,7 +1375,7 @@ namespace mfront {
     auto type = TypeInformation{};
     if (current->value != "::") {
       type.type = current->value;
-      throw_if(!CxxTokenizer::isValidIdentifier(type.type, false),
+      throw_if(!CxxTokenizer::isValidIdentifier(type.type, true),
                "SupportedTypes::parseType: given type '" + type.type +
                    "' is not valid.");
       ++(current);
@@ -1382,7 +1388,7 @@ namespace mfront {
       SupportedTypes::checkIteratorValidity(current, end);
       const auto t = current->value;
       throw_if(
-          !CxxTokenizer::isValidIdentifier(t, false),
+          !CxxTokenizer::isValidIdentifier(t, true),
           "SupportedTypes::parseType: given token '" + t + "' is not valid.");
       type.type += "::" + t;
       ++(current);
@@ -1427,7 +1433,7 @@ namespace mfront {
           if (i) {
             f += std::to_string(*i);
           } else {
-            throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+            throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                      "SupportedTypes::parseType: invalid token '" +
                          current->value + "'");
             const auto pic = opts.integer_constants.find(current->value);
@@ -1448,7 +1454,7 @@ namespace mfront {
           if ((current->value != ">") && (current->value != ">>") &&
               (current->value != ",")) {
             if (!isOperation(current->value)) {
-              throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+              throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                        "SupportedTypes::parseType: invalid token '" +
                            current->value + "'");
             }
@@ -1456,7 +1462,7 @@ namespace mfront {
             ++(current);
             SupportedTypes::checkIteratorValidity(current, end);
             if ((current->value == ">") || ((current->value == ","))) {
-              throw_if(!CxxTokenizer::isValidIdentifier(current->value, false),
+              throw_if(!CxxTokenizer::isValidIdentifier(current->value, true),
                        "SupportedTypes::parseType: unexpected token '" +
                            current->value + "'");
             }
@@ -1559,8 +1565,13 @@ namespace mfront {
   }  // end of getTinyVectorTypeAliases
 
   std::vector<std::string> getStensorTypeAliases() {
-    return {"Stensor",       "StressStensor",     "StressRateStensor",
-            "StrainStensor", "StrainRateStensor", "FrequencyStensor"};
+    return {"Stensor",
+            "StressStensor",
+            "StressRateStensor",
+            "StrainStensor",
+            "StrainRateStensor",
+            "FrequencyStensor",
+            "ThermalExpansionCoefficientTensor"};
   }
 
   std::vector<std::string> getTensorTypeAliases() {

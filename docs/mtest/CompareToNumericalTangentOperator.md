@@ -9,7 +9,12 @@ approximation can be adjusted by the
 
 The value used for to compare the tangent operator given by the behaviour to a
 numerical approximation can be adjusted by the
-`@TangentOperatorComparisonCriterium`.
+`@TangentOperatorComparisonCriterion`.
+
+This comparison is a debugging tool: when it fails, the tangent
+operator given by the behaviour and its numerical approximation are
+printed in the output of `MTest`, but the test is not considered as
+failed.
 
 ## Example
 

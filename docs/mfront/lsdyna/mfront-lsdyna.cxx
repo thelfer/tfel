@@ -2,7 +2,13 @@
  * \file   umat41.cxx
  * \brief
  * \author th202608
- * \date   13/06/2018
+ * \date 13/06/2018
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
@@ -105,15 +111,14 @@ namespace lsdyna {
   }
 
   static std::string strim_back(const std::string& s) {
-    std::string::size_type b = 0u;
     std::string::size_type e = s.size();
-    while (b != e) {
-      if (std::isspace(s[b])) {
-        return s.substr(0, b);
+    while (e != 0) {
+      if (!std::isspace(s[e - 1])) {
+        return s.substr(0, e);
       }
-      ++b;
+      --e;
     }
-    return s;
+    return "";
   }
 
   static std::string strim(const std::string& s) {
@@ -367,7 +372,7 @@ namespace lsdyna {
  * occur in LSDYNA_PP_DO_JOIN2 but does in LSDYNA_PP_DO_JOIN.
  *
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date 28/08/2006
  */
 #define LSDYNA_PP_JOIN(X, Y) LSDYNA_PP_DO_JOIN(X, Y)
 
@@ -376,7 +381,7 @@ namespace lsdyna {
  * \brief An helper macro for LSDYNA_PP_JOIN
  * \see LSDYNA_PP_JOIN
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date 28/08/2006
  */
 #define LSDYNA_PP_DO_JOIN(X, Y) LSDYNA_PP_DO_JOIN2(X, Y)
 
@@ -385,7 +390,7 @@ namespace lsdyna {
  * \brief An helper macro for LSDYNA_PP_JOIN
  * \see LSDYNA_PP_JOIN
  * \author Thomas Helfer
- * \date   28 Aug 2006
+ * \date 28/08/2006
  */
 #define LSDYNA_PP_DO_JOIN2(X, Y) X##Y
 

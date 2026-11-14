@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/LSDYNA/LSDYNARotation.hxx
  * \brief  This file declares the LSDYNARotationMatrix class
  * \author E. Castelier
- * \date   17/03/2008
+ * \date 17/03/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,17 +25,17 @@ namespace lsdyna {
     template <typename InputIterator>
     LSDYNARotation2D(const InputIterator);
     // Compute stresses in the material space
-    void rotateStressesForward(const real *const, real *const);
+    void rotateStressesForward(const real* const, real* const);
     // Compute stresses back in the global space
-    void rotateStressesBackward(const real *const, real *const);
+    void rotateStressesBackward(const real* const, real* const);
     // compute the deformation dradient in the material space
-    void rotateDeformationGradientForward(const real *const, real *const);
+    void rotateDeformationGradientForward(const real* const, real* const);
     // Compute strain in the material space
-    void rotateStrainsForward(const real *const, real *const);
+    void rotateStrainsForward(const real* const, real* const);
     // Compute stresses back in the global space
-    void rotateStrainsBackward(const real *const, real *const);
+    void rotateStrainsBackward(const real* const, real* const);
     // compute the stiffness matrix in the global space
-    void rotateTangentOperatorBackward(real *const) const;
+    void rotateTangentOperatorBackward(real* const) const;
 
    private:
     const real a[4];
@@ -48,17 +48,17 @@ namespace lsdyna {
     LSDYNARotation3D(const InputIterator);
 
     // Compute stresses in the material space
-    void rotateStressesForward(const real *const, real *const);
+    void rotateStressesForward(const real* const, real* const);
     // Compute stresses back in the global space
-    void rotateStressesBackward(const real *const, real *const);
+    void rotateStressesBackward(const real* const, real* const);
     // compute the deformation dradient in the material space
-    void rotateDeformationGradientForward(const real *const, real *const);
+    void rotateDeformationGradientForward(const real* const, real* const);
     // Compute strain in the material space
-    void rotateStrainsForward(const real *const, real *const);
+    void rotateStrainsForward(const real* const, real* const);
     // Compute stresses back in the global space
-    void rotateStrainsBackward(const real *const, real *const);
+    void rotateStrainsBackward(const real* const, real* const);
     // compute the stiffness matrix in the global space
-    void rotateTangentOperatorBackward(real *const) const;
+    void rotateTangentOperatorBackward(real* const) const;
 
    private:
     const real a[9];

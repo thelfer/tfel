@@ -2,7 +2,7 @@
  * \file   mfront/src/Hosford1972StressCriterion.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,7 +31,8 @@ namespace mfront::bbrick {
                       OptionDescription::MATERIALPROPERTY);
     opts.emplace_back(
         "eigen_solver",
-        "Choice of the eigen solver. Valid value are 'default' and 'Jacoby'.",
+        "Choice of the eigen solver. Valid value are 'default' (or 'TFEL') and "
+        "'Jacobi'.",
         OptionDescription::STRING);
     return opts;
   }  // end of Hosford1972StressCriterion::getOptions()

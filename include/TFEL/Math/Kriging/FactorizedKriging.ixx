@@ -94,6 +94,7 @@ namespace tfel::math {
     matrix<T> m(x1.size() + Model1::nb + Model2::nb,
                 x1.size() + Model1::nb + Model2::nb,
                 T(0));  // temporary matrix
+    this->a.clear();
     this->a.resize(x1.size() + Model1::nb + Model2::nb, T(0));  // unknowns
     copy(this->f.begin(), this->f.end(), this->a.begin());      // copy values
     // filling the matrix
@@ -121,7 +122,8 @@ namespace tfel::math {
             typename T,
             typename Model1,
             typename Model2>
-  FactorizedKriging<N, M, T, Model1, Model2>::~FactorizedKriging() noexcept {}
+  FactorizedKriging<N, M, T, Model1, Model2>::~FactorizedKriging() noexcept =
+      default;
 
 }  // end of namespace tfel::math
 

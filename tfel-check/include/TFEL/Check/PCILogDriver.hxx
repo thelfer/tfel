@@ -7,7 +7,7 @@
  * class).
  *
  * \author sb152252
- * \date 31 août 2009
+ * \date 31/08/2009
  *
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -34,15 +34,15 @@ namespace tfel::check {
      * \brief constructor
      * \param os: output stream.
      */
-    PCILogDriver(std::ostream&);
+    explicit PCILogDriver(std::ostream&);
     /*!
      * \brief constructor
      * \param f: string containing the name of the file where logs are
      * to be written. Default : write to stdout (screen).
      */
-    PCILogDriver(const std::string&);
+    explicit PCILogDriver(const std::string&);
     //! move constructor
-    PCILogDriver(PCILogDriver&&);
+    PCILogDriver(PCILogDriver&&) noexcept;
     //! copy constructor
     PCILogDriver(const PCILogDriver&);
     /*!
@@ -83,7 +83,7 @@ namespace tfel::check {
      *
      */
     virtual void terminate();
-    //! destructor
+    //! \brief destructor
     virtual ~PCILogDriver();
 
    protected:

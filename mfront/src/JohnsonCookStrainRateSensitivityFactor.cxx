@@ -2,7 +2,13 @@
  * \file   mfront/src/JohnsonCookStrainRateSensitivityFactor.cxx
  * \brief
  * \author Thomas Helfer
- * \date   27/11/2024
+ * \date 27/11/2024
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include <sstream>
@@ -100,21 +106,17 @@ namespace mfront::bbrick {
       const AbstractBehaviourDSL& dsl,
       const std::string& fid,
       const std::string& id) const {
-    auto mts = getMiddleOfTimeStepModifier(bd);
     // computation of the material properties
     std::ostringstream mps;
     if (!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto An = StrainRateSensitivityFactor::getVariableId("A", fid, id);
-      mps << "this->" + An + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, this->A, mts);
-      mps << ";\n";
+      mps << generateMaterialPropertyInitializationCode(dsl, bd, An, this->A);
     }
     if (!this->dp0.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto dp0n =
           StrainRateSensitivityFactor::getVariableId("dp0", fid, id);
-      mps << "this->" + dp0n + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, this->dp0, mts);
-      mps << ";\n";
+      mps << generateMaterialPropertyInitializationCode(dsl, bd, dp0n,
+                                                        this->dp0);
     }
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     CodeBlock i;

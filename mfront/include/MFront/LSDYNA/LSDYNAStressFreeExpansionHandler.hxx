@@ -33,10 +33,10 @@ namespace lsdyna {
    * \param[in] d      : spatial dimension
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-  LSDYNAStandardSmallStrainStressFreeExpansionHandler(float *const,
-                                                      float *const,
-                                                      const float *const,
-                                                      const float *const,
+  LSDYNAStandardSmallStrainStressFreeExpansionHandler(float* const,
+                                                      float* const,
+                                                      const float* const,
+                                                      const float* const,
                                                       const LSDYNAInt);
   /*!
    * standard handler of stress free expansion handler for small
@@ -52,10 +52,10 @@ namespace lsdyna {
    * \param[in] d      : spatial dimension
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-  LSDYNAStandardSmallStrainStressFreeExpansionHandler(double *const,
-                                                      double *const,
-                                                      const double *const,
-                                                      const double *const,
+  LSDYNAStandardSmallStrainStressFreeExpansionHandler(double* const,
+                                                      double* const,
+                                                      const double* const,
+                                                      const double* const,
                                                       const LSDYNAInt);
   /*!
    * standard handler of stress free expansion handler for logarithmic
@@ -71,10 +71,10 @@ namespace lsdyna {
    * \param[in] d      : spatial dimension
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-  LSDYNALogarithmicStrainStressFreeExpansionHandler(float *const,
-                                                    float *const,
-                                                    const float *const,
-                                                    const float *const,
+  LSDYNALogarithmicStrainStressFreeExpansionHandler(float* const,
+                                                    float* const,
+                                                    const float* const,
+                                                    const float* const,
                                                     const LSDYNAInt);
   /*!
    * standard handler of stress free expansion handler for logarithmic
@@ -90,10 +90,10 @@ namespace lsdyna {
    * \param[in] d      : spatial dimension
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-  LSDYNALogarithmicStrainStressFreeExpansionHandler(double *const,
-                                                    double *const,
-                                                    const double *const,
-                                                    const double *const,
+  LSDYNALogarithmicStrainStressFreeExpansionHandler(double* const,
+                                                    double* const,
+                                                    const double* const,
+                                                    const double* const,
                                                     const LSDYNAInt);
 
 }  // end of namespace lsdyna

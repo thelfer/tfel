@@ -1,7 +1,7 @@
 /*
  * \file test_Column.cpp
  * \author rp238441
- * \date 11 juin 2013
+ * \date 11/06/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -40,6 +40,10 @@ struct test_Column final : public tfel::tests::TestCase {
     c.setFilename(f);
     TFEL_TESTS_ASSERT(std::abs(3. - c.getValues().at(1)) < eps);
     TFEL_TESTS_ASSERT(c.getName() == "B");
+    // quoted column number
+    tfel::check::Column c2("3");
+    c2.setFilename(f);
+    TFEL_TESTS_ASSERT(std::abs(1. - c2.getValues().at(1)) < eps);
     return this->result;
   }
 };

@@ -1,4 +1,4 @@
-The `@InternalStateVariable` keyword defines the inital value of a
+The `@InternalStateVariable` keyword defines the initial value of a
 state variable.
 
 This keyword must be followed by the name of the internal state

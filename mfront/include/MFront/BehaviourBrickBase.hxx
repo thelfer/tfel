@@ -2,7 +2,7 @@
  * \file  BehaviourBrickBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   21 oct. 2014
+ * \date 21/10/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICKBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICKBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/AbstractBehaviourBrick.hxx"
 
 namespace tfel::glossary {
@@ -35,7 +36,8 @@ namespace mfront {
   /*!
    * an helper class providing a set of helper method to build BehaviourBricks.
    */
-  struct BehaviourBrickBase : public AbstractBehaviourBrick {
+  struct MFRONT_VISIBILITY_EXPORT BehaviourBrickBase
+      : public AbstractBehaviourBrick {
     /*!
      * constructor
      * \param[in] dsl_ : domain specific language

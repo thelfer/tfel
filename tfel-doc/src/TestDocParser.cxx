@@ -89,9 +89,9 @@ namespace tfel::utilities {
         this->getStringValue(c, t.name, key, p);
         auto pc = categories.find(c);
         if (pc == categories.end()) {
-          std::cerr << TerminalColors::Red;
+          std::cerr.write(TerminalColors::Red, sizeof(TerminalColors::Red));
           std::cerr << "undefined category '" << c << "'\n";
-          std::cerr << TerminalColors::Reset;
+          std::cerr.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
         }
       } else if (key == "description") {
         this->treatDescription(t.descriptions, t.name, p);
@@ -163,9 +163,10 @@ namespace tfel::utilities {
         if (!key1.empty()) {
           if (key1[0] != '!') {
             if (k.find(key1) == k.end()) {
-              std::cerr << TerminalColors::Red;
+              std::cerr.write(TerminalColors::Red, sizeof(TerminalColors::Red));
               std::cerr << "undefined key '" << key1 << "'\n";
-              std::cerr << TerminalColors::Reset;
+              std::cerr.write(TerminalColors::Reset,
+                              sizeof(TerminalColors::Reset));
             }
           }
         }
@@ -180,9 +181,11 @@ namespace tfel::utilities {
           if (!key2.empty()) {
             if (key2[0] != '!') {
               if (k.find(key2) == k.end()) {
-                std::cerr << TerminalColors::Red;
+                std::cerr.write(TerminalColors::Red,
+                                sizeof(TerminalColors::Red));
                 std::cerr << "undefined key '" << key2 << "'\n";
-                std::cerr << TerminalColors::Reset;
+                std::cerr.write(TerminalColors::Reset,
+                                sizeof(TerminalColors::Reset));
               }
             }
           }

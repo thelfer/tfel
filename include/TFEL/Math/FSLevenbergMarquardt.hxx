@@ -8,7 +8,7 @@
  * K. Madsen, H.B. Nielsen, O. Tingleff
  *
  * \author Thomas Helfer
- * \date   21 nov 2008
+ * \date 21/11/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -62,8 +62,8 @@ namespace tfel::math {
   struct FSLevenbergMarquardt {
     //! a simple alias
     typedef typename FSLevenbergMarquardtVariable<N, T>::type Variable;
-    //! a simple alias
-    typedef typename FSLevenbergMarquardtVariable<M, T>::type Parameter;
+    //! a simple alias (a vector, even if there is only one parameter)
+    typedef tvector<M, T> Parameter;
 
     //! a simple alias
     typedef std::pair<T, Parameter> (*PtrFun)(const Variable&,

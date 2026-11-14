@@ -2,7 +2,7 @@
 macro(tests_system test_arg)
   add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
   add_test(NAME ${test_arg} COMMAND ${test_arg})
-  add_dependencies(check ${test_arg})
+  add_dependencies(build-tests ${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST ${test_arg}
   	         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
@@ -17,6 +17,8 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 endif(NOT CMAKE_CONFIGURATION_TYPES)
 tests_system(rwstream)
 tests_system(binary_write)
+tests_system(process_signal)
+tests_system(ExternalLibraryManagerTest)
 endif(UNIX)
 
 if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))

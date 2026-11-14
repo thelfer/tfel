@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/T2toST2/T2toST2Concept.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19 November 2013
+ * \date 19/11/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -81,7 +81,7 @@ namespace tfel::math {
    * \param[in] t: linear application transforming a symmetric tensor in an
    * unsymmetric tensor
    */
-  TFEL_HOST_DEVICE constexpr void abs(const T2toST2Concept auto&) noexcept;
+  TFEL_HOST_DEVICE constexpr auto abs(const T2toST2Concept auto&) noexcept;
   /*!
    * \brief compute de derivative of the push-forward of a symmetric
    * second order tensor with respect to the deformation gradient, i.e.

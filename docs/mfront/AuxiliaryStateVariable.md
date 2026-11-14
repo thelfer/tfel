@@ -6,7 +6,7 @@ name(s) of the variable(s) declared, separated by commas.
 
 ~~~~{.cpp}
 // scalar auxiliary state variable
-@AuxiliaryStateVariables strain p;
+@AuxiliaryStateVariable strain p;
 // symmetric tensors auxiliary state variable
-@AuxiliaryStateVariables StrainStensor evp,evp2;
+@AuxiliaryStateVariable StrainStensor evp,evp2;
 ~~~~

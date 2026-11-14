@@ -4,12 +4,12 @@ parameter that can be defined depends on the acceleration algorithm
 used.
 
 This keyword is followed by a string giving the name of the parameter
-and a *string* giving the value of this parameter.
+and the value of this parameter, given without quotes.
 
 ## Example
 
 ~~~~~{.cpp}
-@AccelerationAlgorithmParameter 'AccelerationTrigger' '3'; 
+@AccelerationAlgorithmParameter 'AccelerationTrigger' 3;
 ~~~~~
 
 

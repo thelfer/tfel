@@ -2,7 +2,7 @@
  * \file   bindings/python/mfront/VariableDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mai 2016
+ * \date 04/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,6 +26,7 @@ void declareVariableDescription(pybind11::module_&);
 void declareVariableDescription(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<VariableDescriptionBase>(m, "VariableDescriptionBase")
+      .def(pybind11::init<>())
       .def_readwrite("type", &VariableDescriptionBase::type)
       .def_readwrite("name", &VariableDescriptionBase::name)
       .def_readwrite("description", &VariableDescriptionBase::description)
@@ -61,46 +62,63 @@ void declareVariableDescription(pybind11::module_& m) {
       &VariableDescription::setPhysicalBounds;
 
   pybind11::class_<VariableDescription, VariableDescriptionBase>(
-      m, "VariableDescription")
+      m, "VariableDescription",
+      "Structure standing for a standard (non static) variable")
+      .def(pybind11::init<>())
       .def("hasBounds", hasBounds_1,
-           "Return true if the bounds of the variable has already been set")
-      .def("hasBounds", hasBounds_2,
-           "Return true if the bounds of the variable has already been set")
-      .def("getBounds", getBounds_1, pybind11::return_value_policy::reference,
-           "Return the physical bounds of the variable")
-      .def("getBounds", getBounds_2, pybind11::return_value_policy::reference,
-           "Return the physical bounds of the variable")
-      .def("setBounds", setBounds_1, "Set the physical bounds of the variable")
-      .def("setBounds", setBounds_2, "Set the physical bounds of the variable")
-      .def("hasPhysicalBounds", hasPhysicalBounds_1,
-           "Return true if the physical bounds of the variable has already "
-           "been set")
-      .def("hasPhysicalBounds", hasPhysicalBounds_2,
-           "Return true if the physical bounds of the variable has already "
-           "been set")
+           "Return true if bounds has been specified for this variable")
+      .def("hasBounds", hasBounds_2, pybind11::arg("i"),
+           "Return true if bounds has been specified for this variable\n"
+           "i: position")
+      .def("getBounds", getBounds_1,
+           pybind11::return_value_policy::reference_internal,
+           "Return the bounds of this variable")
+      .def("getBounds", getBounds_2,
+           pybind11::return_value_policy::reference_internal,
+           pybind11::arg("i"),
+           "Return the bounds of this variable\n"
+           "i: position")
+      .def("setBounds", setBounds_1, pybind11::arg("b"),
+           "Set bounds on this variable\n"
+           "b: bounds")
+      .def("setBounds", setBounds_2, pybind11::arg("b"), pybind11::arg("i"),
+           "Set bounds on this variable\n"
+           "b: bounds\n"
+           "i: position")
+      .def(
+          "hasPhysicalBounds", hasPhysicalBounds_1,
+          "Return true if physical bounds has been specified for this variable")
+      .def("hasPhysicalBounds", hasPhysicalBounds_2, pybind11::arg("i"),
+           "Return true if physical bounds has been specified for this "
+           "variable\n"
+           "i: position")
       .def("getPhysicalBounds", getPhysicalBounds_1,
-           pybind11::return_value_policy::reference,
-           "Get the physical bounds of the variable")
+           pybind11::return_value_policy::reference_internal,
+           "Return the physical bounds of this variable")
       .def("getPhysicalBounds", getPhysicalBounds_2,
-           pybind11::return_value_policy::reference,
-           "Get the physical bounds of the variable")
-      .def("setPhysicalBounds", setPhysicalBounds_1,
-           "Set the physical bounds of the variable")
-      .def("setPhysicalBounds", setPhysicalBounds_2,
-           "Set the physical bounds of the variable")
+           pybind11::return_value_policy::reference_internal,
+           pybind11::arg("i"),
+           "Return the physical bounds of this variable\n"
+           "i: position")
+      .def("setPhysicalBounds", setPhysicalBounds_1, pybind11::arg("b"),
+           "Set physical bounds on this variable\n"
+           "b: bounds")
+      .def("setPhysicalBounds", setPhysicalBounds_2, pybind11::arg("b"),
+           pybind11::arg("i"),
+           "Set physical bounds on this variable\n"
+           "b: bounds\n"
+           "i: position")
       .def("setGlossaryName", &VariableDescription::setGlossaryName,
-           "Set the glossary name")
+           pybind11::arg("g"))
       .def("setEntryName", &VariableDescription::setEntryName,
-           "Set the entry name")
-      .def("getExternalName", &VariableDescription::getExternalName,
-           "Return the external name")
-      .def("hasGlossaryName", &VariableDescription::hasGlossaryName,
-           "Return true if the variable has a glossary name")
-      .def("hasEntryName", &VariableDescription::hasEntryName,
-           "Return true if the variable has a entry name");
+           pybind11::arg("e"))
+      .def("getExternalName", &VariableDescription::getExternalName)
+      .def("hasGlossaryName", &VariableDescription::hasGlossaryName)
+      .def("hasEntryName", &VariableDescription::hasEntryName);
 
   pybind11::class_<VariableDescriptionContainer>(m,
                                                  "VariableDescriptionContainer")
+      .def(pybind11::init<>())
       .def(
           "__iter__",
           [](const VariableDescriptionContainer& v) {
@@ -109,5 +127,6 @@ void declareVariableDescription(pybind11::module_& m) {
           pybind11::keep_alive<0,
                                1>())  // keep object alive while iterator exists
       .def("__len__", VariableDescriptionContainer_size)
-      .def("contains", &VariableDescriptionContainer::contains);
+      .def("contains", &VariableDescriptionContainer::contains,
+           pybind11::arg("n"));
 }

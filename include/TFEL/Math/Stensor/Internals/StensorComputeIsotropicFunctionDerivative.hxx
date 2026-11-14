@@ -2,7 +2,7 @@
  * \file   StensorComputeIsotropicFunctionDerivative.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 janv. 2017
+ * \date 04/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -13,6 +13,8 @@
 
 #ifndef LIB_TFEL_MATH_STENSORCOMPUTEISOTROPICFUNCTIONDERIVATIVE_HXX
 #define LIB_TFEL_MATH_STENSORCOMPUTEISOTROPICFUNCTIONDERIVATIVE_HXX
+
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 namespace tfel::math::internals {
 
@@ -28,19 +30,21 @@ namespace tfel::math::internals {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename Function,
               typename FunctionDerivative,
               typename T>
-    static void exe2(ST2toST2Type& d,
-                     const Function&,
-                     const FunctionDerivative& df,
-                     const tvector<3u, T>& vp,
-                     const rotation_matrix<T>&,
-                     const T)  //
+    TFEL_HOST_DEVICE static void exe2(ST2toST2Type& d,
+                                      const Function&,
+                                      const FunctionDerivative& df,
+                                      const tvector<3u, T>& vp,
+                                      const rotation_matrix<T>&,
+                                      const T)  //
         requires(getSpaceDimension<ST2toST2Type>() == 1u) {
       using real = numeric_type<ST2toST2Type>;
       constexpr auto zero = real(0);
@@ -58,19 +62,21 @@ namespace tfel::math::internals {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T1,
               typename T2,
               typename T3>
-    static void exe(ST2toST2Type& d,
-                    const tvector<3u, T1>&,
-                    const tvector<3u, T2>& df,
-                    const tvector<3u, T3>&,
-                    const tmatrix<3u, 3u, base_type<T3>>&,
-                    const T3)  //
+    TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
+                                     const tvector<3u, T1>&,
+                                     const tvector<3u, T2>& df,
+                                     const tvector<3u, T3>&,
+                                     const tmatrix<3u, 3u, base_type<T3>>&,
+                                     const T3)  //
         requires(getSpaceDimension<ST2toST2Type>() == 1u) {
       using real = numeric_type<ST2toST2Type>;
       constexpr auto zero = real(0);
@@ -92,24 +98,25 @@ namespace tfel::math::internals {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T1,
               typename T2,
               typename T3>
-    static void exe(ST2toST2Type& d,
-                    const tvector<3u, T1>& f,
-                    const tvector<3u, T2>& df,
-                    const tvector<3u, T3>& vp,
-                    const tmatrix<3u, 3u, base_type<T3>>& m,
-                    const T3 eps)  //
+    TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
+                                     const tvector<3u, T1>& f,
+                                     const tvector<3u, T2>& df,
+                                     const tvector<3u, T3>& vp,
+                                     const tmatrix<3u, 3u, base_type<T3>>& m,
+                                     const T3 eps)  //
         requires(getSpaceDimension<ST2toST2Type>() == 2u) {
-      using real = numeric_type<ST2toST2Type>;
-      using base = base_type<real>;
-      using tvector = tfel::math::tvector<3u, real>;
-      using stensor = tfel::math::stensor<2u, real>;
+      using base = base_type<T3>;
+      using tvector = tfel::math::tvector<3u, base>;
+      using stensor = tfel::math::stensor<2u, base>;
       constexpr base cste = Cste<base>::sqrt2;
       stensor n0, n1, n2;
       stensor::computeEigenTensors(n0, n1, n2, m);
@@ -132,19 +139,21 @@ namespace tfel::math::internals {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T,
               typename Function,
               typename FunctionDerivative>
-    static void exe2(ST2toST2Type& d,
-                     const Function& f,
-                     const FunctionDerivative& df,
-                     const tvector<3u, T>& vp,
-                     const rotation_matrix<T>& m,
-                     const T eps)  //
+    TFEL_HOST_DEVICE static void exe2(ST2toST2Type& d,
+                                      const Function& f,
+                                      const FunctionDerivative& df,
+                                      const tvector<3u, T>& vp,
+                                      const rotation_matrix<T>& m,
+                                      const T eps)  //
         requires(getSpaceDimension<ST2toST2Type>() == 2u) {
       const auto fv = map(f, vp);
       const auto dfv = map(df, vp);
@@ -161,25 +170,28 @@ namespace tfel::math::internals {
      * \param[in]  df:  values of the derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T1,
               typename T2,
               typename T3>
-    static void exe(ST2toST2Type& d,
-                    const tvector<3u, T1>& f,
-                    const tvector<3u, T2>& df,
-                    const tvector<3u, T3>& vp,
-                    const tmatrix<3u, 3u, base_type<T3>>& m,
-                    const T3 eps)  //
+    TFEL_HOST_DEVICE static void exe(ST2toST2Type& d,
+                                     const tvector<3u, T1>& f,
+                                     const tvector<3u, T2>& df,
+                                     const tvector<3u, T3>& vp,
+                                     const tmatrix<3u, 3u, base_type<T3>>& m,
+                                     const T3 eps)  //
         requires(getSpaceDimension<ST2toST2Type>() == 3u) {
-      using real = numeric_type<ST2toST2Type>;
-      using base = base_type<real>;
-      using tvector = tfel::math::tvector<3u, real>;
-      using stensor = tfel::math::stensor<3u, real>;
-      using st2tost2 = tfel::math::st2tost2<3u, real>;
+      using base = base_type<T3>;
+      using tvector = tfel::math::tvector<3u, base>;
+      using stensor = tfel::math::stensor<3u, base>;
+      using st2tost2 = tfel::math::st2tost2<3u, base>;
+      using ist2tost2 =
+          tfel::math::st2tost2<3u, BinaryOperationResult<base, T3, OpDiv>>;
       constexpr base cste = Cste<base>::sqrt2;
       if ((tfel::math::abs(vp(0) - vp(1)) < eps) &&
           (tfel::math::abs(vp(0) - vp(2)) < eps)) {
@@ -200,7 +212,8 @@ namespace tfel::math::internals {
         const auto vpm = (vp(0) + vp(1)) / 2;
         const auto dfm = (df[0] + df[1]) / 2;
         d = (((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * dfm + (n2 ^ n2) * df[2] +
-             (f[0] - f[2]) / (vpm - vp(2)) * ((n02 ^ n02) + (n12 ^ n12)));
+             ((f[0] + f[1]) / 2 - f[2]) / (vpm - vp(2)) *
+                 ((n02 ^ n02) + (n12 ^ n12)));
       } else if (tfel::math::abs(vp(0) - vp(2)) < eps) {
         const tvector v0 = m.template column_view<0u>();
         const tvector v1 = m.template column_view<1u>();
@@ -216,7 +229,8 @@ namespace tfel::math::internals {
         const auto vpm = (vp(0) + vp(2)) / 2;
         const auto dfm = (df[0] + df[2]) / 2;
         d = (((n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02)) * dfm + (n1 ^ n1) * df[1] +
-             (f[0] - f[1]) / (vpm - vp(1)) * ((n01 ^ n01) + (n12 ^ n12)));
+             ((f[0] + f[2]) / 2 - f[1]) / (vpm - vp(1)) *
+                 ((n01 ^ n01) + (n12 ^ n12)));
       } else if (tfel::math::abs(vp(1) - vp(2)) < eps) {
         const tvector v0 = m.template column_view<0u>();
         const tvector v1 = m.template column_view<1u>();
@@ -232,12 +246,14 @@ namespace tfel::math::internals {
         const auto vpm = (vp(1) + vp(2)) / 2;
         const auto dfm = (df[1] + df[2]) / 2;
         d = ((n0 ^ n0) * df[0] + ((n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12)) * dfm +
-             ((f[0] - f[1]) / (vp(0) - vpm)) * ((n01 ^ n01) + (n02 ^ n02)));
+             ((f[0] - (f[1] + f[2]) / 2) / (vp(0) - vpm)) *
+                 ((n01 ^ n01) + (n02 ^ n02)));
       } else {
-        st2tost2 dn0, dn1, dn2;
+        ist2tost2 dn0, dn1, dn2;
         stensor n0, n1, n2;
         stensor::computeEigenTensors(n0, n1, n2, m);
-        stensor::computeEigenTensorsDerivatives(dn0, dn1, dn2, vp, m, eps / 4);
+        tfel::math::stensor<3u, T3>::computeEigenTensorsDerivatives(
+            dn0, dn1, dn2, vp, m, eps / 4);
         d = (n0 ^ n0) * df[0] + (n1 ^ n1) * df[1] + (n2 ^ n2) * df[2] +
             f[0] * dn0 + f[1] * dn1 + f[2] * dn2;
       }
@@ -249,19 +265,21 @@ namespace tfel::math::internals {
      * \param[in]  df:  derivative of the function
      * \param[in]  vp:  eigen values
      * \param[in]  m:   eigenvectors
-     * \param[in]  eps: criterion value used to judge if two eigenvalues are
-     * equals
+     * \param[in]  eps: absolute threshold below which two eigenvalues are
+     * considered equal. It must be well above the rounding errors of the
+     * eigenvalues, for instance sqrt(epsilon) times the largest absolute
+     * eigenvalue (see the documentation of tensors)
      */
     template <ST2toST2Concept ST2toST2Type,
               typename T,
               typename Function,
               typename FunctionDerivative>
-    static void exe2(ST2toST2Type& d,
-                     const Function& f,
-                     const FunctionDerivative& df,
-                     const tvector<3u, T>& vp,
-                     const rotation_matrix<T>& m,
-                     const T eps)  //
+    TFEL_HOST_DEVICE static void exe2(ST2toST2Type& d,
+                                      const Function& f,
+                                      const FunctionDerivative& df,
+                                      const tvector<3u, T>& vp,
+                                      const rotation_matrix<T>& m,
+                                      const T eps)  //
         requires(getSpaceDimension<ST2toST2Type>() == 3u) {
       const auto fv = map(f, vp);
       const auto dfv = map(df, vp);

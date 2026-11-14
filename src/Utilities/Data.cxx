@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   20 Nov 2006
+ * \date 20/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,25 +22,71 @@ namespace tfel::utilities {
 
   Data::Data() = default;
   Data::Data(const Data&) = default;
-  Data::Data(Data&&) = default;
+  Data::Data(Data&&) noexcept = default;
   Data& Data::operator=(const Data&) = default;
-  Data& Data::operator=(Data&&) = default;
+  Data& Data::operator=(Data&&) noexcept = default;
   Data::~Data() = default;
 
   DataStructure::DataStructure() = default;
   DataStructure::DataStructure(const DataStructure&) = default;
-  DataStructure::DataStructure(DataStructure&&) = default;
+  DataStructure::DataStructure(DataStructure&&) noexcept = default;
   DataStructure& DataStructure::operator=(const DataStructure&) = default;
-  DataStructure& DataStructure::operator=(DataStructure&&) = default;
+  DataStructure& DataStructure::operator=(DataStructure&&) noexcept = default;
   DataStructure::~DataStructure() = default;
+
+  bool DataStructure::is_convertible(const Data& d) noexcept {
+    if ((d.is<std::string>()) || (d.is<DataStructure>())) {
+      return true;
+    }
+    if (!d.is<DataMap>()) {
+      return false;
+    }
+    const auto& m = d.get<DataMap>();
+    if (m.size() != 1) {
+      return false;
+    }
+    return m.begin()->second.is<DataMap>();
+  }  // end of is_convertible
+
+  DataStructure DataStructure::convert(const Data& d) {
+    if (d.is<DataStructure>()) {
+      return d.get<DataStructure>();
+    }
+    if (d.is<std::string>()) {
+      auto r = DataStructure{};
+      r.name = d.get<std::string>();
+      return r;
+    }
+    if (!d.is<DataMap>()) {
+      tfel::raise(
+          "DataStructure::convert: given data is "
+          "not convertible to a data structure");
+    }
+    const auto& m = d.get<DataMap>();
+    if (m.size() != 1) {
+      tfel::raise(
+          "DataStructure::convert: given data is "
+          "not convertible to a data structure");
+    }
+    if (!m.begin()->second.is<DataMap>()) {
+      tfel::raise(
+          "DataStructure::convert: given data is "
+          "not convertible to a data structure");
+    }
+    auto r = DataStructure{};
+    r.name = m.begin()->first;
+    r.data = m.begin()->second.get<DataMap>();
+    return r;
+  }  // end of convert
 
   DataParsingOptions::DataParsingOptions() = default;
   DataParsingOptions::DataParsingOptions(const DataParsingOptions&) = default;
-  DataParsingOptions::DataParsingOptions(DataParsingOptions&&) = default;
+  DataParsingOptions::DataParsingOptions(DataParsingOptions&&) noexcept =
+      default;
   DataParsingOptions& DataParsingOptions::operator=(const DataParsingOptions&) =
       default;
-  DataParsingOptions& DataParsingOptions::operator=(DataParsingOptions&&) =
-      default;
+  DataParsingOptions& DataParsingOptions::operator=(
+      DataParsingOptions&&) noexcept = default;
   DataParsingOptions::~DataParsingOptions() = default;
 
   static void read_map(DataMap& r,
@@ -105,12 +151,12 @@ namespace tfel::utilities {
     auto is_integer = [&throw_if](const std::string& s) {
       auto ps = s.cbegin();
       const auto pse = s.cend();
-      if (*ps == '-') {
+      if ((*ps == '-') || (*ps == '+')) {
         ++ps;
       }
       throw_if(ps == pse, "invalid number '" + s + "'");
       while (ps != pse) {
-        if (!::isdigit(*ps)) {
+        if (!::isdigit(static_cast<unsigned char>(*ps))) {
           return false;
         }
         ++ps;
@@ -130,14 +176,16 @@ namespace tfel::utilities {
     };
     if (p->value == "true") {
       ++p;
-      return Data(true);
+      return {true};
     } else if (p->value == "false") {
       ++p;
-      return Data(false);
+      return {false};
     } else if (p->flag == Token::String) {
       const auto name = CxxTokenizer::readString(p, pe);
       return readDataStructureOrString(name);
-    } else if (CxxTokenizer::isValidIdentifier(p->value)) {
+    } else if ((o.allowRawStrings) && (p->flag != Token::Number) &&
+               (CxxTokenizer::isValidIdentifier(p->value,
+                                                o.rawStringParsingOptions))) {
       const auto name = p->value;
       ++p;
       return readDataStructureOrString(name);
@@ -146,11 +194,20 @@ namespace tfel::utilities {
       auto v = std::stoi(p->value, &pos);
       throw_if(pos != p->value.size(), "invalid number '" + p->value + "'");
       ++p;
-      return Data(v);
+      return {v};
     }
-    const auto r = convert<double>(p->value);
-    ++p;
-    return Data(r);
+    const auto r = [&p]() -> double {
+      auto value = double{};
+      try {
+        value = convert<double>(p->value);
+        ++p;
+      } catch (...) {
+        tfel::raise("Data::read_value: can't convert token '" + p->value +
+                    "' to a Data object");
+      }
+      return value;
+    }();
+    return Data{r};
   }
 
   Data Data::read_vector(CxxTokenizer::const_iterator& p,
@@ -165,6 +222,7 @@ namespace tfel::utilities {
     std::vector<Data> v;
     while (p->value != "}") {
       v.push_back(Data::read(p, pe, o));
+      CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
       if (p->value == ",") {
         CxxTokenizer::readSpecifiedToken("Data::read_vector", ",", p, pe);
         CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
@@ -194,6 +252,7 @@ namespace tfel::utilities {
         const auto a = convert<double>(p->value);
         ++p;
         CxxTokenizer::readSpecifiedToken("Data::read_map", ":", p, pe);
+        CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
         const auto o = convert<double>(p->value);
         ++p;
         values.insert({a, o});
@@ -227,20 +286,14 @@ namespace tfel::utilities {
       CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
       if (p->value == "}") {
         ++p;
-        return Data();
+        return Data{};
       }
-      // map or string vector
+      // map or vector
       ++p;
       CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
-      if (p->value == ":") {
-        p = std::prev(p, 2);
-        return read_map(p, pe, o);
-      }
-      if ((p->value != ",") && (p->value != "}")) {
-        raise("expected ',' or ':' or '}', read '" + p->value + "'");
-      }
+      const auto is_map = (std::prev(p)->value != "{") && (p->value == ":");
       p = std::prev(p, 2);
-      return read_vector(p, pe, o);
+      return is_map ? read_map(p, pe, o) : read_vector(p, pe, o);
     }
     // standard value
     return read_value(p, pe, o);
@@ -300,6 +353,9 @@ namespace tfel::utilities {
     static bool apply(const std::string& x1, const std::string& x2) {
       return x1 == x2;
     }  // end of apply
+    static bool apply(const bool x1, const bool x2) {
+      return x1 == x2;
+    }  // end of apply
     static bool apply(const int x1, const int x2) {
       return x1 == x2;
     }  // end of apply
@@ -319,6 +375,10 @@ namespace tfel::utilities {
       }
       return e;
     }  // end of apply
+    static bool apply(const std::map<double, double>& m1,
+                      const std::map<double, double>& m2) {
+      return m1 == m2;
+    }  // end of apply
     static bool apply(const DataMap& v1, const DataMap& v2) {
       bool e = true;
       if (v1.size() != v2.size()) {
@@ -332,6 +392,9 @@ namespace tfel::utilities {
       }
       return e;
     }  // end of apply
+    static bool apply(const DataStructure& d1, const DataStructure& d2) {
+      return (d1.name == d2.name) && (DataComparator::apply(d1.data, d2.data));
+    }  // end of apply
     static bool apply(const double v1, const double v2) {
       return tfel::math::ieee754::fpclassify(v1 - v2) == FP_ZERO;
     }  // end of apply
@@ -341,15 +404,30 @@ namespace tfel::utilities {
     if (&lhs == &rhs) {
       return true;
     }
+    if ((lhs.empty()) || (rhs.empty())) {
+      return (lhs.empty()) && (rhs.empty());
+    }
     return apply<DataComparator>(lhs, rhs);
   }
 
   DataMapValidator::DataMapValidator() = default;
-  DataMapValidator::DataMapValidator(DataMapValidator&&) = default;
+  DataMapValidator::DataMapValidator(DataMapValidator&&) noexcept = default;
   DataMapValidator::DataMapValidator(const DataMapValidator&) = default;
-  DataMapValidator& DataMapValidator::operator=(DataMapValidator&&) = default;
+  DataMapValidator& DataMapValidator::operator=(DataMapValidator&&) noexcept =
+      default;
   DataMapValidator& DataMapValidator::operator=(const DataMapValidator&) =
       default;
+
+  void DataMapValidator::addStrictlyPositiveIntegerCheck(const std::string& k) {
+    this->addDataValidator(k, [k](const Data& d) {
+      if (!d.is<int>()) {
+        tfel::raise("data named '" + k + "' is not an integer");
+      }
+      if (d.get<int>() <= 0) {
+        tfel::raise("data named '" + k + "' is not strictly positive");
+      }
+    });
+  }  // end of addStrictlyPositiveIntegerCheck
 
   DataMapValidator& DataMapValidator::addDataValidator(const std::string& k,
                                                        const DataValidator& f) {
@@ -397,7 +475,7 @@ namespace tfel::utilities {
     tfel::raise(
         "raiseUnmatchedDataType: "
         "the type of data '" +
-        std::string{n} + "'is not the expected one");
+        std::string{n} + "' is not the expected one");
   }  // end of raiseUnmatchedParameterType
 
   const Data& get(const DataMap& m, std::string_view n) {

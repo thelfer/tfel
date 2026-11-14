@@ -2,9 +2,15 @@
  * \file   mtest/src/GenericMaterialProperty.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10/08/2021
+ * \date 10/08/2021
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
@@ -34,7 +40,7 @@ namespace mtest {
   }  // end of GenericMaterialProperty
 
   real GenericMaterialProperty::getValue() const {
-    ::mfront_gmp_OutputStatus s;
+    auto s = ::mfront_gmp_OutputStatus{};
     const auto v = (*this->fct)(
         &s, this->arguments_values.data(),
         static_cast<mfront_gmp_size_type>(this->arguments_values.size()),

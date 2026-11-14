@@ -1,0 +1,22 @@
+@Author HELFER Thomas;
+@Date   29/09/2026;
+@Description{
+  "simple tensile test on an elastic bar"
+};
+
+@ModellingHypothesis 'Tridimensional';
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'BarBehaviour2';
+
+// material properties
+@MaterialProperty<constant> 'YoungModulus' 1.5e+11;
+
+// external state variable
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedGradient 'UniaxialStrain' {0:0, 1:1e-2};
+
+@Times{0,1 in 10};
+
+@Test<function> 'UniaxialTension' 'YoungModulus * UniaxialStrain' 1.e-3;

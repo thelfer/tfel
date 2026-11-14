@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/ModelDSLCommon.hxx
  * \brief  This file declares the ModelDSLCommon class
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -34,25 +34,24 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT bool isValidModelName(const std::string&);
 
-  /*!
-   * \brief base class for domain specific languages for models
-   */
+  //! \brief base class for domain specific languages for models
   struct MFRONT_VISIBILITY_EXPORT ModelDSLCommon : public DSLBase {
     /*!
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    ModelDSLCommon(const DSLOptions&);
+    explicit ModelDSLCommon(const DSLOptions&);
     //
-    DSLTarget getTargetType() const override final;
-    const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
-        const override;
-    std::string getMaterialKnowledgeIdentifier() const override;
-    std::string getMaterialName() const override;
-    std::string getOverridableVariableNameByExternalName(
+    [[nodiscard]] DSLTarget getTargetType() const final;
+    void overrideByAParameter(const std::string&, const double) final;
+    [[nodiscard]] const MaterialKnowledgeDescription&
+    getMaterialKnowledgeDescription() const override;
+    [[nodiscard]] std::string getMaterialKnowledgeIdentifier() const override;
+    [[nodiscard]] std::string getMaterialName() const override;
+    [[nodiscard]] std::string getOverridableVariableNameByExternalName(
         const std::string&) const override;
-    void overrideByAParameter(const std::string&, const double) override;
-    std::map<std::string, double> getOverridenParameters() const override;
+    [[nodiscard]] std::map<std::string, double> getOverridenParameters()
+        const override;
     void endsInputFileProcessing() override;
     void makeConsistencyChecks() const override;
     void generateOutputFiles() override;
@@ -63,24 +62,27 @@ namespace mfront {
 
    protected:
     //
+    // those methods are declared final to be called safely in constructors
+    void reserveName(const std::string&) final;
+    void appendToIncludes(const std::string&) final;
+    //
     void addExternalMFrontFile(const std::string&,
                                const std::vector<std::string>&,
                                const tfel::utilities::DataMap&) override;
-    DSLOptions buildDSLOptions() const override;
+    [[nodiscard]] DSLOptions buildDSLOptions() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
-    bool useQt() const override;
-    void reserveName(const std::string&) override;
-    bool isNameReserved(const std::string&) const override;
-    std::string getClassName() const override;
+    [[nodiscard]] bool useQt() const override;
+    [[nodiscard]] bool isNameReserved(const std::string&) const override;
+    [[nodiscard]] std::string getClassName() const override;
     void addMaterialLaw(const std::string&) override;
-    void appendToIncludes(const std::string&) override;
     void appendToMembers(const std::string&) override;
     void appendToPrivateCode(const std::string&) override;
     void appendToSources(const std::string&) override;
     void addStaticVariableDescription(
         const StaticVariableDescription&) override;
-    std::map<std::string, int> getIntegerConstants() const override;
-    int getIntegerConstant(const std::string&) const override;
+    [[nodiscard]] std::map<std::string, int> getIntegerConstants()
+        const override;
+    [[nodiscard]] int getIntegerConstant(const std::string&) const override;
     void treatUnknownKeyword() override;
     void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
@@ -89,7 +91,7 @@ namespace mfront {
      * \brief get all symbols required to interpret the `@Function` code block.
      * \param[out] symbols: symbols
      */
-    virtual std::map<std::string, std::string> getSymbols();
+    [[nodiscard]] virtual std::map<std::string, std::string> getSymbols();
     //! treat the `@UseQt` keyword
     virtual void treatUseQt();
     //! treat the `@Library` keyword
@@ -136,9 +138,9 @@ namespace mfront {
 
     virtual void readDefaultValue();
 
-    virtual bool isOutputVariable(const std::string&) const;
+    [[nodiscard]] virtual bool isOutputVariable(const std::string&) const;
 
-    virtual bool isInputVariable(const std::string&) const;
+    [[nodiscard]] virtual bool isInputVariable(const std::string&) const;
 
     //! \brief description of the model
     ModelDescription md;
@@ -149,7 +151,6 @@ namespace mfront {
     //! \brief current variable. This variable is set before calling the
     //! `treatVariableMethod` method
     std::string currentVar;
-
   };  // end of class ModelDSLCommon
 
 }  // end of namespace mfront

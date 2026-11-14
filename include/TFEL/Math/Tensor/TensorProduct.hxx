@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   07 avr 2008
+ * \date 07/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -19,14 +19,18 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel::math {
 
   template <TensorConcept A, TensorConcept B>
   struct TFEL_VISIBILITY_LOCAL TensorProductExprBase : public ExprBase {
-    typedef EmptyRunTimeProperties RunTimeProperties;
-
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    using RunTimeProperties = EmptyRunTimeProperties;
+    //
+    TensorProductExprBase() = delete;
+    //
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
+        const noexcept {
       return EmptyRunTimeProperties();
     }
 
@@ -42,8 +46,6 @@ namespace tfel::math {
     typedef const NumType& const_reference;
     typedef IndexType size_type;
     typedef ptrdiff_t difference_type;
-
-    TensorProductExprBase() = delete;
 
     TFEL_HOST_DEVICE constexpr TensorProductExprBase(A l, B r) noexcept
         : a(std::forward<A>(l)), b(std::forward<B>(r)) {}
@@ -61,13 +63,14 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr TensorProductExpr1D(A l, B r) noexcept
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
-    TFEL_HOST_DEVICE constexpr typename TensorProductExprBase<A, B>::NumType
-    operator()(const typename TensorProductExprBase<A, B>::IndexType i)
-        const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr
+        typename TensorProductExprBase<A, B>::NumType
+        operator()(const typename TensorProductExprBase<A, B>::IndexType i)
+            const noexcept {
       return (this->a(i)) * (this->b(i));
     }  // end of operator()
 
-    TFEL_HOST_DEVICE constexpr auto operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator[](
         const typename TensorProductExprBase<A, B>::IndexType i)
         const noexcept {
       return this->operator()(i);
@@ -104,7 +107,7 @@ namespace tfel::math {
       return T(0);
     }  // end of operator()
 
-    TFEL_HOST_DEVICE constexpr auto operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator[](
         const typename TensorProductExprBase<A, B>::IndexType i)
         const noexcept {
       return this->operator()(i);
@@ -117,9 +120,10 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr TensorProductExpr3D(A l, B r) noexcept
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
-    TFEL_HOST_DEVICE constexpr typename TensorProductExprBase<A, B>::NumType
-    operator()(const typename TensorProductExprBase<A, B>::IndexType i)
-        const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr
+        typename TensorProductExprBase<A, B>::NumType
+        operator()(const typename TensorProductExprBase<A, B>::IndexType i)
+            const noexcept {
       using namespace std;
       typedef typename TensorProductExprBase<A, B>::NumType T;
       switch (i) {
@@ -156,7 +160,7 @@ namespace tfel::math {
       return T(0);
     }  // end of operator()
 
-    TFEL_HOST_DEVICE constexpr auto operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto operator[](
         const typename TensorProductExprBase<A, B>::IndexType i)
         const noexcept {
       return this->operator()(i);

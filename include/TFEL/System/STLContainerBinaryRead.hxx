@@ -34,9 +34,7 @@ namespace tfel::system {
       auto s = binary_read<size_type>(f);
       res.clear();
       res.resize(s);
-      if (::read(f, &res[0], s * sizeof(value_type)) == -1) {
-        systemCall::throwSystemError("BinaryReader<T>::exe", errno);
-      }
+      systemCall::read(f, &res[0], s * sizeof(value_type));
     }
   };
 

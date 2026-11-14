@@ -2,7 +2,7 @@
  * \file   include/MFront/BehaviourBrick/Hill1948StressCriterion.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -53,32 +53,35 @@ namespace mfront::bbrick {
    * \f]
    */
   struct Hill1948StressCriterion final : StressCriterionBase {
-    std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-        const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
                     const DataMap&,
                     const Role) override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::string computeElasticPrediction(const std::string&,
-                                         const BehaviourDescription&,
-                                         const StressPotential&) const override;
-    std::string computeCriterion(const std::string&,
-                                 const BehaviourDescription&,
-                                 const StressPotential&) const override;
-    std::string computeNormal(const std::string&,
-                              const BehaviourDescription&,
-                              const StressPotential&,
-                              const Role) const override;
-    std::string computeNormalDerivative(const std::string&,
-                                        const BehaviourDescription&,
-                                        const StressPotential&,
-                                        const Role) const override;
-    bool isCoupledWithPorosityEvolution() const override;
-    bool isNormalDeviatoric() const override;
-    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const override;
+    [[nodiscard]] std::vector<BehaviourSymmetry>
+    getSupportedBehaviourSymmetries() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeCriterion(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeNormal(const std::string&,
+                                            const BehaviourDescription&,
+                                            const StressPotential&,
+                                            const Role) const override;
+    [[nodiscard]] std::string computeNormalDerivative(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&,
+        const Role) const override;
+    [[nodiscard]] bool isCoupledWithPorosityEvolution() const override;
+    [[nodiscard]] bool isNormalDeviatoric() const override;
+    [[nodiscard]] PorosityEffectOnFlowRule
+    getPorosityEffectOnEquivalentPlasticStrain() const override;
     //! destructor
     ~Hill1948StressCriterion() override;
   };  // end of struct Hill1948StressCriterion

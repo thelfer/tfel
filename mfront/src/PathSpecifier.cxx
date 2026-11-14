@@ -2,7 +2,7 @@
  * \file   mfront/src/PathSpecifier.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06/10/2020
+ * \date 06/10/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,9 +27,9 @@
 namespace mfront {
 
   PathSpecifier::PathSpecifier() = default;
-  PathSpecifier::PathSpecifier(PathSpecifier&&) = default;
+  PathSpecifier::PathSpecifier(PathSpecifier&&) noexcept = default;
   PathSpecifier::PathSpecifier(const PathSpecifier&) = default;
-  PathSpecifier& PathSpecifier::operator=(PathSpecifier&&) = default;
+  PathSpecifier& PathSpecifier::operator=(PathSpecifier&&) noexcept = default;
   PathSpecifier& PathSpecifier::operator=(const PathSpecifier&) = default;
   PathSpecifier::~PathSpecifier() = default;
 

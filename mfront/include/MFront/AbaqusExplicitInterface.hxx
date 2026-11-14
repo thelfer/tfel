@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/AbaqusExplicitInterface.hxx
  * \brief
  * \author Thomas Helfer
- * \date   16 mars 2016
+ * \date 16/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,18 +23,25 @@ namespace mfront {
    */
   struct AbaqusExplicitInterface : public AbaqusInterfaceBase {
     //!\return the name of the interface
-    static std::string getName();
+    [[nodiscard]] static std::string getName();
+    //
     void endTreatment(const BehaviourDescription&,
                       const FileDescription&) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
     void getTargetsDescription(TargetsDescription&,
                                const BehaviourDescription&) override;
-    //! destructor
+    //! \brief destructor
     ~AbaqusExplicitInterface() override;
 
    protected:
-    std::string getInterfaceName() const override;
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     void writeBehaviourConstructorHeader(std::ostream&,
                                          const BehaviourDescription&,
                                          const Hypothesis,
@@ -66,12 +73,6 @@ namespace mfront {
     void exportMechanicalData(std::ostream&,
                               const Hypothesis,
                               const BehaviourDescription&) const override;
-    std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription&,
-        const std::string&,
-        const std::vector<std::string>&,
-        tokens_iterator,
-        const tokens_iterator) override;
     /*!
      * \param[out] out: ouput stream
      * \param[in]  md:  behaviour description

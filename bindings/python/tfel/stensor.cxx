@@ -24,31 +24,35 @@ static void declarestensor(pybind11::module_& m, const char* const n) {
   using stensor = tfel::math::stensor<N, double>;
   const auto S = tfel::math::StensorDimeToSize<N>::value;
   pybind11::class_<stensor>(m, n, pybind11::buffer_protocol())
-      .def_static("zero", &stensor::zero)
+      .def_static("zero", &stensor::zero,
+                  "Return a new instance of the Child class filled with null "
+                  "values")
       .def_buffer([](stensor& s) -> pybind11::buffer_info {
         return pybind11::buffer_info(
             s.data(),       /* Pointer to buffer */
             sizeof(double), /* Size of one scalar */
             pybind11::format_descriptor<double>::format(), /* Python
-                                                       struct-style format
-                                                       descriptor */
+                                                        struct-style format
+                                                        descriptor */
             1,          /* Number of dimensions */
             {s.size()}, /* Buffer dimensions */
             {sizeof(double)});
       })
-      .def(pybind11::init<>())
+      .def(pybind11::init<>(), "Default constructor")
       .def(pybind11::init<>(
-          [S](pybind11::array_t<double, pybind11::array::c_style |
-                                            pybind11::array::forcecast>& u) {
-            if (u.size() != S) {
-              tfel::raise<std::range_error>("invalid size of Stensor");
-            }
-            stensor t;
-            for (std::size_t i = 0; i < S; i++) {
-              t(i) = u.unchecked<1>()(i);
-            }
-            return t;
-          }))
+               [S](pybind11::array_t<double, pybind11::array::c_style |
+                                                 pybind11::array::forcecast>&
+                       u) {
+                 if (u.size() != S) {
+                   tfel::raise<std::range_error>("invalid size of Stensor");
+                 }
+                 stensor t;
+                 for (std::size_t i = 0; i < S; i++) {
+                   t(i) = u.unchecked<1>()(i);
+                 }
+                 return t;
+               }),
+           pybind11::arg("u"))
       .def("__len__", [](const stensor& s) { return s.size(); })
       .def("__repr__",
            [](const stensor& s) {
@@ -87,9 +91,9 @@ static void declarestensor(pybind11::module_& m, const char* const n) {
            [](const stensor& a, const stensor& b) -> stensor { return a - b; })
       .def("__mul__",
            [](const stensor& a, const double b) -> stensor { return a * b; })
-      .def("__mul__",
-           [](const double a, const stensor& b) -> stensor { return a * b; })
-      .def("__div__",
+      .def("__rmul__",
+           [](const stensor& b, const double a) -> stensor { return a * b; })
+      .def("__truediv__",
            [](const stensor& a, const double b) -> stensor { return a / b; })
       .def(pybind11::self += pybind11::self)
       .def(pybind11::self -= pybind11::self)
@@ -122,22 +126,36 @@ void declarestensor(pybind11::module_& m);
 
 void declarestensor(pybind11::module_& m) {
   using namespace tfel::math;
+  // the classes are declared before the functions using them, so that the
+  // signatures of these functions refer to the python names of the classes
+  declarestensor<1u>(m, "Stensor1D");
+  declarestensor<2u>(m, "Stensor2D");
+  declarestensor<3u>(m, "Stensor3D");
   double (*tresca1D)(const stensor<1u, double>&) = stensor_tresca<1u>;
   double (*tresca2D)(const stensor<2u, double>&) = stensor_tresca<2u>;
   double (*tresca3D)(const stensor<3u, double>&) = stensor_tresca<3u>;
   double (*sigmaeq1D)(const stensor<1u, double>&) = sigmaeq;
   double (*sigmaeq2D)(const stensor<2u, double>&) = sigmaeq;
   double (*sigmaeq3D)(const stensor<3u, double>&) = sigmaeq;
-  m.def("tresca", tresca1D);
-  m.def("tresca", tresca2D);
-  m.def("tresca", tresca3D);
-  m.def("sigmaeq", sigmaeq1D);
-  m.def("sigmaeq", sigmaeq2D);
-  m.def("sigmaeq", sigmaeq3D);
-  m.def("makeStensor1D", makeStensor1D);
-  m.def("makeStensor2D", makeStensor2D);
-  m.def("makeStensor3D", makeStensor3D);
-  declarestensor<1u>(m, "Stensor1D");
-  declarestensor<2u>(m, "Stensor2D");
-  declarestensor<3u>(m, "Stensor3D");
+  m.def("tresca", tresca1D, pybind11::arg("s"),
+        "Compute the tresca stress for a symmetric tensor\n"
+        "s: symmetric tensor");
+  m.def("tresca", tresca2D, pybind11::arg("s"),
+        "Compute the tresca stress for a symmetric tensor\n"
+        "s: symmetric tensor");
+  m.def("tresca", tresca3D, pybind11::arg("s"),
+        "Compute the tresca stress for a symmetric tensor\n"
+        "s: symmetric tensor");
+  m.def("sigmaeq", sigmaeq1D, pybind11::arg("s"),
+        "Return the von Mises stress of a symmetric tensor\n"
+        "s: symmetric tensor");
+  m.def("sigmaeq", sigmaeq2D, pybind11::arg("s"),
+        "Return the von Mises stress of a symmetric tensor\n"
+        "s: symmetric tensor");
+  m.def("sigmaeq", sigmaeq3D, pybind11::arg("s"),
+        "Return the von Mises stress of a symmetric tensor\n"
+        "s: symmetric tensor");
+  m.def("makeStensor1D", makeStensor1D, pybind11::arg("s"));
+  m.def("makeStensor2D", makeStensor2D, pybind11::arg("s"));
+  m.def("makeStensor3D", makeStensor3D, pybind11::arg("s"));
 }  // end of declarestensor

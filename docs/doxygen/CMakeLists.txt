@@ -4,7 +4,6 @@ if(TFEL_APPEND_SUFFIX)
     COMPONENT doxygen)
   install(FILES
     ${PROJECT_SOURCE_DIR}/docs/doxygen/img/background.svg
-    ${PROJECT_SOURCE_DIR}/docs/mfront-doxygen.png
     ${PROJECT_SOURCE_DIR}/docs/mfront-en.svg
     ${PROJECT_SOURCE_DIR}/docs/mfront-fr.svg
     ${PROJECT_SOURCE_DIR}/docs/web/img/pipe.svg

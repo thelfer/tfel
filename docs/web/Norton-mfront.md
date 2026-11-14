@@ -42,4 +42,4 @@ E.setEntryName("NortonExponent");
   f       = tmp*seq;
   df_dseq = E*tmp;
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

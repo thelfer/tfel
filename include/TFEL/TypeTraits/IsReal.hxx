@@ -3,7 +3,7 @@
  * \brief  This file declares the IsReal traits class
  * and specialises it for standard numeric types.
  * \author Thomas Helfer
- * \date   04 Jul 2006
+ * \date 04/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -20,7 +20,7 @@
  * \brief An helper macro to specialise IsReal for each standard
  * "real" numeric types.
  * \author Thomas Helfer
- * \date   28 jun 2006
+ * \date 28/06/2006
  */
 #define TFEL_META_IS_REAL(X)             \
   /*!                                    \
@@ -59,7 +59,7 @@ namespace tfel::typetraits {
    * \see IsScalar, IsComplex
    *
    * \author Thomas Helfer
-   * \date   04 Jul 2006
+   * \date 04/07/2006
    */
   template <typename T>
   struct IsReal {

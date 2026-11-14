@@ -23,8 +23,8 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeVoigtStiffness(
-          const std::span<types::real<StressType>> &tab_f,
-          const std::span<tfel::math::st2tost2<d, StressType>> &tab_C) {
+          const std::span<types::real<StressType>>& tab_f,
+          const std::span<tfel::math::st2tost2<d, StressType>>& tab_C) {
     tfel::math::st2tost2<d, StressType> C_V = tab_f[0] * tab_C[0];
     for (std::size_t i = 1; i < tab_f.size(); i++) {
       C_V += tab_f[i] * tab_C[i];
@@ -36,8 +36,8 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeReussStiffness(
-          const std::span<types::real<StressType>> &tab_f,
-          const std::span<tfel::math::st2tost2<d, StressType>> &tab_C) {
+          const std::span<types::real<StressType>>& tab_f,
+          const std::span<tfel::math::st2tost2<d, StressType>>& tab_C) {
     tfel::math::st2tost2<d, types::compliance<StressType>> S_R =
         tab_f[0] * invert(tab_C[0]);
     for (std::size_t i = 1; i < tab_f.size(); i++) {
@@ -55,32 +55,29 @@ namespace tfel::material::homogenization::elasticity {
               StressType,
               StressType>> computeIsotropicHashinShtrikmanBounds(const std::
                                                                      span<types::real<
-                                                                         StressType>>
-                                                                         &tab_f,
+                                                                         StressType>>&
+                                                                         tab_f,
                                                                  const std::span<
-                                                                     StressType>
-                                                                     &tab_K,
+                                                                     StressType>&
+                                                                     tab_K,
                                                                  const std::span<
-                                                                     StressType>
-                                                                     &tab_mu) {
+                                                                     StressType>&
+                                                                     tab_mu) {
     using real = types::real<StressType>;
     const auto N = tab_f.size();
 
-    std::vector<StressType> tab_H;
-    for (std::size_t i = 0; i < N; i++) {
-      tab_H.push_back(
-          tab_mu[i] *
-          (real(d) * tab_K[i] / 2 + (d + 1) * (d - 2) * tab_mu[i] / real(d)) /
-          (tab_K[i] + 2 * tab_mu[i]));
-    }
+    const auto H = [](const StressType K, const StressType mu) {
+      return mu * (real(d) * K / 2 + (d + 1) * (d - 2) * mu / real(d)) /
+             (K + 2 * mu);
+    };
     auto mu_max = *std::max_element(tab_mu.begin(), tab_mu.end());
     auto mu_min = *std::min_element(tab_mu.begin(), tab_mu.end());
-    auto H_max = *std::max_element(tab_H.begin(), tab_H.end());
-    auto H_min = *std::min_element(tab_H.begin(), tab_H.end());
+    auto K_max = *std::max_element(tab_K.begin(), tab_K.end());
+    auto K_min = *std::min_element(tab_K.begin(), tab_K.end());
     auto K_star_min = 2 * (d - 1) / real(d) * mu_min;
     auto K_star_max = 2 * (d - 1) / real(d) * mu_max;
-    auto mu_star_min = H_min;
-    auto mu_star_max = H_max;
+    auto mu_star_min = H(K_min, mu_min);
+    auto mu_star_max = H(K_max, mu_max);
     using compliance = types::compliance<StressType>;
     StressType Ke_U;
     StressType mue_U;

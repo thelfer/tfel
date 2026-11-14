@@ -318,11 +318,15 @@ namespace mfront {
               f << dest << "[" << currentOffset << "+idx] = this->" << p->name
                 << "[idx];\n";
             }
-          } else if ((flag == SupportedTypes::TVECTOR) ||
-                     (flag == SupportedTypes::STENSOR) ||
-                     (flag == SupportedTypes::TENSOR)) {
+          } else if (flag == SupportedTypes::TVECTOR) {
+            f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
+              << "[" << currentOffset << "+idx*TVectorSize]);\n";
+          } else if (flag == SupportedTypes::STENSOR) {
             f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
               << "[" << currentOffset << "+idx*StensorSize]);\n";
+          } else if (flag == SupportedTypes::TENSOR) {
+            f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
+              << "[" << currentOffset << "+idx*TensorSize]);\n";
           } else {
             tfel::raise(
                 "UMATInterfaceBase::exportResults: "
@@ -362,7 +366,6 @@ namespace mfront {
       const BehaviourDescription& mb,
       const Hypothesis,
       const std::string& initStateVarsIncrements) const {
-    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
@@ -604,11 +607,21 @@ namespace mfront {
     }
   }  // end of writeMaterialPropertiesInitializersInBehaviourDataConstructorII
 
+  [[nodiscard]] static const VariableDescription* findTemperature(
+      const VariableDescriptionContainer& externalStateVariables) noexcept {
+    using namespace tfel::glossary;
+    for (const auto& v : externalStateVariables) {
+      if (v.getExternalName() == Glossary::Temperature) {
+        return &v;
+      }
+    }
+    return nullptr;
+  }  // end of findTemperature
+
   void UMATInterfaceBase::writeBehaviourDataConstructor(
       std::ostream& out,
       const Hypothesis h,
       const BehaviourDescription& mb) const {
-    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);
@@ -617,15 +630,20 @@ namespace mfront {
     const auto& mp = d.getMaterialProperties();
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
+    const auto* const pT = findTemperature(externalStateVarsHolder);
     out << "/*\n"
         << " * \\brief constructor for the " << this->getInterfaceName()
-        << " interface\n"
-        << " * \\param[in] " << iprefix << "T_: temperature\n"
-        << " * \\param[in] " << iprefix << "mat: material properties\n"
+        << " interface\n";
+    if (pT != nullptr) {
+      out << " * \\param[in] " << iprefix << "T_: temperature\n";
+    } else {
+      out << " * \\param[in] " << iprefix << "T_: temperature (unsued)\n";
+    }
+    out << " * \\param[in] " << iprefix << "mat: material properties\n"
         << " * \\param[in] " << iprefix << "int_vars: state variables\n";
     if (this->areExternalStateVariablesSupported()) {
       out << " * \\param[in] " << iprefix
-          << "ext_vars: external std::ate variables\n";
+          << "ext_vars: external state variables\n";
     }
     for (const auto& v : abdv) {
       out << " * \\param[in] " << iprefix << v.first << ":  " << v.second
@@ -635,10 +653,13 @@ namespace mfront {
       out << " * \\param[in] " << iprefix << v.first << ":  " << v.second
           << "\n";
     }
-    out << " */\n"
-        << mb.getClassName() << "BehaviourData"
-        << "(const NumericType* const " << iprefix
-        << "T_,const NumericType* const";
+    out << " */\n" << mb.getClassName() << "BehaviourData(";
+    if (pT != nullptr) {
+      out << "const NumericType* const " << iprefix << "T_";
+    } else {
+      out << "const NumericType* const";
+    }
+    out << ",\nconst NumericType* const";
     if (!mp.empty()) {
       out << " " << iprefix << "mat,\n";
     } else {
@@ -651,16 +672,22 @@ namespace mfront {
       out << "\n";
     }
     if (this->areExternalStateVariablesSupported()) {
-      out << ",const NumericType* const";
-      if (externalStateVarsHolder.size() != 1) {
-        out << " " << iprefix << "ext_vars";
+      out << ", const NumericType* const";
+      if (pT != nullptr) {
+        if (externalStateVarsHolder.size() != 1) {
+          out << " " << iprefix << "ext_vars";
+        }
+      } else {
+        if (!externalStateVarsHolder.empty()) {
+          out << " " << iprefix << "ext_vars";
+        }
       }
     }
     for (const auto& v : abdv) {
-      out << ",const NumericType* const " << iprefix << v.first;
+      out << "\n, const NumericType* const " << iprefix << v.first;
     }
     for (const auto& v : av) {
-      out << ",const NumericType* const " << iprefix << v.first;
+      out << "\n, const NumericType* const " << iprefix << v.first;
     }
     out << ")\n: ";
     bool first = true;
@@ -669,22 +696,36 @@ namespace mfront {
         "");
     this->writeVariableInitializersInBehaviourDataConstructorI(
         out, first, persistentVarsHolder, iprefix + "int_vars", "", "");
-    if (!first) {
-      out << ",\n";
+    if (pT != nullptr) {
+      this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+      if (!first) {
+        out << ",\n";
+      }
+      out << pT->name << "(*" << iprefix << "T_)";
+      first = false;
+      this->writeVariableInitializersInBehaviourDataConstructorI(
+          out, first, std::next(externalStateVarsHolder.begin()),
+          externalStateVarsHolder.end(), iprefix + "ext_vars", "", "");
+    } else {
+      this->writeVariableInitializersInBehaviourDataConstructorI(
+          out, first, externalStateVarsHolder.begin(),
+          externalStateVarsHolder.end(), iprefix + "ext_vars", "", "");
     }
-    out << "T(*" << iprefix << "T_)";
-    first = false;
-    this->writeVariableInitializersInBehaviourDataConstructorI(
-        out, first, std::next(externalStateVarsHolder.begin()),
-        externalStateVarsHolder.end(), iprefix + "ext_vars", "", "");
     out << "\n{\n";
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(
         out, h, mb, mprops.first, mprops.second, iprefix + "mat", "", "");
     this->writeVariableInitializersInBehaviourDataConstructorII(
         out, mb, persistentVarsHolder, iprefix + "int_vars", "", "");
-    this->writeVariableInitializersInBehaviourDataConstructorII(
-        out, mb, std::next(externalStateVarsHolder.begin()),
-        externalStateVarsHolder.end(), iprefix + "ext_vars", "", "");
+    if (pT != nullptr) {
+      this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+      this->writeVariableInitializersInBehaviourDataConstructorII(
+          out, mb, std::next(externalStateVarsHolder.begin()),
+          externalStateVarsHolder.end(), iprefix + "ext_vars", "", "");
+    } else {
+      this->writeVariableInitializersInBehaviourDataConstructorII(
+          out, mb, externalStateVarsHolder.begin(),
+          externalStateVarsHolder.end(), iprefix + "ext_vars", "", "");
+    }
     this->completeBehaviourDataConstructor(out, h, mb);
     out << "}\n\n";
   }
@@ -697,18 +738,26 @@ namespace mfront {
       std::ostream& out,
       const Hypothesis h,
       const BehaviourDescription& mb) const {
-    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto aidv = this->getIntegrationDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
+    const auto* const pT = findTemperature(externalStateVarsHolder);
+    if (pT != nullptr) {
+      this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+    }
     out << "/*\n"
         << " * \\brief constructor for the " << this->getInterfaceName()
         << " interface\n"
         << " * \\param[in] " + iprefix + "dt_: time increment\n";
     if (this->isTemperatureIncrementSupported()) {
-      out << " * \\param[in] " + iprefix + "dT_: temperature increment\n";
+      if (pT != nullptr) {
+        out << " * \\param[in] " + iprefix + "dT_: temperature increment\n";
+      } else {
+        out << " * \\param[in] " + iprefix +
+                   "dT_: temperature increment (unused)\n";
+      }
     }
     if (this->areExternalStateVariablesSupported()) {
       out << " * \\param[in] " + iprefix +
@@ -726,36 +775,64 @@ namespace mfront {
         << mb.getClassName() << "IntegrationData"
         << "(const NumericType* const " << iprefix << "dt_";
     if (this->isTemperatureIncrementSupported()) {
-      out << ",\nconst NumericType* const " << iprefix << "dT_";
+      out << ",\nconst NumericType* const";
+      if (pT != nullptr) {
+        out << " " << iprefix << "dT_";
+      }
     }
     if (this->areExternalStateVariablesSupported()) {
-      if (externalStateVarsHolder.size() != 1) {
-        out << ",const NumericType* const " << iprefix << "dext_vars";
+      if (pT != nullptr) {
+        this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+        out << ", const NumericType* const";
+        if (externalStateVarsHolder.size() != 1) {
+          out << " " << iprefix << "dext_vars";
+        }
       } else {
-        out << ",const NumericType* const";
+        out << ", const NumericType* const";
+        if (!externalStateVarsHolder.empty()) {
+          out << " " << iprefix << "dext_vars";
+        }
       }
     }
     for (const auto& v : aidv) {
-      out << ",const NumericType* const " << iprefix << v.first;
+      out << "\n, const NumericType* const " << iprefix << v.first;
     }
     for (const auto& v : av) {
-      out << ",const NumericType* const " << iprefix << v.first;
+      out << "\n, const NumericType* const " << iprefix << v.first;
     }
     out << ")\n"
         << ": dt(*" << iprefix << "dt_)";
     if (this->isTemperatureIncrementSupported()) {
-      out << ",dT(*" << iprefix << "dT_)";
+      if (pT != nullptr) {
+        out << ", d" << pT->name << "(*" << iprefix << "dT_)";
+      }
     } else {
-      out << ",dT(temperature(0))";
+      if (pT != nullptr) {
+        out << ", d" << pT->name << "(temperature(0))";
+      }
     }
     bool first = false;
-    this->writeVariableInitializersInBehaviourDataConstructorI(
-        out, first, std::next(externalStateVarsHolder.begin()),
-        externalStateVarsHolder.end(), iprefix + "dext_vars", "d", "");
+    if (pT != nullptr) {
+      this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+      this->writeVariableInitializersInBehaviourDataConstructorI(
+          out, first, std::next(externalStateVarsHolder.begin()),
+          externalStateVarsHolder.end(), iprefix + "dext_vars", "d", "");
+    } else {
+      this->writeVariableInitializersInBehaviourDataConstructorI(
+          out, first, externalStateVarsHolder.begin(),
+          externalStateVarsHolder.end(), iprefix + "dext_vars", "d", "");
+    }
     out << "\n{\n";
-    this->writeVariableInitializersInBehaviourDataConstructorII(
-        out, mb, std::next(externalStateVarsHolder.begin()),
-        externalStateVarsHolder.end(), iprefix + "dext_vars", "d", "");
+    if (pT != nullptr) {
+      this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+      this->writeVariableInitializersInBehaviourDataConstructorII(
+          out, mb, std::next(externalStateVarsHolder.begin()),
+          externalStateVarsHolder.end(), iprefix + "dext_vars", "d", "");
+    } else {
+      this->writeVariableInitializersInBehaviourDataConstructorII(
+          out, mb, externalStateVarsHolder.begin(),
+          externalStateVarsHolder.end(), iprefix + "dext_vars", "d", "");
+    }
     out << "}\n\n";
   }
 
@@ -1106,7 +1183,7 @@ namespace mfront {
         return "SupportedTypes::TENSOR";
       }
       tfel::raise(
-          "GenericBehaviourInterface::generateMTestFile: "
+          "UMATInterfaceBase::generateMTestFileForHypothesis: "
           "unsupported type flag");
     };
     const auto& d = bd.getBehaviourData(h);
@@ -1146,9 +1223,7 @@ namespace mfront {
         << "mg.addTime(0.);\n"
         << "mg.addTime(dt);\n";
     if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "mg.setStrainTensor(STRAN);\n"
-          << "mg.setStrainTensorIncrement(DSTRAN);\n"
-          << "mg.setStressTensor(&mg_STRESS[0]);\n";
+      this->writeMTestFileGeneratorSetStrainAndStressTensors(out, h);
     } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n"
           << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n"
@@ -1202,7 +1277,8 @@ namespace mfront {
               << "[\" + std::to_string(i)+ \"]\";\n";
           out << "mg.addInternalStateVariable(name, "  //
               << as_string(flag) << ", "               //
-              << "mg_STATEV.data() + " << ivoffset << " + i);\n";
+              << "mg_STATEV.data() + " << ivoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "));\n";
           out << "}\n";
           ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
         } else {
@@ -1236,8 +1312,10 @@ namespace mfront {
           out << "const auto name = \"" << evname
               << "[\" +std::to_string(i)+\"]\";\n";
           out << "mg.addExternalStateVariable(name," << as_string(flag) << ", "
-              << "0, PREDEF + " << offset << " + i, "
-              << "dt, DPRED + " << offset << " + i, true);\n";
+              << "0, PREDEF + " << evoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "), "
+              << "dt, DPRED + " << evoffset << " + i*("
+              << SupportedTypes::TypeSize(flag) << "), true);\n";
           out << "}\n";
           evoffset += SupportedTypes::TypeSize(p->arraySize, flag);
         } else {
@@ -1273,6 +1351,13 @@ namespace mfront {
           << "DROT[2],DROT[5],DROT[8]);\n";
     }
   }  // end of writeMTestFileGeneratorSetRotationMatrix
+
+  void UMATInterfaceBase::writeMTestFileGeneratorSetStrainAndStressTensors(
+      std::ostream& out, const Hypothesis) const {
+    out << "mg.setStrainTensor(STRAN);\n"
+        << "mg.setStrainTensorIncrement(DSTRAN);\n"
+        << "mg.setStressTensor(&mg_STRESS[0]);\n";
+  }  // end of writeMTestFileGeneratorSetStrainAndStressTensors
 
   bool UMATInterfaceBase::areExternalStateVariablesSupported() const {
     return true;

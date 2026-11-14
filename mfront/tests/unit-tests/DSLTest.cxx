@@ -2,7 +2,7 @@
  * \file   DSLTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 sept. 2015
+ * \date 04/09/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -15,6 +15,8 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include <string>
+#include <memory>
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -25,6 +27,7 @@
 
 #include "MFront/InitDSLs.hxx"
 #include "MFront/DSLFactory.hxx"
+#include "MFront/AbstractBehaviourDSL.hxx"
 
 struct DSLTest final : public tfel::tests::TestCase {
   DSLTest() : tfel::tests::TestCase("MFront", "DSLTest") {}  // end of DSLTest
@@ -68,7 +71,8 @@ struct DSLTest final : public tfel::tests::TestCase {
                 "@StateVariable real v;");
     this->check("DefaultDSL",
                 "@MaterialProperty real v;"
-                "@StaticVariable   real v;");
+                "@StaticVariable   real v = 1;",
+                "name 'v' already");
     this->check("DefaultDSL",
                 "@MaterialProperty real v;"
                 "@Parameter v = 12;");
@@ -78,21 +82,28 @@ struct DSLTest final : public tfel::tests::TestCase {
           "strain"}) {
       for (const auto& t :
            {"MaterialProperty", "StateVariable", "AuxiliaryStateVariable",
-            "ExternalStateVariable", "StaticVariable"}) {
+            "ExternalStateVariable"}) {
         this->check("DefaultDSL",
                     "@" + std::string(t) + " real " + std::string(r) + ";");
       }
+      this->check("DefaultDSL",
+                  "@StaticVariable real " + std::string(r) + " = 1;",
+                  "name '" + std::string(r) + "' already");
       this->check("DefaultDSL", "@Parameter " + std::string(r) + ";");
     }
-    for (const auto& t :
-         {"MaterialProperty", "StateVariable", "AuxiliaryStateVariable",
-          "ExternalStateVariable", "StaticVariable"}) {
+    for (const auto& t : {"MaterialProperty", "StateVariable",
+                          "AuxiliaryStateVariable", "ExternalStateVariable"}) {
       this->check("Implicit", "@" + std::string(t) + " real eel;");
       this->check("RungeKutta", "@" + std::string(t) + " real eel;");
     }
+    this->check("Implicit", "@StaticVariable real eel = 1;",
+                "name 'eel' already");
+    this->check("RungeKutta", "@StaticVariable real eel = 1;",
+                "name 'eel' already");
     this->check("DefaultDSL",
-                "@RequiresStiffnessTensor;"
-                "@MaterialProperty real D;");
+                "@RequireStiffnessTensor;"
+                "@MaterialProperty real D;",
+                "name 'D' already");
     for (const auto& dsl : {"MaterialLaw", "Model"}) {
       this->check(dsl,
                   "@Input a;"
@@ -141,13 +152,13 @@ struct DSLTest final : public tfel::tests::TestCase {
                              " a;"
                              "a.setEntryName(\"?test\");");
         // multiple glossary/entry name definition
-        this->check(dsl, "@" + std::string(t) +
-                             " a;"
-                             "@" +
-                             std::string(t) +
-                             " b;"
-                             "a.setGlossaryName(\"Porosity\");"
-                             "b.setGlossaryName(\"Porosity\");");
+        this->check(dsl,
+                    "@" + std::string(t) +
+                        " a;"
+                        "@Input b;"
+                        "a.setGlossaryName(\"Porosity\");"
+                        "b.setGlossaryName(\"Porosity\");",
+                    "'Porosity' already");
         this->check(dsl, "@" + std::string(t) +
                              " a;"
                              "@Input b;"
@@ -183,9 +194,55 @@ struct DSLTest final : public tfel::tests::TestCase {
     this->check("DefaultDSL", "@StateVariable real v;@Bounds v in ]*:*[;");
     this->check("DefaultDSL", "@StateVariable real v;@Bounds v in ]-*:0];");
     this->check("DefaultDSL", "@ComputeThermalExpansion {\"test.mfront\"};");
+    // variables declared for some modelling hypotheses only: the error
+    // reports it (checks of BehaviourDescription::checkVariableExistence)
+    this->check("IsotropicMisesCreep",
+                "@Behaviour PartialParameter;"
+                "@ModellingHypotheses {PlaneStrain, Tridimensional};"
+                "@ElasticMaterialProperties {150e9, 0.3};"
+                "@Parameter<PlaneStrain> real lambda = 1;"
+                "@FlowRule{f = seq; df_dseq = 1;}",
+                "is not defined for all hypotheses");
+    this->check("Implicit",
+                "@Behaviour PartialMaterialProperty;"
+                "@ModellingHypotheses {PlaneStrain, Tridimensional};"
+                "@MaterialProperty<PlaneStrain> stress young;"
+                "@MaterialProperty<PlaneStrain> real nu;"
+                "@Brick StandardElasticity;"
+                "@Integrator{}",
+                "is not declared for all specialisations");
+    // name of the DSL stored in the behaviour description
+    for (const std::string n : {"ImplicitII", "IsotropicMisesCreep"}) {
+      const auto dsl = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(
+          mfront::DSLFactory::getDSLFactory().createNewDSL(n));
+      TFEL_TESTS_ASSERT(dsl.get() != nullptr);
+      TFEL_TESTS_CHECK_EQUAL(dsl->getBehaviourDescription().getDSLName(), n);
+    }
     return this->result;
   }  // end of execute()
  private:
+  /*!
+   * \brief checks that analysing the given string throws an exception whose
+   * message contains the given text
+   * \param[in] n: name of the domain specific language
+   * \param[in] s: string to be analysed
+   * \param[in] m: text expected in the message of the exception
+   */
+  void check(const std::string& n, const std::string& s, const std::string& m) {
+    auto& f = mfront::DSLFactory::getDSLFactory();
+    auto dsl = f.createNewDSL(n);
+    try {
+      dsl->analyseString(s);
+    } catch (std::runtime_error& e) {
+      const auto msg = std::string(e.what());
+      TestCase::registerResult("analysing '" + s + "' has thrown (" + msg +
+                                   "), the message containing '" + m + "'",
+                               msg.find(m) != std::string::npos);
+      return;
+    }
+    TestCase::registerResult(
+        "analysing '" + s + "' did *not* throw as expected", false);
+  }
   void check(const std::string& n, const std::string& s) {
     auto& f = mfront::DSLFactory::getDSLFactory();
     auto dsl = f.createNewDSL(n);

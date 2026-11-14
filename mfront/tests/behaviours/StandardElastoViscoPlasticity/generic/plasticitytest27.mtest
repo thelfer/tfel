@@ -1,0 +1,39 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ 'PlasticityTest27';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// hydrostatic pressure, then shear under constant pressure
+@ImposedStress 'SXX' {0 : 0, 1 : -50, 2 : -50};
+@ImposedStress 'SYY' {0 : 0, 1 : -50, 2 : -50};
+@ImposedStress 'SZZ' {0 : 0, 1 : -50, 2 : -50};
+@ImposedStrain 'EXY' {0 : 0, 1 : 0, 2 : 2e-3};
+@Times{0, 1 in 10, 2 in 40};
+
+@Real 'mu' '150e3 / (2 * (1 + 0.3))';
+@Real 'c' 30;
+@Real 'phi' 0.523598775598299;
+@Real 'a' 10;
+@Real 'pr' 50;
+
+// The principal stresses are -pr + tau, -pr, -pr - tau (Lode angle equal
+// to zero): the yield condition reads
+// sqrt(tau ** 2 + (a * sin(phi)) ** 2) = c * cos(phi) + pr * sin(phi)
+// The SXY component is sqrt(2) * tau
+@Real 'SXYy' 'sqrt(2 * ((c * cos(phi) + pr * sin(phi)) ** 2 - (a * sin(phi)) ** 2))';
+
+@Test<function> 'SXY' 'EXY < SXYy / (2 * mu) ? 2 * mu * EXY : SXYy' 1e-8;
+
+// flow criterion (dilatancy angle psi, tension cut-off aG): the stress is
+// constant once yielding, the plastic multiplier follows from the plastic
+// shear strain and the normal strains from the gradient of the flow
+// potential at a zero Lode angle
+@Real 'K' '150e3 / (3 * (1 - 2 * 0.3))';
+@Real 'psi' 0.174532925199433;
+@Real 'aG' 30;
+@Real 'tau' 'SXYy / sqrt(2)';
+@Real 'D' 'sqrt(tau ** 2 + (aG * sin(psi)) ** 2)';
+@Evolution<function> 'dlambda' 'EXY < SXYy / (2 * mu) ? 0 : sqrt(2) * D / tau * (EXY - SXYy / (2 * mu))';
+@Test<function> 'EXX' 'SXX / (3 * K) + dlambda * (sin(psi) / 3 + tau * sin(psi) / (6 * D))' 1e-12;
+@Test<function> 'EZZ' 'SXX / (3 * K) + dlambda * (sin(psi) / 3 - tau * sin(psi) / (3 * D))' 1e-12;

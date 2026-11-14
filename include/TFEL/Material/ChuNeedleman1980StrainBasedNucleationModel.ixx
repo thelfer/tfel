@@ -47,8 +47,8 @@ namespace tfel::material {
     // porosity rate
     const auto fr = cste * params.fn / (params.sn) * std::exp(-x * x / 2);
     // derivative of the porosity rate with respect to the equivalent plastic
-    // strain
-    const auto dfr_dp = fr * x / (params.sn);
+    // strain: the derivative of exp(-x * x / 2) is -x exp(-x * x / 2)
+    const auto dfr_dp = -fr * x / (params.sn);
     //
     return std::make_tuple(fr, dfr_dp);
   }  // end of computeChuNeedleman1980StrainBasedNucleationModelPorosityRate
@@ -57,8 +57,7 @@ namespace tfel::material {
   real computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>& params,
       const real p,
-      const real dp,
-      const real) {
+      const real dp) {
     if (dp < 0) {
       return 0;
     }
@@ -74,17 +73,18 @@ namespace tfel::material {
   computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrementAndDerivative(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>& params,
       const real p,
-      const real dp,
-      const real) {
+      const real dp) {
     if (dp < 0) {
       return std::make_tuple(real(0), real(0));
     }
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     const auto Fa = std::erf((p - params.en) / (cste * (params.sn)));
     const auto Fb = std::erf((p + dp - params.en) / (cste * (params.sn)));
+    // the derivative of the increment with respect to dp is the porosity
+    // rate factor at the end of the increment
     const auto An =
         computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
-            params, p);
+            params, p + dp);
     return std::make_tuple((params.fn) * (Fb - Fa) / 2, An);
   }  // end of
      // computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement

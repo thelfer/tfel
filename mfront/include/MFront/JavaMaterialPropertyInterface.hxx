@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/JavaMaterialPropertyInterface.hxx
  * \brief  This file declares the JavaMaterialPropertyInterface class
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,37 +24,20 @@ namespace mfront {
       : public AbstractMaterialPropertyInterface {
     //! \return the interface name
     static std::string getName();
-    //! constructor
+    //! \brief constructor
     JavaMaterialPropertyInterface();
-    /*!
-     * \param[in] k  : keyword treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted
-     * \param[in] p  : iterator to the current token
-     * \param[in] pe : iterator past the end of the file
-     * \return a pair. The first entry is true if the keyword was
-     * treated by the interface. The second entry is an iterator after
-     * the last token treated.
-     */
+    //
+    void setOptions(const DataMap&) override;
     std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    /*!
-     * \brief : fill the target descripton
-     * \param[out] d   : target description
-     * \param[in]  mpd : material property description
-     */
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;
-    /*!
-     * \brief generate the output files
-     * \param[in] mpd : material property description
-     * \param[in] fd  : mfront file description
-     */
     void writeOutputFiles(const MaterialPropertyDescription&,
                           const FileDescription&) const override;
-    //! destructor
+    //! \brief destructor
     ~JavaMaterialPropertyInterface() override;
 
    private:

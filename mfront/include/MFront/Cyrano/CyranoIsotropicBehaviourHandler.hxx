@@ -2,7 +2,7 @@
  * \file  mfront/include/MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx
  * \brief
  * \author Thomas Helfer
- * \date   21 fév 2014
+ * \date 21/02/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Cyrano/CyranoBehaviourHandler.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX
+#include "MFront/Cyrano/CyranoBehaviourHandler.hxx"
+#else
+
 #ifndef LIB_MFRONT_CYRANO_CYRANOISOTROPICBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CYRANO_CYRANOISOTROPICBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
 
 #include "TFEL/FSAlgorithm/copy.hxx"
 
@@ -28,20 +30,20 @@ namespace cyrano {
       class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CyranoIsotropicBehaviourHandler {
     TFEL_CYRANO_INLINE static void exe(
-        const CyranoReal *const DTIME,
-        const CyranoReal *const,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
         const StressFreeExpansionHandler sfeh,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace tfel::meta;
@@ -73,3 +75,5 @@ namespace cyrano {
 }  // namespace cyrano
 
 #endif /* LIB_MFRONT_CYRANO_CYRANOISOTROPICBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */

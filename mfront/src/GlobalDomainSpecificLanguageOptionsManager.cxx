@@ -2,7 +2,7 @@
  * \file   mfront/src/GlobalDomainSpecificLanguageOptionsManager.cxx
  * \brief
  * \author Thomas Helfer
- * \date   17/01/2022
+ * \date 17/01/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -36,12 +36,6 @@ namespace mfront {
     auto b = t.begin();
     add_option(options, o, tfel::utilities::Data::read(b, t.end()));
   }  // end of add_option
-
-  GlobalDomainSpecificLanguageOptionsManager&
-  GlobalDomainSpecificLanguageOptionsManager::get() {
-    static GlobalDomainSpecificLanguageOptionsManager m;
-    return m;
-  }  // end of get
 
   void GlobalDomainSpecificLanguageOptionsManager::addDSLOption(
       const std::string& n, const std::string& v) {

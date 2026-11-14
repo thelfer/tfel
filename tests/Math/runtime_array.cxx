@@ -2,7 +2,7 @@
  * \file  runtime_array.cxx
  * \brief
  * \author Thomas Helfer
- * \date   07 janv. 2015
+ * \date 07/01/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,12 +18,15 @@
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
+#include <sstream>
 #include <iostream>
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/runtime_array.hxx"
+#include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/runtime_arrayIO.hxx"
 
 struct RuntimeArrayTest final : public tfel::tests::TestCase {
   RuntimeArrayTest()
@@ -122,6 +125,16 @@ struct RuntimeArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(i[0] == -8);
     TFEL_TESTS_ASSERT(i[1] == -11);
     TFEL_TESTS_ASSERT(i[2] == -4);
+    // assignment from an array of views
+    tfel::math::runtime_array<int> j(3);
+    j = tfel::math::map_array<tfel::math::fsarray<3, int>>(external_values);
+    TFEL_TESTS_ASSERT(j[0] == -8);
+    TFEL_TESTS_ASSERT(j[1] == -11);
+    TFEL_TESTS_ASSERT(j[2] == -4);
+    // output
+    std::ostringstream os;
+    os << a;
+    TFEL_TESTS_ASSERT(os.str() == "( 5 5 5 )");
     // end of the tests
     return this->result;
   }  // end of execute

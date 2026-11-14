@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/AnisotropicEshelbyTensor.hxx
  * \author Antoine Martin
- * \date   18 November 2024
+ * \date 18/11/2024
  * \brief  This file declares the Eshelby tensor for an ellipsoidal inclusion
  * embedded in an anisotropic matrix.
  * \copyright Copyright (C) 2006-2018
@@ -17,6 +17,7 @@
 
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
+#include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 #include <stdexcept>
 
 namespace tfel::material::homogenization::elasticity {

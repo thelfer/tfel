@@ -2,7 +2,7 @@
  * \file   tests/Math/qt4.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15/11/2021
+ * \date 15/11/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

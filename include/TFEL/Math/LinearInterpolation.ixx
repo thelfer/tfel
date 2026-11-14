@@ -41,8 +41,9 @@ namespace tfel::math {
     template <typename AbscissaContainer, typename AbscissaType>
     TFEL_HOST_DEVICE constexpr auto findIndex(
         const AbscissaContainer& abscissae, const AbscissaType a) {
+      using size_type = typename AbscissaContainer::size_type;
       const auto s = abscissae.size();
-      auto i = decltype(s){};
+      auto i = size_type{};
       while (i + 1 != s) {
         if (a <= abscissae[i + 1]) {
           break;

@@ -10,5 +10,5 @@ of information.
 @Description
 {
   "Modélisation d'un tube sous pression"
-}
+};
 ~~~~~~~~

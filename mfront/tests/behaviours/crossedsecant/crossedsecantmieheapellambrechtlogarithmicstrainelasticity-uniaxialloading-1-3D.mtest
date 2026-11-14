@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'CrossedSecant';
 @Behaviour<umat> @library@ 'umatlogarithmicstrainelasticity';
-@StressEpsilon 1e2;
+@StressEpsilon 1.e-2;
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/equal.hxx
  * \brief  this file implements the equal class.
  * \author Thomas Helfer
- * \date   30 Jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,7 +22,8 @@ namespace tfel::fsalgo {
    * \class equal
    * \brief Equal returns true if the two ranges [first1, first1+N) and [first2,
    * first2 + N) are identical when compared element-by-element, and otherwise
-   * returns false \param N number of element to be compared.
+   * returns false.
+   * \tparam N: number of elements to be compared.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/equal.html
@@ -30,13 +31,15 @@ namespace tfel::fsalgo {
    * \see transform.cxx for some elementary tests.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct equal {
     /*!
-     * \param  InputIterator  iterator for the first  sequence
-     * \param  InputIterator2 iterator for the second sequence
+     * \tparam InputIterator: iterator for the first sequence
+     * \tparam InputIterator2: iterator for the second sequence
+     * \param[in] p: iterator to the first element of the first sequence
+     * \param[in] q: iterator to the first element of the second sequence
      *
      * \return true if all elements are equal
      *
@@ -61,9 +64,12 @@ namespace tfel::fsalgo {
     }
 
     /*!
-     * \param  InputIterator  iterator for the first  sequence
-     * \param  InputIterator2 iterator for the second sequence
-     * \param  BinaryPredicate predicate used to make comparison
+     * \tparam InputIterator: iterator for the first sequence
+     * \tparam InputIterator2: iterator for the second sequence
+     * \tparam BinaryPredicate: predicate used to make comparison
+     * \param[in] p: iterator to the first element of the first sequence
+     * \param[in] q: iterator to the first element of the second sequence
+     * \param[in] binary_pred: predicate used to make comparison
      * \return true if all elements are one-by-one equal given the predicate
      * used.
      *

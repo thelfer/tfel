@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   01 jui 2007
+ * \date 01/06/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -48,7 +48,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    IsotropicBehaviourDSLBase(const DSLOptions&);
+    explicit IsotropicBehaviourDSLBase(const DSLOptions&);
     //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     void getSymbols(std::map<std::string, std::string>&,
@@ -73,6 +73,13 @@ namespace mfront {
     virtual std::size_t getNumberOfFlowRules() const;
     //! \brief return the default value of the theta parameter
     virtual double getDefaultThetaValue() const;
+    /*!
+     * \return the expression of the value of the theta parameter used to
+     * evaluate the isotropic hardening rules associated with a flow rule
+     * \param[in] id: flow id
+     */
+    virtual std::string getIsotropicHardeningRulesTheta(
+        const std::size_t) const;
     //! \brief treat the `@FlowRule` keyword
     virtual void treatFlowRule();
     //! \brief treat the `@Theta` keyword

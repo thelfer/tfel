@@ -2,7 +2,7 @@
  * \file   src/NUMODIS/Cubic.cxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <tuple>
+#include <utility>
 #include <algorithm>
 
 #include "NUMODIS/Math/Utilities.hxx"
@@ -21,7 +23,7 @@
 
 namespace numodis {
 
-  Cubic::Cubic(Cubic&&) = default;
+  Cubic::Cubic(Cubic&&) noexcept = default;
 
   Cubic::Cubic(const Cubic&) = default;
 
@@ -143,7 +145,7 @@ namespace numodis {
     //--------------------------
     // convert to a unit vector
     //--------------------------
-    xdirection.Normalize();
+    std::ignore = xdirection.Normalize();
     return xdirection;
   }  // end of Cubic::direction
 
@@ -169,7 +171,7 @@ namespace numodis {
     //--------------------------
     // convert to a unit vector
     //--------------------------
-    xdirection.Normalize();
+    std::ignore = xdirection.Normalize();
     return xdirection;
   }
 
@@ -455,26 +457,14 @@ namespace numodis {
   */
   //===============================================================
   void Cubic::GenerateOrthogonalVector(const IPlane& u, IDirection& v) const {
-    //---------------
-    // intialization
-    //---------------
-    int norm2 = 0;
-    std::vector<int> vrandom(3);
-
-    //--------------------
-    // while not found...
-    //--------------------
-    while (norm2 == 0) {
-      // generate a random vector
-      for (unsigned i = 0; i < 3; i++) vrandom[i] = rand();
-
-      // compute a vector normal to plane and vrandom
-      CrossProduct(IPlane(vrandom), u, v);
-
-      // norm of this vector
-      norm2 = v.getIndex()[0] * v.getIndex()[0] +
-              v.getIndex()[1] * v.getIndex()[1] +
-              v.getIndex()[2] * v.getIndex()[2];
+    // intersection of u with the planes (100), (010) and (001): the first
+    // non null one is a low-index direction contained in u
+    const std::vector<int> planes[3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    for (const auto& p : planes) {
+      CrossProduct(IPlane(p), u, v);
+      if (!v.IsNull()) {
+        return;
+      }
     }
   }
 

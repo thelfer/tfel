@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/T2toT2/ConvertFromPK1Derivative.hxx
  * \brief
  * \author Thomas Heler
- * \date   25/04/2019
+ * \date 25/04/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -40,7 +40,7 @@ namespace tfel ::math {
    * the deformation gradient.
    */
   template <unsigned short N, typename stress, typename real>
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr t2tost2<N, stress>
+  [[nodiscard]] TFEL_HOST_DEVICE constexpr t2tost2<N, stress>
   convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
       const t2tot2<N, stress>&,
       const tensor<N, real>&,

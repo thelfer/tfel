@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/VariableBoundsDescription.hxx
  * \brief  This file declares the VariableBoundsDescription class
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -44,9 +44,9 @@ namespace mfront {
     VariableBoundsDescription& operator=(const VariableBoundsDescription&) =
         default;
     //! \return true if the bounds type is either LOWER or LOWERANDUPPER
-    bool hasLowerBound() const;
+    [[nodiscard]] bool hasLowerBound() const;
     //! \return true if the bounds type is either UPPER or LOWERANDUPPER
-    bool hasUpperBound() const;
+    [[nodiscard]] bool hasUpperBound() const;
     //! \brief destructor
     ~VariableBoundsDescription() noexcept;
     //! \brief type of the bound

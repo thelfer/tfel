@@ -2,7 +2,7 @@
  * \file   CxxTokenizerOptions.cxx
  * \brief
  * \author Thomas Helfer
- * \date   6/02/018
+ * \date 06/02/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,11 +18,12 @@ namespace tfel::utilities {
   CxxTokenizerOptions::CxxTokenizerOptions() = default;
   CxxTokenizerOptions::CxxTokenizerOptions(const CxxTokenizerOptions&) =
       default;
-  CxxTokenizerOptions::CxxTokenizerOptions(CxxTokenizerOptions&&) = default;
+  CxxTokenizerOptions::CxxTokenizerOptions(CxxTokenizerOptions&&) noexcept =
+      default;
   CxxTokenizerOptions& CxxTokenizerOptions::operator=(
       const CxxTokenizerOptions&) = default;
-  CxxTokenizerOptions& CxxTokenizerOptions::operator=(CxxTokenizerOptions&&) =
-      default;
+  CxxTokenizerOptions& CxxTokenizerOptions::operator=(
+      CxxTokenizerOptions&&) noexcept = default;
   CxxTokenizerOptions::~CxxTokenizerOptions() = default;
 
 }  // end of namespace tfel::utilities

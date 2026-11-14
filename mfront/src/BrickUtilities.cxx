@@ -2,9 +2,16 @@
  * \file   BrickUtilities.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
+#include <limits>
 #include <utility>
 #include <sstream>
 #include "TFEL/Raise.hxx"
@@ -13,6 +20,8 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/BehaviourDSLUtilities.hxx"
+#include "MFront/ImplicitDSLBase.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 
@@ -47,9 +56,17 @@ namespace mfront::bbrick {
     if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
       auto mts = getMiddleOfTimeStepModifier(bd);
       std::ostringstream mps;
-      mps << "this->" + n + " = ";
-      dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
-      mps << ";\n";
+      if (bd.useQt()) {
+        // the material property is evaluated as a plain number
+        mps << "this->" + n + " = std::remove_cvref_t<decltype(this->" + n +
+                   ")>(";
+        dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
+        mps << ");\n";
+      } else {
+        mps << "this->" + n + " = ";
+        dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
+        mps << ";\n";
+      }
       c = mps.str();
     }
     return c;
@@ -120,24 +137,27 @@ namespace mfront::bbrick {
       tfel::raise_if(b, "addMaterialPropertyIfNotDefined: " + m);
     };
     // treating material properties
+    // `second` is true if the variable is declared for at least one
+    // specialisation of the behaviour, `first` if it is declared for all of
+    // them
     const auto b = bd.checkVariableExistence(n);
-    if (b.first) {
-      throw_if(!b.second, "variable '" + n +
-                              "' is not declared for all specialisations "
-                              "of the behaviour");
+    if (b.second) {
+      throw_if(!b.first, "variable '" + n +
+                             "' is not declared for all specialisations "
+                             "of the behaviour");
       auto r = bd.checkVariableExistence(n, "Parameter", false);
-      if (r.first) {
-        throw_if(!r.second, "parameter '" + n +
-                                "' is not declared for all specialisations "
-                                "of the behaviour");
+      if (r.second) {
+        throw_if(!r.first, "parameter '" + n +
+                               "' is not declared for all specialisations "
+                               "of the behaviour");
       } else {
         r = bd.checkVariableExistence(n, "MaterialProperty", false);
-        throw_if(!r.first, "variable '" + n +
-                               "' is neither declared as a parameter nor "
-                               "a material property");
-        throw_if(!r.second, "material property '" + n +
-                                "' is not declared"
-                                "for all specialisations of the behaviour");
+        throw_if(!r.second, "variable '" + n +
+                                "' is neither declared as a parameter nor "
+                                "a material property");
+        throw_if(!r.first, "material property '" + n +
+                               "' is not declared "
+                               "for all specialisations of the behaviour");
       }
       bd.checkVariableGlossaryName(n, g);
     } else {
@@ -157,24 +177,27 @@ namespace mfront::bbrick {
       tfel::raise_if(b, "addMaterialPropertyIfNotDefined: " + m);
     };
     // treating material properties
+    // `second` is true if the variable is declared for at least one
+    // specialisation of the behaviour, `first` if it is declared for all of
+    // them
     const auto b = bd.checkVariableExistence(n);
-    if (b.first) {
-      throw_if(!b.second, "variable '" + n +
-                              "' is not declared for all specialisations "
-                              "of the behaviour");
+    if (b.second) {
+      throw_if(!b.first, "variable '" + n +
+                             "' is not declared for all specialisations "
+                             "of the behaviour");
       auto r = bd.checkVariableExistence(n, "Parameter", false);
-      if (r.first) {
-        throw_if(!r.second, "parameter '" + n +
-                                "' is not declared for all specialisations "
-                                "of the behaviour");
+      if (r.second) {
+        throw_if(!r.first, "parameter '" + n +
+                               "' is not declared for all specialisations "
+                               "of the behaviour");
       } else {
         r = bd.checkVariableExistence(n, "MaterialProperty", false);
-        throw_if(!r.first, "variable '" + n +
-                               "' is neither declared as a parameter nor "
-                               "a material property");
-        throw_if(!r.second, "material property '" + n +
-                                "' is not declared"
-                                "for all specialisations of the behaviour");
+        throw_if(!r.second, "variable '" + n +
+                                "' is neither declared as a parameter nor "
+                                "a material property");
+        throw_if(!r.first, "material property '" + n +
+                               "' is not declared "
+                               "for all specialisations of the behaviour");
       }
       bd.checkVariableEntryName(n, e);
     } else {
@@ -217,6 +240,48 @@ namespace mfront::bbrick {
     bd.addStateVariable(h, v);
     bd.setEntryName(h, n, e);
   }  // end of addStateVariable
+
+  void checkNoNormalisationFactor(const BehaviourDescription& bd,
+                                  const std::string& n) {
+    for (const auto h : bd.getDistinctModellingHypotheses()) {
+      tfel::raise_if(bd.hasAttribute(h, n + "_normalisation_factor"),
+                     "checkNoNormalisationFactor: a normalisation factor "
+                     "can't be given to variable '" +
+                         n +
+                         "', which is handled by a brick "
+                         "(the code generated by the brick does not "
+                         "take it into account)");
+    }
+  }  // end of checkNoNormalisationFactor
+
+  void checkNoImplicitEquationNormalisationFactor(
+      const BehaviourDescription& bd,
+      const AbstractBehaviourDSL& dsl,
+      const BehaviourDescription::Hypothesis h,
+      const std::string& n) {
+    const auto& solver = dynamic_cast<const ImplicitDSLBase&>(dsl).getSolver();
+    if ((!solver.usesJacobian()) || (solver.requiresNumericalJacobian())) {
+      // the bricks do not compute any jacobian block
+      return;
+    }
+    tfel::raise_if(bd.hasAttribute(h, 'f' + n + "_normalisation_factor"),
+                   "checkNoImplicitEquationNormalisationFactor: a "
+                   "normalisation factor can't be given to the implicit "
+                   "equation 'f" +
+                       n +
+                       "', some jacobian blocks of which are computed by a "
+                       "brick (the generated code does not scale these "
+                       "blocks)");
+  }  // end of checkNoImplicitEquationNormalisationFactor
+
+  void checkNoImplicitEquationNormalisationFactor(
+      const BehaviourDescription& bd,
+      const AbstractBehaviourDSL& dsl,
+      const std::string& n) {
+    for (const auto h : bd.getDistinctModellingHypotheses()) {
+      checkNoImplicitEquationNormalisationFactor(bd, dsl, h, n);
+    }
+  }  // end of checkNoImplicitEquationNormalisationFactor
 
   void addStateVariableIfNotDefined(BehaviourDescription& bd,
                                     const std::string& t,
@@ -413,7 +478,10 @@ namespace mfront::bbrick {
                     const std::vector<double>& p) {
     using tfel::material::ModellingHypothesis;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    VariableDescription v("real", n, 1u, 0u);
+    tfel::raise_if(p.size() != s,
+                   "addParameter: "
+                   "invalid number of default parameters values");
+    VariableDescription v("real", n, s, 0u);
     bd.addParameter(h, v);
     bd.setGlossaryName(h, n, g);
     for (unsigned short i = 0; i != s; ++i) {
@@ -493,18 +561,19 @@ namespace mfront::bbrick {
   std::string computeElasticLimit(
       const BehaviourDescription& bd,
       const std::vector<std::shared_ptr<IsotropicHardeningRule>>& ihrs,
-      const std::string& fid) {
+      const std::string& fid,
+      const std::string& theta) {
     tfel::raise_if(ihrs.empty(),
                    "computeElastic: "
                    "empty list of isotropic hardenings");
     if (ihrs.size() == 1) {
-      return ihrs[0]->computeElasticLimit(bd, fid, "");
+      return ihrs[0]->computeElasticLimit(bd, fid, "", theta);
     }
     auto c = std::string{};
     auto R = std::string{};
     for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
       const auto id = std::to_string(i);
-      c += ihrs[i]->computeElasticLimit(bd, fid, id);
+      c += ihrs[i]->computeElasticLimit(bd, fid, id, theta);
       R += "R" + fid + "_" + id;
       if (++i != ihrs.size()) {
         R += " + ";
@@ -517,19 +586,20 @@ namespace mfront::bbrick {
   std::string computeElasticLimitAndDerivative(
       const BehaviourDescription& bd,
       const std::vector<std::shared_ptr<IsotropicHardeningRule>>& ihrs,
-      const std::string& fid) {
+      const std::string& fid,
+      const std::string& theta) {
     tfel::raise_if(ihrs.empty(),
                    "computeElasticAndDerivative: "
                    "empty list of isotropic hardenings");
     if (ihrs.size() == 1) {
-      return ihrs[0]->computeElasticLimitAndDerivative(bd, fid, "");
+      return ihrs[0]->computeElasticLimitAndDerivative(bd, fid, "", theta);
     }
     auto c = std::string{};
     auto R = std::string{};
     auto dR = std::string{};
     for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
       const auto id = std::to_string(i);
-      c += ihrs[i]->computeElasticLimitAndDerivative(bd, fid, id);
+      c += ihrs[i]->computeElasticLimitAndDerivative(bd, fid, id, theta);
       const auto Ri = "R" + fid + "_" + id;
       const auto dRi = "d" + Ri + "_dp" + fid;
       R += Ri;
@@ -571,10 +641,10 @@ namespace mfront::bbrick {
     if (pev != esvs.end()) {
       const auto& name = pev->name;
       if (b) {
-        return "2 * (this->" + name + " + (this->d " + name + ")) > 1";
+        return "2 * (this->" + name + " + (this->d" + name + ")) > 1";
       } else {
         return "2 * (this->" + name + " + (" + bd.getClassName() +
-               "::theta) * (this->d " + name + ")) > 1";
+               "::theta) * (this->d" + name + ")) > 1";
       }
     }
     return "";
@@ -682,8 +752,15 @@ namespace mfront::bbrick {
         } else {
           const auto& cmp =
               mp.template get<BehaviourDescription::ConstantMaterialProperty>();
-          c += "this->" + vn + " = " + std::to_string(i) +
-               "] = " + std::to_string(cmp.value) + ";\n";
+          std::ostringstream os;
+          os.precision(std::numeric_limits<double>::max_digits10);
+          if (bd.useQt()) {
+            os << "this->" << vn << " = std::remove_cvref_t<decltype(this->"
+               << vn << ")>(" << cmp.value << ");\n";
+          } else {
+            os << "this->" << vn << " = " << cmp.value << ";\n";
+          }
+          c += os.str();
         }
       }
     }

@@ -2,7 +2,7 @@
  * \file  ThermodynamicForce.cxx
  * \brief
  * \author Thomas Helfer
- * \date   21 janv. 2015
+ * \date 21/01/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -30,10 +30,11 @@ namespace mfront {
       : VariableDescription(v) {
   }  // end of ThermodynamicForce::ThermodynamicForce
 
-  ThermodynamicForce::ThermodynamicForce(ThermodynamicForce&&) = default;
-  ThermodynamicForce::ThermodynamicForce(const ThermodynamicForce&) = default;
-  ThermodynamicForce& ThermodynamicForce::operator=(ThermodynamicForce&&) =
+  ThermodynamicForce::ThermodynamicForce(ThermodynamicForce&&) noexcept =
       default;
+  ThermodynamicForce::ThermodynamicForce(const ThermodynamicForce&) = default;
+  ThermodynamicForce& ThermodynamicForce::operator=(
+      ThermodynamicForce&&) noexcept = default;
   ThermodynamicForce& ThermodynamicForce::operator=(const ThermodynamicForce&) =
       default;
 

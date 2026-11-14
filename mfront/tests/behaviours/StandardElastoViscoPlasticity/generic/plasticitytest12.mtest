@@ -1,0 +1,52 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+@StressEpsilon 1e-1;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// proportional multiaxial stress driven by EXX
+@Real 'ryy' 0.35;
+@Real 'rzz' -0.25;
+@Real 'rxy' 0.3;
+@Real 'rxz' 0.2;
+@Real 'ryz' -0.15;
+@NonLinearConstraint<Stress> 'SYY - ryy * SXX';
+@NonLinearConstraint<Stress> 'SZZ - rzz * SXX';
+@NonLinearConstraint<Stress> 'SXY - rxy * SXX';
+@NonLinearConstraint<Stress> 'SXZ - rxz * SXX';
+@NonLinearConstraint<Stress> 'SYZ - ryz * SXX';
+@ImposedStrain 'EXX' {0 : 0, 1 : 6e-3};
+@Times{0, 1. in 20};
+
+// Value of SXX on the yield surface (R0 / seq, for this direction) and
+// normal to the yield surface: the isotropic Cazacu 2004 stress and its gradient
+// are evaluated from their documented expressions in Python (NumPy).
+@Real 'SXXy' 214597634.25756;
+@Real 'nxx' 0.5544336205339;
+@Real 'nyy' -0.1952741973665;
+@Real 'nzz' -0.3591594231672;
+@Real 'nxy' 0.3278261728187;
+@Real 'nxz' 0.11935949805;
+@Real 'nyz' -0.00590189173492;
+
+// elastic compliance along this direction
+@Real 'E' 150e9;
+@Real 'nu' 0.3;
+@Real 'cxx' '(1 - nu * (ryy + rzz)) / E';
+@Real 'cyy' '(ryy - nu * (1 + rzz)) / E';
+@Real 'czz' '(rzz - nu * (1 + ryy)) / E';
+@Real 'cs' '(1 + nu) / E';
+
+// perfect plasticity: the stress is constant once yielding, and the
+// plastic strain is p * n
+@Evolution<function> 's' 'min(EXX / cxx, SXXy)';
+@Evolution<function> 'p' 'max(EXX - cxx * SXXy, 0) / nxx';
+
+@Test<function> 'SXX' 's' 1;
+@Test<function> 'EquivalentPlasticStrain' 'p' 1e-10;
+@Test<function> 'EYY' 'cyy * s + nyy * p' 1e-10;
+@Test<function> 'EZZ' 'czz * s + nzz * p' 1e-10;
+@Test<function> 'EXY' 'cs * rxy * s + nxy * p' 1e-10;
+@Test<function> 'EXZ' 'cs * rxz * s + nxz * p' 1e-10;
+@Test<function> 'EYZ' 'cs * ryz * s + nyz * p' 1e-10;

@@ -2,7 +2,7 @@
  * \file   include/TFEL/Exception/TFELException.hxx
  * \brief  This file declares the TFELException class.
  * \author Thomas Helfer
- * \date   02 Aug 2006
+ * \date 02/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,7 +24,7 @@ namespace tfel::exception {
    * \brief  generic Exception, base class for all the other exception used in
    * the `TFEL` project.
    * \author Thomas Helfer
-   * \date   02 Aug 2006
+   * \date 02/08/2006
    */
   struct TFELEXCEPTION_VISIBILITY_EXPORT TFELException : public std::exception {
     //! default constructor

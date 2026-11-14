@@ -256,11 +256,11 @@ namespace tfel::material {
     tfel::math::tvector<3u, stress> vp1;
     tfel::math::tmatrix<3u, 3u, real> m1;
     std::tie(vp1, m1) = s1.template computeEigenVectors<es>();
-    const auto n1 = tfel::math::stensor<N, stress>::computeEigenTensors(m1);
+    const auto n1 = tfel::math::stensor<N, real>::computeEigenTensors(m1);
     tfel::math::tvector<3u, stress> vp2;
     tfel::math::tmatrix<3u, 3u, real> m2;
     std::tie(vp2, m2) = s2.template computeEigenVectors<es>();
-    const auto n2 = tfel::math::stensor<N, stress>::computeEigenTensors(m2);
+    const auto n2 = tfel::math::stensor<N, real>::computeEigenTensors(m2);
     // Barlat stress
     const auto rvp1 = vp1 * iseq;
     const auto rvp2 = vp2 * iseq;
@@ -472,11 +472,11 @@ namespace tfel::material {
     tfel::math::tvector<3u, stress> vp1;
     tfel::math::tmatrix<3u, 3u, real> m1;
     std::tie(vp1, m1) = s1.template computeEigenVectors<es>();
-    const auto n1 = tfel::math::stensor<N, stress>::computeEigenTensors(m1);
+    const auto n1 = tfel::math::stensor<N, real>::computeEigenTensors(m1);
     tfel::math::tvector<3u, stress> vp2;
     tfel::math::tmatrix<3u, 3u, real> m2;
     std::tie(vp2, m2) = s2.template computeEigenVectors<es>();
-    const auto n2 = tfel::math::stensor<N, stress>::computeEigenTensors(m2);
+    const auto n2 = tfel::math::stensor<N, real>::computeEigenTensors(m2);
     // derivatives of the Barlat potentiel with respect of the eigen
     // values of the s1 and s2
     const auto d =

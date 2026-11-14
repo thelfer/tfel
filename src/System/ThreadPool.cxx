@@ -2,7 +2,7 @@
  * \file   ThreadPool.cxx
  * \brief
  * \author Thomas Helfer
- * \date   19 juin 2016
+ * \date 19/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -13,11 +13,13 @@
 
 #include <memory>
 #include <stdexcept>
+#include "TFEL/Raise.hxx"
 #include "TFEL/System/ThreadPool.hxx"
 
 namespace tfel::system {
 
   ThreadPool::ThreadPool(const size_t n) {
+    raise_if(n == 0, "ThreadPool::ThreadPool: invalid number of threads (0)");
     this->statuses.resize(n, ThreadPool::Status::IDLE);
     for (size_t i = 0; i < n; ++i) {
       auto f = [this, i] {
@@ -73,7 +75,7 @@ namespace tfel::system {
     }
     this->c.notify_all();
     // the destructor joins all threads
-    for (auto &w : this->workers) {
+    for (auto& w : this->workers) {
       w.join();
     }
   }  // end of ThreadPool::~ThreadPool

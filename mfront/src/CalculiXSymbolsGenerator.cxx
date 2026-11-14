@@ -2,7 +2,7 @@
  * \file   CalculiXSymbolsGenerator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   19/07/2018
+ * \date 19/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -68,6 +68,38 @@ namespace mfront {
           "unsupported behaviour type");
     }
   }  // end of CalculiXSymbolsGenerator::writexxBehaviourKinematicSymbols
+
+  void CalculiXSymbolsGenerator::writeStateVariablesSymbols(
+      std::ostream& out,
+      const BehaviourInterfaceBase& i,
+      const BehaviourDescription& mb,
+      const std::string& name,
+      const Hypothesis h) const {
+    if ((mb.getBehaviourType() !=
+         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+        (!mb.hasAttribute(CalculiXInterface::finiteStrainStrategy)) ||
+        (mb.getAttribute<std::string>(
+             CalculiXInterface::finiteStrainStrategy) !=
+         "MieheApelLambrechtLogarithmicStrainII")) {
+      SymbolsGenerator::writeStateVariablesSymbols(out, i, mb, name, h);
+      return;
+    }
+    // the MieheApelLambrechtLogarithmicStrainII finite strain strategy
+    // stores the logarithmic strain and its dual stress after the state
+    // variables of the behaviour, as in the generated input file example
+    auto isvs = mb.getBehaviourData(h).getPersistentVariables();
+    isvs.push_back(
+        VariableDescription{"StrainStensor", "logarithmicStrain", 1, 0u});
+    isvs.push_back(VariableDescription{"StressStensor",
+                                       "dualOfTheLogarithmicStrain", 1, 0u});
+    out << "MFRONT_EXPORT_SYMBOL(unsigned short, "
+        << this->getSymbolName(i, name, h) << "_nInternalStateVariables, "
+        << static_cast<unsigned short>(isvs.getNumberOfVariables()) << "u);\n";
+    this->writeExternalNames(out, i, name, h, mb.getExternalNames(h, isvs),
+                             "InternalStateVariables");
+    this->writeVariablesTypesSymbol(out, i, name, h, isvs,
+                                    "InternalStateVariables");
+  }  // end of CalculiXSymbolsGenerator::writeStateVariablesSymbols
 
   void CalculiXSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,

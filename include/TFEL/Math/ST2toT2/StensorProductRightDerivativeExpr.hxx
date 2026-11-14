@@ -16,6 +16,11 @@
 
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/ExpressionTemplates/Expr.hxx"
+#include "TFEL/Math/ST2toT2/ST2toT2Concept.hxx"
+#include "TFEL/Math/fsarray.hxx"
+#include "TFEL/Math/Stensor/StensorConcept.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 namespace tfel::math {
 

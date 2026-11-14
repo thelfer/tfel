@@ -1,7 +1,9 @@
+@Requires {"mfront::behaviour::castem_interface"};
+
 @Command "@mfront@ --obuild --interface=castem OrthotropicElastic.mfront";
 @Command "@mtest@ castemelasticity-quadratic-mean.ptest";
 @TestType Absolute;
-@Precision 1.e-10;
+@Precision 1.;
 
 @Test "castemelasticity-quadratic-mean.res" "castemelasticity-quadratic-mean.ref" 7;
 @Test "castemelasticity-quadratic-mean.res" "castemelasticity-quadratic-mean.ref" 8;

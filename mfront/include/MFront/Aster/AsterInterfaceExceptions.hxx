@@ -18,6 +18,7 @@
 #include <string_view>
 #include "TFEL/Exception/TFELException.hxx"
 #include "TFEL/Material/MaterialException.hxx"
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/Aster/Aster.hxx"
 #include "MFront/Aster/AsterConfig.hxx"
 #include "MFront/Aster/AsterException.hxx"
@@ -34,28 +35,29 @@ namespace aster {
     /*!
      * \brief throw an exception
      */
-    [[noreturn]] static void exe(const AsterReal *const,
-                                 const AsterReal *const,
-                                 AsterReal *const,
-                                 const AsterReal *const,
-                                 const AsterReal *const,
-                                 const AsterReal *const,
-                                 const AsterReal *const,
-                                 const AsterReal *const,
-                                 const AsterInt *const,
-                                 const AsterReal *const,
-                                 const AsterReal *const,
-                                 AsterReal *const,
-                                 const AsterInt *const,
-                                 AsterReal *const,
-                                 const StressFreeExpansionHandler &);
+    [[noreturn]] static void exe(const AsterReal* const,
+                                 const AsterReal* const,
+                                 AsterReal* const,
+                                 const AsterReal* const,
+                                 const AsterReal* const,
+                                 const AsterReal* const,
+                                 const AsterReal* const,
+                                 const AsterReal* const,
+                                 const AsterInt* const,
+                                 const AsterReal* const,
+                                 const AsterReal* const,
+                                 AsterReal* const,
+                                 const AsterInt* const,
+                                 AsterReal* const,
+                                 const tfel::material::OutOfBoundsPolicy,
+                                 const StressFreeExpansionHandler&);
   };  // end of struct AsterUnSupportedCaseHandler
 
   /*!
    * \class  AsterInterfaceExceptions
    * \brief  Exceptions class for Aster interfaces
    * \author Thomas Helfer
-   * \date   12/12/2011
+   * \date 12/12/2011
    */
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInterfaceExceptions {
     /*!
@@ -89,7 +91,7 @@ namespace aster {
      * \param[in] e : the AsterException to be treated
      */
     static void treatAsterException(const std::string_view,
-                                    const AsterException &);
+                                    const AsterException&);
     /*!
      * \brief display the error message out of a material exception to the
      * standard output.
@@ -97,7 +99,7 @@ namespace aster {
      * \param[in] e : the material exception to be treated
      */
     static void treatMaterialException(
-        const std::string_view, const tfel::material::MaterialException &);
+        const std::string_view, const tfel::material::MaterialException&);
     /*!
      * \brief display the error message out of a generic tfel
      * exception to the standard output.
@@ -105,7 +107,7 @@ namespace aster {
      * \param[in] e : the exception to be treated
      */
     static void treatTFELException(const std::string_view,
-                                   const tfel::exception::TFELException &);
+                                   const tfel::exception::TFELException&);
     /*!
      * \brief display the error message out of a generic standard
      * exception to the standard output.
@@ -113,7 +115,7 @@ namespace aster {
      * \param[in] e : the exception to be treated
      */
     static void treatStandardException(const std::string_view,
-                                       const std::exception &);
+                                       const std::exception&);
     /*!
      * \brief display the error message when an unknown exception is caught
      * \param[in] b : behaviour name
@@ -192,12 +194,12 @@ namespace aster {
 
   template <>
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterReduceTangentOperator<1u> {
-    static void exe(AsterReal *const, const AsterReal *const);
+    static void exe(AsterReal* const, const AsterReal* const);
   };
 
   template <>
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterReduceTangentOperator<2u> {
-    static void exe(AsterReal *const, const AsterReal *const);
+    static void exe(AsterReal* const, const AsterReal* const);
   };
 
 }  // end of namespace aster

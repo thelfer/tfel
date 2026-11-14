@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   14 nov 2007
+ * \date 14/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,43 +22,61 @@
 
 namespace tfel::system {
 
-  void BlockingStreamReader::read(int fd, void *const buf, const size_t count) {
-    ssize_t rread;
+  void BlockingStreamReader::read(int fd, void* const buf, const size_t count) {
+    auto start = static_cast<char*>(buf);
+    size_t r = count;  //< remaining block to be read
     if (count > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) {
       tfel::raise<SystemError>(
           "BlockingStreamReader::read: "
           "number of bytes to be read too high");
     }
-    rread = ::read(fd, buf, count);
-    while (rread == -1) {
-      if (errno != EINTR) {
-        systemCall::throwSystemError(
-            "BlockingStreamReader::read: "
-            "read failed",
-            errno);
+    while (r > 0) {
+      ssize_t rread = 0;  //< number of read blocks
+      while ((rread = ::read(fd, start, r)) == -1) {
+        if (errno != EINTR) {
+          systemCall::throwSystemError(
+              "BlockingStreamReader::read: "
+              "read failed",
+              errno);
+        }
       }
-      rread = ::read(fd, buf, count);
+      if (rread == 0) {
+        tfel::raise<SystemError>(
+            "BlockingStreamReader::read: "
+            "unexpected end of file");
+      }
+      r = static_cast<size_t>(r - rread);
+      start += rread;
     }
   }  // end of BlockingStreamReader::read
 
   void NonBlockingStreamReader::read(int fd,
-                                     void *const buf,
+                                     void* const buf,
                                      const size_t count) {
-    ssize_t rread;
+    auto start = static_cast<char*>(buf);
+    size_t r = count;  //< remaining block to be read
     if (count > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) {
       tfel::raise<SystemError>(
           "NonBlockingStreamReader::read: "
           "number of bytes to be read too high");
     }
-    rread = ::read(fd, buf, count);
-    while (rread == -1) {
-      if (errno != EINTR) {
-        systemCall::throwSystemError(
-            "BlockingStreamReader::read: "
-            "read failed",
-            errno);
+    while (r > 0) {
+      ssize_t rread = 0;  //< number of read blocks
+      while ((rread = ::read(fd, start, r)) == -1) {
+        if (errno != EINTR) {
+          systemCall::throwSystemError(
+              "NonBlockingStreamReader::read: "
+              "read failed",
+              errno);
+        }
       }
-      rread = ::read(fd, buf, count);
+      if (rread == 0) {
+        tfel::raise<SystemError>(
+            "NonBlockingStreamReader::read: "
+            "unexpected end of file");
+      }
+      r = static_cast<size_t>(r - rread);
+      start += rread;
     }
   }  // end of NonBlockingStreamReader::read
 

@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/StaticVariableDescription.hxx
  * \brief  This file declares the StaticVariableDescription class
  * \author Thomas Helfer
- * \date   17 Jan 2007
+ * \date 17/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,9 +26,9 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT StaticVariableDescription
       : public VariableDescriptionBase {
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    typedef double StaticVariableValueType;
+    using StaticVariableValueType = double;
 #else
-    typedef long double StaticVariableValueType;
+    using StaticVariableValueType = long double;
 #endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_HXX */
     /*!
      * \brief constructor
@@ -55,11 +55,11 @@ namespace mfront {
                               const unsigned int,
                               const StaticVariableValueType);
     //! \brief move constructor
-    StaticVariableDescription(StaticVariableDescription&&);
+    StaticVariableDescription(StaticVariableDescription&&) noexcept;
     //! \brief copy constructor
     StaticVariableDescription(const StaticVariableDescription&);
     //! \brief move assignement
-    StaticVariableDescription& operator=(StaticVariableDescription&&);
+    StaticVariableDescription& operator=(StaticVariableDescription&&) noexcept;
     //! \brief standard assignement
     StaticVariableDescription& operator=(const StaticVariableDescription&);
     //! \brief destructor
@@ -71,7 +71,13 @@ namespace mfront {
   //! a simple alias for backward compatibility
   typedef StaticVariableDescription StaticVarHandler;
 
-  //! a simple wrapper around the std::vector class
+  /*!
+   * \brief a simple wrapper around the std::vector class
+   *
+   * \note the member functions are exported one by one: with Visual
+   * Studio, exporting the class would instantiate every member of the
+   * base `std::vector`, some of which need a default constructor.
+   */
   struct StaticVariableDescriptionContainer
       : private std::vector<StaticVariableDescription> {
     using std::vector<StaticVariableDescription>::value_type;
@@ -92,16 +98,18 @@ namespace mfront {
      * \param[in] n : variable name
      * \return true if a variable with the given name exists
      */
-    bool contains(const std::string&) const;
+    [[nodiscard]] MFRONT_VISIBILITY_EXPORT bool contains(
+        const std::string&) const;
     /*!
      * \param[in] n : variable name
      * \return the variable description with the given name
      */
-    const StaticVariableDescription& get(const std::string&) const;
+    [[nodiscard]] MFRONT_VISIBILITY_EXPORT const StaticVariableDescription& get(
+        const std::string&) const;
   };
 
-  //! a simple alias for backward compatibility
-  typedef StaticVariableDescriptionContainer StaticVarContainer;
+  //! \brief a simple alias for backward compatibility
+  using StaticVarContainer = StaticVariableDescriptionContainer;
 
 }  // end of namespace mfront
 

@@ -2,7 +2,7 @@
  * \file   SortEigenVectors.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 janv. 2017
+ * \date 04/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -10,6 +10,12 @@
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
+
+// this header is included by TFEL/Math/stensor.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_TFEL_MATH_STENSOR_HXX
+#include "TFEL/Math/stensor.hxx"
+#else
 
 #ifndef LIB_TFEL_MATH_INTERNALS_SORTEIGENVECTORS_HXX
 #define LIB_TFEL_MATH_INTERNALS_SORTEIGENVECTORS_HXX
@@ -35,11 +41,12 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(tfel::math::tvector<3u, T>&,
-                    tfel::math::tmatrix<3u, 3u, T>&,
-                    const EigenValuesOrdering) {}  // end of exe
-  };  // end of struct SortEigenVectors<1u>
-  //! \brief partial specialisation of the `SortEigenVectors` in 1D
+    TFEL_HOST_DEVICE static void exe(tfel::math::tvector<3u, T>&,
+                                     tfel::math::tmatrix<3u, 3u, T>&,
+                                     const EigenValuesOrdering) {
+    }  // end of exe
+  };   // end of struct SortEigenVectors<1u>
+  //! \brief partial specialisation of the `SortEigenVectors` in 2D
   template <>
   struct SortEigenVectors<2u> {
     //! a simple alias
@@ -51,9 +58,9 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(tfel::math::tvector<3u, T>& vp,
-                    tfel::math::tmatrix<3u, 3u, T>& m,
-                    const EigenValuesOrdering o) {
+    TFEL_HOST_DEVICE static void exe(tfel::math::tvector<3u, T>& vp,
+                                     tfel::math::tmatrix<3u, 3u, T>& m,
+                                     const EigenValuesOrdering o) {
       if (o == EigenValuesOrdering::ASCENDING) {
         if (vp(1) < vp(0)) {
           std::swap(vp(0), vp(1));
@@ -81,9 +88,9 @@ namespace tfel::math::internals {
      * \param[in] o:   eigen value ordering
      */
     template <typename T>
-    static void exe(tfel::math::tvector<3u, T>& vp,
-                    tfel::math::tmatrix<3u, 3u, T>& m,
-                    const EigenValuesOrdering o) {
+    TFEL_HOST_DEVICE static void exe(tfel::math::tvector<3u, T>& vp,
+                                     tfel::math::tmatrix<3u, 3u, T>& m,
+                                     const EigenValuesOrdering o) {
       using size_type = decltype(vp.size());
       size_type zero = 0;
       size_type one = 1;
@@ -92,33 +99,33 @@ namespace tfel::math::internals {
       auto vp2 = vp;
       tfel::math::tvector<3u, decltype(vp.size())> idx = {zero, one, two};
       if (o == EigenValuesOrdering::ASCENDING) {
-        if ((vp(0) < vp(1)) && (vp(1) < vp(2))) {
+        if ((vp(0) <= vp(1)) && (vp(1) <= vp(2))) {
           idx = {zero, one, two};
-        } else if ((vp(0) < vp(2)) && (vp(2) < vp(1))) {
+        } else if ((vp(0) <= vp(2)) && (vp(2) <= vp(1))) {
           idx = {zero, two, one};
-        } else if ((vp(1) < vp(0)) && (vp(0) < vp(2))) {
+        } else if ((vp(1) <= vp(0)) && (vp(0) <= vp(2))) {
           idx = {one, zero, two};
-        } else if ((vp(1) < vp(2)) && (vp(2) < vp(0))) {
+        } else if ((vp(1) <= vp(2)) && (vp(2) <= vp(0))) {
           idx = {one, two, zero};
-        } else if ((vp(2) < vp(0)) && (vp(0) < vp(1))) {
+        } else if ((vp(2) <= vp(0)) && (vp(0) <= vp(1))) {
           idx = {two, zero, one};
         } else {
-          // ((vp(2)<vp(1))&&(vp(1)<vp(0))){
+          // ((vp(2)<=vp(1))&&(vp(1)<=vp(0))){
           idx = {two, one, zero};
         }
       } else if (o == EigenValuesOrdering::DESCENDING) {
-        if ((vp(0) > vp(1)) && (vp(1) > vp(2))) {
+        if ((vp(0) >= vp(1)) && (vp(1) >= vp(2))) {
           idx = {zero, one, two};
-        } else if ((vp(0) > vp(2)) && (vp(2) > vp(1))) {
+        } else if ((vp(0) >= vp(2)) && (vp(2) >= vp(1))) {
           idx = {zero, two, one};
-        } else if ((vp(1) > vp(0)) && (vp(0) > vp(2))) {
+        } else if ((vp(1) >= vp(0)) && (vp(0) >= vp(2))) {
           idx = {one, zero, two};
-        } else if ((vp(1) > vp(2)) && (vp(2) > vp(0))) {
+        } else if ((vp(1) >= vp(2)) && (vp(2) >= vp(0))) {
           idx = {one, two, zero};
-        } else if ((vp(2) > vp(0)) && (vp(0) > vp(1))) {
+        } else if ((vp(2) >= vp(0)) && (vp(0) >= vp(1))) {
           idx = {two, zero, one};
         } else {
-          // ((vp(2)>vp(1))&&(vp(1)>vp(0))){
+          // ((vp(2)>=vp(1))&&(vp(1)>=vp(0))){
           idx = {two, one, zero};
         }
       }
@@ -132,3 +139,5 @@ namespace tfel::math::internals {
 }  // end of namespace tfel::math::internals
 
 #endif /* LIB_TFEL_MATH_INTERNALS_SORTEIGENVECTORS_HXX */
+
+#endif /* LIB_TFEL_MATH_STENSOR_HXX */

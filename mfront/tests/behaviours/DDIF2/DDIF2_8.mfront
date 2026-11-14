@@ -1,0 +1,11 @@
+@DSL Implicit;
+@Behaviour DDIF2_8;
+@Description {
+  Three non constant fracture energies. The third one gives the
+  softening slope of the tensile test along ZZ.
+}
+
+@Brick DDIF2 {
+ fracture_stress : 150e6,
+ fracture_energies : {"1e3+0*T", "1e3+0*T", "3+0*T"}
+};

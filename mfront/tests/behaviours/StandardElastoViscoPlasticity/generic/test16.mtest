@@ -1,0 +1,20 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ 'Test16';
+
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@ImposedStrain 'EXX' {0 : 0, 1 : 1e-2};
+@Times{0, 1. in 20};
+
+@Real 'E' 150e9;
+@Real 'R0' 33e6;
+@Real 'Hy' 438e6;
+
+// only the first flow yields
+@Evolution<function> 'EquivalentStressValue'  //
+    'EXX < (R0 / E) ? E * EXX : Hy * E / (E + Hy) * EXX + E * R0 / (E + Hy)';
+
+@Test<function> 'EquivalentPlasticStrain1' '0' 1e-12;
+@Test<function> 'EquivalentStress1' 'EquivalentStressValue' 1e-3;
+@Test<function> 'YieldSurfaceRadius1' '66e6' 1e-3;

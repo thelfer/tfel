@@ -2,7 +2,7 @@
  * \file   mfront/src/SymbolsGenerator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08/07/2018
+ * \date 08/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -47,6 +47,7 @@ namespace mfront {
                                                 const std::string& name) const {
     this->writeFileDescriptionSymbols(out, i, fd, name);
     this->writeValidatorSymbol(out, i, bd, name);
+    this->writeCompatibilityModeSymbol(out, i, bd, name);
     this->writeBuildIdentifierSymbol(out, i, bd, name);
     this->writeEntryPointSymbol(out, i, name);
     this->writeTFELVersionSymbol(out, i, name);
@@ -81,6 +82,14 @@ namespace mfront {
                                               const std::string& n) const {
     mfront::writeValidatorSymbol(out, i.getFunctionNameBasis(n), d);
   }  // end of writeValidatorSymbol
+
+  void SymbolsGenerator::writeCompatibilityModeSymbol(
+      std::ostream& out,
+      const BehaviourInterfaceBase& i,
+      const BehaviourDescription& d,
+      const std::string& n) const {
+    mfront::writeCompatibilityModeSymbol(out, i.getFunctionNameBasis(n), d);
+  }  // end of writeCompatibilityModeSymbol
 
   void SymbolsGenerator::writeBuildIdentifierSymbol(
       std::ostream& out,
@@ -305,6 +314,9 @@ namespace mfront {
       std::ostream& out,
       const BehaviourInterfaceBase& i,
       const std::string& n) const {
+    // this method is also used by the generic and castem model interfaces:
+    // point-wise models are exported as behaviours, which is what MGIS
+    // expects when loading a model (mgis::model::load)
     mfront::writeMaterialKnowledgeTypeSymbol(out, i.getFunctionNameBasis(n),
                                              MaterialKnowledgeType::BEHAVIOUR);
   }  // end of writeEntryPointSymbol
@@ -503,7 +515,7 @@ namespace mfront {
       const Hypothesis h) const {
     const auto& d = mb.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
-    const unsigned short nStateVariables = static_cast<unsigned short>(
+    const auto nStateVariables = static_cast<unsigned short>(
         persistentVarsHolder.getNumberOfVariables());
     out << "MFRONT_EXPORT_SYMBOL(unsigned short, "
         << this->getSymbolName(i, name, h) << "_nInternalStateVariables, "

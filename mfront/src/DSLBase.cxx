@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   04 jun 2007
+ * \date 04/06/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,6 +14,7 @@
 
 #include <cctype>
 #include <sstream>
+#include <utility>
 #include <iterator>
 #include <stdexcept>
 #include <algorithm>
@@ -39,9 +40,11 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/CompatibilityMode.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/StaticVariableDescription.hxx"
-#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -67,6 +70,7 @@ namespace mfront {
       "parameters_as_static_variables";
   const char* const DSLBase::initializationFromFileOption =
       "parameters_initialization_from_file";
+  const char* const DSLBase::compatibilityModeOption = "compatibility_mode";
   const char* const DSLBase::overridingParameters = "overriding_parameters";
   const char* const DSLBase::validatorOption = "validator";
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
@@ -74,15 +78,15 @@ namespace mfront {
       "disable_runtime_checks";
 
   bool isValidMaterialName(std::string_view n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
   bool isValidLibraryName(std::string_view n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
   bool isValidUserDefinedVariableName(std::string_view n) {
-    return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) &&
+    return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, false)) &&
            (!tfel::utilities::starts_with(n, "mfront_"));
   }  // end of isValidUserDefinedVariableName
 
@@ -95,6 +99,7 @@ namespace mfront {
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
         .addDataTypeValidator<bool>(DSLBase::disableRuntimeChecksOption)
         .addDataTypeValidator<std::string>(DSLBase::validatorOption)
+        .addDataTypeValidator<std::string>(DSLBase::compatibilityModeOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)
         .addDataTypeValidator<tfel::utilities::DataMap>(
             DSLBase::overridingParameters);
@@ -152,6 +157,19 @@ namespace mfront {
           opts.at(DSLBase::buildIdentifierOption).get<std::string>();
       d.setAttribute(MaterialKnowledgeDescription::buildIdentifier, id, false);
     }
+    if (opts.count(DSLBase::compatibilityModeOption) != 0) {
+      const auto version =
+          opts.at(DSLBase::compatibilityModeOption).get<std::string>();
+      // the resolved compatibility mode is stored, as the default one
+      d.setAttribute(MaterialKnowledgeDescription::compatibilityMode,
+                     to_string(CompatibilityMode::fromString(version)), false);
+    } else {
+      const auto ov = getDefaultCompatibilityMode();
+      if (ov.has_value()) {
+        d.setAttribute(MaterialKnowledgeDescription::compatibilityMode,
+                       to_string(*ov), false);
+      }
+    }
   }  // end of handleDSLOptions
 
   AbstractDSL::DSLOptions DSLBase::buildCommonDSLOptions(
@@ -162,18 +180,25 @@ namespace mfront {
         MaterialKnowledgeDescription::buildIdentifier, "");
     const auto validator = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::validator, "");
-    return {{DSLBase::disableRuntimeChecksOption, areRuntimeChecksDisabled(d)},
-            {DSLBase::defaultOutOfBoundsPolicyOption, policy},
-            {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
-             allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
-            {DSLBase::parametersAsStaticVariablesOption,
-             areParametersTreatedAsStaticVariables(d)},
-            {DSLBase::initializationFromFileOption,
-             allowsParametersInitializationFromFile(d)},
-            {DSLBase::validatorOption, validator},
-            {DSLBase::buildIdentifierOption, build_id},
-            {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
-  }  // end of buildCommonOptions
+    auto opts = AbstractDSL::DSLOptions{
+        {DSLBase::disableRuntimeChecksOption, areRuntimeChecksDisabled(d)},
+        {DSLBase::defaultOutOfBoundsPolicyOption, policy},
+        {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
+         allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
+        {DSLBase::parametersAsStaticVariablesOption,
+         areParametersTreatedAsStaticVariables(d)},
+        {DSLBase::initializationFromFileOption,
+         allowsParametersInitializationFromFile(d)},
+        {DSLBase::validatorOption, validator},
+        {DSLBase::buildIdentifierOption, build_id},
+        {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
+    if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      opts.insert({DSLBase::compatibilityModeOption,
+                   d.getAttribute<std::string>(
+                       MaterialKnowledgeDescription::compatibilityMode)});
+    }
+    return opts;
+  }  // end of buildCommonDSLOptions
 
   DSLBase::DSLBase(const DSLOptions& /* opts */) {
     this->addSeparator("\u2297");
@@ -182,28 +207,33 @@ namespace mfront {
 
   std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
       const {
-    return {{DSLBase::disableRuntimeChecksOption,
-             "boolean stating if interfaces shall remove as much runtime "
-             "checks as possible. Those checks include the treatment of "
-             "standard and physical bounds for instance."},
-            {DSLBase::defaultOutOfBoundsPolicyOption,
-             "string specifying the default out of bounds policy. Allowed "
-             "values are `None`, `Warning`, `Strict`"},
-            {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
-             "boolean stating if the runtime modification of the out of bounds "
-             "policy is allowed"},
-            {DSLBase::parametersAsStaticVariablesOption,
-             "boolean stating if parameters shall be treated as static "
-             "variables"},
-            {DSLBase::initializationFromFileOption,
-             "boolean stating if the values of parameters can be changed from "
-             "an external file"},
-            {DSLBase::buildIdentifierOption,
-             "string specifying a build identifier. This option shall only be "
-             "specified on the command line"},
-            {DSLBase::overridingParameters,
-             "map allowing to override material properties, parameters and "
-             "external state variables by parameters"}};
+    return {
+        {DSLBase::disableRuntimeChecksOption,
+         "boolean stating if interfaces shall remove as much runtime "
+         "checks as possible. Those checks include the treatment of "
+         "standard and physical bounds for instance."},
+        {DSLBase::defaultOutOfBoundsPolicyOption,
+         "string specifying the default out of bounds policy. Allowed "
+         "values are `None`, `Warning`, `Strict`"},
+        {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
+         "boolean stating if the runtime modification of the out of bounds "
+         "policy is allowed"},
+        {DSLBase::parametersAsStaticVariablesOption,
+         "boolean stating if parameters shall be treated as static "
+         "variables"},
+        {DSLBase::initializationFromFileOption,
+         "boolean stating if the values of parameters can be changed from "
+         "an external file"},
+        {DSLBase::validatorOption,
+         "string specifying the validator of the implementation"},
+        {DSLBase::buildIdentifierOption,
+         "string specifying a build identifier. This option shall only be "
+         "specified on the command line"},
+        {DSLBase::overridingParameters,
+         "map allowing to override material properties, parameters and "
+         "external state variables by parameters"},
+        {DSLBase::compatibilityModeOption,
+         "string giving the version to which the MFront file shall comply"}};
   }  // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
@@ -276,12 +306,21 @@ namespace mfront {
     const auto pe = s.end();
     for (auto& t : this->tokens) {
       if (t.flag == tfel::utilities::Token::String) {
-        auto delim = t.value.at(0);
-        auto contents = t.value.substr(1, t.value.size() - 2);
+        // the value of a string token holds the whole literal: the
+        // substitutions are performed on its contents, which is written back
+        // with the same delimiters
+        const auto raw = tfel::utilities::isRawString(t);
+        const auto delim = tfel::utilities::getRawStringDelimiter(t);
+        auto contents = tfel::utilities::getContents(t);
         for (const auto& [k, v] : s) {
           contents = tfel::utilities::replace_all(contents, k, v);
         }
-        t.value = delim + contents + delim;
+        if (raw) {
+          t.value = "R\"" + delim + "(" + contents + ")" + delim + "\"";
+        } else {
+          const auto quote = t.value.at(0);
+          t.value = quote + contents + quote;
+        }
       } else {
         auto p = s.find(t.value);
         if (p != pe) {
@@ -290,16 +329,16 @@ namespace mfront {
       }
     }
     // treating external commands
-    for (const auto& c : ecmds) {
+    for (auto pc = ecmds.rbegin(); pc != ecmds.rend(); ++pc) {
       CxxTokenizer t;
       try {
-        t.parseString(c);
+        t.parseString(*pc);
       } catch (std::exception& e) {
         tfel::raise(
             "DSLBase::openFile : "
             "error while parsing external command "
             "'" +
-            c + "'\n" + std::string(e.what()));
+            *pc + "'\n" + std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(), t.begin(), t.end());
     }
@@ -338,12 +377,11 @@ namespace mfront {
           if ((n == this->tokens.end()) || (n->line != c->line)) {
             return;
           }
-          const auto csize = [&c] {
-            if ((c->flag == Token::String) || (c->flag == Token::Char)) {
-              return c->value.size() + 2;
-            }
-            return c->value.size();
-          }();
+          // the value of a token holds its whole spelling in the file, which
+          // is its width, excepted for numbers with digit separators, so that
+          // no special case is required for string and character literals,
+          // including raw string literals, see issue #1390
+          const auto csize = c->value.size();
           if (n->offset > c->offset + csize) {
             const auto d = n->offset - csize - c->offset;
             r += std::string(d, ' ');
@@ -393,11 +431,7 @@ namespace mfront {
     }
     auto currentLine = this->current->line;
     if ((registerLine) && (!getDebugMode())) {
-      res = "#line ";
-      res += std::to_string(currentLine);
-      res += " \"";
-      res += this->fd.fileName;
-      res += "\"\n";
+      res = printLinePragma(currentLine, this->fd.fileName);
     }
     if (!this->current->comment.empty()) {
       if (!b.description.empty()) {
@@ -454,15 +488,9 @@ namespace mfront {
       currentValue = demangle(*(this->current));
       if (currentLine != this->current->line) {
         currentLine = this->current->line;
+        res += "\n";
         if ((registerLine) && (!getDebugMode())) {
-          res += "\n";
-          res += "#line ";
-          res += std::to_string(currentLine);
-          res += " \"";
-          res += this->fd.fileName;
-          res += "\"\n";
-        } else {
-          res += "\n";
+          res += printLinePragma(currentLine, this->fd.fileName);
         }
       }
       if ((currentValue == ";") && (!allowSemiColon)) {
@@ -590,14 +618,20 @@ namespace mfront {
 
   unsigned short DSLBase::readUnsignedShort(const std::string& m) {
     this->checkNotEndOfFile(m, "Cannot read unsigned short value.");
-    unsigned short value;
-    std::istringstream flux(current->value);
-    flux >> value;
-    if ((flux.fail()) || (!flux.eof())) {
+    // checked conversion: negative, non integer and out of range values
+    // are rejected
+    auto p = this->current;
+    auto value = static_cast<unsigned int>(0);
+    try {
+      value = CxxTokenizer::readUnsignedInt(p, this->tokens.end());
+    } catch (std::exception&) {
       this->throwRuntimeError(m, "Failed to read unsigned short value.");
     }
-    ++(this->current);
-    return value;
+    if (!std::in_range<unsigned short>(value)) {
+      this->throwRuntimeError(m, "Failed to read unsigned short value.");
+    }
+    this->current = p;
+    return static_cast<unsigned short>(value);
   }  // end of readUnsignedShort
 
   void DSLBase::readSpecifiedToken(const std::string& m, const std::string& v) {
@@ -621,8 +655,7 @@ namespace mfront {
            (this->current->value != ";")) {
       const auto value = [this] {
         if (this->current->flag == Token::String) {
-          const auto s = this->current->value.size() - 2;
-          return this->current->value.substr(1, s);
+          return tfel::utilities::getContents(*this->current);
         }
         return this->current->value;
       }();
@@ -665,7 +698,7 @@ namespace mfront {
   void DSLBase::registerIntegerConstant(const std::string& n,
                                         const size_t l,
                                         const int v) {
-    if (!this->isValidIdentifier(n)) {
+    if (!this->isValidIdentifier(n, false)) {
       this->throwRuntimeError("DSLBase::registerIntegerConstant",
                               "Variable name '" + n + "' is not valid.");
     }
@@ -869,7 +902,7 @@ namespace mfront {
       if (t.flag != tfel::utilities::Token::String) {
         this->throwRuntimeError(m, "Expected a string");
       }
-      r.push_back(t.value.substr(1, t.value.size() - 2));
+      r.push_back(tfel::utilities::getContents(t));
     }
     return r;
   }  // end of readArrayOfString
@@ -907,8 +940,7 @@ namespace mfront {
     if (this->current->flag != tfel::utilities::Token::String) {
       this->throwRuntimeError(m, "Expected a string");
     }
-    const auto& r =
-        this->current->value.substr(1, this->current->value.size() - 2);
+    const auto r = tfel::utilities::getContents(*this->current);
     ++(this->current);
     return r;
   }  // end of readString
@@ -1000,7 +1032,7 @@ namespace mfront {
   std::string DSLBase::readSpecifiedValue(const std::string& file,
                                           const std::string& value) {
     std::vector<std::string> values(1, value);
-    return this->readSpecifiedValues(file, values)[1];
+    return this->readSpecifiedValues(file, values)[0];
   }  // end of readSpecifiedValue
 
   std::vector<std::string> DSLBase::readSpecifiedValues(
@@ -1038,18 +1070,18 @@ namespace mfront {
         }
         throw_if(
             std::next(pt) == pte,
-            "unexepected end of file '" + file + "' (expected " + *p + ").\n",
-            (--pt)->line);
+            "unexpected end of file '" + file + "' (expected " + *p + ").\n",
+            pt->line);
         ++pt;
         const auto value = pt->value;
-        throw_if(pt->value == ";",
-                 "unexepected token ';' (exepected " + *p + ")", pt->line);
+        throw_if(pt->value == ";", "unexpected token ';' (expected " + *p + ")",
+                 pt->line);
         throw_if(std::next(pt) == pte,
-                 "unexepected end of file '" + file + "' (expected ';').\n",
-                 (--pt)->line);
+                 "unexpected end of file '" + file + "' (expected ';').\n",
+                 pt->line);
         ++pt;
         throw_if(pt->value != ";",
-                 "unexepected token '" + pt->value + "' (exepected ';')",
+                 "unexpected token '" + pt->value + "' (expected ';')",
                  pt->line);
         res[static_cast<std::vector<std::string>::size_type>(
             p - values.begin())] = value;
@@ -1063,7 +1095,8 @@ namespace mfront {
   DSLBase::handleMaterialPropertyDescription(const std::string& f) {
     // getting informations the source file
     const auto& global_options =
-        GlobalDomainSpecificLanguageOptionsManager::get();
+        static_cast<const GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     auto mp = MaterialPropertyDSL{
         tfel::utilities::merge(global_options.getMaterialPropertyDSLOptions(),
                                this->buildDSLOptions(), true)};
@@ -1113,9 +1146,10 @@ namespace mfront {
 
   void DSLBase::treatLonelySeparator() {
     if (getPedanticMode()) {
+      const auto previous = std::prev(this->current);
       auto msg = std::ostringstream{};
-      msg << this->fd.fileName << ":" << this->current->line << ":"
-          << this->current->offset << ": warning: extra ‘;’ [-pedantic]\n";
+      msg << this->fd.fileName << ":" << previous->line << ":"
+          << previous->offset << ": warning: extra ‘;’ [-pedantic]\n";
       reportWarning(msg.str());
     }
   }  // end of treatLonelySperator
@@ -1168,7 +1202,7 @@ namespace mfront {
   void DSLBase::overrideUnitSystem(const std::string& d) {
     if (!this->overriden_unit_system.empty()) {
       this->throwRuntimeError("DSLBase::overrideUnitSystem",
-                              "the author is already overriden");
+                              "the unit system is already overriden");
     }
     this->overriden_unit_system = d;
     this->setUnitSystem(d);
@@ -1246,8 +1280,7 @@ namespace mfront {
         }
       }
       if (this->current->flag == tfel::utilities::Token::String) {
-        description +=
-            this->current->value.substr(1, this->current->value.size() - 2u);
+        description += tfel::utilities::getContents(*this->current);
       } else {
         description += this->current->value;
       }

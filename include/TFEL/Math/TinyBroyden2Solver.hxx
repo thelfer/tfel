@@ -2,7 +2,7 @@
  * \file   TinyBroyden2Solver.hxx
  * \brief
  * \author Thomas Helfer
- * \date   05/07/2021
+ * \date 05/07/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -76,8 +76,13 @@ namespace tfel::math {
     TinyBroyden2Solver& operator=(TinyBroyden2Solver&&) noexcept = default;
     //! \brief default constructor
     TinyBroyden2Solver& operator=(const TinyBroyden2Solver&) noexcept = default;
-    //! \brief update the jacobian matrix
-    TFEL_HOST_DEVICE void updateOrCheckJacobian();
+    /*!
+     * \brief update the inverse of the jacobian matrix
+     *
+     * This method is called by `computeNewCorrection` before the
+     * `updateOrCheckJacobian` method of the derived class.
+     */
+    TFEL_HOST_DEVICE void updateJacobianInvert();
     //! \brief compute a new correction to the unknowns
     TFEL_HOST_DEVICE bool computeNewCorrection();
     //! \brief destructor

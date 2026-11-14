@@ -2,7 +2,7 @@
  * \file   mfront/src/OctaveMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date 06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -38,11 +38,18 @@ namespace mfront {
       const VariableDescription& v,
       const std::string& name,
       const VariableDescriptionContainer::size_type nbr,
-      const bool use_qt) {
+      const bool use_qt,
+      const bool return_status) {
     if (!v.hasBounds()) {
       return;
     }
     const auto& b = v.getBounds();
+    // <name>_checkBounds returns a status, <name>_compute returns the value
+    // of the material property
+    const auto strict_status =
+        return_status ? "return -" + std::to_string(nbr) + ";\n" : "";
+    const auto status =
+        return_status ? "return " + std::to_string(nbr) + ";\n" : "";
     const char* const get_out_of_bounds_policy =
         "#if OCTAVE_MAJOR_VERSION >= 6\n"
         "const octave_value mfront_policy = "
@@ -67,14 +74,14 @@ namespace mfront {
           << " is below its lower bound.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
-          << "return -" << nbr << ";\n"
+          << strict_status  //
           << "}\n"
           << "if(mfront_policy.string_value()==\"WARNING\"){\n"
           << "octave_stdout << msg << \"\\n\";\n"
           << "}\n"
           << "}\n"
           << "}\n"
-          << "return " << nbr << ";\n"
+          << status  //
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       if (use_qt) {
@@ -84,18 +91,20 @@ namespace mfront {
         out << "if(" << v.name << " > " << b.upperBound << "){\n";
       }
       out << get_out_of_bounds_policy  //
-          << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"
-          << "std::string msg(\"" << name << ": \"" << v.name
+          << "std::string msg(\"" << name << ": " << v.name
           << " is over its upper bound.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
-          << "return -" << nbr << ";\n"
+          << strict_status  //
+          << "}\n"
+          << "if(mfront_policy.string_value()==\"WARNING\"){\n"
+          << "octave_stdout << msg << \"\\n\";\n"
           << "}\n"
           << "}\n"
           << "}\n"
-          << "return " << nbr << ";\n"
+          << status  //
           << "}\n";
     } else {
       if (use_qt) {
@@ -114,13 +123,13 @@ namespace mfront {
           << " is out of its bounds.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
-          << "return -" << nbr << ";\n"
+          << strict_status  //
           << "} if(mfront_policy.string_value()==\"WARNING\"){\n"
           << "octave_stdout << msg << \"\\n\";\n"
           << "}\n"
           << "}\n"
           << "}\n"
-          << "return " << nbr << ";\n"
+          << status  //
           << "}\n";
     }
   }  // end of writeBoundsChecks
@@ -215,6 +224,13 @@ namespace mfront {
 
   OctaveMaterialPropertyInterface::OctaveMaterialPropertyInterface() = default;
 
+  void OctaveMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, OctaveMaterialPropertyInterface::tokens_iterator>
   OctaveMaterialPropertyInterface::treatKeyword(
       const std::string& k,
@@ -264,6 +280,7 @@ namespace mfront {
                    "unable to open file '" +
                        fn + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
+    out.precision(14);
     out << "/*!\n"
         << "* \\file   " << fn << '\n'
         << "* \\brief  "
@@ -275,7 +292,7 @@ namespace mfront {
       out << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      out << "* \\date   " << fd.date << '\n';
+      out << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       out << fd.description << '\n';
@@ -315,12 +332,13 @@ namespace mfront {
     writeVariablesNamesSymbol(out, name, mpd);
     writeVariablesBoundsSymbols(out, name, mpd);
     writeValidatorSymbol(out, name, mpd);
+    writeCompatibilityModeSymbol(out, name, mpd);
     writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
     writeUnitSystemSymbol(out, name, mpd);
     writeInterfaceSymbol(out, name, "Octave");
-    writeLawSymbol(out, name, mpd.material);
+    writeLawSymbol(out, name, mpd.law);
     writeMaterialSymbol(out, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(out, name,
                                      MaterialKnowledgeType::MATERIALPROPERTY);
@@ -342,8 +360,10 @@ namespace mfront {
           << "return value.range_value().elem(j);\n"
           << "} // end of get_range_value\n\n";
     }
-    out << "static double " << name << "_compute(";
+    out << "static double " << name
+        << "_compute(octave::interpreter& mfront_octave_interpreter";
     if (!mpd.inputs.empty()) {
+      out << ", ";
       for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
         if (useQuantities(mpd)) {
           out << "const double mfront_" << p3->name;
@@ -354,8 +374,6 @@ namespace mfront {
           out << ",";
         }
       }
-    } else {
-      out << "void";
     }
     out << ")\n{\n";
     writeBeginningOfMaterialPropertyBody(out, mpd, fd, "double", true);
@@ -384,7 +402,7 @@ namespace mfront {
         << "}\n";
     if (!areRuntimeChecksDisabled(mpd)) {
       writePhysicalBoundsChecks(out, mpd.output, name, 0, useQuantities(mpd));
-      writeBoundsChecks(out, mpd.output, name, 0, useQuantities(mpd));
+      writeBoundsChecks(out, mpd.output, name, 0, useQuantities(mpd), false);
     }
     //
     if (useQuantities(mpd)) {
@@ -418,7 +436,7 @@ namespace mfront {
           for (const auto& i : mpd.inputs) {
             const auto nbr =
                 CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
-            writeBoundsChecks(out, i, name, nbr, false);
+            writeBoundsChecks(out, i, name, nbr, false, true);
           }
         }
         out << "return 0;\n"
@@ -455,12 +473,12 @@ namespace mfront {
       out << "bool areAllVariablesScalars  = true;\n";
     }
     out << "octave_value retval;\n";
-    if (!mpd.parameters.empty()) {
+    if ((!areParametersTreatedAsStaticVariables(mpd)) &&
+        (!mpd.parameters.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "if(!octave::" << hn << "::get" << hn << "().ok){\n"
-          << "error(\"%s\\n\", octave::" << name
-          << "MaterialPropertyHandler::get" << name
-          << "MaterialPropertyHandler().msg.c_str());\n"
+          << "error(\"%s\\n\", octave::" << hn << "::get" << hn
+          << "().msg.c_str());\n"
           << "return retval;\n"
           << "}\n";
     }
@@ -478,7 +496,7 @@ namespace mfront {
     out << "return retval;\n";
     out << "}\n";
     if (mpd.inputs.size() == 0) {
-      out << "retval = " << name << "_compute();\n";
+      out << "retval = " << name << "_compute(mfront_octave_interpreter);\n";
     } else if (mpd.inputs.size() == 1) {
       out << "if(args(0).is_real_scalar()){\n";
       if (!areRuntimeChecksDisabled(mpd)) {
@@ -489,7 +507,7 @@ namespace mfront {
           out << "}\n";
         }
       }
-      out << "retval = " << name << "_compute(";
+      out << "retval = " << name << "_compute(mfront_octave_interpreter, ";
       out << "args(0).scalar_value());\n";
       out << "} else if(args(0).is_real_matrix()||args(0).is_range()){\n";
       out << "Matrix xin0(args(0).is_range() ? "
@@ -506,7 +524,7 @@ namespace mfront {
           out << "}\n";
         }
       }
-      out << "xout(i,j) = " << name << "_compute(";
+      out << "xout(i,j) = " << name << "_compute(mfront_octave_interpreter, ";
       out << "xin0(i,j));\n";
       out << "}\n";
       out << "}\n";
@@ -573,7 +591,7 @@ namespace mfront {
           out << "}\n";
         }
       }
-      out << "retval = " << name << "_compute(";
+      out << "retval = " << name << "_compute(mfront_octave_interpreter, ";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {
         out << "args(" << i << ").scalar_value(),";
       }
@@ -597,7 +615,7 @@ namespace mfront {
           out << "}\n";
         }
       }
-      out << "xout(i,j) = " << name << "_compute(";
+      out << "xout(i,j) = " << name << "_compute(mfront_octave_interpreter, ";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {
         out << "xin" << i << "(i,j),";
       }
@@ -621,7 +639,7 @@ namespace mfront {
           out << "}\n";
         }
       }
-      out << "xout(i,j) = " << name << "_compute(";
+      out << "xout(i,j) = " << name << "_compute(mfront_octave_interpreter, ";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {
         out << "(*(getfunction[" << i << "]))(args(" << i << "),i,j),\n";
       }

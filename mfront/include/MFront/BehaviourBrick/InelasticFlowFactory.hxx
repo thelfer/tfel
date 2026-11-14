@@ -2,7 +2,13 @@
  * \file   include/MFront/BehaviourBrick/InelasticFlowFactory.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWFACTORY_HXX
@@ -21,10 +27,15 @@ namespace mfront::bbrick {
 
   //! \brief abstract factory for inelastic Flows.
   struct MFRONT_VISIBILITY_EXPORT InelasticFlowFactory {
-    //! a simple alias
+    //! \brief a simple alias
     using Generator = std::function<std::shared_ptr<InelasticFlow>()>;
     //! \return the uniq instance of the class
-    static InelasticFlowFactory& getFactory();
+    [[nodiscard]] static InelasticFlowFactory& getFactory();
+    //
+    InelasticFlowFactory(InelasticFlowFactory&&) = delete;
+    InelasticFlowFactory(const InelasticFlowFactory&) = delete;
+    InelasticFlowFactory& operator=(InelasticFlowFactory&&) = delete;
+    InelasticFlowFactory& operator=(const InelasticFlowFactory&) = delete;
     /*!
      * \brief add a new generator
      * \param[in] n: name of the generator
@@ -32,24 +43,17 @@ namespace mfront::bbrick {
      */
     void addGenerator(const std::string&, const Generator&);
     //! \return the list of available inelastic flows
-    std::vector<std::string> getRegistredInelasticFlows() const;
+    [[nodiscard]] std::vector<std::string> getRegistredInelasticFlows() const;
     /*!
      * \brief generate a new inelastic flow
      * \param[in] n: name of the inelastic flow
      */
-    std::shared_ptr<InelasticFlow> generate(const std::string&) const;
+    [[nodiscard]] std::shared_ptr<InelasticFlow> generate(
+        const std::string&) const;
 
    private:
-    //! default constructor
+    //! \brief default constructor
     InelasticFlowFactory();
-    //! move constructor (deleted)
-    InelasticFlowFactory(InelasticFlowFactory&&) = delete;
-    //! copy constructor (deleted)
-    InelasticFlowFactory(const InelasticFlowFactory&) = delete;
-    //! move assignement (deleted)
-    InelasticFlowFactory& operator=(InelasticFlowFactory&&) = delete;
-    //! standard assignement(deleted)
-    InelasticFlowFactory& operator=(const InelasticFlowFactory&) = delete;
     //! \brief destructor
     ~InelasticFlowFactory();
     //! \brief generators

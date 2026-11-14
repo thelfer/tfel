@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/MechanicalBehaviourTraits.hxx
  * \brief  This file declares the MechanicalBehaviourTraits template class
  * \author Thomas Helfer
- * \date   10 Aug 2006
+ * \date 10/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,7 +22,7 @@ namespace tfel::material {
    * All behaviour shall specialise this class.
    * \param Behaviour.
    * \author Thomas Helfer
-   * \date   10 Aug 2006
+   * \date 10/08/2006
    */
   template <class Behaviour>
   struct MechanicalBehaviourTraits {

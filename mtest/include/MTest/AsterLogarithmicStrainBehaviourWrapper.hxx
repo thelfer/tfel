@@ -2,7 +2,7 @@
  * \file   mtest/include/MTest/AsterLogarithmicStrainBehaviourWrapper.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04/01/2022
+ * \date 04/01/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,7 +31,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] wb : wrapped behaviour
      */
-    AsterLogarithmicStrainBehaviourWrapper(
+    explicit AsterLogarithmicStrainBehaviourWrapper(
         const std::shared_ptr<AsterSmallStrainBehaviour>&);
     Hypothesis getHypothesis() const override;
     BehaviourType getBehaviourType() const override;
@@ -84,7 +84,7 @@ namespace mtest {
                                     const real,
                                     const StiffnessMatrixType) const override;
     //! \brief destructor
-    virtual ~AsterLogarithmicStrainBehaviourWrapper() override;
+    ~AsterLogarithmicStrainBehaviourWrapper() override;
 
    private:
     /*!

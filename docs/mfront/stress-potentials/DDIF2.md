@@ -11,9 +11,9 @@ properties follows the same rules.
 # Local coordinate
 
 This description is currently limited to initially isotropic
-behaviours, but the damage is described in three orthogonal
+behaviors, but the damage is described in three orthogonal
 directions. Those directions are currently fixed with respect to the
-global system. For \(2D\) and \(3D\) modelling hypotheses, those
+global system. For \(2D\) and \(3D\) modeling hypotheses, those
 directions are determined by a material property, which external name
 is `AngularCoordinate`, giving the angular coordinate in a cylindrical
 system.
@@ -58,7 +58,7 @@ name is `PressureOnCrackSurface`, is automatically declared.
 
 # Example
 
-Here is an example of a behaviour based on the `DDIF2` brick:
+Here is an example of a behavior based on the `DDIF2` brick:
 
 ~~~~{.cpp}
 @DSL Implicit;

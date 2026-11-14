@@ -61,24 +61,28 @@ namespace mfront {
      * \param[in] f : file name
      * \return the full path of the file
      */
-    static std::string search(const std::string&);
+    [[nodiscard]] static std::string search(const std::string&);
     /*!
      * \brief append a madnex search path
      *
      * The path has one of the form:
      *
      * - `<file_path>`
-     * - `<file_path>:<material_id>`
-     * - `<file_path>:<material_id>:<mkt>`
+     * - `<file_path>:<mkt>`
+     * - `<file_path>:<mkt>:<material_id>`
      *
-     * If the material identifier is not specified, all
-     * materials are selected, including the empty one.
+     * `<mkt>` can have one of the values `material_property` (or
+     * `MaterialProperty`), `behaviour` (or `Behaviour`) or `model` (or
+     * `Model`). If `<mkt>` is empty or not specified, all types of material
+     * knowledge are selected.
      *
      * `<material_id>` can be a regular expression.
      * `<material_id>` can also have the special value `<none>`.
      *
-     * <mkt> can have one of the values `MaterialProperties`, `Behaviours` or
-     * `Models`.
+     * If the material identifier is empty or not specified, only the
+     * material knowledge associated with no material is selected, as with
+     * `<none>`. The regular expression `.*` selects all materials,
+     * including the empty one.
      *
      * \param[in] p: path
      */
@@ -86,7 +90,7 @@ namespace mfront {
     /*!
      * \brief Add new search paths.
      *
-     * Multiple paths are separated by commas under unices systems and
+     * Multiple paths are separated by colons under unices systems and
      * by semicolons under Windows systems.
      * \param[in] p : new search paths
      */
@@ -98,14 +102,19 @@ namespace mfront {
     static void addSearchPathsFromImplementationPaths(
         const std::vector<std::string>&);
     //! \return the list of the search paths associated with directories
-    static std::vector<std::string> getSearchPaths();
+    [[nodiscard]] static std::vector<std::string> getSearchPaths();
     //! \return the registred paths
-    static std::vector<Path> getRegistredPaths();
+    [[nodiscard]] static std::vector<Path> getRegistredPaths();
     /*!
      * \brief reset the paths
      * \param[in] npaths: new paths
      */
     static void resetPaths(const std::vector<Path>&);
+    //
+    SearchPathsHandler(const SearchPathsHandler&) = delete;
+    SearchPathsHandler(SearchPathsHandler&&) = delete;
+    SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
+    SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
 
    private:
     //! \return the unique instance of the class
@@ -117,10 +126,6 @@ namespace mfront {
      * is used to fill the search paths.
      */
     SearchPathsHandler();
-    SearchPathsHandler(const SearchPathsHandler&) = delete;
-    SearchPathsHandler(SearchPathsHandler&&) = delete;
-    SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
-    SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
     //! \brief return the path to a madnex file
     TFEL_VISIBILITY_LOCAL static std::string searchMadnexFile(
         const std::string&);

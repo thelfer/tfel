@@ -153,11 +153,9 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>) {
-    using Result = tfel::math::st2tost2<
-        tfel::math::getSpaceDimension<StensorType>(),
-        tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
-                                          tfel::math::numeric_type<StensorType>,
-                                          tfel::math::OpDiv>>;
+    using Result =
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
+                             tfel::math::base_type<StensorType>>;
     return Result{(a3 + a1) / 3, -a1 / 3, -a3 / 3, -a1 / 3,      (a2 + a1) / 3,
                   -a2 / 3,       -a3 / 3, -a2 / 3, (a2 + a3) / 3};
   }  // end of computeJ2OSecondDerivative
@@ -172,11 +170,9 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType> a4,
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>) {
-    using Result = tfel::math::st2tost2<
-        tfel::math::getSpaceDimension<StensorType>(),
-        tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
-                                          tfel::math::numeric_type<StensorType>,
-                                          tfel::math::OpDiv>>;
+    using Result =
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
+                             tfel::math::base_type<StensorType>>;
     using real = tfel::math::base_type<StensorType>;
     constexpr auto zero = real{0};
     return Result{(a3 + a1) / 3, -a1 / 3,       -a3 / 3,       zero,
@@ -195,11 +191,9 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType> a4,
           const tfel::math::base_type<StensorType> a5,
           const tfel::math::base_type<StensorType> a6) {
-    using Result = tfel::math::st2tost2<
-        tfel::math::getSpaceDimension<StensorType>(),
-        tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
-                                          tfel::math::numeric_type<StensorType>,
-                                          tfel::math::OpDiv>>;
+    using Result =
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
+                             tfel::math::base_type<StensorType>>;
     using real = tfel::math::base_type<StensorType>;
     constexpr auto zero = real{0};
     return Result{(a3 + a1) / 3, -a1 / 3,       -a3 / 3,       zero, zero, zero,

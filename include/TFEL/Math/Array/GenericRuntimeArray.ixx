@@ -69,7 +69,7 @@ namespace tfel::math {
   template <typename Child, typename ArrayPolicy>
   GenericRuntimeArray<Child, ArrayPolicy>&
   GenericRuntimeArray<Child, ArrayPolicy>::operator=(
-      GenericRuntimeArray&& src) {
+      GenericRuntimeArray&& src) noexcept {
     //     checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
     //                                              src.getIndexingPolicy());
     if constexpr (ArrayPolicy::IndexingPolicy::areDataContiguous) {
@@ -141,7 +141,12 @@ namespace tfel::math {
           isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
                          value_type>()) {
     auto& child = static_cast<Child&>(*this);
-    child.multiplyByScalar(1 / v);
+    if constexpr (std::is_integral_v<base_type<numeric_type<value_type>>>) {
+      // the reciprocal of an integer is zero in general
+      child.divideByScalar(v);
+    } else {
+      child.multiplyByScalar(base_type<numeric_type<value_type>>{1} / v);
+    }
     return child;
   }  // end of operator /=
 

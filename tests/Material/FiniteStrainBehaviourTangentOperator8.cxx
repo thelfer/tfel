@@ -71,8 +71,8 @@ struct FiniteStrainBehaviourTangentOperator8 final
       return tfel::math::push_forward(CSE, F);
     };
     // compute the spatial moduli through the Kirchhoff stress derivative
-    const auto D = [&svk, &l0,
-                    &m0](const tfel::math::tensor<N, real>& F) -> st2tost2 {
+    const auto D = [this, &svk, &l0, &m0,
+                    &eps](const tfel::math::tensor<N, real>& F) -> st2tost2 {
       const auto s = svk(F);
       const auto CSE = l0 * st2tost2::IxI() + 2 * m0 * st2tost2::Id();
       const auto DS_DC = tfel::material::convert<TangentOperator::DS_DC,
@@ -81,6 +81,10 @@ struct FiniteStrainBehaviourTangentOperator8 final
       const auto DS_DF = tfel::material::convert<TangentOperator::DS_DF,
                                                  TangentOperator::DS_DC>(
           DS_DC, tensor::Id(), F, s);
+      const auto DS_DF2 = tfel::material::convert<TangentOperator::DS_DF,
+                                                  TangentOperator::DS_DEGL>(
+          CSE, tensor::Id(), F, s);
+      TFEL_TESTS_ASSERT(abs(DS_DF - DS_DF2) < eps);
       const auto Dt = tfel::material::convert<TangentOperator::DTAU_DF,
                                               TangentOperator::DS_DF>(
           DS_DF, tensor::Id(), F, s);

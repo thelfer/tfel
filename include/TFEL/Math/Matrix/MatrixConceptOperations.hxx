@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/Matrix/MatrixConceptOperations.hxx
  * \brief  This file implements operations that can be applied to matrices.
  * \author Thomas Helfer
- * \date   01 jui 2006
+ * \date 01/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,6 +18,7 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel::math {
 

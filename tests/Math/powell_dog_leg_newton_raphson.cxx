@@ -3,7 +3,7 @@
  *
  * \brief
  * \author Thomas Helfer
- * \date   02/07/2021
+ * \date 02/07/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,6 +23,8 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
+// included first to check that both solvers can be used in the same file
+#include "TFEL/Math/TinyNewtonRaphsonSolver.hxx"
 #include "TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"
 
 struct PowellDogLegNewtonRaphsonSolver

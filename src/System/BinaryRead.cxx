@@ -14,11 +14,9 @@
 #include <unistd.h>
 #include "TFEL/System/BinaryRead.hxx"
 
-#define TFEL_SYSTEM_BINARY_READER_SRC(X)                                \
-  void BinaryReader<X>::exe(const int f, X& v) {                        \
-    if (::read(f, static_cast<void*>(&v), sizeof(X)) == -1) {           \
-      systemCall::throwSystemError("BinaryReader<" #X ">::exe", errno); \
-    }                                                                   \
+#define TFEL_SYSTEM_BINARY_READER_SRC(X)                    \
+  void BinaryReader<X>::exe(const int f, X& v) {            \
+    systemCall::read(f, static_cast<void*>(&v), sizeof(X)); \
   }
 
 namespace tfel::system {
@@ -37,9 +35,7 @@ namespace tfel::system {
   TFEL_SYSTEM_BINARY_READER_SRC(long double)
 
   void BinaryReader<void*>::exe(const int f, void*& v) {
-    if (::read(f, static_cast<void*>(&v), sizeof(void*)) == -1) {
-      systemCall::throwSystemError("BinaryReader<void*>::exe", errno);
-    }
+    systemCall::read(f, static_cast<void*>(&v), sizeof(void*));
   }
 
 }  // end of namespace tfel::system

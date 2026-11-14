@@ -2,7 +2,13 @@
  * \file   strided_coalesced_view.cxx
  * \brief
  * \author Tristan Chenaille
- * \date   15/01/2026
+ * \date 15/01/2026
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
@@ -251,6 +257,12 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(values[4] == 1);   // c1_s1
     TFEL_TESTS_ASSERT(values[7] == 1);   // c2_s1
     TFEL_TESTS_ASSERT(values[10] == 0);  // c3_s1
+    // Test a view of constant data
+    const auto& cvalues = values;
+    const auto carr =
+        map_strided_array<const tvector<3u, stensor<2u, int>>>(cvalues.data());
+    TFEL_TESTS_ASSERT(carr[1][0] == 1);
+    TFEL_TESTS_ASSERT(carr[2][1] == 30);
   }
 };
 

@@ -1,7 +1,13 @@
 /*!
  * \file   tests/Utilities/CxxTokenizerTest3.cxx
  * \brief
- * \date   09/03/2023
+ * \date 09/03/2023
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
@@ -24,6 +30,13 @@ struct CxxTokenizerTest3 final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->checkInteger("1000", 1000);
     this->checkInteger("1'000", 1000);
+    this->checkInteger("+3u", 3);
+    for (const auto& s : {"3.0", "3.", "3e0"}) {
+      tfel::utilities::CxxTokenizer t;
+      t.parseString(s);
+      auto p = t.begin();
+      TFEL_TESTS_CHECK_THROW(t.readInt(p, t.end()), std::runtime_error);
+    }
     return this->result;
   }  // end of execute()
  private:

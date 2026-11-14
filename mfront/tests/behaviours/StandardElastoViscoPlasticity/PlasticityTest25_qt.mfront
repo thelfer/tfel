@@ -1,0 +1,28 @@
+@DSL Implicit;
+@Behaviour PlasticityTest25_qt;
+@Description {
+  "Coefficients of the stress potential and of the hardening rules "
+  "given by formulas of the temperature with quantities: the formulas "
+  "are evaluated on plain numbers and the results are converted to the "
+  "types of the coefficients."
+}
+
+@UseQt true;
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {
+    young_modulus : "150e9 * (1 - 1e-4 * (T - 293.15))",
+    poisson_ratio : 0.3
+  },
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {
+      R0 : "200e6 * (1 - 1e-3 * (T - 293.15))",
+      H : "1e9 * (1 - 1e-4 * (T - 293.15))"
+    },
+    kinematic_hardening : "Prager" {C : "1e9 * (1 - 1e-4 * (T - 293.15))"}
+  }
+};

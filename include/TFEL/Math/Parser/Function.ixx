@@ -19,6 +19,8 @@
 #include <cerrno>
 #include <cstring>
 #include <cmath>
+#include "TFEL/Math/Evaluator.hxx"
+#include "TFEL/Math/Parser/Number.hxx"
 
 #ifndef __SUNPRO_CC
 #define TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(X) \
@@ -91,9 +93,12 @@ namespace tfel::math::parser {
 
   template <StandardFunctionPtr f>
   std::shared_ptr<Expr> differentiateFunction(
-      const std::shared_ptr<Expr>,
-      const std::vector<double>::size_type,
+      const std::shared_ptr<Expr> expr,
+      const std::vector<double>::size_type pos,
       const std::vector<double>&) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     FunctionBase::throwUnimplementedDifferentiateFunctionException();
 #ifndef _MSC_VER
     return {};
@@ -120,6 +125,33 @@ namespace tfel::math::parser {
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(sinh);
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(cosh);
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(tanh);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(exp2);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(expm1);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(cbrt);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(fabs);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(log2);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(log1p);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(asinh);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(acosh);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(atanh);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(erf);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(erfc);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(tgamma);
+  TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DECLARATION(lgamma);
+
+  template <>
+  std::shared_ptr<Expr> differentiateFunction<Evaluator::Heavyside>(
+      const std::shared_ptr<Expr>,
+      const std::vector<double>::size_type,
+      const std::vector<double>&);
+
+  /*!
+   * \brief the Heaviside function has no C++ counterpart: a conditional
+   * expression is used.
+   */
+  template <>
+  std::string StandardFunction<Evaluator::Heavyside>::getCxxFormula(
+      const std::vector<std::string>&) const;
 
   template <StandardFunctionPtr f>
   StandardFunction<f>::~StandardFunction() = default;

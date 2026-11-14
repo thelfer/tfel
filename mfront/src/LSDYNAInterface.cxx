@@ -2,7 +2,7 @@
  * \file   LSDYNAInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   16 mars 2016
+ * \date 16/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -289,6 +289,13 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "LSDYNAInterface::endTreatment: " + m);
     };
+    // the entry points (lsdyna<name>.hxx and lsdyna<name>.cxx) and the
+    // constructors that they call are not written yet (see the code commented
+    // out below and in writeBehaviourConstructorHeader): the generated code
+    // would not compile
+    throw_if(true,
+             "the lsdyna interface is not functional yet "
+             "(the entry points called by LS-DYNA are not generated)");
     this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     //    checkOrthotropyManagementPolicyConsistency(mb);
     throw_if(!((mb.getBehaviourType() ==
@@ -324,7 +331,7 @@ namespace mfront {
     //            "the "
     //         << mb.getClassName() << " behaviour law\n"
     //         << "* \\author " << fd.authorName << '\n'
-    //         << "* \\date   " << fd.date << '\n'
+    //         << "* \\date " << fd.date << '\n'
     //         << "*/\n\n";
     //
     //     const auto header = this->getHeaderGuard(mb);
@@ -397,7 +404,7 @@ namespace mfront {
     //            "the "
     //         << mb.getClassName() << " behaviour law\n"
     //         << "* \\author " << fd.authorName << '\n'
-    //         << "* \\date   " << fd.date << '\n'
+    //         << "* \\date " << fd.date << '\n'
     //         << "*/\n\n";
     //
     //     out << "#include<cmath>\n"

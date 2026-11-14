@@ -2,7 +2,7 @@
  * \file   CurrentState.hxx
  * \brief
  * \author Thomas Helfer
- * \date   23 oct. 2015
+ * \date 23/10/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -21,6 +21,7 @@
 #include "TFEL/Math/matrix.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Utilities/GenTypeBase.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
@@ -55,11 +56,11 @@ namespace mtest {
     //! \brief copy constructor
     CurrentState(const CurrentState&);
     //! \brief move constructor
-    CurrentState(CurrentState&&);
+    CurrentState(CurrentState&&) noexcept;
     //! \brief assignement
     CurrentState& operator=(const CurrentState&);
     //! \brief move assignement
-    CurrentState& operator=(CurrentState&&);
+    CurrentState& operator=(CurrentState&&) noexcept;
     //! \brief destructor
     ~CurrentState() noexcept;
     //! \brief behaviour
@@ -171,6 +172,19 @@ namespace mtest {
                                                        const real,
                                                        const real,
                                                        const unsigned short);
+  /*!
+   * \brief compute the thermal expansion (orthotropic case)
+   *
+   * In plane stress, the third thermal expansion coefficient is
+   * optional: if it is not defined, the out-of-plane thermal strain is
+   * null.
+   */
+  MTEST_VISIBILITY_EXPORT void computeThermalExpansion(
+      CurrentState&,
+      const EvolutionManager&,
+      const real,
+      const real,
+      const tfel::material::ModellingHypothesis::Hypothesis);
   /*!
    * \brief update the state for the next time step
    * \param[out] s: state

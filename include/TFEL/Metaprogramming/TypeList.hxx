@@ -2,7 +2,7 @@
  * \file   include/TFEL/Metaprogramming/TypeList.hxx
  * \brief  This file declares some tools to work with TL.
  * \author Thomas Helfer
- * \date   30 August 2006
+ * \date 30/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,7 +31,7 @@ namespace tfel::meta {
    * \endhtmlonly.
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   struct TFEL_VISIBILITY_LOCAL TL {};
 
@@ -40,7 +40,7 @@ namespace tfel::meta {
    * \brief Nodes of TL.
    * TLs are simply linked list of types. This class describe its nodes.
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename T, typename U>
   struct TLNode;
@@ -49,7 +49,7 @@ namespace tfel::meta {
    * \class  TLE
    * \brief  Type used to end a TL.
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   struct TLE;
 
@@ -65,7 +65,7 @@ namespace tfel::meta {
    * \return type, the TL resulting from the transformation.
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename Tlist, template <typename> class Transform>
   struct TLTransform;
@@ -78,7 +78,7 @@ namespace tfel::meta {
    * \return value, the number of elements in T.
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename T>
   struct TLSize;
@@ -93,7 +93,7 @@ namespace tfel::meta {
    * \return value, the number of times T appears in U.
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename T, typename U>
   struct TLCountNbrOfT;
@@ -108,7 +108,7 @@ namespace tfel::meta {
    * \return value, the position of T in List.
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename T, typename List>
   struct TLFindEltPos;
@@ -121,7 +121,7 @@ namespace tfel::meta {
    * \param T, a type.
    * \return type, a new typelist.
    * \author Thomas Helfer
-   * \date   09 September 2006
+   * \date 09/09/2006
    */
   template <typename List, typename T>
   struct TLPrepend;
@@ -134,7 +134,7 @@ namespace tfel::meta {
    * \param T, a type.
    * \return type, a new typelist.
    * \author Thomas Helfer
-   * \date   09 September 2006
+   * \date 09/09/2006
    */
   template <typename List, typename T>
   struct TLAppend;
@@ -148,7 +148,7 @@ namespace tfel::meta {
    * \return type, the resulting TL.
    *
    * \author Thomas Helfer
-   * \date   15 Sept. 2006
+   * \date 15/09/2006
    */
   template <typename First, typename Second>
   struct TLConcatenate;
@@ -164,7 +164,7 @@ namespace tfel::meta {
    * if T contains less than N elements.
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename T, unsigned int N>
   struct TLFindNthElt;
@@ -180,7 +180,7 @@ namespace tfel::meta {
    * if T contains less than N elements.
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename T, unsigned int N>
   struct TLRemoveNthFirstElt;
@@ -195,7 +195,7 @@ namespace tfel::meta {
    * \return cond, true if T  appears one and only one time in U.
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename T, typename U>
   struct TLElementIsUnique;
@@ -209,7 +209,7 @@ namespace tfel::meta {
    * \return cond, true if all elements in T are unique
    *
    * \author Thomas Helfer
-   * \date   30 August 2006
+   * \date 30/08/2006
    */
   template <typename T>
   struct TLElementsAreUnique;
@@ -223,7 +223,7 @@ namespace tfel::meta {
    * \param BaseType, a type.
    * \return type, a new typelist.
    * \author Thomas Helfer
-   * \date   09 September 2006
+   * \date 09/09/2006
    */
   template <typename List, typename BaseType>
   struct TLExtractSubClassesOf;
@@ -236,7 +236,7 @@ namespace tfel::meta {
    * \param List, a TL.
    * \return type, a new typelist.
    * \author Thomas Helfer
-   * \date   08 Januar 2006
+   * \date 08/01/2006
    */
   template <typename List>
   struct TLUnique;
@@ -250,7 +250,7 @@ namespace tfel::meta {
    *
    * \return const bool.
    * \author Thomas Helfer
-   * \date   10 March 2007
+   * \date 10/03/2007
    */
   template <typename List>
   struct TLContainsInvalidType;
@@ -263,7 +263,7 @@ namespace tfel::meta {
    * The size is given by the sizeof operator.
    * The minimum size is 1.
    * \author Thomas Helfer.
-   * \date   22 Apr. 2007.
+   * \date 22/04/2007.
    */
   template <typename List>
   class TLMaxSize;
@@ -275,7 +275,7 @@ namespace tfel::meta {
    * The size is given by the sizeof operator.
    * The minimum size is alignof(char).
    * \author Thomas Helfer.
-   * \date   16/12/2014
+   * \date 16/12/2014
    */
   template <typename List>
   class TLMaxAlign;
@@ -288,7 +288,7 @@ namespace tfel::meta {
    * \param size_t, the thresold value.
    * \return type, a result under the form of a TL.
    * \author Thomas Helfer.
-   * \date   22 Apr. 2007.
+   * \date 22/04/2007.
    */
   template <typename List, size_t size>
   class TLComputeAlignBound;

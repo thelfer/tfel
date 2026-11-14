@@ -5,7 +5,7 @@
  *
  *
  * \author: sb152252
- * \date 26 oct. 2017
+ * \date 26/10/2017
  *
  * Copyright © CEA 2017
  */
@@ -30,11 +30,18 @@ namespace mfront {
   PleiadesMaterialPropertyInterface::
       PleiadesMaterialPropertyInterface() noexcept = default;
 
-  std::string PleiadesMaterialPropertyInterface::getName(void) {
+  std::string PleiadesMaterialPropertyInterface::getName() {
     return "pleiades-2.0";
     // TODO: make a PleiadesMaterialPropertyInterface.cxx.in and use
     // @PACKAGE_VERSION@
   }
+
+  void PleiadesMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool, PleiadesMaterialPropertyInterface::const_iterator>
   PleiadesMaterialPropertyInterface::treatKeyword(
@@ -104,7 +111,7 @@ namespace mfront {
       os << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << '\n';
+      os << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       os << fd.description << '\n';
@@ -179,7 +186,7 @@ namespace mfront {
     }
 
     if (!fd.date.empty()) {
-      os << "* \\date   " << fd.date << '\n';
+      os << "* \\date " << fd.date << '\n';
     }
 
     os << " */\n\n"

@@ -24,7 +24,7 @@ namespace tfel {
    * \param[in] msg: message
    */
 #ifndef TFEL_NO_REPORT_CONTRACT_VIOLATION
-  [[noreturn]] TFEL_HOST TFELEXCEPTION_VISIBILITY_EXPORT void
+  [[noreturn]] TFELEXCEPTION_VISIBILITY_EXPORT TFEL_HOST void
   reportContractViolation(const char* const);
 #else  /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
   TFEL_HOST_DEVICE constexpr void reportContractViolation(const char* const) {
@@ -34,6 +34,18 @@ namespace tfel {
   TFEL_HOST_DEVICE constexpr void reportContractViolation(const char* const) {
   }  // end of reportContractViolation
 #endif /* SYCL_LANGUAGE_VERSION  */
+
+  //! \brief type of the functions called on a contract violation
+  using ContractViolationHandler = void (*)(const char* const);
+  /*!
+   * \brief set the function called by `reportContractViolation` before
+   * aborting the program. This function is meant to throw an exception, for
+   * instance in the python bindings. If it returns, the program is aborted.
+   * \return the previous handler
+   * \param[in] h: new handler (`nullptr` restores the default behaviour)
+   */
+  TFELEXCEPTION_VISIBILITY_EXPORT TFEL_HOST ContractViolationHandler
+  setContractViolationHandler(const ContractViolationHandler);
 
 }  // namespace tfel
 

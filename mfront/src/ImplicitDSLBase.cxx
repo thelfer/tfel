@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   21 sep 2008
+ * \date 21/09/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,7 +27,12 @@
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractLinearSystemSolver.hxx"
+#include "MFront/DefaultLinearSystemSolver.hxx"
+#ifdef TFEL_MATH_TDLS_SUPPORT
+#include "MFront/TDLSLinearSystemSolver.hxx"
+#endif /* TFEL_MATH_TDLS_SUPPORT */
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/NonLinearSystemSolverFactory.hxx"
 #include "MFront/UserDefinedNonLinearSystemSolver.hxx"
@@ -70,6 +75,7 @@ namespace mfront {
     this->reserveName("GetPartialJacobianInvert");
     this->reserveName("TinyMatrixSolve");
     this->mb.registerMemberName(uh, "iter");
+    this->mb.registerMemberName(uh, "is_delta_zeros_defined");
     this->mb.registerMemberName(uh, "zeros");
     this->mb.registerMemberName(uh, "delta_zeros");
     this->mb.registerMemberName(uh, "fzeros");
@@ -102,6 +108,8 @@ namespace mfront {
     this->registerNewCallBack(
         "@IsTangentOperatorSymmetric",
         &ImplicitDSLBase::treatIsTangentOperatorSymmetric);
+    this->registerNewCallBack("@LinearSystemSolver",
+                              &ImplicitDSLBase::treatLinearSystemSolver);
     this->registerNewCallBack("@InitJacobian",
                               &ImplicitDSLBase::treatInitJacobian);
     this->registerNewCallBack("@InitializeJacobian",
@@ -145,13 +153,18 @@ namespace mfront {
 
   std::unique_ptr<AbstractBehaviourCodeGenerator>
   ImplicitDSLBase::getCodeGenerator() const {
+    if (this->linear_solver == nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::getCodeGenerator: "
+          "linear solver has not been initialized");
+    }
     return std::make_unique<ImplicitCodeGeneratorBase>(
-        this->fd, this->mb, this->interfaces, *(this->solver),
-        this->jacobianPartsUsedInIntegrator,
+        this->fd, this->mb, this->interfaces, *(this->linear_solver),
+        this->getSolver(), this->jacobianPartsUsedInIntegrator,
         this->integrationVariablesIncrementsUsedInPredictor);
   }  // end of getCodeGenerator
 
-  const NonLinearSystemSolver& ImplicitDSLBase::getSolver() const {
+  const AbstractNonLinearSystemSolver& ImplicitDSLBase::getSolver() const {
     if (this->solver == nullptr) {
       this->throwRuntimeError("ImplicitBase::getSolver", "no solver defined");
     }
@@ -200,12 +213,13 @@ namespace mfront {
         if (v1.arraySize == 1u) {
           i += "f" + v1n + " += ;\n";
           i += "// jacobian blocks\n";
-          if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+          if ((this->solver != nullptr) && (this->solver->usesJacobian()) &&
+              (!this->solver->requiresNumericalJacobian())) {
             for (const auto& v2 : ivs) {
               const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
               const auto j = o.useUnicodeSymbols
                                  ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
-                                 : "df" + v1n + "_d" + v2n;
+                                 : "df" + v1n + "_dd" + v2n;
               const auto op = v1.name == v2.name ? "+=" : "=";
               if (v2.arraySize == 1u) {
                 i += j + " " + op + " ;\n";
@@ -222,12 +236,13 @@ namespace mfront {
                ";++i){\n";
           i += "f" + v1n + "(i) += ;\n";
           i += "// jacobian blocks\n";
-          if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+          if ((this->solver != nullptr) && (this->solver->usesJacobian()) &&
+              (!this->solver->requiresNumericalJacobian())) {
             for (const auto& v2 : ivs) {
               const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
               const auto j = o.useUnicodeSymbols
                                  ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
-                                 : "df" + v1n + "_d" + v2n;
+                                 : "df" + v1n + "_dd" + v2n;
               const auto op = v1.name == v2.name ? "+=" : "=";
               if (v2.arraySize == 1u) {
                 i += j + "(i) " + op + " ;\n";
@@ -264,6 +279,30 @@ namespace mfront {
     }
     BehaviourDSLCommon::treatUnknownKeyword();
   }  // end of treatUnknownKeyword
+
+  void ImplicitDSLBase::treatLinearSystemSolver() {
+    this->checkNotEndOfFile("ImplicitDSLBase::treatLinearSystemSolver");
+    const auto& s = this->current->value;
+    ++this->current;
+    this->checkNotEndOfFile("ImplicitDSLBase::treatLinearSystemSolver");
+    const auto opts = [this] {
+      using namespace tfel::utilities;
+      if (this->current->value == "{") {
+        const auto options = Data::read(this->current, this->tokens.end());
+        if (options.empty()) {
+          return DataMap{};
+        }
+        if (!options.is<DataMap>()) {
+          this->throwRuntimeError("ImplicitDSLBase::treatLinearSystemSolver",
+                                  "expected to read a dictionary");
+        }
+        return options.get<DataMap>();
+      }
+      return DataMap{};
+    }();
+    this->setLinearSystemSolver(s, opts);
+    this->readSpecifiedToken("ImplicitDSLBase::treatLinearSystemSolver", ";");
+  }  // end of treatLinearSystemSolver
 
   void ImplicitDSLBase::treatProcessNewCorrection() {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
@@ -490,8 +529,69 @@ namespace mfront {
                                       jacobianComparisonCriterion);
   }  // ImplicitDSLBase::treatJacobianComparisonCriterion
 
+  void ImplicitDSLBase::setLinearSystemSolver(
+      std::shared_ptr<AbstractLinearSystemSolver> s, const std::string& n) {
+    if (s == nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::setLinearSystemSolver: "
+          "invalid linear solver '" +
+          n + "' given");
+    }
+    if (this->linear_solver != nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::setLinearSystemSolver: "
+          "linear solver has already been set");
+    }
+    this->linear_solver = s;
+    for (const auto& rn : this->linear_solver->getReservedNames()) {
+      this->reserveName(rn);
+    }
+  }  // end of setLinearSystemSolver
+
+  void ImplicitDSLBase::setLinearSystemSolver(
+      const std::string& n, const tfel::utilities::DataMap& opts) {
+    if ((n == "TDLS") || (n == "TinyDeviceCallableLinearSolver")) {
+#ifdef TFEL_MATH_TDLS_SUPPORT
+      auto ptr = std::make_shared<TDLSLinearSystemSolver>(opts);
+      this->setLinearSystemSolver(ptr, n);
+#else
+      reportWarning(
+          "ImplicitDSLBase::setLinearSystemSolver: "
+          "MFront was not built with TDLS support, "
+          "falling back to default linear solver");
+      this->setLinearSystemSolver("Default", {});
+#endif
+    } else if (n == "Default") {
+      if (!opts.empty()) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::setLinearSystemSolver",
+            "no options expected for the 'Default' linear solver");
+      }
+      auto ptr = std::make_shared<DefaultLinearSystemSolver>();
+      this->setLinearSystemSolver(ptr, n);
+    } else {
+      this->throwRuntimeError(
+          "ImplicitDSLBase::setLinearSystemSolver",
+          "invalid linear solver '" + n +
+              "'. Valid linear solvers are "
+              "'TDLS' (or 'TinyDeviceCallableLinearSolver') and "
+              "'Default'");
+    }
+  }  // end of setLinearSystemSolver
+
   void ImplicitDSLBase::setNonLinearSolver(
-      std::shared_ptr<NonLinearSystemSolver> s, const std::string& name) {
+      std::shared_ptr<AbstractNonLinearSystemSolver> s,
+      const std::string& name) {
+    if (s.get() == nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::setNonLinearSolver: "
+          "invalid nonlinear solver given");
+    }
+    if (this->solver.get() != nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::setNonLinearSolver: "
+          "nonlinear solver has already been set");
+    }
     this->solver = s;
     for (const auto& n : this->solver->getReservedNames()) {
       this->reserveName(n);
@@ -530,7 +630,7 @@ namespace mfront {
         }
         if (!opts.is<DataMap>()) {
           this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
-                                  "expected to read a string");
+                                  "expected to read a dictionary");
         }
         return opts.get<DataMap>();
       }();
@@ -578,7 +678,7 @@ namespace mfront {
           "the choosen default value for the convergence threshold could be "
           "too stringent (" +
           converter.str() +
-          "). You may want to consider a more stringent value (1e-14 "
+          "). You may want to consider a less stringent value (1e-14 "
           "is generally a good choice).");
     }
     if ((!safe) && (epsilon > 1e-12)) {
@@ -675,29 +775,9 @@ namespace mfront {
   }  // end of treatIterMax
 
   std::string ImplicitDSLBase::tangentOperatorVariableModifier(
-      const Hypothesis h, const std::string& var, const bool addThisPtr) {
-    const auto& d = this->mb.getBehaviourData(h);
-    if (d.isIntegrationVariableIncrementName(var)) {
-      const auto v = var.substr(1);
-      if (this->mb.hasAttribute(h, v + "_normalisation_factor")) {
-        const auto& s = d.getStateVariableDescription(v);
-        const auto& nf =
-            this->mb.getAttribute<std::string>(h, v + "_normalisation_factor");
-        if (s.arraySize == 1u) {
-          if (addThisPtr) {
-            return "((" + nf + ")*(this->" + var + "))";
-          } else {
-            return "(" + nf + ")*var";
-          }
-        } else {
-          if (addThisPtr) {
-            return "(" + nf + ")*(this->" + var + ")";
-          } else {
-            return "(" + nf + ")*var";
-          }
-        }
-      }
-    }
+      const Hypothesis, const std::string& var, const bool addThisPtr) {
+    // the increments of the integration variables are no longer normalised
+    // when the tangent operator is computed
     if (addThisPtr) {
       return "(this->" + var + ")";
     } else {
@@ -710,20 +790,20 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     if (d.isIntegrationVariableIncrementName(var)) {
       if (this->mb.hasAttribute(h, var.substr(1) + "_normalisation_factor")) {
-        const auto& s = d.getStateVariableDescription(var.substr(1));
+        const auto& s = d.getIntegrationVariableDescription(var.substr(1));
         const auto& nf = this->mb.getAttribute<std::string>(
             h, var.substr(1) + "_normalisation_factor");
         if (s.arraySize == 1u) {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
           } else {
-            return "(" + nf + ")*var";
+            return "((" + nf + ")*" + var + ")";
           }
         } else {
           if (addThisPtr) {
             return "(" + nf + ")*(this->" + var + ")";
           } else {
-            return "(" + nf + ")*var";
+            return "(" + nf + ")*" + var;
           }
         }
       }
@@ -981,6 +1061,13 @@ namespace mfront {
               (pd != implicit_equation_derivatives.end()) ||
               (piJ != jacobian_invert_blocks.end()) ||
               (get_integration_variables_derivatives_names.count(v) != 0)) {
+            if (!this->solver->usesJacobian()) {
+              this->throwRuntimeError(
+                  "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                  "'" + v +
+                      "' can only be used with an algorithm based on "
+                      "the jacobian");
+            }
             if (cb.attributes.count(an) == 0) {
               cb.attributes[an] = true;
             } else {
@@ -1258,6 +1345,17 @@ namespace mfront {
     if (this->solver == nullptr) {
       this->setNonLinearSolver("NewtonRaphson");
     }
+    if (this->linear_solver == nullptr) {
+#ifdef TFEL_MATH_TDLS_SUPPORT
+#ifdef MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER
+      this->setLinearSystemSolver("TDLS", {});
+#else  /* MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER*/
+      this->setLinearSystemSolver("Default", {});
+#endif /* MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER */
+#else  /* TFEL_MATH_TDLS_SUPPORT */
+      this->setLinearSystemSolver("Default", {});
+#endif /* TFEL_MATH_TDLS_SUPPORT*/
+    }
     BehaviourDSLCommon::completeVariableDeclaration();
     if (this->mb.getAttribute<bool>(
             BehaviourDescription::computesStiffnessTensor, false)) {
@@ -1282,14 +1380,16 @@ namespace mfront {
       auto add_lv = [this](BehaviourDescription& bd, const std::string& t,
                            const std::string& sn, const std::string& n,
                            const std::string& g, const std::string d) {
+        // `second` is true if the parameter is declared for at least one
+        // modelling hypothesis, `first` if it is declared for all of them
         auto r = bd.checkVariableExistence(n, "Parameter", false);
-        if (!r.first) {
+        if (!r.second) {
           auto v = (!sn.empty()) ? VariableDescription(t, sn, n, 1u, 0u)
                                  : VariableDescription(t, n, 1u, 0u);
           v.description = d;
           bd.addLocalVariable(uh, v, BehaviourData::UNREGISTRED);
         } else {
-          if (!r.second) {
+          if (!r.first) {
             this->throwRuntimeError(
                 "ImplicitDSLBase::completeVariableDeclaration",
                 "Parameter '" + n + "' is not defined for all hypotheses");
@@ -1501,7 +1601,7 @@ namespace mfront {
     }
     // create the compute final stress code is necessary
     this->setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
-    // correct prediction to take into account normalisation factors
+    // numerically computed jacobian blocks
     for (const auto& h : mh) {
       if (this->mb.hasAttribute(
               h, BehaviourData::numericallyComputedJacobianBlocks)) {
@@ -1545,42 +1645,6 @@ namespace mfront {
                        nd.second + "' is not an integration variable");
         }
       }
-      if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
-        CodeBlock predictor;
-        const auto& d = this->mb.getBehaviourData(h);
-        for (const auto& v : d.getIntegrationVariables()) {
-          if (this->integrationVariablesIncrementsUsedInPredictor.find(
-                  'd' + v.name) !=
-              this->integrationVariablesIncrementsUsedInPredictor.end()) {
-            if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
-              const auto& nf = this->mb.getAttribute<std::string>(
-                  h, v.name + "_normalisation_factor");
-              predictor.code += "this->d" + v.name + " /= " + nf + ";\n";
-            }
-          }
-        }
-        this->mb.setCode(h, BehaviourData::ComputePredictor, predictor,
-                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
-      }
-    }
-    if (!this->mb.areAllMechanicalDataSpecialised()) {
-      if (this->mb.hasCode(uh, BehaviourData::ComputePredictor)) {
-        CodeBlock predictor;
-        const auto& d = this->mb.getBehaviourData(uh);
-        for (const auto& v : d.getIntegrationVariables()) {
-          if (this->integrationVariablesIncrementsUsedInPredictor.find(
-                  'd' + v.name) !=
-              this->integrationVariablesIncrementsUsedInPredictor.end()) {
-            if (this->mb.hasAttribute(uh, v.name + "_normalisation_factor")) {
-              const auto& nf = this->mb.getAttribute<std::string>(
-                  uh, v.name + "_normalisation_factor");
-              predictor.code += "this->d" + v.name + " /= " + nf + ";\n";
-            }
-          }
-        }
-        this->mb.setCode(uh, BehaviourData::ComputePredictor, predictor,
-                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
-      }
     }
     // minimal tangent operator
     this->setMinimalTangentOperator();
@@ -1603,6 +1667,24 @@ namespace mfront {
                           std::string{BehaviourData::InitializeLocalVariables} +
                           "' code block. This is unexpected.");
           }
+        }
+      }
+      // physical bounds are only taken into account for state variables
+      for (const auto& v : d.getIntegrationVariables()) {
+        if (d.isStateVariableName(v.name)) {
+          continue;
+        }
+        auto b = v.hasPhysicalBounds();
+        if (v.arraySize != 1u) {
+          for (unsigned short i = 0; i != v.arraySize; ++i) {
+            b = b || v.hasPhysicalBounds(i);
+          }
+        }
+        if (b) {
+          reportWarning("physical bounds set on integration variable '" +
+                        v.name +
+                        "' are ignored since this variable is not a state "
+                        "variable");
         }
       }
     }

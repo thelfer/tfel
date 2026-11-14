@@ -25,13 +25,14 @@
 namespace tfel::math::internals {
 
   template <typename real>
-  void HarariEigensolver3x3<real>::computeEigenValues(tvector<3u, real>& vp,
-                                                      const real A,
-                                                      const real B,
-                                                      const real C,
-                                                      const real D,
-                                                      const real E,
-                                                      const real F) {
+  TFEL_HOST_DEVICE void HarariEigensolver3x3<real>::computeEigenValues(
+      tvector<3u, real>& vp,
+      const real A,
+      const real B,
+      const real C,
+      const real D,
+      const real E,
+      const real F) {
     constexpr auto sqrt3 = Cste<real>::sqrt3;
     constexpr auto one = real{1};
     constexpr const auto one_third = one / 3;
@@ -85,8 +86,8 @@ namespace tfel::math::internals {
 
     if (sj * (1 - d) < eps) {
       vp[0] = sqrt3 * s + tr;
-      vp[1] = 0 + tr;
-      vp[2] = -vp[0] + tr;
+      vp[1] = tr;
+      vp[2] = -sqrt3 * s + tr;
       return;
     }
 
@@ -105,14 +106,15 @@ namespace tfel::math::internals {
   }
 
   template <typename real>
-  void HarariEigensolver3x3<real>::computeEigenVectors(tvector<3u, real>& vp,
-                                                       tmatrix<3u, 3u, real>& m,
-                                                       const real A,
-                                                       const real B,
-                                                       const real C,
-                                                       const real D,
-                                                       const real E,
-                                                       const real F) {
+  TFEL_HOST_DEVICE void HarariEigensolver3x3<real>::computeEigenVectors(
+      tvector<3u, real>& vp,
+      tmatrix<3u, 3u, real>& m,
+      const real A,
+      const real B,
+      const real C,
+      const real D,
+      const real E,
+      const real F) {
     constexpr const auto cste = Cste<real>::sqrt2;
     const real s[6u] = {A, B, C, D * cste, E * cste, F * cste};
     // computing eigen values

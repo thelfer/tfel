@@ -2,7 +2,7 @@
  * \file   mfront/src/ExecutableDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 mai 2015
+ * \date 09/05/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -89,8 +89,8 @@ namespace mfront {
 
   ExecutableDescription::ExecutableDescription(const ExecutableDescription&) =
       default;
-  ExecutableDescription::ExecutableDescription(ExecutableDescription&&) =
-      default;
+  ExecutableDescription::ExecutableDescription(
+      ExecutableDescription&&) noexcept = default;
   ExecutableDescription::~ExecutableDescription() = default;
 
   std::ostream& operator<<(std::ostream& os, const ExecutableDescription& l) {
@@ -155,7 +155,7 @@ namespace mfront {
       v = read<std::vector<std::string>>(c, pe);
       CxxTokenizer::readSpecifiedToken(f, ";", c, pe);
     };
-    while (c->value != "}") {
+    while ((c != pe) && (c->value != "}")) {
       if (c->value == "name") {
         get_string(name, "executable name");
       } else if (c->value == "prefix") {

@@ -1,0 +1,55 @@
+name: CMake with the Ninja Multi-Config generator
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        path: tfel
+
+    - name: Set up ccache
+      id: ccache
+      uses: ./tfel/.github/actions/setup-ccache
+      with:
+        key: cmake-ninja-multi-config
+
+    - name: Install ninja
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build
+
+    - name: Configure CMake
+      run: |
+        cmake -G "Ninja Multi-Config" ${{github.workspace}}/tfel   \
+              -B ${{github.workspace}}/build                       \
+              -Denable-portable-build=ON                           \
+              -DCMAKE_C_COMPILER_LAUNCHER=ccache                   \
+              -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+    - name: Build
+      run: |
+        cmake --build ${{github.workspace}}/build --config Release
+
+    - name: Test
+      run: |
+        cmake --build ${{github.workspace}}/build --config Release --target build-tests
+        ctest --test-dir ${{github.workspace}}/build --build-config Release -j $(nproc)
+
+    - name: Print test log on failure
+      if: ${{ failure() }}
+      run: |
+        cat ${{github.workspace}}/build/Testing/Temporary/*.log
+
+    # even when a test fails, so that the next run does not compile everything again
+    - name: Save ccache
+      if: ${{ !cancelled() && steps.ccache.outcome == 'success' }}
+      uses: ./tfel/.github/actions/save-ccache

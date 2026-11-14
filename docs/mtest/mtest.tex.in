@@ -1518,16 +1518,16 @@ sont admises~:
   fasse par une interpolation linéaire~;
 \item {\tt ElasticPrediction}, qui demande à ce que la prédiction se
   fasse par une résolution utilisant la matrice élastique non endommagée~;
-\item {\tt ElasticPredictionFromMaterialProperies}, qui demande à ce
+\item {\tt ElasticPredictionFromMaterialProperties}, qui demande à ce
   que la prédiction se fasse à partir d'une matrice de raideur
   élastique calculée non par la loi mais sur la base des propriétés
   matériau.  Cette option est uniquement supportée par l'interface
   UMAT~: nous tirons parti du fait que le code \castem{} exige que des
   propriétés élastiques fassent systématiquement partie de la liste de
   propriétés matériau~;
-\item {\tt SecantPrediction}, qui demande à ce que la prédiction se
-  fasse par une résolution utilisant la matrice élastique
-  éventuellement endommagée~;
+\item {\tt SecantOperatorPrediction}, qui demande à ce que la
+  prédiction se fasse par une résolution utilisant la matrice
+  élastique éventuellement endommagée~;
 \item {\tt TangentOperatorPrediction}, qui demande à ce que la
   prédiction se fasse par une résolution utilisant la matrice tangente
   en début de pas de temps.

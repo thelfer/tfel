@@ -2,7 +2,7 @@
  * \file   tests/Utilities/UnicodeSupportTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23 janv. 2017
+ * \date 23/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

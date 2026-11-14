@@ -2,7 +2,7 @@
  * \file   mfront/src/DataIsotropicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
- * \date   25/07/2022
+ * \date 25/07/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -51,7 +51,9 @@ namespace mfront::bbrick {
     opts.emplace_back("extrapolation",
                       "extrapolation type. "
                       "Possible values are 'bound_to_last_value' (or "
-                      "'constant') and 'extrapolation' (default choice)",
+                      "'constant', or the boolean value false) and "
+                      "'extrapolation' (or the boolean value true, "
+                      "default choice)",
                       OptionDescription::STRING);
     return opts;
   }  // end of getOptions
@@ -70,10 +72,12 @@ namespace mfront::bbrick {
   std::string DataIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto local_id = id.empty() ? fid : fid + "_" + id;
     const auto R = "R" + local_id;
-    const auto p = "this->p" + fid + " + (this->theta) * (this->dp" + fid + ")";
+    const auto p =
+        "this->p" + fid + " + (" + theta + ") * (this->dp" + fid + ")";
     return "const auto " + R +  //
            " = this->mfront_computeYieldRadius" + local_id + "(" + p + ");\n";
   }  // end of computeElasticLimit
@@ -81,11 +85,13 @@ namespace mfront::bbrick {
   std::string DataIsotropicHardeningRule::computeElasticLimitAndDerivative(
       const BehaviourDescription&,
       const std::string& fid,
-      const std::string& id) const {
+      const std::string& id,
+      const std::string& theta) const {
     const auto local_id = id.empty() ? fid : fid + "_" + id;
     const auto R = "R" + local_id;
     const auto dR = "d" + R + "_dp" + fid;
-    const auto p = "this->p" + fid + " + (this->theta) * (this->dp" + fid + ")";
+    const auto p =
+        "this->p" + fid + " + (" + theta + ") * (this->dp" + fid + ")";
     return "const auto [" + R + ", " + dR + "]" +  //
            " = this->mfront_computeYieldRadiusAndDerivative" + local_id + "(" +
            p + ");\n";
@@ -195,7 +201,7 @@ namespace mfront::bbrick {
       m += "return {};\n";
     }
     m += "} // end of " + m1 + "\n\n";
-    m += "std::pair<stress, stress> " + m2 + local_id +
+    m += "std::pair<stress, stress> " + m2 +
          "(const strain mfront_arg_p) const {\n";
     if (this->values.size() == 1) {
       const auto& v = *(this->values.begin());

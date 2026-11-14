@@ -6,9 +6,25 @@ lang: en-EN
 numbersections: true
 keywords: Porous plasticity. Ductile failure. Constitutive equations. MFront. StandardElastoViscoPlasticty brick.
 abstract: |
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+geometry:
+- paper=a4paper
+- margin=2cm
+link-citations: true
+colorlinks: true
+bibliography: bibliography.bib
+csl: iso690-numeric-en.csl
+header-includes:
+- \usepackage{tcolorbox}
+- \newtcolorbox{myquote}{colframe=gray}
+- \renewenvironment{quote}{\begin{myquote}}{\end{myquote}}
+abstract: |
   This report describes the implementation of porous (visco-)plastic
   behaviours that may be used to describe ductile failure of metals
-  or the viscoplasticity of nuclears fuels.
+  or the viscoplasticity of nuclear fuels.
 
   Aside from the standard implicit scheme, this report describes a new
   implicit scheme based on a staggered approach. The presented algorithms have been introduced in the
@@ -17,22 +33,6 @@ abstract: |
   Two porous stress criteria - Gurson-Tvergaard-Needleman and Rousselier-Tanguy-Besson -
   are implemented, along with several nucleation models. The implementations are applied
   to a set of representative simulations using the `Cast3M` solver.
-
-geometry:
-- paper=a4paper
-- margin=2cm
-link-citations: true
-colorlinks: true
-figPrefixTemplate: "$$i$$"
-tblPrefixTemplate: "$$i$$"
-secPrefixTemplate: "$$i$$"
-eqnPrefixTemplate: "($$i$$)"
-bibliography: bibliography.bib
-csl: iso690-numeric-en.csl
-header-includes:
-- \usepackage{tcolorbox}
-- \newtcolorbox{myquote}{colframe=gray}
-- \renewenvironment{quote}{\begin{myquote}}{\end{myquote}}
 ---
 
 \newcommand{\tsigma}{\underline{\sigma}}
@@ -76,9 +76,9 @@ and growth due to plastic flow.
 While some implementations of these models based on implicit schemes are
 already available in `MFront` (Gurson [@gurson1977],
 Gurson-Tvergaard-Needleman [@tvergaardneedleman1984], ...), their
-numerical treatment have specific issues:
+numerical treatment has specific issues:
 
-- Phenomenological laws describing porosity nucleation may have threshold to
+- Phenomenological laws describing porosity nucleation may have thresholds to
   be activated or inhibited.
 - Material failure usually happens when the porosity reaches a critical
   value corresponding to the collapse of the yield surface. Detection of
@@ -97,7 +97,7 @@ The purpose of this work is twofold:
   of nucleation laws and material failure.
 - Extend the [`StandardElastoViscoPlasticity`
   brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html)
-  to this class of behaviours, allowing a declarative syntax similar as:
+  to this class of behaviours, allowing a declarative syntax similar to:
 
 ~~~~{.cxx}
 @Brick "StandardElastoViscoPlasticity" {
@@ -106,24 +106,24 @@ The purpose of this work is twofold:
       poisson_ratio : 0.3
    },
    inelastic_flow : "Plastic" {
-      criterion : "GursonTvergaardNeedleman" {
-         q1 : 1.5,
-         q2 : 1.0,
-         q3 : 2.2,
-         fc : 0.01,
-         fr : 0.1
+      criterion : "GursonTvergaardNeedleman1982" {
+         q_1 : 1.5,
+         q_2 : 1.0,
+         q_3 : 2.2,
+         f_c : 0.01,
+         f_r : 0.1
       },
       isotropic_hardening : "Linear" {
          R0 : 150e6
       }
    },
    porosity_evolution : {
-      nucleation_model : "Chu_Needleman" {
-         An : 0.01,
-         pn : 0.1,
+      nucleation_model : "Chu-Needleman 1980 (strain)" {
+         fn : 0.01,
+         en : 0.1,
          sn : 0.1
-      },
-      growth_model : "StandardPlasticModel"
+      }
+   }
 };
 ~~~~
 
@@ -135,7 +135,7 @@ The purpose of this work is twofold:
 This document is meant to be part of the MFront documentation. It will
 be available on the MFront website and on the ResearchGate page of the
 project. The authors have carefully checked that no unpublished material
-data has been used in the examples.
+data have been used in the examples.
 
 ## Outline
 
@@ -166,7 +166,7 @@ Section @sec:mfront:porous_plasticity:verifications is devoted to unit
 tests and verifications.
 
 Section @sec:mfront:porous_plasticity:applications describes early
-results that proves the robustness of the proposed schemes.
+results that prove the robustness of the proposed schemes.
 
 Appendix @sec:mfront:porous_plasticity:stress_criterion is dedicated to
 the computation of the stress criterion which may
@@ -199,7 +199,7 @@ explicitly on the stress tensor \(\tsigma\) and the porosity \(f\):
 
 This stress criterion is used to define the yield surface or the intensity of the viscoplastic flow.
 
-Concerning the flow rule, two main classes of models are classically
+Concerning the flow rule, two main class of models are classically
 found in the literature. In the first class of model, the porosity does not change the expression of the flow rule:
 
 \[
@@ -213,8 +213,8 @@ identified as the plastic multiplier \(\lambda\).
 This class of models encompasses:
 
 - the work of Ponte-Castaneda (see @castaneda_effective_1991), which is
-  the theorical basis of several viscoplastic behaviours used in uranium
-  dioxyde fuels [@monerie_overall_2006;@salvo_experimental_2015];
+  the theoretical basis of several viscoplastic behaviours used in uranium
+  dioxide fuels [@monerie_overall_2006;@salvo_experimental_2015];
 - the work of Rousselier [@rousselier_1981].
 
 In the second class, the flow rule is affected by a correction factor
@@ -224,8 +224,8 @@ In the second class, the flow rule is affected by a correction factor
 \tdepsilonp = \dot{\lambda}\, \deriv{\sstar}{\tsigma} = (1 - f)\, \dot{p}\, \deriv{\sstar}{\tsigma}
 \]
 
-where $f$ is the porosity. Here, $p$ can be identified to the equivalent
-(visco-)plastic strain in the matrix and it is no more equal to the
+where $f$ is the porosity. Here, $p$ can be identified with the equivalent
+(visco-)plastic strain in the matrix and it is no longer equal to the
 plastic multiplier \(\lambda\).
 
 > **Note**
@@ -308,8 +308,8 @@ For $\left\{q_1,q_2,q_3,f_c,f_r \right\} =
 reduces to the Gurson model [@gurson1977] which has no free parameter.
 
 Note that the physical meaning of \(q_3\) different from \(q_1^2\) is
-doubtful. Moreover, the current implementation is incorrect for \(q_3
-> q_1^2\).
+doubtful. Moreover, the current implementation is incorrect for \(q_3 > q_1^2\).
+If \(q_3\) is not given, \(q_3 = q_1^2\) is assumed.
 
 - **Rousselier-Tanguy-Besson** [@tanguybesson2002]
 
@@ -325,6 +325,93 @@ where $L$ is the Lambert function, and $T = \sigma_m / \sigma_{vM}$ the stress t
 
 \[\left\{q_R,D_R \right\} \]
 
+- **Generalised Gurson-Tvergaard-Needleman**
+
+This criterion is the Gurson-Tvergaard-Needleman criterion in which the
+von Mises stress is replaced by an equivalent stress \(\sigmaeq\) chosen
+by the user (see @benzergabesson2001, @morgeneyer2009, @daehli2017):
+
+\[
+ S = \paren{\dfrac{\sigmaeq}{\sstar} }^2 + 2 q_1 f_{\star} \cosh{\paren{\dfrac{3}{2} q_2 \dfrac{\sigma_m}{\sstar}    }} - 1 - q_3 f_{\star}^2  = 0
+\] {#eq:mfront:porous_plasticity:GGTN:S}
+
+The parameters \(\left\{q_1,q_2,q_3,f_c,f_r \right\}\) and the
+definition of \(f_{\star}\) are unchanged. The equivalent stress is
+given by the `equivalent_stress` option, described in Section
+@sec:mfront:porous_plasticity:generalised_stress_criteria.
+
+- **Generalised Rousselier-Tanguy-Besson**
+
+This criterion is the Rousselier-Tanguy-Besson criterion in which the
+von Mises stress is replaced by an equivalent stress \(\sigmaeq\) chosen
+by the user (see @bronbesson2006):
+
+\[
+S = \dfrac{\sigmaeq}{(1- f )\sstar} + \dfrac{2}{3} f D_R \exp{\paren{\dfrac{3}{2} q_R \dfrac{\sigma_m}{(1 - f )\sstar}    }} - 1  = 0
+\] {#eq:mfront:porous_plasticity:GRTB:S}
+
+The parameters \(\left\{q_R,D_R \right\}\) are unchanged. The equivalent
+stress is given by the `equivalent_stress` option, described in Section
+@sec:mfront:porous_plasticity:generalised_stress_criteria.
+
+### Equivalent stress of the generalised stress criteria {#sec:mfront:porous_plasticity:generalised_stress_criteria}
+
+The `GeneralisedGursonTvergaardNeedleman` and
+`GeneralisedRousselierTanguyBesson` stress criteria have the options of
+the `GursonTvergaardNeedleman1982` and `RousselierTanguyBesson2002`
+stress criteria respectively, and one more mandatory option named
+`equivalent_stress`.
+
+This option gives the name of a stress criterion of the brick and its
+options, as follows:
+
+~~~~{.cxx}
+   inelastic_flow : "Plastic" {
+      criterion : "GeneralisedGursonTvergaardNeedleman" {
+         q_1 : 1.5,
+         q_2 : 1.0,
+         f_c : 0.01,
+         f_r : 0.1,
+         equivalent_stress : "Hosford" {a : 8}
+      },
+      isotropic_hardening : "Linear" {
+         R0 : 150e6
+      }
+   },
+~~~~
+
+The stress criterion must have a deviatoric normal and must not be
+coupled with the porosity evolution. `Mises`, `Hill`, `Hosford`,
+`Barlat`, `Drucker1949` and `Cazacu2001` are examples of valid choices.
+An orthotropic stress criterion requires an orthotropic behaviour.
+
+If the equivalent stress is the von Mises stress, the generalised
+criteria reduce to the original ones.
+
+> **Note**
+>
+> This extension is phenomenological. It only modifies the contribution
+> of the deviatoric part of the stress. The role of the mean stress is
+> unchanged.
+
+> **Hill matrix and spherical voids**
+>
+> Benzerga and Besson studied a Hill matrix containing spherical voids
+> (see @benzergabesson2001). Their criterion has the form of Equation
+> @eq:mfront:porous_plasticity:GGTN:S. \(\sigmaeq\) is the Hill stress
+> and the hyperbolic cosine is
+> \(\cosh\paren{\trace{\tsigma}/\paren{h\,\sstar}}\). It is thus
+> obtained with the `Hill` equivalent stress and \(q_2=2/h\). With the
+> convention of the brick for the Hill coefficients, the anisotropy
+> factor \(h\) is:
+>
+> \[
+> h = 2\,\sqrt{\dfrac{F+G+H}{5\,\paren{F\,G+G\,H+H\,F}}+\dfrac{3}{10}\,\paren{\dfrac{1}{L}+\dfrac{1}{M}+\dfrac{1}{N}}}
+> \]
+>
+> \(h\) is equal to \(2\) for an isotropic matrix. This result was
+> established for loadings whose principal directions are the axes of
+> orthotropy.
 
 <!--
 - **UserDefinedGenericGrowth**
@@ -407,7 +494,7 @@ The first and second order derivatives of $\sstar$ are:
     \end{aligned}
 \]
 
-> **Note** Many models developped for porous materials and accounting for anisotropy and void shape effects can be recasted into such generic form of the stress criterion, such as [@benzergabesson2001], [@madou2012a], [@morin2015], [@paux2018]
+> **Note** Many models developed for porous materials and accounting for anisotropy and void shape effects can be recasted into such generic form of the stress criterion, such as [@benzergabesson2001], [@madou2012a], [@morin2015], [@paux2018]
 
 -->
 <!--
@@ -569,7 +656,7 @@ formulas currently implemented into the brick in Appendixes
 ### Taking the elastic contribution to the porosity growth into account {#sec:mfront:porous_plasticity:elastic_contribution_to_porosity_growth}
 
 Adding the elastic contribution to the porosity growth is trivially
-performed by substracting the following term to the implicit equation
+performed by subtracting the following term to the implicit equation
 associated with the porosity evolution:
 
 \[
@@ -1140,7 +1227,9 @@ growth:
     poisson_ratio : 0.3
   },
   inelastic_flow : "Plastic" {
-    criterion : "Gurson1975" {},
+    criterion : "GursonTvergaardNeedleman1982" {
+      f_c : 0.01, f_r : 0.1, q_1 : 2, q_2 : 1, q_3 : 4
+    },
     isotropic_hardening : "Linear" {R0 : "0"}
   }
 };
@@ -1188,7 +1277,7 @@ growth:
 >       a : 1e1       // tension cuff-off parameter
 >     },
 >     isotropic_hardening : "Linear" {R0 : "0"}
->   }
+>   },
 >   porosity_evolution: {}
 > };
 > ~~~~~~~~
@@ -1224,7 +1313,9 @@ ss.setGlossaryName("SolidSwelling");
     poisson_ratio : 0.3
   },
   inelastic_flow : "Plastic" {
-    criterion : "Gurson1975" {},
+    criterion : "GursonTvergaardNeedleman1982" {
+      f_c : 0.01, f_r : 0.1, q_1 : 2, q_2 : 1, q_3 : 4
+    },
     isotropic_hardening : "Linear" {R0 : "0"}
   }
 };
@@ -1236,13 +1327,13 @@ ss.setGlossaryName("SolidSwelling");
   // This shall only been done after the convergence of the
   // staggered scheme has converged.
   if(compute_standard_system_of_implicit_equations){
-    ff -= ;
+    ff -= ...;
   }
 }
 
 @AdditionalConvergenceChecks {
   // adding the contribution of the solid swelling
-  // the porosity increase to the next extimate of the porosity by
+  // the porosity increase to the next estimate of the porosity by
   // the staggered scheme.
   // This shall only been done after the convergence of the
   // staggered scheme has converged.
@@ -1318,14 +1409,17 @@ as follows:
 ~~~~
 
 However, this behaviour can be overloaded in every inelastic flow
-section and every nucleation model by setting the
-`save_porosity_increase` boolean variable.
+section by setting the `save_porosity_increase` boolean variable and in
+every nucleation model by setting the
+`save_individual_porosity_increase` boolean variable.
 
 For example, one may use the following declaration:
 
 ~~~~{.cxx}
-  inelastic_flow : "Plasticity" {
-    criterion : "Gurson1975",
+  inelastic_flow : "Plastic" {
+    criterion : "GursonTvergaardNeedleman1982" {
+      f_c : 0.01, f_r : 0.1, q_1 : 2, q_2 : 1, q_3 : 4
+    },
     isotropic_hardening : "Voce" {R0 : 200, Rinf : 100, b : 20},
     save_porosity_increase : true
   }
@@ -1454,16 +1548,18 @@ parameters, and $\sigma_I$ is the maximum positive principal stress.
 >    },
 >    isotropic_hardening : "Linear" {R0 : 274},
 >    isotropic_hardening : "Voce" {R0 : 0, Rinf : 85, b : 17},
->    isotropic_hardening : "Voce" {R0 : 0, Rinf : 17, b : 262},
->    nucleation_model : "Power-based" {
->      An0 : 2.92,
->      s1_n : 500,
->      p_n : 0.0321,
->      s1_max : 700,
->      fg_max : 0.0215,
->      ng : 2
+>    isotropic_hardening : "Voce" {R0 : 0, Rinf : 17, b : 262}
+>  },
+>  porosity_evolution : {
+>    nucleation_model : "PowerLaw (stress)" {
+>      fn : 2.92,
+>      sn : 500,
+>      m : 2,
+>      pmin : 0.0321,
+>      fmax : 0.0215
 >    }
 >  }
+> };
 > ~~~~
 
 The numerical response of NT specimens (notch radii are noted as : NT10,
@@ -1531,7 +1627,7 @@ equations is:
 >    nucleation_model : "PowerLaw (strain)" {
 >       fn : 0.038, en : 0.5, m : 0., fmax : 0.023}
 >  }
->}
+>};
 > ~~~~
 
 Simulations are performed with `Cast3M` finite element code, using
@@ -1728,6 +1824,46 @@ The first and second order derivatives of $\sstar$ are:
 
 \[\dfrac{\partial^2 \sstar}{\partial \tsigma \partial f} = - \bigg(\dfrac{\partial S}{\partial  \sstar} \bigg)^{-1} \bigg(\dfrac{\partial^2 S}{\partial \tsigma \partial f} + \dfrac{\partial^2 S}{\partial f \partial \sstar}  \deriv{\sstar}{\tsigma} \bigg) + \bigg(\dfrac{\partial S}{\partial  \sstar} \bigg)^{-2} \bigg(\dfrac{\partial^2 S}{\partial \tsigma \partial \sstar} +  \dfrac{\partial^2 S}{ \partial \sstar^2}  \deriv{\sstar}{\tsigma} \bigg) \bigg(\deriv{S}{f} \bigg) \]
 
+### Derivatives of the generalised stress criteria
+
+The equivalent stress \(\sigmaeq\) of the generalised stress criteria
+depends on the stress only. Its normal and the derivative of its normal
+are denoted:
+
+\[
+\tenseur{n}_{\mathrm{eq}}=\deriv{\sigmaeq}{\tsigma}
+\quad\text{and}\quad
+\deriv{\tenseur{n}_{\mathrm{eq}}}{\tsigma}=\dfrac{\partial^2 \sigmaeq}{\partial \tsigma^2}
+\]
+
+The derivatives of \(S\) are the ones of the original criteria, in which
+\(\sigma_{vM}\) is replaced by \(\sigmaeq\), except for the terms which
+involve the derivatives of the equivalent stress.
+
+For the generalised Gurson-Tvergaard-Needleman criterion, those terms
+are modified as follows:
+
+- \(3\,\tenseur{s}\) is replaced by
+  \(2\,\sigmaeq\,\tenseur{n}_{\mathrm{eq}}\) in
+  \(\deriv{S}{\tsigma}\).
+- \(2\,\tenseurq{M}\) is replaced by
+  \(2\,\paren{\tenseur{n}_{\mathrm{eq}}\otimes\tenseur{n}_{\mathrm{eq}}+\sigmaeq\,\deriv{\tenseur{n}_{\mathrm{eq}}}{\tsigma}}\)
+  in \(\dfrac{\partial^2 S}{\partial \tsigma^2}\).
+- \(6\,\tenseur{s}\) is replaced by
+  \(4\,\sigmaeq\,\tenseur{n}_{\mathrm{eq}}\) in
+  \(\dfrac{\partial^2 S}{\partial \tsigma \partial \sstar}\).
+
+For the generalised Rousselier-Tanguy-Besson criterion:
+
+- \(\dfrac{3}{2}\,\dfrac{\tenseur{s}}{\sigma_{vM}}\) is replaced by
+  \(\tenseur{n}_{\mathrm{eq}}\) in \(\deriv{S}{\tsigma}\),
+  \(\dfrac{\partial^2 S}{\partial \tsigma \partial \sstar}\) and
+  \(\dfrac{\partial^2 S}{\partial \tsigma \partial f}\).
+- the first term of \(\dfrac{\partial^2 S}{\partial \tsigma^2}\) is
+  replaced by
+  \(\dfrac{1}{(1-f)\,\sstar}\,\deriv{\tenseur{n}_{\mathrm{eq}}}{\tsigma}\).
+
+The expressions of the derivatives of \(\sstar\) are unchanged.
 
 <!--
 ### Derivatives of the generic Thomason stress criterion
@@ -1781,7 +1917,7 @@ $$ f (f ( f (f (a f + b) + c) + d) + e) + g$$
 ## On the use of porous constitutive equations with `Cast3M` {#sec:mfront:porous_plasticity:castem}
 
 
-The staggered approach improves robustness of the numerical integration of the porous constitutive equations, especially if sub-stepping is allowed. However, integration may still fail due to too severe input parameters. As integration failure is not handled in the finite element code `Cast3M`, additional stategies are required at the structural scale to avoid such problems. An efficient stategy is to adjust the time-step based on the maximal increase of porosity such as:
+The staggered approach improves robustness of the numerical integration of the porous constitutive equations, especially if sub-stepping is allowed. However, integration may still fail due to too severe input parameters. As integration failure is not handled in the finite element code `Cast3M`, additional strategies are required at the structural scale to avoid such problems. An efficient strategy is to adjust the time-step based on the maximal increase of porosity such as:
 \[
 \Delta t_{i+1} = \min{\left(   \frac{\Delta f_{max}}{\Delta f_{i}} \Delta t_i , \Delta t_{ref} \right)}
 \]

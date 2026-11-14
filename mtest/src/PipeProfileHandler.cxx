@@ -2,7 +2,7 @@
  * \file   PipeProfileHandler.cxx
  * \brief
  * \author Thomas Helfer
- * \date   14 déc. 2015
+ * \date 14/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -17,10 +17,11 @@
 namespace mtest {
 
   PipeProfileHandler::PipeProfileHandler() = default;
-  PipeProfileHandler::PipeProfileHandler(PipeProfileHandler&&) = default;
-  PipeProfileHandler::PipeProfileHandler(const PipeProfileHandler&) = default;
-  PipeProfileHandler& PipeProfileHandler::operator=(PipeProfileHandler&&) =
+  PipeProfileHandler::PipeProfileHandler(PipeProfileHandler&&) noexcept =
       default;
+  PipeProfileHandler::PipeProfileHandler(const PipeProfileHandler&) = default;
+  PipeProfileHandler& PipeProfileHandler::operator=(
+      PipeProfileHandler&&) noexcept = default;
   PipeProfileHandler& PipeProfileHandler::operator=(const PipeProfileHandler&) =
       default;
 

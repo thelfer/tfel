@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/min_element.hxx
  * \brief  This file implements the min_element class.
  * \author Thomas Helfer
- * \date   30 jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -21,19 +21,21 @@ namespace tfel::fsalgo {
   /*!
    * \class min_element
    * \brief min_element finds the smallest element in the range [first, first+N)
-   * \param N number of element to be transformed.
+   * \tparam N: number of elements of the range.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/min_element.html
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct min_element {
     /*
      * Internal function member used by min_element<N>::exe
-     * \param ForwardIterator, iterator to the elements.
+     * \tparam ForwardIterator: iterator to the elements.
+     * \param[in] p: iterator to the next element to be compared
+     * \param[in] q: iterator to the smallest element found so far
      *
      * \return ForwardIterator to the minimum element
      *
@@ -42,7 +44,7 @@ namespace tfel::fsalgo {
      * - ForwardIterator's value type is LessThan Comparable.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
@@ -59,8 +61,11 @@ namespace tfel::fsalgo {
     /*
      * Internal function member used by min_element<N>::exe
      *
-     * \param ForwardIterator, iterator to the elements.
-     * \param BinaryPredicate, comparison function
+     * \tparam ForwardIterator: iterator to the elements.
+     * \tparam BinaryPredicate: comparison function
+     * \param[in] p: iterator to the next element to be compared
+     * \param[in] q: iterator to the element selected so far
+     * \param[in] comp: comparison function
      *
      * \return ForwardIterator to the minimum element
      *
@@ -71,7 +76,7 @@ namespace tfel::fsalgo {
      * argument type and second argument type.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
@@ -89,10 +94,11 @@ namespace tfel::fsalgo {
    public:
     /*!
      * It returns the first iterator i in [first, first+N) such that no other
-     * iterator in [first, last) points to a value greater than *i. The return
+     * iterator in [first, last) points to a value smaller than *i. The return
      * value is first+N if and only if [first, last) is an empty range.
      *
-     * \param ForwardIterator, iterator to the elements.
+     * \tparam ForwardIterator: iterator to the elements.
+     * \param[in] p: iterator to the first element
      *
      * \return ForwardIterator to the minimum element
      *
@@ -101,7 +107,7 @@ namespace tfel::fsalgo {
      * - ForwardIterator's value type is LessThan Comparable.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
@@ -114,8 +120,10 @@ namespace tfel::fsalgo {
      * such that, for every iterator j in [first, first+N), comp(*i, *j) is
      * false, where comp is a binary predicate given in argument
      *
-     * \param ForwardIterator, iterator to the elements.
-     * \param BinaryPredicate, comparison function
+     * \tparam ForwardIterator: iterator to the elements.
+     * \tparam BinaryPredicate: comparison function
+     * \param[in] p: iterator to the first element
+     * \param[in] comp: comparison function
      *
      * \return ForwardIterator to the minimum element
      *
@@ -126,7 +134,7 @@ namespace tfel::fsalgo {
      * argument type and second argument type.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,
@@ -141,7 +149,7 @@ namespace tfel::fsalgo {
    * min_element algorithm.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct min_element<1u> {
@@ -150,7 +158,7 @@ namespace tfel::fsalgo {
      * \sa min_element<N>::exe_() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
@@ -166,7 +174,7 @@ namespace tfel::fsalgo {
      * \sa min_element<N>::exe_() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
@@ -184,7 +192,7 @@ namespace tfel::fsalgo {
      * \sa min_element<N>::exe() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
@@ -196,7 +204,7 @@ namespace tfel::fsalgo {
      * \sa min_element<N>::exe() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,
@@ -210,7 +218,7 @@ namespace tfel::fsalgo {
    * min_element algorithm.
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <>
   struct min_element<0u> {
@@ -219,7 +227,7 @@ namespace tfel::fsalgo {
      * \sa min_element<N>::exe() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p) {
@@ -231,7 +239,7 @@ namespace tfel::fsalgo {
      * \sa min_element<N>::exe() for more details.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator, typename BinaryPredicate>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe(ForwardIterator p,

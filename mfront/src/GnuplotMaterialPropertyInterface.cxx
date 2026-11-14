@@ -2,7 +2,7 @@
  * \file   mfront/src/GnuplotMaterialPropertyInterface.cxx
  * \brief
  * \author P. GOLDBRONN
- * \date   14 mai 2008
+ * \date 14/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -12,6 +12,7 @@
  */
 
 #include <sstream>
+#include <iterator>
 #include <algorithm>
 #include <stdexcept>
 
@@ -44,25 +45,25 @@ namespace mfront {
   GnuplotMaterialPropertyInterface::dataFile::dataFile(
       const GnuplotMaterialPropertyInterface::dataFile&) = default;
   GnuplotMaterialPropertyInterface::dataFile::dataFile(
-      GnuplotMaterialPropertyInterface::dataFile&&) = default;
+      GnuplotMaterialPropertyInterface::dataFile&&) noexcept = default;
   GnuplotMaterialPropertyInterface::dataFile&
   GnuplotMaterialPropertyInterface::dataFile::operator=(
       const GnuplotMaterialPropertyInterface::dataFile&) = default;
   GnuplotMaterialPropertyInterface::dataFile&
   GnuplotMaterialPropertyInterface::dataFile::operator=(
-      GnuplotMaterialPropertyInterface::dataFile&&) = default;
+      GnuplotMaterialPropertyInterface::dataFile&&) noexcept = default;
   GnuplotMaterialPropertyInterface::dataFile::~dataFile() = default;
 
   GnuplotMaterialPropertyInterface::tokens_iterator
   GnuplotMaterialPropertyInterface::nextToken(tokens_iterator current,
                                               const tokens_iterator endTokens,
                                               const std::string& msg) {
-    tfel::raise_if(++current == endTokens,
-                   msg +
-                       ": unexpected end of file.\n"
-                       "Error at line : " +
-                       std::to_string((--current)->line));
-    return current;
+    const auto next = std::next(current);
+    tfel::raise_if(next == endTokens, msg +
+                                          ": unexpected end of file.\n"
+                                          "Error at line : " +
+                                          std::to_string(current->line));
+    return next;
   }
 
   std::string GnuplotMaterialPropertyInterface::getName() { return "gnuplot"; }
@@ -72,6 +73,13 @@ namespace mfront {
 
   GnuplotMaterialPropertyInterface::~GnuplotMaterialPropertyInterface() =
       default;
+
+  void GnuplotMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::string GnuplotMaterialPropertyInterface::eraseQuote(
       const std::string& in) {
@@ -131,7 +139,7 @@ namespace mfront {
              "invalid bounds type");
     throw_if(!this->registredTestBounds.insert(b).second,
              "test bounds for variable '" + b.first + "' already registred");
-    return {true, ++p};
+    return {true, p};
   }  // end of registerTestBounds
 
   std::pair<bool, GnuplotMaterialPropertyInterface::tokens_iterator>
@@ -147,7 +155,7 @@ namespace mfront {
              "Error at line '" +
                  std::to_string(current->line) + "'");
     current = nextToken(current, pe, method);
-    while ((current->value != "}") && (current != pe)) {
+    while ((current != pe) && (current->value != "}")) {
       throw_if(current->value == "{",
                "'{' is not allowed in graph.\n"
                "Error at line '" +
@@ -201,8 +209,8 @@ namespace mfront {
                           : mpd.material + "_" + mpd.className;
     const auto target = name + "GnuplotGraph";
     insert_if(d.specific_targets[target].deps, name + "CppTest");
-    insert_if(d.specific_targets[target].sources, "./" + name + "CppTest");
-    insert_if(d.specific_targets[target].sources,
+    insert_if(d.specific_targets[target].cmds, "./" + name + "CppTest");
+    insert_if(d.specific_targets[target].cmds,
               string(GNUPLOT_PATH) + " " + name + ".gp");
     insert_if(d.specific_targets["graph"].deps, target);
     insert_if(d.specific_targets["check"].deps, target);
@@ -296,7 +304,7 @@ namespace mfront {
               for (auto p6 = testBounds.begin(); p6 != testBounds.end(); ++p6) {
                 if (p6->first == p4->name) {
                   out << p4->name << "="
-                      << (p6->second.upperBound - p6->second.lowerBound) / 2.;
+                      << (p6->second.upperBound + p6->second.lowerBound) / 2.;
                   if (p3 + 1 == inputs.end()) {
                     if (p4 + 2 != inputs.end()) out << ",";
                   } else {

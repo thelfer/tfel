@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/Cazacu2004IsotropicYieldCriterion.hxx
  * \brief
  * \author Thomas Helfer
- * \date   10/05/2018
+ * \date 10/05/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,7 +26,7 @@ namespace tfel::material {
    * \sigma_{\mathrm{eq}}^{C}=
    * \sqrt[3]{J_{2}^{3/2} - c\,J_{3}}
    * \f]
-   * where \(J_{2}\) and \(J_{3}\) are the first and second invariants
+   * where \(J_{2}\) and \(J_{3}\) are the second and third invariants
    * of the deviatoric part of the stress tensor
    *
    * Cazacu, Oano and Barlat, Frédéric. 2004.

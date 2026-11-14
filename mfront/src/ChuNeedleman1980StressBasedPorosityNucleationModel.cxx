@@ -2,7 +2,7 @@
  * \file   mfront/src/ChuNeedleman1980StressBasedPorosityNucleationModel.cxx
  * \brief
  * \author Thomas Helfer
- * \date   05/04/2020
+ * \date 05/04/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,7 +28,7 @@ namespace mfront::bbrick {
       getMaterialCoefficientDescriptions() const {
     auto mcs = StressBasedPorosityNucleationModelBase::
         getMaterialCoefficientDescriptions();
-    mcs.push_back({"real", "fn", "porosity rate coefficient"});
+    mcs.push_back({"stress", "fn", "porosity rate coefficient"});
     mcs.push_back(
         {"stress", "sigm", "mean value of the gaussian distribution"});
     mcs.push_back(

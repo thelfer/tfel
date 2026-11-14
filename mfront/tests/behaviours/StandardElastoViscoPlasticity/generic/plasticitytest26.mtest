@@ -1,0 +1,21 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ 'PlasticityTest26';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// uniaxial tension, imposed stress
+@ImposedStress 'SXX' {0 : 0, 1 : 236e6};
+@Times{0, 1. in 50};
+
+@Real 'E' 150e9;
+@Real 'R0' 200e6;
+@Real 'Hy' 40e6;
+@Real 'b' 100;
+
+// the yield radius R0 + Hy * (1 - exp(-b * p)) is equal to SXX
+@Evolution<function> 'EquivalentPlasticStrainValue'  //
+    'SXX < R0 ? 0 : -log(1 - (SXX - R0) / Hy) / b';
+
+@Test<function> 'EquivalentPlasticStrain' 'EquivalentPlasticStrainValue' 1e-12;
+@Test<function> 'EXX' 'SXX / E + EquivalentPlasticStrainValue' 1e-12;

@@ -2,7 +2,7 @@
  * \file  DocumentationGeneratorBase.cxx
  * \brief
  * \author Maxence Wangermez
- * \date   16 avril 2024
+ * \date 16/04/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -74,9 +74,17 @@ namespace mfront {
   void DocumentationGeneratorBase::registerCommandLineCallBacks() {
     using Parser =
         tfel::utilities::ArgumentParserBase<DocumentationGeneratorBase>;
+    Parser::registerCallBack(
+        "--no-terminate-handler",
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
     Parser::registerNewCallBack("--verbose",
                                 &DocumentationGeneratorBase::treatVerbose,
                                 "set verbose output", true);
+    this->registerNewCallBack(
+        "--default-compatibility-mode",
+        &DocumentationGeneratorBase::treatDefaultCompatibilityMode,
+        "set the compatibility mode", true);
     this->registerNewCallBack(
         "--dsl-option", &DocumentationGeneratorBase::treatDSLOption,
         "allow to define options passed to domain specific languages", true);
@@ -194,7 +202,7 @@ namespace mfront {
       const VariableInformationBase&) = default;
   DocumentationGeneratorBase::VariableInformationBase&
   DocumentationGeneratorBase::VariableInformationBase::operator=(
-      VariableInformationBase&&) = default;
+      VariableInformationBase&&) noexcept = default;
   DocumentationGeneratorBase::VariableInformationBase&
   DocumentationGeneratorBase::VariableInformationBase::operator=(
       const VariableInformationBase&) = default;

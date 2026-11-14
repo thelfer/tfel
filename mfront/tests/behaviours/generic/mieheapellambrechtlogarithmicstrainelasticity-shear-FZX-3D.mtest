@@ -26,6 +26,8 @@
 
 @Times {0.,1 in 15};
 
+@Test<file> @reference_file@ {'SZZ':7} 1.;
+@Test<file> @reference_file@ {'SXX':8} 1.;
 @Test<file> @reference_file@ {'SYY':9} 1.;
 @Test<file> @reference_file@ {'SXZ':10} 1.;
 @Test<function> {'SXY':'0'} 1.;

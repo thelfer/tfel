@@ -21,10 +21,10 @@
 namespace castem {
 
   void CastemStandardSmallStrainStressFreeExpansionHandler(
-      CastemReal *const e,
-      CastemReal *const de,
-      const CastemReal *const s0,
-      const CastemReal *const s1,
+      CastemReal* const e,
+      CastemReal* const de,
+      const CastemReal* const s0,
+      const CastemReal* const s1,
       const CastemInt d) {
     constexpr auto cste = tfel::math::Cste<CastemReal>::sqrt2;
     e[0] -= s0[0];
@@ -39,7 +39,7 @@ namespace castem {
     }
     if (d == 3) {
       e[3] -= s0[3] * cste;
-      e[4] -= s0[3] * cste;
+      e[4] -= s0[4] * cste;
       e[5] -= s0[5] * cste;
       de[3] -= (s1[3] - s0[3]) * cste;
       de[4] -= (s1[4] - s0[4]) * cste;
@@ -48,10 +48,10 @@ namespace castem {
   }  // end of CastemStandardSmallStrainStressFreeExpansionHandler
 
   void CastemLogarithmicStrainStressFreeExpansionHandler(
-      CastemReal *const e,
-      CastemReal *const de,
-      const CastemReal *const s0,
-      const CastemReal *const s1,
+      CastemReal* const e,
+      CastemReal* const de,
+      const CastemReal* const s0,
+      const CastemReal* const s1,
       const CastemInt d) {
     constexpr auto cste = tfel::math::Cste<CastemReal>::sqrt2;
     CastemReal log_s0[6];
@@ -116,7 +116,7 @@ namespace castem {
     }
     if (d == 3) {
       e[3] -= log_s0[3] * cste;
-      e[4] -= log_s0[3] * cste;
+      e[4] -= log_s0[4] * cste;
       e[5] -= log_s0[5] * cste;
       de[3] -= (log_s1[3] - log_s0[3]) * cste;
       de[4] -= (log_s1[4] - log_s0[4]) * cste;

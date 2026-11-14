@@ -29,7 +29,7 @@ namespace tfel::math {
     // transpose
     for (unsigned short i = 0; i != 3u; ++i) {
       for (unsigned short j = 0; j != 3u; ++j) {
-        k(i, j) = d(i, j);
+        k(i, j) = d(j, i);
       }
     }
   }

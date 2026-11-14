@@ -4,7 +4,7 @@ macro(tests_fsalgorithm test_arg)
   target_include_directories(${test_arg}
     PRIVATE ${PROJECT_SOURCE_DIR}/include)
   add_test(NAME ${test_arg} COMMAND ${test_arg})
-  add_dependencies(check ${test_arg})
+  add_dependencies(build-tests ${test_arg})
 endmacro(tests_fsalgorithm)
 
 tests_fsalgorithm(accumulate)

@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/VariableDescriptionBase.hxx
  * \brief  This file declares the VariableDescriptionBase class
  * \author Thomas Helfer
- * \date   17 Jan 2007
+ * \date 17/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,15 +31,15 @@ namespace mfront {
    * than 1.
    */
   struct MFRONT_VISIBILITY_EXPORT VariableDescriptionBase {
-    //! default constructor
+    //! \brief default constructor
     VariableDescriptionBase();
-    //! copy constructor
+    //! \brief copy constructor
     VariableDescriptionBase(const VariableDescriptionBase&);
-    //! move constructor
-    VariableDescriptionBase(VariableDescriptionBase&&);
-    //! move operator
-    VariableDescriptionBase& operator=(VariableDescriptionBase&&);
-    //! assignement operator
+    //! \brief move constructor
+    VariableDescriptionBase(VariableDescriptionBase&&) noexcept;
+    //! \brief move operator
+    VariableDescriptionBase& operator=(VariableDescriptionBase&&) noexcept;
+    //! \brief assignement operator
     VariableDescriptionBase& operator=(const VariableDescriptionBase&);
     /*!
      * \brief constructor
@@ -68,14 +68,14 @@ namespace mfront {
                             const unsigned short,
                             const size_t);
     //! \return the type flag associated to a the variable
-    SupportedTypes::TypeFlag getTypeFlag() const;
+    [[nodiscard]] SupportedTypes::TypeFlag getTypeFlag() const;
     //! \return the size of the variable
-    SupportedTypes::TypeSize getTypeSize() const;
+    [[nodiscard]] SupportedTypes::TypeSize getTypeSize() const;
     /*!
      * \return an integer describing the type of variable
      * \see `SupportedTypes::getVariableTypeIdentifier` for details.
      */
-    int getVariableTypeIdentifier() const;
+    [[nodiscard]] int getVariableTypeIdentifier() const;
     //! \brief destructor
     ~VariableDescriptionBase();
     /*!

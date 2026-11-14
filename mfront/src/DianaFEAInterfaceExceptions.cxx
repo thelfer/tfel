@@ -2,7 +2,7 @@
  * \file   mfront/src/DianaFEAInterfaceExceptions.cxx
  * \brief  This file implements the DianaFEAInterfaceExceptions class.
  * \author Thomas Helfer
- * \date   12/12/2011
+ * \date 12/12/2011
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -84,6 +84,24 @@ namespace dianafea {
         "negative time step detected for behaviour '" +
         b + "'");
   }  // end of DianaFEAInterfaceExceptions::throwNegativeTimeStepException
+
+  void DianaFEAInterfaceExceptions::throwBehaviourInitializationFailedException(
+      const std::string& b) {
+    tfel::raise<DianaFEAException>(
+        "DianaFEAInterfaceExceptions::"
+        "throwBehaviourInitializationFailedException: "
+        "initialization of behaviour '" +
+        b + "' failed");
+  }  // end of throwBehaviourInitializationFailedException
+
+  void DianaFEAInterfaceExceptions::throwBehaviourIntegrationFailedException(
+      const std::string& b) {
+    tfel::raise<DianaFEAException>(
+        "DianaFEAInterfaceExceptions::"
+        "throwBehaviourIntegrationFailedException: "
+        "integration failed for behaviour '" +
+        b + "'");
+  }  // end of throwBehaviourIntegrationFailedException
 
   void DianaFEAInterfaceExceptions::throwPredictionComputationFailedException(
       const std::string& b) {

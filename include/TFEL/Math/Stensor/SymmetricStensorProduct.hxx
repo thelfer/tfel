@@ -2,7 +2,7 @@
  * \file   SymmetricStensorProduct.hxx
  * \brief
  * \author Thomas Helfer
- * \date   20 avril 2017
+ * \date 20/04/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,7 +27,8 @@ namespace tfel::math {
    * \param[in] b: the second symmetric * tensor
    */
   template <StensorConcept StensorType1, StensorConcept StensorType2>
-  auto symmetric_product_aba(const StensorType1&, const StensorType2&)  //
+  TFEL_HOST_DEVICE constexpr auto symmetric_product_aba(const StensorType1&,
+                                                        const StensorType2&)  //
       requires(getSpaceDimension<StensorType1>() ==
                getSpaceDimension<StensorType2>());
 

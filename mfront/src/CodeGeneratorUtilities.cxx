@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   23 oct 2008
+ * \date 23/10/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -237,6 +237,18 @@ namespace mfront {
     }
   }  // end of writeBoundsSymbol
 
+  /*!
+   * \return if the given bounds describe the whole variable. The exported
+   * symbols describe the bounds of the whole variable: bounds on a single
+   * component of a non scalar variable are only checked by the behaviour.
+   * \param[in] v: variable
+   * \param[in] b: bounds
+   */
+  static bool areBoundsExported(const VariableDescription& v,
+                                const VariableBoundsDescription& b) {
+    return (b.component == -1) || (v.isScalar());
+  }  // end of areBoundsExported
+
   void writeBoundsSymbols(std::ostream& os,
                           const std::string_view n,
                           const VariableDescriptionContainer& vc) {
@@ -244,20 +256,21 @@ namespace mfront {
     os.precision(14);
     for (const auto& v : vc) {
       if (v.arraySize == 1u) {
-        if (!v.hasBounds()) {
+        if ((!v.hasBounds()) || (!areBoundsExported(v, v.getBounds()))) {
           continue;
         }
         mfront::writeBoundsSymbol(os, n, v.getExternalName(), "",
                                   v.getBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasBounds(idx)) {
+          if ((!v.hasBounds(idx)) ||
+              (!areBoundsExported(v, v.getBounds(idx)))) {
             continue;
           }
-          mfront::writeBoundsSymbol(os, n,
-                                    v.getExternalName() + "_mfront_index_" +
-                                        std::to_string(idx) + "_",
-                                    "", v.getBounds(idx));
+          mfront::writeBoundsSymbol(
+              os, n,
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx), "",
+              v.getBounds(idx));
         }
       }
     }
@@ -271,20 +284,22 @@ namespace mfront {
     os.precision(14);
     for (const auto& v : vc) {
       if (v.arraySize == 1u) {
-        if (!v.hasPhysicalBounds()) {
+        if ((!v.hasPhysicalBounds()) ||
+            (!areBoundsExported(v, v.getPhysicalBounds()))) {
           continue;
         }
         mfront::writeBoundsSymbol(os, n, v.getExternalName(), "Physical",
                                   v.getPhysicalBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasPhysicalBounds(idx)) {
+          if ((!v.hasPhysicalBounds(idx)) ||
+              (!areBoundsExported(v, v.getPhysicalBounds(idx)))) {
             continue;
           }
-          mfront::writeBoundsSymbol(os, n,
-                                    v.getExternalName() + "_mfront_index_" +
-                                        std::to_string(idx) + "_",
-                                    "Physical", v.getPhysicalBounds(idx));
+          mfront::writeBoundsSymbol(
+              os, n,
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx),
+              "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
@@ -297,33 +312,27 @@ namespace mfront {
       const mfront::MaterialPropertyDescription& mpd) {
     const auto prec = out.precision();
     out.precision(14);
+    // the bounds and the physical bounds are independent
     for (const auto& v : mpd.inputs) {
       if (v.arraySize == 1u) {
-        if (!v.hasBounds()) {
-          continue;
+        if (v.hasBounds()) {
+          writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
         }
-        writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
-        if (!v.hasPhysicalBounds()) {
-          continue;
+        if (v.hasPhysicalBounds()) {
+          writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
+                            v.getPhysicalBounds());
         }
-        writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
-                          v.getPhysicalBounds());
       } else {
         for (auto idx = 0; idx != v.arraySize; ++idx) {
-          if (!v.hasBounds(idx)) {
-            continue;
+          const auto n =
+              v.getExternalName() + "_mfront_index_" + std::to_string(idx);
+          if (v.hasBounds(idx)) {
+            writeBoundsSymbol(out, name, n, "", v.getBounds(idx));
           }
-          writeBoundsSymbol(out, name,
-                            v.getExternalName() + "_mfront_index_" +
-                                std::to_string(idx) + "_",
-                            "", v.getBounds(idx));
-          if (!v.hasPhysicalBounds(idx)) {
-            continue;
+          if (v.hasPhysicalBounds(idx)) {
+            writeBoundsSymbol(out, name, n, "Physical",
+                              v.getPhysicalBounds(idx));
           }
-          writeBoundsSymbol(out, name,
-                            v.getExternalName() + "_mfront_index_" +
-                                std::to_string(idx) + "_",
-                            "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
@@ -367,7 +376,17 @@ namespace mfront {
     const auto validator = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::validator, "");
     exportStringSymbol(os, std::string{n} + "_validator", validator);
-  }  // end of writeValidatorSymbols
+  }  // end of writeValidatorSymbol
+
+  void writeCompatibilityModeSymbol(std::ostream& os,
+                                    const std::string_view n,
+                                    const MaterialKnowledgeDescription& d) {
+    if (d.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      const auto version = d.getAttribute<std::string>(
+          MaterialKnowledgeDescription::compatibilityMode, "");
+      exportStringSymbol(os, std::string{n} + "_compatibility_mode", version);
+    }
+  }  // end of writeCompatibilityModeSymbol
 
   void writeBuildIdentifierSymbol(std::ostream& os,
                                   const std::string_view n,
@@ -464,7 +483,7 @@ namespace mfront {
     }
     for (const auto& v : vc) {
       if (getDebugMode()) {
-        os << "#line " << v.lineNumber << " \"" << f << "\"\n";
+        printLinePragma(os, v.lineNumber, f);
       }
       if (v.type == "short") {
         os << "static " << constexpr_c << "  short " << v.name << " = "
@@ -585,28 +604,28 @@ namespace mfront {
 
   static void writeBoundsChecks(std::ostream& os,
                                 const VariableDescription& v,
+                                const VariableBoundsDescription& bounds,
                                 const std::string_view n,
                                 const std::string_view space_dimension,
                                 const std::string_view policy,
                                 const bool addThis,
                                 const bool checkEndOfTimeStepValue,
                                 const bool physicalBounds) {
-    if (physicalBounds) {
-      if (!v.hasPhysicalBounds()) {
-        return;
-      }
-    } else {
-      if (!v.hasBounds()) {
-        return;
-      }
-    }
-    const auto& bounds = physicalBounds ? v.getPhysicalBounds() : v.getBounds();
     const auto numeric_type = [&v] {
       if (v.isScalar()) {
         return v.type;
       }
       return "tfel::math::numeric_type<" + v.type + ">";
     }();
+    // bounds set on a component of a non scalar variable only apply to this
+    // component
+    const auto c = ((bounds.component != -1) && (!v.isScalar()))
+                       ? std::to_string(bounds.component)
+                       : std::string{};
+    const auto name =
+        c.empty() ? std::string{n} : std::string{n} + '(' + c + ')';
+    const auto value =
+        c.empty() ? std::string{n} : std::string{n} + '[' + c + ']';
     const auto this_pointer = addThis ? "this->" : "";
     const auto policy_argument = [&physicalBounds, &policy]() -> std::string {
       if (!physicalBounds) {
@@ -616,39 +635,41 @@ namespace mfront {
     }();
     if (bounds.boundsType == VariableBoundsDescription::LOWER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::lowerBoundCheck(\"" << n << "\", " << this_pointer << n << ","
+         << ">::lowerBoundCheck(\"" << name << "\", " << this_pointer << value
+         << ","
          << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::lowerBoundCheck(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::lowerBoundCheck(\"" << name << "+d" << name << "\", "
+           << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << ")"
            << policy_argument << ");\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::upperBoundCheck(\"" << n << "\", " << this_pointer << n << ","
+         << ">::upperBoundCheck(\"" << name << "\", " << this_pointer << value
+         << ","
          << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::upperBoundCheck(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::upperBoundCheck(\"" << name << "+d" << name << "\", "
+           << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
            << policy_argument << ");\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
       os << "tfel::material::BoundsCheck<" << space_dimension
-         << ">::lowerAndUpperBoundsChecks(\"" << n << "\", " << this_pointer
-         << n << ","
+         << ">::lowerAndUpperBoundsChecks(\"" << name << "\", " << this_pointer
+         << value << ","
          << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
          << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
          << policy_argument << ");\n";
       if (checkEndOfTimeStepValue) {
         os << "tfel::material::BoundsCheck<" << space_dimension
-           << ">::lowerAndUpperBoundsChecks(\"" << n << "+d" << n << "\", "
-           << this_pointer << n << "+this->d" << n << ","
+           << ">::lowerAndUpperBoundsChecks(\"" << name << "+d" << name
+           << "\", " << this_pointer << value << "+this->d" << value << ","
            << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
            << "),"
            << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
@@ -667,7 +688,22 @@ namespace mfront {
                          const std::string_view policy,
                          const bool addThis,
                          const bool checkEndOfTimeStepValue) {
-    writeBoundsChecks(os, v, n, space_dimension, policy, addThis,
+    if (!v.hasBounds()) {
+      return;
+    }
+    writeBoundsChecks(os, v, v.getBounds(), n, space_dimension, policy, addThis,
+                      checkEndOfTimeStepValue);
+  }  // end of writeBoundsChecks
+
+  void writeBoundsChecks(std::ostream& os,
+                         const VariableDescription& v,
+                         const VariableBoundsDescription& bounds,
+                         const std::string_view n,
+                         const std::string_view space_dimension,
+                         const std::string_view policy,
+                         const bool addThis,
+                         const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, bounds, n, space_dimension, policy, addThis,
                       checkEndOfTimeStepValue, false);
   }  // end of writeBoundsChecks
 
@@ -677,8 +713,86 @@ namespace mfront {
                                  const std::string_view space_dimension,
                                  const bool addThis,
                                  const bool checkEndOfTimeStepValue) {
-    writeBoundsChecks(os, v, n, space_dimension, "", addThis,
+    if (!v.hasPhysicalBounds()) {
+      return;
+    }
+    writePhysicalBoundsChecks(os, v, v.getPhysicalBounds(), n, space_dimension,
+                              addThis, checkEndOfTimeStepValue);
+  }  // end of writePhysicalBoundsChecks
+
+  void writePhysicalBoundsChecks(std::ostream& os,
+                                 const VariableDescription& v,
+                                 const VariableBoundsDescription& bounds,
+                                 const std::string_view n,
+                                 const std::string_view space_dimension,
+                                 const bool addThis,
+                                 const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, bounds, n, space_dimension, "", addThis,
                       checkEndOfTimeStepValue, true);
   }  // end of writePhysicalBoundsChecks
+
+  std::string printLinePragma(const std::size_t ln, std::string_view f) {
+    if (ln == 0) {
+      return {};
+    }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    return "#line " + std::to_string(ln) + " \"" +
+           tfel::utilities::replace_all(f, "\\", "\\\\") + "\"\n";
+#else
+    return "#line " + std::to_string(ln) + " \"" + std::string{f} + "\"\n";
+#endif
+  }
+
+  void printLinePragma(std::ostream& os,
+                       const std::size_t ln,
+                       std::string_view f) {
+    if (ln == 0) {
+      return;
+    }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    os << "#line " << ln << " \""
+       << tfel::utilities::replace_all(f, "\\", "\\\\") << "\"\n";
+#else
+    os << "#line " << ln << " \"" << f << "\"\n";
+#endif
+  }
+
+  void writePhysicalConstantsAlias(std::ostream& os,
+                                   const MaterialKnowledgeDescription& d,
+                                   std::string_view numeric_type,
+                                   const bool use_quantities) {
+    const auto v = getEffectiveCompatibilityMode(d);
+    if (v == CompatibilityMode::future) {
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::future::PhysicalConstants<" << numeric_type
+           << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::future::PhysicalConstants<" << numeric_type
+           << ", false>;\n";
+      }
+    } else if (v == CompatibilityMode::v5_2_0) {
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
+           << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::v5_2_0::PhysicalConstants<" << numeric_type
+           << ", false>;\n";
+      }
+      return;
+    } else {
+      // use the current version of the physical constants
+      if (use_quantities) {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::PhysicalConstants<" << numeric_type << ", use_qt>;\n";
+      } else {
+        os << "using PhysicalConstants [[maybe_unused]] = "
+           << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
+      }
+    }
+  }  // end of writePhysicalConstantsAlias
 
 }  // end of namespace mfront

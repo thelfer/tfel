@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/GeneratorOptions.hxx
  * \brief
  * \author Thomas Helfer
- * \date   16 août 2015
+ * \date 16/08/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -85,6 +85,10 @@ namespace mfront {
      * commands shall be displayed.
      */
     bool silentBuild = true;
+    /*!
+     * \brief boolean stating if rpath shall be set
+     */
+    bool setRPATH = true;
 #if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     bool nodeps = true;
 #else  /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */

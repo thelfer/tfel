@@ -2,16 +2,23 @@
  * \file   MFrontDatabase.cxx
  * \brief
  * \author th202608
- * \date   13/11/2025
+ * \date 13/11/2025
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Macros.hxx"
 #include "MFront/MFrontDatabase.hxx"
 
 #define MFRONT_DATABASE_MODULE_NAME \
-  TFEL_PP_JOIN(_mfront_database, TFEL_SUFFIX_FOR_PYTHON_MODULES)
+  TFEL_PP_JOIN(_mfront_database_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 static std::vector<mfront::MFrontDatabase::EntryPoint>
 MFrontDatabase_getEntryPoints(const mfront::MFrontDatabase& db,
@@ -129,7 +136,7 @@ PYBIND11_MODULE(_mfront_database, m) {
       .def_readonly("library", &MFrontDatabase::EntryPoint::library)
       .def_readonly("name", &MFrontDatabase::EntryPoint::name)
       .def_readonly("source", &MFrontDatabase::EntryPoint::source)
-      .def_readonly("source", &MFrontDatabase::EntryPoint::type);
+      .def_readonly("type", &MFrontDatabase::EntryPoint::type);
 
   pybind11::class_<
       MFrontDatabase::AnalyseDirectoryResults::LibraryAnalysisFailureReport>(
@@ -151,10 +158,12 @@ PYBIND11_MODULE(_mfront_database, m) {
 
   pybind11::class_<MFrontDatabase>(m, "MFrontDatabase")
       .def(pybind11::init<>())
-      .def("analyseLibrary", &MFrontDatabase::analyseLibrary)
-      .def("analyseLibraries", &MFrontDatabase::analyseLibraries)
-      .def("analyseDirectory", pybind11::overload_cast<const std::string&>(
-                                   &MFrontDatabase::analyseDirectory))
+      .def("analyseLibrary", &MFrontDatabase::analyseLibrary, "library"_a)
+      .def("analyseLibraries", &MFrontDatabase::analyseLibraries, "libraries"_a)
+      .def("analyseDirectory",
+           pybind11::overload_cast<const std::string&>(
+               &MFrontDatabase::analyseDirectory),
+           "directory"_a)
       .def("analyseDirectory", MFrontDatabase_analyseDirectory, "directory"_a,
            "ignore_errors"_a = false,
            "library_prefix"_a = std::optional<std::string>{},
@@ -165,7 +174,8 @@ PYBIND11_MODULE(_mfront_database, m) {
            "library_suffix"_a = std::optional<std::string>{})
       .def("analyseDirectories",
            pybind11::overload_cast<const std::vector<std::string>&>(
-               &MFrontDatabase::analyseDirectories))
+               &MFrontDatabase::analyseDirectories),
+           "directories"_a)
       .def("analyseDirectoriesListedInEnvironmentVariable",
            MFrontDatabase_analyseDirectoriesListedInEnvironmentVariable,
            "directories"_a, "ignore_errors"_a = false,
@@ -173,7 +183,8 @@ PYBIND11_MODULE(_mfront_database, m) {
            "library_suffix"_a = std::optional<std::string>{})
       .def("analyseDirectoriesListedInEnvironmentVariable",
            pybind11::overload_cast<const std::string&>(
-               &MFrontDatabase::analyseDirectoriesListedInEnvironmentVariable))
+               &MFrontDatabase::analyseDirectoriesListedInEnvironmentVariable),
+           "directories"_a)
       .def("getEntryPoints", MFrontDatabase_getEntryPoints,
            "type"_a = std::optional<std::string>{},
            "name"_a = std::optional<std::string>{},

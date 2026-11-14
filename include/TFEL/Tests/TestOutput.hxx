@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Tests/TestOutput.hxx
  * \author Thomas Helfer
- * \date   10 Apr 10
+ * \date 10/04/2010
  * \brief
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -20,7 +20,7 @@
 namespace tfel::tests {
 
   //! \brief base class for tests' outputs
-  struct TestOutput {
+  struct TFELTESTS_VISIBILITY_EXPORT TestOutput {
     /*!
      * \brief begin a new test suite
      * \param[in] n: name of the test suite

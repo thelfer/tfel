@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/GenericBehaviour/Integrate.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/07/2018
+ * \date 03/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -212,9 +212,11 @@ namespace mfront::gb {
                                 mfront_gb_BehaviourData& d,
                                 const typename Behaviour::SMFlag f) {
     const auto smt = [&d] {
-      if (-1.5 < d.K[0]) {
+      // the offset used to request the speed of sound is removed
+      const auto Ke = d.K[0] > 50 ? d.K[0] - 100 : d.K[0];
+      if (-1.5 < Ke) {
         return Behaviour::ELASTIC;
-      } else if ((-2.5 < d.K[0]) && (d.K[0] < -1.5)) {
+      } else if ((-2.5 < Ke) && (Ke < -1.5)) {
         return Behaviour::SECANTOPERATOR;
       }
       return Behaviour::TANGENTOPERATOR;
@@ -315,10 +317,14 @@ namespace mfront::gb {
     using speed = typename Behaviour::speed;
     using massdensity = typename Behaviour::massdensity;
     using behaviour_real_type = typename Behaviour::real;
-    Behaviour b(d);
-    b.setOutOfBoundsPolicy(p);
     auto&& rdt = tfel::math::map<behaviour_real_type>(d.rdt);
+    // time step scaling factor returned if an exception is thrown. The
+    // behaviour is built in the try block since its constructor may throw.
+    auto rdt_on_exception = behaviour_real_type{rdt};
     try {
+      Behaviour b(d);
+      b.setOutOfBoundsPolicy(p);
+      rdt_on_exception = b.getMinimalTimeStepScalingFactor();
       if (!b.initialize()) {
         reportError(d, "behaviour initialisation failed");
         return -1;
@@ -387,7 +393,7 @@ namespace mfront::gb {
       }
     } catch (...) {
       reportFailureByException(d);
-      rdt = b.getMinimalTimeStepScalingFactor();
+      rdt = rdt_on_exception;
       return -1;
     }
     return rdt < behaviour_real_type{0.99} ? 0 : 1;
@@ -407,20 +413,16 @@ namespace mfront::gb {
                                 const real* const initialize_variables,
                                 const tfel::material::OutOfBoundsPolicy p) {
     try {
-      //
-      auto* const gradients_old = d.s1.gradients;
-      auto* const material_properties_old = d.s1.material_properties;
-      auto* const external_state_variables_old = d.s1.external_state_variables;
-      d.s1.gradients = d.s0.gradients;
-      d.s1.material_properties = d.s0.material_properties;
-      d.s1.external_state_variables = d.s0.external_state_variables;
-      //
-      Behaviour b(d);
+      // the behaviour is built from a copy of the behaviour data in which the
+      // gradients, material properties and external state variables at the
+      // end of the time step are the ones at the beginning of the time step,
+      // so that the pointers of the caller are never modified
+      auto d0 = d;
+      d0.s1.gradients = d.s0.gradients;
+      d0.s1.material_properties = d.s0.material_properties;
+      d0.s1.external_state_variables = d.s0.external_state_variables;
+      Behaviour b(d0);
       b.setOutOfBoundsPolicy(p);
-      //
-      d.s1.gradients = gradients_old;
-      d.s1.material_properties = material_properties_old;
-      d.s1.external_state_variables = external_state_variables_old;
       //
       if (!b.initialize()) {
         reportError(d, "behaviour initialisation failed");
@@ -455,19 +457,19 @@ namespace mfront::gb {
                             const tfel::material::OutOfBoundsPolicy p) {
     try {
       // a little trick to initialize the behaviour with the thermodynamic
-      // forces and internal state variables at the end of the time step
-      auto* const thermodynamic_forces_old = d.s0.thermodynamic_forces;
-      auto* const internal_state_variables_old = d.s0.internal_state_variables;
-      d.s0.thermodynamic_forces = d.s1.thermodynamic_forces;
-      //
-      Behaviour b(d);
+      // forces and internal state variables at the end of the time step: the
+      // behaviour is built from a copy of the behaviour data in which the
+      // thermodynamic forces and internal state variables at the beginning of
+      // the time step are the ones at the end of the time step, so that the
+      // pointers of the caller are never modified
+      auto d1 = d;
+      d1.s0.thermodynamic_forces = d.s1.thermodynamic_forces;
+      d1.s0.internal_state_variables = d.s1.internal_state_variables;
+      Behaviour b(d1);
       b.setOutOfBoundsPolicy(p);
       // This call sets the values of the gradients and external state variables
       // at the end of the time step
       b.updateExternalStateVariables();
-      //
-      d.s0.thermodynamic_forces = thermodynamic_forces_old;
-      d.s0.internal_state_variables = internal_state_variables_old;
       //
       if (!b.initialize()) {
         reportError(d, "behaviour initialisation failed");
@@ -480,8 +482,8 @@ namespace mfront::gb {
         Behaviour initial_state(d);
         (b.*m)(post_processing_variables, initial_state);
       } else {
-        (b.*m)(post_processing_variables,
-               *(static_cast<const BehaviourData*>(nullptr)));
+        // the initial state is not used by the post-processing
+        (b.*m)(post_processing_variables, b);
       }
     } catch (...) {
       reportFailureByException(d);

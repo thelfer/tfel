@@ -4,7 +4,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   01 avr 2008
+ * \date 01/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -162,6 +162,33 @@ namespace aster {
     static void exe(const AsterReal* const,
                     tfel::config::Types<3u, AsterReal, false>::
                         ThermalExpansionCoefficientTensor&);
+  };  // end of struct AsterComputeThermalExpansionCoefficientTensor
+
+  /*!
+   * Partial specialisation for finite strain behaviours
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            AsterSymmetryType stype>
+  struct TFEL_VISIBILITY_LOCAL AsterComputeThermalExpansionCoefficientTensor<
+      aster::STANDARDFINITESTRAINBEHAVIOUR,
+      H,
+      stype> {
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    /*!
+     * \brief compute the thermal expansion coefficient tensor.
+     * \param[in]  props : material properties
+     * \param[out] A     : thermal expansion coefficient tensor
+     */
+    static void exe(
+        const AsterReal* const props,
+        typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,
+                                     AsterReal,
+                                     false>::ThermalExpansionCoefficientTensor&
+            A) {
+      AsterComputeThermalExpansionCoefficientTensor<
+          aster::STANDARDSTRAINBASEDBEHAVIOUR, H, stype>::exe(props, A);
+    }
   };  // end of struct AsterComputeThermalExpansionCoefficientTensor
 
 }  // end of namespace aster

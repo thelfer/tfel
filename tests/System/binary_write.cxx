@@ -2,7 +2,7 @@
  * \file   tests/System/binary_write.cxx
  * \brief
  * \author Thomas Helfer
- * \date   05/10/2016
+ * \date 05/10/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -33,7 +33,7 @@ struct BinaryReadWriteTest final : public tfel::tests::TestCase {
 
     int fd[2];
     if (::pipe(fd) != 0) {
-      return false;
+      return tfel::tests::TestResult{false};
     }
     // integers
     this->test(fd, false);
@@ -63,6 +63,11 @@ struct BinaryReadWriteTest final : public tfel::tests::TestCase {
     this->test3<std::set<std::string>>(fd, {"Lena", "Bettie"});
     this->test4<std::map<std::string, int>>(fd,
                                             {{"Lena", 1972}, {"Bettie", 1955}});
+    // end of file
+    ::close(fd[1]);
+    TFEL_TESTS_CHECK_THROW(tfel::system::binary_read<int>(fd[0]),
+                           tfel::system::SystemError);
+    ::close(fd[0]);
     return this->result;
   }  // end of execute
  private:

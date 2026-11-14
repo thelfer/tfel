@@ -26,7 +26,7 @@ defining the flow rule:
 - For DSLs supporting only one flow rule, the `flow_id` parameter is
   optional and shall be equal to zero if specified.
 - In the case of the `IsotropicPlasticMisesFlow` DSL, the following
-  flow rule is implicitly defined (if the user does specify it):
+  flow rule is implicitly defined (if the user does not specify it):
 
   ~~~~{.cxx}
   @FlowRule {

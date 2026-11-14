@@ -1,0 +1,3 @@
+@Model @library@ 'PhysicalConstants_v5_2_0';
+@Times{0, 1};
+@Test<function> 'x' '5.67037e-08 * t' 1e-14;

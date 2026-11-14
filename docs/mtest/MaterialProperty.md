@@ -7,7 +7,9 @@ thermal expansions:
   `ThermalExpansion` property
 - orthotropic thermal expansion is defined through the
   `ThermalExpansion1`, `ThermalExpansion2` and `ThermalExpansion3`
-  material properties.
+  material properties. In plane stress, `ThermalExpansion3` is
+  optional (the out-of-plane thermal strain is then null). An
+  incomplete set of coefficients is an error.
 
 This keyword takes the type of the material property as an option.
 Three types of material properties are supported, `constant` or

@@ -1,7 +1,7 @@
 ---
-title: Parameters in `MFront`
-author: Thomas
-date: 6/10/2014
+title: Parameters in MFront
+author: Thomas Helfer
+date: 06/10/2014
 lang: en-EN
 link-citations: true
 colorlinks: true
@@ -24,7 +24,7 @@ behaviour. The main idea behind material properties is to write
 generic behaviours that can be used to describe a wide range of
 materials.
 
-There are a important shortcomings associated with the use of material
+There are important shortcomings associated with the use of material
 properties:
 
 - For Assurance Quality reasons, we consider that the usage of generic
@@ -32,7 +32,7 @@ properties:
   of the behaviour is put in the user input file: we do think that the
   whole description of the behaviour shall be included in the `MFront`
   implementation. This can not be achieved with material properties
-  since their is no easy cross-solver way to define their default
+  since there is no easy cross-solver way to define their default
   values from the behaviour implementation.
 - The use of material properties can have significant numerical impact
   in some finite element solver: those costs are associated to the
@@ -86,7 +86,7 @@ There are two ways to modify a parameter at runtime:
 From our point of view, the first method is preferable but is not
 always available. Some examples are provided below.
 
-## Examples of modify the calling solver input file
+## Examples of modifying the calling solver input file
 
 ### `MTest`
 
@@ -113,7 +113,7 @@ it is automatically read at the first behaviour call. This file must
 contain lines beginning with a parameter name and its value. No
 comments are allowed.
 
-If our case, this file may contain the following line:
+In our case, this file may contain the following line:
 
 ~~~~~~~~~{#external-file .txt}
 DamageThreshold 0.95
@@ -126,6 +126,30 @@ This functionality is illustrated below:
 
 ![Definition of parameters through an external file](img/parameters.svg
  "Definition of parameters through an external file")
+
+### Models
+
+The parameters of a model written with the `Model` domain specific
+language can be modified in the same way with the `generic`, `castem`
+and `castem21` interfaces. The file is named after the name of the
+model, prefixed by the material name (if any).
+
+Let us consider a model named `Swelling`, without material name, which
+defines a parameter whose entry name is `GrowthRate`. If a file named
+`Swelling-parameters.txt` is in the current directory, it is read at the
+first call of the model. This file may contain the following line:
+
+~~~~~~~~~{.txt}
+GrowthRate 3e-2
+~~~~~~~~~
+
+A parameter can be designated by its entry name or by the name of the
+variable in the `MFront` file. Empty lines and lines beginning with the
+`#` character are ignored. If the file is invalid, the call of the
+model fails.
+
+This feature can be disabled with the
+`parameters_initialization_from_file` DSL option.
 
 # Querying information about parameters in `mfront-query`
 
@@ -181,5 +205,7 @@ with the `--parameters-file` query:
 $ mfront-query --parameters-file Rousselier.mfront 
 Rousseliertest-parameters.txt
 ~~~~
+
+This query is also available for material properties and models.
 
 <!-- Local IspellDict: english -->

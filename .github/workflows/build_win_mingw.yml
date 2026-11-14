@@ -18,10 +18,20 @@ jobs:
           msystem: UCRT64
           update: true
           install: git mingw-w64-ucrt-x86_64-gnuplot mingw-w64-ucrt-x86_64-gcc-libgfortran mingw-w64-ucrt-x86_64-gcc-fortran mingw-w64-ucrt-x86_64-cc mingw-w64-ucrt-x86_64-cc mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja
+      - name: Set up ccache
+        id: ccache
+        uses: ./.github/actions/setup-ccache
+        with:
+          key: mingw
       - name: CI-Build
         run: |
           mkdir build
           cd build
-          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-lsdyna=ON -Denable-portable-build=ON -Denable-reference-doc=OFF -Denable-testing=OFF ..
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-lsdyna=ON -Denable-portable-build=ON -Denable-reference-doc=OFF -Denable-testing=OFF -DCMAKE_C_COMPILER_LAUNCHER="$(cygpath -m "$CCACHE_EXE")" -DCMAKE_CXX_COMPILER_LAUNCHER="$(cygpath -m "$CCACHE_EXE")" ..
           cmake --build . -j $(nproc)
           
+
+      # even when a test fails, so that the next run does not compile everything again
+      - name: Save ccache
+        if: ${{ !cancelled() && steps.ccache.outcome == 'success' }}
+        uses: ./.github/actions/save-ccache

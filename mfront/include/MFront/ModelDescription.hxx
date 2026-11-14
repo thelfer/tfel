@@ -36,17 +36,24 @@ namespace mfront {
       //! \brief copy constructor
       Function(const Function&);
       //! \brief move constructor
-      Function(Function&&);
+      Function(Function&&) noexcept;
       //! \brief assignement
       Function& operator=(const Function&);
       //! \brief move assignement
-      Function& operator=(Function&&);
+      Function& operator=(Function&&) noexcept;
       //! \brief destructor
       ~Function();
       //! \brief list of variables used by the function
       std::set<std::string> usedVariables;
       //! \brief list of variables modified by the function
       std::set<std::string> modifiedVariables;
+      /*!
+       * \brief list of the modified variables whose first modification in
+       * the function is a compound assignment (`+=`, `-=`, `*=` or `/=`),
+       * which reads their value at the beginning of the time step. The
+       * depth of these variables is at least one (checked by the DSL).
+       */
+      std::set<std::string> compoundAssignedVariables;
       //! \brief list of constant material properties used by the function
       std::set<std::string> constantMaterialProperties;
       //! \brief list of parameters used by the function
@@ -67,23 +74,24 @@ namespace mfront {
      * \brief decompose a variable name to get the basis and the depth
      * of the variable
      */
-    std::pair<std::string, unsigned short> decomposeVariableName(
+    [[nodiscard]] std::pair<std::string, unsigned short> decomposeVariableName(
         const std::string&) const;
     //! \brief defaut constructor
     ModelDescription();
     //! \brief copy constructor
     ModelDescription(const ModelDescription&);
     //! \brief move constructor
-    ModelDescription(ModelDescription&&);
+    ModelDescription(ModelDescription&&) noexcept;
     //! \brief assignement operator
     ModelDescription& operator=(const ModelDescription&);
     //! \brief move assignement operator
-    ModelDescription& operator=(ModelDescription&&);
+    ModelDescription& operator=(ModelDescription&&) noexcept;
     /*!
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
-    const VariableDescription& getVariableDescription(const std::string&) const;
+    [[nodiscard]] const VariableDescription& getVariableDescription(
+        const std::string&) const;
     /*!
      * \brief associate a glossary name to a variable
      * \param[in] v: variable name
@@ -142,7 +150,7 @@ namespace mfront {
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-    bool isNameReserved(const std::string&) const;
+    [[nodiscard]] bool isNameReserved(const std::string&) const;
     //! \brief check and complete the physical bounds of variables
     void checkAndCompletePhysicalBoundsDeclaration();
     //! \brief destructor
@@ -196,14 +204,15 @@ namespace mfront {
      */
     void checkVariableExistence(const std::string&) const;
     //! \return the list of reserved names
-    const std::set<std::string>& getReservedNames() const;
+    [[nodiscard]] const std::set<std::string>& getReservedNames() const;
 
    private:
     /*!
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
-    VariableDescription& getVariableDescription(const std::string&);
+    [[nodiscard]] VariableDescription& getVariableDescription(
+        const std::string&);
     //! \brief set glossary names
     std::map<std::string, std::string> glossaryNames;
     //! \brief entry names
@@ -217,7 +226,34 @@ namespace mfront {
    * \return the behaviour description
    * \param[in] md: model description
    */
-  BehaviourDescription convertToBehaviourDescription(const ModelDescription&);
+  MFRONT_VISIBILITY_EXPORT BehaviourDescription
+  convertToBehaviourDescription(const ModelDescription&);
+
+  /*!
+   * \return the name of the file which can be used to override the default
+   * values of the parameters of a model.
+   * \param[in] md: model description
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getParametersFileName(
+      const ModelDescription&);
+
+  /*!
+   * \brief write the default constructor of the class holding the real
+   * parameters of a model.
+   *
+   * If the parameters can be initialized from a file (see the
+   * `allowsParametersInitializationFromFile` function), this constructor
+   * reads the file returned by the `getParametersFileName` function, if it
+   * exists, to override the default values of the parameters. The generated
+   * code requires the `<cerrno>`, `<string>`, `<vector>`, `<fstream>`,
+   * `<sstream>`, `<locale>` and `TFEL/Raise.hxx` headers.
+   *
+   * \param[out] os: output stream
+   * \param[in] md: model description
+   * \param[in] cn: name of the class holding the real parameters
+   */
+  MFRONT_VISIBILITY_EXPORT void writeRealParametersInitializerConstructor(
+      std::ostream&, const ModelDescription&, const std::string&);
 
 }  // end of namespace mfront
 

@@ -2,7 +2,7 @@
  * \file   mfront/src/RousselierTanguyBesson2002StressCriterion.cxx
  * \brief
  * \author Thomas Helfer, Jérémy Hure, Mohamed Shokeir
- * \date   14/04/2020
+ * \date 14/04/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,6 +23,11 @@ namespace mfront::bbrick {
   RousselierTanguyBesson2002StressCriterion::
       RousselierTanguyBesson2002StressCriterion()
       : StandardPorousStressCriterionBase("RousselierTanguyBesson2002") {
+  }  // end of RousselierTanguyBesson2002StressCriterion
+
+  RousselierTanguyBesson2002StressCriterion::
+      RousselierTanguyBesson2002StressCriterion(const std::string& n)
+      : StandardPorousStressCriterionBase(n) {
   }  // end of RousselierTanguyBesson2002StressCriterion
 
   std::vector<mfront::BehaviourSymmetryType>
@@ -65,7 +70,7 @@ namespace mfront::bbrick {
         StressCriterion::getVariableId("sscb_parameters", id, r);
     return "this->" + bound + " = " +   //
            "std::min(this->" + bound +  //
-           ", 3 / (2 * this->" + params + ".DR));\n";
+           ", real(3 / (2 * this->" + params + ".DR)));\n";
   }  // end of updatePorosityUpperBound
 
   RousselierTanguyBesson2002StressCriterion::

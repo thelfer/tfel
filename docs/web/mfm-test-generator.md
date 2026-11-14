@@ -20,8 +20,8 @@ specific test cases.
 
 `mfm-test-generator` is based on two main concepts:
 
-- test cases, which derives from the `AbstractTestCase` class. Those
-  class are meant to interpret the input file.
+- test cases, which derive from the `AbstractTestCase` class. Those
+  classes are meant to interpret the input file.
 - generators. Generators are related to one test case and one target
   (finite element solvers, fuel performance code, etc.). From an object
   describing a test case, the generator generates the input file for its
@@ -50,10 +50,10 @@ $ mfm-test-generator --target=mtest pipe.mfmtg \
 The main command line options are:
 
 - `--target` which allows specifying one target
-- `--targets` which allows specifying a list of target, separated by
+- `--targets` which allows specifying a list of targets, separated by
   commas.
 - `--targets` which allows specifying a list of shared libraries
-  containing user defined " "test cases or generators, separated by a
+  containing user defined test cases or generators, separated by
   commas.
 - `--verbose` which allows specifying the verbosity level. Possible
   choices are: `quiet`, `level0`, `level1`, `level2`, `level3`, `debug`

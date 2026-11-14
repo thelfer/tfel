@@ -79,10 +79,10 @@ namespace lsdyna {
     static void exe(const Behaviour& b, real* const DDSDDE) {
       using namespace tfel::material;
       typedef MechanicalBehaviourTraits<Behaviour> Traits;
-      using handler = typename std::conditional<
+      using handler = typename std::conditional_t<
           Traits::isConsistentTangentOperatorSymmetric,
           SymmetricConsistentTangentOperatorComputer,
-          GeneralConsistentTangentOperatorComputer>::type;
+          GeneralConsistentTangentOperatorComputer>;
       handler::exe(b, DDSDDE);
     }  // end of exe
    private:
@@ -135,10 +135,10 @@ namespace lsdyna {
     static void exe(const Behaviour& b, real* const DDSDDE) {
       using namespace tfel::material;
       typedef MechanicalBehaviourTraits<Behaviour> Traits;
-      using handler = typename std::conditional<
+      using handler = typename std::conditional_t<
           Traits::isConsistentTangentOperatorSymmetric,
           SymmetricConsistentTangentOperatorComputer,
-          GeneralConsistentTangentOperatorComputer>::type;
+          GeneralConsistentTangentOperatorComputer>;
       handler::exe(b, DDSDDE);
     }  // end of exe
    private:
@@ -174,13 +174,13 @@ namespace lsdyna {
         const auto& Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
         DDSDDE[0] = Dt(0, 0);
-        DDSDDE[1] = Dt(0, 1);
-        DDSDDE[2] = Dt(0, 3) * icste;
-        DDSDDE[3] = Dt(1, 0);
+        DDSDDE[1] = Dt(1, 0);
+        DDSDDE[2] = Dt(3, 0) * icste;
+        DDSDDE[3] = Dt(0, 1);
         DDSDDE[4] = Dt(1, 1);
-        DDSDDE[5] = Dt(1, 3) * icste;
-        DDSDDE[6] = Dt(3, 0) * icste;
-        DDSDDE[7] = Dt(3, 1) * icste;
+        DDSDDE[5] = Dt(3, 1) * icste;
+        DDSDDE[6] = Dt(0, 3) * icste;
+        DDSDDE[7] = Dt(1, 3) * icste;
         DDSDDE[8] = Dt(3, 3) * one_half;
       }  // end of exe
     };

@@ -2,7 +2,7 @@
  * \file   AsterConvertStress.hxx
  * \brief
  * \author Thomas Helfer
- * \date   06 févr. 2017
+ * \date 06/02/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -13,6 +13,11 @@
 
 #ifndef LIB_ASTER_ASTERCONVERTSTRESS_HXX
 #define LIB_ASTER_ASTERCONVERTSTRESS_HXX
+
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "MFront/Aster/Aster.hxx"
+#include "MFront/Aster/AsterTraits.hxx"
 
 namespace aster {
 

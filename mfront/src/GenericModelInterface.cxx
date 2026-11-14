@@ -2,7 +2,7 @@
  * \file   mfront/src/GenericModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28/04/2022
+ * \date 28/04/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -68,11 +68,12 @@ namespace mfront {
   static void writeScalarStandardTypedefs(std::ostream& os,
                                           const ModelDescription& md) {
     const auto use_qt = useQuantities(md) ? "true" : "false";
-    os << "using NumericType [[maybe_unused]] = double;\n";
+    os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n"
+       << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<double, " << use_qt
-         << ">::" << a << ";\n";
+      os << "using " << a << " [[maybe_unused]] = typename "
+         << "tfel::config::ScalarTypes<double, " << use_qt << ">::" << a
+         << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
 
@@ -93,6 +94,13 @@ namespace mfront {
   std::string GenericModelInterface::getName() {
     return "generic";
   }  // end of getName
+
+  void GenericModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool, GenericModelInterface::tokens_iterator>
   GenericModelInterface::treatKeyword(const std::string& k,
@@ -134,7 +142,7 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n";
 
     const auto hg = getHeaderGuard(md);
@@ -148,6 +156,9 @@ namespace mfront {
     os << "#ifdef __cplusplus\n"
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
+
+    GenericBehaviourInterface bi;
+    bi.writeSetOutOfBoundsPolicyFunctionDeclaration(os, name);
 
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
@@ -213,11 +224,18 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
+       << "#include <cerrno>\n"
+       << "#include <locale>\n"
+       << "#include <string>\n"
+       << "#include <vector>\n"
        << "#include <cstring>\n"
+       << "#include <fstream>\n"
        << "#include <sstream>\n"
+       << "#include <iostream>\n"
+       << "#include \"TFEL/Raise.hxx\"\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include \"TFEL/Math/Array/View.hxx\"\n"
@@ -243,6 +261,8 @@ namespace mfront {
     os << '\n';
     sg.generateSymbols(os, bi, bd, fd, name, uh);
     //
+    bi.writeGetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
+    //
     if (!md.sources.empty()) {
       os << md.sources << "\n\n";
     }
@@ -250,7 +270,10 @@ namespace mfront {
     const auto has_constructor =
         (!md.constantMaterialProperties.empty()) || (hasRealParameters(md));
     //
-    os << "namespace mfront::gm{\n\n";
+    // the classes are local to the library: two libraries defining a
+    // model of the same name must not share their parameters
+    os << "namespace mfront::gm{\n\n"
+       << "namespace {\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
@@ -271,9 +294,9 @@ namespace mfront {
            << p.getAttribute<double>(VariableDescription::defaultValue)
            << "};\n";
       }
-      os << "private:\n"
-         << cn << "() = default;\n"
-         << "};\n\n";
+      os << "private:\n";
+      writeRealParametersInitializerConstructor(os, md, cn);
+      os << "};\n\n";
     }
     //
     os << "struct " << md.className << "{\n\n";
@@ -294,7 +317,8 @@ namespace mfront {
         first = false;
       }
       for (const auto& p : md.parameters) {
-        if (!isRealParameter(p)) {
+        // parameters treated as static variables are not members
+        if ((!isRealParameter(p)) || (!hasRealParameters(md))) {
           continue;
         }
         os << (first ? "" : ",\n");
@@ -310,16 +334,10 @@ namespace mfront {
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using namespace tfel::material;\n";
-      if (useQuantities(md)) {
-        os << "using PhysicalConstants [[maybe_unused]] = "
-           << "tfel::PhysicalConstants<NumericType, true>;\n";
-      } else {
-        os << "using PhysicalConstants [[maybe_unused]] = "
-           << "tfel::PhysicalConstants<NumericType, false>;\n";
-      }
-      const auto policy = getDefaultOutOfBoundsPolicyAsString(md);
-      os << "[[maybe_unused]] constexpr const auto policy = "
-         << "tfel::material::" << policy << ";\n";
+      writeMaterialLaws(os, md.materialLaws);
+      writePhysicalConstantsAlias(os, md, "NumericType", useQuantities(md));
+      os << "[[maybe_unused]] const auto policy = ::" << name
+         << "_getOutOfBoundsPolicy();\n";
       if (f.useTimeIncrement) {
         os << "const auto dt = time{mfront_model_data.dt};\n";
       }
@@ -364,10 +382,9 @@ namespace mfront {
           raise("error while treating physical bounds of variable '" + v.name +
                 "' (only scalar variable are supported)");
         }
-        writePhysicalBoundsChecks(os, v, n, "1u", false, false);
-        if (vdepth == 1u) {
-          writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
-        }
+        // the variable is checked under the name it is declared with
+        const auto vn = (vdepth == 1u) ? n + "_1" : n;
+        writePhysicalBoundsChecks(os, v, vn, "1u", false, false);
       };
       if (!areRuntimeChecksDisabled(md)) {
         for (const auto& mv : f.usedVariables) {
@@ -396,10 +413,9 @@ namespace mfront {
           raise("error while treating bounds of variable '" + v.name +
                 "' (only scalar variable are supported)");
         }
-        writeBoundsChecks(os, v, n, "1u", "policy", false, false);
-        if (vdepth == 1u) {
-          writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false, false);
-        }
+        // the variable is checked under the name it is declared with
+        const auto vn = (vdepth == 1u) ? n + "_1" : n;
+        writeBoundsChecks(os, v, vn, "1u", "policy", false, false);
       };
       if (!areRuntimeChecksDisabled(md)) {
         for (const auto& mv : f.usedVariables) {
@@ -419,6 +435,14 @@ namespace mfront {
       }
       //
       os << f.body << '\n';
+      // bounds of the outputs computed by the function
+      if (!areRuntimeChecksDisabled(md)) {
+        for (const auto& mv : f.modifiedVariables) {
+          const auto& v = md.outputs.getVariable(mv);
+          write_physical_bounds(v, v.name, 0u);
+          write_bounds(v, v.name, 0u);
+        }
+      }
       for (const auto& mv : f.modifiedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
         const auto& v = md.outputs.getVariable(mv);
@@ -440,14 +464,14 @@ namespace mfront {
     // material properties
     for (const auto& mp : md.constantMaterialProperties) {
       if (!getDebugMode()) {
-        os << "#line " << mp.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, mp.lineNumber, fd.fileName);
       }
       os << "const " << mp.type << " " << mp.name << ";\n";
     }
     // parameters
     for (const auto& p : md.parameters) {
       if (!getDebugMode()) {
-        os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, p.lineNumber, fd.fileName);
       }
       if ((isRealParameter(p)) &&
           (!areParametersTreatedAsStaticVariables(md))) {
@@ -471,10 +495,11 @@ namespace mfront {
     // static variables
     for (const auto& v : md.staticVars) {
       if (!getDebugMode()) {
-        os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, v.lineNumber, fd.fileName);
       }
-      os << "static constexpr " << v.type << " " << v.name << " = "  //
-         << v.value << ";\n";
+      // brace initialisation is required by quantities
+      os << "static constexpr auto " << v.name << " = " << v.type << "{"
+         << v.value << "};\n";
     }
     os << "}; // end of struct " << md.className << "\n\n";
     //
@@ -497,14 +522,19 @@ namespace mfront {
        << "}\n"
        << "return 1;\n"
        << "}\n\n";
-    os << "} // end of namespace mfront::gm\n\n";
+    os << "} // end of anonymous namespace\n\n"
+       << "} // end of namespace mfront::gm\n\n";
+    //
+    bi.writeSetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
       os << "MFRONT_SHAREDOBJ int\n"
          << name << "_setParameter(const char *const n, const double v){\n";
       writeScalarStandardTypedefs(os, md);
-      os << "auto& parameters = mfront::gm::" << cn << "::get();\n";
+      // reading the parameters' file may fail
+      os << "try{\n"
+         << "auto& parameters = mfront::gm::" << cn << "::get();\n";
       auto first = true;
       for (const auto& p : md.parameters) {
         if (!isRealParameter(p)) {
@@ -518,6 +548,9 @@ namespace mfront {
         first = false;
       }
       os << "}\n"
+         << "} catch(...){\n"
+         << "return 0;\n"
+         << "}\n"
          << "return 0;\n"
          << "} // end of " << name << "_setParameter\n\n";
     }

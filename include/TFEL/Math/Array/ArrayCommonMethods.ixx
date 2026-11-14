@@ -264,6 +264,22 @@ namespace tfel::math {
     child.iterate(f);
   }  // end of multiplyByScalar
 
+  template <typename Child, typename ArrayPolicyType>
+  template <typename ValueType2>
+  constexpr void
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::divideByScalar(
+      const ValueType2& s)  //
+      requires(isAssignableTo<
+               BinaryOperationResult<typename ArrayPolicyType::value_type,
+                                     ValueType2,
+                                     OpDiv>,
+               typename ArrayPolicyType::value_type>()) {
+    const auto f = makeMultiIndicesUnaryOperatorFunctor(
+        [s](typename ArrayPolicyType::reference a) { a /= s; }, *this);
+    auto& child = static_cast<Child&>(*this);
+    child.iterate(f);
+  }  // end of divideByScalar
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_ARRAY_ARRAYCOMMONMETHODS_IXX */

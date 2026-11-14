@@ -35,9 +35,10 @@ namespace mtest {
                                  const std::string&,
                                  const std::string&);
     StandardBehaviourDescription();
-    StandardBehaviourDescription(StandardBehaviourDescription&&);
+    StandardBehaviourDescription(StandardBehaviourDescription&&) noexcept;
     StandardBehaviourDescription(const StandardBehaviourDescription&);
-    StandardBehaviourDescription& operator=(StandardBehaviourDescription&&);
+    StandardBehaviourDescription& operator=(
+        StandardBehaviourDescription&&) noexcept;
     StandardBehaviourDescription& operator=(
         const StandardBehaviourDescription&);
   };
@@ -60,7 +61,7 @@ namespace mtest {
                           const std::string&,
                           const std::string&);
     //! \param[in] umb: behaviour description
-    StandardBehaviourBase(const StandardBehaviourDescription&);
+    explicit StandardBehaviourBase(const StandardBehaviourDescription&);
     void allocateCurrentState(CurrentState&) const override;
     std::string getBehaviourName() const override;
     Hypothesis getHypothesis() const override;

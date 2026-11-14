@@ -2,7 +2,7 @@
  * \file  runtime_arrayIO.hxx
  * \brief
  * \author Thomas Helfer
- * \date   21/05/2021
+ * \date 21/05/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,7 +27,7 @@ namespace tfel::math {
   std::ostream& operator<<(std::ostream& os, const runtime_array<T>& a) {
     os << "( ";
     for (const auto& v : a) {
-      os << a << " ";
+      os << v << " ";
     }
     os << ")";
     return os;

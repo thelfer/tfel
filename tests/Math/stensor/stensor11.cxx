@@ -43,6 +43,10 @@ struct STensorTest11 final : public tfel::tests::TestCase {
     std::cout << "m : " << m << std::endl;
     s.changeBasis(m);
     std::cout << "s : " << s << std::endl;
+    TFEL_TESTS_ASSERT(std::abs(s[0] - vp[0]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(s[1] - vp[1]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(s[2] - vp[2]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(s[3]) < eps);
     return this->result;
   }  // end of execute
 };

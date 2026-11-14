@@ -1,0 +1,30 @@
+@DSL Default;
+@Behaviour HenckyTimeStepScalingFactorTest;
+@Description {
+  "Test of the integration driver of the generic interface for "
+  "behaviours based on the Hencky strain measure: the stress and "
+  "the tangent operator must be returned when the behaviour proposes "
+  "a smaller time step after the integration."
+}
+
+@ModellingHypothesis Tridimensional;
+@StrainMeasure Hencky;
+@ProvidesSymmetricTangentOperator;
+
+@MaterialProperty stress young;
+@MaterialProperty real nu;
+//! \brief time step scaling factor proposed after the integration
+@MaterialProperty real time_step_scaling_factor;
+
+@Integrator {
+  const auto lambda = computeLambda(young, nu);
+  const auto mu = computeMu(young, nu);
+  sig = lambda * trace(eto + deto) * StrainStensor::Id() + 2 * mu * (eto + deto);
+  if (computeTangentOperator_) {
+    Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+  }
+}
+
+@APosterioriTimeStepScalingFactor {
+  return {true, time_step_scaling_factor};
+}

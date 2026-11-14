@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/LogicalOperations.hxx
  * \brief  This file implements the OpOr and OpAnd classes.
  * \author Thomas Helfer
- * \date   06 mai 2006
+ * \date 06/05/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file   AnsysConvert.hxx
  * \brief
  * \author Thomas Helfer
- * \date   22 mars 2016
+ * \date 22/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -15,6 +15,10 @@
 #define LIB_MFRONT_ANSYS_ANSYSCONVERT_HXX
 
 #include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/Ansys/Ansys.hxx"
 
 namespace ansys {
 
@@ -82,7 +86,17 @@ namespace ansys {
     template <typename T>
     static inline void exe(tfel::math::stensor<N, T>& s,
                            const AnsysReal* const v) {
-      ImportSymmetricTensor<N>::exe(s, v);
+      constexpr auto cste = tfel::math::Cste<T>::sqrt2;
+      s[0] = v[0];
+      s[1] = v[1];
+      s[2] = v[2];
+      if constexpr (N >= 2) {
+        s[3] = v[3] * cste;
+      }
+      if constexpr (N == 3) {
+        s[4] = v[5] * cste;
+        s[5] = v[4] * cste;
+      }
     }  // end of exe
   };   // end of struct ImportThermodynamicForces
   /*!
@@ -136,7 +150,7 @@ namespace ansys {
     template <typename T>
     static inline void exe(tfel::math::tensor<2u, T>& F,
                            const AnsysReal* const v) {
-      //      tfel::math::tensor<N, T>::buildFromFortranMatrix(F, v);
+      tfel::math::tensor<2u, T>::buildFromFortranMatrix(F, v);
     }  // end of exe
   };   // end of struct ImportGradients
   /*!

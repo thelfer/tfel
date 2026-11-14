@@ -23,12 +23,13 @@
 #endif
 #include <cstdlib>
 #include <algorithm>
-// #include <filesystem>
+#include <filesystem>
 #ifdef MFRONT_HAVE_MADNEX
 #include "Madnex/MFrontDataBase.hxx"
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/SearchPathsHandler.hxx"
@@ -38,11 +39,8 @@ namespace mfront {
 #ifdef MFRONT_HAVE_MADNEX
 
   static std::string getFileExtension(const std::string& f) {
-    const auto pos = f.find(".");
-    if (pos != std::string::npos) {
-      return f.substr(pos + 1);
-    }
-    return "";
+    const auto e = std::filesystem::path{f}.extension().string();
+    return e.empty() ? e : e.substr(1);
   }  // end of getFileExtension
 
 #endif /* MFRONT_HAVE_MADNEX */
@@ -107,10 +105,10 @@ namespace mfront {
 
   std::string SearchPathsHandler::search(const std::string& f) {
     using namespace tfel::system;
-    auto& msf = SearchPathsHandler::getSearchPathsHandler();
     if (fileExistsAndIsReadable(f)) {
       return f;
     }
+    auto& msf = SearchPathsHandler::getSearchPathsHandler();
     for (const auto& p : msf.paths) {
       if (std::holds_alternative<MadnexPath>(p)) {
 #ifdef MFRONT_HAVE_MADNEX
@@ -137,7 +135,7 @@ namespace mfront {
             ((madnex_path.mkt == MadnexPath::MADNEX_ALL) ||
              (madnex_path.mkt == MadnexPath::MADNEX_BEHAVIOUR))) {
           mpath = getMatchingMaterialKnoweldge<static_cast<ptr>(
-              &madnex::DataBase::getAvailableMaterialProperties)>(
+              &madnex::DataBase::getAvailableBehaviours)>(
               db, madnex_path.file_path, madnex_path.material, name,
               "Behaviour");
         }
@@ -145,7 +143,7 @@ namespace mfront {
             ((madnex_path.mkt == MadnexPath::MADNEX_ALL) ||
              (madnex_path.mkt == MadnexPath::MADNEX_MODEL))) {
           mpath = getMatchingMaterialKnoweldge<static_cast<ptr>(
-              &madnex::DataBase::getAvailableMaterialProperties)>(
+              &madnex::DataBase::getAvailableModels)>(
               db, madnex_path.file_path, madnex_path.material, name, "Model");
         }
         if (!mpath.empty()) {
@@ -190,7 +188,7 @@ namespace mfront {
       tfel::raise(
           "SearchPathsHandler::addMadnexSearchPaths: "
           "invalid path '" +
-          p + "' (invalid file extension for file '" + details[1] + "')");
+          p + "' (invalid file extension for file '" + file_path + "')");
     }
     if (details.size() > 1) {
       const auto mkt = [&p, &details] {
@@ -207,7 +205,7 @@ namespace mfront {
         tfel::raise(
             "SearchPathsHandler::addMadnexSearchPaths: "
             "invalid path '" +
-            p + "' (invalid file extension for file '" + details[1] + "')");
+            p + "' (invalid material knowledge type '" + details[1] + "')");
       }();
       const auto& material_id = [&details] {
         if (details.size() == 3) {
@@ -227,6 +225,7 @@ namespace mfront {
           MadnexPath path;
           path.file_path = file_path;
           path.material = material;
+          path.mkt = mkt;
           msf.paths.push_back(path);
         }
       }
@@ -299,6 +298,20 @@ namespace mfront {
   }  // end of resetPaths
 
   SearchPathsHandler::SearchPathsHandler() {
+    // adding path to configuration files generated automatically, installed
+    // in the `mfront/configuration-files` subdirectory of the data directory
+    // of TFEL (`TFEL_DATAROOTDIR` in `cmake/modules/tfel.cmake`)
+    const auto root = tfel::getInstallPath();
+    const auto ds = tfel::system::dirSeparator();
+#ifdef TFEL_APPEND_SUFFIX
+    this->paths.push_back(root + ds + "share" + ds + "tfel-" TFEL_SUFFIX + ds +
+                          "mfront" + ds + "configuration-files");
+#else  /* TFEL_APPEND_SUFFIX */
+    this->paths.push_back(root + ds + "share" + ds + "tfel" + ds + "mfront" +
+                          ds + "configuration-files");
+#endif /* TFEL_APPEND_SUFFIX */
+
+    //
     const char* const p = ::getenv("MFRONT_INCLUDE_PATH");
     if (p != nullptr) {
 #if defined _WIN32 || defined _WIN64

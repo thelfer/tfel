@@ -24,9 +24,9 @@ namespace tfel::utilities {
   struct TestDocumentation {
     TestDocumentation();
     TestDocumentation(const TestDocumentation&);
-    TestDocumentation(TestDocumentation&&);
+    TestDocumentation(TestDocumentation&&) noexcept;
     TestDocumentation& operator=(const TestDocumentation&);
-    TestDocumentation& operator=(TestDocumentation&&);
+    TestDocumentation& operator=(TestDocumentation&&) noexcept;
     //! destructor
     ~TestDocumentation();
     //! name of the test

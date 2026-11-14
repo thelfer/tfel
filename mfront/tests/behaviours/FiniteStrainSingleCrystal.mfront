@@ -3,6 +3,14 @@
  * \brief  
  * \author Jean-Michel Proix - Helfer Thomas
  * \date   20 mars 2014
+ *
+ * The derivatives of the normalisation of the inverse of the plastic
+ * deformation gradient increment by the cubic root of its determinant
+ * are explicitly neglected in the jacobian and the tangent operator,
+ * as numerical tests showed (or at least seemed to show) that they were
+ * negligible. The file
+ * FiniteStrainSingleCrystal_WithCorrections.mfront
+ * takes these corrections into account.
  */
 
 @DSL    ImplicitFiniteStrain;
@@ -247,6 +255,7 @@
     // ok, je suis une fainéasse, j'oublie la correction due au déterminant:
     // 1) il y a de fortes chances pour que ça ne serve à rien
     // 2) il faut bien laisser du boulot au thésard
+    // see FiniteStrainSingleCrystal_WithCorrections.mfront
     dfeel_ddg(i) = 0.5*dfeel_dinv_dFp*ss.mu[i];
   }
   // increment de déformation plastique
@@ -454,7 +463,9 @@
   st2tost2<N,real> Je;
   tvector<12u,Stensor> Jg;
   getPartialJacobianInvert(Je,Jg);
-  // calcul de dinv_Fp_dDF  
+  // calcul de dinv_Fp_dDF: the corrections due to the normalisation of
+  // the inverse of the plastic deformation gradient increment are
+  // explicitly neglected
   t2tot2<N,real> dinv_Fp_dDF((ss.mu[0])^(Jg[0]|dfeel_dDF));
   for(unsigned short i=1;i!=12;++i){
     dinv_Fp_dDF += (ss.mu[i])^(Jg[i]|dfeel_dDF);

@@ -59,7 +59,15 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
     set(export_install_path "share/tfel/cmake")
   endif(TFEL_APPEND_SUFFIX)
   install(FILES "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
-    DESTINATION "${export_install_path}")
+    DESTINATION "${export_install_path}"
+    COMPONENT core)
+
+  if(TFEL_APPEND_SUFFIX)
+    set(TFEL_DATAROOTDIR "share/tfel-${TFEL_SUFFIX}")
+  else(TFEL_APPEND_SUFFIX)
+    set(TFEL_DATAROOTDIR "share/tfel")
+  endif(TFEL_APPEND_SUFFIX)
+
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest mfm)
@@ -68,7 +76,7 @@ set(CPACK_COMPONENT_CORE_DESCRIPTION
   "Contains all the core libraries developped within TFEL")
 set(CPACK_COMPONENT_MFRONT_DESCRIPTION
   "Contains the MFront code generator and the associated libraries")
-set(CPACK_COMPONENT_MTESTS_DESCRIPTION
+set(CPACK_COMPONENT_MTEST_DESCRIPTION
   "Contains the MTest tool")
 
 set(CPACK_COMPONENT_MFRONT_DEPENDS core)
@@ -125,10 +133,12 @@ endfunction(install_mfm_header)
 function(install_data dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/tfel-${TFEL_SUFFIX}/${dir}")
+      DESTINATION "share/tfel-${TFEL_SUFFIX}/${dir}"
+      COMPONENT core)
   else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/tfel/${dir}")
+      DESTINATION "share/tfel/${dir}"
+      COMPONENT core)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(install_data)
 
@@ -149,11 +159,11 @@ function(install_gallery dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/doc/tfel-${TFEL_SUFFIX}/web/gallery/${dir}"
-      COMPONENT web)
+      COMPONENT website)
   else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/doc/tfel/web/gallery/${dir}"
-      COMPONENT web)
+      COMPONENT website)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(install_gallery)
 
@@ -163,6 +173,11 @@ function(tfel_library_internal name component)
   endif(${ARGC} LESS 2)
   add_library(${name} ${ARGN})
   add_library(tfel::${name} ALIAS ${name})
+  # the installed headers require C++20
+  target_compile_features(${name} PUBLIC cxx_std_20)
+  # reference to the library, used by generate_python_stubs to know the
+  # directories containing the dynamic link libraries of the build tree
+  set_property(GLOBAL APPEND PROPERTY TFEL_LIBRARIES "${name}")
   if(TFEL_APPEND_SUFFIX)
     set(export_install_path "share/tfel-${TFEL_SUFFIX}/cmake")
   else(TFEL_APPEND_SUFFIX)
@@ -171,8 +186,10 @@ function(tfel_library_internal name component)
   if(TFEL_APPEND_SUFFIX)
     set_target_properties(${name} PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
   endif(TFEL_APPEND_SUFFIX)
-  set_target_properties(${name}
-    PROPERTIES VERSION ${TFEL_VERSION} SOVERSION ${TFEL_VERSION})
+  if(NOT unversioned-libraries)
+    set_target_properties(${name}
+      PROPERTIES VERSION ${TFEL_VERSION} SOVERSION ${TFEL_VERSION})
+  endif(NOT unversioned-libraries)
   if(enable-include-what-you-use)
     set_property(TARGET ${name}
       PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${TFEL_IWYU_PATH})
@@ -188,7 +205,8 @@ function(tfel_library_internal name component)
   endif(WIN32)
   install(EXPORT ${name} DESTINATION ${export_install_path}
           EXPORT_LINK_INTERFACE_LIBRARIES
-          NAMESPACE tfel:: FILE ${name}Targets.cmake)
+          NAMESPACE tfel:: FILE ${name}Targets.cmake
+          COMPONENT ${component})
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
     set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
   else()
@@ -205,12 +223,14 @@ function(tfel_library_internal name component)
                                 NO_SET_AND_CHECK_MACRO
                                 NO_CHECK_REQUIRED_COMPONENTS_MACRO)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
-          DESTINATION ${export_install_path})
+          DESTINATION ${export_install_path}
+          COMPONENT ${component})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
     add_library(tfel::${name}-static ALIAS ${name}-static)
+    target_compile_features(${name}-static PUBLIC cxx_std_20)
     if(TFEL_APPEND_SUFFIX)
-      set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-{TFEL_SUFFIX}")
+      set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
     else(TFEL_APPEND_SUFFIX)
       set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}")
     endif(TFEL_APPEND_SUFFIX)
@@ -227,13 +247,16 @@ function(tfel_library_internal name component)
     set_target_properties(${name}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
     set_target_properties(${name}-static PROPERTIES COMPILE_FLAGS "-D${name}_EXPORTS -DTFEL_STATIC_BUILD")
     if(WIN32)
-      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION bin)
+      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION bin
+        COMPONENT ${component})
     else(WIN32)
-      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX})
+      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX}
+        COMPONENT ${component})
     endif(WIN32)
     install(EXPORT ${name}-static DESTINATION ${export_install_path}
             NAMESPACE tfel:: FILE ${name}StaticTargets.cmake
-            EXPORT_LINK_INTERFACE_LIBRARIES)
+            EXPORT_LINK_INTERFACE_LIBRARIES
+            COMPONENT ${component})
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
       set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
     else()
@@ -250,7 +273,8 @@ function(tfel_library_internal name component)
                                   NO_SET_AND_CHECK_MACRO
                                   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}StaticConfig.cmake"
-            DESTINATION ${export_install_path})
+            DESTINATION ${export_install_path}
+            COMPONENT ${component})
     target_compile_options (${name}-static PRIVATE "${TFEL_CXX_FLAGS}")
   endif(enable-static)
 endfunction(tfel_library_internal)
@@ -381,7 +405,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS mfront
-	DEPENDS "${mfront_file}"
+	DEPENDS "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	COMMENT "treating mfront source ${source}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
@@ -389,7 +413,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS mfront
-	DEPENDS "${mfront_file}"
+	DEPENDS "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	COMMENT "treating mfront source ${source}.mfront")
       # add_test(NAME mfront-${source}-mfront COMMAND
       # 	COMMAND "${mfront_executable}"
@@ -421,7 +445,7 @@ function(mfront_check_library_base lib interface directory intrinsic_sources)
     PRIVATE TFELMath
     PRIVATE TFELUtilities
     PRIVATE TFELException)
-  add_dependencies(check ${lib})
+  add_dependencies(build-tests ${lib})
 endfunction(mfront_check_library_base)
 
 function(mfront_behaviour_check_library lib interface)
@@ -436,3 +460,224 @@ function(mfront_model_check_library lib interface)
   mfront_check_library_base(${lib} ${interface} "models" OFF ${ARGN})
 endfunction(mfront_model_check_library)
 
+# list of components automatically declared in tfel-check
+set(tfel-check-components)
+# list of substitutions automatically declared in tfel-check
+# the keys are stored in the TFEL_SUBSTITUTIONS_KEYS global property and
+# the value associated with a key in the TFEL_SUBSTITUTION_<key> global
+# property, so that the value may contain any character
+# the substitutions are stored in global properties, not in the cache, so
+# that only the ones of the current configuration are kept
+function(add_tfel_substitution key value)
+  get_property(_keys GLOBAL PROPERTY TFEL_SUBSTITUTIONS_KEYS)
+  if(key IN_LIST _keys)
+    get_property(_value GLOBAL PROPERTY TFEL_SUBSTITUTION_${key})
+    if(NOT "${_value}" STREQUAL "${value}")
+      message(FATAL_ERROR "a tfel substitution with key '${key}' is already defined")
+    endif()
+  else()
+    set_property(GLOBAL APPEND PROPERTY TFEL_SUBSTITUTIONS_KEYS "${key}")
+    set_property(GLOBAL PROPERTY TFEL_SUBSTITUTION_${key} "${value}")
+  endif()
+endfunction()
+add_tfel_substitution(TFEL_CXX_STANDARD "${CMAKE_CXX_STANDARD}")
+
+# function used to search additional C++ compilers, if needed
+function(define_tfel_cxx_compiler compiler)
+ if(compiler STREQUAL "g++")
+   if(NOT TFEL_GXX_COMPILER)
+     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        set(TFEL_GXX_COMPILER "${CMAKE_CXX_COMPILER}")
+     else()
+        find_program(TFEL_GXX_COMPILER NAMES "g++" REQUIRED)
+     endif()
+   endif()
+   # the substitution is also defined if the compiler is given by the user
+   set(TFEL_GXX_COMPILER "${TFEL_GXX_COMPILER}" PARENT_SCOPE)
+   add_tfel_substitution(TFEL_GXX_COMPILER "${TFEL_GXX_COMPILER}")
+   message(STATUS "TFEL_GXX_COMPILER: ${TFEL_GXX_COMPILER}")
+ elseif(compiler STREQUAL "clang++")
+   if(NOT TFEL_CLANGXX_COMPILER)
+     if((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") OR
+        (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang"))
+        set(TFEL_CLANGXX_COMPILER "${CMAKE_CXX_COMPILER}")
+     else()
+        find_program(TFEL_CLANGXX_COMPILER NAMES "clang++" REQUIRED)
+     endif()
+   endif()
+   # the substitution is also defined if the compiler is given by the user
+   set(TFEL_CLANGXX_COMPILER "${TFEL_CLANGXX_COMPILER}" PARENT_SCOPE)
+   add_tfel_substitution(TFEL_CLANGXX_COMPILER "${TFEL_CLANGXX_COMPILER}")
+   message(STATUS "TFEL_CLANGXX_COMPILER: ${TFEL_CLANGXX_COMPILER}")
+ elseif(compiler STREQUAL "icpx")
+   if(NOT TFEL_ICPX_COMPILER)
+     if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+        set(TFEL_ICPX_COMPILER "${CMAKE_CXX_COMPILER}")
+     else()
+        find_program(TFEL_ICPX_COMPILER NAMES "icpx" REQUIRED)
+     endif()
+   endif()
+   # the substitution is also defined if the compiler is given by the user
+   set(TFEL_ICPX_COMPILER "${TFEL_ICPX_COMPILER}" PARENT_SCOPE)
+   add_tfel_substitution(TFEL_ICPX_COMPILER "${TFEL_ICPX_COMPILER}")
+   message(STATUS "TFEL_ICPX_COMPILER: ${TFEL_ICPX_COMPILER}")
+ elseif(compiler STREQUAL "acpp")
+   if(NOT TFEL_ACPP_COMPILER)
+     find_program(TFEL_ACPP_COMPILER NAMES "acpp" REQUIRED)
+   endif()
+   # the substitution is also defined if the compiler is given by the user
+   set(TFEL_ACPP_COMPILER "${TFEL_ACPP_COMPILER}" PARENT_SCOPE)
+   add_tfel_substitution(TFEL_ACPP_COMPILER "${TFEL_ACPP_COMPILER}")
+   message(STATUS "TFEL_ACPP_COMPILER: ${TFEL_ACPP_COMPILER}")
+ elseif(compiler STREQUAL "nvhpc")
+   if(NOT TFEL_NVHPC_COMPILER)
+     if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
+        set(TFEL_NVHPC_COMPILER "${CMAKE_CXX_COMPILER}")
+     else()
+        find_program(TFEL_NVHPC_COMPILER NAMES "nvc++" REQUIRED)
+     endif()
+   endif()
+   # the substitution is also defined if the compiler is given by the user
+   set(TFEL_NVHPC_COMPILER "${TFEL_NVHPC_COMPILER}" PARENT_SCOPE)
+   add_tfel_substitution(TFEL_NVHPC_COMPILER "${TFEL_NVHPC_COMPILER}")
+   message(STATUS "TFEL_NVHPC_COMPILER: ${TFEL_NVHPC_COMPILER}")
+ else()
+   message(FATAL_ERROR "unsupported C++ compiler '${compiler}'. "
+           "Supported compilers are 'g++', 'clang++', 'icpx', 'acpp', 'nvhpc'")
+ endif()
+endfunction(define_tfel_cxx_compiler)
+
+####
+# Support of tests related to the generic-parallel interface
+####
+
+set(_tfel-generic-parallel_supported_configurations
+    "cuda-nvcc" "cuda-clang" "hip-hipcc" "hip-clang"
+    "stlpar-parunseq-gcc"
+    "stlpar-parunseq-clang"
+    "stlpar-parunseq-icpx"
+    "stlpar-parunseq-nvhpc-gpu"
+#    "stlpar-parunseq-acpp-generic"
+    "sycl-default-icpx"
+    "sycl-default-acpp"
+    "sycl-gpu-acpp")
+
+foreach(conf ${generic-parallel-configurations})
+  if(NOT "${conf}" IN_LIST _tfel-generic-parallel_supported_configurations)
+    message(FATAL_ERROR "unsupported configuration '${conf}' for the tests of the generic-parallel interface. "
+            "Supported configuration are '${_tfel-generic-parallel_supported_configurations}'")
+  endif()
+  set(_tfel-enable-generic-parallel-${conf}-configuration ON)
+  if(NOT ${conf} STREQUAL "hip-clang")
+    list(APPEND tfel-check-components
+         "mfront::material_property::generic-parallel_interface::supported_configuration::${conf}")
+  endif()
+endforeach()
+
+set(TFEL_REQUIRES_CUDA OFF)
+set(TFEL_REQUIRES_HIP OFF)
+
+if(_tfel-enable-generic-parallel-cuda-nvcc-configuration OR
+   _tfel-enable-generic-parallel-cuda-clang-configuration)
+  set(TFEL_REQUIRES_CUDA ON)
+endif()
+
+if(_tfel-enable-generic-parallel-hip-hipcc-configuration OR
+   _tfel-enable-generic-parallel-hip-clang-configuration)
+  set(TFEL_REQUIRES_HIP ON)
+endif()
+
+if(TFEL_REQUIRES_HIP)
+ if(NOT TFEL_HIPCC_COMPILER)
+   find_program(TFEL_HIPCC_COMPILER NAMES "hipcc" REQUIRED)
+ endif(NOT TFEL_HIPCC_COMPILER)
+ # the substitution is also defined if the compiler is given by the user
+ add_tfel_substitution(TFEL_HIPCC_COMPILER "${TFEL_HIPCC_COMPILER}")
+ if(NOT HIP_PLATFORM)
+   if(NOT DEFINED ENV{HIP_PLATFORM})
+     message(FATAL_ERROR "HIP_PLATFORM is not defined")
+   endif()
+   # cached, so that a reconfiguration does not depend on the environment
+   set(HIP_PLATFORM "$ENV{HIP_PLATFORM}" CACHE STRING
+       "HIP platform ('amd' or 'nvidia')")
+ endif(NOT HIP_PLATFORM)
+ if(HIP_PLATFORM STREQUAL "nvidia")
+   set(TFEL_REQUIRES_CUDA ON)
+   # hipcc calls nvcc
+   set(TFEL_HIPCC_FLAGS
+       "-x cu --compiler-options=-fPIC --expt-relaxed-constexpr -diag-suppress 20012")
+   if("hip-clang" IN_LIST generic-parallel-configurations)
+    list(APPEND tfel-check-components
+         "mfront::material_property::generic-parallel_interface::supported_configuration::hip-clang-nvidia-platform")
+   endif("hip-clang" IN_LIST generic-parallel-configurations)
+ elseif(HIP_PLATFORM STREQUAL "amd")
+   # hipcc calls clang
+   set(TFEL_HIPCC_FLAGS "-fPIC")
+   if("hip-clang" IN_LIST generic-parallel-configurations)
+     message(WARNING "the 'hip-clang' configuration only targets the NVIDIA "
+             "platform: on the AMD platform, it installs no configuration "
+             "file and declares no test (use 'hip-hipcc')")
+   endif("hip-clang" IN_LIST generic-parallel-configurations)
+ else()
+   message(FATAL_ERROR "unsupported value of HIP_PLATFORM. Expected 'amd' or 'nvidia', got '${HIP_PLATFORM}'")
+ endif()
+endif(TFEL_REQUIRES_HIP)
+
+if(TFEL_REQUIRES_CUDA)
+  find_package(CUDAToolkit REQUIRED)
+  if(NOT CMAKE_CUDA_COMPILER)
+   set(CMAKE_CUDA_COMPILER "${CUDAToolkit_NVCC_EXECUTABLE}")
+  endif()
+  message(STATUS "nvcc compiler: ${CUDAToolkit_NVCC_EXECUTABLE}")
+  set(TFEL_NVCC_COMPILER "${CUDAToolkit_NVCC_EXECUTABLE}")
+  add_tfel_substitution(TFEL_NVCC_COMPILER "${TFEL_NVCC_COMPILER}")
+  if(CUDAToolkit_LIBRARY_ROOT)
+    set(TFEL_CUDA_PATH "${CUDAToolkit_LIBRARY_ROOT}")
+  else(CUDAToolkit_LIBRARY_ROOT)
+    cmake_path(GET CUDAToolkit_BIN_DIR PARENT_PATH TFEL_CUDA_PATH)
+  endif(CUDAToolkit_LIBRARY_ROOT)  
+  add_tfel_substitution(TFEL_CUDA_PATH "${TFEL_CUDA_PATH}")
+  add_tfel_substitution(TFEL_CUDA_LIBRARY_DIR "${CUDAToolkit_LIBRARY_DIR}")
+endif()
+
+if(TFEL_REQUIRES_HIP)
+  find_package(hip REQUIRED)
+  set(TFEL_HIP_INCLUDES "${HIP_INCLUDE_DIR}")
+  add_tfel_substitution(TFEL_HIP_INCLUDE_DIR "${TFEL_HIP_INCLUDES}")
+  # The headers of HIP are given with `-I`, not `-isystem`: when HIP is
+  # installed in `/usr`, `-isystem /usr/include` would place `/usr/include`
+  # before the headers of the C++ standard library and break their
+  # `#include_next` directives.
+  if(HIP_PLATFORM STREQUAL "nvidia")
+    # hipcc does not give the headers of HIP to nvcc
+    if(NOT "${HIP_INCLUDE_DIR}" IN_LIST CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
+      string(APPEND TFEL_HIPCC_FLAGS " -I${HIP_INCLUDE_DIR}")
+    endif()
+  endif()
+  add_tfel_substitution(TFEL_HIPCC_FLAGS "${TFEL_HIPCC_FLAGS}")
+endif(TFEL_REQUIRES_HIP)
+
+if((_tfel-enable-generic-parallel-cuda-clang-configuration) OR
+   (_tfel-enable-generic-parallel-hip-clang-configuration) OR
+   (_tfel-enable-generic-parallel-stlpar-parunseq-clang-configuration))
+  define_tfel_cxx_compiler("clang++")
+endif()
+
+if(_tfel-enable-generic-parallel-stlpar-parunseq-gcc-configuration)
+  define_tfel_cxx_compiler("g++")
+endif(_tfel-enable-generic-parallel-stlpar-parunseq-gcc-configuration)
+
+if(_tfel-enable-generic-parallel-stlpar-parunseq-nvhpc-gpu-configuration)
+  define_tfel_cxx_compiler("nvhpc")
+endif(_tfel-enable-generic-parallel-stlpar-parunseq-nvhpc-gpu-configuration)
+
+if((_tfel-enable-generic-parallel-stlpar-parunseq-icpx-configuration) OR
+   (_tfel-enable-generic-parallel-sycl-default-icpx-configuration))
+  define_tfel_cxx_compiler("icpx")
+endif()
+
+if((_tfel-enable-generic-parallel-stlpar-parunseq-acpp-generic-configuration) OR
+   (_tfel-enable-generic-parallel-sycl-default-acpp-configuration) OR
+   (_tfel-enable-generic-parallel-sycl-gpu-acpp-configuration))
+  define_tfel_cxx_compiler("acpp")
+endif()

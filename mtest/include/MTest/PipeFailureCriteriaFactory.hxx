@@ -2,9 +2,15 @@
  * \file   mtest/include/MTest/PipeFailureCriteriaFactory.hxx
  * \brief
  * \author Thomas Helfer
- * \date   12/09/2022
+ * \date 12/09/2022
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
@@ -34,7 +40,14 @@ namespace mtest {
     using Generator = std::function<std::unique_ptr<PipeFailureCriterion>(
         const std::string&, const ParametersMap&)>;
     //! \brief return the unique instance of the factory
-    static PipeFailureCriteriaFactory& getFactory() noexcept;
+    [[nodiscard]] static PipeFailureCriteriaFactory& getFactory() noexcept;
+    //
+    PipeFailureCriteriaFactory(PipeFailureCriteriaFactory&&) = delete;
+    PipeFailureCriteriaFactory(const PipeFailureCriteriaFactory&) = delete;
+    PipeFailureCriteriaFactory& operator=(PipeFailureCriteriaFactory&&) =
+        delete;
+    PipeFailureCriteriaFactory& operator=(const PipeFailureCriteriaFactory&) =
+        delete;
     /*!
      * \brief declare a new generator
      * \param[in] n: name of the failure criterion
@@ -46,22 +59,12 @@ namespace mtest {
      * \param[in] n: name of the failure criterion
      * \param[in] d: data passed to initialize the failure criterion
      */
-    std::unique_ptr<PipeFailureCriterion> generate(const std::string&,
-                                                   const ParametersMap&) const;
+    [[nodiscard]] std::unique_ptr<PipeFailureCriterion> generate(
+        const std::string&, const ParametersMap&) const;
 
    private:
     //! \brief default constructor
     PipeFailureCriteriaFactory() noexcept;
-    //! \brief move constructor (disabled)
-    PipeFailureCriteriaFactory(PipeFailureCriteriaFactory&&) = delete;
-    //! \brief copy constructor (disabled)
-    PipeFailureCriteriaFactory(const PipeFailureCriteriaFactory&) = delete;
-    //! \brief move assignement (disabled)
-    PipeFailureCriteriaFactory& operator=(PipeFailureCriteriaFactory&&) =
-        delete;
-    //! \brief copy assignement (disabled)
-    PipeFailureCriteriaFactory& operator=(const PipeFailureCriteriaFactory&) =
-        delete;
     //! \brief destructor
     ~PipeFailureCriteriaFactory();
     //! \brief list of registred generators

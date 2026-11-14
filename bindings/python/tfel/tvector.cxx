@@ -24,31 +24,35 @@ template <unsigned short N>
 static void declaretvector(pybind11::module_& m, const char* const n) {
   using tvector = tfel::math::tvector<N, double>;
   pybind11::class_<tvector>(m, n, pybind11::buffer_protocol())
-      .def_static("zero", &tvector::zero)
+      .def_static("zero", &tvector::zero,
+                  "Return a new instance of the Child class filled with null "
+                  "values")
       .def_buffer([](tvector& v) -> pybind11::buffer_info {
         return pybind11::buffer_info(
             v.data(),       /* Pointer to buffer */
             sizeof(double), /* Size of one scalar */
             pybind11::format_descriptor<double>::format(), /* Python
-                                                       struct-style format
-                                                       descriptor */
+                                                        struct-style format
+                                                        descriptor */
             1,          /* Number of dimensions */
             {v.size()}, /* Buffer dimensions */
             {sizeof(double)});
       })
-      .def(pybind11::init<>())
-      .def(pybind11::init<>(
-          [](pybind11::array_t<double, pybind11::array::c_style |
-                                           pybind11::array::forcecast>& u) {
-            if (u.size() != N) {
-              tfel::raise<std::range_error>("invalid size of TVector");
-            }
-            tvector t;
-            for (std::size_t i = 0; i < N; i++) {
-              t(i) = u.unchecked<1>()(i);
-            }
-            return t;
-          }))
+      .def(pybind11::init<>(), "Default constructor")
+      .def(
+          pybind11::init<>(
+              [](pybind11::array_t<double, pybind11::array::c_style |
+                                               pybind11::array::forcecast>& u) {
+                if (u.size() != N) {
+                  tfel::raise<std::range_error>("invalid size of TVector");
+                }
+                tvector t;
+                for (std::size_t i = 0; i < N; i++) {
+                  t(i) = u.unchecked<1>()(i);
+                }
+                return t;
+              }),
+          pybind11::arg("u"))
       .def("__len__", [](const tvector& v) { return v.size(); })
       .def("__repr__",
            [](const tvector& v) {
@@ -87,9 +91,9 @@ static void declaretvector(pybind11::module_& m, const char* const n) {
            [](const tvector& a, const tvector& b) -> tvector { return a - b; })
       .def("__mul__",
            [](const tvector& a, const double b) -> tvector { return a * b; })
-      .def("__mul__",
-           [](const double a, const tvector& b) -> tvector { return a * b; })
-      .def("__div__",
+      .def("__rmul__",
+           [](const tvector& b, const double a) -> tvector { return a * b; })
+      .def("__truediv__",
            [](const tvector& a, const double b) -> tvector { return a / b; })
       .def(pybind11::self += pybind11::self)
       .def(pybind11::self -= pybind11::self)

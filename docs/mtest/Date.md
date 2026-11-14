@@ -2,7 +2,7 @@ The `@Date` keyword allows the user to precise when the mtest file was
 written.
 
 All the following words are appended to the date up to a final
-semi-colon.
+semicolon.
 
 ## Example
 

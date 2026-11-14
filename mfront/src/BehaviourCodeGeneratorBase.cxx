@@ -2,7 +2,7 @@
  * \file   mfront/src/BehaviourCodeGeneratorBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03/08/2022
+ * \date 03/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,6 +14,9 @@
 #include <ostream>
 #include <fstream>
 #include <sstream>
+#include <optional>
+#include <algorithm>
+#include <functional>
 #include "TFEL/Raise.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/System/System.hxx"
@@ -40,6 +43,122 @@
 #include "MFront/BehaviourCodeGeneratorBase.hxx"
 
 namespace mfront {
+
+  /*!
+   * \return the types of the arguments of the constructor declared at the
+   * beginning of the given code, i.e. without the names of the arguments, or
+   * nothing if no constructor is found
+   * \param[in] code: code of the constructor
+   * \param[in] n: name of the class
+   */
+  static std::optional<std::string> getConstructorArgumentsTypes(
+      const std::string& code, const std::string& n) {
+    using tfel::utilities::CxxTokenizer;
+    auto t = CxxTokenizer{};
+    try {
+      // only the declaration and the initializers are tokenized
+      t.parseString(code.substr(0, code.find("\n{")));
+      t.stripComments();
+    } catch (...) {
+      return {};
+    }
+    // look for the name of the class followed by an opening parenthesis
+    const auto pe = t.end();
+    auto p = t.begin();
+    while ((p != pe) && (std::next(p) != pe) &&
+           ((p->value != n) || (std::next(p)->value != "("))) {
+      ++p;
+    }
+    if ((p == pe) || (std::next(p) == pe)) {
+      return {};
+    }
+    auto r = std::string{};
+    auto arg = std::vector<std::string>{};
+    auto add_argument = [&r, &arg] {
+      // the last token is the name of the argument if it is an identifier
+      // preceded by the name of a type
+      const auto is_identifier = [](const std::string& v) {
+        return CxxTokenizer::isValidIdentifier(v, false);
+      };
+      if ((arg.size() > 1) && (is_identifier(arg.back())) &&
+          (std::any_of(arg.begin(), std::prev(arg.end()), is_identifier))) {
+        arg.pop_back();
+      }
+      for (const auto& v : arg) {
+        r += v + ' ';
+      }
+      arg.clear();
+    };
+    auto depth = 0;
+    for (p = std::next(p, 2); p != pe; ++p) {
+      const auto& v = p->value;
+      if ((depth == 0) && (v == ")")) {
+        add_argument();
+        return r;
+      }
+      if ((depth == 0) && (v == ",")) {
+        add_argument();
+        r += ", ";
+        continue;
+      }
+      if ((v == "(") || (v == "<")) {
+        ++depth;
+      } else if ((v == ")") || (v == ">")) {
+        --depth;
+      } else if (v == ">>") {
+        depth -= 2;
+      }
+      arg.push_back(v);
+    }
+    return {};
+  }  // end of getConstructorArgumentsTypes
+
+  /*!
+   * \brief write the constructors that the interfaces add to a class
+   * (behaviour data, integration data or behaviour). Two interfaces adding
+   * constructors with the same arguments, which would not compile, are
+   * reported.
+   * \param[out] os: output stream
+   * \param[in] interfaces: interfaces
+   * \param[in] bd: behaviour description
+   * \param[in] h: modelling hypothesis
+   * \param[in] c: name of the class
+   * \param[in] w: function writing the constructor of an interface
+   */
+  static void writeInterfacesSpecificConstructors(
+      std::ostream& os,
+      const BehaviourCodeGeneratorBase::BehaviourInterfaceMap& interfaces,
+      const BehaviourDescription& bd,
+      const tfel::material::ModellingHypothesis::Hypothesis h,
+      const std::string& c,
+      const std::function<void(std::ostream&,
+                               const AbstractBehaviourInterface&)>& w) {
+    // types of the arguments of the constructors already written and names
+    // of the associated interfaces
+    auto constructors = std::map<std::string, std::string>{};
+    for (const auto& i : interfaces) {
+      if (!i.second->isBehaviourConstructorRequired(h, bd)) {
+        continue;
+      }
+      std::ostringstream code;
+      w(code, *(i.second));
+      const auto args = getConstructorArgumentsTypes(code.str(), c);
+      if (args.has_value()) {
+        const auto p = constructors.find(*args);
+        if (p != constructors.end()) {
+          tfel::raise(
+              "BehaviourCodeGeneratorBase::"
+              "writeInterfacesSpecificConstructors: the interfaces '" +
+              p->second + "' and '" + i.first + "' both add to the class '" +
+              c +
+              "' a constructor with the same arguments. Those interfaces "
+              "can't be used in the same call to mfront");
+        }
+        constructors.insert({*args, i.first});
+      }
+      os << code.str();
+    }
+  }  // end of writeInterfacesSpecificConstructors
 
   static std::string makeCamelCase(std::string_view s) {
     const auto words = tfel::utilities::tokenize(s, '_', false);
@@ -71,7 +190,7 @@ namespace mfront {
       std::vector<std::string>& tmpnames,
       const BehaviourDescription& bd,
       const std::string& p) {
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(p)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(p, false)) {
       tfel::raise(
           "getTemporaryVariableName: "
           "invalid variable prefix '" +
@@ -121,6 +240,18 @@ namespace mfront {
       const BehaviourDescription& d,
       const BehaviourInterfaceMap& bim)
       : fd(f), bd(d), interfaces(bim) {}  // end of BehaviourCodeGeneratorBase
+
+  void BehaviourCodeGeneratorBase::checkArraySizeOfMainVariables(
+      const std::string_view m,
+      const std::pair<Gradient, ThermodynamicForce>& mv) {
+    if (mv.first.arraySize != mv.second.arraySize) {
+      tfel::raise(std::string{m} + ": the array size of the gradient '" +
+                  mv.first.name +
+                  "' is "
+                  "different from the array size of the thermodynamic force '" +
+                  mv.second.name + "'");
+    }
+  }  // end of checkArraySizeOfMainVariables
 
   void BehaviourCodeGeneratorBase::throwRuntimeError(
       const std::string_view m, const std::string_view e) const {
@@ -364,7 +495,7 @@ namespace mfront {
       out << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      out << "* \\date   " << this->fd.date << '\n';
+      out << "* \\date " << this->fd.date << '\n';
     }
     out << " */\n\n";
     this->writeHeaderGuardBegin(out, cn, true);
@@ -537,7 +668,7 @@ namespace mfront {
       out << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      out << "* \\date   " << this->fd.date << '\n';
+      out << "* \\date " << this->fd.date << '\n';
     }
     out << " */\n\n";
     this->writeHeaderGuardBegin(out, cn, false);
@@ -824,7 +955,12 @@ namespace mfront {
     throw_if(f.modifiedVariables.size() != outputVariables.size(),
              "invalid number of functions in model '" + md.className + "'");
     throw_if(f.name.empty(), "unnamed function");
-    throw_if((f.usedVariables.empty()) && (!f.useTimeIncrement),
+    // the values at the beginning of the time step of the outputs updated by
+    // a compound assignment are passed as arguments, as the other values at
+    // the beginning of the time step (see the mfront model interface)
+    const auto& updatedOutputs = f.compoundAssignedVariables;
+    throw_if((f.usedVariables.empty()) && (updatedOutputs.empty()) &&
+                 (!f.useTimeIncrement),
              "no used variable for function '" + f.name + "'");
     const auto sm = getTemporaryVariableName(tmpnames, this->bd, bn);
     if (inputVariables.size() == 1) {
@@ -849,9 +985,13 @@ namespace mfront {
         out << "this->" << outputVariables[p - pb] << ", ";
       }
     }
-    const auto args = [&f] {
+    const auto args = [&f, &updatedOutputs] {
+      auto vars = f.usedVariables;
+      for (const auto& v : updatedOutputs) {
+        vars.insert(v + "_1");
+      }
       auto a = std::vector<std::string>{};
-      for (const auto& uv : f.usedVariables) {
+      for (const auto& uv : vars) {
         a.push_back(uv);
       }
       if (f.useTimeIncrement) {
@@ -907,11 +1047,9 @@ namespace mfront {
       const VariableDescriptionContainer& v,
       const std::string& prefix,
       const std::string& suffix,
-      const std::string& fileName,
       const bool useTimeDerivative) const {
     for (const auto& e : v) {
-      this->writeVariableDeclaration(f, e, prefix, suffix, fileName,
-                                     useTimeDerivative);
+      this->writeVariableDeclaration(f, e, prefix, suffix, useTimeDerivative);
     }
   }  // end of writeVariablesDeclarations
 
@@ -920,14 +1058,13 @@ namespace mfront {
       const VariableDescription& v,
       const std::string& prefix,
       const std::string& suffix,
-      const std::string& fileName,
       const bool useTimeDerivative) const {
     const auto n = prefix + v.name + suffix;
     const auto t = (!useTimeDerivative)
                        ? v.type
                        : SupportedTypes::getTimeDerivativeType(v.type);
-    if ((!getDebugMode()) && (v.lineNumber != 0u)) {
-      f << "#line " << v.lineNumber << " \"" << fileName << "\"\n";
+    if (!getDebugMode()) {
+      printLinePragma(f, v.lineNumber, this->fd.fileName);
     }
     if (v.arraySize == 1u) {
       f << t << " " << n << ";\n";
@@ -1000,13 +1137,8 @@ namespace mfront {
            << ";\n";
     }
     // physical constants
-    if (this->bd.useQt()) {
-      file << "using PhysicalConstants = "
-           << "tfel::PhysicalConstants<NumericType, use_qt>;\n";
-    } else {
-      file << "using PhysicalConstants = "
-           << "tfel::PhysicalConstants<NumericType, false>;\n";
-    }
+    writePhysicalConstantsAlias(file, this->bd, "NumericType",
+                                this->bd.useQt());
   }  // end of writeTypeAliases
 
   bool BehaviourCodeGeneratorBase::usesStateVariableTimeDerivative() const {
@@ -1075,7 +1207,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << " */\n\n";
   }
@@ -1230,15 +1362,8 @@ namespace mfront {
       os << "ThermalExpansionCoefficientTensor A;\n";
     }
     for (const auto& mv : this->bd.getMainVariables()) {
-      if (mv.first.arraySize != mv.second.arraySize) {
-        tfel::raise(
-            "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers: "
-            "the array size of the gradient '" +
-            mv.first.name +
-            "' is "
-            "different from the array size of the thermodynamic force '" +
-            mv.second.name + "'");
-      }
+      checkArraySizeOfMainVariables(
+          "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers", mv);
       if (mv.first.arraySize == 1) {
         if (Gradient::isIncrementKnown(mv.first)) {
           os << mv.first.type << " " << mv.first.name << ";\n\n";
@@ -1351,11 +1476,12 @@ namespace mfront {
     }
     os << "\n{}\n\n";
     // Creating constructor for external interfaces
-    for (const auto& i : this->interfaces) {
-      if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
-        i.second->writeBehaviourDataConstructor(os, h, this->bd);
-      }
-    }
+    writeInterfacesSpecificConstructors(
+        os, this->interfaces, this->bd, h,
+        this->bd.getClassName() + "BehaviourData",
+        [this, h](std::ostream& out, const AbstractBehaviourInterface& i) {
+          i.writeBehaviourDataConstructor(out, h, this->bd);
+        });
   }  // end of writeBehaviourDataConstructors
 
   void BehaviourCodeGeneratorBase::writeBehaviourDataAssignementOperator(
@@ -1454,7 +1580,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << "*/\n";
   }
@@ -1575,7 +1701,7 @@ namespace mfront {
     this->checkBehaviourDataFile(os);
     this->writeVariablesDeclarations(
         os, this->bd.getBehaviourData(h).getMaterialProperties(), "", "",
-        this->fd.fileName, false);
+        false);
     os << '\n';
   }
 
@@ -1583,12 +1709,11 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     const auto& d = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, d.getStateVariables(), "", "",
-                                     this->fd.fileName, false);
+    this->writeVariablesDeclarations(os, d.getStateVariables(), "", "", false);
     this->writeVariablesDeclarations(os, d.getAuxiliaryStateVariables(), "", "",
-                                     this->fd.fileName, false);
+                                     false);
     this->writeVariablesDeclarations(os, d.getExternalStateVariables(), "", "",
-                                     this->fd.fileName, false);
+                                     false);
     os << '\n';
   }
 
@@ -1779,7 +1904,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     if (!this->fd.description.empty()) {
       os << this->fd.description << '\n';
@@ -1899,7 +2024,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << " */\n\n";
   }
@@ -1976,7 +2101,7 @@ namespace mfront {
     os << "/*!\n"
        << " * \\brief Update auxiliary state variables at end of integration\n"
        << " */\n"
-       << "TFEL_HOST_DEVICE [[nodiscard]] bool updateAuxiliaryStateVariables()"
+       << "[[nodiscard]] TFEL_HOST_DEVICE bool updateAuxiliaryStateVariables()"
        << "{\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -2126,11 +2251,10 @@ namespace mfront {
        << "*/\n";
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag smflag, const SMType smt) override "
-            "final{\n";
+         << "integrate(const SMFlag smflag, const SMType smt) final{\n";
     } else {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag, const SMType) override final{\n";
+         << "integrate(const SMFlag, const SMType) final{\n";
     }
     os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -2263,8 +2387,11 @@ namespace mfront {
       mfront::writeBoundsChecks(os, v, v.name, "N", "policy", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writeBoundsChecks(os, v, v.name + '[' + std::to_string(i) + ']',
-                                  "N", "policy", true, b);
+        if (v.hasBounds(i)) {
+          mfront::writeBoundsChecks(os, v, v.getBounds(i),
+                                    v.name + '[' + std::to_string(i) + ']', "N",
+                                    "policy", true, b);
+        }
       }
     }
   }  // end of writeBoundsChecks
@@ -2275,8 +2402,11 @@ namespace mfront {
       mfront::writePhysicalBoundsChecks(os, v, v.name, "N", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
-        mfront::writePhysicalBoundsChecks(
-            os, v, v.name + '[' + std::to_string(i) + ']', "N", true, b);
+        if (v.hasPhysicalBounds(i)) {
+          mfront::writePhysicalBoundsChecks(
+              os, v, v.getPhysicalBounds(i),
+              v.name + '[' + std::to_string(i) + ']', "N", true, b);
+        }
       }
     }
   }  // end of writePhysicalBoundsChecks
@@ -2379,12 +2509,12 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourConstructors(
       std::ostream& os, const Hypothesis h) const {
     auto tmpnames = std::vector<std::string>{};
-    auto write_body = [this, &os, h] {
-      os << "using namespace std;\n"
-         << "using namespace tfel::math;\n"
-         << "using std::vector;\n";
-      writeMaterialLaws(os, this->bd.getMaterialLaws());
-      this->writeBehaviourParameterInitialisation(os, h);
+    auto write_body = [this, h](std::ostream& out) {
+      out << "using namespace std;\n"
+          << "using namespace tfel::math;\n"
+          << "using std::vector;\n";
+      writeMaterialLaws(out, this->bd.getMaterialLaws());
+      this->writeBehaviourParameterInitialisation(out, h);
     };
     this->checkBehaviourFile(os);
     // initializers
@@ -2397,7 +2527,7 @@ namespace mfront {
         os << "\n: " << init;
       }
       os << "\n{";
-      write_body();
+      write_body(os);
       os << "}\n\n";
     }
     os << "/*!\n"
@@ -2428,18 +2558,19 @@ namespace mfront {
       os << ",\n" << init;
     }
     os << "\n{\n";
-    write_body();
+    write_body(os);
     os << "}\n\n";
     // constructor specific to interfaces
-    for (const auto& i : this->interfaces) {
-      if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
-        i.second->writeBehaviourConstructorHeader(os, this->bd, h, init);
-        os << "\n{\n";
-        write_body();
-        i.second->writeBehaviourConstructorBody(os, this->bd, h);
-        os << "}\n\n";
-      }
-    }
+    writeInterfacesSpecificConstructors(
+        os, this->interfaces, this->bd, h, this->bd.getClassName(),
+        [this, h, &init, &write_body](std::ostream& out,
+                                      const AbstractBehaviourInterface& i) {
+          i.writeBehaviourConstructorHeader(out, this->bd, h, init);
+          out << "\n{\n";
+          write_body(out);
+          i.writeBehaviourConstructorBody(out, this->bd, h);
+          out << "}\n\n";
+        });
   }
 
   void BehaviourCodeGeneratorBase::writeHillTensorComputation(
@@ -2703,9 +2834,14 @@ namespace mfront {
       const auto& amp = m.get<BehaviourDescription::AnalyticMaterialProperty>();
       tfel::math::Evaluator e(amp.f);
       auto mi = std::map<std::string, std::string>{};
+      const auto use_qt = this->bd.useQt();
       for (const auto& i :
            this->bd.getMaterialPropertyInputs(e.getVariablesNames())) {
-        mi[i.name] = f(i);
+        if (use_qt) {
+          mi[i.name] = "tfel::math::base_type_cast(" + f(i) + ")";
+        } else {
+          mi[i.name] = f(i);
+        }
       }
       out << e.getCxxFormula(mi);
     } else if (m.empty()) {
@@ -3096,6 +3232,17 @@ namespace mfront {
         const auto& s = d.get<BehaviourData::Relocation>();
         throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
                  "null swelling is not supported here");
+        // In the plane hypotheses, the orthoradial direction is the second
+        // one. With the `Pipe` convention, the relocation is added to the
+        // third direction of orthotropy, which is the orthoradial one: the
+        // conversion to the axes of the modelling hypothesis, made at the
+        // end of this method, exchanges the second and third components.
+        const auto* const od =
+            ((this->bd.getSymmetryType() == mfront::ORTHOTROPIC) &&
+             (this->bd.getOrthotropicAxesConvention() ==
+              OrthotropicAxesConvention::PIPE))
+                ? "2"
+                : "1";
         if (s.sfe.is<BehaviourData::SFED_ESV>()) {
           const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
           if ((h ==
@@ -3113,11 +3260,11 @@ namespace mfront {
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "mfront_dl0_l0[0]+=this->" << ev << "/2;\n"
-               << "mfront_dl0_l0[1]+=this->" << ev << "/2;\n"
+               << "mfront_dl0_l0[" << od << "]+=this->" << ev << "/2;\n"
                << "mfront_dl1_l0[0]+=(this->" << ev << "+this->d" << ev
                << ")/2;\n"
-               << "mfront_dl1_l0[1]+=(this->" << ev << "+this->d" << ev
-               << ")/2;\n";
+               << "mfront_dl1_l0[" << od << "]+=(this->" << ev << "+this->d"
+               << ev << ")/2;\n";
           }
         } else if (s.sfe.is<std::shared_ptr<ModelDescription>>()) {
           const auto& md = *(s.sfe.get<std::shared_ptr<ModelDescription>>());
@@ -3132,14 +3279,27 @@ namespace mfront {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "mfront_dl0_l0[2]+=(this->" << vs << ")/2;\n";
           }
-          this->writeModelCall(os, tmpnames, h, md,
-                               std::vector<std::string>(1u, vs),
-                               std::vector<std::string>(1u, vs), "sfeh");
           if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
             os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
-               << "mfront_dl0_l0[1]+=(this->" << vs << ")/2;\n";
+               << "mfront_dl0_l0[" << od << "]+=(this->" << vs << ")/2;\n";
+          }
+          this->writeModelCall(os, tmpnames, h, md,
+                               std::vector<std::string>(1u, vs),
+                               std::vector<std::string>(1u, vs), "sfeh");
+          if ((h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
+              (h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)) {
+            os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl1_l0[2]+=(this->" << vs << ")/2;\n";
+          }
+          if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRESS)) {
+            os << "mfront_dl1_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl1_l0[" << od << "]+=(this->" << vs << ")/2;\n";
           }
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
@@ -3549,8 +3709,7 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     const auto& md = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "",
-                                     this->fd.fileName, false);
+    this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "", false);
     os << '\n';
     auto write_wrapper = [this, &os](const BehaviourVariableDescription& b) {
       const auto wrapper = getBehaviourWrapperClassName(b);
@@ -3615,8 +3774,7 @@ namespace mfront {
     for (const auto& v : md.getIntegrationVariables()) {
       if (!md.isStateVariableName(v.name)) {
         if (md.isMemberUsedInCodeBlocks(v.name)) {
-          this->writeVariableDeclaration(os, v, "", "", this->fd.fileName,
-                                         false);
+          this->writeVariableDeclaration(os, v, "", "", false);
         }
       }
     }
@@ -3635,10 +3793,7 @@ namespace mfront {
         continue;
       }
       if (!getDebugMode()) {
-        if (p.lineNumber != 0u) {
-          os << "#line " << p.lineNumber << " \"" << this->fd.fileName
-             << "\"\n";
-        }
+        printLinePragma(os, p.lineNumber, this->fd.fileName);
       }
       if (use_static_variables) {
         os << "static constexpr ";
@@ -3708,10 +3863,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     for (const auto& v : md.getStaticVariables()) {
       if (!getDebugMode()) {
-        if (v.lineNumber != 0u) {
-          os << "#line " << v.lineNumber << " \"" << this->fd.fileName
-             << "\"\n";
-        }
+        printLinePragma(os, v.lineNumber, this->fd.fileName);
       }
       os << "static constexpr auto " << v.name << " = "  //
          << v.type << "{" << v.value << "};\n";
@@ -3724,7 +3876,6 @@ namespace mfront {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkBehaviourFile(os);
     this->writeVariablesDeclarations(os, md.getIntegrationVariables(), "d", "",
-                                     this->fd.fileName,
                                      this->usesStateVariableTimeDerivative());
     os << '\n';
   }
@@ -3832,7 +3983,7 @@ namespace mfront {
     for (const auto& v : md.getLocalVariables()) {
 #pragma message( \
     "BehaviourCodeGeneratorBase: handle LocalDataStructure properly")
-      if ((v.type.size() >= 7) && (v.type.substr(0, 7) != "struct{")) {
+      if (!tfel::utilities::starts_with(v.type, "struct{")) {
         os << "os << \"" << displayName(v) << " : \" << b." << v.name
            << " << '\\n';\n";
       }
@@ -4529,7 +4680,7 @@ namespace mfront {
     }
     if (!hasUserDefinedPredictionOperatorCode(this->bd, h)) {
       os << "[[nodiscard]] IntegrationResult computePredictionOperator("
-         << "const SMFlag, const SMType) override final{\n"
+         << "const SMFlag, const SMType) final{\n"
          << "tfel::raise(\"" << this->bd.getClassName()
          << "::computePredictionOperator: \"\n"
          << "\"unsupported prediction operator flag\");\n"
@@ -4640,7 +4791,7 @@ namespace mfront {
         }
         os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
            << "computePredictionOperator(const SMFlag smflag, "
-           << "const SMType smt) override final{\n"
+           << "const SMType smt) final{\n"
            << "using namespace std;\n"
            << "switch(smflag){\n";
         for (const auto& t : tos) {
@@ -4659,7 +4810,7 @@ namespace mfront {
     } else {
       os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag,const SMType smt) "
-         << "override final{\n"
+         << "final{\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -4842,7 +4993,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE real getMinimalTimeStepScalingFactor() const "
-          "noexcept override final{\n"
+          "noexcept final{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -4853,7 +5004,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPrioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override final{\n"
+          "current_time_step_scaling_factor) const final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPrioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -4890,7 +5041,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPosterioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override final{\n"
+          "current_time_step_scaling_factor) const final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPosterioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -4959,9 +5110,11 @@ namespace mfront {
         if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
             (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
           if (this->bd.useQt()) {
-            os << "typename tfel::math::MakeQuantityReferenceType<"
+            os << "std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
-               << ">>::type " << bn << ";\n";
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">&>" << bn << ";\n";
           } else {
             os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">& " << bn << ";\n";
@@ -4971,21 +5124,43 @@ namespace mfront {
              << "," << v2.type << ">> " << bn << ";\n";
         }
       } else if ((v1.arraySize == 1u) || (v2.arraySize == 1u)) {
+        auto ptr = std::string{"this->Dt.data() + "};
+        if (!o.isNull()) {
+          ptr += o.asString() + " + ";
+        }
+        ptr += "mfront_idx * " + block_size.asString();
         os << "/*!\n"
            << " * \\return the derivative of " << v1.name << " with respect "
            << v2.name << "\n"
            << " * \\param[in] mfront_idx: array index relative to " << v1.name
            << "\n"
            << " */\n"
-           << "auto " << bn << "(const ushort mfront_idx) noexcept {\n"
-           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
-           << ", " << v2.type << ">>(this->Dt.data() + ";
-        if (!o.isNull()) {
-          os << o << " + ";
+           << "decltype(auto) " << bn
+           << "(const ushort mfront_idx) noexcept {\n";
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          if (bd.useQt()) {
+            os << "return std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
+               << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">&>(*(" + ptr + "));\n";
+          } else {
+            os << "return tfel::math::map<tfel::math::derivative_type<"
+               << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
+          }
+        } else {
+          os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+             << ", " << v2.type << ">>(" << ptr << ");\n";
         }
-        os << "mfront_idx * " << block_size << ");\n"
-           << "}\n";
+        os << "}\n";
       } else {
+        auto ptr = std::string{"this->Dt.data() + "};
+        if (!o.isNull()) {
+          ptr += o.asString() + " + ";
+        }
+        ptr += "(" + std::to_string(v2.arraySize) +
+               " * mfront_idx + mfront_idx2) * " + block_size.asString();
         os << "/*!\n"
            << " * \\return the derivative of " << v1.name << " with respect "
            << v2.name << "\n"
@@ -4996,15 +5171,24 @@ namespace mfront {
            << " */\n"
            << "decltype(auto) " << bn
            << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept "
-           << "{\n"
-           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
-           << ", " << v2.type << ">>(this->Dt.data() + ";
-        if (!o.isNull()) {
-          os << o << " + ";
+           << "{\n";
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          if (bd.useQt()) {
+            os << "return std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
+               << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">&>(*(" + ptr + "));";
+          } else {
+            os << "return tfel::math::map<tfel::math::derivative_type<"
+               << v1.type << ", " << v2.type << ">>(" << ptr << ");\n";
+          }
+        } else {
+          os << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+             << ", " << v2.type << ">>(" << ptr << ");\n";
         }
-        os << "(" << v2.arraySize << " * mfront_idx + mfront_idx2) * "
-           << block_size << ");\n"
-           << "}\n";
+        os << "}\n";
       }
       o += (v1.arraySize) * (v2.arraySize) * block_size;
     }
@@ -5386,7 +5570,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << " */\n\n";
   }
@@ -5448,15 +5632,8 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     os << "protected: \n\n";
     for (const auto& v : this->bd.getMainVariables()) {
-      if (v.first.arraySize != v.second.arraySize) {
-        tfel::raise(
-            "BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers: "
-            "the array size of the gradient '" +
-            v.first.name +
-            "' is "
-            "different from the array size of the thermodynamic force '" +
-            v.second.name + "'");
-      }
+      checkArraySizeOfMainVariables(
+          "BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers", v);
       if (Gradient::isIncrementKnown(v.first)) {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " increment\n"
@@ -5464,8 +5641,8 @@ namespace mfront {
         if (v.first.arraySize == 1u) {
           os << v.first.type << " d" << v.first.name << ";\n\n";
         } else {
-          os << v.first.type << " d" << v.first.name << "[" << v.first.arraySize
-             << "];\n\n";
+          os << "tfel::math::fsarray<" << v.first.arraySize << ", "
+             << v.first.type << "> d" << v.first.name << ";\n\n";
         }
       } else {
         os << "/*!\n"
@@ -5474,8 +5651,8 @@ namespace mfront {
         if (v.first.arraySize == 1u) {
           os << v.first.type << " " << v.first.name << "1;\n\n";
         } else {
-          os << v.first.type << " " << v.first.name << "1[" << v.first.arraySize
-             << "];\n\n";
+          os << "tfel::math::fsarray<" << v.first.arraySize << ", "
+             << v.first.type << "> " << v.first.name << "1;\n\n";
         }
       }
     }
@@ -5532,11 +5709,12 @@ namespace mfront {
     }
     os << "\n{}\n\n";
     // Creating constructor for external interfaces
-    for (const auto& i : this->interfaces) {
-      if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
-        i.second->writeIntegrationDataConstructor(os, h, this->bd);
-      }
-    }
+    writeInterfacesSpecificConstructors(
+        os, this->interfaces, this->bd, h,
+        this->bd.getClassName() + "IntegrationData",
+        [this, h](std::ostream& out, const AbstractBehaviourInterface& i) {
+          i.writeIntegrationDataConstructor(out, h, this->bd);
+        });
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataScaleOperators(
@@ -5657,7 +5835,7 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << "*/\n";
   }
@@ -5812,8 +5990,6 @@ namespace mfront {
              << v.first.name << "1 << '\\n';\n";
         }
       }
-      os << "os << \"" << displayName(v.second) << " : \" << b."
-         << v.second.name << " << '\\n';\n";
     }
     if (getUnicodeOutputOption()) {
       os << "os << \"\u0394t : \" << b.dt << '\\n';\n";
@@ -5845,7 +6021,7 @@ namespace mfront {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkIntegrationDataFile(os);
     this->writeVariablesDeclarations(os, md.getExternalStateVariables(), "d",
-                                     "", this->fd.fileName, false);
+                                     "", false);
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataFileBegin(
@@ -5908,12 +6084,13 @@ namespace mfront {
       os << "* \\author " << this->fd.authorName << '\n';
     }
     if (!this->fd.date.empty()) {
-      os << "* \\date   " << this->fd.date << '\n';
+      os << "* \\date " << this->fd.date << '\n';
     }
     os << " */\n\n";
     if (this->bd.hasParameters()) {
       os << "#include<string>\n"
          << "#include<locale>\n"
+         << "#include<limits>\n"
          << "#include<cstring>\n"
          << "#include<sstream>\n"
          << "#include<fstream>\n"
@@ -5955,20 +6132,32 @@ namespace mfront {
       const std::string& cname,
       const std::string& type,
       const std::string& type2) {
+    // an unsigned short is read as an int, so that negative and out of range
+    // values are rejected instead of being wrapped around
+    const auto is_unsigned_short = type == "unsigned short";
     f << type << '\n'
       << cname << "::get" << type2 << "(const std::string& n,\n"
       << "const std::string& v)\n"
       << "{\n"
-      << type << " value;\n"
+      << (is_unsigned_short ? "int" : type) << " value;\n"
       << "std::istringstream converter(v);\n"
       << "converter.imbue(std::locale::classic());\n"
       << "converter >> value;\n"
-      << "tfel::raise_if(!converter||(!converter.eof()),\n"
+      << "tfel::raise_if(!converter||(!converter.eof())";
+    if (is_unsigned_short) {
+      f << "||(value<0)||\n"
+        << "(value>std::numeric_limits<unsigned short>::max())";
+    }
+    f << ",\n"
       << "\"" << cname << "::get" << type2 << ": \"\n"
       << "\"can't convert '\"+v+\"' to " << type << " "
-      << "for parameter '\"+ n+\"'\");\n"
-      << "return value;\n"
-      << "}\n\n";
+      << "for parameter '\"+ n+\"'\");\n";
+    if (is_unsigned_short) {
+      f << "return static_cast<unsigned short>(value);\n";
+    } else {
+      f << "return value;\n";
+    }
+    f << "}\n\n";
   }
 
   void BehaviourCodeGeneratorBase::writeSrcFileParametersInitializer(
@@ -6215,9 +6404,10 @@ namespace mfront {
          << "if(!f){\n"
          << "return;\n"
          << "}\n"
-         << "size_t ln = 1u;\n"
+         << "size_t ln = 0u;\n"
          << "auto line = std::string{};\n"
          << "while(std::getline(f,line)){\n"
+         << "++ln;\n"
          << "auto tokens = tokenize(line);\n"
          << "auto throw_if = [line_number = ln, fn](const bool mfront_c,\n"
          << "const std::string& mfront_error_message){\n"

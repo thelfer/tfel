@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   09 avr 2008
+ * \date 09/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -116,6 +116,8 @@ struct TinyBroyden2SolverTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(norm(vf) < 1.e-11);
     TFEL_TESTS_ASSERT(abs(x(0) - 2) < 1.e-11);
     TFEL_TESTS_ASSERT(abs(x(1)) < 1.e-11);
+    // convergence at the last allowed iteration
+    TFEL_TESTS_ASSERT((broyden2<2, double, f2>(x0, 1.e-11, 16).first));
   }
 
   void test4() {

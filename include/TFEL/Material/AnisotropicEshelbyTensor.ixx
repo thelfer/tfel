@@ -162,7 +162,7 @@ namespace tfel::material::homogenization::elasticity {
     if (not((a > LengthType{0}) and (b > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0");
     }
-    if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
+    if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
     using namespace tfel::math;
@@ -173,6 +173,8 @@ namespace tfel::material::homogenization::elasticity {
                                               n_a_[1], n_b_[1], real(0),
                                               real(0), real(0), real(1)};
     const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
+    const auto C_loc =
+        change_basis(C / StressType(1), r_glob_loc) * StressType(1);
     const real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
     const real zero = real(0);
     using compliance = types::compliance<StressType>;
@@ -181,9 +183,9 @@ namespace tfel::material::homogenization::elasticity {
       for (int j = i; j < 2; j++)
         for (int k = 0; k < 2; k++)
           for (int l = k; l < 2; l++) {
-            const auto p_ = [C, a, b, i, j, k, l](const real& theta) {
+            const auto p_ = [C_loc, a, b, i, j, k, l](const real& theta) {
               return internals::p_ijkl_2D<real, StressType, LengthType>(
-                  C, a, b, theta, i, j, k, l);
+                  C_loc, a, b, theta, i, j, k, l);
             };
             const auto int_p = compliance(
                 internals::integrate1D<real>(p_, zero, 2 * pi, max_it));
@@ -210,21 +212,16 @@ namespace tfel::material::homogenization::elasticity {
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
     }
-    if (not(tfel::math::ieee754::fpclassify(
-                tfel::math::VectorVectorDotProduct::exe<
-                    real, tfel::math::tvector<3u, real>,
-                    tfel::math::tvector<3u, real>>(n_a, n_b)) == FP_ZERO)) {
-      tfel::reportContractViolation("n_a and n_b not normals");
-    }
-    if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
+    if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
-    if (tfel::math::ieee754::fpclassify(norm(n_b)) == FP_ZERO) {
+    if (norm(n_b) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_b is null");
     }
     using namespace tfel::math;
+    const auto n_b_o = internals::orthogonaliseEllipsoidAxes(n_a, n_b);
     const auto n_a_ = n_a / norm(n_a);
-    const auto n_b_ = n_b / norm(n_b);
+    const auto n_b_ = n_b_o / norm(n_b_o);
     const auto n_c_ = cross_product<real>(n_a_, n_b_);
 
     const rotation_matrix<real> r_glob_loc = {n_a_[0], n_b_[0], n_c_[0],
@@ -300,20 +297,15 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& c,
           const std::size_t max_it) {
     using real = types::real<StressType>;
-    if (not(tfel::math::ieee754::fpclassify(
-                tfel::math::VectorVectorDotProduct::exe<
-                    real, tfel::math::tvector<3u, real>,
-                    tfel::math::tvector<3u, real>>(n_a, n_b)) == FP_ZERO)) {
-      tfel::reportContractViolation("n_a and n_b not normals");
-    }
-    if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
+    if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
-    if (tfel::math::ieee754::fpclassify(norm(n_b)) == FP_ZERO) {
+    if (norm(n_b) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_b is null");
     }
+    const auto n_b_o = internals::orthogonaliseEllipsoidAxes(n_a, n_b);
     const auto n_a_ = n_a / norm(n_a);
-    const auto n_b_ = n_b / norm(n_b);
+    const auto n_b_ = n_b_o / norm(n_b_o);
     const auto n_c_ = tfel::math::cross_product<real>(n_a_, n_b_);
 
     using namespace tfel::math;
@@ -343,7 +335,7 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& b,
           const std::size_t max_it) {
     using real = types::real<StressType>;
-    if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
+    if (norm(n_a) < std::numeric_limits<real>::epsilon()) {
       tfel::reportContractViolation("n_a is null");
     }
     using namespace tfel::math;
@@ -372,6 +364,7 @@ namespace tfel::material::homogenization::elasticity {
     exe(const tfel::math::st2tost2<2u, StressType>& C_0_glob,
         const tfel::math::st2tost2<2u, StressType>& C_i_loc,
         const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+        const tfel::math::tvector<2u, types::real<StressType>>&,
         const std::array<types::length<StressType>, 2u>& semiLengths,
         const std::size_t max_it) {
       return computePlaneStrainAnisotropicLocalisationTensor<StressType>(

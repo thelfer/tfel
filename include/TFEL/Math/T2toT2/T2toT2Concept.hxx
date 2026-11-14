@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/T2toT2/T2toT2Concept.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19 November 2013
+ * \date 19/11/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,6 +22,7 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
+#include "TFEL/Math/types.hxx"
 
 namespace tfel::math {
 

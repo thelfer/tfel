@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/CalculiX/CalculiXInterface.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CALCULIX_CALL_HXX
+#include "MFront/CalculiX/CalculiXInterface.hxx"
+#else
+
 #ifndef LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CALCULIX_CALL_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CALCULIX_CALL_HXX */
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -102,8 +104,8 @@ namespace calculix {
        */
       TFEL_CALCULIX_INLINE static void exe(
           BV& b,
-          const CalculiXReal* const DV1,
           const CalculiXReal* const DV0,
+          const CalculiXReal* const DV1,
           const StressFreeExpansionHandler& sfeh) {
         using std::pair;
         using tfel::fsalgo::copy;
@@ -171,8 +173,8 @@ namespace calculix {
                                            const CalculiXReal* const props) {
         const auto o = CalculiXTraits<BV>::elasticPropertiesOffset;
         CalculiXComputeThermalExpansionCoefficientTensor<CalculiXTraits<
-            BV>::stype>::exe(props + o,
-                             data.getThermalExpansionCoefficientTensor());
+            BV>::type>::exe(props + o,
+                            data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
 
@@ -336,3 +338,5 @@ namespace calculix {
 }  // end of namespace calculix
 
 #endif /* LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CALCULIX_CALL_HXX */

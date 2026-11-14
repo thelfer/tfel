@@ -1,6 +1,15 @@
-% Implementation of the Ogden hyperelastic behaviour
-% T. Helfer
-% 09/01/2017
+---
+title: Implementation of the Ogden hyperelastic behaviour
+author: T. Helfer
+date: 09/01/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\tenseur}[1]{\underline{#1}}
@@ -161,7 +170,7 @@ const auto C  = computeRightCauchyGreenTensor(F1);
 
 For the computation of the invariants of \(\C\) and their
 derivatives, we need to compute \(\C^{2}\). Since the multiplication
-of two symmetric tensors leads to a non symmetric tensors, we use the
+of two symmetric tensors leads to a non-symmetric tensor, we use the
 special function `square` which is a more efficient equivalent of
 `syme(C*C)`:
 
@@ -279,7 +288,7 @@ std::tie(vp,m) = C.computeEigenVectors();
 > const auto [vp,m] = C.computeEigenVectors();
 > ~~~~~
 
-We can now evaluate \(f\) and \(\deriv{f}{\C}\).:
+We can now evaluate \(f\) and \(\deriv{f}{\C}\):
 
 ~~~~~{.cpp}
 const tvector<3u,real> pwv  = {pow(vp(0),a-2),pow(vp(1),a-2),pow(vp(2),a-2)};

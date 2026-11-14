@@ -68,7 +68,7 @@ illustrates:
 
 - The usage of `StandardElasticity` brick (see
   [this page](BehaviourBricks.html)).
-- The usage of the functionnalities introduces by the `TFELNumodis`
+- The usage of the functionalities introduces by the `TFELNumodis`
   library, as described [here](singlecrystal.html). In particular, we
   will automatically let `MFront` generate the slips systems and the
   interaction matrix.
@@ -76,7 +76,7 @@ illustrates:
 - The FiniteStrainSingleCrystal brick, which is described
   [here](finitestrainsinglecrystal.html).
 
-> **Advices**
+> **Advice**
 >
 > This kind of behaviour is rather complex and requires lot of care to
 > get it work properly in any solver. We highly recommend that you follow
@@ -124,7 +124,7 @@ at the microscopic scale largely describe the origins of the hardening of matter
 The first particularity of a monocrystalline law is in the use of the Schmid tensor
 to project the tensors of the stresses in the resolved shear stress.The Schmid tensor
 is determined from the normal to the slip plane and the direction of the slip. The second
-particularity lies in the introduction of an interaction matrix which weigths hardening
+particularity lies in the introduction of an interaction matrix which weights hardening
 according to the type of interaction considered. The last particularity is the introduction
 of the orientation of the crystal material for the elastic and the plastic modelization.
 
@@ -254,7 +254,7 @@ where :
 - \(\displaystyle\mts{R_{i}}=Q\,\sum_{j=1}^{N}h_{ij}\,\paren{1-\exp\paren{-b\,\mts{p_{j}}}}\)
   with \(\mts{p}=\bts{p}+\theta\,\incr{p}\)
 
-This number of unknowns of System @eq:F is egal to \(6+3\,N_{ss}\) where
+This number of unknowns of System @eq:F is equal to \(6+3\,N_{ss}\) where
 \(N_{ss}\) is the number of slip systems and \(6\) is the number of
 component of the elastic strain.
 
@@ -292,7 +292,7 @@ It shall be noted that:
   called *integration variables* and are declared through the
   `@IntegrationVariable` keyword. Note that one may save the values of
   \(\Delta\,\gamma_{i}\) only by changing its declaration from
-  `@IntegrationVariable` to `@StateVariable`, which can be usefull for
+  `@IntegrationVariable` to `@StateVariable`, which can be useful for
   debugging purposes or for post-processing: this possibility is the
   main reason to keep \(\Delta\,\gamma_{i}\) rather than
   \(\Delta\,p_{i}\).
@@ -378,7 +378,7 @@ The behaviour describes an orthotropic material:
 > **Note**
 > 
 > As the behaviour is only valid in \(3D\), there is no need to specify any
-> orthotropic axises convention (see the `@OrthotropicBehaviour`
+> orthotropic axes convention (see the `@OrthotropicBehaviour`
 > keyword for details).
 
 ## Numerical parameters
@@ -386,7 +386,7 @@ The behaviour describes an orthotropic material:
 The following lines declare that we want to use a standard
 Newton-Raphson algorithm with a numerically evaluated jacobian. The
 perturbation value used to evaluate the jacobian is chosen equal to
-\(10^{-7}\) which is a reasonnable value.
+\(10^{-7}\) which is a reasonable value.
 
 ~~~~{.cpp}
 @Algorithm NewtonRaphson_NumericalJacobian;
@@ -424,7 +424,7 @@ brick which provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 
@@ -449,7 +449,7 @@ The usage of the `StandardElasticity` is declared as follows:
 > **Note**
 > 
 > Here, we chose to declare the elastic material properties as part of
-> the brick declaration. This pratice has been introduced in `TFEL-3.2`
+> the brick declaration. This practice has been introduced in `TFEL-3.2`
 > with the development of the `StandardElastoViscoPlasticity`brick.
 > The material properties can also be computed using a formula or
 > an external `MFront` files. 
@@ -501,7 +501,7 @@ $ mfront-query MericCailletaudSingleCrystalViscoPlasticityNumericalJacobian.mfro
 - 11: [1,1,0](1,-1,1)
 ~~~~
 
-The interation matrix, which is non symmetric, has \(7\) independent
+The iteration matrix, which is non symmetric, has \(7\) independent
 coefficients. The precise structure of this interaction matrix can be
 retrieved thank to the `mfront-query` tool as follows:
 
@@ -645,7 +645,7 @@ size `Nss` called `exp_bp`. We then loop over each slip systems.
 
 ### Definition of the implicit equations
 
-Befor defining the implicit equations, it is important to remember a few
+Before defining the implicit equations, it is important to remember a few
 conventions of the `Implicit` DSL and of the `StandardElasticity` brick:
 
 - The implicit equations are initialized by the `Implicit` dsl to the
@@ -715,7 +715,7 @@ auxiliary state variables as follows:
 
 ## Improving the robustness of the  Newton-Raphson algorithm
 
-When the Norton exponent \(n\) is reasonnable, the standard
+When the Norton exponent \(n\) is reasonable, the standard
 Newton-Raphson algorithm works pretty good. However, in practice, this
 exponent is usually very high, typically between \(70\) and \(100\)
 which almost imposes \(f=\left|\tau_e\right|-R_{i}-\tau_0\) to be equal
@@ -826,7 +826,7 @@ n \, \Frac{v}{f}&\quad\text{if}\quad&f > 0&\\
 From the previous file, one must:
 
 - change the name of the behaviour.
-- change the name of the classe containing the slip systems to reflect
+- change the name of the class containing the slip systems to reflect
   the change of name of the behaviour.
 - change the name of the algorithm (or simply remove the associated line
   as the Newton-Raphson algorithm with analytical jacobian is the
@@ -926,13 +926,13 @@ The new `@Integrator` block is now:
 | UpdateAuxiliaryStateVariables             | 15musecs 801nsecs (15801 ns)                 |
 +-------------------------------------------+----------------------------------------------+
 
-# Extenstion to finite strain
+# Extension to finite strain
 
 To extend the implementation to finite strain, we will use the
 `FiniteStrainSingleCrystal` brick which is described
 [here](finitestrainsinglecrystal.html).
 
-In pratice, thanks to this brick, only a very limited number of changes
+In practice, thanks to this brick, only a very limited number of changes
 are required:
 
 - The name of DSL must changed to `ImplicitFiniteStrainDSL`.
@@ -996,7 +996,7 @@ polycrystal simulations with `MFront` and `code_aster`:
 - <https://www.youtube.com/watch?v=evNhkEcntaU>
 - <https://www.youtube.com/watch?v=OAnJmMTGhE4>
 
-The series adresses several advanced topics regarding the interface
+The series addresses several advanced topics regarding the interface
 between code_ater and MFront:
 
 - handling orthotropy,

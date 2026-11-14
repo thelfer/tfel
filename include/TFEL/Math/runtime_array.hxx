@@ -181,10 +181,10 @@ namespace tfel::typetraits {
     using RuntimeArrayIndexingPolicy =
         typename tfel::math::runtime_array<ValueType>::indexing_policy;
     //! \brief a simple alias
-    using View =
+    using View = std::decay_t<
         typename tfel::math::ViewsArray<MappedType,
                                         MemoryIndexingPolicyType,
-                                        ViewIndexingPolicyType>::view_type;
+                                        ViewIndexingPolicyType>::view_type>;
 
     //! \brief result
     static constexpr auto cond =

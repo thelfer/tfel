@@ -1,3 +1,4 @@
+add_subdirectory(configuration-files)
 add_subdirectory(include)
 add_subdirectory(src)
 if(enable-testing)

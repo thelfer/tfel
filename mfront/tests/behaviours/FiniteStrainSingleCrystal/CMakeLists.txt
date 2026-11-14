@@ -3,3 +3,4 @@ add_subdirectory(aster)
 
 install_mfront_data(tests/behaviours/FiniteStrainSingleCrystal FiniteStrainSingleCrystal.mfront)
 install_mfront_data(tests/behaviours/FiniteStrainSingleCrystal FiniteStrainSingleCrystal_NumericalJacobian.mfront)
+install_mfront_data(tests/behaviours/FiniteStrainSingleCrystal FiniteStrainSingleCrystal_WithoutCorrections.mfront)

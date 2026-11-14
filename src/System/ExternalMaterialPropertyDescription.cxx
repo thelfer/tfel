@@ -2,7 +2,7 @@
  * \file   src/System/ExternalMaterialPropertyDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15 June 2015
+ * \date 15/06/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -105,7 +105,7 @@ namespace tfel::system {
   ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription() =
       default;
   ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
-      ExternalMaterialPropertyDescription&&) = default;
+      ExternalMaterialPropertyDescription&&) noexcept = default;
   ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
       const ExternalMaterialPropertyDescription&) = default;
   ExternalMaterialPropertyDescription&
@@ -113,7 +113,7 @@ namespace tfel::system {
       const ExternalMaterialPropertyDescription&) = default;
   ExternalMaterialPropertyDescription&
   ExternalMaterialPropertyDescription::operator=(
-      ExternalMaterialPropertyDescription&&) = default;
+      ExternalMaterialPropertyDescription&&) noexcept = default;
   ExternalMaterialPropertyDescription::~ExternalMaterialPropertyDescription() =
       default;
 

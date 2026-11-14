@@ -2,7 +2,7 @@
  * \file   OrthotropicStressLinearTransformation.hxx
  * \brief
  * \author Thomas Helfer
- * \date   13/01/2018
+ * \date 13/01/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -147,9 +147,8 @@ namespace tfel::material {
    * the `makeOrthotropicStressLinearTransformation<N,real>` function depends
    * on the modelling hypothesis:
    * - in 3D and in plane 2D modelling hypotheses (`PLANESTRAIN`,
-   *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the coefficients
-   *   relative to the second axis are exchanged with the
-   *   coefficients related to the third axis.
+   *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the arguments are
+   *   passed unchanged.
    * - 1D, 2D axisymmetric modelling hypotheses are not available.
    */
   template <ModellingHypothesis::Hypothesis H,
@@ -199,9 +198,8 @@ namespace tfel::material {
    * the `makeOrthotropicStressLinearTransformation<N,real>` function depends
    * on the modelling hypothesis:
    * - in 3D and in plane 2D modelling hypotheses (`PLANESTRAIN`,
-   *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the coefficients
-   *   relative to the second axis are exchanged with the
-   *   coefficients related to the third axis.
+   *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the arguments are
+   *   passed unchanged.
    * - 1D, 2D axisymmetric modelling hypotheses are not available.
    */
   template <ModellingHypothesis::Hypothesis H,

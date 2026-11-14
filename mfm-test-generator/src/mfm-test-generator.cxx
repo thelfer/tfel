@@ -2,7 +2,7 @@
  * \file   mfm-test-generator/src/mfm-test-generator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   13 avril 2017
+ * \date 13/04/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -12,6 +12,8 @@
  */
 
 #include <regex>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
@@ -76,6 +78,13 @@ namespace mfmtg {
      * \param[in] i: input file
      */
     void execute(const std::string& i) {
+      const auto ext = [&i]() -> std::string {
+        const auto pos = i.rfind('.');
+        if (pos != std::string::npos) {
+          return i.substr(pos);
+        }
+        return "";
+      }();
       if (tfel::utilities::starts_with(i, "madnex:")) {
 #ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
         this->treatMadnexPath(i);
@@ -84,15 +93,7 @@ namespace mfmtg {
             "MFMTestGenerator::execute: "
             "madnex support is not enabled");
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
-      }
-      const auto ext = [&i]() -> std::string {
-        const auto pos = i.rfind('.');
-        if (pos != std::string::npos) {
-          return i.substr(pos);
-        }
-        return "";
-      }();
-      if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
+      } else if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
 #ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
         this->treatMadnexInputFile(i);
 #else  /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
@@ -100,8 +101,9 @@ namespace mfmtg {
             "MFMTestGenerator::execute: "
             "madnex support is not enabled");
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
+      } else {
+        this->treatStandardInputFile(i);
       }
-      this->treatStandardInputFile(i);
     }  // end of execute
 
    private:
@@ -118,6 +120,10 @@ namespace mfmtg {
 
     //! \brief register the command line call backs
     void registerCommandLineCallBacks() {
+      this->registerCallBack(
+          "--no-terminate-handler",
+          CallBack(
+              "don't set a terminate handler", []() noexcept {}, false));
       this->registerCallBack(
           "--verbose", CallBack(
                            "set verbose output",
@@ -230,7 +236,8 @@ namespace mfmtg {
 #endif /* MFM_TEST_GENERATOR_HAVE_MADNEX */
     }  // end of registerCommandLineCallBacks
 
-    const tfel::utilities::Argument& getCurrentCommandLineArgument() const {
+    [[nodiscard]] const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const {
       return *(this->currentArgument);
     }
 
@@ -282,7 +289,7 @@ namespace mfmtg {
           return;
         }
       }
-      if ((a[0] == '-') || (a[0] == '/')) {
+      if (a[0] == '-') {
         tfel::utilities::ArgumentParserBase<
             MFMTestGenerator>::treatUnknownArgument();
       }
@@ -292,11 +299,11 @@ namespace mfmtg {
       }
     }  // end of treatUnknownArgument
 
-    std::string getVersionDescription() const override {
+    [[nodiscard]] std::string getVersionDescription() const override {
       return "1.0";
     }  // end of getVersionDescription
 
-    std::string getUsageDescription() const override {
+    [[nodiscard]] std::string getUsageDescription() const override {
       return "Usage: " + this->programName + " [options] [files]";
     }  // end of getUsageDescription
 
@@ -366,8 +373,8 @@ namespace mfmtg {
       std::regex r(this->test);
       const auto m = this->material == "<none>" ? "" : this->material;
       auto tests = std::vector<std::string>{};
-      for (const auto& tname : d.getAvailableMFMTestGeneratorTests(
-               this->material, this->behaviour)) {
+      for (const auto& tname :
+           d.getAvailableMFMTestGeneratorTests(m, this->behaviour)) {
         if (std::regex_match(tname, r)) {
           tests.push_back(tname);
         }
@@ -380,7 +387,7 @@ namespace mfmtg {
             this->test + "'");
       }
       for (const auto& t : tests) {
-        this->treatMadnexTest(this->material, this->behaviour, t, i);
+        this->treatMadnexTest(m, this->behaviour, t, i);
       }
     }  // end of treatMadnexInputFile
 
@@ -494,7 +501,37 @@ namespace mfmtg {
 
 }  // end of namespace mfmtg
 
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+[[noreturn]] static void mfm_test_generator_terminate_handler() {
+  if (auto pe = std::current_exception()) {
+    // we have an exception
+    try {
+      std::rethrow_exception(pe);
+    } catch (const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch (...) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 int main(const int argc, const char* const* const argv) {
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, v) == 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+  if (!find("--no-terminate-handler")) {
+    std::set_terminate(mfm_test_generator_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
 #if !defined(__GLIBCXX__)
   try {
 #endif /* not defined(__GLIBCXX__) */

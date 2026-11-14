@@ -2,7 +2,13 @@
  * \file   mfront/src/BehaviourVariableDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06/01/2025
+ * \date 06/01/2025
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include "TFEL/Raise.hxx"
@@ -183,7 +189,7 @@ namespace mfront {
   void checkSharedVariableCompatibility(const BehaviourVariableDescription& bv,
                                         const VariableDescription& v1,
                                         const VariableDescription& v2) {
-    auto report = [&bv, &v1, &v2](const std::string_view& reason) {
+    auto report = [&bv, &v1](const std::string_view& reason) {
       tfel::raise("The shared variable '" + v1.name +
                   "' declared by behaviour variable '" + bv.name +
                   "' is not compatible with the variable declared by the "

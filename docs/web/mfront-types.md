@@ -1,5 +1,5 @@
 ---
-title: Predefined aliases in `MFront`
+title: Predefined aliases in MFront
 author: Thomas Helfer
 date: 17/08/2021
 lang: en-EN

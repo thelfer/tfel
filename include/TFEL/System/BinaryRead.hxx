@@ -70,8 +70,8 @@ namespace tfel::system {
    */
   template <typename T>
   struct EnumBinaryReader {
-    //! a simple alias
-    using integer = typename std::underlying_type<T>::type;
+    //! \brief a simple alias
+    using integer = std::underlying_type_t<T>;
     static void exe(const int s, T& v) {
       union {
         T v1;
@@ -111,9 +111,7 @@ namespace tfel::system {
   template <typename T>
   struct StandardBinaryReader {
     static void exe(const int s, T& v) {
-      if (::read(s, static_cast<T*>(&v), sizeof(T)) == -1) {
-        systemCall::throwSystemError("BinaryReader<T>::exe", errno);
-      }
+      systemCall::read(s, static_cast<void*>(&v), sizeof(T));
     }
   };
   /*!
@@ -122,15 +120,15 @@ namespace tfel::system {
    */
   template <typename T>
   struct BinaryReader
-      : std::conditional<std::is_enum<T>::value,
-                         EnumBinaryReader<T>,
-                         typename std::conditional<
-                             std::is_pointer<T>::value,
-                             PointerBinaryReader<T>,
-                             typename std::conditional<
-                                 std::is_empty<T>::value,
-                                 EmptyBinaryReader<T>,
-                                 StandardBinaryReader<T>>::type>::type>::type {
+      : std::conditional_t<
+            std::is_enum_v<T>,
+            EnumBinaryReader<T>,
+            typename std::conditional_t<
+                std::is_pointer_v<T>,
+                PointerBinaryReader<T>,
+                typename std::conditional_t<std::is_empty_v<T>,
+                                            EmptyBinaryReader<T>,
+                                            StandardBinaryReader<T>>>> {
   };  // end of struct BinaryReader
   /*!
    * read a value in a stream

@@ -2,7 +2,7 @@
  * \file   IsotropicCazacuYieldTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10/01/2018
+ * \date 10/01/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -41,12 +41,12 @@ struct IsotropicCazacuYieldTest final : public tfel::tests::TestCase {
                           0.24525337568425,  -1.7790370858361e-4,
                           3.613971630283e-3, -1.7873236537153e-02};
     for (const auto v : {v1, v2, v3, v4, v5}) {
-      // test<1u>(tfel::math::stensor<1u,double>(v));
-      // test<2u>(tfel::math::stensor<2u,double>(v));
-      // test<3u>(tfel::math::stensor<3u,double>(v));
+      test<1u>(tfel::math::stensor<1u, double>(v));
+      test<2u>(tfel::math::stensor<2u, double>(v));
+      test<3u>(tfel::math::stensor<3u, double>(v));
       test2<1u>(tfel::math::stensor<1u, double>(v));
-      // test2<2u>(tfel::math::stensor<2u,double>(v));
-      // test2<3u>(tfel::math::stensor<3u,double>(v));
+      test2<2u>(tfel::math::stensor<2u, double>(v));
+      test2<3u>(tfel::math::stensor<3u, double>(v));
     }
     return this->result;
   }  // end of execute
@@ -57,7 +57,9 @@ struct IsotropicCazacuYieldTest final : public tfel::tests::TestCase {
     using stensor = tfel::math::stensor<N, double>;
     constexpr double c = -1.058;
     constexpr double e = 1.e-6;
-    constexpr double prec = 2.e-10;
+    // the rounding error of the centered finite difference is about the
+    // machine epsilon divided by the perturbation, i.e. about 2e-10
+    constexpr double prec = 1.e-9;
     auto fseq = [](const stensor& sig) {
       const auto s = deviator(sig);
       const auto J2 = (s | s) / 2;

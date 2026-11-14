@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/Abaqus/AbaqusExplicitInterface.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19 mars 2016
+ * \date 19/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -86,8 +86,8 @@ namespace abaqus {
         const unsigned short o = ATraits::elasticPropertiesOffset;
         AbaqusComputeThermalExpansionCoefficientTensor<
             ATraits::btype, H,
-            ATraits::stype>::exe(props + o,
-                                 data.getThermalExpansionCoefficientTensor());
+            ATraits::type>::exe(props + o,
+                                data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
     //! place holder for tag dispatching
@@ -95,25 +95,42 @@ namespace abaqus {
       typedef typename BV::BehaviourData BData;
       TFEL_ABAQUS_INLINE static void exe(BData&, const T* const) {}
     };  // end of struct DoNothingInitializer
-    //! structure in charge of calling the computeInternalEnergy method
+    /*!
+     * \brief structure in charge of calling the computeInternalEnergy method
+     * \note the energy given to the behaviour is the one at the beginning
+     * of the increment: the content of the output array on entry is not
+     * specified by Abaqus/Explicit.
+     */
     struct TFEL_VISIBILITY_LOCAL InternalEnergyComputer {
-      TFEL_ABAQUS_INLINE static void exe(T& e, const BV& b, const T& rho) {
-        auto Psi_s = e * rho;
+      TFEL_ABAQUS_INLINE static void exe(T& e,
+                                         const T& e0,
+                                         const BV& b,
+                                         const T& rho) {
+        auto Psi_s = e0 * rho;
         b.computeInternalEnergy(Psi_s);
         e = Psi_s / rho;
       }
     };  // namespace abaqus
-    //! structure in charge of calling the computeDissipatedEnergy method
+    /*!
+     * \brief structure in charge of calling the computeDissipatedEnergy
+     * method
+     * \note the energy given to the behaviour is the one at the beginning
+     * of the increment: the content of the output array on entry is not
+     * specified by Abaqus/Explicit.
+     */
     struct TFEL_VISIBILITY_LOCAL DissipatedEnergyComputer {
-      TFEL_ABAQUS_INLINE static void exe(T& e, const BV& b, const T& rho) {
-        auto Psi_d = e * rho;
+      TFEL_ABAQUS_INLINE static void exe(T& e,
+                                         const T& e0,
+                                         const BV& b,
+                                         const T& rho) {
+        auto Psi_d = e0 * rho;
         b.computeDissipatedEnergy(Psi_d);
         e = Psi_d / rho;
       }
     };
     //! place holder for tag dispatching
     struct TFEL_VISIBILITY_LOCAL DoNothingEnergyComputer {
-      TFEL_ABAQUS_INLINE static void exe(T&, const BV&, const T&) {}
+      TFEL_ABAQUS_INLINE static void exe(T&, const T&, const BV&, const T&) {}
     };  // end of struct DoNothingEnergyComputer
     static constexpr bool bs = ATraits::requiresStiffnessTensor;
     static constexpr bool ba =
@@ -240,8 +257,8 @@ namespace abaqus {
       }
       b.checkBounds();
       b.exportStateData(s, d);
-      IEnergyComputer::exe(d.enerInternNew, b, d.density);
-      DEnergyComputer::exe(d.enerInelasNew, b, d.density);
+      IEnergyComputer::exe(d.enerInternNew, d.enerInternOld, b, d.density);
+      DEnergyComputer::exe(d.enerInelasNew, d.enerInelasOld, b, d.density);
       return 0;
     }
     /*!
@@ -286,8 +303,8 @@ namespace abaqus {
       }
       b.checkBounds();
       b.exportStateData(s, d);
-      IEnergyComputer::exe(d.enerInternNew, b, d.density);
-      DEnergyComputer::exe(d.enerInelasNew, b, d.density);
+      IEnergyComputer::exe(d.enerInternNew, d.enerInternOld, b, d.density);
+      DEnergyComputer::exe(d.enerInelasNew, d.enerInelasOld, b, d.density);
       return 0;
     }
 

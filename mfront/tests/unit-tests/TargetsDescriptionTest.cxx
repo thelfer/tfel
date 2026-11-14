@@ -2,7 +2,7 @@
  * \file   TargetsDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   17 août 2015
+ * \date 17/08/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -106,6 +106,13 @@ struct TargetsDescriptionTest final : public tfel::tests::TestCase {
     auto t2 = extract(ss.str());
     // testing the value read again
     this->check(t2);
+    // truncated target descriptions
+    TFEL_TESTS_CHECK_THROW(extract("{ headers : {\"a.hxx\"};"),
+                           std::runtime_error);
+    TFEL_TESTS_CHECK_THROW(extract("{ library : { name : \"libA\";"),
+                           std::runtime_error);
+    TFEL_TESTS_CHECK_THROW(extract("{ target : { name : \"t\";"),
+                           std::runtime_error);
     return this->result;
   }
 

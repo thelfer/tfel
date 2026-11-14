@@ -85,6 +85,8 @@ project's developers might not want to merge into the project.
 
 Please adhere to the coding conventions used throughout a project (indentation,
 accurate comments, etc.) and any other requirements (such as test coverage).
+The coding conventions of the `C` and `C++` sources are described in
+the [coding guidelines](coding-guidelines.html) page.
 
 Adhering to the following this process is the best way to get your work
 included in the project:

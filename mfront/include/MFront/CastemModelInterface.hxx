@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/CastemModelInterface.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/07/2022
+ * \date 03/07/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,15 +26,14 @@ namespace mfront {
    * model description in a behaviour description and using the interface for
    * behaviours.
    */
-  struct CastemModelInterface final : public AbstractModelInterface {
+  struct CastemModelInterface : public AbstractModelInterface {
     //! \return the name of the interface
-    static std::string getName();
-    //! \return the name of the generated library
-    std::string getLibraryName(const ModelDescription &) const;
+    [[nodiscard]] static std::string getName();
     //! \brief constructor
     CastemModelInterface();
     //
-    std::pair<bool, tokens_iterator> treatKeyword(
+    void setOptions(const DataMap &) override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         const std::string &,
         const std::vector<std::string> &,
         tokens_iterator,
@@ -44,6 +43,8 @@ namespace mfront {
                           const ModelDescription &) override;
     void getTargetsDescription(TargetsDescription &,
                                const ModelDescription &) override;
+    //! \return the name of the generated library
+    [[nodiscard]] std::string getLibraryName(const ModelDescription &) const;
     //! \brief destructor
     ~CastemModelInterface() override;
 

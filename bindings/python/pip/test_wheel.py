@@ -1,0 +1,94 @@
+"""Test of an installed tfel-mfront wheel, run by cibuildwheel.
+
+On Linux and macOS, a behaviour is compiled with mfront, integrated
+with mtest and loaded in python, which checks that the executables, the
+headers and the libraries of the package are found. On Windows, building
+behaviours requires Visual Studio and is not tested.
+"""
+
+import ast
+import glob
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+
+import tfel
+import tfel.math
+import tfel.material
+import mfront
+import mtest
+import mfm_test_generator
+
+tfelhome = os.path.dirname(os.path.abspath(tfel.__file__))
+
+includes = subprocess.run([shutil.which("tfel-config"), "--includes"],
+                          check=True, stdout=subprocess.PIPE,
+                          text=True).stdout.strip()
+print("tfel-config --includes:", includes)
+expected_includes = os.path.realpath(os.path.join(tfelhome, "include"))
+if os.path.realpath(includes[2:]) != expected_includes:
+    sys.exit("tfel-config does not point to " + expected_includes)
+
+# the stubs of the python modules are installed next to them
+for package, module in ((tfel, "_tfel"), (tfel, "math"),
+                        (tfel.material, "_material"), (mfront, "_mfront"),
+                        (mtest, "_mtest"),
+                        (mfm_test_generator, "_mfm_test_generator")):
+    directory = os.path.dirname(package.__file__)
+    stub = os.path.join(directory, module + ".pyi")
+    # a module with submodules has a directory of stubs
+    package_stub = os.path.join(directory, module, "__init__.pyi")
+    if not (os.path.isfile(stub) or os.path.isfile(package_stub)):
+        sys.exit("missing stub " + stub)
+
+# type checkers only use the stubs of the packages holding this marker, and
+# they stop on a stub which is not valid python
+for package in (tfel, mfront, mtest, mfm_test_generator):
+    directory = os.path.dirname(package.__file__)
+    marker = os.path.join(directory, "py.typed")
+    if not os.path.isfile(marker):
+        sys.exit("missing marker " + marker)
+    stubs = os.path.join(directory, "**", "*.pyi")
+    for stub in glob.glob(stubs, recursive=True):
+        with open(stub, encoding="utf-8") as f:
+            ast.parse(f.read(), stub)
+
+if os.name == "nt":
+    sys.exit(0)
+
+behaviour = """\
+@DSL Implicit;
+@Behaviour Elasticity;
+@Brick StandardElasticity;
+@ElasticMaterialProperties {150e9, 0.3};
+"""
+
+library = "libBehaviour.dylib" if sys.platform == "darwin" else "libBehaviour.so"
+test = f"""\
+@Behaviour<generic> 'src/{library}' 'Elasticity';
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain 'EXX' {{0 : 0, 1 : 1e-3}};
+@Times {{0, 1 in 1}};
+"""
+
+with tempfile.TemporaryDirectory() as directory:
+    os.chdir(directory)
+    with open("Elasticity.mfront", "w") as f:
+        f.write(behaviour)
+    with open("elasticity.mtest", "w") as f:
+        f.write(test)
+    subprocess.run([shutil.which("mfront"), "--obuild", "--interface=generic",
+                    "Elasticity.mfront"], check=True)
+    subprocess.run([shutil.which("mtest"), "elasticity.mtest"], check=True)
+    # loading the behaviour in python
+    m = mtest.MTest()
+    m.setBehaviour("generic", os.path.join("src", library), "Elasticity")
+    with open("elasticity.res") as f:
+        lines = f.readlines()
+    column = next(int(line.split()[1]) for line in lines if "(SXX)" in line)
+    sxx = float(lines[-1].split()[column - 1])
+    print("SXX:", sxx)
+    if abs(sxx - 150e6) > 1:
+        sys.exit("unexpected stress value")

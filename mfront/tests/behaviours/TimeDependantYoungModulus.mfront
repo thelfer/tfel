@@ -1,0 +1,17 @@
+@DSL Implicit;
+@Behaviour TimeDependantYoungModulus;
+@Model "TimeUpdate.mfront";
+
+@UseQt true;
+
+@Parameter stress E0 = 150e9;
+E0.setEntryName("InitialYoungModulus");
+@Parameter time t0 = 4;
+t0.setEntryName("CharacteristicYoungModulusDecayTime");
+
+@ElasticMaterialProperties{
+  young_modulus : "E0*exp(-tv/t0)",
+  poisson_ratio : 0.3
+};
+
+@Brick StandardElasticity;

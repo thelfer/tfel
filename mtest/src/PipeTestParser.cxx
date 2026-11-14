@@ -72,12 +72,21 @@ namespace mtest {
     const auto pe = s.end();
     for (auto& token : this->tokens) {
       if (token.flag == tfel::utilities::Token::String) {
-        auto delim = token.value.at(0);
-        auto contents = token.value.substr(1, token.value.size() - 2);
+        // the value of a string token holds the whole literal: the
+        // substitutions are performed on its contents, which is written back
+        // with the same delimiters
+        const auto raw = tfel::utilities::isRawString(token);
+        const auto delim = tfel::utilities::getRawStringDelimiter(token);
+        auto contents = tfel::utilities::getContents(token);
         for (const auto& [k, v] : s) {
           contents = tfel::utilities::replace_all(contents, k, v);
         }
-        token.value = delim + contents + delim;
+        if (raw) {
+          token.value = "R\"" + delim + "(" + contents + ")" + delim + "\"";
+        } else {
+          const auto quote = token.value.at(0);
+          token.value = quote + contents + quote;
+        }
       } else {
         auto p = s.find(token.value);
         if (p != pe) {
@@ -90,18 +99,18 @@ namespace mtest {
       }
     }
     // treating external commands
-    for (const auto& c : ecmds) {
+    for (auto pc = ecmds.rbegin(); pc != ecmds.rend(); ++pc) {
       CxxTokenizer tokenizer;
       tokenizer.treatCharAsString(true);
       try {
-        tokenizer.parseString(c);
+        tokenizer.parseString(*pc);
 
       } catch (std::exception& e) {
         tfel::raise(
             "PipeTestParser::execute: "
             "error while parsing external command "
             "'" +
-            c + "'\n" + std::string(e.what()));
+            *pc + "'\n" + std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(), tokenizer.begin(),
                           tokenizer.end());
@@ -138,8 +147,8 @@ namespace mtest {
       log << "PipeTestParser::execute : treating keyword '" << p->value
           << "' at line '" << p->line << "'\n";
     }
+    const auto line = p->line;
     ++p;
-    auto line = p->line;
     try {
       (this->*(pc->second))(t, p);
     } catch (std::exception& e) {
@@ -194,7 +203,7 @@ namespace mtest {
       std::cout << "\n# The `" << k << "` keyword\n\n";
       if (!f.empty()) {
         std::ifstream desc{f};
-        if (!desc) {
+        if (desc) {
           std::cout << desc.rdbuf();
         } else {
           std::cout << "The keyword `" << k << "` is not documented yet\n";
@@ -594,6 +603,15 @@ namespace mtest {
   }
 
   void PipeTestParser::handleTest(PipeTest& t, tokens_iterator& p) {
+    auto warn_if = [this](const bool c, const tokens_iterator pv,
+                          const std::string& v) {
+      if (c) {
+        mfront::getLogStream()
+            << this->file << ":" << pv->line << ":" << pv->offset
+            << ": warning: variable '" << v
+            << "' given twice, only its first entry is used\n";
+      }
+    };
     this->readSpecifiedToken("PipeTestParser::handleTest", "<", p,
                              this->tokens.end());
     this->checkNotEndOfLine("PipeTestParser::handleTest", p,
@@ -639,11 +657,12 @@ namespace mtest {
         this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                                 this->tokens.end());
         while (p->value != "}") {
+          const auto pv = p;
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("PipeTestParser::handleTest", ":", p,
                                    this->tokens.end());
           const auto c = this->readUnsignedInt(p, this->tokens.end());
-          variables.insert({v, c});
+          warn_if(!variables.insert({v, c}).second, pv, v);
           this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                                   this->tokens.end());
           if (p->value != "}") {
@@ -689,11 +708,12 @@ namespace mtest {
         this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                                 this->tokens.end());
         while (p->value != "}") {
+          const auto pv = p;
           const auto& v = this->readString(p, this->tokens.end());
           this->readSpecifiedToken("PipeTestParser::handleTest", ":", p,
                                    this->tokens.end());
           const auto ev = this->readString(p, this->tokens.end());
-          variables.insert({v, ev});
+          warn_if(!variables.insert({v, ev}).second, pv, v);
           this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                                   this->tokens.end());
           if (p->value != "}") {

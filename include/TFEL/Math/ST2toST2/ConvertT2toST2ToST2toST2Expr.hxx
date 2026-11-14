@@ -16,6 +16,8 @@
 
 #include "TFEL/FSAlgorithm/copy.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
+#include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
 
 namespace tfel::math {
 
@@ -33,22 +35,27 @@ namespace tfel::math {
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>>,
         public array_holder<9u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 1u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<ST2toST2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : t2tost2 to be converted
      */
     template <T2toST2Concept T2toST2Type>
     TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& A) noexcept {
-      using tfel::fsalgo::copy;
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
                                    numeric_type<ST2toST2ResultType>>());
-      copy<9u>::exe(&A(0, 0), this->v);
+      for (unsigned short i = 0; i != 3; ++i) {
+        for (unsigned short j = 0; j != 3; ++j) {
+          this->v[3 * i + j] = A(i, j);
+        }
+      }
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index
@@ -74,12 +81,13 @@ namespace tfel::math {
       : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>>,
         public array_holder<16u, numeric_type<ST2toST2ResultType>> {
-    //! a simple check
+    //! \brief a simple check
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 2u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<ST2toST2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : t2tost2 to be converted
      */
@@ -89,8 +97,7 @@ namespace tfel::math {
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
                                    numeric_type<ST2toST2ResultType>>());
-      constexpr auto icste = Cste<value_type>::sqrt2;
-      constexpr auto icste2 = Cste<value_type>::isqrt2;
+      constexpr auto icste = Cste<value_type>::isqrt2;
       this->v[0] = A(0, 0);
       this->v[1] = A(0, 1);
       this->v[2] = A(0, 2);
@@ -103,11 +110,12 @@ namespace tfel::math {
       this->v[12] = A(3, 0);
       this->v[13] = A(3, 1);
       this->v[14] = A(3, 2);
-      this->v[3] = (A(0, 3) + A(0, 4)) * icste2;
-      this->v[7] = (A(1, 3) + A(1, 4)) * icste2;
-      this->v[11] = (A(2, 3) + A(2, 4)) * icste2;
+      this->v[3] = (A(0, 3) + A(0, 4)) * icste;
+      this->v[7] = (A(1, 3) + A(1, 4)) * icste;
+      this->v[11] = (A(2, 3) + A(2, 4)) * icste;
       this->v[15] = (A(3, 3) + A(3, 4)) * icste;
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index
@@ -134,10 +142,11 @@ namespace tfel::math {
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>>,
         public array_holder<36u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 3u);
-    //! a simple alias
+    //! \brief a simple alias
     typedef numeric_type<ST2toST2ResultType> value_type;
-    //! a simple alias
+    //! \brief a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \param[in] A : t2tost2 to be converted
      */
@@ -147,8 +156,7 @@ namespace tfel::math {
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
                                    numeric_type<ST2toST2ResultType>>());
-      constexpr auto icste = Cste<value_type>::sqrt2;
-      constexpr auto icste2 = Cste<value_type>::isqrt2;
+      constexpr auto icste = Cste<value_type>::isqrt2;
       this->v[0] = A(0, 0);
       this->v[1] = A(0, 1);
       this->v[2] = A(0, 2);
@@ -167,15 +175,15 @@ namespace tfel::math {
       this->v[30] = A(5, 0);
       this->v[31] = A(5, 1);
       this->v[32] = A(5, 2);
-      this->v[3] = (A(0, 3) + A(0, 4)) * icste2;
-      this->v[4] = (A(0, 5) + A(0, 6)) * icste2;
-      this->v[5] = (A(0, 7) + A(0, 8)) * icste2;
-      this->v[9] = (A(1, 3) + A(1, 4)) * icste2;
-      this->v[10] = (A(1, 5) + A(1, 6)) * icste2;
-      this->v[11] = (A(1, 7) + A(1, 8)) * icste2;
-      this->v[15] = (A(2, 3) + A(2, 4)) * icste2;
-      this->v[16] = (A(2, 5) + A(2, 6)) * icste2;
-      this->v[17] = (A(2, 7) + A(2, 8)) * icste2;
+      this->v[3] = (A(0, 3) + A(0, 4)) * icste;
+      this->v[4] = (A(0, 5) + A(0, 6)) * icste;
+      this->v[5] = (A(0, 7) + A(0, 8)) * icste;
+      this->v[9] = (A(1, 3) + A(1, 4)) * icste;
+      this->v[10] = (A(1, 5) + A(1, 6)) * icste;
+      this->v[11] = (A(1, 7) + A(1, 8)) * icste;
+      this->v[15] = (A(2, 3) + A(2, 4)) * icste;
+      this->v[16] = (A(2, 5) + A(2, 6)) * icste;
+      this->v[17] = (A(2, 7) + A(2, 8)) * icste;
       this->v[21] = (A(3, 3) + A(3, 4)) * icste;
       this->v[22] = (A(3, 5) + A(3, 6)) * icste;
       this->v[23] = (A(3, 7) + A(3, 8)) * icste;
@@ -186,6 +194,7 @@ namespace tfel::math {
       this->v[34] = (A(5, 5) + A(5, 6)) * icste;
       this->v[35] = (A(5, 7) + A(5, 8)) * icste;
     }  // end of Expr
+    // NOLINTEND(google-explicit-constructor)
     /*!
      * \brief access operator
      * \param[in] i : line   index

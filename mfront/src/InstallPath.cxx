@@ -2,7 +2,7 @@
  * \file   mfront/src/InstallPath.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06/03/2019
+ * \date 06/03/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,7 +28,7 @@ namespace mfront {
 
   void setInstallPath(const std::string& p) {
     auto& path = mfront::internals::getInstallPath();
-    tfel::raise_if(!path.empty(),
+    tfel::raise_if((!path.empty()) && (path != p),
                    "mfront::setInstallPath: install path already set");
     path = p;
   }  // end of setInstallPath

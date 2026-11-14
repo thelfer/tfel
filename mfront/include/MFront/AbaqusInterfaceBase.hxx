@@ -2,7 +2,7 @@
  * \file   AbaqusInterfaceBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   17 mars 2016
+ * \date 17/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,10 +27,23 @@ namespace mfront {
    * - the Abaqus Explicit finite element solver (see `AbaqusExplicitInterface`)
    */
   struct AbaqusInterfaceBase : public UMATInterfaceBase {
-    //! name of finite strain strategy attribute
-    static const char *const finiteStrainStrategy;
-    //! name of the orthotropy management policy attribute
-    static const char *const orthotropyManagementPolicy;
+    /*!
+     * \return the name of the attribute storing the finite strain strategy
+     * selected for the given interface
+     * \param[in] i: name of the interface, as returned by `getInterfaceName`
+     *
+     * \note the `abaqus` and `abaqusexplicit` interfaces may be used in the
+     * same call to `mfront`: each interface stores its own options.
+     */
+    [[nodiscard]] static std::string getFiniteStrainStrategyAttributeName(
+        const std::string&);
+    /*!
+     * \return the name of the attribute storing the orthotropy management
+     * policy selected for the given interface
+     * \param[in] i: name of the interface, as returned by `getInterfaceName`
+     */
+    [[nodiscard]] static std::string getOrthotropyManagementPolicyAttributeName(
+        const std::string&);
     /*!
      * \param[in] bd: behaviour description
      * \param[in] fs: finite strain strategy
@@ -42,51 +55,73 @@ namespace mfront {
      *   must match this choice.
      */
     static void checkFiniteStrainStrategyDefinitionConsistency(
-        const BehaviourDescription &, const std::string &);
+        const BehaviourDescription&, const std::string&);
     /*!
+     * \param[in] i: name of the interface
      * \param[in] bd: behaviour description.
      *
      * If a strain measure and a finite strain strategy are defined,
      * this method checks they are compatible.
      */
     static void checkFiniteStrainStrategyDefinitionConsistency(
-        const BehaviourDescription &);
+        const std::string&, const BehaviourDescription&);
     /*!
      * \brief check if the behaviour has been associated to a strain
      * measure or if a finite strain strategy has been defined.
+     * \param[in] i: name of the interface
      * \param[in] bd: behaviour description.
      */
-    static bool hasFiniteStrainStrategy(const BehaviourDescription &);
+    [[nodiscard]] static bool hasFiniteStrainStrategy(
+        const std::string&, const BehaviourDescription&);
     /*!
      * \brief check if the behaviour has been associated to a strain
      * measure or if a finite strain strategy has been defined.
+     * \param[in] i: name of the interface
      * \param[in] bd: behaviour description.
      */
-    static std::string getFiniteStrainStrategy(const BehaviourDescription &);
+    [[nodiscard]] static std::string getFiniteStrainStrategy(
+        const std::string&, const BehaviourDescription&);
     /*!
      * \brief check if the orthotropy management policy defined is
      * consistent with the behaviour.
+     * \param[in] i: name of the interface
      * \param[in] bd: behaviour description.
      */
     static void checkOrthotropyManagementPolicyConsistency(
-        const BehaviourDescription &);
-
-    static bool hasOrthotropyManagementPolicy(const BehaviourDescription &);
-
-    static std::string getOrthotropyManagementPolicy(
-        const BehaviourDescription &);
-    //! destructor
+        const std::string&, const BehaviourDescription&);
+    /*!
+     * \param[in] i: name of the interface
+     * \param[in] bd: behaviour description.
+     */
+    [[nodiscard]] static bool hasOrthotropyManagementPolicy(
+        const std::string&, const BehaviourDescription&);
+    /*!
+     * \param[in] i: name of the interface
+     * \param[in] bd: behaviour description.
+     */
+    [[nodiscard]] static std::string getOrthotropyManagementPolicy(
+        const std::string&, const BehaviourDescription&);
+    //! \brief destructor
     ~AbaqusInterfaceBase() override;
 
    protected:
+    //
+    void writeMTestFileGeneratorSetModellingHypothesis(
+        std::ostream&) const override;
+    [[nodiscard]] std::string getLibraryName(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::string getFunctionNameBasis(
+        const std::string&) const override;
     /*!
      * \brief return the state variable offset used for variables used
      * internally by the abaqus interface
      * \param[in] mb: behaviour description
      * \param[in] h:  modelling hypothesis
      */
-    virtual unsigned short getStateVariablesOffset(const BehaviourDescription &,
-                                                   const Hypothesis) const;
+    [[nodiscard]] virtual unsigned short getStateVariablesOffset(
+        const BehaviourDescription&, const Hypothesis) const;
+    //! \return the list of supported keywords
+    [[nodiscard]] virtual std::vector<std::string> getCommonKeywords() const;
     /*!
      * \param[in,out] bd: behaviour description
      * \param[in] k  : keyword treated
@@ -96,38 +131,20 @@ namespace mfront {
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool, tokens_iterator> treatCommonKeywords(
-        BehaviourDescription &,
-        const std::string &,
+    [[nodiscard]] virtual std::pair<bool, tokens_iterator> treatCommonKeywords(
+        BehaviourDescription&,
+        const std::string&,
         tokens_iterator,
         const tokens_iterator);
-    /*!
-     * \return the list of supported keywords
-     */
-    std::vector<std::string> getCommonKeywords() const;
-    /*!
-     * \return the name of the generated library
-     * \param[in] mb : behaviour description
-     */
-    virtual std::string getLibraryName(
-        const BehaviourDescription &) const override;
     /*!
      * \brief write a  specialisation of the AbaqusTraits class
      * \param[in] out : ouptut file
      * \param[in] mb  : behaviour description
      * \param[in] h   : modelling hypothesis
      */
-    virtual void writeAbaqusBehaviourTraits(std::ostream &,
-                                            const BehaviourDescription &,
+    virtual void writeAbaqusBehaviourTraits(std::ostream&,
+                                            const BehaviourDescription&,
                                             const Hypothesis) const;
-    /*!
-     * \param[in] out : output file
-     */
-    virtual void writeMTestFileGeneratorSetModellingHypothesis(
-        std::ostream &) const override;
-
-    virtual std::string getFunctionNameBasis(
-        const std::string &) const override;
     /*!
      * \return the name of the function generated by the interface
      * \param[in] n: name of the behaviour as defined by interface
@@ -135,14 +152,14 @@ namespace mfront {
      *               and the behaviour name)
      * \param[in] h: modelling hypothesis
      */
-    virtual std::string getFunctionNameForHypothesis(const std::string &,
-                                                     const Hypothesis) const;
+    [[nodiscard]] virtual std::string getFunctionNameForHypothesis(
+        const std::string&, const Hypothesis) const;
     /*!
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
-    virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const override;
+    [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
+        const BehaviourDescription&) const override;
     /*!
      * \return the input file example
      * \param[in] mb: behaviour description
@@ -151,15 +168,15 @@ namespace mfront {
      * Abaqus-Standard. If false, write the example for
      * Abaqus-Explicit
      */
-    virtual void writeInputFileExample(const BehaviourDescription &,
-                                       const FileDescription &,
+    virtual void writeInputFileExample(const BehaviourDescription&,
+                                       const FileDescription&,
                                        const bool) const;
 
-    virtual void writeDepvar(std::ostream &,
-                             int &,
-                             const Hypothesis &,
-                             const VariableDescription &,
-                             const std::string &) const;
+    virtual void writeDepvar(std::ostream&,
+                             int&,
+                             const Hypothesis&,
+                             const VariableDescription&,
+                             const std::string&) const;
   };  // end of struct AbaqusInterfaceBase
 
 }  // end of namespace mfront

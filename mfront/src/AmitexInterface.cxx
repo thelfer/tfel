@@ -2,7 +2,7 @@
  * \file   mfront/src/AmitexInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   17 Jan 2007
+ * \date 17/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -21,8 +21,7 @@ namespace mfront {
 
   std::string AmitexInterface::getName() { return "amitex"; }  // end of getName
 
-  AmitexInterface::AmitexInterface() {
-  }  // end of AmitexInterface::AmitexInterface
+  AmitexInterface::AmitexInterface() = default;
 
   void AmitexInterface::generateInputFileExampleForHypothesis(
       std::ostream& out,
@@ -54,7 +53,7 @@ namespace mfront {
             << "Type = \"Constant\" Value = \"...\" />\n";
         ++nprops;
       } else {
-        for (unsigned short j = 0; j != pm.arraySize;) {
+        for (unsigned short j = 0; j != pm.arraySize; ++j) {
           out << "<!-- material property " << pm.getExternalName() << "[" << j
               << "] -->\n"
               << "<Coeff Index = \"" << nprops << "\" "
@@ -66,59 +65,24 @@ namespace mfront {
     auto nisvs = std::size_t{1};
     if (!persistentVarsHolder.empty()) {
       for (const auto& v : persistentVarsHolder) {
-        const auto flag = SupportedTypes::getTypeFlag(v.type);
+        const auto s = SupportedTypes::getTypeSize(v.type, 1u)
+                           .getValueForModellingHypothesis(h);
         if (v.arraySize == 1) {
           out << "<!-- internal state variable " << v.getExternalName()
               << " -->\n";
-          if (flag == SupportedTypes::SCALAR) {
+          for (int i = 0; i != s; ++i) {
             out << "<IntVar Index = \"" << nisvs << "\" "
                 << "Type = \"Constant\" Value = \"...\" />\n";
             ++nisvs;
-          } else if (flag == SupportedTypes::STENSOR) {
-            for (unsigned short i = 0; i != tfel::material::getStensorSize(h);
-                 ++i) {
-              out << "<IntVar Index = \"" << nisvs << "\" "
-                  << "Type = \"Constant\" Value = \"...\" />\n";
-              ++nisvs;
-            }
-          } else if (flag == SupportedTypes::TENSOR) {
-            for (unsigned short i = 0; i != tfel::material::getStensorSize(h);
-                 ++i) {
-              out << "<IntVar Index = \"" << nisvs << "\" "
-                  << "Type = \"Constant\" Value = \"...\" />\n";
-              ++nisvs;
-            }
-          } else {
-            tfel::raise(
-                "AmitexInterface::generateInputFileExampleForHypothesis: "
-                "unsupported state variable type");
           }
         } else {
           for (unsigned short j = 0; j != v.arraySize; ++j) {
             out << "<!-- internal state variable " << v.getExternalName() << "["
                 << j << "] -->\n";
-            if (flag == SupportedTypes::SCALAR) {
+            for (int i = 0; i != s; ++i) {
               out << "<IntVar Index = \"" << nisvs << "\" "
                   << "Type = \"Constant\" Value = \"...\" />\n";
               ++nisvs;
-            } else if (flag == SupportedTypes::STENSOR) {
-              for (unsigned short i = 0; i != tfel::material::getStensorSize(h);
-                   ++i) {
-                out << "<IntVar Index = \"" << nisvs << "\" "
-                    << "Type = \"Constant\" Value = \"...\" />\n";
-                ++nisvs;
-              }
-            } else if (flag == SupportedTypes::TENSOR) {
-              for (unsigned short i = 0; i != tfel::material::getStensorSize(h);
-                   ++i) {
-                out << "<IntVar Index = \"" << nisvs << "\" "
-                    << "Type = \"Constant\" Value = \"...\" />\n";
-                ++nisvs;
-              }
-            } else {
-              tfel::raise(
-                  "AmitexInterface::generateInputFileExampleForHypothesis: "
-                  "unsupported state variable type");
             }
           }
         }

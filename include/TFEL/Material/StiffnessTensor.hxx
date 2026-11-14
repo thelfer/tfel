@@ -2,7 +2,7 @@
  * \file   StiffnessTensor.hxx
  * \brief
  * \author Thomas Helfer
- * \date   23 oct. 2014
+ * \date 23/10/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -96,6 +96,22 @@ namespace tfel::material {
     TFEL_HOST_DEVICE static constexpr void exe(
         tfel::math::st2tost2<2u, StressType>&,
         const tfel::math::st2tost2<2u, StressType>&) noexcept;
+  };
+  /*!
+   * \brief compute the altered stiffness tensor from the unaltered
+   * one in axisymmetrical generalised plane stress.
+   */
+  template <>
+  struct ComputeAlteredStiffnessTensor<
+      ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS> {
+    /*!
+     * \param[out] Da : altered stiffness
+     * \param[in]  D  : unaltered stiffness
+     */
+    template <typename StressType>
+    TFEL_HOST_DEVICE static constexpr void exe(
+        tfel::math::st2tost2<1u, StressType>&,
+        const tfel::math::st2tost2<1u, StressType>&) noexcept;
   };
 
   /*!

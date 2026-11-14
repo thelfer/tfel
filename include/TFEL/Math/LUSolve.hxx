@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   06 Jul 2006
+ * \date 06/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -45,7 +45,7 @@ namespace tfel::math {
         throw(LUMatrixNotSquare());
       }
       if ((m.getNbRows() != b.size()) || (m.getNbRows() != p.size()) ||
-          (m.getNbRows() != p.size())) {
+          (m.getNbRows() != x.size())) {
         throw(LUUnmatchedSize());
       }
       if (m.getNbRows() == 0) {
@@ -66,7 +66,7 @@ namespace tfel::math {
         throw(LUMatrixNotSquare());
       }
       if ((m.getNbRows() != b.size()) || (m.getNbRows() != p.size()) ||
-          (m.getNbRows() != p.size())) {
+          (m.getNbRows() != x.size())) {
         throw(LUUnmatchedSize());
       }
       if (m.getNbRows() == 0) {

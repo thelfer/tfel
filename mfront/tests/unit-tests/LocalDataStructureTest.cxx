@@ -2,7 +2,7 @@
  * \file   LocalDataStructureTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   02 mai 2016
+ * \date 02/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -35,8 +35,8 @@ struct LocalDataStructureTest final : public tfel::tests::TestCase {
   }  // end of LocalDataStructureTest
 
   tfel::tests::TestResult execute() override {
-    // this->test1();
-    // this->test2();
+    this->test1();
+    this->test2();
     this->test3();
     return this->result;
   }

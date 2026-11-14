@@ -14,7 +14,10 @@
 #include <vector>
 #include <cstdlib>
 #include <cmath>
+#include <cstddef>
+#include <optional>
 #include <limits>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/RelativeComparison.hxx"
 
@@ -27,13 +30,11 @@ namespace tfel::check {
   void RelativeComparison::compare() {
     using namespace std;
     constexpr const double eps = 100. * numeric_limits<double>::min();
-    unsigned int errorLineNumber = 0;
+    std::optional<std::size_t> errorLineNumber;
     unsigned int errorLinesCount = 0;
     float errorLinesPercent = 0.;
     double relativeError;
     double maxRelativeError = 0.;
-    unsigned int lineOffset =
-        (!this->c2->getData()->getLegends().empty()) ? 2u : 1u;
     this->msgLog += '\n';
 
     bool s = true;
@@ -44,11 +45,17 @@ namespace tfel::check {
                       (min(abs(this->c1->getValues()[index]),
                            abs(this->c2->getValues()[index])) +
                        eps);
-      if (maxRelativeError < relativeError) {
+      // a NaN is reported as the maximum error
+      if ((!tfel::math::ieee754::isnan(maxRelativeError)) &&
+          (tfel::math::ieee754::isnan(relativeError) ||
+           (maxRelativeError < relativeError))) {
         maxRelativeError = relativeError;
-        errorLineNumber = index + lineOffset;
+        errorLineNumber = index;
       }
-      if (relativeError > (this->prec)) {
+      // the NaN is tested explicitly, as -ffast-math assumes that the
+      // comparisons never involve one
+      if (tfel::math::ieee754::isnan(relativeError) ||
+          (relativeError > this->prec)) {
         errorLinesCount++;
         s = false;
       }
@@ -73,7 +80,7 @@ namespace tfel::check {
                           " check).\n    Maximum relative error : ");
       this->msgLog.append(tfel::utilities::convert(maxRelativeError));
       this->msgLog +=
-          " at line " + std::to_string(errorLineNumber) +
+          this->getLocation(errorLineNumber) +
           "\n    Failed comparisons (for column) : " +
           std::to_string(errorLinesCount) + " / " +
           std::to_string(this->c1->getValues().size()) + " (" +

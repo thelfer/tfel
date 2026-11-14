@@ -69,10 +69,10 @@ namespace tfel::utilities {
     if (pk != translations.end()) {
       return pk->second;
     }
-    std::cerr << TerminalColors::Red;
+    std::cerr.write(TerminalColors::Red, sizeof(TerminalColors::Red));
     std::cerr << "getTranslation : no translation found for '" << s
               << "' in language '" + l + "', using default" << std::endl;
-    std::cerr << TerminalColors::Reset;
+    std::cerr.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
     return s;
   }
 
@@ -83,10 +83,10 @@ namespace tfel::utilities {
     if (pk != categories.end()) {
       return pk->second;
     }
-    std::cerr << TerminalColors::Red;
+    std::cerr.write(TerminalColors::Red, sizeof(TerminalColors::Red));
     std::cerr << "getCategory : no category found for '" << s
               << "' in language '" + l + "', using default" << std::endl;
-    std::cerr << TerminalColors::Reset;
+    std::cerr.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
     return s;
   }
 
@@ -103,10 +103,10 @@ namespace tfel::utilities {
     if (pk != keys.end()) {
       return pk->second;
     }
-    std::cerr << TerminalColors::Red;
+    std::cerr.write(TerminalColors::Red, sizeof(TerminalColors::Red));
     std::cerr << "getKeyValue : no translation found for key '" << s
               << "' in language '" + l + "', using default" << std::endl;
-    std::cerr << TerminalColors::Reset;
+    std::cerr.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
     return s;
   }
 
@@ -127,7 +127,7 @@ namespace tfel::utilities {
     } else if (tfel::utilities::starts_with(r, "ç")) {
       replace("ç", "Ç");
     } else {
-      r[0] = static_cast<char>(toupper(r[0]));
+      r[0] = static_cast<char>(toupper(static_cast<unsigned char>(r[0])));
     }
     return r;
   }  // end of capitalize

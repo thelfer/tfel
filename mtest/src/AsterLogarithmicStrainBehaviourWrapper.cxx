@@ -2,7 +2,7 @@
  * \file   mtest/src/AsterLogarithmicStrainBehaviourWrapper.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/01/2022
+ * \date 04/01/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,7 +31,7 @@ namespace mtest {
     /*!
      * \param[in] s: state to be modified
      */
-    AsterComputePredictionLogarithmicStrainHandler(CurrentState& cs)
+    explicit AsterComputePredictionLogarithmicStrainHandler(CurrentState& cs)
         : tfel::material::LogarithmicStrainHandler<N, real>(
               tfel::material::LogarithmicStrainHandlerBase::EULERIAN,
               tfel::math::tensor<N, real>{cs.e0.data()}),
@@ -75,7 +75,7 @@ namespace mtest {
     /*!
      * \param[in] s: state to be modified
      */
-    AsterIntegrateLogarithmicStrainHandler(CurrentState& cs)
+    explicit AsterIntegrateLogarithmicStrainHandler(CurrentState& cs)
         : state(cs),
           h0(tfel::material::LogarithmicStrainHandlerBase::EULERIAN,
              tfel::math::tensor<N, real>{cs.e0.data()}),
@@ -333,7 +333,7 @@ namespace mtest {
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    this->allocateCurrentState(wk.cs);
+    this->b->allocateCurrentState(wk.cs);
   }  // end of allocateWorkSpace
 
   tfel::math::tmatrix<3u, 3u, real>
@@ -379,7 +379,7 @@ namespace mtest {
           "AsterLogarithmicStrainBehaviourWrapper::"
           "computePredictionOperator: unsupported space dimension");
     }
-    const auto r = this->b->computePredictionOperator(wk, s, ktype);
+    const auto r = this->b->computePredictionOperator(wk, cs, ktype);
     if (r.first) {
       if (N == 1) {
         const auto& h =

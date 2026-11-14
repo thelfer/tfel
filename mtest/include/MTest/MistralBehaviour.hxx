@@ -79,7 +79,7 @@ namespace mtest {
     const std::pair<double, double> young_modulus;
     //! Poisson ratio
     const std::pair<double, double> poisson_ratio;
-    char mname[16];
+    char mname[17] = {};
     const int SENSIP1;
     const int SENSIP2;
     const int ICBASE;

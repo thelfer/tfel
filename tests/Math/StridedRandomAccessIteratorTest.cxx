@@ -2,7 +2,7 @@
  * \file   StridedRandomAccessIteratorTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08 avril 2016
+ * \date 08/04/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -83,6 +83,10 @@ struct StridedRandomAccessIteratorTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(values[9] - 0) < eps);
     TFEL_TESTS_ASSERT(std::abs(values[10] - 10) < eps);
     TFEL_TESTS_ASSERT(std::abs(values[11] - 11) < eps);
+    const auto b2 = iterator(values.begin() + 1, 3);
+    std::copy(b2, b2 + 2, b);
+    TFEL_TESTS_ASSERT(std::abs(values[0] - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[3] - 4) < eps);
   }
 };
 

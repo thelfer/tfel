@@ -1,3 +1,11 @@
+# compiler and platforms reported by MFrontHeader::getHeader
+set(CXX "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+set(build_cpu "${CMAKE_HOST_SYSTEM_PROCESSOR}")
+set(build_os "${CMAKE_HOST_SYSTEM_NAME}")
+set(host_cpu "${CMAKE_SYSTEM_PROCESSOR}")
+set(host_os "${CMAKE_SYSTEM_NAME}")
+set(target_cpu "${CMAKE_SYSTEM_PROCESSOR}")
+set(target_os "${CMAKE_SYSTEM_NAME}")
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -12,6 +20,24 @@ target_include_directories(MFrontLogStream
 if(enable-static)
   target_include_directories(MFrontLogStream-static
     PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+endif(enable-static)
+
+# MFrontGenericParallelRuntime: base class of the execution policies of the
+# generic-parallel interfaces, linked by the codes creating policies (the
+# generated libraries do not need it)
+mfront_library(MFrontGenericParallelRuntime
+  GenericParallel/AbstractBackendExecutionPolicy.cxx)
+target_include_directories(MFrontGenericParallelRuntime
+   PUBLIC
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
+if(enable-static)
+  target_include_directories(MFrontGenericParallelRuntime-static
+    PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
@@ -74,6 +100,8 @@ endif(enable-static)
 set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
+    CompatibilityMode.cxx
+    ConfigurationManager.cxx
     GlobalDomainSpecificLanguageOptionsManager.cxx
     MaterialKnowledgeDescription.cxx
     PathSpecifier.cxx
@@ -154,7 +182,10 @@ set(TFELMFront_SOURCES
     ImplicitGenericBehaviourDSL.cxx
     ImplicitModelDSL.cxx
     ImplicitCZMDSL.cxx
-    NonLinearSystemSolver.cxx
+    AbstractLinearSystemSolver.cxx
+    LinearSystemSolverBase.cxx
+    DefaultLinearSystemSolver.cxx
+    AbstractNonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
     NonLinearSystemSolverFactory.cxx
     UserDefinedNonLinearSystemSolver.cxx
@@ -203,6 +234,17 @@ set(TFELMFront_SOURCES
     UMATInterfaceBase.cxx
     GenericMaterialPropertyInterfaceBase.cxx
     GenericMaterialPropertyInterface.cxx
+    GenericParallelMaterialPropertyInterface.cxx
+    GenericParallel/BackendOptions.cxx
+    GenericParallel/MaterialProperty/AbstractBackend.cxx
+    GenericParallel/MaterialProperty/BackendFactory.cxx
+    GenericParallel/MaterialProperty/BackendBase.cxx
+    GenericParallel/MaterialProperty/CUDABackendBase.cxx
+    GenericParallel/MaterialProperty/CUDABackend.cxx
+    GenericParallel/MaterialProperty/HIPBackend.cxx
+    GenericParallel/MaterialProperty/CxxProgrammingModelBackendBase.cxx
+    GenericParallel/MaterialProperty/ParallelSTLBackend.cxx
+    GenericParallel/MaterialProperty/SYCLBackend.cxx
     GenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx
     GenericModelInterface.cxx
@@ -249,6 +291,9 @@ set(TFELMFront_SOURCES
     MichelAndSuquet1992HollowSphereStressCriterion.cxx
     GursonTvergaardNeedleman1982StressCriterion.cxx
     RousselierTanguyBesson2002StressCriterion.cxx
+    PorousStressCriterionEquivalentStress.cxx
+    GeneralisedGursonTvergaardNeedlemanStressCriterion.cxx
+    GeneralisedRousselierTanguyBessonStressCriterion.cxx
     StressCriterionFactory.cxx
     IsotropicHardeningRule.cxx
     LinearIsotropicHardeningRule.cxx
@@ -283,6 +328,9 @@ if(HAVE_PYTHON)
     set(TFELMFront_SOURCES
 	PythonMaterialPropertyInterface.cxx
 	${TFELMFront_SOURCES})
+    # paths of python, see the main CMakeLists.txt
+    set_source_files_properties(PythonMaterialPropertyInterface.cxx
+      PROPERTIES COMPILE_DEFINITIONS "${TFEL_PYTHON_DEFINITIONS}")
 endif(HAVE_PYTHON)
 
 if(HAVE_JAVA)
@@ -304,7 +352,9 @@ if(HAVE_CASTEM)
 	Castem21Interface.cxx
 	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
+	Castem21MaterialPropertyInterface.cxx
 	CastemModelInterface.cxx
+	Castem21ModelInterface.cxx
 	AmitexInterface.cxx
 	${TFELMFront_SOURCES})
     set(CastemInterface_SOURCES
@@ -490,7 +540,29 @@ if(HAVE_CYRANO)
     TFELException)
 endif(HAVE_CYRANO)
 
+if(enable-tdls)
+  set(TFELMFront_SOURCES
+      TDLSLinearSystemSolver.cxx
+      ${TFELMFront_SOURCES})
+endif(enable-tdls)
+
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
+if(enable-tdls)
+  target_compile_definitions(TFELMFront
+    PUBLIC TFEL_MATH_TDLS_SUPPORT)
+  if(enable-tdls-as-default-linear-system-solver-in-mfront)
+    target_compile_definitions(TFELMFront
+      PRIVATE MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER)
+  endif(enable-tdls-as-default-linear-system-solver-in-mfront)
+  if(enable-static)
+    target_compile_definitions(TFELMFront-static
+      PUBLIC TFEL_MATH_TDLS_SUPPORT)
+    if(enable-tdls-as-default-linear-system-solver-in-mfront)
+      target_compile_definitions(TFELMFront-static
+        PRIVATE MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER)
+    endif(enable-tdls-as-default-linear-system-solver-in-mfront)
+  endif(enable-static)
+endif(enable-tdls)
 target_include_directories(TFELMFront
    PUBLIC 
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -503,19 +575,6 @@ if(enable-static)
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
     $<INSTALL_INTERFACE:include>)
 endif(enable-static)
-if(HAVE_CASTEM)
-  if(CASTEHOME)
-    target_include_directories(TFELMFront 
-      PRIVATE "${CASTEMHOME}/include"
-      PRIVATE "${CASTEMHOME}/include/c")
-    if(enable-static)
-      target_include_directories(TFELMFront-static 
-        PRIVATE "${CASTEMHOME}/include"
-        PRIVATE "${CASTEMHOME}/include/c")
-    endif(enable-static)
-  endif(CASTEHOME)
-endif(HAVE_CASTEM)
-
 target_link_libraries(TFELMFront
   PUBLIC
   tfel::MFrontLogStream

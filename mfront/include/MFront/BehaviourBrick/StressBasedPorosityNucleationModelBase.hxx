@@ -3,7 +3,7 @@
  * include/MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   05/04/2020
+ * \date 05/04/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -15,6 +15,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_STRESSBASEDPOROSITYNUCLEATIONMODELBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_STRESSBASEDPOROSITYNUCLEATIONMODELBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourBrick/PorosityNucleationModelBase.hxx"
 
 namespace mfront::bbrick {
@@ -28,8 +29,8 @@ namespace mfront::bbrick {
    * - \f$f\f$ is the nucleated porosity.
    * - \f$p\f$ is the total equivalent plastic strain.
    */
-  struct StressBasedPorosityNucleationModelBase : PorosityNucleationModelBase {
-    std::vector<OptionDescription> getOptions() const override;
+  struct MFRONT_VISIBILITY_EXPORT StressBasedPorosityNucleationModelBase
+      : PorosityNucleationModelBase {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -40,19 +41,18 @@ namespace mfront::bbrick {
         const StressPotential&,
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string&) const override;
-    std::string updateNextEstimateOfThePorosityIncrement(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string updateNextEstimateOfThePorosityIncrement(
         const BehaviourDescription&,
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string&) const override;
-    bool requiresSavingNucleatedPorosity() const override final;
+    [[nodiscard]] bool requiresSavingNucleatedPorosity() const final;
     //! \brief destructor
     ~StressBasedPorosityNucleationModelBase() override;
 
    protected:
-    /*!
-     * \return the name of the underlying nucleation model.
-     */
-    virtual std::string getModelName() const = 0;
+    //! \return the name of the underlying nucleation model.
+    [[nodiscard]] virtual std::string getModelName() const = 0;
     //!
     BehaviourDescription::MaterialProperty fmax;
   };  // end of struct StressBasedPorosityNucleationModelBase

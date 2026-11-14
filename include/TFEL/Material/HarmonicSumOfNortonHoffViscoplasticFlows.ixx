@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATERIAL_HARMONICSUMOFNORTONHOFFVISCOPLASTICFLOWS_IXX
 #define LIB_TFEL_MATERIAL_HARMONICSUMOFNORTONHOFFVISCOPLASTICFLOWS_IXX
 
+#include <cmath>
 #include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::material {
@@ -87,24 +88,28 @@ namespace tfel::material {
     if (!(seq > stress(0))) {
       return r;
     }
-    auto dp = A[0] * pow(seq / K[0], n[0]);
-    auto ddp_dseq = n[0] * dp / seq;
-    auto idp = 1 / dp;
-    auto didp_dseq = -idp * idp * ddp_dseq;
+    auto dp = tfel::math::fsarray<N, strainrate>{};
+    auto idp = 1 / (dp[0] = A[0] * pow(seq / K[0], n[0]));
     for (decltype(A.size()) i = 1; i != A.size(); ++i) {
-      dp = A[i] * pow(seq / K[i], n[i]);
-      ddp_dseq = n[i] * dp / seq;
-      idp += 1 / dp;
-      didp_dseq += -ddp_dseq / (dp * dp);
+      dp[i] = A[i] * pow(seq / K[i], n[i]);
+      idp += 1 / dp[i];
     }
-    std::get<0>(r) = 1 / idp;
-    std::get<1>(r) = -1 / (idp * idp) * didp_dseq;
+    const auto vp = 1 / idp;
+    if (!(vp > strainrate(0))) {
+      return r;
+    }
+    // the derivative is computed from the ratios vp / dp[i], which lie in
+    // [0, 1], to avoid an underflow of the squares of the strain rates
+    auto s = n[0] * (vp / dp[0]);
+    for (decltype(A.size()) i = 1; i != A.size(); ++i) {
+      s += n[i] * (vp / dp[i]);
+    }
+    std::get<0>(r) = vp;
+    std::get<1>(r) = s * vp / seq;
     return r;
   }  // end of
      // computeEquivalentStrainRateAndDerivativeOfHarmonicSumOfNortonHoffViscoplasticFlows
 
 }  // end of namespace tfel::material
-
-#include "TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.ixx"
 
 #endif /* LIB_TFEL_MATERIAL_HARMONICSUMOFNORTONHOFFVISCOPLASTICFLOWS_IXX */

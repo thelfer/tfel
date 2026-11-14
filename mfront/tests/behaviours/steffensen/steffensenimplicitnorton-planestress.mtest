@@ -18,7 +18,10 @@
 
 @ModellingHypothesis 'PlaneStress';
 @Behaviour<umat> @library@ 'umatimplicitnorton2';
-@StressEpsilon 1.e-2;
+// note: through the Norton law, a stress residual of 1.e-2 gives an error
+// of 4.4e-12 on the equivalent viscoplastic strain, above the criteria of
+// the tests below
+@StressEpsilon 1.e-3;
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

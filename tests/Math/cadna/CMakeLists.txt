@@ -5,7 +5,7 @@ macro(tests_math_cadna test_arg)
   target_link_libraries(cadna_${test_arg}
     TFELMath TFELTests ${TFEL_CADNA_LIBRARY})
   add_test(NAME cadna_${test_arg} COMMAND cadna_${test_arg})
-  add_dependencies(check cadna_${test_arg})
+  add_dependencies(build-tests cadna_${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST cadna_${test_arg}
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMath>\;${CADNA_LIBRARY_PATH}/lib\;$ENV{PATH}")

@@ -1,3 +1,4 @@
+
 /*!
  * \file  include/TFEL/Math/Array/View.hxx
  * \brief
@@ -35,8 +36,8 @@ namespace tfel::math::internals {
     using type = T&;
   };
 
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
-  struct MakeViewReference<Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <unit::UnitConcept UnitType, typename ValueType>
+  struct MakeViewReference<qt<UnitType, ValueType>> {
     //! \brief result of the metafunction
     using type = qt_ref<UnitType, ValueType>;
   };
@@ -47,9 +48,8 @@ namespace tfel::math::internals {
     using type = const T&;
   };
 
-  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
-  struct MakeConstViewReference<
-      Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  template <unit::UnitConcept UnitType, typename ValueType>
+  struct MakeConstViewReference<qt<UnitType, ValueType>> {
     //! \brief result of the metafunction
     using type = const_qt_ref<UnitType, ValueType>;
   };
@@ -207,13 +207,14 @@ namespace tfel::math {
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator[];
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept
         requires(!is_const) {
       return this->data_pointer;
     }  // end of data
 
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr const_data_pointer_type data() const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const_data_pointer_type data()
+        const noexcept {
       return this->data_pointer;
     }  // end of data
 
@@ -269,8 +270,14 @@ namespace tfel::math {
             BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
             numeric_type<MappedType>>()) {
       static_assert(!is_const, "invalid call");
-      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(1 /
-                                                                            s);
+      using base = base_type<numeric_type<MappedType>>;
+      if constexpr (std::is_integral_v<base>) {
+        // the reciprocal of an integer is zero in general
+        selectViewArrayBase<MappedType, IndexingPolicyType>::divideByScalar(s);
+      } else {
+        selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(
+            base{1} / s);
+      }
       return *this;
     }  // end of operator/=
 
@@ -315,7 +322,7 @@ namespace tfel::math {
     struct ScalarViewImplementation<ScalarType, true> {
       using type = std::conditional_t<
           std::is_const_v<ScalarType>,
-          const qt_ref<
+          const_qt_ref<
               typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
               typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>,
           qt_ref<typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,

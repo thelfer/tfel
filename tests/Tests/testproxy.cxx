@@ -1,7 +1,7 @@
 /*!
  * \file   tests/Tests/testproxy.cxx
  * \author Thomas Helfer
- * \date   10 Apr 10
+ * \date 10/04/2010
  * \brief a simple test of the TestSuite class
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.

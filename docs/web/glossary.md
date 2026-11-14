@@ -31,7 +31,7 @@ no units specified
 
 ## Notes 
 
-This quantity is only meaningful under on of the plane stress modelling hypotheses.
+This quantity is only meaningful under one of the plane stress modelling hypotheses.
 
 # The `AxialGrowth` entry
 
@@ -53,7 +53,7 @@ no units specified
 
 ## Notes 
 
-This quantity is only meaningful under on of the plane stress modelling hypotheses.
+This quantity is only meaningful under one of the plane stress modelling hypotheses.
 
 # The `AxialStress` entry
 
@@ -70,7 +70,7 @@ This quantity is only meaningful under the axisymmetrical generalized plane stre
 
 # The `B10BurnUp` entry
 
-This entry describes the burn-up of an absorant material containing \(\mbox{}^{10}B\).
+This entry describes the burn-up of an absorbent material containing \(\mbox{}^{10}B\).
 
 
 * units:
@@ -115,11 +115,11 @@ This entry describes the burn-up in MegaWattJour per tons of metals.
 
 # The `CohesiveForce` entry
 
-This entry describes cohesive force for cohesize zone models.
+This entry describes cohesive force for cohesive zone models.
 
 
 * units:
-  *SI: Newton
+  *SI: Pa
 * type: vector
 
 # The `ConvectiveHeatTransferCoefficient` entry
@@ -133,7 +133,7 @@ This entry describes the heat transfer coefficient by convection.
 
 # The `CrossSectionArea` entry
 
-This entry describes ??.
+This entry describes the area of the cross section of a beam.
 
 
 * units:
@@ -160,7 +160,7 @@ no units specified
 
 # The `DeformationGradient` entry
 
-This entry describes gradient of the transformation.
+This entry describes the gradient of the transformation.
 
 
 * units:
@@ -182,12 +182,12 @@ This entry describes the dual stress of the strain measure.
 
 
 * units:
-  *SI: stress
+  *SI: Pa
 * type: tensor
 
 # The `ElasticStrain` entry
 
-This entry describes The elastic strain.
+This entry describes the elastic strain.
 
 
 * units:
@@ -196,7 +196,7 @@ no units specified
 
 # The `Emissivity` entry
 
-This entry describes the emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation.
+This entry describes the emissivity of the surface of a material, which is its effectiveness in emitting energy as thermal radiation.
 
 
 * units:
@@ -254,7 +254,7 @@ This entry describes the fast neutron fluence, where the limit for fast neutron 
 
 # The `FastNeutronFlux_01MeV` entry
 
-This entry describes the fast neutron fluence.
+This entry describes the fast neutron flux, where the limit for fast neutron is 0.1 MeV.
 
 
 * units:
@@ -263,7 +263,7 @@ This entry describes the fast neutron fluence.
 
 # The `FastNeutronFlux_1MeV` entry
 
-This entry describes the fast neutron fluence.
+This entry describes the fast neutron flux, where the limit for fast neutron is 1 MeV.
 
 
 * units:
@@ -272,7 +272,7 @@ This entry describes the fast neutron fluence.
 
 # The `FirstAxisSecondMomentArea` entry
 
-This entry describes ??.
+This entry describes the second moment of area of the cross section of a beam about its first axis.
 
 
 * units:
@@ -299,7 +299,7 @@ This entry describes the fission density.
 
 # The `GaseousSwelling` entry
 
-This entry describes swelling du to gazeous fission products.
+This entry describes swelling due to gaseous fission products.
 
 
 * units:
@@ -317,7 +317,7 @@ This entry describes the grain size.
 
 # The `HeatFlux` entry
 
-This entry describes the heat flux, generally in the current configuration..
+This entry describes the heat flux, generally in the current configuration.
 
 
 * units:
@@ -326,7 +326,7 @@ This entry describes the heat flux, generally in the current configuration..
 
 # The `HeatTransferCoefficient` entry
 
-This entry describes the heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference.
+This entry describes the heat transfer coefficient, which is the proportionality constant between the heat flux and the temperature difference.
 
 
 * units:
@@ -340,7 +340,7 @@ This entry describes the Hill equivalent stress.
 
 * units:
   *SI: Pa
-* type: tensor
+* type: scalar
 
 # The `HydrostaticPressure` entry
 
@@ -349,11 +349,11 @@ This entry describes the hydrostatic pressure, defined as the third of the trace
 
 * units:
   *SI: Pa
-* type: tensor
+* type: scalar
 
 # The `IrradiationDamage` entry
 
-This entry describes the irradiation damage, measure by the mean number of displacements of each atoms.
+This entry describes the irradiation damage, measured by the mean number of displacements of each atom.
 
 
 * units:
@@ -362,7 +362,7 @@ This entry describes the irradiation damage, measure by the mean number of displ
 
 # The `IrradiationInducedSwelling` entry
 
-This entry describes swelling du to irradiation damage.
+This entry describes swelling due to irradiation damage.
 
 
 * units:
@@ -371,7 +371,7 @@ no units specified
 
 # The `IrradiationSwelling` entry
 
-This entry describes swelling du to irradiation damage.
+This entry describes swelling due to irradiation damage.
 
 
 * units:
@@ -419,7 +419,7 @@ This entry describes the temperature.
 
 ## Notes 
 
-This entry has been introduced by compatibility with implantation choices made by the Germinal fuel performance code
+This entry has been introduced for compatibility with implantation choices made by the Germinal fuel performance code.
 
 # The `MassDensity` entry
 
@@ -450,7 +450,7 @@ This entry describes the spatial average of the  burn-up in MegaWattJour per ton
 
 # The `MeanIrradiationTemperature` entry
 
-This entry describes The mean temperature  in time over a given domain \(\Omega\).
+This entry describes the mean temperature in time over a given domain \(\Omega\).
 
 
 * units:
@@ -467,7 +467,7 @@ In practice, the computation of the spatial integral is done using standard fini
 
 # The `MeanTemperature` entry
 
-This entry describes The mean temperature over a given domain \(\Omega\).
+This entry describes the mean temperature over a given domain \(\Omega\).
 
 
 * units:
@@ -607,7 +607,7 @@ This quantity is defined internally by the Licos fuel performance code
 
 # The `PlasticStrain` entry
 
-This entry describes The plastic strain.
+This entry describes the plastic strain.
 
 
 * units:
@@ -616,7 +616,7 @@ no units specified
 
 # The `PlateWidth` entry
 
-This entry describes ??.
+This entry describes the out-of-plane width of a plate.
 
 
 * units:
@@ -661,7 +661,7 @@ no units specified
 
 # The `Porosity` entry
 
-This entry describes Porosity of the material.
+This entry describes the porosity of the material.
 
 
 * units:
@@ -670,7 +670,7 @@ no units specified
 
 # The `PorosityIncreaseDueToInelasticFlow` entry
 
-This entry describes Part of the porosity increase du to inelastic flow.
+This entry describes part of the porosity increase due to inelastic flow.
 
 
 * units:
@@ -679,7 +679,7 @@ no units specified
 
 # The `PorosityIncreaseDueToNucleation` entry
 
-This entry describes Part of the porosity increase du to nucleation.
+This entry describes part of the porosity increase due to nucleation.
 
 
 * units:
@@ -697,7 +697,7 @@ This entry describes the power density, generally in the current configuration.
 
 # The `Pressure` entry
 
-This entry describes the pressure of a gaz.
+This entry describes the pressure of a gas.
 
 
 * units:
@@ -715,7 +715,7 @@ This entry describes the first principal stress.
 
 # The `PrincipalStress2` entry
 
-This entry describes the third principal stress.
+This entry describes the second principal stress.
 
 
 * units:
@@ -733,7 +733,7 @@ This entry describes the third principal stress.
 
 # The `SecondAxisSecondMomentArea` entry
 
-This entry describes ??.
+This entry describes the second moment of area of the cross section of a beam about its second axis.
 
 
 * units:
@@ -751,7 +751,7 @@ This entry describes the shear modulus of an isotropic material.
 
 # The `ShearModulus12` entry
 
-This entry describes the shear moduls between the first and second directions of orthotropy.
+This entry describes the shear modulus between the first and second directions of orthotropy.
 
 
 * units:
@@ -760,7 +760,7 @@ This entry describes the shear moduls between the first and second directions of
 
 # The `ShearModulus13` entry
 
-This entry describes the shear moduls between the first and third directions of orthotropy.
+This entry describes the shear modulus between the first and third directions of orthotropy.
 
 
 * units:
@@ -769,7 +769,7 @@ This entry describes the shear moduls between the first and third directions of 
 
 # The `ShearModulus23` entry
 
-This entry describes the shear moduls between the second and third directions of orthotropy.
+This entry describes the shear modulus between the second and third directions of orthotropy.
 
 
 * units:
@@ -778,7 +778,7 @@ This entry describes the shear moduls between the second and third directions of
 
 # The `SolidSwelling` entry
 
-This entry describes swelling du to solid fission products.
+This entry describes swelling due to solid fission products.
 
 
 * units:
@@ -863,7 +863,7 @@ This entry describes the temperature gradient, generally in the current configur
 
 
 * units:
-  *SI: T.m^{-1}
+  *SI: K.m^{-1}
 * type: vector
 
 # The `ThermalConductivity` entry
@@ -913,7 +913,7 @@ This entry describes the mean thermal expansion coefficient.
 
 ## Notes 
 
-This entry shall have be named MeanThermalExpansionCoefficient.
+This entry shall have been named MeanThermalExpansionCoefficient.
 
 # The `ThermalExpansion1` entry
 
@@ -926,7 +926,7 @@ This entry describes the mean thermal expansion coefficient along the first orth
 
 ## Notes 
 
-This entry shall have be named MeanThermalExpansionCoefficient1.
+This entry shall have been named MeanThermalExpansionCoefficient1.
 
 # The `ThermalExpansion2` entry
 
@@ -939,7 +939,7 @@ This entry describes the mean thermal expansion coefficient along the second ort
 
 ## Notes 
 
-This entry shall have be named MeanThermalExpansionCoefficient2.
+This entry shall have been named MeanThermalExpansionCoefficient2.
 
 # The `ThermalExpansion3` entry
 
@@ -952,15 +952,15 @@ This entry describes the mean thermal expansion coefficient along the third orth
 
 ## Notes 
 
-This entry shall have be named MeanThermalExpansionCoefficient3.
+This entry shall have been named MeanThermalExpansionCoefficient3.
 
 # The `TorsionConstant` entry
 
-This entry describes ??.
+This entry describes the torsion constant of the cross section of a beam.
 
 
 * units:
-  *SI: ??
+  *SI: m^{4}
 * type: scalar
 
 # The `TrescaStress` entry
@@ -983,7 +983,7 @@ This entry describes the maximum stress that a material can withstand while bein
 
 # The `ViscoplasticStrain` entry
 
-This entry describes The viscoplatic strain.
+This entry describes the viscoplastic strain.
 
 
 * units:
@@ -1019,7 +1019,7 @@ This entry describes the stress corresponding to the yield point at which the ma
 
 ## Notes 
 
-When this limit is difficult to identify experimentally, the offset yield point is taken as the stress at which 0.2% plastic deformation occurs
+When this limit is difficult to identify experimentally, the offset yield point is taken as the stress at which 0.2% plastic deformation occurs.
 
 # The `YoungModulus` entry
 
@@ -1032,7 +1032,7 @@ This entry describes the Young's modulus of an isotropic material.
 
 # The `YoungModulus1` entry
 
-This entry describes the Young's modulus of an isotropic material along the first direction of orthotropy.
+This entry describes the Young's modulus of an orthotropic material along the first direction of orthotropy.
 
 
 * units:
@@ -1041,7 +1041,7 @@ This entry describes the Young's modulus of an isotropic material along the firs
 
 # The `YoungModulus2` entry
 
-This entry describes the Young's modulus of an isotropic material along the second direction of orthotropy.
+This entry describes the Young's modulus of an orthotropic material along the second direction of orthotropy.
 
 
 * units:
@@ -1050,7 +1050,7 @@ This entry describes the Young's modulus of an isotropic material along the seco
 
 # The `YoungModulus3` entry
 
-This entry describes the Young's modulus of an isotropic material along the third direction of orthotropy.
+This entry describes the Young's modulus of an orthotropic material along the third direction of orthotropy.
 
 
 * units:

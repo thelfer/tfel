@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx
  * \brief
  * \author Thomas Helfer
- * \date   22 nov. 2014
+ * \date 22/11/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

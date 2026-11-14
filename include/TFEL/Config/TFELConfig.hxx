@@ -3,7 +3,7 @@
  * \brief  This file declares some useful typedef to control the level
  * of inlining used by the different parts of TFEL.
  * \author Thomas Helfer
- * \date   31 mai 2006
+ * \date 31/05/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

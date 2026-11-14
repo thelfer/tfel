@@ -1,0 +1,32 @@
+@DSL MaterialLaw;
+@Law YoungModulus_Martin1989;
+@Material UO2;
+
+@UseQt true;
+
+@Output quantity<real, 1, -1, -2, 0, 0, 0, 0> E;
+E.setGlossaryName("YoungModulus");
+
+@Input quantity<real, 0, 0, 0, 0, 1, 0, 0> T;
+
+@Input real f;
+T.setGlossaryName("Temperature");
+f.setGlossaryName("Porosity");
+
+@PhysicalBounds T in [0:*[;
+@Bounds T in [273.15:2610.15];
+@PhysicalBounds f in [0:1];
+
+@Parameter quantity<real, 1, -1, -2, 0, 0, 0, 0> E0 = 2.2693e11;
+@Parameter derivative_type<quantity<real, 1, -1, -2, 0, 0, 0, 0>,
+                           quantity<real, 0, 0, 0, 0, 1, 0, 0>>
+    dE_dT = -1.53994698e7;
+@Parameter derivative_type<quantity<real, 1, -1, -2, 0, 0, 0, 0>,
+                           quantity<real, 0, 0, 0, 0, 1, 0, 0>,
+                           quantity<real, 0, 0, 0, 0, 1, 0, 0>>
+    d2E_dT2 = -1.9198278e4;
+@Parameter real f0 = 0.4;
+
+@Function {
+  E = (1 - f / f0) * (E0 + dE_dT * T + (d2E_dT2 / 2) * T * T);
+}

@@ -175,8 +175,6 @@ namespace mtest {
     const AnsysReal TIME = 0;
     const AnsysReal tsstif = 0;
     AnsysReal epsZZ = 0;
-    AnsysReal sedEl = 0;
-    AnsysReal sedPl = 0;
     AnsysReal epseq = 0;
     AnsysReal epsPl[6] = {0, 0, 0, 0, 0, 0};
     const AnsysReal coords[3] = {0, 0, 0};
@@ -184,11 +182,13 @@ namespace mtest {
         0, 0, 0, 0, 0, 0, 0, 0,
     };
     AnsysInt keycut = 0;
+    s.se1 = s.se0;
+    s.de1 = s.de0;
     (this->fct)(&matId, &elemId, &kDomIntPt, &kLayer, &kSectPt, &ldsetp,
                 &isubst, &keycut, &ndirect, &nshear, &ntens, &nstatv, &nprops,
                 &TIME, &dt, &(s.esv0(0)), &(s.desv(0)), &us(0),
                 wk.ivs.size() == 0 ? nullptr : &wk.ivs(0), &(wk.D(0, 0)),
-                &sedEl, &sedPl, &epseq, &ue0(0), &ude(0), epsPl, &(wk.mps(0)),
+                &s.se1, &s.de1, &epseq, &ue0(0), &ude(0), epsPl, &(wk.mps(0)),
                 coords, &drot(0, 0), nullptr, nullptr, &tsstif, &epsZZ, &var[0],
                 &var[1], &var[2], &var[3], &var[4], &var[5], &var[6], &var[7]);
     if (keycut != 0) {
@@ -198,7 +198,8 @@ namespace mtest {
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       // normalizing
       AnsysNormaliseTangentOperator::exe(&Kt(0, 0), wk.D, 3u);
-    } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
+    } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+               (h == ModellingHypothesis::PLANESTRAIN)) {
       AnsysNormaliseTangentOperator::exe(&Kt(0, 0), wk.D, 2u);
     } else if (h == ModellingHypothesis::PLANESTRESS) {
       constexpr auto zero = AnsysReal{0};

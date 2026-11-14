@@ -13,3 +13,11 @@
 @ExternalStateVariable 'Temperature' {0:293.15,1:693.15};
 
 @Times {0,1};
+
+// inner pressure given by the ideal gas law at constant volume (small
+// strain analysis), inner and outer displacements given by the Lamé
+// solution (end cap effect)
+@Real 'Pi' '1.e5*693.15/293.15';
+@Real 'Pe' 0;
+@Test<function> 'InnerDisplacement' 'Ri/YoungModulus*((Pi*(Ri*Ri+Re*Re)-2*Pe*Re*Re)/(Re*Re-Ri*Ri)+PoissonRatio*Pi-PoissonRatio*(Pi*Ri*Ri-Pe*Re*Re)/(Re*Re-Ri*Ri))' 5.e-10;
+@Test<function> 'OuterDisplacement' 'Re/YoungModulus*((2*Pi*Ri*Ri-Pe*(Ri*Ri+Re*Re))/(Re*Re-Ri*Ri)+PoissonRatio*Pe-PoissonRatio*(Pi*Ri*Ri-Pe*Re*Re)/(Re*Re-Ri*Ri))' 5.e-10;

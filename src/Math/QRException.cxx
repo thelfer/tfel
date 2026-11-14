@@ -16,12 +16,12 @@
 namespace tfel::math {
 
   QRException::QRException() = default;
-  QRException::QRException(QRException&&) = default;
+  QRException::QRException(QRException&&) noexcept = default;
   QRException::QRException(const QRException&) = default;
   QRException::~QRException() noexcept = default;
 
   QRUnmatchedSize::QRUnmatchedSize() = default;
-  QRUnmatchedSize::QRUnmatchedSize(QRUnmatchedSize&&) = default;
+  QRUnmatchedSize::QRUnmatchedSize(QRUnmatchedSize&&) noexcept = default;
   QRUnmatchedSize::QRUnmatchedSize(const QRUnmatchedSize&) = default;
   QRUnmatchedSize::~QRUnmatchedSize() noexcept = default;
 
@@ -30,7 +30,8 @@ namespace tfel::math {
   }  // end of QRUnmatchedSize::what
 
   QRInvalidMatrixSize::QRInvalidMatrixSize() = default;
-  QRInvalidMatrixSize::QRInvalidMatrixSize(QRInvalidMatrixSize&&) = default;
+  QRInvalidMatrixSize::QRInvalidMatrixSize(QRInvalidMatrixSize&&) noexcept =
+      default;
   QRInvalidMatrixSize::QRInvalidMatrixSize(const QRInvalidMatrixSize&) =
       default;
   QRInvalidMatrixSize::~QRInvalidMatrixSize() noexcept = default;
@@ -40,7 +41,7 @@ namespace tfel::math {
   }  // end of QRInvalidMatrixSize::what
 
   QRNullPivot::QRNullPivot() = default;
-  QRNullPivot::QRNullPivot(QRNullPivot&&) = default;
+  QRNullPivot::QRNullPivot(QRNullPivot&&) noexcept = default;
   QRNullPivot::QRNullPivot(const QRNullPivot&) = default;
   QRNullPivot::~QRNullPivot() noexcept = default;
 

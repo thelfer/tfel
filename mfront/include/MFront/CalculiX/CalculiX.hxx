@@ -32,10 +32,10 @@ namespace calculix {
   //! floatting-point type used by the calculix interface
   using CalculiXReal = double;
   //! a simple alias
-  using StressFreeExpansionHandler = void (*)(CalculiXReal *const,
-                                              CalculiXReal *const,
-                                              const CalculiXReal *const,
-                                              const CalculiXReal *const,
+  using StressFreeExpansionHandler = void (*)(CalculiXReal* const,
+                                              CalculiXReal* const,
+                                              const CalculiXReal* const,
+                                              const CalculiXReal* const,
                                               const CalculiXInt);
 
 }  // end of namespace calculix

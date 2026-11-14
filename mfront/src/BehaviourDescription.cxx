@@ -57,6 +57,7 @@ namespace mfront {
     auto mpd = MaterialPropertyDescription{};
     mpd.output = VariableDescription{"real", "res", 1u, 0u};
     std::ostringstream body;
+    body.precision(14);
     body << "res = " << mp.value << ";\n";
     mpd.law = prefix + n;
     mpd.className = prefix + n;
@@ -504,7 +505,7 @@ namespace mfront {
             std::string{BehaviourDescription::internalNamespace} + "'");
       }
       const auto& ns = ns_opt.get<std::string>();
-      if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+      if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns, false)) {
         tfel::raise(
             "BehaviourDescription::BehaviourDescription: "
             "invalid namespace space '" +
@@ -557,7 +558,7 @@ namespace mfront {
     }
     const auto& ns = this->getAttribute<std::string>(
         BehaviourDescription::internalNamespace);
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns, false)) {
       tfel::raise(
           "BehaviourDescription::getInternalNamespace: "
           "invalid namespace space '" +
@@ -815,7 +816,7 @@ namespace mfront {
                        "categories in two distinct modelling hypotheses. "
                        "This is not supported.");
         }
-        return {v, en, t};
+        return {.name = v, .ename = en, .category = t};
       }
     }
   }  // end of getMaterialPropertyInput
@@ -901,7 +902,7 @@ namespace mfront {
   void BehaviourDescription::setLibrary(const std::string& l) {
     tfel::raise_if(!this->library.empty(),
                    "BehaviourDescription::setLibrary: "
-                   "library alreay defined");
+                   "library already defined");
     this->library = l;
   }  // end of setLibrary
 
@@ -912,7 +913,7 @@ namespace mfront {
   void BehaviourDescription::setMaterialName(const std::string& m) {
     tfel::raise_if(!this->material.empty(),
                    "BehaviourDescription::setMaterialName: "
-                   "material name alreay defined");
+                   "material name already defined");
     this->material = m;
     this->updateClassName();
   }  // end of setMaterialName
@@ -924,7 +925,7 @@ namespace mfront {
   void BehaviourDescription::setClassName(const std::string& n) {
     tfel::raise_if(!this->className.empty(),
                    "BehaviourDescription::setClassName: "
-                   "class name alreay defined");
+                   "class name already defined");
     this->className = n;
   }  // end of setClassName
 
@@ -1397,7 +1398,7 @@ namespace mfront {
       return r;
     };
     tfel::raise_if(
-        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, true),
+        !tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name, false),
         "BehaviourDSLCommon::addLocalDataStructure: "
         "invalid local structure name '" +
             lds.name + "'");
@@ -1492,7 +1493,7 @@ namespace mfront {
                                  this->getTangentOperatorBlockName({thf2, g}));
       }
     }
-    this->mvariables.push_back({g, f});
+    this->mvariables.emplace_back(g, f);
   }  // end of addMainVariables
 
   const std::vector<std::pair<Gradient, ThermodynamicForce>>&
@@ -1734,6 +1735,13 @@ namespace mfront {
             bn + "' already defined");
       }
     }
+    // the names of the blocks between main variables are registered by the
+    // addMainVariable2 method
+    if (!((this->isThermodynamicForceName(b.first.name)) &&
+          (this->isGradientName(b.second.name)))) {
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                               block_name);
+    }
     this->additionalTangentOperatorBlocks.push_back(b);
   }  // end of addTangentOperatorBlock
 
@@ -1776,7 +1784,7 @@ namespace mfront {
     if (this->useDefaultTangentOperatorBlocks) {
       for (const auto& f : this->getMainVariables()) {
         for (const auto& g : this->getMainVariables()) {
-          blocks.push_back({f.second, g.first});
+          blocks.emplace_back(f.second, g.first);
         }
       }
     }
@@ -2052,47 +2060,12 @@ namespace mfront {
       const auto& mvs = this->getMainVariables();
       if (this->hasTrivialTangentOperatorStructure()) {
         const auto& mv = mvs.front();
-        const auto gflags = mv.first.getTypeFlag();
-        const auto fflags = mv.second.getTypeFlag();
-        auto throw_unmatch = [&mv] {
-          tfel::raise(
-              "BehaviourDescription::getTangentOperatorType: "
-              "gradient '" +
-              mv.first.name + "' is not conjugated with flux '" +
-              mv.second.name + "'");
-        };
-        if (gflags == SupportedTypes::SCALAR) {
-          if (fflags != SupportedTypes::SCALAR) {
-            throw_unmatch();
-          }
-          return "real";
-        } else if (gflags == SupportedTypes::TVECTOR) {
-          if (fflags != SupportedTypes::TVECTOR) {
-            throw_unmatch();
-          }
-          return "tfel::math::tmatrix<N,N,real>";
-        } else if (gflags == SupportedTypes::STENSOR) {
-          if (fflags != SupportedTypes::STENSOR) {
-            throw_unmatch();
-          }
-          return "tfel::math::st2tost2<N,real>";
-        } else if (gflags == SupportedTypes::TENSOR) {
-          if (fflags == SupportedTypes::STENSOR) {
-            return "tfel::math::t2tost2<N,real>";
-          } else if (fflags == SupportedTypes::TENSOR) {
-            return "tfel::math::t2tot2<N,real>";
-          } else {
-            throw_unmatch();
-          }
-        } else {
-          tfel::raise(
-              "BehaviourDescription::getTangentOperatorType: "
-              "unsupported type for gradient '" +
-              mv.first.name + "'");
-        }
+        const auto& g = mv.first;
+        const auto& th = mv.second;
+        return "tfel::math::derivative_type<" + th.type + "," + g.type + ">";
       }
       return "tfel::math::tvector<" + this->computeTangentOperatorSize() +
-             ",real>";
+             ",NumericType>";
     } else if (this->getBehaviourType() == STANDARDSTRAINBASEDBEHAVIOUR) {
       return "StiffnessTensor";
     } else if (this->getBehaviourType() == STANDARDFINITESTRAINBEHAVIOUR) {
@@ -2210,9 +2183,6 @@ namespace mfront {
     // never ever trust a user
     throw_if(mhs.find(uh) != mhs.end(),
              "undefined modelling hypothesis specified");
-    // check that the user did not already set the modelling hypotheses
-    throw_if(!this->hypotheses.empty(),
-             "supported modelling hypotheses have already been declared");
     // check that if a specialised version of the behaviour
     // is defined, it is present in the set of hypotheses defined here
     for (const auto& ld : this->sd) {
@@ -2332,7 +2302,7 @@ namespace mfront {
       const BehaviourVariableDescription& md) {
     const auto fname = getBehaviourVariableFactoryClassName(md);
     this->addBehaviourVariableFactory(md, false, true);
-    this->auxiliaryModels.push_back(
+    this->auxiliaryModels.emplace_back(
         ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addAuxiliaryModelDescription
 
@@ -2503,8 +2473,8 @@ namespace mfront {
           bd.addAuxiliaryStateVariable(applyNamesChanges(bv, th),
                                        BehaviourData::UNREGISTRED);
         } catch (std::exception& e) {
-          tfel::raise("Error while treating saved gradient '" + th.name +
-                      "' from behaviour '" + bv.name + "' of type '" +
+          tfel::raise("Error while treating saved thermodynamic force '" +
+                      th.name + "' from behaviour '" + bv.name + "' of type '" +
                       bv.behaviour.getClassName() + "'\n" +
                       std::string{e.what()});
         }
@@ -2572,7 +2542,8 @@ namespace mfront {
       }
       // check compatibility with the modelling hypotheses of the behaviour
       const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
-      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      const auto& v_distinct_hypotheses =
+          v.behaviour.getDistinctModellingHypotheses();
       for (const auto& h : this->hypotheses) {
         if (!v_hypotheses.contains(h)) {
           tfel::raise(
@@ -2635,7 +2606,8 @@ namespace mfront {
       }
       // check compatibility with the modelling hypotheses of the behaviour
       const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
-      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      const auto& v_distinct_hypotheses =
+          v.behaviour.getDistinctModellingHypotheses();
       for (const auto& h : this->hypotheses) {
         if (!v_hypotheses.contains(h)) {
           tfel::raise(
@@ -2672,8 +2644,8 @@ namespace mfront {
             << "' is delayed up to when the modelling hypotheses "
             << "are defined'\n";
       }
-      this->behaviourVariableFactoriesCandidates.push_back(
-          {v, isExternalModel, isAuxiliaryModel});
+      this->behaviourVariableFactoriesCandidates.emplace_back(
+          v, isExternalModel, isAuxiliaryModel);
     }
   }  // end of addBehaviourVariableFactory
 
@@ -2787,7 +2759,7 @@ namespace mfront {
                                             bv) {
         auto checkVariable = [this, &bdata, &bv](const VariableDescription& v,
                                                  const bool materialProperty) {
-          const auto& osource = [this, &bdata, &bv,
+          const auto& osource = [this, &bdata,
                                  &v]() -> std::optional<VariableDescription> {
             if (this->isGradientExternalName(v.getExternalName())) {
               return this->getGradientByExternalName(v.getExternalName());
@@ -2864,38 +2836,43 @@ namespace mfront {
                   "variable ");
             }
           }
-          auto report = [&v, &osource, &bv](const std::string_view& reason) {
-            tfel::raise("The sourve variable '" + osource->name +
-                        "' declared by behaviour variable '" + bv.name +
-                        "' is not compatible with the variable declared by the "
-                        "calling behaviour: " +
-                        std::string{reason});
+          auto report = [&bv, &v](const std::string_view& source,
+                                  const std::string_view& reason) {
+            tfel::raise(
+                "The variable '" + v.name + "' of behaviour variable '" +
+                bv.name + "' is not compatible with the variable '" +
+                std::string{source} +
+                "' declared by the calling behaviour: " + std::string{reason});
           };
           if (bdata.isStaticVariableName(v.getExternalName())) {
             const auto sv =
                 bdata.getStaticVariableDescription(v.getExternalName());
             if (v.getVariableTypeIdentifier() !=
                 sv.getVariableTypeIdentifier()) {
-              report("unmatched type ('" + v.type + "' vs '" + sv.type + "')");
+              report(sv.name,
+                     "unmatched type ('" + v.type + "' vs '" + sv.type + "')");
             }
             if (v.arraySize != sv.arraySize) {
-              report("unmatched array size (" + std::to_string(v.arraySize) +
-                     " vs " + std::to_string(sv.arraySize) + ")");
+              report(sv.name, "unmatched array size (" +
+                                  std::to_string(v.arraySize) + " vs " +
+                                  std::to_string(sv.arraySize) + ")");
             }
           } else {
             if (v.getVariableTypeIdentifier() !=
                 osource->getVariableTypeIdentifier()) {
-              report("unmatched type ('" + v.type + "' vs '" + osource->type +
-                     "')");
+              report(osource->name, "unmatched type ('" + v.type + "' vs '" +
+                                        osource->type + "')");
             }
             if (v.arraySize != osource->arraySize) {
-              report("unmatched array size (" + std::to_string(v.arraySize) +
-                     " vs " + std::to_string(osource->arraySize) + ")");
+              report(osource->name,
+                     "unmatched array size (" + std::to_string(v.arraySize) +
+                         " vs " + std::to_string(osource->arraySize) + ")");
             }
             if ((v.hasGlossaryName()) && (osource->hasGlossaryName())) {
               if (v.getExternalName() != osource->getExternalName()) {
-                report("unmatched external names ('" + v.getExternalName() +
-                       "' vs '" + osource->getExternalName() + "')");
+                report(osource->name, "unmatched external names ('" +
+                                          v.getExternalName() + "' vs '" +
+                                          osource->getExternalName() + "')");
               }
             }
           }
@@ -3546,17 +3523,11 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
     };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b);
-    } else {
-      this->callBehaviourData(h, &BehaviourData::setBounds, n, b, true);
-    }
+    throw_if((this->isGradientName(n)) || (this->isThermodynamicForceName(n)),
+             "bounds on gradients and thermodynamic forces are not "
+             "supported ('" +
+                 n + "')");
+    this->callBehaviourData(h, &BehaviourData::setBounds, n, b, true);
   }  // end of setBounds
 
   void BehaviourDescription::setBounds(const Hypothesis h,
@@ -3566,23 +3537,17 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
     };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b, i);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b, i);
-    } else {
-      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        this->d.setBounds(n, i, b);
-        for (auto md : this->sd) {
-          md.second.get()->setBounds(n, i, b);
-        }
-      } else {
-        this->getBehaviourData2(h).setBounds(n, i, b);
+    throw_if((this->isGradientName(n)) || (this->isThermodynamicForceName(n)),
+             "bounds on gradients and thermodynamic forces are not "
+             "supported ('" +
+                 n + "')");
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      this->d.setBounds(n, i, b);
+      for (auto md : this->sd) {
+        md.second.get()->setBounds(n, i, b);
       }
+    } else {
+      this->getBehaviourData2(h).setBounds(n, i, b);
     }
   }  // end of setBounds
 
@@ -3593,17 +3558,11 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
     };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b);
-    } else {
-      this->callBehaviourData(h, &BehaviourData::setPhysicalBounds, n, b, true);
-    }
+    throw_if((this->isGradientName(n)) || (this->isThermodynamicForceName(n)),
+             "physical bounds on gradients and thermodynamic forces are not "
+             "supported ('" +
+                 n + "')");
+    this->callBehaviourData(h, &BehaviourData::setPhysicalBounds, n, b, true);
   }  // end of setPhysicalBounds
 
   void BehaviourDescription::setPhysicalBounds(
@@ -3614,23 +3573,17 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
     };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b, i);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b, i);
-    } else {
-      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        this->d.setPhysicalBounds(n, i, b);
-        for (auto md : this->sd) {
-          md.second.get()->setPhysicalBounds(n, i, b);
-        }
-      } else {
-        this->getBehaviourData2(h).setPhysicalBounds(n, i, b);
+    throw_if((this->isGradientName(n)) || (this->isThermodynamicForceName(n)),
+             "physical bounds on gradients and thermodynamic forces are not "
+             "supported ('" +
+                 n + "')");
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      this->d.setPhysicalBounds(n, i, b);
+      for (auto md : this->sd) {
+        md.second.get()->setPhysicalBounds(n, i, b);
       }
+    } else {
+      this->getBehaviourData2(h).setPhysicalBounds(n, i, b);
     }
   }  // end of setPhysicalBounds
 
@@ -3878,6 +3831,9 @@ namespace mfront {
                    "BehaviourDescription::setSaveStrainMeasure: "
                    "this method has already been called");
     this->saveStrainMeasureValue = b;
+    if (!b) {
+      return;
+    }
     auto v =
         VariableDescription("StrainStensor", "saved_strain_measure", 1u, 0u);
     v.setGlossaryName(tfel::glossary::Glossary::StrainMeasure);
@@ -3893,12 +3849,15 @@ namespace mfront {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(this->getBehaviourType() !=
                        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
-                   "BehaviourDescription::setSaveStrainMeasure: "
+                   "BehaviourDescription::setSaveDualStress: "
                    "invalid behaviour type");
     tfel::raise_if(this->saveDualStressValue.has_value(),
                    "BehaviourDescription::setSaveDualStress: "
                    "this method has already been called");
     this->saveDualStressValue = b;
+    if (!b) {
+      return;
+    }
     auto v = VariableDescription("StressStensor", "saved_dual_stress", 1u, 0u);
     v.setGlossaryName(tfel::glossary::Glossary::DualStress);
     this->addAuxiliaryStateVariable(uh, v, BehaviourData::UNREGISTRED);

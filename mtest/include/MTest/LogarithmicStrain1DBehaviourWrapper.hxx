@@ -2,7 +2,7 @@
  * \file   LogarithmicStrain1DBehaviourWrapper.hxx
  * \brief
  * \author Thomas Helfer
- * \date   28/12/2015
+ * \date 28/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,7 +32,8 @@ namespace mtest {
      * \brief constructor
      * \param[in] wb : wrapped behaviour
      */
-    LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>&);
+    explicit LogarithmicStrain1DBehaviourWrapper(
+        const std::shared_ptr<Behaviour>&);
     Hypothesis getHypothesis() const override;
     BehaviourType getBehaviourType() const override;
     Kinematic getBehaviourKinematic() const override;

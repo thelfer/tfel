@@ -1,0 +1,21 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// nearly hydrostatic loading: the von Mises stress is below 1 Pa
+@ImposedStrain 'EXX' {0 : 0, 1 : 2e-3};
+@ImposedStrain 'EYY' {0 : 0, 1 : 1.999999998e-3};
+@ImposedStrain 'EZZ' {0 : 0, 1 : 1.999999998e-3};
+@ImposedStrain 'EXY' 0;
+@ImposedStrain 'EXZ' 0;
+@ImposedStrain 'EYZ' 0;
+@Times{0, 1. in 20};
+
+// elastic response: three times the bulk modulus times the strain
+@Real 'K3' 375e9;
+@Test<function> 'SXX' 'K3 * EXX' 1;
+@Test<function> 'SYY' 'K3 * EXX' 1;
+@Test<function> 'SZZ' 'K3 * EXX' 1;
+@Test<function> 'EquivalentViscoplasticStrain' '0' 1e-12;

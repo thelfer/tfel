@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/ExpressionTemplates/Expr.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 févr. 2015
+ * \date 04/02/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -122,7 +122,7 @@ namespace tfel::math {
     /*!
      * \param l : left argument of the unary operation
      */
-    TFEL_HOST_DEVICE constexpr Expr(T1 l) : a(std::forward<T1>(l)) {}
+    TFEL_HOST_DEVICE constexpr explicit Expr(T1 l) : a(std::forward<T1>(l)) {}
     /*!
      * array-like access operator
      */

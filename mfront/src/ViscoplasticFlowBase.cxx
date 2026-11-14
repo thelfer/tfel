@@ -2,7 +2,7 @@
  * \file   mfront/src/NortonInelasticFlow.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28/03/2018
+ * \date 28/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,7 +14,6 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
@@ -33,7 +32,7 @@ namespace mfront::bbrick {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     InelasticFlowBase::initialize(bd, dsl, id, d);
     if (!this->equivalent_strain_external_name.empty()) {
-      addStateVariable(bd, "strain", "p",
+      addStateVariable(bd, "strain", "p" + id,
                        this->equivalent_strain_external_name);
     } else {
       if (id.empty()) {
@@ -61,10 +60,6 @@ namespace mfront::bbrick {
     if (b) {
       if (!this->ihrs.empty()) {
         c += computeElasticLimitAndDerivative(bd, this->ihrs, id);
-        if (this->save_yield_surface_radius) {
-          c += "this->mfront_" + yield_surface_radius_external_name + " = R" +
-               id + ";\n";
-        }
       }
       c += this->computeFlowRateAndDerivative(bd, sp, id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
@@ -80,7 +75,7 @@ namespace mfront::bbrick {
       }
       if (this->describesStrainHardeningExplicitly()) {
         c += "dfp" + id + "_ddp" + id + " -= ";
-        c += "(this->dt) * dvp" + id + "_dp" + id + ";\n";
+        c += "(this->dt) * (this->theta) * dvp" + id + "_dp" + id + ";\n";
       }
       auto kid = decltype(khrs.size()){};
       for (const auto& khr : khrs) {
@@ -102,10 +97,6 @@ namespace mfront::bbrick {
     } else {
       if (!this->ihrs.empty()) {
         c += computeElasticLimit(bd, this->ihrs, id);
-        if (this->save_yield_surface_radius) {
-          c += "this->mfront_" + yield_surface_radius_external_name + " = R" +
-               id + ";\n";
-        }
       }
       c += this->computeFlowRate(bd, sp, id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";

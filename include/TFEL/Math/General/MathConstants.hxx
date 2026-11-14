@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/MathConstants.hxx
  * \brief
  * \author Thomas Helfer
- * \date   06/10/2016
+ * \date 06/10/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,11 +14,11 @@
 #ifndef LIB_TFEL_MATH_MATHCONSTANTS_HXX
 #define LIB_TFEL_MATH_MATHCONSTANTS_HXX
 
+#include <numbers>
 #include <type_traits>
 #include "TFEL/Metaprogramming/EmptyClass.hxx"
 #include "TFEL/TypeTraits/IsReal.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
-#include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace tfel::math {
 
@@ -27,24 +27,16 @@ namespace tfel::math {
 
   template <typename real>
   struct CsteBase {
-#ifndef _MSC_VER
-    static constexpr real sqrt2 = constexpr_fct::sqrt(real{2});
-    static constexpr real isqrt2 = 1 / constexpr_fct::sqrt(real{2});
-    static constexpr real sqrt3 = constexpr_fct::sqrt(real{3});
-    static constexpr real isqrt3 = 1 / constexpr_fct::sqrt(real{3});
-#else
-    static constexpr real sqrt2 = 1.41421356237309504880;
-    static constexpr real isqrt2 = 0.70710678118654752440;
-    static constexpr real sqrt3 =
-        1.7320508075688772935274463415058723669428052538103806280;
-    static constexpr real isqrt3 = 0.57735026919;
-#endif
+    static constexpr real sqrt2 = std::numbers::sqrt2_v<real>;
+    static constexpr real isqrt2 = sqrt2 / 2;
+    static constexpr real sqrt3 = std::numbers::sqrt3_v<real>;
+    static constexpr real isqrt3 = std::numbers::inv_sqrt3_v<real>;
   };
 
   template <typename T>
-  struct Cste : std::conditional<tfel::typetraits::IsReal<T>::cond,
-                                 CsteBase<base_type<T>>,
-                                 tfel::meta::EmptyClass>::type {};
+  struct Cste : std::conditional_t<tfel::typetraits::IsReal<T>::cond,
+                                   CsteBase<base_type<T>>,
+                                   tfel::meta::EmptyClass> {};
 
 }  // end of namespace tfel::math
 

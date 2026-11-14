@@ -2,7 +2,7 @@
 @Behaviour Norton_rkCastem_qt;
 @UseQt true;
 @Author Thomas Helfer;
-@Algorithm euler;
+@Algorithm rkCastem;
 @Date 23/11/06;
 
 @Epsilon 1.e-8;

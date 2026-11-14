@@ -2,7 +2,7 @@
  * \file   mfront/src/IsotropicMisesPlasticFlowDSL.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -108,7 +108,7 @@ namespace mfront {
       if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
         if (this->ihrs.empty()) {
           this->throwRuntimeError(
-              "IsotropicMisesCreepDSL::endsInputFileProcessing",
+              "IsotropicMisesPlasticFlowDSL::endsInputFileProcessing",
               "no flow rule and no hardening rule defined");
         }
         auto c = CodeBlock{};

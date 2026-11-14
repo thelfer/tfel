@@ -1,7 +1,7 @@
 /*!
  * \file   src/Tests/TestCase.cxx
  * \author Thomas Helfer
- * \date   10 Apr 10
+ * \date 10/04/2010
  * \brief
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -14,6 +14,12 @@
 #include "TFEL/Tests/TestCase.hxx"
 
 namespace tfel::tests {
+
+  TestAssertionFailure::TestAssertionFailure(const std::string& m,
+                                             const TestResult& r)
+      : std::runtime_error(m), result(r) {}
+
+  TestAssertionFailure::~TestAssertionFailure() noexcept = default;
 
   TestCase::TestCase(const std::string& n)
       : gname("UnitTest"), tname(n) {}  // end of TestCase::~TestCase

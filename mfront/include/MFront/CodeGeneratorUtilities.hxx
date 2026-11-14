@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   23 oct 2008
+ * \date 23/10/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -55,17 +55,16 @@ namespace mfront {
    * \param[out] os: output stream
    * \param[in] n: name of the symbol
    */
-  void exportStringSymbol(std::ostream&,
-                          const std::string_view,
-                          const std::string_view);
+  MFRONT_VISIBILITY_EXPORT void exportStringSymbol(std::ostream&,
+                                                   const std::string_view,
+                                                   const std::string_view);
   /*!
    * \brief export string symbol using the `MFRONT_EXPORT_SYMBOL` macro
    * \param[out] os: output stream
    * \param[in] n: name of the symbol
    */
-  void exportUnsignedShortSymbol(std::ostream&,
-                                 const std::string_view,
-                                 const unsigned short);
+  MFRONT_VISIBILITY_EXPORT void exportUnsignedShortSymbol(
+      std::ostream&, const std::string_view, const unsigned short);
   /*!
    * \brief write the name of the variable
    * \param[out] os: output stream
@@ -138,6 +137,16 @@ namespace mfront {
    * \param[in] d: description
    */
   MFRONT_VISIBILITY_EXPORT void writeValidatorSymbol(
+      std::ostream&,
+      const std::string_view,
+      const MaterialKnowledgeDescription&);
+  /*!
+   * \brief write a symbol associated with the compatibility mode.
+   * \param[out] os: output stream
+   * \param[in]  n: entry point name
+   * \param[in] d: description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeCompatibilityModeSymbol(
       std::ostream&,
       const std::string_view,
       const MaterialKnowledgeDescription&);
@@ -348,6 +357,27 @@ namespace mfront {
   /*!
    * \param[out] os: output stream
    * \param[in] v: variable description
+   * \param[in] bounds: bounds to be checked
+   * \param[in] n: name of the variable tested. If the variable describes an
+   * array of variables, this argument may point to an element of this array.
+   * \param[in] space_dimension: string containing the space dimension
+   * \param[in] policy: name of the variable holding the policy
+   * \param[in] addThis: add "this->" in front of the variables
+   * \param[in] checkEndOfTimeStepValue: also check the value at the end of
+   * the time step given by the value of the variable plus its increment.
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void writeBoundsChecks(std::ostream&,
+                         const VariableDescription&,
+                         const VariableBoundsDescription&,
+                         const std::string_view,
+                         const std::string_view,
+                         const std::string_view,
+                         const bool,
+                         const bool);
+  /*!
+   * \param[out] os: output stream
+   * \param[in] v: variable description
    * \param[in] n: name of the variable tested. If the variable describes an
    * array of variables, this argument may point to an element of this array.
    * \param[in] space_dimension: string containing the space dimension
@@ -362,6 +392,55 @@ namespace mfront {
                                  const std::string_view,
                                  const bool,
                                  const bool);
+  /*!
+   * \param[out] os: output stream
+   * \param[in] v: variable description
+   * \param[in] bounds: physical bounds to be checked
+   * \param[in] n: name of the variable tested. If the variable describes an
+   * array of variables, this argument may point to an element of this array.
+   * \param[in] space_dimension: string containing the space dimension
+   * \param[in] addThis: add "this->" in front of the variables
+   * \param[in] checkEndOfTimeStepValue: also check the value at the end of
+   * the time step given by the value of the variable plus its increment.
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void writePhysicalBoundsChecks(std::ostream&,
+                                 const VariableDescription&,
+                                 const VariableBoundsDescription&,
+                                 const std::string_view,
+                                 const std::string_view,
+                                 const bool,
+                                 const bool);
+  /*!
+   * \brief print a `#line` pragma indicating a line number and a file name
+   *
+   * \param[os] os: output stream
+   * \param[in] ln: line number
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void printLinePragma(std::ostream&, const std::size_t, std::string_view);
+
+  /*!
+   * \brief print a `#line` pragma indicating a line number and a file name
+   *
+   * \param[in] ln: line number
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT std::string printLinePragma(const std::size_t,
+                                                       std::string_view);
+  /*!
+   * \brief declare an alias to the PhysicalConstant class
+   * \param[in] os: output stream
+   * \param[in] d: material knowledge description
+   * \param[in] numeric_type: numeric type
+   * \param[in] use_quantities: boolean stating if quantities are used
+   */
+  MFRONT_VISIBILITY_EXPORT void writePhysicalConstantsAlias(
+      std::ostream&,
+      const MaterialKnowledgeDescription&,
+      std::string_view,
+      const bool);
 
 }  // end of namespace mfront
 

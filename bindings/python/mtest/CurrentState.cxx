@@ -2,7 +2,7 @@
  * \file  bindings/python/mfront/CurrentState.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23 oct. 2015
+ * \date 23/10/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -50,20 +50,7 @@ static pybind11::object getInternalStateVariableValue(
            "variable named '" +
                n + "'");
   const auto type = s.behaviour->getInternalStateVariableType(n);
-  const auto size = [&s, throw_if,
-                     type]() -> std::vector<mtest::real>::size_type {
-    if (type == 0) {
-      return 1;
-    } else if (type == 1) {
-      return tfel::material::getStensorSize(s.behaviour->getHypothesis());
-    } else if (type == 2) {
-      return tfel::material::getSpaceDimension(s.behaviour->getHypothesis());
-    } else if (type == 3) {
-      return tfel::material::getTensorSize(s.behaviour->getHypothesis());
-    }
-    throw_if(true, "unsupported variable type");
-    return 0;
-  }();
+  const auto size = mtest::getVariableSize(type, s.behaviour->getHypothesis());
   const auto pos = s.behaviour->getInternalStateVariablePosition(n);
   throw_if((s.iv_1.size() < pos + size) || (s.iv0.size() < pos + size) ||
                (s.iv1.size() < pos + size),
@@ -123,7 +110,8 @@ void declareCurrentState(pybind11::module_& m) {
       .def_property_readonly("evs0", CurrentState_getesv0)
       .def_property_readonly("desv", CurrentState_getdesv)
       .def_readonly("position", &mtest::CurrentState::position)
-      .def("setInternalStateVariableValue", ptr,
+      .def("setInternalStateVariableValue", ptr, pybind11::arg("n"),
+           pybind11::arg("v"),
            "set the value of a scalar internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -133,7 +121,8 @@ void declareCurrentState(pybind11::module_& m) {
            "- at the beginning of the previous time step\n"
            "- at the beginning of the current time step\n"
            "- at the end of the current time step")
-      .def("setInternalStateVariableValue", ptr2,
+      .def("setInternalStateVariableValue", ptr2, pybind11::arg("n"),
+           pybind11::arg("v"),
            "set the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -143,7 +132,8 @@ void declareCurrentState(pybind11::module_& m) {
            "- at the beginning of the previous time step\n"
            "- at the beginning of the current time step\n"
            "- at the end of the current time step")
-      .def("setInternalStateVariableValue", ptr3,
+      .def("setInternalStateVariableValue", ptr3, pybind11::arg("n"),
+           pybind11::arg("v"), pybind11::arg("d"),
            "set the value of a scalar internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -157,7 +147,8 @@ void declareCurrentState(pybind11::module_& m) {
            "  at the beginning of the current time step\n"
            "- 1 means that we are modifying the internal state variable value\n"
            "  at the end of the current time step")
-      .def("setInternalStateVariableValue", ptr4,
+      .def("setInternalStateVariableValue", ptr4, pybind11::arg("n"),
+           pybind11::arg("v"), pybind11::arg("d"),
            "set the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -171,13 +162,14 @@ void declareCurrentState(pybind11::module_& m) {
            "  at the beginning of the current time step\n"
            "- 1 means that we are modifying the internal state variable value\n"
            "  at the end of the current time step")
-      .def("getInternalStateVariableValue", ptr5,
+      .def("getInternalStateVariableValue", ptr5, pybind11::arg("n"),
            "get the value of an internal state variable at the end of the time "
            "\n"
            "step\n"
            "\n"
            "param[in]  n: variable name")
-      .def("getInternalStateVariableValue", ptr6,
+      .def("getInternalStateVariableValue", ptr6, pybind11::arg("n"),
+           pybind11::arg("d"),
            "get the value of an internal state variable\n"
            "\n"
            "param[in]  n: variable name\n"
@@ -199,8 +191,8 @@ void declareCurrentState(pybind11::module_& m) {
            })
       .def(
           "__getitem__",
-          [](const tfel::math::vector<mtest::CurrentState>& v,
-             const unsigned short idx) {
+          [](tfel::math::vector<mtest::CurrentState>& v,
+             const unsigned short idx) -> mtest::CurrentState& {
             if (idx >= v.size()) {
               tfel::raise<std::range_error>(
                   "invalid index '" + std::to_string(static_cast<int>(idx)) +
@@ -208,7 +200,7 @@ void declareCurrentState(pybind11::module_& m) {
             }
             return v[idx];
           },
-          pybind11::return_value_policy::reference)
+          pybind11::return_value_policy::reference_internal)
       .def(
           "__iter__",
           [](const tfel::math::vector<mtest::CurrentState>& v) {

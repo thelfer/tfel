@@ -26,7 +26,7 @@ namespace mtest {
      // CrossedDelta2AccelerationAlgorithm::CrossedDelta2AccelerationAlgorithm
 
   std::string CrossedDelta2AccelerationAlgorithm::getName() const {
-    return "crossed secant";
+    return "CrossedDelta2";
   }
 
   void CrossedDelta2AccelerationAlgorithm::setParameter(const std::string& p,

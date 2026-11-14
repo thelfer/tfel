@@ -1,0 +1,60 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// The damage frame is rotated by theta around the Z axis
+@Real 'theta' 0.5235987755982988;
+@MaterialProperty<constant> 'AngularCoordinate' 'theta';
+@Real 'c' 'cos(theta)';
+@Real 's' 'sin(theta)';
+
+// proportional multiaxial strain in the damage frame, with an unloading, a
+// compression and a final tension until the crack is fully open. Off-diagonal
+// components are multiplied by sqrt(2), as in MTest
+@Evolution 'e1' {0 : 0, 1 : 1.5e-3, 2 : 0, 3 : -1e-3, 4 : 0, 5 : 3e-3};
+@Real 'r2' -0.1;
+@Real 'r3' -0.2;
+@Real 'r12' 0.2;
+@Real 'r13' 0.1;
+@Real 'r23' -0.1;
+@ImposedStrain<function> 'EXX' '(c * c + s * s * r2 - sqrt(2) * c * s * r12) * e1';
+@ImposedStrain<function> 'EYY' '(s * s + c * c * r2 + sqrt(2) * c * s * r12) * e1';
+@ImposedStrain<function> 'EZZ' 'r3 * e1';
+@ImposedStrain<function> 'EXY' '(sqrt(2) * c * s * (1 - r2) + (c * c - s * s) * r12) * e1';
+@ImposedStrain<function> 'EXZ' '(c * r13 - s * r23) * e1';
+@ImposedStrain<function> 'EYZ' '(s * r13 + c * r23) * e1';
+@Times{0, 5 in 100};
+
+// Only the first direction cracks. Its fracture strain ef follows the softening
+// law S1 = Sr + H * ef up to the full opening at ec, then a secant unloading
+@Real 'l' '150e9 * 0.3 / ((1 + 0.3) * (1 - 2 * 0.3))';
+@Real 'm' '150e9 / (2 * (1 + 0.3))';
+@Real 'Sr' 150e6;
+@Real 'HS' -75e9;
+@Real 'ec' '-Sr / HS';
+@Real 'tre' '1 + r2 + r3';
+@Real 'M' 'l + 2 * m';
+@Real 'kp' 'l * tre + 2 * m';
+@Real 'em' '(kp * 1.5e-3 - Sr) / (M + HS)';
+@Real 'ks' '(Sr + HS * em) / em';
+@Evolution<function> 'St' 'kp * e1';
+@Evolution<function> 'es' 'St / (M + ks)';
+@Evolution<function> 'eg' '(St - Sr) / (M + HS)';
+@Evolution<function> 'ef1' 't <= 1 ? max(eg, 0) : max(es, 0)';
+@Evolution<function> 'ef2' 'eg <= ec ? eg : St / M';
+@Evolution<function> 'ef3' 'es <= em ? es : ef2';
+@Evolution<function> 'ef' 't <= 4 ? ef1 : ef3';
+
+// stress in the damage frame
+@Evolution<function> 'S1' 'St - M * ef';
+@Evolution<function> 'S2' 'l * (tre * e1 - ef) + 2 * m * r2 * e1';
+@Evolution<function> 'S3' 'l * (tre * e1 - ef) + 2 * m * r3 * e1';
+
+@Test<function> 'SXX' 'c * c * S1 + s * s * S2 - sqrt(2) * c * s * 2 * m * r12 * e1' 1;
+@Test<function> 'SYY' 's * s * S1 + c * c * S2 + sqrt(2) * c * s * 2 * m * r12 * e1' 1;
+@Test<function> 'SZZ' 'S3' 1;
+@Test<function> 'SXY' 'sqrt(2) * c * s * (S1 - S2) + (c * c - s * s) * 2 * m * r12 * e1' 1;
+@Test<function> 'SXZ' '2 * m * (c * r13 - s * r23) * e1' 1;
+@Test<function> 'SYZ' '2 * m * (s * r13 + c * r23) * e1' 1;

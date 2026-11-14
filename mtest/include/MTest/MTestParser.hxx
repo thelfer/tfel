@@ -56,7 +56,7 @@ namespace mtest {
      */
     void parseString(MTest&, const std::string&);
     //! \return the list of keywords
-    virtual std::vector<std::string> getKeyWordsList() const;
+    [[nodiscard]] std::vector<std::string> getKeyWordsList() const;
     //! \brief display the list of keywords
     virtual void displayKeyWordsList() const;
     //! \brief display the list of keywords
@@ -75,9 +75,12 @@ namespace mtest {
      */
     void execute(MTest& t);
     /*!
-     * register the call backs associated with each command
+     * \brief register the call backs associated with each command
+     *
+     * \note this method is declared final to be callable in MTestParser's
+     * constructor safely
      */
-    void registerCallBacks() override;
+    void registerCallBacks() final;
     /*!
      * \brief handle the `@Event` keyword
      * \param[in,out] p : position in the input file

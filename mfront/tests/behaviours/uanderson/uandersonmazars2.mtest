@@ -6,6 +6,7 @@
  */
 
 @ModellingHypothesis 'PlaneStress';
+@AccelerationAlgorithm 'UAnderson';
 @Behaviour<umat> @library@ 'umatmazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    

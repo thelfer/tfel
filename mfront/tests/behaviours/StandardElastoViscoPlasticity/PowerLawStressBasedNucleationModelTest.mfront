@@ -14,6 +14,6 @@
   },
   porosity_evolution : {
     nucleation_model :
-        "PowerLaw (stress)" {fn : 0.1, sn : 20, m : 4, fmax : 0.1, pmin : 0}
+        "PowerLaw (stress)" {fn : 0.1, sn : 200, m : 4, fmax : 0.1, pmin : 0}
   }
 };

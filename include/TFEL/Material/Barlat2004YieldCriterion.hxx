@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/Barlat2004YieldCriterion.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/11/2017
+ * \date 15/11/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -149,7 +149,7 @@ namespace tfel::material {
    * \code{.cpp}
    * const auto l1 =
    * makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
-   *                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
+   *                                                   cB_23,cB_32,cB_66,cB_55,cB_44);
    * \endcode
    */
   template <unsigned short N, typename real>
@@ -238,9 +238,8 @@ namespace tfel::material {
    * the `makeBarlatLinearTransformation<N,real>` function depends
    * on the modelling hypothesis:
    * - in 3D and in plane 2D modelling hypotheses (`PLANESTRAIN`,
-   *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the coefficients
-   *   relative to the second axis are exchanged with the
-   *   coefficients related to the third axis.
+   *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the arguments are
+   *   passed unchanged.
    * - 1D, 2D axisymmetric modelling hypotheses are not available.
    */
   template <ModellingHypothesis::Hypothesis H,
@@ -290,9 +289,8 @@ namespace tfel::material {
    * the `makeBarlatLinearTransformation<N,real>` function depends
    * on the modelling hypothesis:
    * - in 3D and in plane 2D modelling hypotheses (`PLANESTRAIN`,
-   *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the coefficients
-   *   relative to the second axis are exchanged with the
-   *   coefficients related to the third axis.
+   *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the arguments are
+   *   passed unchanged.
    * - 1D, 2D axisymmetric modelling hypotheses are not available.
    */
   template <ModellingHypothesis::Hypothesis H,

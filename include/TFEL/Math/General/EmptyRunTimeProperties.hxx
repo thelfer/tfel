@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/General/EmptyRunTimeProperties.hxx
  * \brief  This file describes the EmptyRunTimeProperties class
  * \author Thomas Helfer
- * \date   03 oct 2006
+ * \date 03/10/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -3,7 +3,7 @@
  * mfront/include/MFront/BehaviourBrick/__StressCriterionName__StressCriterion.hxx
  * \brief
  * \author __Author__
- * \date   __Date__
+ * \date __Date__
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

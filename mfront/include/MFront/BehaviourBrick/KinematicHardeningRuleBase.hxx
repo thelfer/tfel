@@ -2,7 +2,7 @@
  * \file   KinematicHardeningRuleBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04/04/2018
+ * \date 04/04/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_KINEMATICHARDENINGRULEBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_KINEMATICHARDENINGRULEBASE_HXX
 
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRule.hxx"
 
@@ -22,7 +23,8 @@ namespace mfront::bbrick {
   /*!
    * \brief class describing the Prager kinematic hardening rule
    */
-  struct KinematicHardeningRuleBase : KinematicHardeningRule {
+  struct MFRONT_VISIBILITY_EXPORT KinematicHardeningRuleBase
+      : KinematicHardeningRule {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -32,18 +34,18 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const std::string&) const override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::vector<std::string> getKinematicHardeningsVariables(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<std::string> getKinematicHardeningsVariables(
         const std::string&, const std::string&) const override;
-    std::string computeKinematicHardeningsInitialValues(
+    [[nodiscard]] std::string computeKinematicHardeningsInitialValues(
         const std::string&, const std::string&) const override;
-    std::string computeKinematicHardenings(const std::string&,
-                                           const std::string&) const override;
-    std::string getBackStrainVariable(const std::string&,
-                                      const std::string&) const override;
-    std::string getBackStressDerivative(const std::string&,
-                                        const std::string&) const override;
-    std::string generateImplicitEquationDerivatives(
+    [[nodiscard]] std::string computeKinematicHardenings(
+        const std::string&, const std::string&) const override;
+    [[nodiscard]] std::string getBackStrainVariable(
+        const std::string&, const std::string&) const override;
+    [[nodiscard]] std::string getBackStressDerivative(
+        const std::string&, const std::string&) const override;
+    [[nodiscard]] std::string generateImplicitEquationDerivatives(
         const std::string&,
         const std::string&,
         const std::string&,

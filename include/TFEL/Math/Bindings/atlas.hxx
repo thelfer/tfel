@@ -25,7 +25,8 @@ extern "C" {
 
 namespace tfel::math::atlas {
 
-  void gesv(tfel::math::matrix<double>& A, tfel::math::vector<double>& b) {
+  inline void gesv(tfel::math::matrix<double>& A,
+                   tfel::math::vector<double>& b) {
     using namespace std;
     using namespace tfel::math;
     using tfel::math::vector;

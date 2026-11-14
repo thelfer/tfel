@@ -115,6 +115,17 @@ namespace mfront {
     os << "};\n";
     i = 0;
     for (auto p = n.begin(); p != n.end(); ++p, ++i) {
+      using tfel::material::ModellingHypothesis;
+      // the axial deformation gradient is not an unknown of MTest in
+      // plane strain (one) and in plane stress (computed by the behaviour)
+      if (((i == 2) &&
+           ((this->hypothesis == ModellingHypothesis::PLANESTRAIN) ||
+            (this->hypothesis == ModellingHypothesis::PLANESTRESS))) ||
+          ((i == 1) &&
+           (this->hypothesis ==
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
+        continue;
+      }
       os.precision(14);
       os << "@ImposedDeformationGradient<evolution> '" << *p << "' {" << t0
          << ":" << this->F0[i] << "," << t1 << ":" << this->F1[i] << "};\n";

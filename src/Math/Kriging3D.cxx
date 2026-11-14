@@ -26,6 +26,9 @@ namespace tfel::math {
     std::vector<double>::const_iterator pz;
     std::vector<double>::const_iterator pv;
     tvector<3u, double> v;
+    raise_if<KrigingErrorInvalidLength>((vx.size() != vy.size()) ||
+                                        (vx.size() != vz.size()) ||
+                                        (vx.size() != vv.size()));
     const auto n1 = KrigingUtilities::normalize(vx);
     this->a1 = n1.first;
     this->b1 = n1.second;
@@ -35,9 +38,6 @@ namespace tfel::math {
     const auto n3 = KrigingUtilities::normalize(vz);
     this->a3 = n3.first;
     this->b3 = n3.second;
-    raise_if<KrigingErrorInvalidLength>((vx.size() != vy.size()) ||
-                                        (vx.size() != vz.size()) ||
-                                        (vx.size() != vv.size()));
     for (px = vx.begin(), py = vy.begin(), pz = vz.begin(), pv = vv.begin();
          px != vx.end(); ++px, ++py, ++pz, ++pv) {
       v(0) = this->a1 * (*px) + this->b1;

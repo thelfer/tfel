@@ -2,7 +2,7 @@
  * \file   TFEL/Math/Array/FixedSizeArrayDerivative.hxx
  * \brief
  * \author Thomas Helfer
- * \date   17/01/2021
+ * \date 17/01/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -109,8 +109,10 @@ namespace tfel::math {
         FixedSizeArrayDerivativePolicy<typename Array1::array_policy,
                                        typename Array2::array_policy>>;
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(FixedSizeArrayDerivative,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
@@ -230,10 +232,10 @@ namespace tfel::math {
    public:
     //! \brief result
     using type = std::conditional_t<
-        areCompatible && isInvalid<NumType>(),
+        (!areCompatible) || isInvalid<NumType>(),
         tfel::meta::InvalidType,
         FixedSizeArrayDerivative<result_type<Array11, Array21, OpPlus>,
-                                 result_type<Array11, Array21, OpPlus>>>;
+                                 result_type<Array12, Array22, OpPlus>>>;
   };
   /*!
    * \brief partial specialisation for the addition of two array derivatives.
@@ -273,10 +275,10 @@ namespace tfel::math {
    public:
     //! \brief result
     using type = std::conditional_t<
-        areCompatible && isInvalid<NumType>(),
+        (!areCompatible) || isInvalid<NumType>(),
         tfel::meta::InvalidType,
         FixedSizeArrayDerivative<result_type<Array11, Array21, OpMinus>,
-                                 result_type<Array11, Array21, OpPlus>>>;
+                                 result_type<Array12, Array22, OpPlus>>>;
   };
   //   /*!
   //    * \brief partial specialisation for the addition of two array

@@ -23,13 +23,27 @@ namespace mtest {
       const std::string& cname,
       const std::shared_ptr<Evolution> s_)
       : sev(s_) {
+    using tfel::material::MechanicalBehaviourBase;
     this->c = b.getThermodynamicForceComponentPosition(cname);
+    // for finite strain behaviours, the equation associated with an
+    // off-diagonal component of the Cauchy stress is duplicated on the rows of
+    // the two associated components of the deformation gradient
+    if ((b.getBehaviourType() ==
+         MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) &&
+        (this->c >= 3)) {
+      const auto i = static_cast<unsigned short>(2 * (this->c - 3) + 3);
+      this->rows = {i, static_cast<unsigned short>(i + 1)};
+    } else {
+      this->rows = {this->c};
+    }
   }  // end of ImposedThermodynamicForce::ImposedThermodynamicForce
 
   ImposedThermodynamicForce::ImposedThermodynamicForce(
       const unsigned short c_, const std::shared_ptr<Evolution> s_)
       : sev(s_),
-        c(c_) {}  // end of ImposedThermodynamicForce::ImposedThermodynamicForce
+        c(c_),
+        rows({c_}) {
+  }  // end of ImposedThermodynamicForce::ImposedThermodynamicForce
 
   unsigned short ImposedThermodynamicForce::getNumberOfLagrangeMultipliers()
       const {
@@ -48,7 +62,10 @@ namespace mtest {
                                             const real dt,
                                             const real) const {
     if (this->isActive()) {
-      r(this->c) -= this->sev->operator()(t + dt);
+      const auto v = this->sev->operator()(t + dt);
+      for (const auto i : this->rows) {
+        r(i) -= v;
+      }
     }
   }  // end of ImposedThermodynamicForce::setValues
 

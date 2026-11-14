@@ -1,6 +1,15 @@
-% Implementing a simple finite strain single crystal behaviour, comparison with Huang's implementation
-% Thomas Helfer, Jürgen Almanstoetter
-% October 2017
+---
+title: Implementing a simple finite strain single crystal behaviour, comparison with Huang's implementation
+author: Thomas Helfer, Jürgen Almanstoetter
+date: 10/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 This document describes how to implement a phenomenological crystal
 plasticity model used in Huang's UMAT subroutine (See
@@ -10,7 +19,7 @@ Such an example illustrates:
 
 - The usage of `FiniteStrainSingleCrystal` brick (see
   [this page](finitestrainsinglecrystal.html)).
-- The usage of the `@CristalStructure` and `@SlidingSystem`
+- The usage of the `@CrystalStructure` and `@SlidingSystem`
   keywords. See [this page](singlecrystal.html) for details.
 
 The whole implementation is available

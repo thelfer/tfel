@@ -33,10 +33,10 @@ namespace dianafea {
    * \param[in] d      : spatial dimension
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-  DianaFEAStandardSmallStrainStressFreeExpansionHandler(double *const,
-                                                        double *const,
-                                                        const double *const,
-                                                        const double *const,
+  DianaFEAStandardSmallStrainStressFreeExpansionHandler(double* const,
+                                                        double* const,
+                                                        const double* const,
+                                                        const double* const,
                                                         const DianaFEAInt);
 
 }  // end of namespace dianafea

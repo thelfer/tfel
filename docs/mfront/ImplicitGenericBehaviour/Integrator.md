@@ -1,5 +1,5 @@
 The `@Integrator` code block allows the user to construct a residual,
-and, depending on the algorihm used (selected by the @Algorithm
+and, depending on the algorithm used (selected by the @Algorithm
 keyword), its derivative, called the jacobian in the following which
 aims at determining the increments of the integration variables
 (integration variables are introduced either by the @IntegrationVariable

@@ -178,6 +178,9 @@ namespace mtest {
     }
     std::copy(s.s0.begin(), s.s0.end(), us.begin());
     // ansys standard convention
+    if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      std::swap(us[4], us[5]);
+    }
     for (AnsysInt i = 3; i != static_cast<unsigned short>(ntens); ++i) {
       us(i) /= sqrt2;
     }
@@ -191,8 +194,6 @@ namespace mtest {
     const AnsysReal TIME = 0;
     const AnsysReal tsstif = 0;
     AnsysReal epsZZ = 0;
-    AnsysReal sedEl = 0;
-    AnsysReal sedPl = 0;
     AnsysReal epseq = 0;
     AnsysReal epsPl[6] = {0, 0, 0, 0, 0, 0};
     const AnsysReal coords[3] = {0, 0, 0};
@@ -200,11 +201,13 @@ namespace mtest {
         0, 0, 0, 0, 0, 0, 0, 0,
     };
     AnsysInt keycut = 0;
+    s.se1 = s.se0;
+    s.de1 = s.de0;
     (this->fct)(&matId, &elemId, &kDomIntPt, &kLayer, &kSectPt, &ldsetp,
                 &isubst, &keycut, &ndirect, &nshear, &ntens, &nstatv, &nprops,
                 &TIME, &dt, &(s.esv0(0)), &(s.desv(0)), &us(0),
                 wk.ivs.size() == 0 ? nullptr : &wk.ivs(0), &(wk.D(0, 0)),
-                &sedEl, &sedPl, &epseq, nullptr, nullptr, epsPl, &(wk.mps(0)),
+                &s.se1, &s.de1, &epseq, nullptr, nullptr, epsPl, &(wk.mps(0)),
                 coords, &drot(0, 0), &uu0(0, 0), &uu1(0, 0), &tsstif, &epsZZ,
                 &var[0], &var[1], &var[2], &var[3], &var[4], &var[5], &var[6],
                 &var[7]);

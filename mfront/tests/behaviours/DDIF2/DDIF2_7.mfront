@@ -1,0 +1,11 @@
+@DSL Implicit;
+@Behaviour DDIF2_7;
+@Description {
+  Three non constant fracture stresses. Only the third one is reached
+  by the tensile test along ZZ.
+}
+
+@Brick DDIF2 {
+ fracture_stresses : {"1e11+0*T", "1e11+0*T", "150e6+0*T"},
+ softening_slope : -75e9
+};

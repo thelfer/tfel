@@ -2,7 +2,7 @@
  * \file  BoundsCheck.cxx
  * \brief
  * \author Thomas Helfer
- * \date   13 janv. 2015
+ * \date 13/01/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -43,7 +43,7 @@ namespace tfel::material {
                                                   const std::string_view lb,
                                                   const std::string_view ub) {
     tfel::raise<OutOfBoundsException>(
-        "BoundsCheckBase::throwOutOfLowerBoundsException: variable '" +
+        "BoundsCheckBase::throwOutOfBoundsException: variable '" +
         std::string{n} + "' is out of its bounds (" + std::string{v} + "<" +
         std::string{lb} + " or " + std::string{v} + ">" + std::string{ub} +
         ")");
@@ -69,9 +69,9 @@ namespace tfel::material {
                                                   const std::string_view v,
                                                   const std::string_view lb,
                                                   const std::string_view ub) {
-    std::cerr << "BoundsCheckBase::displayOutOfLowerBoundsWarning : variable '"
-              << n << "' is out of its bounds (" << v << "<" << lb << " or "
-              << v << ">" << ub << ")\n";
+    std::cerr << "BoundsCheckBase::displayOutOfBoundsWarning : variable '" << n
+              << "' is out of its bounds (" << v << "<" << lb << " or " << v
+              << ">" << ub << ")\n";
   }
 
 }  // end of namespace tfel::material

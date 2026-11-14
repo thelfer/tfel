@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   03 jui 2006
+ * \date 03/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -128,15 +128,10 @@ namespace tfel::math {
         if (tfel::math::abs(cbrt_q) < prec) {
           x1 = x2 = x3 = -tmp3;
           return 3u;
-        } else if (q > 0) {
-          x1 = -tmp3 + cbrt_q;
+        } else {
+          x1 = -tmp3 - cbrt_q;
           x2 = -tmp3 + C_1_2 * cbrt_q;
           x3 = -tmp3 + C_1_2 * cbrt_q;
-          return 1u;
-        } else {
-          x3 = -tmp3 + cbrt_q;
-          x1 = -tmp3 + C_1_2 * cbrt_q;
-          x2 = -tmp3 + C_1_2 * cbrt_q;
           return 1u;
         }
       }
@@ -252,7 +247,7 @@ namespace tfel::math {
         return;
       }
       auto x1 = x - f(x) / dfv;
-      auto iter = integer(0);
+      auto iter = integer{};
       while ((tfel::math::abs(x1 - x) > prec) && (iter < iter_max)) {
         x = x1;
         dfv = df(x);

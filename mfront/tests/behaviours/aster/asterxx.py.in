@@ -35,7 +35,7 @@ class Asterxx(unittest.TestCase):
             self.assertEqual(ivtypes[2+Np+i],'Scalar')
         for i in range(0,Nss*Np):
             self.assertEqual(ivnames[2+Np+i+Nss*Np],'a[{0}]'.format(i))
-            self.assertEqual(ivtypes[2+Np+i],'Scalar')
+            self.assertEqual(ivtypes[2+Np+i+Nss*Np],'Scalar')
         for i in range(0,Nss*Np):
             self.assertEqual(ivnames[2+Np+i+2*Nss*Np],'p[{0}]'.format(i))
             self.assertEqual(ivtypes[2+Np+i+2*Nss*Np],'Scalar')
@@ -46,8 +46,6 @@ class Asterxx(unittest.TestCase):
         self.assertTrue(b.isOrthotropic())
         
         b.setParameter("epsilon",1.e-12)
-        
-        self.assertEqual(10, 7 + 3)
 
 if __name__ == '__main__':
     unittest.main()

@@ -36,6 +36,7 @@ bibliography: bibliography.bib
 \newcommand{\tepsilonvis}{\underline{\epsilon}^{\mathrm{vis}}}
 \newcommand{\tdepsilonvis}{\underline{\dot{\epsilon}}^{\mathrm{vis}}}
 \newcommand{\tdepsilonp}{\underline{\dot{\epsilon}}^{\mathrm{p}}}
+\newcommand{\tdepsilonvp}{\underline{\dot{\epsilon}}^{\mathrm{vp}}}
 
 \newcommand{\talpha}{\underline{\alpha}}
 \newcommand{\tdalpha}{\underline{\dot{\alpha}}}
@@ -86,7 +87,7 @@ The brick decomposes the behaviour into two components:
 > evolution of porosity is described on a [dedicated
 > page](StandardElastoViscoPlasticityBrick-PorousPlasticity.html).
 
-## A detailled Example
+## A detailed Example
 
 ~~~~{.cpp}
 @Brick "StandardElastoViscoPlasticity" {
@@ -105,7 +106,7 @@ The brick decomposes the behaviour into two components:
   // Here we define only one viscplastic flow defined by the Norton law,
   // which is based:
   // - the von Mises stress criterion
-  // - one isotorpic hardening rule based on Voce formalism
+  // - one isotropic hardening rule based on Voce formalism
   // - one kinematic hardening rule following the Armstrong-Frederick law
   inelastic_flow : "Norton" {
     criterion : "Mises",
@@ -145,7 +146,7 @@ This stress potential provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 
@@ -155,7 +156,7 @@ The Hooke stress potential is fully described
 ## The `IsotropicDamage` stress potential
 
 This stress potential adds to the Hooke stress potential the description
-of an isotropioc damage. The relation 
+of an isotropic damage. The relation
 \[
  \tsigma=\left(1-d\right)\,\tenseurq{D}\,\colon\,\tepsilonel
 \]
@@ -187,16 +188,79 @@ The DDIF2 stress potential is fully described
 
 ## Generalities
 
+### General form of an inelastic flow {#sec:StandardElastoViscoPlasticity:inelastic_flow_general_form}
+
+All the inelastic flows described on this page have the same form. The
+plastic strain rate \(\tdepsilonp\)
+of a plastic flow, or the viscoplastic strain rate \(\tdepsilonvp\) of a
+viscoplastic flow, is given by:
+
+\[
+\tdepsilonp=\dot{p}\,\tenseur{n}
+\quad\text{or}\quad
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
+\]
+
+where:
+
+- \(p\) is the equivalent plastic strain (or the equivalent viscoplastic
+  strain). Its rate \(\dot{p}\) gives the intensity of the flow.
+- \(\tenseur{n}\) is the flow direction.
+- \(g\) is the plastic potential (or the viscoplastic potential).
+
+The elastic domain is described by the yield function \(f\):
+
+\[
+f\paren{\tsigma,p}= \phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
+\]
+
+where:
+
+- \(\phi\) is the stress criterion, given by the `criterion` option.
+- \(\tenseur{X}_{i}\) are the back stresses, given by the kinematic
+  hardening rules (`kinematic_hardening` option, optional).
+- \(R_{i}\) are the contributions to the radius of the yield surface,
+  given by the isotropic hardening rules (`isotropic_hardening` option,
+  optional for the viscoplastic flows).
+  The sum \(\sum_{i}R_{i}\paren{p}\) indicates that this radius may be
+  defined by combining various predefined forms of isotropic hardening
+  rules (Voce, Linear, etc.) defined hereafter.
+
+The potential \(g\) is built on a second stress criterion \(\phi_{g}\),
+given by the `flow_criterion` option:
+
+\[
+g\paren{\tsigma}= \phi_{g}\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}
+\]
+
+If the `flow_criterion` option is not used, \(\phi_{g}\) is equal to
+\(\phi\) and the flow is associated.
+
+The inelastic flows only differ by the way the rate \(\dot{p}\) is
+determined:
+
+- for the `Plastic` flow, \(\dot{p}\) is the plastic multiplier,
+  determined by the consistency conditions.
+- for the viscoplastic flows, \(\dot{p}\) is an explicit function of the
+  yield function \(f\), and possibly of \(p\).
+
+In the following, \(\left<x\right>\) denotes the positive part of
+\(x\).
+
 ### About the equivalent strain
 
-Most inelastic flows introduces an equivalent strain as a measure of the
-material's hardening.
+Most inelastic flows introduce an equivalent strain as a measure of the
+material's hardening. This equivalent strain is the variable \(p\)
+introduced in Section
+@sec:StandardElastoViscoPlasticity:inelastic_flow_general_form.
 
 This state variable is named `p`+`id` where `id` is an identifier
 associated with the inelastic flow. `id` is empty if only one inelastic
-flows is defined and contain a number otherwise. More precisely, when
+flow is defined and contains a number otherwise. More precisely, when
 several inelastic flows are defined, `0` is the `id` of the first
-inelatic flow, `1` is the `id` of the second inelatic flow, etc..
+inelastic flow, `1` is the `id` of the second inelastic flow, etc.
 
 The default external name of the equivalent strain depends on the
 inelastic flow selected:
@@ -206,7 +270,7 @@ inelastic flow selected:
 
 See Section
 @sec:StandardElastoViscoPlasticity:equivalent_strain_external_name for
-how to change the external name of the equilavent strain.
+how to change the external name of the equivalent strain.
 
 ## List of available inelastic flows
 
@@ -214,37 +278,40 @@ how to change the external name of the equilavent strain.
 
 The plastic flow is defined by:
 
-- a yield surface \(f\)
+- a yield function \(f\)
 - a plastic potential \(g\)
+
+with the notations of Section
+@sec:StandardElastoViscoPlasticity:inelastic_flow_general_form.
 
 The plastic strain rate satisfies:
 \[
-\tdepsilonp=\dot{\lambda}\,\deriv{g}{\tsigma}
+\tdepsilonp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
 \]
 
-The plastic multiplier satifies the Kuhn-Tucker relation:
+The rate \(\dot{p}\) of the equivalent plastic strain is the plastic
+multiplier. It satisfies the Kuhn-Tucker relations:
 \[
 \left\{
 \begin{aligned}
-\dot{\lambda}\,f\paren{\tsigma,p}&=0\\
-\dot{\lambda}&\geq 0
+\dot{p}\,f\paren{\tsigma,p}&=0\\
+\dot{p}&\geq 0\\
+f\paren{\tsigma,p}&\leq 0
 \end{aligned}
 \right.
 \]
 
-The flow is associated is \(f\) is equal to \(g\). In practice \(f\) is
-defined by a stress criterion \(\phi\), a set of kinematic hardening
-rules, and an isotropic hardening rule, as follows:
+The yield function \(f\) is defined by a stress criterion \(\phi\), a
+set of kinematic hardening rules (optional), and at least one isotropic
+hardening rule, as follows:
 
 \[
 f\paren{\tsigma,p}= \phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
 \]
 
-where \(p\) is the equivalent plastic strain. Here we have decomposed
-the limit of the elastic domain as a sum, denoted
-\(\sum_{i}R_{i}\paren{p}\), to indicate that one may define it by
-combining various predefined forms of isotropic hardening rules (Voce,
-Linear, etc.) defined hereafter.
+The flow is associated if the `flow_criterion` option is not used.
 
 #### Maximum equivalent stress in the `Plastic` flow
 
@@ -260,7 +327,7 @@ the `maximum_equivalent_stress_factor` option.
 
 In some cases, rejecting steps may also lead to a divergence of the
 Newton algorithm, so one may specify a relative threshold \(\beta\) on
-the iteration number which desactivate this check, i.e. the check is
+the iteration number which deactivates this check, i.e. the check is
 performed only if the current iteration number is below
 \(\beta\,\cdot\,i_{\max{}}\) where \(i_{\max{}}\) is the maximum number
 of iterations allowed for the Newton algorithm. A typical value for
@@ -283,49 +350,103 @@ of iterations allowed for the Newton algorithm. A typical value for
 
 ### The `Norton` inelastic flow
 
-The plastic flow is defined by:
-
-- a function \(f\paren{\tsigma}\) giving the flow intensity:
-  \[
-  f\paren{\tsigma}=A\,\left<\dfrac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}}{K}\right>^{n}
-  \]
-- a stress criterion \(\phi\)
-- a viscoplastic potential \(g\)
-- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
-- one isotropic hardening rule (optional), denoted \(R_{i}\)
-
-### The `HyperbolicSine` inelastic flow
-
-The viscoplastic flow is defined by:
-
-- a function \(f\paren{\tsigma}\) giving the flow intensity given by:
-  \[
-  f\paren{\tsigma}=A\,\sinh\paren{\dfrac{\left<\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\right>}{K}}^{n}
-  \]
-- a stress criterion \(\phi\)
-- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
-- one isotropic hardening rule (optional), denoted \(R_{i}\)
-
-### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow 
-
-The equivalent viscoplastic strain rate \(\dot{p}\) is defined as:
-
+The viscoplastic strain rate satisfies:
 \[
-\dfrac{1}{\dot{p}}=\sum_{i=1}^{N}\dfrac{1}{\dot{p}_{i}}
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
 \]
 
-where \(\dot{p}_{i}\) has an expression similar to the the Norton-Hoff
-viscoplastic flow:
-
+The rate \(\dot{p}\) of the equivalent viscoplastic strain is given by
+the Norton law:
 \[
-\dot{p}_{i}=A_{i}\,\paren{\dfrac{\left<\phi\paren{\tsigma-\sum_{j}\tenseur{X}_{j}}-\sum_{j}R_{j}\paren{p}\right>}{K_{i}}}^{n_{i}}
+\dot{p}=A\,\left<\dfrac{f\paren{\tsigma,p}}{K}\right>^{n}
+\quad\text{with}\quad
+f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
 \]
 
 in which appear:
 
 - a stress criterion \(\phi\)
-- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
-- one isotropic hardening rule (optional), denoted \(R_{i}\)
+- a viscoplastic potential \(g\)
+- one or more kinematic hardening rules (optional), denoted \(\tenseur{X}_{i}\)
+- one or more isotropic hardening rules (optional), denoted \(R_{i}\)
+- the coefficients \(A\), \(K\) and \(n\), given by the options `A`, `K`
+  and `n`. `A` is optional and equal to \(1\) by default.
+
+#### Newton steps rejection
+
+One may specify a relative threshold denoted \(K_{sf}\), given by the
+`Ksf` option: if the estimate of \(f\) is greater than \(K_{sf}\,K\),
+the Newton step is rejected.
+
+### The `HyperbolicSine` inelastic flow
+
+The viscoplastic strain rate satisfies:
+\[
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
+\]
+
+The rate \(\dot{p}\) of the equivalent viscoplastic strain is given by:
+\[
+\dot{p}=A\,\sinh\paren{\dfrac{\left<f\paren{\tsigma,p}\right>}{K}}^{n}
+\quad\text{with}\quad
+f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
+\]
+
+in which appear:
+
+- a stress criterion \(\phi\)
+- a viscoplastic potential \(g\)
+- one or more kinematic hardening rules (optional), denoted \(\tenseur{X}_{i}\)
+- one or more isotropic hardening rules (optional), denoted \(R_{i}\)
+- the coefficients \(A\), \(K\) and \(n\), given by the options `A`, `K`
+  and `n`. `A` and `n` are optional and equal to \(1\) by default.
+
+#### Newton steps rejection
+
+The exponential nature of the hyperbolic sinus function may lead to
+divergence of the Newton method. To avoid this, one may specify a
+relative threshold denoted \(K_{sf}\), given by the `Ksf` option: if the
+estimate of \(f\) is greater than \(K_{sf}\,K\), the Newton step is
+rejected.
+
+### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow 
+
+The viscoplastic strain rate satisfies:
+\[
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
+\]
+
+The rate \(\dot{p}\) of the equivalent viscoplastic strain is defined
+as:
+
+\[
+\dfrac{1}{\dot{p}}=\sum_{i=1}^{N}\dfrac{1}{\dot{p}_{i}}
+\]
+
+where \(\dot{p}_{i}\) has an expression similar to the Norton
+viscoplastic flow:
+
+\[
+\dot{p}_{i}=A_{i}\,\left<\dfrac{f\paren{\tsigma,p}}{K_{i}}\right>^{n_{i}}
+\quad\text{with}\quad
+f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{j}\tenseur{X}_{j}}-\sum_{j}R_{j}\paren{p}
+\]
+
+in which appear:
+
+- a stress criterion \(\phi\)
+- a viscoplastic potential \(g\)
+- one or more kinematic hardening rules (optional), denoted \(\tenseur{X}_{j}\)
+- one or more isotropic hardening rules (optional), denoted \(R_{j}\)
+- the coefficients \(A_{i}\), \(K_{i}\) and \(n_{i}\), given by the
+  options `A`, `K` and `n`, which are arrays of the same size \(N\).
+  `A` is optional and its values are equal to \(1\) by default.
 
 #### Example
 
@@ -341,26 +462,27 @@ in which appear:
 };
 ~~~~
 
-#### Newton steps rejection
-
-The exponential nature of the hyperbolic sinus function may lead to
-divergence of the Newton method. To avoid this, one may specify a
-relative threshold denoted \(K_{sf}\): if the stress estimate is greater
-than \(K_{sf}\,K\), the step is rejected.
-
 ### The `UserDefinedViscoplasticity` inelastic flow
 
-The `UserDefinedViscoplasticity` inelastic flow allows the user to
-specify the viscoplastic strain rate `vp` as a function of `f` and `p`
-where:
+The viscoplastic strain rate satisfies:
+\[
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
+\]
 
-- `f` is the positive part of the
-  \(\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\)
+The `UserDefinedViscoplasticity` inelastic flow allows the user to
+specify the rate \(\dot{p}\) of the equivalent viscoplastic strain,
+named `vp`, as a function of `f` and `p` where:
+
+- `f` is the positive part \(\left<f\paren{\tsigma,p}\right>\) of the
+  yield function
+  \(f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\)
   where \(\phi\) is the stress criterion.
-- `p` is the equivalent viscoplastic strain.
+- `p` is the equivalent viscoplastic strain \(p\).
 
 This function shall be given by a string option named `vp`. This
-function must depend on `f`. Dependance to `p` is optional.
+function must depend on `f`. Dependence on `p` is optional.
 
 The function may also depend on other variables. Let `A` be such a
 variable. The `UserDefinedViscoplasticity` flow will look if an option
@@ -368,7 +490,7 @@ named `A` has been given to the flow:
 
 
 - If this option exists, it will be interpreted as a material
-  coefficient as usal and this option can be a number, a formula or the
+  coefficient as usual and this option can be a number, a formula or the
   name of an external `MFront` file.
 - If this option does not exist, a suitable variable will be search in
   the variables defined in the behaviour (static variables, parameters,
@@ -377,13 +499,16 @@ named `A` has been given to the flow:
 If required, the derivatives of `vp` with respect to `f` and `p` can be
 provided through the options `dvp_df` and `dvp_dp`. The derivatives
 `dvp_df` and `dvp_dp` can depend on two additional variables, `vp` and
-`seps`, which denotes the viscoplastic strain rate and a stress
-threshold.
+`seps`, which denotes the equivalent viscoplastic strain rate and a
+stress threshold.
 
 If those derivatives are not provided, automatic differentiation will be
 used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
-code.
+code. The functions `tgamma` and `lgamma` can't be differentiated: the
+derivatives must be provided if `vp` uses them. The functions `abs`,
+`max`, `min` and `H` are differentiated piecewise, the derivative of `H`
+being null.
 
 #### Example of usage {.unnumbered}
 
@@ -409,7 +534,7 @@ code.
 
 ### External name of the equivalent strain  {#sec:StandardElastoViscoPlasticity:equivalent_strain_external_name}
 
-All inelastic flows allows to change the external name of the equilvaent
+All inelastic flows allow changing the external name of the equivalent
 strain with the `equivalent_strain_external_name` option.
 
 #### Example of usage
@@ -427,7 +552,7 @@ strain with the `equivalent_strain_external_name` option.
 
 ### Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
 
-Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) shows
+Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) show
 sharp edges that may cause the failure of the standard Newton algorithm,
 due to oscillations in the prediction of the flow direction.
 
@@ -435,8 +560,8 @@ Rejecting Newton steps leading to a too large variation of the flow
 direction between the new estimate of the flow direction and the
 previous estimate is a cheap and efficient method to overcome this
 issue. This method can be viewed as a bisectional linesearch based on
-the Newton prediction: the Newton steps magnitude is divided by two if
-its results to a too large change in the flow direction.
+the Newton prediction: the Newton step's magnitude is divided by two if
+it results in a too large change in the flow direction.
 
 More precisely, the change of the flow direction is estimated by the
 computation of the cosine of the angle between the two previous
@@ -663,7 +788,7 @@ have been proposed by Cazacu and Barlat (see
   &\frac{1}{27}\,(b_1+b_2)\,s_{xx}^3+\frac{1}{27}\,(b_3+b_4)\,s_{yy}^3+\frac{1}{27}\,(2\,(b_1+b_4)-b_2-b_3)\,s_{zz}^3\\
   &-\frac{1}{9}\,(b_1\,s_{yy}+b_2s_{zz})\,s_{xx}^2\\
   &-\frac{1}{9}\,(b_3\,s_{zz}+b_4\,s_{xx})\,s_{yy}^2\\
-  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b3+b_4)\,s_{yy})\,s_{zz}^3\\
+  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b_3+b_4)\,s_{yy})\,s_{zz}^2\\
   &+\frac{2}{9}\,(b_1+b_4)\,s_{xx}\,s_{yy}\,s_{zz}\\
   &-\frac{s_{xz}^2}{3}\,(2\,b_9\,s_{yy}-b_8\,s_{zz}-(2\,b_9-b_8)\,s_{xx})\\
   &-\frac{s_{xy}^2}{3}\,(2\,b_{10}\,s_{zz}-b_5\,s_{yy}-(2\,b_{10}-b_5)\,s_{xx})\\
@@ -712,7 +837,7 @@ the following restrictions apply:
   `Tridimensional` modelling hypothesis is supported.q
 - if the `Plate` orthotropic axis convention is used, only the
   `Tridimensional` and `PlaneStress` modelling hypotheses are supported.
-- if the `Pipe` orthotropic axis convention is used, only theI
+- if the `Pipe` orthotropic axis convention is used, only their
   `Tridimensional`, `Axisymmetrical`,
   `AxisymmetricalGeneralisedPlainStrain`, and
   `AxisymmetricalGeneralisedPlainStres` modelling hypotheses are
@@ -902,7 +1027,7 @@ flow. This name can be changed using the
 
 > **Note**
 >
-> The follwing hardening rules can be combined to define
+> The following hardening rules can be combined to define
 > more complex hardening rules. For example, the following
 > code adds to Voce hardening:
 >
@@ -1041,7 +1166,7 @@ be such a variable. The `UserDefined` isotropic hardening rule will look
 if an option named `A` has been given:
 
 - If this option exists, it will be interpreted as a material
-  coefficient as usal and this option can be a number, a formula or the
+  coefficient as usual and this option can be a number, a formula or the
   name of an external `MFront` file.
 - If this option does not exist, a suitable variable will be search in
   the variables defined in the behaviour (static variables, parameters,
@@ -1054,7 +1179,10 @@ variable `R`.
 If this derivative is not provided, automatic differentiation will be
 used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
-code.
+code. The functions `tgamma` and `lgamma` can't be differentiated: the
+derivative must be provided if `R` uses them. The functions `abs`,
+`max`, `min` and `H` are differentiated piecewise, the derivative of `H`
+being null.
 
 #### Example of usage {.unnumbered}
 
@@ -1083,13 +1211,14 @@ equivalent strain and equivalent stress.
 
 This isotropic hardening rule can be parametrised using three entries:
 
-- `values`: which must a dictionnary giving the value of the yield
+- `values`: which must a dictionary giving the value of the yield
   surface radius as a function of the equivalent plastic strain.
 - `interpolation`: which allows to select the interpolation type.
   Possible values are `linear` (default choice) and `cubic_spline`.
 - `extrapolation`: which allows to select the extrapolation type.
-  Possible values are `bound_to_last_value` (or `constant`) and
-  `extrapolation` (default choice).
+  Possible values are `bound_to_last_value` (or `constant`, or the
+  boolean value `false`) and `extrapolation` (or the boolean value
+  `true`, default choice).
 
 #### Example of usage
 
@@ -1115,7 +1244,7 @@ The `StrainRateSensitive` isotropic hardening rule is defined by:
 
 where:
 
-- \(R_{0}\paren{p}\) is the yield radius corresponding to an infinitly
+- \(R_{0}\paren{p}\) is the yield radius corresponding to an infinitely
   slow loading. It can be built by summing any isotropic hardening rule
   already implemented in the `StandardElastoViscoPlasticity\ brick.
 - \(R_{rs}\paren{\dot{p}}\) is a correction describing the strain rate
@@ -1127,8 +1256,8 @@ options:
 - `rate_independent_isotropic_hardening`: this option introduces a
   contribution to \(R_{0}\paren{p}\). This option can be repeated
   multiple times.
-- `rate_sensitivity_factor`: this option introduces the rate sensivity
-  factor \(R_{rs}\paren{\dot{p}}\). The list of available rate sensivity
+- `rate_sensitivity_factor`: this option introduces the rate sensitivity
+  factor \(R_{rs}\paren{\dot{p}}\). The list of available rate sensitivity
   factors is given in section @sec:rate_sensitivity_factors.
 
 #### Example of usage
@@ -1292,12 +1421,12 @@ with:
 \)
 - \(
 \Psi^{\left(\tenseur{X}\right)}\left(\tenseur{X}\right)=
-\frac{\left<D\,J\left(\tenseur{X}\right)-\omega\,C\right>^{m}}{1-\omega}\,
+\frac{\left<D\,J\left(\tenseur{X}\right)-\omega\,C\right>^{m}}{\left(1-\omega\right)^{m}}\,
 \frac{1}{\left(D\,J\left(\tenseur{X}\right)\right)^{m}}
 \)
 - \(
 \Psi\left(\tenseur{a}\right)=
-\frac{\left<D\,J\left(\tenseur{a}\right)-\frac{3}{2}\omega\right>^{m}}{1-\omega}\,
+\frac{\left<D\,J\left(\tenseur{a}\right)-\frac{3}{2}\omega\right>^{m}}{\left(1-\omega\right)^{m}}\,
 \frac{1}{\left(D\,J\left(\tenseur{a}\right)\right)^{m}}
 \)
 
@@ -1310,9 +1439,83 @@ The following code can be added in a block defining an inelastic flow:
       C : 250e7,
       D : 100,
       m : 2,
-      w : 0.6,
+      w : 0.6
     }
 ~~~~
+
+#### Properties of this rule
+
+In this section, \(\Phi=1\). The dynamic recovery only acts above the
+threshold \(J\left(\tenseur{X}\right)=\omega\,C/D\). Under a monotonic
+loading, \(J\left(\tenseur{X}\right)\) saturates at \(C/D\), whatever the
+values of \(m\) and \(\omega\).
+
+Two particular cases are worth noting:
+
+- For \(m=1\), this is the rule used in @chaboche_cyclic_2012.
+- For \(\omega=0\), \(\Psi=1\): the exponent \(m\) has no effect, and this
+  is the `Armstrong-Frederick` rule.
+
+The values of \(m\) and \(\omega\) (option `w`) are not checked: \(\omega=1\)
+leads to a division by zero, and for \(m<1\), the derivative of \(\Psi\) is
+singular at the threshold.
+
+#### Comparison with the literature
+
+For \(m\neq 1\), this rule is not the same as the ones found in the
+literature, so parameters identified for one of them can't be used as they
+are in another one.
+
+Under a uniaxial loading and with \(\Phi=1\), the kinematic variable evolves
+as:
+
+\[
+\dot{X}=C\,\dot{\varepsilon}^{p}-R\,\dot{p}\,\mathrm{sign}\left(X\right)
+\]
+
+The three forms below only differ by the dynamic recovery \(R\), given as a
+function of \(x=D\,\left|X\right|/C\). They are identical for \(m=1\).
+
+| Source | \(R/C\) |
+|---|---|
+| This rule | \(\left<\dfrac{x-\omega}{1-\omega}\right>^{m}\,x^{1-m}\) |
+| @chaboche_cyclic_2012, equation 7, with \(m_{1}=m_{2}=m\) | \(D^{m-1}\,\left<\dfrac{x-\omega}{1-\omega}\right>^{m}\,x^{1-m}\) |
+| @chaboche_review_2008, equation 124 | \(\left<\dfrac{x-\omega}{1-\omega}\right>^{m}\) |
+
+**Equation 7 of @chaboche_cyclic_2012.** This paper only uses
+\(m_{1}=m_{2}=1\). With \(m_{1}=m_{2}=m\), its equation describes the same
+family of laws as this rule, but with other values of the parameters: the
+values \(\left(D,\omega\right)\) of the paper correspond to the values
+\(\left(D',\omega'\right)\) of this rule such that:
+
+\[
+\dfrac{\omega'}{D'}=\dfrac{\omega}{D}
+\quad\text{and}\quad
+\dfrac{D'}{\left(1-\omega'\right)^{m}}=\left(\dfrac{D}{1-\omega}\right)^{m}
+\]
+
+This rule has a single exponent: the case \(m_{1}\neq m_{2}\) can't be
+expressed.
+
+**Equation 124 of @chaboche_review_2008.** No change of the parameters
+removes the factor \(x^{1-m}\). Both forms have the same threshold and the
+same saturation, and their tensile curves are close: for
+\(C=2.5\,10^{9}\,\mathrm{Pa}\), \(D=100\), \(m=2\) and \(\omega=0.6\), the
+largest difference on \(X\) is \(0.33\,\mathrm{MPa}\).
+
+The ratcheting differs. The following table gives the plastic strain per
+stabilized cycle, with one kinematic variable with the same values of \(C\)
+and \(D\), an elastic limit of \(120\,\mathrm{MPa}\) and a stress between
+\(-132\,\mathrm{MPa}\) and \(144\,\mathrm{MPa}\). This single loading only
+gives an order of magnitude.
+
+| \(\omega\) | \(m\) | This rule | Equation 124 | Ratio |
+|---|---|---|---|---|
+| 0.6 | 1 | \(6.643\,10^{-3}\) | \(6.643\,10^{-3}\) | 1.00 |
+| 0.6 | 2 | \(3.736\,10^{-3}\) | \(2.958\,10^{-3}\) | 1.26 |
+| 0.6 | 4 | \(1.802\,10^{-3}\) | \(1.163\,10^{-3}\) | 1.55 |
+| 0.3 | 2 | \(1.095\,10^{-2}\) | \(6.971\,10^{-3}\) | 1.57 |
+| 0 | 2 | \(2.284\,10^{-2}\) | \(1.105\,10^{-2}\) | 2.07 |
 
 ### Delobelle-Robinet-Schaffler (DRS) kinematic hardening rule
 
@@ -1335,6 +1538,9 @@ same structure as the Hill tensors and are defined by \(6\) components
 (see [this page](tensors.html) for details).
 
 The `f` and `a0` parameters are optional and defaults to \(1\).
+
+This kinematic hardening rule requires the behaviour to be orthotropic
+(see the `@OrthotropicBehaviour` keyword).
 
 #### Example
 

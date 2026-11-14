@@ -1,0 +1,25 @@
+@DSL RungeKutta;
+@Behaviour RungeKuttaElasticity_rk4;
+@Author Tristan Chenaille;
+@Date 25/10/2026;
+@Algorithm rk4;
+@Description {
+  Elasticity with a stiffness tensor depending on the temperature: the
+  final stress must be computed with the stiffness tensor at the end of
+  the time step.
+}
+
+@ComputeStiffnessTensor{"150e9 * (1 - T / 2e3)", 0.3};
+
+@ComputeStress {
+  sig = D * eel;
+}
+
+@Derivative {
+  deel = deto;
+}
+
+@TangentOperator {
+  static_cast<void>(smt);
+  Dt = D;
+}

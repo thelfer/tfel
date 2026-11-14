@@ -19,6 +19,10 @@
 
 namespace mfront {
 
+  std::vector<std::string> SecondBroydenSolver::getMemberNames() const {
+    return {"fzeros_1", "inv_jacobian"};
+  }  // end of getMemberNames
+
   std::vector<std::string> SecondBroydenSolver::getSpecificHeaders() const {
     return {"TFEL/Math/TinyBroyden2Solver.hxx"};
   }  // end of getSpecificHeaders

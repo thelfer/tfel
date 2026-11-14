@@ -2,7 +2,7 @@
  * \file   PipeQuadraticElement.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10 déc. 2015
+ * \date 10/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <numbers>
 #include <ostream>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -157,7 +158,7 @@ namespace mtest {
       const StiffnessMatrixType mt,
       const size_t i) {
     //! a simple alias
-    constexpr real pi = 3.14159265358979323846;
+    constexpr real pi = std::numbers::pi_v<real>;
     // number of elements
     const auto ne = size_t(m.number_of_elements);
     // number of nodes

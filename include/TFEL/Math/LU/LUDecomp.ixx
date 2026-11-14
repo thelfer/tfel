@@ -76,7 +76,7 @@ namespace tfel::math {
       size_type piv = i;
       if (p.isIdentity()) {
         auto cmax = tfel::math::abs(m(i, i));
-        for (size_type j = static_cast<size_type>(i + 1u); j != nr; ++j) {
+        for (auto j = static_cast<size_type>(i + 1u); j != nr; ++j) {
           if (tfel::math::abs(m(j, i)) > cmax) {
             cmax = tfel::math::abs(m(j, i));
             piv = j;
@@ -91,7 +91,7 @@ namespace tfel::math {
         }
       } else {
         auto cmax = tfel::math::abs(m(p(i), i));
-        for (size_type j = static_cast<size_type>(i + 1u); j != nr; ++j) {
+        for (auto j = static_cast<size_type>(i + 1u); j != nr; ++j) {
           size_type pj = p(j);
           if (tfel::math::abs(m(pj, i)) > cmax) {
             cmax = tfel::math::abs(m(pj, i));

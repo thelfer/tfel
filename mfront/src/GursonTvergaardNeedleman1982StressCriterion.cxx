@@ -2,7 +2,7 @@
  * \file   mfront/src/GursonTvergaardNeedleman1982StressCriterion.cxx
  * \brief
  * \author Thomas Helfer, Jérémy Hure, Mohamed Shokeir
- * \date   20/07/2020
+ * \date 20/07/2020
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,6 +23,11 @@ namespace mfront::bbrick {
   GursonTvergaardNeedleman1982StressCriterion::
       GursonTvergaardNeedleman1982StressCriterion()
       : StandardPorousStressCriterionBase("GursonTvergaardNeedleman1982") {
+  }  // end of GursonTvergaardNeedleman1982StressCriterion
+
+  GursonTvergaardNeedleman1982StressCriterion::
+      GursonTvergaardNeedleman1982StressCriterion(const std::string& n)
+      : StandardPorousStressCriterionBase(n) {
   }  // end of GursonTvergaardNeedleman1982StressCriterion
 
   std::vector<mfront::BehaviourSymmetryType>
@@ -62,7 +67,7 @@ namespace mfront::bbrick {
           const Role r,
           const std::string& n) {
     if (n != "q_3") {
-      StandardPorousStressCriterionBase::
+      return StandardPorousStressCriterionBase::
           generateMissingMaterialPropertyInitializationCode(bd, dsl, id, r, n);
     }
     const auto params =
@@ -94,7 +99,7 @@ namespace mfront::bbrick {
         GursonTvergaardNeedleman1982StressCriterion::getVariableId(
             "sscb_parameters", id, r);
     return "this->" + bound + " = " +  //
-           "std::min(this->" + bound + ", this->" + params + ".f_r);\n";
+           "std::min(this->" + bound + ", real(this->" + params + ".f_r));\n";
   }  // end of updatePorosityUpperBound
 
   GursonTvergaardNeedleman1982StressCriterion::

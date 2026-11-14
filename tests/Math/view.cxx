@@ -2,7 +2,7 @@
  * \file   view.cxx
  * \brief
  * \author Thomas Helfer
- * \date   12/05/2021
+ * \date 12/05/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -40,6 +40,8 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     this->test5();
     this->test6();
     this->test7();
+    this->test8();
+    this->test9();
     this->constexpr_test1();
     this->constexpr_test2();
     return this->result;
@@ -55,6 +57,16 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     tvector<12, int> buffer{0};
     auto* const data = buffer.data();
     auto s = map_array<tvector<2u, stensor<2u, int>>>(data);
+    s[0] = stensor<2u, int>::Id();
+    s[1] = s[0] * 2;
+    return s[1];
+  }
+  //! \brief create an array view from raw memory
+  static constexpr tfel::math::stensor<2u, int> get2() {
+    using namespace tfel::math;
+    tvector<12, int> buffer{0};
+    auto* const data = buffer.data();
+    auto s = map_array<fsarray<2u, stensor<2u, int>>>(data);
     s[0] = stensor<2u, int>::Id();
     s[1] = s[0] * 2;
     return s[1];
@@ -152,6 +164,33 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(v2[2] - 4) < eps);
     TFEL_TESTS_ASSERT(std::abs(v2[3] - 4) < eps);
   }
+  //! \brief create arrays of views of quantities from a tiny vector
+  void test8() {
+    using namespace tfel::math;
+    using stress = qt<unit::Stress, double>;
+    this->array = tvector<12, double>{0};
+    this->check0();
+    auto s = map<2u, stensor<2u, stress>>(this->array);
+    s[0] = stress(1) * stensor<2u, double>::Id();
+    this->check1();
+    // views of scalars, using an offset
+    auto v = map<3u, stress, 4u>(this->array);
+    v[0] = 2 * s[0][0];
+    v[1] = v[0];
+    v[2] = v[1];
+    this->check2();
+  }
+
+  //! \brief create an array view of constant data from raw memory
+  void test9() {
+    using namespace tfel::math;
+    const double values[8] = {1, 1, 1, 0, 2, 2, 2, 0};
+    const auto v = map_array<const fsarray<2u, double>>(values);
+    TFEL_TESTS_ASSERT(std::abs(v[1] - 1) < eps);
+    const auto s = map_array<const fsarray<2u, stensor<2u, double>>>(values);
+    TFEL_TESTS_ASSERT(std::abs(s[1][0] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(s[1][3]) < eps);
+  }
 
   void constexpr_test1() {
     /* does not compile with icc 2021.1, but compiles with 2021.1 */
@@ -161,6 +200,13 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(s[1] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[3] == 0);
+#endif /* __INTEL_COMPILER */
+#ifndef __INTEL_COMPILER
+    constexpr auto s2 = StensorViewTest::get2();
+    TFEL_TESTS_STATIC_ASSERT(s2[0] == 2);
+    TFEL_TESTS_STATIC_ASSERT(s2[1] == 2);
+    TFEL_TESTS_STATIC_ASSERT(s2[2] == 2);
+    TFEL_TESTS_STATIC_ASSERT(s2[3] == 0);
 #endif /* __INTEL_COMPILER */
   }
   void constexpr_test2() {
@@ -179,7 +225,7 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     static_assert(std::same_as<scalar_view<const float>, const float&>);
     static_assert(std::same_as<scalar_view<time>, qt_ref<unit::Time, double>>);
     static_assert(std::same_as<scalar_view<const time>,
-                               const qt_ref<unit::Time, double>>);
+                               const_qt_ref<unit::Time, double>>);
   }
 
   //! \brief an helper method to check values

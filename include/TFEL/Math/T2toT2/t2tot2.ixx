@@ -95,7 +95,7 @@ namespace tfel::math {
       const auto g = r(2, 0);
       const auto h = r(2, 1);
       const auto i = r(2, 2);
-      tfel::math::t2tot2<3u, T> rt;
+      tfel::math::t2tot2<3u, base> rt;
       // d*g*v[8]+d*g*v[7]+a*g*v[6]+a*g*v[5]+a*d*v[4]+a*d*v[3]+g*g*v[2]+d*d*v[1]+a*a*v[0];
       rt(0, 0) = a * a;
       rt(0, 1) = d * d;
@@ -457,6 +457,35 @@ namespace tfel::math {
     if constexpr (N == 1) {
       return Result{zero, t[2], t[1], t[2], zero, t[0], t[1], t[0], zero};
     } else if constexpr (N == 2) {
+      return Result{zero, t[2],  t[1], zero, zero,  t[2],  zero, t[0], zero,
+                    zero, t[1],  t[0], zero, -t[4], -t[3], zero, zero, -t[4],
+                    zero, -t[2], zero, zero, -t[3], -t[2], zero};
+    } else {
+      return Result{
+          zero,  t[2],  t[1],  zero,  zero,  zero,  zero,  -t[8], -t[7],
+          t[2],  zero,  t[0],  zero,  zero,  -t[6], -t[5], zero,  zero,
+          t[1],  t[0],  zero,  -t[4], -t[3], zero,  zero,  zero,  zero,
+          zero,  zero,  -t[4], zero,  -t[2], zero,  t[7],  t[6],  zero,
+          zero,  zero,  -t[3], -t[2], zero,  t[8],  zero,  zero,  t[5],
+          zero,  -t[6], zero,  zero,  t[8],  zero,  -t[1], zero,  t[4],
+          zero,  -t[5], zero,  t[7],  zero,  -t[1], zero,  t[3],  zero,
+          -t[8], zero,  zero,  t[6],  zero,  zero,  t[3],  zero,  -t[0],
+          -t[7], zero,  zero,  zero,  t[5],  t[4],  zero,  -t[0], zero};
+    }
+  }  // end of computeDeterminantSecondDerivative
+
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantSecondDerivative(
+      const TensorType& t) noexcept
+      requires(isScalar<numeric_type<TensorType>>()) {
+    constexpr auto N = getSpaceDimension<TensorType>();
+    using NumType = numeric_type<TensorType>;
+    constexpr auto zero = NumType{0};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    using Result = t2tot2<N, NumType>;
+    if constexpr (N == 1) {
+      return Result{zero, t[2], t[1], t[2], zero, t[0], t[1], t[0], zero};
+    } else if constexpr (N == 2) {
       return Result{zero,  t[2], t[1], zero, zero,  t[2],  zero, t[0], zero,
                     zero,  t[1], t[0], zero, -t[4], -t[3], zero, zero, -t[3],
                     -t[2], zero, zero, zero, -t[4], zero,  -t[2]};
@@ -472,7 +501,7 @@ namespace tfel::math {
           -t[7], zero,  zero,  zero,  t[5],  t[4],  zero,  -t[0], zero,
           -t[8], zero,  zero,  t[6],  zero,  zero,  t[3],  zero,  -t[0]};
     }
-  }  // end of computeDeterminantSecondDerivative
+  }  // end of computeAdjugateDeterminantSecondDerivative
 
   template <typename T, T2toST2Concept T2toST2Type>
   TFEL_HOST_DEVICE constexpr void convert(

@@ -2,7 +2,7 @@
  * \file   mtest/src/SmallStrainTridimensionalBehaviourWrapper.cxx
  * \brief
  * \author Thomas Helfer
- * \date   8/11/2021
+ * \date 08/11/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,16 +25,6 @@
 #include "MTest/SmallStrainTridimensionalBehaviourWrapper.hxx"
 
 namespace mtest {
-
-  static void projectTangenOperator(
-      real* const K, const tfel::material::ModellingHypothesis::Hypothesis h) {
-    const auto ss = tfel::material::getStensorSize(h);
-    for (unsigned short i = 0; i != ss; ++i) {
-      for (unsigned short j = 0; j != ss; ++j) {
-        K[i * ss + j] = K[i * 6 + j];
-      }
-    }
-  }  // end of projectTangenOperator
 
   SmallStrainTridimensionalBehaviourWrapper::
       SmallStrainTridimensionalBehaviourWrapper(
@@ -300,17 +290,7 @@ namespace mtest {
       BehaviourWorkSpace& wk,
       const CurrentState& s,
       const StiffnessMatrixType ktype) const {
-    const auto r = this->b->computePredictionOperator(wk, s, ktype);
-    if (!r.first) {
-      return r;
-    }
-    // modify wk.kp
-    if ((ktype != StiffnessMatrixType::NOSTIFFNESS) &&
-        (ktype != StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE) &&
-        (ktype != StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)) {
-      projectTangenOperator(wk.kt.data(), this->hypothesis);
-    }
-    return r;
+    return this->b->computePredictionOperator(wk, s, ktype);
   }  // end of computePredictionOperator
 
   std::pair<bool, real> SmallStrainTridimensionalBehaviourWrapper::integrate(
@@ -318,11 +298,7 @@ namespace mtest {
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
-    const auto r = this->b->integrate(s, wk, dt, ktype);
-    if ((r.first) && (ktype != StiffnessMatrixType::NOSTIFFNESS)) {
-      projectTangenOperator(wk.kt.data(), this->hypothesis);
-    }
-    return r;
+    return this->b->integrate(s, wk, dt, ktype);
   }  // end of integrate
 
   SmallStrainTridimensionalBehaviourWrapper::

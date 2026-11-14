@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/Tensor/TensorConcept.hxx
  * \brief
  * \author Thomas Helfer
- * \date   01/12/2013
+ * \date 01/12/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -76,7 +76,7 @@ namespace tfel::math {
     TensorInvalidIndexException() = default;
     TensorInvalidIndexException(const TensorInvalidIndexException&) = default;
     TensorInvalidIndexException(TensorInvalidIndexException&&) = default;
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~TensorInvalidIndexException() noexcept override;
   };  // end of struct TensorInvalidIndexException
 
@@ -88,8 +88,9 @@ namespace tfel::math {
     TensorInvalidIndexesException() = default;
     TensorInvalidIndexesException(const TensorInvalidIndexesException&) =
         default;
-    TensorInvalidIndexesException(TensorInvalidIndexesException&&) = default;
-    const char* what() const noexcept override final;
+    TensorInvalidIndexesException(TensorInvalidIndexesException&&) noexcept =
+        default;
+    [[nodiscard]] const char* what() const noexcept final;
     ~TensorInvalidIndexesException() noexcept override;
   };  // end of struct TensorInvalidIndexesException
 
@@ -103,8 +104,8 @@ namespace tfel::math {
     TensorInvalidInitializerListSizeException(
         const TensorInvalidInitializerListSizeException&) = default;
     TensorInvalidInitializerListSizeException(
-        TensorInvalidInitializerListSizeException&&) = default;
-    const char* what() const noexcept override final;
+        TensorInvalidInitializerListSizeException&&) noexcept = default;
+    [[nodiscard]] const char* what() const noexcept final;
     ~TensorInvalidInitializerListSizeException() noexcept override;
   };  // end of struct TensorInvalidInitializerListSizeException
 
@@ -119,8 +120,8 @@ namespace tfel::math {
      * \param[in] i: row number
      * \param[in] j: column number
      */
-    TFEL_HOST numeric_type<T> operator()(const unsigned short,
-                                         const unsigned short) const;
+    [[nodiscard]] TFEL_HOST numeric_type<T> operator()(
+        const unsigned short, const unsigned short) const;
   };
 
   //! partial specialisation for tensors
@@ -206,6 +207,15 @@ namespace tfel::math {
    * \param[in]  : argument
    */
   TFEL_HOST_DEVICE constexpr auto computeDeterminantDerivative(
+      TensorConcept auto&, const TensorConcept auto&) noexcept;
+  /*!
+   * \brief compute the adjugate of a tensor, \f$\det\left(F\right)\,F^{-1}\f$,
+   * i.e. the transpose of the derivative of the determinant with respect to
+   * its argument.
+   * \param[out] : adjugate
+   * \param[in]  : argument
+   */
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantDerivative(
       TensorConcept auto&, const TensorConcept auto&) noexcept;
   /*!
    * \brief provide the polar decomposition of a tensor

@@ -2,7 +2,7 @@
  * \file  ExecutableDescription.hxx
  * \brief
  * \author Thomas Helfer
- * \date   17 mars 2015
+ * \date 17/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -54,11 +54,11 @@ namespace mfront {
     //! \brief copy constructor
     ExecutableDescription(const ExecutableDescription&);
     //! \brief move constructor
-    ExecutableDescription(ExecutableDescription&&);
+    ExecutableDescription(ExecutableDescription&&) noexcept;
     //! \brief standard assignement (deleted)
     ExecutableDescription& operator=(const ExecutableDescription&) = delete;
     //! \brief move assignement (deleted)
-    ExecutableDescription& operator=(ExecutableDescription&&) = delete;
+    ExecutableDescription& operator=(ExecutableDescription&&) noexcept = delete;
     //! \brief destructor
     ~ExecutableDescription();
   };  // end of struct ExecutableDescription

@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/fill.hxx
  * \brief  This file implements the fill class.
  * \author Thomas Helfer
- * \date   30 Jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,13 +22,14 @@ namespace tfel::fsalgo {
    * \class fill
    * \brief Fill assigns the value value to every element in the range [first,
    * last). That is, for every iterator i in [first, first+N), it performs the
-   * assignment *i = value. \param N number of element to be filled.
+   * assignment *i = value.
+   * \tparam N: number of elements to be filled.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/fill.html
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct fill {

@@ -6,7 +6,7 @@
 @MaterialProperty real young; 
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
-young.setGlossaryName("PoissonRatio");
+nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real R_inf;
 @MaterialProperty real R_0;
 @MaterialProperty real b;
@@ -25,7 +25,7 @@ young.setGlossaryName("PoissonRatio");
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
   // prediction elastique
-  StresssStensor sigel(lambda*trace(eel+deto)*Stensor::Id()+2*mu*(eel+deto));
+  StressStensor sigel(lambda*trace(eel+deto)*Stensor::Id()+2*mu*(eel+deto));
   for(unsigned short i=0;i!=2;++i){
     sigel -= C[i]*a[i]/1.5 ;
   }

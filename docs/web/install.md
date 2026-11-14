@@ -48,31 +48,34 @@ directory of the sources.
 
 This document describes the generic installation procedure for `TFEL`
 from the sources on posix-compliant systems. Please note that the main
-systems on which `TFEL` was developed is `Linux`. Extensive testing on
+system on which `TFEL` was developed is `Linux`. Extensive testing on
 other posix-compliant operating systems, notably `FreeBSD`, is
-lacking, although compilation and unit testing is known to work. A
+lacking, although compilation and unit testing are known to work. A
 page dedicated to `FreeBSD` is available [here](install-freebsd.html).
 
 The installation on [Windows platform](http://windows.microsoft.com)
 is described in the following pages:
 
-- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
-- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html). This
-  tutorial can easily be adapted to other versions of `MinGW`, without
-  requiring `Cast3M` to be installed.
 - [Installation on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment](install-windows-msys.html).
+- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
+  This tutorial was written for `TFEL` 3.x: `TFEL` 5 requires
+  `Visual Studio` `2022` or later.
+- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html).
+  This tutorial was written for `TFEL` 3.x: the `MinGW` compiler
+  packaged with `Cast3M` `2017` does not support `C++-20` and can not
+  build `TFEL` 5.
 
-The creation of binary packages are detailed [here](packages.html). 
+The creation of binary packages is detailed [here](packages.html). 
 
 A quick way of installing `TFEL` on `Ubuntu` systems is given in Section
 @sec:QuickUbuntu.
 
 `TFEL` is known to work on standard architectures implemented by the
 Intel and AMD processors, either 32 or 64 bits. As no specific
-instructions relative to the underlying architecture is used in the
+instructions relative to the underlying architecture are used in the
 code, other architectures shall work as well.
 
-You must have the `cmake` build system (version greater than \(2.8\))
+You must have the `cmake` build system (version \(3.20\) or later)
 installed on your system, installing ̀`TFEL` basically boils down to the
 following simple commands:
 
@@ -82,11 +85,11 @@ $ make
 $ make install
 ~~~~
 
-The optional parameters of `cmake` allows you to:
+The optional parameters of `cmake` allow you to:
 
 - specify the source location
 - specify the installation directory
-- *specify the interfaces to be build*
+- *specify the interfaces to be built*
 
 The rest of this document is dedicated to giving all the details
 related to the installation process. For completeness, we will break
@@ -104,8 +107,8 @@ the installation procedure down into five steps:
 ## Compilers 
 
 `TFEL` version 5.0 requires a `C++-20` compliant compiler, a `C`
-compiler and optionally a `fortran` compiler. The following compilers
-suite are officially supported:
+compiler and optionally a `fortran` compiler. The following compiler
+suites are officially supported:
 
 - [The GNU Compiler Collection](https://gcc.gnu.org/). This is the
   default on most Linux distributions and is used for the development
@@ -114,9 +117,20 @@ suite are officially supported:
 - The
   [Intel compilers suite](https://software.intel.com/en-us/c-compilers).
 
+The required `C++` standard depends on the major version of `TFEL`.
+The following table gives, for each major version, the minimal
+versions checked at configuration time or required by the sources, and
+the compilers listed in the release notes:
+
+| `TFEL` | Standard   | Minimal versions                     | Compilers listed in the release notes                                                                 |
+| :----: | :--------: | :----------------------------------: | :---------------------------------------------------------------------------------------------------- |
+| 3.x    | `C++-11`   | `gcc` 4.7, `clang` 3.4               | `Visual Studio` 2015, `MinGW` packaged with `Cast3M` 2017                                             |
+| 4.x    | `C++-17`   |                                      | `gcc` 8.3 and 10.3, `clang` 11.0.1, Intel oneAPI 2023.2 (Linux, Windows), `MinGW` 10.3 (`TFEL` 4.2)   |
+| 5.x    | `C++-20`   | `gcc` 11 ([`std::bit_cast`](https://github.com/thelfer/tfel/issues/918)) | `gcc` 11.4 to 15.1, `clang` 14 to 21, Intel 2024.2, `Visual Studio` 2022 (17.4), `MinGW` 14.2         |
+
 ## Third party libraries
 
-`TFEL` has been designed to have no dependencies to third parties
+`TFEL` has been designed to have no dependencies on third-party
 libraries with the very exception of the
 [pybind11](https://github.com/pybind/pybind11) library used to create
 optional bindings for the [`Python`](https://www.python.org/) language.
@@ -126,7 +140,7 @@ optional bindings for the [`Python`](https://www.python.org/) language.
 The best way to build the `TFEL` is to use the
 [`cmake`](http://www.cmake.org/) build system (see this
 [section](#using-the-cmake-build-system)). *We only support `cmake`
-versions greater than \(2.8\)*.
+versions \(3.20\) or later*.
 
 To build `TFEL` documentation, one may need:
 
@@ -149,7 +163,7 @@ of the navigation bar).
 
 ## Creating a `build` directory
 
-We highly recommend to use a separate directory to build the
+We highly recommend using a separate directory to build the
 sources.
 
 In the following, we use the following convention:
@@ -164,12 +178,15 @@ Both `<srcdir>` and `<install_prefix>` must contain an *absolute* path.
 
 The use of the `cmake` build system is described in depth in the
 `INSTALL-cmake` file that is located in the top directory of `TFEL`
-sources. *We only support `cmake` versions greater than \(2.8\)*, so
+sources. *We only support `cmake` versions \(3.20\) or later*, so
 please check the version available on your system:
 
 ~~~~ {#cmake-version .bash}
 $ cmake --version
 ~~~~
+
+On older systems (`Ubuntu` 20.04, `Debian` 11), a recent version of
+`cmake` can be installed with `python3 -m pip install --user cmake`.
 
 A typical usage of `cmake` is the following:
 
@@ -196,6 +213,10 @@ Various other options can be passed to `cmake`:
   language, notably for the `MTest` tool, one may use the
   `-Denable-python-bindings=ON` option. This requires
   [pybind11](https://github.com/pybind/pybind11) to be available.
+  Stubs (`.pyi` files) of the python modules are generated and installed
+  if the [pybind11-stubgen](https://github.com/pybind/pybind11-stubgen)
+  tool is available. This behaviour can be turned off using the
+  `-Denable-pybind11-stubgen=OFF` option.
 
 Some default compiler settings are detected by `cmake`, depending on
 your system. To explicitly specify the compilers to be used, one may
@@ -213,6 +234,53 @@ For example, we can use the following command to select the
 $ CXX=icpc CC=icc FC=ifort F77=ifort cmake <srcdir> -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=<install_prefix>
 ~~~~
 
+### Sanitizers and hardening options
+
+The `enable-sanitize-options` option takes the list of the sanitizers to
+enable, for instance:
+
+~~~~ {#sanitizers .bash}
+$ cmake <srcdir> -Denable-sanitize-options="address;undefined"
+~~~~
+
+As for any `cmake` list, the sanitizers are separated by semicolons. As a
+convenience, commas may also be used as separators, which avoids to quote
+the separator on some shells:
+
+~~~~ {#sanitizers-comma .bash}
+$ cmake <srcdir> -Denable-sanitize-options=address,undefined
+~~~~
+
+The available sanitizers depend on the compiler and on its version. The
+`address`, `thread` and `memory` sanitizers cannot be used simultaneously.
+
+Each sanitizer can also be enabled individually using the dedicated option
+whose name is obtained from the sanitizer name:
+`enable-<name>-sanitizer`, for instance:
+
+~~~~ {#address-sanitizer .bash}
+$ cmake <srcdir> -Denable-sanitize-options="undefined" -Denable-bounds-strict-sanitizer=ON
+~~~~
+
+Such options can be combined with the `enable-sanitize-options` option: the
+enabled sanitizers are the sanitizers listed in the `enable-sanitize-options`
+option and the sanitizers whose dedicated option is enabled.
+
+Some sanitizers require specific settings to be fully effective (the link
+time optimization for `cfi`, instrumentation of all the linked code for
+`memory`, etc.), as described in the `gcc` and `clang` documentations.
+
+Note that passing a boolean value to the `enable-sanitize-options` option is
+no longer supported: this option used to enable a set of sanitizers at once,
+which is meaningless as most sanitizers cannot be combined.
+
+Standard library hardening can be combined with the sanitizers: the
+`enable-glibcxx-debug` option enables the debug mode of the standard library
+of the GNU C++ library in debug builds and the `enable-libcxx-hardening-mode`
+option enables the hardening mode of `libc++`. How to build and run the tests
+with the sanitizers is described in
+[a dedicated page](sanitizers.html).
+
 ### Controlling the generation of the documentation
 
 Generation of the documentation can be controlled by the following
@@ -221,8 +289,7 @@ boolean options:
 - `enable-doxygen-doc`, which enables or disables the generation of the
   doxygen documentation (disabled by default)
 - `enable-reference-doc`, which enables or disables the reference
-  documentation generation (enabled by default if `latex` or `pandoc` is
-  found)
+  documentation generation (disabled by default)
 - `enable-website`, which enables or disables the generation of the
   `TFEL` website (enabled by default if `pandoc` is found)
 
@@ -243,8 +310,8 @@ names of:
 
 - The executables.
 - The libraries.
-- The python modules. Note that, to comply with `python` restriction
-  on modules' names, the characters `.` and `-` are replace by `_` and
+- The python modules. Note that, to comply with `python` restrictions
+  on modules' names, the characters `.` and `-` are replaced by `_` and
   that only the first level modules are affected.
 - The directories in the `share` folder.
 
@@ -273,13 +340,24 @@ invocation, will generate an executable called `mfront-dbg`.
 
 This option can be combined with the `TFEL_APPEND_VERSION` option.
 
+### Unversioned libraries
+
+By default, the libraries are versioned: on `LiNuX`, the
+`libTFELMaterial.so` library is a symbolic link to
+`libTFELMaterial.so.${TFEL_VERSION}`, which is the name recorded in
+the libraries and executables which depend on it.
+
+The `unversioned-libraries` option disables this mechanism: each
+library is a single file, named `libTFELMaterial.so`. This option is
+used to build the `pip` package, which can't store symbolic links.
+
 ### Selecting the `python` version
 
-A specific `python` version can be selected by setting the
-`Python_ADDITIONAL_VERSIONS`, as follows:
+A specific `python` interpreter can be selected by setting
+`Python_EXECUTABLE` (or `Python_ROOT_DIR`), as follows:
 
 ~~~~{.bash}
-cmake ../master/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
+cmake ../master/ -Denable-python-bindings=ON -DPython_EXECUTABLE=/usr/bin/python3.12 ...
 ~~~~
 
 # Building
@@ -331,7 +409,7 @@ available, code source documentation can be built through:
 $ make doc-html
 ~~~~
 
-If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is build
+If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is built
 and if you are using the `cmake` build system, the previous command
 will also install a local version of the `TFEL` website.
 
@@ -358,7 +436,7 @@ The previous command also installs the documentation if built.
 
 # Scripts to define environment variables for `TFEL` to work properly
 
-Depending on the system and compilation options, some of following
+Depending on the system and compilation options, some of the following
 variables shall be set for `TFEL` to work properly after the
 installation: `TFELHOME`, `PATH`, `LD_LIBRARY_PATH` and `PYTHONPATH`.
 
@@ -366,7 +444,9 @@ installation: `TFELHOME`, `PATH`, `LD_LIBRARY_PATH` and `PYTHONPATH`.
 directory:
 
 - `<install_prefix>/share/tfel/env/env.sh` for `UNIX` systems and the
-  `bash` shell. This file shall be used as follows:
+  `bash` shell. This file is also installed when `TFEL` is built with a
+  `MinGW` compiler, as in the [`MSYS2`](https://www.msys2.org/)
+  environments. This file shall be used as follows:
 
   ~~~~{.sh}
   $ source <install_prefix>/share/tfel/env/env.sh
@@ -389,6 +469,43 @@ directory:
 > Those variables are not required if `TFEL` is installed
 > system-wide (for instance in `/usr/local`) and that the `TFEL`'s
 > binaries are not relocated.
+
+# Installing using `pip`
+
+The `tfel-mfront` wheel provides the `python` bindings, the executables,
+the headers and the libraries of `TFEL`:
+
+~~~~{.bash}
+$ pip install tfel-mfront
+~~~~
+
+## Using the headers and the libraries in a `C++` project
+
+The headers and the libraries are installed in the `tfel` directory of
+the `python` package, whose paths are given by `tfel-config`. The libraries
+are not in the default search path of the dynamic loader, hence the
+`rpath` option below:
+
+~~~~{.bash}
+$ g++ -std=c++20 $(tfel-config --includes) main.cxx -o main \
+    $(tfel-config --libs --material) \
+    -Wl,-rpath,$(tfel-config --library-path)
+~~~~
+
+A `cmake` project uses the exported targets, as described in [this
+page](libraries_usage.html):
+
+~~~~{.cmake}
+find_package(TFELMaterial REQUIRED)
+add_executable(main main.cxx)
+target_link_libraries(main PRIVATE tfel::TFELMaterial)
+~~~~
+
+The location of these targets is given by `tfel-config`:
+
+~~~~{.bash}
+$ cmake -S . -B build -DCMAKE_PREFIX_PATH=$(tfel-config --cmake-prefix-path)
+~~~~
 
 # A Quick installation procedure on `Ubuntu` {#sec:QuickUbuntu}
 
@@ -424,7 +541,7 @@ $ mkdir build && cd build
 $ ccmake ../tfel
 ~~~~
 
-`ccmake` allows to select various options. In this tutorial, we choose
+`ccmake` allows you to select various options. In this tutorial, we choose
 the following options:
 
 ~~~~{.sh}
@@ -435,7 +552,7 @@ the following options:
   enable-python-bindings        ON
 ~~~~
 
-The `TFEL_APPEND_VERSION` allows to install different versions of `TFEL`
+The `TFEL_APPEND_VERSION` option allows you to install different versions of `TFEL`
 at the same location.
 
 Then configure twice `[c]`,`[c]` and generate `[g]`. Once done, just

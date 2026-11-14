@@ -1,4 +1,4 @@
-The `@LocalParameter` keyword let the user defines specialisation
+The `@LocalParameter` keyword let the user defines specialization
 parameters. This keyword is followed by the type and the names of the
 parameters, separated by commas. The names of the variables must be
 valid `C++` identifiers.

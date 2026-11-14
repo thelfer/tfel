@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   15/08/2006
+ * \date 15/08/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -34,5 +34,9 @@ int main() {
   for (std::vector<uishort>::size_type i = 0; i != 10; ++i) {
     assert(v2[i] == i);
   }
+  auto s = 0u;
+  auto f = [&s](const unsigned int i) { s += i; };
+  tfel::fsalgo::loop<4u>::exe(f);
+  assert(s == 6u);
   return EXIT_SUCCESS;
 }

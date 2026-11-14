@@ -441,7 +441,7 @@ namespace mtest {
     throw_if(wk.evs.size() != s.esv0.size(),
              "temporary external state variable vector was not allocated "
              "properly");
-    auto rdt = real{1};
+    auto rdt = std::numeric_limits<real>::max();
     const auto ir = tfel::math::transpose(s.r);
     if (this->btype == 2u) {
       if (this->fsto == DSIG_DF) {
@@ -564,13 +564,6 @@ namespace mtest {
         log << '\n';
       }
     }
-    // turn back the gradients in the global frame
-    if (stype == 1u) {
-      // here we use the fact that d.s1.gradients is a pointer to
-      // &(wk.e0[0])
-      this->rg_fct(&(wk.e0[0]), &(wk.e0[0]), ir.begin());
-      this->rg_fct(&(wk.e1[0]), &(wk.e1[0]), ir.begin());
-    }
     if (b) {
       std::copy(wk.ivs.begin(), wk.ivs.end(), s.iv1.begin());
       if (this->btype == 2u) {
@@ -662,11 +655,15 @@ namespace mtest {
           to_offset += to_ro * to_co;
         }
       }
-      if (b && (this->stype == 1u)) {
-        this->rtf_fct(&s.s1[0], &s.s1[0], s.r.begin());
-      }
     }
-    return {true, rdt};
+    if (b && (this->stype == 1u)) {
+      this->rtf_fct(&s.s1[0], &s.s1[0], s.r.begin());
+    }
+    // the generic interface reports a success (status 1) for time step
+    // scaling factors greater than or equal to 0.99: the step is accepted,
+    // as by the solvers based on this interface, without increasing the
+    // time step if the factor is below one
+    return {true, std::max(rdt, real{1})};
   }  // end of call_behaviour
 
   void GenericBehaviour::executeFiniteStrainBehaviourStressPreProcessing(
@@ -687,13 +684,16 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane strain is not supported yet");
+              "using the 'PK2' stress measure in axisymmetrical generalised "
+              "plane stress is not supported yet");
         }
         convertToSecondPiolaKirchhoffStress<1u>(
             &wk.S0[0], d.s0.thermodynamic_forces, d.s0.gradients);
       } else if (n == 2u) {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
-          throw_if(true, "using DS_DEGL in plane strain is not supported yet");
+          throw_if(true,
+                   "using the 'PK2' stress measure in plane stress is not "
+                   "supported yet");
         }
         convertToSecondPiolaKirchhoffStress<2u>(
             &wk.S0[0], d.s0.thermodynamic_forces, d.s0.gradients);
@@ -713,13 +713,16 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane strain is not supported yet");
+              "using the 'PK1' stress measure in axisymmetrical generalised "
+              "plane stress is not supported yet");
         }
         convertToFirstPiolaKirchhoffStress<1u>(
             &wk.pk0[0], d.s0.thermodynamic_forces, d.s0.gradients);
       } else if (n == 2u) {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
-          throw_if(true, "using DS_DEGL in plane strain is not supported yet");
+          throw_if(true,
+                   "using the 'PK1' stress measure in plane stress is not "
+                   "supported yet");
         }
         convertToFirstPiolaKirchhoffStress<2u>(
             &wk.pk0[0], d.s0.thermodynamic_forces, d.s0.gradients);
@@ -774,13 +777,16 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane strain is not supported yet");
+              "using the 'PK2' stress measure in axisymmetrical generalised "
+              "plane stress is not supported yet");
         }
         convertFromSecondPiolaKirchhoffStress<1u>(d.s1.thermodynamic_forces,
                                                   &wk.S1[0], d.s1.gradients);
       } else if (n == 2u) {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
-          throw_if(true, "using DS_DEGL in plane strain is not supported yet");
+          throw_if(true,
+                   "using the 'PK2' stress measure in plane stress is not "
+                   "supported yet");
         }
         convertFromSecondPiolaKirchhoffStress<2u>(d.s1.thermodynamic_forces,
                                                   &wk.S1[0], d.s1.gradients);
@@ -797,13 +803,16 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane strain is not supported yet");
+              "using the 'PK1' stress measure in axisymmetrical generalised "
+              "plane stress is not supported yet");
         }
         convertFromFirstPiolaKirchhoffStress<1u>(d.s1.thermodynamic_forces,
                                                  &wk.pk1[0], d.s1.gradients);
       } else if (n == 2u) {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
-          throw_if(true, "using DS_DEGL in plane strain is not supported yet");
+          throw_if(true,
+                   "using the 'PK1' stress measure in plane stress is not "
+                   "supported yet");
         }
         convertFromFirstPiolaKirchhoffStress<2u>(d.s1.thermodynamic_forces,
                                                  &wk.pk1[0], d.s1.gradients);
@@ -831,7 +840,8 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane stress is not supported yet");
+              "using the 'DS_DEGL' tangent operator in axisymmetrical "
+              "generalised plane stress is not supported yet");
         } else {
           convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
                                 d.s1.thermodynamic_forces);
@@ -840,7 +850,8 @@ namespace mtest {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane stress is not supported yet");
+              "using the 'DS_DEGL' tangent operator in plane stress is not "
+              "supported yet");
         } else {
           convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
                                 d.s1.thermodynamic_forces);
@@ -860,7 +871,8 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DPK1_DG in plane stress is not supported yet");
+              "using the 'DPK1_DF' tangent operator in axisymmetrical "
+              "generalised plane stress is not supported yet");
         } else {
           convertFromDPK1DF<1u>(d.K, d.s0.gradients, d.s1.gradients,
                                 d.s1.thermodynamic_forces);
@@ -869,7 +881,8 @@ namespace mtest {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane stress is not supported yet");
+              "using the 'DPK1_DF' tangent operator in plane stress is not "
+              "supported yet");
         } else {
           convertFromDPK1DF<2u>(d.K, d.s0.gradients, d.s1.gradients,
                                 d.s1.thermodynamic_forces);
@@ -889,7 +902,8 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DPK1_DG in plane stress is not supported yet");
+              "using the 'DTAU_DDF' tangent operator in axisymmetrical "
+              "generalised plane stress is not supported yet");
         } else {
           convertFromDTAUDDF<1u>(d.K, d.s0.gradients, d.s1.gradients,
                                  d.s1.thermodynamic_forces);
@@ -898,7 +912,8 @@ namespace mtest {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane stress is not supported yet");
+              "using the 'DTAU_DDF' tangent operator in plane stress is not "
+              "supported yet");
         } else {
           convertFromDTAUDDF<2u>(d.K, d.s0.gradients, d.s1.gradients,
                                  d.s1.thermodynamic_forces);

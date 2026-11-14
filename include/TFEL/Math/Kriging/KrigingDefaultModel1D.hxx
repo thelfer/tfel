@@ -20,6 +20,10 @@
 
 namespace tfel::math {
 
+  //! \brief forward declaration, see KrigingDefaultModels.hxx
+  template <unsigned short N, typename T, typename NM>
+  struct KrigingDefaultModel;
+
   /*!
    * Partial specialisation in 1D
    * \param T  : numeric type
@@ -27,17 +31,17 @@ namespace tfel::math {
    */
   template <typename T, typename NM>
   struct KrigingDefaultModel<1u, T, NM> : public NM {
-    static TFEL_MATH_INLINE T
+    [[nodiscard]] static TFEL_MATH_INLINE T
     one(const typename KrigingVariable<1u, T>::type&) {
       return T(1);
     }
 
-    static TFEL_MATH_INLINE T
-    x(const typename KrigingVariable<1u, T>::type& v) {
+    [[nodiscard]] TFEL_MATH_INLINE static T x(
+        const typename KrigingVariable<1u, T>::type& v) {
       return v;
     }
 
-    TFEL_MATH_INLINE T
+    [[nodiscard]] TFEL_MATH_INLINE T
     covariance(const typename KrigingVariable<1u, T>::type& v) const {
       using namespace std;
       return abs(v * v * v);

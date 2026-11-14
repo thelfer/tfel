@@ -11,13 +11,27 @@
  * project under specific licensing conditions.
  */
 
+#include <atomic>
 #include <cstdlib>
 #include <iostream>
 #include "TFEL/ContractViolation.hxx"
 
 namespace tfel {
 
+  //! \brief function called by `reportContractViolation`, if any
+  static std::atomic<ContractViolationHandler> contract_violation_handler{
+      nullptr};
+
+  ContractViolationHandler setContractViolationHandler(
+      const ContractViolationHandler h) {
+    return contract_violation_handler.exchange(h);
+  }  // end of setContractViolationHandler
+
   void reportContractViolation(const char* const msg) {
+    const auto h = contract_violation_handler.load();
+    if (h != nullptr) {
+      h(msg);
+    }
     std::cerr << msg << '\n';
     std::abort();
   }

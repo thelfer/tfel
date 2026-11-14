@@ -4,7 +4,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   01 avr 2008
+ * \date 01/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -198,6 +198,34 @@ namespace lsdyna {
     static void exe(const double* const,
                     tfel::config::Types<3u, double, false>::
                         ThermalExpansionCoefficientTensor&);
+  };  // end of struct LSDYNAComputeThermalExpansionCoefficientTensor
+
+  /*!
+   * Partial specialisation for finite strain behaviours
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            LSDYNASymmetryType stype>
+  struct TFEL_VISIBILITY_LOCAL LSDYNAComputeThermalExpansionCoefficientTensor<
+      lsdyna::STANDARDFINITESTRAINBEHAVIOUR,
+      H,
+      stype> {
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    /*!
+     * \brief compute the thermal expansion coefficient tensor.
+     * \param[in]  props : material properties
+     * \param[out] A     : thermal expansion coefficient tensor
+     */
+    template <typename real>
+    static void exe(
+        const real* const props,
+        typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,
+                                     real,
+                                     false>::ThermalExpansionCoefficientTensor&
+            A) {
+      LSDYNAComputeThermalExpansionCoefficientTensor<
+          lsdyna::STANDARDSTRAINBASEDBEHAVIOUR, H, stype>::exe(props, A);
+    }
   };  // end of struct LSDYNAComputeThermalExpansionCoefficientTensor
 
 }  // end of namespace lsdyna

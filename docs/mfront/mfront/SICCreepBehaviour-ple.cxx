@@ -3,7 +3,7 @@
  * \brief  example of how to use the SiCCreep behaviour law
  * in the celaeno fuel performanece code
  * \author Helfer Thomas
- * \date   06 / 12 / 07
+ * \date 06/12/2007
  */
 
 MechanicalBehaviour 'IsotropicUmatBehaviour' 'libUmatBehaviour.so' 'umatSiCCreep' MaterialProperty<constant> 'YoungModulus' 150.e9 MaterialProperty<constant> 'PoissonRatio' 0.3 MaterialProperty<

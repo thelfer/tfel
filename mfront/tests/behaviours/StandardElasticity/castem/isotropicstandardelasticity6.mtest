@@ -29,4 +29,4 @@
 // stresses
 @Test<function> {'SXX':'0.','SYY':'0.','SZZ':'0.',
                  'SXY':'YoungModulus1/(1+PoissonRatio12)*EXY',
-                 'SXZ':'0.','SXY':'0.'} 1.e-3;
+                 'SXZ':'0.','SYZ':'0.'} 1.e-3;

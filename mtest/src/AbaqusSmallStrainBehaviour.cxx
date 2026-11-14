@@ -112,7 +112,7 @@ namespace mtest {
       ude(i) = s.e1(i) - s.e0(i);
     }
     // thermal strain
-    for (AbaqusInt i = 0; i != static_cast<unsigned short>(ntens); ++i) {
+    for (AbaqusInt i = 0; i != s.e_th0.size(); ++i) {
       ue0(i) -= s.e_th0(i);
       ude(i) -= s.e_th1(i) - s.e_th0(i);
     }

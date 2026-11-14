@@ -2,7 +2,7 @@
  * \file   src/NUMODIS/Vect3.cxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,8 +11,10 @@
  * project under specific licensing conditions.
  */
 
+#include <tuple>
 #include <cmath>
 #include <limits>
+#include <utility>
 #include <ostream>
 #include <stdexcept>
 
@@ -145,7 +147,7 @@ namespace numodis {
   //===============================================================
   Vect3 Vect3::UnitCross(const Vect3& vec) const {
     Vect3 cross = this->Cross(vec);
-    cross.Normalize();
+    std::ignore = cross.Normalize();
     return cross;
   }
 
@@ -176,7 +178,7 @@ namespace numodis {
   }
 
   Vect3 operator-(const double scalar, const Vect3& vec) {
-    return Vect3(vec[0] - scalar, vec[1] - scalar, vec[2] - scalar);
+    return Vect3(scalar - vec[0], scalar - vec[1], scalar - vec[2]);
   }
 
   Vect3 Vect3::operator+(const Vect3& vec) const {

@@ -2,7 +2,7 @@
  * \file   mfront/src/HookeStressPotentialBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,7 +18,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"
@@ -328,7 +328,7 @@ namespace mfront::bbrick {
     bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sebdata");
     update(this->pss, "plane_stress_support");
     update(this->gto, "generic_tangent_operator");
-    update(this->gpo, "generic_tangent_operator");
+    update(this->gpo, "generic_prediction_operator");
     if (this->pss) {
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "etozz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "detozz");
@@ -436,9 +436,11 @@ namespace mfront::bbrick {
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
     // elastic strain
+    // `second` is true if `eel` is declared for at least one specialisation
+    // of the behaviour, `first` if it is declared for all of them
     const auto b = bd.checkVariableExistence("eel");
-    if (b.first) {
-      throw_if(!b.second,
+    if (b.second) {
+      throw_if(!b.first,
                "'eel' is not declared for all specialisation of the behaviour");
       bd.checkVariableExistence("eel", "IntegrationVariable");
       bd.checkVariableGlossaryName("eel", Glossary::ElasticStrain);
@@ -587,6 +589,10 @@ namespace mfront::bbrick {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "HookeStressPotentialBase::endTreatment: begin\n";
     }
+    checkNoNormalisationFactor(bd, "eel");
+    if (this->pss) {
+      checkNoNormalisationFactor(bd, "etozz");
+    }
     // implicit equation associated with the elastic strain
     CodeBlock integrator;
     auto broken_test = getBrokenTest(bd, false);
@@ -606,6 +612,16 @@ namespace mfront::bbrick {
           bmh.count(
               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) != 0;
       const bool ps = bmh.count(ModellingHypothesis::PLANESTRESS) != 0;
+      // the plane stress support computes some jacobian blocks of the
+      // implicit equations of the elastic strain and of the axial strain
+      for (const auto h :
+           {ModellingHypothesis::PLANESTRESS,
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS}) {
+        if (bmh.count(h) != 0) {
+          checkNoImplicitEquationNormalisationFactor(bd, dsl, h, "eel");
+          checkNoImplicitEquationNormalisationFactor(bd, dsl, h, "etozz");
+        }
+      }
       if (ps) {
         this->addPlaneStressSupport(bd, dsl);
       }
@@ -906,10 +922,10 @@ namespace mfront::bbrick {
             "dfetozz_ddetozz   = real(0);\n"
             "dfetozz_ddeel(2)  = 1;\n"
             "dfetozz_ddeel(0)  = (this->" +
-            D + "(1,0))/(this->" + D +
-            "(1,1));\n"
+            D + "(2,0))/(this->" + D +
+            "(2,2));\n"
             "dfetozz_ddeel(1)  = (this->" +
-            D + "(2,0))/(this->" + D + "(1,1));\n";
+            D + "(2,1))/(this->" + D + "(2,2));\n";
       }
     } else {
       if (bd.areElasticMaterialPropertiesDefined()) {

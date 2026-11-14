@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/Cazacu2001YieldCriterion.hxx
  * \brief
  * \author Thomas Helfer
- * \date   10/05/2018
+ * \date 10/05/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -49,8 +49,11 @@ namespace tfel::material {
    * \f[
    * \sigma_{\mathrm{eq}}^{C}=
    * \sqrt{3}\,\sqrt[6]{\left(J_{2}^{O}\right)^{3} -
-   * c\,\left(J_{3}^{O}\right)^{2}} \f] where \(J_{2}\) and \(J_{3}\) are the
-   * first and second invariants of the deviatoric part of the stress tensor
+   * c\,\left(J_{3}^{O}\right)^{2}}
+   * \f]
+   * where \(J_{2}^{O}\) and \(J_{3}^{O}\) are the orthotropic generalizations
+   * of the second and third invariants of the deviatoric part of the stress
+   * tensor
    * \tparam StressStensor: type of the stress tensor
    * \param[in] sig: stress tensor
    * \param[in] a: coefficients for the \f$J_{2}^{O}\f$ invariant

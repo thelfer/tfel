@@ -2,7 +2,7 @@
  * \file   include/MFront/BehaviourBrick/KinematicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -64,9 +64,9 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] kid: kinematic hardening rule id
      */
-    static std::string getVariableId(const std::string&,
-                                     const std::string&,
-                                     const std::string&);
+    [[nodiscard]] static std::string getVariableId(const std::string&,
+                                                   const std::string&,
+                                                   const std::string&);
     /*!
      * \param[in,out] bd: behaviour description
      * \param[in,out] dsl: abstract behaviour dsl
@@ -91,14 +91,15 @@ namespace mfront::bbrick {
                               const std::string&,
                               const std::string&) const = 0;
     //! \return the flow options
-    virtual std::vector<OptionDescription> getOptions() const = 0;
+    [[nodiscard]] virtual std::vector<OptionDescription> getOptions() const = 0;
     /*!
      * \return the list of kinematic hardening variables.
      * \param[in] fid: flow id
      * \param[in] kid: kinematic hardening rule id
      */
-    virtual std::vector<std::string> getKinematicHardeningsVariables(
-        const std::string&, const std::string&) const = 0;
+    [[nodiscard]] virtual std::vector<std::string>
+    getKinematicHardeningsVariables(const std::string&,
+                                    const std::string&) const = 0;
     /*!
      * \brief compute the initial values of the kinematic hardening variables.
      * Thoses initial values are used to compute an elastic prediction of the
@@ -106,7 +107,7 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] kid: kinematic hardening rule id
      */
-    virtual std::string computeKinematicHardeningsInitialValues(
+    [[nodiscard]] virtual std::string computeKinematicHardeningsInitialValues(
         const std::string&, const std::string&) const = 0;
     /*!
      * \brief compute the values of the kinematic hardening variables
@@ -114,23 +115,23 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] kid: kinematic hardening rule id
      */
-    virtual std::string computeKinematicHardenings(
+    [[nodiscard]] virtual std::string computeKinematicHardenings(
         const std::string&, const std::string&) const = 0;
     /*!
      * \return the back-strain' name
      * \param[in] fid: flow id
      * \param[in] kid: kinematic hardening rule id
      */
-    virtual std::string getBackStrainVariable(const std::string&,
-                                              const std::string&) const = 0;
+    [[nodiscard]] virtual std::string getBackStrainVariable(
+        const std::string&, const std::string&) const = 0;
     /*!
      * \return the derivative of the back-stress with respect to the
      * back-strain
      * \param[in] fid: flow id
      * \param[in] kid: kinematic hardening rule id
      */
-    virtual std::string getBackStressDerivative(const std::string&,
-                                                const std::string&) const = 0;
+    [[nodiscard]] virtual std::string getBackStressDerivative(
+        const std::string&, const std::string&) const = 0;
     /*!
      * \brief compute the derivatives of a variable \f$v\f$ knowing the
      * derivative of \f$\frac{d\,v}{d\underline{s}}\f$.
@@ -140,7 +141,7 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] kid: kinematic hardening rule id
      */
-    virtual std::string generateImplicitEquationDerivatives(
+    [[nodiscard]] virtual std::string generateImplicitEquationDerivatives(
         const std::string&,
         const std::string&,
         const std::string&,
@@ -156,7 +157,7 @@ namespace mfront::bbrick {
      * \param[in] kid: kinematic hardening rule id
      * \param[in] b: compute derivatives
      */
-    virtual std::string buildBackStrainImplicitEquations(
+    [[nodiscard]] virtual std::string buildBackStrainImplicitEquations(
         const BehaviourDescription&,
         const StressPotential&,
         const StressCriterion&,
@@ -164,7 +165,34 @@ namespace mfront::bbrick {
         const std::string&,
         const std::string&,
         const bool) const = 0;
-    //! destructor
+    /*!
+     * \return the code computing the implicit equations associated with the
+     * back-strains and the derivatives of those equations (if requested) when
+     * the inelastic flow is inactive, i.e. when the code returned by the
+     * `buildBackStrainImplicitEquations` method is not executed.
+     *
+     * Only the terms which do not depend on the increment of the equivalent
+     * plastic strain, such as a static recovery, shall be computed. By
+     * default, an empty string is returned.
+     *
+     * \param[in] bd: behaviour description
+     * \param[in] sp: stress potential
+     * \param[in] fc: flow criterion
+     * \param[in] khrs: list of kinematic hardening rules
+     * \param[in] fid: flow id
+     * \param[in] kid: kinematic hardening rule id
+     * \param[in] b: compute derivatives
+     */
+    [[nodiscard]] virtual std::string
+    buildBackStrainImplicitEquationsForAnInactiveFlow(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const StressCriterion&,
+        const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
+        const std::string&,
+        const std::string&,
+        const bool) const;
+    //! \brief destructor
     virtual ~KinematicHardeningRule();
   };  // end of struct KinematicHardeningRule
 

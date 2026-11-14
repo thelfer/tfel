@@ -2,7 +2,7 @@
  * \file   HarmonicSumOfNortonHoffViscoplasticFlows.hxx
  * \brief
  * \author Thomas Helfer
- * \date   28/03/2018
+ * \date 28/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -45,35 +45,27 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const StressPotential&,
                       const std::string&) const override;
-    std::vector<OptionDescription> getOptions() const override;
-    //! destructor
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    //! \brief destructor
     ~HarmonicSumOfNortonHoffViscoplasticFlows() override;
 
    protected:
     //
-    bool describesStrainHardeningExplicitly() const override;
-    std::string computeFlowRate(const BehaviourDescription&,
-                                const StressPotential&,
-                                const std::string&) const override;
-    std::string computeFlowRateAndDerivative(const BehaviourDescription&,
-                                             const StressPotential&,
-                                             const std::string&) const override;
+    [[nodiscard]] bool describesStrainHardeningExplicitly() const override;
+    [[nodiscard]] std::string computeFlowRate(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeFlowRateAndDerivative(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const std::string&) const override;
     //! \brief A coefficients
     std::vector<BehaviourDescription::MaterialProperty> A;
     //! \brief K coefficients
     std::vector<BehaviourDescription::MaterialProperty> K;
     //! \brief Norton exponents
     std::vector<BehaviourDescription::MaterialProperty> n;
-    /*!
-     * \brief stress threshold factor (optional).
-     *
-     * If defined, this property is used to check if the stress prediction
-     * does not diverge during the Newton iterations.
-     *
-     * In pratice, it means that if the condition
-     * \f$\sigma_{\mathrm{eq}}-R>K_{sf}\,K\f$, the Newton step is rejected.
-     */
-    BehaviourDescription::MaterialProperty Ksf;
   };  // end of struct HarmonicSumOfNortonHoffViscoplasticFlows
 
 }  // end of namespace mfront::bbrick

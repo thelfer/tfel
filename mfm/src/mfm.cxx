@@ -2,7 +2,7 @@
  * \file   mfm.cxx
  * \brief
  * \author Thomas Helfer
- * \date   13 avril 2017
+ * \date 13/04/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -13,6 +13,7 @@
 
 #include <regex>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
@@ -101,7 +102,7 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     };
     auto type_filter = [this] {
       const auto t = this->currentArgument->getOption();
-      if (t == "material_property") {
+      if ((t == "material_property") || (t == "material-property")) {
         this->query.type = EntryPoint::MATERIALPROPERTY;
       } else if (t == "behaviour") {
         this->query.type = EntryPoint::BEHAVIOUR;
@@ -120,6 +121,10 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     auto interface_filter = [this] {
       this->query.interface_filter = this->currentArgument->getOption();
     };
+    this->registerCallBack(
+        "--no-terminate-handler",
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
     this->registerCallBack("--regex-syntax",
                            CallBack("select the syntax used by "
                                     "regular expressions. "
@@ -139,7 +144,7 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
         "--filter-by-type",
         CallBack(
             "filter entry points by material knowledge type. Valid types are "
-            "material-property, behaviour or model",
+            "material_property, behaviour or model",
             type_filter, true));
     this->registerCallBack(
         "--verbose", CallBack("set verbose output", set_verbose_level, true));
@@ -157,7 +162,8 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
             [this]() noexcept { this->show_sources = true; }, false));
   }  // end of registerCommandLineCallBacks
 
-  const tfel::utilities::Argument& getCurrentCommandLineArgument() const {
+  [[nodiscard]] const tfel::utilities::Argument& getCurrentCommandLineArgument()
+      const {
     return *(this->currentArgument);
   }
 
@@ -196,7 +202,13 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
         }
         this->analyseLibrary(e);
       } else {
-        tfel::raise("'" + e + "' is neither a regular file nor a directory");
+        // an argument which is neither a file nor a directory is reported,
+        // unless no output is requested. Files which can't be analysed are
+        // silently ignored, as all the files of a directory may be given.
+        if (this->vlevel >= VERBOSE_LEVEL0) {
+          std::cerr << "mfm: '" << e
+                    << "' is neither a regular file nor a directory\n";
+        }
       }
     } catch (std::exception& error) {
       if (this->vlevel >= VERBOSE_DEBUG) {
@@ -206,9 +218,11 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     }
   }  // end of treatUnknownArgument
 
-  std::string getVersionDescription() const override { return "1.0"; }
+  [[nodiscard]] std::string getVersionDescription() const override {
+    return "1.0";
+  }
 
-  std::string getUsageDescription() const override {
+  [[nodiscard]] std::string getUsageDescription() const override {
     return "Usage: " + this->programName + " [options] [files]";
   }
 
@@ -235,7 +249,37 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
   bool show_sources = false;
 };
 
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+[[noreturn]] static void mfm_terminate_handler() {
+  if (auto pe = std::current_exception()) {
+    // we have an exception
+    try {
+      std::rethrow_exception(pe);
+    } catch (const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch (...) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 int main(const int argc, const char* const* const argv) {
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, v) == 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+  if (!find("--no-terminate-handler")) {
+    std::set_terminate(mfm_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
 #if !defined(__GLIBCXX__)
   try {
 #endif /* not defined(__GLIBCXX__) */

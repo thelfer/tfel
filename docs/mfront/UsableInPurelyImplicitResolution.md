@@ -14,6 +14,6 @@ context) which may result in some gain in time and memory space.
 ## Example
 
 ~~~~{.cpp}
-@UsableInPurelyImplicitResolution true;
+@UsableInPurelyImplicitResolution;
 ~~~~
 

@@ -2,7 +2,7 @@
  * \file   include/NUMODIS/AnalyseJunction.hxx
  * \brief  analyse the strength of a junction within the line tension model.
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

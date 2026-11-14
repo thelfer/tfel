@@ -1,0 +1,27 @@
+@DSL Implicit;
+@Behaviour Test16;
+@Description {
+  "Two plastic flows with different yield stresses. The second flow is "
+  "activated by the elastic prediction, then deactivated: the stress "
+  "criterion and the yield surface radius saved for this flow must be "
+  "the ones of the solution."
+}
+
+@Epsilon 1e-14;
+@Theta 1;
+
+@ModellingHypotheses {".+"};
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6}
+  },
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 66e6, H : 438e6},
+    save_stress_criterion : true,
+    save_yield_surface_radius : true
+  }
+};

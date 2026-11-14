@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   06 avr 2008
+ * \date 06/04/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -17,6 +17,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include <utility>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/FSAlgorithm/inner_product.hxx"
@@ -25,7 +26,7 @@
 #include "TFEL/Math/General/RunTimeCheck.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/tvector.hxx"
-#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel::math {
 
@@ -46,14 +47,15 @@ namespace tfel::math {
     using const_reference = const NumType&;
     using size_type = IndexType;
     using difference_type = ptrdiff_t;
-
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    //
+    TVectorTMatrixExpr() = delete;
+    //
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
 
    protected:
-    TVectorTMatrixExpr() = delete;
-
     struct ColumnConstIterator {
       using MType = std::decay_t<B>;
       using NumType = numeric_type<MType>;
@@ -77,7 +79,8 @@ namespace tfel::math {
     struct VectorConstIterator {
       using VType = std::decay_t<A>;
       using NumType = numeric_type<VType>;
-      TFEL_HOST_DEVICE constexpr VectorConstIterator(const VType& v_) noexcept
+      TFEL_HOST_DEVICE constexpr explicit VectorConstIterator(
+          const VType& v_) noexcept
           : v(v_), i(0) {}
       TFEL_HOST_DEVICE constexpr VectorConstIterator& operator++() noexcept {
         ++i;
@@ -92,9 +95,8 @@ namespace tfel::math {
       size_type i;
     };  // end of struc VectorConstIterator
 
-    TFEL_HOST_DEVICE constexpr TVectorTMatrixExpr(const A& l,
-                                                  const B& r) noexcept
-        : a(l), b(r) {}
+    TFEL_HOST_DEVICE constexpr TVectorTMatrixExpr(A l, B r) noexcept
+        : a(std::forward<A>(l)), b(std::forward<B>(r)) {}
 
     TFEL_HOST_DEVICE constexpr auto operator()(
         const IndexType i) const noexcept {

@@ -1,0 +1,26 @@
+"""Commands of the tfel-mfront pip package.
+
+The executables of TFEL are installed in the bin directory of the tfel
+module. pip installs a command of the same name for each of them (see
+pyproject.toml), which calls the main function below. This function
+points TFEL to the files of the package, then runs the executable.
+"""
+
+import os
+import subprocess
+import sys
+from importlib.util import find_spec
+
+
+def main():
+    # find_spec does not import the tfel module, so no library is loaded
+    tfelhome = find_spec("tfel").submodule_search_locations[0]
+    os.environ["@TFELHOME_VARIABLE@"] = tfelhome
+    name = os.path.basename(sys.argv[0])
+    if os.name == "nt":
+        # pip's wrappers only remove a lower case .exe suffix
+        name = os.path.splitext(name)[0]
+    executable = os.path.join(tfelhome, "bin", name)
+    if os.name == "nt":
+        sys.exit(subprocess.call([executable + ".exe"] + sys.argv[1:]))
+    os.execv(executable, [executable] + sys.argv[1:])

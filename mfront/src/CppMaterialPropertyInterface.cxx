@@ -2,7 +2,7 @@
  * \file   mfront/src/CppMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -184,6 +184,13 @@ namespace mfront {
 
   CppMaterialPropertyInterface::CppMaterialPropertyInterface() = default;
 
+  void CppMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool,
             tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppMaterialPropertyInterface::treatKeyword(const std::string& k,
@@ -241,6 +248,7 @@ namespace mfront {
                        "' "
                        "for writing output file.");
     header.exceptions(std::ios::badbit | std::ios::failbit);
+    header.precision(14);
     header << "/*!\n"
            << "* \\file   " << getHeaderFileName(name) << '\n'
            << "* \\brief  "
@@ -252,7 +260,7 @@ namespace mfront {
       header << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      header << "* \\date   " << fd.date << '\n';
+      header << "* \\date " << fd.date << '\n';
     }
     if (!fd.description.empty()) {
       header << fd.description << '\n';
@@ -283,8 +291,11 @@ namespace mfront {
     if (mpd.inputs.empty()) {
       header << "//! nested typedef to make " << name
              << " model an adaptable generator (STL compliance)\n\n";
-      header << "typedef double result_type;\n\n";
+      header << "using result_type =  double;\n\n";
     }
+    const auto use_qt = useQuantities(mpd) ? "true" : "false";
+    header << "[[maybe_unused]] static constexpr auto use_qt = "  //
+           << use_qt << ";\n";
     writeScalarStandardTypedefs(header, mpd, "double", true);
     header << "//! \\brief default constructor\n"
            << name << "() noexcept;\n\n"
@@ -347,6 +358,7 @@ namespace mfront {
     std::ofstream src(src_name);
     throw_if(!src, "unable to open '" + src_name + "'");
     src.exceptions(std::ios::badbit | std::ios::failbit);
+    src.precision(14);
     src << "/*!\n"
         << "* \\file   " << src_name << '\n'
         << "* \\brief  "
@@ -358,7 +370,7 @@ namespace mfront {
       src << "* \\author " << fd.authorName << '\n';
     }
     if (!fd.date.empty()) {
-      src << "* \\date   " << fd.date << '\n';
+      src << "* \\date " << fd.date << '\n';
     }
     src << " */\n\n"
         << "#include<stdexcept>\n"
@@ -380,6 +392,9 @@ namespace mfront {
     writeFileDescriptionSymbols(src, name, fd);
     writeVariablesNamesSymbol(src, name, mpd);
     writeVariablesBoundsSymbols(src, name, mpd);
+    writeValidatorSymbol(src, name, mpd);
+    writeCompatibilityModeSymbol(src, name, mpd);
+    writeBuildIdentifierSymbol(src, name, mpd);
     writeEntryPointSymbol(src, name);
     writeLawSymbol(src, name, mpd.law);
     writeTFELVersionSymbol(src, name);
@@ -443,13 +458,7 @@ namespace mfront {
         << "using tfel::math::invert_type;\n"
         << "using tfel::math::result_type;\n"
         << "using tfel::math::derivative_type;\n";
-    if (useQuantities(mpd)) {
-      src << "using PhysicalConstants [[maybe_unused]] = "
-          << "tfel::PhysicalConstants<double, true>;\n";
-    } else {
-      src << "using PhysicalConstants [[maybe_unused]] = "
-          << "tfel::PhysicalConstants<double, false>;\n";
-    }
+    writePhysicalConstantsAlias(src, mpd, "double", useQuantities(mpd));
     src << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
         << "{ return a < b ? a : b; };\n"
         << "[[maybe_unused]] auto max = [](const auto a, const auto b) "
@@ -498,10 +507,12 @@ namespace mfront {
             // can't use std::swap here as errno might be a macro
             << "const auto mfront_errno = errno;\n"
             << "errno = mfront_errno_old;\n"
-            << "tfel::raise_if((mfront_errno!=0)||"
-            << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")),\n"
+            << "tfel::raise_if(mfront_errno!=0,\n"
             << "\"" << name << ": errno has been set \"\n"
-            << "\"(\"+std::string(::strerror(errno))+\")\");\n"
+            << "\"(\"+std::string(::strerror(mfront_errno))+\")\");\n"
+            << "tfel::raise_if("
+            << "!tfel::math::ieee754::isfinite(" << mpd.output.name << "),\n"
+            << "\"" << name << ": invalid result\");\n"
             << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
       }
       //

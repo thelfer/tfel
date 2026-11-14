@@ -2,7 +2,7 @@
  * \file   StensorSymmetricProductDerivative.hxx
  * \brief
  * \author Thomas Helfer
- * \date   17 août 2016
+ * \date 17/08/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by TFEL/Math/st2tost2.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_TFEL_MATH_ST2TOST2_HXX
+#include "TFEL/Math/st2tost2.hxx"
+#else
+
 #ifndef LIB_STENSORSYMMETRICPRODUCTDERIVATIVE_HXX
 #define LIB_STENSORSYMMETRICPRODUCTDERIVATIVE_HXX
-
-#ifndef LIB_TFEL_MATH_ST2TOST2_HXX
-#error "This file is not meant to be included directly"
-#endif
 
 namespace tfel::math {
 
@@ -75,3 +77,5 @@ namespace tfel::math {
 }  // end of namespace tfel::math
 
 #endif /* LIB_STENSORSYMMETRICPRODUCTDERIVATIVE_HXX */
+
+#endif /* LIB_TFEL_MATH_ST2TOST2_HXX */

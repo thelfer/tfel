@@ -86,13 +86,17 @@ namespace tfel::math {
         } else if (levmar_r > this->levmar_p2) {
           this->levmar_mu = std::max(this->levmar_mu / 4, this->levmar_m);
         }
-        child.updateOrCheckJacobian();
+        if (!this->callUpdateOrCheckJacobian()) {
+          return false;
+        }
         if (!child.computeLevenbergMarquardtCorrection()) {
           return false;
         }
       }
     } else {
-      child.updateOrCheckJacobian();
+      if (!this->callUpdateOrCheckJacobian()) {
+        return false;
+      }
       if (!child.computeLevenbergMarquardtCorrection()) {
         return false;
       }

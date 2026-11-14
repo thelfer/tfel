@@ -1,0 +1,26 @@
+@DSL Default;
+@Behaviour InternalStateVariablePostProcessingTest;
+@Description {
+  "Test of the post-processings of the generic interface: "
+  "a post-processing must see the internal state variables "
+  "at the end of the time step."
+}
+
+@ModellingHypothesis Tridimensional;
+
+@StateVariable real p;
+
+@ProvidesSymmetricTangentOperator;
+@Integrator {
+  sig = 150e9 * (eto + deto);
+  if (computeTangentOperator_) {
+    Dt = 150e9 * Stensor4::Id();
+  }
+  dp = 1;
+}
+
+@PostProcessingVariable real p_end;
+//! \brief copy of the internal state variable `p`
+@PostProcessing InternalStateVariable {
+  p_end = p;
+}

@@ -2,7 +2,7 @@
  * \file   src/Math/LogicalExpr.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 jan 2009
+ * \date 09/01/2009
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

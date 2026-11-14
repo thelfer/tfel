@@ -2,7 +2,7 @@
  * \file   Constraint.cxx
  * \brief
  * \author th202608
- * \date   13/02/2018
+ * \date 13/02/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -37,7 +37,8 @@ static mtest::ConstraintOptions makeConstraintOptions(
 
 void declareConstraint(pybind11::module_&);
 void declareConstraint(pybind11::module_& m) {
-  pybind11::class_<mtest::ConstraintOptions>(m, "ConstraintOptions")
+  pybind11::class_<mtest::ConstraintOptions>(
+      m, "ConstraintOptions", "A structure containing constraint' options")
       .def_readonly("active", &mtest::ConstraintOptions::active)
       .def_readonly("activating_events",
                     &mtest::ConstraintOptions::activating_events)

@@ -2,7 +2,7 @@
  * \file   ConvertKirchhoffStressJaumanRateModuliToKirchhoffStressDerivative.hxx
  * \brief
  * \author Thomas Helfer
- * \date   18 août 2016
+ * \date 18/08/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -110,7 +110,7 @@ namespace tfel::math {
                               const StensorType& t) {
       constexpr auto cste = Cste<T>::sqrt2;
       constexpr auto icste = Cste<T>::isqrt2;
-      TFEL_HOST_DEVICE constexpr const auto icste2 = icste / 2;
+      constexpr auto icste2 = icste / 2;
       const auto iF = invert(F);
       return {
           (cste * t[4] * iF[5] + cste * t[3] * iF[3]) / 2 +

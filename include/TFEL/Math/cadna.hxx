@@ -2,7 +2,7 @@
  * \file   cadna.hxx
  * \brief
  * \author Thomas Helfer
- * \date   29 sept. 2015
+ * \date 29/09/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -1,0 +1,26 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// multiaxial loading, unloading and hold: the flow is inactive during the hold,
+// when the back strain only evolves through the static recovery
+@ImposedStress 'SXX' {0 : 0, 1 : 170e6, 2 : 0, 1002 : 0};
+@ImposedStress 'SYY' {0 : 0, 1 : 40e6, 2 : 0, 1002 : 0};
+@ImposedStress 'SZZ' {0 : 0, 1 : -20e6, 2 : 0, 1002 : 0};
+@ImposedStress 'SXY' {0 : 0, 1 : 25e6, 2 : 0, 1002 : 0};
+@ImposedStress 'SXZ' {0 : 0, 1 : 15e6, 2 : 0, 1002 : 0};
+@ImposedStress 'SYZ' {0 : 0, 1 : -10e6, 2 : 0, 1002 : 0};
+@Times{0, 1 in 25, 2 in 50, 1002 in 25};
+
+// The reference is an implicit Euler integration of the documented equations in
+// Python (NumPy), independent of TFEL, with the same time steps.
+@Test<file> @reference_file@ {
+  'EXX' : 2, 'EYY' : 3, 'EZZ' : 4, 'EXY' : 5, 'EXZ' : 6, 'EYZ' : 7
+} 1e-10;
+@Test<file> @reference_file@ 'EquivalentPlasticStrain' 8 1e-10;
+@Test<file> @reference_file@ {
+  'khr_BackStrain_0XX' : 9, 'khr_BackStrain_0YY' : 10, 'khr_BackStrain_0ZZ' : 11,
+  'khr_BackStrain_0XY' : 12, 'khr_BackStrain_0XZ' : 13, 'khr_BackStrain_0YZ' : 14
+} 1e-10;

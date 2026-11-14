@@ -5,6 +5,7 @@ add_subdirectory(database)
 mfront_python_module(_mfront mfront.cxx
   madnex.cxx
   MaterialKnowledgeDescriptionAttribute.cxx
+  MaterialKnowledgeDescription.cxx
   AbstractDSL.cxx
   FileDescription.cxx
   TargetsDescription.cxx

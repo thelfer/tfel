@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/DefaultDSLBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   08 nov 2006
+ * \date 08/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,7 +23,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    DefaultDSLBase(const DSLOptions&);
+    explicit DefaultDSLBase(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

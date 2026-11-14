@@ -2,7 +2,7 @@
  * \file   mfront/src/StandardPorousStressCriterionBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -48,6 +48,7 @@ namespace mfront::bbrick {
       const auto n = StressCriterion::getVariableId(mp.name, id, r);
       if (d.count(mp.name) == 0) {
         this->initializeMissingMaterialProperty(mp.name);
+        continue;
       }
       auto mpd =
           getBehaviourDescriptionMaterialProperty(dsl, mp.name, d.at(mp.name));
@@ -180,7 +181,8 @@ namespace mfront::bbrick {
     const auto f_ = f.name + "_";
     auto c = std::string{};
     if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
-      c += "const auto [" + seq + ",d" + seq + "_d" + s + "] = ";
+      c += "const auto [" + seq + ",d" + seq + "_d" + s + ",d" + seq + "_d" +
+           f.name + "] = ";
       c += "compute" + this->name + "StressNormal(" + s + ", " + f_ +
            ", this->" + params + ", " + sp.getEquivalentStressLowerBound(bd) +
            ");\n";
@@ -190,7 +192,7 @@ namespace mfront::bbrick {
     }
     if (r == FLOWCRITERION) {
       c += "const auto [" + seqf +  //
-           ", " + n + ", " +        //
+           ", " + n +               //
            ", d" + seqf + "_d" + f.name + "] = ";
       c += "compute" + this->name + "StressNormal(" + s + ", " + f_ +
            ", this->" + params + ", " + sp.getEquivalentStressLowerBound(bd) +

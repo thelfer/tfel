@@ -2,7 +2,7 @@
  * \file   SingleStructureScheme.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 déc. 2015
+ * \date 09/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -115,33 +115,14 @@ static void SingleStructureScheme_setInternalStateVariableInitialValue1(
     mtest::SingleStructureScheme& s,
     const std::string& n,
     const mtest::real v) {
-  s.setScalarInternalStateVariableInitialValue(n, v);
+  s.setInternalStateVariableInitialValue(n, v);
 }
 
 static void SingleStructureScheme_setInternalStateVariableInitialValue2(
     mtest::SingleStructureScheme& s,
     const std::string& n,
     const std::vector<mtest::real>& v) {
-  const auto& b = *(s.getBehaviour());
-  const auto type = b.getInternalStateVariableType(n);
-  if (type == 0) {
-    tfel::raise_if(v.size() != 1u,
-                   "SingleStructureScheme::"
-                   "setInternalStateVariableInitialValue: "
-                   "unsupported number of values for scalar internal "
-                   "state variable '" +
-                       n + "'");
-    s.setScalarInternalStateVariableInitialValue(n, v[0]);
-  } else if (type == 1) {
-    s.setStensorInternalStateVariableInitialValues(n, v);
-  } else if (type == 3) {
-    s.setTensorInternalStateVariableInitialValues(n, v);
-  } else {
-    tfel::raise(
-        "SingleStructureScheme::setInternalStateVariableInitialValue: "
-        "unsupported type for internal state variable '" +
-        n + "'");
-  }
+  s.setInternalStateVariableInitialValue(n, v);
 }
 
 static void SingleStructureScheme_setBehaviour(mtest::SingleStructureScheme& s,
@@ -198,6 +179,22 @@ static int SingleStructureScheme_getBehaviourKinematic(
   return 4;
 }  // end of SingleStructureScheme_getBehaviourKinematic
 
+static void SingleStructureScheme_setOutOfBoundsPolicy(
+    mtest::SingleStructureScheme& s, const std::string& p) {
+  if (p == "None") {
+    s.setOutOfBoundsPolicy(tfel::material::None);
+  } else if (p == "Warning") {
+    s.setOutOfBoundsPolicy(tfel::material::Warning);
+  } else if (p == "Strict") {
+    s.setOutOfBoundsPolicy(tfel::material::Strict);
+  } else {
+    tfel::raise(
+        "SingleStructureScheme::setOutOfBoundsPolicy: "
+        "invalid policy '" +
+        p + "'");
+  }
+}  // end of SingleStructureScheme_setOutOfBoundsPolicy
+
 void declareSingleStructureScheme(pybind11::module_&);
 
 void declareSingleStructureScheme(pybind11::module_& m) {
@@ -222,9 +219,12 @@ void declareSingleStructureScheme(pybind11::module_& m) {
       .def("getBehaviourType", &SingleStructureScheme_getBehaviourType)
       .def("getBehaviourKinematic",
            &SingleStructureScheme_getBehaviourKinematic)
-      .def("setBehaviour", ptr1)
-      .def("setBehaviour", ptr2)
+      .def("setBehaviour", ptr1, pybind11::arg("i"), pybind11::arg("l"),
+           pybind11::arg("f"), pybind11::arg("p"))
+      .def("setBehaviour", ptr2, pybind11::arg("w"), pybind11::arg("i"),
+           pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("p"))
       .def("setBehaviour", SingleStructureScheme_setBehaviour,
+           pybind11::arg("i"), pybind11::arg("l"), pybind11::arg("f"),
            "This method declares the behaviour used for the "
            "test.\n"
            "* The first argument (string) specify a wrapper "
@@ -238,6 +238,8 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "dynamic library which implement the selected behaviour.\n"
            "* The third argument (string) is the name of the function.")
       .def("setBehaviour", SingleStructureScheme_setBehaviour2,
+           pybind11::arg("w"), pybind11::arg("i"), pybind11::arg("l"),
+           pybind11::arg("f"),
            "This method declares the behaviour used for the "
            "test.\n"
            "* The first argument (string) specify the interface "
@@ -249,14 +251,19 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "* The second argument (string) is the path to the "
            "dynamic library which implement the selected behaviour.\n"
            "* The third argument (string) is the name of the function.")
-      .def("setModel", ptr1)
-      .def("setModel", ptr2)
-      .def("setModel", SingleStructureScheme_setBehaviour,
+      .def("setModel", ptr1, pybind11::arg("i"), pybind11::arg("l"),
+           pybind11::arg("f"), pybind11::arg("p"))
+      .def("setModel", ptr2, pybind11::arg("w"), pybind11::arg("i"),
+           pybind11::arg("l"), pybind11::arg("f"), pybind11::arg("p"))
+      .def("setModel", SingleStructureScheme_setBehaviour, pybind11::arg("i"),
+           pybind11::arg("l"), pybind11::arg("f"),
            "see the documentation of the setBehaviour method")
-      .def("setModel", SingleStructureScheme_setBehaviour2,
+      .def("setModel", SingleStructureScheme_setBehaviour2, pybind11::arg("w"),
+           pybind11::arg("i"), pybind11::arg("l"), pybind11::arg("f"),
            "see the documentation of the setBehaviour method")
       .def("handleThermalExpansion",
            &SingleStructureScheme::setHandleThermalExpansion,
+           pybind11::arg("b"),
            "This method override the (de)activation of the thermal "
            "strain computation. It's activated by default if a "
            "material property named 'ThermalExpansion' is defined "
@@ -264,6 +271,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "* If the argument (bool) is 'true', the computation is "
            "activated. Otherwise, the computation is deactivated.")
       .def("setParameter", &SingleStructureScheme::setParameter,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This method specifies the value of a parameter's "
            "behaviour.\n"
            "* The first argument (string) is the name of the "
@@ -271,6 +279,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "* The second argument (double) is the value of that "
            "parameter's behaviour.")
       .def("setIntegerParameter", &SingleStructureScheme::setIntegerParameter,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This keyword specifies the value of an "
            "integer parameter of the behaviour.\n"
            "* The first argument (string) is the name of the "
@@ -279,6 +288,7 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "parameter's behaviour.")
       .def("setUnsignedIntegerParameter",
            &SingleStructureScheme::setUnsignedIntegerParameter,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This method specifies the value of an "
            "unsigned integer parameter of the behaviour.\n"
            "* The first argument (string) is the name of the "
@@ -286,9 +296,10 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "* The second argument (uint) is the value of that "
            "parameter's behaviour.")
       .def("setOutOfBoundsPolicy", &SingleStructureScheme::setOutOfBoundsPolicy,
+           pybind11::arg("p"),
            "This method let the user to precise the out "
            "of bounds policy.\n"
-           "* The argument (OutOfBoundsPolicy) is the selected "
+           "* The argument (OutOfBoundsPolicy or string) is the selected "
            "policy. Three policies are available:\n"
            "- 'None' : nothing is done when a variable is out of "
            "bounds.\n"
@@ -298,6 +309,8 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "is out of bounds. Most mechanical behaviours "
            "implementations throw an exception which is caught "
            "by 'MTest'.")
+      .def("setOutOfBoundsPolicy", SingleStructureScheme_setOutOfBoundsPolicy,
+           pybind11::arg("p"))
       .def("setMaterialProperty", SingleStructureScheme_setMaterialProperty,
            "name"_a, "value"_a, "check"_a = true,
            "This method defines a constant material property.\n"
@@ -404,18 +417,22 @@ void declareSingleStructureScheme(pybind11::module_& m) {
            "function"_a, "b1"_a = true, "b2"_a = true)
       .def("setInternalStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue1,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This method allow to specify the initial  value of an "
            "internal state variable.")
       .def("setInternalStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue2,
+           pybind11::arg("n"), pybind11::arg("v"),
            "This method allow to specify the initial  value of an "
            "internal state variable.")
       .def("setStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue1,
+           pybind11::arg("n"), pybind11::arg("v"),
            "see the doumentation of the "
            "setInternalStateVariableInitialValue method")
       .def("setStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue2,
+           pybind11::arg("n"), pybind11::arg("v"),
            "see the doumentation of the "
            "setInternalStateVariableInitialValue method");
 }

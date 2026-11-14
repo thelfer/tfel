@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   16 jan 2007
+ * \date 16/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -19,28 +19,36 @@
 #include <set>
 #include <string>
 #include <vector>
-
-#include "MFront/MFrontConfig.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
-
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/ModelDescription.hxx"
 
 namespace mfront {
 
-  // forward declartion
+  // forward declarations
   struct FileDescription;
-  // forward declartion
   struct TargetsDescription;
-  // forward declartion
   struct ModelDescription;
 
   struct MFRONT_VISIBILITY_EXPORT AbstractModelInterface {
-    //! a simple alias
+    //! \brief a simple alias
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
-    //! a simple alias
+    //! \brief a simple alias
     using TokensContainer = CxxTokenizer::TokensContainer;
-    //! a simple alias
+    //! \brief a simple alias
     using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
+    //! \brief a simple alias
+    using DataMap = tfel::utilities::DataMap;
+    /*!
+     * \brief give options to the interface
+     *
+     * Those options may have been read from a configuration file or from the
+     * command line
+     *
+     * \param[in] opts: options
+     */
+    virtual void setOptions(const DataMap&) = 0;
     /*!
      * \param[out] names: reserved names
      */

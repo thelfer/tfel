@@ -2,7 +2,7 @@
  * \file   FAnderson.hxx
  * \brief
  * \author Étienne Castelier
- * \date   10 oct. 2016
+ * \date 10/10/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -21,7 +21,7 @@ namespace tfel::math {
   template <typename Field, typename real>
   struct FAnderson : public AndersonBase<Field, real> {
     //! constructor
-    FAnderson(const typename AndersonBase<Field, real>::Allocator);
+    explicit FAnderson(const typename AndersonBase<Field, real>::Allocator);
     //! Displacement fields for a new iteration
     //! \param uO,uN Old and new displacement field
     void newIter(Field*& uO, Field*& uN, Field*& Df);

@@ -2,7 +2,7 @@
  * \file   src/NUMODIS/HCP.cxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -12,6 +12,7 @@
  */
 
 #include <cmath>
+#include <numbers>
 #include <algorithm>
 #include "NUMODIS/Math/Utilities.hxx"
 #include "NUMODIS/GSystem.hxx"
@@ -40,11 +41,11 @@ namespace numodis {
     // atom basis
     //---------------
     _alattice.resize(4, Vect3());
-    _alattice[0][0] = sqrt(3.) / 2.;
+    _alattice[0][0] = std::numbers::sqrt3_v<double> / 2.;
     _alattice[0][1] = 1 / 2.;
     _alattice[0][2] = 0.;
 
-    _alattice[1][0] = -sqrt(3.) / 2.;
+    _alattice[1][0] = -std::numbers::sqrt3_v<double> / 2.;
     _alattice[1][1] = 1 / 2.;
     _alattice[1][2] = 0.;
 
@@ -60,11 +61,11 @@ namespace numodis {
     // Burgers basis
     //---------------
     _blattice.resize(4, Vect3());
-    _blattice[0][0] = sqrt(3.) / 2.;
+    _blattice[0][0] = std::numbers::sqrt3_v<double> / 2.;
     _blattice[0][1] = 1 / 2.;
     _blattice[0][2] = 0.;
 
-    _blattice[1][0] = -sqrt(3.) / 2.;
+    _blattice[1][0] = -std::numbers::sqrt3_v<double> / 2.;
     _blattice[1][1] = 1 / 2.;
     _blattice[1][2] = 0.;
 
@@ -80,11 +81,11 @@ namespace numodis {
     // plane basis
     //-------------
     _plattice.resize(4, Vect3());
-    _plattice[0][0] = sqrt(3.) / 12.;
+    _plattice[0][0] = std::numbers::sqrt3_v<double> / 12.;
     _plattice[0][1] = 1. / 12.;
     _plattice[0][2] = 0.;
 
-    _plattice[1][0] = -sqrt(3.) / 12;
+    _plattice[1][0] = -std::numbers::sqrt3_v<double> / 12;
     _plattice[1][1] = 1. / 12.;
     _plattice[1][2] = 0.;
 
@@ -97,11 +98,11 @@ namespace numodis {
     _plattice[3][2] = 1. / (4. * _ratio);
   }
 
-  HCP::HCP(HCP&&) = default;
+  HCP::HCP(HCP&&) noexcept = default;
 
   HCP::HCP(const HCP&) = default;
 
-  int HCP::getNsymmetries() const { return 96; }
+  int HCP::getNsymmetries() const { return 24; }
 
   int HCP::getNindices() const { return 4; }
 
@@ -147,17 +148,16 @@ namespace numodis {
     for (int i = 0; i != 3; i++)
       permutation[i] = (p / 3 == 0 ? (i + p) % 3 : (p - i) % 3);
 
-    // signes
-    int s = (k % 48) / 6;
+    // sign of the three first indices (rotation of pi around c)
+    const int s = ((k / 6) % 2 == 0) ? 1 : -1;
+    // sign of the fourth index (mirror orthogonal to c)
+    const int c = (k / 12 == 0) ? 1 : -1;
 
     std::vector<int> symmetry(4);
-    symmetry[0] =
-        (s / 4 == 0 ? indices[permutation[0]] : -indices[permutation[0]]);
-    symmetry[1] =
-        ((s / 2) % 2 == 0 ? indices[permutation[1]] : -indices[permutation[1]]);
-    symmetry[2] =
-        (s % 2 == 0 ? indices[permutation[2]] : -indices[permutation[2]]);
-    symmetry[3] = (k / 48 == 0 ? indices[3] : -indices[3]);
+    symmetry[0] = s * indices[permutation[0]];
+    symmetry[1] = s * indices[permutation[1]];
+    symmetry[2] = s * indices[permutation[2]];
+    symmetry[3] = c * indices[3];
 
     return symmetry;
   }
@@ -374,6 +374,17 @@ namespace numodis {
       if (isNew) planes.push_back(newPlane);
 
     } while (next_permutation(indices.begin(), indices.begin() + 3));
+
+    // opposite sign for c axis (if needed): only adds the planes which are
+    // not equivalent to the previous ones, e.g. for the {11-22} planes
+    if (indices[3] != 0) {
+      indices[3] = -indices[3];
+      do {
+        IPlane newPlane(indices);
+        if (std::find(planes.begin(), planes.end(), newPlane) == planes.end())
+          planes.push_back(newPlane);
+      } while (next_permutation(indices.begin(), indices.begin() + 3));
+    }
   }
 
   //=====================================================================
@@ -446,27 +457,15 @@ namespace numodis {
   */
   //===============================================================
   void HCP::GenerateOrthogonalVector(const IPlane& u, IDirection& v) const {
-    //---------------
-    // intialization
-    //---------------
-    int norm2 = 0;
-    std::vector<int> vrandom(4);
-
-    //--------------------
-    // while not found...
-    //--------------------
-    while (norm2 == 0) {
-      // generate a random vector
-      for (unsigned i = 0; i < 4; i++) vrandom[i] = rand();
-
-      // compute a vector normal to plane and vrandom
-      CrossProduct(IPlane(vrandom), u, v);
-
-      // norm of this vector
-      norm2 = v.getIndex()[0] * v.getIndex()[0] +
-              v.getIndex()[1] * v.getIndex()[1] +
-              v.getIndex()[2] * v.getIndex()[2] +
-              v.getIndex()[3] * v.getIndex()[3];
+    // intersection of u with the planes (1-100), (01-10) and (0001): the
+    // first non null one is a low-index direction contained in u
+    const std::vector<int> planes[3] = {
+        {1, -1, 0, 0}, {0, 1, -1, 0}, {0, 0, 0, 1}};
+    for (const auto& p : planes) {
+      CrossProduct(IPlane(p), u, v);
+      if (!v.IsNull()) {
+        return;
+      }
     }
   }
 

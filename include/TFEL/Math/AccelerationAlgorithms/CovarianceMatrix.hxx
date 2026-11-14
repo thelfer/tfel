@@ -2,7 +2,7 @@
  * \file   CovarianceMatrix.hxx
  * \brief
  * \author Étienne Castelier
- * \date   10 oct. 2016
+ * \date 10/10/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,17 +31,17 @@ namespace tfel::math::anderson {
     CovarianceMatrix();
     //! Constructor
     //! \param Nmax Matrix size
-    CovarianceMatrix(size_type Nmax);
+    explicit CovarianceMatrix(size_type Nmax);
     //! Destructor
     virtual ~CovarianceMatrix();
     //! Resize the matrix
     //! \param Nmax Matrix size
     void resize(size_type Nmax);
     //! \return the matrix size
-    size_type getSize() const;
+    [[nodiscard]] size_type getSize() const;
     //! \param N Line index
     //! \return the address of the Nth line
-    pointer getLine(size_type N);
+    [[nodiscard]] pointer getLine(size_type N);
     // Shift the covariances
     void shift();
     //! Anderson weights by Gram-Schmidt process

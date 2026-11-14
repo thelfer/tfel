@@ -2,7 +2,7 @@
  * \file   include/NUMODIS/GSystem.hxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,14 +32,12 @@ namespace numodis {
   //! GSystem handles all the properties of a glide system
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT GSystem {
-    void PrintProperties(std::ostream& os, unsigned shift = 0) const;
-
     //=============================================================
     // GSystem::GSystem
     //-------------------------------------------------------------
     //! Constructor
     //=============================================================
-    GSystem(const unsigned size) : _iburgers(size), _iplane(size) {}
+    explicit GSystem(const unsigned size) : _iburgers(size), _iplane(size) {}
 
     //=============================================================
     // GSystem::GSystem
@@ -71,7 +69,7 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return const reference to the Burgers vector            */
     //=============================================================
-    const IBurgers& getIBurgers() const { return _iburgers; }
+    [[nodiscard]] const IBurgers& getIBurgers() const { return _iburgers; }
 
     //=============================================================
     // GSystem::getIPlane
@@ -80,7 +78,7 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return const reference the glide plane                  */
     //=============================================================
-    const IPlane& getIPlane() const { return _iplane; }
+    [[nodiscard]] const IPlane& getIPlane() const { return _iplane; }
 
     //=============================================================
     // GSystem::getNindices
@@ -89,7 +87,9 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return number of indices                                */
     //=============================================================
-    IBurgers::size_type getNindices() const { return _iburgers.getNindices(); }
+    [[nodiscard]] IBurgers::size_type getNindices() const {
+      return _iburgers.getNindices();
+    }
 
     virtual ~GSystem();
 

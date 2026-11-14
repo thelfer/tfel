@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/st2tot2.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19 November 2013
+ * \date 19/11/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -154,6 +154,7 @@ namespace tfel::math {
                                                  OpMult>,
                            ValueType>());
     //
+    // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(st2tot2,
                                                GenericFixedSizeArrayBase);
     /*!
@@ -165,6 +166,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr st2tot2(ValueType const (&... arrays)[d])  //
         requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
                  ((d == StensorDimeToSize<N>::value) && ...));
+    // NOLINTEND(google-explicit-constructor)
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

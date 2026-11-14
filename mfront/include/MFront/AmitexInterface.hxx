@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/AmitexInterface.hxx
  * \brief  This file declares the AmitexInterface class
  * \author Thomas Helfer
- * \date   17 Jan 2007
+ * \date 17/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -31,10 +31,10 @@ namespace mfront {
     ~AmitexInterface() override;
 
    protected:
-    void generateInputFileExample(const BehaviourDescription &,
-                                  const FileDescription &) const override;
-    void generateInputFileExampleForHypothesis(std::ostream &,
-                                               const BehaviourDescription &,
+    void generateInputFileExample(const BehaviourDescription&,
+                                  const FileDescription&) const override;
+    void generateInputFileExampleForHypothesis(std::ostream&,
+                                               const BehaviourDescription&,
                                                const Hypothesis) const override;
   };  // end of struct AmitexInterface
 

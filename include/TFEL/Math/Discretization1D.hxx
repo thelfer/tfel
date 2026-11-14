@@ -31,7 +31,7 @@ namespace tfel::math {
     GeometricDiscretizationInvalidDensity(
         const GeometricDiscretizationInvalidDensity&) = default;
     //! \return a string describing the error
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! destructor
     ~GeometricDiscretizationInvalidDensity() noexcept override;
   };  // end of struct GeometricDiscretizationInvalidDensity
@@ -48,7 +48,7 @@ namespace tfel::math {
     GeometricDiscretizationInvalidLength(
         const GeometricDiscretizationInvalidLength&) = default;
     //! \return a string describing the error
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! destructor
     ~GeometricDiscretizationInvalidLength() noexcept override;
   };  // end of struct GeometricDiscretizationInvalidLength
@@ -66,7 +66,7 @@ namespace tfel::math {
     GeometricDiscretizationInvalidNumberOfElements(
         const GeometricDiscretizationInvalidNumberOfElements&) = default;
     //! \return a string describing the error
-    const char* what() const noexcept override final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! destructor
     ~GeometricDiscretizationInvalidNumberOfElements() noexcept override;
   };  // end of struct GeometricDiscretizationInvalidNumberOfElements

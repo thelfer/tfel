@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   13/01/2009
+ * \date 13/01/2009
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,24 +27,26 @@
 #ifndef LIB_TFEL_MATH_EVALUATORTEXPR_HXX
 #define LIB_TFEL_MATH_EVALUATORTEXPR_HXX
 
+#include "TFEL/Math/Evaluator.hxx"
+
 namespace tfel::math {
 
   struct Evaluator::TExpr {
     TExpr() = default;
     TExpr(TExpr&&) = default;
     TExpr(const TExpr&) = default;
-    virtual parser::ExprPtr analyse() = 0;
+    [[nodiscard]] virtual parser::ExprPtr analyse() = 0;
     virtual void reduce() = 0;
-    virtual bool isOperator() const = 0;
+    [[nodiscard]] virtual bool isOperator() const = 0;
     virtual ~TExpr();
   };  // end of Evaluator::TExpr
 
   struct Evaluator::TNegation final : public Evaluator::TExpr {
-    TNegation(std::shared_ptr<Evaluator::TExpr>);
+    explicit TNegation(std::shared_ptr<Evaluator::TExpr>);
     TNegation(TNegation&&) = default;
     TNegation(const TNegation&) = default;
-    bool isOperator() const override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] bool isOperator() const override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     void reduce() override;
     ~TNegation() noexcept override;
 
@@ -53,13 +55,13 @@ namespace tfel::math {
   };  // end of struct Evaluator::TNegation
 
   struct Evaluator::TOperator final : public Evaluator::TExpr {
-    TOperator(const std::string&);
+    explicit TOperator(const std::string&);
     TOperator(TOperator&&) = default;
     TOperator(const TOperator&) = default;
-    bool isOperator() const override;
+    [[nodiscard]] bool isOperator() const override;
     void reduce() override;
-    parser::ExprPtr analyse() override;
-    std::string getOperatorType() const;
+    [[nodiscard]] parser::ExprPtr analyse() override;
+    [[nodiscard]] std::string getOperatorType() const;
     ~TOperator() noexcept override;
 
    private:
@@ -70,9 +72,9 @@ namespace tfel::math {
     TBinaryOperation(std::shared_ptr<Evaluator::TExpr>,
                      const std::shared_ptr<TOperator>,
                      std::shared_ptr<Evaluator::TExpr>);
-    bool isOperator() const override;
+    [[nodiscard]] bool isOperator() const override;
     void reduce() override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     ~TBinaryOperation() override;
 
    private:
@@ -88,9 +90,9 @@ namespace tfel::math {
   };  // end of struct Evaluator::TLogicalExpr
 
   struct Evaluator::TNegLogicalExpr final : public Evaluator::TLogicalExpr {
-    TNegLogicalExpr(const std::shared_ptr<Evaluator::TLogicalExpr>);
+    explicit TNegLogicalExpr(const std::shared_ptr<Evaluator::TLogicalExpr>);
     void reduce() override;
-    parser::LogicalExprPtr analyse() override;
+    [[nodiscard]] parser::LogicalExprPtr analyse() override;
     ~TNegLogicalExpr() override;
 
    private:
@@ -102,7 +104,7 @@ namespace tfel::math {
     TLogicalOperation(std::shared_ptr<Evaluator::TExpr>,
                       std::shared_ptr<Evaluator::TExpr>) noexcept;
     void reduce() override;
-    parser::LogicalExprPtr analyse() override;
+    [[nodiscard]] parser::LogicalExprPtr analyse() override;
     ~TLogicalOperation() noexcept override = default;
 
    private:
@@ -116,7 +118,7 @@ namespace tfel::math {
     TLogicalBinaryOperation(std::shared_ptr<Evaluator::TLogicalExpr>,
                             std::shared_ptr<Evaluator::TLogicalExpr>) noexcept;
     void reduce() override;
-    parser::LogicalExprPtr analyse() override;
+    [[nodiscard]] parser::LogicalExprPtr analyse() override;
     ~TLogicalBinaryOperation() noexcept override = default;
 
    private:
@@ -128,9 +130,9 @@ namespace tfel::math {
     TConditionalExpr(std::shared_ptr<Evaluator::TLogicalExpr>,
                      std::shared_ptr<Evaluator::TExpr>,
                      std::shared_ptr<Evaluator::TExpr>);
-    bool isOperator() const override;
+    [[nodiscard]] bool isOperator() const override;
     void reduce() override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     ~TConditionalExpr() override;
 
    private:
@@ -142,9 +144,9 @@ namespace tfel::math {
   struct Evaluator::TVariable final : public Evaluator::TExpr {
     TVariable(const std::string&, Evaluator&);
     TVariable(const std::vector<double>::size_type, std::vector<double>&);
-    bool isOperator() const override;
+    [[nodiscard]] bool isOperator() const override;
     void reduce() override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     ~TVariable() override;
 
    private:
@@ -154,9 +156,9 @@ namespace tfel::math {
 
   struct Evaluator::TGroup final : public Evaluator::TExpr {
     void add(std::shared_ptr<Evaluator::TExpr> const);
-    bool isOperator() const override;
+    [[nodiscard]] bool isOperator() const override;
     void reduce() override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     ~TGroup() override;
 
    private:
@@ -166,8 +168,8 @@ namespace tfel::math {
 
   struct Evaluator::TFunction final : public Evaluator::TExpr {
     TFunction(Evaluator::FunctionGenerator, std::shared_ptr<Evaluator::TExpr>);
-    bool isOperator() const override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] bool isOperator() const override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     void reduce() override;
     ~TFunction() override;
 
@@ -180,8 +182,8 @@ namespace tfel::math {
     TBinaryFunction(Evaluator::BinaryFunctionGenerator,
                     std::shared_ptr<Evaluator::TExpr>,
                     std::shared_ptr<Evaluator::TExpr>);
-    bool isOperator() const override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] bool isOperator() const override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     void reduce() override;
     ~TBinaryFunction() override;
 
@@ -195,8 +197,8 @@ namespace tfel::math {
     TExternalOperator(const Evaluator::ExternalFunctionGenerator,
                       const std::vector<std::string>&,
                       std::vector<std::shared_ptr<Evaluator::TExpr>>&);
-    bool isOperator() const override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] bool isOperator() const override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     void reduce() override;
     ~TExternalOperator() override;
 
@@ -208,9 +210,9 @@ namespace tfel::math {
 
   struct Evaluator::TNumber final : public Evaluator::TExpr {
     TNumber(const std::string&, const double);
-    virtual bool isOperator() const override;
-    virtual parser::ExprPtr analyse() override;
-    virtual void reduce() override;
+    [[nodiscard]] bool isOperator() const override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
+    void reduce() override;
 
    private:
     const std::string str;
@@ -222,8 +224,8 @@ namespace tfel::math {
         const std::string&,
         std::vector<std::shared_ptr<Evaluator::TExpr>>&,
         std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
-    bool isOperator() const override;
-    parser::ExprPtr analyse() override;
+    [[nodiscard]] bool isOperator() const override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
     void reduce() override;
     ~TExternalFunctionExpr() noexcept override;
 
@@ -239,10 +241,10 @@ namespace tfel::math {
         std::shared_ptr<ExternalFunction>,
         std::vector<std::shared_ptr<Evaluator::TExpr>>&,
         const std::vector<std::vector<double>::size_type>&);
-    virtual bool isOperator() const override;
-    virtual parser::ExprPtr analyse() override;
-    virtual void reduce() override;
-    virtual ~TDifferentiatedFunctionExpr() noexcept override;
+    [[nodiscard]] bool isOperator() const override;
+    [[nodiscard]] parser::ExprPtr analyse() override;
+    void reduce() override;
+    ~TDifferentiatedFunctionExpr() noexcept override;
 
    private:
     std::shared_ptr<ExternalFunction> f;

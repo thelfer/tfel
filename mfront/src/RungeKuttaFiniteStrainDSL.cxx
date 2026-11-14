@@ -32,7 +32,8 @@ namespace mfront {
   }  // end of RungeKuttaFiniteStrainDSL::getName
 
   std::string RungeKuttaFiniteStrainDSL::getDescription() {
-    return "this parser provides a generic integrator based on a theta method.";
+    return "this dsl provides a generic integrator for finite strain "
+           "behaviours based on one of the Runge-Kutta algorithms";
   }  // end of RungeKuttaFiniteStrainDSL::getDescription
 
   std::string RungeKuttaFiniteStrainDSL::getCodeBlockTemplate(

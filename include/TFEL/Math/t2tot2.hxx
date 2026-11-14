@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/t2tot2.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19 November 2013
+ * \date 19/11/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -176,6 +176,7 @@ namespace tfel::math {
      * Id2 is the identity tensor
      */
     TFEL_HOST_DEVICE static constexpr auto K() noexcept;
+    // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \brief constructor from a t2tost2
      * \param[in] v : values
@@ -196,6 +197,7 @@ namespace tfel::math {
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(t2tot2,
                                                GenericFixedSizeArrayBase);
+    // NOLINTEND(google-explicit-constructor)
     //! exposing GenericFixedSizeArray access operator
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
@@ -254,11 +256,21 @@ namespace tfel::math {
       const TensorConcept auto&) noexcept;
   /*!
    * \brief compute the second derivative of the determinant of a
-   * symmetric tensor
+   * tensor
    * \param[in] s: tensor
    */
   template <TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto computeDeterminantSecondDerivative(
+      const TensorType&) noexcept
+      requires(isScalar<numeric_type<TensorType>>());
+  /*!
+   * \brief compute the derivative of the adjugate of a tensor,
+   * \f$\det\left(F\right)\,F^{-1}\f$, i.e. of the result of
+   * `computeAdjugateDeterminantDerivative`
+   * \param[in] s: tensor
+   */
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantSecondDerivative(
       const TensorType&) noexcept
       requires(isScalar<numeric_type<TensorType>>());
 

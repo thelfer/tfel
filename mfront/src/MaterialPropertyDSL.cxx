@@ -2,7 +2,7 @@
  * \file   mfront/src/MaterialPropertyDSL.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,7 +18,6 @@
 #include <iterator>
 #include <algorithm>
 #include <stdexcept>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/Data.hxx"
@@ -27,9 +26,9 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
-
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/PedanticMode.hxx"
@@ -38,6 +37,7 @@
 #include "MFront/DSLFactory.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/ModelInterfaceFactory.hxx"
 #include "MFront/DataInterpolationUtilities.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
 
@@ -57,7 +57,7 @@ namespace std {
 namespace mfront {
 
   bool isValidMaterialPropertyName(const std::string& n) {
-    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
   MaterialPropertyDSL::MaterialPropertyDSL(const DSLOptions& opts)
@@ -168,10 +168,12 @@ namespace mfront {
   /*!
    * \brief various checks on variables
    * \param[in] v  : variables
+   * \param[in] b  : check if bounds are declared
    */
   static void performPedanticChecks(const VariableDescriptionContainer& vc,
                                     const std::set<std::string>& m,
-                                    const std::string& t) {
+                                    const std::string& t,
+                                    const bool b = true) {
     auto& log = getLogStream();
     auto& glossary = tfel::glossary::Glossary::getGlossary();
     // boucle sur md.inputs
@@ -182,10 +184,10 @@ namespace mfront {
         if ((!v.hasGlossaryName()) && (!v.hasEntryName())) {
           log << "- " << t << " '" << v.name << "' has no external name.\n";
         }
-        if (!v.hasPhysicalBounds()) {
+        if ((b) && (!v.hasPhysicalBounds())) {
           log << "- " << t << " '" << v.name << "' has no physical bounds.\n";
         }
-        if (!v.hasBounds()) {
+        if ((b) && (!v.hasBounds())) {
           log << "- " << t << " '" << v.name << "' has no bounds.\n";
         }
         if (v.description.empty()) {
@@ -238,13 +240,16 @@ namespace mfront {
     log << "\n* Pedantic checks of " << this->fd.fileName << "\n\n";
     performPedanticChecks(this->fd);
     performPedanticChecks(this->md.inputs, this->md.f.used_inputs, "input");
+    // bounds can't be declared for parameters
     performPedanticChecks(this->md.parameters, md.f.used_parameters,
-                          "parameter");
+                          "parameter", false);
     performPedanticChecks(this->md.output, "output");
     log << "\n# End of pedantic checks\n";
   }  // end of doPedanticChecks
 
   void MaterialPropertyDSL::endsInputFileProcessing() {
+    // complete the declaration of physical bounds
+    this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of endsInputFileProcessing
 
   void MaterialPropertyDSL::makeConsistencyChecks() const {
@@ -310,9 +315,7 @@ namespace mfront {
     while (p2 != p2e) {
       msg += "'" + *p2 + "'";
       if (++p2 != p2e) {
-        msg += ",";
-      } else {
-        msg += " and ";
+        msg += (std::next(p2) != p2e) ? ", " : " and ";
       }
     }
     return msg;
@@ -329,7 +332,7 @@ namespace mfront {
   void MaterialPropertyDSL::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::setMaterial",
-                              "material name alreay defined");
+                              "material name already defined");
     }
     if (!isValidMaterialName(m)) {
       this->throwRuntimeError("MaterialPropertyDSL::setMaterial",
@@ -352,7 +355,7 @@ namespace mfront {
   void MaterialPropertyDSL::treatLibrary() {
     if (!this->md.library.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
-                              "material name alreay defined");
+                              "library name already defined");
     }
     const auto& l = this->readOnlyOneToken();
     if (!isValidLibraryName(l)) {
@@ -366,7 +369,7 @@ namespace mfront {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatConstant",
                             "Cannot read variable name.");
     const auto name = this->current->value;
-    if (!isValidIdentifier(name)) {
+    if (!isValidIdentifier(name, false)) {
       this->throwRuntimeError("DSLBase::treatConstant",
                               "constant name '" + name + "' is not valid.");
     }
@@ -399,7 +402,7 @@ namespace mfront {
     //
     const auto sname = this->current->value;
     const auto name = tfel::unicode::getMangledString(sname);
-    if (!this->isValidIdentifier(name)) {
+    if (!this->isValidIdentifier(name, false)) {
       this->throwRuntimeError("DSLBase::treatParameter",
                               "parameter name '" + name + "' is not valid.");
     }
@@ -451,9 +454,15 @@ namespace mfront {
 
   void MaterialPropertyDSL::addInterface(const std::string& i) {
     using MLIF = mfront::MaterialPropertyInterfaceFactory;
+    const auto& m = ConfigurationManager::get();
     if (this->interfaces.find(i) == this->interfaces.end()) {
       auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-      this->interfaces.insert({i, mlif.getInterface(i)});
+      auto ptr = mlif.getInterface(i);
+      const auto opts = m.getMaterialPropertyInterfaceOptions(i);
+      if (!opts.empty()) {
+        ptr->setOptions(opts);
+      }
+      this->interfaces.insert({i, ptr});
     }
   }  // end of addInterface
 
@@ -473,8 +482,7 @@ namespace mfront {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInterface",
                             "Expected interface name.");
     if (this->current->flag == tfel::utilities::Token::String) {
-      this->addInterface(
-          this->current->value.substr(1, this->current->value.size() - 2));
+      this->addInterface(tfel::utilities::getContents(*this->current));
     } else {
       this->addInterface(this->current->value);
     }
@@ -521,7 +529,6 @@ namespace mfront {
         pp->setAttribute(VariableDescription::defaultValue, op.second, true);
       }
     }
-    this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of finalizeVariablesDeclaration
 
   static std::string getFunctionAssociatedWithAValue(
@@ -677,8 +684,7 @@ namespace mfront {
     currentLine = this->current->line;
     newLine = true;
     if (!getDebugMode()) {
-      this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
-                         this->fd.fileName + "\"\n";
+      this->md.f.body += printLinePragma(currentLine, this->fd.fileName);
     }
     for (; (this->current != this->tokens.end()) && (openedBrackets != 0);
          ++(this->current)) {
@@ -686,8 +692,7 @@ namespace mfront {
         currentLine = this->current->line;
         this->md.f.body += "\n";
         if (!getDebugMode()) {
-          this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
-                             this->fd.fileName + "\"\n";
+          this->md.f.body += printLinePragma(currentLine, this->fd.fileName);
         }
         newLine = true;
       }
@@ -707,6 +712,9 @@ namespace mfront {
         throw_if(openedParenthesis == 0, "unbalanced parenthesis");
         --openedParenthesis;
         this->md.f.body += ")";
+        // a variable directly following a closing parenthesis starts the
+        // body of an if, for or while statement
+        newInstruction = (openedParenthesis == 0);
       } else if (this->current->value == ";") {
         this->md.f.body += ";";
         newInstruction = true;
@@ -756,7 +764,7 @@ namespace mfront {
           this->md.f.body +=
               tfel::unicode::getMangledString(this->current->value);
         }
-        newInstruction = false;
+        newInstruction = (var == "else") || (var == "do");
       }
       newLine = false;
     }
@@ -766,6 +774,10 @@ namespace mfront {
              "parenthesis still opened at the end of function");
     throw_if(this->md.f.body.empty(), "empty function");
     throw_if(!this->md.f.modified, "function does not modify output.");
+    // the interfaces may write a preprocessor directive after the body
+    if (this->md.f.body.back() != '\n') {
+      this->md.f.body += '\n';
+    }
   }  // end of treatFunction
 
   void MaterialPropertyDSL::treatMethod() {
@@ -799,8 +811,7 @@ namespace mfront {
       throw_if(this->current->flag != Token::String,
                "expected a string as glossary name");
       throw_if(this->current->value.size() < 3, "glossary name too short");
-      const auto gn =
-          this->current->value.substr(1, this->current->value.size() - 2);
+      const auto gn = tfel::utilities::getContents(*this->current);
       throw_if(!glossary.contains(gn),
                "'" + gn + "' is not a valid glossary name");
       this->md.setGlossaryName(this->currentVar, gn);
@@ -811,8 +822,7 @@ namespace mfront {
       throw_if(this->current->flag != Token::String,
                "expected a string as entry file name");
       throw_if(this->current->value.size() < 3, "entry file name too short");
-      const auto en =
-          this->current->value.substr(1, this->current->value.size() - 2);
+      const auto en = tfel::utilities::getContents(*this->current);
       if (glossary.contains(en)) {
         std::ostringstream msg;
         msg << "'" << en << "' is a glossary name. Please use "
@@ -821,7 +831,7 @@ namespace mfront {
                                                 glossary.getGlossaryEntry(en));
         this->throwRuntimeError("MaterialPropertyDSL::treatMethod", msg.str());
       }
-      throw_if(!CxxTokenizer::isValidIdentifier(en),
+      throw_if(!CxxTokenizer::isValidIdentifier(en, false),
                "invalid entry name '" + en + "'");
       this->md.setEntryName(this->currentVar, en);
     } else if (methodName == "setDefaultValue") {
@@ -855,6 +865,7 @@ namespace mfront {
     this->fd.fileName = "user defined string";
     this->parseString(s);
     this->analyse();
+    this->endsInputFileProcessing();
   }
 
   void MaterialPropertyDSL::analyse() {
@@ -1035,7 +1046,7 @@ namespace mfront {
                               "output type'" + type + "' is not valid.");
     }
     const auto n = tfel::unicode::getMangledString(s);
-    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(n, false)) {
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
                               "invalid output name.");
     }
@@ -1085,8 +1096,7 @@ namespace mfront {
         this->checkNotEndOfFile("MaterialPropertyDSL::treatUnknownKeyword");
         const auto t = [this]() -> std::string {
           if (this->current->flag == tfel::utilities::Token::String) {
-            return this->current->value.substr(1,
-                                               this->current->value.size() - 2);
+            return tfel::utilities::getContents(*this->current);
           }
           return this->current->value;
         }();

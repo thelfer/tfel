@@ -2,7 +2,7 @@
  * \file   PipeProfile.hxx
  * \brief
  * \author Thomas Helfer
- * \date   14 déc. 2015
+ * \date 14/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -47,7 +47,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] cn: component
      */
-    PipeStressProfile(const unsigned short);
+    explicit PipeStressProfile(const unsigned short);
     /*!
      * put the requested value(s) in the output stream
      * \param[out] os: output stream
@@ -72,7 +72,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] cn: component
      */
-    PipeStrainProfile(const unsigned short);
+    explicit PipeStrainProfile(const unsigned short);
     /*!
      * put the requested value(s) in the output stream
      * \param[out] os: output stream
@@ -97,7 +97,7 @@ namespace mtest {
      * \brief constructor
      * \param[in] cn: component
      */
-    PipeInternalStateVariableProfile(const unsigned short);
+    explicit PipeInternalStateVariableProfile(const unsigned short);
     /*!
      * put the requested value(s) in the output stream
      * \param[out] os: output stream

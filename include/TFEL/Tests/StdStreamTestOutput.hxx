@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Tests/StdStreamTestOutput.hxx
  * \author Thomas Helfer
- * \date   10 Apr 10
+ * \date 10/04/2010
  * \brief
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -34,20 +34,23 @@ namespace tfel::tests {
      * \brief constructor
      * \param[in] o: output file name
      */
-    StdStreamTestOutput(const std::string&);
+    explicit StdStreamTestOutput(const std::string&);
     /*!
      * \brief constructor
      * \param[in] o: output stream
      * \param[in] b: color output
      */
-    StdStreamTestOutput(std::ostream&, const bool = true);
+    explicit StdStreamTestOutput(std::ostream&, const bool = true);
     /*!
      * \brief Constructor
      * \param[in] o: output stream
      * \param[in] b: color output
      */
-    StdStreamTestOutput(const std::shared_ptr<std::ostream>&,
-                        const bool = false);
+    explicit StdStreamTestOutput(const std::shared_ptr<std::ostream>&,
+                                 const bool = false);
+    //
+    StdStreamTestOutput(const StdStreamTestOutput&) = delete;
+    StdStreamTestOutput& operator=(const StdStreamTestOutput&) = delete;
     /*!
      * \brief begin a new test suite
      * \param[in] n: name of the test suite
@@ -76,10 +79,6 @@ namespace tfel::tests {
      * \param s: string to be added at beginning of line
      */
     TFEL_VISIBILITY_LOCAL void treatTest(const TestResult&, const std::string&);
-    //! \brief copy constructor (disabled)
-    StdStreamTestOutput(const StdStreamTestOutput&) = delete;
-    //! \brief assignement operator (disabled)
-    StdStreamTestOutput& operator=(const StdStreamTestOutput&) = delete;
     //! pointer used to close stream, if the class has to handle it
     std::shared_ptr<std::ostream> pos;
     //! output stream

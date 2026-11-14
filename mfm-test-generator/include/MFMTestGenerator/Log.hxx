@@ -3,7 +3,7 @@
  * \brief  This file introduces some wrapper around functions defined in the
  *         `MFrontLogStream` library.
  * \author Thomas Helfer
- * \date   26/09/2019
+ * \date 26/09/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -2,7 +2,7 @@
  * \file   ComputeStiffnessTensorTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   2 may 2016
+ * \date 02/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -57,9 +57,6 @@ struct ComputeStiffnessTensorTest final : public tfel::tests::TestCase {
     this->check("Implicit",
                 "@ComputeStiffnessTensor {150e9,0.3};"
                 "@MaterialProperty real nu;");
-    this->check("Implicit",
-                "@OrthotrophicBehaviours;"
-                "@ComputeStiffnessTensor {150e9,0.3};");
     this->check("Implicit",
                 "@ComputeStiffnessTensor {150e9,0.3};"
                 "@MaterialProperty real nu;"

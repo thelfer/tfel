@@ -2,7 +2,13 @@
  * \file   MFront/BehaviourBrick/JohnsonCookStrainRateSensitivityFactor.hxx
  * \brief
  * \author Thomas Helfer
- * \date   27/11/2024
+ * \date 27/11/2024
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BBRICKS_JOHNSONCOOKSTRAINRATESENSITIVITYFACTOR_HXX
@@ -26,12 +32,12 @@ namespace mfront::bbrick {
                     const std::string&,
                     const std::string&,
                     const DataMap&) override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::string computeStrainRateSensitivityFactor(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string computeStrainRateSensitivityFactor(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const override;
-    std::string computeStrainRateSensitivityFactorAndDerivative(
+    [[nodiscard]] std::string computeStrainRateSensitivityFactorAndDerivative(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const override;

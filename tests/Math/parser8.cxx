@@ -80,7 +80,7 @@ struct ParserTest final : public tfel::tests::TestCase {
                         eps);
     } catch (runtime_error& e) {
       cout << e.what() << endl;
-      return false;
+      return tfel::tests::TestResult{false};
     }
     return this->result;
   }  // end of execute()

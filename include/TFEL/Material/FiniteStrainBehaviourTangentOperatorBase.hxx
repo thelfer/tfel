@@ -49,7 +49,7 @@ namespace tfel::material {
       DSIG_DDE,       /*!< derivative of the Cauchy stress with respect to
                         the small strain deformation increment*/
       DTAU_DF,        /*!< derivative of the Kirchhoff stress with respect to
-                        the deformation gradient increment */
+                        the deformation gradient */
       DTAU_DDF,       /*!< derivative of the Kirchhoff stress with respect
                         to the deformation gradient increment
                         \f$\Delta\,F\f$ This is the deformation gradient
@@ -61,8 +61,8 @@ namespace tfel::material {
                         increment */
       DS_DC,          /*!< derivative of the second Piola-Kirchhoff stress
                         with respect to the right Cauchy-Green tensor */
-      DS_DEGL,        /*!< derivative of the Cauchy stress with respect to
-                        the Green-Lagrange strain deformation */
+      DS_DEGL,        /*!< derivative of the second Piola-Kirchhoff stress
+                        with respect to the Green-Lagrange strain deformation */
       DT_DELOG,       /*!< derivative of the dual of the logarithmic strain
                         with respect to Hencky strain tensor */
       DPK1_DF         /*!< derivative of the first Piola-Kirchhoff stress

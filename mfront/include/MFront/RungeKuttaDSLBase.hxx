@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/RungeKuttaDSLBase.hxx
  * \brief  This file declares the RungeKuttaDSLBase class
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date 10/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,13 +22,11 @@ namespace mfront {
   struct RungeKuttaDSLBase : public BehaviourDSLBase<RungeKuttaDSLBase> {
     //! \brief code block name
     static const char* const RungeKuttaUpdateAuxiliaryStateVariables;
-    //! \return a generic description of DSL based on this class
-    static std::string getDescription();
     /*!
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    RungeKuttaDSLBase(const DSLOptions&);
+    explicit RungeKuttaDSLBase(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

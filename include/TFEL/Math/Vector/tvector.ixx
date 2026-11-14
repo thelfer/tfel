@@ -70,7 +70,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto norm(const tvector<N, T>& vec) noexcept
       requires(isScalar<T>()) {
-    typedef result_type<T, T, OpMult> squareT;
+    using squareT = result_type<T, T, OpMult>;
     return power<1, 2>(
         real(dotProduct<N>::exe(vec.begin(), vec.begin(), squareT(0u))));
   }  // end of norm
@@ -79,6 +79,16 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto abs(const tvector<N, T>& v) noexcept {
     AbsSum<T> a;
     tfel::fsalgo::for_each<N>::exe(v.begin(), a);
+    return a.result;
+  }
+
+  template <unsigned short N, typename T, typename Operation>
+  TFEL_HOST_DEVICE constexpr auto abs(
+      const Expr<tvector<N, T>, Operation>& e) noexcept {
+    AbsSum<T> a;
+    for (unsigned short i = 0; i != N; ++i) {
+      a(e(i));
+    }
     return a.result;
   }
 
@@ -255,11 +265,12 @@ namespace tfel::math {
             unsigned short stride,
             unsigned short N>
   TFEL_HOST_DEVICE constexpr auto map(
-      tvector<N, ViewsArrayNumericType<MappedType>>& v) noexcept
+      tvector<N, ViewsArrayStorageType<MappedType>>& v) noexcept
       requires(!std::is_const_v<MappedType>) {
     constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
-    static_assert(N >= offset + M * mstride, "invalid vector size");
+    static_assert(N >= offset + (M - 1) * stride + mstride,
+                  "invalid vector size");
     return ViewsFixedSizeVector<MappedType, unsigned short, M, stride>(
         v.data() + offset);
   }  // end of map
@@ -270,10 +281,11 @@ namespace tfel::math {
             unsigned short stride,
             unsigned short N>
   TFEL_HOST_DEVICE constexpr auto map(
-      const tvector<N, ViewsArrayNumericType<MappedType>>& v) {
+      const tvector<N, ViewsArrayStorageType<MappedType>>& v) {
     constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
-    static_assert(N >= offset + M * mstride, "invalid vector size");
+    static_assert(N >= offset + (M - 1) * stride + mstride,
+                  "invalid vector size");
     return ViewsFixedSizeVector<const MappedType, unsigned short, M, stride>(
         v.data() + offset);
   }  // end of map

@@ -1,6 +1,15 @@
-% Utilisation de MFront dans [Cast3M](http://www-cast3m.cea.fr/)
-% Helfer Thomas
-% August 19, 2014
+---
+title: Utilisation de MFront dans Cast3M
+author: Helfer Thomas
+date: 19/08/2014
+lang: fr-FR
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
@@ -246,7 +255,7 @@ la suivante:
 @Input T,p,Bu; //< inputs of the law
 T.setGlossaryName("Temperature"); //< pleiades name
 p.setGlossaryName("Porosity"); //< pleiades name
-Bu.setGlossaryName("BurnUp"); //< pleiades name
+Bu.setGlossaryName("BurnUp (at.%)"); //< pleiades name
 @PhysicalBounds T in [0 :*[; //< temperature physical bounds
 @Bounds T in [0 :2573.15]; //< temperature bounds
 @PhysicalBounds p in [0 :1]; //< porosity physical bounds

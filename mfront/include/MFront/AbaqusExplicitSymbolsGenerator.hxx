@@ -2,7 +2,7 @@
  * \file   AbaqusExplicitSymbolsGenerator.hxx
  * \brief
  * \author Thomas Helfer
- * \date   19/07/2018
+ * \date 19/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -26,26 +26,26 @@ namespace mfront {
       : public SymbolsGenerator {
     //! constructor
     AbaqusExplicitSymbolsGenerator();
-    void writeBehaviourTypeSymbols(std::ostream &,
-                                   const BehaviourInterfaceBase &,
-                                   const BehaviourDescription &,
-                                   const std::string &) const override;
-    void writeBehaviourKinematicSymbols(std::ostream &,
-                                        const BehaviourInterfaceBase &,
-                                        const BehaviourDescription &,
-                                        const std::string &) const override;
-    void writeAdditionalSymbols(std::ostream &,
-                                const BehaviourInterfaceBase &,
-                                const BehaviourDescription &,
-                                const FileDescription &,
-                                const std::string &,
+    void writeBehaviourTypeSymbols(std::ostream&,
+                                   const BehaviourInterfaceBase&,
+                                   const BehaviourDescription&,
+                                   const std::string&) const override;
+    void writeBehaviourKinematicSymbols(std::ostream&,
+                                        const BehaviourInterfaceBase&,
+                                        const BehaviourDescription&,
+                                        const std::string&) const override;
+    void writeAdditionalSymbols(std::ostream&,
+                                const BehaviourInterfaceBase&,
+                                const BehaviourDescription&,
+                                const FileDescription&,
+                                const std::string&,
                                 const Hypothesis) const override;
-    void writeSpecificSymbols(std::ostream &,
-                              const BehaviourInterfaceBase &,
-                              const BehaviourDescription &,
-                              const FileDescription &,
-                              const std::string &) const override;
-    bool handleStrainMeasure() const override;
+    void writeSpecificSymbols(std::ostream&,
+                              const BehaviourInterfaceBase&,
+                              const BehaviourDescription&,
+                              const FileDescription&,
+                              const std::string&) const override;
+    [[nodiscard]] bool handleStrainMeasure() const override;
     //! destructor
     ~AbaqusExplicitSymbolsGenerator() override;
   };  // end of struct AbaqusExplicitSymbolsGenerator

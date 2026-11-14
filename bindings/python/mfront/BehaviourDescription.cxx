@@ -3,7 +3,7 @@
  * \file   bindings/python/mfront/BehaviourDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mai 2016
+ * \date 04/05/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -135,15 +135,17 @@ static void setStrainMeasure(mfront::BehaviourDescription& d,
                              const std::string& s) {
   if (s == "Linearised") {
     d.setStrainMeasure(mfront::BehaviourDescription::LINEARISED);
+    return;
   } else if (s == "Green-Lagrange") {
     d.setStrainMeasure(mfront::BehaviourDescription::GREENLAGRANGE);
+    return;
   }
   tfel::raise_if(s != "Hencky",
                  "BehaviourDescription::setStrainMeasure: "
                  "unsupported strain measure '" +
                      s + "'");
   d.setStrainMeasure(mfront::BehaviourDescription::HENCKY);
-}  // end of getStrainMeasure
+}
 
 static std::string getStrainMeasure(const mfront::BehaviourDescription& d) {
   tfel::raise_if(
@@ -159,75 +161,92 @@ static std::string getStrainMeasure(const mfront::BehaviourDescription& d) {
       ss != mfront::BehaviourDescription::HENCKY,
       "BehaviourDescription::getStrainMeasure: unsupported strain measure");
   return "Hencky";
-}  // end of getStrainMeasure
+}
 
 static bool BehaviourDescription_hasAttribute(
     const mfront::BehaviourDescription& d, const std::string& s) {
   return d.hasAttribute(s);
-}  // end of
+}
 
 void declareBehaviourDescription(pybind11::module_&);
 
 void declareBehaviourDescription(pybind11::module_& m) {
   using namespace mfront;
-  pybind11::class_<BehaviourDescription>(m, "BehaviourDescription")
-      .def("setBehaviourName", &BehaviourDescription::setBehaviourName)
+  pybind11::class_<BehaviourDescription, MaterialKnowledgeDescription>(
+      m, "BehaviourDescription", pybind11::multiple_inheritance(),
+      "This structure describes a mechanical behaviour\n"
+      "\n"
+      "This class handles the fact that the mechanical behaviour\n"
+      "data may depend on the modelling hypothesis considered,\n"
+      "altough most of the time they won't.\n"
+      "\n"
+      "This class thus stores a default mechanical behaviour data\n"
+      "which is intendend to be valid for most hypotheses, and specific\n"
+      "mechanical behaviour datas when required.")
+      .def(pybind11::init<>())
+      .def("setBehaviourName", &BehaviourDescription::setBehaviourName,
+           pybind11::arg("n"))
       .def("getBehaviourName", &BehaviourDescription::getBehaviourName)
-      .def("setDSLName", &BehaviourDescription::setDSLName)
+      .def("setDSLName", &BehaviourDescription::setDSLName, pybind11::arg("n"))
       .def("getDSLName", &BehaviourDescription::getDSLName)
-      .def("setMaterialName", &BehaviourDescription::setMaterialName)
+      .def("setMaterialName", &BehaviourDescription::setMaterialName,
+           pybind11::arg("n"))
       .def("getMaterialName", &BehaviourDescription::getMaterialName)
-      .def("setLibrary", &BehaviourDescription::setLibrary)
+      .def("setLibrary", &BehaviourDescription::setLibrary, pybind11::arg("l"))
       .def("getLibrary", &BehaviourDescription::getLibrary)
-      .def("setClassName", &BehaviourDescription::setClassName)
+      .def("setClassName", &BehaviourDescription::setClassName,
+           pybind11::arg("n"))
       .def("getClassName", &BehaviourDescription::getClassName)
       .def("areModellingHypothesesDefined",
            &BehaviourDescription::areModellingHypothesesDefined)
       .def("isModellingHypothesisSupported",
-           &BehaviourDescription::isModellingHypothesisSupported)
+           &BehaviourDescription::isModellingHypothesisSupported,
+           pybind11::arg("h"))
       .def("getModellingHypotheses", getModellingHypotheses)
       .def("getDistinctModellingHypotheses", getDistinctModellingHypotheses)
-      .def("setModellingHypotheses", setModellingHypotheses1)
-      .def("setModellingHypotheses", setModellingHypotheses2)
+      .def("setModellingHypotheses", setModellingHypotheses1,
+           pybind11::arg("mh"))
+      .def("setModellingHypotheses", setModellingHypotheses2,
+           pybind11::arg("mh"), pybind11::arg("b"))
       .def("getBehaviourData", &BehaviourDescription::getBehaviourData,
-           pybind11::return_value_policy::reference)
-      .def("hasAttribute", &BehaviourDescription_hasAttribute)
+           pybind11::arg("h"),
+           pybind11::return_value_policy::reference_internal)
+      .def("hasAttribute", &BehaviourDescription_hasAttribute,
+           pybind11::arg("s"))
       .def("getSymmetryType", &BehaviourDescription::getSymmetryType)
       .def("getElasticSymmetryType",
            &BehaviourDescription::getElasticSymmetryType)
-      .def("hasAttribute", ::hasAttribute)
-      .def("getUnsignedShortAttribute", getUnsignedShortAttribute)
-      .def("getStringAttribute", getStringAttribute)
-      .def("getBooleanAttribute", getBooleanAttribute)
-      .def("getUnsignedShortAttribute", getUnsignedShortAttribute2)
-      .def("getStringAttribute", getStringAttribute2)
-      .def("getBooleanAttribute", getBooleanAttribute2)
-      .def("getUnsignedShortAttribute", getUnsignedShortAttribute3)
-      .def("getStringAttribute", getStringAttribute3)
-      .def("getBooleanAttribute", getBooleanAttribute3)
-      .def("getUnsignedShortAttribute", getUnsignedShortAttribute4)
-      .def("getStringAttribute", getStringAttribute4)
-      .def("getBooleanAttribute", getBooleanAttribute4)
-      .def("hasCrystalStructure", &BehaviourDescription::hasCrystalStructure,
-           "return if a crystal structure has been defined")
-      .def("getCrystalStructure", &BehaviourDescription::getCrystalStructure,
-           "return the crystal structure")
+      .def("hasAttribute", ::hasAttribute, pybind11::arg("h"),
+           pybind11::arg("n"))
+      .def("getUnsignedShortAttribute", getUnsignedShortAttribute,
+           pybind11::arg("n"))
+      .def("getStringAttribute", getStringAttribute, pybind11::arg("n"))
+      .def("getBooleanAttribute", getBooleanAttribute, pybind11::arg("n"))
+      .def("getUnsignedShortAttribute", getUnsignedShortAttribute2,
+           pybind11::arg("n"), pybind11::arg("v"))
+      .def("getStringAttribute", getStringAttribute2, pybind11::arg("n"),
+           pybind11::arg("v"))
+      .def("getBooleanAttribute", getBooleanAttribute2, pybind11::arg("n"),
+           pybind11::arg("v"))
+      .def("getUnsignedShortAttribute", getUnsignedShortAttribute3,
+           pybind11::arg("h"), pybind11::arg("n"))
+      .def("getStringAttribute", getStringAttribute3, pybind11::arg("h"),
+           pybind11::arg("n"))
+      .def("getBooleanAttribute", getBooleanAttribute3, pybind11::arg("h"),
+           pybind11::arg("n"))
+      .def("getUnsignedShortAttribute", getUnsignedShortAttribute4,
+           pybind11::arg("h"), pybind11::arg("n"), pybind11::arg("v"))
+      .def("getStringAttribute", getStringAttribute4, pybind11::arg("h"),
+           pybind11::arg("n"), pybind11::arg("v"))
+      .def("getBooleanAttribute", getBooleanAttribute4, pybind11::arg("h"),
+           pybind11::arg("n"), pybind11::arg("v"))
+      .def("hasCrystalStructure", &BehaviourDescription::hasCrystalStructure)
+      .def("getCrystalStructure", &BehaviourDescription::getCrystalStructure)
       .def("setCrystalStructure", &BehaviourDescription::setCrystalStructure,
-           "set the crystal structure")
+           pybind11::arg("s"))
       .def("getAttributes", &BehaviourDescription::getAttributes)
       .def("isStrainMeasureDefined",
-           &BehaviourDescription::isStrainMeasureDefined,
-           "return if a strain measure has been defined")
-      .def("setStrainMeasure", setStrainMeasure,
-           "set the strain measure. The following strain measures are "
-           "supported:\n"
-           "- Linearised\n"
-           "- Green-Lagrange\n"
-           "- Hencky\n")
-      .def("getStrainMeasure", getStrainMeasure,
-           "return the strain measure, which can have one of the following "
-           "values:\n"
-           "- Linearised\n"
-           "- Green-Lagrange\n"
-           "- Hencky\n");
+           &BehaviourDescription::isStrainMeasureDefined)
+      .def("setStrainMeasure", setStrainMeasure, pybind11::arg("s"))
+      .def("getStrainMeasure", getStrainMeasure);
 }

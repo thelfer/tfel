@@ -1,3 +1,17 @@
+---
+title: Model keywords
+author: TFEL Team
+date: 25/08/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
+
+
 % `Model` keywords
 
 
@@ -60,7 +74,7 @@ The `@Coef` keyword is a deprecated synonymous of
 
 # The `@ConstantMaterialProperty` keyword
 
-The `@ConstantMaterialPropery` let the user define a specific kind of
+The `@ConstantMaterialProperty` let the user define a specific kind of
 input to a model which is meant to be constant and uniform during the
 computations. This allows the interfaces to optimize the generated
 code. This keyword is followed by the names of the material
@@ -168,6 +182,15 @@ Options can be passed to a DSL as follows:
 };
 ~~~~
 
+The `compatibility_mode` option, which is common to all DSLs, is
+specified in the same way:
+
+~~~~{.cxx}
+@DSL Default{
+  compatibility_mode : "5.2.0"
+};
+~~~~
+
 ### Defining `DSL` options on the command line:
 
 `MFront` have various command line arguments to define options passed to DSLs:
@@ -209,6 +232,22 @@ The following options are available for all DSLs:
 - `out_of_bounds_policy_runtime_modification` (boolean), which states if
   the out-of-bounds policy can be changed at runtime. By default, this
   option is `true`.
+- `compatibility_mode` (string), which selects the compatibility mode of
+  the file. The value is either a version, such as `5.2.0`, or `future`,
+  which gives the behaviour of the next major version. A version which is
+  not a known compatibility mode is associated with the greatest known
+  compatibility mode which does not exceed it, which is reported by a
+  warning. A version strictly lower than `5.2.0` is rejected. This option
+  has precedence over the default compatibility mode, which can be set
+  globally using the `--default-compatibility-mode` command line argument: when no
+  compatibility mode is declared, the generated code uses the entities and
+  the algorithms of the version of the `TFEL` libraries which compiles it.
+  The compatibility mode of a file is recorded in the generated code as
+  the `<entry point>_compatibility_mode` symbol, which is returned by the
+  `ExternalLibraryManager::getCompatibilityMode` method. This symbol is
+  only generated when a compatibility mode is declared. Compatibility
+  modes are described at
+  <https://thelfer.github.io/tfel/web/mfront-compatibility-modes.html>.
 
 
 ### Options common to all DSLs related to behaviours
@@ -346,6 +385,14 @@ The `@Function` keyword defines a computational part of the
 model. This keyword is followed by a string defining the name of this
 part of the computation.
 
+The functions are executed in the order of their declaration. An
+output can only be modified by one function.
+
+An output whose first modification in a function is a compound
+assignment (`+=`, `-=`, `*=` or `/=`) starts from its value at the
+beginning of the time step: its depth must be at least one (see the
+`setDepth` method).
+
 ## Example
 
 ~~~~{.cpp}
@@ -443,8 +490,27 @@ T.setGlossaryName("Temperature");
 p.setGlossaryName("Porosity");
 // we need the value at the end of the time step and the value at the
 // beginning at the time step
-p.setGlossaryName("Porosity");
+p.setDepth(1);
 ~~~~
+
+# The `@Link` keyword
+
+The `@Link` keyword let the user specify additional linker flags used
+to build their shared library/executables. This keyword must be
+followed by a string or an array of strings.
+
+Usage of the `@Link` keyword is deprecated a linker flags are not
+portable. The user may prefer using the `LDFLAGS` environment
+variable.
+
+## Example
+
+~~~~{.cpp}
+// explicit link with libm.so
+// (not necessary in pratice)
+@Link "-lm";
+~~~~
+
 
 # The `@LocalParameter` keyword
 
@@ -671,7 +737,7 @@ fc.setDefaultValue(1.e-2);
 
 # The `@Parser` keyword
 
-The `@Paser` keyword is a deprecated synonymous of `@DSL`.
+The `@Parser` keyword is a deprecated synonymous of `@DSL`.
 
 # The `@PhysicalBounds` keyword
 
@@ -684,9 +750,11 @@ represented by the '*' character.
 
 ## Effect
 
-In implicit schemes, if physical bounds are set on an integration
-variable, this variable is bounded to satisfy them during the internal
-iterations.
+In implicit schemes, if physical bounds are set on a state variable,
+or on some elements of an array of state variables, this variable is
+bounded to satisfy them during the internal iterations. Physical bounds
+set on an integration variable which is not a state variable (see
+`@IntegrationVariable`) are ignored.
 
 If a variable is found to be out of its physical bounds, the
 computations are stopped. The tests are performed at different stages
@@ -736,9 +804,9 @@ respectively.
 
 ~~~~{.cpp}
 // scalar state variable
-@StateVariables strain p;
+@StateVariable strain p;
 // symmetric tensors state variable
-@StateVariables StrainStensor evp,evp2;
+@StateVariable StrainStensor evp,evp2;
 ~~~~
 
 # The `@StaticVar` keyword
@@ -760,6 +828,23 @@ an equal sign and its value.
 ~~~~{.cpp}
 @StaticVariable real A = 1.234e56;
 ~~~~
+
+# The `@TFELLibraries` keyword
+
+The `@TFELLibraries` keyword let the user specify TFEL libraries to link
+with. This keyword must be followed by an array of strings.
+
+The following libraries are available: `Config`, `Exception`,
+`Glossary`, `Tests`, `UnicodeSupport`, `Utilities`, `System`, `Math`,
+`MathCubicSpline`, `MathKriging`, `MathParser`, `NUMODIS`, `Material`,
+`MFront`, `MTest`.
+
+## Example
+
+~~~~{.cpp}
+@TFELLibraries {"MathParser"};
+~~~~
+
 
 # The `@UnitSystem` keyword
 

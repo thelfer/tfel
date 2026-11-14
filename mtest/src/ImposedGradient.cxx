@@ -2,7 +2,7 @@
  * \file  mtest/src/ImposedGradient.cxx
  * \brief
  * \author Thomas Helfer
- * \date 05 avril 2013
+ * \date 05/04/2013
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

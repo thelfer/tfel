@@ -1,4 +1,3 @@
-
 /*!
  * \file  mfront/include/MFront/MaterialKnowledgeDescription.hxx
  * \brief
@@ -24,6 +23,7 @@
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/MFrontConfig.hxx"
+#include "MFront/CompatibilityMode.hxx"
 #include "MFront/MaterialKnowledgeAttribute.hxx"
 
 namespace mfront {
@@ -46,6 +46,8 @@ namespace mfront {
     static const char* const validator;
     //! \brief attribute name
     static const char* const buildIdentifier;
+    //! \brief attribute name
+    static const char* const compatibilityMode;
     /*!
      * \brief throw an exception saying that no attribute with the given name
      * exists
@@ -54,14 +56,15 @@ namespace mfront {
     //! \brief default constructor
     MaterialKnowledgeDescription();
     //! \brief move constructor
-    MaterialKnowledgeDescription(MaterialKnowledgeDescription&&);
+    MaterialKnowledgeDescription(MaterialKnowledgeDescription&&) noexcept;
     //! \brief copy constructor
     MaterialKnowledgeDescription(const MaterialKnowledgeDescription&);
     //! \brief default assignement
     MaterialKnowledgeDescription& operator=(
         const MaterialKnowledgeDescription&);
     //! \brief move assignement
-    MaterialKnowledgeDescription& operator=(MaterialKnowledgeDescription&&);
+    MaterialKnowledgeDescription& operator=(
+        MaterialKnowledgeDescription&&) noexcept;
     /*!
      * \brief insert a new attribute
      * \param[in] n : name
@@ -85,20 +88,20 @@ namespace mfront {
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
      */
-    bool hasAttribute(const std::string_view) const;
+    [[nodiscard]] bool hasAttribute(const std::string_view) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    T& getAttribute(const std::string_view) requires(
+    [[nodiscard]] T& getAttribute(const std::string_view) requires(
         isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    const T& getAttribute(const std::string_view) const
+    [[nodiscard]] const T& getAttribute(const std::string_view) const
         requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
@@ -106,14 +109,15 @@ namespace mfront {
      * \param[in] v: default value if the attribute is not defined
      */
     template <typename T>
-    T getAttribute(const std::string_view, const T&) const
+    [[nodiscard]] T getAttribute(const std::string_view, const T&) const
         requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string, MaterialKnowledgeAttribute, std::less<>>&
-    getAttributes() const;
+    [[nodiscard]] const std::
+        map<std::string, MaterialKnowledgeAttribute, std::less<>>&
+        getAttributes() const;
     /*!
      * \brief add an external `MFront` file and the list of interfaces used to
      * treat it.
@@ -125,16 +129,17 @@ namespace mfront {
                                const std::vector<std::string>&,
                                const tfel::utilities::DataMap&);
     //! \return the external `MFront` files
-    const std::map<std::string,                           // file path
-                   std::tuple<std::vector<std::string>,   // list of interfaces
-                              tfel::utilities::DataMap>,  // DSL options
-                   std::less<>>&
+    [[nodiscard]] const std::map<
+        std::string,                           // file path
+        std::tuple<std::vector<std::string>,   // list of interfaces
+                   tfel::utilities::DataMap>,  // DSL options
+        std::less<>>&
     getExternalMFrontFiles() const;
     /*!
      * \brief return if an unit system has been associated to the material
      * knowledge
      */
-    bool hasUnitSystem() const;
+    [[nodiscard]] bool hasUnitSystem() const;
     /*!
      * \brief associate an unit system to the material knowledge
      * \param[in] s: unit system
@@ -144,7 +149,7 @@ namespace mfront {
      * \brief associate an unit system to the material knowledge
      * \param[in] s: unit system
      */
-    const std::string& getUnitSystem() const;
+    [[nodiscard]] const std::string& getUnitSystem() const;
     //! \brief destructor
     ~MaterialKnowledgeDescription();
 
@@ -240,6 +245,22 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT bool allowsParametersInitializationFromFile(
       const MaterialKnowledgeDescription&);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::compatibilityMode`
+   * attribute if it is defined.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT std::optional<CompatibilityMode::Version>
+  getCompatibilityMode(const MaterialKnowledgeDescription&);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::compatibilityMode`
+   * attribute if it is defined or the maximum known compatibility mode.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT CompatibilityMode::Version
+  getEffectiveCompatibilityMode(const MaterialKnowledgeDescription&);
 
 }  // end of namespace mfront
 

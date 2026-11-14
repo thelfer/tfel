@@ -34,64 +34,24 @@ namespace mtest {
     AsterStandardBehaviour(const Hypothesis,
                            const std::string&,
                            const std::string&);
-    /*!
-     * \brief compute the *real* rotation matrix
-     * \param[in] mp : material properties
-     * \param[in] r  : rotation matrix defined by the user
-     * \note this method is only meaningfull for the umat (Cast3M)
-     * interface
-     */
+    //
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
-    /*!
-     * \return the size of the array of internal variables
-     */
     size_t getInternalStateVariablesSize() const override;
-    /*!
-     * \return the descriptions the internal variables
-     * \param[in] d : space dimension
-     */
     std::vector<std::string> getInternalStateVariablesDescriptions()
         const override;
-    /*!
-     * \return the default type of stiffness matrix used by the behaviour
-     */
-    virtual StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
-    /*!
-     * \brief integrate the mechanical behaviour over the time step
-     * \return a pair. The first member is true if the integration was
-     * successfull, false otherwise. The second member contains a time
-     * step scaling factor.
-     * \param[out] wk    : behaviour workspace
-     * \param[in]  s     : current state
-     * \param[in]  dt    : time increment
-     * \param[in]  ktype : type of the stiffness matrix
-     */
+    StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
         const CurrentState&,
         const StiffnessMatrixType) const override;
-    /*!
-     * \brief integrate the mechanical behaviour over the time step
-     * \return a pair. The first member is true if the integration was
-     * successfull, false otherwise. The second member contains a time
-     * step scaling factor.
-     * \param[out/in] s     : current state
-     * \param[out]    wk    : behaviour workspace
-     * \param[in]     dt    : time increment
-     * \param[in]     ktype : type of the stiffness matrix
-     */
     std::pair<bool, real> integrate(CurrentState&,
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
-    /*!
-     * \brief allocate internal workspace
-     * \param[out] wk : behaviour workspace
-     */
     void allocateWorkSpace(BehaviourWorkSpace&) const override;
-    //! destructor
+    //! \brief destructor
     ~AsterStandardBehaviour() override;
 
    protected:
@@ -114,11 +74,11 @@ namespace mtest {
                                                  const real,
                                                  const StiffnessMatrixType,
                                                  const bool) const = 0;
-    //! the aster fonction
+    //! \brief the aster fonction
     tfel::system::AsterFctPtr fct;
-    //! Pointer to function returing the integration error message
+    //! \brief ointer to function returing the integration error message
     const char* (*emsg)();
-    //! save tangent operator
+    //! \brief save tangent operator
     bool savesTangentOperator;
   };  // end of struct Behaviour
 

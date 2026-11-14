@@ -1,6 +1,15 @@
-% Implementing an isotropic elliptic yield criterion of the Green type
-% Thomas Helfer
-% 30/11/2017
+---
+title: Implementing an isotropic elliptic yield criterion of the Green type
+author: Thomas Helfer
+date: 30/11/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
@@ -193,7 +202,7 @@ In the plastic loading case, the system of equations to be solved is
 *non-linear*. We choose the Newton-Raphson algorithm with an
 analytical jacobian. Compared to other algorithm available in `MFront`
 (Runge-Kutta, Broyden, Newton-Raphson with numerical jacobian, etc..),
-this algorithm is generally the *most efficient* in pratice.
+this algorithm is generally the *most efficient* in practice.
 
 ## Preamble
 
@@ -247,7 +256,7 @@ brick which provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 

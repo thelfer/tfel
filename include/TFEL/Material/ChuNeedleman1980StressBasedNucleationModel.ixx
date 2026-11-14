@@ -77,9 +77,9 @@ namespace tfel::material {
     const auto x = (s1 - params.sigm) / (params.sn);
     // porosity rate
     const auto An = cste * params.fn / (params.sn) * std::exp(-x * x / 2);
-    // derivative of the porosity rate with respect to the equivalent plastic
-    // strain
-    const auto dAn_ds1 = An * x / (params.sn);
+    // derivative of the porosity rate with respect to the maximum principal
+    // stress: the derivative of exp(-x * x / 2) is -x exp(-x * x / 2)
+    const auto dAn_ds1 = -An * x / (params.sn);
     //
     return std::make_tuple(An, dAn_ds1 * n1);
   }  // end of computeChuNeedleman1980StressBasedNucleationModelPorosityRate

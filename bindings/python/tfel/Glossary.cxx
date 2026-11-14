@@ -1,7 +1,7 @@
 /*!
  * \file   Glossary.cxx
  * \author Thomas Helfer
- * \date   18/12/2024
+ * \date 18/12/2024
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -19,10 +19,14 @@ void declareGlossary(pybind11::module_&);
 
 void declareGlossary(pybind11::module_& m) {
   using namespace tfel::glossary;
-  pybind11::class_<Glossary>(m, "Glossary")
-      .def_static("getGlossary", Glossary::getGlossary,
-                  pybind11::return_value_policy::reference)
-      .def("contains", &Glossary::contains)
+  pybind11::class_<Glossary>(
+      m, "Glossary", "Structure in charge of handling the TFEL Glossary")
+      .def_static(
+          "getGlossary", Glossary::getGlossary,
+          pybind11::return_value_policy::reference,
+          "Return the unique instance of this class (singleton pattern)")
+      .def("contains", &Glossary::contains, pybind11::arg("n"),
+           "Return true if the glossary contains the given name or key")
       .def_readonly_static("AxialDeformationGradient",
                            &Glossary::AxialDeformationGradient)
       .def_readonly_static("AxialGrowth", &Glossary::AxialGrowth)

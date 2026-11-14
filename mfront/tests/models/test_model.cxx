@@ -2,7 +2,7 @@
  * \file   test_model.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23 juin 2016
+ * \date 23/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -78,10 +78,16 @@ struct B4CConcentrationModelTest final : public tfel::tests::TestCase {
     double t = 0.0;
     const double te = 41696641.0;
     const double dt = (te - t) / 100;
+    // swelling under a constant flux above 1250 Celsius
+    const double Phi0 = 0.3396e25;
+    const double ss = 0.04 * std::exp(-(T - 273.15) / 370);
     while (std::abs(te - t) > dt / 2) {
-      s = sm.compute(T, T, f, f, n, n, s, dt);
+      // the fluence and the flux are the inputs f and n of the model
+      s = sm.compute(T, T, n + f * dt, n, f, f, s, dt);
       n += f * dt;
       t += dt;
+      const double s_ref = ss * (1 - std::exp(-n / Phi0)) + 1.297e-28 * n;
+      TFEL_TESTS_ASSERT(std::abs(s - s_ref) < s_ref * 1e-6);
     }
   }
 };

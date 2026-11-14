@@ -34,13 +34,14 @@ namespace mfront {
     using Hypothesis = NonLinearSystemSolverBase::Hypothesis;
     //! \brief default constructor
     NewtonRaphsonSolverBase();
-    bool usesJacobian() const override;
-    bool usesJacobianInvert() const override;
-    bool allowsJacobianInitialisation() const override;
-    bool allowsJacobianInvertInitialisation() const override;
-    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
+    [[nodiscard]] bool usesJacobian() const override;
+    [[nodiscard]] bool usesJacobianInvert() const override;
+    [[nodiscard]] bool allowsJacobianInitialisation() const override;
+    [[nodiscard]] bool allowsJacobianInvertInitialisation() const override;
+    [[nodiscard]] bool
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
         const override;
-    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatSpecificKeywords(
         BehaviourDescription&,
         const std::string&,
         const tokens_iterator,
@@ -60,20 +61,20 @@ namespace mfront {
 
   //! \brief the standard Newton-Raphson Solver
   struct NewtonRaphsonSolver : public NewtonRaphsonSolverBase {
-    std::vector<std::string> getSpecificHeaders() const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    bool requiresNumericalJacobian() const override;
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
     //! \brief destructor
     ~NewtonRaphsonSolver() override;
   };
 
   //! \brief the standard Newton-Raphson solver with a numerical jacobian
   struct NewtonRaphsonNumericalJacobianSolver : public NewtonRaphsonSolverBase {
-    std::vector<std::string> getSpecificHeaders() const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    bool requiresNumericalJacobian() const override;
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
     //! destructor
     ~NewtonRaphsonNumericalJacobianSolver() override;
   };
@@ -89,19 +90,19 @@ namespace mfront {
     using NonLinearSystemSolverBase::CxxTokenizer;
     //! a simple alias
     using NonLinearSystemSolverBase::tokens_iterator;
-    std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
     void initializeNumericalParameters(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;
-    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatSpecificKeywords(
         BehaviourDescription&,
         const std::string&,
         const tokens_iterator,
         const tokens_iterator) override;
     void completeVariableDeclaration(BehaviourDescription&) const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    bool requiresNumericalJacobian() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
     //! \brief destructor
     ~PowellDogLegNewtonRaphsonSolver() override;
   };
@@ -118,19 +119,19 @@ namespace mfront {
     using NonLinearSystemSolverBase::CxxTokenizer;
     //! a simple alias
     using NonLinearSystemSolverBase::tokens_iterator;
-    std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
     void initializeNumericalParameters(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;
-    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatSpecificKeywords(
         BehaviourDescription&,
         const std::string&,
         const tokens_iterator,
         const tokens_iterator) override;
     void completeVariableDeclaration(BehaviourDescription&) const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    bool requiresNumericalJacobian() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
     //! destructor
     ~PowellDogLegNewtonRaphsonNumericalJacobianSolver() override;
   };

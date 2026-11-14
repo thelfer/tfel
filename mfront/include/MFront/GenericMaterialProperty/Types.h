@@ -2,7 +2,7 @@
  * \file   include/MFront/GenericMaterialProperty/Types.h
  * \brief
  * \author Thomas Helfer
- * \date   03/05/2022
+ * \date 03/05/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with linking exception
@@ -20,6 +20,7 @@
 #include <stddef.h>
 #endif /* __cplusplus */
 
+// NOLINTBEGIN(modernize-use-using)
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -36,5 +37,6 @@ typedef size_t mfront_gmp_size_type;
 #ifdef __cplusplus
 } // end of extern "C"
 #endif /* __cplusplus */
+// NOLINTEND(modernize-use-using)
 
 #endif /* LIB_MFRONT_GENERICMATERIALPROPERTY_TYPES_H */

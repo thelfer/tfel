@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   02/11/2007
+ * \date 02/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -41,8 +41,9 @@ namespace tfel::math::parser {
    */
   struct Function : public Expr {
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     void getParametersNames(std::set<std::string>&) const override;
     //! \brief destructor
@@ -53,7 +54,7 @@ namespace tfel::math::parser {
      * \brief constructor
      * \param[in] e: expression representing the argument of the function
      */
-    Function(const std::shared_ptr<Expr>) noexcept;
+    explicit Function(const std::shared_ptr<Expr>) noexcept;
     //! \brief argument
     const std::shared_ptr<Expr> expr;
   };
@@ -71,15 +72,22 @@ namespace tfel::math::parser {
      * \param[in] e: expression
      */
     StandardFunction(const char* const, const std::shared_ptr<Expr>) noexcept;
-    double getValue() const override;
-    std::string getCxxFormula(const std::vector<std::string>&) const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    //
+    StandardFunction& operator=(const StandardFunction&) = delete;
+    StandardFunction& operator=(StandardFunction&&) = delete;
+    //
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::string getCxxFormula(
+        const std::vector<std::string>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -88,8 +96,6 @@ namespace tfel::math::parser {
     ~StandardFunction() override;
 
    private:
-    StandardFunction& operator=(const StandardFunction&) = delete;
-    StandardFunction& operator=(StandardFunction&&) = delete;
     //! \brief name
     const char* const name;
   };  // end of struct StandardFunction

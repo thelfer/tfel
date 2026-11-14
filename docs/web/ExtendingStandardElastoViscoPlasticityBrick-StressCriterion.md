@@ -1,6 +1,15 @@
-% Extending the `StandardElastoViscoPlasticity` brick with a new stress criterion
-% Thomas Helfer, Jérémy Hure, Mohamed Shokeir
-% April 2020
+---
+title: Extending the StandardElastoViscoPlasticity brick with a new stress criterion
+author: Thomas Helfer, Jérémy Hure, Mohamed Shokeir
+date: 04/2020
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
@@ -102,7 +111,7 @@ The header files `StressCriterionTemplate.hxx` and
 `Green1972StressCriterion.hxx` and `Green1972StressCriterion.ixx`.
 
 The `MFront` template files must be copied in the working directory and
-renamed appropriatly.
+renamed appropriately.
 
 This can be done by taping the following commands in the terminal (under
 `LiNuX` or `Mac Os`):
@@ -293,7 +302,7 @@ computeGreen1972StressNormal(
 >
 > At this stage, the `MFront` implementation based on a numerical
 > jacobian could be fully functional if one modifies the
-> `@InitLocalVarialbes` block to initialize the parameters of
+> `@InitLocalVariables` block to initialize the parameters of
 > stress criterion.
 
 ### Implementing the `computeGreen1972StressSecondDerivative` function
@@ -437,7 +446,10 @@ $ mfront -I $(pwd)/../../include --obuild --interface=generic \
 
 - The convergence of `MTest` is quadratic, i.e. that the consistent
   tangent operator is correct (this is just another way of checking if
-  the jacobian of the implicit system is correct):
+  the jacobian of the implicit system is correct). The comparison to a
+  numerical approximation of the tangent operator is a debugging tool:
+  a failed comparison is printed in the output of `MTest`, but does not
+  make the test fail:
 
 ~~~~{.bash}
 $ mtest Green1972PerfectPlasticity.mtest                   \

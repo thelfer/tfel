@@ -20,6 +20,7 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/QR/QRException.hxx"
 
@@ -37,7 +38,7 @@ namespace tfel::math {
     if ((n != rdiag.size()) || (n != beta.size())) {
       throw(QRUnmatchedSize());
     }
-    for (index_type<MatrixType> k = 0; k != m; ++k) {
+    for (index_type<MatrixType> k = 0; k != std::min(m, n); ++k) {
       real alpha;
       if (a(k, k) > real(0)) {
         alpha = -QRDecomp::enorm(a, k, k, m);
@@ -48,7 +49,9 @@ namespace tfel::math {
       rdiag(k) = alpha;
       a(k, k) -= alpha;
       index_type<MatrixType> nk = k + 1;
-      if (nk != m) {
+      // a null sub-column gives a null beta: the householder
+      // transformation is then the identity
+      if (tfel::math::ieee754::fpclassify(beta[k]) != FP_ZERO) {
         for (index_type<MatrixType> j = nk; j != n; ++j) {
           auto gamma = real(0);
           for (index_type<MatrixType> i = k; i != m; ++i) {
@@ -77,6 +80,10 @@ namespace tfel::math {
     if ((n != beta.size()) || (m != v.size())) {
       throw(QRUnmatchedSize());
     }
+    // a null beta denotes the identity, see QRDecomp::exe
+    if (tfel::math::ieee754::fpclassify(beta(c)) == FP_ZERO) {
+      return;
+    }
     auto gamma = real(0);
     for (index_type<MatrixType> i = c; i != m; ++i) {
       gamma += a(i, c) * v(i);
@@ -91,8 +98,9 @@ namespace tfel::math {
   void QRDecomp::tq_product(VectorType& v,
                             const MatrixType& a,
                             const VectorType& beta) {
-    const auto m = a.getNbCols();
-    for (index_type<MatrixType> i = 0; i != m; ++i) {
+    // number of householder transformations
+    const auto nh = std::min(a.getNbRows(), a.getNbCols());
+    for (index_type<MatrixType> i = 0; i != nh; ++i) {
       QRDecomp::householder_product(v, a, beta, i);
     }
   }  // end of QRDecomp::tq_product
@@ -107,10 +115,10 @@ namespace tfel::math {
     if ((m == 0) || (n == 0)) {
       throw(QRInvalidMatrixSize());
     }
-    if ((n != v.size()) || (n != d.size())) {
+    if ((v.size() < n) || (n != d.size())) {
       throw(QRUnmatchedSize());
     }
-    for (index_type<MatrixType> i = m; i != 0; --i) {
+    for (index_type<MatrixType> i = std::min(m, n); i != 0; --i) {
       const index_type<MatrixType> l = i - 1;
       if (tfel::math::abs(d(l)) < e) {
         throw(QRNullPivot());

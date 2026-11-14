@@ -26,7 +26,7 @@ namespace mtest {
      // AlternateSecantAccelerationAlgorithm::AlternateSecantAccelerationAlgorithm
 
   std::string AlternateSecantAccelerationAlgorithm::getName() const {
-    return "crossed secant";
+    return "AlternateSecant";
   }
 
   void AlternateSecantAccelerationAlgorithm::setParameter(

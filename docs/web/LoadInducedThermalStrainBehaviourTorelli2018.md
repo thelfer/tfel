@@ -1,6 +1,15 @@
-% How to implement Torelli 2018' load induced thermal strain behaviour
-% Thomas Helfer, Giacomo Torelli
-% 08/12/2019
+---
+title: How to implement Torelli 2018 load induced thermal strain behaviour
+author: Thomas Helfer, Giacomo Torelli
+date: 08/12/2019
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\ppos}[1]{{\left<#1\right>_{+}}}
@@ -139,7 +148,7 @@ Equation @eq:felits shows that \(\Delta\,\telits\) is known if
 \(\Delta\,\tepsilonel\) is known.
 
 Using Equation @eq:eel in its increment form thus leads to the following
-non linear equation whose only unknows is \(\Delta\,\tepsilonel\):
+non linear equation whose only unknowns is \(\Delta\,\tepsilonel\):
 
 \[
 f_{\tepsilonel}=\Delta\,\tepsilonel+\Delta\,\telits\paren{\Delta\,\tepsilonel}-\Delta\,\tepsilonto=\tenseur{0}
@@ -180,7 +189,7 @@ where \(\mts{\tenseurq{D}}\) is the elastic stiffness tensor at the middle of th
 >
 > The explicit expression of
 > \(\deriv{\pneg{\mts{\tsigma}}}{\mts{\tsigma}}\) is not given here
-> as it will be computed by an build-in function of the `TFEL/Math`
+> as it will be computed by an built-in function of the `TFEL/Math`
 > library.
 
 \(\deriv{C_{m}}{\pneg{\mts{\tsigma}}}\) is computed as follows:
@@ -270,7 +279,7 @@ page](BehaviourBricks.html), provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 

@@ -2,7 +2,7 @@
  * \file   tests/Utilities/FCString.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23 janv. 2017
+ * \date 23/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -80,7 +80,7 @@ struct FCStringTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(s2[0] == 'a');
     TFEL_TESTS_ASSERT(s2[1] == 'b');
     TFEL_TESTS_ASSERT(std::strcmp(s2.data(), "ab") == 0);
-    TFEL_TESTS_ASSERT(s.size() == 2);
+    TFEL_TESTS_ASSERT(s2.size() == 2);
     TFEL_TESTS_CHECK_THROW(s2[3], std::out_of_range);
   }
   void test3() {

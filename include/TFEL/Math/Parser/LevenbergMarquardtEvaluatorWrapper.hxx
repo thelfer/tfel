@@ -30,9 +30,8 @@ namespace tfel::math::parser {
                                        const size_type,
                                        const size_type);
 
-    size_type getNumberOfVariables() const;
-
-    size_type getNumberOfParameters() const;
+    [[nodiscard]] size_type getNumberOfVariables() const;
+    [[nodiscard]] size_type getNumberOfParameters() const;
 
     void operator()(double&,
                     tfel::math::vector<double>&,

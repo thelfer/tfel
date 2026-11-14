@@ -34,7 +34,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    RungeKuttaFiniteStrainDSL(const DSLOptions&);
+    explicit RungeKuttaFiniteStrainDSL(const DSLOptions&);
     //
     std::string getCodeBlockTemplate(
         const std::string&,

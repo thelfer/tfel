@@ -2,7 +2,7 @@
  * \file   MFront/BehaviourBrick/OptionDescription.hxx
  * \brief
  * \author Thomas Helfer
- * \date   23/03/2018
+ * \date 23/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -102,11 +102,11 @@ namespace mfront::bbrick {
     //! \brief copy constructor
     OptionDescription(const OptionDescription&);
     //! \brief move constructor
-    OptionDescription(OptionDescription&&);
+    OptionDescription(OptionDescription&&) noexcept;
     //! \brief standard assignement
     OptionDescription& operator=(const OptionDescription&);
     //! \brief move assignement
-    OptionDescription& operator=(OptionDescription&&);
+    OptionDescription& operator=(OptionDescription&&) noexcept;
     //! \brief destructor
     ~OptionDescription();
     //! \brief name of the option

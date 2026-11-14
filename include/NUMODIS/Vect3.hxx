@@ -2,7 +2,7 @@
  * \file   include/NUMODIS/Vect3.hxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -56,8 +56,6 @@ namespace numodis {
 
     Vect3 operator/(const double scalar) const;
 
-    Vect3 operator*(const Vect3& vec) const;
-
     Vect3& operator=(const Vect3& vec);
 
     Vect3& operator=(const double scalar);
@@ -72,25 +70,25 @@ namespace numodis {
 
     Vect3& operator-=(const Vect3& vec);
 
-    Vect3 UnitVector() const;
+    [[nodiscard]] Vect3 UnitVector() const;
 
-    Vect3 Cross(const Vect3& vec) const;
+    [[nodiscard]] Vect3 Cross(const Vect3& vec) const;
 
-    Vect3 UnitCross(const Vect3& vec) const;
+    [[nodiscard]] Vect3 UnitCross(const Vect3& vec) const;
 
-    double& operator[](int i);
+    [[nodiscard]] double& operator[](int i);
 
-    double operator[](int i) const;
+    [[nodiscard]] double operator[](int i) const;
 
-    double Length() const;
+    [[nodiscard]] double Length() const;
 
-    double SquareLength() const;
+    [[nodiscard]] double SquareLength() const;
 
-    double Dot(const Vect3& vec) const;
+    [[nodiscard]] double Dot(const Vect3& vec) const;
 
     void Swap(Vect3& vec);
 
-    bool Normalize();
+    [[nodiscard]] bool Normalize();
 
     //==========================================================
     // Vect3::X
@@ -99,7 +97,7 @@ namespace numodis {
     //----------------------------------------------------------
     /*! \return reference to the component                    */
     //==========================================================
-    inline double& X() { return this->_vector[0]; }
+    [[nodiscard]] inline double& X() { return this->_vector[0]; }
 
     //===========================================================
     // Vect3::Y
@@ -108,7 +106,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \return reference to the component                     */
     //===========================================================
-    inline double& Y() { return this->_vector[1]; }
+    [[nodiscard]] inline double& Y() { return this->_vector[1]; }
 
     //==========================================================
     // Vect3::Z
@@ -117,7 +115,7 @@ namespace numodis {
     //----------------------------------------------------------
     /*! \return reference to the component                    */
     //==========================================================
-    inline double& Z() { return this->_vector[2]; }
+    [[nodiscard]] inline double& Z() { return this->_vector[2]; }
 
     //==========================================================
     // Vect3::X
@@ -126,7 +124,7 @@ namespace numodis {
     //----------------------------------------------------------
     /*! \return first component                               */
     //==========================================================
-    inline double X() const { return this->_vector[0]; }
+    [[nodiscard]] inline double X() const { return this->_vector[0]; }
 
     //==========================================================
     // Vect3::Y
@@ -135,7 +133,7 @@ namespace numodis {
     //----------------------------------------------------------
     /*! \return second component                              */
     //==========================================================
-    inline double Y() const { return this->_vector[1]; }
+    [[nodiscard]] inline double Y() const { return this->_vector[1]; }
 
     //==========================================================
     // Vect3::Z
@@ -144,7 +142,7 @@ namespace numodis {
     //----------------------------------------------------------
     /*! \return third component                               */
     //==========================================================
-    inline double Z() const { return this->_vector[2]; }
+    [[nodiscard]] inline double Z() const { return this->_vector[2]; }
 
     //==========================================================
     // Vect::Norm
@@ -153,7 +151,7 @@ namespace numodis {
     //----------------------------------------------------------
     /*! \return length of the vector                          */
     //==========================================================
-    double Norm() const { return this->Length(); }
+    [[nodiscard]] double Norm() const { return this->Length(); }
 
    protected:
     double _vector[3];

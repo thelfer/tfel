@@ -13,7 +13,7 @@ This keywords is followed by:
     - the behaviour' external state variables
     - any evolution defined in the input file
 
-## Example 
+## Example
 
 ~~~~{.cpp}
 @UserDefinedPostProcessing 'test.txt' '(SXX+SYY+SZZ)/3';

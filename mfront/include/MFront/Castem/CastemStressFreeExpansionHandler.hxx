@@ -33,10 +33,10 @@ namespace castem {
    * \param[in] d      : spatial dimension
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
-  CastemStandardSmallStrainStressFreeExpansionHandler(CastemReal *const,
-                                                      CastemReal *const,
-                                                      const CastemReal *const,
-                                                      const CastemReal *const,
+  CastemStandardSmallStrainStressFreeExpansionHandler(CastemReal* const,
+                                                      CastemReal* const,
+                                                      const CastemReal* const,
+                                                      const CastemReal* const,
                                                       const CastemInt);
   /*!
    * \brief handler of stress free expansion handler for logarithmic strains
@@ -51,10 +51,10 @@ namespace castem {
    * \param[in] d      : spatial dimension
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
-  CastemLogarithmicStrainStressFreeExpansionHandler(CastemReal *const,
-                                                    CastemReal *const,
-                                                    const CastemReal *const,
-                                                    const CastemReal *const,
+  CastemLogarithmicStrainStressFreeExpansionHandler(CastemReal* const,
+                                                    CastemReal* const,
+                                                    const CastemReal* const,
+                                                    const CastemReal* const,
                                                     const CastemInt);
 
 }  // end of namespace castem

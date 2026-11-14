@@ -1,4 +1,4 @@
-The `@StiffnessMatrixType` keyword let the user specifiy choose type
+The `@StiffnessMatrixType` keyword let the user specify choose type
 of stiffness matrix that shall be given by the mechanical behaviour
 and that will be used by the resolution algorithm.
 

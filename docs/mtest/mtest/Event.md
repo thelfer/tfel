@@ -15,9 +15,7 @@ a list of times (given as an array of values).
 
 ## Note
 
-The times defining an event are not recquired to match a time of the
-discretisation of the The times defining an event are not required to
-match a time of the discretisation of the computation, but this is
-highly recommended. An event is triggered at the the end of a time step
-when the final time is greater or equal that the time associated with
-the event. **This does not take into account sub-steppings**.
+The times defining an event are not required to match a time of the
+discretisation of the computation, but this is highly recommended. An
+event is triggered at the end of a time step when the final time is
+greater or equal than the time associated with the event. **This does not take into account sub-steppings**.

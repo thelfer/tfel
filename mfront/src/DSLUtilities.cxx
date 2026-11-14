@@ -2,10 +2,17 @@
  * \file   mfront/src/DSLUtilities.cxx
  * \brief
  * \author Thomas Helfer
- * \date   23/04/2025
+ * \date 23/04/2025
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include <sstream>
+#include <string>
+#include <utility>
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontWarningMode.hxx"
@@ -78,28 +85,37 @@ namespace mfront {
     if (p->value == "[") {
       CxxTokenizer::readSpecifiedToken(m, "[", p, pe);
       CxxTokenizer::checkNotEndOfLine(m, p, pe);
-      std::string position(p->value);
-      std::istringstream converter(position);
-      unsigned int pos;
-      converter >> pos;
-      throw_if(!converter || (!converter.eof()),
-               "could not read position number for variable '" + n + "'");
-      ++p;
+      // checked conversion: negative and non integer values are rejected
+      auto pos = static_cast<unsigned int>(0);
+      try {
+        pos = CxxTokenizer::readUnsignedInt(p, pe);
+      } catch (std::exception&) {
+        throw_if(true,
+                 "could not read position number for variable '" + n + "'");
+      }
       CxxTokenizer::checkNotEndOfLine(m, p, pe);
       CxxTokenizer::readSpecifiedToken(m, "]", p, pe);
-      n += '[' + position + ']';
+      n += '[' + std::to_string(pos) + ']';
     }
     CxxTokenizer::checkNotEndOfLine(m, "Expected '(' or 'in'.", p, pe);
     if (p->value == "(") {
       CxxTokenizer::readSpecifiedToken(m, "(", p, pe);
       CxxTokenizer::checkNotEndOfLine(m, p, pe);
       if (p->value != "*") {
-        unsigned int component;
-        std::istringstream converter(p->value);
-        converter >> component;
-        throw_if(!converter || (!converter.eof()),
+        // checked conversion: negative, non integer and out of range values
+        // are rejected (-1 is the value used to designate all the
+        // components)
+        auto c = p;
+        auto component = static_cast<unsigned int>(0);
+        try {
+          component = CxxTokenizer::readUnsignedInt(c, pe);
+        } catch (std::exception&) {
+          throw_if(true,
+                   "could not read component number for variable '" + n + "'");
+        }
+        throw_if(!std::in_range<short>(component),
                  "could not read component number for variable '" + n + "'");
-        b.component = component;
+        b.component = static_cast<short>(component);
       }
       ++(p);
       CxxTokenizer::checkNotEndOfLine(m, p, pe);
@@ -111,9 +127,11 @@ namespace mfront {
     if (p->value == "\u211D\u208A") {
       b.lowerBound = 0.;
       b.boundsType = VariableBoundsDescription::LOWER;
+      ++p;
     } else if (p->value == "\u211D\u208B") {
       b.upperBound = 0.;
       b.boundsType = VariableBoundsDescription::UPPER;
+      ++p;
     } else {
       if (p->value == "]") {
         ++p;

@@ -2,7 +2,7 @@
  * \file   mfront/src/ExcelMaterialPropertyInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date 06/05/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -82,6 +82,13 @@ namespace mfront {
   std::string ExcelMaterialPropertyInterface::getName() { return "excel"; }
 
   ExcelMaterialPropertyInterface::~ExcelMaterialPropertyInterface() = default;
+
+  void ExcelMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::pair<bool, ExcelMaterialPropertyInterface::tokens_iterator>
   ExcelMaterialPropertyInterface::treatKeyword(

@@ -12,12 +12,15 @@
  */
 
 #include <cmath>
+#include <cstddef>
+#include <optional>
 #include <sstream>
 #include <iomanip>
 #include <vector>
 #include <limits>
 #include <cstdlib>
 
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/MixedComparison.hxx"
 
@@ -34,9 +37,7 @@ namespace tfel::check {
         -std::numeric_limits<double>::max();  // smallest possible value
     unsigned int errorLinesCount = 0;
     float errorLinesPercent = 0.;
-    unsigned int errorLineNumber = 0;
-    unsigned int lineOffset =
-        (!this->c2->getData()->getLegends().empty()) ? 2u : 1u;
+    std::optional<std::size_t> errorLineNumber;
 
     this->msgLog += '\n';
 
@@ -45,12 +46,21 @@ namespace tfel::check {
          index != this->c1->getValues().size(); ++index) {
       const auto va = this->c1->getValues().at(index);
       const auto vb = this->c2->getValues().at(index);
-      mixedError = std::abs(va - vb) - (this->prec * vb) - this->precision2;
-      if (maxMixedError < mixedError) {
+      // the relative tolerance is scaled by the absolute value of vb:
+      // a negative value of vb would make the check fail for identical
+      // values
+      mixedError =
+          std::abs(va - vb) - (this->prec * std::abs(vb)) - this->precision2;
+      // a NaN is reported as the maximum error
+      if ((!tfel::math::ieee754::isnan(maxMixedError)) &&
+          (tfel::math::ieee754::isnan(mixedError) ||
+           (maxMixedError < mixedError))) {
         maxMixedError = mixedError;
-        errorLineNumber = index + lineOffset;
+        errorLineNumber = index;
       }
-      if (mixedError > 0) {
+      // the NaN is tested explicitly, as -ffast-math assumes that the
+      // comparisons never involve one
+      if (tfel::math::ieee754::isnan(mixedError) || (mixedError > 0)) {
         s = false;
         errorLinesCount++;
       }
@@ -74,7 +84,7 @@ namespace tfel::check {
                           " check).\n    Maximum mixed error : ");
       this->msgLog.append(tfel::utilities::convert(maxMixedError));
       this->msgLog +=
-          " at line " + std::to_string(errorLineNumber) +
+          this->getLocation(errorLineNumber) +
           "\n    Failed comparisons (for column) : " +
           std::to_string(errorLinesCount) + " / " +
           std::to_string(this->c1->getValues().size()) + " (" +

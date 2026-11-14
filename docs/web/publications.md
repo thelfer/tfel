@@ -1,23 +1,50 @@
 ---
 title: Publications
 author: Thomas Helfer
-date: 1/10/2020
+date: 01/10/2020
 lang: en-EN
 link-citations: true
 colorlinks: true
 figPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
-eqnPrefixTemplate: "($$i$$)"
+eeqnPrefixTemplate: "($$i$$)"
 ---
 
 ---
 nocite: |
+    @mohanan_accuracy_2026
+    @bourceret_lattice_2026
+    @chenaille_accelerating_2026
+    @larsen_open-source_2026
+    @lacorre_plant-inspired_2026
+    @doshi_solver-independent_2026
+    @badri_psd_2026
+    @amouzou-adoun_robust_2026
+    @vedrine_constitutive_2026
+    @ren_poro-elasto-viscoplastic_2026
+    @masin_viscohypoplastic_2026
+    @gautier_methode_2026
+    @ordonez_simulation_2026
+    @gelebart_amitex_2026
+    @latyshev_dolfinx_2026
+    @xper_perales_2026
+    @jamond_manta_2026
+    @adoun_ext_2026
+    @helfer_new_2026
+    @nava_numerical_2026
+    @barani_mfem_mgis_2026
+    @helfer_third_2026
+    @raude_advanced_2026
+    @dambrosi_analysis_2026
+    @balaguer_simulation_2026
+    @spanu_experimental_2026
     @simo_wrapper-based_2026
     @zhang_mind_2026
     @hure_homogenized_2026
     @tandogan_multi-physics_2026
     @fontana_hyperelastic_2026
+    @martin_implementation_2025
     @ren_laboratory_2025
     @elbez_crystal_2025
     @bourceret_interaction_2025
@@ -37,6 +64,7 @@ nocite: |
     @pierre_modelling_2025
     @scherer_grain-size_2025
     @liu_mesostructural_2025
+    @cimatti_lucarelli_reduced_2024
     @bez_impact_2024
     @quintin_uncertainty_2024
     @rapanakis_cross-anisotropic_2024
@@ -86,6 +114,7 @@ nocite: |
     @zhang_modeling_2023
     @siedel_approche_2023
     @soleilhet_numerical_2023
+    @lorenzo_projet_2022
     @bouizem_application_2022
     @beccantini_europlexus_2022
     @helfer_mfem-mgis-mfront_2022

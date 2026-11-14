@@ -20,51 +20,24 @@
 
 namespace mtest {
 
-  /*!
-   * \brief This class implements the Cast3M acceleration algorithm.
-   */
+  //! \brief This class implements the Cast3M acceleration algorithm.
   struct MTEST_VISIBILITY_EXPORT FAndersonAccelerationAlgorithm final
       : public AccelerationAlgorithm {
-    //! default constructor
+    //! \brief default constructor
     FAndersonAccelerationAlgorithm();
-    /*!
-     * \return the name of the acceleration algorithm
-     */
-    std::string getName() const override;
-    /*!
-     * \param[in] psz : total number of unknowns (problem size)
-     */
+    //
+    [[nodiscard]] std::string getName() const override;
     void initialize(const unsigned short) override;
-    /*!
-     * set a parameter of the acceleration algorithm
-     * \param[in] p : parameter name
-     * \param[in] v : parameter value
-     */
-    void setParameter(const std::string &, const std::string &) override;
-    /*!
-     * called at each time step, before the beginning of the Newton
-     * algorithm
-     */
+    void setParameter(const std::string&, const std::string&) override;
     void preExecuteTasks() override;
-    /*!
-     * \param[in,out] u1   : current estimate of the unknowns
-     * \param[in]     u0   : previous estimate of the unknowns
-     * \param[in]     r    : Newton residual
-     * \param[in]     ueps : criterium on the unknowns
-     * \param[in]     seps : criterium on the thermodynamic forces
-     * \param[in]     iter : current iteration number
-     */
-    void execute(tfel::math::vector<real> &,
-                 const tfel::math::vector<real> &,
-                 const tfel::math::vector<real> &,
+    void execute(tfel::math::vector<real>&,
+                 const tfel::math::vector<real>&,
+                 const tfel::math::vector<real>&,
                  const real,
                  const real,
                  const unsigned short) override;
-    /*!
-     * called at each time step, once convergence is reached
-     */
     void postExecuteTasks() override;
-    //! destructor
+    //! \brief destructor
     ~FAndersonAccelerationAlgorithm() override;
 
    protected:
@@ -74,11 +47,11 @@ namespace mtest {
     std::unique_ptr<FAnderson> a;
     /* pointer to the internal fields */
     //! previous displacement estimate
-    Field *uO = nullptr;
+    Field* uO = nullptr;
     //! current displacement estimate
-    Field *uN = nullptr;
+    Field* uN = nullptr;
     //! current residual
-    Field *Df = nullptr;
+    Field* Df = nullptr;
     //! method order
     int Nmax = -1;
     //! alternance order

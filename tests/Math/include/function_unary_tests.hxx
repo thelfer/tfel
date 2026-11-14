@@ -2,7 +2,7 @@
  * \file   tests/Math/include/function_unary_tests.hxx
  * \brief
  * \author Thomas Helfer
- * \date   28 Jun 2006
+ * \date 28/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

@@ -452,23 +452,58 @@ namespace tfel::math {
     }
   }  // end of computeDeterminantDerivative
 
+  TFEL_HOST_DEVICE constexpr auto computeAdjugateDeterminantDerivative(
+      TensorConcept auto& adj, const TensorConcept auto& F) noexcept {
+    using TensorType = decltype(F);
+    using TensorResultType = decltype(adj);
+    constexpr auto N = getSpaceDimension<TensorType>();
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    static_assert(N == getSpaceDimension<TensorResultType>(),
+                  "arguments must have the same space dimension");
+    static_assert(
+        isAssignableTo<UnaryOperationResult<numeric_type<TensorType>, Power<2>>,
+                       numeric_type<TensorResultType>>(),
+        "invalid arguments");
+    if constexpr (N == 1u) {
+      adj[0] = F[1] * F[2];
+      adj[1] = F[0] * F[2];
+      adj[2] = F[0] * F[1];
+    } else if constexpr (N == 2u) {
+      adj[0] = F[1] * F[2];
+      adj[1] = F[0] * F[2];
+      adj[2] = F[0] * F[1] - F[3] * F[4];
+      adj[3] = -F[2] * F[3];
+      adj[4] = -F[2] * F[4];
+    } else {
+      adj[0] = F[1] * F[2] - F[7] * F[8];
+      adj[1] = F[0] * F[2] - F[5] * F[6];
+      adj[2] = F[0] * F[1] - F[3] * F[4];
+      adj[3] = F[5] * F[8] - F[2] * F[3];
+      adj[4] = F[6] * F[7] - F[2] * F[4];
+      adj[5] = F[3] * F[7] - F[1] * F[5];
+      adj[6] = F[4] * F[8] - F[1] * F[6];
+      adj[7] = F[4] * F[5] - F[0] * F[7];
+      adj[8] = F[3] * F[6] - F[0] * F[8];
+    }
+  }  // end of computeAdjugateDeterminantDerivative
+
   TFEL_HOST void polar_decomposition(TensorConcept auto& R,
                                      StensorConcept auto& U,
                                      const TensorConcept auto& F) {
     using TensorType = decltype(R);
     using TensorType2 = decltype(F);
     using StensorType = decltype(U);
-    static_assert(std::is_same<numeric_type<StensorType>,
-                               numeric_type<TensorType2>>::value &&
-                      std::is_same<base_type<numeric_type<TensorType2>>,
-                                   numeric_type<TensorType>>::value &&
-                      (getSpaceDimension<TensorType>() ==
-                       getSpaceDimension<TensorType2>()) &&
-                      (getSpaceDimension<TensorType>() ==
-                       getSpaceDimension<StensorType>()),
-                  "invalid arguments");
+    static_assert(
+        std::is_same_v<numeric_type<StensorType>, numeric_type<TensorType2>> &&
+            std::is_same_v<base_type<numeric_type<TensorType2>>,
+                           numeric_type<TensorType>> &&
+            (getSpaceDimension<TensorType>() ==
+             getSpaceDimension<TensorType2>()) &&
+            (getSpaceDimension<TensorType>() ==
+             getSpaceDimension<StensorType>()),
+        "invalid arguments");
     if constexpr (getSpaceDimension<TensorType>() == 1u) {
-      typedef numeric_type<TensorType2> T;
+      using T = numeric_type<TensorType2>;
       using real = base_type<T>;
       R = tensor<1u, real>::Id();
       for (unsigned short i = 0; i != 3u; ++i) {
@@ -505,6 +540,14 @@ namespace tfel::math {
                 MatrixViewFromTensorExpr<decltype(t)>>(
         std::forward<TensorType>(t));
   }  // end of matrix_view
+
+  //! \brief forward declarations, see TensorTransposeExpr.hxx
+  template <typename A>
+  struct TensorTransposeExpr1D;
+  template <typename A>
+  struct TensorTransposeExpr2D;
+  template <typename A>
+  struct TensorTransposeExpr3D;
 
   template <TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto transpose(TensorType&& t) noexcept {

@@ -11,12 +11,14 @@
  * project under specific licensing conditions.
  */
 
+// this header is included by MFront/Castem/CastemBehaviourHandler.hxx: when
+// included directly, it includes this header first
+#ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
+#include "MFront/Castem/CastemBehaviourHandler.hxx"
+#else
+
 #ifndef LIB_MFRONT_CASTEM_CASTEMISOTROPICBEHAVIOURHANDLER_HXX
 #define LIB_MFRONT_CASTEM_CASTEMISOTROPICBEHAVIOURHANDLER_HXX
-
-#ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
-#error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX */
 
 #include "TFEL/FSAlgorithm/copy.hxx"
 
@@ -30,23 +32,23 @@ namespace castem {
   struct TFEL_VISIBILITY_LOCAL CastemIsotropicBehaviourHandlerBase
       : public CastemBehaviourHandler<type, H, Behaviour> {
     TFEL_CASTEM_INLINE static void exe(
-        const CastemReal *const DTIME,
-        const CastemReal *const,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemReal* const DTIME,
+        const CastemReal* const,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       typedef MechanicalBehaviourTraits<Behaviour<H, CastemReal, false>>
@@ -98,23 +100,23 @@ namespace castem {
                                                    H,
                                                    Behaviour> {
     TFEL_CASTEM_INLINE static void exe(
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       // local material properties to match castem conventions
       // In Cast3M, the tangential stiffness is given by PROPS[0],
       // the normal stiffness by PROPS[1].
@@ -140,3 +142,5 @@ namespace castem {
 }  // namespace castem
 
 #endif /* LIB_MFRONT_CASTEM_CASTEMISOTROPICBEHAVIOURHANDLER_HXX */
+
+#endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX */

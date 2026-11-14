@@ -2,7 +2,7 @@
  * \file   CxxTokenizerTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   24 août 2015
+ * \date 24/08/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -43,6 +43,10 @@ struct CxxTokenizerTest2 final : public tfel::tests::TestCase {
     this->check("a<=b", {"a", "<=", "b"});
     this->check("a:b", {"a", ":", "b"});
     this->check("a::b", {"a", "::", "b"});
+    this->check("a->*b", {"a", "->*", "b"});
+    // reserved C++ keywords
+    TFEL_TESTS_ASSERT(!CxxTokenizer::isValidIdentifier("char", false));
+    TFEL_TESTS_ASSERT(!CxxTokenizer::isValidIdentifier("nullptr", false));
     this->check2();
     this->check3();
     return this->result;

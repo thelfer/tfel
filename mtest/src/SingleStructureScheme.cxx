@@ -2,7 +2,7 @@
  * \file   SingleStructureScheme.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09/12/2015
+ * \date 09/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -340,8 +340,7 @@ namespace mtest {
           computeThermalExpansion(s, *(this->evm), t, dt);
         } else if (this->b->getSymmetryType() == 1) {
           // orthotropic case
-          computeThermalExpansion(s, *(this->evm), t, dt,
-                                  getSpaceDimension(this->hypothesis));
+          computeThermalExpansion(s, *(this->evm), t, dt, this->hypothesis);
         } else {
           tfel::raise(
               "SingleStructureScheme::prepare: "

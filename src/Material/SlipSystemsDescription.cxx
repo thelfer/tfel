@@ -2,7 +2,7 @@
  * \file   SlipSystemsDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 juin 2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,7 +11,9 @@
  * project under specific licensing conditions.
  */
 
+#include <tuple>
 #include <string>
+#include <utility>
 #include <stdexcept>
 #include "NUMODIS/HCP.hxx"
 #include "NUMODIS/BCC.hxx"
@@ -191,8 +193,8 @@ namespace tfel::material {
 
   SlipSystemsDescription::SlipSystemsDescription(
       const SlipSystemsDescription&) = default;
-  SlipSystemsDescription::SlipSystemsDescription(SlipSystemsDescription&&) =
-      default;
+  SlipSystemsDescription::SlipSystemsDescription(
+      SlipSystemsDescription&&) noexcept = default;
 
   CrystalStructure SlipSystemsDescription::getCrystalStructure() const {
     return this->cs;
@@ -326,12 +328,12 @@ namespace tfel::material {
     if (cs == CrystalStructure::FCC) {
       auto s = numodis::FCC();
       auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
-      bv.Normalize();
+      std::ignore = bv.Normalize();
       return to_array(bv);
     } else if (cs == CrystalStructure::BCC) {
       auto s = numodis::BCC();
       auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
-      bv.Normalize();
+      std::ignore = bv.Normalize();
       return to_array(bv);
     }
     raise_if(cs != CrystalStructure::Cubic,
@@ -339,7 +341,7 @@ namespace tfel::material {
              "(unsupported crystal structure)");
     auto s = numodis::Cubic();
     auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
-    bv.Normalize();
+    std::ignore = bv.Normalize();
     return to_array(bv);
   }
 
@@ -350,7 +352,7 @@ namespace tfel::material {
              "(unsupported crystal structure)");
     auto s = numodis::HCP();
     auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
-    bv.Normalize();
+    std::ignore = bv.Normalize();
     return to_array(bv);
   }
 
@@ -543,22 +545,25 @@ namespace tfel::material {
       return to_array(bv);
     } else if (cs == CrystalStructure::Cubic) {
       throw_if(!d.is<SlipSystemsDescription::vec3d>(),
-               "invalid direction description for HCP "
-               "(shall be given as a four indices' vector)");
+               "invalid direction description for cubic crystals "
+               "(shall be given as a three indices' vector)");
       const auto s = numodis::Cubic();
       const auto d3d = d.get<SlipSystemsDescription::vec3d>();
       const auto bv = s.direction(build3d(d3d));
       return to_array(bv);
     } else if (cs == CrystalStructure::FCC) {
       throw_if(!d.is<SlipSystemsDescription::vec3d>(),
-               "invalid direction description for HCP "
-               "(shall be given as a four indices' vector)");
+               "invalid direction description for FCC "
+               "(shall be given as a three indices' vector)");
       const auto s = numodis::FCC();
       const auto d3d = d.get<SlipSystemsDescription::vec3d>();
       const auto bv = s.direction(build3d(d3d));
       return to_array(bv);
     }
     throw_if(cs != CrystalStructure::BCC, "unsupported crystalline structure");
+    throw_if(!d.is<SlipSystemsDescription::vec3d>(),
+             "invalid direction description for BCC "
+             "(shall be given as a three indices' vector)");
     const auto s = numodis::BCC();
     const auto d3d = d.get<SlipSystemsDescription::vec3d>();
     const auto bv = s.direction(build3d(d3d));
@@ -575,9 +580,9 @@ namespace tfel::material {
                            d3d[2] * d3d[0], d3d[1] * d3d[2], d3d[2] * d3d[1]};
     for (size_type idx = 0; idx != ss.size(); ++idx) {
       const auto mn = tfel::material::getOrientationTensor(this->cs, ss[idx]);
-      r[i] = td[8] * mn[8] + td[7] * mn[7] + td[6] * mn[6] + td[5] * mn[5] +
-             td[4] * mn[4] + td[3] * mn[3] + td[2] * mn[2] + td[1] * mn[1] +
-             td[0] * mn[0];
+      r[idx] = td[8] * mn[8] + td[7] * mn[7] + td[6] * mn[6] + td[5] * mn[5] +
+               td[4] * mn[4] + td[3] * mn[3] + td[2] * mn[2] + td[1] * mn[1] +
+               td[0] * mn[0];
     }
     return r;
   }  // end of getSchmidFactors
@@ -710,7 +715,7 @@ namespace tfel::material {
         ims[i].push_back(std::move(ssi));
       }
     }
-    return {ims};
+    return SlipSystemsDescription::InteractionMatrixStructure{ims};
   }
 
   SlipSystemsDescription::InteractionMatrixStructure::
@@ -719,7 +724,8 @@ namespace tfel::material {
       : ranks(r) {}  // end of InteractionMatrixStructure
 
   SlipSystemsDescription::InteractionMatrixStructure::
-      InteractionMatrixStructure(InteractionMatrixStructure&&) = default;
+      InteractionMatrixStructure(InteractionMatrixStructure&&) noexcept =
+          default;
 
   SlipSystemsDescription::size_type
   SlipSystemsDescription::InteractionMatrixStructure::rank() const {

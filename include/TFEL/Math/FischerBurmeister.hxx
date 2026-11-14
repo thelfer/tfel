@@ -2,7 +2,13 @@
  * \file   include/TFEL/MATH/FischerBurmeister.hxx
  * \brief
  * \author Thomas Helfer
- * \date   29/05/2019
+ * \date 29/05/2019
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_FISCHERBURMEISTER_HXX
@@ -18,12 +24,12 @@ namespace tfel::math {
    * \brief return a regularised version of the Fischer-Burmeister function
    * defined by:
    * \[
-   * f\left(x,y)=x+y-\sqrt{x^{2}+y^{2}+\varepsilon^{2}}
+   * f\left(x,y\right)=x+y-\sqrt{x^{2}+y^{2}+\varepsilon^{2}}
    * \]
    * This function is such that:
    * \[
-   * f\left(x,y)=0 \RighatArrow x\leq 0, y\leq 0 and
-   * \sqrt{2\,x\,y}=\varepsilon^{2}
+   * f\left(x,y\right)=0 \Rightarrow x\geq 0, y\geq 0 and
+   * 2\,x\,y=\varepsilon^{2}
    * \]
    *
    * > A Regularized and Smoothed Fischer-Burmeister Method for

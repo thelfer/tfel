@@ -23,9 +23,12 @@ namespace tfel::material {
       const J2OCoefficients<StressStensor>& a,
       const J3OCoefficients<StressStensor>& b,
       const Cazacu2004BaseType<StressStensor> c) {
+    using stress = Cazacu2004StressType<StressStensor>;
     const auto J2O = computeJ2O(sig, a);
     const auto J3O = computeJ3O(sig, b);
-    return std::cbrt(tfel::math::power<3>(sqrt(J2O)) - c * J3O);
+    const auto sJ2O = tfel::math::power<1, 2>(J2O);
+    return stress(std::cbrt(
+        tfel::math::base_type_cast(tfel::math::power<3>(sJ2O) - c * J3O)));
   }  // end of computeCazacu2004OrthotropicStressCriterion
 
   template <typename StressStensor>
@@ -37,14 +40,17 @@ namespace tfel::material {
       const J3OCoefficients<StressStensor>& b,
       const Cazacu2004BaseType<StressStensor> c,
       const Cazacu2004StressType<StressStensor> seps) {
+    using stress = Cazacu2004StressType<StressStensor>;
     const auto J2O = computeJ2O(sig, a);
     const auto J3O = computeJ3O(sig, b);
-    const auto seq = std::cbrt(tfel::math::power<3>(sqrt(J2O)) - c * J3O);
+    const auto sJ2O = tfel::math::power<1, 2>(J2O);
+    const auto seq = stress(std::cbrt(
+        tfel::math::base_type_cast(tfel::math::power<3>(sJ2O) - c * J3O)));
     const auto iseq = 1 / std::max(seq, seps);
     const auto dJ2O = computeJ2ODerivative(sig, a);
     const auto dJ3O = computeJ3ODerivative(sig, b);
     // the normal is written n = nb/(seq*seq)
-    const auto nb = (std::sqrt(J2O) / 2) * dJ2O - (c / 3) * dJ3O;
+    const auto nb = (sJ2O / 2) * dJ2O - (c / 3) * dJ3O;
     return std::make_tuple(seq, tfel::math::eval(iseq * iseq * nb));
   }  // end of computeCazacu2004OrthotropicStressCriterion
 
@@ -58,18 +64,21 @@ namespace tfel::material {
       const J3OCoefficients<StressStensor>& b,
       const Cazacu2004BaseType<StressStensor> c,
       const Cazacu2004StressType<StressStensor> seps) {
+    using stress = Cazacu2004StressType<StressStensor>;
     const auto J2O = computeJ2O(sig, a);
     const auto J3O = computeJ3O(sig, b);
-    const auto seq = std::cbrt(tfel::math::power<3>(sqrt(J2O)) - c * J3O);
+    const auto sJ2O = tfel::math::power<1, 2>(J2O);
+    const auto seq = stress(std::cbrt(
+        tfel::math::base_type_cast(tfel::math::power<3>(sJ2O) - c * J3O)));
     const auto iseq = 1 / std::max(seq, seps);
     const auto dJ2O = computeJ2ODerivative(sig, a);
     const auto d2J2O = computeJ2OSecondDerivative(sig, a);
     const auto dJ3O = computeJ3ODerivative(sig, b);
     const auto d2J3O = computeJ3OSecondDerivative(sig, b);
     // the normal is written n = nb/(seq*seq)
-    const auto nb = (std::sqrt(J2O) / 2) * dJ2O - (c / 3) * dJ3O;
-    const auto dnb = 1 / (4 * std::sqrt(J2O)) * (dJ2O ^ dJ2O) +
-                     (std::sqrt(J2O) / 2) * d2J2O - (c / 3) * d2J3O;
+    const auto nb = (sJ2O / 2) * dJ2O - (c / 3) * dJ3O;
+    const auto dnb = 1 / (4 * std::max(sJ2O, seps)) * (dJ2O ^ dJ2O) +
+                     (sJ2O / 2) * d2J2O - (c / 3) * d2J3O;
     const auto n = tfel::math::eval(iseq * iseq * nb);
     return std::make_tuple(
         seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb)));

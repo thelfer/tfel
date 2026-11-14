@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/Forward/Expr.hxx
  * \brief
  * \author Thomas Helfer
- * \date   18/01/2021
+ * \date 18/01/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -13,6 +13,8 @@
 
 #ifndef LIB_TFEL_MATH_FORWARD_EXPR_HXX
 #define LIB_TFEL_MATH_FORWARD_EXPR_HXX
+
+#include <type_traits>
 
 namespace tfel::math {
 

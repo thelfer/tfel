@@ -1,6 +1,15 @@
-% Description of the Hooke stress potential
-% Thomas Helfer
-% 15/05/2018
+---
+title: Description of the Hooke stress potential
+author: Thomas Helfer
+date: 15/05/2018
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
@@ -53,7 +62,7 @@ glossary name must be `ElasticStrain`. This is automatically the case
 with the `@Implicit` dsl.
 
 The total strain increment \(\Delta\,\tepsilonto\) is automatically
-substracted to the equation associated with the elastic
+subtracted to the equation associated with the elastic
 (\(f_{\tepsilonel}\)), which is equivalent to the following statement:
 
 ~~~~{.cpp}
@@ -90,7 +99,7 @@ At \(t+\theta\,dt\), the stress are computed using:
 
 ### Computation of the final stress at \(t+dt\)
 
-If the stiffness tensor is avaible using the
+If the stiffness tensor is available using the
 `@RequireStiffnessTensor`, the final stress \(\ets{\sigma}\) is
 computed using the following formula :
 

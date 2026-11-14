@@ -36,7 +36,7 @@ namespace tfel::meta {
    */
   template <typename CurrentType, typename... Types>
   struct TFEL_VISIBILITY_LOCAL GenerateTypeList<CurrentType, Types...> {
-    typedef TLNode<CurrentType, typename GenerateTypeList<Types...>::type> type;
+    using type = TLNode<CurrentType, typename GenerateTypeList<Types...>::type>;
   };
 
   /*!
@@ -44,7 +44,7 @@ namespace tfel::meta {
    */
   template <>
   struct TFEL_VISIBILITY_LOCAL GenerateTypeList<> {
-    typedef TLE type;
+    using type = TLE;
   };
 
 }  // end of namespace tfel::meta

@@ -3,7 +3,7 @@
  * \file   mfront/src/MultipleIsotropicMisesFlowsDSL.cxx
  * \brief
  * \author Thomas Helfer
- * \date   31 jan 2008
+ * \date 31/01/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -60,6 +60,11 @@ namespace mfront {
     this->mb.addLocalVariable(
         h, VariableDescription("StrainStensor", "n", 1u, 0u));
     this->mb.addLocalVariable(h, VariableDescription("strain", "p_", 1u, 0u));
+    // see the computeConsistentTangentOperator method written by the code
+    // generator
+    this->mb.setAttribute(h, BehaviourData::hasConsistentTangentOperator, true);
+    this->mb.setAttribute(
+        h, BehaviourData::isConsistentTangentOperatorSymmetric, true);
   }
 
   std::unique_ptr<AbstractBehaviourCodeGenerator>
@@ -144,6 +149,21 @@ namespace mfront {
   std::size_t MultipleIsotropicMisesFlowsDSL::getNumberOfFlowRules() const {
     return this->flows.size();
   }  // end of getNumberOfFlowRules
+
+  std::string MultipleIsotropicMisesFlowsDSL::getIsotropicHardeningRulesTheta(
+      const std::size_t id) const {
+    const auto& flow = this->flows.at(id);
+    if (!flow.hasSpecificTheta) {
+      return IsotropicBehaviourDSLBase::getIsotropicHardeningRulesTheta(id);
+    }
+    // same expression as in the NewtonIntegration method written by the code
+    // generator, which writes the behaviour file with a precision of 14
+    std::ostringstream theta;
+    theta.imbue(std::locale::classic());
+    theta.precision(14);
+    theta << "real(" << flow.theta << ")";
+    return theta.str();
+  }  // end of getIsotropicHardeningRulesTheta
 
   void MultipleIsotropicMisesFlowsDSL::treatFlowRule() {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -239,6 +259,16 @@ namespace mfront {
       this->reserveName(ose.str());
       this->mb.addLocalVariable(
           uh, VariableDescription("stress", oseq_e.str(), 1u, 0u));
+      // normal associated with the elastic prediction of this flow, used to
+      // compute the consistent tangent operator
+      this->mb.addLocalVariable(
+          uh, VariableDescription(
+                  "StrainStensor",
+                  "mfront_n" + std::to_string(this->flows.size()), 1u, 0u));
+      // the elastic prediction of this flow and the one used to define the
+      // flow direction are not colinear in general
+      this->mb.updateAttribute(
+          uh, BehaviourData::isConsistentTangentOperatorSymmetric, false);
       ++(this->current);
     } else {
       flow.hasSpecificTheta = false;

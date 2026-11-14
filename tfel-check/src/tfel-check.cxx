@@ -2,7 +2,7 @@
  * \file   tfel-check/src/tfel-check.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28 Jan 2008
+ * \date 28/01/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -17,6 +17,7 @@
 #include <vector>
 #include <string>
 #include <cerrno>
+#include <sstream>
 #include <cstring>
 #include <cstdlib>
 #include <climits>
@@ -30,12 +31,14 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/Config/Substitutions.hxx"
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/System/RecursiveFind.hxx"
 #include "TFEL/System/ThreadPool.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
@@ -90,7 +93,29 @@ namespace tfel::check {
     for (const auto& i : mf.getRegistredInterfaces()) {
       c.addComponent("mfront::model::" + i + "_interface");
     }
-  }  // end of declareTFELComponents
+#ifdef TFEL_CHECK_COMPONENTS
+    for (const auto& co :
+         tfel::utilities::tokenize(TFEL_CHECK_COMPONENTS, '@')) {
+      c.addComponent(co);
+    }
+#endif /* TFEL_CHECK_COMPONENTS */
+  }    // end of declareTFELComponents
+
+  static void declareTFELSubstitutions(ConfigurationManager& c) {
+    const auto s = tfel::system::dirSeparator();
+    c.addSubstitution("@TFEL_INCLUDE_DIR@", getInstallPath() + s + "include",
+                      false);
+#ifdef _WIN32
+    c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "bin",
+                      false);
+#else
+    c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "lib",
+                      false);
+#endif
+    for (const auto& [s1, s2] : tfel::config::getTFELDefaultSubstitutions()) {
+      c.addSubstitution(s1, s2, false);
+    }
+  }  // end of declareTFELSubstitutions
 
   static void declareTFELExecutables(ConfigurationManager& c) {
     for (const std::string e : {"mfront", "mtest", "mfront-doc",
@@ -124,14 +149,14 @@ namespace tfel::check {
      * arguments.
      */
     void treatUnknownArgument() override;
-    //! \brief treat a substituion pattern
-    virtual bool treatSubstitution();
-    //! \brief register call backs associated to command line arguments
-    virtual void registerArgumentCallBacks();
     //! \return the current version of `tfel-check`
-    std::string getVersionDescription() const override;
+    [[nodiscard]] std::string getVersionDescription() const override;
     //! \return the description of the usage of `tfel-check`
-    std::string getUsageDescription() const override;
+    [[nodiscard]] std::string getUsageDescription() const override;
+    //! \brief treat a substituion pattern
+    bool treatSubstitution();
+    //! \brief register call backs associated to command line arguments
+    void registerArgumentCallBacks();
     //! \brief configuration manager
     ConfigurationManager configurations;
     //! \brief list of configuration files
@@ -149,7 +174,7 @@ namespace tfel::check {
      * \brief boolean stating that terminal colors shall be used for the
      * terminal output (std::cout)
      */
-    bool use_terminal_colors = false;
+    bool use_terminal_colors = true;
     /*!
      * \brief boolean stating that the terminal output (std::cout) shall be
      * synchronized
@@ -236,11 +261,12 @@ namespace tfel::check {
               auto pos = std::size_t{};
               try {
                 this->njobs = std::stoul(o, &pos);
-              } catch (std::invalid_argument& e) {
+              } catch (std::exception&) {
                 std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
                 std::exit(EXIT_FAILURE);
               }
-              if (pos != o.size()) {
+              // std::stoul accepts negative values
+              if ((o[0] == '-') || (pos != o.size()) || (this->njobs == 0)) {
                 std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
                 std::exit(EXIT_FAILURE);
               }
@@ -254,6 +280,32 @@ namespace tfel::check {
                    parse(this->configurations, f);
                  },
                  true));
+    this->registerCallBack(
+        "--no-terminate-handler",
+        CallBack(
+            "don't set a terminate handler", []() noexcept {}, false));
+    this->registerCallBack(
+        "--clean-up", CallBack(
+                          "clean generated files and directories listed by "
+                          "the @CleanFiles and @CleanDirectories keywords in "
+                          "case of success (true by default).",
+                          [this, read_boolean_value] {
+                            const auto b = read_boolean_value("--clean-up");
+                            this->configurations.setCleanUp(b);
+                          },
+                          true));
+    this->registerCallBack(
+        "--discard-clean-up-on-failure",
+        CallBack(
+            "don't clean generated files and directories listed by "
+            "the @CleanFiles and @CleanDirectories keywords in case of "
+            "failure (true by default).",
+            [this, read_boolean_value] {
+              const auto b =
+                  read_boolean_value("--discard-clean-up-on-failure");
+              this->configurations.discardCleanUpOnFailure(b);
+            },
+            true));
     this->registerCallBack(
         "--synchronize-terminal-output",
         CallBack(
@@ -291,7 +343,7 @@ namespace tfel::check {
             "disable test on the number of jobs allowed to run simultaneously.",
             [this, read_boolean_value] {
               this->discard_jobs_limit =
-                  read_boolean_value("--discard-commands-failure");
+                  read_boolean_value("--discard-jobs-limit");
             },
             true));
     this->registerCallBack(
@@ -307,6 +359,19 @@ namespace tfel::check {
               std::exit(EXIT_SUCCESS);
             },
             false));
+    this->registerCallBack(
+        "--list-default-substitutions",
+        CallBack(
+            "list all default substitutions",
+            [this] {
+              auto global_configuration =
+                  this->configurations.getConfiguration("");
+              for (const auto& [k, v] : global_configuration.substitutions) {
+                std::cout << "- '" << k << "': '" << v << "'\n";
+              }
+              std::exit(EXIT_SUCCESS);
+            },
+            false));
   }  // end of TFELCheck::registerArgumentCallBacks
 
   std::string TFELCheck::getVersionDescription() const { return VERSION; }
@@ -318,7 +383,17 @@ namespace tfel::check {
   TFELCheck::TFELCheck(const int argc, const char* const* const argv) {
     parseConfigFiles(this->configurations);
     declareTFELComponents(this->configurations);
+    declareTFELSubstitutions(this->configurations);
     this->setArguments(argc, argv);
+    // '-j' without value is treated as '--jobs' without value, since the
+    // argument parser requires a value after an alias
+    for (auto p = this->args.begin(); p != this->args.end(); ++p) {
+      const auto next = std::next(p);
+      if ((p->as_string() == "-j") &&
+          ((next == this->args.end()) || (next->as_string()[0] == '-'))) {
+        p->as_string() = "--jobs";
+      }
+    }
     this->registerArgumentCallBacks();
     this->parseArguments();
     //
@@ -352,12 +427,18 @@ namespace tfel::check {
       const auto cpath = systemCall::getCurrentWorkingDirectory();
       const auto path = systemCall::getAbsolutePath(d);
       // store the output of the given process that will be saved in
-      // tfel-check.log
+      // tfel-check.log, without terminal colors
       std::ostringstream output;
-      auto log = PCLogger(std::make_shared<PCTextDriver>(output, true));
-      // this adds unsynchronized output to std::cout
-      if (!this->synchronize_terminal_output) {
-        log.addDriver(std::make_shared<PCTextDriver>());
+      // store the synchronized terminal output
+      std::ostringstream terminal_output;
+      auto log = PCLogger(std::make_shared<PCTextDriver>(output, false));
+      if (this->synchronize_terminal_output) {
+        log.addDriver(std::make_shared<PCTextDriver>(
+            terminal_output, this->use_terminal_colors));
+      } else {
+        // this adds unsynchronized output to std::cout
+        log.addDriver(
+            std::make_shared<PCTextDriver>(this->use_terminal_colors));
       }
       log.addMessage("entering directory '" + path + "'");
       log.addMessage("* beginning of test '" + d + '/' + f + "'");
@@ -380,7 +461,7 @@ namespace tfel::check {
         std::lock_guard<std::mutex> guard(log_synchronization);
         log_file << output.str();
         if (this->synchronize_terminal_output) {
-          std::cout << output.str();
+          std::cout << terminal_output.str();
         }
       }
       return success;
@@ -446,9 +527,50 @@ namespace tfel::check {
 
 }  // end of namespace tfel::check
 
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+[[noreturn]] static void tfel_check_terminate_handler() {
+  if (auto pe = std::current_exception()) {
+    // we have an exception
+    try {
+      std::rethrow_exception(pe);
+    } catch (const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch (...) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
+  ::exit(EXIT_FAILURE);
+}
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+
 int main(const int argc, const char* const* const argv) {
-  mfront::initDSLs();
-  mfront::initInterfaces();
-  tfel::check::TFELCheck check(argc, argv);
-  return check.execute();
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+  auto find = [argv, argc](const char* v) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, v) == 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+  if (!find("--no-terminate-handler")) {
+    std::set_terminate(tfel_check_terminate_handler);
+  }
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
+  int r = EXIT_FAILURE;
+#if not defined(__GLIBCXX__)
+  try {
+#endif /* not defined(__GLIBCXX__) */
+    mfront::initDSLs();
+    mfront::initInterfaces();
+    tfel::check::TFELCheck check(argc, argv);
+    r = check.execute();
+#if not defined(__GLIBCXX__)
+  } catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+#endif /* not defined(__GLIBCXX__) */
+  return r;
 }  // end of main

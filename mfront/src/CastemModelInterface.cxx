@@ -2,7 +2,7 @@
  * \file   mfront/src/CastemModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   03/07/2022
+ * \date 03/07/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -74,13 +74,52 @@ namespace mfront {
   static void writeScalarStandardTypedefs(std::ostream& os,
                                           const ModelDescription& md) {
     const auto use_qt = useQuantities(md) ? "true" : "false";
-    os << "using NumericType [[maybe_unused]] = double;\n";
+    os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n"
+       << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<double, " << use_qt
-         << ">::" << a << ";\n";
+      os << "using " << a << " [[maybe_unused]] = typename "
+         << "tfel::config::ScalarTypes<double, " << use_qt << ">::" << a
+         << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
+
+  /*!
+   * \return if the output `n` is modified by a function called before the
+   * function `f`, the functions being called in the order of their
+   * declaration
+   */
+  static bool isModifiedByAPreviousFunction(const ModelDescription& md,
+                                            const ModelDescription::Function& f,
+                                            const std::string& n) {
+    for (const auto& pf : md.functions) {
+      if (pf.name == f.name) {
+        return false;
+      }
+      if (pf.modifiedVariables.count(n) != 0) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isModifiedByAPreviousFunction
+
+  /*!
+   * \return if the function `f` uses the value at the beginning of the time
+   * step of an output modified by a previous function. Since each function
+   * stores the outputs it computes in the state variables, this value is
+   * read in a copy of the state variables made before calling the first
+   * function.
+   */
+  static bool requiresInitialStateVariables(
+      const ModelDescription& md, const ModelDescription::Function& f) {
+    for (const auto& uv : f.usedVariables) {
+      const auto [n, vdepth] = md.decomposeVariableName(uv);
+      if ((vdepth == 1) && (md.outputs.contains(n)) &&
+          (isModifiedByAPreviousFunction(md, f, n))) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of requiresInitialStateVariables
 
   void CastemModelInterface::writeUMATFunctionArguments(std::ostream& os) {
     os << "(castem::CastemReal *const,\n"
@@ -124,6 +163,13 @@ namespace mfront {
   }  // end of writeUMATFunctionArguments
 
   CastemModelInterface::CastemModelInterface() = default;
+
+  void CastemModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
 
   std::string CastemModelInterface::getLibraryName(
       const ModelDescription& md) const {
@@ -183,7 +229,7 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n";
 
     const auto hg = getHeaderGuard(md);
@@ -198,11 +244,23 @@ namespace mfront {
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
 
+    CastemInterface i;
+    i.writeSetOutOfBoundsPolicyFunctionDeclaration(os, name);
+
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
+      const auto fn = getUmatFunctionName(md);
       os << "/*!\n"
          << " * \\brief function allowing to modify the parameters of the "
          << name << " model\n"
+         << " * \\param[in] n: name of the parameter\n"
+         << " * \\param[in] v: value of the parameter\n"
+         << " */\n"
+         << "MFRONT_SHAREDOBJ int\n"
+         << fn << "_setParameter(const char *const, const double);\n\n"
+         << "/*!\n"
+         << " * \\brief same as " << fn
+         << "_setParameter, kept for backward compatibility\n"
          << " * \\param[in] n: name of the parameter\n"
          << " * \\param[in] v: value of the parameter\n"
          << " */\n"
@@ -267,16 +325,23 @@ namespace mfront {
        << " * \\brief  This file declares the generic interface for the "
        << md.className << " model\n"
        << " * \\author " << fd.authorName << '\n'
-       << " * \\date   " << fd.date << '\n'
+       << " * \\date " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
+       << "#include <cerrno>\n"
        << "#include <locale>\n"
+       << "#include <string>\n"
+       << "#include <vector>\n"
        << "#include <cstring>\n"
+       << "#include <fstream>\n"
        << "#include <sstream>\n"
+       << "#include <iostream>\n"
+       << "#include \"TFEL/Raise.hxx\"\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include \"TFEL/Math/Array/View.hxx\"\n"
-       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n"
+       << "#include\"MFront/Castem/CastemOutOfBoundsPolicy.hxx\"\n";
     if (useQuantities(md)) {
       os << "#include\"TFEL/Math/qt.hxx\"\n"
          << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
@@ -307,6 +372,9 @@ namespace mfront {
     exportUnsignedShortSymbol(os, fn + "_nThermodynamicForces", 0);
     exportArrayOfIntegersSymbol(os, fn + "_ThermodynamicForcesTypes", {});
     exportArrayOfStringsSymbol(os, fn + "_ThermodynamicForces", {""});
+    // policy read from the environment, as for the castem behaviours
+    const BehaviourInterfaceBase& bi = i;
+    bi.writeGetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if (!md.sources.empty()) {
       os << md.sources << "\n\n";
@@ -315,7 +383,10 @@ namespace mfront {
     const auto has_constructor =
         (!md.constantMaterialProperties.empty()) || (hasRealParameters(md));
     //
-    os << "namespace castem{\n\n";
+    // the classes are local to the library: two libraries defining a
+    // model of the same name must not share their parameters
+    os << "namespace castem{\n\n"
+       << "namespace {\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
@@ -336,9 +407,9 @@ namespace mfront {
            << p.getAttribute<double>(VariableDescription::defaultValue)
            << "};\n";
       }
-      os << "private:\n"
-         << cn << "() = default;\n"
-         << "};\n\n";
+      os << "private:\n";
+      writeRealParametersInitializerConstructor(os, md, cn);
+      os << "};\n\n";
     }
     //
     os << "struct " << md.className << "{\n\n";
@@ -359,7 +430,8 @@ namespace mfront {
         first = false;
       }
       for (const auto& p : md.parameters) {
-        if (!isRealParameter(p)) {
+        // parameters treated as static variables are not members
+        if ((!isRealParameter(p)) || (!hasRealParameters(md))) {
           continue;
         }
         os << (first ? "" : ",\n");
@@ -392,6 +464,9 @@ namespace mfront {
       }();
       os << "void execute_" << f.name
          << "(castem::CastemReal *const mfront_STATEV,\n";
+      if (requiresInitialStateVariables(md, f)) {
+        os << "const castem::CastemReal *const mfront_STATEV0,\n";
+      }
       if (f.useTimeIncrement) {
         os << "const castem::CastemReal *const mfront_DTIME,\n";
       } else {
@@ -414,16 +489,10 @@ namespace mfront {
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using namespace tfel::material;\n";
-      if (useQuantities(md)) {
-        os << "using PhysicalConstants [[maybe_unused]] = "
-           << "tfel::PhysicalConstants<NumericType, true>;\n";
-      } else {
-        os << "using PhysicalConstants [[maybe_unused]] = "
-           << "tfel::PhysicalConstants<NumericType, false>;\n";
-      }
-      const auto policy = getDefaultOutOfBoundsPolicyAsString(md);
-      os << "[[maybe_unused]] constexpr const auto policy = "
-         << "tfel::material::" << policy << ";\n";
+      writeMaterialLaws(os, md.materialLaws);
+      writePhysicalConstantsAlias(os, md, "NumericType", useQuantities(md));
+      os << "[[maybe_unused]] const auto policy = ::" << fn
+         << "_getOutOfBoundsPolicy();\n";
       if (f.useTimeIncrement) {
         os << "const auto dt = time{*mfront_DTIME};\n";
       }
@@ -442,13 +511,13 @@ namespace mfront {
           const auto& v = md.inputs.getVariable(n);
           const auto pos = getVariablePosition(md.inputs, n, true);
           if (v.getExternalName() == Glossary::Temperature) {
+            // the temperature is the only value of TEMP and DTEMP
             if (vdepth == 1) {
               os << "const auto " << v.name << "_1 = " << v.type
-                 << "{mfront_TEMP[" << pos << "]};\n";
+                 << "{*mfront_TEMP};\n";
             } else {
               os << "const auto " << v.name << " = " << v.type
-                 << "{mfront_TEMP[" << pos << "] + "
-                 << "mfront_DTEMP[" << pos << "]};\n";
+                 << "{*mfront_TEMP + *mfront_DTEMP};\n";
             }
           } else {
             if (vdepth == 1) {
@@ -466,27 +535,30 @@ namespace mfront {
           if (vdepth != 1) {
             raise("unsupported depth for variable '" + n + "'");
           }
-          os << "const auto " << v.name << "_1 = " << v.type
-             << "{mfront_STATEV[" << pos << "]};\n";
+          // a previous function has already stored the value of the
+          // output at the end of the time step in mfront_STATEV
+          const auto statev = isModifiedByAPreviousFunction(md, f, n)
+                                  ? "mfront_STATEV0"
+                                  : "mfront_STATEV";
+          os << "const auto " << v.name << "_1 = " << v.type << "{" << statev
+             << "[" << pos << "]};\n";
         }
       }
+      auto write_physical_bounds = [&os, &raise](const VariableDescription& v,
+                                                 const std::string& n,
+                                                 const unsigned short vdepth) {
+        if (!v.hasPhysicalBounds()) {
+          return;
+        }
+        if (!v.isScalar()) {
+          raise("error while treating physical bounds of variable '" + v.name +
+                "' (only scalar variable are supported)");
+        }
+        // the variable is checked under the name it is declared with
+        const auto vn = (vdepth == 1u) ? n + "_1" : n;
+        writePhysicalBoundsChecks(os, v, vn, "1u", false, false);
+      };
       if (!areRuntimeChecksDisabled(md)) {
-        auto write_physical_bounds = [&os, &raise](
-                                         const VariableDescription& v,
-                                         const std::string& n,
-                                         const unsigned short vdepth) {
-          if (!v.hasPhysicalBounds()) {
-            return;
-          }
-          if (!v.isScalar()) {
-            raise("error while treating physical bounds of variable '" +
-                  v.name + "' (only scalar variable are supported)");
-          }
-          writePhysicalBoundsChecks(os, v, n, "1u", false, false);
-          if (vdepth == 1u) {
-            writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
-          }
-        };
         for (const auto& mv : f.usedVariables) {
           const auto [n, vdepth] = md.decomposeVariableName(mv);
           if (md.outputs.contains(n)) {
@@ -503,23 +575,21 @@ namespace mfront {
         }
       }
       //
+      auto write_bounds = [&os, &raise](const VariableDescription& v,
+                                        const std::string& n,
+                                        const unsigned short vdepth) {
+        if (!v.hasBounds()) {
+          return;
+        }
+        if (!v.isScalar()) {
+          raise("error while treating bounds of variable '" + v.name +
+                "' (only scalar variable are supported)");
+        }
+        // the variable is checked under the name it is declared with
+        const auto vn = (vdepth == 1u) ? n + "_1" : n;
+        writeBoundsChecks(os, v, vn, "1u", "policy", false, false);
+      };
       if (!areRuntimeChecksDisabled(md)) {
-        auto write_bounds = [&os, &raise](const VariableDescription& v,
-                                          const std::string& n,
-                                          const unsigned short vdepth) {
-          if (!v.hasBounds()) {
-            return;
-          }
-          if (!v.isScalar()) {
-            raise("error while treating bounds of variable '" + v.name +
-                  "' (only scalar variable are supported)");
-          }
-          writeBoundsChecks(os, v, n, "1u", "policy", false, false);
-          if (vdepth == 1u) {
-            writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false,
-                              false);
-          }
-        };
         for (const auto& mv : f.usedVariables) {
           const auto [n, vdepth] = md.decomposeVariableName(mv);
           if (md.outputs.contains(n)) {
@@ -537,6 +607,14 @@ namespace mfront {
       }
       //
       os << f.body << '\n';
+      // bounds of the outputs computed by the function
+      if (!areRuntimeChecksDisabled(md)) {
+        for (const auto& mv : f.modifiedVariables) {
+          const auto& v = md.outputs.getVariable(mv);
+          write_physical_bounds(v, v.name, 0u);
+          write_bounds(v, v.name, 0u);
+        }
+      }
       for (const auto& mv : f.modifiedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
         const auto& v = md.outputs.getVariable(mv);
@@ -557,14 +635,14 @@ namespace mfront {
     // material properties
     for (const auto& mp : md.constantMaterialProperties) {
       if (!getDebugMode()) {
-        os << "#line " << mp.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, mp.lineNumber, fd.fileName);
       }
       os << "const " << mp.type << " " << mp.name << ";\n";
     }
     // parameters
     for (const auto& p : md.parameters) {
       if (!getDebugMode()) {
-        os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, p.lineNumber, fd.fileName);
       }
       if ((isRealParameter(p)) &&
           (!areParametersTreatedAsStaticVariables(md))) {
@@ -588,10 +666,11 @@ namespace mfront {
     // static variables
     for (const auto& v : md.staticVars) {
       if (!getDebugMode()) {
-        os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, v.lineNumber, fd.fileName);
       }
-      os << "static constexpr " << v.type << " " << v.name << " = "  //
-         << v.value << ";\n";
+      // brace initialisation is required by quantities
+      os << "static constexpr auto " << v.name << " = " << v.type << "{"
+         << v.value << "};\n";
     }
     os << "}; // end of struct " << md.className << "\n\n";
     //
@@ -615,9 +694,24 @@ namespace mfront {
     } else {
       os << "const " << md.className << " m;\n";
     }
+    if (std::any_of(md.functions.begin(), md.functions.end(),
+                    [&md](const ModelDescription::Function& f) {
+                      return requiresInitialStateVariables(md, f);
+                    })) {
+      // the state variables at the beginning of the time step
+      os << "const castem::CastemReal mfront_STATEV0[" << md.outputs.size()
+         << "] = {";
+      for (std::size_t i = 0; i != md.outputs.size(); ++i) {
+        os << (i == 0 ? "" : ", ") << "mfront_STATEV[" << i << "]";
+      }
+      os << "};\n";
+    }
     for (const auto& f : md.functions) {
-      os << "m.execute_" << f.name
-         << "(mfront_STATEV, mfront_DTIME, mfront_TEMP, mfront_DTEMP, "
+      os << "m.execute_" << f.name << "(mfront_STATEV, ";
+      if (requiresInitialStateVariables(md, f)) {
+        os << "mfront_STATEV0, ";
+      }
+      os << "mfront_DTIME, mfront_TEMP, mfront_DTEMP, "
          << "mfront_PREDEF, mfront_DPRED);\n";
     }
     os << "} catch(...){\n"
@@ -626,14 +720,19 @@ namespace mfront {
        << "}\n"
        << "return 1;\n"
        << "}\n\n";
-    os << "} // end of namespace castem\n\n";
+    os << "} // end of anonymous namespace\n\n"
+       << "} // end of namespace castem\n\n";
+    //
+    i.writeSetOutOfBoundsPolicyFunctionImplementation(os, bd, name);
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
       os << "MFRONT_SHAREDOBJ int\n"
-         << name << "_setParameter(const char *const n, const double v){\n";
+         << fn << "_setParameter(const char *const n, const double v){\n";
       writeScalarStandardTypedefs(os, md);
-      os << "auto& parameters = castem::" << cn << "::get();\n";
+      // reading the parameters' file may fail
+      os << "try{\n"
+         << "auto& parameters = castem::" << cn << "::get();\n";
       auto first = true;
       for (const auto& p : md.parameters) {
         if (!isRealParameter(p)) {
@@ -661,7 +760,14 @@ namespace mfront {
         first = false;
       }
       os << "}\n"
+         << "} catch(...){\n"
          << "return 0;\n"
+         << "}\n"
+         << "return 0;\n"
+         << "} // end of " << fn << "_setParameter\n\n";
+      os << "MFRONT_SHAREDOBJ int\n"
+         << name << "_setParameter(const char *const n, const double v){\n"
+         << "return " << fn << "_setParameter(n, v);\n"
          << "} // end of " << name << "_setParameter\n\n";
     }
     //
@@ -735,6 +841,7 @@ namespace mfront {
     td.headers.push_back("MFront/CastemModel/" + name + "-castem.hxx");
     insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
+    insert_if(l.link_libraries, tfel::getLibraryInstallName("CastemInterface"));
     insert_if(l.link_libraries, "$(shell " + tfel_config +
                                     " --library-dependency "
                                     "--material --mfront-profiling)");

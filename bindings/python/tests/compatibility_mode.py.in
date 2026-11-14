@@ -1,0 +1,19 @@
+import os
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+
+import @tfel_system_python_module@ as tfel_system
+
+class PyTFELSystemExternalLibraryManager(unittest.TestCase):
+    def test_elm(self):
+        l = os.environ['MFRONT_BEHAVIOUR_LIBRARY']
+        elm = tfel_system.ExternalLibraryManager.getExternalLibraryManager()
+        v1 = elm.getCompatibilityMode(l, "PhysicalConstants_v5_2_0")
+        self.assertTrue(v1 == "5.2.0")
+        v2 = elm.getCompatibilityMode(l, "PhysicalConstants_v6_0_0")
+        self.assertTrue(v2 == "future")
+
+if __name__ == '__main__':
+    unittest.main()

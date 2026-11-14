@@ -2,7 +2,7 @@
  * \file   SchemeBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 déc. 2015
+ * \date 09/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,6 +25,9 @@ static void setPredictionPolicy(mtest::SchemeBase& s, const std::string& p) {
     s.setPredictionPolicy(mtest::PredictionPolicy::LINEARPREDICTION);
   } else if (p == "ElasticPrediction") {
     s.setPredictionPolicy(mtest::PredictionPolicy::ELASTICPREDICTION);
+  } else if (p == "ElasticPredictionFromMaterialProperties") {
+    s.setPredictionPolicy(
+        mtest::PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES);
   } else if (p == "SecantOperatorPrediction") {
     s.setPredictionPolicy(mtest::PredictionPolicy::SECANTOPERATORPREDICTION);
   } else if (p == "TangentOperatorPrediction") {
@@ -59,13 +62,14 @@ static void setStiffnessMatrixType(mtest::SchemeBase& s, const std::string& t) {
 
 static void setStiffnessUpdatingPolicy(mtest::SchemeBase& s,
                                        const std::string& p) {
-  if (p == "CONSTANTSTIFFNESS") {
+  // the spellings of the @StiffnessUpdatePolicy keyword are also accepted
+  if ((p == "CONSTANTSTIFFNESS") || (p == "ConstantStiffness")) {
     s.setStiffnessUpdatingPolicy(
         mtest::StiffnessUpdatingPolicy::CONSTANTSTIFFNESS);
-  } else if (p == "CONSTANTSTIFFNESSBYPERIOD") {
+  } else if ((p == "CONSTANTSTIFFNESSBYPERIOD") || (p == "SecantOperator")) {
     s.setStiffnessUpdatingPolicy(
         mtest::StiffnessUpdatingPolicy::CONSTANTSTIFFNESSBYPERIOD);
-  } else if (p == "UPDATEDSTIFFNESSMATRIX") {
+  } else if ((p == "UPDATEDSTIFFNESSMATRIX") || (p == "TangentOperator")) {
     s.setStiffnessUpdatingPolicy(
         mtest::StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX);
   } else {
@@ -100,20 +104,21 @@ void declareSchemeBase(pybind11::module_&);
 void declareSchemeBase(pybind11::module_& m) {
   using namespace mtest;
   pybind11::class_<SchemeBase>(m, "SchemeBase")
-      .def("setDescription", &SchemeBase::setDescription,
+      .def("setDescription", &SchemeBase::setDescription, pybind11::arg("d"),
            "This method describes the test  which is implemented "
            "in a mtest file.\n"
            "* The parameter (string) is the description of the "
            "test.")
-      .def("setAuthor", &SchemeBase::setAuthor,
+      .def("setAuthor", &SchemeBase::setAuthor, pybind11::arg("a"),
            "This method is used give the name of the person who "
            "wrote the mtest file.\n"
            "* The parameter (string) is the author's name.")
-      .def("setDate", &SchemeBase::setDate,
+      .def("setDate", &SchemeBase::setDate, pybind11::arg("d"),
            "This method allows the user to precise when the mtest "
            "file was written.\n"
            "* The parameter (string) is the mtest's creation date.")
       .def("setPredictionPolicy", &SchemeBase::setPredictionPolicy,
+           pybind11::arg("p"),
            "This method specify how the initial estimate of the "
            "solution shall be obtained.\n"
            "* The parameter (PredictionPolicy) is the selected "
@@ -121,9 +126,10 @@ void declareSchemeBase(pybind11::module_& m) {
            "- NOPREDICTION\n"
            "- LINEARPREDICTION\n"
            "- ELASTICPREDICTION\n"
+           "- ELASTICPREDICTIONFROMMATERIALPROPERTIES\n"
            "- SECANTOPERATORPREDICTION\n"
            "- TANGENTOPERATORPREDICTION\n")
-      .def("setPredictionPolicy", setPredictionPolicy,
+      .def("setPredictionPolicy", setPredictionPolicy, pybind11::arg("p"),
            "This method specify how the initial estimate of the "
            "solution shall be obtained.\n"
            "* The parameter (string) is the selected policy. "
@@ -139,6 +145,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "the 'Cast3M' finite element solver requires the "
            "stiffness matrix to be defined.")
       .def("setStiffnessMatrixType", &SchemeBase::setStiffnessMatrixType,
+           pybind11::arg("t"),
            "This method specify the type of stiffness matrix that "
            "shall be given by the mechanical behaviour and which "
            "will be used by the resolution algorithm.\n"
@@ -149,7 +156,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "- SECANTOPERATOR\n"
            "- TANGENTOPERATOR\n"
            "- CONSISTENTTANGENTOPERATOR")
-      .def("setStiffnessMatrixType", setStiffnessMatrixType,
+      .def("setStiffnessMatrixType", setStiffnessMatrixType, pybind11::arg("t"),
            "This method specify the type of stiffness matrix that "
            "shall be given by the mechanical behaviour and which "
            "will be used by the resolution algorithm.\n"
@@ -161,26 +168,28 @@ void declareSchemeBase(pybind11::module_& m) {
            "- 'TangentOperator'\n"
            "- 'ConsistentTangentOperator'")
       .def("setStiffnessUpdatingPolicy",
-           &SchemeBase::setStiffnessUpdatingPolicy)
-      .def("setStiffnessUpdatingPolicy", setStiffnessUpdatingPolicy)
+           &SchemeBase::setStiffnessUpdatingPolicy, pybind11::arg("p"))
+      .def("setStiffnessUpdatingPolicy", setStiffnessUpdatingPolicy,
+           pybind11::arg("p"))
       .def("setUseCastemAccelerationAlgorithm",
-           &SchemeBase::setUseCastemAccelerationAlgorithm,
+           &SchemeBase::setUseCastemAccelerationAlgorithm, pybind11::arg("b"),
            "This method specifies if the acceleration algorithm "
            "introduced by the resolution procedures of the castem "
            "finite element shall be used.\n"
            "* If the parameter (bool) is 'true', the algorithm "
            "will be used. Otherwise, it wont be.")
       .def("setCastemAccelerationTrigger",
-           &SchemeBase::setCastemAccelerationTrigger,
+           &SchemeBase::setCastemAccelerationTrigger, pybind11::arg("n"),
            "This method specifies iterations number "
            "before the first call to the acceleration algorithm.\n"
            "* The parameter (int) specify the iterations number.")
       .def("setCastemAccelerationPeriod",
-           &SchemeBase::setCastemAccelerationPeriod,
+           &SchemeBase::setCastemAccelerationPeriod, pybind11::arg("n"),
            "This method specifies iterations number "
            "between two calls to the acceleration algorithm.\n"
            "* The parameter (int) specify the iterations number.")
       .def("setAccelerationAlgorithm", &SchemeBase::setAccelerationAlgorithm,
+           pybind11::arg("a"),
            "This method specify the name of the acceleration "
            "algorithm used to accelerate the convergence toward "
            "equilibrium.\n"
@@ -188,10 +197,20 @@ void declareSchemeBase(pybind11::module_& m) {
            "The following algorithms are available:\n"
            "- 'Cast3M'\n"
            "- 'Secant'\n"
+           "- 'AlternateSecant'\n"
+           "- 'AlternateDelta2'\n"
+           "- 'Alternate2Delta'\n"
+           "- 'CrossedSecant'\n"
+           "- 'CrossedDelta2'\n"
+           "- 'Crossed2Delta'\n"
+           "- 'Crossed2Deltabis'\n"
            "- 'Steffensen'\n"
-           "- 'Irons-Tuck'")
+           "- 'IronsTuck'\n"
+           "- 'UAnderson'\n"
+           "- 'FAnderson'")
       .def("setAccelerationParameter",
-           &SchemeBase::setAccelerationAlgorithmParameter,
+           &SchemeBase::setAccelerationAlgorithmParameter, pybind11::arg("n"),
+           pybind11::arg("v"),
            "This method fine-tune the acceleration algorithm "
            "used to reach equilibrium. "
            "* The first parameter (string) is the name of the "
@@ -199,7 +218,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "* The second parameter (string) is the value of "
            "this parameter.")
       .def("setMaximumNumberOfIterations",
-           &SchemeBase::setMaximumNumberOfIterations,
+           &SchemeBase::setMaximumNumberOfIterations, pybind11::arg("n"),
            "This method specify the maximum number of iterations "
            "allowed to the global algorithm to reach the equilibrium.\n"
            "* The parameter (uint) is the maximum number of iterations.\n"
@@ -207,7 +226,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "the time step is divided by two. The maximum number of sub-steps "
            "can be specified using the 'setMaximumNumberOfSubSteps' method.")
       .def("setMaximumNumberOfSubSteps",
-           &SchemeBase::setMaximumNumberOfSubSteps,
+           &SchemeBase::setMaximumNumberOfSubSteps, pybind11::arg("n"),
            "This method specify the maximum number of sub-steps allowed.\n"
            "* The parameter (uint) is the maximum number of sub-steps.\n"
            "When the global algorithm fails to reach equilibrium (see "
@@ -215,6 +234,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "be divided by two. The maximal number of times the time step "
            "is reduced if given by maximum number of sub steps.")
       .def("setModellingHypothesis", &SchemeBase::setModellingHypothesis,
+           pybind11::arg("h"),
            "This method specify the modelling hypothesis to use.\n"
            "* The parameter (string) is the selected modelling "
            "hypothesis. The available modeling hypothesis (including "
@@ -226,7 +246,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "- GeneralisedPlaneStrain               (2D) : EXX EYY EZZ EXY\n"
            "- Tridimensional                       (3D) : EXX EYY EZZ EXY EXZ "
            "EYZ")
-      .def("setTimes", &SchemeBase::setTimes,
+      .def("setTimes", &SchemeBase::setTimes, pybind11::arg("t"),
            "This method specify a list of times used for the "
            "computations.\n "
            "* The parameter (vector<double>) is the specified "
@@ -239,21 +259,27 @@ void declareSchemeBase(pybind11::module_& m) {
            "steppings time. See the 'setMaximumNumberOfSubSteps' "
            "method for details.")
       .def("setOutputFileName", &SchemeBase::setOutputFileName,
+           pybind11::arg("f"),
            "This method specifiy the name of the output file.\n"
            "* The parameter (string) is the selected name of the "
            "output file. Generaly, it's similar to the input file, "
            "replacing the optionnal .mtest' extension by '.res'.")
       .def("setOutputFilePrecision", &SchemeBase::setOutputFilePrecision,
+           pybind11::arg("n"),
            "This method specify the number of digits used to print "
            "the results in the output file.\n"
            "* The parameter (uint) is the number of digits wanted.")
-      .def("printOutput", &SchemeBase::printOutput)
-      .def("printOutput", &SchemeBase_printOutput)
+      .def("printOutput", &SchemeBase::printOutput, pybind11::arg("t"),
+           pybind11::arg("s"), pybind11::arg("b"))
+      .def("printOutput", &SchemeBase_printOutput, pybind11::arg("t"),
+           pybind11::arg("s"))
       .def("setResidualFileName", &SchemeBase::setResidualFileName,
+           pybind11::arg("f"),
            "This method specify the name of a file where the "
            "residuals at each iteration will be printed.\n"
            "* The parameter (string) is the name of the choosen file.")
       .def("setResidualFilePrecision", &SchemeBase::setResidualFilePrecision,
+           pybind11::arg("n"),
            "This method specify the number of significant digits "
            "used when printing residuals at each iteration.\n"
            "* The parameter (uint) is the number of digits wanted.\n"
@@ -261,39 +287,42 @@ void declareSchemeBase(pybind11::module_& m) {
            "residuals is the same than the one used for printing results "
            "(see the 'setOutputFilePrecision' method for details).")
       .def("setDynamicTimeStepScaling", &SchemeBase::setDynamicTimeStepScaling,
+           pybind11::arg("b"),
            "This method enable or disable the dynamic time step "
            "adaptation.\n"
            "* If the parameter (bool) is 'true', the dynamic time "
            "step adaptation is enabled. Otherwise, it's disabled.")
       .def("setMaximalTimeStep", &SchemeBase::setMaximalTimeStep,
+           pybind11::arg("t"),
            "This method define the maximal time step allowed.\n"
            "* The parameter (double) specify the maximal time step.")
       .def("setMinimalTimeStep", &SchemeBase::setMinimalTimeStep,
+           pybind11::arg("t"),
            "This method define the minimal time step allowed.\n"
            "* The parameter (double) specify the minimal time step.")
       .def("setMaximalTimeStepScalingFactor",
-           &SchemeBase::setMaximalTimeStepScalingFactor,
+           &SchemeBase::setMaximalTimeStepScalingFactor, pybind11::arg("f"),
            "This method define the maximal time step scaling factor "
            "allowed during automatic time step adaptation (see the "
            "'setDynamicTimeStepScaling' method for details).\n"
            "* The parameter (double) is the maximal time step "
            "scaling factor wich must be greater than one.")
       .def("setMinimalTimeStepScalingFactor",
-           &SchemeBase::setMinimalTimeStepScalingFactor,
+           &SchemeBase::setMinimalTimeStepScalingFactor, pybind11::arg("f"),
            "This method define the minimal time step scaling factor "
            "allowed during automatic time step adaptation (see the "
            "'setDynamicTimeStepScaling' method for details).\n"
            "* The parameter (double) is the minimal time step "
            "scaling factor wich must be positive and lower than one.")
-      .def("setOutputFrequency", setOutputFrequency,
+      .def("setOutputFrequency", setOutputFrequency, pybind11::arg("v"),
            "This method specify when the results are written in the "
            "output files.\n"
            "* The parameter (string) specify the choosen option. "
            "The two allowed options are:\n"
            "- 'UserDefinedTimes': the results are written at each "
            "user defined time (default).\n"
-           "- 'EveryIteration': the outputs are written after each "
-           "successful iteration.\n"
+           "- 'EveryPeriod': the outputs are written after each "
+           "successful period, i.e. at the end of every time step.\n"
            "Note : These options only differs in case of substepping.")
       .def("resetOutputFile", &SchemeBase::resetOutputFile,
            "close and reopen the output files");

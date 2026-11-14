@@ -5,7 +5,7 @@ integer.
 ## The iterMax parameter
 
 The `@MaximumNumberOfIterations` keyword defines the default value for
-the `itermax` parameter. This parameter can be changed at runtime.
+the `iterMax` parameter. This parameter can be changed at runtime.
 
 ## Example
 

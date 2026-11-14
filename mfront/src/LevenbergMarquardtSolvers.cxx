@@ -36,7 +36,7 @@ namespace mfront {
             "levmar_error2",     "levmar_error_1",  "levmar_m",
             "levmar_sm",         "levmar_mu",       "levmar_mu0",
             "levmar_muF",        "levmar_r",        "levmar_p0",
-            "levmar_p1",         "levmar_p2"};
+            "levmar_p1",         "levmar_p2",       "levmar_first"};
   }  // end of LevenbergMarquardtSolverBase::getReservedNames
 
   void LevenbergMarquardtSolverBase::completeVariableDeclaration(

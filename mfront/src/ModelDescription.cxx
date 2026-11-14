@@ -2,7 +2,7 @@
  * \file  ModelDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   21 janv. 2015
+ * \date 21/01/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
@@ -23,11 +24,12 @@ namespace mfront {
   ModelDescription::Function::Function() = default;
   ModelDescription::Function::Function(const ModelDescription::Function&) =
       default;
-  ModelDescription::Function::Function(ModelDescription::Function&&) = default;
+  ModelDescription::Function::Function(ModelDescription::Function&&) noexcept =
+      default;
   ModelDescription::Function& ModelDescription::Function::operator=(
       const ModelDescription::Function&) = default;
   ModelDescription::Function& ModelDescription::Function::operator=(
-      ModelDescription::Function&&) = default;
+      ModelDescription::Function&&) noexcept = default;
   ModelDescription::Function::~Function() = default;
 
   std::pair<std::string, unsigned short>
@@ -63,10 +65,11 @@ namespace mfront {
 
   ModelDescription::ModelDescription() = default;
   ModelDescription::ModelDescription(const ModelDescription&) = default;
-  ModelDescription::ModelDescription(ModelDescription&&) = default;
+  ModelDescription::ModelDescription(ModelDescription&&) noexcept = default;
   ModelDescription& ModelDescription::operator=(const ModelDescription&) =
       default;
-  ModelDescription& ModelDescription::operator=(ModelDescription&&) = default;
+  ModelDescription& ModelDescription::operator=(ModelDescription&&) noexcept =
+      default;
 
   void ModelDescription::reserveName(const std::string& n) {
     tfel::raise_if(!this->reservedNames.insert(n).second,
@@ -187,7 +190,7 @@ namespace mfront {
   void ModelDescription::setEntryName(const std::string& v,
                                       const std::string& e) {
     this->checkVariableExistence(v);
-    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, false),
+    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, true),
                    "ModelDescription::setEntryName: "
                    "'" +
                        e + "' is a not a valid entry name");
@@ -298,6 +301,18 @@ namespace mfront {
                     areParametersTreatedAsStaticVariables(md), false);
     bd.setAttribute(MaterialKnowledgeDescription::initializeParametersFromFile,
                     allowsParametersInitializationFromFile(md), false);
+    if (md.hasAttribute(MaterialKnowledgeDescription::validator)) {
+      bd.setAttribute(
+          MaterialKnowledgeDescription::validator,
+          md.getAttribute<std::string>(MaterialKnowledgeDescription::validator),
+          false);
+    }
+    if (md.hasAttribute(MaterialKnowledgeDescription::compatibilityMode)) {
+      bd.setAttribute(MaterialKnowledgeDescription::compatibilityMode,
+                      md.getAttribute<std::string>(
+                          MaterialKnowledgeDescription::compatibilityMode),
+                      false);
+    }
     // exernal files
     for (const auto& efiles : md.getExternalMFrontFiles()) {
       bd.addExternalMFrontFile(efiles.first, std::get<0>(efiles.second),
@@ -337,6 +352,10 @@ namespace mfront {
         bd.setParameterDefaultValue(uh, p.name,
                                     md.overriding_parameters.at(p.name));
       } else {
+        tfel::raise_if(!p.hasAttribute(VariableDescription::defaultValue),
+                       "convertToBehaviourDescription: "
+                       "no default value for parameter '" +
+                           p.name + "'");
         const auto v =
             p.getAttribute<double>(VariableDescription::defaultValue);
         bd.setParameterDefaultValue(uh, p.name, v);
@@ -344,5 +363,85 @@ namespace mfront {
     }
     return bd;
   }  // end of convertToBehaviourDescription
+
+  std::string getParametersFileName(const ModelDescription& md) {
+    return md.className + "-parameters.txt";
+  }  // end of getParametersFileName
+
+  void writeRealParametersInitializerConstructor(std::ostream& os,
+                                                 const ModelDescription& md,
+                                                 const std::string& cn) {
+    if (!allowsParametersInitializationFromFile(md)) {
+      os << cn << "() = default;\n";
+      return;
+    }
+    const auto fn = getParametersFileName(md);
+    os << cn << "(){\n"
+       << "// reading parameters from a file\n"
+       << "const auto mfront_errno_old = errno;\n"
+       << "std::ifstream mfront_pfile(\"" << fn << "\");\n"
+       << "if(!mfront_pfile){\n"
+       << "errno = mfront_errno_old;\n"
+       << "return;\n"
+       << "}\n"
+       << "auto mfront_ln = std::size_t{};\n"
+       << "auto mfront_line = std::string{};\n"
+       << "while(std::getline(mfront_pfile, mfront_line)){\n"
+       << "++mfront_ln;\n"
+       << "auto mfront_throw_if = [mfront_ln](const bool mfront_c,\n"
+       << "const std::string& mfront_error_message){\n"
+       << "tfel::raise_if(mfront_c, \"" << cn << "::" << cn << ": \"\n"
+       << "\"error at line '\" + std::to_string(mfront_ln) + \"' \"\n"
+       << "\"while reading parameter file '" << fn << "' \"\n"
+       << "\"(\" + mfront_error_message + \")\");\n"
+       << "};\n"
+       << "std::istringstream mfront_tokenizer(mfront_line);\n"
+       << "std::vector<std::string> mfront_tokens;\n"
+       << "for(std::string mfront_token; mfront_tokenizer >> mfront_token;){\n"
+       << "mfront_tokens.push_back(mfront_token);\n"
+       << "}\n"
+       << "if(mfront_tokens.empty()){\n"
+       << "continue;\n"
+       << "}\n"
+       << "if(mfront_tokens[0][0] == '#'){\n"
+       << "continue;\n"
+       << "}\n"
+       << "mfront_throw_if(mfront_tokens.size() != 2u, "
+       << "\"invalid number of tokens\");\n"
+       << "double mfront_pvalue;\n"
+       << "std::istringstream mfront_converter(mfront_tokens[1]);\n"
+       << "mfront_converter.imbue(std::locale::classic());\n"
+       << "mfront_converter >> mfront_pvalue;\n"
+       << "mfront_throw_if((!mfront_converter) || (!mfront_converter.eof()),\n"
+       << "\"can't convert '\" + mfront_tokens[1] + "
+       << "\"' to a floating point value\");\n";
+    for (const auto& p : md.parameters) {
+      // only real parameters are members of the class
+      if (!((p.type == "double") || (p.isScalar()))) {
+        continue;
+      }
+      auto names = std::vector<std::string>{p.name};
+      if (p.getExternalName() != p.name) {
+        names.push_back(p.getExternalName());
+      }
+      if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
+        names.push_back(p.symbolic_form);
+      }
+      os << "if(";
+      for (auto pn = names.begin(); pn != names.end(); ++pn) {
+        os << (pn == names.begin() ? "" : " || ") << "(mfront_tokens[0] == \""
+           << *pn << "\")";
+      }
+      os << "){\n"
+         << "this->" << p.name << " = " << p.type << "{mfront_pvalue};\n"
+         << "continue;\n"
+         << "}\n";
+    }
+    os << "mfront_throw_if(true, \"invalid parameter '\" + mfront_tokens[0] + "
+       << "\"'\");\n"
+       << "}\n"
+       << "errno = mfront_errno_old;\n"
+       << "}\n";
+  }  // end of writeRealParametersInitializerConstructor
 
 }  // end of namespace mfront

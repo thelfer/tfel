@@ -235,7 +235,8 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto stensor<N, T>::computeEigenTensors(
       const rotation_matrix<T>& m) noexcept {
-    std::tuple<stensor<N, T>, stensor<N, T>, stensor<N, T>> r;
+    using real = base_type<T>;
+    std::tuple<stensor<N, real>, stensor<N, real>, stensor<N, real>> r;
     tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(
         std::get<0>(r), std::get<1>(r), std::get<2>(r), m);
     return r;
@@ -311,9 +312,8 @@ namespace tfel::math {
       const tvector<3u, T>& vp,
       const rotation_matrix<T>& m,
       const T eps) requires((getSpaceDimension<ST2toST2Type>() == N) &&
-                            (isAssignableTo<
-                                BinaryOperationResult<base_type<T>, T, OpDiv>,
-                                numeric_type<ST2toST2Type>>())) {
+                            (isAssignableTo<BinaryOperationResult<T, T, OpDiv>,
+                                            numeric_type<ST2toST2Type>>())) {
     tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe2(
         d, f, df, vp, m, eps);
   }  // end of computeIsotropicFunctionDerivative
@@ -340,9 +340,8 @@ namespace tfel::math {
       const tvector<3u, T>& vp,
       const rotation_matrix<T>& m,
       const T eps) requires((getSpaceDimension<ST2toST2Type>() == N) &&
-                            (isAssignableTo<
-                                BinaryOperationResult<base_type<T>, T, OpDiv>,
-                                numeric_type<ST2toST2Type>>())) {
+                            (isAssignableTo<BinaryOperationResult<T, T, OpDiv>,
+                                            numeric_type<ST2toST2Type>>())) {
     tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe(
         d, f, df, vp, m, eps);
   }
@@ -366,7 +365,7 @@ namespace tfel::math {
       const T eps,
       const bool b) const {
     const auto [vp, m] = this->template computeEigenVectors<es>(b);
-    st2tost2<N, T> r;
+    st2tost2<N, BinaryOperationResult<T, T, OpDiv>> r;
     stensor<N, T>::computeIsotropicFunctionDerivative(r, f, df, vp, m, eps);
     return r;
   }
@@ -383,7 +382,7 @@ namespace tfel::math {
     const auto [vp, m] = this->template computeEigenVectors<es>(b);
     const auto fv = map(f, vp);
     const auto dfv = map(df, vp);
-    std::pair<stensor<N, T>, st2tost2<N, T>> r;
+    std::pair<stensor<N, T>, st2tost2<N, BinaryOperationResult<T, T, OpDiv>>> r;
     r.first =
         stensor<N, T>::buildFromEigenValuesAndVectors(fv(0), fv(1), fv(2), m);
     stensor<N, T>::computeIsotropicFunctionDerivative(r.second, fv, dfv, vp, m,
@@ -445,7 +444,7 @@ namespace tfel::math {
   template <typename InputIterator>
   TFEL_HOST_DEVICE constexpr void stensor<N, T>::copy(
       const InputIterator src) noexcept {
-    tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src, *this);
+    tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(src, this->begin());
   }
 
   template <unsigned short N, typename T, typename OutputIterator>
@@ -666,6 +665,26 @@ namespace tfel::math {
     return stensor::buildFromEigenValuesAndVectors(
         std::log(vp(0)), std::log(vp(1)), std::log(vp(2)), m);
   }  // end of buildLogarithmFromEigenValuesAndVectors
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto
+  stensor<N, T>::buildAbsoluteValueFromEigenValuesAndVectors(
+      const T& v1,
+      const T& v2,
+      const T& v3,
+      const rotation_matrix<T>& m) noexcept {
+    return stensor::buildFromEigenValuesAndVectors(
+        tfel::math::abs(v1), tfel::math::abs(v2), tfel::math::abs(v3), m);
+  }  // end of buildAbsoluteValueFromEigenValuesAndVectors
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto
+  stensor<N, T>::buildAbsoluteValueFromEigenValuesAndVectors(
+      const tvector<3u, T>& vp, const rotation_matrix<T>& m) noexcept {
+    return stensor::buildFromEigenValuesAndVectors(tfel::math::abs(vp(0)),
+                                                   tfel::math::abs(vp(1)),
+                                                   tfel::math::abs(vp(2)), m);
+  }  // end of buildAbsoluteValueFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto
@@ -1016,24 +1035,28 @@ namespace tfel::math {
     constexpr auto N = getSpaceDimension<StensorType1>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
-      return Result{2 * s1[0] * s2[0], 2 * s1[1] * s2[1], 2 * s1[2] * s2[2]};
+      return Result{s1[0] * s2[0], s1[1] * s2[1], s1[2] * s2[2]};
     } else if constexpr (N == 2u) {
-      return Result{2 * s1[0] * s2[0] + s1[3] * s2[3],
-                    2 * s1[1] * s2[1] + s1[3] * s2[3], 2 * s1[2] * s2[2],
-                    (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]};
+      return Result{
+          s1[0] * s2[0] + s1[3] * s2[3] / 2, s1[1] * s2[1] + s1[3] * s2[3] / 2,
+          s1[2] * s2[2],
+          ((s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]) / 2};
     } else {
       using res = result_type<numeric_type<StensorType1>,
                               numeric_type<StensorType2>, OpMult>;
       constexpr auto icste = Cste<res>::isqrt2;
-      return Result{s1[4] * s2[4] + s1[3] * s2[3] + 2 * s1[0] * s2[0],
-                    s1[5] * s2[5] + s1[3] * s2[3] + 2 * s1[1] * s2[1],
-                    s1[5] * s2[5] + s1[4] * s2[4] + 2 * s1[2] * s2[2],
-                    icste * s1[4] * s2[5] + icste * s1[5] * s2[4] +
-                        (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0],
-                    icste * s1[3] * s2[5] + (s1[2] + s1[0]) * s2[4] +
-                        icste * s1[5] * s2[3] + s1[4] * s2[2] + s1[4] * s2[0],
-                    (s1[2] + s1[1]) * s2[5] + icste * s1[3] * s2[4] +
-                        icste * s1[4] * s2[3] + s1[5] * s2[2] + s1[5] * s2[1]};
+      return Result{s1[4] * s2[4] / 2 + s1[3] * s2[3] / 2 + s1[0] * s2[0],
+                    s1[5] * s2[5] / 2 + s1[3] * s2[3] / 2 + s1[1] * s2[1],
+                    s1[5] * s2[5] / 2 + s1[4] * s2[4] / 2 + s1[2] * s2[2],
+                    (icste * s1[4] * s2[5] + icste * s1[5] * s2[4] +
+                     (s1[1] + s1[0]) * s2[3] + s1[3] * s2[1] + s1[3] * s2[0]) /
+                        2,
+                    (icste * s1[3] * s2[5] + (s1[2] + s1[0]) * s2[4] +
+                     icste * s1[5] * s2[3] + s1[4] * s2[2] + s1[4] * s2[0]) /
+                        2,
+                    ((s1[2] + s1[1]) * s2[5] + icste * s1[3] * s2[4] +
+                     icste * s1[4] * s2[3] + s1[5] * s2[2] + s1[5] * s2[1]) /
+                        2};
     }
   }  // end of symmetric_product
 
@@ -1064,38 +1087,38 @@ namespace tfel::math {
       const tvector<3u, ValueType>& vp,
       stensor_common::EigenValuesOrdering o) noexcept {
     if (o == stensor_common::DESCENDING) {
-      if ((vp[0] > vp[1]) && (vp[0] > vp[2])) {
-        if (vp[1] > vp[2]) {
+      if ((vp[0] >= vp[1]) && (vp[0] >= vp[2])) {
+        if (vp[1] >= vp[2]) {
           return {vp[0], vp[1], vp[2]};
         } else {
           return {vp[0], vp[2], vp[1]};
         }
-      } else if ((vp[1] > vp[0]) && (vp[1] > vp[2])) {
-        if (vp[0] > vp[2]) {
+      } else if ((vp[1] >= vp[0]) && (vp[1] >= vp[2])) {
+        if (vp[0] >= vp[2]) {
           return {vp[1], vp[0], vp[2]};
         } else {
           return {vp[1], vp[2], vp[0]};
         }
       }
-      if (vp[0] > vp[1]) {
+      if (vp[0] >= vp[1]) {
         return {vp[2], vp[0], vp[1]};
       }
       return {vp[2], vp[1], vp[0]};
     } else if (o == stensor_common::ASCENDING) {
-      if ((vp[0] < vp[1]) && (vp[0] < vp[2])) {
-        if (vp[1] < vp[2]) {
+      if ((vp[0] <= vp[1]) && (vp[0] <= vp[2])) {
+        if (vp[1] <= vp[2]) {
           return {vp[0], vp[1], vp[2]};
         } else {
           return {vp[0], vp[2], vp[1]};
         }
-      } else if ((vp[1] < vp[0]) && (vp[1] < vp[2])) {
-        if (vp[0] < vp[2]) {
+      } else if ((vp[1] <= vp[0]) && (vp[1] <= vp[2])) {
+        if (vp[0] <= vp[2]) {
           return {vp[1], vp[0], vp[2]};
         } else {
           return {vp[1], vp[2], vp[0]};
         }
       }
-      if (vp[0] < vp[1]) {
+      if (vp[0] <= vp[1]) {
         return {vp[2], vp[0], vp[1]};
       }
       return {vp[2], vp[1], vp[0]};

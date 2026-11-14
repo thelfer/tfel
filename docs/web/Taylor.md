@@ -1,6 +1,15 @@
-% Implementation of Taylor/Voigt homogenization scheme with a BehaviourVariable
-% Helfer Thomas/Martin Antoine
-% February 6, 2025
+---
+title: Implementation of Taylor/Voigt homogenization scheme with a BehaviourVariable
+author: Helfer Thomas, Martin Antoine
+date: 06/02/2025
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\D}{\mathrm{d}}
 \newcommand{\tenseur}[1]{\underline{#1}}
@@ -50,6 +59,8 @@ The macroscopic tangent operator is given by
   \end{aligned}
 
 # Implementation in MFront
+
+The files `Plasticity.mfront` and `Taylor.mfront` are available in the `MFrontGallery` project, [here](https://github.com/thelfer/MFrontGallery/tree/master/generic-behaviours/homogenization/).
 
 It is possible to implement this homogenization scheme through a `Behaviour`.
 This `Behaviour` must call the behaviour laws of each phase.

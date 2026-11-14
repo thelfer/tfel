@@ -2,7 +2,7 @@
  * \file  bindings/python/mtest/MTestFileExport.cxx
  * \brief
  * \author Thomas Helfer
- * \date   01/03/2022
+ * \date 01/03/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -36,9 +36,11 @@ void declareMTestFileExport(pybind11::module_& m) {
       .def_readwrite("date", &mtest::TestDescription::date)
       .def_readwrite("description", &mtest::TestDescription::description)
       .def_readwrite("behaviour", &mtest::TestDescription::behaviour)
-      .def_readwrite("material", &mtest::TestDescription::material);
+      .def_readwrite("material", &mtest::TestDescription::material)
+      .def_readwrite("content", &mtest::TestDescription::content);
   //
-  m.def("loadMTestFileContent", mtest_loadMTestFileContent);
-  m.def("write", mtest_write);
+  m.def("loadMTestFileContent", mtest_loadMTestFileContent, pybind11::arg("d"),
+        pybind11::arg("f"));
+  m.def("write", mtest_write, pybind11::arg("m"), pybind11::arg("f"));
 
 }  // end of declareMTestFileExport

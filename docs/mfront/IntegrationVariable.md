@@ -26,7 +26,7 @@ size after the integration variable name.
 
 ~~~~{.cpp}
 // scalar integration variable
-@IntegrationVariables strain p;
+@IntegrationVariable strain p;
 // symmetric tensors integration variable
-@IntegrationVariables StrainStensor evp,evp2;
+@IntegrationVariable StrainStensor evp,evp2;
 ~~~~

@@ -2,7 +2,7 @@
  * \file   include/TFEL/System/ProcessManager.hxx
  * \brief
  * \author Thomas Helfer
- * \date   09 Nov 2007
+ * \date 09/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cstddef>
 #include <csignal>
 #include <sys/types.h>
 #include "TFEL/Config/TFELConfig.hxx"
@@ -52,6 +53,13 @@ namespace tfel::system {
 
     ProcessManager();
 
+    /*!
+     *
+     * \note this method is not virtual to be callable in ProcessManager's
+     * constructor
+     */
+    void stopOnSignals(const bool);
+    //
     virtual void killProcess(const ProcessId);
 
     virtual void sendSignal(const ProcessId, const int = SIGTERM);
@@ -117,8 +125,8 @@ namespace tfel::system {
      */
     virtual void execute(const std::string&,
                          const std::string&,
-                         const std::string& = "",
-                         const std::string& = "",
+                         const std::string&,
+                         const std::string&,
                          const std::map<std::string, std::string>& = {});
     /*!
      * execute the command and wait until its end
@@ -137,13 +145,11 @@ namespace tfel::system {
                          const std::string& = "",
                          const std::map<std::string, std::string>& = {});
 
-    virtual void stopOnSignals(const bool);
+    [[nodiscard]] virtual wstream getInputStream(const ProcessId) const;
 
-    virtual wstream getInputStream(const ProcessId) const;
+    [[nodiscard]] virtual rstream getOutputStream(const ProcessId) const;
 
-    virtual rstream getOutputStream(const ProcessId) const;
-
-    virtual ProcessId createProcess(ProcessManager::Command&);
+    [[nodiscard]] virtual ProcessId createProcess(ProcessManager::Command&);
 
     virtual void wait(const ProcessId);
 
@@ -212,17 +218,17 @@ namespace tfel::system {
     StreamMap outputs;
     StreamMap inputFiles;
     StreamMap outputFiles;
-    unsigned short sHandler;
-    unsigned short sHandlerSIGBUS;
-    unsigned short sHandlerSIGSEGV;
-    unsigned short sHandlerSIGFPE;
-    unsigned short sHandlerSIGABRT;
-    unsigned short sHandlerSIGHUP;
-    unsigned short sHandlerSIGILL;
-    unsigned short sHandlerSIGINT;
-    unsigned short sHandlerSIGTERM;
-    unsigned short sHandlerSIGQUIT;
-    bool shallStopOnSignals;
+    std::size_t sHandler;
+    std::size_t sHandlerSIGBUS;
+    std::size_t sHandlerSIGSEGV;
+    std::size_t sHandlerSIGFPE;
+    std::size_t sHandlerSIGABRT;
+    std::size_t sHandlerSIGHUP;
+    std::size_t sHandlerSIGILL;
+    std::size_t sHandlerSIGINT;
+    std::size_t sHandlerSIGTERM;
+    std::size_t sHandlerSIGQUIT;
+    bool shallStopOnSignals = false;
 
   };  // end of struct ProcessManager
 

@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   18 nov 2007
+ * \date 18/11/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -33,9 +33,9 @@ namespace tfel::system {
   struct rstreamView
       : public basic_rstream<rstreamView<isBlocking>,
                              stream_traits<rstreamView<isBlocking>>> {
-    rstreamView(const int);
+    explicit rstreamView(const int);
 
-    int getFileDescriptor() const;
+    [[nodiscard]] int getFileDescriptor() const;
 
    private:
     const int fd;

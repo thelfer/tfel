@@ -2,7 +2,7 @@
  * \file   include/TFEL/Utilities/LogarithmicStrainHandler.hxx
  * \brief
  * \author Thomas Helfer
- * \date   25/06/2017
+ * \date 25/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_HXX
 #define LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_HXX
 
+#include <limits>
+#include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
@@ -33,7 +35,8 @@ namespace tfel::material {
      * \brief constructor
      * \param[in] c: setting
      */
-    TFEL_HOST_DEVICE TFEL_INLINE LogarithmicStrainHandlerBase(const Setting);
+    TFEL_HOST_DEVICE TFEL_INLINE explicit LogarithmicStrainHandlerBase(
+        const Setting);
     /*!
      * \brief throw an exception if the setting is not equal to
      * `LAGRANGIAN`.
@@ -77,15 +80,22 @@ namespace tfel::material {
     using TangentOperator = tfel::math::st2tost2<1u, stress>;
     //! a simple alias
     using size_type = unsigned short;
-    //! numerical parameter used to distinguish egal eigenvalues.
-    static constexpr real eps = 1.e-14;
+    /*!
+     * \brief relative criterion used to check if eigenvalues are equal,
+     * as in 2D and 3D: two eigenvalues of the right Cauchy-Green tensor
+     * are considered equal if their difference is below `eps` times the
+     * largest eigenvalue. It is not used in 1D, where the eigenvalues of
+     * the right Cauchy-Green tensor are never compared.
+     */
+    static constexpr real eps =
+        tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
     /*!
      * \brief constructor
      * \param[in] c:  setting
      * \param[in] F1: deformation gradient
      */
     TFEL_HOST_DEVICE LogarithmicStrainHandler(
-        const Setting, const DeformationGradient &) noexcept;
+        const Setting, const DeformationGradient&) noexcept;
     /*!
      * \brief update the axial deformation gradient
      * \param[in] Fzz: axial deformation gradient
@@ -96,85 +106,88 @@ namespace tfel::material {
      */
     TFEL_HOST_DEVICE void updateAxialDeformationGradient(const real);
     //! \return the the logarithmic strain
-    TFEL_HOST_DEVICE StrainStensor getHenckyLogarithmicStrain() const;
+    [[nodiscard]] TFEL_HOST_DEVICE StrainStensor
+    getHenckyLogarithmicStrain() const;
     /*!
      * \param[out] elog: the logarithmic strain in `Abaqus/Standard`
      * conventions
      */
-    TFEL_HOST_DEVICE void getHenckyLogarithmicStrain(real *const) const;
+    TFEL_HOST_DEVICE void getHenckyLogarithmicStrain(real* const) const;
     /*!
      * \return the Cauchy stress from the dual of the logarithmic strain
      * \param[in] T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertToSecondPiolaKirchhoffStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertToSecondPiolaKirchhoffStress(const StressStensor&) const;
     /*!
      * \brief compute the second Piola-Kirchhoff stress from the
      * dual of the logarithmic strain.
      * \param[in,out] TS: stress in `Abaqus/Standard` conventions.
      */
     TFEL_HOST_DEVICE void convertToSecondPiolaKirchhoffStress(
-        stress *const) const;
+        stress* const) const;
     /*!
      * \return the dual of the logarithmic strain
      * \param[in] S: Second Piola Kirchhoff stress.
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertFromSecondPiolaKirchhoffStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertFromSecondPiolaKirchhoffStress(const StressStensor&) const;
     /*!
      * \brief compute the dual of the logarithmic strain from the
      * second Piola-Kirchhoff stress from.
      * \param[in,out] ST: stress in `Abaqus/Standard` conventions.
      */
     TFEL_HOST_DEVICE void convertFromSecondPiolaKirchhoffStress(
-        stress *const) const;
+        stress* const) const;
     /*!
      * \return the Cauchy stress from the dual of the logarithmic strain
      * \param[in] T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertToCauchyStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertToCauchyStress(const StressStensor&) const;
     /*!
      * \brief compute the Cauchy stress from the dual of the
      * logarithmic strain.
      * \param[in,out] Ts: stress in `Abaqus/Standard` conventions.
      */
-    TFEL_HOST_DEVICE void convertToCauchyStress(stress *const) const;
+    TFEL_HOST_DEVICE void convertToCauchyStress(stress* const) const;
     /*!
      * \return the dual of the logarithmic strain
      * \param[in] s: Cauchy stress.
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertFromCauchyStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertFromCauchyStress(const StressStensor&) const;
     /*!
      * \brief compute the dual of the logarithmic strain from the
      * Cauchy stress.
      * \param[in,out] sT: stress in `Abaqus/Standard` conventions.
      */
-    TFEL_HOST_DEVICE void convertFromCauchyStress(stress *const) const;
+    TFEL_HOST_DEVICE void convertFromCauchyStress(stress* const) const;
     /*!
      * \return the material tangent moduli
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator convertToMaterialTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToMaterialTangentModuli(const TangentOperator&,
+                                   const StressStensor&) const;
     /*!
      * \return the spatial tangent moduli
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator convertToSpatialTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToSpatialTangentModuli(const TangentOperator&,
+                                  const StressStensor&) const;
     /*!
      * \return the moduli associated with the Truesdell' rate of the
      * Cauchy stress.
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator
-    convertToCauchyStressTruesdellRateTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
+                                                    const StressStensor&) const;
     /*!
      * \param[in,out] K: On input, the consistent tangent operator
      * in the logarithmic space. On output, the moduli associated
@@ -184,9 +197,10 @@ namespace tfel::material {
      * Abaqus/Standard conventions.
      */
     TFEL_HOST_DEVICE void convertToCauchyStressTruesdellRateTangentModuli(
-        stress *const, const stress *const) const;
+        stress* const, const stress* const) const;
     //! \brief return the deformation gradient
-    TFEL_HOST_DEVICE const DeformationGradient &getDeformationGradient() const;
+    [[nodiscard]] TFEL_HOST_DEVICE const DeformationGradient&
+    getDeformationGradient() const;
 
    protected:
     //! deformation gradient
@@ -221,8 +235,13 @@ namespace tfel::material {
     using TangentOperator = tfel::math::st2tost2<2u, stress>;
     //! a simple alias
     using size_type = unsigned short;
-    //! criterion used to check if eigenvalues are equal.
-    static constexpr real eps = 1.e-14;
+    /*!
+     * \brief relative criterion used to check if eigenvalues are equal:
+     * two eigenvalues of the right Cauchy-Green tensor are considered
+     * equal if their difference is below `eps` times the largest of them.
+     */
+    static constexpr real eps =
+        tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
     /*!
      * \brief constructor
      * \param[in] c:  setting
@@ -231,7 +250,7 @@ namespace tfel::material {
      * unused in plane stress analyses.
      */
     TFEL_HOST_DEVICE LogarithmicStrainHandler(const Setting,
-                                              const DeformationGradient &,
+                                              const DeformationGradient&,
                                               const bool = true);
     /*!
      * \brief update the axial deformation gradient
@@ -246,82 +265,85 @@ namespace tfel::material {
      * \return the Cauchy stress from the dual of the logarithmic strain
      * \param[in] T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertToSecondPiolaKirchhoffStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertToSecondPiolaKirchhoffStress(const StressStensor&) const;
     /*!
      * \brief compute the second Piola-Kirchhoff stress from the
      * dual of the logarithmic strain.
      * \param[in,out] TS: stress in `Abaqus/Standard` conventions.
      */
     TFEL_HOST_DEVICE void convertToSecondPiolaKirchhoffStress(
-        stress *const) const;
+        stress* const) const;
     //! \return the the logarithmic strain
-    TFEL_HOST_DEVICE StrainStensor getHenckyLogarithmicStrain() const;
+    [[nodiscard]] TFEL_HOST_DEVICE StrainStensor
+    getHenckyLogarithmicStrain() const;
     /*!
      * \param[out] elog: the logarithmic strain in `Abaqus/Standard`
      * conventions.
      */
-    TFEL_HOST_DEVICE void getHenckyLogarithmicStrain(real *const) const;
+    TFEL_HOST_DEVICE void getHenckyLogarithmicStrain(real* const) const;
     /*!
      * \return the dual of the logarithmic strain
      * \param[in] S: Second Piola Kirchhoff stress.
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertFromSecondPiolaKirchhoffStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertFromSecondPiolaKirchhoffStress(const StressStensor&) const;
     /*!
      * \brief compute the dual of the logarithmic strain from the
      * second Piola-Kirchhoff stress from.
      * \param[in,out] ST: stress in `Abaqus/Standard` conventions.
      */
     TFEL_HOST_DEVICE void convertFromSecondPiolaKirchhoffStress(
-        stress *const) const;
+        stress* const) const;
     /*!
      * \return the Cauchy stress from the dual of the logarithmic strain
      * \param[in] T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertToCauchyStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertToCauchyStress(const StressStensor&) const;
     /*!
      * \brief compute the Cauchy stress from the dual of the
      * logarithmic strain.
      * \param[in,out] Ts: stress in `Abaqus/Standard` conventions.
      */
-    TFEL_HOST_DEVICE void convertToCauchyStress(stress *const) const;
+    TFEL_HOST_DEVICE void convertToCauchyStress(stress* const) const;
     /*!
      * \return the dual of the logarithmic strain
      * \param[in] s: Cauchy stress.
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertFromCauchyStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertFromCauchyStress(const StressStensor&) const;
     /*!
      * \brief compute the dual of the logarithmic strain from the
      * Cauchy stress.
      * \param[in,out] sT: stress in `Abaqus/Standard` conventions.
      */
-    TFEL_HOST_DEVICE void convertFromCauchyStress(stress *const) const;
+    TFEL_HOST_DEVICE void convertFromCauchyStress(stress* const) const;
     /*!
      * \return the material tangent moduli
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator convertToMaterialTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToMaterialTangentModuli(const TangentOperator&,
+                                   const StressStensor&) const;
     /*!
      * \return the spatial tangent moduli
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator convertToSpatialTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToSpatialTangentModuli(const TangentOperator&,
+                                  const StressStensor&) const;
     /*!
      * \return the moduli associated with the Truesdell' rate of the
      * Cauchy stress.
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator
-    convertToCauchyStressTruesdellRateTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
+                                                    const StressStensor&) const;
     /*!
      * \param[in,out] K: On input, the consistent tangent operator
      * in the logarithmic space. On output, the moduli associated
@@ -331,14 +353,14 @@ namespace tfel::material {
      * Abaqus/Standard conventions.
      */
     TFEL_HOST_DEVICE void convertToCauchyStressTruesdellRateTangentModuli(
-        stress *const, const stress *const) const;
+        stress* const, const stress* const) const;
     /*!
      * \return the moduli used by the Abaqus solver
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator convertToAbaqusTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator convertToAbaqusTangentModuli(
+        const TangentOperator&, const StressStensor&) const;
     /*!
      * \param[in,out] K: On input, the consistent tangent operator
      * in the logarithmic space. On output, the moduli used by
@@ -348,9 +370,10 @@ namespace tfel::material {
      * Abaqus/Standard conventions.
      */
     TFEL_HOST_DEVICE void convertToAbaqusTangentModuli(
-        stress *const, const stress *const) const;
+        stress* const, const stress* const) const;
     //! \brief return the deformation gradient
-    TFEL_HOST_DEVICE const DeformationGradient &getDeformationGradient() const;
+    [[nodiscard]] TFEL_HOST_DEVICE const DeformationGradient&
+    getDeformationGradient() const;
 
    protected:
     //! deformation gradient
@@ -362,18 +385,18 @@ namespace tfel::material {
      * \param[in] m: eigenvectors of the right Cauchy-Green tensor
      * \param[in] F: deformation gradient
      */
-    TFEL_HOST_DEVICE static tfel::math::tvector<4u,
-                                                tfel::math::stensor<2u, real>>
-    getNTensors(const tfel::math::tmatrix<3u, 3u, real> &);
+    [[nodiscard]] TFEL_HOST_DEVICE static tfel::math::
+        tvector<4u, tfel::math::stensor<2u, real>>
+        getNTensors(const tfel::math::tmatrix<3u, 3u, real>&);
     /*!
      * \brief compute the M tensors in the Eulerian setting.
      * \param[in] m: eigenvectors of the right Cauchy-Green tensor
      * \param[in] F: deformation gradient
      */
-    TFEL_HOST_DEVICE static tfel::math::tvector<4u,
-                                                tfel::math::stensor<2u, real>>
-    getEulerianMTensors(const tfel::math::tmatrix<3u, 3u, real> &,
-                        const DeformationGradient &);
+    [[nodiscard]] TFEL_HOST_DEVICE static tfel::math::
+        tvector<4u, tfel::math::stensor<2u, real>>
+        getEulerianMTensors(const tfel::math::tmatrix<3u, 3u, real>&,
+                            const DeformationGradient&);
     /*!
      * \brief: an helper class used to build the a
      * `LogarithmicStrainHandler` object.
@@ -387,7 +410,7 @@ namespace tfel::material {
        * unused in plane stress analyses.
        */
       TFEL_HOST_DEVICE Builder(const Setting,
-                               const DeformationGradient &,
+                               const DeformationGradient&,
                                const bool);
       /*!
        * derivative of the logarithmic strain with respect to the
@@ -409,9 +432,9 @@ namespace tfel::material {
      * \param[in] c:  setting
      * \param[in] F1: deformation gradient
      */
-    TFEL_HOST_DEVICE LogarithmicStrainHandler(Builder &&,
+    TFEL_HOST_DEVICE LogarithmicStrainHandler(Builder&&,
                                               const Setting,
-                                              const DeformationGradient &);
+                                              const DeformationGradient&);
     /*!
      * \brief general method to convert the tangent operator,
      * whatever the setting used.
@@ -422,11 +445,11 @@ namespace tfel::material {
      * \param[in]   M: set of tensors (meaning depends on the setting)
      */
     TFEL_HOST_DEVICE void convertTangentModuli(
-        TangentOperator &,
-        const TangentOperator &,
-        const StressStensor &,
-        const tfel::math::tvector<4u, tfel::math::stensor<2u, real>> &,
-        const tfel::math::tvector<4u, tfel::math::stensor<2u, real>> &) const;
+        TangentOperator&,
+        const TangentOperator&,
+        const StressStensor&,
+        const tfel::math::tvector<4u, tfel::math::stensor<2u, real>>&,
+        const tfel::math::tvector<4u, tfel::math::stensor<2u, real>>&) const;
     /*!
      * derivative of the logarithmic strain with respect to the
      * right Cauchy-Green tensor
@@ -461,95 +484,104 @@ namespace tfel::material {
     using TangentOperator = tfel::math::st2tost2<3u, stress>;
     //! a simple alias
     using size_type = unsigned short;
-    //! numerical parameter used to distinguish egal eigenvalues.
-    static constexpr real eps = 1.e-14;
+    /*!
+     * \brief relative criterion used to check if eigenvalues are equal:
+     * two eigenvalues of the right Cauchy-Green tensor are considered
+     * equal if their difference is below `eps` times the largest
+     * eigenvalue.
+     */
+    static constexpr real eps =
+        tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
     /*!
      * \brief constructor
      * \param[in] c:  setting
      * \param[in] F1: deformation gradient
      */
     TFEL_HOST_DEVICE LogarithmicStrainHandler(const Setting,
-                                              const DeformationGradient &);
+                                              const DeformationGradient&);
     //! \return the the logarithmic strain
-    TFEL_HOST_DEVICE StrainStensor getHenckyLogarithmicStrain() const;
+    [[nodiscard]] TFEL_HOST_DEVICE StrainStensor
+    getHenckyLogarithmicStrain() const;
     /*!
      * \param[out] elog: the logarithmic strain in `Abaqus/Standard`
      * conventions
      */
-    TFEL_HOST_DEVICE void getHenckyLogarithmicStrain(real *const) const;
+    TFEL_HOST_DEVICE void getHenckyLogarithmicStrain(real* const) const;
     /*!
      * \return the Cauchy stress from the dual of the logarithmic strain
      * \param[in] T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertToSecondPiolaKirchhoffStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertToSecondPiolaKirchhoffStress(const StressStensor&) const;
     /*!
      * \brief compute the second Piola-Kirchhoff stress from the
      * dual of the logarithmic strain.
      * \param[in,out] TS: stress in `Abaqus/Standard` conventions.
      */
     TFEL_HOST_DEVICE void convertToSecondPiolaKirchhoffStress(
-        stress *const) const;
+        stress* const) const;
     /*!
      * \return the dual of the logarithmic strain
      * \param[in] S: Second Piola Kirchhoff stress.
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertFromSecondPiolaKirchhoffStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertFromSecondPiolaKirchhoffStress(const StressStensor&) const;
     /*!
      * \brief compute the dual of the logarithmic strain from the
      * second Piola-Kirchhoff stress from.
      * \param[in,out] ST: stress in `Abaqus/Standard` conventions.
      */
     TFEL_HOST_DEVICE void convertFromSecondPiolaKirchhoffStress(
-        stress *const) const;
+        stress* const) const;
     /*!
      * \return the Cauchy stress from the dual of the logarithmic strain
      * \param[in] T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertToCauchyStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertToCauchyStress(const StressStensor&) const;
     /*!
      * \brief compute the Cauchy stress from the dual of the
      * logarithmic strain.
      * \param[in,out] Ts: stress in `Abaqus/Standard` conventions.
      */
-    TFEL_HOST_DEVICE void convertToCauchyStress(stress *const) const;
+    TFEL_HOST_DEVICE void convertToCauchyStress(stress* const) const;
     /*!
      * \return the dual of the logarithmic strain
      * \param[in] s: Cauchy stress.
      */
-    TFEL_HOST_DEVICE StressStensor
-    convertFromCauchyStress(const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE StressStensor
+    convertFromCauchyStress(const StressStensor&) const;
     /*!
      * \brief compute the dual of the logarithmic strain from the
      * Cauchy stress.
      * \param[in,out] sT: stress in `Abaqus/Standard` conventions.
      */
-    TFEL_HOST_DEVICE void convertFromCauchyStress(stress *const) const;
+    TFEL_HOST_DEVICE void convertFromCauchyStress(stress* const) const;
     /*!
      * \return the material tangent moduli
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator convertToMaterialTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToMaterialTangentModuli(const TangentOperator&,
+                                   const StressStensor&) const;
     /*!
      * \return the spatial tangent moduli
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator convertToSpatialTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToSpatialTangentModuli(const TangentOperator&,
+                                  const StressStensor&) const;
     /*!
      * \return the moduli associated with the Truesdell' rate of the
      * Cauchy stress.
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator
-    convertToCauchyStressTruesdellRateTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator
+    convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
+                                                    const StressStensor&) const;
     /*!
      * \param[in,out] K: On input, the consistent tangent operator
      * in the logarithmic space. On output, the moduli associated
@@ -559,14 +591,14 @@ namespace tfel::material {
      * Abaqus/Standard conventions.
      */
     TFEL_HOST_DEVICE void convertToCauchyStressTruesdellRateTangentModuli(
-        stress *const, const stress *const) const;
+        stress* const, const stress* const) const;
     /*!
      * \return the moduli used by the Abaqus solver
      * \param[in] Ks: tangent moduli in the logarithmic space
      * \param[in]  T: dual of the logarithmic strain
      */
-    TFEL_HOST_DEVICE TangentOperator convertToAbaqusTangentModuli(
-        const TangentOperator &, const StressStensor &) const;
+    [[nodiscard]] TFEL_HOST_DEVICE TangentOperator convertToAbaqusTangentModuli(
+        const TangentOperator&, const StressStensor&) const;
     /*!
      * \param[in,out] K: On input, the consistent tangent operator
      * in the logarithmic space. On output, the moduli used by
@@ -576,9 +608,10 @@ namespace tfel::material {
      * Abaqus/Standard conventions.
      */
     TFEL_HOST_DEVICE void convertToAbaqusTangentModuli(
-        stress *const, const stress *const) const;
+        stress* const, const stress* const) const;
     //! \brief return the deformation gradient
-    TFEL_HOST_DEVICE const DeformationGradient &getDeformationGradient() const;
+    [[nodiscard]] TFEL_HOST_DEVICE const DeformationGradient&
+    getDeformationGradient() const;
 
    protected:
     //! deformation gradient
@@ -586,31 +619,31 @@ namespace tfel::material {
 
    private:
     //! \return true if all eigenvalues are equal
-    TFEL_HOST_DEVICE static bool areEigenValuesEqual(
-        const tfel::math::tvector<3u, real> &);
+    [[nodiscard]] TFEL_HOST_DEVICE static bool areEigenValuesEqual(
+        const tfel::math::tvector<3u, real>&);
     /*!
      * \return the index of the single value if two eigenvalues are
      * equal, 3 otherwise.
      */
-    TFEL_HOST_DEVICE static size_type findSingleEigenValue(
-        const tfel::math::tvector<3u, real> &);
+    [[nodiscard]] TFEL_HOST_DEVICE static size_type findSingleEigenValue(
+        const tfel::math::tvector<3u, real>&);
     /*!
      * \brief compute the N tensors
      * \param[in] m: eigenvectors of the right Cauchy-Green tensor
      * \param[in] F: deformation gradient
      */
-    TFEL_HOST_DEVICE static tfel::math::
+    [[nodiscard]] TFEL_HOST_DEVICE static tfel::math::
         tmatrix<3u, 3u, tfel::math::stensor<3u, real>>
-        getNTensors(const tfel::math::tmatrix<3u, 3u, real> &);
+        getNTensors(const tfel::math::tmatrix<3u, 3u, real>&);
     /*!
      * \brief compute the M tensors in the Eulerian setting.
      * \param[in] m: eigenvectors of the right Cauchy-Green tensor
      * \param[in] F: deformation gradient
      */
-    TFEL_HOST_DEVICE static tfel::math::
+    [[nodiscard]] TFEL_HOST_DEVICE static tfel::math::
         tmatrix<3u, 3u, tfel::math::stensor<3u, real>>
-        getEulerianMTensors(const tfel::math::tmatrix<3u, 3u, real> &,
-                            const DeformationGradient &);
+        getEulerianMTensors(const tfel::math::tmatrix<3u, 3u, real>&,
+                            const DeformationGradient&);
     /*!
      * \brief: an helper class used to build the a
      * `LogarithmicStrainHandler` object.
@@ -621,7 +654,7 @@ namespace tfel::material {
        * \param[in] c:  setting
        * \param[in] F1: deformation gradient
        */
-      TFEL_HOST_DEVICE Builder(const Setting, const DeformationGradient &);
+      TFEL_HOST_DEVICE Builder(const Setting, const DeformationGradient&);
       /*!
        * derivative of the logarithmic strain with respect to the
        * right Cauchy-Green tensor
@@ -642,9 +675,9 @@ namespace tfel::material {
      * \param[in] c:  setting
      * \param[in] F1: deformation gradient
      */
-    TFEL_HOST_DEVICE LogarithmicStrainHandler(Builder &&,
+    TFEL_HOST_DEVICE LogarithmicStrainHandler(Builder&&,
                                               const Setting,
-                                              const DeformationGradient &);
+                                              const DeformationGradient&);
     /*!
      * \brief general method to convert the tangent operator,
      * whatever the setting used.
@@ -655,11 +688,11 @@ namespace tfel::material {
      * \param[in]   M: set of tensors (meaning depends on the setting)
      */
     TFEL_HOST_DEVICE void convertTangentModuli(
-        TangentOperator &,
-        const TangentOperator &,
-        const StressStensor &,
-        const tfel::math::tmatrix<3u, 3u, tfel::math::stensor<3u, real>> &,
-        const tfel::math::tmatrix<3u, 3u, tfel::math::stensor<3u, real>> &)
+        TangentOperator&,
+        const TangentOperator&,
+        const StressStensor&,
+        const tfel::math::tmatrix<3u, 3u, tfel::math::stensor<3u, real>>&,
+        const tfel::math::tmatrix<3u, 3u, tfel::math::stensor<3u, real>>&)
         const;
     /*!
      * derivative of the logarithmic strain with respect to the

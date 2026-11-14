@@ -2,7 +2,7 @@
  * \file   mfront/include/AbstractBehaviourCodeGenerator.hxx
  * \brief
  * \author Thomas Helfer
- * \date   03/08/2022
+ * \date 03/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -55,7 +55,7 @@ namespace mfront {
      * The source file contains implementations of functions common to all
      * interfaces.
      */
-    virtual bool isSrcFileRequired() const = 0;
+    [[nodiscard]] virtual bool isSrcFileRequired() const = 0;
     //! \brief destructor
     virtual ~AbstractBehaviourCodeGenerator();
   };  // end of AbstractBehaviourCodeGenerator

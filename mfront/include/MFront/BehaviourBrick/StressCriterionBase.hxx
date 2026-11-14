@@ -2,7 +2,7 @@
  * \file   StressCriterionBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   10/04/2018
+ * \date 10/04/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -42,16 +42,17 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const Role) override;
-    std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
     /*!
      * \return the code updating the upper bound of the porosity.
      * If this stress criterion is not coupled with porosity, the returned
      * value may be empty.
      * \param[in] bd: behaviour description
      */
-    std::string updatePorosityUpperBound(const BehaviourDescription&,
-                                         const std::string&,
-                                         const Role) const override;
+    [[nodiscard]] std::string updatePorosityUpperBound(
+        const BehaviourDescription&,
+        const std::string&,
+        const Role) const override;
     //! \brief destructor
     ~StressCriterionBase() override;
   };  // end of StressCriterionBase

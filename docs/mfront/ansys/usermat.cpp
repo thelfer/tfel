@@ -78,15 +78,14 @@ static std::string strim_front(const std::string &s) {
 }
 
 static std::string strim_back(const std::string &s) {
-  std::string::size_type b = 0u;
   std::string::size_type e = s.size();
-  while (b != e) {
-    if (std::isspace(s[b])) {
-      return s.substr(0, b);
+  while (e != 0) {
+    if (!std::isspace(s[e - 1])) {
+      return s.substr(0, e);
     }
-    ++b;
+    --e;
   }
-  return s;
+  return "";
 }
 
 static std::string strim(const std::string &s) {
@@ -267,7 +266,7 @@ namespace ansys {
       }
       exit_if(tokens.size() != 5, "invalid line '" + std::to_string(ln) +
                                       "' in file 'mfront-usermat.dat', "
-                                      "expected at least 5 tokens");
+                                      "expected 5 tokens");
       exit_if(tokens[0] != "tb", "invalid line, expected 'tb', read '"+tokens[0]+"'");
       exit_if(tokens[1] != "mfront", "invalid line '" + std::to_string(ln) +
                                          "' in file 'mfront-usermat.dat', "

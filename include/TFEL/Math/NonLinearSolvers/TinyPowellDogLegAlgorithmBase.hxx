@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   06/07/2021
+ * \date 06/07/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -54,7 +54,7 @@ namespace tfel::math {
     }
     const auto cste = (g | g) / (g2 | g2);
     g *= cste;
-    if (tfel::math::abs(g) < N * radius) {
+    if (norm(g) < radius) {
       const auto c0 = radius * radius;
       const auto c1 = (g | g);
       const auto c2 = -delta_zeros | g;

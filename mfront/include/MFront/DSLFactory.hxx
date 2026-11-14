@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/DSLFactory.hxx
  * \brief
  * \author Thomas Helfer
- * \date   09 nov 2006
+ * \date 09/11/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -41,25 +41,27 @@ namespace mfront {
      * \return the list of all registred DSLs.
      * \param[in] b: add the alias
      */
-    std::vector<std::string> getRegistredDSLs(const bool = true) const;
+    [[nodiscard]] std::vector<std::string> getRegistredDSLs(
+        const bool = true) const;
 
     void registerDSLAlias(const std::string&, const std::string&);
 
-    std::string getDSLDescription(const std::string&) const;
+    [[nodiscard]] std::string getDSLDescription(const std::string&) const;
     /*!
      * \return an instance of the DSL with the given name
      * \param[in] n: name of the DSL to be generated
      */
-    std::shared_ptr<AbstractDSL> createNewDSL(
+    [[nodiscard]] std::shared_ptr<AbstractDSL> createNewDSL(
         const std::string&, const AbstractDSL::DSLOptions& = {}) const;
     /*!
      * \return an instance of the DSL with the given name
      * \param[in] n: name of the DSL to be generated
      */
-    [[deprecated]] std::shared_ptr<AbstractDSL> createNewParser(
+    [[deprecated, nodiscard]] std::shared_ptr<AbstractDSL> createNewParser(
         const std::string&, const AbstractDSL::DSLOptions& = {}) const;
 
-    std::vector<std::string> getRegistredParsers(const bool = true) const;
+    [[nodiscard]] std::vector<std::string> getRegistredParsers(
+        const bool = true) const;
     /*!
      * \brief register a new DSL generator
      */
@@ -71,7 +73,7 @@ namespace mfront {
                                               DSLGenerator,
                                               DescriptionGenerator);
 
-    std::string getParserDescription(const std::string&) const;
+    [[nodiscard]] std::string getParserDescription(const std::string&) const;
     //! \brief destructor
     ~DSLFactory();
 

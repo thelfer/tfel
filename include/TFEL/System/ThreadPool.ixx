@@ -21,21 +21,22 @@ namespace tfel::system {
 
   template <typename F>
   struct ThreadPool::Wrapper {
-    Wrapper(F&& f_) : f(f_) {}
+    explicit Wrapper(F f_) : f(std::move(f_)) {}
     template <typename... Args>
     ThreadedTaskResult<std::invoke_result_t<F, Args...>> operator()(
         Args&&... args) {
       using result = std::invoke_result_t<F, Args...>;
-      using apply = typename std::conditional<std::is_same<result, void>::value,
-                                              GetVoid, Get<result>>::type;
+      using apply = std::conditional_t<std::is_same_v<result, void>, GetVoid,
+                                       Get<result>>;
       ThreadedTaskResult<result> r;
       apply::exe(r, f, std::forward<Args>(args)...);
       return r;
     }
 
    private:
-    template <typename T, typename... Args>
+    template <typename T>
     struct Get {
+      template <typename... Args>
       static void exe(ThreadedTaskResult<T>& r, F& t, Args&&... args) {
         try {
           r = t(args...);
@@ -65,7 +66,8 @@ namespace tfel::system {
     using return_type = ThreadedTaskResult<std::invoke_result_t<F, Args...>>;
     using task = std::packaged_task<return_type()>;
     auto t = std::make_shared<task>(
-        std::bind(Wrapper<F>(std::forward<F>(f)), std::forward<Args>(a)...));
+        std::bind(Wrapper<std::decay_t<F>>(std::forward<F>(f)),
+                  std::forward<Args>(a)...));
     auto res = t->get_future();
     {
       std::unique_lock<std::mutex> lock(this->m);

@@ -2,7 +2,7 @@
  * \file   tests/Math/st2tost2/st2tost2.cxx
  * \brief
  * \author Thomas Helfer
- * \date   30 jan 2007
+ * \date 30/01/2007
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,7 +18,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <type_traits>
+#include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/t2tost2.hxx"
 
 template <typename T>
 static constexpr T my_abs(const T& v) noexcept {
@@ -83,10 +85,22 @@ static void test3() {
   static_assert(s(2, 2) == 1);
 }
 
+static void test4() {
+  using namespace tfel::math;
+  // conversion of the derivative of the symmetric part of a tensor
+  constexpr auto dsym =
+      computeRateOfDeformationDerivative(tensor<3u, double>::Id());
+  constexpr auto s = st2tost2<3u, double>::convert(dsym);
+  static_assert(my_abs(s(3, 3) - 1) < 1.e-14);
+  static_assert(my_abs(s(4, 4) - 1) < 1.e-14);
+  static_assert(my_abs(s(5, 5) - 1) < 1.e-14);
+}
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   test1();
   test2();
   test3();
+  test4();
   return EXIT_SUCCESS;
 }

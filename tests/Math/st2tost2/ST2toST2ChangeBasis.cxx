@@ -2,7 +2,7 @@
  * \file   ChangeBasis.cxx
  * \brief
  * \author Thomas Helfer
- * \date   13 oct. 2015
+ * \date 13/10/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -27,6 +27,7 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
@@ -127,6 +128,11 @@ struct ST2toST2ChangeBasisTest : public tfel::tests::TestCase {
     for (; p2 != ns2.end(); ++p, ++p2) {
       TFEL_TESTS_ASSERT(std::abs(*p - *p2) < eps);
     }
+    // same rotation of a tensor of quantities
+    using stress = tfel::math::qt<tfel::math::unit::Stress>;
+    const auto nDq =
+        change_basis(tfel::math::st2tost2<N, stress>(D * stress(1)), r);
+    TFEL_TESTS_ASSERT(std::abs(nDq(0, 0).getValue() - nD(0, 0)) < eps);
   }
 };  // end of ST2toST2ChangeBasisTest
 

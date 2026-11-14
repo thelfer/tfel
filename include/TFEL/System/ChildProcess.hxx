@@ -40,9 +40,9 @@ namespace tfel::system {
     virtual void execute(const int, const int) = 0;
 
     void setPid(const pid_t);
-    pid_t getPid() const;
-    int getOutputStream() const;
-    int getInputStream() const;
+    [[nodiscard]] pid_t getPid() const;
+    [[nodiscard]] int getOutputStream() const;
+    [[nodiscard]] int getInputStream() const;
     virtual ~ChildProcess();
 
    protected:
@@ -86,7 +86,12 @@ namespace tfel::system {
       if (::close(toFather[0]) == -1) {
         exit(EXIT_FAILURE);
       }
-      childProcess->execute(toChild[0], toFather[1]);
+      try {
+        childProcess->execute(toChild[0], toFather[1]);
+      } catch (...) {
+        // no exception shall leave the child
+        exit(EXIT_FAILURE);
+      }
       exit(EXIT_SUCCESS);
     }
     childProcess->setPid(pid);

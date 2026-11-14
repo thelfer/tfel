@@ -2,7 +2,7 @@
  * \file  TargetsDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \date   09 mai 2015
+ * \date 09/05/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -22,7 +22,8 @@ namespace mfront {
 
   TargetsDescription::TargetsDescription() = default;
   TargetsDescription::TargetsDescription(const TargetsDescription&) = default;
-  TargetsDescription::TargetsDescription(TargetsDescription&&) = default;
+  TargetsDescription::TargetsDescription(TargetsDescription&&) noexcept =
+      default;
   TargetsDescription::~TargetsDescription() = default;
 
   LibraryDescription& TargetsDescription::getLibrary(
@@ -45,7 +46,7 @@ namespace mfront {
     throw_if(l.prefix != pr, "unmatched library prefix for library '" + n +
                                  "'"
                                  " ('" +
-                                 l.prefix + "' vs '" + s + "')");
+                                 l.prefix + "' vs '" + pr + "')");
     throw_if(l.suffix != s, "unmatched library suffix for library '" + n +
                                 "'"
                                 " ('" +
@@ -186,7 +187,7 @@ namespace mfront {
     auto c = p;
     CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
     CxxTokenizer::checkNotEndOfLine(f, c, pe);
-    while (c->value != "}") {
+    while ((c != pe) && (c->value != "}")) {
       if (c->value == "library") {
         ++c;
         CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
@@ -209,7 +210,7 @@ namespace mfront {
         ++c;
         CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
         CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
-        while (c->value != "}") {
+        while ((c != pe) && (c->value != "}")) {
           if (c->value == "name") {
             if (!name.empty()) {
               error("target name '" + name + "' multiply defined");

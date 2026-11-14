@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   19 nov 2008
+ * \date 19/11/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -64,6 +64,10 @@ int main() {
   cout << "res : ";
   copy(p.begin(), p.end(), ostream_iterator<double>(cout, " "));
   cout << endl;
+  // reference values obtained with scipy.optimize.least_squares
+  if ((abs(p(0) - 1.0018987) > 1.e-6) || (abs(p(1) - 1.0028177) > 1.e-6)) {
+    return EXIT_FAILURE;
+  }
 #endif
   return EXIT_SUCCESS;
 }  // end of main

@@ -7,7 +7,7 @@ short_description:
 };
 
 "DualStress" {
-units : { "SI" : "stress" };
+units : { "SI" : "Pa" };
 type:
   "tensor";
 short_description:
@@ -27,7 +27,7 @@ upper_physical_bounds : { "SI" : 1 };
 type:
   "scalar";
 short_description:
-  "the emissivity of the surface of a material is its effectiveness in "
+  "the emissivity of the surface of a material, which is its effectiveness in "
   "emitting energy as thermal radiation";
 };
 
@@ -37,7 +37,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the heat transfer coefficient is the proportionality constant between the "
+  "the heat transfer coefficient, which is the proportionality constant between the "
   "heat flux and the temperature difference";
 };
 
@@ -175,8 +175,8 @@ type:
 short_description:
   "the temperature";
 notes : {
-  "This entry has been introduced by compatibility with implantation choices "
-  "made by the Germinal fuel performance code"
+  "This entry has been introduced for compatibility with implantation choices "
+  "made by the Germinal fuel performance code."
 };
 };
 
@@ -196,7 +196,7 @@ description : {
       "and "
       "position \(\vec{r}\) ;",
       "* \(t_{0}\) is the reference time;", "* \(t\) is the current time.", "",
-      "In pratice, this integral is computed incrementally as follows: ", "\[",
+      "In practice, this integral is computed incrementally as follows: ", "\[",
       "\average{T}\paren{t+dt,\vec{r}} \approx "
       "\Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+"
       "\Frac{dt}{2}\left[T\paren{t,\vec{r}}+T\paren{t+dt,\vec{r}}\right]"
@@ -215,7 +215,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "The mean temperature over a given domain \(\Omega\)";
+  "the mean temperature over a given domain \(\Omega\)";
 description : {
   "This temperature is defined as follows:"
   "\["
@@ -226,7 +226,7 @@ description : {
   "and at position \(\vec{r}\)."
 };
 notes : {
-  "In pratice, the computation of this integral is done using standard finite "
+  "In practice, the computation of this integral is done using standard finite "
   "element operations."
 };
 };
@@ -237,7 +237,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "The mean temperature  in time over a given domain \(\Omega\)";
+  "the mean temperature in time over a given domain \(\Omega\)";
 description : {
   "This temperature is defined as follows:"
   "\["
@@ -250,14 +250,14 @@ description : {
   "and at position \(\vec{r}\)."
 };
 notes : {
-  "In pratice, the computation of the spatial integral is done using standard "
+  "In practice, the computation of the spatial integral is done using standard "
   "finite element operations and the time integral is performed incrementally "
   "using a trapezoidal rule."
 };
 };
 
 "TemperatureGradient" {
-units : { "SI" : "T.m^{-1}" };
+units : { "SI" : "K.m^{-1}" };
 type:
   "vector";
 short_description:
@@ -269,7 +269,7 @@ units : { "SI" : "J.m^{-2}.s^{-1}" };
 type:
   "vector";
 short_description:
-  "the heat flux, generally in the current configuration.";
+  "the heat flux, generally in the current configuration";
 };
 
 "PowerDensity" {
@@ -330,7 +330,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the Young's modulus of an isotropic material along the first direction of "
+  "the Young's modulus of an orthotropic material along the first direction of "
   "orthotropy";
 };
 
@@ -340,7 +340,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the Young's modulus of an isotropic material along the second direction of "
+  "the Young's modulus of an orthotropic material along the second direction of "
   "orthotropy";
 };
 
@@ -350,7 +350,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the Young's modulus of an isotropic material along the third direction of "
+  "the Young's modulus of an orthotropic material along the third direction of "
   "orthotropy";
 };
 
@@ -399,7 +399,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the shear moduls between the first and second directions of "
+  "the shear modulus between the first and second directions of "
   "orthotropy";
 };
 
@@ -409,7 +409,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the shear moduls between the second and third directions of "
+  "the shear modulus between the second and third directions of "
   "orthotropy";
 };
 
@@ -419,7 +419,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the shear moduls between the first and third directions of "
+  "the shear modulus between the first and third directions of "
   "orthotropy";
 };
 
@@ -430,7 +430,7 @@ type:
 short_description:
   "the mean thermal expansion coefficient";
 notes:{
-  "This entry shall have be named MeanThermalExpansionCoefficient."
+  "This entry shall have been named MeanThermalExpansionCoefficient."
 };
 };
 
@@ -441,7 +441,7 @@ type:
 short_description:
   "the mean thermal expansion coefficient along the first orthotropy direction";
 notes:{
-  "This entry shall have be named MeanThermalExpansionCoefficient1."
+  "This entry shall have been named MeanThermalExpansionCoefficient1."
 };
 };
 
@@ -452,7 +452,7 @@ type:
 short_description:
   "the mean thermal expansion coefficient along the second orthotropy direction";
 notes:{
-  "This entry shall have be named MeanThermalExpansionCoefficient2."
+  "This entry shall have been named MeanThermalExpansionCoefficient2."
 };
 };
 
@@ -463,7 +463,7 @@ type:
 short_description:
   "the mean thermal expansion coefficient along the third orthotropy direction";
 notes:{
-  "This entry shall have be named MeanThermalExpansionCoefficient3."
+  "This entry shall have been named MeanThermalExpansionCoefficient3."
 };
 };
 
@@ -486,7 +486,7 @@ short_description:
 type:
   "tensor";
 short_description:
-  "gradient of the transformation";
+  "the gradient of the transformation";
 };
 
 "OpeningDisplacement" {
@@ -501,21 +501,21 @@ short_description:
 type:
   "tensor";
 short_description:
-  "The elastic strain";
+  "the elastic strain";
 };
 
 "PlasticStrain" {
 type:
   "tensor";
 short_description:
-  "The plastic strain";
+  "the plastic strain";
 };
 
 "ViscoplasticStrain" {
 type:
   "tensor";
 short_description:
-  "The viscoplatic strain";
+  "the viscoplastic strain";
 };
 
 "EquivalentStrain" {
@@ -547,7 +547,7 @@ type:
   "scalar";
 short_description:
   "the axial strain";
-notes : { "This quantity is only meaningful under on of the plane stress modelling hypotheses." };
+notes : { "This quantity is only meaningful under one of the plane stress modelling hypotheses." };
 };
 
 "AxialDeformationGradient" {
@@ -555,7 +555,7 @@ type:
   "scalar";
 short_description:
   "the axial component of the deformation gradient";
-notes : { "This quantity is only meaningful under on of the plane stress modelling hypotheses." };
+notes : { "This quantity is only meaningful under one of the plane stress modelling hypotheses." };
 };
 
 "VolumetricStrain" {
@@ -574,11 +574,11 @@ short_description:
 };
 
 "CohesiveForce" {
-units : { "SI" : "Newton" };
+units : { "SI" : "Pa" };
 type:
   "vector";
 short_description:
-  "cohesive force for cohesize zone models";
+  "cohesive force for cohesive zone models";
 };
 
 "AxialStress" {
@@ -593,7 +593,7 @@ notes : { "This quantity is only meaningful under the axisymmetrical generalized
 units : { "SI" : "Pa" };
 lower_physical_bounds : { "SI" : 0 };
 type:
-  "tensor";
+  "scalar";
 short_description:
   "the Hill equivalent stress";
 };
@@ -617,7 +617,7 @@ short_description:
 "HydrostaticPressure" {
 units : { "SI" : "Pa" };
 type:
-  "tensor";
+  "scalar";
 short_description:
   "the hydrostatic pressure, defined as the third of the trace of the stress tensor";
 };
@@ -653,7 +653,7 @@ units : { "SI" : "Pa" };
 type:
   "scalar";
 short_description:
-  "the third principal stress";
+  "the second principal stress";
 };
 
 "PrincipalStress3" {
@@ -669,7 +669,7 @@ units : { "SI" : "Pa" };
 type:
   "scalar";
 short_description:
-  "the pressure of a gaz";
+  "the pressure of a gas";
 };
 
 "Swelling" {
@@ -690,21 +690,21 @@ short_description:
 type:
   "scalar";
 short_description:
-  "swelling du to solid fission products";
+  "swelling due to solid fission products";
 };
 
 "GaseousSwelling" {
 type:
   "scalar";
 short_description:
-  "swelling du to gazeous fission products";
+  "swelling due to gaseous fission products";
 };
 
 "Porosity" {
 type:
   "scalar";
 short_description:
-  "Porosity of the material";
+  "the porosity of the material";
 lower_physical_bounds : { "SI" : 0 };
 upper_physical_bounds : { "SI" : 1 };
 };
@@ -713,7 +713,7 @@ upper_physical_bounds : { "SI" : 1 };
 type:
   "scalar";
 short_description:
-  "Part of the porosity increase du to inelastic flow";
+  "part of the porosity increase due to inelastic flow";
 lower_physical_bounds : { "SI" : 0 };
 upper_physical_bounds : { "SI" : 1 };
 };
@@ -722,7 +722,7 @@ upper_physical_bounds : { "SI" : 1 };
 type:
   "scalar";
 short_description:
-  "Part of the porosity increase du to nucleation";
+  "part of the porosity increase due to nucleation";
 lower_physical_bounds : { "SI" : 0 };
 upper_physical_bounds : { "SI" : 1 };
 };
@@ -731,14 +731,14 @@ upper_physical_bounds : { "SI" : 1 };
 type:
   "scalar";
 short_description:
-  "swelling du to irradiation damage";
+  "swelling due to irradiation damage";
 };
 
 "IrradiationSwelling" {
 type:
   "scalar";
 short_description:
-  "swelling du to irradiation damage";
+  "swelling due to irradiation damage";
 };
 
 "NormalStiffness" {
@@ -766,7 +766,7 @@ type:
   "scalar";
 short_description:
   "the stress corresponding to the yield point at which the material begins to deform plastically";
-notes: {"When this limit is difficult to identify experimentally, the offset yield point is taken as the stress at which 0.2% plastic deformation occurs"};
+notes: {"When this limit is difficult to identify experimentally, the offset yield point is taken as the stress at which 0.2% plastic deformation occurs."};
 };
 
 "UltimateTensileStrength" {
@@ -811,7 +811,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the irradiation damage, measure by the mean number of displacements of each atoms";
+  "the irradiation damage, measured by the mean number of displacements of each atom";
 };
 
 "NeutronFlux" {
@@ -839,7 +839,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the fast neutron fluence";
+  "the fast neutron flux, where the limit for fast neutron is 0.1 MeV";
 };
 
 "FastNeutronFlux_1MeV" {
@@ -850,7 +850,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the fast neutron fluence";
+  "the fast neutron flux, where the limit for fast neutron is 1 MeV";
 };
 
 "FastNeutronFluence_01MeV" {
@@ -925,7 +925,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "the burn-up of an absorant material containing \(\mbox{}^{10}B\)";
+  "the burn-up of an absorbent material containing \(\mbox{}^{10}B\)";
 };
 
 "PlateWidth" {
@@ -933,7 +933,7 @@ units : { "SI" : "m" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the out-of-plane width of a plate";
 };
 
 "CrossSectionArea" {
@@ -941,7 +941,7 @@ units : { "SI" : "m^{2}" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the area of the cross section of a beam";
 };
 
 "FirstAxisSecondMomentArea" {
@@ -949,7 +949,7 @@ units : { "SI" : "m^{4}" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the second moment of area of the cross section of a beam about its first axis";
 };
 
 "SecondAxisSecondMomentArea" {
@@ -957,15 +957,15 @@ units : { "SI" : "m^{4}" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the second moment of area of the cross section of a beam about its second axis";
 };
 
 "TorsionConstant" {
-units : { "SI" : "??" };
+units : { "SI" : "m^{4}" };
 type:
   "scalar";
 short_description:
-  "??";
+  "the torsion constant of the cross section of a beam";
 };
 
 "NumberOfMoles" {

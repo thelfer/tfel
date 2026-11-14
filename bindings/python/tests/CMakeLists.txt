@@ -1,19 +1,22 @@
 if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
   set(tfel_system_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.system_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
-  set(tfel_material_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.material_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(tfel_material_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.material")
   set(mfront_python_module "mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
   set(mtest_python_module "mtest_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mfm_test_generator_python_module "mfm_test_generator_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
 else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
   set(tfel_system_python_module "tfel.system")
   set(tfel_material_python_module "tfel.material")
   set(mfront_python_module "mfront")
   set(mtest_python_module "mtest")
+  set(mfm_test_generator_python_module "mfm_test_generator")
 endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 
 configure_file(behaviour-constructors.py.in behaviour-constructors.py @ONLY)
 configure_file(small-strain-tridimensional-behaviour-wrapper.py.in
                small-strain-tridimensional-behaviour-wrapper.py @ONLY)
 configure_file(material-properties.py.in material-properties.py @ONLY)
+configure_file(compatibility_mode.py.in compatibility_mode.py @ONLY)
 
 function(test_pymfront test)
   if(NOT CMAKE_CONFIGURATION_TYPES)
@@ -49,11 +52,33 @@ function(test_pymtest_bv file library)
   endif(NOT CMAKE_CONFIGURATION_TYPES)
 endfunction(test_pymtest_bv)
 
+function(test_externallibrarymanager file library)
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    add_test(NAME pytfel_system_externallibrarymanager_${file}_py
+      COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${file}.py)
+    set_property(TEST pytfel_system_externallibrarymanager_${file}_py
+      PROPERTY ENVIRONMENT
+      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python
+      MFRONT_BEHAVIOUR_LIBRARY=${library})      
+  endif(NOT CMAKE_CONFIGURATION_TYPES)
+endfunction(test_externallibrarymanager)
+
 if(HAVE_ASTER)
   test_pymfront(test1)
 endif(HAVE_ASTER)
 test_pymfront(test2)
 test_pymfront(test3)
+
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  configure_file(mfm-test-generator.py.in mfm-test-generator.py @ONLY)
+  add_test(NAME pymfm_test_generator_py
+    COMMAND ${Python_EXECUTABLE} mfm-test-generator.py)
+  set_tests_properties(pymfm_test_generator_py
+    PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
+endif(NOT CMAKE_CONFIGURATION_TYPES)
+
+test_externallibrarymanager("compatibility_mode" "$<TARGET_FILE:MFrontGenericBehaviours>")
+
 
 test_pymfront_mp("generic" "$<TARGET_FILE:MFrontMaterialProperties-generic>" "VanadiumAlloy_YoungModulus_SRMA")
 test_pymfront_mp("c" "$<TARGET_FILE:MFrontMaterialProperties>" "VanadiumAlloy_YoungModulus_SRMA")

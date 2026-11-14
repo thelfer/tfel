@@ -2,7 +2,7 @@
  * \file   PipeProfileHandler.hxx
  * \brief
  * \author Thomas Helfer
- * \date   14 déc. 2015
+ * \date 14/12/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -29,9 +29,9 @@ namespace mtest {
    */
   struct PipeProfileHandler {
     PipeProfileHandler();
-    PipeProfileHandler(PipeProfileHandler&&);
+    PipeProfileHandler(PipeProfileHandler&&) noexcept;
     PipeProfileHandler(const PipeProfileHandler&);
-    PipeProfileHandler& operator=(PipeProfileHandler&&);
+    PipeProfileHandler& operator=(PipeProfileHandler&&) noexcept;
     PipeProfileHandler& operator=(const PipeProfileHandler&);
     std::shared_ptr<std::ostream> out;
     std::vector<std::shared_ptr<PipeProfile>> profiles;

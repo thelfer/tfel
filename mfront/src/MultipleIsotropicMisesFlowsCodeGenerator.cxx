@@ -2,7 +2,7 @@
  * \file   mfront/src/MultipleIsotropicMisesFlowsCodeGenerator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/08/2022
+ * \date 04/08/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,7 +11,11 @@
  * project under specific licensing conditions.
  */
 
+#include <locale>
+#include <string>
 #include <ostream>
+#include <sstream>
+#include <algorithm>
 #include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/IsotropicBehaviourDSLBase.hxx"
@@ -72,7 +76,10 @@ namespace mfront {
       writeMaterialLaws(os, this->bd.getMaterialLaws());
       const auto flow_id = std::to_string(n);
       if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule + flow_id)) {
-        os << this->bd.getCode(h, BehaviourData::BeforeFlowRule + flow_id);
+        // not profiled: the variables declared by this code block are used
+        // by the flow rule
+        os << this->bd.getCodeBlock(h, BehaviourData::BeforeFlowRule + flow_id)
+                  .code;
       }
       os << p->flowRule << '\n';
       os << "}\n\n";
@@ -83,8 +90,12 @@ namespace mfront {
             "100 * std::numeric_limits<NumericType>::epsilon();\n";
     }
     os << "tfel::math::tvector<" << this->flows.size()
-       << ", NumericType> vdp(NumericType(0));\n"
-       << "tfel::math::tvector<" << this->flows.size()
+       << ", NumericType> vdp;\n";
+    n = 0;
+    for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
+      os << "vdp(" << n << ") = this->dp" << n << ";\n";
+    }
+    os << "tfel::math::tvector<" << this->flows.size()
        << ", NumericType> newton_f;\n"
        << "tfel::math::tmatrix<" << this->flows.size() << ","
        << this->flows.size() << ", NumericType> newton_df;\n";
@@ -112,6 +123,8 @@ namespace mfront {
        << "(iter<(" << this->bd.getClassName() << "::iterMax))){\n";
     n = 0;
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
+      os << "{\n";
+      os << "this->dp" << n << " = strain(vdp(" << n << "));\n";
       os << "this->p_  = this->p" << n << " + (";
       if (p->hasSpecificTheta) {
         os << "real(" << p->theta << ")";
@@ -243,6 +256,7 @@ namespace mfront {
           }
         }
       }
+      os << "}\n";
     }
     os << "auto error = NumericType(0);\n";
     n = 0;
@@ -267,7 +281,7 @@ namespace mfront {
     os << "converge = ((error)/(real(" << this->flows.size() << "))<"
        << "(" << this->bd.getClassName() << "::epsilon));\n"
        << "}\n\n"
-       << "if(iter==" << this->bd.getClassName() << "::iterMax){\n";
+       << "if(!converge){\n";
     if (getDebugMode()) {
       os << "std::cout << \"" << this->bd.getClassName()
          << "::NewtonIntegration() : no convergence after \" "
@@ -300,7 +314,7 @@ namespace mfront {
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n"
-       << "integrate(const SMFlag smflag,const SMType smt) override final{\n"
+       << "integrate(const SMFlag smflag,const SMType smt) final{\n"
        << "using namespace std;\n";
     if (this->bd.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype
@@ -337,7 +351,16 @@ namespace mfront {
              << "2 * (this->mu) * (tfel::math::deviator(this->eel + ("
              << f.theta << ") * (this->deto)));\n";
         }
-        os << "this->seq_e" << n << " = sigmaeq(mfront_se" << n << ");\n";
+        os << "this->seq_e" << n << " = sigmaeq(mfront_se" << n << ");\n"
+           << "if(smt==CONSISTENTTANGENTOPERATOR){\n"
+           << "if(this->seq_e" << n << " > 100 * (this->young) * "
+           << "std::numeric_limits<NumericType>::epsilon()){\n"
+           << "this->mfront_n" << n << " = 3 * mfront_se" << n
+           << " / (2 * this->seq_e" << n << ");\n"
+           << "} else {\n"
+           << "this->mfront_n" << n << " = StrainStensor(strain(0));\n"
+           << "}\n"
+           << "}\n";
       }
       ++n;
     }
@@ -401,16 +424,125 @@ namespace mfront {
   void MultipleIsotropicMisesFlowsCodeGenerator::
       writeBehaviourComputeTangentOperator(std::ostream& os,
                                            const Hypothesis) const {
+    const auto nflows = this->flows.size();
+    const auto cn = this->bd.getClassName();
+    // theta associated with a flow
+    const auto theta = [&cn](const FlowHandler& f) -> std::string {
+      if (f.hasSpecificTheta) {
+        // same precision as the one of the behaviour file
+        std::ostringstream t;
+        t.imbue(std::locale::classic());
+        t.precision(14);
+        t << "real(" << f.theta << ")";
+        return t.str();
+      }
+      return cn + "::theta";
+    };
     os << "bool computeConsistentTangentOperator(const SMType smt){\n"
        << "using namespace std;\n"
        << "using tfel::material::computeElasticStiffness;\n"
-       << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+       << "using tfel::math::st2tost2;\n"
+       << "if((smt!=ELASTIC)&&(smt!=SECANTOPERATOR)&&"
+       << "(smt!=CONSISTENTTANGENTOPERATOR)){\n"
+       << "return false;\n"
+       << "}\n"
        << "computeElasticStiffness<N, "
-          "NumericType>::exe(this->Dt,this->lambda,this->mu)"
+          "NumericType>::exe(this->Dt,this->lambda_tdt,this->mu_tdt)"
           ";\n"
+       << "if(smt!=CONSISTENTTANGENTOPERATOR){\n"
        << "return true;\n"
        << "}\n"
+       << "// the flow direction is null, see the integrate method\n"
+       << "if(!(this->seq_e > 100 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon())){\n"
+       << "return true;\n"
+       << "}\n"
+       << "// The implicit equation associated with the i-th flow depends on\n"
+       << "// the increments of the equivalent strains and on the von Mises\n"
+       << "// norm seq_e_i of its elastic prediction. Its derivatives are:\n"
+       << "// - mfront_ccto_d(i) - mfront_ccto_k(i) with respect to dp_i,\n"
+       << "// - -mfront_ccto_k(i) with respect to dp_j (j != i),\n"
+       << "// - mfront_ccto_k(i) / (3 * mu * theta_i) with respect to "
+          "seq_e_i.\n"
+       << "// Those derivatives are the ones of the last iteration of the\n"
+       << "// NewtonIntegration method.\n";
+    const auto has_plastic_flow = std::any_of(
+        this->flows.begin(), this->flows.end(), [](const FlowHandler& f) {
+          return f.flow == FlowHandler::PlasticFlow;
+        });
+    if (has_plastic_flow) {
+      os << "constexpr auto newton_epsilon = "
+            "100 * std::numeric_limits<NumericType>::epsilon();\n";
+    }
+    os << "tfel::math::tvector<" << nflows << ", NumericType> mfront_ccto_d;\n"
+       << "tfel::math::tvector<" << nflows << ", NumericType> mfront_ccto_k;\n";
+    auto n = std::size_t{};
+    for (const auto& f : this->flows) {
+      const auto mu3_theta = "3 * (" + theta(f) + ") * (this->mu)";
+      if (f.flow == FlowHandler::PlasticFlow) {
+        os << "if((((this->f" << n << ") / (this->young) > "
+           << "strain(newton_epsilon)) && "
+           << "((this->dp" << n << ") >= strain(0))) || "
+           << "((this->dp" << n << ") > strain(newton_epsilon))){\n"
+           << "mfront_ccto_d(" << n << ") = (" << theta(f) << ") * (this->df_dp"
+           << n << ") / (this->young);\n"
+           << "mfront_ccto_k(" << n << ") = " << mu3_theta
+           << " * (this->df_dseq" << n << ") / (this->young);\n"
+           << "} else {\n"
+           << "mfront_ccto_d(" << n << ") = NumericType(1);\n"
+           << "mfront_ccto_k(" << n << ") = NumericType(0);\n"
+           << "}\n";
+      } else if (f.flow == FlowHandler::CreepFlow) {
+        os << "mfront_ccto_d(" << n << ") = NumericType(1);\n"
+           << "mfront_ccto_k(" << n << ") = -" << mu3_theta
+           << " * (this->df_dseq" << n << ") * (this->dt);\n";
+      } else {
+        os << "mfront_ccto_d(" << n << ") = 1 - (" << theta(f)
+           << ") * (this->df_dp" << n << ") * (this->dt);\n"
+           << "mfront_ccto_k(" << n << ") = -" << mu3_theta
+           << " * (this->df_dseq" << n << ") * (this->dt);\n";
+      }
+      ++n;
+    }
+    os << "// The derivative of the sum of the increments of the equivalent\n"
+       << "// strains with respect to seq_e_i is\n"
+       << "// -mfront_ccto_w(i) * mfront_ccto_k(i) / (3 * mu * theta_i),\n"
+       << "// where mfront_ccto_w is the solution of the transposed system.\n"
+       << "tfel::math::tmatrix<" << nflows << ", " << nflows
+       << ", NumericType> mfront_ccto_tJ;\n"
+       << "tfel::math::tvector<" << nflows << ", NumericType> mfront_ccto_w;\n"
+       << "for(unsigned short mfront_i = 0; mfront_i != " << nflows
+       << "; ++mfront_i){\n"
+       << "mfront_ccto_w(mfront_i) = NumericType(1);\n"
+       << "for(unsigned short mfront_j = 0; mfront_j != " << nflows
+       << "; ++mfront_j){\n"
+       << "mfront_ccto_tJ(mfront_j, mfront_i) = -mfront_ccto_k(mfront_i);\n"
+       << "}\n"
+       << "mfront_ccto_tJ(mfront_i, mfront_i) += mfront_ccto_d(mfront_i);\n"
+       << "}\n"
+       << "if(!tfel::math::TinyMatrixSolve<" << nflows
+       << ", NumericType, false>::exe(mfront_ccto_tJ, mfront_ccto_w)){\n"
        << "return false;\n"
+       << "}\n"
+       << "// The derivative of seq_e_i with respect to the total strain\n"
+       << "// increment is 2 * mu * theta_i * n_i, where n_i is the normal\n"
+       << "// associated with the elastic prediction of the i-th flow.\n"
+       << "auto mfront_ccto_dp_ddeto = StrainStensor(strain(0));\n";
+    n = 0;
+    for (const auto& f : this->flows) {
+      os << "mfront_ccto_dp_ddeto += (mfront_ccto_w(" << n
+         << ") * mfront_ccto_k(" << n << ")) * (this->"
+         << (f.hasSpecificTheta ? "mfront_n" + std::to_string(n) : "n")
+         << ");\n";
+      ++n;
+    }
+    os << "const auto mfront_ccto_dp_seq_e = this->dp / this->seq_e;\n"
+       << "const auto& M = st2tost2<N, NumericType>::M();\n"
+       << "this->Dt += 4 * (this->mu_tdt) / 3 * "
+       << "((this->n) ^ mfront_ccto_dp_ddeto) - "
+       << "4 * (this->mu_tdt) * (this->mu) * (" << cn << "::theta) * "
+       << "mfront_ccto_dp_seq_e * (M - ((this->n) ^ (this->n)));\n"
+       << "return true;\n"
        << "}\n\n";
   }
 

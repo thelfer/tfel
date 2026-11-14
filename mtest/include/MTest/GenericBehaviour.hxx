@@ -41,32 +41,26 @@ namespace mtest {
                      const std::string&,
                      const std::string&,
                      const ParametersMap&);
-
+    //
     void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;
-
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
         const CurrentState&,
         const StiffnessMatrixType) const override;
-
     std::pair<bool, real> integrate(CurrentState&,
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
-
     std::vector<std::string> getOptionalMaterialProperties() const override;
     void setOptionalMaterialPropertiesDefaultValues(
         EvolutionManager&, const EvolutionManager&) const override;
-
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
-
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
-
     void allocateWorkSpace(BehaviourWorkSpace&) const override;
-    //! destructor
+    //! \brief destructor
     ~GenericBehaviour() override;
 
    protected:

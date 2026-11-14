@@ -3,7 +3,7 @@
  * \brief This file declares a set of classes and methods useful
  * to handle data interpolation.
  * \author Thomas Helfer
- * \brief 17/06/2024
+ * \date 17/06/2024
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,6 +11,9 @@
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
+
+#ifndef LIB_MFRONT_DATAINTERPOLATIONUTILITIES_HXX
+#define LIB_MFRONT_DATAINTERPOLATIONUTILITIES_HXX
 
 #include <map>
 #include <string>
@@ -87,3 +90,5 @@ namespace mfront {
       const SingleVariableInterpolatedData::WriteCollocationPointsArguments&);
 
 }  // end of namespace mfront
+
+#endif /* LIB_MFRONT_DATAINTERPOLATIONUTILITIES_HXX */

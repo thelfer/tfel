@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/BehaviourBrick/DDIF2StressPotential.hxx
  * \brief
  * \author Thomas Helfer
- * \date   20/03/2018
+ * \date 20/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -38,9 +38,10 @@ namespace mfront::bbrick {
   struct DDIF2StressPotential : HookeStressPotential {
     //! \brief constructor
     DDIF2StressPotential();
-    std::string getName() const override;
-    std::vector<OptionDescription> getOptions(const BehaviourDescription&,
-                                              const bool) const override;
+    //
+    [[nodiscard]] std::string getName() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions(
+        const BehaviourDescription&, const bool) const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const DataMap&) override;
@@ -48,7 +49,7 @@ namespace mfront::bbrick {
         BehaviourDescription&, const AbstractBehaviourDSL&) const override;
     void endTreatment(BehaviourDescription&,
                       const AbstractBehaviourDSL&) const override;
-    //! destructor
+    //! \brief destructor
     ~DDIF2StressPotential() override;
 
    protected:

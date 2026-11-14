@@ -2,7 +2,7 @@
  * \file   include/TFEL/FSAlgorithm/swap_ranges.hxx
  * \brief  This file implements the swap_ranges class.
  * \author Thomas Helfer
- * \date   30 jun 2006
+ * \date 30/06/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -24,20 +24,22 @@ namespace tfel::fsalgo {
    * \brief swap_ranges swaps each of the elements in the range [first1,
    * first1+N) with the corresponding element in the range [first2, first2 + N).
    * That is, for each integer n such that 0 <= i < N, it swaps *(first1 + i)
-   * and *(first2 + i). The return value is first2 + N. \param N size of the
-   * ranges to be swapped.
+   * and *(first2 + i). The return value is first2 + N.
+   * \tparam N: size of the ranges to be swapped.
    *
    * This documentation is mostly inspired from:
    * http://www.sgi.com/tech/stl/swap_ranges.html
    *
    * \author Thomas Helfer
-   * \date   30 Jun 2006
+   * \date 30/06/2006
    */
   template <unsigned int N>
   struct swap_ranges {
     /*!
-     * \param ForwardIterator1
-     * \param ForwardIterator
+     * \tparam ForwardIterator1: iterator to the first range
+     * \tparam ForwardIterator2: iterator to the second range
+     * \param[in] p: iterator to the first element of the first range
+     * \param[in] q: iterator to the first element of the second range
      *
      * \return  q + N
      *
@@ -48,7 +50,7 @@ namespace tfel::fsalgo {
      * convertible to each other.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \date 30/06/2006
      */
     template <typename ForwardIterator1, typename ForwardIterator2>
     static TFEL_FSALGORITHM_INLINE ForwardIterator2 exe(ForwardIterator1 p,

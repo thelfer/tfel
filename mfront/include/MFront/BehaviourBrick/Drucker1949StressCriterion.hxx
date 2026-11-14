@@ -2,7 +2,7 @@
  * \file   include/MFront/BehaviourBrick/Drucker1949StressCriterion.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -25,14 +25,11 @@ namespace mfront::bbrick {
    * \sigma_{\mathrm{eq}}^{d}=
    * \sqrt{3}\,\sqrt[6]{J_{2}^{3} - c\,J_{3}^{2}}
    * \f]
-   * where \(J_{2}\) and \(J_{3}\) are the first and second invariants
+   * where \(J_{2}\) and \(J_{3}\) are the second and third invariants
    * of the deviatoric part of the stress tensor
    * \f$\underline{\sigma}\f$.
    */
   struct Drucker1949StressCriterion final : StressCriterionBase {
-    std::vector<OptionDescription> getOptions() const override;
-    std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-        const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -42,25 +39,31 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const Role) override;
-    std::string computeElasticPrediction(const std::string&,
-                                         const BehaviourDescription&,
-                                         const StressPotential&) const override;
-    std::string computeCriterion(const std::string&,
-                                 const BehaviourDescription&,
-                                 const StressPotential&) const override;
-    std::string computeNormal(const std::string&,
-                              const BehaviourDescription&,
-                              const StressPotential&,
-                              const Role) const override;
-    std::string computeNormalDerivative(const std::string&,
-                                        const BehaviourDescription&,
-                                        const StressPotential&,
-                                        const Role) const override;
-    bool isCoupledWithPorosityEvolution() const override;
-    bool isNormalDeviatoric() const override;
-    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const override;
-    //! destructor
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<BehaviourSymmetry>
+    getSupportedBehaviourSymmetries() const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeCriterion(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeNormal(const std::string&,
+                                            const BehaviourDescription&,
+                                            const StressPotential&,
+                                            const Role) const override;
+    [[nodiscard]] std::string computeNormalDerivative(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&,
+        const Role) const override;
+    [[nodiscard]] bool isCoupledWithPorosityEvolution() const override;
+    [[nodiscard]] bool isNormalDeviatoric() const override;
+    [[nodiscard]] PorosityEffectOnFlowRule
+    getPorosityEffectOnEquivalentPlasticStrain() const override;
+    //! \brief destructor
     ~Drucker1949StressCriterion() override;
 
    protected:

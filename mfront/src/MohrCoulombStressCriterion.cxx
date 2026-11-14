@@ -2,7 +2,7 @@
  * \file   mfront/src/MohrCoulombStressCriterion.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10/09/2019
+ * \date 10/09/2019
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -51,7 +51,7 @@ namespace mfront::bbrick {
                    "MohrCoulombStressCriterion::initialize: "
                    "material property 'c' is not defined");
     this->c = getBehaviourDescriptionMaterialProperty(dsl, "c", d.at("c"));
-    declareParameterOrLocalVariable(bd, this->c, "real", cn);
+    declareParameterOrLocalVariable(bd, this->c, "stress", cn);
     const auto phin = StressCriterion::getVariableId("phi", id, r);
     tfel::raise_if(d.count("phi") == 0,
                    "MohrCoulombStressCriterion::initialize: "
@@ -71,7 +71,7 @@ namespace mfront::bbrick {
                    "MohrCoulombStressCriterion::initialize: "
                    "material property 'a' is not defined");
     this->a = getBehaviourDescriptionMaterialProperty(dsl, "a", d.at("a"));
-    declareParameterOrLocalVariable(bd, this->a, "real", an);
+    declareParameterOrLocalVariable(bd, this->a, "stress", an);
     const auto pn = StressCriterion::getVariableId("mcsc_parameters", id, r);
     bd.addLocalVariable(
         uh, VariableDescription("MohrCoulombParameters<StressStensor>", pn, 1u,
@@ -142,7 +142,7 @@ namespace mfront::bbrick {
       code += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
     }
     if (r == FLOWCRITERION) {
-      code += "const auto [seqf" + id + ",dseq" + id + "_ds" + id + "] = ";
+      code += "const auto [seqf" + id + ", n" + id + "] = ";
       code += "computeMohrCoulombStressCriterionNormal(this->" + pn + ", s" +
               id + ");\n";
     }

@@ -20,10 +20,10 @@ namespace dianafea {
 
   template <typename real>
   static void DianaFEAStandardSmallStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const DianaFEAInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0] -= s0[0];
@@ -37,20 +37,21 @@ namespace dianafea {
       de[3] -= (s1[3] - s0[3]) * cste;
     }
     if (d == 3) {
+      // e and de follow the DianaFEA order (XY, YZ, ZX)
       e[3] -= s0[3] * cste;
-      e[4] -= s0[3] * cste;
-      e[5] -= s0[5] * cste;
+      e[4] -= s0[5] * cste;
+      e[5] -= s0[4] * cste;
       de[3] -= (s1[3] - s0[3]) * cste;
-      de[4] -= (s1[4] - s0[4]) * cste;
-      de[5] -= (s1[5] - s0[5]) * cste;
+      de[4] -= (s1[5] - s0[5]) * cste;
+      de[5] -= (s1[4] - s0[4]) * cste;
     }
   }  // end of DianaFEAStandardSmallStrainStressFreeExpansionHandler
 
   void DianaFEAStandardSmallStrainStressFreeExpansionHandler(
-      double *const e,
-      double *const de,
-      const double *const s0,
-      const double *const s1,
+      double* const e,
+      double* const de,
+      const double* const s0,
+      const double* const s1,
       const DianaFEAInt d) {
     DianaFEAStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }

@@ -3,7 +3,7 @@
  * \brief  imposed displacement test case
  * celaeno --scheme=BehaviourTesting test-T.ple
  * \author Helfer Thomas
- * \date   06 / 12 / 07
+ * \date 06 / 12 / 07
  */
 
 Loadings{'Tx', 'Ty',

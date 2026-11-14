@@ -31,7 +31,7 @@ namespace mfront {
      * \brief constructor
      *\param[in] opts: options passed to the DSL
      */
-    ImplicitDSLII(const DSLOptions&);
+    explicit ImplicitDSLII(const DSLOptions&);
     //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     std::string getCodeBlockTemplate(

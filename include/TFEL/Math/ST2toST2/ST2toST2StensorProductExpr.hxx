@@ -19,6 +19,7 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
 #include "TFEL/Math/fsarray.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 namespace tfel::math {
 
@@ -60,7 +61,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
@@ -68,12 +69,13 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator[]
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2SST2toST2StensorProductExp>
@@ -115,7 +117,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
@@ -123,14 +125,14 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator[]
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
-        const noexcept {
-      return RunTimeProperties();
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr RunTimeProperties
+    getRunTimeProperties() const noexcept {
+      return {};
     }
   };  // end of struct Expr<StensorResultType,T2SST2toST2StensorProductExp>
 
@@ -175,7 +177,7 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
@@ -183,12 +185,13 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr const value_type& operator[](
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator[]
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2SST2toST2StensorProductExp>

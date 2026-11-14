@@ -25,7 +25,7 @@ namespace tfel::math {
   // grid: Grid
   // flags: Plane construction method
   template <typename Field, typename real>
-  AndersonBase<Field, real>::AndersonBase(const Allocator a) : ma(a), n(0) {}
+  AndersonBase<Field, real>::AndersonBase(const Allocator a) : ma(a) {}
 
   template <typename Field, typename real>
   const std::vector<Field*>& AndersonBase<Field, real>::getU() const {
@@ -48,6 +48,11 @@ namespace tfel::math {
       tfel::raise(
           "Anderson<Field,real>::setAnderson: "
           "parameters already set");
+    }
+    if (Nmax_i == 0) {
+      tfel::raise(
+          "Anderson<Field,real>::setAnderson: "
+          "invalid method order (null value)");
     }
     this->w.clear();
     this->cM.resize(Nmax_i);

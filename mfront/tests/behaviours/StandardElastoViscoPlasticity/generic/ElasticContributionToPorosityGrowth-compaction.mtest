@@ -1,0 +1,14 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// hydrostatic compaction in one step: the porosity reaches its lower bound
+@InternalStateVariable 'Porosity' 1.e-3;
+@ImposedStrain 'EXX' {0 : 0, 1 : -1.e-2};
+@ImposedStrain 'EYY' {0 : 0, 1 : -1.e-2};
+@ImposedStrain 'EZZ' {0 : 0, 1 : -1.e-2};
+@Times{0, 1};
+
+@Test<function> 'Porosity' '0' 1.e-12;

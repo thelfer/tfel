@@ -1,7 +1,7 @@
 /*!
  * \file Comparison.hxx
  *
- *  \date 27 mai 2013
+ *  \date 27/05/2013
  *  \author Remy Petkantchin
  *
  *  \class Comparison
@@ -18,6 +18,8 @@
 
 #include <cmath>
 #include <string>
+#include <cstddef>
+#include <optional>
 
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Check/Column.hxx"
@@ -36,14 +38,10 @@ namespace tfel::check {
                const bool interpolationIsConform,
                const std::shared_ptr<Column> colIntegralInterpolated,
                const std::shared_ptr<Interpolation> integralInterpolation);
-    /*!
-     * \brief returns true if Comparison has succeed
-     */
-    bool hasSucceed() const;
-    /*!
-     * \brief returns the log message with comparison info
-     */
-    std::string getMsgLog() const;
+    //! \return true if Comparison has succeed
+    [[nodiscard]] bool hasSucceed() const;
+    //! \return the log message with comparison info
+    [[nodiscard]] std::string getMsgLog() const;
     /*!
      * \brief executes the comparison between the values
      */
@@ -62,7 +60,15 @@ namespace tfel::check {
         const std::shared_ptr<Column> colIntegralInterpolated,
         const std::shared_ptr<Interpolation> integralInterpolation);
 
-    const std::string& getName() const;
+    [[nodiscard]] const std::string& getName() const;
+    /*!
+     * \return the location of the given row, i.e. " at line N of file
+     * 'f'" for each file from which the values of this row were read, or
+     * an empty string if no row is given
+     * \param[in] i: row index
+     */
+    [[nodiscard]] std::string getLocation(
+        const std::optional<std::size_t>&) const;
     //! destructor
     virtual ~Comparison();
 

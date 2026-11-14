@@ -2,7 +2,7 @@
  * \file   include/FSES/Utilities.hxx
  * \brief
  * \author Joachim Kopp/Thomas Helfer
- * \date   02 janv. 2017
+ * \date 02/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -36,6 +36,7 @@
 #ifndef LIB_FSES_UTILITIES_HXX
 #define LIB_FSES_UTILITIES_HXX
 
+#include <limits>
 #include <cstdlib>
 #include <type_traits>
 

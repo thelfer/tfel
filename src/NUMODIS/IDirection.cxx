@@ -2,7 +2,7 @@
  * \file   src/NUMODIS/IDirection.cxx
  * \brief
  * \author Laurent Dupuy
- * \date   9/06/2017
+ * \date 09/06/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -18,6 +18,25 @@
 #include "NUMODIS/IDirection.hxx"
 
 namespace numodis {
+
+  //===============================================================
+  // IDirection : Operator <<
+  //---------------------------------------------------------------
+  //! Print the data of a discrete direction
+  //---------------------------------------------------------------
+  /*!
+    \param os output stream
+    \param idirection IDirection to be printed
+  */
+  //===============================================================
+  std::ostream& operator<<(std::ostream& os, const IDirection& idirection) {
+    os << "[";
+    for (unsigned i = 0; i != idirection.getNindices() - 1; i++)
+      os << idirection.getIndex()[i] << ",";
+    os << idirection.getIndex()[idirection.getNindices() - 1] << "]";
+
+    return os;
+  }
 
   //===============================================================
   // IDirection :: Operator ==

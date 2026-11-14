@@ -1,0 +1,44 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// constant multiaxial stress: the viscoplastic strain rate is constant
+@Real 'Sxx' 100e6;
+@Real 'Syy' 35e6;
+@Real 'Szz' -25e6;
+@Real 'Sxy' 30e6;
+@Real 'Sxz' 20e6;
+@Real 'Syz' -15e6;
+@ImposedStress 'SXX' 'Sxx';
+@ImposedStress 'SYY' 'Syy';
+@ImposedStress 'SZZ' 'Szz';
+@ImposedStress 'SXY' 'Sxy';
+@ImposedStress 'SXZ' 'Sxz';
+@ImposedStress 'SYZ' 'Syz';
+@Times{0, 1e-2 in 10};
+
+// Hill equivalent stress, with Sij = sqrt(2) * sigma_ij for i != j
+@Real 'HF' 0.371;
+@Real 'HG' 0.629;
+@Real 'HH' 4.052;
+@Real 'HL' 1.2;
+@Real 'HM' 1.7;
+@Real 'HN' 2.3;
+@Real 'seq' 'sqrt(HF * (Sxx - Syy) ** 2 + HG * (Syy - Szz) ** 2 + HH * (Szz - Sxx) ** 2 + HL * Sxy ** 2 + HM * Sxz ** 2 + HN * Syz ** 2)';
+
+// Norton's law
+@Real 'K' 250e6;
+@Real 'n' 3.2;
+@Evolution<function> 'p' '(seq / K) ** n * t';
+
+@Real 'E' 150e9;
+@Real 'nu' 0.3;
+@Test<function> 'EquivalentViscoplasticStrain' 'p' 1e-12;
+@Test<function> 'EXX' '(Sxx - nu * (Syy + Szz)) / E + p * (HF * (Sxx - Syy) - HH * (Szz - Sxx)) / seq' 1e-12;
+@Test<function> 'EYY' '(Syy - nu * (Szz + Sxx)) / E + p * (HG * (Syy - Szz) - HF * (Sxx - Syy)) / seq' 1e-12;
+@Test<function> 'EZZ' '(Szz - nu * (Sxx + Syy)) / E + p * (HH * (Szz - Sxx) - HG * (Syy - Szz)) / seq' 1e-12;
+@Test<function> 'EXY' '(1 + nu) * Sxy / E + p * HL * Sxy / seq' 1e-12;
+@Test<function> 'EXZ' '(1 + nu) * Sxz / E + p * HM * Sxz / seq' 1e-12;
+@Test<function> 'EYZ' '(1 + nu) * Syz / E + p * HN * Syz / seq' 1e-12;

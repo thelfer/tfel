@@ -2,7 +2,7 @@
  * \file   StensorComputeEigenVectorsDerivatives.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 janv. 2017
+ * \date 04/01/2017
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,6 +14,12 @@
 #ifndef LIB_TFEL_MATH_INTERNALS_STENSORCOMPUTEEIGENVECTORSDERIVATIVES_HXX
 #define LIB_TFEL_MATH_INTERNALS_STENSORCOMPUTEEIGENVECTORSDERIVATIVES_HXX
 
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/General/ComputeBinaryResult.hxx"
+#include "TFEL/Math/Forward/General.hxx"
+#include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
+
 namespace tfel::math::internals {
 
   template <unsigned short N>
@@ -21,17 +27,21 @@ namespace tfel::math::internals {
 
   struct StensorComputeEigenTensorsDerivativesBase {
     template <typename NumType>
-    TFEL_MATH_INLINE static
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static
         typename ComputeBinaryResult<base_type<NumType>, NumType, OpDiv>::Result
         regularized_inverse(const NumType x, const NumType eps) {
-      if (tfel::math::abs(x) < 100 * std::numeric_limits<NumType>::min()) {
-        return NumType(0);
+      using Result = typename ComputeBinaryResult<base_type<NumType>, NumType,
+                                                  OpDiv>::Result;
+      if (tfel::math::abs(x) <
+          NumType(100 * std::numeric_limits<base_type<NumType>>::min())) {
+        return Result(0);
       }
       return regularization_function(x / eps) / x;
     }  // end of regularization
    protected:
     template <typename NumType>
-    TFEL_MATH_INLINE static NumType regularization_function(const NumType x) {
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE static NumType regularization_function(
+        const NumType x) {
       if (tfel::math::abs(x) > 1) {
         return NumType(1);
       }
@@ -42,7 +52,7 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenTensorsDerivatives<1u> {
     template <ST2toST2Concept ST2toST2Type, typename NumType>
-    static TFEL_MATH_INLINE2 void exe(
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 void exe(
         ST2toST2Type& dn0_ds,
         ST2toST2Type& dn1_ds,
         ST2toST2Type& dn2_ds,
@@ -57,8 +67,8 @@ namespace tfel::math::internals {
                             numeric_type<ST2toST2Type>>())) {
       using namespace tfel::math;
       using namespace tfel::typetraits;
-      typedef typename ComputeBinaryResult<base_type<NumType>, NumType,
-                                           OpDiv>::Result InvNumType;
+      using InvNumType = typename ComputeBinaryResult<base_type<NumType>,
+                                                      NumType, OpDiv>::Result;
       dn0_ds = st2tost2<1u, InvNumType>(InvNumType(0));
       dn1_ds = dn0_ds;
       dn2_ds = dn0_ds;
@@ -69,7 +79,7 @@ namespace tfel::math::internals {
   struct StensorComputeEigenTensorsDerivatives<2u>
       : public StensorComputeEigenTensorsDerivativesBase {
     template <ST2toST2Concept ST2toST2Type, typename NumType>
-    static TFEL_MATH_INLINE2 void exe(
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 void exe(
         ST2toST2Type& dn0_ds,
         ST2toST2Type& dn1_ds,
         ST2toST2Type& dn2_ds,
@@ -82,8 +92,8 @@ namespace tfel::math::internals {
                                                          NumType,
                                                          OpDiv>::Result,
                             numeric_type<ST2toST2Type>>())) {
-      typedef base_type<NumType> base;
-      typedef BinaryOperationResult<base, NumType, OpDiv> InvNumType;
+      using base = base_type<NumType>;
+      using InvNumType = BinaryOperationResult<base, NumType, OpDiv>;
       constexpr auto icste = Cste<base>::isqrt2;
       const tvector<3u, base> v0 = m.template column_view<0u>();
       const tvector<3u, base> v1 = m.template column_view<1u>();
@@ -100,7 +110,7 @@ namespace tfel::math::internals {
   struct StensorComputeEigenTensorsDerivatives<3u>
       : public StensorComputeEigenTensorsDerivativesBase {
     template <ST2toST2Concept ST2toST2Type, typename NumType>
-    static TFEL_MATH_INLINE2 void exe(
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 void exe(
         ST2toST2Type& dn0_ds,
         ST2toST2Type& dn1_ds,
         ST2toST2Type& dn2_ds,
@@ -114,7 +124,7 @@ namespace tfel::math::internals {
                                                          OpDiv>::Result,
                             numeric_type<ST2toST2Type>>())) {
       using namespace tfel::math;
-      typedef base_type<NumType> base;
+      using base = base_type<NumType>;
       constexpr auto cste = Cste<base>::isqrt2;
       const tvector<3u, base> v0 = m.template column_view<0u>();
       const tvector<3u, base> v1 = m.template column_view<1u>();

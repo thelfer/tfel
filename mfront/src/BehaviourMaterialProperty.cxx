@@ -2,7 +2,7 @@
  * \file   BehaviourMaterialProperty.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08/07/2018
+ * \date 08/07/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -32,11 +32,11 @@ namespace mfront {
   BehaviourMaterialProperty::BehaviourMaterialProperty(
       const BehaviourMaterialProperty&) = default;
   BehaviourMaterialProperty::BehaviourMaterialProperty(
-      BehaviourMaterialProperty&&) = default;
+      BehaviourMaterialProperty&&) noexcept = default;
   BehaviourMaterialProperty& BehaviourMaterialProperty::operator=(
       const BehaviourMaterialProperty&) = default;
   BehaviourMaterialProperty& BehaviourMaterialProperty::operator=(
-      BehaviourMaterialProperty&&) = default;
+      BehaviourMaterialProperty&&) noexcept = default;
 
   bool BehaviourMaterialProperty::isScalar() const {
     return SupportedTypes::isScalarType(this->type);
@@ -144,19 +144,20 @@ namespace mfront {
         (h != ModellingHypothesis::PLANESTRESS) &&
         (h != ModellingHypothesis::TRIDIMENSIONAL)) {
       if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        raise("unexepected undefined hypothesis");
+        raise("unexpected undefined hypothesis");
       } else {
-        raise("unexepected hypothesis '" + ModellingHypothesis::toString(h) +
+        raise("unexpected hypothesis '" + ModellingHypothesis::toString(h) +
               "'");
       }
     }
     if (opts.useMaterialPropertiesToBuildStiffnessTensor) {
       if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                           false)) {
-        if (bd.getSymmetryType() == mfront::ISOTROPIC) {
+        // the stiffness tensor has the elastic symmetry
+        if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
           add_mp("stress", "YoungModulus", "youn", false);
           add_mp("real", "PoissonRatio", "nu", false);
-        } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+        } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
           add_mp("stress", "YoungModulus1", "yg1", false);
           add_mp("stress", "YoungModulus2", "yg2", false);
           add_mp("stress", "YoungModulus3", "yg3", false);
@@ -174,7 +175,7 @@ namespace mfront {
             add_mp("stress", "ShearModulus13", "g13", false);
           }
         } else {
-          throw_if(true, "unsupported behaviour symmetry type");
+          throw_if(true, "unsupported elastic symmetry type");
         }
       }
     }
@@ -182,6 +183,8 @@ namespace mfront {
       if (bd.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
+        // the thermal expansion coefficient tensor has the symmetry of the
+        // behaviour
         if (bd.getSymmetryType() == mfront::ISOTROPIC) {
           add_mp("thermalexpansion", "ThermalExpansion", "alph", false);
         } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {

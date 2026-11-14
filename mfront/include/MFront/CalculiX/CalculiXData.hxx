@@ -2,7 +2,7 @@
  * \file   CalculiXData.hxx
  * \brief
  * \author Thomas Helfer
- * \date   22/03/2016
+ * \date 22/03/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_CALCULIX_CALCULIXDATA_HXX
 #define LIB_MFRONT_CALCULIX_CALCULIXDATA_HXX
 
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/CalculiX/CalculiX.hxx"
 
 namespace calculix {
@@ -23,18 +24,18 @@ namespace calculix {
    * the umat interface
    */
   struct CalculiXData {
-    CalculiXReal *const STRESS;
-    CalculiXReal *const PNEWDT;
-    CalculiXReal *const DDSDDE;
-    CalculiXReal *const STATEV1;
+    CalculiXReal* const STRESS;
+    CalculiXReal* const PNEWDT;
+    CalculiXReal* const DDSDDE;
+    CalculiXReal* const STATEV1;
     //! time increment
     const CalculiXReal DTIME;
-    const CalculiXReal *const STATEV0;
-    const CalculiXReal *const DV0;
-    const CalculiXReal *const DV1;
+    const CalculiXReal* const STATEV0;
+    const CalculiXReal* const DV0;
+    const CalculiXReal* const DV1;
     //! temperature at the end of the time step
-    const CalculiXReal *const TEMP;
-    const CalculiXReal *const MPROPS;
+    const CalculiXReal* const TEMP;
+    const CalculiXReal* const MPROPS;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler sfeh;
   };  // end of struct CalculiXData

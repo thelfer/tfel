@@ -2,7 +2,7 @@
  * \file   mfront/src/MakefileGenerator.cxx
  * \brief
  * \author Thomas Helfer
- * \date   16/08/2015
+ * \date 16/08/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -12,6 +12,7 @@
  */
 
 #include <set>
+#include <array>
 #include <cstring>
 #include <ostream>
 #include <sstream>
@@ -44,6 +45,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/MFrontHeader.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/InstallPath.hxx"
 #include "MFront/SearchPathsHandler.hxx"
@@ -119,34 +121,42 @@ namespace mfront {
     return res;
   }  // end of getLibraryLinkFlags(const std::string&)
 
-  // res.first : true if the target has C++ source files
+  // res.first.first : true if the target has C++ source files
+  // res.first.second: true if the target has CUDA source files
+  // res.first.second: true if the target has CUDA source files
   // res.second.first : list of object files
   // res.second.first : list of library dependencies
-  static std::pair<bool, std::pair<std::string, std::string>>
+  static std::pair<std::array<bool, 3u>, std::pair<std::string, std::string>>
   getLibrarySourcesAndDependencies(const TargetsDescription& t,
                                    const GeneratorOptions& o,
                                    const std::string& name) {
     const auto& l = t.getLibrary(name);
-    auto res = std::pair<bool, std::pair<std::string, std::string>>{};
-    res.first = false;
+    auto res =
+        std::pair<std::array<bool, 3u>, std::pair<std::string, std::string>>{};
+    res.first = {false, false};
     for (const auto& s : l.sources) {
-      if (s.size() > 4) {
-        const auto ext = s.substr(s.size() - 4);
-        if ((ext == ".cpp") || (ext == ".cxx")) {
-          res.first = true;
-          res.second.first += s.substr(0, s.size() - 4) + ".o ";
-        }
+      if ((s.ends_with(".cpp")) || (s.ends_with(".cxx"))) {
+        res.first[0] = true;
+        res.second.first += s.substr(0, s.size() - 4) + ".o ";
       }
-      if (s.size() > 2) {
-        if (s.substr(s.size() - 2) == ".c") {
-          res.second.first += s.substr(0, s.size() - 2) + ".o ";
-        }
+      if (s.ends_with(".c")) {
+        res.second.first += s.substr(0, s.size() - 2) + ".o ";
+      }
+      if (s.ends_with(".cu")) {
+        res.first[1] = true;
+        res.second.first += s.substr(0, s.size() - 3) + ".o ";
+      }
+      if (s.ends_with(".hip")) {
+        res.first[2] = true;
+        res.second.first += s.substr(0, s.size() - 4) + ".o ";
       }
     }
     if (o.melt) {
       for (const auto& d : l.deps) {
         const auto rd = getLibrarySourcesAndDependencies(t, o, d);
-        res.first = res.first || rd.first;
+        for (std::size_t i = 0; i != res.first.size(); ++i) {
+          res.first[i] = res.first[i] || rd.first[i];
+        }
         if (!res.second.first.empty()) {
           res.second.first += " ";
         }
@@ -186,55 +196,162 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "generating Makefile\n";
     }
+    const auto& cm = ConfigurationManager::get();
+    auto get_compiler = [&cm](const char* const env,
+                              const ConfigurationManager::Language l)
+        -> std::optional<std::string> {
+      const auto* const compiler = std::getenv(env);
+      if (compiler != nullptr) {
+        return compiler;
+      }
+      const auto ocompiler = cm.getCompiler(l);
+      if (ocompiler.has_value()) {
+        return *ocompiler;
+      }
+      return {};
+    };
+    auto get_compilation_flags =
+        [&cm](const char* const env, const ConfigurationManager::Language l,
+              const ConfigurationManager::LanguageOptionCategory c)
+        -> std::vector<std::string> {
+      const auto* const opts = std::getenv(env);
+      if (opts != nullptr) {
+        return std::vector<std::string>{std::string{opts}};
+      }
+      const auto opts2 = cm.getCompilationOptions(l, c);
+      if (opts2.has_value()) {
+        return *opts2;
+      }
+      return {};
+    };
+    auto get_preprocessor_flags = [&cm](const ConfigurationManager::Language l)
+        -> std::vector<std::string> {
+      const auto opts =
+          cm.getCompilationOptions(l, ConfigurationManager::PREPROCESSOR_FLAGS);
+      if (opts.has_value()) {
+        return *opts;
+      }
+      return {};
+    };
+    auto get_linker_flags =
+        [&cm](const char* const env,
+              const ConfigurationManager::LinkerOptionCategory c)
+        -> std::vector<std::string> {
+      const auto* const opts = std::getenv(env);
+      if (opts != nullptr) {
+        return std::vector<std::string>{std::string{opts}};
+      }
+      const auto opts2 = cm.getLinkerOptions(c);
+      if (opts2.has_value()) {
+        return *opts2;
+      }
+      return {};
+    };
+    auto transform_flag = [](const std::string& flag) {
+      if ((tfel::utilities::starts_with(flag, "$(shell ")) ||
+          (tfel::utilities::ends_with(flag, ")"))) {
+        return "$(strip " + flag + ")";
+      }
+      return flag;
+    };
     MFrontLockGuard lock;
-    const auto env_cc = ::getenv("CC");
-    const auto env_cxx = ::getenv("CXX");
+    const auto c_compiler = get_compiler("CC", ConfigurationManager::C);
+    const auto cxx_compiler = get_compiler("CXX", ConfigurationManager::CXX);
+    const auto cuda_compiler =
+        get_compiler("CUDA_COMPILER", ConfigurationManager::CUDA);
+    const auto hip_compiler =
+        get_compiler("HIP_COMPILER", ConfigurationManager::HIP);
     const auto inc = ::getenv("INCLUDES");
-    const auto cxxflags = ::getenv("CXXFLAGS");
-    const auto cflags = ::getenv("CFLAGS");
-    const auto ldflags = ::getenv("LDFLAGS");
+    const auto include_paths = cm.getIncludePaths();
+    const auto cxx_preprocessor_flags =
+        get_preprocessor_flags(ConfigurationManager::CXX);
+    const auto cxxflags =
+        get_compilation_flags("CXXFLAGS", ConfigurationManager::CXX,
+                              ConfigurationManager::COMPILATION_FLAGS);
+    const auto c_preprocessor_flags =
+        get_preprocessor_flags(ConfigurationManager::C);
+    const auto cflags =
+        get_compilation_flags("CFLAGS", ConfigurationManager::C,
+                              ConfigurationManager::COMPILATION_FLAGS);
+    const auto cuda_preprocessor_flags =
+        get_preprocessor_flags(ConfigurationManager::CUDA);
+    const auto cuda_flags =
+        get_compilation_flags("CUDAFLAGS", ConfigurationManager::CUDA,
+                              ConfigurationManager::COMPILATION_FLAGS);
+    const auto hip_preprocessor_flags =
+        get_preprocessor_flags(ConfigurationManager::HIP);
+    const auto hip_flags =
+        get_compilation_flags("HIPFLAGS", ConfigurationManager::HIP,
+                              ConfigurationManager::COMPILATION_FLAGS);
+    const auto ldflags =
+        get_linker_flags("LDFLAGS", ConfigurationManager::LINKER_FLAGS);
     const auto sb = o.silentBuild ? "@" : "";
-    const auto cxx = (env_cxx == nullptr) ? "$(CXX)" : env_cxx;
-    const auto cc = (env_cc == nullptr) ? "$(CC)" : env_cc;
+    const auto cc = c_compiler.value_or("$(CC)");
+    const auto cxx = cxx_compiler.value_or("$(CXX)");
+    const auto cuda = cuda_compiler.value_or("$(CUDA_COMPILER)");
+    const auto hip = hip_compiler.value_or("$(HIP_COMPILER)");
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto mfile = d + tfel::system::dirStringSeparator() + f;
     std::ofstream m(mfile);
     m.exceptions(std::ios::badbit | std::ios::failbit);
-    tfel::raise_if(!m, "generateMakeFile : can't open file '" + mfile + "'");
+    tfel::raise_if(!m, "generateMakeFile: can't open file '" + mfile + "'");
     auto cppSources = std::set<std::string>{};
     auto cSources = std::set<std::string>{};
+    auto cudaSources = std::set<std::string>{};
+    auto hipSources = std::set<std::string>{};
     for (const auto& l : t.libraries) {
       for (const auto& src : l.sources) {
-        if (src.size() > 4) {
-          if ((src.substr(src.size() - 4) == ".cpp") ||
-              (src.substr(src.size() - 4) == ".cxx")) {
-            cppSources.insert(src);
-          }
+        if ((src.ends_with(".cpp")) || (src.ends_with(".cxx"))) {
+          cppSources.insert(src);
         }
-        if (src.size() > 2) {
-          if (src.substr(src.size() - 2) == ".c") {
-            cSources.insert(src);
-          }
+        if (src.ends_with(".c")) {
+          cSources.insert(src);
+        }
+        if (src.ends_with(".cu")) {
+          cudaSources.insert(src);
+        }
+        if (src.ends_with(".hip")) {
+          hipSources.insert(src);
         }
       }
     }
+    if ((!cudaSources.empty()) && (!hipSources.empty())) {
+      tfel::raise(
+          "generateMakeFile: can't mix CUDA and HIP "
+          "sources in the same library");
+    }
     m << "# Makefile generated by mfront.\n"
       << MFrontHeader::getHeader("# ") << "\n";
-    m << "export LD_LIBRARY_PATH:=$(PWD):$(LD_LIBRARY_PATH)\n\n";
+    m << "export LD_LIBRARY_PATH:=$(CURDIR):$(LD_LIBRARY_PATH)\n\n";
     // COMPILERS
-    if (env_cc != nullptr) {
-      m << "CC := " << env_cc << "\n";
+    if (c_compiler.has_value()) {
+      m << "CC := " << *(c_compiler) << "\n";
     }
-    if (env_cxx != nullptr) {
-      m << "CXX := " << env_cxx << "\n";
+    if (cxx_compiler.has_value()) {
+      m << "CXX := " << *(cxx_compiler) << "\n";
     }
-    if ((env_cc != nullptr) || (env_cxx != nullptr)) {
+    if (cuda_compiler.has_value()) {
+      m << "CUDA_COMPILER := " << *(cuda_compiler) << "\n";
+    }
+    if (hip_compiler.has_value()) {
+      m << "HIP_COMPILER := " << *(hip_compiler) << "\n";
+    }
+    if ((c_compiler.has_value()) || (cxx_compiler.has_value()) ||
+        (cuda_compiler.has_value())) {
       m << '\n';
     }
     // INCLUDES
     m << "INCLUDES := ";
     if (inc != nullptr) {
       m << inc << " ";
+    }
+    if (!include_paths.empty()) {
+      for (const auto& path : include_paths) {
+        m << "-I" << path << ' ';
+      }
+    }
+    if (inc != nullptr) {
+      m << inc << ' ';
     }
     m << "-I../include";
     for (const auto& path : o.include_paths) {
@@ -243,16 +360,11 @@ namespace mfront {
     // cpp flags
     std::vector<std::string> cppflags;
     for (const auto& l : t.libraries) {
-      for (const auto& flags : l.cppflags) {
-        insert_if(cppflags, flags);
+      for (const auto& flag : l.cppflags) {
+        insert_if(cppflags, transform_flag(flag));
       }
       for (const auto& id : l.include_directories) {
-        if ((tfel::utilities::starts_with(id, "$(shell ")) ||
-            (tfel::utilities::ends_with(id, ")"))) {
-          insert_if(cppflags, "-I\"$(strip " + id + ")\"");
-        } else {
-          insert_if(cppflags, "-I" + id);
-        }
+        insert_if(cppflags, "-I\"" + transform_flag(id) + '\"');
       }
     }
     if (!cppflags.empty()) {
@@ -272,38 +384,51 @@ namespace mfront {
           m << "\\\n";
           first = false;
         }
-        m << "\t     -I" << dir;
+        m << "\t     -I\"" << dir << '"';
       }
     }
     //
     m << "\n\n";
     // LDFLAGS
-    if (ldflags != nullptr) {
-      m << "LDFLAGS := " << ldflags << '\n';
+    if (!ldflags.empty()) {
+      m << "LDFLAGS :=";
+      for (const auto& flag : ldflags) {
+        m << " " << transform_flag(flag);
+      }
+      m << " \n";
     }
+    auto write_default_c_cxx_flags = [&o, &m, &tfel_config] {
+      switch (o.olevel) {
+        case GeneratorOptions::LEVEL2:
+          m << "$(shell " << tfel_config << " --oflags --oflags2) ";
+          break;
+        case GeneratorOptions::LEVEL1:
+          m << "$(shell " << tfel_config << " --oflags) ";
+          break;
+        case GeneratorOptions::LEVEL0:
+          m << "$(shell " << tfel_config << " --oflags0) ";
+          break;
+      }
+      if (o.debugFlags) {
+        m << "$(shell " << tfel_config << " --debug-flags) ";
+      }
+    };
     // CXXFLAGS
     if (!cppSources.empty()) {
-      m << "CXXFLAGS := -Wall -Wfatal-errors ";
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      m << "-ansi ";
-#endif /* __CYGWIN__ */
-      if (cxxflags != nullptr) {
-        m << cxxflags << " ";
+      m << "CXXFLAGS := ";
+      for (const auto& flag : cxx_preprocessor_flags) {
+        m << transform_flag(flag) << " ";
+      }
+      if (!cxxflags.empty()) {
+        for (const auto& flag : cxxflags) {
+          m << transform_flag(flag) << " ";
+        }
       } else {
-        switch (o.olevel) {
-          case GeneratorOptions::LEVEL2:
-            m << "$(shell " << tfel_config << " --oflags --oflags2) ";
-            break;
-          case GeneratorOptions::LEVEL1:
-            m << "$(shell " << tfel_config << " --oflags) ";
-            break;
-          case GeneratorOptions::LEVEL0:
-            m << "$(shell " << tfel_config << " --oflags0) ";
-            break;
-        }
-        if (o.debugFlags) {
-          m << "$(shell " << tfel_config << " --debug-flags) ";
-        }
+        m << "-Wall -Wfatal-errors ";
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+        m << "-ansi ";
+#endif /* __CYGWIN__ */
+        write_default_c_cxx_flags();
       }
       if ((o.sys == "win32") || (o.sys == "cygwin")) {
         m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES) \n\n";
@@ -313,30 +438,50 @@ namespace mfront {
     }
     // CFLAGS
     if (!cSources.empty()) {
-      m << "CFLAGS := -W -Wall -Wfatal-errors ";
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      m << "-ansi -std=c99 ";
-#endif /* __CYGWIN__ */
-      if (cflags != nullptr) {
-        m << cflags << " ";
-      } else {
-        switch (o.olevel) {
-          case GeneratorOptions::LEVEL2:
-            m << "$(shell " << tfel_config << " --oflags --oflags2) ";
-            break;
-          case GeneratorOptions::LEVEL1:
-            m << "$(shell " << tfel_config << " --oflags) ";
-            break;
-          case GeneratorOptions::LEVEL0:
-            m << "$(shell " << tfel_config << " --oflags0) ";
-            break;
+      m << "CFLAGS := ";
+      for (const auto& flag : c_preprocessor_flags) {
+        m << transform_flag(flag) << " ";
+      }
+      if (!cflags.empty()) {
+        for (const auto& flag : cflags) {
+          m << transform_flag(flag) << " ";
         }
+      } else {
+        m << "-W -Wall -Wfatal-errors ";
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+        m << "-ansi -std=c99 ";
+#endif /* __CYGWIN__ */
+        write_default_c_cxx_flags();
       }
       if ((o.sys == "win32") || (o.sys == "cygwin")) {
         m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES)\n\n";
       } else {
         m << "-fPIC $(INCLUDES)\n\n";
       }
+    }
+    if (!cudaSources.empty()) {
+      m << "CUDAFLAGS := ";
+      for (const auto& flag : cuda_preprocessor_flags) {
+        m << transform_flag(flag) << " ";
+      }
+      if (!cuda_flags.empty()) {
+        for (const auto& flag : cuda_flags) {
+          m << transform_flag(flag) << " ";
+        }
+      }
+      m << "$(INCLUDES)\n\n";
+    }
+    if (!hipSources.empty()) {
+      m << "HIPFLAGS := ";
+      for (const auto& flag : hip_preprocessor_flags) {
+        m << transform_flag(flag) << " ";
+      }
+      if (!hip_flags.empty()) {
+        for (const auto& flag : hip_flags) {
+          m << transform_flag(flag) << " ";
+        }
+      }
+      m << "$(INCLUDES)\n\n";
     }
     // sources list
     if (!cppSources.empty()) {
@@ -361,6 +506,28 @@ namespace mfront {
       }
       m << "\n\n";
     }
+    if (!cudaSources.empty()) {
+      m << "SRCCUDA = ";
+      auto p4 = cudaSources.begin();
+      while (p4 != cudaSources.end()) {
+        m << *p4;
+        if (++p4 != cudaSources.end()) {
+          m << " ";
+        }
+      }
+      m << "\n\n";
+    }
+    if (!hipSources.empty()) {
+      m << "SRCHIP = ";
+      auto p4 = hipSources.begin();
+      while (p4 != hipSources.end()) {
+        m << *p4;
+        if (++p4 != hipSources.end()) {
+          m << " ";
+        }
+      }
+      m << "\n\n";
+    }
     if (!o.nodeps) {
       if (!cppSources.empty()) {
         m << "makefiles1 = $(SRCCXX:.cxx=.d)\n";
@@ -369,12 +536,24 @@ namespace mfront {
       if (!cSources.empty()) {
         m << "makefiles3 = $(SRC:.c=.d)\n";
       }
+      if (!cudaSources.empty()) {
+        m << "makefiles4 = $(SRCCUDA:.cu=.d)\n";
+      }
+      if (!hipSources.empty()) {
+        m << "makefiles5 = $(SRCHIP:.hip=.d)\n";
+      }
       m << "makefiles  =";
       if (!cppSources.empty()) {
         m << " $(makefiles2)";
       }
       if (!cSources.empty()) {
         m << " $(makefiles3)";
+      }
+      if (!cudaSources.empty()) {
+        m << " $(makefiles4)";
+      }
+      if (!hipSources.empty()) {
+        m << " $(makefiles5)";
       }
     }
     m << "\n\n";
@@ -413,6 +592,9 @@ namespace mfront {
         for (const auto& dependency : target.second.deps) {
           m << " " << getTargetName(t, dependency);
         }
+        for (const auto& source : target.second.sources) {
+          m << " " << source;
+        }
         m << '\n';
         for (const auto& cmd : target.second.cmds) {
           m << "\t" << cmd << '\n';
@@ -426,7 +608,14 @@ namespace mfront {
       }
       m << getLibraryFullName(l) << " : ";
       auto dep = getLibrarySourcesAndDependencies(t, o, l.name);
-      const auto hasCxxSources = dep.first;
+      const auto hasCxxSources = dep.first[0];
+      const auto hasCUDASources = dep.first[1];
+      const auto hasHIPSources = dep.first[2];
+      if (hasCUDASources && hasHIPSources) {
+        tfel::raise(
+            "generateMakeFile: can't mix HIP and CUDA sources in library '" +
+            getLibraryFullName(l) + "'");
+      }
       if (!dep.second.first.empty()) {
         m << dep.second.first;
       }
@@ -435,13 +624,14 @@ namespace mfront {
         m << sl;
       }
       m << "\n\t";
-      if (hasCxxSources) {
+      if (hasCUDASources) {
+        m << sb << cuda << " ";
+      } else if (hasHIPSources) {
+        m << sb << hip << " ";
+      } else if (hasCxxSources) {
         m << sb << cxx << " ";
       } else {
         m << sb << cc << " ";
-      }
-      if (ldflags != nullptr) {
-        m << "$(LDFLAGS) ";
       }
       if (o.sys == "win32") {
         m << "-shared -Wl,--add-stdcall-alias,--out-implib,lib" << l.name
@@ -450,12 +640,29 @@ namespace mfront {
         m << "-shared -Wl,--add-stdcall-alias,--out-implib,cyg" << l.name
           << "_dll.a,-no-undefined ";
       } else if (o.sys == "apple") {
-        m << "-bundle ";
+        m << "-bundle -Wl,-headerpad_max_install_names ";
       } else {
         m << "-shared ";
       }
       m << "$^  -o $@ ";
       m << getLibraryLinkFlags(t, o, l.name);
+      if (o.sys == "default") {
+        // as on macOS (see below), the library looks for TFEL' libraries
+        // in the installation directory of TFEL. `-Xlinker` is understood
+        // by all the compilers linking the libraries, including `nvcc` and
+        // `hipcc` (libraries with CUDA or HIP sources), which do not
+        // understand `-Wl`.
+        if (o.setRPATH) {
+          m << "-Xlinker -rpath -Xlinker \"$(strip $(shell " << tfel_config
+            << " --library-path))\" ";
+        }
+      }
+      // the linker flags may contain libraries (for instance `-ltbb`) which
+      // must be given after the object files, otherwise they are ignored by
+      // linkers using the `--as-needed` policy
+      if (!ldflags.empty()) {
+        m << " $(LDFLAGS)";
+      }
       m << "\n";
       if (o.sys == "apple") {
         m << "\tinstall_name_tool -add_rpath  $(shell " << tfel_config
@@ -532,7 +739,31 @@ namespace mfront {
       m << "%.o:%.c\n";
       m << "\t" << sb << cc << " $(CFLAGS) $< -o $@ -c\n\n";
     }
+    if (!cudaSources.empty()) {
+      m << "%.o:%.cu\n";
+      m << "\t" << sb << cuda << " $(CUDAFLAGS) $< -o $@ -c\n\n";
+    }
+    if (!hipSources.empty()) {
+      m << "%.o:%.hip\n";
+      m << "\t" << sb << hip << " $(HIPFLAGS) $< -o $@ -c\n\n";
+    }
     if (!o.nodeps) {
+      if (!cudaSources.empty()) {
+        m << "%.d:%.cu\n";
+        m << "\t" << sb << "set -e; rm -f $@;	    \\\n";
+        m << "\t" << cuda << " -M $(CUDAFLAGS) $< > $@.$$$$; \\\n";
+        m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
+             "\\\n";
+        m << "\trm -f $@.$$$$\n\n";
+      }
+      if (!hipSources.empty()) {
+        m << "%.d:%.hip\n";
+        m << "\t" << sb << "set -e; rm -f $@;	    \\\n";
+        m << "\t" << hip << " -M $(HIPFLAGS) $< > $@.$$$$; \\\n";
+        m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
+             "\\\n";
+        m << "\trm -f $@.$$$$\n\n";
+      }
       if (!cppSources.empty()) {
         m << "%.d:%.cxx\n";
         m << "\t" << sb << "set -e; rm -f $@;	    \\\n";

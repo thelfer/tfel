@@ -1,0 +1,23 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+// shear
+@ImposedStrain 'EXY' {0 : 0, 1 : 4e-3};
+@Times{0, 1. in 20};
+
+@Real 'mu' '160e9 / (2 * (1 + 0.3))';
+@Real 'R0' 120e6;
+@Real 'a' 6;
+
+// The principal stresses are tau, -tau, 0: the Hosford equivalent stress
+// is tau * ((2 ** a + 2) / 2) ** (1 / a). The SXY component is
+// sqrt(2) * tau
+@Real 'SXYy' 'sqrt(2) * R0 / ((2 ** a + 2) / 2) ** (1 / a)';
+
+@Test<function> 'SXY' 'EXY < SXYy / (2 * mu) ? 2 * mu * EXY : SXYy' 1e-3;
+// plastic work: R0 * dp = SXY * dEXYp
+@Test<function> 'EquivalentPlasticStrain'  //
+    'EXY < SXYy / (2 * mu) ? 0 : SXYy * (EXY - SXYy / (2 * mu)) / R0' 1e-12;

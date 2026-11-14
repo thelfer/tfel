@@ -20,6 +20,7 @@ if(HAVE_FORTRAN)
     else(_NO_XML_OUTPUT)
 	add_test(NAME castemumat${test_arg}_mtest
 	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
+                        --xml-output-file=castemumat${test_arg}_mtest.xml
                         --@CASTEMUMATLIBRARY@="$<TARGET_FILE:CastemUmat>"
                         ${CMAKE_CURRENT_SOURCE_DIR}/castemumat${test_arg}.mtest)
     endif(_NO_XML_OUTPUT)

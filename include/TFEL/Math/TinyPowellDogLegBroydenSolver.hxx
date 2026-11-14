@@ -2,7 +2,7 @@
  * \file include/TFEL/Math/TinyPowellDogLegBroydenSolver.hxx
  * \brief
  * \author Thomas Helfer
- * \date   02/07/2021
+ * \date 02/07/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -83,8 +83,13 @@ namespace tfel::math {
         const TinyPowellDogLegBroydenSolver&) noexcept = default;
     //! \brief destructor
     ~TinyPowellDogLegBroydenSolver() noexcept = default;
-    //! \brief update the jacobian matrix
-    TFEL_HOST_DEVICE void updateOrCheckJacobian();
+    /*!
+     * \brief update the jacobian matrix
+     *
+     * This method is called by `computeNewCorrection` before the
+     * `updateOrCheckJacobian` method of the derived class.
+     */
+    TFEL_HOST_DEVICE void updateJacobian();
     //! \brief compute a new correction to the unknowns
     TFEL_HOST_DEVICE bool computeNewCorrection();
 

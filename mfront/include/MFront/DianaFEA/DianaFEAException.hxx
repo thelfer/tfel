@@ -27,21 +27,22 @@ namespace dianafea {
    */
   struct MFRONT_DIANAFEA_VISIBILITY_EXPORT DianaFEAException
       : public std::exception {
-    DianaFEAException(const std::string&);
+    explicit DianaFEAException(std::string);
     //! move constructor
-    DianaFEAException(DianaFEAException&&);
+    DianaFEAException(DianaFEAException&&) noexcept;
     //! copy constructor
     DianaFEAException(const DianaFEAException&);
-
-    const char* what() const noexcept override final;
-    virtual std::string getMsg() const noexcept final;
+    //
+    DianaFEAException() = delete;
+    DianaFEAException& operator=(const DianaFEAException&) = delete;
+    DianaFEAException& operator=(DianaFEAException&&) = delete;
+    //
+    [[nodiscard]] const char* what() const noexcept final;
+    [[nodiscard]] virtual const std::string& getMsg() const noexcept final;
     //! destructor
     ~DianaFEAException() noexcept override;
 
    private:
-    DianaFEAException() = delete;
-    DianaFEAException& operator=(const DianaFEAException&) = delete;
-    DianaFEAException& operator=(DianaFEAException&&) = delete;
     //! error message
     const std::string msg;
   };  // end of struct DianaFEAException
@@ -54,18 +55,18 @@ namespace dianafea {
     /*!
      * \param[in] b : behaviour name
      */
-    DianaFEAInvalidModellingHypothesis(const char*);
+    explicit DianaFEAInvalidModellingHypothesis(const char*);
     //! move constructor
-    DianaFEAInvalidModellingHypothesis(DianaFEAInvalidModellingHypothesis&&);
+    DianaFEAInvalidModellingHypothesis(
+        DianaFEAInvalidModellingHypothesis&&) noexcept;
     //! copy constructor
     DianaFEAInvalidModellingHypothesis(
         const DianaFEAInvalidModellingHypothesis&);
-    //! destructor
-    ~DianaFEAInvalidModellingHypothesis() noexcept override;
-
-   private:
+    //
     DianaFEAInvalidModellingHypothesis& operator=(
         const DianaFEAInvalidModellingHypothesis&) = delete;
+    //! \brief destructor
+    ~DianaFEAInvalidModellingHypothesis() noexcept override;
   };  // end of struct DianaFEAInvalidModellingHypothesis
   /*!
    * \brief exception thrown when an invalid value of the *NTENS
@@ -73,18 +74,17 @@ namespace dianafea {
    */
   struct MFRONT_DIANAFEA_VISIBILITY_EXPORT DianaFEAInvalidNTENSValue final
       : public DianaFEAException {
-    DianaFEAInvalidNTENSValue(const unsigned short);
+    explicit DianaFEAInvalidNTENSValue(const unsigned short);
     //! move constructor
-    DianaFEAInvalidNTENSValue(DianaFEAInvalidNTENSValue&&);
+    DianaFEAInvalidNTENSValue(DianaFEAInvalidNTENSValue&&) noexcept;
     //! copy constructor
     DianaFEAInvalidNTENSValue(const DianaFEAInvalidNTENSValue&);
-    //! desctructor
-    ~DianaFEAInvalidNTENSValue() noexcept override;
-
-   private:
+    //
     DianaFEAInvalidNTENSValue() = delete;
     DianaFEAInvalidNTENSValue& operator=(const DianaFEAInvalidNTENSValue&) =
         delete;
+    //! desctructor
+    ~DianaFEAInvalidNTENSValue() noexcept override;
   };  // end of struct DianaFEAInvalidNTENSValue
   /*!
    * \brief exception thrown when an invalid dimension is detected
@@ -93,16 +93,15 @@ namespace dianafea {
       : public DianaFEAException {
     DianaFEAInvalidDimension(const std::string&, const unsigned short);
     //! move constructor
-    DianaFEAInvalidDimension(DianaFEAInvalidDimension&&);
+    DianaFEAInvalidDimension(DianaFEAInvalidDimension&&) noexcept;
     //! copy constructor
     DianaFEAInvalidDimension(const DianaFEAInvalidDimension&);
-    //! destructor
-    ~DianaFEAInvalidDimension() noexcept override;
-
-   private:
+    //
     DianaFEAInvalidDimension() = delete;
     DianaFEAInvalidDimension& operator=(const DianaFEAInvalidDimension&) =
         delete;
+    //! destructor
+    ~DianaFEAInvalidDimension() noexcept override;
   };  // end of struct DianaFEAInvalidDimension
 
 }  // end of namespace dianafea

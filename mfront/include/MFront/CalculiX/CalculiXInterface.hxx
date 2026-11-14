@@ -2,7 +2,7 @@
  * \file   mfront/include/MFront/CalculiX/CalculiXInterface.hxx
  * \brief  This file implements the CalculiXInterface class.
  * \author Thomas Helfer
- * \date   28 Jul 2006
+ * \date 28/07/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with

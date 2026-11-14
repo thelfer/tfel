@@ -1,7 +1,13 @@
 /*!
  * \file   tests/Math/matrix.cxx
  * \author Thomas Helfer
- * \date   29/04/2024
+ * \date 29/04/2024
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
@@ -13,6 +19,7 @@
 #include <cassert>
 #include <iostream>
 #include "TFEL/Math/matrix.hxx"
+#include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
@@ -25,6 +32,7 @@ struct MatrixTest final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }  // end of execute
  private:
@@ -63,6 +71,14 @@ struct MatrixTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(m(0, 1) == 1);
     TFEL_TESTS_ASSERT(m(1, 0) == 2);
     TFEL_TESTS_ASSERT(m(1, 1) == 3);
+  }
+  void test4() {
+    using namespace tfel::math;
+    int values[6] = {0, 1, 2, 3, 4, 5};
+    auto m = map<matrix<int>>(std::size_t{2}, std::size_t{3}, values);
+    TFEL_TESTS_ASSERT(m(1, 2) == 5);
+    m(0, 1) = 6;
+    TFEL_TESTS_ASSERT(values[1] == 6);
   }
 };
 

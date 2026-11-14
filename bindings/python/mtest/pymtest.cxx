@@ -52,6 +52,8 @@ PYBIND11_MODULE(_mtest, m) {
       .value("NOPREDICTION", mtest::PredictionPolicy::NOPREDICTION)
       .value("LINEARPREDICTION", mtest::PredictionPolicy::LINEARPREDICTION)
       .value("ELASTICPREDICTION", mtest::PredictionPolicy::ELASTICPREDICTION)
+      .value("ELASTICPREDICTIONFROMMATERIALPROPERTIES",
+             mtest::PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES)
       .value("SECANTOPERATORPREDICTION",
              mtest::PredictionPolicy::SECANTOPERATORPREDICTION)
       .value("TANGENTOPERATORPREDICTION",
@@ -71,11 +73,13 @@ PYBIND11_MODULE(_mtest, m) {
   declareStructureCurrentState(m);
   declareStudyCurrentState(m);
   declareSolverWorkSpace(m);
-  declareMTestParser(m);
   declareSchemeBase(m);
   declareSingleStructureScheme(m);
   declareConstraint(m);
   declareMTest(m);
+  // declared after MTest, so that the signatures of its methods refer to
+  // the python name of this class
+  declareMTestParser(m);
   declarePipeMesh(m);
   declarePipeTest(m);
   declareMFrontLogStream(m);
@@ -83,6 +87,6 @@ PYBIND11_MODULE(_mtest, m) {
 
   void (*ptr)(const std::string&) = mtest::setRoundingMode;
   void (*ptr2)() = mtest::setRoundingMode;
-  m.def("setRoundingMode", ptr);
+  m.def("setRoundingMode", ptr, pybind11::arg("m"));
   m.def("setRoundingMode", ptr2);
 }

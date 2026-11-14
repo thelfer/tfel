@@ -86,8 +86,18 @@ namespace tfel::material::homogenization::elasticity {
         StiffnessTensorAlterationCharacteristic::UNALTERED;
     computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
                                                                    nu);
+    using namespace tfel::math;
+    // the elasticity of the inclusion is given in its local basis
+    const auto n_a_ = n_a / norm(n_a);
+    const tvector<2u, real> n_b_ = {-n_a_[1], n_a_[0]};
+    const rotation_matrix<real> r_glob_loc = {n_a_[0], n_b_[0], real(0),
+                                              n_a_[1], n_b_[1], real(0),
+                                              real(0), real(0), real(1)};
+    const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
+    const st2tost2<2u, StressType> C_i_glob =
+        change_basis(C_i / StressType(1), r_loc_glob) * StressType(1);
     return internals::computeLocalisationTensorBase<2u, StressType>(C_0, P0,
-                                                                    C_i);
+                                                                    C_i_glob);
   }  // end of computePlaneStrainLocalisationTensor
 
   template <tfel::math::ScalarConcept StressType>
@@ -101,12 +111,12 @@ namespace tfel::material::homogenization::elasticity {
               const types::real<StressType>& nu_i) {
     using real = types::real<StressType>;
 
-    if (not(young > StressType{0})) {
-      tfel::reportContractViolation("E<=0");
-    }
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
+    // if (not(young > StressType{0})) {
+    //   tfel::reportContractViolation("E<=0");
+    // }
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
     const auto kaS = (1 + nu) / 9 / (1 - nu);
     const auto muS = 2 * (4 - 5 * nu) / 30 / (1 - nu);
     const auto k0 = young / 3 / (1 - 2 * nu);
@@ -144,9 +154,9 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>& n_a,
           const types::real<StressType>& e) {
     using real = types::real<StressType>;
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
     if (not(e > real(0))) {
       tfel::reportContractViolation("e<=0");
     }
@@ -218,7 +228,17 @@ namespace tfel::material::homogenization::elasticity {
     computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_0, young0,
                                                                    nu0);
     using namespace tfel::math;
-    const auto C = C_i - C_0;
+    // the elasticity of the inclusion is given in its local basis
+    const auto n_a_ = n_a / norm(n_a);
+    const auto n_b_ = n_b / norm(n_b);
+    const auto n_c_ = cross_product<real>(n_a_, n_b_);
+    const rotation_matrix<real> r_glob_loc = {n_a_[0], n_b_[0], n_c_[0],
+                                              n_a_[1], n_b_[1], n_c_[1],
+                                              n_a_[2], n_b_[2], n_c_[2]};
+    const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
+    const auto C_i_glob =
+        change_basis(C_i / StressType(1), r_loc_glob) * StressType(1);
+    const st2tost2<3u, StressType> C = C_i_glob - C_0;
     const auto Pr = P0 * C;
     const auto A = invert(st2tost2<3u, real>::Id() + Pr);
     return A;
@@ -275,8 +295,9 @@ namespace tfel::material::homogenization::elasticity {
     exe(const IsotropicModuli<StressType>& IM0,
         const tfel::math::st2tost2<2u, StressType>& C_i_loc,
         const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+        const tfel::math::tvector<2u, types::real<StressType>>&,
         const std::array<types::length<StressType>, 2u>& semiLengths) {
-      return computePlainStrainLocalisationTensor<StressType>(
+      return computePlaneStrainLocalisationTensor<StressType>(
           IM0, C_i_loc, n_a, semiLengths[0], semiLengths[1]);
     }
   };  // end of IsotropicLocalisationTensor<2u, StressType>

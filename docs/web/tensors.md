@@ -70,7 +70,7 @@ of mechanical behaviours:
   depends of the current modelling hypothesis. The concrete type for
   `real` depends on the interface used.
 - `StrainStensor` is an alias to `stensor<N,strain>`.
-- `StressStensor` is an alias to `stensor<N,stess>`.
+- `StressStensor` is an alias to `stensor<N,stress>`.
 
 ## Vector notations for symmetric tensors
 
@@ -440,10 +440,12 @@ This can be computed by the `symmetric_product` function.
 
 ### Derivative
 
-The derivative of the symmetric product
-\(\tenseur{a}\,\cdot_{s}\,\tenseur{b}\) with respect to
-\(\tenseur{a}\) can be computed using the `st2tost2::stpd` static
-method with takes \(\tenseur{b}\) as argument.
+The `st2tost2::stpd` static method, which takes \(\tenseur{b}\) as
+argument, computes the derivative of
+\(\tenseur{a}\,\cdot\tenseur{b}+\tenseur{b}\,\cdot\tenseur{a}\)
+with respect to \(\tenseur{a}\). The derivative of the symmetric
+product \(\tenseur{a}\,\cdot_{s}\,\tenseur{b}\) with respect to
+\(\tenseur{a}\) is thus `st2tost2::stpd(b) / 2`.
 
 ## Second symmetric product of two symmetric second order tensors \(\tenseur{a}\,\cdot\,\tenseur{b}\,\cdot\,\tenseur{a}\)
 
@@ -523,7 +525,7 @@ const auto rt = t2tot2<N,real>::fromRotationMatrix(r);
 
 > **Note**
 > 
-> In pratice, the `fromRotationMatrix` static methods can be used to
+> In practice, the `fromRotationMatrix` static methods can be used to
 > compute the rotation of any second and fourth order tensors (including
 > the ones of the `t2tost2` and `st2tot2` types). They are used internally
 > in the implementation of the `change_basis` functions provided for the
@@ -697,7 +699,7 @@ The derivative of the invariants are classically given by:
 \right.
 \]
 
-Those expressions are simplier for symmetric tensors:
+Those expressions are simpler for symmetric tensors:
 \[
 \left\{
 \begin{aligned}
@@ -736,7 +738,7 @@ const auto id = tensor<N,real>::Id();
 const auto d2I2_dA2 = (id^id)-t2tot2<N,real>::transpose_derivative();
 ~~~~
 
-For symmetric tensors, this computation is much simplier:
+For symmetric tensors, this computation is much simpler:
 
 ~~~~{.cpp}
 const auto id = stensor<N,real>::Id();
@@ -816,7 +818,7 @@ of a tensor (see Section&nbsp;@sec:invariants:derivatives):
 \deriv{J_{2}}{\tsigma}= \deriv{J_{2}}{\tenseur{s}}\,\cdot\,\deriv{\tenseur{s}}{\tsigma}= \tenseur{s}
 \]
 
-In pratice, this can be implemented as follows:
+In practice, this can be implemented as follows:
 
 ~~~~{.cpp}
 const auto dJ2 = deviator(sig);
@@ -931,7 +933,7 @@ have been proposed by Cazacu and Barlat (see
   &\frac{1}{27}\,(b_1+b_2)\,s_{xx}^3+\frac{1}{27}\,(b_3+b_4)\,s_{yy}^3+\frac{1}{27}\,(2\,(b_1+b_4)-b_2-b_3)\,s_{zz}^3\\
   &-\frac{1}{9}\,(b_1\,s_{yy}+b_2s_{zz})\,s_{xx}^2\\
   &-\frac{1}{9}\,(b_3\,s_{zz}+b_4\,s_{xx})\,s_{yy}^2\\
-  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b3+b_4)\,s_{yy})\,s_{zz}^3\\
+  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b_3+b_4)\,s_{yy})\,s_{zz}^2\\
   &+\frac{2}{9}\,(b_1+b_4)\,s_{xx}\,s_{yy}\,s_{zz}\\
   &-\frac{s_{xz}^2}{3}\,(2\,b_9\,s_{yy}-b_8\,s_{zz}-(2\,b_9-b_8)\,s_{xx})\\
   &-\frac{s_{xy}^2}{3}\,(2\,b_{10}\,s_{zz}-b_5\,s_{yy}-(2\,b_{10}-b_5)\,s_{xx})\\
@@ -1038,6 +1040,14 @@ fall back to some default algorithm as described below.
 The various eigen solvers available are enumerated in Table
 @tbl:eigensolvers.
 
+> **Note**
+>
+> The analytical formulas of the eigenvectors are not reliable for
+> repeated or nearly repeated eigenvalues. The eigenvectors of the
+> `FSESANALYTICALEIGENSOLVER` solver are thus computed as by the
+> `FSESHYBRIDEIGENSOLVER` solver, which falls back to the QL algorithm
+> in this case.
+
 The eigen solver is passed as a template argument of the
 `computeEigenValues` or the `computeEigenVectors` methods as
 illustrated in the code below:
@@ -1052,6 +1062,13 @@ std::tie(vp,m)=s.computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>();
 >
 > In `2D`, the last eigenvector always corresponds to the out-of-plane
 > direction.
+
+> **Note**
+>
+> The `TFELEIGENSOLVER`, `GTESYMMETRICQREIGENSOLVER` and
+> `HARARIEIGENSOLVER` eigen solvers can be used in GPU kernels. The
+> eigen solvers based on the `FSES` library are only available on the
+> host.
 
 The `computeEigenVectors` method can also order the eigenvalues in
 ascending or descending order, see the `computeEigenValues` method for
@@ -1086,6 +1103,33 @@ the stensor class. \(\deriv{f}{\tenseur{s}}\) can be computed with
 `computeIsotropicFunctionAndDerivative` method. All those methods are
 templated by the name of the eigen solver (if no template parameter is
 given, the `TFELEIGENSOLVER` is used).
+
+The methods computing \(\deriv{f}{\tenseur{s}}\) take an argument
+\(\varepsilon\): two eigenvalues \(\lambda_{i}\) and
+\(\lambda_{j}\) are considered equal if
+\(\left|\lambda_{i}-\lambda_{j}\right|<\varepsilon\). In this case,
+the divided difference
+\(\Frac{f\paren{\lambda_{i}}-f\paren{\lambda_{j}}}{\lambda_{i}-\lambda_{j}}\)
+is replaced by the mean of the derivatives of \(f\) and, in three
+dimensions, when the third eigenvalue \(\lambda_{k}\) is not
+considered equal to them, the divided differences involving
+\(\lambda_{k}\) are computed with the mean of \(\lambda_{i}\) and
+\(\lambda_{j}\) and the mean of \(f\paren{\lambda_{i}}\) and
+\(f\paren{\lambda_{j}}\). This threshold is absolute. It must be well
+above the rounding errors of the eigenvalues: computed in floating
+point arithmetic, two mathematically equal eigenvalues generally
+differ by a few units in the last place, and the divided difference
+has an error of about
+\(u\,\left|f\right|/\left|\lambda_{i}-\lambda_{j}\right|\), where
+\(u\) is the machine precision, whereas those replacements have an
+error of order \(\left|\lambda_{i}-\lambda_{j}\right|\). For a
+function whose derivatives vary on the scale of the eigenvalues, such
+as the logarithm, a value of \(\varepsilon\) of order
+\(\sqrt{u}\,\max_{i}\left|\lambda_{i}\right|\) bounds both errors
+by about \(\sqrt{u}\) relatively: in double precision, the relative
+errors observed on the derivative of the logarithm with this threshold
+stay below \(2\,10^{-8}\), including for nearly isotropic tensors whose
+three eigenvalues differ by a few \(\varepsilon\).
 
 Various new overloaded versions of those methods have been
 introduced. Those overloaded methods are meant to:
@@ -1347,7 +1391,6 @@ The linear transformations \(\tenseurq{C}'\) and \(\tenseurq{C}''\) of
 the deviator stress are defined as follows:
 \[
 \tenseurq{C}'=
-\Frac{1}{3}\,
 \begin{pmatrix}
 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
 -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
@@ -1430,7 +1473,7 @@ const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
 > 
 > ~~~~{.cpp}
 > const auto l1 = makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
->                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
+>                                                   cB_23,cB_32,cB_66,cB_55,cB_44);
 > ~~~~
 
 The `TFEL/Material` library also provide an overload of the

@@ -31,17 +31,17 @@ namespace calculix {
    */
   struct ExtractTangentOperator {
     template <typename Behaviour, typename real>
-    static void exe(const Behaviour &bv, real *const DDSDDE) {
+    static void exe(const Behaviour& bv, real* const DDSDDE) {
       using TangentOperatorType = tfel::math::st2tost2<3u, real>;
-      const auto &Dt =
-          static_cast<const TangentOperatorType &>(bv.getTangentOperator());
+      const auto& Dt =
+          static_cast<const TangentOperatorType&>(bv.getTangentOperator());
       std::copy(Dt.begin(), Dt.end(), DDSDDE);
     }
   };  // end of ExtractTangentOperator
 
   struct ConvertSymmetricTangentOperator {
     template <typename real>
-    static void exe(real *const DDSDDE, const real *const D) {
+    static void exe(real* const DDSDDE, const real* const D) {
       constexpr const auto one_half = real(1) / real(2);
       constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
       tfel::math::ConstST2toST2View<3u, real> Dt(D);
@@ -71,7 +71,7 @@ namespace calculix {
 
   struct ConvertUnsymmetricTangentOperator {
     template <typename real>
-    static void exe(real *const DDSDDE, const real *const D) {
+    static void exe(real* const DDSDDE, const real* const D) {
       // In CalculiX, the stiffness tensor is written using Voigt
       // notations
       // (sxx ... sxy ... ) = D. (exx ... 2exy ...)

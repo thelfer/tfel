@@ -2,7 +2,7 @@
  * \file   mfront/tests/unit-tests/SupportedTypesTest.cxx
  * \brief
  * \author Thomas Helfer
- * \date   30/08/2021
+ * \date 30/08/2021
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * re served.
  * This project is publicly released under either the GNU GPL Licence with
@@ -67,16 +67,20 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("result_type<toto,tata,tfel::math::OpDiv>",
           "tfel::math::result_type<toto,tata,tfel::math::OpDiv>");
     check("quantity<real,1,0,0,3,2,-1,0>",
-          "tfel::math::quantity<numeric_type,1,0,0,3,2,-1,0>");
+          "tfel::math::quantity_or_base_type<use_qt,numeric_type,1,0,0,3,2,-1,"
+          "0>");
     check("test_empty_template_arguments<>", "test_empty_template_arguments<>");
     check("derivative_type<quantity<real,1,0,0,3,2,-1,0>,time>",
           "tfel::math::derivative_type<"
-          "tfel::math::quantity<numeric_type,1,0,0,3,2,-1,0>,time>");
+          "tfel::math::quantity_or_base_type<use_qt,numeric_type,1,0,0,3,2,-1,"
+          "0>,time>");
     check("vector<2u,3u+3u>", "vector<2,6>");
-    check("quantity<real,0,1>",
-          "tfel::math::quantity<numeric_type,0,1,0,0,0,0,0>");
-    check("quantity<real,0,1,2>",
-          "tfel::math::quantity<numeric_type,0,1,2,0,0,0,0>");
+    check(
+        "quantity<real,0,1>",
+        "tfel::math::quantity_or_base_type<use_qt,numeric_type,0,1,0,0,0,0,0>");
+    check(
+        "quantity<real,0,1,2>",
+        "tfel::math::quantity_or_base_type<use_qt,numeric_type,0,1,2,0,0,0,0>");
     check("tvector<Nss,real>", "tfel::math::tvector<12,real>");
     check("stensor<N,real>", "tfel::math::stensor<N,real>");
     check("tensor<N,real>", "tfel::math::tensor<N,real>");
@@ -110,6 +114,7 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
       TFEL_TESTS_CHECK_EQUAL(mfront::SupportedTypes::getTypeFlag(v), f);
     };
     check("Stensor", mfront::SupportedTypes::STENSOR);
+    check("ThermalExpansionCoefficientTensor", mfront::SupportedTypes::STENSOR);
     check("stensor<N,real>", mfront::SupportedTypes::STENSOR);
     check("tensor<N,real>", mfront::SupportedTypes::TENSOR);
     for (const auto& m :
@@ -133,8 +138,9 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
       TFEL_TESTS_CHECK_THROW(mfront::SupportedTypes::getTypeSize(v1),
                              std::runtime_error);
     };
-    check("Stensor", SupportedTypes::STENSOR);
-    check("derivative_type<Stensor,real>", SupportedTypes::STENSOR);
+    check("Stensor", SupportedTypes::TypeSize{SupportedTypes::STENSOR});
+    check("derivative_type<Stensor,real>",
+          SupportedTypes::TypeSize{SupportedTypes::STENSOR});
     check("Stensor4", SupportedTypes::TypeSize::buildFromExponents(0u, 2u, 0u));
     check("tfel::math::st2tost2<N,real>",
           SupportedTypes::TypeSize::buildFromExponents(0u, 2u, 0u));
@@ -195,6 +201,9 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("derivative_type<tvector<N,stress>,stress>", mid);
     check("derivative_type<stensor<N,stress>, stensor<N,stress>>",
           4 + (1 << 3) + (1 << 8));
+    check("derivative_type<StressStensor, StrainStensor>", sid);
+    check("derivative_type<Tensor, StrainStensor>", 4 + (3 << 3) + (1 << 8));
+    check("derivative_type<StressStensor, temperature>", 4 + (1 << 3));
     //
     check("tvector<3u, st2tost2<N,stress>>",
           5 + (1 << 3) + (3 << 6) + (sid << 13));

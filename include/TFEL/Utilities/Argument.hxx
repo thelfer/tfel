@@ -2,7 +2,7 @@
  * \file   Argument.hxx
  * \brief
  * \author Thomas Helfer
- * \date   09 juin 2016
+ * \date 09/06/2016
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -28,20 +28,21 @@ namespace tfel::utilities {
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT Argument {
     //! \param s : argument name
-    Argument(std::string);
+    Argument(std::string);  // NOLINT(google-explicit-constructor)
     //! \param s : argument name
-    Argument(const char* const s);
-    Argument(Argument&&);
+    Argument(const char* const s);  // NOLINT(google-explicit-constructor)
+    //
+    Argument(Argument&&) noexcept;  // NOLINT(google-explicit-constructor)
     Argument(const Argument&);
-    Argument& operator=(Argument&&);
+    Argument& operator=(Argument&&) noexcept;
     Argument& operator=(const Argument&);
     //! \return true if an option was given for this argument
-    bool hasOption() const noexcept;
-    //! convertion to string
-    std::string& as_string() noexcept;
-    //! convertion to string
-    const std::string& as_string() const noexcept;
-    //! convertion to string (return argument's name)
+    [[nodiscard]] bool hasOption() const noexcept;
+    //! \brief convertion to string
+    [[nodiscard]] std::string& as_string() noexcept;
+    //! \brief convertion to string
+    [[nodiscard]] const std::string& as_string() const noexcept;
+    //! \brief convertion to string (return argument's name)
     explicit operator const std::string&() const noexcept;
     /*!
      * \brief set argument option
@@ -49,16 +50,16 @@ namespace tfel::utilities {
      */
     void setOption(const std::string& o);
     //! \return argument option
-    const std::string& getOption() const noexcept;
-    //! destructor
+    [[nodiscard]] const std::string& getOption() const noexcept;
+    //! \brief destructor
     ~Argument() noexcept;
 
    private:
-    //! argument name
+    //! \brief argument name
     std::string name;
-    //! argument option
+    //! \brief argument option
     std::string option;
-    //! flag telling if an option has been defined
+    //! \brief flag telling if an option has been defined
     bool isOptionSet = false;
   };  // end of struct Argument
 

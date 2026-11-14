@@ -2,7 +2,7 @@
  * \file   mfront/src/KinematicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date 15/03/2018
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -23,6 +23,18 @@ namespace mfront::bbrick {
     }
     return "khr_" + n + fid + '_' + kid;
   }  // end of getVariableId
+
+  std::string
+  KinematicHardeningRule::buildBackStrainImplicitEquationsForAnInactiveFlow(
+      const BehaviourDescription&,
+      const StressPotential&,
+      const StressCriterion&,
+      const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
+      const std::string&,
+      const std::string&,
+      const bool) const {
+    return "";
+  }  // end of buildBackStrainImplicitEquationsForAnInactiveFlow
 
   KinematicHardeningRule::~KinematicHardeningRule() = default;
 

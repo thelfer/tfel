@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   17 oct 2008
+ * \date 17/10/2008
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -44,7 +44,7 @@ struct ST2toST2FromTinyMatrixViewTest final : public tfel::tests::TestCase {
           TFEL_TESTS_ASSERT(ms2(i, i) == 1);
         } else {
           TFEL_TESTS_ASSERT(ms(i, j) == 0);
-          TFEL_TESTS_ASSERT(ms2(i, i) == 1);
+          TFEL_TESTS_ASSERT(ms2(i, j) == 0);
         }
       }
     }

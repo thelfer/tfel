@@ -1,0 +1,40 @@
+@DSL RungeKuttaFiniteStrain;
+@Behaviour RungeKuttaFiniteStrainElasticity_rk2;
+@Author Tristan Chenaille;
+@Date 03/11/2026;
+@Algorithm rk2;
+@Description {
+  Saint Venant-Kirchhoff elasticity with an artificial state variable a
+  whose rate is det(F)-1: the deformation gradient, whose increment is
+  not known, is used to compute the stress and the derivative.
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@StateVariable real a;
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables {
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+}
+
+@ComputeStress {
+  const auto e = computeGreenLagrangeTensor(F);
+  const auto S = lambda * trace(e) * Stensor::Id() + 2 * mu * e;
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(S, F);
+}
+
+@Derivative {
+  da = det(F) - 1;
+}
+
+@TangentOperator<DS_DEGL> {
+  static_cast<void>(smt);
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}

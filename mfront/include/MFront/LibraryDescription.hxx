@@ -2,7 +2,7 @@
  * \file  LibraryDescription.hxx
  * \brief
  * \author Thomas Helfer
- * \date   17 mars 2015
+ * \date 17/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -68,11 +68,11 @@ namespace mfront {
     //! \brief copy constructor
     LibraryDescription(const LibraryDescription&);
     //! \brief move constructor
-    LibraryDescription(LibraryDescription&&);
+    LibraryDescription(LibraryDescription&&) noexcept;
     //! \brief standard assignement (deleted)
     LibraryDescription& operator=(const LibraryDescription&) = delete;
     //! \brief move assignement (deleted)
-    LibraryDescription& operator=(LibraryDescription&&) = delete;
+    LibraryDescription& operator=(LibraryDescription&&) noexcept = delete;
     //! \brief destructor
     ~LibraryDescription();
     //! \brief libray type

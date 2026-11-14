@@ -37,9 +37,8 @@ namespace mfront {
 
   std::string RungeKuttaDSL::getDescription() {
     return "this dsl provides a generic integrator based on one of the many "
-           "Runge-Kutta algorithm. Avalailable algorithms are 'euler', 'rk2', "
-           "'rk4' "
-           "'r42', 'rk54' and 'rkCastem'";
+           "Runge-Kutta algorithms. Available algorithms are 'euler', 'rk2', "
+           "'rk4', 'rk42', 'rk54' and 'rkCastem'";
   }  // end of RungeKuttaDSL::getDescription
 
   std::string RungeKuttaDSL::getCodeBlockTemplate(

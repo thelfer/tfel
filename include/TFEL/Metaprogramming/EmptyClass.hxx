@@ -2,7 +2,7 @@
  * \file   include/TFEL/Metaprogramming/EmptyClass.hxx
  * \brief
  * \author Thomas Helfer
- * \date   22 oct 2006
+ * \date 22/10/2006
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -21,7 +21,7 @@ namespace tfel::meta {
   /*!
    * \brief Empty class is a dummy class.
    * \author Thomas Helfer
-   * \date   01 Mar 06
+   * \date 01/03/2006
    */
   struct TFEL_VISIBILITY_LOCAL EmptyClass {};
 

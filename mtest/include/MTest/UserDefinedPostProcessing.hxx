@@ -2,24 +2,37 @@
  * \file   UserDefinedPostProcessing.hxx
  * \brief
  * \author Thomas Helfer
- * \date   27/02/2018
+ * \date 27/02/2018
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of theses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_USERDEFINEDPOSTPROCESSING_HXX
 #define LIB_MTEST_USERDEFINEDPOSTPROCESSING_HXX
 
+#include <map>
 #include <memory>
 #include <vector>
+#include <string>
 #include <fstream>
+#include <functional>
 #include "TFEL/Math/Evaluator.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Types.hxx"
 
 namespace mtest {
 
   // forward declaration
   struct Behaviour;
+  // forward declaration
+  struct CurrentState;
 
   //! \brief class handling a user defined postprocessing
-  struct UserDefinedPostProcessing {
+  struct MTEST_VISIBILITY_EXPORT UserDefinedPostProcessing {
     /*!
      * \brief constructor
      * \param[in] b: behaviour

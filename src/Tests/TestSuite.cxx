@@ -1,7 +1,7 @@
 /*!
  * \file   src/Tests/TestSuite.cxx
  * \author Thomas Helfer
- * \date   10 Apr 10
+ * \date 10/04/2010
  * \brief
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -14,6 +14,7 @@
 #include <chrono>
 #include <stdexcept>
 
+#include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestSuite.hxx"
 
 namespace tfel::tests {
@@ -42,6 +43,8 @@ namespace tfel::tests {
       const auto start = high_resolution_clock::now();
       try {
         r1 = t->execute();
+      } catch (TestAssertionFailure& e) {
+        r1 = e.result;
       } catch (std::exception& e) {
         r1 = TestResult(false, "test '" + t->name() +
                                    "' has thrown "
@@ -73,16 +76,18 @@ namespace tfel::tests {
         if (!r1.success()) {
           success = false;
         }
+      } catch (TestAssertionFailure& e) {
+        r1 = e.result;
+        success = false;
       } catch (std::exception& e) {
-        r1 = TestResult(false, "test '" + t->name() +
-                                   "' has thrown an exception "
-                                   "(" +
-                                   std::string(e.what()) + ")");
+        r1 = TestResult(false,
+                        "test '" + t->name() + "' failed due to an exception");
+        r1.append(TestResult{false, "failure reason", std::string(e.what())});
         success = false;
       } catch (...) {
-        r1 = TestResult(false, "test '" + t->name() +
-                                   "' has thrown an "
-                                   "unknown exception");
+        r1 = TestResult(false,
+                        "test '" + t->name() + "' failed due to an exception");
+        r1.append(TestResult{false, "failure reason", "unknown"});
         success = false;
       }
       const auto stop = high_resolution_clock::now();

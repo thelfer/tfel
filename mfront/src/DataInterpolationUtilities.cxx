@@ -2,7 +2,7 @@
  * \file   mfront/src/DataIsotropicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
- * \date   25/07/2022
+ * \date 25/07/2022
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -62,13 +62,16 @@ namespace mfront {
           return opt.get<bool>();
         } else if (opt.is<std::string>()) {
           const auto& v = opt.get<std::string>();
-          if ((v == "bound_to_last_value") || (v == "constant")) {
+          if (v == "extrapolation") {
+            return true;
+          } else if ((v == "bound_to_last_value") || (v == "constant")) {
             return false;
           } else {
             tfel::raise(
                 "SingleVariableInterpolatedData::extract: "
                 "unsupported value for option 'extrapolation' "
-                "(expected 'bound_to_last_value' or 'constant')");
+                "(expected 'extrapolation', 'bound_to_last_value' or "
+                "'constant')");
           }
         } else {
           tfel::raise(

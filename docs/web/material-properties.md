@@ -893,7 +893,7 @@ Hence, the temperature could be defined as follows:
 By default, `temperature`, `strain`, `stress` are defined as type
 aliases to floating point number type used by the interface.
 
-The keyword `@UseQT` allows the usage of quantities, i.e. floating
+The keyword `@UseQt` allows the usage of quantities, i.e. floating
 point values associated with units. Quantities allow the compiler to
 perform *dimensional analysis* at compile-time.
 

@@ -15,6 +15,7 @@
 #define LIB_MTEST_MTESTIMPOSEDTHERMODYNAMICFORCE_HXX
 
 #include <memory>
+#include <vector>
 #include "TFEL/Math/matrix.hxx"
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
@@ -28,13 +29,11 @@ namespace mtest {
   // forward declaration
   struct Behaviour;
 
-  /*!
-   * \brief Impose the value of a thermodynamic force component
-   */
+  //! \brief Impose the value of a thermodynamic force component
   struct MTEST_VISIBILITY_EXPORT ImposedThermodynamicForce final
       : public ConstraintBase {
     /*!
-     * constructor
+     * \brief constructor
      * \param[in] b : behaviour
      * \param[in] c : thermodynamic force component
      * \param[in] s : thermodynamic force evolution
@@ -43,37 +42,19 @@ namespace mtest {
                               const std::string&,
                               const std::shared_ptr<Evolution>);
     /*!
-     * constructor
+     * \brief constructor
      * \param[in] c : thermodynamic force component
      * \param[in] s : thermodynamic force evolution
      */
     ImposedThermodynamicForce(const unsigned short,
                               const std::shared_ptr<Evolution>);
-    /*!
-     * \return the number of Lagrange Multipliers
-     * associated with this contraint
-     */
-    unsigned short getNumberOfLagrangeMultipliers() const override;
-    /*!
-     * \brief builds up the stiffness matrix and the residual.
-     * \param[out] K:  stiffness matrix
-     * \param[out] r:  residual vector
-     * \param[in]  u0: value of the unknowns at the beginning
-     *                  of the time step
-     * \param[in]  u1: current estimate of the unknowns
-     * \param[in]  u1: current estimate of the unknowns
-     * \param[in]  k: approximation of the derivative of the
-     * thermodynamic force with respect to the driving variable, as
-     * returned by the mechanical behaviour.
-     * \param[in]  f: thermodynamic forces.
-     * \param[in]  u1: current estimate of the unknowns
-     * \param[in]  p:  position of the first lagrange multiplier
-     *                 in the residual
-     * \param[in]  d:  space dimension
-     * \param[in]  t:  beginning of the time step
-     * \param[in]  dt: time increment
-     * \param[in]  a:  normalisation factor
-     */
+    //
+    ImposedThermodynamicForce& operator=(const ImposedThermodynamicForce&) =
+        delete;
+    ImposedThermodynamicForce& operator=(ImposedThermodynamicForce&&) = delete;
+    //
+    [[nodiscard]] unsigned short getNumberOfLagrangeMultipliers()
+        const override;
     void setValues(tfel::math::matrix<real>&,
                    tfel::math::vector<real>&,
                    const tfel::math::vector<real>&,
@@ -85,45 +66,29 @@ namespace mtest {
                    const real,
                    const real,
                    const real) const override;
-    /*!
-     * \param[in]  e    : strains
-     * \param[in]  s    : ThermodynamicForcees
-     * \param[in]  eeps : criterium value for strains
-     * \param[in]  seps : criterium value for ThermodynamicForcees
-     * \param[in]  t    : beginning of the time step
-     * \param[in]  dt   : time increment
-     */
-    bool checkConvergence(const tfel::math::vector<real>&,
-                          const tfel::math::vector<real>&,
-                          const real,
-                          const real,
-                          const real,
-                          const real) const override;
-    /*!
-     * \param[in]  e    : driving variables
-     * \param[in]  s    : thermodynamic forces
-     * \param[in]  eeps : criterium value for driving variables
-     * \param[in]  seps : criterium value for thermodynamic forces
-     * \param[in]  t    : beginning of the time step
-     * \param[in]  dt   : time increment
-     */
-    std::string getFailedCriteriaDiagnostic(const tfel::math::vector<real>&,
-                                            const tfel::math::vector<real>&,
-                                            const real,
-                                            const real,
-                                            const real,
-                                            const real) const override;
-    //! destructor
+    [[nodiscard]] bool checkConvergence(const tfel::math::vector<real>&,
+                                        const tfel::math::vector<real>&,
+                                        const real,
+                                        const real,
+                                        const real,
+                                        const real) const override;
+    [[nodiscard]] std::string getFailedCriteriaDiagnostic(
+        const tfel::math::vector<real>&,
+        const tfel::math::vector<real>&,
+        const real,
+        const real,
+        const real,
+        const real) const override;
+    //! \brief destructor
     ~ImposedThermodynamicForce() override;
 
    protected:
-    ImposedThermodynamicForce& operator=(const ImposedThermodynamicForce&) =
-        delete;
-    ImposedThermodynamicForce& operator=(ImposedThermodynamicForce&&) = delete;
-    //! thermodynamic force evolution
+    //! \brief thermodynamic force evolution
     const std::shared_ptr<Evolution> sev;
-    //! component value
+    //! \brief component value
     unsigned short c;
+    //! \brief rows of the residual associated with the component
+    std::vector<unsigned short> rows;
   };  // end of struct ImposedThermodynamicForce
 
 }  // end of namespace mtest
