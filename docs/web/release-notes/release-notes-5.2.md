@@ -91,7 +91,7 @@ the version which introduced them (`tfel::v5_2_0::`, `tfel::v6_0_0::`,
 referring to the values of the current version. The current values of
 Version 5.2 are those of the `5.2.0` mode, so the physical constants of
 version 5.2 are those of version 5.1: the use of the values of the
-`CODATA` 2014 adjustment with all the digits of the `double`
+`CODATA` 2022 adjustment with all the digits of the `double`
 representation is postponed to version 6.0, where it is available
 through the `6.0.0` set of constants.
 
@@ -1206,6 +1206,29 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 1411: [TFEL/PhysicalConstants] Use CODATA 2022 for 6.0 and the `future` compatibility mode of 5.2.0
+
+The values of the physical constants of the `6.0.0` compatibility mode,
+which are those of the next major version, are now the `CODATA` 2022
+internationally recommended values, in place of the `CODATA` 2014 ones.
+Those values are available through the `tfel::v6_0_0` and `tfel::future`
+namespaces in `C++`, through the `tfel.v6_0_0` and `tfel.future`
+submodules in `Python` and through the `future` compatibility mode in
+`MFront`.
+
+The values used by default, which are those of the `5.2.0` compatibility
+mode, are unchanged.
+
+The `Fortran` bindings, which are not versioned, expose the values of
+the next major version: their values are thus now the `CODATA` 2022
+ones.
+
+The initial guess of the gas equation of state solver of `MTest` now
+uses the molar gas constant of the `TFEL/PhysicalConstants` library, in
+place of a hard-coded value.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1411>
 
 ## Issue 1417: Investigate tests failures with `gcc` and `-ffast-math`
 
