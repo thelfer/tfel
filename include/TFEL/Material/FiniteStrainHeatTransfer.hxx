@@ -1,8 +1,15 @@
 /*!
  * \file   TFEL/Material/FiniteStrainHeatTransfer.hxx
- * \brief
+ * \brief  This file declares functions computing the thermal conductivity
+ * matrix in the reference configuration.
  * \author Thomas Helfer
  * \date   30/01/2026
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_FINITESTRAINHEATTRANSFER_HXX
@@ -31,7 +38,7 @@ namespace tfel::material {
                tfel::math::unit::ThermalConductivity,
                ThermalConductivityOrDerivativeType>()) ||
            (tfel::math::checkUnitCompatibility<
-               tfel::math::unit::generate_unit<1, 1, -3, 0, -2, 0, 0>,
+               tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
                ThermalConductivityOrDerivativeType>()))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr auto      //
       computeThermalConductivyMatrixInReferenceConfiguration(
@@ -55,7 +62,7 @@ namespace tfel::material {
                 tfel::math::unit::ThermalConductivity,
                 ThermalConductivityOrDerivativeType>()) ||
             (tfel::math::checkUnitCompatibility<
-                tfel::math::unit::generate_unit<1, 1, -3, 0, -2, 0, 0>,
+                tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
                 ThermalConductivityOrDerivativeType>())) &&
            (tfel::math::space_dimension<DeformationGradientType> == 2u))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                       //
@@ -82,7 +89,7 @@ namespace tfel::material {
                 tfel::math::unit::ThermalConductivity,
                 ThermalConductivityOrDerivativeType>()) ||
             (tfel::math::checkUnitCompatibility<
-                tfel::math::unit::generate_unit<1, 1, -3, 0, -2, 0, 0>,
+                tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
                 ThermalConductivityOrDerivativeType>())) &&
            (tfel::math::space_dimension<DeformationGradientType> == 3u))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                       //

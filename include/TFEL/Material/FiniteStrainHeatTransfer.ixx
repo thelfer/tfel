@@ -1,13 +1,21 @@
 /*!
  * \file   TFEL/Material/FiniteStrainHeatTransfer.ixx
- * \brief
+ * \brief  This file implements functions computing the thermal
+ * conductivity matrix in the reference configuration.
  * \author Thomas Helfer
  * \date   30/01/2026
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_FINITESTRAINHEATTRANSFER_IXX
 #define LIB_TFEL_MATERIAL_FINITESTRAINHEATTRANSFER_IXX
 
+#include <type_traits>
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/Tensor/PiolaTransformation.hxx"
 
@@ -19,7 +27,7 @@ namespace tfel::material {
                tfel::math::unit::ThermalConductivity,
                ThermalConductivityOrDerivativeType>()) ||
            (tfel::math::checkUnitCompatibility<
-               tfel::math::unit::generate_unit<1, 1, -3, 0, -2, 0, 0>,
+               tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
                ThermalConductivityOrDerivativeType>()))  //
       TFEL_HOST_DEVICE constexpr auto                    //
       computeThermalConductivyMatrixInReferenceConfiguration(
@@ -54,7 +62,7 @@ namespace tfel::material {
                 tfel::math::unit::ThermalConductivity,
                 ThermalConductivityOrDerivativeType>()) ||
             (tfel::math::checkUnitCompatibility<
-                tfel::math::unit::generate_unit<1, 1, -3, 0, -2, 0, 0>,
+                tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
                 ThermalConductivityOrDerivativeType>())) &&
            (tfel::math::space_dimension<DeformationGradientType> == 2u))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                       //
@@ -67,7 +75,7 @@ namespace tfel::material {
     const auto k00 = iJ * (F2_2 * F[3] * F[3] * k2 + F[1] * F[1] * F2_2 * k1);
     const auto k01 = iJ * (-F[0] * F2_2 * F[3] * k2 - F[1] * F2_2 * F[4] * k1);
     const auto k11 = iJ * (F[0] * F[0] * F2_2 * k2 + F2_2 * F[4] * F[4] * k1);
-    return tfel::math::tmatrix<2, 2, decltype(k00)>{k00, k01,  //
+    return tfel::math::tmatrix<2, 2, std::decay_t<decltype(k00)>>{k00, k01,  //
                                                     k01, k11};
   }  // end of computeThermalConductivyMatrixInReferenceConfiguration
 
@@ -77,7 +85,7 @@ namespace tfel::material {
                 tfel::math::unit::ThermalConductivity,
                 ThermalConductivityOrDerivativeType>()) ||
             (tfel::math::checkUnitCompatibility<
-                tfel::math::unit::generate_unit<1, 1, -3, 0, -2, 0, 0>,
+                tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
                 ThermalConductivityOrDerivativeType>())) &&
            (tfel::math::space_dimension<DeformationGradientType> == 3u))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                       //
@@ -89,67 +97,67 @@ namespace tfel::material {
     const auto iJ = 1 / det(F);
     const auto k00 =
         iJ * ((F[3] * F[3] * F[7] * F[7] - 2 * F[1] * F[3] * F[5] * F[7] +
-               *F[1] * F[1] * F[5] * F[5]) *
+               F[1] * F[1] * F[5] * F[5]) *
                   k3 +
               (F[5] * F[5] * F[8] * F[8] - 2 * F[2] * F[3] * F[5] * F[8] +
-               *F[2] * F[2] * F[3] * F[3]) *
+               F[2] * F[2] * F[3] * F[3]) *
                   k2 +
               (F[7] * F[7] * F[8] * F[8] - 2 * F[1] * F[2] * F[7] * F[8] +
-               *F[1] * F[1] * F[2] * F[2]) *
+               F[1] * F[1] * F[2] * F[2]) *
                   k1);
     const auto k01 =
         iJ * ((-F[0] * F[3] * F[7] * F[7] +
-               (F[3] * F[4] + *F[0] * F[1]) * F[5] * F[7] -
+               (F[3] * F[4] + F[0] * F[1]) * F[5] * F[7] -
                F[1] * F[4] * F[5] * F[5]) *
                   k3 +  //
               ((F[0] * F[2] * F[5] - F[5] * F[5] * F[6]) * F[8] +
-               *F[2] * F[3] * F[5] * F[6] - F[0] * F[2] * F[2] * F[3]) *
+               F[2] * F[3] * F[5] * F[6] - F[0] * F[2] * F[2] * F[3]) *
                   k2 +
               ((F[2] * F[4] * F[7] - F[6] * F[7] * F[7]) * F[8] +
-               *F[1] * F[2] * F[6] * F[7] - F[1] * F[2] * F[2] * F[4]) *
+               F[1] * F[2] * F[6] * F[7] - F[1] * F[2] * F[2] * F[4]) *
                   k1);
     const auto k02 = iJ * (((F[0] * F[1] * F[3] - F[3] * F[3] * F[4]) * F[7] +
                             (F[1] * F[3] * F[4] - F[0] * F[1] * F[1]) * F[5]) *
                                k3 +
                            (-F[0] * F[5] * F[8] * F[8] +
-                            (F[3] * F[5] * F[6] + *F[0] * F[2] * F[3]) * F[8] -
+                            (F[3] * F[5] * F[6] + F[0] * F[2] * F[3]) * F[8] -
                             F[2] * F[3] * F[3] * F[6]) *
                                k2 +
                            (-F[4] * F[7] * F[8] * F[8] +
-                            (F[1] * F[6] * F[7] + *F[1] * F[2] * F[4]) * F[8] -
+                            (F[1] * F[6] * F[7] + F[1] * F[2] * F[4]) * F[8] -
                             F[1] * F[1] * F[2] * F[6]) *
                                k1);
     const auto k11 =
         iJ * ((F[0] * F[0] * F[7] * F[7] - 2 * F[0] * F[4] * F[5] * F[7] +
-               *F[4] * F[4] * F[5] * F[5]) *
+               F[4] * F[4] * F[5] * F[5]) *
                   k3 +
               (F[5] * F[5] * F[6] * F[6] - 2 * F[0] * F[2] * F[5] * F[6] +
-               *F[0] * F[0] * F[2] * F[2]) *
+               F[0] * F[0] * F[2] * F[2]) *
                   k2 +
               (F[6] * F[6] * F[7] * F[7] - 2 * F[2] * F[4] * F[6] * F[7] +
-               *F[2] * F[2] * F[4] * F[4]) *
+               F[2] * F[2] * F[4] * F[4]) *
                   k1);
     const auto k12 =
         iJ * (((F[0] * F[3] * F[4] - F[0] * F[0] * F[1]) * F[7] +
                (F[0] * F[1] * F[4] - F[3] * F[4] * F[4]) * F[5]) *
                   k3 +
               ((F[0] * F[5] * F[6] - F[0] * F[0] * F[2]) * F[8] -
-               F[3] * F[5] * F[6] * F[6] + *F[0] * F[2] * F[3] * F[6]) *
+               F[3] * F[5] * F[6] * F[6] + F[0] * F[2] * F[3] * F[6]) *
                   k2 +
               ((F[4] * F[6] * F[7] - F[2] * F[4] * F[4]) * F[8] -
-               F[1] * F[6] * F[6] * F[7] + *F[1] * F[2] * F[4] * F[6]) *
+               F[1] * F[6] * F[6] * F[7] + F[1] * F[2] * F[4] * F[6]) *
                   k1);
     const auto k22 =
         iJ * ((F[3] * F[3] * F[4] * F[4] - 2 * F[0] * F[1] * F[3] * F[4] +
-               *F[0] * F[0] * F[1] * F[1]) *
+               F[0] * F[0] * F[1] * F[1]) *
                   k3 +
               (F[0] * F[0] * F[8] * F[8] - 2 * F[0] * F[3] * F[6] * F[8] +
-               *F[3] * F[3] * F[6] * F[6]) *
+               F[3] * F[3] * F[6] * F[6]) *
                   k2 +
               (F[4] * F[4] * F[8] * F[8] - 2 * F[1] * F[4] * F[6] * F[8] +
-               *F[1] * F[1] * F[6] * F[6]) *
+               F[1] * F[1] * F[6] * F[6]) *
                   k1);
-    return tfel::math::tmatrix<3, 3, decltype(k00)>{k00, k01, k02,  //
+    return tfel::math::tmatrix<3, 3, std::decay_t<decltype(k00)>>{k00, k01, k02,  //
                                                     k01, k11, k12,  //
                                                     k02, k12, k22};
   }  // end of computeThermalConductivyMatrixInReferenceConfiguration

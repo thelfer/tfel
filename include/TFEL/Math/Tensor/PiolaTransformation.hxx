@@ -1,6 +1,7 @@
 /*!
  * \file   TFEL/Math/Tensor/PiolaTransformation.hxx
- * \brief
+ * \brief  This file declares functions related to the Piola
+ * transformation.
  * \author Thomas Helfer
  * \date   04/02/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
