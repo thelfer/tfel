@@ -13,6 +13,7 @@
 #include <cmath>
 #include <numeric>
 #include <algorithm>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Raise.hxx"
 #include "TFEL/Check/Interpolation.hxx"
 #include "TFEL/Check/Curve.hxx"
@@ -26,8 +27,9 @@ namespace tfel::check {
              "buildCurve: the abscissa and value columns of file '" + f +
                  "' do not have the same size");
     raise_if(x.empty(), "buildCurve: no values in file '" + f + "'");
-    raise_if(std::any_of(x.begin(), x.end(),
-                         [](const double v) { return std::isnan(v); }),
+    raise_if(std::any_of(
+                 x.begin(), x.end(),
+                 [](const double v) { return tfel::math::ieee754::isnan(v); }),
              "buildCurve: invalid abscissa (NaN) in file '" + f + "'");
     auto indexes = std::vector<std::vector<double>::size_type>(x.size());
     std::iota(indexes.begin(), indexes.end(), 0);
@@ -39,7 +41,7 @@ namespace tfel::check {
       if ((!c.abscissas.empty()) && (!(c.abscissas.back() < x[i]))) {
         // a NaN in a duplicated point is kept, so that the comparison
         // fails
-        if (std::isnan(y[i])) {
+        if (tfel::math::ieee754::isnan(y[i])) {
           c.values.back() = y[i];
         }
         continue;
