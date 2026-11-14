@@ -349,7 +349,7 @@ It allows defining the coefficients of the interaction matrix as
 parameters or as material properties:
 
 ~~~~{.cxx}
-@Parameters real im_coefficients[7];
+@Parameter real im_coefficients[7] = {1, 1, 1, 1, 1, 1, 1};
 im_coefficients.setEntryName("InteractionMatrixCoefficients");
 
 ....

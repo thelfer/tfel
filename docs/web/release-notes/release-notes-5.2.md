@@ -1251,6 +1251,16 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1451: [doc] Keywords cited in the documentation which do not exist (@StiffnessTensor, @ElasticProperties, @Parameters)
+
+The description of the `@OrthotropicBehaviour` keyword now refers to
+the `@ComputeStiffnessTensor` and `@ElasticMaterialProperties` keywords.
+The example of the manual construction of the interaction matrix of the
+single crystal page now uses the `@Parameter` keyword and gives default
+values.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1451>.
+
 ## Issue 431: Extend the GursonTvergaardNeedleman model to account for other equivalent stresses
 
 The `GeneralisedGursonTvergaardNeedleman` stress criterion of the
