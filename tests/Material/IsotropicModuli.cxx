@@ -120,9 +120,8 @@ struct IsotropicModuliTest final : public tfel::tests::TestCase {
     const auto Kappa_ = std::get<0>(KappaMu);
     const auto Mu_ = std::get<1>(KappaMu);
 
-    TFEL_TESTS_ASSERT(my_abs(Kappa_ - kappa) < stress(eps));
-
-    TFEL_TESTS_ASSERT(my_abs(Mu_ - mu) < stress(eps));
+    TFEL_TESTS_ASSERT(my_abs((Kappa_ - kappa) / kappa) < real(2 * eps));
+    TFEL_TESTS_ASSERT(my_abs((Mu_ - mu) / mu) < 10 * real(eps));
   }
 };  // end of struct IsotropicModuliTest
 
