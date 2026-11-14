@@ -1207,6 +1207,18 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1416: Fix tests failures with intel `icpx` 2024
+
+The `icpx` compiler enables by default a fast floating-point model
+(`-fp-model=fast`), which allows value-unsafe optimisations and flushes
+the subnormal numbers to zero. The `-fno-fast-math` flag is now passed
+to this compiler when the `enable-fast-math` option is not set, as
+already done for `gcc`. The `StringAlgorithms`,
+`LinearHomogenizationSchemes` and `IsotropicModuli` tests failed in
+`Release` mode without this flag.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1416>
+
 ## Issue 1387: [TFEL/Utilities] tests `CxxTokenizer` with `libFuzzer`
 
 The `tfel::utilities::CxxTokenizer` class is now covered by `libFuzzer`
