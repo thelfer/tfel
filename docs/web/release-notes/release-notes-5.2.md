@@ -630,8 +630,9 @@ const auto dadj = computeAdjugateDeterminantSecondDerivative(F);
 ### Piola's transformation
 
 The `computePiolaTransformOfIdentityMatrixInReferenceConfiguration`
-function returns the Piola transformation transformation of the identity
-matrix in the current configuration.
+function returns the Piola transformation of the identity matrix of the
+current configuration, i.e. the matrix
+\(\det\left(F\right)\,F^{-1}\,F^{-T}\) in the reference configuration.
 
 # New `TFEL/Material` features
 
@@ -639,11 +640,11 @@ matrix in the current configuration.
 
 For isotropic or orthotropic materials described by Fourier's law in the
 current configuration, the
-`computeThermalConductivyMatrixInReferenceConfiguration` function are
+`computeThermalConductivyMatrixInReferenceConfiguration` functions are
 available to compute the thermal conductivity matrix in the reference
-frame using Piola's transformation. This function can be also be used to
-compute the derivative of the thermal conductivity matrix with respect
-to the temperature.
+configuration using Piola's transformation. Those functions can also be
+used to compute the derivative of the thermal conductivity matrix with
+respect to the temperature.
 
 ### Example of usage
 
