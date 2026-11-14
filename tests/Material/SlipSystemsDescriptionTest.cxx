@@ -117,6 +117,16 @@ struct SlipSystemsDescriptionTest final : public tfel::tests::TestCase {
     for (std::size_t idx = 0; idx != sf.size(); ++idx) {
       TFEL_TESTS_ASSERT(std::abs(sf[idx] - mus[idx][0]) < 1e-14L);
     }
+    /* climb tensors: tensorial product of the slip direction by itself */
+    const auto cts = ssd.getClimbTensors(0);
+    const auto ds = ssd.getSlipDirections(0);
+    TFEL_TESTS_CHECK_EQUAL(cts.size(), 12u);
+    for (std::size_t idx = 0; idx != cts.size(); ++idx) {
+      TFEL_TESTS_ASSERT(std::abs(cts[idx][0] - ds[idx][0] * ds[idx][0]) <
+                        1e-14L);
+      TFEL_TESTS_ASSERT(std::abs(cts[idx][7] - ds[idx][2] * ds[idx][1]) <
+                        1e-14L);
+    }
   }
   //! \brief tests related to HCP systems
   void checkHCP() {
