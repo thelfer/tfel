@@ -1207,6 +1207,19 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 796: Remarks on the documentation of the StandardElastoViscoPlasticity Brick of MFront
+
+The description of the inelastic flows of the
+[`StandardElastoViscoPlasticity` brick](StandardElastoViscoPlasticityBrick.html)
+now uses the same notations for every flow. The inelastic strain rate is
+always written \(\dot{p}\,\tenseur{n}\), where \(\dot{p}\) is the rate
+of the equivalent strain and \(\tenseur{n}\) is the flow direction, and
+\(f\) always denotes the yield function. Each flow is then described by
+the expression of \(\dot{p}\). A section describing this general form
+has been added.
+
+For more details, see <https://github.com/thelfer/tfel/issues/796>.
+
 ## Issue 641: [Miscellaneous] Is a library a MFront library?
 
 `mfm` displayed nothing when its argument was not an existing file, for
