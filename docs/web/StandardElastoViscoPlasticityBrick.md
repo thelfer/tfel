@@ -197,6 +197,8 @@ viscoplastic flow, is given by:
 
 \[
 \tdepsilonp=\dot{p}\,\tenseur{n}
+\quad\text{or}\quad
+\tdepsilonvp=\dot{p}\,\tenseur{n}
 \quad\text{with}\quad
 \tenseur{n}=\deriv{g}{\tsigma}
 \]
