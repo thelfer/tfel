@@ -1182,11 +1182,12 @@ criteria coupled with the porosity evolution:
 
 They are the `GursonTvergaardNeedleman1982` and
 `RousselierTanguyBesson2002` stress criteria in which the von Mises
-stress is replaced by an equivalent stress chosen by the user. This
-equivalent stress is given by the `equivalent_stress` option, which
-accepts every stress criterion of the brick whose normal is deviatoric
-and which is not coupled with the porosity evolution (`Mises`, `Hill`,
-`Hosford`, `Barlat`, etc.).
+stress is replaced by an equivalent stress chosen by the user.
+
+This equivalent stress is given by the `equivalent_stress` option. It
+must be a stress criterion of the brick with a deviatoric normal, not
+coupled with the porosity evolution (`Mises`, `Hill`, `Hosford`,
+`Barlat`, etc.).
 
 ~~~~{.cxx}
 @Brick StandardElastoViscoPlasticity{

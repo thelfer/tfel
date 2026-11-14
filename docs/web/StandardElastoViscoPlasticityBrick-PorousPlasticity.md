@@ -380,10 +380,10 @@ options, as follows:
    },
 ~~~~
 
-Every stress criterion whose normal is deviatoric and which is not
-coupled with the porosity evolution can be used: `Mises`, `Hill`,
-`Hosford`, `Barlat`, `Drucker1949`, `Cazacu2001`, etc. An orthotropic stress
-criterion requires an orthotropic behaviour.
+The stress criterion must have a deviatoric normal and must not be
+coupled with the porosity evolution. `Mises`, `Hill`, `Hosford`,
+`Barlat`, `Drucker1949` and `Cazacu2001` are examples of valid choices.
+An orthotropic stress criterion requires an orthotropic behaviour.
 
 If the equivalent stress is the von Mises stress, the generalised
 criteria reduce to the original ones.
