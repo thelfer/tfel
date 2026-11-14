@@ -25,6 +25,7 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/General/floating_point_exceptions.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/Vector/tvectorIO.hxx"
@@ -62,8 +63,9 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     const auto s = tfel::math::stensor<3u, double>{1, 2, 3, nan, 0.5, 0.6};
     const auto [vp, m] =
         s.computeEigenVectors<EigenSolver::FSESJACOBIEIGENSOLVER>();
-    TFEL_TESTS_ASSERT(std::isnan(vp[0]) && std::isnan(m(0, 0)));
-    TFEL_TESTS_ASSERT(std::isnan(
+    TFEL_TESTS_ASSERT(tfel::math::ieee754::isnan(vp[0]) &&
+                      tfel::math::ieee754::isnan(m(0, 0)));
+    TFEL_TESTS_ASSERT(tfel::math::ieee754::isnan(
         s.computeEigenValues<EigenSolver::FSESJACOBIEIGENSOLVER>()[0]));
     return this->result;
   }  // end of execute
