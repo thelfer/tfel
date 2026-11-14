@@ -126,6 +126,12 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   ElasticContributionToPorosityGrowth
   GursonTvergaardNeedleman1982
   RousselierTanguyBesson2002
+  GeneralisedGursonTvergaardNeedlemanMises
+  GeneralisedGursonTvergaardNeedlemanHosford
+  GeneralisedGursonTvergaardNeedlemanHill
+  GeneralisedRousselierTanguyBessonMises
+  GeneralisedRousselierTanguyBessonHosford
+  GeneralisedRousselierTanguyBessonHill
   MichelAndSuquet1992HollowSphereTest
   DDIF2StressPotentialTest
   DDIF2BrickTest)
@@ -164,7 +170,9 @@ if(enable-mfront-quantity-tests)
     MohrCoulombTest_qt
     MichelAndSuquet1992HollowSphereTest_qt
     GursonTvergaardNeedleman1982_qt
-    RousselierTanguyBesson2002_qt)
+    RousselierTanguyBesson2002_qt
+    GeneralisedGursonTvergaardNeedlemanHosford_qt
+    GeneralisedRousselierTanguyBessonHosford_qt)
 
 endif(enable-mfront-quantity-tests)
 
@@ -357,6 +365,20 @@ generictest_standardelastovicoplasticitybrick(RousselierTanguyBesson2002-proport
     RousselierTanguyBesson2002-proportional
     MFrontStandardElastoViscoPlasticityBrickBehaviours
     RousselierTanguyBesson2002 RousselierTanguyBesson2002-proportional.ref)
+# the generalised criteria must give the results of the original ones
+# when the equivalent stress reduces to the von Mises stress
+foreach(es Mises Hosford Hill)
+  foreach(test test1 test2)
+    generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-${test}
+      GursonTvergaardNeedleman1982-${test}
+      MFrontStandardElastoViscoPlasticityBrickBehaviours
+      GeneralisedGursonTvergaardNeedleman${es} GursonTvergaardNeedleman1982-${test}.ref)
+  endforeach()
+  generictest_standardelastovicoplasticitybrick(RousselierTanguyBesson2002-proportional
+    RousselierTanguyBesson2002-proportional
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    GeneralisedRousselierTanguyBesson${es} RousselierTanguyBesson2002-proportional.ref)
+endforeach()
 generictest_standardelastovicoplasticitybrick(MichelAndSuquet1992HollowSphereTest
     MichelAndSuquet1992HollowSphereTest
     MFrontStandardElastoViscoPlasticityBrickBehaviours
@@ -366,6 +388,16 @@ if(enable-mfront-quantity-tests)
     RousselierTanguyBesson2002-proportional
     MFrontStandardElastoViscoPlasticityBrickBehaviours3
     RousselierTanguyBesson2002_qt RousselierTanguyBesson2002-proportional.ref)
+  foreach(test test1 test2)
+    generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-${test}_qt
+      GursonTvergaardNeedleman1982-${test}
+      MFrontStandardElastoViscoPlasticityBrickBehaviours3
+      GeneralisedGursonTvergaardNeedlemanHosford_qt GursonTvergaardNeedleman1982-${test}.ref)
+  endforeach()
+  generictest_standardelastovicoplasticitybrick(RousselierTanguyBesson2002-proportional_qt
+    RousselierTanguyBesson2002-proportional
+    MFrontStandardElastoViscoPlasticityBrickBehaviours3
+    GeneralisedRousselierTanguyBessonHosford_qt RousselierTanguyBesson2002-proportional.ref)
   generictest_standardelastovicoplasticitybrick(MichelAndSuquet1992HollowSphereTest_qt
     MichelAndSuquet1992HollowSphereTest
     MFrontStandardElastoViscoPlasticityBrickBehaviours3

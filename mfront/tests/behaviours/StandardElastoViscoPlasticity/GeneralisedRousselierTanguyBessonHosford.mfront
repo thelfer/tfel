@@ -1,0 +1,31 @@
+@DSL Implicit;
+@Behaviour GeneralisedRousselierTanguyBessonHosford;
+@Author Tristan Chenaille;
+@Date 14 / 11 / 2026;
+@Description {
+  "The GeneralisedRousselierTanguyBesson criterion built on the Hosford "
+  "stress with an exponent equal to 2, which must give the results of "
+  "the RousselierTanguyBesson2002 criterion."
+}
+
+@ModellingHypotheses{".+"};
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 200e3, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "GeneralisedRousselierTanguyBesson" {
+      qR : 0.89,
+      DR : 2.2,
+      equivalent_stress : "Hosford" {a : 2, eigen_solver : "Jacobi"}
+    },
+    isotropic_hardening : "Linear" {R0 : 200.}
+  },
+  porosity_evolution : {
+    safety_factor_for_the_upper_bound_of_the_porosity : 0.95,
+    safety_factor_for_the_upper_bound_of_the_porosity_for_fracture_detection : 0.94
+  }
+};

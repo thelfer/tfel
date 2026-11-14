@@ -1172,6 +1172,50 @@ taking them into account are provided by the
 `FiniteStrainSingleCrystal_NumericalJacobian_WithCorrections` test
 behaviours.
 
+## Generalised porous stress criteria in the `StandardElastoViscoPlasticity` brick {#sec:tfel:5.2:mfront:generalised_porous_stress_criteria}
+
+The `StandardElastoViscoPlasticity` brick provides two new stress
+criteria coupled with the porosity evolution:
+
+- `GeneralisedGursonTvergaardNeedleman`,
+- `GeneralisedRousselierTanguyBesson`.
+
+They are the `GursonTvergaardNeedleman1982` and
+`RousselierTanguyBesson2002` stress criteria in which the von Mises
+stress is replaced by an equivalent stress chosen by the user.
+
+This equivalent stress is given by the `equivalent_stress` option. It
+must be a stress criterion of the brick with a deviatoric normal, not
+coupled with the porosity evolution (`Mises`, `Hill`, `Hosford`,
+`Barlat`, etc.).
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 200e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "GeneralisedGursonTvergaardNeedleman" {
+      q_1 : 1.5,
+      q_2 : 1.0,
+      f_c : 0.01,
+      f_r : 0.1,
+      equivalent_stress : "Hosford" {a : 8}
+    },
+    isotropic_hardening : "Linear" {R0 : 150e6}
+  }
+};
+~~~~
+
+The original criteria are unchanged. The generalised criteria give the
+same results if the equivalent stress is the von Mises stress.
+
+Those criteria are described on [this
+page](StandardElastoViscoPlasticityBrick-PorousPlasticity.html).
+
+The associated functions of the `TFEL/Material` library are declared in
+the `TFEL/Material/GeneralisedGursonTvergaardNeedlemanStressCriterion.hxx`
+and `TFEL/Material/GeneralisedRousselierTanguyBessonStressCriterion.hxx`
+headers.
+
 # Documentation
 
 ## New coding guidelines page
@@ -1206,6 +1250,19 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 431: Extend the GursonTvergaardNeedleman model to account for other equivalent stresses
+
+The `GeneralisedGursonTvergaardNeedleman` stress criterion of the
+`StandardElastoViscoPlasticity` brick allows choosing the equivalent
+stress used by the Gurson-Tvergaard-Needleman criterion. The same
+extension is available for the Rousselier-Tanguy-Besson criterion
+through the `GeneralisedRousselierTanguyBesson` stress criterion.
+
+See Section @sec:tfel:5.2:mfront:generalised_porous_stress_criteria for
+details.
+
+For more details, see <https://github.com/thelfer/tfel/issues/431>.
 
 ## Issue 440: There is no tangent operator for DSL MultipleIsotropicMisesFlows
 

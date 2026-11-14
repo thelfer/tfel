@@ -25,6 +25,11 @@ namespace mfront::bbrick {
       : StandardPorousStressCriterionBase("GursonTvergaardNeedleman1982") {
   }  // end of GursonTvergaardNeedleman1982StressCriterion
 
+  GursonTvergaardNeedleman1982StressCriterion::
+      GursonTvergaardNeedleman1982StressCriterion(const std::string& n)
+      : StandardPorousStressCriterionBase(n) {
+  }  // end of GursonTvergaardNeedleman1982StressCriterion
+
   std::vector<mfront::BehaviourSymmetryType>
   GursonTvergaardNeedleman1982StressCriterion::getSupportedBehaviourSymmetries()
       const {
