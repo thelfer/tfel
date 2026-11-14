@@ -57,7 +57,9 @@ struct IsotropicCazacuYieldTest final : public tfel::tests::TestCase {
     using stensor = tfel::math::stensor<N, double>;
     constexpr double c = -1.058;
     constexpr double e = 1.e-6;
-    constexpr double prec = 2.e-10;
+    // the rounding error of the centered finite difference is about the
+    // machine epsilon divided by the perturbation, i.e. about 2e-10
+    constexpr double prec = 1.e-9;
     auto fseq = [](const stensor& sig) {
       const auto s = deviator(sig);
       const auto J2 = (s | s) / 2;
