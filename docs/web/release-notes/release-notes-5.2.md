@@ -1207,6 +1207,30 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1417: Investigate tests failures with `gcc` and `-ffast-math`
+
+With the `-ffast-math` flag, the compiler assumes that no `NaN` and no
+infinite value exist, treats the subnormal numbers as zeros and may
+evaluate both branches of a test. The following points are fixed:
+
+- `tfel-check` detects the `NaN` in the results.
+- `MTest` detects the non finite results in the analytical tests and in
+  the comparisons to reference files.
+- `tfel::utilities::convert<double>` and
+  `tfel::utilities::convert<long double>` reject the numbers which
+  overflow.
+- The Jacobi eigen solver (`FSESJACOBIEIGENSOLVER`) returns `NaN` for a
+  tensor holding a `NaN`, as the other eigen solvers.
+- The default 2D kriging model can be evaluated at one of its data
+  points when the floating-point exceptions are enabled.
+
+The tolerances of the `IsotropicCazacuYieldTest`,
+`HosfordSecondDerivativeTest` and `IsotropicModuli` tests and the
+criterion on the stresses of the `HyperbolicSineTest2` `MTest` test are
+now consistent with the accuracy of the algorithms they rely on.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1417>
+
 ## Issue 1416: Fix tests failures with intel `icpx` 2024
 
 The `icpx` compiler enables by default a fast floating-point model
