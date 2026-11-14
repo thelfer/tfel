@@ -396,14 +396,14 @@ criteria reduce to the original ones.
 
 > **Hill matrix and spherical voids**
 >
-> For a matrix obeying the Hill criterion and containing spherical
-> voids, Benzerga and Besson derived a criterion having the form of
-> Equation @eq:mfront:porous_plasticity:GGTN:S, in which \(\sigmaeq\) is
-> the Hill stress and the hyperbolic cosine is
-> \(\cosh\paren{\trace{\tsigma}/\paren{h\,\sstar}}\) (see
-> @benzergabesson2001). This criterion is thus obtained with the `Hill`
-> equivalent stress and \(q_2=2/h\). With the convention used by the
-> brick for the Hill coefficients, the anisotropy factor \(h\) is:
+> Benzerga and Besson studied a Hill matrix containing spherical voids
+> (see @benzergabesson2001). Their criterion has the form of Equation
+> @eq:mfront:porous_plasticity:GGTN:S. \(\sigmaeq\) is the Hill stress
+> and the hyperbolic cosine is
+> \(\cosh\paren{\trace{\tsigma}/\paren{h\,\sstar}}\). It is thus
+> obtained with the `Hill` equivalent stress and \(q_2=2/h\). With the
+> convention of the brick for the Hill coefficients, the anisotropy
+> factor \(h\) is:
 >
 > \[
 > h = 2\,\sqrt{\dfrac{F+G+H}{5\,\paren{F\,G+G\,H+H\,F}}+\dfrac{3}{10}\,\paren{\dfrac{1}{L}+\dfrac{1}{M}+\dfrac{1}{N}}}
