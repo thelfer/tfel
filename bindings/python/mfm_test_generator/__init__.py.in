@@ -1,3 +1,5 @@
+import os
+
 if os.name == 'nt':
     versioned_tfelhome="TFELHOME_@TFEL_VERSION@".replace(".", "_").replace("-", "_")
     if versioned_tfelhome in os.environ:
