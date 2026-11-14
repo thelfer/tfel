@@ -87,6 +87,7 @@ struct T2toT2Test_2D final : public tfel::tests::TestCase {
   }  // end of STensorTest8
   tfel::tests::TestResult execute() override {
     this->test1();
+    this->test2();
     return this->result;
   }  // end of execute
  private:
@@ -125,6 +126,12 @@ struct T2toT2Test_2D final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(s(4, 2) == 0);
     TFEL_TESTS_STATIC_ASSERT(s(4, 3) == 0);
     TFEL_TESTS_STATIC_ASSERT(s(4, 4) == -1);
+  }
+  void test2() {
+    using namespace tfel::math;
+    // determinant of an operator whose LU decomposition exchanges two rows
+    const auto t = t2tot2<2u, double>::transpose_derivative();
+    TFEL_TESTS_ASSERT(my_abs(det(t) + 1) < 1.e-14);
   }
 };
 
