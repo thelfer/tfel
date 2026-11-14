@@ -127,6 +127,16 @@ the `PYTHONPATH` variable does not have to be set. With another
 installation prefix, this directory shall be added to the `PYTHONPATH`
 variable.
 
+When `TFEL` is built from sources, the `share/tfel/env/env.sh` file of
+the installation prefix defines the `TFELHOME`, `PATH`,
+`LD_LIBRARY_PATH` and `PYTHONPATH` variables. It can be sourced in place
+of the first three lines of the previous file:
+
+~~~~{.bash}
+$ source /mingw64/share/tfel/env/env.sh
+$ export MAKE=mingw32-make.exe
+~~~~
+
 # Loading the environment
 
 Before using TFEL/MFront, load the environment with:

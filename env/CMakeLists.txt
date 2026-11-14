@@ -1,4 +1,7 @@
-if(UNIX)
+# The shell scripts are also installed with MinGW compilers, such as the
+# ones provided by MSYS2, whose environments are used through a Unix
+# shell: UNIX is false in this case.
+if(UNIX OR MINGW)
   if(enable-python-bindings)
     configure_file(env-python.sh.in env.sh @ONLY)
     configure_file(env-python.fish.in env.fish @ONLY)
@@ -19,7 +22,7 @@ if(UNIX)
             DESTINATION share/tfel/env
             COMPONENT core)
   endif(TFEL_SUFFIX)
-endif(UNIX)
+endif(UNIX OR MINGW)
 
 if(WIN32)
   if(enable-python-bindings)

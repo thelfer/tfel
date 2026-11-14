@@ -1207,6 +1207,19 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 954: [msys2] the environment scripts are not the good ones (use `.sh.in`, not  `.bat.in` or `.ps1.in`)
+
+With a `MinGW` compiler, such as the ones provided by `MSYS2`, only the
+`env.bat` and `env.ps1` environment scripts were installed, although the
+`MSYS2` environments are used through the `bash` shell.
+
+The `env.sh` and `env.fish` scripts are now also installed in this case,
+in the `share/tfel/env` directory. The `env.bat` and `env.ps1` scripts
+are still installed, as the binaries may also be used from the `cmd` and
+`PowerShell` shells.
+
+For more details, see <https://github.com/thelfer/tfel/issues/954>
+
 ## Issue 955: [msys2] `python` modules are not installed in the right places: one shall follow Unix conventions
 
 With a `MinGW` compiler, such as the ones provided by `MSYS2`, the

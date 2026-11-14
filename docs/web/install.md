@@ -444,7 +444,9 @@ installation: `TFELHOME`, `PATH`, `LD_LIBRARY_PATH` and `PYTHONPATH`.
 directory:
 
 - `<install_prefix>/share/tfel/env/env.sh` for `UNIX` systems and the
-  `bash` shell. This file shall be used as follows:
+  `bash` shell. This file is also installed when `TFEL` is built with a
+  `MinGW` compiler, as in the [`MSYS2`](https://www.msys2.org/)
+  environments. This file shall be used as follows:
 
   ~~~~{.sh}
   $ source <install_prefix>/share/tfel/env/env.sh
