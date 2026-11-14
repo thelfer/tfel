@@ -50,11 +50,17 @@ namespace tfel::math {
     static TFEL_MATH_INLINE T
     covariance(const typename KrigingVariable<2u, T>::type& v) {
       using namespace std;
-      T h2 = v(0) * v(0) + v(1) * v(1);
+      const T h2 = v(0) * v(0) + v(1) * v(1);
       if (h2 < 10 * numeric_limits<T>::epsilon()) {
         return T(0);
       }
-      return 0.5 * h2 * log(h2);
+      // The smallest normalised number is added to the argument of the
+      // logarithm, which does not change its value. When a loop calling
+      // this function is vectorised, the compiler may evaluate the
+      // logarithm for all the points, including those at a null distance
+      // for which the previous test holds: the logarithm of zero would
+      // raise a division by zero floating-point exception.
+      return 0.5 * h2 * log(h2 + numeric_limits<T>::min());
     }  // end of covariance
 
     typedef T (*Drifts)(const typename KrigingVariable<2u, T>::type&);
