@@ -22,6 +22,7 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
 struct StringAlgorithmsTest final : public tfel::tests::TestCase {
@@ -72,16 +73,22 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
   //! \brief underflows are accepted, overflows rejected
   void test3() {
     using namespace tfel::utilities;
-    // a difference below the smallest subnormal number is null
+    using tfel::math::ieee754::fpclassify;
+    // the classification of the numbers is based on their representation,
+    // so that those checks also hold when the subnormal numbers are treated
+    // as zeros by the processor, which is the case with -ffast-math
     constexpr auto dmin = std::numeric_limits<double>::denorm_min();
-    constexpr auto ldmin = std::numeric_limits<long double>::denorm_min();
-    TFEL_TESTS_ASSERT(std::abs(convert<double>("1.5") - 1.5) < dmin);
-    TFEL_TESTS_ASSERT(std::abs(convert<double>("1e-310") - 1e-310) < dmin);
-    TFEL_TESTS_ASSERT(std::abs(convert<double>("4.9e-324") - dmin) < dmin);
-    TFEL_TESTS_ASSERT(std::abs(convert<double>("1e-400")) < dmin);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1.5") - 1.5) == FP_ZERO);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-310")) == FP_SUBNORMAL);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-310") - 1e-310) ==
+                      FP_ZERO);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("4.9e-324")) == FP_SUBNORMAL);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("4.9e-324") - dmin) ==
+                      FP_ZERO);
+    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-400")) == FP_ZERO);
     TFEL_TESTS_CHECK_THROW(convert<double>("1e400"), std::exception);
     TFEL_TESTS_CHECK_THROW(convert<double>("1.5x"), std::exception);
-    TFEL_TESTS_ASSERT(std::abs(convert<long double>("1e-5000")) < ldmin);
+    TFEL_TESTS_ASSERT(fpclassify(convert<long double>("1e-5000")) == FP_ZERO);
     TFEL_TESTS_CHECK_THROW(convert<long double>("1e5000"), std::exception);
     // errno is preserved
     errno = EDOM;

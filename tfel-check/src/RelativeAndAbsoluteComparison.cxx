@@ -20,6 +20,7 @@
 #include <vector>
 #include <cstdlib>
 #include <limits>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/RelativeAndAbsoluteComparison.hxx"
 
@@ -54,24 +55,30 @@ namespace tfel::check {
                                        eps);
 
       // a NaN is reported as the maximum error
-      if ((!std::isnan(maxRelativeError)) &&
-          (std::isnan(relativeError) || (maxRelativeError < relativeError))) {
+      if ((!tfel::math::ieee754::isnan(maxRelativeError)) &&
+          (tfel::math::ieee754::isnan(relativeError) ||
+           (maxRelativeError < relativeError))) {
         maxRelativeError = relativeError;
         errorRelLineNumber = index;
       }
 
       // only store maxAbsoluteError if relative check failed
-      if (!(relativeError <= this->prec)) {
+      const auto relativeCheckFailed =
+          tfel::math::ieee754::isnan(relativeError) ||
+          (relativeError > this->prec);
+      if (relativeCheckFailed) {
         // a NaN is reported as the maximum error
-        if ((!std::isnan(maxAbsoluteError)) &&
-            (std::isnan(absoluteError) || (maxAbsoluteError < absoluteError))) {
+        if ((!tfel::math::ieee754::isnan(maxAbsoluteError)) &&
+            (tfel::math::ieee754::isnan(absoluteError) ||
+             (maxAbsoluteError < absoluteError))) {
           maxAbsoluteError = absoluteError;
           errorAbsLineNumber = index;
         }
       }
-      // written this way so that a NaN fails
-      if (!((relativeError <= this->prec) ||
-            (absoluteError <= this->precision2))) {
+      // the NaN is tested explicitly, as -ffast-math assumes that the
+      // comparisons never involve one
+      if (relativeCheckFailed && (tfel::math::ieee754::isnan(absoluteError) ||
+                                  (absoluteError > this->precision2))) {
         errorLinesCount++;
         s = false;
       }

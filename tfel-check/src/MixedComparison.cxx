@@ -20,6 +20,7 @@
 #include <limits>
 #include <cstdlib>
 
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/MixedComparison.hxx"
 
@@ -51,13 +52,15 @@ namespace tfel::check {
       mixedError =
           std::abs(va - vb) - (this->prec * std::abs(vb)) - this->precision2;
       // a NaN is reported as the maximum error
-      if ((!std::isnan(maxMixedError)) &&
-          (std::isnan(mixedError) || (maxMixedError < mixedError))) {
+      if ((!tfel::math::ieee754::isnan(maxMixedError)) &&
+          (tfel::math::ieee754::isnan(mixedError) ||
+           (maxMixedError < mixedError))) {
         maxMixedError = mixedError;
         errorLineNumber = index;
       }
-      // written this way so that a NaN fails
-      if (!(mixedError <= 0)) {
+      // the NaN is tested explicitly, as -ffast-math assumes that the
+      // comparisons never involve one
+      if (tfel::math::ieee754::isnan(mixedError) || (mixedError > 0)) {
         s = false;
         errorLinesCount++;
       }

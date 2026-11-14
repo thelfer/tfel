@@ -15,6 +15,7 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/Curve.hxx"
@@ -98,8 +99,9 @@ namespace tfel::check {
       areaValue /= maxValueA;
     }
 
-    // written this way so that a NaN fails
-    if (!(areaValue <= this->prec)) {
+    // the NaN is tested explicitly, as -ffast-math assumes that the
+    // comparisons never involve one
+    if (tfel::math::ieee754::isnan(areaValue) || (areaValue > this->prec)) {
       s = false;
     }
     if (!s) {

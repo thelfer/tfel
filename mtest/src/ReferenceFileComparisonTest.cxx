@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <sstream>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Raise.hxx"
 #include "MTest/TextDataUtilities.hxx"
 #include "MTest/ReferenceFileComparisonTest.hxx"
@@ -59,7 +60,8 @@ namespace mtest {
           << "(reference value is not available for period  '" << p << "')";
       this->results.append({false, msg.str()});
     } else {
-      throw_if(!std::isfinite(v), "invalid result for '" + this->name + "'");
+      throw_if(!tfel::math::ieee754::isfinite(v),
+               "invalid result for '" + this->name + "'");
       const real err = std::abs(v - this->values[p]);
       if (err > this->eps) {
         std::ostringstream msg;
