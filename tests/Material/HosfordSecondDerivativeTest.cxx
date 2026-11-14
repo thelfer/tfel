@@ -68,7 +68,12 @@ struct HosfordSecondDerivativeTest final : public tfel::tests::TestCase {
     using size_type = typename stensor<N, double>::size_type;
     const auto seps = 1.e-10;
     const auto eps1 = 1.e-8;
-    const auto eps2 = 1.e-8;
+    // The default eigen solver separates two equal eigenvalues by about
+    // the square root of the machine epsilon (about 1e-8). This gap is
+    // greater than `seps`, so the second derivative is computed by a
+    // divided difference whose rounding error is about the machine
+    // epsilon divided by this gap, i.e. about 1e-8.
+    const auto eps2 = 1.e-7;
     const auto s = stensor<N, double>{values};
     const auto seq = sigmaeq(s);
     const auto n = (seq < seps ? stensor<N, double>(double(0))
@@ -150,15 +155,26 @@ struct HosfordSecondDerivativeTest final : public tfel::tests::TestCase {
     stensor<N, double> n;
     st2tost2<N, double> dn;
     std::tie(seq, n, dn) = computeHosfordStressSecondDerivative(s, a, seps);
+    // The reference is computed with the Jacobi eigen solver. For the
+    // stresses having two equal eigenvalues, the perturbation separates
+    // them by about `ds`: the eigenvectors given by the default eigen
+    // solver, whose accuracy is about the square root of the machine
+    // epsilon, are then only known with a relative accuracy of 1e-2, and
+    // so would be the reference.
+    constexpr auto es = tfel::math::stensor_common::FSESJACOBIEIGENSOLVER;
     tfel::math::st2tost2<N, double> dnn;
     for (size_type i = 0; i != s.size(); ++i) {
       auto sb = s;
       sb[i] += ds;
       double seq_p, seq_m;
       stensor<N, double> n_p, n_m;
-      std::tie(seq_p, n_p) = computeHosfordStressNormal(sb, a, seps);
+      std::tie(seq_p, n_p) =
+          computeHosfordStressNormal<stensor<N, double>, double, es>(sb, a,
+                                                                     seps);
       sb[i] -= 2 * ds;
-      std::tie(seq_m, n_m) = computeHosfordStressNormal(sb, a, seps);
+      std::tie(seq_m, n_m) =
+          computeHosfordStressNormal<stensor<N, double>, double, es>(sb, a,
+                                                                     seps);
       for (size_type j = 0; j != s.size(); ++j) {
         dnn(j, i) = (n_p(j) - n_m(j)) / (2 * ds);
       }
