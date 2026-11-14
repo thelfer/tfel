@@ -291,6 +291,9 @@ set(TFELMFront_SOURCES
     MichelAndSuquet1992HollowSphereStressCriterion.cxx
     GursonTvergaardNeedleman1982StressCriterion.cxx
     RousselierTanguyBesson2002StressCriterion.cxx
+    PorousStressCriterionEquivalentStress.cxx
+    GeneralisedGursonTvergaardNeedlemanStressCriterion.cxx
+    GeneralisedRousselierTanguyBessonStressCriterion.cxx
     StressCriterionFactory.cxx
     IsotropicHardeningRule.cxx
     LinearIsotropicHardeningRule.cxx

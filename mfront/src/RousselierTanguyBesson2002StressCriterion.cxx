@@ -25,6 +25,11 @@ namespace mfront::bbrick {
       : StandardPorousStressCriterionBase("RousselierTanguyBesson2002") {
   }  // end of RousselierTanguyBesson2002StressCriterion
 
+  RousselierTanguyBesson2002StressCriterion::
+      RousselierTanguyBesson2002StressCriterion(const std::string& n)
+      : StandardPorousStressCriterionBase(n) {
+  }  // end of RousselierTanguyBesson2002StressCriterion
+
   std::vector<mfront::BehaviourSymmetryType>
   RousselierTanguyBesson2002StressCriterion::getSupportedBehaviourSymmetries()
       const {
