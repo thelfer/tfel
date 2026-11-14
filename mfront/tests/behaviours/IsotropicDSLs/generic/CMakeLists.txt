@@ -11,7 +11,8 @@ mfront_behaviour_brick_check_library(MFrontGenericIsotropicDSLsTestsBehaviours
    MultipleFlows2
    MultipleFlows3
    MultipleFlows4
-   MultipleFlows5)
+   MultipleFlows5
+   MultipleFlows6)
 
 macro(generictestisotropic_dsls test_arg behaviour)
     set(_REFERENCE_FILE )
@@ -61,4 +62,7 @@ generictestisotropic_dsls(plasticity  Plasticity6 plasticity.ref)
 generictestisotropic_dsls(plasticity2 Plasticity7 plasticity.ref)
 generictestisotropic_dsls(multipleflows MultipleFlows4 plasticity.ref)
 generictestisotropic_dsls(multipleflows MultipleFlows5 plasticity.ref)
+generictestisotropic_dsls(multipleflows2 MultipleFlows4 plasticity.ref)
+generictestisotropic_dsls(multipleflows2 MultipleFlows5 plasticity.ref)
+generictestisotropic_dsls(multipleflows3 MultipleFlows6)
 
