@@ -1207,6 +1207,22 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 955: [msys2] `python` modules are not installed in the right places: one shall follow Unix conventions
+
+With a `MinGW` compiler, such as the ones provided by `MSYS2`, the
+`Python` modules were installed in the
+`bin/python<major>.<minor>/site-packages` directory, which is the
+directory used on `Windows` with `Visual Studio`. The `Python`
+interpreter of `MSYS2` follows the Unix directory layout and does not
+look for modules in this directory.
+
+The `Python` modules are now installed in the
+`lib/python<major>.<minor>/site-packages` directory in this case. The
+`TFEL_PYTHON_SITE_PACKAGES_DIR` `cmake` variable still allows choosing
+another directory.
+
+For more details, see <https://github.com/thelfer/tfel/issues/955>
+
 ## Issue 1411: [TFEL/PhysicalConstants] Use CODATA 2022 for 6.0 and the `future` compatibility mode of 5.2.0
 
 The values of the physical constants of the `6.0.0` compatibility mode,
