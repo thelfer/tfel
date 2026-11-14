@@ -1603,14 +1603,10 @@ namespace mfront {
              "cste*(*(stressOld+i+5*(*nblock))),cste*(*(stressOld+i+4*(*nblock)"
              "))};\n";
     }
-    out << "auto sk2 = "
-           "convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);"
-           "\n";
     const auto mfront_omp =
         usesMFrontOrthotropyManagementPolicy(this->getInterfaceName(), mb);
     if (mfront_omp) {
       writeGetRotationMatrix(out, h);
-      out << "sk2.changeBasis(R);\n";
     }
     out << "st2tost2<" << dime << "," << t << "> P0;\n"
         << "st2tost2<" << dime << "," << t << "> P1;\n"
@@ -1645,6 +1641,14 @@ namespace mfront {
           << "*(*nblock)];\n"
           << "U0[2]    = std::exp(ezz_old);\n"
           << "P0(2,2) += df(U0[2]*U0[2]);\n";
+    }
+    // the stress at the beginning of the time step is converted once the
+    // axial stretch is known (plane stress)
+    out << "auto sk2 = "
+           "convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);"
+           "\n";
+    if (mfront_omp) {
+      out << "sk2.changeBasis(R);\n";
     }
     out << "const auto iP0 = invert(P0);\n"
         << "stensor<" << dime << "," << t << "> T = (sk2|iP0)/2;\n";
