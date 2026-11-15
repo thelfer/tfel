@@ -1251,6 +1251,24 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 969: GPU coalescence/broadcast loss when projectors/identities are accessed with warp-divergent runtime index
+
+The `Id`, `IxI`, `K`, `M` and `J` methods of the `st2tost2` class, the
+`Id`, `IxI`, `K` and `transpose_derivative` methods of the `t2tot2`
+class and the `Id` methods of the `stensor`, `tensor` and `tmatrix`
+classes have a new overload which takes the indices of a component and
+returns this component without building the object:
+
+~~~~{.cxx}
+// same value as Stensor4::M()(i, j)
+const auto m = Stensor4::M(i, j);
+~~~~
+
+On GPUs, those overloads avoid storing and reading a table when an
+index is only known at run time. The existing methods are unchanged.
+
+For more details, see <https://github.com/thelfer/tfel/issues/969>.
+
 ## Issue 1451: [doc] Keywords cited in the documentation which do not exist (@StiffnessTensor, @ElasticProperties, @Parameters)
 
 The description of the `@OrthotropicBehaviour` keyword now refers to

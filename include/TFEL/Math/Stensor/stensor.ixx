@@ -409,6 +409,12 @@ namespace tfel::math {
     return {one, one, one, zero, zero, zero};
   }  // end of stensor<N,T>::Id
 
+  template <unsigned short N, typename T>
+  constexpr base_type<T> stensor<N, T>::Id(
+      const typename stensor<N, T>::size_type i) noexcept {
+    return (i < 3) ? base_type<T>{1} : base_type<T>{0};
+  }  // end of stensor<N,T>::Id
+
   template <typename NumType, typename T>
   TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto& A,
                                                unsigned short i,
