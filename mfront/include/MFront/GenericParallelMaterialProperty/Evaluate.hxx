@@ -153,12 +153,20 @@ namespace mfront::gpmp {
    */
   template <typename Evaluation, size_type N>
   struct PointEvaluator {
-    //! \brief evaluate the material property at the `i`-th point
-    TFEL_HOST_DEVICE BatchStatistics operator()(const size_type i) const {
+    /*!
+     * \brief evaluate the material property at the `i`-th point
+     * \note the `inline` keyword is not redundant. It is an inlining hint:
+     * `clang` only gives one to the functions explicitly declared `inline`,
+     * and may otherwise leave a function call per point in the loop over
+     * the points.
+     */
+    TFEL_HOST_DEVICE inline BatchStatistics operator()(
+        const size_type i) const {
       // The arguments are read by a pack expansion rather than by a loop: a
       // loop over the arguments, nested in the loop over the points, may
-      // prevent the vectorisation of the latter. No element of an empty
-      // array is accessed if `N` is zero.
+      // prevent the inlining of this function or the vectorisation of the
+      // loop over the points. No element of an empty array is accessed if
+      // `N` is zero.
       const auto read = [this, i]<std::size_t... J>(std::index_sequence<J...>) {
         return std::array<real, N>{
             this->arguments[J].values[this->arguments[J].point_stride * i]...};
