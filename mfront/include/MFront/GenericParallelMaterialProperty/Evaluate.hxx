@@ -155,14 +155,15 @@ namespace mfront::gpmp {
   struct PointEvaluator {
     //! \brief evaluate the material property at the `i`-th point
     TFEL_HOST_DEVICE BatchStatistics operator()(const size_type i) const {
-      auto values = std::array<real, N>{};
-      // `std::array<T, 0>::operator[]` is not available in device code
-      if constexpr (N != 0) {
-        for (size_type j = 0; j != N; ++j) {
-          const auto& a = this->arguments[j];
-          values[j] = a.values[a.point_stride * i];
-        }
-      }
+      // The arguments are read by a pack expansion rather than by a loop: a
+      // loop over the arguments, nested in the loop over the points, may
+      // prevent the vectorisation of the latter. No element of an empty
+      // array is accessed if `N` is zero.
+      const auto read = [this, i]<std::size_t... J>(std::index_sequence<J...>) {
+        return std::array<real, N>{
+            this->arguments[J].values[this->arguments[J].point_stride * i]...};
+      };
+      const auto values = read(std::make_index_sequence<N>{});
       const auto r = this->evaluation(values, this->out_of_bounds_policy);
       this->output.values[this->output.point_stride * i] = r.value;
       if (this->statuses != nullptr) {
