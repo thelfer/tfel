@@ -130,8 +130,10 @@ An empty batch is accepted without any check: nothing is read, written
 or submitted, and the status is
 `0`. The arrays and the execution policy may then be null.
 
-All the backends treat a batch of one point, and the case where all the
-strides are equal to one, with a kernel without strides.
+All the backends use a single kernel, which reads the strides at
+runtime. A kernel specialized for unit strides gave no measurable gain on
+large batches, which are limited by the memory bandwidth, and a few
+percent on small batches evaluated sequentially on a CPU.
 
 ## Execution policies and statistics
 
@@ -223,22 +225,23 @@ another and copied to the host after the computations (`CUDA`, `HIP` and
 `SYCL` backends), or by a local variable (C++ parallel algorithms): the
 output status is the same.
 
-The statistics give the number of points where the evaluation failed, the number of points where
-a bound is violated with the warning policy, and two keys giving the
-first point of each kind and the check retained at this point. The keys
-are opaque: the minimum of the keys gives the first point, whatever the
-order of the computations, and only the report function of the same
-library decodes them. A structure of statistics is used for one material
-property and one batch. The kernels compute the status of each point and
-merge it in the statistics only when an event occurs: with integer atomic
-operations (`CUDA`, `HIP` and `SYCL` backends), or by a reduction (C++
-parallel algorithms). With the atomic operations, the reporting of the errors costs
-nothing when the evaluation succeeds. A reduction combines the statuses of
-all the points and copies its result, a few integers, to the host at each
-call. The members of the statistics have the type
-`mfront_gp_atomic_size_type`, an alias of `unsigned long long`: it is the
-only 64 bits integer type for which `CUDA` provides the `atomicAdd` and
-`atomicMin` functions.
+The statistics give the number of points where the evaluation failed, the
+number of points where a bound is violated with the warning policy, and
+two keys giving the first point of each kind and the check retained at
+this point. The keys are opaque: the minimum of the keys gives the first
+point, whatever the order of the computations, and only the report
+function of the same library decodes them. A structure of statistics is
+used for one material property and one batch. The kernels compute the
+status of each point and merge it in the statistics only when an event
+occurs: with integer atomic operations (`CUDA`, `HIP` and `SYCL` backends,
+the `CUDA` and `HIP` backends first combining the statuses of the points
+of a warp), or by a reduction (C++ parallel algorithms). With the atomic
+operations, the reporting of the errors costs nothing when the evaluation
+succeeds. A reduction combines the statuses of all the points and copies
+its result, a few integers, to the host at each call. The members of the
+statistics have the type `mfront_gp_atomic_size_type`, an alias of
+`unsigned long long`: it is the only 64 bits integer type for which `CUDA`
+provides the `atomicAdd` and `atomicMin` functions.
 
 ## Output status
 
@@ -279,6 +282,9 @@ computed:
   based on C++ programming models (`SYCL`, C++ parallel algorithms). No
   exception goes through the
   generated functions: an unexpected exception also gives `-7`.
+
+If the data of the batch are given, the invalid parameters (`-6`) are
+reported before the other errors of the batch.
 
 The output status also gives:
 
@@ -322,6 +328,34 @@ and the report function returns `0`.
 # Backends
 
 Backends are associated with parallel programming models.
+
+The code generated for a material property only depends on the backend
+through the inclusion of the header of its primitive, the expression
+building this primitive, the function of the runtime which is called
+(`mfront::gpmp::sycl::evaluateBatch` for the `SYCL` backend, which
+transfers the fields) and the symbols describing the backend. It holds:
+
+- a function object, declared in an anonymous namespace, which evaluates
+  the material property at one point and returns its value and the status
+  of the point. Its body is written as for the `generic` interface. The
+  parameters, unless they are treated as static variables, are members of
+  this function object;
+- the report function (`<name>_generic_parallel_report`), which decodes
+  the statistics of an evaluation;
+- the function of batches (`<name>_generic_parallel`), which checks the
+  pointers and the parameters (status `-6`), and calls
+  `mfront::gpmp::evaluateBatch` (see
+  `MFront/GenericParallelMaterialProperty/Evaluate.hxx`). This function
+  checks the data of the batch, and evaluates the material property at
+  each point with the primitive of the backend.
+
+The primitive of a backend, declared in `MFront/GenericParallel/GPU.hxx`
+(`CUDA` and `HIP`), `MFront/GenericParallel/ParallelSTL.hxx` or
+`MFront/GenericParallel/SYCL.hxx`, applies a function at the points of a
+batch, checks the execution policy, combines the statuses of the points
+and reports the statistics (see `MFront/GenericParallel/Batch.hxx`).
+These headers are installed with `TFEL`: the rest of the generated code
+only depends on the material property.
 
 ## `CUDA` backend
 
@@ -441,29 +475,37 @@ and \(256\).
 
 ### Internal details
 
-When required, the strides are passed by value to the kernel, as kernel
-parameters, which `CUDA` stores in constant memory.
+The function object evaluating the material property at the points of a
+batch, which holds the pointers to the arguments and to the output and
+their strides, is passed by value to the kernel, as a kernel parameter,
+which `CUDA` stores in constant memory.
 
-If the material property exposes parameters, those are stored in a
-global variable on the host (the CPU). For efficiency, the values of the
-parameters are also passed by value to the kernel when evaluating the
-material property. This mechanism allows to keep the flexibility provided by
-parameters: this flexibility is required to perform sensitivity
-analyses, uncertainty propagation studies or perform a new
-identification. Note that parameters' handling can still be disabled by
-setting the `parameters_as_static_variables` DSL option to `true`.
+If the material property exposes parameters, those are stored in a global
+variable on the host (the CPU). For efficiency, the values of the
+parameters are copied in the function object evaluating the material
+property at one point, and thus passed by value to the kernel. This
+mechanism allows to keep the flexibility provided by parameters: this
+flexibility is required to perform sensitivity analyses, uncertainty
+propagation studies or perform a new identification. Note that parameters'
+handling can still be disabled by setting the
+`parameters_as_static_variables` DSL option to `true`.
 
-The errors are reported in the statistics of the evaluation, held by managed
-memory. Each thread computes the status of its point and only accesses the
-statistics, with integer atomic operations, if an event occurs, minimizing
-the cost of error handling. Without statistics given by the calling code,
-the statistics are taken from a pool of blocks allocated at the first call
-on a device and reused by the following calls (see
-`mfront::generic_parallel::StatusBlockPool`), so that no memory is allocated
-per call. The `HIP` and `SYCL` backends handle the errors in the same way,
-with the memory accessible by the host and the device of the backend
-(managed memory, shared USM memory). Those blocks are never freed. The C++
-parallel algorithms merge the statuses of the points by a reduction.
+The errors are reported in the statistics of the evaluation. Each thread
+computes the status of its point. The statuses of the points of a warp are
+combined, and the statistics are only accessed, with integer atomic
+operations, if an event occurs in the warp, minimizing the cost of error
+handling. Without statistics given by the calling code, the statistics are
+held by a block of device memory taken from a pool of blocks allocated at
+the first call on a device and reused by the following calls (see
+`mfront::generic_parallel::StatusBlockPool`), so that no memory is
+allocated per call. Each generated function has its own pool. The block is
+initialized by a copy of statistics initialized on the host, just before
+the launch of the kernel, and copied back once the computations are
+completed: the host never accesses it. The `HIP` backend handles
+the errors in the same way. The `SYCL` backend also holds the statistics
+in a block of device memory taken from a pool, but updates them point by
+point. Those blocks are never freed. The C++ parallel
+algorithms merge the statuses of the points by a reduction.
 
 Before launching a kernel, the stack size of the threads is increased if
 the kernel requires it (see the `preserve_stack_size` option of the

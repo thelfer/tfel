@@ -41,6 +41,14 @@ keyword. This keyword is followed by one of the following values:
 @CrystalStructure FCC;
 ~~~~
 
+For the `HCP` structure, the `c_over_a_ratio` option gives the c/a
+ratio, whose default value is the one of the ideal structure,
+\(\sqrt{8/3}\):
+
+~~~~{.cpp}
+@CrystalStructure HCP{c_over_a_ratio : 1.593};
+~~~~
+
 ## Definition of the slip systems
 
 A single slip system family can be defined by one of the following

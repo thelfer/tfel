@@ -717,6 +717,12 @@ namespace mfront {
      * \param[in] cs: crystal structure
      */
     void setCrystalStructure(const CrystalStructure);
+    /*!
+     * \brief set the crystal structure
+     * \param[in] cs: crystal structure, which must be `HCP`
+     * \param[in] r: c/a ratio
+     */
+    void setCrystalStructure(const CrystalStructure, const long double);
     //! \return true if slip systems were defined
     bool areSlipSystemsDefined() const;
     /*!

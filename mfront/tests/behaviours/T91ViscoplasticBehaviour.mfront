@@ -149,6 +149,8 @@ R_aust.setNormalisationFactor(1.e11);
   C = 1. / ( ( max(1. - ksi, epsilon) / mu_aust ) + ( max(ksi, epsilon) / mu_mart ) ) ;
   K_mart = lambda_mart + 2.* mu_mart/3. ;
   K_aust = lambda_aust + 2.* mu_aust/3. ;
+  Q_mart = 0.;
+  Q_aust = 0.;
   expmq_mart_o_rt = exp( - Q_mart / ( R * (T_) ) ) ;
   expmq_aust_o_rt = exp( - Q_aust / ( R * (T_) ) ) ;
   expmwb_o_rt = exp( - Wb / ( R * (T_) ) ) ;
@@ -161,7 +163,6 @@ R_aust.setNormalisationFactor(1.e11);
   Kvisc_mart = T91MartensiticSteel_Kvisc_ROUX2007(T_);
   Nexp_mart = T91MartensiticSteel_Nexp_ROUX2007(T_);
   F_mart = T91MartensiticSteel_F_ROUX2007(T_);
-  Q_mart =  0.;
   C1_mart = T91MartensiticSteel_C1_ROUX2007(T_);
   C2_mart =  T91MartensiticSteel_C2_ROUX2007(T_);
   gamma1_mart = T91MartensiticSteel_gamma1_ROUX2007(T_);
@@ -173,7 +174,6 @@ R_aust.setNormalisationFactor(1.e11);
   Kvisc_aust = T91AusteniticSteel_Kvisc_ROUX2007(T_);
   Nexp_aust = T91AusteniticSteel_Nexp_ROUX2007(T_);
   F_aust = T91AusteniticSteel_F_ROUX2007(T_);
-  Q_aust = 0.;
 
   growth = T91MartensiticSteel_growth_ROUX2007(T_);
   
