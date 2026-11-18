@@ -117,6 +117,16 @@ struct SlipSystemsDescriptionTest final : public tfel::tests::TestCase {
     for (std::size_t idx = 0; idx != sf.size(); ++idx) {
       TFEL_TESTS_ASSERT(std::abs(sf[idx] - mus[idx][0]) < 1e-14L);
     }
+    /* climb tensors: tensorial product of the slip direction by itself */
+    const auto cts = ssd.getClimbTensors(0);
+    const auto ds = ssd.getSlipDirections(0);
+    TFEL_TESTS_CHECK_EQUAL(cts.size(), 12u);
+    for (std::size_t idx = 0; idx != cts.size(); ++idx) {
+      TFEL_TESTS_ASSERT(std::abs(cts[idx][0] - ds[idx][0] * ds[idx][0]) <
+                        1e-14L);
+      TFEL_TESTS_ASSERT(std::abs(cts[idx][7] - ds[idx][2] * ds[idx][1]) <
+                        1e-14L);
+    }
   }
   //! \brief tests related to HCP systems
   void checkHCP() {
@@ -214,6 +224,21 @@ struct SlipSystemsDescriptionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(gs4.size(), 6u);
     TFEL_TESTS_ASSERT(
         contains(gs4, make_vec(-1, -1, 2, -3), make_vec(1, 1, -2, -2)));
+    // c/a ratio: Schmid factor of the pyramidal <c+a> systems for a tension
+    // along the c axis
+    const auto sf = [](const long double r) {
+      return 1 / (std::sqrt(4 / 3.L + 1 / (r * r)) * std::sqrt(1 + r * r));
+    };
+    auto zr = SlipSystemsDescription(CrystalStructure::HCP, 1.593L);
+    zr.addSlipSystemsFamily(make_vec(-2, 1, 1, 3), make_vec(1, -1, 0, 1));
+    const auto c = make_vec(0, 0, 0, 1);
+    TFEL_TESTS_ASSERT(std::abs(std::abs(ssd.getSchmidFactors(c, 3)[0]) -
+                               sf(1.632993162L)) < 1e-12L);
+    TFEL_TESTS_ASSERT(
+        std::abs(std::abs(zr.getSchmidFactors(c, 0)[0]) - sf(1.593L)) < 1e-12L);
+    TFEL_TESTS_CHECK_THROW(
+        SlipSystemsDescription(CrystalStructure::FCC, 1.593L),
+        std::runtime_error);
   }
 };
 

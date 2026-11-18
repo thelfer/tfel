@@ -55,7 +55,7 @@ namespace mfront {
      * \brief simple data structure describing a version with three numbers
      * named major, minor and patch
      */
-    struct Version {
+    struct [[nodiscard]] Version {
       std::size_t major;
       std::size_t minor;
       std::size_t patch;
@@ -104,11 +104,11 @@ namespace mfront {
    * \throw if the version is strictly lower than 5.2.0
    */
   MFRONT_VISIBILITY_EXPORT
-  [[nodiscard]] std::optional<CompatibilityMode::Version>
+  std::optional<CompatibilityMode::Version>
   getDefaultCompatibilityMode() noexcept;
   //! \return the greatest known compatibility mode
   MFRONT_VISIBILITY_EXPORT
-  [[nodiscard]] CompatibilityMode::Version
+  CompatibilityMode::Version
   getGreatestCompatibilityMode() noexcept;
   /*!
    * \brief check if the given version is ok

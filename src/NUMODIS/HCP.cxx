@@ -14,6 +14,7 @@
 #include <cmath>
 #include <numbers>
 #include <algorithm>
+#include "TFEL/Raise.hxx"
 #include "NUMODIS/Math/Utilities.hxx"
 #include "NUMODIS/GSystem.hxx"
 #include "NUMODIS/HCP.hxx"
@@ -31,7 +32,24 @@ namespace numodis {
     \f$ \sqrt{8/3} \f$.
   */
   //===============================================================
-  HCP::HCP() : _ratio(1.632993162) {
+  HCP::HCP() : HCP(HCP::default_ratio) {}
+
+  //===============================================================
+  // HCP::HCP
+  //---------------------------------------------------------------
+  //! Constructor.
+  //---------------------------------------------------------------
+  /*!
+    Defines the HCP Wigner-Seitz cell and its contravariant
+    basis.
+
+    \param r ratio c/a
+  */
+  //===============================================================
+  HCP::HCP(const double r) : _ratio(r) {
+    if (!(r > 0)) {
+      tfel::raise("HCP::HCP: invalid c/a ratio");
+    }
     //------------
     // class name
     //------------

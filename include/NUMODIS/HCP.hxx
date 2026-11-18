@@ -49,7 +49,13 @@ namespace numodis {
   */
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT HCP : public Crystallo {
+    //! \brief default value of the c/a ratio
+    static constexpr double default_ratio = 1.632993162;
     HCP();
+    /*!
+     * \param[in] r: c/a ratio
+     */
+    explicit HCP(const double);
     HCP(HCP&&) noexcept;
     HCP(const HCP&);
     //

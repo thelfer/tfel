@@ -94,6 +94,11 @@ namespace tfel::material {
      */
     explicit SlipSystemsDescription(const CrystalStructure);
     /*!
+     * \param[in] s:  crystal structure, which must be `HCP`
+     * \param[in] r:  c/a ratio
+     */
+    SlipSystemsDescription(const CrystalStructure, const long double);
+    /*!
      * copy constructor
      * \param[in] src: object copied
      */
@@ -218,6 +223,8 @@ namespace tfel::material {
     tfel::utilities::GenType<std::vector<system3d>, std::vector<system4d>> gs;
     //! \brief the crystal structure
     const CrystalStructure cs;
+    //! \brief the c/a ratio, which is only meaningful for `HCP` structures
+    const long double c_over_a_ratio;
     //! \brief the interaction matrix
     std::vector<long double> m;
     /*! \brief matrix standing for the effects of the dislocations on the mean

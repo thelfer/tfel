@@ -99,7 +99,8 @@ namespace tfel::math {
       }
       auto v = base_type<real>{1};
       for (index_type<ST2toST2Type> i = 0; i != ts; ++i) {
-        v *= m(i, i);
+        // the rows are permuted implicitly by the LU decomposition
+        v *= m(p(i), i);
       }
       return r.second == 1 ? Result{v} : -Result{v};
     }

@@ -11,9 +11,10 @@
  * project under specific licensing conditions.
  */
 
+#include <bit>
 #include <cmath>
 #include <cerrno>
-#include <limits>
+#include <cstdint>
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
@@ -74,18 +75,17 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
   void test3() {
     using namespace tfel::utilities;
     using tfel::math::ieee754::fpclassify;
-    // the classification of the numbers is based on their representation,
-    // so that those checks also hold when the subnormal numbers are treated
-    // as zeros by the processor, which is the case with -ffast-math
-    constexpr auto dmin = std::numeric_limits<double>::denorm_min();
-    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1.5") - 1.5) == FP_ZERO);
-    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-310")) == FP_SUBNORMAL);
-    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-310") - 1e-310) ==
-                      FP_ZERO);
-    TFEL_TESTS_ASSERT(fpclassify(convert<double>("4.9e-324")) == FP_SUBNORMAL);
-    TFEL_TESTS_ASSERT(fpclassify(convert<double>("4.9e-324") - dmin) ==
-                      FP_ZERO);
-    TFEL_TESTS_ASSERT(fpclassify(convert<double>("1e-400")) == FP_ZERO);
+    // the results are checked through their representations, so that those
+    // checks also hold when the subnormal numbers are treated as zeros by the
+    // processor, which is the case with -ffast-math
+    const auto bits = [](const double x) {
+      return std::bit_cast<std::uint64_t>(x);
+    };
+    TFEL_TESTS_ASSERT(bits(convert<double>("1.5")) == 0x3ff8000000000000ULL);
+    // 1e-310 and 4.9e-324 are subnormal numbers
+    TFEL_TESTS_ASSERT(bits(convert<double>("1e-310")) == 0x000012688b70e62bULL);
+    TFEL_TESTS_ASSERT(bits(convert<double>("4.9e-324")) == 0x1ULL);
+    TFEL_TESTS_ASSERT(bits(convert<double>("1e-400")) == 0x0ULL);
     TFEL_TESTS_CHECK_THROW(convert<double>("1e400"), std::exception);
     TFEL_TESTS_CHECK_THROW(convert<double>("1.5x"), std::exception);
     TFEL_TESTS_ASSERT(fpclassify(convert<long double>("1e-5000")) == FP_ZERO);

@@ -29,10 +29,11 @@
 #endif /* MFRONT_GPMP_TEST_BACKEND */
 #define MFRONT_GPMP_TEST_STRINGIFY2(x) #x
 #define MFRONT_GPMP_TEST_STRINGIFY(x) MFRONT_GPMP_TEST_STRINGIFY2(x)
-// clang-format off: the spaces would appear in the name of the header
-#define MFRONT_GPMP_TEST_HEADER(name)                    \
-  MFRONT_GPMP_TEST_STRINGIFY(name - generic - parallel - \
-                             MFRONT_GPMP_TEST_BACKEND.hxx)
+// the name of the header must not be formatted: the spaces would appear
+// in it
+// clang-format off
+#define MFRONT_GPMP_TEST_HEADER(name) \
+  MFRONT_GPMP_TEST_STRINGIFY(name-generic-parallel-MFRONT_GPMP_TEST_BACKEND.hxx)
 // clang-format on
 
 #include MFRONT_GPMP_TEST_HEADER(Inconel600_YoungModulus)
