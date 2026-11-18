@@ -1166,7 +1166,7 @@ namespace mfront {
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if (v.first) {
         out << "const " << t << " ezz_old = "
-            << "stateOld[i+" << v.second.getValueForDimension(2)
+            << "stateOld[i+" << ivoffset + v.second.getValueForDimension(2)
             << "*(*nblock)];\n";
       } else {
         // no axial strain
@@ -1254,7 +1254,7 @@ namespace mfront {
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if (v.first) {
         out << "const " << t << " ezz_new = "
-            << "stateNew[i+" << v.second.getValueForDimension(2)
+            << "stateNew[i+" << ivoffset + v.second.getValueForDimension(2)
             << "*(*nblock)];\n"
             << "//strain update\n"
             << "*(strainInc+i+2*(*(nblock))) = ezz_new-ezz_old;\n";
@@ -1332,7 +1332,7 @@ namespace mfront {
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       out << "constexpr const " << t << " zero = " << t << "(0);\n"
           << "const " << t << " ezz_old = "
-          << "stateOld[i+" << v.second.getValueForDimension(2)
+          << "stateOld[i+" << ivoffset + v.second.getValueForDimension(2)
           << "*(*nblock)];\n"
           << "stensor<2u," << t
           << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
@@ -1444,7 +1444,7 @@ namespace mfront {
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if (v.first) {
         out << "const " << t << " ezz_new = "
-            << "stateNew[i+" << v.second.getValueForDimension(2)
+            << "stateNew[i+" << ivoffset + v.second.getValueForDimension(2)
             << "*(*nblock)];\n"
             << "U1[2] = std::sqrt(1+2*ezz_new);\n"
             << "//strain update\n"
@@ -1603,14 +1603,10 @@ namespace mfront {
              "cste*(*(stressOld+i+5*(*nblock))),cste*(*(stressOld+i+4*(*nblock)"
              "))};\n";
     }
-    out << "auto sk2 = "
-           "convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);"
-           "\n";
     const auto mfront_omp =
         usesMFrontOrthotropyManagementPolicy(this->getInterfaceName(), mb);
     if (mfront_omp) {
       writeGetRotationMatrix(out, h);
-      out << "sk2.changeBasis(R);\n";
     }
     out << "st2tost2<" << dime << "," << t << "> P0;\n"
         << "st2tost2<" << dime << "," << t << "> P1;\n"
@@ -1641,10 +1637,18 @@ namespace mfront {
       // sert à rien pour le calcul de eto et deto
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       out << "const " << t << " ezz_old = "
-          << "stateOld[i+" << v.second.getValueForDimension(2)
+          << "stateOld[i+" << ivoffset + v.second.getValueForDimension(2)
           << "*(*nblock)];\n"
           << "U0[2]    = std::exp(ezz_old);\n"
           << "P0(2,2) += df(U0[2]*U0[2]);\n";
+    }
+    // the stress at the beginning of the time step is converted once the
+    // axial stretch is known (plane stress)
+    out << "auto sk2 = "
+           "convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);"
+           "\n";
+    if (mfront_omp) {
+      out << "sk2.changeBasis(R);\n";
     }
     out << "const auto iP0 = invert(P0);\n"
         << "stensor<" << dime << "," << t << "> T = (sk2|iP0)/2;\n";
@@ -1709,7 +1713,7 @@ namespace mfront {
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if (v.first) {
         out << "const " << t << " ezz_new = "
-            << "stateNew[i+" << v.second.getValueForDimension(2)
+            << "stateNew[i+" << ivoffset + v.second.getValueForDimension(2)
             << "*(*nblock)];\n"
             << "U1[2]    = std::exp(ezz_new);\n"
             << "P1(2,2) += df(U1[2]*U1[2]);\n"

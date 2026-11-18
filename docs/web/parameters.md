@@ -127,6 +127,30 @@ This functionality is illustrated below:
 ![Definition of parameters through an external file](img/parameters.svg
  "Definition of parameters through an external file")
 
+### Models
+
+The parameters of a model written with the `Model` domain specific
+language can be modified in the same way with the `generic`, `castem`
+and `castem21` interfaces. The file is named after the name of the
+model, prefixed by the material name (if any).
+
+Let us consider a model named `Swelling`, without material name, which
+defines a parameter whose entry name is `GrowthRate`. If a file named
+`Swelling-parameters.txt` is in the current directory, it is read at the
+first call of the model. This file may contain the following line:
+
+~~~~~~~~~{.txt}
+GrowthRate 3e-2
+~~~~~~~~~
+
+A parameter can be designated by its entry name or by the name of the
+variable in the `MFront` file. Empty lines and lines beginning with the
+`#` character are ignored. If the file is invalid, the call of the
+model fails.
+
+This feature can be disabled with the
+`parameters_initialization_from_file` DSL option.
+
 # Querying information about parameters in `mfront-query`
 
 ## List of parameters
@@ -181,5 +205,7 @@ with the `--parameters-file` query:
 $ mfront-query --parameters-file Rousselier.mfront 
 Rousseliertest-parameters.txt
 ~~~~
+
+This query is also available for material properties and models.
 
 <!-- Local IspellDict: english -->

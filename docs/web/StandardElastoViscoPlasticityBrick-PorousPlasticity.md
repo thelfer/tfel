@@ -325,6 +325,93 @@ where $L$ is the Lambert function, and $T = \sigma_m / \sigma_{vM}$ the stress t
 
 \[\left\{q_R,D_R \right\} \]
 
+- **Generalised Gurson-Tvergaard-Needleman**
+
+This criterion is the Gurson-Tvergaard-Needleman criterion in which the
+von Mises stress is replaced by an equivalent stress \(\sigmaeq\) chosen
+by the user (see @benzergabesson2001, @morgeneyer2009, @daehli2017):
+
+\[
+ S = \paren{\dfrac{\sigmaeq}{\sstar} }^2 + 2 q_1 f_{\star} \cosh{\paren{\dfrac{3}{2} q_2 \dfrac{\sigma_m}{\sstar}    }} - 1 - q_3 f_{\star}^2  = 0
+\] {#eq:mfront:porous_plasticity:GGTN:S}
+
+The parameters \(\left\{q_1,q_2,q_3,f_c,f_r \right\}\) and the
+definition of \(f_{\star}\) are unchanged. The equivalent stress is
+given by the `equivalent_stress` option, described in Section
+@sec:mfront:porous_plasticity:generalised_stress_criteria.
+
+- **Generalised Rousselier-Tanguy-Besson**
+
+This criterion is the Rousselier-Tanguy-Besson criterion in which the
+von Mises stress is replaced by an equivalent stress \(\sigmaeq\) chosen
+by the user (see @bronbesson2006):
+
+\[
+S = \dfrac{\sigmaeq}{(1- f )\sstar} + \dfrac{2}{3} f D_R \exp{\paren{\dfrac{3}{2} q_R \dfrac{\sigma_m}{(1 - f )\sstar}    }} - 1  = 0
+\] {#eq:mfront:porous_plasticity:GRTB:S}
+
+The parameters \(\left\{q_R,D_R \right\}\) are unchanged. The equivalent
+stress is given by the `equivalent_stress` option, described in Section
+@sec:mfront:porous_plasticity:generalised_stress_criteria.
+
+### Equivalent stress of the generalised stress criteria {#sec:mfront:porous_plasticity:generalised_stress_criteria}
+
+The `GeneralisedGursonTvergaardNeedleman` and
+`GeneralisedRousselierTanguyBesson` stress criteria have the options of
+the `GursonTvergaardNeedleman1982` and `RousselierTanguyBesson2002`
+stress criteria respectively, and one more mandatory option named
+`equivalent_stress`.
+
+This option gives the name of a stress criterion of the brick and its
+options, as follows:
+
+~~~~{.cxx}
+   inelastic_flow : "Plastic" {
+      criterion : "GeneralisedGursonTvergaardNeedleman" {
+         q_1 : 1.5,
+         q_2 : 1.0,
+         f_c : 0.01,
+         f_r : 0.1,
+         equivalent_stress : "Hosford" {a : 8}
+      },
+      isotropic_hardening : "Linear" {
+         R0 : 150e6
+      }
+   },
+~~~~
+
+The stress criterion must have a deviatoric normal and must not be
+coupled with the porosity evolution. `Mises`, `Hill`, `Hosford`,
+`Barlat`, `Drucker1949` and `Cazacu2001` are examples of valid choices.
+An orthotropic stress criterion requires an orthotropic behaviour.
+
+If the equivalent stress is the von Mises stress, the generalised
+criteria reduce to the original ones.
+
+> **Note**
+>
+> This extension is phenomenological. It only modifies the contribution
+> of the deviatoric part of the stress. The role of the mean stress is
+> unchanged.
+
+> **Hill matrix and spherical voids**
+>
+> Benzerga and Besson studied a Hill matrix containing spherical voids
+> (see @benzergabesson2001). Their criterion has the form of Equation
+> @eq:mfront:porous_plasticity:GGTN:S. \(\sigmaeq\) is the Hill stress
+> and the hyperbolic cosine is
+> \(\cosh\paren{\trace{\tsigma}/\paren{h\,\sstar}}\). It is thus
+> obtained with the `Hill` equivalent stress and \(q_2=2/h\). With the
+> convention of the brick for the Hill coefficients, the anisotropy
+> factor \(h\) is:
+>
+> \[
+> h = 2\,\sqrt{\dfrac{F+G+H}{5\,\paren{F\,G+G\,H+H\,F}}+\dfrac{3}{10}\,\paren{\dfrac{1}{L}+\dfrac{1}{M}+\dfrac{1}{N}}}
+> \]
+>
+> \(h\) is equal to \(2\) for an isotropic matrix. This result was
+> established for loadings whose principal directions are the axes of
+> orthotropy.
 
 <!--
 - **UserDefinedGenericGrowth**
@@ -1737,6 +1824,46 @@ The first and second order derivatives of $\sstar$ are:
 
 \[\dfrac{\partial^2 \sstar}{\partial \tsigma \partial f} = - \bigg(\dfrac{\partial S}{\partial  \sstar} \bigg)^{-1} \bigg(\dfrac{\partial^2 S}{\partial \tsigma \partial f} + \dfrac{\partial^2 S}{\partial f \partial \sstar}  \deriv{\sstar}{\tsigma} \bigg) + \bigg(\dfrac{\partial S}{\partial  \sstar} \bigg)^{-2} \bigg(\dfrac{\partial^2 S}{\partial \tsigma \partial \sstar} +  \dfrac{\partial^2 S}{ \partial \sstar^2}  \deriv{\sstar}{\tsigma} \bigg) \bigg(\deriv{S}{f} \bigg) \]
 
+### Derivatives of the generalised stress criteria
+
+The equivalent stress \(\sigmaeq\) of the generalised stress criteria
+depends on the stress only. Its normal and the derivative of its normal
+are denoted:
+
+\[
+\tenseur{n}_{\mathrm{eq}}=\deriv{\sigmaeq}{\tsigma}
+\quad\text{and}\quad
+\deriv{\tenseur{n}_{\mathrm{eq}}}{\tsigma}=\dfrac{\partial^2 \sigmaeq}{\partial \tsigma^2}
+\]
+
+The derivatives of \(S\) are the ones of the original criteria, in which
+\(\sigma_{vM}\) is replaced by \(\sigmaeq\), except for the terms which
+involve the derivatives of the equivalent stress.
+
+For the generalised Gurson-Tvergaard-Needleman criterion, those terms
+are modified as follows:
+
+- \(3\,\tenseur{s}\) is replaced by
+  \(2\,\sigmaeq\,\tenseur{n}_{\mathrm{eq}}\) in
+  \(\deriv{S}{\tsigma}\).
+- \(2\,\tenseurq{M}\) is replaced by
+  \(2\,\paren{\tenseur{n}_{\mathrm{eq}}\otimes\tenseur{n}_{\mathrm{eq}}+\sigmaeq\,\deriv{\tenseur{n}_{\mathrm{eq}}}{\tsigma}}\)
+  in \(\dfrac{\partial^2 S}{\partial \tsigma^2}\).
+- \(6\,\tenseur{s}\) is replaced by
+  \(4\,\sigmaeq\,\tenseur{n}_{\mathrm{eq}}\) in
+  \(\dfrac{\partial^2 S}{\partial \tsigma \partial \sstar}\).
+
+For the generalised Rousselier-Tanguy-Besson criterion:
+
+- \(\dfrac{3}{2}\,\dfrac{\tenseur{s}}{\sigma_{vM}}\) is replaced by
+  \(\tenseur{n}_{\mathrm{eq}}\) in \(\deriv{S}{\tsigma}\),
+  \(\dfrac{\partial^2 S}{\partial \tsigma \partial \sstar}\) and
+  \(\dfrac{\partial^2 S}{\partial \tsigma \partial f}\).
+- the first term of \(\dfrac{\partial^2 S}{\partial \tsigma^2}\) is
+  replaced by
+  \(\dfrac{1}{(1-f)\,\sstar}\,\deriv{\tenseur{n}_{\mathrm{eq}}}{\tsigma}\).
+
+The expressions of the derivatives of \(\sstar\) are unchanged.
 
 <!--
 ### Derivatives of the generic Thomason stress criterion

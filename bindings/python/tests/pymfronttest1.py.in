@@ -30,6 +30,10 @@ class PyMFrontTest1(unittest.TestCase):
         self.assertTrue('TFEL/Material/ChabocheBehaviourData.hxx' in tg.headers)
         self.assertTrue('TFEL/Material/ChabocheIntegrationData.hxx' in tg.headers)
         self.assertFalse('TFEL/Material/ChabocheIntegrationData2.hxx' in tg.headers)
+        t = mfront.SpecificTargetDescription()
+        t.deps = ['AsterBehaviour']
+        tg.specific_targets = {'check': t}
+        self.assertEqual(tg.specific_targets['check'].deps, ['AsterBehaviour'])
         
         # library description
         l = tg.getLibrary('AsterBehaviour')

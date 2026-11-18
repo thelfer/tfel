@@ -307,8 +307,8 @@ The previous data structure has the following public members:
 - `mu`: an array containing all the orientation tensors
 - `mus`: an array containing all the symmetric part of the orientation tensors
 - `climb_tensors`: an array containing all the climb tensors (as
-  symmetric tensors) defined as the tensorial product of the normals by
-  themselves.
+  symmetric tensors) defined as the tensorial product of the slip
+  directions by themselves.
 
 For every slip system family, specific arrays are also provided. For
 example, `np0` contains all the normals to the slip planes of the
@@ -349,7 +349,7 @@ It allows defining the coefficients of the interaction matrix as
 parameters or as material properties:
 
 ~~~~{.cxx}
-@Parameters real im_coefficients[7];
+@Parameter real im_coefficients[7] = {1, 1, 1, 1, 1, 1, 1};
 im_coefficients.setEntryName("InteractionMatrixCoefficients");
 
 ....

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iterator>
+#include <locale>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -2217,13 +2218,12 @@ namespace mfront {
       }
     }
     BehaviourDescription::ConstantMaterialProperty mp;
-    try {
-      mp.value = std::stold(t.value);
-    } catch (std::exception& e) {
-      this->throwRuntimeError(m, "can't convert token '" + t.value +
-                                     "' to long double "
-                                     "(" +
-                                     std::string(e.what()) + ")");
+    std::istringstream converter(t.value);
+    converter.imbue(std::locale::classic());
+    converter >> mp.value;
+    if (!converter || (!converter.eof())) {
+      this->throwRuntimeError(
+          m, "can't convert token '" + t.value + "' to double");
     }
     return mp;
   }

@@ -129,7 +129,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "- ELASTICPREDICTIONFROMMATERIALPROPERTIES\n"
            "- SECANTOPERATORPREDICTION\n"
            "- TANGENTOPERATORPREDICTION\n")
-      .def("setPredictionPolicy", setPredictionPolicy,
+      .def("setPredictionPolicy", setPredictionPolicy, pybind11::arg("p"),
            "This method specify how the initial estimate of the "
            "solution shall be obtained.\n"
            "* The parameter (string) is the selected policy. "
@@ -156,7 +156,7 @@ void declareSchemeBase(pybind11::module_& m) {
            "- SECANTOPERATOR\n"
            "- TANGENTOPERATOR\n"
            "- CONSISTENTTANGENTOPERATOR")
-      .def("setStiffnessMatrixType", setStiffnessMatrixType,
+      .def("setStiffnessMatrixType", setStiffnessMatrixType, pybind11::arg("t"),
            "This method specify the type of stiffness matrix that "
            "shall be given by the mechanical behaviour and which "
            "will be used by the resolution algorithm.\n"
@@ -169,7 +169,8 @@ void declareSchemeBase(pybind11::module_& m) {
            "- 'ConsistentTangentOperator'")
       .def("setStiffnessUpdatingPolicy",
            &SchemeBase::setStiffnessUpdatingPolicy, pybind11::arg("p"))
-      .def("setStiffnessUpdatingPolicy", setStiffnessUpdatingPolicy)
+      .def("setStiffnessUpdatingPolicy", setStiffnessUpdatingPolicy,
+           pybind11::arg("p"))
       .def("setUseCastemAccelerationAlgorithm",
            &SchemeBase::setUseCastemAccelerationAlgorithm, pybind11::arg("b"),
            "This method specifies if the acceleration algorithm "
@@ -268,8 +269,10 @@ void declareSchemeBase(pybind11::module_& m) {
            "This method specify the number of digits used to print "
            "the results in the output file.\n"
            "* The parameter (uint) is the number of digits wanted.")
-      .def("printOutput", &SchemeBase::printOutput)
-      .def("printOutput", &SchemeBase_printOutput)
+      .def("printOutput", &SchemeBase::printOutput, pybind11::arg("t"),
+           pybind11::arg("s"), pybind11::arg("b"))
+      .def("printOutput", &SchemeBase_printOutput, pybind11::arg("t"),
+           pybind11::arg("s"))
       .def("setResidualFileName", &SchemeBase::setResidualFileName,
            pybind11::arg("f"),
            "This method specify the name of a file where the "

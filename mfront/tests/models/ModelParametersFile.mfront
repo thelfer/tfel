@@ -1,0 +1,19 @@
+@DSL Model;
+@Model ModelParametersFile;
+@Author Tristan Chenaille;
+@Date 14 / 11 / 2026;
+@Description {
+  "This model checks that the default value of a parameter "
+  "can be overridden by the `ModelParametersFile-parameters.txt` "
+  "file."
+}
+
+@Output real x;
+x.setDepth(1);
+
+@Parameter real a = 2;
+a.setEntryName("GrowthRate");
+
+@Function compute {
+  x = x_1 + a * dt;
+}

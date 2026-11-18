@@ -81,30 +81,32 @@ PYBIND11_MODULE(_mfront, m) {
   GetImplementationsPathsPtr ptr = mfront::getImplementationsPaths;
   m.def("initDSLs", mfront::initDSLs);
   m.def("initInterfaces", mfront::initInterfaces);
-  m.def("setDebugMode", mfront::setDebugMode);
-  m.def("getDSL", getDSL);
+  m.def("setDebugMode", mfront::setDebugMode, "b"_a);
+  m.def("getDSL", getDSL, "file"_a);
   m.def("getImplementationsPaths", ptr, "file"_a, "material"_a = "",
         "material_property"_a = "", "behaviour"_a = "", "model"_a = "");
   declareMadnexSupport(m);
   declareMaterialKnowledgeAttribute(m);
   declareMaterialKnowledgeDescription(m);
-  declareAbstractDSL(m);
-  declareDSLFactory(m);
+  // the descriptions are declared before the domain specific languages
+  // returning them, so that the signatures of the methods of the latter
+  // refer to the python names of the descriptions
   declareFileDescription(m);
   declareCompiledTargetDescriptionBase(m);
   declareLibraryDescription(m);
   declareTargetsDescription(m);
-  declareOverridableImplementation(m);
-  // material properties
-  declareMaterialPropertyDSL(m);
-  declareMaterialPropertyDescription(m);
-  // behaviours
-  declareAbstractBehaviourDSL(m);
   declareVariableBoundsDescription(m);
   declareVariableDescription(m);
+  declareMaterialPropertyDescription(m);
   declareBehaviourData(m);
   declareBehaviourSymmetryType(m);
   declareBehaviourDescription(m);
+  // domain specific languages
+  declareAbstractDSL(m);
+  declareDSLFactory(m);
+  declareOverridableImplementation(m);
+  declareMaterialPropertyDSL(m);
+  declareAbstractBehaviourDSL(m);
   declareSearchPathsHandler(m);
   // generators
   declareGeneratorOptions(m);

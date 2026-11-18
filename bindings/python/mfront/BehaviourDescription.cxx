@@ -184,20 +184,24 @@ void declareBehaviourDescription(pybind11::module_& m) {
       "which is intendend to be valid for most hypotheses, and specific\n"
       "mechanical behaviour datas when required.")
       .def(pybind11::init<>())
-      .def("setBehaviourName", &BehaviourDescription::setBehaviourName)
+      .def("setBehaviourName", &BehaviourDescription::setBehaviourName,
+           pybind11::arg("n"))
       .def("getBehaviourName", &BehaviourDescription::getBehaviourName)
-      .def("setDSLName", &BehaviourDescription::setDSLName)
+      .def("setDSLName", &BehaviourDescription::setDSLName, pybind11::arg("n"))
       .def("getDSLName", &BehaviourDescription::getDSLName)
-      .def("setMaterialName", &BehaviourDescription::setMaterialName)
+      .def("setMaterialName", &BehaviourDescription::setMaterialName,
+           pybind11::arg("n"))
       .def("getMaterialName", &BehaviourDescription::getMaterialName)
-      .def("setLibrary", &BehaviourDescription::setLibrary)
+      .def("setLibrary", &BehaviourDescription::setLibrary, pybind11::arg("l"))
       .def("getLibrary", &BehaviourDescription::getLibrary)
-      .def("setClassName", &BehaviourDescription::setClassName)
+      .def("setClassName", &BehaviourDescription::setClassName,
+           pybind11::arg("n"))
       .def("getClassName", &BehaviourDescription::getClassName)
       .def("areModellingHypothesesDefined",
            &BehaviourDescription::areModellingHypothesesDefined)
       .def("isModellingHypothesisSupported",
-           &BehaviourDescription::isModellingHypothesisSupported)
+           &BehaviourDescription::isModellingHypothesisSupported,
+           pybind11::arg("h"))
       .def("getModellingHypotheses", getModellingHypotheses)
       .def("getDistinctModellingHypotheses", getDistinctModellingHypotheses)
       .def("setModellingHypotheses", setModellingHypotheses1,
@@ -205,6 +209,7 @@ void declareBehaviourDescription(pybind11::module_& m) {
       .def("setModellingHypotheses", setModellingHypotheses2,
            pybind11::arg("mh"), pybind11::arg("b"))
       .def("getBehaviourData", &BehaviourDescription::getBehaviourData,
+           pybind11::arg("h"),
            pybind11::return_value_policy::reference_internal)
       .def("hasAttribute", &BehaviourDescription_hasAttribute,
            pybind11::arg("s"))
@@ -237,7 +242,8 @@ void declareBehaviourDescription(pybind11::module_& m) {
            pybind11::arg("n"), pybind11::arg("v"))
       .def("hasCrystalStructure", &BehaviourDescription::hasCrystalStructure)
       .def("getCrystalStructure", &BehaviourDescription::getCrystalStructure)
-      .def("setCrystalStructure", &BehaviourDescription::setCrystalStructure)
+      .def("setCrystalStructure", &BehaviourDescription::setCrystalStructure,
+           pybind11::arg("s"))
       .def("getAttributes", &BehaviourDescription::getAttributes)
       .def("isStrainMeasureDefined",
            &BehaviourDescription::isStrainMeasureDefined)

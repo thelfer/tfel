@@ -6,6 +6,8 @@ headers and the libraries of the package are found. On Windows, building
 behaviours requires Visual Studio and is not tested.
 """
 
+import ast
+import glob
 import os
 import shutil
 import subprocess
@@ -28,6 +30,30 @@ print("tfel-config --includes:", includes)
 expected_includes = os.path.realpath(os.path.join(tfelhome, "include"))
 if os.path.realpath(includes[2:]) != expected_includes:
     sys.exit("tfel-config does not point to " + expected_includes)
+
+# the stubs of the python modules are installed next to them
+for package, module in ((tfel, "_tfel"), (tfel, "math"),
+                        (tfel.material, "_material"), (mfront, "_mfront"),
+                        (mtest, "_mtest"),
+                        (mfm_test_generator, "_mfm_test_generator")):
+    directory = os.path.dirname(package.__file__)
+    stub = os.path.join(directory, module + ".pyi")
+    # a module with submodules has a directory of stubs
+    package_stub = os.path.join(directory, module, "__init__.pyi")
+    if not (os.path.isfile(stub) or os.path.isfile(package_stub)):
+        sys.exit("missing stub " + stub)
+
+# type checkers only use the stubs of the packages holding this marker, and
+# they stop on a stub which is not valid python
+for package in (tfel, mfront, mtest, mfm_test_generator):
+    directory = os.path.dirname(package.__file__)
+    marker = os.path.join(directory, "py.typed")
+    if not os.path.isfile(marker):
+        sys.exit("missing marker " + marker)
+    stubs = os.path.join(directory, "**", "*.pyi")
+    for stub in glob.glob(stubs, recursive=True):
+        with open(stub, encoding="utf-8") as f:
+            ast.parse(f.read(), stub)
 
 if os.name == "nt":
     sys.exit(0)

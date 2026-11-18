@@ -18,7 +18,7 @@ The physical constants are extracted from: <http://physics.nist.gov/cuu/Constant
 Their values are subject to compatibility modes: the values which are
 used by default are those of the compatibility mode of the version,
 whereas the values of the next major version, which use all the
-published digits of the `CODATA` 2014 values, are available in a
+published digits of the `CODATA` 2022 values, are available in a
 specific namespace.
 Compatibility modes are described in the page devoted to
 [compatibility modes in the `TFEL` libraries](tfel-compatibility-modes.html).
@@ -28,23 +28,26 @@ Compatibility modes are described in the page devoted to
 Version 5.2 provides the following values, where the `5.2.0` column is
 the default:
 
-|   Symbol  |       Description         |     Value (`5.2.0`)          |     Value (`6.0.0`)          |        Unit            |
-|-----------+---------------------------+------------------------------+------------------------------+------------------------|
-| \(\mu\)   | Atomic mass constant      | \(1.66054\,.10^{-27}\)       | \(1.660539040\,.10^{-27}\)   | \(kg\)                 |
-| \(N_{a}\) | Avogadro constant         | \(6.02214\,.10^{23}\)        | \(6.022140857\,.10^{23}\)    | \(\mol^{-1}\)          |
-| \(k_{b}\) | Boltzmann constant        | \(1.38065\,.10^{-23} \)      | \(1.38064852\,.10^{-23} \)   | \(J.K^{-1}\)           |
-| \(G_{0}\) | Conductance quantum       | \(7.74809\,.10^{-5}\)        | \(7.7480917310\,.10^{-5}\)   | \(S\)                  |
-| \(e_{0}\) | Electric constant         | \(8.85419\,.10^{-12}\)       | \(8.854187817\,.10^{-12}\)   | \(F.m^{-1}\)           |
-| \(m_{e}\) | Electron mass             | \(9.10938\,.10^{-31} \)      | \(9.10938356\,.10^{-31} \)   | \(kg\)                 |
-| \(eV\)    | Electron volt             | \(1.60218\,.10^{-19}\)       | \(1.6021766208\,.10^{-19}\)  | \(J\)                  |
-| \(e\)     | Elementary charge         | \(1.60218\,.10^{-19}\)       | \(1.6021766208\,.10^{-19}\)  | \(C\)                  |
-| \(F\)     | Faraday constant          | \(96485.3\)                  | \(96485.33289\)              | \(C.\mol^{-1}\)        |
-| \(a\)     | Fine-structure constant   | \(7.29735\,.10^{-3}\)        | \(7.2973525664\,.10^{-3}\)   |                        |
-| \(R\)     | Molar gas constant        | \(8.31446\)                  | \(8.3144598\)                | \(J.\mol^{-1}.K^{-1}\) |
-| \(s\)     | Stefan-Boltzmann constant | \(5.67037\,.10^{-8}\)        | \(5.670367\,.10^{-8}\)       | \(W.m^{-2}.K^{-4}\)    |
+|   Symbol  |       Description         |     Value (`5.2.0`)          |     Value (`6.0.0`)                |        Unit            |
+|-----------+---------------------------+------------------------------+------------------------------------+------------------------|
+| \(\mu\)   | Atomic mass constant      | \(1.66054\,.10^{-27}\)       | \(1.66053906892\,.10^{-27}\)       | \(kg\)                 |
+| \(N_{a}\) | Avogadro constant         | \(6.02214\,.10^{23}\)        | \(6.02214076\,.10^{23}\)           | \(\mol^{-1}\)          |
+| \(k_{b}\) | Boltzmann constant        | \(1.38065\,.10^{-23} \)      | \(1.380649\,.10^{-23} \)           | \(J.K^{-1}\)           |
+| \(G_{0}\) | Conductance quantum       | \(7.74809\,.10^{-5}\)        | \(7.7480917298636506\,.10^{-5}\)   | \(S\)                  |
+| \(e_{0}\) | Electric constant         | \(8.85419\,.10^{-12}\)       | \(8.8541878188\,.10^{-12}\)        | \(F.m^{-1}\)           |
+| \(m_{e}\) | Electron mass             | \(9.10938\,.10^{-31} \)      | \(9.1093837139\,.10^{-31} \)       | \(kg\)                 |
+| \(eV\)    | Electron volt             | \(1.60218\,.10^{-19}\)       | \(1.602176634\,.10^{-19}\)         | \(J\)                  |
+| \(e\)     | Elementary charge         | \(1.60218\,.10^{-19}\)       | \(1.602176634\,.10^{-19}\)         | \(C\)                  |
+| \(F\)     | Faraday constant          | \(96485.3\)                  | \(96485.33212331002\)              | \(C.\mol^{-1}\)        |
+| \(a\)     | Fine-structure constant   | \(7.29735\,.10^{-3}\)        | \(7.2973525643\,.10^{-3}\)         |                        |
+| \(R\)     | Molar gas constant        | \(8.31446\)                  | \(8.31446261815324\)               | \(J.\mol^{-1}.K^{-1}\) |
+| \(s\)     | Stefan-Boltzmann constant | \(5.67037\,.10^{-8}\)        | \(5.6703744191844295\,.10^{-8}\)   | \(W.m^{-2}.K^{-4}\)    |
 
-The set of the next major version, `6.0.0`, uses the `CODATA` 2014
-internationally recommended values with all their published digits.
+The set of the next major version, `6.0.0`, uses the `CODATA` 2022
+internationally recommended values with all their published digits. The
+constants which are exact since the 2019 revision of the International
+System of Units, or which derive from such constants, are given with all
+the digits of their `double` representation.
 
 # Versioned values
 
@@ -138,7 +141,7 @@ only the path to the headers is needed to compile this example:
 ~~~~{.bash}
 $ g++ -std=c++20 $(tfel-config --includes) constants.cxx
 $ ./a.out
-8.3144600000000004 8.3144600000000004 8.3144597999999998 8.3144597999999998
+8.3144600000000004 8.3144600000000004 8.3144626181532395 8.3144626181532395
 ~~~~
 
 The call to `std::setprecision` is required: `std::cout` prints only six
@@ -182,9 +185,9 @@ in the `future` submodule:
 >>> tfel.v5_2_0.PhysicalConstants.R
 8.31446
 >>> tfel.v6_0_0.PhysicalConstants.R
-8.3144598
+8.31446261815324
 >>> tfel.future.PhysicalConstants.R
-8.3144598
+8.31446261815324
 ~~~~
 
 # `Fortran`
@@ -231,7 +234,7 @@ follows:
     unit: "W.m^{-2}.K^{-4}";
     qt_unit:
       [ 1, 0, -3, 0, -4, 0, 0 ];
-    value: 5.670367e-8;
+    value: 5.6703744191844295e-8;
     values:
     [
       {

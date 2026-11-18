@@ -50,19 +50,22 @@ void declareOverridableImplementation(pybind11::module_& m) {
           "overrideDate",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             i.setOverridenValue<mfront::OverridableImplementation::DATE>(a);
-          })
+          },
+          pybind11::arg("a"))
       .def(
           "overrideDescription",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             i.setOverridenValue<mfront::OverridableImplementation::DESCRIPTION>(
                 a);
-          })
+          },
+          pybind11::arg("a"))
       .def(
           "overrideMaterial",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
             i.setOverridenValue<
                 mfront::OverridableImplementation::MATERIAL_NAME>(a);
-          })
+          },
+          pybind11::arg("a"))
       .def(
           "overrideMaterialPropertyName",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
@@ -73,7 +76,8 @@ void declareOverridableImplementation(pybind11::module_& m) {
             }
             i.setOverridenValue<mfront::OverridableImplementation::
                                     MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
-          })
+          },
+          pybind11::arg("a"))
       .def(
           "overrideBehaviourName",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
@@ -84,7 +88,8 @@ void declareOverridableImplementation(pybind11::module_& m) {
             }
             i.setOverridenValue<mfront::OverridableImplementation::
                                     MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
-          })
+          },
+          pybind11::arg("a"))
       .def(
           "overrideModelName",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
@@ -95,7 +100,8 @@ void declareOverridableImplementation(pybind11::module_& m) {
             }
             i.setOverridenValue<mfront::OverridableImplementation::
                                     MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
-          })
+          },
+          pybind11::arg("a"))
       .def("overrideByAParameter",
            &mfront::OverridableImplementation::overrideByAParameter,
            pybind11::arg("n"), pybind11::arg("v"))
@@ -105,7 +111,8 @@ void declareOverridableImplementation(pybind11::module_& m) {
 
   m.def("getDestinationPathInMadnexFile",
         static_cast<std::string (*)(const mfront::OverridableImplementation&)>(
-            mfront::getDestinationPathInMadnexFile));
+            mfront::getDestinationPathInMadnexFile),
+        pybind11::arg("i"));
 
   m.def("write", write_ptr, pybind11::arg("i"), pybind11::arg("f"));
   m.def("write", write_ptr2, pybind11::arg("i"), pybind11::arg("f"),

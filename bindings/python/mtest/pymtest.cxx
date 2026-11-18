@@ -73,11 +73,13 @@ PYBIND11_MODULE(_mtest, m) {
   declareStructureCurrentState(m);
   declareStudyCurrentState(m);
   declareSolverWorkSpace(m);
-  declareMTestParser(m);
   declareSchemeBase(m);
   declareSingleStructureScheme(m);
   declareConstraint(m);
   declareMTest(m);
+  // declared after MTest, so that the signatures of its methods refer to
+  // the python name of this class
+  declareMTestParser(m);
   declarePipeMesh(m);
   declarePipeTest(m);
   declareMFrontLogStream(m);

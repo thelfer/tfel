@@ -48,6 +48,14 @@ Apart from filters, `mfm` also have the following options:
   no value is given, `level1` is selected.
 - `--show-libs`: show library name in front of entry points.
 
+An argument which is neither a file nor a directory is reported on the
+standard error stream, unless the `quiet` verbosity level is selected.
+On the contrary, the files which can't be analysed, because they are not
+shared libraries for example, are silently ignored: this allows passing
+all the files of a directory to `mfm`, as in the example below. The
+reason why a file can't be analysed is displayed with the `debug`
+verbosity level.
+
 # Usage
 
 ~~~~{.bash}

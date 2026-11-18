@@ -26,6 +26,11 @@ namespace mfront::bbrick {
       : StandardPorousStressCriterionBase {
     //! \brief constructor
     RousselierTanguyBesson2002StressCriterion();
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the stress criterion
+     */
+    explicit RousselierTanguyBesson2002StressCriterion(const std::string&);
     //
     [[nodiscard]] std::vector<BehaviourSymmetry>
     getSupportedBehaviourSymmetries() const override;

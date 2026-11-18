@@ -25,6 +25,8 @@
 #include "MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx"
 #include "MFront/BehaviourBrick/GursonTvergaardNeedleman1982StressCriterion.hxx"
 #include "MFront/BehaviourBrick/RousselierTanguyBesson2002StressCriterion.hxx"
+#include "MFront/BehaviourBrick/GeneralisedGursonTvergaardNeedlemanStressCriterion.hxx"
+#include "MFront/BehaviourBrick/GeneralisedRousselierTanguyBessonStressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
 
 namespace mfront::bbrick {
@@ -146,6 +148,14 @@ namespace mfront::bbrick {
     this->addGenerator("RousselierTanguyBesson 2002", []() {
       return std::make_shared<
           bbrick::RousselierTanguyBesson2002StressCriterion>();
+    });
+    this->addGenerator("GeneralisedGursonTvergaardNeedleman", []() {
+      return std::make_shared<
+          bbrick::GeneralisedGursonTvergaardNeedlemanStressCriterion>();
+    });
+    this->addGenerator("GeneralisedRousselierTanguyBesson", []() {
+      return std::make_shared<
+          bbrick::GeneralisedRousselierTanguyBessonStressCriterion>();
     });
   }  // end of StressCriterionFactory
 

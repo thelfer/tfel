@@ -19,6 +19,7 @@
 #include <concepts>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
 namespace tfel::utilities {
@@ -155,7 +156,8 @@ namespace tfel::utilities {
     errno = 0;
     char* pe = nullptr;
     const auto r = std::strtod(s.c_str(), &pe);
-    const auto overflow = (errno == ERANGE) && (std::isinf(r));
+    const auto overflow = (errno == ERANGE) &&
+                          (tfel::math::ieee754::fpclassify(r) == FP_INFINITE);
     errno = errno_value;
     throw_if((pe != s.c_str() + s.size()) || overflow);
     return r;
@@ -177,7 +179,8 @@ namespace tfel::utilities {
     errno = 0;
     char* pe = nullptr;
     const auto r = std::strtold(s.c_str(), &pe);
-    const auto overflow = (errno == ERANGE) && (std::isinf(r));
+    const auto overflow = (errno == ERANGE) &&
+                          (tfel::math::ieee754::fpclassify(r) == FP_INFINITE);
     errno = errno_value;
     throw_if((pe != s.c_str() + s.size()) || overflow);
     return r;

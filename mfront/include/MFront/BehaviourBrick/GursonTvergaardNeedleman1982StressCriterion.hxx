@@ -27,6 +27,11 @@ namespace mfront::bbrick {
       : StandardPorousStressCriterionBase {
     //! \brief constructor
     GursonTvergaardNeedleman1982StressCriterion();
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the stress criterion
+     */
+    explicit GursonTvergaardNeedleman1982StressCriterion(const std::string&);
     //
     [[nodiscard]] std::vector<BehaviourSymmetry>
     getSupportedBehaviourSymmetries() const override;

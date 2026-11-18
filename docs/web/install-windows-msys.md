@@ -115,11 +115,27 @@ Create a file named `env.sh` and add the following lines:
 $ export TFELHOME=/mingw64
 $ export PATH=/mingw64/bin:$PATH
 $ export LD_LIBRARY_PATH=/mingw64/lib:$LD_LIBRARY_PATH
-$ export PYTHONPATH=/mingw64/bin/python3.XX/site-packages
 $ export MAKE=mingw32-make.exe
 ~~~~
 
-Note: `XX` corresponds to the `Python` version installed in [`MSYS2`](https://www.msys2.org/).
+The `Python` modules are installed in the `lib/python3.XX/site-packages`
+directory of the installation prefix, where `XX` corresponds to the
+`Python` version installed in [`MSYS2`](https://www.msys2.org/). With
+the `/mingw64` prefix, this is the directory where the `Python`
+interpreter of [`MSYS2`](https://www.msys2.org/) looks for modules, so
+the `PYTHONPATH` variable does not have to be set. With another
+installation prefix, this directory shall be added to the `PYTHONPATH`
+variable.
+
+When `TFEL` is built from sources, the `share/tfel/env/env.sh` file of
+the installation prefix defines the `TFELHOME`, `PATH`,
+`LD_LIBRARY_PATH` and `PYTHONPATH` variables. It can be sourced in place
+of the first three lines of the previous file:
+
+~~~~{.bash}
+$ source /mingw64/share/tfel/env/env.sh
+$ export MAKE=mingw32-make.exe
+~~~~
 
 # Loading the environment
 

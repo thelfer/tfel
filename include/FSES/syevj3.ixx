@@ -37,6 +37,7 @@
 #define LIB_FSES_SYEVJ3_IXX
 
 #include <cmath>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "FSES/Utilities.hxx"
 
 namespace fses {
@@ -82,7 +83,7 @@ namespace fses {
       so = zero;
       for (int p = 0; p < n; p++)
         for (int q = p + 1; q < n; q++) so += std::abs(at(A, p, q));
-      if (std::fpclassify(so) == FP_ZERO) return 0;
+      if (tfel::math::ieee754::fpclassify(so) == FP_ZERO) return 0;
 
       if (nIter < 4)
         thresh = c1_5 * so / square(n);

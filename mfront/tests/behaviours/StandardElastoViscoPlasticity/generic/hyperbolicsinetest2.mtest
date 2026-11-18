@@ -1,6 +1,10 @@
 @MaximumNumberOfSubSteps 1;
 @XMLOutputFile @xml_output@;
 @Behaviour<generic> @library@ @behaviour@;
+// The convergence criterion of the behaviour (1e-14) leaves an error of
+// about 1.5e-3 Pa on the stresses (150e9 Pa * 1e-14), which is greater
+// than the default criterion on the stresses (1e-3 Pa).
+@StressEpsilon 1e-2;
 
 @ExternalStateVariable 'Temperature' 293.15;
 

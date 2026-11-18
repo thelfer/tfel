@@ -132,7 +132,7 @@ struct ConvertToTangentModuliTest : public tfel::tests::TestCase {
     }
     for (size_type i = 0; i != StensorDimeToSize<N>::value; ++i) {
       for (size_type j = 3; j != StensorDimeToSize<N>::value; ++j) {
-        C2(i, j) /= std::sqrt(2);
+        C2(i, j) *= std::sqrt(2);
       }
     }
     const auto C = convertToTangentModuli(K, F);

@@ -1,8 +1,8 @@
 @OutputFilePrecision 12;
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
-// the behaviours of the MultipleIsotropicMisesFlows DSL only provide the
-// elastic operator
+// this test checks the elastic operator, see multipleflows2.mtest for the
+// consistent tangent operator
 @StiffnessMatrixType 'Elastic';
 @Behaviour<generic> @library@ @behaviour@;
 

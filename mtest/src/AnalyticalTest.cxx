@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <sstream>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/Evolution.hxx"
@@ -52,8 +53,10 @@ namespace mtest {
     }
     const real v = get(s);
     const auto fv = this->f.getValue();
-    throw_if(!std::isfinite(v), "invalid result for '" + this->name + "'");
-    throw_if(!std::isfinite(fv), "invalid evolution of reference value");
+    throw_if(!tfel::math::ieee754::isfinite(v),
+             "invalid result for '" + this->name + "'");
+    throw_if(!tfel::math::ieee754::isfinite(fv),
+             "invalid evolution of reference value");
     const real err = std::abs(v - fv);
     if (err > this->eps) {
       std::ostringstream msg;

@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include <cmath>
+#include <cassert>
 #include <cstdlib>
 #include <type_traits>
 #include "TFEL/Math/tensor.hxx"
@@ -96,11 +97,23 @@ static void test4() {
   static_assert(my_abs(s(5, 5) - 1) < 1.e-14);
 }
 
+static void test5() {
+  using namespace tfel::math;
+  // determinant of an operator whose LU decomposition exchanges two rows
+  st2tost2<2u, double> s(0.);
+  s(0, 1) = 1;
+  s(1, 0) = 1;
+  s(2, 2) = 1;
+  s(3, 3) = 2;
+  assert(my_abs(det(s) + 2) < 1.e-14);
+}
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   test1();
   test2();
   test3();
   test4();
+  test5();
   return EXIT_SUCCESS;
 }
