@@ -108,8 +108,7 @@ namespace mfront {
   getDefaultCompatibilityMode() noexcept;
   //! \return the greatest known compatibility mode
   MFRONT_VISIBILITY_EXPORT
-  CompatibilityMode::Version
-  getGreatestCompatibilityMode() noexcept;
+  CompatibilityMode::Version getGreatestCompatibilityMode() noexcept;
   /*!
    * \brief check if the given version is ok
    * \param[in] v: version

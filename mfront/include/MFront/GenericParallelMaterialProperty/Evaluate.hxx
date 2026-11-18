@@ -167,7 +167,8 @@ namespace mfront::gpmp {
       // prevent the inlining of this function or the vectorisation of the
       // loop over the points. No element of an empty array is accessed if
       // `N` is zero.
-      const auto read = [this, i]<std::size_t... J>(std::index_sequence<J...>) {
+      const auto read =
+          [ this, i ]<std::size_t... J>(std::index_sequence<J...>) {
         return std::array<real, N>{
             this->arguments[J].values[this->arguments[J].point_stride * i]...};
       };

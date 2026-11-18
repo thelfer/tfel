@@ -26,9 +26,8 @@ namespace tfel::math::internals {
    */
   template <unsigned short N, typename ValueType, TensorConcept TensorType>
   requires(getSpaceDimension<TensorType>() == N)  //
-      TFEL_HOST_DEVICE [[nodiscard]] constexpr auto
-      applyTensor(const TensorType& t,
-                  const tvector<N, ValueType>& v) noexcept {
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr auto applyTensor(
+          const TensorType& t, const tvector<N, ValueType>& v) noexcept {
     using ResultType = tvector<N, std::decay_t<decltype(t[0] * v[0])>>;
     if constexpr (N == 1) {
       return ResultType{t[0] * v[0]};

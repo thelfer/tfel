@@ -28,7 +28,8 @@ tfel_sources = pip_directory.parents[2]
 def get_tfel_version():
     """return the TFEL version, as defined in the main CMakeLists.txt"""
     cmakelists = (tfel_sources / "CMakeLists.txt").read_text()
-    version = re.search(r'tfel_project\(\s*(\d+)\s+(\d+)\s+"?(\d+)"?\s*\)', cmakelists)
+    version = re.search(r'tfel_project\(\s*(\d+)\s+(\d+)\s+"?(\d+)"?\s*\)',
+                        cmakelists)
     if version is None:
         raise RuntimeError("TFEL version not found in CMakeLists.txt")
     version = ".".join(version.groups())
@@ -40,7 +41,8 @@ def get_tfel_version():
 tfel_version = get_tfel_version()
 # environment variable defining the installation directory of this version
 # of TFEL. It takes precedence over TFELHOME (see src/Config/GetInstallPath.cxx)
-tfelhome_variable = "TFELHOME_" + tfel_version.replace(".", "_").replace("-", "_")
+tfelhome_variable = "TFELHOME_" + tfel_version.replace(".", "_").replace(
+    "-", "_")
 
 # python code which sets the TFELHOME variable, inserted at the beginning of
 # the __init__.py files of the python modules. The argument gives the path to
@@ -74,7 +76,8 @@ def build_and_install_tfel(build_directory, install_directory):
         "-DCMAKE_INSTALL_PREFIX=" + str(install_directory),
         "-DTFEL_PYTHON_SITE_PACKAGES_DIR=site-packages",
         "-DPython_EXECUTABLE=" + sys.executable,
-        "-Dpybind11_DIR=" + str(pybind11_directory / "share" / "cmake" / "pybind11"),
+        "-Dpybind11_DIR=" +
+        str(pybind11_directory / "share" / "cmake" / "pybind11"),
         "-Dunversioned-libraries=ON",
         "-Denable-python-bindings=ON",
         "-Denable-numpy-support=ON",
@@ -93,13 +96,22 @@ def build_and_install_tfel(build_directory, install_directory):
     ]
     if os.name == "nt":
         cmake_options += ["-A", "x64"]
-    jobs = os.environ.get("CMAKE_BUILD_PARALLEL_LEVEL", str(os.cpu_count() or 1))
-    subprocess.run(["cmake", "-S", str(tfel_sources), "-B", str(build_directory)]
-                   + cmake_options, check=True)
-    subprocess.run(["cmake", "--build", str(build_directory), "--config",
-                    "Release", "--parallel", jobs], check=True)
-    subprocess.run(["cmake", "--install", str(build_directory), "--config",
-                    "Release"], check=True)
+    jobs = os.environ.get("CMAKE_BUILD_PARALLEL_LEVEL", str(os.cpu_count()
+                                                            or 1))
+    subprocess.run(
+        ["cmake", "-S",
+         str(tfel_sources), "-B",
+         str(build_directory)] + cmake_options,
+        check=True)
+    subprocess.run([
+        "cmake", "--build",
+        str(build_directory), "--config", "Release", "--parallel", jobs
+    ],
+                   check=True)
+    subprocess.run(
+        ["cmake", "--install",
+         str(build_directory), "--config", "Release"],
+        check=True)
 
 
 def insert_tfelhome_setup(init_file, path_to_tfel_module):
@@ -107,7 +119,8 @@ def insert_tfelhome_setup(init_file, path_to_tfel_module):
     after the `from __future__` statements which must come first"""
     lines = init_file.read_text().splitlines(keepends=True)
     position = 0
-    while position < len(lines) and lines[position].startswith("from __future__"):
+    while position < len(lines) and lines[position].startswith(
+            "from __future__"):
         position += 1
     setup_code = tfelhome_setup.format(variable=tfelhome_variable,
                                        path=path_to_tfel_module)
@@ -133,7 +146,7 @@ def set_relative_runtime_paths(package_directory):
     TFEL installation, whose libraries may have the same names."""
     library_directory = package_directory / "tfel" / "lib"
     if sys.platform.startswith("linux"):
-        magic_numbers = (b"\x7fELF",)
+        magic_numbers = (b"\x7fELF", )
     elif sys.platform == "darwin":
         magic_numbers = (b"\xcf\xfa\xed\xfe", b"\xca\xfe\xba\xbe")
     else:
@@ -146,34 +159,44 @@ def set_relative_runtime_paths(package_directory):
         relative_path = os.path.relpath(library_directory, path.parent)
         if sys.platform.startswith("linux"):
             rpath = "$ORIGIN" if relative_path == "." else "$ORIGIN/" + relative_path
-            subprocess.run(["patchelf", "--force-rpath", "--set-rpath", rpath,
-                            str(path)], check=True)
+            subprocess.run(
+                ["patchelf", "--force-rpath", "--set-rpath", rpath,
+                 str(path)],
+                check=True)
         else:
-            load_commands = subprocess.run(["otool", "-l", str(path)], check=True,
-                                           capture_output=True,
-                                           text=True).stdout.splitlines()
-            rpaths = [load_commands[i + 2].split()[1]
-                      for i, line in enumerate(load_commands)
-                      if line.strip() == "cmd LC_RPATH"]
+            load_commands = subprocess.run(
+                ["otool", "-l", str(path)],
+                check=True,
+                capture_output=True,
+                text=True).stdout.splitlines()
+            rpaths = [
+                load_commands[i + 2].split()[1]
+                for i, line in enumerate(load_commands)
+                if line.strip() == "cmd LC_RPATH"
+            ]
             options = []
             for rpath in rpaths:
                 options += ["-delete_rpath", rpath]
             rpath = "@loader_path" if relative_path == "." else "@loader_path/" + relative_path
             options += ["-add_rpath", rpath]
-            subprocess.run(["install_name_tool"] + options + [str(path)], check=True)
+            subprocess.run(["install_name_tool"] + options + [str(path)],
+                           check=True)
             # install_name_tool invalidates the signature of the binary
-            subprocess.run(["codesign", "--force", "--sign", "-", str(path)],
+            subprocess.run(["codesign", "--force", "--sign", "-",
+                            str(path)],
                            check=True)
 
 
 def layout_package(install_directory, package_directory):
     """lay out the TFEL installation as a python package"""
-    shutil.copytree(install_directory / "site-packages", package_directory,
+    shutil.copytree(install_directory / "site-packages",
+                    package_directory,
                     dirs_exist_ok=True)
     tfel_module = package_directory / "tfel"
     for directory in ("bin", "lib", "include", "share"):
         if (install_directory / directory).is_dir():
-            shutil.copytree(install_directory / directory, tfel_module / directory,
+            shutil.copytree(install_directory / directory,
+                            tfel_module / directory,
                             dirs_exist_ok=True)
     insert_tfelhome_setup(tfel_module / "__init__.py", ".")
     for module in ("mtest", "mfm_test_generator"):

@@ -90,9 +90,10 @@ namespace tfel::math {
             typename ValueType,
             tfel::math::NoUnitTensorConcept DeformationGradientType>
   requires(getSpaceDimension<DeformationGradientType>() == N)  //
-      TFEL_HOST_DEVICE [[nodiscard]] constexpr auto
-      computeInversePiolaTransform(const tvector<N, ValueType>&,
-                                   const DeformationGradientType&) noexcept;
+      TFEL_HOST_DEVICE
+      [[nodiscard]] constexpr auto computeInversePiolaTransform(
+          const tvector<N, ValueType>&,
+          const DeformationGradientType&) noexcept;
   /*!
    * \return the vector \f$J\,F^{-T}\,N\f$ given by Nanson's formula. If
    * \f$N\f$ is an oriented surface element of the reference configuration,
@@ -130,9 +131,10 @@ namespace tfel::math {
             typename ValueType,
             tfel::math::NoUnitTensorConcept DeformationGradientType>
   requires(getSpaceDimension<DeformationGradientType>() == N)  //
-      TFEL_HOST_DEVICE [[nodiscard]] constexpr auto
-      computeInverseNansonTransform(const tvector<N, ValueType>&,
-                                    const DeformationGradientType&) noexcept;
+      TFEL_HOST_DEVICE
+      [[nodiscard]] constexpr auto computeInverseNansonTransform(
+          const tvector<N, ValueType>&,
+          const DeformationGradientType&) noexcept;
   /*
    * The following functions return a tuple made of the result of the
    * previous functions, its derivative with respect to the transformed

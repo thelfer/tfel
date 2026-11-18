@@ -18,7 +18,7 @@ t.performSmallStrainAnalysis()
 
 t.setTimes([0, 1])
 t.setInnerPressureEvolution(1.5e6)
-t.setOuterPressureEvolution({0 : 1.5e6, 1 : 10e6})
+t.setOuterPressureEvolution({0: 1.5e6, 1: 10e6})
 
 t.setBehaviour('castem', 'src/libUmatBehaviour.so', 'umatelasticity')
 t.setMaterialProperty('YoungModulus', 150e9)

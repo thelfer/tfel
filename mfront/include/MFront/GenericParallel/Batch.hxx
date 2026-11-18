@@ -126,8 +126,9 @@ namespace mfront::generic_parallel {
    * the material properties
    */
   template <typename Statistics>
-  inline constexpr bool hasTimeStepScalingFactor =
-      requires(Statistics& s) { s.rdt; };
+  inline constexpr bool hasTimeStepScalingFactor = requires(Statistics& s) {
+    s.rdt;
+  };
 
   /*!
    * \brief update the statistics shared by the threads with the statistics

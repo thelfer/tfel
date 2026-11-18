@@ -3,8 +3,10 @@ try:
 except ImportError:
     import unittest
 import mtest
-    
+
+
 class MaterialPropertyTest(unittest.TestCase):
+
     def test1(self):
         E_ref = 125111405902.5
         young_modulus = mtest.MaterialProperty(
@@ -38,6 +40,7 @@ class MaterialPropertyTest(unittest.TestCase):
         self.assertAlmostEqual(E, E_ref)
         # for material properties with only one argument
         E = young_modulus(562)
+
 
 if __name__ == '__main__':
     unittest.main()

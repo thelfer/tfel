@@ -47,12 +47,11 @@ namespace tfel::material {
   concept ThermalConductivityOrDerivativeConcept =
       tfel::math::ScalarConcept<ThermalConductivityOrDerivativeType> &&
       ((tfel::math::checkUnitCompatibility<
-            tfel::math::unit::ThermalConductivity,
-            ThermalConductivityOrDerivativeType>()) ||
-       std::same_as<
-           ThermalConductivityOrDerivativeType,
-           ThermalConductivityDerivative<
-               tfel::math::base_type<ThermalConductivityOrDerivativeType>>>);
+           tfel::math::unit::ThermalConductivity,
+           ThermalConductivityOrDerivativeType>()) ||
+       std::same_as<ThermalConductivityOrDerivativeType,
+                    ThermalConductivityDerivative<tfel::math::base_type<
+                        ThermalConductivityOrDerivativeType>>>);
 
   /*!
    * \brief compute the thermal conductivity matrix in the reference
@@ -78,8 +77,8 @@ namespace tfel::material {
             tfel::math::NoUnitTensorConcept DeformationGradientType>
   requires(ThermalConductivityOrDerivativeConcept<
            ThermalConductivityOrDerivativeType>)  //
-      TFEL_HOST_DEVICE [[nodiscard]] constexpr auto
-      computeThermalConductivityMatrixInReferenceConfiguration(
+      TFEL_HOST_DEVICE
+      [[nodiscard]] constexpr auto computeThermalConductivityMatrixInReferenceConfiguration(
           const ThermalConductivityOrDerivativeType,
           const DeformationGradientType&) noexcept;
   /*!

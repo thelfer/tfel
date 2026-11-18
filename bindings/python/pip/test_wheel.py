@@ -24,7 +24,8 @@ import mfm_test_generator
 tfelhome = os.path.dirname(os.path.abspath(tfel.__file__))
 
 includes = subprocess.run([shutil.which("tfel-config"), "--includes"],
-                          check=True, stdout=subprocess.PIPE,
+                          check=True,
+                          stdout=subprocess.PIPE,
                           text=True).stdout.strip()
 print("tfel-config --includes:", includes)
 expected_includes = os.path.realpath(os.path.join(tfelhome, "include"))
@@ -34,8 +35,8 @@ if os.path.realpath(includes[2:]) != expected_includes:
 # the stubs of the python modules are installed next to them
 for package, module in ((tfel, "_tfel"), (tfel, "math"),
                         (tfel.material, "_material"), (mfront, "_mfront"),
-                        (mtest, "_mtest"),
-                        (mfm_test_generator, "_mfm_test_generator")):
+                        (mtest, "_mtest"), (mfm_test_generator,
+                                            "_mfm_test_generator")):
     directory = os.path.dirname(package.__file__)
     stub = os.path.join(directory, module + ".pyi")
     # a module with submodules has a directory of stubs
@@ -79,8 +80,11 @@ with tempfile.TemporaryDirectory() as directory:
         f.write(behaviour)
     with open("elasticity.mtest", "w") as f:
         f.write(test)
-    subprocess.run([shutil.which("mfront"), "--obuild", "--interface=generic",
-                    "Elasticity.mfront"], check=True)
+    subprocess.run([
+        shutil.which("mfront"), "--obuild", "--interface=generic",
+        "Elasticity.mfront"
+    ],
+                   check=True)
     subprocess.run([shutil.which("mtest"), "elasticity.mtest"], check=True)
     # loading the behaviour in python
     m = mtest.MTest()

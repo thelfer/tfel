@@ -261,10 +261,10 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
         return computeThermalConductivityMatrixInReferenceConfiguration(k1, F2);
       } else if constexpr (N == 2u) {
         return computeThermalConductivityMatrixInReferenceConfiguration(k1, k2,
-                                                                      F2);
+                                                                        F2);
       } else {
         return computeThermalConductivityMatrixInReferenceConfiguration(k1, k2,
-                                                                      k3, F2);
+                                                                        k3, F2);
       }
     };
     const auto [Q, dQ_dgT, dQ_dF] =

@@ -7,6 +7,7 @@ from mfront import getImplementationsPaths
 
 
 class MadnexTest(unittest.TestCase):
+
     def test_pass(self):
 
         paths = getImplementationsPaths(file='MFront-test1.madnex',
