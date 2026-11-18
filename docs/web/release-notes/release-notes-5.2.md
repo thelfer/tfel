@@ -1467,6 +1467,20 @@ already done for `gcc`. The `StringAlgorithms`,
 `LinearHomogenizationSchemes` and `IsotropicModuli` tests failed in
 `Release` mode without this flag.
 
+Those tests no longer depend on the floating-point model. They also
+pass with the default model of `icpx` and with the `-ffast-math` flag of
+`gcc`, `clang` and `icpx`:
+
+- The `tfel::utilities::convert` function detects that a floating-point
+  number overflows from the magnitude of the value returned by
+  `std::strtod` or `std::strtold`, in place of testing if this value is
+  infinite. A number which overflows is thus also rejected when the
+  rounding mode is not `to nearest`: it was previously converted to the
+  largest finite number.
+- The `StringAlgorithms` test compares the representations of the
+  converted values.
+- The `LinearHomogenizationSchemes` test uses a relative tolerance.
+
 For more details, see <https://github.com/thelfer/tfel/issues/1416>
 
 ## Issue 1387: [TFEL/Utilities] tests `CxxTokenizer` with `libFuzzer`
