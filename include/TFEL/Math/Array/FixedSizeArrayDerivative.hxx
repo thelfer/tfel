@@ -24,6 +24,8 @@
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
+#include "TFEL/Math/Forward/tvector.hxx"
+#include "TFEL/Math/Forward/tmatrix.hxx"
 
 namespace tfel::math {
 
@@ -616,6 +618,41 @@ namespace tfel::math {
     FixedSizeArrayDerivative<Array11, Array22> c;
     MultiplyFixedSizeArrayDerivatives::exe(c, a, b);
     return c;
+  }  // end of operator*
+
+  /*!
+   * \brief product of a matrix by the derivative of a vector with respect
+   * to an array. If the matrix is the derivative of a vector \f$u\f$ with
+   * respect to a vector \f$v\f$ and the derivative is the derivative of
+   * \f$v\f$ with respect to an array \f$a\f$, the result is the
+   * derivative of \f$u\f$ with respect to \f$a\f$ (chain rule).
+   * \param[in] m: matrix
+   * \param[in] d: derivative of a vector with respect to an array
+   */
+  template <unsigned short M,
+            unsigned short N,
+            typename MatrixValueType,
+            typename VectorValueType,
+            typename Array2>
+  requires(Array2::indexing_policy::arity == 1)  //
+      TFEL_HOST_DEVICE constexpr auto
+      operator*(const tmatrix<M, N, MatrixValueType>& m,
+                const FixedSizeArrayDerivative<tvector<N, VectorValueType>,
+                                               Array2>& d) noexcept {
+    using ValueType = result_type<MatrixValueType, VectorValueType, OpMult>;
+    using ResultType = FixedSizeArrayDerivative<tvector<M, ValueType>, Array2>;
+    using size_type = index_type<ResultType>;
+    auto r = ResultType{};
+    for (size_type i = 0; i != M; ++i) {
+      for (size_type j = 0; j != r.size(1); ++j) {
+        auto v = ValueType{0};
+        for (size_type k = 0; k != N; ++k) {
+          v += m(i, k) * d(k, j);
+        }
+        r(i, j) = v;
+      }
+    }
+    return r;
   }  // end of operator*
 
 }  // end of namespace tfel::math

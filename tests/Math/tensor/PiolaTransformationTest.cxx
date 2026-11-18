@@ -24,15 +24,37 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/Tensor/PiolaTransformation.hxx"
+
+/*!
+ * \return true if the derivatives of the Piola transform are the expected
+ * ones for the identity. This function is evaluated at compile time.
+ */
+static constexpr bool checkAtIdentity() {
+  using namespace tfel::math;
+  const auto F = tensor<3u, double>::Id();
+  const auto [Q, dQ_dq, dQ_dF] =
+      computePiolaTransformAndDerivatives(tvector<3u, double>{1, 2, 3}, F);
+  // dQ_i/dF_kl = Q_i.delta_kl - delta_ik.Q_l, F_01 being the component 3
+  const auto dQ_dF2 = tmatrix<3u, 3u, double>::Id() * dQ_dF;
+  constexpr auto near = [](const double a, const double b) {
+    return tfel::math::abs(a - b) < 1e-14;
+  };
+  return near(Q[2], 3) && near(dQ_dq(1, 1), 1) && near(dQ_dq(0, 1), 0) &&
+         near(dQ_dF(0, 1), 1) && near(dQ_dF(0, 3), -2) &&
+         near(dQ_dF2(0, 3), -2);
+}  // end of checkAtIdentity
 
 struct PiolaTransformationTest final : public tfel::tests::TestCase {
   PiolaTransformationTest()
       : tfel::tests::TestCase("TFEL/Math", "PiolaTransformationTest") {
   }  // end of PiolaTransformationTest
   tfel::tests::TestResult execute() override {
+    TFEL_TESTS_STATIC_ASSERT(checkAtIdentity());
     this->test<1u, true>();
     this->test<1u, false>();
     this->test<2u, true>();
@@ -88,6 +110,55 @@ struct PiolaTransformationTest final : public tfel::tests::TestCase {
                         eps);
     }
   }  // end of compare
+
+  /*!
+   * \brief check a function returning a transformed vector and its
+   * derivatives
+   * \param[in] f: function
+   * \param[in] v: vector
+   * \param[in] F: deformation gradient
+   * \param[in] vr: reference solution for the transformed vector
+   */
+  template <unsigned short N,
+            typename FunctionType,
+            typename VectorType,
+            typename TensorType>
+  void checkDerivatives(const FunctionType& f,
+                        const VectorType& v,
+                        const TensorType& F,
+                        const Vector& vr) {
+    using namespace tfel::math;
+    using real = numeric_type<TensorType>;
+    using value_type = numeric_type<VectorType>;
+    constexpr auto h = 1e-6;
+    constexpr auto eps = 1e-8;
+    const auto [r, dr_dv, dr_dF] = f(v, F);
+    this->template compare<N>(r, vr);
+    // the transformations are linear in the vector
+    for (unsigned short j = 0; j != N; ++j) {
+      auto e = VectorType{value_type{0}};
+      e[j] = value_type{1};
+      const auto rj = std::get<0>(f(e, F));
+      for (unsigned short i = 0; i != N; ++i) {
+        TFEL_TESTS_ASSERT(std::abs(base_type_cast(rj[i]) -
+                                   base_type_cast(dr_dv(i, j))) < eps);
+      }
+    }
+    // derivative with respect to F, compared to centered finite differences
+    for (unsigned short c = 0; c != TensorDimeToSize<N>::value; ++c) {
+      auto Fp = F;
+      auto Fm = F;
+      Fp[c] += real(h);
+      Fm[c] -= real(h);
+      const auto rp = std::get<0>(f(v, Fp));
+      const auto rm = std::get<0>(f(v, Fm));
+      for (unsigned short i = 0; i != N; ++i) {
+        const auto nd =
+            (base_type_cast(rp[i]) - base_type_cast(rm[i])) / (2 * h);
+        TFEL_TESTS_ASSERT(std::abs(nd - base_type_cast(dr_dF(i, c))) < eps);
+      }
+    }
+  }  // end of checkDerivatives
 
   template <unsigned short N, bool use_qt>
   void test() {
@@ -147,6 +218,27 @@ struct PiolaTransformationTest final : public tfel::tests::TestCase {
     // the inverse transformations give back the initial vector
     this->template compare<N>(computeInversePiolaTransform(Q, F), vr);
     this->template compare<N>(computeInverseNansonTransform(n, F), vr);
+    // derivatives
+    this->template checkDerivatives<N>(
+        [](const auto& x, const auto& y) {
+          return computePiolaTransformAndDerivatives(x, y);
+        },
+        v, F, apply(a, vr, false));
+    this->template checkDerivatives<N>(
+        [](const auto& x, const auto& y) {
+          return computeInversePiolaTransformAndDerivatives(x, y);
+        },
+        v, F, scale(apply(Fm, vr, false), 1 / J));
+    this->template checkDerivatives<N>(
+        [](const auto& x, const auto& y) {
+          return computeNansonTransformAndDerivatives(x, y);
+        },
+        v, F, apply(a, vr, true));
+    this->template checkDerivatives<N>(
+        [](const auto& x, const auto& y) {
+          return computeInverseNansonTransformAndDerivatives(x, y);
+        },
+        v, F, scale(apply(Fm, vr, true), 1 / J));
   }  // end of test
 };
 
