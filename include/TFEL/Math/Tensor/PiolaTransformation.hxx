@@ -15,12 +15,14 @@
 #ifndef LIB_TFEL_MATH_PIOLATRANSFORMATION_HXX
 #define LIB_TFEL_MATH_PIOLATRANSFORMATION_HXX
 
+#include <tuple>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/types.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
+#include "TFEL/Math/Array/FixedSizeArrayDerivative.hxx"
 
 namespace tfel::math {
 
@@ -131,6 +133,72 @@ namespace tfel::math {
       TFEL_HOST_DEVICE [[nodiscard]] constexpr auto
       computeInverseNansonTransform(const tvector<N, ValueType>&,
                                     const DeformationGradientType&) noexcept;
+  /*
+   * The following functions return a tuple made of the result of the
+   * previous functions, its derivative with respect to the transformed
+   * vector and its derivative with respect to the deformation gradient.
+   * Those derivatives are the ones needed by strongly coupled resolutions.
+   */
+  /*!
+   * \return the Piola transform \f$Q=J\,F^{-1}\,q\f$ of a vector, its
+   * derivative with respect to \f$q\f$ and its derivative with respect to
+   * \f$F\f$
+   * \param[in] q: vector in the current configuration
+   * \param[in] F: deformation gradient
+   */
+  template <unsigned short N,
+            typename ValueType,
+            tfel::math::NoUnitTensorConcept DeformationGradientType>
+  requires(getSpaceDimension<DeformationGradientType>() == N)  //
+      TFEL_HOST_DEVICE
+      [[nodiscard]] constexpr auto computePiolaTransformAndDerivatives(
+          const tvector<N, ValueType>&,
+          const DeformationGradientType&) noexcept;
+  /*!
+   * \return the vector \f$q=F\,Q/J\f$ of the current configuration whose
+   * Piola transform is the given vector, its derivative with respect to
+   * \f$Q\f$ and its derivative with respect to \f$F\f$
+   * \param[in] Q: vector in the reference configuration
+   * \param[in] F: deformation gradient
+   */
+  template <unsigned short N,
+            typename ValueType,
+            tfel::math::NoUnitTensorConcept DeformationGradientType>
+  requires(getSpaceDimension<DeformationGradientType>() == N)  //
+      TFEL_HOST_DEVICE
+      [[nodiscard]] constexpr auto computeInversePiolaTransformAndDerivatives(
+          const tvector<N, ValueType>&,
+          const DeformationGradientType&) noexcept;
+  /*!
+   * \return the vector \f$n=J\,F^{-T}\,N\f$ given by Nanson's formula,
+   * its derivative with respect to \f$N\f$ and its derivative with respect
+   * to \f$F\f$
+   * \param[in] N: vector in the reference configuration
+   * \param[in] F: deformation gradient
+   */
+  template <unsigned short N,
+            typename ValueType,
+            tfel::math::NoUnitTensorConcept DeformationGradientType>
+  requires(getSpaceDimension<DeformationGradientType>() == N)  //
+      TFEL_HOST_DEVICE
+      [[nodiscard]] constexpr auto computeNansonTransformAndDerivatives(
+          const tvector<N, ValueType>&,
+          const DeformationGradientType&) noexcept;
+  /*!
+   * \return the vector \f$N=F^{T}\,n/J\f$ of the reference configuration
+   * whose transform by Nanson's formula is the given vector, its derivative
+   * with respect to \f$n\f$ and its derivative with respect to \f$F\f$
+   * \param[in] n: vector in the current configuration
+   * \param[in] F: deformation gradient
+   */
+  template <unsigned short N,
+            typename ValueType,
+            tfel::math::NoUnitTensorConcept DeformationGradientType>
+  requires(getSpaceDimension<DeformationGradientType>() == N)  //
+      TFEL_HOST_DEVICE
+      [[nodiscard]] constexpr auto computeInverseNansonTransformAndDerivatives(
+          const tvector<N, ValueType>&,
+          const DeformationGradientType&) noexcept;
 
 }  // end of namespace tfel::math
 

@@ -152,6 +152,49 @@ namespace tfel::material {
                       k02, k12, k22};
   }  // end of computeThermalConductivityMatrixInReferenceConfiguration
 
+  template <unsigned short N,
+            typename ThermalConductivityType,
+            typename TemperatureGradientType,
+            tfel::math::NoUnitTensorConcept DeformationGradientType>
+  requires(tfel::math::getSpaceDimension<DeformationGradientType>() == N)  //
+      constexpr auto computeHeatFluxInReferenceConfigurationAndDerivatives(
+          const tfel::math::tmatrix<N, N, ThermalConductivityType>& K,
+          const tfel::math::tvector<N, TemperatureGradientType>& gT,
+          const DeformationGradientType& F) noexcept {
+    using namespace tfel::math;
+    using namespace tfel::math::internals;
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    using HeatFluxType =
+        result_type<ThermalConductivityType, TemperatureGradientType, OpMult>;
+    using VectorType = tvector<N, HeatFluxType>;
+    using DerivativeType1 =
+        derivative_type<VectorType, tvector<N, TemperatureGradientType>>;
+    using DerivativeType2 =
+        VectorDerivativeWithRespectToTensor<VectorType,
+                                            DeformationGradientType>;
+    const auto adj = computeAdjugateDeterminantDerivative(F);
+    const auto J = det(F);
+    const auto dQ_dgT = buildMatrix<N, DerivativeType1>(
+        [&K](const unsigned short i, const unsigned short j) {
+          return -K(i, j);
+        });
+    const auto Q = eval(dQ_dgT * gT);
+    // temperature gradient in the current configuration, F^{-T}.gT
+    const auto g = eval(applyTransposedTensor(adj, gT) / J);
+    // dQ_i/dF_kl = Q_i.F^{-1}_lk - F^{-1}_ik.Q_l + K_il.g_k, K_il being
+    // null if l is the out-of-plane direction in 1D and 2D
+    const auto dQ_dF = buildDerivativeWithRespectToTensor<N, DerivativeType2>(
+        [&K, &adj, &Q, &g, J](const unsigned short i, const unsigned short k,
+                              const unsigned short l) {
+          const auto Kil = (l < N) ? K(i, l) : ThermalConductivityType{0};
+          return (Q[i] * getTensorComponent(adj, l, k) -
+                  getTensorComponent(adj, i, k) * getVectorComponent(Q, l)) /
+                     J +
+                 Kil * getVectorComponent(g, k);
+        });
+    return std::tuple{Q, dQ_dgT, dQ_dF};
+  }  // end of computeHeatFluxInReferenceConfigurationAndDerivatives
+
 }  // end of namespace tfel::material
 
 #endif /* LIB_TFEL_MATERIAL_FINITESTRAINHEATTRANSFER_IXX */

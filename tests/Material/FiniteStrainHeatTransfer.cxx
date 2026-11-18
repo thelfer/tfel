@@ -20,7 +20,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <type_traits>
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/Tensor/PiolaTransformation.hxx"
 #include "TFEL/Material/FiniteStrainHeatTransfer.hxx"
@@ -46,6 +48,12 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
     this->test2<2u, false>();
     this->test2<3u, true>();
     this->test2<3u, false>();
+    this->test3<1u, true>();
+    this->test3<1u, false>();
+    this->test3<2u, true>();
+    this->test3<2u, false>();
+    this->test3<3u, true>();
+    this->test3<3u, false>();
     return this->result;
   }  // end of execute
 
@@ -210,6 +218,80 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(dK_dT(2, 1)) < eps2);
     TFEL_TESTS_STATIC_ASSERT(my_abs(dK_dT(2, 2) - dk_dT) < eps2);
   }  // end of test
+  /*!
+   * \brief check the heat flux in the reference configuration and its
+   * derivatives against finite differences, for the thermal conductivity
+   * matrices returned by the
+   * `computeThermalConductivyMatrixInReferenceConfiguration` functions.
+   */
+  template <unsigned short N, bool use_qt>
+  void test3() {
+    using namespace tfel::math;
+    using namespace tfel::material;
+    using real = typename tfel::config::ScalarTypes<double, use_qt>::real;
+    using thermalconductivity = tfel::types::thermalconductivity<real>;
+    using temperaturegradient =
+        std::conditional_t<use_qt, qt<unit::TemperatureGradient, double>,
+                           double>;
+    constexpr auto h = 1e-6;
+    constexpr auto eps = 1e-8;
+    const auto F = [] {
+      if constexpr (N == 1u) {
+        return tensor<1u, real>{real(1.1), real(0.9), real(1.2)};
+      } else if constexpr (N == 2u) {
+        return tensor<2u, real>{real(1.1), real(0.9), real(1.2), real(0.15),
+                                real(-0.08)};
+      } else {
+        return tensor<3u, real>{real(1.1),   real(0.9),   real(1.2),
+                                real(0.15),  real(-0.08), real(0.07),
+                                real(-0.12), real(0.05),  real(0.11)};
+      }
+    }();
+    auto gT = tvector<N, temperaturegradient>{};
+    for (unsigned short i = 0; i != N; ++i) {
+      gT[i] = temperaturegradient(2.5 - 2 * i);
+    }
+    // conductivity matrix in the reference configuration, orthotropic in 2D
+    // and 3D
+    const auto K = [](const tensor<N, real>& F2) {
+      constexpr auto k1 = thermalconductivity(3);
+      constexpr auto k2 = thermalconductivity(5);
+      constexpr auto k3 = thermalconductivity(2);
+      if constexpr (N == 1u) {
+        return computeThermalConductivyMatrixInReferenceConfiguration(k1, F2);
+      } else if constexpr (N == 2u) {
+        return computeThermalConductivyMatrixInReferenceConfiguration(k1, k2,
+                                                                      F2);
+      } else {
+        return computeThermalConductivyMatrixInReferenceConfiguration(k1, k2,
+                                                                      k3, F2);
+      }
+    };
+    const auto [Q, dQ_dgT, dQ_dF] =
+        computeHeatFluxInReferenceConfigurationAndDerivatives(K(F), gT, F);
+    const auto Q2 = eval(-(K(F) * gT));
+    for (unsigned short i = 0; i != N; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(base_type_cast(Q[i] - Q2[i])) < eps);
+      for (unsigned short j = 0; j != N; ++j) {
+        TFEL_TESTS_ASSERT(std::abs(base_type_cast(dQ_dgT(i, j) + K(F)(i, j))) <
+                          eps);
+      }
+    }
+    // derivative with respect to F, compared to centered finite differences
+    for (unsigned short c = 0; c != TensorDimeToSize<N>::value; ++c) {
+      auto Fp = F;
+      auto Fm = F;
+      Fp[c] += real(h);
+      Fm[c] -= real(h);
+      const auto Qp = eval(-(K(Fp) * gT));
+      const auto Qm = eval(-(K(Fm) * gT));
+      for (unsigned short i = 0; i != N; ++i) {
+        const auto nd =
+            (base_type_cast(Qp[i]) - base_type_cast(Qm[i])) / (2 * h);
+        TFEL_TESTS_ASSERT(std::abs(nd - base_type_cast(dQ_dF(i, c))) < eps);
+      }
+    }
+  }  // end of test3
 };
 
 TFEL_TESTS_GENERATE_PROXY(FiniteStrainHeatTransferTest,

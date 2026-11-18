@@ -19,6 +19,8 @@
 #include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/types.hxx"
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/tensor.hxx"
 
 namespace tfel::material {
@@ -134,6 +136,39 @@ namespace tfel::material {
           const ThermalConductivityOrDerivativeType,
           const ThermalConductivityOrDerivativeType,
           const ThermalConductivityOrDerivativeType,
+          const DeformationGradientType&) noexcept;
+  /*!
+   * \brief compute the heat flux \f$Q=-K\,\nabla T\f$ in the reference
+   * configuration and its derivatives with respect to the temperature
+   * gradient and to the deformation gradient. Those derivatives are the
+   * ones needed by strongly coupled resolutions.
+   *
+   * \return a tuple made of \f$Q\f$, its derivative with respect to
+   * \f$\nabla T\f$, i.e. \f$-K\f$, and its derivative with respect to
+   * \f$F\f$
+   *
+   * \param[in] K: thermal conductivity matrix in the reference
+   * configuration
+   * \param[in] gT: temperature gradient in the reference configuration
+   * \param[in] F: deformation gradient
+   *
+   * \note the derivative with respect to \f$F\f$ assumes that \f$K\f$ is
+   * the Piola transform \f$J\,F^{-1}\,k\,F^{-T}\f$ of a thermal
+   * conductivity matrix \f$k\f$ of the current configuration which does
+   * not depend on \f$F\f$ and, in 1D and 2D, for which the out-of-plane
+   * direction is a principal direction. This is the case of the matrices
+   * returned by the `computeThermalConductivyMatrixInReferenceConfiguration`
+   * functions.
+   */
+  template <unsigned short N,
+            typename ThermalConductivityType,
+            typename TemperatureGradientType,
+            tfel::math::NoUnitTensorConcept DeformationGradientType>
+  requires(tfel::math::getSpaceDimension<DeformationGradientType>() == N)  //
+      TFEL_HOST_DEVICE
+      [[nodiscard]] constexpr auto computeHeatFluxInReferenceConfigurationAndDerivatives(
+          const tfel::math::tmatrix<N, N, ThermalConductivityType>&,
+          const tfel::math::tvector<N, TemperatureGradientType>&,
           const DeformationGradientType&) noexcept;
 
 }  // end of namespace tfel::material

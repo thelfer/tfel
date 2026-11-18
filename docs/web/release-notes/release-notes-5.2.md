@@ -659,6 +659,32 @@ const auto n = computeNansonTransform(N, F);
 const auto N2 = computeInverseNansonTransform(n, F);
 ~~~~
 
+### Derivatives
+
+Strongly coupled resolutions need the derivatives of those
+transformations. The `computePiolaTransformAndDerivatives`,
+`computeInversePiolaTransformAndDerivatives`,
+`computeNansonTransformAndDerivatives` and
+`computeInverseNansonTransformAndDerivatives` functions return a tuple
+made of the transformed vector, its derivative with respect to the
+initial vector and its derivative with respect to the deformation
+gradient.
+
+~~~~{.cxx}
+const auto [Q, dQ_dq, dQ_dF] = computePiolaTransformAndDerivatives(q, F);
+~~~~
+
+The derivative with respect to the vector is a `tmatrix`. The
+derivative with respect to the deformation gradient is of type
+`derivative_type<tvector<N, T>, tensor<N, real>>`. A `tmatrix` can now
+be multiplied by such a derivative, which allows to apply the chain
+rule:
+
+~~~~{.cxx}
+// q depends on F through dq_dF
+const auto dQ_dF_total = dQ_dF + dQ_dq * dq_dF;
+~~~~
+
 Those functions are declared in the
 `TFEL/Math/Tensor/PiolaTransformation.hxx` header.
 
@@ -726,6 +752,23 @@ gradient are described and the isotropic version of the function is also
 suitable for orthotropic materials: only the thermal conductivity in the
 first direction is used and the result is
 \(F_{22}\,F_{33}\,k_1/F_{11}\).
+
+### Heat flux in the reference configuration and its derivatives
+
+The `computeHeatFluxInReferenceConfigurationAndDerivatives` function
+returns the heat flux \(Q=-K\,\nabla T\) in the reference
+configuration, its derivative with respect to the temperature gradient
+and its derivative with respect to the deformation gradient, which
+strongly coupled resolutions need. The thermal conductivity matrix
+\(K\) must be given by one of the
+`computeThermalConductivyMatrixInReferenceConfiguration` functions.
+
+~~~~{.cxx}
+const auto K =
+  computeThermalConductivyMatrixInReferenceConfiguration(k, F);
+const auto [Q, dQ_dgT, dQ_dF] =
+  computeHeatFluxInReferenceConfigurationAndDerivatives(K, gT, F);
+~~~~
 
 ## Homogenization
 
