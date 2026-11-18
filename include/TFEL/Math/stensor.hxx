@@ -320,7 +320,8 @@ namespace tfel::math {
     /*!
      * \return the component i of `Id()`, without building the tensor.
      * This is useful when the index is only known at run time: no table is
-     * stored nor read.
+     * stored nor read. The component has no unit: its type is the base type
+     * of `ValueType`.
      * \param[in] i: index
      */
     [[nodiscard]] TFEL_HOST_DEVICE static constexpr base_type<ValueType> Id(

@@ -2,7 +2,7 @@
  * \file  tests/Math/special_tensors_components.cxx
  * \brief This file checks that the overloads of `Id`, `IxI`, `K`, `M`, `J`
  * and `transpose_derivative` which take indices return the components of the
- * objects returned by the overloads without argument
+ * objects returned by the overloads without argument, with the base type
  * \author Tristan Chenaille
  * \date 15/11/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -15,11 +15,13 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <type_traits>
 
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -29,34 +31,37 @@
 
 /*!
  * \return true if every overload taking indices returns the component of the
- * object returned by the overload without argument
+ * object returned by the overload without argument for the base type
  * \tparam N: space dimension
  * \tparam T: numeric type
  */
 template <unsigned short N, typename T>
 constexpr bool check() {
   using namespace tfel::math;
+  using base = base_type<T>;
   using Stensor = stensor<N, T>;
   using Tensor = tensor<N, T>;
   using Stensor4 = st2tost2<N, T>;
   using Tensor4 = t2tot2<N, T>;
   using Matrix = tmatrix<3u, 3u, T>;
-  constexpr auto differ = [](const T a, const T b) {
-    return tfel::math::abs(a - b) > T{};
+  // a is the value returned by an overload: it must have the base type
+  constexpr auto differ = [](const auto a, const base b) {
+    static_assert(std::is_same_v<decltype(a), const base>);
+    return tfel::math::abs(a - b) > base{};
   };
   // objects built once: this keeps the evaluation at compile time short
-  constexpr auto s_id = Stensor::Id();
-  constexpr auto s4_id = Stensor4::Id();
-  constexpr auto s4_ixi = Stensor4::IxI();
-  constexpr auto s4_k = Stensor4::K();
-  constexpr auto s4_m = Stensor4::M();
-  constexpr auto s4_j = Stensor4::J();
-  constexpr auto t_id = Tensor::Id();
-  constexpr auto t4_id = Tensor4::Id();
-  constexpr auto t4_ixi = Tensor4::IxI();
-  constexpr auto t4_k = Tensor4::K();
-  constexpr auto t4_dt = Tensor4::transpose_derivative();
-  constexpr auto m_id = Matrix::Id();
+  constexpr auto s_id = stensor<N, base>::Id();
+  constexpr auto s4_id = st2tost2<N, base>::Id();
+  constexpr auto s4_ixi = st2tost2<N, base>::IxI();
+  constexpr auto s4_k = st2tost2<N, base>::K();
+  constexpr auto s4_m = st2tost2<N, base>::M();
+  constexpr auto s4_j = st2tost2<N, base>::J();
+  constexpr auto t_id = tensor<N, base>::Id();
+  constexpr auto t4_id = t2tot2<N, base>::Id();
+  constexpr auto t4_ixi = t2tot2<N, base>::IxI();
+  constexpr auto t4_k = t2tot2<N, base>::K();
+  constexpr auto t4_dt = t2tot2<N, base>::transpose_derivative();
+  constexpr auto m_id = tmatrix<3u, 3u, base>::Id();
   constexpr unsigned short ss = StensorDimeToSize<N>::value;
   constexpr unsigned short ts = TensorDimeToSize<N>::value;
   for (unsigned short i = 0; i != ss; ++i) {
@@ -106,6 +111,9 @@ struct SpecialTensorsComponentsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT((check<2u, double>()));
     TFEL_TESTS_STATIC_ASSERT((check<3u, double>()));
     TFEL_TESTS_STATIC_ASSERT((check<3u, float>()));
+    // a quantity: the components have no unit
+    using stress = tfel::math::qt<tfel::math::unit::Stress, double>;
+    TFEL_TESTS_STATIC_ASSERT((check<3u, stress>()));
     return this->result;
   }  // end of execute
 };

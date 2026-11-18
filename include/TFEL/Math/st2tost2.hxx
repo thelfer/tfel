@@ -176,14 +176,15 @@ namespace tfel::math {
     /*
      * The following overloads give one component of the previous tensors.
      * They are useful when an index is only known at run time: no table is
-     * stored nor read.
+     * stored nor read. The component has no unit: its type is the base type
+     * of `ValueType`.
      */
     /*!
      * \return the component (i, j) of `Id()`, without building the tensor.
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr ValueType Id(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> Id(
         const typename st2tost2<N, ValueType>::size_type,
         const typename st2tost2<N, ValueType>::size_type) noexcept;
     /*!
@@ -191,7 +192,7 @@ namespace tfel::math {
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr ValueType IxI(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> IxI(
         const typename st2tost2<N, ValueType>::size_type,
         const typename st2tost2<N, ValueType>::size_type) noexcept;
     /*!
@@ -199,7 +200,7 @@ namespace tfel::math {
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr ValueType K(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> K(
         const typename st2tost2<N, ValueType>::size_type,
         const typename st2tost2<N, ValueType>::size_type) noexcept;
     /*!
@@ -207,7 +208,7 @@ namespace tfel::math {
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr ValueType M(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> M(
         const typename st2tost2<N, ValueType>::size_type,
         const typename st2tost2<N, ValueType>::size_type) noexcept;
     /*!
@@ -215,7 +216,7 @@ namespace tfel::math {
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr ValueType J(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> J(
         const typename st2tost2<N, ValueType>::size_type,
         const typename st2tost2<N, ValueType>::size_type) noexcept;
     //

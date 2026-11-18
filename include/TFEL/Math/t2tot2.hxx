@@ -179,7 +179,8 @@ namespace tfel::math {
     /*
      * The following overloads give one component of the previous tensors.
      * They are useful when an index is only known at run time: no table is
-     * stored nor read.
+     * stored nor read. The component has no unit: its type is the base type
+     * of `ValueType`.
      */
     /*!
      * \return the component (i, j) of `transpose_derivative()`, without
@@ -187,7 +188,7 @@ namespace tfel::math {
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr auto transpose_derivative(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> transpose_derivative(
         const typename t2tot2<N, ValueType>::size_type,
         const typename t2tot2<N, ValueType>::size_type) noexcept;
     /*!
@@ -195,7 +196,7 @@ namespace tfel::math {
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr auto Id(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> Id(
         const typename t2tot2<N, ValueType>::size_type,
         const typename t2tot2<N, ValueType>::size_type) noexcept;
     /*!
@@ -203,7 +204,7 @@ namespace tfel::math {
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr auto IxI(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> IxI(
         const typename t2tot2<N, ValueType>::size_type,
         const typename t2tot2<N, ValueType>::size_type) noexcept;
     /*!
@@ -211,7 +212,7 @@ namespace tfel::math {
      * \param[in] i: row index
      * \param[in] j: column index
      */
-    TFEL_HOST_DEVICE static constexpr auto K(
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> K(
         const typename t2tot2<N, ValueType>::size_type,
         const typename t2tot2<N, ValueType>::size_type) noexcept;
     // NOLINTBEGIN(google-explicit-constructor)

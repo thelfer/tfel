@@ -268,7 +268,7 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::transpose_derivative(
+  TFEL_HOST_DEVICE constexpr base_type<T> t2tot2<N, T>::transpose_derivative(
       const typename t2tot2<N, T>::size_type i,
       const typename t2tot2<N, T>::size_type j) noexcept {
     using base = base_type<T>;
@@ -308,7 +308,7 @@ namespace tfel::math {
   }  // end of Id
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::Id(
+  TFEL_HOST_DEVICE constexpr base_type<T> t2tot2<N, T>::Id(
       const typename t2tot2<N, T>::size_type i,
       const typename t2tot2<N, T>::size_type j) noexcept {
     using base = base_type<T>;
@@ -347,7 +347,7 @@ namespace tfel::math {
   }  // end of IxI
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::IxI(
+  TFEL_HOST_DEVICE constexpr base_type<T> t2tot2<N, T>::IxI(
       const typename t2tot2<N, T>::size_type i,
       const typename t2tot2<N, T>::size_type j) noexcept {
     using base = base_type<T>;
@@ -389,7 +389,7 @@ namespace tfel::math {
   }  // end of K
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::K(
+  TFEL_HOST_DEVICE constexpr base_type<T> t2tot2<N, T>::K(
       const typename t2tot2<N, T>::size_type i,
       const typename t2tot2<N, T>::size_type j) noexcept {
     using base = base_type<T>;

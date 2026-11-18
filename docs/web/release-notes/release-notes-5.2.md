@@ -1275,6 +1275,9 @@ returns this component without building the object:
 const auto m = Stensor4::M(i, j);
 ~~~~
 
+The component has no unit: its type is the base type of the numeric
+type of the object.
+
 On GPUs, those overloads avoid storing and reading a table when an
 index is only known at run time. The existing methods are unchanged.
 

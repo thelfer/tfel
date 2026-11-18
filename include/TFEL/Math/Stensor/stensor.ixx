@@ -410,9 +410,10 @@ namespace tfel::math {
   }  // end of stensor<N,T>::Id
 
   template <unsigned short N, typename T>
-  constexpr base_type<T> stensor<N, T>::Id(
+  TFEL_HOST_DEVICE constexpr base_type<T> stensor<N, T>::Id(
       const typename stensor<N, T>::size_type i) noexcept {
-    return (i < 3) ? base_type<T>{1} : base_type<T>{0};
+    using base = base_type<T>;
+    return (i < 3) ? base{1} : base{0};
   }  // end of stensor<N,T>::Id
 
   template <typename NumType, typename T>
