@@ -125,12 +125,20 @@ namespace tfel::material {
     return r;
   }  // end of to_string
 
+  /*!
+   * \return the description of the HCP structure
+   * \param[in] r: c/a ratio
+   */
+  static numodis::HCP makeHCP(const long double r) {
+    return numodis::HCP(static_cast<double>(r));
+  }  // end of makeHCP
+
   template <CrystalStructure cs>
   std::vector<SlipSystemsDescription::system> generateSlipSystems(
       const typename CristalStructureSlipSystems<cs>::vector_type& b,
-      const typename CristalStructureSlipSystems<cs>::vector_type& p) {
-    using handler = typename CristalStructureSlipSystems<cs>::numodis_handler;
-    const auto cd = handler{};
+      const typename CristalStructureSlipSystems<cs>::vector_type& p,
+      const typename CristalStructureSlipSystems<cs>::numodis_handler& cd =
+          {}) {
     const auto nb = to_numodis<numodis::IBurgers>(b);
     const auto pp = to_numodis<numodis::IPlane>(p);
     const auto ng = numodis::GSystem{cd.InitGSystem(nb, pp)};
@@ -145,22 +153,26 @@ namespace tfel::material {
 
   template <CrystalStructure cs>
   std::vector<SlipSystemsDescription::system> generateSlipSystems(
-      const SlipSystemsDescription::system& g) {
+      const SlipSystemsDescription::system& g,
+      const typename CristalStructureSlipSystems<cs>::numodis_handler& cd =
+          {}) {
     using system_type = typename CristalStructureSlipSystems<cs>::system_type;
     raise_if(!g.is<system_type>(),
              "generateSlipSystems: unexpected system description");
     const auto& gd = g.get<system_type>();
-    return generateSlipSystems<cs>(gd.burgers, gd.plane);
+    return generateSlipSystems<cs>(gd.burgers, gd.plane, cd);
   }  // end of generateSlipSystems
 
   template <CrystalStructure cs>
   static void addSlipSystemsFamily(
       std::vector<typename CristalStructureSlipSystems<cs>::system_type>& gs,
       const typename CristalStructureSlipSystems<cs>::vector_type& b,
-      const typename CristalStructureSlipSystems<cs>::vector_type& p) {
+      const typename CristalStructureSlipSystems<cs>::vector_type& p,
+      const typename CristalStructureSlipSystems<cs>::numodis_handler& cd =
+          {}) {
     using system_type = typename CristalStructureSlipSystems<cs>::system_type;
     for (const auto& gn : gs) {
-      for (const auto& gg : generateSlipSystems<cs>(gn)) {
+      for (const auto& gg : generateSlipSystems<cs>(gn, cd)) {
         const auto& g = gg.template get<system_type>();
         raise_if((std::equal(g.burgers.begin(), g.burgers.end(), b.begin())) &&
                      (std::equal(g.plane.begin(), g.plane.end(), p.begin())),
@@ -178,7 +190,7 @@ namespace tfel::material {
   }  // end of addSlipSytem
 
   SlipSystemsDescription::SlipSystemsDescription(const CrystalStructure s)
-      : cs(s) {
+      : cs(s), c_over_a_ratio(numodis::HCP::default_ratio) {
     if ((s == CrystalStructure::Cubic) || (s == CrystalStructure::FCC) ||
         (s == CrystalStructure::BCC)) {
       this->gs = std::vector<system3d>();
@@ -189,6 +201,18 @@ namespace tfel::material {
           "SlipSystemsDescription::SlipSystemsDescription: "
           "unsupported crystal structure");
     }
+  }
+
+  SlipSystemsDescription::SlipSystemsDescription(const CrystalStructure s,
+                                                 const long double r)
+      : cs(s), c_over_a_ratio(r) {
+    raise_if(s != CrystalStructure::HCP,
+             "SlipSystemsDescription::SlipSystemsDescription: "
+             "the c/a ratio is only meaningful for the HCP crystal structure");
+    raise_if(!(r > 0),
+             "SlipSystemsDescription::SlipSystemsDescription: "
+             "invalid c/a ratio");
+    this->gs = std::vector<system4d>();
   }
 
   SlipSystemsDescription::SlipSystemsDescription(
@@ -229,7 +253,8 @@ namespace tfel::material {
     throw_if(cs != CrystalStructure::HCP,
              "internal error (unknown cristal structure)");
     auto& gs4d = this->gs.get<std::vector<system4d>>();
-    tfel::material::addSlipSystemsFamily<CrystalStructure::HCP>(gs4d, b, p);
+    tfel::material::addSlipSystemsFamily<CrystalStructure::HCP>(
+        gs4d, b, p, makeHCP(this->c_over_a_ratio));
   }  // end of addSlipSystemsFamily
 
   SlipSystemsDescription::size_type
@@ -277,7 +302,8 @@ namespace tfel::material {
     }
     throw_if(cs != CrystalStructure::HCP,
              "internal error (unknown cristal structure)");
-    return generateSlipSystems<CrystalStructure::HCP>(g);
+    return generateSlipSystems<CrystalStructure::HCP>(
+        g, makeHCP(this->c_over_a_ratio));
   }
 
   std::vector<std::vector<SlipSystemsDescription::system>>
@@ -315,11 +341,13 @@ namespace tfel::material {
   }
 
   static std::array<long double, 3u> normal(
-      const CrystalStructure cs, const SlipSystemsDescription::vec4d& p) {
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::vec4d& p) {
     raise_if(cs != CrystalStructure::HCP,
              "normal: internal error "
              "(unsupported crystal structure)");
-    auto s = numodis::HCP();
+    auto s = makeHCP(r);
     return to_array(s.normal(to_numodis<numodis::IPlane>(p)));
   }
 
@@ -346,11 +374,13 @@ namespace tfel::material {
   }
 
   static std::array<long double, 3u> burgers(
-      const CrystalStructure cs, const SlipSystemsDescription::vec4d& b) {
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::vec4d& b) {
     raise_if(cs != CrystalStructure::HCP,
              "burgers: internal error "
              "(unsupported crystal structure)");
-    auto s = numodis::HCP();
+    auto s = makeHCP(r);
     auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
     std::ignore = bv.Normalize();
     return to_array(bv);
@@ -377,26 +407,36 @@ namespace tfel::material {
   }  // end of getOrientationTensor
 
   static SlipSystemsDescription::tensor getOrientationTensor(
-      const CrystalStructure cs, const SlipSystemsDescription::system4d& s) {
-    const auto& n = normal(cs, s.plane);
-    const auto& m = burgers(cs, s.burgers);
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::system4d& s) {
+    const auto& n = normal(cs, r, s.plane);
+    const auto& m = burgers(cs, r, s.burgers);
     return tfel::material::getOrientationTensor(n, m);
   }  // end of getOrientationTensor
 
   static SlipSystemsDescription::tensor getClimbTensor(
       const CrystalStructure cs, const SlipSystemsDescription::system3d& s) {
-    const auto& n = normal(cs, s.plane);
-    return tfel::material::getOrientationTensor(n, n);
+    // tensorial product of the slip direction by itself, as in the
+    // behaviours generated by MFront
+    const auto& m = burgers(cs, s.burgers);
+    return tfel::material::getOrientationTensor(m, m);
   }  // end of getClimbTensor
 
   static SlipSystemsDescription::tensor getClimbTensor(
-      const CrystalStructure cs, const SlipSystemsDescription::system4d& s) {
-    const auto& n = normal(cs, s.plane);
-    return tfel::material::getOrientationTensor(n, n);
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::system4d& s) {
+    // tensorial product of the slip direction by itself, as in the
+    // behaviours generated by MFront
+    const auto& m = burgers(cs, r, s.burgers);
+    return tfel::material::getOrientationTensor(m, m);
   }  // end of getClimbTensor
 
   static SlipSystemsDescription::vector getSlipPlaneNormal(
-      const CrystalStructure cs, const SlipSystemsDescription::system& s) {
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::system& s) {
     if (s.is<SlipSystemsDescription::system3d>()) {
       const auto& s3d = s.get<SlipSystemsDescription::system3d>();
       return normal(cs, s3d.plane);
@@ -405,11 +445,13 @@ namespace tfel::material {
              "getSlipPlaneNormal: "
              "internal error (unsupported slip system type)");
     const auto& s4d = s.get<SlipSystemsDescription::system4d>();
-    return normal(cs, s4d.plane);
+    return normal(cs, r, s4d.plane);
   }  // end of getSlipPlaneNormal
 
   static SlipSystemsDescription::vector getSlipDirection(
-      const CrystalStructure cs, const SlipSystemsDescription::system& s) {
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::system& s) {
     if (s.is<SlipSystemsDescription::system3d>()) {
       const auto& s3d = s.get<SlipSystemsDescription::system3d>();
       return burgers(cs, s3d.burgers);
@@ -418,11 +460,13 @@ namespace tfel::material {
              "getSlipDirection: "
              "internal error (unsupported slip system type)");
     const auto& s4d = s.get<SlipSystemsDescription::system4d>();
-    return burgers(cs, s4d.burgers);
+    return burgers(cs, r, s4d.burgers);
   }  // end of getSlipDirection
 
   static SlipSystemsDescription::tensor getOrientationTensor(
-      const CrystalStructure cs, const SlipSystemsDescription::system& s) {
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::system& s) {
     if (s.is<SlipSystemsDescription::system3d>()) {
       return getOrientationTensor(cs,
                                   s.get<SlipSystemsDescription::system3d>());
@@ -430,18 +474,21 @@ namespace tfel::material {
     raise_if(!s.is<SlipSystemsDescription::system4d>(),
              "getOrientationTensor: "
              "internal error (unsupported slip system type)");
-    return getOrientationTensor(cs, s.get<SlipSystemsDescription::system4d>());
+    return getOrientationTensor(cs, r,
+                                s.get<SlipSystemsDescription::system4d>());
   }  // end of getOrientationTensor
 
   static SlipSystemsDescription::tensor getClimbTensor(
-      const CrystalStructure cs, const SlipSystemsDescription::system& s) {
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::system& s) {
     if (s.is<SlipSystemsDescription::system3d>()) {
       return getClimbTensor(cs, s.get<SlipSystemsDescription::system3d>());
     }
     raise_if(!s.is<SlipSystemsDescription::system4d>(),
              "getClimbTensor: "
              "internal error (unsupported slip system type)");
-    return getClimbTensor(cs, s.get<SlipSystemsDescription::system4d>());
+    return getClimbTensor(cs, r, s.get<SlipSystemsDescription::system4d>());
   }  // end of getClimbTensor
 
   std::vector<SlipSystemsDescription::vector>
@@ -449,7 +496,8 @@ namespace tfel::material {
     const auto ss = this->getSlipSystems(i);
     auto r = std::vector<vector>(ss.size());
     for (size_type idx = 0; idx != ss.size(); ++idx) {
-      r[idx] = tfel::material::getSlipPlaneNormal(this->cs, ss[idx]);
+      r[idx] = tfel::material::getSlipPlaneNormal(
+          this->cs, this->c_over_a_ratio, ss[idx]);
     }
     return r;
   }  // end of getSlipPlaneNormals()
@@ -469,7 +517,8 @@ namespace tfel::material {
     const auto ss = this->getSlipSystems(i);
     auto r = std::vector<vector>(ss.size());
     for (size_type idx = 0; idx != ss.size(); ++idx) {
-      r[idx] = tfel::material::getSlipDirection(this->cs, ss[idx]);
+      r[idx] = tfel::material::getSlipDirection(this->cs, this->c_over_a_ratio,
+                                                ss[idx]);
     }
     return r;
   }  // end of getSlipDirections()
@@ -489,7 +538,8 @@ namespace tfel::material {
     const auto ss = this->getSlipSystems(i);
     auto r = std::vector<tensor>(ss.size());
     for (size_type idx = 0; idx != ss.size(); ++idx) {
-      r[idx] = tfel::material::getOrientationTensor(this->cs, ss[idx]);
+      r[idx] = tfel::material::getOrientationTensor(
+          this->cs, this->c_over_a_ratio, ss[idx]);
     }
     return r;
   }  // end of getOrientationTensors
@@ -509,7 +559,8 @@ namespace tfel::material {
     const auto ss = this->getSlipSystems(i);
     auto r = std::vector<tensor>(ss.size());
     for (size_type idx = 0; idx != ss.size(); ++idx) {
-      r[idx] = tfel::material::getClimbTensor(this->cs, ss[idx]);
+      r[idx] = tfel::material::getClimbTensor(this->cs, this->c_over_a_ratio,
+                                              ss[idx]);
     }
     return r;
   }  // end of getClimbTensors
@@ -525,7 +576,9 @@ namespace tfel::material {
   }  // end of getClimbTensors
 
   static std::array<long double, 3u> getDirection(
-      const CrystalStructure cs, const SlipSystemsDescription::vec& d) {
+      const CrystalStructure cs,
+      const long double r,
+      const SlipSystemsDescription::vec& d) {
     auto throw_if = [](const bool c, const std::string& m) {
       raise_if(c, "getDirection: " + m);
     };
@@ -539,7 +592,7 @@ namespace tfel::material {
       throw_if(!d.is<SlipSystemsDescription::vec4d>(),
                "invalid direction description for HCP "
                "(shall be given as a four indices' vector)");
-      const auto s = numodis::HCP();
+      const auto s = makeHCP(r);
       const auto d4d = d.get<SlipSystemsDescription::vec4d>();
       const auto bv = s.direction(build4d(d4d));
       return to_array(bv);
@@ -574,12 +627,13 @@ namespace tfel::material {
       const vec d, const size_type i) const {
     const auto ss = this->getSlipSystems(i);
     auto r = std::vector<long double>(ss.size());
-    const auto d3d = getDirection(this->cs, d);
+    const auto d3d = getDirection(this->cs, this->c_over_a_ratio, d);
     const auto td = tensor{d3d[0] * d3d[0], d3d[1] * d3d[1], d3d[2] * d3d[2],
                            d3d[0] * d3d[1], d3d[1] * d3d[0], d3d[0] * d3d[2],
                            d3d[2] * d3d[0], d3d[1] * d3d[2], d3d[2] * d3d[1]};
     for (size_type idx = 0; idx != ss.size(); ++idx) {
-      const auto mn = tfel::material::getOrientationTensor(this->cs, ss[idx]);
+      const auto mn = tfel::material::getOrientationTensor(
+          this->cs, this->c_over_a_ratio, ss[idx]);
       r[idx] = td[8] * mn[8] + td[7] * mn[7] + td[6] * mn[6] + td[5] * mn[5] +
                td[4] * mn[4] + td[3] * mn[3] + td[2] * mn[2] + td[1] * mn[1] +
                td[0] * mn[0];
@@ -679,7 +733,8 @@ namespace tfel::material {
   template <CrystalStructure cs>
   static SlipSystemsDescription::InteractionMatrixStructure
   buildInteractionMatrix(
-      const std::vector<std::vector<SlipSystemsDescription::system>>& gs) {
+      const std::vector<std::vector<SlipSystemsDescription::system>>& gs,
+      const typename CristalStructureSlipSystems<cs>::numodis_handler& s = {}) {
     using SlidingSystemsInteraction = SlipSystemsDescription::
         InteractionMatrixStructure::SlidingSystemsInteraction;
     auto ngs = std::vector<numodis::GSystem>{};
@@ -693,7 +748,6 @@ namespace tfel::material {
         ngs.push_back(to_numodis(gg.burgers, gg.plane));
       }
     }
-    const auto s = typename CristalStructureSlipSystems<cs>::numodis_handler{};
     const auto h = numodis::Hardening(s, ngs);
     auto ranks =
         std::map<int,
@@ -791,7 +845,8 @@ namespace tfel::material {
     raise_if(cs != CrystalStructure::HCP,
              "SlipSystemsDescription::getInteractionMatrixStructure: "
              "internal error (unknown cristal structure)");
-    return buildInteractionMatrix<CrystalStructure::HCP>(ags);
+    return buildInteractionMatrix<CrystalStructure::HCP>(
+        ags, makeHCP(this->c_over_a_ratio));
   }  // end of getInteractionMatrixStructure
 
   const SlipSystemsDescription::InteractionMatrixStructure::SSIContainer&

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iterator>
+#include <locale>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -2217,13 +2218,12 @@ namespace mfront {
       }
     }
     BehaviourDescription::ConstantMaterialProperty mp;
-    try {
-      mp.value = std::stold(t.value);
-    } catch (std::exception& e) {
-      this->throwRuntimeError(m, "can't convert token '" + t.value +
-                                     "' to long double "
-                                     "(" +
-                                     std::string(e.what()) + ")");
+    std::istringstream converter(t.value);
+    converter.imbue(std::locale::classic());
+    converter >> mp.value;
+    if (!converter || (!converter.eof())) {
+      this->throwRuntimeError(
+          m, "can't convert token '" + t.value + "' to double");
     }
     return mp;
   }
@@ -4286,24 +4286,42 @@ namespace mfront {
 
   void BehaviourDSLCommon::treatCrystalStructure() {
     using tfel::material::CrystalStructure;
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatCrystalStructure",
-                            "expected crystal structure");
-    if (this->current->value == "Cubic") {
-      this->mb.setCrystalStructure(CrystalStructure::Cubic);
-    } else if (this->current->value == "FCC") {
-      this->mb.setCrystalStructure(CrystalStructure::FCC);
-    } else if (this->current->value == "BCC") {
-      this->mb.setCrystalStructure(CrystalStructure::BCC);
-    } else if (this->current->value == "HCP") {
-      this->mb.setCrystalStructure(CrystalStructure::HCP);
-    } else {
-      this->throwRuntimeError("BehaviourDSLCommon::treatCrystalStructure",
-                              "unsupported crystal structure "
-                              "'" +
-                                  this->current->value + "'");
-    }
+    const auto m = std::string{"BehaviourDSLCommon::treatCrystalStructure"};
+    this->checkNotEndOfFile(m, "expected crystal structure");
+    const auto s = this->current->value;
     ++(this->current);
-    this->readSpecifiedToken("BehaviourDSLCommon::treatCrystalStructure", ";");
+    this->checkNotEndOfFile(m);
+    if (s == "Cubic") {
+      this->mb.setCrystalStructure(CrystalStructure::Cubic);
+    } else if (s == "FCC") {
+      this->mb.setCrystalStructure(CrystalStructure::FCC);
+    } else if (s == "BCC") {
+      this->mb.setCrystalStructure(CrystalStructure::BCC);
+    } else if (s == "HCP") {
+      const auto opts = [this] {
+        if (this->current->value == "{") {
+          return read<tfel::utilities::DataMap>(this->current,
+                                                this->tokens.end());
+        }
+        return tfel::utilities::DataMap{};
+      }();
+      tfel::utilities::check_keys(opts, {"c_over_a_ratio"});
+      if (opts.empty()) {
+        this->mb.setCrystalStructure(CrystalStructure::HCP);
+      } else {
+        const auto& r = opts.at("c_over_a_ratio");
+        if (!tfel::utilities::is_convertible<double>(r)) {
+          this->throwRuntimeError(m,
+                                  "invalid type for the "
+                                  "'c_over_a_ratio' option");
+        }
+        this->mb.setCrystalStructure(CrystalStructure::HCP,
+                                     tfel::utilities::convert<double>(r));
+      }
+    } else {
+      this->throwRuntimeError(m, "unsupported crystal structure '" + s + "'");
+    }
+    this->readSpecifiedToken(m, ";");
   }  // end of treatCrystalStructure
 
   void BehaviourDSLCommon::treatInteractionMatrix() {

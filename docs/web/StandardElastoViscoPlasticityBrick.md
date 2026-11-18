@@ -36,6 +36,7 @@ bibliography: bibliography.bib
 \newcommand{\tepsilonvis}{\underline{\epsilon}^{\mathrm{vis}}}
 \newcommand{\tdepsilonvis}{\underline{\dot{\epsilon}}^{\mathrm{vis}}}
 \newcommand{\tdepsilonp}{\underline{\dot{\epsilon}}^{\mathrm{p}}}
+\newcommand{\tdepsilonvp}{\underline{\dot{\epsilon}}^{\mathrm{vp}}}
 
 \newcommand{\talpha}{\underline{\alpha}}
 \newcommand{\tdalpha}{\underline{\dot{\alpha}}}
@@ -187,10 +188,73 @@ The DDIF2 stress potential is fully described
 
 ## Generalities
 
+### General form of an inelastic flow {#sec:StandardElastoViscoPlasticity:inelastic_flow_general_form}
+
+All the inelastic flows described on this page have the same form. The
+plastic strain rate \(\tdepsilonp\)
+of a plastic flow, or the viscoplastic strain rate \(\tdepsilonvp\) of a
+viscoplastic flow, is given by:
+
+\[
+\tdepsilonp=\dot{p}\,\tenseur{n}
+\quad\text{or}\quad
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
+\]
+
+where:
+
+- \(p\) is the equivalent plastic strain (or the equivalent viscoplastic
+  strain). Its rate \(\dot{p}\) gives the intensity of the flow.
+- \(\tenseur{n}\) is the flow direction.
+- \(g\) is the plastic potential (or the viscoplastic potential).
+
+The elastic domain is described by the yield function \(f\):
+
+\[
+f\paren{\tsigma,p}= \phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
+\]
+
+where:
+
+- \(\phi\) is the stress criterion, given by the `criterion` option.
+- \(\tenseur{X}_{i}\) are the back stresses, given by the kinematic
+  hardening rules (`kinematic_hardening` option, optional).
+- \(R_{i}\) are the contributions to the radius of the yield surface,
+  given by the isotropic hardening rules (`isotropic_hardening` option,
+  optional for the viscoplastic flows).
+  The sum \(\sum_{i}R_{i}\paren{p}\) indicates that this radius may be
+  defined by combining various predefined forms of isotropic hardening
+  rules (Voce, Linear, etc.) defined hereafter.
+
+The potential \(g\) is built on a second stress criterion \(\phi_{g}\),
+given by the `flow_criterion` option:
+
+\[
+g\paren{\tsigma}= \phi_{g}\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}
+\]
+
+If the `flow_criterion` option is not used, \(\phi_{g}\) is equal to
+\(\phi\) and the flow is associated.
+
+The inelastic flows only differ by the way the rate \(\dot{p}\) is
+determined:
+
+- for the `Plastic` flow, \(\dot{p}\) is the plastic multiplier,
+  determined by the consistency conditions.
+- for the viscoplastic flows, \(\dot{p}\) is an explicit function of the
+  yield function \(f\), and possibly of \(p\).
+
+In the following, \(\left<x\right>\) denotes the positive part of
+\(x\).
+
 ### About the equivalent strain
 
 Most inelastic flows introduce an equivalent strain as a measure of the
-material's hardening.
+material's hardening. This equivalent strain is the variable \(p\)
+introduced in Section
+@sec:StandardElastoViscoPlasticity:inelastic_flow_general_form.
 
 This state variable is named `p`+`id` where `id` is an identifier
 associated with the inelastic flow. `id` is empty if only one inelastic
@@ -214,37 +278,40 @@ how to change the external name of the equivalent strain.
 
 The plastic flow is defined by:
 
-- a yield surface \(f\)
+- a yield function \(f\)
 - a plastic potential \(g\)
+
+with the notations of Section
+@sec:StandardElastoViscoPlasticity:inelastic_flow_general_form.
 
 The plastic strain rate satisfies:
 \[
-\tdepsilonp=\dot{\lambda}\,\deriv{g}{\tsigma}
+\tdepsilonp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
 \]
 
-The plastic multiplier satisfies the Kuhn-Tucker relation:
+The rate \(\dot{p}\) of the equivalent plastic strain is the plastic
+multiplier. It satisfies the Kuhn-Tucker relations:
 \[
 \left\{
 \begin{aligned}
-\dot{\lambda}\,f\paren{\tsigma,p}&=0\\
-\dot{\lambda}&\geq 0
+\dot{p}\,f\paren{\tsigma,p}&=0\\
+\dot{p}&\geq 0\\
+f\paren{\tsigma,p}&\leq 0
 \end{aligned}
 \right.
 \]
 
-The flow is associated if \(f\) is equal to \(g\). In practice \(f\) is
-defined by a stress criterion \(\phi\), a set of kinematic hardening
-rules, and an isotropic hardening rule, as follows:
+The yield function \(f\) is defined by a stress criterion \(\phi\), a
+set of kinematic hardening rules (optional), and at least one isotropic
+hardening rule, as follows:
 
 \[
 f\paren{\tsigma,p}= \phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
 \]
 
-where \(p\) is the equivalent plastic strain. Here we have decomposed
-the limit of the elastic domain as a sum, denoted
-\(\sum_{i}R_{i}\paren{p}\), to indicate that one may define it by
-combining various predefined forms of isotropic hardening rules (Voce,
-Linear, etc.) defined hereafter.
+The flow is associated if the `flow_criterion` option is not used.
 
 #### Maximum equivalent stress in the `Plastic` flow
 
@@ -283,56 +350,103 @@ of iterations allowed for the Newton algorithm. A typical value for
 
 ### The `Norton` inelastic flow
 
-The plastic flow is defined by:
-
-- a function \(f\paren{\tsigma}\) giving the flow intensity:
-  \[
-  f\paren{\tsigma}=A\,\left<\dfrac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}}{K}\right>^{n}
-  \]
-- a stress criterion \(\phi\)
-- a viscoplastic potential \(g\)
-- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
-- one isotropic hardening rule (optional), denoted \(R_{i}\)
-
-### The `HyperbolicSine` inelastic flow
-
-The viscoplastic flow is defined by:
-
-- a function \(f\paren{\tsigma}\) giving the flow intensity given by:
-  \[
-  f\paren{\tsigma}=A\,\sinh\paren{\dfrac{\left<\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\right>}{K}}^{n}
-  \]
-- a stress criterion \(\phi\)
-- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
-- one isotropic hardening rule (optional), denoted \(R_{i}\)
-
-#### Newton steps rejection
-
-The exponential nature of the hyperbolic sinus function may lead to
-divergence of the Newton method. To avoid this, one may specify a
-relative threshold denoted \(K_{sf}\): if the stress estimate is greater
-than \(K_{sf}\,K\), the step is rejected.
-
-### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow 
-
-The equivalent viscoplastic strain rate \(\dot{p}\) is defined as:
-
+The viscoplastic strain rate satisfies:
 \[
-\dfrac{1}{\dot{p}}=\sum_{i=1}^{N}\dfrac{1}{\dot{p}_{i}}
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
 \]
 
-where \(\dot{p}_{i}\) has an expression similar to the Norton-Hoff
-viscoplastic flow:
-
+The rate \(\dot{p}\) of the equivalent viscoplastic strain is given by
+the Norton law:
 \[
-\dot{p}_{i}=A_{i}\,\paren{\dfrac{\left<\phi\paren{\tsigma-\sum_{j}\tenseur{X}_{j}}-\sum_{j}R_{j}\paren{p}\right>}{K_{i}}}^{n_{i}}
+\dot{p}=A\,\left<\dfrac{f\paren{\tsigma,p}}{K}\right>^{n}
+\quad\text{with}\quad
+f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
 \]
 
 in which appear:
 
 - a stress criterion \(\phi\)
-- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
-- one isotropic hardening rule (optional), denoted \(R_{i}\)
+- a viscoplastic potential \(g\)
+- one or more kinematic hardening rules (optional), denoted \(\tenseur{X}_{i}\)
+- one or more isotropic hardening rules (optional), denoted \(R_{i}\)
+- the coefficients \(A\), \(K\) and \(n\), given by the options `A`, `K`
+  and `n`. `A` is optional and equal to \(1\) by default.
+
+#### Newton steps rejection
+
+One may specify a relative threshold denoted \(K_{sf}\), given by the
+`Ksf` option: if the estimate of \(f\) is greater than \(K_{sf}\,K\),
+the Newton step is rejected.
+
+### The `HyperbolicSine` inelastic flow
+
+The viscoplastic strain rate satisfies:
+\[
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
+\]
+
+The rate \(\dot{p}\) of the equivalent viscoplastic strain is given by:
+\[
+\dot{p}=A\,\sinh\paren{\dfrac{\left<f\paren{\tsigma,p}\right>}{K}}^{n}
+\quad\text{with}\quad
+f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
+\]
+
+in which appear:
+
+- a stress criterion \(\phi\)
+- a viscoplastic potential \(g\)
+- one or more kinematic hardening rules (optional), denoted \(\tenseur{X}_{i}\)
+- one or more isotropic hardening rules (optional), denoted \(R_{i}\)
+- the coefficients \(A\), \(K\) and \(n\), given by the options `A`, `K`
+  and `n`. `A` and `n` are optional and equal to \(1\) by default.
+
+#### Newton steps rejection
+
+The exponential nature of the hyperbolic sinus function may lead to
+divergence of the Newton method. To avoid this, one may specify a
+relative threshold denoted \(K_{sf}\), given by the `Ksf` option: if the
+estimate of \(f\) is greater than \(K_{sf}\,K\), the Newton step is
+rejected.
+
+### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow 
+
+The viscoplastic strain rate satisfies:
+\[
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
+\]
+
+The rate \(\dot{p}\) of the equivalent viscoplastic strain is defined
+as:
+
+\[
+\dfrac{1}{\dot{p}}=\sum_{i=1}^{N}\dfrac{1}{\dot{p}_{i}}
+\]
+
+where \(\dot{p}_{i}\) has an expression similar to the Norton
+viscoplastic flow:
+
+\[
+\dot{p}_{i}=A_{i}\,\left<\dfrac{f\paren{\tsigma,p}}{K_{i}}\right>^{n_{i}}
+\quad\text{with}\quad
+f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{j}\tenseur{X}_{j}}-\sum_{j}R_{j}\paren{p}
+\]
+
+in which appear:
+
+- a stress criterion \(\phi\)
+- a viscoplastic potential \(g\)
+- one or more kinematic hardening rules (optional), denoted \(\tenseur{X}_{j}\)
+- one or more isotropic hardening rules (optional), denoted \(R_{j}\)
+- the coefficients \(A_{i}\), \(K_{i}\) and \(n_{i}\), given by the
+  options `A`, `K` and `n`, which are arrays of the same size \(N\).
+  `A` is optional and its values are equal to \(1\) by default.
 
 #### Example
 
@@ -350,14 +464,22 @@ in which appear:
 
 ### The `UserDefinedViscoplasticity` inelastic flow
 
-The `UserDefinedViscoplasticity` inelastic flow allows the user to
-specify the viscoplastic strain rate `vp` as a function of `f` and `p`
-where:
+The viscoplastic strain rate satisfies:
+\[
+\tdepsilonvp=\dot{p}\,\tenseur{n}
+\quad\text{with}\quad
+\tenseur{n}=\deriv{g}{\tsigma}
+\]
 
-- `f` is the positive part of the
-  \(\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\)
+The `UserDefinedViscoplasticity` inelastic flow allows the user to
+specify the rate \(\dot{p}\) of the equivalent viscoplastic strain,
+named `vp`, as a function of `f` and `p` where:
+
+- `f` is the positive part \(\left<f\paren{\tsigma,p}\right>\) of the
+  yield function
+  \(f\paren{\tsigma,p}=\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\)
   where \(\phi\) is the stress criterion.
-- `p` is the equivalent viscoplastic strain.
+- `p` is the equivalent viscoplastic strain \(p\).
 
 This function shall be given by a string option named `vp`. This
 function must depend on `f`. Dependence on `p` is optional.
@@ -377,8 +499,8 @@ named `A` has been given to the flow:
 If required, the derivatives of `vp` with respect to `f` and `p` can be
 provided through the options `dvp_df` and `dvp_dp`. The derivatives
 `dvp_df` and `dvp_dp` can depend on two additional variables, `vp` and
-`seps`, which denotes the viscoplastic strain rate and a stress
-threshold.
+`seps`, which denotes the equivalent viscoplastic strain rate and a
+stress threshold.
 
 If those derivatives are not provided, automatic differentiation will be
 used. The user shall be warned that the automatic differentiation

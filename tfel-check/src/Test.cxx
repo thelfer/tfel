@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/Curve.hxx"
@@ -160,8 +161,10 @@ namespace tfel::check {
         }
         const auto eps = 1.e-10 * xmax;
         for (size_type i = 0; i != x1.size(); ++i) {
-          // written this way so that a NaN fails
-          raise_if(!(std::abs(x1[i] - x2[i]) <= eps),
+          // the NaN is tested explicitly, as -ffast-math assumes that the
+          // comparisons never involve one
+          const auto dx = std::abs(x1[i] - x2[i]);
+          raise_if(tfel::math::ieee754::isnan(dx) || (dx > eps),
                    "Test::applyInterpolation: the abscissas of files '" +
                        this->f1 + "' and '" + this->f2 + "' differ (" +
                        tfel::utilities::convert(x1[i]) + " and " +
@@ -190,7 +193,9 @@ namespace tfel::check {
       // abscissas at which the curve is evaluated
       auto checkNaN = [](const std::string& f, const std::vector<double>& v) {
         raise_if(std::any_of(v.begin(), v.end(),
-                             [](const double y) { return std::isnan(y); }),
+                             [](const double y) {
+                               return tfel::math::ieee754::isnan(y);
+                             }),
                  "Test::applyInterpolation: NaN value in file '" + f + "'");
       };
       checkNaN(this->f1, this->c1->getValues());

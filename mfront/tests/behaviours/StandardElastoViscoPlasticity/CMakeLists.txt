@@ -231,6 +231,18 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
         RousselierTanguyBesson2002.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        GeneralisedGursonTvergaardNeedlemanMises.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        GeneralisedGursonTvergaardNeedlemanHosford.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        GeneralisedGursonTvergaardNeedlemanHill.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        GeneralisedRousselierTanguyBessonMises.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        GeneralisedRousselierTanguyBessonHosford.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+        GeneralisedRousselierTanguyBessonHill.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
         MichelAndSuquet1992HollowSphereTest.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
         DDIF2StressPotentialTest.mfront)

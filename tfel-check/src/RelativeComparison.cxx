@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <optional>
 #include <limits>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/RelativeComparison.hxx"
 
@@ -45,13 +46,16 @@ namespace tfel::check {
                            abs(this->c2->getValues()[index])) +
                        eps);
       // a NaN is reported as the maximum error
-      if ((!std::isnan(maxRelativeError)) &&
-          (std::isnan(relativeError) || (maxRelativeError < relativeError))) {
+      if ((!tfel::math::ieee754::isnan(maxRelativeError)) &&
+          (tfel::math::ieee754::isnan(relativeError) ||
+           (maxRelativeError < relativeError))) {
         maxRelativeError = relativeError;
         errorLineNumber = index;
       }
-      // written this way so that a NaN fails
-      if (!(relativeError <= this->prec)) {
+      // the NaN is tested explicitly, as -ffast-math assumes that the
+      // comparisons never involve one
+      if (tfel::math::ieee754::isnan(relativeError) ||
+          (relativeError > this->prec)) {
         errorLinesCount++;
         s = false;
       }

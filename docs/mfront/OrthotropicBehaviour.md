@@ -11,7 +11,8 @@ currently supported:
   described in the MFront behaviour manual. With this convention, the
   results of various keywords depends on the modelling hypothesis. For
   example, this option allows a consistent definition of the elastic
-  material properties (see `@StiffnessTensor`, `@ElasticProperties`),
+  material properties (see `@ComputeStiffnessTensor`,
+  `@ElasticMaterialProperties`),
   thermal expansion coefficients (see `@ComputeThermalExpansion`) and
   the proper application of swelling (see `@AxialGrowth`, `Swelling`).
 - `Plate`: when modelling plates, an appropriate convention is the following:

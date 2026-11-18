@@ -229,6 +229,32 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT BehaviourDescription
   convertToBehaviourDescription(const ModelDescription&);
 
+  /*!
+   * \return the name of the file which can be used to override the default
+   * values of the parameters of a model.
+   * \param[in] md: model description
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getParametersFileName(
+      const ModelDescription&);
+
+  /*!
+   * \brief write the default constructor of the class holding the real
+   * parameters of a model.
+   *
+   * If the parameters can be initialized from a file (see the
+   * `allowsParametersInitializationFromFile` function), this constructor
+   * reads the file returned by the `getParametersFileName` function, if it
+   * exists, to override the default values of the parameters. The generated
+   * code requires the `<cerrno>`, `<string>`, `<vector>`, `<fstream>`,
+   * `<sstream>`, `<locale>` and `TFEL/Raise.hxx` headers.
+   *
+   * \param[out] os: output stream
+   * \param[in] md: model description
+   * \param[in] cn: name of the class holding the real parameters
+   */
+  MFRONT_VISIBILITY_EXPORT void writeRealParametersInitializerConstructor(
+      std::ostream&, const ModelDescription&, const std::string&);
+
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MODELDESCRIPTION_HXX */

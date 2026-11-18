@@ -59,6 +59,9 @@ namespace mfront {
         {"--external-state-variables",
          "show model external state variables (same as --inputs)"},
         {"--parameters", "show the list of parameters"},
+        {"--parameters-file",
+         "display the name of a text file which can be used to modify the "
+         "default value of the parameters"},
         {"--list-dependencies", "list the MFront dependencies"}};
     for (const auto& q : sq) {
       this->registerCallBack(
@@ -171,6 +174,14 @@ namespace mfront {
                                                  const ModelDescription& md) {
              if (!areParametersTreatedAsStaticVariables(md)) {
                displayVariableDescriptionContainer(md.parameters);
+             }
+           }});
+    } else if (qn == "--parameters-file") {
+      this->queries.push_back(
+          {"--parameters-file",
+           [](const FileDescription&, const ModelDescription& md) {
+             if (!areParametersTreatedAsStaticVariables(md)) {
+               std::cout << mfront::getParametersFileName(md) << '\n';
              }
            }});
     } else {

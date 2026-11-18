@@ -121,7 +121,7 @@ named after the mode, which is a submodule in `Python`:
 >>> tfel.v5_2_0.PhysicalConstants.R
 8.31446
 >>> tfel.future.PhysicalConstants.R
-8.3144598
+8.31446261815324
 ~~~~
 
 `tfel.PhysicalConstants` gives the values of the current version,

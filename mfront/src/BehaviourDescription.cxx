@@ -1275,6 +1275,14 @@ namespace mfront {
     this->gs.emplace(s);
   }  // end of setCrystalStructure
 
+  void BehaviourDescription::setCrystalStructure(const CrystalStructure s,
+                                                 const long double r) {
+    tfel::raise_if(this->hasCrystalStructure(),
+                   "BehaviourDescription::setCrystalStructure: "
+                   "crystal structure already declared");
+    this->gs.emplace(s, r);
+  }  // end of setCrystalStructure
+
   bool BehaviourDescription::hasCrystalStructure() const {
     return this->gs.has_value();
   }  // end of hasCrystalStructure

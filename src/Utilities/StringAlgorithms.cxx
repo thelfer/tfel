@@ -12,7 +12,6 @@
  */
 
 #include <cerrno>
-#include <cmath>
 #include <cstdlib>
 #include <sstream>
 #include <algorithm>
@@ -155,7 +154,11 @@ namespace tfel::utilities {
     errno = 0;
     char* pe = nullptr;
     const auto r = std::strtod(s.c_str(), &pe);
-    const auto overflow = (errno == ERANGE) && (std::isinf(r));
+    // an overflow is distinguished from an underflow by the magnitude of the
+    // result. Testing if the result is infinite is not reliable when the
+    // compiler assumes that no infinite value exists, which is the case with
+    // -ffast-math
+    const auto overflow = (errno == ERANGE) && ((r > 1) || (r < -1));
     errno = errno_value;
     throw_if((pe != s.c_str() + s.size()) || overflow);
     return r;
@@ -177,7 +180,7 @@ namespace tfel::utilities {
     errno = 0;
     char* pe = nullptr;
     const auto r = std::strtold(s.c_str(), &pe);
-    const auto overflow = (errno == ERANGE) && (std::isinf(r));
+    const auto overflow = (errno == ERANGE) && ((r > 1) || (r < -1));
     errno = errno_value;
     throw_if((pe != s.c_str() + s.size()) || overflow);
     return r;

@@ -32,6 +32,10 @@ tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS_MARCH "march=native")
 if(enable-fast-math)
   tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS  "ffast-math")
 else(enable-fast-math)
+  # no effect with clang, whose default floating-point model is strict.
+  # icpx (IntelLLVM) enables by default a fast floating-point model, which
+  # also flushes the subnormal numbers to zero.
+  tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS  "fno-fast-math")
   tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS2 "ffast-math")
 endif(enable-fast-math)
 

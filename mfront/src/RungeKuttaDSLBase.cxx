@@ -236,9 +236,9 @@ namespace mfront {
         return "(real(1)/(this->dt)) * " + var;
       }
       if (addThisPtr) {
-        return "(this->" + var + ")/(this->dt)";
+        return "((this->" + var + ")/(this->dt))";
       }
-      return "(" + var + ")/(this->dt)";
+      return "((" + var + ")/(this->dt))";
     };
     for (const auto& v : d.getAuxiliaryStateVariables()) {
       if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
@@ -250,9 +250,9 @@ namespace mfront {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
       if (addThisPtr) {
-        return "(this->" + var + ")/(this->dt)";
+        return "((this->" + var + ")/(this->dt))";
       } else {
-        return "(" + var + ")/(this->dt)";
+        return "((" + var + ")/(this->dt))";
       }
     }
     if (this->mb.isExternalStateVariableIncrementName(h, var)) {
@@ -282,18 +282,18 @@ namespace mfront {
     if ((this->mb.isGradientName(var)) ||
         (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
-        return "this->" + var + "+this->d" + var;
+        return "(this->" + var + "+this->d" + var + ")";
       } else {
-        return var + "+d" + var;
+        return "(" + var + "+d" + var + ")";
       }
     }
     if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
       if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {
-          return "this->" + var + "+this->d" + var;
+          return "(this->" + var + "+this->d" + var + ")";
         } else {
-          return var + " + d" + var;
+          return "(" + var + "+d" + var + ")";
         }
       }
     }
@@ -301,9 +301,9 @@ namespace mfront {
       if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
           (var == "d" + v.name)) {
         if (addThisPtr) {
-          return "(this->" + var + ")/(this->dt)";
+          return "((this->" + var + ")/(this->dt))";
         } else {
-          return "(" + var + ")/(this->dt)";
+          return "((" + var + ")/(this->dt))";
         }
       }
     }
@@ -321,9 +321,9 @@ namespace mfront {
             h, var.substr(1));
       }
       if (addThisPtr) {
-        return "(this->" + var + ")/(this->dt)";
+        return "((this->" + var + ")/(this->dt))";
       } else {
-        return "(" + var + ")/(this->dt)";
+        return "((" + var + ")/(this->dt))";
       }
     }
     if (addThisPtr) {

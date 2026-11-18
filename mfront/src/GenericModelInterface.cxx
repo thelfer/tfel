@@ -227,9 +227,15 @@ namespace mfront {
        << " * \\date " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
+       << "#include <cerrno>\n"
+       << "#include <locale>\n"
+       << "#include <string>\n"
+       << "#include <vector>\n"
        << "#include <cstring>\n"
+       << "#include <fstream>\n"
        << "#include <sstream>\n"
        << "#include <iostream>\n"
+       << "#include \"TFEL/Raise.hxx\"\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include \"TFEL/Math/Array/View.hxx\"\n"
@@ -288,9 +294,9 @@ namespace mfront {
            << p.getAttribute<double>(VariableDescription::defaultValue)
            << "};\n";
       }
-      os << "private:\n"
-         << cn << "() = default;\n"
-         << "};\n\n";
+      os << "private:\n";
+      writeRealParametersInitializerConstructor(os, md, cn);
+      os << "};\n\n";
     }
     //
     os << "struct " << md.className << "{\n\n";
@@ -526,7 +532,9 @@ namespace mfront {
       os << "MFRONT_SHAREDOBJ int\n"
          << name << "_setParameter(const char *const n, const double v){\n";
       writeScalarStandardTypedefs(os, md);
-      os << "auto& parameters = mfront::gm::" << cn << "::get();\n";
+      // reading the parameters' file may fail
+      os << "try{\n"
+         << "auto& parameters = mfront::gm::" << cn << "::get();\n";
       auto first = true;
       for (const auto& p : md.parameters) {
         if (!isRealParameter(p)) {
@@ -540,6 +548,9 @@ namespace mfront {
         first = false;
       }
       os << "}\n"
+         << "} catch(...){\n"
+         << "return 0;\n"
+         << "}\n"
          << "return 0;\n"
          << "} // end of " << name << "_setParameter\n\n";
     }

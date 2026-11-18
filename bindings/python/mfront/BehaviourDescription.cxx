@@ -242,8 +242,15 @@ void declareBehaviourDescription(pybind11::module_& m) {
            pybind11::arg("n"), pybind11::arg("v"))
       .def("hasCrystalStructure", &BehaviourDescription::hasCrystalStructure)
       .def("getCrystalStructure", &BehaviourDescription::getCrystalStructure)
-      .def("setCrystalStructure", &BehaviourDescription::setCrystalStructure,
+      .def("setCrystalStructure",
+           pybind11::overload_cast<BehaviourDescription::CrystalStructure>(
+               &BehaviourDescription::setCrystalStructure),
            pybind11::arg("s"))
+      .def("setCrystalStructure",
+           pybind11::overload_cast<BehaviourDescription::CrystalStructure,
+                                   long double>(
+               &BehaviourDescription::setCrystalStructure),
+           pybind11::arg("s"), pybind11::arg("r"))
       .def("getAttributes", &BehaviourDescription::getAttributes)
       .def("isStrainMeasureDefined",
            &BehaviourDescription::isStrainMeasureDefined)

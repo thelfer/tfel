@@ -276,4 +276,45 @@ namespace abaqus {
     }
   }  // end of AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE
 
+  void AbaqusFiniteStrain::cancelRigidBodyRotationIncrement(
+      AbaqusReal* const STRESS,
+      const AbaqusReal* const DROT,
+      const AbaqusInt NTENS) {
+    // warning DROT is given in the fortran convention
+    // (R0 R3 R6
+    //  R1 R4 R7
+    //  R2 R5 R8)
+    // in plane stress, only the in-plane components are given (11, 22 and 12)
+    const bool ps = NTENS == 3;
+    const AbaqusReal p2 = ps ? AbaqusReal(0) : STRESS[2];
+    const AbaqusReal p3 = ps ? STRESS[2] : STRESS[3];
+    const AbaqusReal p4 = (NTENS == 6) ? STRESS[4] : AbaqusReal(0);
+    const AbaqusReal p5 = (NTENS == 6) ? STRESS[5] : AbaqusReal(0);
+    const AbaqusReal s[3][3] = {{STRESS[0], p3, p4},  //
+                                {p3, STRESS[1], p5},
+                                {p4, p5, p2}};
+    // component of tr(DROT) . s . DROT
+    auto c = [&s, DROT](const unsigned short i, const unsigned short j) {
+      auto v = AbaqusReal(0);
+      for (unsigned short k = 0; k != 3; ++k) {
+        for (unsigned short l = 0; l != 3; ++l) {
+          v += DROT[k + 3 * i] * s[k][l] * DROT[l + 3 * j];
+        }
+      }
+      return v;
+    };
+    STRESS[0] = c(0, 0);
+    STRESS[1] = c(1, 1);
+    if (ps) {
+      STRESS[2] = c(0, 1);
+      return;
+    }
+    STRESS[2] = c(2, 2);
+    STRESS[3] = c(0, 1);
+    if (NTENS == 6) {
+      STRESS[4] = c(0, 2);
+      STRESS[5] = c(1, 2);
+    }
+  }  // end of AbaqusFiniteStrain::cancelRigidBodyRotationIncrement
+
 }  // end of namespace abaqus

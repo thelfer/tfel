@@ -16,6 +16,7 @@
 #include <optional>
 #include <vector>
 #include <cstdlib>
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/AbsoluteComparison.hxx"
 
@@ -40,13 +41,16 @@ namespace tfel::check {
       absoluteError =
           std::abs(this->c1->getValues()[idx] - this->c2->getValues()[idx]);
       // a NaN is reported as the maximum error
-      if ((!std::isnan(maxAbsoluteError)) &&
-          (std::isnan(absoluteError) || (maxAbsoluteError < absoluteError))) {
+      if ((!tfel::math::ieee754::isnan(maxAbsoluteError)) &&
+          (tfel::math::ieee754::isnan(absoluteError) ||
+           (maxAbsoluteError < absoluteError))) {
         maxAbsoluteError = absoluteError;
         errorLineNumber = idx;
       }
-      // written this way so that a NaN fails
-      if (!(absoluteError <= this->prec)) {
+      // the NaN is tested explicitly, as -ffast-math assumes that the
+      // comparisons never involve one
+      if (tfel::math::ieee754::isnan(absoluteError) ||
+          (absoluteError > this->prec)) {
         s = false;
         errorLinesCount++;
       }
