@@ -1261,6 +1261,21 @@ values.
 
 For more details, see <https://github.com/thelfer/tfel/issues/1451>.
 
+## Issue 1440: [tfel-material] HCP slip systems: the c/a ratio is fixed to the ideal value
+
+The c/a ratio of the `HCP` crystal structure can now be given through
+the `c_over_a_ratio` option of the `@CrystalStructure` keyword:
+
+~~~~{.cpp}
+@CrystalStructure HCP{c_over_a_ratio : 1.593};
+~~~~
+
+The default value is unchanged: it is the one of the ideal structure,
+\(\sqrt{8/3}\). The ratio is an argument of a new constructor of the
+`tfel::material::SlipSystemsDescription` and `numodis::HCP` classes.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1440>.
+
 ## Issue 431: Extend the GursonTvergaardNeedleman model to account for other equivalent stresses
 
 The `GeneralisedGursonTvergaardNeedleman` stress criterion of the
