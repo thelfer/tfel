@@ -1,9 +1,9 @@
 /*!
- * \file   MFront/GenericParallel/MaterialProperty/BackendFactory.hxx
- *
- * \brief This file declares the `BackendFactory` class
+ * \file   mfront/include/MFront/GenericParallel/BackendFactory.hxx
+ * \brief  This file declares the factory of the backends of the
+ * `generic-parallel` interfaces
  * \author Thomas Helfer
- * \date 15/04/2026
+ * \date   15/04/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_BACKENDFACTORY_HXX
-#define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_BACKENDFACTORY_HXX
+#ifndef LIB_MFRONT_GENERICPARALLEL_BACKENDFACTORY_HXX
+#define LIB_MFRONT_GENERICPARALLEL_BACKENDFACTORY_HXX
 
 #include <map>
 #include <string>
@@ -23,14 +23,12 @@
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
 
-namespace mfront::generic_parallel::material_property {
+namespace mfront::generic_parallel {
 
   // forward declaration
   struct AbstractBackend;
 
-  /*!
-   * \brief an abstract factory for backends
-   */
+  //! \brief abstract factory for backends
   struct MFRONT_VISIBILITY_EXPORT BackendFactory {
     //! \brief a simple alias
     using DataMap = tfel::utilities::DataMap;
@@ -40,17 +38,15 @@ namespace mfront::generic_parallel::material_property {
     //! \return the uniq instance of this class
     static BackendFactory& get() noexcept;
     /*!
-     * \brief add a new generator
-     *
-     * \param[in] n: name
+     * \brief register a backend
+     * \param[in] n: name of the backend
      * \param[in] g: generator
      */
     void add(std::string_view, Generator);
     /*!
-     * \brief add a new generator
-     *
-     * \param[in] n: name
-     * \param[in] g: generator
+     * \return a new backend
+     * \param[in] n: name of the backend
+     * \param[in] opts: options passed to the backend
      */
     std::unique_ptr<AbstractBackend> generate(std::string_view,
                                               const DataMap&) const;
@@ -69,6 +65,6 @@ namespace mfront::generic_parallel::material_property {
     std::map<std::string, Generator, std::less<>> generators;
   };
 
-}  // end of namespace mfront::generic_parallel::material_property
+}  // end of namespace mfront::generic_parallel
 
-#endif /* LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_BACKENDFACTORY_HXX */
+#endif /* LIB_MFRONT_GENERICPARALLEL_BACKENDFACTORY_HXX */
