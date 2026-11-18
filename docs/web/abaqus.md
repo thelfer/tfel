@@ -430,6 +430,14 @@ keyword):
 Those two strategies use lagrangian tensors, which automatically
 ensures the objectivity of the behaviour.
 
+`Abaqus/Standard` rotates the stress at the beginning of the increment
+by the increment of rigid body rotation (`DROT`) before calling the
+`UMAT` subroutine. The interface cancels this rotation before computing
+the lagrangian stress at the beginning of the time step. The same is
+done for finite strain behaviours, which expect the Cauchy stress
+associated with the deformation gradient at the beginning of the time
+step.
+
 Each of these two strategies defines an energetic conjugate pair of
 strain or stress tensors:
 

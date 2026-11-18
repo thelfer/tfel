@@ -439,12 +439,17 @@ namespace mfront {
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       out << "#include\"MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx\"\n";
     }
+    if (mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n";
+    }
     if (AbaqusInterfaceBase::hasFiniteStrainStrategy(iname, mb)) {
       const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(iname, mb);
       if (fs == "FiniteRotationSmallStrain") {
         out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n\n";
       } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
-        out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
+        out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n"
+            << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
       }
     }
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
@@ -861,6 +866,12 @@ namespace mfront {
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
+    // Abaqus/Standard has already rotated the Cauchy stress by DROT: this
+    // rotation is cancelled, as the behaviour expects the stress at the
+    // beginning of the time step, associated with the deformation gradient
+    // DFGRD0
+    out << "abaqus::AbaqusFiniteStrain::cancelRigidBodyRotationIncrement("
+        << "STRESS,DROT,*NTENS);\n";
     out << name << "_base" << this->getFunctionNameForHypothesis("", h)
         << "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
         << "STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
@@ -1050,6 +1061,9 @@ namespace mfront {
         << ps << ");\n"
         << "AbaqusFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1,*NTENS,"
         << ps << ");\n"
+        << "// Abaqus/Standard has already rotated the stress by DROT\n"
+        << "AbaqusFiniteStrain::cancelRigidBodyRotationIncrement("
+        << "STRESS,DROT,*NTENS);\n"
         << "AbaqusFiniteStrain::"
            "computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0,*"
            "NTENS,"
@@ -1151,7 +1165,10 @@ namespace mfront {
     for (unsigned short i = 0; i != n; ++i) {
       out << "deto[" << i << "]-=eto[" << i << "];\n";
     }
-    out << "lsh0.convertFromCauchyStress(STRESS);\n";
+    out << "// Abaqus/Standard has already rotated the stress by DROT\n"
+        << "AbaqusFiniteStrain::cancelRigidBodyRotationIncrement("
+        << "STRESS,DROT,*NTENS);\n"
+        << "lsh0.convertFromCauchyStress(STRESS);\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";
     }

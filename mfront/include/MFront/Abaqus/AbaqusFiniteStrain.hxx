@@ -83,6 +83,20 @@ namespace abaqus {
         const bool,
         const AbaqusReal);
     /*!
+     * \brief cancel the increment of rigid body rotation that
+     * `Abaqus/Standard` applies to the Cauchy stress before calling the
+     * `UMAT` subroutine. On output, the stress is the one known at the
+     * beginning of the increment.
+     * \param[in,out] STRESS: Cauchy stress expressed using umat conventions
+     * \param[in] DROT: increment of rigid body rotation expressed as a
+     * fortran matrix
+     * \param[in] NTENS: number of components of the stress tensor (3 in
+     * plane stress)
+     */
+    static void cancelRigidBodyRotationIncrement(AbaqusReal* const,
+                                                 const AbaqusReal* const,
+                                                 const AbaqusInt);
+    /*!
      * \brief convert the tangent operator to the abaqus one
      * \param[out] D:     abaqus tangent operator
      * \param[in]  CSE:   tangent operator
