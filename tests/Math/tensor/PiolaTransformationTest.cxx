@@ -39,6 +39,7 @@ struct PiolaTransformationTest final : public tfel::tests::TestCase {
     this->test<2u, false>();
     this->test<3u, true>();
     this->test<3u, false>();
+    this->testOutOfPlaneStretchConvention();
     return this->result;
   }  // end of execute
 
@@ -96,6 +97,11 @@ struct PiolaTransformationTest final : public tfel::tests::TestCase {
     using heatfluxdensity =
         std::conditional_t<use_qt, qt<unit::HeatFluxDensity, double>, double>;
     const auto [F, Fm] = [] {
+      // In space dimensions one and two, the deformation gradient is a block
+      // diagonal matrix: the out of plane stretch, given by the third component
+      // of the deformation gradient, is taken into account and the third
+      // component of the vectors is null. In space dimension one, only the
+      // diagonal components of the deformation gradient are described.
       if constexpr (N == 1u) {
         return std::pair{tensor<1u, real>{real(1.1), real(0.9), real(1.2)},
                          Matrix{{{1.1, 0, 0}, {0, 0.9, 0}, {0, 0, 1.2}}}};
@@ -148,6 +154,68 @@ struct PiolaTransformationTest final : public tfel::tests::TestCase {
     this->template compare<N>(computeInversePiolaTransform(Q, F), vr);
     this->template compare<N>(computeInverseNansonTransform(n, F), vr);
   }  // end of test
+  /*!
+   * \brief In space dimensions one and two, the out of plane stretch, given by
+   * the third component of the deformation gradient, is taken into account: the
+   * result is the in plane block of the result obtained in the three
+   * dimensional case. This function checks that this convention is honoured.
+   */
+  void testOutOfPlaneStretchConvention() {
+    using namespace tfel::math;
+    constexpr auto eps = 1e-13;
+    // block diagonal deformation gradient: the out of plane direction is not
+    // coupled with the in plane one
+    const auto F3 = tensor<3u, double>{1.1, 0.9, 1.2, 0.15, -0.08, 0, 0, 0, 0};
+    const auto F2 = tensor<2u, double>{1.1, 0.9, 1.2, 0.15, -0.08};
+    // in space dimension one, only the diagonal components of the deformation
+    // gradient are described: the reference solution is the three dimensional
+    // result obtained with a diagonal deformation gradient
+    const auto F3d = tensor<3u, double>{1.1, 0.9, 1.2, 0, 0, 0, 0, 0, 0};
+    const auto F1 = tensor<1u, double>{1.1, 0.9, 1.2};
+    // the third component of the vectors of the current configuration is null
+    const auto q3 = tvector<3u, double>{2.5, -1.5, 0};
+    const auto q2 = tvector<2u, double>{2.5, -1.5};
+    const auto q1 = tvector<1u, double>{2.5};
+    const auto as_vector = [](const auto& v) {
+      return Vector{tfel::math::base_type_cast(v[0]),
+                    tfel::math::base_type_cast(v[1]),
+                    tfel::math::base_type_cast(v[2])};
+    };
+    const auto Q3 = computePiolaTransform(q3, F3);
+    this->compare<2u>(computePiolaTransform(q2, F2), as_vector(Q3));
+    this->compare<1u>(computePiolaTransform(q1, F1),
+                      as_vector(computePiolaTransform(q3, F3d)));
+    const auto n3 = computeNansonTransform(q3, F3);
+    this->compare<2u>(computeNansonTransform(q2, F2), as_vector(n3));
+    this->compare<1u>(computeNansonTransform(q1, F1),
+                      as_vector(computeNansonTransform(q3, F3d)));
+    // the out of plane component of the three dimensional results is null, so
+    // that the transformations are consistent with the convention
+    TFEL_TESTS_ASSERT(std::abs(Q3[2]) < eps);
+    TFEL_TESTS_ASSERT(std::abs(n3[2]) < eps);
+    // Piola's transformation of the identity matrix
+    const auto P3 =
+        computePiolaTransformOfIdentityMatrixInReferenceConfiguration(F3);
+    const auto P2 =
+        computePiolaTransformOfIdentityMatrixInReferenceConfiguration(F2);
+    const auto P1 =
+        computePiolaTransformOfIdentityMatrixInReferenceConfiguration(F1);
+    for (unsigned short i = 0; i != 2u; ++i) {
+      for (unsigned short j = 0; j != 2u; ++j) {
+        TFEL_TESTS_ASSERT(std::abs(P2(i, j) - P3(i, j)) < eps);
+      }
+    }
+    TFEL_TESTS_ASSERT(
+        std::abs(P1(0, 0) -
+                 computePiolaTransformOfIdentityMatrixInReferenceConfiguration(
+                     F3d)(0, 0)) < eps);
+    // in space dimension one, the result is F22.F33/F11
+    TFEL_TESTS_ASSERT(std::abs(P1(0, 0) - 0.9 * 1.2 / 1.1) < eps);
+    // the missing out of plane component of the three dimensional result is
+    // det(F)/F33^2 where det(F) is the in plane determinant
+    TFEL_TESTS_ASSERT(std::abs(P3(2, 2) - (1.1 * 0.9 - 0.15 * -0.08) / 1.2) <
+                      eps);
+  }  // end of testOutOfPlaneStretchConvention
 };
 
 TFEL_TESTS_GENERATE_PROXY(PiolaTransformationTest, "PiolaTransformationTest");

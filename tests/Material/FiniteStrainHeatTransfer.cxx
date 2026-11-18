@@ -110,6 +110,11 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
     using thermalconductivity_derivative =
         derivative_type<thermalconductivity, tfel::types::temperature<real>>;
     const auto k = std::array<double, 3>{3, 5, 2};
+    // In space dimensions one and two, the out of plane stretch, given by the
+    // third component of the deformation gradient, is taken into account: the
+    // reference solution is the in plane block of the three dimensional
+    // solution. In space dimension one, only the diagonal components of the
+    // deformation gradient are described.
     const auto [F, Fm] = [] {
       if constexpr (N == 1u) {
         return std::pair{tensor<1u, real>{real(1.1), real(0.9), real(1.2)},
@@ -131,11 +136,11 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
     // isotropic case
     const auto Kr = computeReferenceSolution(Fm, {k[0], k[0], k[0]});
     this->template compare<N>(
-        computeThermalConductivyMatrixInReferenceConfiguration(
+        computeThermalConductivityMatrixInReferenceConfiguration(
             thermalconductivity{k[0]}, F),
         Kr);
     this->template compare<N>(
-        computeThermalConductivyMatrixInReferenceConfiguration(
+        computeThermalConductivityMatrixInReferenceConfiguration(
             thermalconductivity_derivative{k[0]}, F),
         Kr);
     // Piola transformation of the identity
@@ -146,22 +151,22 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
     const auto Kr2 = computeReferenceSolution(Fm, k);
     if constexpr (N == 2u) {
       this->template compare<N>(
-          computeThermalConductivyMatrixInReferenceConfiguration(
+          computeThermalConductivityMatrixInReferenceConfiguration(
               thermalconductivity{k[0]}, thermalconductivity{k[1]}, F),
           Kr2);
       this->template compare<N>(
-          computeThermalConductivyMatrixInReferenceConfiguration(
+          computeThermalConductivityMatrixInReferenceConfiguration(
               thermalconductivity_derivative{k[0]},
               thermalconductivity_derivative{k[1]}, F),
           Kr2);
     } else if constexpr (N == 3u) {
       this->template compare<N>(
-          computeThermalConductivyMatrixInReferenceConfiguration(
+          computeThermalConductivityMatrixInReferenceConfiguration(
               thermalconductivity{k[0]}, thermalconductivity{k[1]},
               thermalconductivity{k[2]}, F),
           Kr2);
       this->template compare<N>(
-          computeThermalConductivyMatrixInReferenceConfiguration(
+          computeThermalConductivityMatrixInReferenceConfiguration(
               thermalconductivity_derivative{k[0]},
               thermalconductivity_derivative{k[1]},
               thermalconductivity_derivative{k[2]}, F),
@@ -183,9 +188,9 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
                         tfel::types::temperature<real>>{3};
     constexpr auto id = tensor<3u, double>::Id();
     constexpr auto K =
-        computeThermalConductivyMatrixInReferenceConfiguration(k, id);
+        computeThermalConductivityMatrixInReferenceConfiguration(k, id);
     constexpr auto dK_dT =
-        computeThermalConductivyMatrixInReferenceConfiguration(dk_dT, id);
+        computeThermalConductivityMatrixInReferenceConfiguration(dk_dT, id);
     TFEL_TESTS_STATIC_ASSERT(my_abs(K(0, 0) - k) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(K(0, 1)) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(K(0, 2)) < eps);

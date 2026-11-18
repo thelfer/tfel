@@ -662,13 +662,33 @@ const auto N2 = computeInverseNansonTransform(n, F);
 Those functions are declared in the
 `TFEL/Math/Tensor/PiolaTransformation.hxx` header.
 
+### Space dimensions one and two
+
+In space dimensions one and two, those functions only describe the in
+plane behaviour:
+
+- the out of plane stretch, given by the third component of the
+  deformation gradient, is taken into account: the result is the in plane
+  block of the result obtained in the three dimensional case,
+- the out of plane component of the vector on which the transformation is
+  applied is taken equal to zero: the out of plane component of the
+  result is null.
+
+In space dimension one, only the diagonal components of the deformation
+gradient are described. The result of
+`computePiolaTransformOfIdentityMatrixInReferenceConfiguration` is
+therefore \(F_{22}\,F_{33}/F_{11}\). In space dimension two, the missing
+out of plane component of this matrix is
+\(\det\left(F\right)/F_{33}^{2}\), where \(\det\left(F\right)\) is the
+determinant of the two dimensional deformation gradient.
+
 # New `TFEL/Material` features
 
 ## Finite strain heat transfer
 
 For isotropic or orthotropic materials described by Fourier's law in the
 current configuration, the
-`computeThermalConductivyMatrixInReferenceConfiguration` functions are
+`computeThermalConductivityMatrixInReferenceConfiguration` functions are
 available to compute the thermal conductivity matrix in the reference
 configuration using Piola's transformation. Those functions can also be
 used to compute the derivative of the thermal conductivity matrix with
@@ -678,11 +698,34 @@ respect to the temperature.
 
 ~~~~{.cxx}
 const auto K =
-  computeThermalConductivyMatrixInReferenceConfiguration(k, F);
+  computeThermalConductivityMatrixInReferenceConfiguration(k, F);
 ~~~~
 
 where `k` is the thermal conductivity and `F` is the deformation
 gradient.
+
+### Space dimensions one and two
+
+In space dimension two, the orthotropic version of the function takes the
+two in plane thermal conductivities as arguments and returns the in plane
+block of the thermal conductivity matrix:
+
+~~~~{.cxx}
+const auto K =
+  computeThermalConductivityMatrixInReferenceConfiguration(k1, k2, F);
+~~~~
+
+The out of plane thermal conductivity \(k_3\) is not used: the out of
+plane component of the three dimensional result,
+\(\det\left(F\right)\,k_3/F_{33}\), is indeed of no use in a two
+dimensional computation. The out of plane stretch is nevertheless taken
+into account, as for Piola's transformation.
+
+In space dimension one, only the diagonal components of the deformation
+gradient are described and the isotropic version of the function is also
+suitable for orthotropic materials: only the thermal conductivity in the
+first direction is used and the result is
+\(F_{22}\,F_{33}\,k_1/F_{11}\).
 
 ## Homogenization
 

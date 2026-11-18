@@ -23,14 +23,10 @@ namespace tfel::material {
 
   template <tfel::math::ScalarConcept ThermalConductivityOrDerivativeType,
             tfel::math::NoUnitTensorConcept DeformationGradientType>
-  requires((tfel::math::checkUnitCompatibility<
-               tfel::math::unit::ThermalConductivity,
-               ThermalConductivityOrDerivativeType>()) ||
-           (tfel::math::checkUnitCompatibility<
-               tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
-               ThermalConductivityOrDerivativeType>()))  //
-      TFEL_HOST_DEVICE constexpr auto                    //
-      computeThermalConductivyMatrixInReferenceConfiguration(
+  requires(ThermalConductivityOrDerivativeConcept<
+           ThermalConductivityOrDerivativeType>)  //
+      TFEL_HOST_DEVICE constexpr auto             //
+      computeThermalConductivityMatrixInReferenceConfiguration(
           const ThermalConductivityOrDerivativeType k,
           const DeformationGradientType& F) noexcept {
     using namespace tfel::math;
@@ -54,19 +50,15 @@ namespace tfel::material {
           f * iC[3] * icste, f * iC[1],         f * iC[5] * icste,
           f * iC[4] * icste, f * iC[5] * icste, f * iC[2]};
     }
-  }  // end of computeThermalConductivyMatrix
+  }  // end of computeThermalConductivityMatrixInReferenceConfiguration
 
   template <tfel::math::ScalarConcept ThermalConductivityOrDerivativeType,
             tfel::math::NoUnitTensorConcept DeformationGradientType>
-  requires(((tfel::math::checkUnitCompatibility<
-                tfel::math::unit::ThermalConductivity,
-                ThermalConductivityOrDerivativeType>()) ||
-            (tfel::math::checkUnitCompatibility<
-                tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
-                ThermalConductivityOrDerivativeType>())) &&
+  requires(ThermalConductivityOrDerivativeConcept<
+               ThermalConductivityOrDerivativeType> &&
            (tfel::math::space_dimension<DeformationGradientType> == 2u))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                       //
-      computeThermalConductivyMatrixInReferenceConfiguration(
+      computeThermalConductivityMatrixInReferenceConfiguration(
           const ThermalConductivityOrDerivativeType k1,
           const ThermalConductivityOrDerivativeType k2,
           const DeformationGradientType& F) noexcept {
@@ -75,21 +67,18 @@ namespace tfel::material {
     const auto k00 = iJ * (F2_2 * F[3] * F[3] * k2 + F[1] * F[1] * F2_2 * k1);
     const auto k01 = iJ * (-F[0] * F2_2 * F[3] * k2 - F[1] * F2_2 * F[4] * k1);
     const auto k11 = iJ * (F[0] * F[0] * F2_2 * k2 + F2_2 * F[4] * F[4] * k1);
-    return tfel::math::tmatrix<2, 2, std::decay_t<decltype(k00)>>{k00, k01,  //
-                                                    k01, k11};
-  }  // end of computeThermalConductivyMatrixInReferenceConfiguration
+    using ResultType = tfel::math::tmatrix<2, 2, std::decay_t<decltype(k00)>>;
+    return ResultType{k00, k01,  //
+                      k01, k11};
+  }  // end of computeThermalConductivityMatrixInReferenceConfiguration
 
   template <tfel::math::ScalarConcept ThermalConductivityOrDerivativeType,
             tfel::math::NoUnitTensorConcept DeformationGradientType>
-  requires(((tfel::math::checkUnitCompatibility<
-                tfel::math::unit::ThermalConductivity,
-                ThermalConductivityOrDerivativeType>()) ||
-            (tfel::math::checkUnitCompatibility<
-                tfel::math::unit::StandardUnit<1, 1, -3, 0, -2, 0, 0>,
-                ThermalConductivityOrDerivativeType>())) &&
+  requires(ThermalConductivityOrDerivativeConcept<
+               ThermalConductivityOrDerivativeType> &&
            (tfel::math::space_dimension<DeformationGradientType> == 3u))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr auto                       //
-      computeThermalConductivyMatrixInReferenceConfiguration(
+      computeThermalConductivityMatrixInReferenceConfiguration(
           const ThermalConductivityOrDerivativeType k1,
           const ThermalConductivityOrDerivativeType k2,
           const ThermalConductivityOrDerivativeType k3,
@@ -157,10 +146,11 @@ namespace tfel::material {
               (F[4] * F[4] * F[8] * F[8] - 2 * F[1] * F[4] * F[6] * F[8] +
                F[1] * F[1] * F[6] * F[6]) *
                   k1);
-    return tfel::math::tmatrix<3, 3, std::decay_t<decltype(k00)>>{k00, k01, k02,  //
-                                                    k01, k11, k12,  //
-                                                    k02, k12, k22};
-  }  // end of computeThermalConductivyMatrixInReferenceConfiguration
+    using ResultType = tfel::math::tmatrix<3, 3, std::decay_t<decltype(k00)>>;
+    return ResultType{k00, k01, k02,  //
+                      k01, k11, k12,  //
+                      k02, k12, k22};
+  }  // end of computeThermalConductivityMatrixInReferenceConfiguration
 
 }  // end of namespace tfel::material
 

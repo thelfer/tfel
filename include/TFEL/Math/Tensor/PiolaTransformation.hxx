@@ -25,9 +25,27 @@
 namespace tfel::math {
 
   /*!
-   * \brief return the Piola-transform of the id-matrix
+   * \return the Piola transform of the identity matrix of the current
+   * configuration, i.e. the matrix \f$J\,F^{-1}\,F^{-T}\f$ of the reference
+   * configuration, where \f$J=\det\left(F\right)\f$, which is also
+   * \f$J\,C^{-1}\f$, \f$C^{-1}\f$ being the inverse of the right Cauchy-Green
+   * tensor
+   * \param[in] F: deformation gradient
+   *
    * \note This operation is useful when computing the thermal conductivity
    * matrix in the reference frame
+   *
+   * \note In space dimensions one and two, the returned matrix is the in plane
+   * block of the result obtained in the three dimensional case, where the out
+   * of plane stretch, given by the third component of the deformation
+   * gradient, is taken into account. This block cannot be deduced from the
+   * in plane components of the deformation gradient alone: in space dimension
+   * two, the missing out of plane component of the three dimensional result is
+   * \f$\det\left(F\right)/F_{33}^{2}\f$.
+   *
+   * \note In space dimension one, only the three diagonal components of the
+   * deformation gradient are available and the returned matrix is
+   * \f$F_{22}\,F_{33}/F_{11}\f$.
    */
   template <tfel::math::NoUnitTensorConcept DeformationGradientType>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr auto
@@ -40,6 +58,12 @@ namespace tfel::math {
    * \param[in] F: deformation gradient
    * \note This operation gives the heat flux in the reference configuration
    * from the heat flux in the current configuration.
+   *
+   * \note In space dimensions one and two, the given vector is a plane vector:
+   * its out of plane component is taken equal to zero and \f$J\f$ is the three
+   * dimensional determinant, so the out of plane stretch, given by the third
+   * component of the deformation gradient, is taken into account. The out of
+   * plane component of the result is then null.
    */
   template <unsigned short N,
             typename ValueType,
@@ -53,6 +77,12 @@ namespace tfel::math {
    * Piola transform is the given vector
    * \param[in] Q: vector in the reference configuration
    * \param[in] F: deformation gradient
+   *
+   * \note In space dimensions one and two, the given vector is a plane vector:
+   * its out of plane component is taken equal to zero and \f$J\f$ is the three
+   * dimensional determinant, so the out of plane stretch, given by the third
+   * component of the deformation gradient, is taken into account. The out of
+   * plane component of the result is then null.
    */
   template <unsigned short N,
             typename ValueType,
@@ -68,6 +98,12 @@ namespace tfel::math {
    * configuration.
    * \param[in] n: vector in the reference configuration
    * \param[in] F: deformation gradient
+   *
+   * \note In space dimensions one and two, the given vector is a plane vector:
+   * its out of plane component is taken equal to zero and \f$J\f$ is the three
+   * dimensional determinant, so the out of plane stretch, given by the third
+   * component of the deformation gradient, is taken into account. The out of
+   * plane component of the result is then null.
    */
   template <unsigned short N,
             typename ValueType,
@@ -81,6 +117,12 @@ namespace tfel::math {
    * whose transform by Nanson's formula is the given vector
    * \param[in] n: vector in the current configuration
    * \param[in] F: deformation gradient
+   *
+   * \note In space dimensions one and two, the given vector is a plane vector:
+   * its out of plane component is taken equal to zero and \f$J\f$ is the three
+   * dimensional determinant, so the out of plane stretch, given by the third
+   * component of the deformation gradient, is taken into account. The out of
+   * plane component of the result is then null.
    */
   template <unsigned short N,
             typename ValueType,
