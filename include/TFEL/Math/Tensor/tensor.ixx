@@ -133,6 +133,13 @@ namespace tfel::math {
   }  // end of tensor<N,T>::Id
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> tensor<N, T>::Id(
+      const typename tensor<N, T>::size_type i) noexcept {
+    using base = base_type<T>;
+    return (i < 3) ? base{1} : base{0};
+  }  // end of tensor<N,T>::Id
+
+  template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void tensor<N, T>::copy(const auto p) noexcept {
     tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(p, this->begin());
   }  // end of copy

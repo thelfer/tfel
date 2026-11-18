@@ -337,6 +337,15 @@ namespace tfel::math {
   }
 
   template <unsigned short N, unsigned short M, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> tmatrix<N, M, T>::Id(
+      const typename tmatrix<N, M, T>::size_type i,
+      const typename tmatrix<N, M, T>::size_type j) noexcept {
+    static_assert(N == M);
+    using base = base_type<T>;
+    return (i == j) ? base{1} : base{0};
+  }
+
+  template <unsigned short N, unsigned short M, typename T>
   template <typename InputIterator>
   TFEL_HOST_DEVICE constexpr void tmatrix<N, M, T>::copy(
       const InputIterator src) {

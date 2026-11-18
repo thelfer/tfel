@@ -268,6 +268,16 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> t2tot2<N, T>::transpose_derivative(
+      const typename t2tot2<N, T>::size_type i,
+      const typename t2tot2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    // the transposition exchanges the components 3 and 4, 5 and 6, 7 and 8
+    const auto k = (j < 3) ? j : ((j % 2 == 1) ? j + 1 : j - 1);
+    return (i == k) ? base{1} : base{0};
+  }  // end of transpose_derivative
+
+  template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::Id() noexcept {
     using base = base_type<T>;
     constexpr auto c0 = base{0};
@@ -295,6 +305,14 @@ namespace tfel::math {
                     c0, c0, c0, c0, c0, c0, c0, c1, c0,  //
                     c0, c0, c0, c0, c0, c0, c0, c0, c1};
     }
+  }  // end of Id
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> t2tot2<N, T>::Id(
+      const typename t2tot2<N, T>::size_type i,
+      const typename t2tot2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    return (i == j) ? base{1} : base{0};
   }  // end of Id
 
   template <unsigned short N, typename T>
@@ -329,6 +347,14 @@ namespace tfel::math {
   }  // end of IxI
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> t2tot2<N, T>::IxI(
+      const typename t2tot2<N, T>::size_type i,
+      const typename t2tot2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    return ((i < 3) && (j < 3)) ? base{1} : base{0};
+  }  // end of IxI
+
+  template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::K() noexcept {
     using base = base_type<T>;
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -360,6 +386,21 @@ namespace tfel::math {
                     c0,    c0,    c0,    c0, c0, c0, c0, c1, c0,  //
                     c0,    c0,    c0,    c0, c0, c0, c0, c0, c1};
     }
+  }  // end of K
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> t2tot2<N, T>::K(
+      const typename t2tot2<N, T>::size_type i,
+      const typename t2tot2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    constexpr auto c0 = base{0};
+    constexpr auto c1 = base{1};
+    constexpr auto c2_3 = base{2} / base{3};
+    constexpr auto mc1_3 = -base{1} / base{3};
+    if (i == j) {
+      return (i < 3) ? c2_3 : c1;
+    }
+    return ((i < 3) && (j < 3)) ? mc1_3 : c0;
   }  // end of K
 
   template <unsigned short N, typename T>

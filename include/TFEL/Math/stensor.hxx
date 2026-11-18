@@ -317,6 +317,15 @@ namespace tfel::math {
         N,
         base_type<ValueType>>
     Id() noexcept;
+    /*!
+     * \return the component i of `Id()`, without building the tensor.
+     * This is useful when the index is only known at run time: no table is
+     * stored nor read. The component has no unit: its type is the base type
+     * of `ValueType`.
+     * \param[in] i: index
+     */
+    [[nodiscard]] TFEL_HOST_DEVICE static constexpr base_type<ValueType> Id(
+        const typename stensor<N, ValueType>::size_type) noexcept;
 
     /*!
      * copy the value from a container

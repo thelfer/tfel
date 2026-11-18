@@ -168,11 +168,57 @@ namespace tfel::math {
         requires(getSpaceDimension<StensorType>() == N &&
                  isAssignableTo<numeric_type<StensorType>, ValueType>());
     //
-    static constexpr st2tost2 Id() noexcept;
-    static constexpr st2tost2 IxI() noexcept;
-    static constexpr st2tost2 K() noexcept;
-    static constexpr st2tost2 M() noexcept;
-    static constexpr st2tost2 J() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 Id() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 IxI() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 K() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 M() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 J() noexcept;
+    /*
+     * The following overloads give one component of the previous tensors.
+     * They are useful when an index is only known at run time: no table is
+     * stored nor read. The component has no unit: its type is the base type
+     * of `ValueType`.
+     */
+    /*!
+     * \return the component (i, j) of `Id()`, without building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> Id(
+        const typename st2tost2<N, ValueType>::size_type,
+        const typename st2tost2<N, ValueType>::size_type) noexcept;
+    /*!
+     * \return the component (i, j) of `IxI()`, without building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> IxI(
+        const typename st2tost2<N, ValueType>::size_type,
+        const typename st2tost2<N, ValueType>::size_type) noexcept;
+    /*!
+     * \return the component (i, j) of `K()`, without building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> K(
+        const typename st2tost2<N, ValueType>::size_type,
+        const typename st2tost2<N, ValueType>::size_type) noexcept;
+    /*!
+     * \return the component (i, j) of `M()`, without building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> M(
+        const typename st2tost2<N, ValueType>::size_type,
+        const typename st2tost2<N, ValueType>::size_type) noexcept;
+    /*!
+     * \return the component (i, j) of `J()`, without building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> J(
+        const typename st2tost2<N, ValueType>::size_type,
+        const typename st2tost2<N, ValueType>::size_type) noexcept;
     //
     // NOLINTBEGIN(google-explicit-constructor)
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(st2tost2,

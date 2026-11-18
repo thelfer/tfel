@@ -86,6 +86,15 @@ namespace tfel::math {
     TFEL_HOST_DEVICE static constexpr tensor<N, base_type<ValueType>>
     Id() noexcept;
     /*!
+     * \return the component i of `Id()`, without building the tensor.
+     * This is useful when the index is only known at run time: no table is
+     * stored nor read. The component has no unit: its type is the base type
+     * of `ValueType`.
+     * \param[in] i: index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> Id(
+        const typename tensor<N, ValueType>::size_type) noexcept;
+    /*!
      * \brief Build a tensor from a fortran matrix.
      * \param[in] t: tensor to be filled
      * \param[in] v: pointer to an array used to initialise the

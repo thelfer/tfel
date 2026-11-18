@@ -323,6 +323,17 @@ namespace tfel::math {
     // NOLINTEND(google-explicit-constructor)
     //! \return the identity matrix
     TFEL_HOST_DEVICE static constexpr auto Id();
+    /*!
+     * \return the component (i, j) of `Id()`, without building the matrix.
+     * This is useful when an index is only known at run time: no table is
+     * stored nor read. The component has no unit: its type is the base type
+     * of `ValueType`.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> Id(
+        const typename tmatrix<N, M, ValueType>::size_type,
+        const typename tmatrix<N, M, ValueType>::size_type) noexcept;
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

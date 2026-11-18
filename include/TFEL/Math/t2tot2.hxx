@@ -176,6 +176,45 @@ namespace tfel::math {
      * Id2 is the identity tensor
      */
     TFEL_HOST_DEVICE static constexpr auto K() noexcept;
+    /*
+     * The following overloads give one component of the previous tensors.
+     * They are useful when an index is only known at run time: no table is
+     * stored nor read. The component has no unit: its type is the base type
+     * of `ValueType`.
+     */
+    /*!
+     * \return the component (i, j) of `transpose_derivative()`, without
+     * building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> transpose_derivative(
+        const typename t2tot2<N, ValueType>::size_type,
+        const typename t2tot2<N, ValueType>::size_type) noexcept;
+    /*!
+     * \return the component (i, j) of `Id()`, without building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> Id(
+        const typename t2tot2<N, ValueType>::size_type,
+        const typename t2tot2<N, ValueType>::size_type) noexcept;
+    /*!
+     * \return the component (i, j) of `IxI()`, without building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> IxI(
+        const typename t2tot2<N, ValueType>::size_type,
+        const typename t2tot2<N, ValueType>::size_type) noexcept;
+    /*!
+     * \return the component (i, j) of `K()`, without building the tensor.
+     * \param[in] i: row index
+     * \param[in] j: column index
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType> K(
+        const typename t2tot2<N, ValueType>::size_type,
+        const typename t2tot2<N, ValueType>::size_type) noexcept;
     // NOLINTBEGIN(google-explicit-constructor)
     /*!
      * \brief constructor from a t2tost2

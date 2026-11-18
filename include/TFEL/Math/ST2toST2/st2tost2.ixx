@@ -118,6 +118,14 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::Id
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> st2tost2<N, T>::Id(
+      const typename st2tost2<N, T>::size_type i,
+      const typename st2tost2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    return (i == j) ? base{1} : base{0};
+  }  // end of st2tost2<N,T>::Id
+
+  template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::IxI() noexcept {
     constexpr auto c1 = T{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -141,6 +149,14 @@ namespace tfel::math {
               c0, c0, c0, c0, c0, c0};
     }
   }  // end of st2tost2<N,T>::Id
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> st2tost2<N, T>::IxI(
+      const typename st2tost2<N, T>::size_type i,
+      const typename st2tost2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    return ((i < 3) && (j < 3)) ? base{1} : base{0};
+  }  // end of st2tost2<N,T>::IxI
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::K() noexcept {
@@ -168,6 +184,21 @@ namespace tfel::math {
               c0,    c0,    c0,    c0, c1, c0,  //
               c0,    c0,    c0,    c0, c0, c1};
     }
+  }  // end of st2tost2<N,T>::K
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> st2tost2<N, T>::K(
+      const typename st2tost2<N, T>::size_type i,
+      const typename st2tost2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    constexpr auto c0 = base{0};
+    constexpr auto c1 = base{1};
+    constexpr auto c2_3 = base{2} / base{3};
+    constexpr auto mc1_3 = -base{1} / base{3};
+    if (i == j) {
+      return (i < 3) ? c2_3 : c1;
+    }
+    return ((i < 3) && (j < 3)) ? mc1_3 : c0;
   }  // end of st2tost2<N,T>::K
 
   template <unsigned short N, typename T>
@@ -199,6 +230,21 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::M
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> st2tost2<N, T>::M(
+      const typename st2tost2<N, T>::size_type i,
+      const typename st2tost2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    constexpr auto c0 = base{0};
+    constexpr auto c1 = base{1};
+    constexpr auto mc1_2 = -base{1} / base{2};
+    constexpr auto c3_2 = base{3} / base{2};
+    if (i == j) {
+      return (i < 3) ? c1 : c3_2;
+    }
+    return ((i < 3) && (j < 3)) ? mc1_2 : c0;
+  }  // end of st2tost2<N,T>::M
+
+  template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::J() noexcept {
     constexpr auto c1_3 = T{1} / T{3};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -221,6 +267,16 @@ namespace tfel::math {
               c0,   c0,   c0,   c0, c0, c0,  //
               c0,   c0,   c0,   c0, c0, c0};
     }
+  }  // end of st2tost2<N,T>::J
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr base_type<T> st2tost2<N, T>::J(
+      const typename st2tost2<N, T>::size_type i,
+      const typename st2tost2<N, T>::size_type j) noexcept {
+    using base = base_type<T>;
+    constexpr auto c0 = base{0};
+    constexpr auto c1_3 = base{1} / base{3};
+    return ((i < 3) && (j < 3)) ? c1_3 : c0;
   }  // end of st2tost2<N,T>::J
 
   template <typename NumType, typename T>
