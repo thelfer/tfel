@@ -222,7 +222,7 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
    * \brief check the heat flux in the reference configuration and its
    * derivatives against finite differences, for the thermal conductivity
    * matrices returned by the
-   * `computeThermalConductivyMatrixInReferenceConfiguration` functions.
+   * `computeThermalConductivityMatrixInReferenceConfiguration` functions.
    */
   template <unsigned short N, bool use_qt>
   void test3() {
@@ -258,12 +258,12 @@ struct FiniteStrainHeatTransferTest final : public tfel::tests::TestCase {
       constexpr auto k2 = thermalconductivity(5);
       constexpr auto k3 = thermalconductivity(2);
       if constexpr (N == 1u) {
-        return computeThermalConductivyMatrixInReferenceConfiguration(k1, F2);
+        return computeThermalConductivityMatrixInReferenceConfiguration(k1, F2);
       } else if constexpr (N == 2u) {
-        return computeThermalConductivyMatrixInReferenceConfiguration(k1, k2,
+        return computeThermalConductivityMatrixInReferenceConfiguration(k1, k2,
                                                                       F2);
       } else {
-        return computeThermalConductivyMatrixInReferenceConfiguration(k1, k2,
+        return computeThermalConductivityMatrixInReferenceConfiguration(k1, k2,
                                                                       k3, F2);
       }
     };
