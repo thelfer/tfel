@@ -7,10 +7,16 @@
 #
 #   ./update-release.sh <version>
 #
-# which refreshes the `sources` file used by `rpmbuild -ra` / `mock`.
+# which downloads the archive into SOURCES/, refreshes the
+# `tfel_version` global below and rewrites the `sources` file (md5 +
+# archive name, the format used by Fedora dist-git and `rpkg`).
 
-%global tfel_version 4.2.5
-# %%global tfel_suffix -dev  # only for pre-releases (not accepted in Fedora)
+# Version of the release being packaged. The conditional form allows
+# an override on the command line
+# (`rpmbuild --define 'tfel_version 5.2.0' ...`) to test the packaging
+# of unreleased sources; `update-release.sh` keeps it in sync with the
+# `sources` file.
+%{!?tfel_version: %global tfel_version 4.2.5}
 
 # python bindings are not packaged yet: the install path must be aligned
 # with Fedora's layout (see the notes at the end of this file and #1466).
@@ -29,8 +35,9 @@ License:        GPL-2.0-or-later WITH Classpath-exception-2.0 OR CECILL-2.1
 # to be confirmed with Fedora Legal during the review (see #1468).
 URL:            https://thelfer.github.io/tfel/web/index.html
 Source0:        https://github.com/thelfer/tfel/archive/refs/tags/TFEL-%{version}.tar.gz
-# sha256sum + filename, for `rpmbuild -ra` and `mock --scm init`
-Source1:        sources
+# Note: the `sources` file next to this spec (md5 + archive name, the
+# Fedora dist-git format) is packaging metadata, not a Source: place the
+# archive in SOURCES/ (see `update-release.sh`).
 
 BuildRequires:  cmake >= 3.20
 BuildRequires:  gcc
@@ -171,22 +178,25 @@ associated test files.
 rm -rf %{buildroot}%{_docdir}/tfel/LICENCE-*
 
 %check
-# TFEL registers ~6400 tests, but the executables are EXCLUDE_FROM_ALL
-# and the `generic-*`/`mfront-*` matrices (more than 6000 tests) need
-# `tfel-config` and `mfront` from an *installed* tree: they are run by
-# the upstream CI (`check_all.sh`) and can be run after installation
-# with the `tfel-check` package, see #1468.
+# TFEL registers thousands of tests, but the executables are
+# EXCLUDE_FROM_ALL and the `generic-*`/`mfront-*`/`*_mtest` matrices
+# (more than 6000 tests) need `tfel-config` and `mfront` from an
+# *installed* tree: they are run by the upstream CI (`check_all.sh`)
+# and can be run after installation with the `tfel-check` package, see
+# #1468.
 #
 # What is run here is the set of self-contained unit tests of the
-# libraries (their names have no `-`): 222 tests on 4.2.5, built in
-# ~3 min and run in ~5 s, all passing.
+# libraries (their names have neither `-` nor the `_mtest` suffix):
+# 222 tests on 4.2.5 (3 min to build, 5 s to run) and 264 on 5.2
+# (4 min to build, 9 s to run), all passing in both cases.
 %global tfel_unit_tests ^[A-Za-z0-9_]+$
 tfel_test_targets=$(%{__ctest} --test-dir %{_vpath_builddir} -N \
-                      -R '%{tfel_unit_tests}' 2>/dev/null |
+                      -R '%{tfel_unit_tests}' -E '_mtest$' 2>/dev/null |
                      sed -n 's/^ *Test *#[0-9]*: *//p' | sort -u)
 %{__cmake} --build %{_vpath_builddir} --target ${tfel_test_targets} \
            --parallel %{_smp_build_ncpus}
-%ctest -R '%{tfel_unit_tests}' --output-on-failure --parallel %{_smp_build_ncpus}
+%ctest -R '%{tfel_unit_tests}' -E '_mtest$' --output-on-failure \
+       --parallel %{_smp_build_ncpus}
 
 %ldconfig_scriptlets
 
@@ -199,6 +209,11 @@ tfel_test_targets=$(%{__ctest} --test-dir %{_vpath_builddir} -N \
 %license LICENCE-CECILL-A-EN
 %license LICENCE-CECILL-A-FR
 %{_libdir}/lib*.so.*
+# TFEL >= 5.2 additionally installs `share/tfel/env` (shell/fish
+# environment helpers): claim it here when packaging a 5.2 release
+# (`update-release.sh` and the unpackaged files check will point it
+# out). It is not installed by 4.2.5 when no solver interface is
+# enabled, so it cannot be listed unconditionally.
 
 %files devel
 %{_includedir}/TFEL/

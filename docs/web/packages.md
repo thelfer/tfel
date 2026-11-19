@@ -18,6 +18,15 @@ This document describes how to generate packages for `TFEL`. It relies
 on the instructions given [here](install.html) to build `TFEL` from
 the sources using the `cmake` build system.
 
+Note that `TFEL` also provides native `Fedora` packaging metadata in
+the [`packages/fedora`](https://github.com/thelfer/tfel/tree/master/packages/fedora)
+directory of the sources, which is used to build official quality
+`Fedora` packages with `rpmbuild` or `mock` (see the
+[Fedora packaging guide](packaging-fedora.html) and
+[issue #1468](https://github.com/thelfer/tfel/issues/1468)). The
+rest of this document deals with the binary packages generated with
+`CPack`, which are only intended for personal or internal use.
+
 # Building portable binaries
 
 The section is only meaningful if you wish to share the generated

@@ -12,29 +12,47 @@ upstream install-layout fixes).
 | file                | role                                                    |
 | ------------------- | ------------------------------------------------------- |
 | `tfel.spec`         | RPM spec file (single spec, multiple binary packages)   |
-| `sources`           | md5 + tarball name, the dist-git format read by `rpmbuild -ra` and `mock` |
-| `update-release.sh` | bumps the spec and `sources` to a new upstream release  |
+| `sources`           | md5 + archive name, the format used by Fedora dist-git and `rpkg` |
+| `update-release.sh` | downloads a new release, bumps the spec and rewrites `sources` |
 | `.gitignore`        | local `rpmbuild --define '_topdir $PWD'` artefacts      |
 
 ## Quick local build
 
-From this directory (requires `rpm-build`, any distribution with a
-recent enough `rpmbuild` works for a syntax/prep check; a Fedora
-container is recommended for real builds, see below):
+The archive of the packaged release must be in `SOURCES/`; the
+`update-release.sh` script downloads it (and refreshes the spec and
+the `sources` file at the same time):
 
 ```sh
-# -ra downloads the tarball listed in `sources` into SOURCES/
-rpmbuild --define '_topdir '"${PWD}" -ra tfel.spec
+./update-release.sh 4.2.5
+```
+
+Then build the packages from this directory (requires `rpm-build`; any
+distribution with a recent enough `rpmbuild` works for a
+syntax/prep check, a Fedora container is recommended for real builds,
+see below):
+
+```sh
+rpmbuild --define '_topdir '"${PWD}" -ba tfel.spec
 ```
 
 The binaries are then in `RPMS/`, the sources package in `SRPMS/`.
-
-Reproducible builds against a clean Fedora root are obtained with
-`mock` (or `dist-git` style tooling):
+To check the packaging of a development tree, build the archive
+yourself and override the version:
 
 ```sh
-dnf install mock rpmdev-tools
-rpmdev-mock-rebuild -r fedora-rawhide-x86_64 .   # uses `sources`
+git archive --prefix=tfel-TFEL-5.2.0/ -o SOURCES/TFEL-5.2.0.tar.gz HEAD
+rpmbuild --define '_topdir '"${PWD}" --define 'tfel_version 5.2.0' \
+         -ba tfel.spec
+```
+
+Reproducible builds against a clean Fedora root are obtained with
+`mock`: build the sources package first (it embeds the archive), then
+rebuild it in a chroot:
+
+```sh
+dnf install mock
+rpmbuild --define '_topdir '"${PWD}" -bs tfel.spec
+mock -r fedora-rawhide-x86_64 --rebuild SRPMS/*.src.rpm
 ```
 
 Building inside a container, without installing anything on the host:
@@ -48,8 +66,8 @@ podman run --rm -v "$PWD":/pkg:z -w /pkg fedora:rawhide \
 
 | package      | content                                                |
 | ------------ | ------------------------------------------------------ |
-| `tfel`       | shared libraries, `env` files, licences (metapackage pulling `mfront`, recommending `mtest`) |
-| `tfel-devel` | headers, unversioned `.so` links, CMake package files, `tfel-config`, gcc plugins |
+| `tfel`       | shared libraries and licences (metapackage pulling `mfront`, recommending `mtest`) |
+| `tfel-devel` | headers, unversioned `.so` links, CMake package files, `tfel-config` |
 | `mfront`     | `mfront`, `mfront-query`, `mfront-doc`, `mfm`, `mfm-test-generator`, gallery |
 | `mtest`      | the `mtest` solver and its documentation |
 | `tfel-check` | the `tfel-check` validation suite and test files |

@@ -21,20 +21,21 @@ tarball="TFEL-${version}.tar.gz"
 url="https://github.com/thelfer/tfel/archive/refs/tags/TFEL-${version}.tar.gz"
 
 echo "downloading ${url}"
-tmp=$(mktemp -d)
-trap 'rm -rf "${tmp}"' EXIT
-curl -sfL "${url}" -o "${tmp}/${tarball}"
+mkdir -p "${dir}/SOURCES"
+tarball_path="${dir}/SOURCES/${tarball}"
+curl -sfL "${url}" -o "${tarball_path}"
 
-md5=$(md5sum "${tmp}/${tarball}" | cut -d' ' -f1)
-sha256=$(sha256sum "${tmp}/${tarball}" | cut -d' ' -f1)
+md5=$(md5sum "${tarball_path}" | cut -d' ' -f1)
+sha256=$(sha256sum "${tarball_path}" | cut -d' ' -f1)
 
 echo "  md5:    ${md5}"
 echo "  sha256: ${sha256}"
 
-sed -i "s/^%global tfel_version .*/%global tfel_version ${version}/" \
+sed -i "s@^%{!?tfel_version: %global tfel_version .*@%{!?tfel_version: %global tfel_version ${version}}@" \
     "${dir}/tfel.spec"
 echo "${md5}  ${tarball}" > "${dir}/sources"
 
 echo "tfel.spec and sources updated to ${version}."
+echo "the archive is available in SOURCES/${tarball}"
 echo "remember to update %%changelog and to test with:"
-echo "  rpmbuild --define '_topdir \${PWD}' -ra tfel.spec"
+echo "  rpmbuild --define '_topdir \${PWD}' -ba tfel.spec"
