@@ -62,6 +62,10 @@ namespace tfel::utilities {
      * In `C` and `C++`, two separator characters can be associated to
      * create a new separator: `->`, `&=`. If this flag is true, these
      * separators will be grouped in a single token.
+     *
+     * The punctuators of three characters, as `...` or `<<=`, are grouped in a
+     * single token too since a punctuator is the longest sequence of characters
+     * which can build one, see the `CxxTokenizer` class.
      */
     bool joinCxxTwoCharactersSeparators = true;
     /*!
