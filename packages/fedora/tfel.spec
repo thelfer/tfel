@@ -173,9 +173,21 @@ associated test files.
 
 %install
 %cmake_install
-# the copies installed by the build itself (%%{_docdir}/tfel) are
-# redundant with the %%licence entries below
-rm -rf %{buildroot}%{_docdir}/tfel/LICENCE-*
+# the licences are shipped through %%licence below; the `web` tree is a
+# duplicate of the `mfront` gallery (it feeds the website, which will go
+# to a future `tfel-doc` package)
+rm -rf %{buildroot}%{_docdir}/tfel
+# `Fedora` doc directories are versioned per package: relocate the
+# unversioned trees installed by the build (portable across rpm
+# versions, unlike entries prefixed by %%{buildroot})
+for d in mfront mtest; do
+  if [ -d %{buildroot}%{_docdir}/${d} ]; then
+    mkdir -p %{buildroot}%{_docdir}/${d}-%{version}
+    mv %{buildroot}%{_docdir}/${d}/* \
+       %{buildroot}%{_docdir}/${d}-%{version}/
+    rmdir %{buildroot}%{_docdir}/${d}
+  fi
+done
 
 %check
 # TFEL registers thousands of tests, but the executables are
@@ -237,15 +249,13 @@ tfel_test_targets=$(%{__ctest} --test-dir %{_vpath_builddir} -N \
 %{_bindir}/mfm
 %{_bindir}/mfm-test-generator
 %{_bindir}/tfel-doc
-# mfront documentation and gallery and the tfel web documentation
-# (all installed by the build itself); Fedora relocates them to
-# %%{_docdir}/<name>-%%{version} and strips the buildroot prefix
-%{buildroot}%{_docdir}/mfront/
-%{buildroot}%{_docdir}/tfel/
+# documentation and gallery of `MFront` (installed unversioned by the
+# build, relocated in %%install)
+%doc %{_docdir}/mfront-%{version}
 
 %files mtest
 %{_bindir}/mtest
-%{buildroot}%{_docdir}/mtest/
+%doc %{_docdir}/mtest-%{version}
 
 %files check
 %{_bindir}/tfel-check
