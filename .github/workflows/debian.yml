@@ -1,0 +1,51 @@
+name: Debian
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        path: tfel
+
+    - name: Install the packaging tools and the build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          cmake \
+          debhelper \
+          devscripts \
+          dpkg-dev \
+          fakeroot \
+          gfortran \
+          libpython3-dev \
+          python3-dev
+
+    - name: Build the Debian packages
+      working-directory: tfel
+      # The unit tests are run by the CMake workflow; skip them here
+      # to keep the packaging job fast.
+      run: |
+        ln -sfn packages/debian debian
+        DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -b
+
+    - name: Analyse the generated packages with lintian
+      run: |
+        lintian --no-tag-display-limit ../*.changes || true
+      continue-on-error: true
+
+    - name: Upload the generated packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: debian-packages
+        path: '*.deb'

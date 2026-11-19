@@ -1,0 +1,45 @@
+#!/usr/bin/make -f
+# TFEL/MFront Debian packaging
+# See https://github.com/thelfer/tfel/issues/1466 for the packaging
+# strategy.
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --buildsystem=cmake
+
+override_dh_auto_install:
+	dh_auto_install
+	# licence files are redundant with debian/copyright
+	rm -rf debian/tmp/usr/share/doc/tfel/LICENCE-*
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DLIB_SUFFIX=/$(DEB_HOST_MULTIARCH) \
+		-Denable-portable-build=ON \
+		-Denable-fortran=ON \
+		-Denable-python=ON \
+		-Denable-python-bindings=OFF \
+		-Denable-reference-doc=OFF \
+		-Denable-website=OFF \
+		-DTFEL_APPEND_VERSION=OFF
+
+# Notes:
+#
+#  - TFEL installs libraries in `lib${LIB_SUFFIX}` instead of using
+#    `GNUInstallDirs` (`CMAKE_INSTALL_LIBDIR`): the multiarch path is
+#    injected through `LIB_SUFFIX` until upstream honours
+#    `CMAKE_INSTALL_LIBDIR` (upstream change to be proposed, see
+#    issue #1466).
+#
+#  - python bindings are disabled for the first iteration: TFEL
+#    installs them in `lib/python3.X/site-packages` whereas Debian
+#    policy requires `dist-packages`. This can be addressed either by
+#    passing -DTFEL_PYTHON_SITE_PACKAGES_DIR=lib/python3/dist-packages
+#    (the variable is already honoured by the CMake code) or by an
+#    upstream change; a `tfel-python` binary package will then be
+#    added (see issue #1466).
+#
+#  - the reference documentation and the website require the
+#    pandoc/texlive tool chain; a `tfel-doc` binary package will be
+#    added in a later iteration.

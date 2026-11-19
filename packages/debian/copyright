@@ -1,0 +1,44 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: TFEL
+Upstream-Contact: https://github.com/thelfer/tfel/issues
+Source: https://github.com/thelfer/tfel
+
+Files-Excluded:
+ packages
+
+Files: *
+Copyright: 2006-2026 CEA/DEN, EDF R&D
+License: GPL-2+ or CECILL-1.1
+ TFEL is publicly released under either the GNU GPL Licence with
+ linking exception or the CECILL-A licence. CEA or EDF may also
+ distribute this project under specific licensing conditions.
+ .
+ On Debian systems, the complete text of the GNU General Public
+ License version 2 can be found in
+ `/usr/share/common-licenses/GPL-2'. The linking exception used by
+ upstream ("with linking exception", see the file LICENCE-GNU-GPL in
+ the sources) is a GPL-2 compatible exception.
+ .
+ The complete text of the CECILL licence version 1.1 (CECILL-A) is
+ available in the source files `LICENCE-CECILL-A-EN' and
+ `LICENCE-CECILL-A-FR'.
+
+Files: include/FSES/*
+Copyright: 2006 Joachim Kopp
+License: LGPL-2.1+
+ Numerical diagonalization of 3x3 matrices.
+ .
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ .
+ On Debian systems, the complete text of the GNU Lesser General
+ Public License version 2.1 can be found in
+ `/usr/share/common-licenses/LGPL-2.1'.
+
+# TFEL versions prior to 0.1 were released under the LGPL and the
+# CECILL-B licences, and version 1.x under the GPL/CECILL-A licences
+# as part of the PLEIADES environment. The current dual licensing
+# (GPL-2+ with linking exception / CECILL-1.1) covers all files
+# shipped in the current release.
