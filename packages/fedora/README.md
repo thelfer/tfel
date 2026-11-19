@@ -1,0 +1,143 @@
+# Fedora packaging for TFEL/MFront
+
+This directory contains the packaging files required to build
+**official Fedora packages** (RPMs) of TFEL/MFront. See issue
+[#1468](https://github.com/thelfer/tfel/issues/1468) for the overall
+strategy and [#1466](https://github.com/thelfer/tfel/issues/1466) for
+the parallel Debian effort (the two share configuration options and
+upstream install-layout fixes).
+
+## Content
+
+| file                | role                                                    |
+| ------------------- | ------------------------------------------------------- |
+| `tfel.spec`         | RPM spec file (single spec, multiple binary packages)   |
+| `sources`           | md5 + tarball name, the dist-git format read by `rpmbuild -ra` and `mock` |
+| `update-release.sh` | bumps the spec and `sources` to a new upstream release  |
+| `.gitignore`        | local `rpmbuild --define '_topdir $PWD'` artefacts      |
+
+## Quick local build
+
+From this directory (requires `rpm-build`, any distribution with a
+recent enough `rpmbuild` works for a syntax/prep check; a Fedora
+container is recommended for real builds, see below):
+
+```sh
+# -ra downloads the tarball listed in `sources` into SOURCES/
+rpmbuild --define '_topdir '"${PWD}" -ra tfel.spec
+```
+
+The binaries are then in `RPMS/`, the sources package in `SRPMS/`.
+
+Reproducible builds against a clean Fedora root are obtained with
+`mock` (or `dist-git` style tooling):
+
+```sh
+dnf install mock rpmdev-tools
+rpmdev-mock-rebuild -r fedora-rawhide-x86_64 .   # uses `sources`
+```
+
+Building inside a container, without installing anything on the host:
+
+```sh
+podman run --rm -v "$PWD":/pkg:z -w /pkg fedora:rawhide \
+  bash -c 'dnf -y install rpm-build && rpmbuild --define "_topdir /pkg" -ba tfel.spec'
+```
+
+## Binary packages
+
+| package      | content                                                |
+| ------------ | ------------------------------------------------------ |
+| `tfel`       | shared libraries, `env` files, licences (metapackage pulling `mfront`, recommending `mtest`) |
+| `tfel-devel` | headers, unversioned `.so` links, CMake package files, `tfel-config`, gcc plugins |
+| `mfront`     | `mfront`, `mfront-query`, `mfront-doc`, `mfm`, `mfm-test-generator`, gallery |
+| `mtest`      | the `mtest` solver and its documentation |
+| `tfel-check` | the `tfel-check` validation suite and test files |
+
+Not built yet (second iteration, see #1468):
+
+- `python3-tfel`: blocked on the install path of the bindings
+  (`site-packages` vs. `python3_sitelib`, shared with #1466: upstream
+  should honour `CMAKE_INSTALL_PYTHONDIR`);
+- `tfel-doc`: requires the pandoc/LaTeX tool chain
+  (`-Denable-website=ON`, `-Denable-reference-doc=ON`);
+- interfaces to external solvers (`aster`, `abaqus`, `cyrano`, ...)
+  stay disabled: they require non-free or non-packaged prerequisites.
+
+## Build configuration notes
+
+- `-Denable-portable-build=ON`: Fedora forbids `-march=native` for
+  distributed binaries;
+- `-DTFEL_APPEND_VERSION=OFF`: unversioned install tree
+  (`/usr/include/TFEL`, `/usr/share/tfel`) and clean SONAMEs;
+- `-DLIB_SUFFIX=64`: TFEL installs libraries in
+  `lib${LIB_SUFFIX}` instead of honouring `GNUInstallDirs`; passing
+  `64` makes them land in `%{_libdir}` (a fix making upstream honour
+  `CMAKE_INSTALL_LIBDIR` is to be proposed, same issue as Debian
+  multiarch in #1466);
+- `enable-fortran=ON`: the Fortran 77/90 bindings only need
+  `gcc-gfortran`, which is in every Fedora buildroot.
+
+## Licensing
+
+The sources are dual licensed: GNU GPL (v2 or later) *with a linking
+exception*, or CECILL-A (v2.1, explicitly GPL-compatible). The spec
+currently uses
+
+```
+License: GPL-2.0-or-later WITH Classpath-exception-2.0 OR CECILL-2.1
+```
+
+as a placeholder: the linking exception is functionally close to the
+GNU Classpath exception but the exact expression must be confirmed
+with [Fedora Legal](https://docs.fedoraproject.org/en-US/packaging-guidelines/LicensingGuidelines/)
+during the review (see #1468). `include/FSES` is LGPL-2.1+ (see #1466)
+and must be documented separately in a review submission.
+
+## Status / trial results
+
+First validation (TFEL 4.2.5 sources, `rpmbuild` 4.17, x86_64; the
+Fedora-specific cmake macros were stubbed since the trial ran on a
+non-Fedora host — a full `%cmake`-macro run on Fedora or in `mock` is
+still to be done):
+
+- `configure` + `build` + `install` with the exact options used by the
+  spec: OK (~20 min, `-j 8`, no dependency beyond gcc/gcc-c++/gfortran/
+  python3);
+- all five binary packages (`tfel`, `tfel-devel`, `mfront`, `mtest`,
+  `tfel-check`) build with correct auto-detected `DT_NEEDED`
+  dependencies, correct `%{_libdir}` placement and no unpackaged files;
+- findings already applied to the spec: `LIB_SUFFIX` must be passed as
+  `64` (`DESTINATION lib${LIB_SUFFIX}` concatenation), no
+  `%%{_libdir}/gcc` tree exists (the Fortran 90 bindings only install
+  a module file under `%%{_includedir}/TFEL`), the `env` directory is
+  not installed when no solver interface is enabled, the tools are
+  ELF binaries (`tfel-check` is not a script, so `tfel-check` cannot
+  be `noarch`).
+
+Still to check on real Fedora: `%cmake`/`%ctest`/`%ldconfig_scriptlets`
+expansions, `rpmlint`, `%check` duration and failures (the `ctest`
+suite is large; some tests invoke `mfront`+`g++`), debuginfo
+generation.
+
+## Path to an official package
+
+1. iterate here until `rpmbuild` produces clean packages
+   (`rpmlint tfel.spec RPMS/*/*.rpm SRPMS/*.src.rpm` silent or with
+   justified overrides only);
+2. publish a [COPR](https://fedora-copr.github.io/) repository
+   (`packit build in-copr` or the GitHub Pages continuous packaging
+   workflow) so that users get up-to-date packages;
+3. optionally add [Packit](https://packit.dev/) (`packit.yaml`) for
+   downstream-first CI on pull requests and dist-git commits;
+4. open a [review
+   request](https://docs.fedoraproject.org/en-US/mentors/Complete_Reviewer_Manual/)
+   in Fedora Infra Issues and get sponsored; the dist-git repository
+   `rpms/tfel` then becomes the reference, this directory staying a
+   convenience copy synchronised on every release (or the other way
+   round, with `packit` pulling from dist-git).
+
+Requirements for step 4 that are not met yet: a stable upstream
+release cadence is fine already, but the python bindings, the
+`LIB_SUFFIX`/`CMAKE_INSTALL_LIBDIR` fix and the license expression
+check remain open (see #1468).
