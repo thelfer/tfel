@@ -29,23 +29,40 @@ jobs:
           fakeroot \
           gfortran \
           libpython3-dev \
+          lintian \
           python3-dev
+
+    - name: Check the build dependencies declared in the control file
+      working-directory: tfel
+      # The list of dependencies of the job is not maintained by hand:
+      # it must match the Build-Depends of the control file.
+      run: |
+        ln -sfn packages/debian debian
+        dpkg-checkbuilddeps
 
     - name: Build the Debian packages
       working-directory: tfel
       # The unit tests are run by the CMake workflow; skip them here
       # to keep the packaging job fast.
+      #
+      # dpkg-buildpackage writes the generated files in the parent
+      # directory of the sources, which is the workspace as the sources
+      # are checked out in the `tfel` subdirectory.
       run: |
         ln -sfn packages/debian debian
         DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -b
 
     - name: Analyse the generated packages with lintian
-      run: |
-        lintian --no-tag-display-limit ../*.changes || true
-      continue-on-error: true
+      # Informational only: the packaging is not polished yet, the
+      # missing man pages and the not yet introduced tfel-python and
+      # tfel-doc packages are tracked in issue #1466.
+      run: lintian --no-tag-display-limit *.changes || true
 
     - name: Upload the generated packages
       uses: actions/upload-artifact@v4
       with:
         name: debian-packages
-        path: '*.deb'
+        path: |
+          *.deb
+          *.changes
+        if-no-files-found: error
