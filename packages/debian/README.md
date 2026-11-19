@@ -64,6 +64,10 @@ directory is used as the top-level `debian/` directory of a
 from the release tag so that `packages/debian` is not part of it
 (`Files-Excluded` in `copyright` takes care of the repackaging case).
 
+The procedure to package a new release (version renames, changelog,
+publication to a PPA or to Debian) is described in
+[`docs/web/packaging-debian.md`](https://github.com/thelfer/tfel/blob/master/docs/web/packaging-debian.md).
+
 # Continuous integration
 
 A `.deb` build must not regress: a GitHub Actions job runs

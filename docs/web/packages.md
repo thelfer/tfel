@@ -21,9 +21,9 @@ the sources using the `cmake` build system.
 Note that `TFEL` also provides native `Debian` packaging metadata in
 the [`packages/debian`](https://github.com/thelfer/tfel/tree/master/packages/debian)
 directory of the sources, which is used to build official quality
-`Debian` packages with `dpkg-buildpackage` (see
-[this `README`](https://github.com/thelfer/tfel/blob/master/packages/debian/README.md)
-and [issue #1466](https://github.com/thelfer/tfel/issues/1466)). The
+`Debian` packages with `dpkg-buildpackage` (see the
+[Debian packaging guide](packaging-debian.html) and
+[issue #1466](https://github.com/thelfer/tfel/issues/1466)). The
 rest of this document deals with the binary packages generated with
 `CPack`, which are only intended for personal or internal use.
 
