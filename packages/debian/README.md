@@ -35,7 +35,11 @@ Planned follow-ups (see the issue for details):
 - `tfel-python`: Python bindings. They are disabled in
   `debian/rules` for the first iteration because `TFEL` installs them
   in `lib/python3.X/site-packages` while Debian policy requires
-  `dist-packages`;
+  `dist-packages`. NumPy is only used by those bindings, hence
+  `-Denable-numpy-support=OFF` in `debian/rules`: `-Denable-python=ON`
+  makes the NumPy component of `FindPython` mandatory, so leaving the
+  support on would require installing `python3-numpy`. Both choices are
+  reversed when the bindings are enabled;
 - `tfel-doc`: reference documentation (requires the `pandoc` and
   `texlive` tool chains);
 - manual pages for `mfront`, `mtest`, etc. (currently missing).
@@ -70,9 +74,13 @@ publication to a PPA or to Debian) is described in
 
 # Continuous integration
 
-A `.deb` build must not regress: a GitHub Actions job runs
-`dpkg-buildpackage -us -uc -b` (and ideally `lintian`) on each push.
-See the workflow `.github/workflows/debian.yml`.
+A `.deb` build must not regress: the `.github/workflows/debian.yml`
+workflow runs `dpkg-buildpackage -us -uc -b` on each push and pull
+request, after checking the installed tools against the build
+dependencies declared in `control` with `dpkg-checkbuilddeps`. It runs
+`lintian` on the result (informational only for now: the missing manual
+pages and the planned packages are tracked in the issue) and uploads
+the generated packages as artifacts of the run.
 
 The packages are published on `GitHub` (releases and weekly rolling
 prereleases per `master`/`rliv-*` branch) by the

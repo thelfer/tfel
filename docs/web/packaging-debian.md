@@ -41,6 +41,11 @@ $ sudo apt-get install -y --no-install-recommends \
   fakeroot gfortran libpython3-dev python3-dev
 ~~~~~~~~~~~~~~~~~~~~~~
 
+`dpkg-checkbuilddeps`, run from the directory of the sources, checks
+the installed packages against the `Build-Depends` of
+`packages/debian/control`: the `Debian` workflow uses it to make sure
+that this list stays complete.
+
 ## Binary-only build (test a release)
 
 This is the way to check that the packaging is still valid for a new
@@ -58,7 +63,7 @@ are run by the `GitHub Actions` workflow when the release is tested;
 remove this variable to run them during the package build as well
 (`tests` are built by default).
 
-The `.deb` files are written in the directory containing the sources.
+The `.deb` files are written in the parent directory of the sources.
 The following binary packages are generated:
 
 | Package | Contents |
@@ -211,7 +216,11 @@ The following points are tracked in [issue
   `debian/rules` because `TFEL` installs them in
   `lib/python3.X/site-packages` whereas `Debian` policy requires
   `dist-packages` (the `TFEL_PYTHON_SITE_PACKAGES_DIR` CMake variable
-  is already honoured by the build system);
+  is already honoured by the build system). Enabling them will also
+  mean dropping `-Denable-numpy-support=OFF`, which is only needed
+  because `-Denable-python=ON` makes the `NumPy` component of
+  `FindPython` mandatory whereas `NumPy` is used by the bindings only,
+  and adding `python3-numpy` to the build dependencies;
 - `tfel-doc`: the reference documentation and the website require the
   `pandoc` and `texlive` tool chains and are disabled in
   `debian/rules`;
