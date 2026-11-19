@@ -115,10 +115,26 @@ still to be done):
   ELF binaries (`tfel-check` is not a script, so `tfel-check` cannot
   be `noarch`).
 
+### Tests run by `%%check`
+
+`ctest` knows about 6428 tests on 4.2.5 (7953 on the current
+development branch), but
+
+- the test executables are `EXCLUDE_FROM_ALL`: running `ctest` without
+  building them reports thousands of "Not Run" failures;
+- the `generic-*` / `mfront-*` matrices (> 6000 tests) invoke
+  `tfel-config` and `mfront` and therefore require an **installed**
+  tree; they are what the upstream `check_all.sh` script runs and are
+  also covered by the `tfel-check` package after installation.
+
+`%check` therefore builds and runs only the self-contained unit tests
+of the libraries (names without a `-`): 222 tests on 4.2.5, 628 on the
+development branch — built in ~3 min with `-j 16`, executed in ~5 s,
+100 % passing in both trials.
+
 Still to check on real Fedora: `%cmake`/`%ctest`/`%ldconfig_scriptlets`
-expansions, `rpmlint`, `%check` duration and failures (the `ctest`
-suite is large; some tests invoke `mfront`+`g++`), debuginfo
-generation.
+expansions, `rpmlint`, debuginfo generation, and the `%check` timings
+under `mock`.
 
 ## Path to an official package
 

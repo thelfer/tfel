@@ -171,9 +171,22 @@ associated test files.
 rm -rf %{buildroot}%{_docdir}/tfel/LICENCE-*
 
 %check
-# the full suite is long; restrict to ctest for now (tfel-check is
-# exercised by the tfel-check package after installation, see #1468)
-%ctest
+# TFEL registers ~6400 tests, but the executables are EXCLUDE_FROM_ALL
+# and the `generic-*`/`mfront-*` matrices (more than 6000 tests) need
+# `tfel-config` and `mfront` from an *installed* tree: they are run by
+# the upstream CI (`check_all.sh`) and can be run after installation
+# with the `tfel-check` package, see #1468.
+#
+# What is run here is the set of self-contained unit tests of the
+# libraries (their names have no `-`): 222 tests on 4.2.5, built in
+# ~3 min and run in ~5 s, all passing.
+%global tfel_unit_tests ^[A-Za-z0-9_]+$
+tfel_test_targets=$(%{__ctest} --test-dir %{_vpath_builddir} -N \
+                      -R '%{tfel_unit_tests}' 2>/dev/null |
+                     sed -n 's/^ *Test *#[0-9]*: *//p' | sort -u)
+%{__cmake} --build %{_vpath_builddir} --target ${tfel_test_targets} \
+           --parallel %{_smp_build_ncpus}
+%ctest -R '%{tfel_unit_tests}' --output-on-failure --parallel %{_smp_build_ncpus}
 
 %ldconfig_scriptlets
 
