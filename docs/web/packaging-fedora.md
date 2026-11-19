@@ -49,17 +49,20 @@ prerequisites which are not part of `Fedora`.
 
 ## Build from a release tag
 
-From a `TFEL-x.y.z` checkout:
+The archive of the packaged release must be in `SOURCES/`; the
+`update-release.sh` script downloads it and keeps the spec file and the
+`sources` file in sync (it is the recommended way of bumping the
+packaging to a new release):
 
 ~~~~ {#binary_build .bash}
 $ git checkout TFEL-x.y.z
 $ cd packages/fedora
+$ ./update-release.sh x.y.z   # only if the archive is not in SOURCES/
 $ rpmbuild --define '_topdir '"${PWD}" -ba tfel.spec
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The `-ra`/`-ba` invocation downloads the tarball referenced by the
-`sources` file, checks its checksum and builds the sources package
-(`SRPMS/`) and the binary packages (`RPMS/`).
+This builds the sources package (`SRPMS/`, which embeds the archive)
+and the binary packages (`RPMS/`).
 
 ## Build from a development checkout
 
@@ -170,6 +173,32 @@ lists still match the install tree of the new release, and to rebuild
 the packages:
 
 ~~~~ {#after_update .bash}
-$ rpmbuild --define '_topdir '"${PWD}" -ra tfel.spec
+$ rpmbuild --define '_topdir '"${PWD}" -ba tfel.spec
 $ rpmlint tfel.spec RPMS/*/*.rpm SRPMS/*.src.rpm
 ~~~~~~~~~~~~~~~~~~~~~~
+
+# Continuous integration and published packages
+
+The [`fedora-release.yml`](https://github.com/thelfer/tfel/blob/master/.github/workflows/fedora-release.yml)
+`GitHub Actions` workflow builds the packages in a `Fedora` container
+and publishes them as assets of the `GitHub` releases:
+
+- on every published release (tag `TFEL-x.y.z`): the source and binary
+  packages of the release are attached to that release;
+- every week: `master` and every `rliv-x.y` maintenance branch (one
+  build per major and minor version) carrying the packaging metadata
+  are built and published to rolling prereleases named
+  `rpm-rolling-<branch>`;
+- manually, for any branch or tag.
+
+The weekly packages are experimental development packages; the version
+they carry is the version declared by the branch, with a `.github`
+suffix instead of the `.fcXX` suffix of `Fedora`, so that they can be
+installed side by side with the official packages once they exist. The
+unit tests of the `%check` phase are only run for the release builds
+(`--with check`, versus `--without check` for the weekly builds).
+
+This complements the [COPR](https://fedora-copr.github.io/) repository
+and the `Fedora` official repositories, which remain the recommended
+ways of installing `TFEL` (see the
+[path to an official package](https://github.com/thelfer/tfel/tree/master/packages/fedora#path-to-an-official-package)).

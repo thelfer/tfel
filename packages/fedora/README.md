@@ -16,6 +16,12 @@ upstream install-layout fixes).
 | `update-release.sh` | downloads a new release, bumps the spec and rewrites `sources` |
 | `.gitignore`        | local `rpmbuild --define '_topdir $PWD'` artefacts      |
 
+The packages are built automatically by the
+[`.github/workflows/fedora-release.yml`](../../.github/workflows/fedora-release.yml)
+workflow: on every GitHub release (assets attached to the release) and
+weekly for `master` and the `rliv-x.y` branches carrying this directory
+(assets of rolling prereleases named `rpm-rolling-<branch>`).
+
 ## Quick local build
 
 The archive of the packaged release must be in `SOURCES/`; the
@@ -152,7 +158,10 @@ development branch — built in ~3 min with `-j 16`, executed in ~5 s,
 
 Still to check on real Fedora: `%cmake`/`%ctest`/`%ldconfig_scriptlets`
 expansions, `rpmlint`, debuginfo generation, and the `%check` timings
-under `mock`.
+under `mock`. The `fedora-release.yml` workflow runs `rpmbuild` and
+`rpmlint` in a `fedora:latest` container on every release and every
+week, which covers the first three points as soon as this directory is
+merged to `master`.
 
 ## Path to an official package
 

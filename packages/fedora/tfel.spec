@@ -21,6 +21,9 @@
 # python bindings are not packaged yet: the install path must be aligned
 # with Fedora's layout (see the notes at the end of this file and #1466).
 %bcond_with python
+# the unit tests are run by `%%check` (see the comment in that section);
+# continuous integration jobs may disable them with `--without check`
+%bcond_without check
 
 Name:           tfel
 Version:        %{tfel_version}
@@ -54,7 +57,7 @@ Requires:       mfront = %{version}-%{release}
 Recommends:     mtest = %{version}-%{release}
 
 %global tfel_description \
-TFEL is a numerical library developped by CEA and EDF. It provides\
+TFEL is a numerical library developed by CEA and EDF. It provides\
 the infrastructure to implement material knowledge (material\
 properties, mechanical behaviours, heat transfer laws, etc.) in a way\
 which is independent from any solver.\
@@ -190,6 +193,7 @@ for d in mfront mtest; do
 done
 
 %check
+%if %{with check}
 # TFEL registers thousands of tests, but the executables are
 # EXCLUDE_FROM_ALL and the `generic-*`/`mfront-*`/`*_mtest` matrices
 # (more than 6000 tests) need `tfel-config` and `mfront` from an
@@ -205,10 +209,13 @@ done
 tfel_test_targets=$(%{__ctest} --test-dir %{_vpath_builddir} -N \
                       -R '%{tfel_unit_tests}' -E '_mtest$' 2>/dev/null |
                      sed -n 's/^ *Test *#[0-9]*: *//p' | sort -u)
-%{__cmake} --build %{_vpath_builddir} --target ${tfel_test_targets} \
-           --parallel %{_smp_build_ncpus}
-%ctest -R '%{tfel_unit_tests}' -E '_mtest$' --output-on-failure \
-       --parallel %{_smp_build_ncpus}
+if [ -n "${tfel_test_targets}" ]; then
+  %{__cmake} --build %{_vpath_builddir} --target ${tfel_test_targets} \
+             --parallel %{_smp_build_ncpus}
+  %ctest -R '%{tfel_unit_tests}' -E '_mtest$' --output-on-failure \
+         --parallel %{_smp_build_ncpus}
+fi
+%endif
 
 %ldconfig_scriptlets
 

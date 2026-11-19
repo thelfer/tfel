@@ -1,0 +1,236 @@
+name: Fedora packages release
+
+# Publishes the RPM packages generated from `packages/fedora`:
+#
+#  - on every published GitHub release (tag `TFEL-x.y.z`): the source
+#    and binary RPMs of the release are attached to that release;
+#  - every week: `master` and every `rliv-x.y` maintenance branch (one
+#    build per major and minor version) which carries the packaging
+#    metadata are built and published to rolling prereleases named
+#    `rpm-rolling-<branch>`;
+#  - manually, for any branch or tag (also published to a rolling
+#    prerelease).
+#
+# Only refs which contain `packages/fedora/tfel.spec` are built: the
+# packaging has to be merged to `master` and backported to the
+# `rliv-x.y` branches for those branches to be published.
+#
+# The version of the packages is the version declared by the checked out
+# ref (`tfel_project` in the top level `CMakeLists.txt`) and the `%dist`
+# suffix is replaced by `.github`, so that the generated packages of a
+# given branch always have the same names: the weekly builds replace the
+# assets of the rolling prerelease instead of accumulating them.
+
+on:
+  release:
+    types: [published]
+  schedule:
+    # Mondays at 04:30 UTC
+    - cron: '30 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or tag to build and publish'
+        required: true
+        default: 'master'
+
+jobs:
+  targets:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.compute.outputs.matrix }}
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+
+    - name: Compute the list of refs to build
+      id: compute
+      env:
+        EVENT: ${{ github.event_name }}
+        RELEASE_TAG: ${{ github.event.release.tag_name }}
+        INPUT_REF: ${{ github.event.inputs.ref }}
+      run: |
+        set -eu
+        entry() {
+          # entry <ref> <publish_tag> <publish_to_release>
+          printf '{"ref":"%s","publish_tag":"%s","publish_to_release":"%s"}' \
+            "$1" "$2" "$3"
+        }
+        ref_has_packaging() {
+          local r
+          for r in "$1" "refs/heads/$1" "refs/tags/$1" "origin/$1"; do
+            if git cat-file -e "$r^{commit}:packages/fedora/tfel.spec" 2>/dev/null; then
+              return 0
+            fi
+          done
+          return 1
+        }
+        rolling_tag() {
+          echo "rpm-rolling-$(echo "$1" | tr '/.' '--')"
+        }
+        if [ "$EVENT" = "release" ]; then
+          if ! ref_has_packaging "refs/tags/$RELEASE_TAG"; then
+            echo "::error::${RELEASE_TAG} does not carry the Fedora packaging"
+            exit 1
+          fi
+          matrix="[$(entry "$RELEASE_TAG" "$RELEASE_TAG" "true")]"
+        elif [ "$EVENT" = "workflow_dispatch" ]; then
+          ref="$INPUT_REF"
+          if ! ref_has_packaging "$ref"; then
+            echo "::error::${ref} does not carry the Fedora packaging"
+            exit 1
+          fi
+          if git rev-parse -q --verify "refs/tags/${ref}" >/dev/null; then
+            matrix="[$(entry "$ref" "$ref" "true")]"
+          else
+            matrix="[$(entry "$ref" "$(rolling_tag "$ref")" "false")]"
+          fi
+        else
+          entries=""
+          for r in $(git for-each-ref --format='%(refname:strip=2)' \
+                       'refs/remotes/origin/master' 'refs/remotes/origin/rliv-*') ; do
+            branch="${r#origin/}"
+            if ref_has_packaging "$r"; then
+              entries="${entries:+${entries},}$(entry "$branch" \
+                                          "$(rolling_tag "$branch")" "false")"
+              echo "selected ${branch}"
+            else
+              echo "skipping ${branch} (no Fedora packaging)"
+            fi
+          done
+          if [ -z "$entries" ]; then
+            echo "::error::no branch carries the Fedora packaging"
+            exit 1
+          fi
+          matrix="[${entries}]"
+        fi
+        echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+        echo "will build ${matrix}"
+
+  build:
+    needs: targets
+    # the Fedora image provides `rpm`, the macros used by the spec file
+    # (`%cmake`, `%ctest`, `%ldconfig_scriptlets`, ...) and all the
+    # packages declared in the `BuildRequires` lines
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    concurrency:
+      group: fedora-release-${{ matrix.publish_tag }}
+      cancel-in-progress: false
+
+    steps:
+    # `actions/checkout` and `actions/upload-artifact` are JavaScript
+    # actions: the interpreter and the utilities they rely on are not
+    # part of the Fedora image
+    - name: Prepare the container for the GitHub Actions actions
+      run: dnf -y install git nodejs tar gzip which
+
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ matrix.ref }}
+
+    - name: Install the packaging tools and the build dependencies
+      run: |
+        set -eu
+        dnf -y install cmake gcc gcc-c++ gcc-gfortran make python3-devel \
+          rpm-build rpmdevtools rpmlint
+        # `gh` is not part of the Fedora image: it is used to publish the
+        # generated packages
+        dnf -y install gh
+        # provides ~/rpmbuild with the expected layout
+        rpmdev-setuptree
+
+    - name: Build the archive of the sources
+      # The archive is generated from the checked out ref: it is exactly
+      # what is published and the version of a branch is the version it
+      # will be released as.
+      run: |
+        set -eu
+        version=$(sed -n -E 's/^tfel_project\(([0-9]+)[ ]+([0-9]+)[ ]+"([0-9]+)".*/\1.\2.\3/p' \
+                   CMakeLists.txt | head -1)
+        if [ -z "$version" ]; then
+          echo "::error::no TFEL version found in the top level CMakeLists.txt"
+          exit 1
+        fi
+        echo "packaged version: ${version}"
+        echo "TFEL_PACKAGED_VERSION=${version}" >> "$GITHUB_ENV"
+        mkdir -p packages/fedora/SOURCES
+        git archive --prefix="tfel-TFEL-${version}/" \
+          -o "packages/fedora/SOURCES/TFEL-${version}.tar.gz" HEAD
+        cp "packages/fedora/SOURCES/TFEL-${version}.tar.gz" \
+          "${HOME}/rpmbuild/SOURCES/"
+        sha256sum "packages/fedora/SOURCES/TFEL-${version}.tar.gz"
+
+    - name: Build the source and binary packages
+      # The unit tests are run by the CMake workflow; they are disabled
+      # here to keep the weekly builds focused on the packaging (release
+      # builds run them).
+      env:
+        EVENT: ${{ github.event_name }}
+      run: |
+        set -eu
+        tests=--with=check
+        if [ "$EVENT" != "release" ]; then
+          tests=--without=check
+        fi
+        rpmbuild --define "_topdir ${HOME}/rpmbuild" \
+          --define "dist .github" \
+          --define "tfel_version ${TFEL_PACKAGED_VERSION}" \
+          ${tests} -ba packages/fedora/tfel.spec
+
+    - name: Analyse the generated packages with rpmlint
+      run: |
+        rpmlint packages/fedora/tfel.spec \
+          "${HOME}"/rpmbuild/RPMS/*/*.rpm \
+          "${HOME}"/rpmbuild/SRPMS/*.src.rpm || true
+      continue-on-error: true
+
+    - name: Collect the generated packages
+      run: |
+        set -eu
+        mkdir -p packages-out
+        cp "${HOME}"/rpmbuild/RPMS/*/*.rpm packages-out/
+        cp "${HOME}"/rpmbuild/SRPMS/*.src.rpm packages-out/
+        ls -l packages-out
+
+    - name: Publish to the GitHub release
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PUBLISH_TAG: ${{ matrix.publish_tag }}
+        REF: ${{ matrix.ref }}
+        PUBLISH_TO_RELEASE: ${{ matrix.publish_to_release }}
+      run: |
+        set -eu
+        if ! gh release view "$PUBLISH_TAG" >/dev/null 2>&1; then
+          if [ "$PUBLISH_TO_RELEASE" = "true" ]; then
+            echo "::error::release ${PUBLISH_TAG} does not exist"
+            exit 1
+          fi
+          notes=$(printf 'Automated build of the `Fedora` packages from `%s`.\n\n' "$REF")
+          notes+=$'These packages are rebuilt weekly. Install them with:\n\n'
+          notes+=$'    sudo dnf install ./<package>.rpm\n\n'
+          notes+=$'They are experimental: consider them as development packages.\n\n'
+          notes+=$'See [the Fedora packaging guide](https://thelfer.github.io/tfel/web/packaging-fedora.html)'
+          notes+=$' and [issue #1468](https://github.com/thelfer/tfel/issues/1468).\n'
+          gh release create "$PUBLISH_TAG" \
+            --prerelease \
+            --target "$REF" \
+            --title "Fedora packages (rolling: ${REF})" \
+            --notes "$notes"
+        fi
+        gh release upload "$PUBLISH_TAG" packages-out/*.rpm --clobber
+
+    - name: Upload the generated packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: fedora-packages-${{ matrix.publish_tag }}
+        path: packages-out/*.rpm
+        if-no-files-found: error
