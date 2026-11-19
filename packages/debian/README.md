@@ -73,3 +73,8 @@ publication to a PPA or to Debian) is described in
 A `.deb` build must not regress: a GitHub Actions job runs
 `dpkg-buildpackage -us -uc -b` (and ideally `lintian`) on each push.
 See the workflow `.github/workflows/debian.yml`.
+
+The packages are published on `GitHub` (releases and weekly rolling
+prereleases per `master`/`rliv-*` branch) by the
+`.github/workflows/debian-release.yml` workflow, as described in
+[`docs/web/packaging-debian.md`](https://github.com/thelfer/tfel/blob/master/docs/web/packaging-debian.md).

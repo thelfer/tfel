@@ -177,8 +177,23 @@ $ dch -v x.y.z-1 "New upstream release TFEL x.y.z."
 At the moment, three publication channels are planned, in increasing
 order of effort:
 
-1. attach the generated `.deb` files to the `GitHub` release (the CI
-   artifacts of the `Debian` workflow can be reused);
+1. attach the generated `.deb` files to the `GitHub` release: this is
+   automated by the `Debian packages release` workflow
+   (`.github/workflows/debian-release.yml`), which:
+   - publishes the packages of every published `GitHub` release (tag
+     `TFEL-x.y.z`), attaching the `.deb` files and the `.changes` file
+     to the release,
+   - every week, builds `master` and all `rliv-x.y` maintenance
+     branches which carry the packaging metadata
+     (`packages/debian/changelog`), publishing them to rolling
+     prereleases named `deb-rolling-<branch>`; the packages are marked
+     with a date stamped version (`<version>~dev.<YYYYMMDD>-1`),
+   - can be run manually for any branch or tag,
+   
+   so that the latest packages of every maintained version (`master`,
+   `rliv-5.1`, `rliv-5.0`, ...) are always available for download and
+   installation with `sudo apt install ./<package>.deb`. Only branches
+   to which the packaging has been backported are built;
 1. publish the source package to a `Ubuntu` PPA with `dput`: this
    provides `apt` users with a repository kept in sync with the
    releases;
