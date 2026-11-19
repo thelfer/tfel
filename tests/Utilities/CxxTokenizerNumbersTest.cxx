@@ -44,6 +44,8 @@ struct CxxTokenizerNumbersTest final : public tfel::tests::TestCase {
     this->testIllFormedLiterals();
     this->testLiteralsFollowedByIdentifiers();
     this->testValues();
+    this->testExtractingSuffixes();
+    this->testParseNumberArgument();
     return this->result;
   }  // end of execute()
  private:
@@ -146,6 +148,44 @@ struct CxxTokenizerNumbersTest final : public tfel::tests::TestCase {
     // with `==`
     TFEL_TESTS_ASSERT(std::abs(x - v) <=
                       (std::abs(v) * std::numeric_limits<double>::epsilon()));
+  }
+  /*!
+   * \return the single number token which the given string is tokenized as
+   * \param[in] s: string to tokenize
+   */
+  tfel::utilities::Token getNumberToken(const std::string& s) {
+    tfel::utilities::CxxTokenizer t;
+    t.parseString(s);
+    TFEL_TESTS_ASSERT(t.size() == 1u);
+    return t[0];
+  }  // end of getNumberToken
+  /*!
+   * \brief check the value read in a number token
+   * \param[in] x: value which has been read
+   * \param[in] v: expected value
+   */
+  void checkValue(const double x, const double v) {
+    // the values of the literals which are tested are exactly representable: a
+    // relative tolerance is only used to avoid comparing floating point values
+    // with `==`
+    TFEL_TESTS_ASSERT(std::abs(x - v) <=
+                      (std::abs(v) * std::numeric_limits<double>::epsilon()));
+  }
+  /*!
+   * \brief check the suffixes extracted from a number token
+   * \param[in] s:  string to tokenize
+   * \param[in] ts: expected type suffix of the literal
+   * \param[in] us: expected suffix of the user defined literal
+   */
+  void checkSuffixes(const std::string& s,
+                     const std::string& ts,
+                     const std::string& us) {
+    const auto tok = this->getNumberToken(s);
+    TFEL_TESTS_ASSERT(
+        tfel::utilities::CxxTokenizer::extractNumberTypeSuffix(tok) == ts);
+    TFEL_TESTS_ASSERT(
+        tfel::utilities::CxxTokenizer::extractNumberUserDefinedLiteral(tok) ==
+        us);
   }
   // decimal integers
   void testDecimalIntegers() {
@@ -350,15 +390,171 @@ struct CxxTokenizerNumbersTest final : public tfel::tests::TestCase {
     this->checkDouble("0x1p3f", 8.);
     // the digit separators are not a part of the value of the token
     this->checkDouble("3.14'15", 3.1415);
-    // the value of an integer literal with a suffix is not the value of a
-    // floating point literal
+    // the suffixes of the literal are not a part of its value: that of an
+    // integer literal is read like that of a floating point literal
+    this->checkDouble("3u", 3.);
+    this->checkDouble("1l", 1.);
+    this->checkDouble("0x10ul", 16.);
+    // the value of a binary integer literal is read with the radix of its base
+    // prefix, which the standard conversions do not read
+    this->checkDouble("0b101", 5.);
+    this->checkDouble("-0b101", -5.);
+    this->checkDouble("-0x10", -16.);
+    // the suffix of a user defined literal is not a part of the value of the
+    // literal it follows
+    this->checkInteger("1'000'000u_km", 1000000);
+    this->checkUnsignedInteger("1'000'000u_km", 1000000u);
+    this->checkDouble("1_km", 1.);
+    this->checkDouble("1.5f_km", 1.5);
+    this->checkDouble("1.5'0e3_km", 1500.);
+    // a floating point literal is not the value of an integer
     {
       tfel::utilities::CxxTokenizer t;
-      t.parseString("1l");
+      t.parseString("1.5f_km");
       auto p = t.begin();
-      TFEL_TESTS_CHECK_THROW(t.readDouble(p, t.end()), std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(t.readInt(p, t.end()), std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(t.readUnsignedInt(p, t.end()), std::runtime_error);
     }
   }  // end of testValues()
+  // the suffixes which are extracted from the number tokens
+  void testExtractingSuffixes() {
+    // the type suffix of an integer literal
+    this->checkSuffixes("3", "", "");
+    this->checkSuffixes("3u", "u", "");
+    this->checkSuffixes("3U", "U", "");
+    this->checkSuffixes("1l", "l", "");
+    this->checkSuffixes("1'000'000ull", "ull", "");
+    this->checkSuffixes("0x10UL", "UL", "");
+    this->checkSuffixes("0b101u", "u", "");
+    // the type suffix of a floating point literal
+    this->checkSuffixes("1.5", "", "");
+    this->checkSuffixes("1.5f", "f", "");
+    this->checkSuffixes("1.5F", "F", "");
+    this->checkSuffixes("1e5l", "l", "");
+    this->checkSuffixes("1E+5L", "L", "");
+    this->checkSuffixes("3.", "", "");
+    this->checkSuffixes("0x1.8p3", "", "");
+    this->checkSuffixes("0x1.8p3f", "f", "");
+    // the suffix of a user defined literal is never that of a floating point or
+    // integer literal, but the latter is kept when it precedes it
+    this->checkSuffixes("1_km", "", "_km");
+    this->checkSuffixes("1'000'000u_km", "u", "_km");
+    this->checkSuffixes("1.5f_km", "f", "_km");
+    this->checkSuffixes("0x1p3_km", "", "_km");
+    this->checkSuffixes("-1.5_imp_thing", "", "_imp_thing");
+    this->checkSuffixes("2.e-5l_kg", "l", "_kg");
+    // a token which is not a number has no suffix. `123abc` is split in a
+    // number and an identifier, see `testLiteralsFollowedByIdentifiers`
+    for (const auto& s : {"a", "\"a\"", "+"}) {
+      tfel::utilities::CxxTokenizer t;
+      t.parseString(s);
+      TFEL_TESTS_ASSERT(!t.empty());
+      TFEL_TESTS_CHECK_THROW(
+          tfel::utilities::CxxTokenizer::extractNumberTypeSuffix(t[0]),
+          std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(
+          tfel::utilities::CxxTokenizer::extractNumberUserDefinedLiteral(t[0]),
+          std::runtime_error);
+    }
+  }  // end of testExtractingSuffixes
+  // the options used to read the value of a number token
+  void testParseNumberArgument() {
+    using CxxTokenizer = tfel::utilities::CxxTokenizer;
+    const CxxTokenizer::ParseNumberArgument discard_all;
+    auto keep_type_suffix = CxxTokenizer::ParseNumberArgument{};
+    keep_type_suffix.discard_type_suffix = false;
+    auto keep_user_defined_literal = CxxTokenizer::ParseNumberArgument{};
+    keep_user_defined_literal.discard_user_defined_literal = false;
+    {
+      // a literal without any suffix: the options have no effect
+      const auto tok = this->getNumberToken("42");
+      TFEL_TESTS_ASSERT(CxxTokenizer::readInt(tok) == 42);
+      TFEL_TESTS_ASSERT(CxxTokenizer::readUnsignedInt(tok) == 42u);
+      this->checkValue(CxxTokenizer::readDouble(tok), 42.);
+      TFEL_TESTS_ASSERT(CxxTokenizer::readInt(tok, keep_type_suffix) == 42);
+      TFEL_TESTS_ASSERT(CxxTokenizer::readInt(tok, keep_user_defined_literal) ==
+                        42);
+      this->checkValue(CxxTokenizer::readDouble(tok, keep_type_suffix), 42.);
+      this->checkValue(CxxTokenizer::readDouble(tok, keep_user_defined_literal),
+                       42.);
+    }
+    {
+      // an integer literal with a type suffix: its value is only read if such a
+      // suffix can be discarded
+      const auto tok = this->getNumberToken("3u");
+      TFEL_TESTS_ASSERT(CxxTokenizer::readInt(tok) == 3);
+      TFEL_TESTS_ASSERT(CxxTokenizer::readUnsignedInt(tok) == 3u);
+      this->checkValue(CxxTokenizer::readDouble(tok), 3.);
+      TFEL_TESTS_ASSERT(CxxTokenizer::readInt(tok, keep_user_defined_literal) ==
+                        3);
+      TFEL_TESTS_CHECK_THROW(CxxTokenizer::readInt(tok, keep_type_suffix),
+                             std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(
+          CxxTokenizer::readUnsignedInt(tok, keep_type_suffix),
+          std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(CxxTokenizer::readDouble(tok, keep_type_suffix),
+                             std::runtime_error);
+    }
+    {
+      // a floating point literal with a type suffix: its value is never that of
+      // an integer
+      const auto tok = this->getNumberToken("1.5f");
+      this->checkValue(CxxTokenizer::readDouble(tok), 1.5);
+      this->checkValue(CxxTokenizer::readDouble(tok, keep_user_defined_literal),
+                       1.5);
+      TFEL_TESTS_CHECK_THROW(CxxTokenizer::readDouble(tok, keep_type_suffix),
+                             std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(CxxTokenizer::readInt(tok), std::runtime_error);
+    }
+    {
+      // a user defined literal: its suffix is only read if it can be discarded,
+      // whether the literal it follows has a type suffix or not
+      const auto tok = this->getNumberToken("1'000'000u_km");
+      TFEL_TESTS_ASSERT(CxxTokenizer::readInt(tok) == 1000000);
+      TFEL_TESTS_ASSERT(CxxTokenizer::readUnsignedInt(tok) == 1000000u);
+      this->checkValue(CxxTokenizer::readDouble(tok), 1e6);
+      TFEL_TESTS_CHECK_THROW(
+          CxxTokenizer::readInt(tok, keep_user_defined_literal),
+          std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(
+          CxxTokenizer::readDouble(tok, keep_user_defined_literal),
+          std::runtime_error);
+      // both of the suffixes of the spelling of the literal prevent reading its
+      // value when none of them can be discarded
+      auto keep_both = keep_type_suffix;
+      keep_both.discard_user_defined_literal = false;
+      TFEL_TESTS_CHECK_THROW(CxxTokenizer::readInt(tok, keep_both),
+                             std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(CxxTokenizer::readDouble(tok, keep_both),
+                             std::runtime_error);
+    }
+    {
+      // the value of a floating point user defined literal is read as a
+      // floating point number, not as an integer
+      const auto tok = this->getNumberToken("1.5f_km");
+      this->checkValue(CxxTokenizer::readDouble(tok), 1.5);
+      TFEL_TESTS_CHECK_THROW(CxxTokenizer::readInt(tok), std::runtime_error);
+    }
+    // the value of a binary or hexadecimal integer literal is read with its
+    // radix, whatever the reader is: such a literal has no type suffix and can
+    // not be a user defined literal
+    for (const auto& v : {std::pair{"0b101", 5}, std::pair{"0x10", 16}}) {
+      const auto tok = this->getNumberToken(v.first);
+      TFEL_TESTS_ASSERT(CxxTokenizer::readInt(tok) == v.second);
+      TFEL_TESTS_ASSERT(CxxTokenizer::readUnsignedInt(tok) ==
+                        static_cast<unsigned int>(v.second));
+      this->checkValue(CxxTokenizer::readDouble(tok),
+                       static_cast<double>(v.second));
+      this->checkValue(CxxTokenizer::readDouble(tok, keep_type_suffix),
+                       static_cast<double>(v.second));
+      TFEL_TESTS_ASSERT(CxxTokenizer::readInt(tok, keep_user_defined_literal) ==
+                        v.second);
+    }
+    this->checkValue(CxxTokenizer::readDouble(this->getNumberToken("-0b101")),
+                     -5.);
+    this->checkValue(CxxTokenizer::readDouble(this->getNumberToken("-0x10")),
+                     -16.);
+  }  // end of testParseNumberArgument
 };   // end of struct CxxTokenizerNumbersTest
 
 TFEL_TESTS_GENERATE_PROXY(CxxTokenizerNumbersTest, "CxxTokenizerNumbersTest");

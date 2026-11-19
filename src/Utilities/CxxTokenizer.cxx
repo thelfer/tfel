@@ -428,7 +428,7 @@ namespace tfel::utilities {
    * since a preprocessing token is the longest sequence of characters which can
    * build one, see issue #1460.
    */
-  static bool is_integer_suffix(const std::string& s) {
+  static bool is_integer_suffix(const std::string_view s) {
     auto is_unsigned_suffix_character = [](const char c) {
       return (c == 'u') || (c == 'U');
     };
@@ -458,6 +458,214 @@ namespace tfel::utilities {
         return false;
     }
   }  // end of is_integer_suffix
+
+  /*!
+   * \return true if the given string is the suffix of a user defined literal
+   * \param[in] s: suffix of a number
+   *
+   * The user defined literals of the `C++11` standard are literals followed by
+   * a suffix which starts with an underscore, as `1_km` or `0x1FFFu_k`. Such a
+   * suffix, which can neither be that of an integer literal nor that of a
+   * floating point literal, is a part of the value of the number token, see
+   * issue #1460.
+   */
+  static bool is_user_defined_literal_suffix(const std::string_view s) {
+    return (!s.empty()) && (s.front() == '_');
+  }  // end of is_user_defined_literal_suffix
+
+  /*!
+   * \return the prefix which introduces the radix of the given literal
+   * \param[in] v: spelling of a literal, whose sign has been removed
+   *
+   * The prefix of a binary literal is `0b` or `0B` and that of a hexadecimal
+   * literal is `0x` or `0X`. The octal literals are not supported: a number
+   * with a leading zero has no prefix and is read as a decimal literal, see
+   * issue #1460.
+   */
+  static std::string_view get_literal_prefix(const std::string_view v) {
+    if ((v.size() < 3u) || (v[0] != '0')) {
+      return {};
+    }
+    const auto c = v[1];
+    if ((c == 'x') || (c == 'X') || (c == 'b') || (c == 'B')) {
+      return v.substr(0u, 2u);
+    }
+    return {};
+  }  // end of get_literal_prefix
+
+  /*!
+   * \brief split the value of a number token into the digit sequence of the
+   * literal it holds and its suffixes
+   * \param[in]  v: value of a number token, whose digit separators have been
+   *                removed
+   * \param[out] o: offset of the first character of the suffixes of the literal
+   * \return true if the literal is a floating point literal
+   *
+   * The value of a number token is the spelling of a valid literal, so that its
+   * suffixes are made of the characters which follow its digit sequence, the
+   * tokenizer reading them at once, see issue #1460. The digit sequence of a
+   * literal is its base prefix, which introduces the radix of its digits, its
+   * integral and fractional parts and its exponent part, which is introduced by
+   * `p` for a hexadecimal literal.
+   */
+  static bool get_suffix_offset(const std::string& v,
+                                std::string::size_type& o) {
+    auto is_float = false;
+    auto p = v.cbegin();
+    const auto pe = v.cend();
+    if ((p != pe) && ((*p == '-') || (*p == '+'))) {
+      ++p;
+    }
+    const auto prefix = get_literal_prefix({p, pe});
+    const auto radix =
+        (prefix.size() != 2u)
+            ? 10u
+            : (((prefix[1] == 'x') || (prefix[1] == 'X')) ? 16u : 2u);
+    p += prefix.size();
+    auto is_digit_of_the_radix = [radix](const char c) {
+      if (radix == 2u) {
+        return is_binary_digit(c);
+      }
+      if (radix == 16u) {
+        return is_hexadecimal_digit(c);
+      }
+      return is_digit(c);
+    };
+    while ((p != pe) && (is_digit_of_the_radix(*p))) {
+      ++p;
+    }
+    if ((p != pe) && (*p == '.')) {
+      is_float = true;
+      ++p;
+      while ((p != pe) && (is_digit_of_the_radix(*p))) {
+        ++p;
+      }
+    }
+    // the exponent part is that of a floating point literal: an integer literal
+    // has none and the digits of the exponent are always decimal digits
+    if ((p != pe) && ((radix == 16u) ? ((*p == 'p') || (*p == 'P'))
+                                     : ((*p == 'e') || (*p == 'E')))) {
+      is_float = true;
+      ++p;
+      if ((p != pe) && ((*p == '+') || (*p == '-'))) {
+        ++p;
+      }
+      while ((p != pe) && (is_digit(*p))) {
+        ++p;
+      }
+    }
+    o = p - v.cbegin();
+    return is_float;
+  }  // end of get_suffix_offset
+
+  CxxTokenizer::ParseNumberArgument::ParseNumberArgument() = default;
+
+  /*!
+   * \return the spelling of the literal which the given number token holds,
+   * without its digit separators and without the suffixes which the given
+   * options allow to discard, so that its value can be read
+   * \param[in] t:      token
+   * \param[in] args:   how the spelling of the literal is interpreted
+   * \param[in] method: name of the calling method, used in the error messages
+   * \throw std::exception if the token is not a number or if it holds a suffix
+   * which the options do not allow to discard
+   *
+   * The value of a number token is the spelling of the literal with its two
+   * suffixes, as `1'000'000u_km`, see the description of the `CxxTokenizer`
+   * class: that of the literal itself, which tells the type of the value of the
+   * literal, as the `u` of `1'000'000u_km`, and that of the user defined
+   * literal it belongs to, as its `_km`. The latter is always removed, the
+   * former only if `discard_type_suffix` is true, see issue #1460.
+   */
+  static std::string get_number_literal_value(
+      const Token& t,
+      const CxxTokenizer::ParseNumberArgument& args,
+      const std::string& method) {
+    raise_if(t.flag != Token::Number,
+             method + ": given value is not a number (read '" + t.value + "')");
+    auto v = t.value;
+    replace_all(v, '\'', "");
+    auto o = std::string::size_type{};
+    get_suffix_offset(v, o);
+    const auto suffix = std::string_view{v}.substr(o);
+    const auto ud = suffix.find('_');
+    const auto type_suffix = suffix.substr(0u, ud);
+    if ((!args.discard_type_suffix) && (!type_suffix.empty())) {
+      raise(method + ": token '" + t.value +
+            "' holds a literal with the suffix '" + std::string{type_suffix} +
+            "'.");
+    }
+    if ((!args.discard_user_defined_literal) &&
+        (ud != std::string_view::npos)) {
+      raise(method + ": token '" + t.value +
+            "' holds a user defined literal '" +
+            std::string{suffix.substr(ud)} + "'.");
+    }
+    v.erase((args.discard_type_suffix) ? o : (o + type_suffix.size()));
+    return v;
+  }  // end of get_number_literal_value
+
+  /*!
+   * \brief convert the value of a number token to an integer
+   * \return true on success
+   * \param[out] r: integer
+   * \param[in] v: spelling of an integer literal, whose digit separators and
+   *               suffixes have been removed
+   *
+   * The spelling must be that of a decimal, binary or hexadecimal integer
+   * literal, as `3`, `-0x10` or `+0b1000`, in the range of the integer type: a
+   * fractional part or an exponent is rejected, even if it does not change the
+   * value of the literal (`3.0`). The octal literals are not supported: a
+   * number with a leading zero is read as a decimal integer, see issue #1460.
+   *
+   * \see `CxxTokenizer::readInt` and `get_number_literal_value`
+   */
+  template <typename IntegerType>
+  static bool convertToInteger(IntegerType& r, const std::string& v) {
+    // std::from_chars does not accept an explicit plus sign
+    auto s = std::string_view{v};
+    if ((!s.empty()) && (s.front() == '+')) {
+      s.remove_prefix(1u);
+    }
+    const auto negated = ((!s.empty()) && (s.front() == '-'));
+    if ((negated) && (!std::is_signed_v<IntegerType>)) {
+      return false;
+    }
+    // std::from_chars does not accept the base prefix of the binary and
+    // hexadecimal literals: the sign which may precede it is applied to the
+    // value which is read, so that a literal whose absolute value is out of the
+    // range of the type is rejected, as `-0x80000000` for an `int`. On the
+    // contrary, it reads the sign of a decimal literal, which is therefore kept
+    // so that the minimum value of the type, which has no positive counterpart,
+    // can be read
+    auto digits = (negated) ? s.substr(1u) : s;
+    auto radix = 10;
+    if ((digits.size() > 2u) && (digits[0] == '0')) {
+      if (((digits[1]) == 'x') || ((digits[1]) == 'X')) {
+        radix = 16;
+      } else if (((digits[1]) == 'b') || ((digits[1]) == 'B')) {
+        radix = 2;
+      }
+    }
+    if (radix != 10) {
+      digits.remove_prefix(2u);
+    } else {
+      digits = s;
+    }
+    const auto de = digits.data() + digits.size();
+    // std::from_chars reports the values out of the range of the type
+    auto i = IntegerType{};
+    const auto [pi, ec] = std::from_chars(digits.data(), de, i, radix);
+    if (ec != std::errc{}) {
+      return false;
+    }
+    const auto suffix = std::string_view(pi, de - pi);
+    if (suffix.find_first_not_of("uUlL") != std::string_view::npos) {
+      return false;
+    }
+    r = ((negated) && (radix != 10)) ? static_cast<IntegerType>(-i) : i;
+    return true;
+  }  // end of convertToInteger
 
   /*!
    * \return true if the given character may introduce the suffix of a numeric
@@ -1389,62 +1597,51 @@ namespace tfel::utilities {
     return value;
   }  // end of CxxTokenizer::readString
 
-  /*!
-   * \return the value of a number token which holds a floating point literal
-   * \param[in] v: value of the token
-   *
-   * The value of the token is the spelling of the literal, without its digit
-   * separators (see the description of the `CxxTokenizer` class) and with its
-   * suffix. The suffix of a floating point literal, that is `f`, `F`, `l` or
-   * `L`, is removed so that the value of the literal can be read, see issue
-   * #1460. The suffix of an integer literal, as the `l` of `1l`, is kept: the
-   * token does not hold a floating point literal.
-   */
-  static std::string getFloatingPointLiteralValue(std::string v) {
-    replace_all(v, '\'', "");
-    if ((v.size() < 2u) || ((v.back() != 'f') && (v.back() != 'F') &&
-                            (v.back() != 'l') && (v.back() != 'L'))) {
-      return v;
-    }
-    // a floating point literal has a fractional part or an exponent part: the
-    // exponent of a decimal literal is introduced by `e` or `E` and that of a
-    // hexadecimal literal by `p` or `P`, the other letters being hexadecimal
-    // digits
-    const auto b =
-        ((v.front() == '-') || (v.front() == '+')) ? v.begin() + 1 : v.begin();
-    const auto hexadecimal = ((v.end() - b) > 2) && (*b == '0') &&
-                             (((*(b + 1)) == 'x') || ((*(b + 1)) == 'X'));
-    for (auto it = b; it != (v.end() - 1); ++it) {
-      if (*it == '.') {
-        v.pop_back();
-        return v;
-      }
-      if (hexadecimal ? ((*it == 'p') || (*it == 'P'))
-                      : ((*it == 'e') || (*it == 'E'))) {
-        v.pop_back();
-        return v;
-      }
-    }
-    return v;
-  }  // end of getFloatingPointLiteralValue
-
-  double CxxTokenizer::readDouble(const_iterator& p, const const_iterator pe)
-
-  {
-    double res;
+  double CxxTokenizer::readDouble(const_iterator& p, const const_iterator pe) {
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readDouble",
                                     "expected number", p, pe);
-    raise_if(p->flag != Token::Number,
-             "CxxTokenizer::readDouble: given value is not a number (read '" +
-                 p->value + "')");
-    const auto value = getFloatingPointLiteralValue(p->value);
+    const auto res = CxxTokenizer::readDouble(*p, ParseNumberArgument{});
+    ++p;
+    return res;
+  }  // end of CxxTokenizer::readDouble
+
+  double CxxTokenizer::readDouble(const Token& t,
+                                  const ParseNumberArgument& args) {
+    const auto value =
+        get_number_literal_value(t, args, "CxxTokenizer::readDouble");
+    auto o = std::string::size_type{};
+    const auto is_float = get_suffix_offset(value, o);
+    // the digits of the literal, which may be preceded by a sign
+    auto digits = std::string_view{value};
+    if ((!digits.empty()) &&
+        ((digits.front() == '-') || (digits.front() == '+'))) {
+      digits.remove_prefix(1u);
+    }
+    if ((!is_float) && (!get_literal_prefix(digits).empty())) {
+      // the standard conversions do not read the radix which the base prefix of
+      // a binary or hexadecimal integer literal introduces: the value of such a
+      // literal is read as an integer and converted
+      auto i = 0ll;
+      if (convertToInteger(i, value)) {
+        return static_cast<double>(i);
+      }
+      auto j = 0ull;
+      if (convertToInteger(j, value)) {
+        return static_cast<double>(j);
+      }
+      raise(
+          "CxxTokenizer::readDouble: "
+          "could not read value from token '" +
+          t.value + "'.");
+    }
+    auto res = double{};
 #ifdef __CYGWIN__
     std::istringstream is(value);
     is >> res;
     raise_if((is.fail()) || (!is.eof()),
              "CxxTokenizer::readDouble: "
              "could not read value from token '" +
-                 p->value + "'.");
+                 t.value + "'.");
 #else
     try {
       res = convert<double>(value);
@@ -1453,119 +1650,101 @@ namespace tfel::utilities {
           "CxxTokenizer::readDouble: "
           "could not read value from token "
           "'" +
-          p->value + "' (" + std::string(e.what()) + ").");
+          t.value + "' (" + std::string(e.what()) + ").");
     }
 #endif
-    ++p;
     return res;
   }  // end of CxxTokenizer::readDouble
 
-  /*!
-   * \brief convert the value of a number token to an integer
-   * \return true on success
-   * \param[out] r: integer
-   * \param[in] v: value of the token
-   *
-   * The value must be that of a decimal, binary or hexadecimal integer literal
-   * in the range of the integer type, possibly preceded by a sign and followed
-   * by an integer suffix (for example `3u`, `0b1'000` or `0x10ul`): a
-   * fractional part or an exponent is rejected, even if it does not change the
-   * value
-   * (`3.0`). The octal literals are not supported: a number with a leading zero
-   * is read as a decimal integer, see issue #1460.
-   */
-  template <typename IntegerType>
-  static bool convertToInteger(IntegerType& r, const std::string& v) {
-    // std::from_chars does not accept an explicit plus sign
-    auto s = std::string_view{v};
-    if ((!s.empty()) && (s.front() == '+')) {
-      s.remove_prefix(1u);
-    }
-    const auto negated = ((!s.empty()) && (s.front() == '-'));
-    if ((negated) && (!std::is_signed_v<IntegerType>)) {
-      return false;
-    }
-    // std::from_chars does not accept the base prefix of the binary and
-    // hexadecimal literals: the sign which may precede it is applied to the
-    // value which is read, so that a literal whose absolute value is out of the
-    // range of the type is rejected, as `-0x80000000` for an `int`. On the
-    // contrary, it reads the sign of a decimal literal, which is therefore kept
-    // so that the minimum value of the type, which has no positive counterpart,
-    // can be read
-    auto digits = (negated) ? s.substr(1u) : s;
-    auto radix = 10;
-    if ((digits.size() > 2u) && (digits[0] == '0')) {
-      if (((digits[1]) == 'x') || ((digits[1]) == 'X')) {
-        radix = 16;
-      } else if (((digits[1]) == 'b') || ((digits[1]) == 'B')) {
-        radix = 2;
-      }
-    }
-    if (radix != 10) {
-      digits.remove_prefix(2u);
-    } else {
-      digits = s;
-    }
-    const auto de = digits.data() + digits.size();
-    // std::from_chars reports the values out of the range of the type
-    auto i = IntegerType{};
-    const auto [pi, ec] = std::from_chars(digits.data(), de, i, radix);
-    if (ec != std::errc{}) {
-      return false;
-    }
-    const auto suffix = std::string_view(pi, de - pi);
-    if (suffix.find_first_not_of("uUlL") != std::string_view::npos) {
-      return false;
-    }
-    r = ((negated) && (radix != 10)) ? static_cast<IntegerType>(-i) : i;
-    return true;
-  }  // end of convertToInteger
-
-  int CxxTokenizer::readInt(const_iterator& p, const const_iterator pe)
-
-  {
-    int res;
+  int CxxTokenizer::readInt(const_iterator& p, const const_iterator pe) {
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readInt", "expected number",
                                     p, pe);
-    raise_if(p->flag != Token::Number,
-             "CxxTokenizer::readInt: given value is not a number (read " +
-                 p->value + ")");
-    const auto value = [&p] {
-      auto v = p->value;
-      replace_all(v, '\'', "");
-      return v;
-    }();
+    const auto res = CxxTokenizer::readInt(*p, ParseNumberArgument{});
+    ++p;
+    return res;
+  }  // end of CxxTokenizer::readInt
+
+  int CxxTokenizer::readInt(const Token& t, const ParseNumberArgument& args) {
+    const auto value =
+        get_number_literal_value(t, args, "CxxTokenizer::readInt");
+    auto res = int{};
     raise_if(!convertToInteger(res, value),
              "CxxTokenizer::readInt: "
              "could not read value from token '" +
-                 p->value + "'.");
-    ++p;
+                 t.value + "'.");
     return res;
   }  // end of CxxTokenizer::readInt
 
   unsigned int CxxTokenizer::readUnsignedInt(const_iterator& p,
                                              const const_iterator pe) {
-    unsigned int res;
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt",
                                     "expected number", p, pe);
-    raise_if(p->flag != Token::Number,
-             "CxxTokenizer::readUnsignedInt: given value is not a number "
-             "(read " +
-                 p->value + ")");
-    const auto value = [&p] {
-      auto v = p->value;
-      replace_all(v, '\'', "");
-      return v;
-    }();
-    if (!convertToInteger(res, value)) {
-      tfel::raise(
-          "CxxTokenizer::readUnsignedInt: "
-          "could not read value from token '" +
-          p->value + "'.\n");
-    }
+    const auto res = CxxTokenizer::readUnsignedInt(*p, ParseNumberArgument{});
     ++p;
     return res;
   }  // end of CxxTokenizer::readUnsignedInt
+
+  unsigned int CxxTokenizer::readUnsignedInt(const Token& t,
+                                             const ParseNumberArgument& args) {
+    const auto value =
+        get_number_literal_value(t, args, "CxxTokenizer::readUnsignedInt");
+    auto res = 0u;
+    raise_if(!convertToInteger(res, value),
+             "CxxTokenizer::readUnsignedInt: "
+             "could not read value from token '" +
+                 t.value + "'.");
+    return res;
+  }  // end of CxxTokenizer::readUnsignedInt
+
+  std::string CxxTokenizer::extractNumberTypeSuffix(const Token& t) {
+    raise_if(t.flag != Token::Number,
+             "CxxTokenizer::extractNumberTypeSuffix: given value is not a "
+             "number (read '" +
+                 t.value + "')");
+    auto v = t.value;
+    replace_all(v, '\'', "");
+    auto o = std::string::size_type{};
+    const auto is_float = get_suffix_offset(v, o);
+    // the type suffix of the literal is that which precedes that of a user
+    // defined literal, if any
+    const auto suffix = std::string_view{v}.substr(o);
+    const auto type_suffix = suffix.substr(0u, suffix.find('_'));
+    if (is_float) {
+      // the suffix of a floating point literal is `f`, `F`, `l` or `L`
+      if ((type_suffix.size() == 1u) &&
+          ((type_suffix[0] == 'f') || (type_suffix[0] == 'F') ||
+           (type_suffix[0] == 'l') || (type_suffix[0] == 'L'))) {
+        return std::string{type_suffix};
+      }
+      return {};
+    }
+    if (is_integer_suffix(type_suffix)) {
+      return std::string{type_suffix};
+    }
+    return {};
+  }  // end of extractNumberTypeSuffix
+
+  std::string CxxTokenizer::extractNumberUserDefinedLiteral(const Token& t) {
+    raise_if(
+        t.flag != Token::Number,
+        "CxxTokenizer::extractNumberUserDefinedLiteral: given value is not "
+        "a number (read '" +
+            t.value + "')");
+    auto v = t.value;
+    replace_all(v, '\'', "");
+    auto o = std::string::size_type{};
+    get_suffix_offset(v, o);
+    const auto suffix = std::string_view{v}.substr(o);
+    const auto p = suffix.find('_');
+    if (p == std::string_view::npos) {
+      return {};
+    }
+    const auto ud_suffix = suffix.substr(p);
+    if (!is_user_defined_literal_suffix(ud_suffix)) {
+      return {};
+    }
+    return std::string{ud_suffix};
+  }  // end of extractNumberUserDefinedLiteral
 
   void CxxTokenizer::readList(std::vector<Token>& l,
                               const std::string& m,

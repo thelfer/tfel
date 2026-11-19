@@ -48,6 +48,13 @@ namespace tfel::utilities {
    * be rewritten from the offsets of its tokens, as the `MFront` interfaces
    * for `Abaqus`, `Aster` and `CalculiX` do.
    *
+   * The value of a number token holds the suffixes of the literal whose
+   * spelling it is: the token `1'000'000u_km` holds both the `u` suffix, which
+   * tells the type of the value of the literal, and the `_km` suffix of the
+   * user defined literal. The `readInt`, `readUnsignedInt` and `readDouble`
+   * methods read the value of a literal discarding those suffixes, which
+   * `extractNumberTypeSuffix` and `extractNumberUserDefinedLiteral` return.
+   *
    * Four deviations of `C++` are maintained, see issue #1460:
    *
    * - the sign of a literal is a part of the token which holds it, so that an
@@ -104,6 +111,54 @@ namespace tfel::utilities {
      * \param[in] b : boolean telling if C++ keywords are allowed.
      */
     static bool isValidIdentifier(std::string_view, const bool = true);
+    /*!
+     * \brief options used to read the value of a number token
+     *
+     * The value of a number token is the spelling of the literal it holds,
+     * whose digit separators are removed and whose suffixes are kept, as
+     * `1'000'000u_km`, see the description of the `CxxTokenizer` class. These
+     * options tell which suffixes are removed from the spelling before the
+     * value of the literal is read: a literal holding a suffix which can not be
+     * discarded is rejected.
+     */
+    struct ParseNumberArgument {
+      /*!
+       * \brief default constructor: the type suffix of the literal and that of
+       * a user defined literal are both discarded
+       */
+      ParseNumberArgument();
+      //! \brief discard the suffix of an integer or floating point literal
+      bool discard_type_suffix = true;
+      //! \brief discard the suffix of a user defined literal
+      bool discard_user_defined_literal = true;
+    };
+    /*!
+     * \return the type suffix of the literal which the given number token
+     * holds, that is that of an integer literal, as `u`, `l` or `ull`, or that
+     * of a floating point literal, as `f` or `L`
+     * \param[in] t: token
+     * \throw std::runtime_error if the given token is not a number
+     *
+     * The tokens `3u`, `1l` and `0x10UL` give `u`, `l` and `UL`, those of
+     * `1.5f` and `1e5L` give `f` and `L` and those of `3`, `1.5` or
+     * `1'000'000_km` give an empty string: the suffix of a user defined literal
+     * is not a type suffix, see `extractNumberUserDefinedLiteral`.
+     */
+    static std::string extractNumberTypeSuffix(const Token &);
+    /*!
+     * \return the suffix of the given number token if it holds a user defined
+     * literal, that is a suffix which starts with an underscore
+     * \param[in] t: token
+     * \throw std::runtime_error if the given token is not a number
+     *
+     * The token `1_km` gives `_km`, that of `1'000'000u_km` gives `_km` and
+     * those of `1`, `3u` or `1.5e-3f` give an empty string: the suffix of a
+     * user defined literal is any sequence of characters which is neither a
+     * digit, a digit separator nor a suffix of an integer or floating point
+     * literal, which is the way the tokenizer reads such a literal, see issue
+     * #1460.
+     */
+    static std::string extractNumberUserDefinedLiteral(const Token &);
     /*!
      * \brief an helper method throwing an exception if the given
      * iterator is egal to the third argument (which shall point
@@ -163,12 +218,70 @@ namespace tfel::utilities {
      * an integer literal in the range of the type
      *
      * The value of a decimal, binary or hexadecimal integer literal is read,
-     * with or without its suffix, as `3u`, `0b1'000` or `0x10ul`. A fractional
+     * whatever the suffixes of its spelling: those which tell the type of the
+     * literal, as the `ul` of `0x10ul`, and that of a user defined literal, as
+     * the `_km` of `1'000'000u_km`, are not a part of its value. A fractional
      * part or an exponent is rejected, even if it does not change the value of
      * the literal, as in `3.0`. The octal literals are not supported, see the
      * description of the `CxxTokenizer` class.
+     *
+     * \see `readUnsignedInt(const Token &, const ParseNumberArgument &)`
      */
     static unsigned int readUnsignedInt(const_iterator &, const const_iterator);
+    /*!
+     * \brief read the value of a number token as an integer
+     * \param[in] t:    token
+     * \param[in] args: how the spelling of the literal is interpreted
+     * \return the extracted value
+     * \throw std::runtime_error if the given token is not a number, if it holds
+     * a literal with a type suffix and `discard_type_suffix` is false, if it
+     * holds a user defined literal and `discard_user_defined_literal` is false
+     * or if the value of the literal can not be read
+     *
+     * The value of a decimal, binary or hexadecimal integer literal is read, as
+     * `3u`, `0b1'000` or `0x10ul`. A fractional part or an exponent is
+     * rejected, even if it does not change the value of the literal, as in
+     * `3.0`. The octal literals are not supported, see the description of the
+     * `CxxTokenizer` class.
+     */
+    static int readInt(const Token &,
+                       const ParseNumberArgument & = ParseNumberArgument{});
+    /*!
+     * \brief read the value of a number token as an unsigned integer
+     * \param[in] t:    token
+     * \param[in] args: how the spelling of the literal is interpreted
+     * \return the extracted value
+     * \throw std::runtime_error if the given token is not a number, if it holds
+     * a literal with a type suffix and `discard_type_suffix` is false, if it
+     * holds a user defined literal and `discard_user_defined_literal` is false
+     * or if the value of the literal can not be read
+     *
+     * The value of a decimal, binary or hexadecimal integer literal is read, as
+     * `3u`, `0b1'000` or `0x10ul`. A fractional part or an exponent is
+     * rejected, even if it does not change the value of the literal, as in
+     * `3.0`. The octal literals are not supported, see the description of the
+     * `CxxTokenizer` class.
+     */
+    static unsigned int readUnsignedInt(
+        const Token &, const ParseNumberArgument & = ParseNumberArgument{});
+    /*!
+     * \brief read the value of a number token as a floating point number
+     * \param[in] t:    token
+     * \param[in] args: how the spelling of the literal is interpreted
+     * \return the extracted value
+     * \throw std::runtime_error if the given token is not a number, if it holds
+     * a literal with a type suffix and `discard_type_suffix` is false, if it
+     * holds a user defined literal and `discard_user_defined_literal` is false
+     * or if the value of the literal can not be read
+     *
+     * The value of a decimal or hexadecimal floating point literal is read, as
+     * `1.5f`, `1e5L` or `0x1.8p3`, and that of an integer literal, with the
+     * radix which its base prefix introduces, as `3`, `3u`, `0b101` or `0x10`.
+     * The digit separators of the literal are ignored, see the description of
+     * the `CxxTokenizer` class.
+     */
+    static double readDouble(
+        const Token &, const ParseNumberArgument & = ParseNumberArgument{});
     /*!
      * \brief an helper method to extract a string from the
      * given token
@@ -262,10 +375,13 @@ namespace tfel::utilities {
      * a number which can be read as a floating point number
      *
      * The value of a decimal or hexadecimal floating point literal is read,
-     * with or without the `f`, `F`, `l` or `L` suffix which may introduce it,
-     * as `1.5` and `0x1p3f`. The suffix is not a part of the value of the
-     * token, whereas that of an integer literal, as the `l` of `1l`, is: such a
-     * token does not hold a floating point literal and is rejected.
+     * whatever the suffixes of its spelling, as `1.5`, `1e5L` or `0x1p3f`, and
+     * that of an integer literal, with the radix which its base prefix
+     * introduces, as `3`, `1l` or `0b101`. The digit separators and the
+     * suffixes of the literal are not a part of its value, as if the default
+     * options of `ParseNumberArgument` were used.
+     *
+     * \see `readDouble(const Token &, const ParseNumberArgument &)`
      */
     static double readDouble(const_iterator &, const const_iterator);
     /*!
@@ -280,10 +396,14 @@ namespace tfel::utilities {
      * an integer literal in the range of the type
      *
      * The value of a decimal, binary or hexadecimal integer literal is read,
-     * with or without its suffix, as `3u`, `0b1'000` or `0x10ul`. A fractional
+     * whatever the suffixes of its spelling: those which tell the type of the
+     * literal, as the `ul` of `0x10ul`, and that of a user defined literal, as
+     * the `_km` of `1'000'000u_km`, are not a part of its value. A fractional
      * part or an exponent is rejected, even if it does not change the value of
      * the literal, as in `3.0`. The octal literals are not supported, see the
      * description of the `CxxTokenizer` class.
+     *
+     * \see `readInt(const Token &, const ParseNumberArgument &)`
      */
     static int readInt(const_iterator &, const const_iterator);
     //! \brief default constructor
