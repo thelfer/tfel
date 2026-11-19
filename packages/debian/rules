@@ -20,6 +20,7 @@ override_dh_auto_configure:
 		-Denable-fortran=ON \
 		-Denable-python=ON \
 		-Denable-python-bindings=OFF \
+		-Denable-numpy-support=OFF \
 		-Denable-reference-doc=OFF \
 		-Denable-website=OFF \
 		-DTFEL_APPEND_VERSION=OFF
@@ -39,6 +40,10 @@ override_dh_auto_configure:
 #    (the variable is already honoured by the CMake code) or by an
 #    upstream change; a `tfel-python` binary package will then be
 #    added (see issue #1466).
+#
+#  - `enable-numpy-support` is off: NumPy headers are only used by the
+#    python bindings; leaving it on would make `-Denable-python=ON`
+#    require the `python3-numpy` package without any benefit.
 #
 #  - the reference documentation and the website require the
 #    pandoc/texlive tool chain; a `tfel-doc` binary package will be
