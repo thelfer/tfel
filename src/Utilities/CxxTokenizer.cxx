@@ -53,6 +53,19 @@ namespace tfel::utilities {
     return std::isdigit(static_cast<unsigned char>(c)) != 0;
   }  // end of is_digit
 
+  static bool is_binary_digit(const char c) {
+    return (c == '0') || (c == '1');
+  }  // end of is_binary_digit
+
+  static bool is_octal_digit(const char c) {
+    return (c >= '0') && (c <= '7');
+  }  // end of is_octal_digit
+
+  static bool is_hexadecimal_digit(const char c) {
+    return (((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'f')) ||
+            ((c >= 'A') && (c <= 'F')));
+  }  // end of is_hexadecimal_digit
+
   static bool is_alpha(const char c) {
     return std::isalpha(static_cast<unsigned char>(c)) != 0;
   }  // end of is_alpha
@@ -242,9 +255,9 @@ namespace tfel::utilities {
           grave_accent_as_separator(ba) {}  // end of is_separator
     bool operator()(const std::string::value_type& c) const {
       using ctype = std::string::value_type;
-      constexpr std::array<ctype, 24> s = {
-          {'?', ';', '/', '!', '&', '*', '|', '{', '}',  '[',  ']', '(',
-           ')', '%', '=', '^', ',', ':', '<', '>', '\'', '\"', '\\'}};
+      constexpr std::array<ctype, 25> s = {
+          {'?', ';', '/', '!', '&', '*', '|', '{', '}', '[',  ']',  '(',
+           ')', '%', '=', '^', ',', ':', '<', '>', '~', '\'', '\"', '\\'}};
       if (c == '.') {
         return this->dot_as_separator;
       }
@@ -300,6 +313,30 @@ namespace tfel::utilities {
     advance(o, p, np);
   }
 
+  /*!
+   * \return true if the given position holds the hexadecimal digits of a
+   * universal character name
+   * \param[in,out] o:         offset in the line
+   * \param[in,out] p:         first character which follows the `\u` or `\U`
+   * introducer
+   * \param[in]     pe:        end of the line
+   * \param[in]     nb_digits: number of hexadecimal digits, which is four for a
+   * `\u` introducer and eight for a `\U` one
+   */
+  static bool read_universal_character_name(
+      Token::size_type& o,
+      std::string::const_iterator& p,
+      const std::string::const_iterator pe,
+      const Token::size_type nb_digits) {
+    for (auto i = Token::size_type{}; i != nb_digits; ++i) {
+      if ((p == pe) || (!is_hexadecimal_digit(*p))) {
+        return false;
+      }
+      advance(o, p, 1u);
+    }
+    return true;
+  }  // end of read_universal_character_name
+
   void CxxTokenizer::parseChar(Token::size_type& o,
                                std::string::const_iterator& p,
                                const std::string::const_iterator pe,
@@ -309,27 +346,72 @@ namespace tfel::utilities {
     };
     if (this->charAsString) {
       this->parseString(o, p, pe, n, '\'');
-    } else {
-      const auto pn = std::next(p, 1);
-      throw_if(pn == pe, "unterminated char");
-      const auto pn2 = std::next(p, 2);
-      throw_if(pn2 == pe, "unterminated char");
-      const auto pn3 = std::next(p, 3);
-      if (*pn == '\\') {
-        throw_if(pn3 == pe, "unterminated char");
-        const auto pn4 = std::next(p, 4);
-        throw_if(*pn3 != '\'',
-                 "unexpected token '" + std::string(1u, *pn3) + "'");
-        this->tokens.emplace_back(std::string(p, pn4), n, o, Token::Char);
-        advance(o, p, pn4);
-      } else {
-        throw_if(*pn2 != '\'',
-                 "unexpected token '" + std::string(1u, *pn2) + "'");
-        this->tokens.emplace_back(std::string(p, pn3), n, o, Token::Char);
-        advance(o, p, pn3);
-      }
+      return;
     }
-  }
+    // the sequence of the characters of the literal, which the closing quote
+    // ends: an escape sequence is read as a whole so that the character it
+    // introduces is not taken for that quote, as in `'\''` or `'\x27'`
+    const auto b = p;
+    advance(o, p, 1u);
+    auto nb_chars = Token::size_type{};
+    while ((p != pe) && (*p != '\'')) {
+      if (*p != '\\') {
+        advance(o, p, 1u);
+        ++nb_chars;
+        continue;
+      }
+      advance(o, p, 1u);
+      throw_if(p == pe, "unterminated char");
+      if (*p == 'x') {
+        // the hexadecimal escape sequence, as `'\x41'`, which shall hold at
+        // least one digit. The value of the escape sequence is not checked
+        // against that of the character type, which is a condition of the
+        // `C++` standard, as the value of `'\400'` is out of the range of the
+        // `signed char` type
+        advance(o, p, 1u);
+        throw_if((p == pe) || (!is_hexadecimal_digit(*p)),
+                 "a hexadecimal escape sequence shall have at least one digit");
+        while ((p != pe) && (is_hexadecimal_digit(*p))) {
+          advance(o, p, 1u);
+        }
+      } else if ((*p == 'u') || (*p == 'U')) {
+        // the universal character name of the `C++11` standard, as `'\u00e9'`
+        // or `'\U0001F600'`, which is a character of the literal although it
+        // holds several characters of the source file
+        const auto nb_digits =
+            ((*p == 'u') ? Token::size_type{4u} : Token::size_type{8u});
+        advance(o, p, 1u);
+        throw_if(!read_universal_character_name(o, p, pe, nb_digits),
+                 "an incomplete universal character name");
+      } else if (is_octal_digit(*p)) {
+        // the octal escape sequence, as `'\7'` or `'\101'`, which holds at most
+        // three digits
+        auto nb_digits = Token::size_type{};
+        do {
+          advance(o, p, 1u);
+          ++nb_digits;
+        } while ((p != pe) && (nb_digits != 3u) && (is_octal_digit(*p)));
+      } else {
+        // a simple escape sequence, as `'\n'`, `'\''` or `'\"'`. An unknown
+        // escape sequence, as `'\q'`, is a diagnostic of a `C++` compiler and
+        // not an error of the grammar: the character which follows the
+        // backslash is taken for a part of the literal
+        advance(o, p, 1u);
+      }
+      ++nb_chars;
+    }
+    throw_if(p == pe, "unterminated char");
+    // A character literal of `C++` holds exactly one character, which is either
+    // a character of the source character set or an escape sequence: the
+    // multi-character character constants, as `'ab'`, are only supported by
+    // `C++` compilers and are rejected by the tokenizer since the sequences of
+    // characters which build them are those of the free form texts, as the
+    // apostrophe of `don't`, see issue #1460
+    throw_if(nb_chars == 0u, "empty char");
+    throw_if(nb_chars > 1u, "a char literal holds at most one character");
+    advance(o, p, 1u);
+    this->tokens.emplace_back(std::string(b, p), n, o, Token::Char);
+  }  // end of CxxTokenizer::parseChar
 
   void CxxTokenizer::parseString(Token::size_type& o,
                                  std::string::const_iterator& p,
@@ -406,15 +488,6 @@ namespace tfel::utilities {
       advance(o, p, 1u);
     }
   }  // end of CxxTokenizer::try_join
-
-  static bool is_binary_digit(const char c) {
-    return (c == '0') || (c == '1');
-  }  // end of is_binary_digit
-
-  static bool is_hexadecimal_digit(const char c) {
-    return (((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'f')) ||
-            ((c >= 'A') && (c <= 'F')));
-  }  // end of is_hexadecimal_digit
 
   /*!
    * \return true if the given string is a valid suffix of an integer literal
@@ -1093,6 +1166,65 @@ namespace tfel::utilities {
     this->parseStandardLine(o, p, p, pe, n);
   }  // end of CxxTokenizer::parsePreprocessorDirective
 
+  /*!
+   * \return the punctuator of C++ which begins at the given position, which is
+   * empty if the character at that position introduces no punctuator of more
+   * than one character
+   * \param[in] p:  first character of the punctuator
+   * \param[in] pe: end of the line
+   *
+   * A punctuator is the longest sequence of characters which can build a
+   * preprocessing token, so that the candidates are tested from the longest one
+   * to the shortest one: `a<<=b` holds the left shift assignment operator and
+   * not the left shift operator followed by the equal sign, see issue #1460.
+   *
+   * Only the punctuators of the branches of `parseStandardLine` which call this
+   * function are listed: `->`, `++` or `::` have a branch of their own, which
+   * handles the numbers with a leading sign or the comments. The digraphs, as
+   * `<:` for `[`, and the trigraphs, as `??(` for `[`, which a `C++` compiler
+   * only supports on request, are not supported.
+   */
+  static std::string_view match_punctuator(
+      const std::string::const_iterator p,
+      const std::string::const_iterator pe) {
+    static constexpr std::array<std::string_view, 13u> ps = {
+        {"<<=", ">>=", "<=>", "...", "&&", "&=", "^=", "<<", "<=", ">>",
+         ">=", ".*", ".."}};
+    // `..`, which is the range separator of `MFront`, is the last candidate so
+    // that `...`, the ellipsis of the variadic arguments, is matched first
+    for (const auto& s : ps) {
+      if ((static_cast<std::string::size_type>(pe - p) >= s.size()) &&
+          (std::equal(s.begin(), s.end(), p))) {
+        return s;
+      }
+    }
+    return {};
+  }  // end of match_punctuator
+
+  /*!
+   * \brief add the token of the punctuator which begins at the given position
+   * \param[in,out] ts:  tokens
+   * \param[in,out] o:   offset in the line
+   * \param[in,out] p:   first character of the punctuator
+   * \param[in]     pe:  end of the line
+   * \param[in]     n:   line number
+   * \param[in]     jcs: if false, the characters of a punctuator of more than
+   * one character are added as separate tokens, see
+   * `CxxTokenizerOptions::joinCxxTwoCharactersSeparators`
+   */
+  static void append_punctuator(std::vector<Token>& ts,
+                                Token::size_type& o,
+                                std::string::const_iterator& p,
+                                const std::string::const_iterator pe,
+                                const Token::size_type n,
+                                const bool jcs) {
+    const auto s = (jcs) ? match_punctuator(p, pe) : std::string_view{};
+    const auto nb_chars = (s.empty()) ? Token::size_type{1u} : s.size();
+    ts.emplace_back(std::string{p, std::next(p, nb_chars)}, n, o,
+                    Token::Standard);
+    advance(o, p, nb_chars);
+  }  // end of append_punctuator
+
   void CxxTokenizer::parseStandardLine(Token::size_type& o,
                                        std::string::const_iterator& p,
                                        const std::string::const_iterator b,
@@ -1121,14 +1253,23 @@ namespace tfel::utilities {
           advance(o, p, pe - p);
         } else {
           auto pn = std::next(p);
-          if (pn == pe) {
-            throw_if(!this->allowStrayHashCharacter, "stray ‘#’");
+          if ((this->joinCxxTwoCharactersSeparators) && (pn != pe) &&
+              (*pn == '#')) {
+            // `##`, the token pasting operator of the preprocessor, as in
+            // `#define NAME(A) A ## _sfx`, which the `#` branch of a stray hash
+            // character would otherwise reject, see issue #1460
+            this->tokens.emplace_back("##", n, o, Token::Standard);
+            advance(o, p, 2u);
           } else {
-            throw_if((!this->allowStrayHashCharacter) && (!is_alpha(*pn)),
-                     "stray ‘#’");
+            if (pn == pe) {
+              throw_if(!this->allowStrayHashCharacter, "stray ‘#’");
+            } else {
+              throw_if((!this->allowStrayHashCharacter) && (!is_alpha(*pn)),
+                       "stray ‘#’");
+            }
+            this->tokens.emplace_back("#", n, o, Token::Standard);
+            advance(o, p, 1u);
           }
-          this->tokens.emplace_back("#", n, o, Token::Standard);
-          advance(o, p, 1u);
         }
       } else if (*p == '\\') {
         throw_if((!this->allowStrayBackSlash) && (p != std::prev(pe)),
@@ -1179,10 +1320,13 @@ namespace tfel::utilities {
           this->tokens.emplace_back("\'", n, o, Token::Standard);
           advance(o, p, 1u);
         }
-      } else if (*p == '<') {
-        this->try_join(o, p, pe, n, '<', '=');
-      } else if (*p == '>') {
-        this->try_join(o, p, pe, n, '>', '=');
+      } else if ((*p == '<') || (*p == '>') || (*p == '&') || (*p == '^')) {
+        // the punctuators of more than one character, the longest first, so
+        // that
+        // `<<=`, `>>=`, `<=>` and the compound assignments are read as a single
+        // token, see `match_punctuator`
+        append_punctuator(this->tokens, o, p, pe, n,
+                          this->joinCxxTwoCharactersSeparators);
       } else if (*p == ':') {
         this->try_join(o, p, pe, n, ':');
       } else if ((*p == '+') || (*p == '-')) {
@@ -1228,7 +1372,8 @@ namespace tfel::utilities {
       } else if ((*p == '*') || (*p == '%') || (*p == '!') || (*p == '=')) {
         this->try_join(o, p, pe, n, '=');
       } else if (*p == '&') {
-        this->try_join(o, p, pe, n, '&');
+        append_punctuator(this->tokens, o, p, pe, n,
+                          this->joinCxxTwoCharactersSeparators);
       } else if (*p == '.') {
         auto pn = std::next(p);
         if ((pn != pe) && (is_digit(*pn))) {
@@ -1240,7 +1385,10 @@ namespace tfel::utilities {
             advance(o, p, 1u);
           }
         } else {
-          this->try_join(o, p, pe, n, '.', '*');
+          // `...`, the ellipsis of the variadic arguments, is read before `..`,
+          // the range separator of `MFront`, and before `.*`
+          append_punctuator(this->tokens, o, p, pe, n,
+                            this->joinCxxTwoCharactersSeparators);
         }
       } else if (*p == '|') {
         this->try_join(o, p, pe, n, '|', '=');

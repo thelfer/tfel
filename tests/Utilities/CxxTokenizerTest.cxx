@@ -143,11 +143,40 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t.size() == 1u);
     TFEL_TESTS_ASSERT(t[0].flag == Token::Char);
     TFEL_TESTS_ASSERT(t[0].value == "'\\''");
-    // t.clear();
+    // the escape sequences of a character literal: an escape sequence is a
+    // single character of the literal although it holds several characters of
+    // the source file, so that `'\x27'` is the `'` character and not an
+    // unterminated literal, as `'\''` is. The value of the escape sequence is
+    // not checked against that of the character type: `'\400'` is out of the
+    // range of a `signed char` and is a diagnostic of a compiler, not an error
+    // of the grammar
+    for (const auto* const s :
+         {"'\\n'", "'\\0'", "'\\\"'", "'\\\\'", "'\\a'", "'\\?'", "'\\q'",
+          "'\\x41'", "'\\xff'", "'\\7'", "'\\77'", "'\\101'", "'\\u0041'",
+          "'\\u00e9'", "'\\U00000041'"}) {
+      t.clear();
+      t.parseString(s);
+      TFEL_TESTS_ASSERT(t.size() == 1u);
+      TFEL_TESTS_ASSERT(t[0].flag == Token::Char);
+      TFEL_TESTS_ASSERT(t[0].value == s);
+    }
+    // a hexadecimal escape sequence without any digit, as `'\x'`, and an
+    // incomplete universal character name, as `'\u00zz'`, are rejected
+    // although the tokenizer used to accept the first one and to reject both
+    // with a message about an unexpected token
+    for (const auto* const s :
+         {"''", "'\\x'", "'\\xG'", "'\\u00zz'", "'\\08'", "'ab'", "'\\ab'"}) {
+      t.clear();
+      TFEL_TESTS_CHECK_THROW(t.parseString(s), std::runtime_error);
+    }
+    // the backslash which introduces an escape sequence is itself introduced by
+    // a backslash: the value of the token holds the four characters of the
+    // literal
+    t.clear();
     t.parseString("'\\\\'");
-    // TFEL_TESTS_ASSERT(t.size()==1u);
-    // TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
-    // TFEL_TESTS_ASSERT(t[0].value=="'\\'");
+    TFEL_TESTS_ASSERT(t.size() == 1u);
+    TFEL_TESTS_ASSERT(t[0].flag == Token::Char);
+    TFEL_TESTS_ASSERT(t[0].value == "'\\\\'");
     // t.clear();
     // t.parseString("'\\\\"'");
     // TFEL_TESTS_ASSERT(t.size()==1u);

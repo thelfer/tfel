@@ -55,7 +55,8 @@ namespace tfel::utilities {
    * methods read the value of a literal discarding those suffixes, which
    * `extractNumberTypeSuffix` and `extractNumberUserDefinedLiteral` return.
    *
-   * Four deviations of `C++` are maintained, see issue #1460:
+   * Four deviations of `C++` are maintained for the numeric literals, see
+   * issue #1460:
    *
    * - the sign of a literal is a part of the token which holds it, so that an
    *   unsigned literal can not be signed: `-2U` is rejected whereas `C++` reads
@@ -78,6 +79,80 @@ namespace tfel::utilities {
    * - the suffixes of the floating point types of `C++23`, as `f32` or `df32`,
    *   and those of the decimal floating point types of the `C` extensions, as
    *   `dd`, are not supported.
+   *
+   * Several other deviations are maintained for the remaining constructs, which
+   * are the punctuators, the character literals, the quoted strings and the
+   * preprocessor:
+   *
+   * - the `..` punctuator, which is the range separator specific to `MFront`,
+   *   as in `n=0..10`, is read after the `...` punctuator, the ellipsis of the
+   *   variadic arguments, which is the longest sequence of characters which
+   *   builds a punctuator at that position. A number followed by a range
+   *   separator is rejected since the maximal munch of the grammar builds the
+   *   number `1.` first, which the `.` punctuator may not follow, so that
+   *   `1..2` gives an error and not the `1`, `..` and `2` tokens,
+   *
+   * - a character literal holds one character, which is either a character of
+   *   the source character set or an escape sequence, as `'\n'`, `'\x41'`,
+   *   `'\101'` or `'\u00e9'`: the multi-character character constants, as
+   *   `'ab'`, which a `C++` compiler only supports, are rejected since such a
+   *   sequence of characters is that of a free form text, as the apostrophe of
+   *   `don't`. The value of an escape sequence is not checked against that of
+   *   the character type: `'\400'` is out of the range of a `signed char` and
+   *   `'\q'` is an unknown escape sequence, which are diagnostics of a
+   *   compiler, and both are accepted by the tokenizer,
+   *
+   * - the escape sequences of a quoted string are neither interpreted nor
+   *   checked, contrary to those of a character literal: the only character
+   *   which is looked for is that which closes the string, so that `"\users"`
+   *   and `"a\x"`, which no compiler accepts, are valid string literals. It
+   *   allows the paths of the Windows files, as `"C:\users\jdoe"`, to be read
+   *   although they hold no valid escape sequence. The prefix of an encoded
+   *   string, as the `u8` of `u8"text"`, and the suffix of a user defined
+   *   literal, as the `_km` of `"text"_km`, are read as separate identifier
+   *   tokens, whereas `C++` reads a single token: as for the numeric literals,
+   *   the value of the string token is that of the characters between the
+   *   quotes, whether the literal holds a prefix or a suffix,
+   *
+   * - the tokenizer reads a line at a time, so that a backslash which ends a
+   *   line, that is the line splicing of the preprocessor, does not join the
+   * two lines: `a\` followed by `b` gives the `a`, `\` and `b` tokens and not
+   * the `ab` identifier. It is the same for the unterminated comments and raw
+   *   string literals, which are not errors: the remainder of the line is kept
+   *   and the caller checks the state of the tokenizer once the end of the file
+   *   is reached, see issue #1395,
+   *
+   * - a preprocessor directive is introduced by the `#` punctuator followed by
+   *   one of the keywords of the preprocessor, as `define` or `include`: a line
+   *   directive, as `# 1 "file.mfront"`, which is valid `C++`, is rejected
+   * since `1` is not such a keyword. The `#` character is not a separator of
+   * the tokenizer, so that `A##_sfx` is a single identifier token and not the
+   * token pasting operator between the `A` and `_sfx` identifiers,
+   *
+   * - the `$` character and the characters of the UTF-8 encoding are accepted
+   *   in an identifier, as in `a$b` or `café`, which the `C++` standard does
+   *   not allow and a `C++` compiler accepts as an extension, whereas a
+   *   universal character name is accepted in a character literal, as
+   *   `'\u00e9'`, and rejected in an identifier, so that `h\u00e9l` gives an
+   *   error,
+   *
+   * - the digraphs, as `<:` for `[` or `?:` for `or`, which `g++` accepts at
+   *   every language level, and the trigraphs, as `??(` for `[`, which a `C++`
+   *   compiler only supports on request, are not supported: they give the
+   * tokens of the punctuators they are made of, as the `<` and `:` tokens of
+   * `<:`. The value of a token being that of the characters it holds, the `[`
+   * token which is the equivalent of `<:` could not be given without
+   * translating this text.
+   *
+   * The punctuators of `C++` are read as a single token, from the longest one
+   * to the shortest one, since a preprocessing token is the longest sequence of
+   * characters which can build one: `<<=`, `>>=`, `<=>`, `&=`, `^=` and the
+   * ellipsis, `...`, are single tokens. The `~` punctuator is a separator, as
+   * the
+   * `!` and `&` ones are, so that `~y` gives two tokens and not the `~y`
+   * identifier. The `##` punctuator of the token pasting operator of the
+   * preprocessor is read too, as in `#define SUFFIX(A) A ## _sfx`, see issue
+   * #1460.
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer
       : protected CxxTokenizerOptions {
