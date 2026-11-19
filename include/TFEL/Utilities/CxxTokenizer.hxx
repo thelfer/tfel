@@ -31,13 +31,46 @@ namespace tfel::utilities {
    * \brief class in charge of reading a C++-style file and converting it
    * in tokens.
    *
-   * The value of a number token does not hold the digit separators of the
-   * `C++14` integer literals: `@IterMax 1'000;` gives the number token
+   * The numeric literals which are read by the tokenizer are those of the
+   * `C++11` and `C++14` standards: decimal, binary (`0b1010`) and hexadecimal
+   * (`0x1F`) integer literals, with the `u`, `U`, `l`, `L`, `ll`, `LL`, `ul`,
+   * `uL`, `llu`, ... suffixes, decimal floating point literals (`1.5`, `1.`,
+   * `.5`, `1e5`, `1.5e-3`, ...), with the `f`, `F`, `l` and `L` suffixes,
+   * hexadecimal floating point literals (`0x1.8p3`), whose exponent, which is
+   * introduced by `p` or `P`, is required, and the suffixes of the user defined
+   * literals, which shall begin with an underscore (`1_km`).
+   *
+   * The digit separators of the `C++14` literals are supported: the value of a
+   * number token does not hold them: `@IterMax 1'000;` gives the number token
    * `1000`, whose value is therefore not the substring of the line taken at
    * the offset of this token. The offsets of the tokens remain those of the
    * file, whatever the numbers which precede them, so that a source code can
    * be rewritten from the offsets of its tokens, as the `MFront` interfaces
    * for `Abaqus`, `Aster` and `CalculiX` do.
+   *
+   * Four deviations of `C++` are maintained, see issue #1460:
+   *
+   * - the sign of a literal is a part of the token which holds it, so that an
+   *   unsigned literal can not be signed: `-2U` is rejected whereas `C++` reads
+   *   it as the negation of the `unsigned` literal `2U`,
+   *
+   * - a number with a leading zero is read as a decimal integer: the octal
+   *   literals are not supported, as they are a notorious source of errors and
+   *   as the metadata of the `MFront` files use decimal numbers with leading
+   *   zeros, as in `@Date 06/07/2015;`,
+   *
+   * - an identifier which follows a numeric literal is not a part of this
+   *   literal, unless it begins with one of the characters which may introduce
+   *   a suffix, as the `f` of `2f`, which is rejected. The maximal munch rule
+   *   of the preprocessing tokens, which states that a token is the longest
+   *   sequence of characters which can build one, is hence not applied as
+   *   strictly as `C++` does it: the tokenizer is also used to read free form
+   *   texts, as the `@Description` blocks of the `MFront` files, in which a
+   *   number is often followed by an identifier, as `5Cr` or `21st`,
+   *
+   * - the suffixes of the floating point types of `C++23`, as `f32` or `df32`,
+   *   and those of the decimal floating point types of the `C` extensions, as
+   *   `dd`, are not supported.
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer
       : protected CxxTokenizerOptions {
@@ -126,7 +159,14 @@ namespace tfel::utilities {
      * line
      * \return the extracted value
      * \throw std::runtime_error if the given iterator is egal to
-     * the second argument
+     * the second argument or if the token does not hold the value of
+     * an integer literal in the range of the type
+     *
+     * The value of a decimal, binary or hexadecimal integer literal is read,
+     * with or without its suffix, as `3u`, `0b1'000` or `0x10ul`. A fractional
+     * part or an exponent is rejected, even if it does not change the value of
+     * the literal, as in `3.0`. The octal literals are not supported, see the
+     * description of the `CxxTokenizer` class.
      */
     static unsigned int readUnsignedInt(const_iterator &, const const_iterator);
     /*!
@@ -218,7 +258,14 @@ namespace tfel::utilities {
      * line
      * \return the extracted value
      * \throw std::runtime_error if the given iterator is egal to
-     * the second argument
+     * the second argument or if the token does not hold the value of
+     * a number which can be read as a floating point number
+     *
+     * The value of a decimal or hexadecimal floating point literal is read,
+     * with or without the `f`, `F`, `l` or `L` suffix which may introduce it,
+     * as `1.5` and `0x1p3f`. The suffix is not a part of the value of the
+     * token, whereas that of an integer literal, as the `l` of `1l`, is: such a
+     * token does not hold a floating point literal and is rejected.
      */
     static double readDouble(const_iterator &, const const_iterator);
     /*!
@@ -229,7 +276,14 @@ namespace tfel::utilities {
      * line
      * \return the extracted value
      * \throw std::runtime_error if the given iterator is egal to
-     * the second argument
+     * the second argument or if the token does not hold the value of
+     * an integer literal in the range of the type
+     *
+     * The value of a decimal, binary or hexadecimal integer literal is read,
+     * with or without its suffix, as `3u`, `0b1'000` or `0x10ul`. A fractional
+     * part or an exponent is rejected, even if it does not change the value of
+     * the literal, as in `3.0`. The octal literals are not supported, see the
+     * description of the `CxxTokenizer` class.
      */
     static int readInt(const_iterator &, const const_iterator);
     //! \brief default constructor

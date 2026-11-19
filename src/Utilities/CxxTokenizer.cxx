@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <utility>
 
 #include "TFEL/Raise.hxx"
@@ -406,6 +407,68 @@ namespace tfel::utilities {
     }
   }  // end of CxxTokenizer::try_join
 
+  static bool is_binary_digit(const char c) {
+    return (c == '0') || (c == '1');
+  }  // end of is_binary_digit
+
+  static bool is_hexadecimal_digit(const char c) {
+    return (((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'f')) ||
+            ((c >= 'A') && (c <= 'F')));
+  }  // end of is_hexadecimal_digit
+
+  /*!
+   * \return true if the given string is a valid suffix of an integer literal
+   * \param[in] s: suffix of an integer literal
+   *
+   * A suffix of an integer literal is one of `u`, `U`, `l`, `L`, `ll`, `LL`, or
+   * one of `u`, `U`, `l`, `L`, `ll`, `LL` followed by one of `u`, `U`, `l`,
+   * `L`. The two characters of a `long long` suffix have the same case, so that
+   * `1ll` and `1LL` are valid whereas `1lL` is not. The other combinations, as
+   * `1ulu`, are ill formed: they are rejected and not split in several tokens
+   * since a preprocessing token is the longest sequence of characters which can
+   * build one, see issue #1460.
+   */
+  static bool is_integer_suffix(const std::string& s) {
+    auto is_unsigned_suffix_character = [](const char c) {
+      return (c == 'u') || (c == 'U');
+    };
+    auto is_long_suffix_character = [](const char c) {
+      return (c == 'l') || (c == 'L');
+    };
+    auto is_long_long_suffix = [&is_long_suffix_character](const char c1,
+                                                           const char c2) {
+      return ((c1 == c2) && (is_long_suffix_character(c1)));
+    };
+    switch (s.size()) {
+      case 1u:
+        return (is_unsigned_suffix_character(s[0])) ||
+               (is_long_suffix_character(s[0]));
+      case 2u:
+        return ((is_unsigned_suffix_character(s[0])) &&
+                (is_long_suffix_character(s[1]))) ||
+               ((is_long_suffix_character(s[0])) &&
+                (is_unsigned_suffix_character(s[1]))) ||
+               (is_long_long_suffix(s[0], s[1]));
+      case 3u:
+        return ((is_unsigned_suffix_character(s[0])) &&
+                (is_long_long_suffix(s[1], s[2]))) ||
+               ((is_long_long_suffix(s[0], s[1])) &&
+                (is_unsigned_suffix_character(s[2])));
+      default:
+        return false;
+    }
+  }  // end of is_integer_suffix
+
+  /*!
+   * \return true if the given character may introduce the suffix of a numeric
+   * literal
+   * \param[in] c: character
+   */
+  static bool is_suffix_character(const char c) {
+    return ((c == 'u') || (c == 'U') || (c == 'l') || (c == 'L') ||
+            (c == 'f') || (c == 'F'));
+  }  // end of is_suffix_character
+
   void CxxTokenizer::parseNumber(Token::size_type& o,
                                  std::string::const_iterator& p,
                                  const std::string::const_iterator pe,
@@ -413,178 +476,182 @@ namespace tfel::utilities {
     auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseNumber: " + m);
     };
-    auto is_binary = [](const char c) { return (c == '0') || (c == '1'); };
-    auto is_hex = [](const char c) {
-      return (((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'f')) ||
-              ((c >= 'A') && (c <= 'F')));
+    // reads the digit sequence which begins at `p` and whose digits are
+    // accepted by the given predicate. The digit separators of the `C++14`
+    // literals are only allowed between two digits, so that `1'`, `1''2` and
+    // `0x'1` are rejected. \return the number of digits which have been read
+    auto read_digit_sequence = [&](const auto& is_digit_of_the_radix) {
+      auto nb_digits = Token::size_type{};
+      while (p != pe) {
+        if (is_digit_of_the_radix(*p)) {
+          ++nb_digits;
+          ++p;
+        } else if ((nb_digits != 0u) && (*p == '\'')) {
+          // a digit separator, which is not a part of the value of the token
+          throw_if(++p == pe, "a digit separator shall be followed by a digit");
+          throw_if(!is_digit_of_the_radix(*p),
+                   "a digit separator shall be followed by a digit");
+          ++nb_digits;
+          ++p;
+        } else {
+          break;
+        }
+      }
+      return nb_digits;
     };
     const auto b = p;
-    // if true, reading a float point value, otherwise
-    // could be a float or an integer
-    auto is_float = false;
+    // In `C++`, the sign of a number is given by an operator and is not a part
+    // of the literal: holding the sign in the value of the token is a deviation
+    // of `TFEL` which is used by the parsers built on top of `CxxTokenizer`,
+    // see issue #1460
     auto is_signed = false;
-    auto is_binary_integer = false;
-    auto is_hex_integer = false;
     if ((*p == '-') || (*p == '+')) {
       if (*p == '-') {
         is_signed = true;
       }
-      // reading decimal part
       throw_if(++p == pe, "invalid number");
     }
     throw_if((!(is_digit(*p))) && (*p != '.'),
              std::string("expected digit, read '") + *p + '\'');
+    // a floating point literal has a fractional part or an exponent part: the
+    // sign of the exponent does not matter
+    auto is_float = false;
+    // radix of the digits which follow the base prefix of the literal
+    auto radix = 10u;
+    auto nb_digits = Token::size_type{};
     if (*p == '.') {
+      // a fractional-constant may begin with the decimal point, as `.5`. Only a
+      // decimal literal can start with the decimal point since the base prefix
+      // of a binary or hexadecimal literal comes first
       is_float = true;
       throw_if(++p == pe, "invalid number");
-      throw_if(!is_digit(*p),
-               std::string("expected digit, read '") + *p + '\'');
-    } else if (*p == '0') {
-      if (++p != pe) {
-        if ((*p == 'b') || (*p == 'B')) {
-          // reading binary integer
-          is_binary_integer = true;
-          throw_if(++p == pe, "invalid binary integer");
-          throw_if(!is_binary(*p), "invalid binary integer");
-          while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
-            if (*p == '\'') {
-              throw_if(++p == pe, "invalid binary integer");
-            }
-            throw_if(!is_binary(*p), "invalid binary integer");
-            ++p;
-          }
-        } else if ((*p == 'x') || (*p == 'X')) {
-          // reading hex integer
-          is_hex_integer = true;
-          throw_if(++p == pe, "invalid hexadecimal integer");
-          throw_if(!is_hex(*p), "invalid hexadecimal integer");
-          while ((p != pe) && ((is_hex(*p)) || (*p == '\''))) {
-            if (*p == '\'') {
-              throw_if(++p == pe, "invalid hexadecimal integer");
-              throw_if(!is_hex(*p), "invalid hexadecimal integer");
-            }
-            ++p;
-          }
-        } else {
-          --p;
+      nb_digits = read_digit_sequence(is_digit);
+      throw_if(nb_digits == 0u,
+               "a fractional constant shall have at least one digit");
+    } else {
+      if ((*p == '0') && (std::next(p) != pe)) {
+        if ((*std::next(p) == 'b') || (*std::next(p) == 'B')) {
+          radix = 2u;
+          std::advance(p, 2);
+        } else if ((*std::next(p) == 'x') || (*std::next(p) == 'X')) {
+          radix = 16u;
+          std::advance(p, 2);
         }
       }
-    }
-    while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
-      if (*p == '\'') {
-        throw_if(++p == pe, "invalid number");
-        throw_if(!is_digit(*p),
-                 std::string("expected digit, read '") + *p + '\'');
+      auto is_digit_of_the_radix = [&](const char c) {
+        if (radix == 2u) {
+          return is_binary_digit(c);
+        }
+        if (radix == 16u) {
+          return is_hexadecimal_digit(c);
+        }
+        return is_digit(c);
+      };
+      nb_digits = read_digit_sequence(is_digit_of_the_radix);
+      if ((radix != 10u) && (nb_digits == 0u)) {
+        // the digits of the integral part may be given by the fractional part,
+        // as in `0x.8p+2`
+        throw_if((p == pe) || (*p != '.'),
+                 (radix == 2u)
+                     ? "a binary literal shall have at least one "
+                       "binary digit"
+                     : "a hexadecimal literal shall have at least one "
+                       "hexadecimal digit");
       }
-      ++p;
     }
+    // the fractional part
     if ((p != pe) && (*p == '.')) {
-      throw_if(is_hex_integer, "invalid hexadecimal integer");
-      throw_if(is_binary_integer, "invalid binary integer");
+      throw_if(radix == 2u, "a binary literal has no fractional part");
       throw_if(is_float, "decimal sign multiply defined");
       is_float = true;
-      // the decimal part
       ++p;
-      while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
-        if (*p == '\'') {
-          // C++14 digit separator
-          throw_if(++p == pe, "invalid number");
-          throw_if(!is_digit(*p),
-                   std::string("expected digit, read '") + *p + '\'');
-        }
+      if (radix == 16u) {
+        read_digit_sequence(is_hexadecimal_digit);
+      } else {
+        read_digit_sequence(is_digit);
+      }
+    }
+    // the exponent part, which is introduced by `e` for a decimal literal and
+    // by `p` for a hexadecimal literal: an integer literal has no exponent
+    // part, so that a binary literal, which is always an integer literal, has
+    // none
+    auto has_exponent = false;
+    if ((p != pe) &&
+        ((radix == 16u)
+             ? ((*p == 'p') || (*p == 'P'))
+             : ((radix == 2u) ? false : ((*p == 'e') || (*p == 'E'))))) {
+      is_float = true;
+      has_exponent = true;
+      ++p;
+      if ((p != pe) && ((*p == '+') || (*p == '-'))) {
         ++p;
       }
+      // the digits of the exponent part are always decimal digits
+      throw_if(read_digit_sequence(is_digit) == 0u,
+               "the exponent part of a number shall have at least one digit");
     }
-    throw_if((p != pe) && (*p == '.'), "invalid number");
-    if (p != pe) {
-      throw_if(is_hex_integer && ((*p == 'p') || (*p == 'P')),
-               "invalid hexadecimal integer");
-      if ((*p == 'e') || (*p == 'E')) {
-        throw_if(is_binary_integer, "invalid binary integer");
-        throw_if(++p == pe, "invalid number");
-        if ((*p == '+') || (*p == '-')) {
-          if (*p == '-') {
-            is_float = true;
-          }
-          throw_if(++p == pe, "invalid number");
-        }
-        throw_if(!(is_digit(*p)), "invalid number");
+    // a hexadecimal floating point literal has no decimal exponent: the
+    // exponent is required since it is the only way to tell it from an integer
+    // literal
+    throw_if((radix == 16u) && (is_float) && (!has_exponent),
+             "a hexadecimal floating point literal requires an exponent");
+    // a binary literal is always an integer literal: it has neither fractional
+    // part nor exponent part
+    throw_if((radix == 2u) && (p != pe) &&
+                 (((*p == 'e') || (*p == 'E') || (*p == 'p') || (*p == 'P'))),
+             "a binary literal is an integer literal, which has no exponent "
+             "part");
+    if (is_float) {
+      // the suffix of a floating point literal is `f`, `F`, `l` or `L`: the
+      // suffixes of the floating point types of `C++23`, as `f32`, are not
+      // supported, see issue #1460
+      throw_if((p != pe) && ((*p == 'u') || (*p == 'U')),
+               "invalid number (floating points can't be unsigned)");
+      if ((p != pe) &&
+          ((*p == 'f') || (*p == 'F') || (*p == 'l') || (*p == 'L'))) {
         ++p;
-        while ((p != pe) && ((is_digit(*p)) || (*p == '\''))) {
-          if (*p == '\'') {
-            throw_if(++p == pe, "invalid number");
-            throw_if(!is_digit(*p),
-                     std::string("expected digit, read '") + *p + '\'');
-          }
-          ++p;
-        }
+      }
+    } else {
+      // the suffix of an integer literal is read at once so that an ill formed
+      // one is rejected and not split in several tokens
+      auto suffix = std::string{};
+      while ((p != pe) &&
+             ((*p == 'u') || (*p == 'U') || (*p == 'l') || (*p == 'L'))) {
+        suffix += *p;
+        ++p;
+      }
+      if (!suffix.empty()) {
+        throw_if(!is_integer_suffix(suffix),
+                 "invalid suffix '" + suffix + "' on an integer literal");
+        throw_if(
+            (is_signed) && (suffix.find_first_of("uU") != std::string::npos),
+            "invalid number (unsigned can't be signed)");
       }
     }
-    throw_if((p != pe) && (*p == '.'), "invalid number");
-    if (p != pe) {
-      if (((is_float) &&
-           ((*p == 'l') || (*p == 'f') || (*p == 'L') || (*p == 'F'))) ||
-          ((!is_float) &&
-           ((*p == 'u') || (*p == 'U') || (*p == 'l') || (*p == 'L')))) {
-        throw_if(((*p == 'u') || (*p == 'U')) && (is_signed),
-                 "invalid number (unsigned can't be signed)");
-        if ((*p == 'f') || (*p == 'F')) {
-          ++p;
-        } else if ((*p == 'l') || (*p == 'L')) {
-          // long suffix
-          ++p;
-          if ((p != pe) && ((*p == 'l') || (*p == 'L'))) {
-            throw_if(is_float, "invalid float suffix");
-            // long long suffix
-            ++p;
-            if ((p != pe) && ((*p == 'u') || (*p == 'U'))) {
-              throw_if(is_float,
-                       "invalid number (floating points "
-                       "can't be unsigned)");
-              throw_if(is_signed,
-                       "invalid number (unsigned "
-                       "can't be signed)");
-              ++p;
-            }
-          } else if ((p != pe) && ((*p == 'u') || (*p == 'U'))) {
-            // long unsigned
-            throw_if(is_float,
-                     "invalid number (floating points "
-                     "can't be unsigned)");
-            throw_if(is_signed,
-                     "invalid number (unsigned "
-                     "can't be signed)");
-            ++p;
-          }
-        } else if ((*p == 'u') || (*p == 'U')) {
-          // usigned integer
-          throw_if(is_signed, "invalid number (unsigned can't be signed)");
-          ++p;
-          if ((p != pe) && ((*p == 'l') || (*p == 'L'))) {
-            // long usigned integer
-            ++p;
-            if ((p != pe) && ((*p == 'l') || (*p == 'L'))) {
-              // long long usigned integer
-              ++p;
-            }
-          }
-        } else {
-          ++p;
-        }
-      }
-    }
-    throw_if((p != pe) && (*p == '.'), "invalid number");
-    // C++11 user defined litterals
+    // the maximal munch rule of the preprocessing tokens, which states that a
+    // token is the longest sequence of characters which can build one, can not
+    // be applied as strictly as `C++` does it: the tokenizer is also used to
+    // read free form texts, as the `@Description` blocks of `MFront`, in which
+    // a number is often followed by an identifier, as `5Cr` or `21st`. So that
+    // only the characters which can not be explained by the literal which has
+    // just been read are rejected: a second decimal point, a digit which is not
+    // a digit of the radix of the literal, as the `2` of `0b10102`, and the
+    // characters of a suffix which is not a valid one. The identifier `123abc`
+    // is still split in `123` and `abc`, which a `C++` compiler will reject
+    // later on, see issue #1460.
     if ((p != pe) && (*p == '_')) {
+      // suffix of a user defined literal, which is a part of the value of the
+      // token
       throw_if(++p == pe, "invalid user litteral");
-      while (p != pe) {
-        if (!((is_alpha(*p)) || is_digit(*p) || (*p == '_'))) {
-          break;
-        }
+      while ((p != pe) && ((is_alpha(*p)) || (is_digit(*p)) || (*p == '_'))) {
         ++p;
       }
+    } else if ((p != pe) &&
+               ((*p == '.') || (is_digit(*p)) || (is_suffix_character(*p)))) {
+      throw_if(true,
+               std::string{"invalid numeric literal: unexpected character '"} +
+                   *p + "' after the literal");
     }
-    throw_if((p != pe) && (*p == '.'), "invalid number");
     this->tokens.emplace_back(replace_all(std::string{b, p}, "\'", ""), n, o,
                               Token::Number);
     const auto d = p - b;
@@ -1322,6 +1389,45 @@ namespace tfel::utilities {
     return value;
   }  // end of CxxTokenizer::readString
 
+  /*!
+   * \return the value of a number token which holds a floating point literal
+   * \param[in] v: value of the token
+   *
+   * The value of the token is the spelling of the literal, without its digit
+   * separators (see the description of the `CxxTokenizer` class) and with its
+   * suffix. The suffix of a floating point literal, that is `f`, `F`, `l` or
+   * `L`, is removed so that the value of the literal can be read, see issue
+   * #1460. The suffix of an integer literal, as the `l` of `1l`, is kept: the
+   * token does not hold a floating point literal.
+   */
+  static std::string getFloatingPointLiteralValue(std::string v) {
+    replace_all(v, '\'', "");
+    if ((v.size() < 2u) || ((v.back() != 'f') && (v.back() != 'F') &&
+                            (v.back() != 'l') && (v.back() != 'L'))) {
+      return v;
+    }
+    // a floating point literal has a fractional part or an exponent part: the
+    // exponent of a decimal literal is introduced by `e` or `E` and that of a
+    // hexadecimal literal by `p` or `P`, the other letters being hexadecimal
+    // digits
+    const auto b =
+        ((v.front() == '-') || (v.front() == '+')) ? v.begin() + 1 : v.begin();
+    const auto hexadecimal = ((v.end() - b) > 2) && (*b == '0') &&
+                             (((*(b + 1)) == 'x') || ((*(b + 1)) == 'X'));
+    for (auto it = b; it != (v.end() - 1); ++it) {
+      if (*it == '.') {
+        v.pop_back();
+        return v;
+      }
+      if (hexadecimal ? ((*it == 'p') || (*it == 'P'))
+                      : ((*it == 'e') || (*it == 'E'))) {
+        v.pop_back();
+        return v;
+      }
+    }
+    return v;
+  }  // end of getFloatingPointLiteralValue
+
   double CxxTokenizer::readDouble(const_iterator& p, const const_iterator pe)
 
   {
@@ -1331,11 +1437,7 @@ namespace tfel::utilities {
     raise_if(p->flag != Token::Number,
              "CxxTokenizer::readDouble: given value is not a number (read '" +
                  p->value + "')");
-    const auto value = [&p] {
-      auto v = p->value;
-      replace_all(v, '\'', "");
-      return v;
-    }();
+    const auto value = getFloatingPointLiteralValue(p->value);
 #ifdef __CYGWIN__
     std::istringstream is(value);
     is >> res;
@@ -1364,27 +1466,58 @@ namespace tfel::utilities {
    * \param[out] r: integer
    * \param[in] v: value of the token
    *
-   * The value must be a decimal integer in the range of the integer
-   * type, possibly followed by an integer suffix (for example `3u`): a
-   * fractional part or an exponent is rejected, even if it does not change
-   * the value (`3.0`).
+   * The value must be that of a decimal, binary or hexadecimal integer literal
+   * in the range of the integer type, possibly preceded by a sign and followed
+   * by an integer suffix (for example `3u`, `0b1'000` or `0x10ul`): a
+   * fractional part or an exponent is rejected, even if it does not change the
+   * value
+   * (`3.0`). The octal literals are not supported: a number with a leading zero
+   * is read as a decimal integer, see issue #1460.
    */
   template <typename IntegerType>
   static bool convertToInteger(IntegerType& r, const std::string& v) {
     // std::from_chars does not accept an explicit plus sign
-    const auto b = v.data() + (((!v.empty()) && (v[0] == '+')) ? 1 : 0);
-    const auto e = v.data() + v.size();
+    auto s = std::string_view{v};
+    if ((!s.empty()) && (s.front() == '+')) {
+      s.remove_prefix(1u);
+    }
+    const auto negated = ((!s.empty()) && (s.front() == '-'));
+    if ((negated) && (!std::is_signed_v<IntegerType>)) {
+      return false;
+    }
+    // std::from_chars does not accept the base prefix of the binary and
+    // hexadecimal literals: the sign which may precede it is applied to the
+    // value which is read, so that a literal whose absolute value is out of the
+    // range of the type is rejected, as `-0x80000000` for an `int`. On the
+    // contrary, it reads the sign of a decimal literal, which is therefore kept
+    // so that the minimum value of the type, which has no positive counterpart,
+    // can be read
+    auto digits = (negated) ? s.substr(1u) : s;
+    auto radix = 10;
+    if ((digits.size() > 2u) && (digits[0] == '0')) {
+      if (((digits[1]) == 'x') || ((digits[1]) == 'X')) {
+        radix = 16;
+      } else if (((digits[1]) == 'b') || ((digits[1]) == 'B')) {
+        radix = 2;
+      }
+    }
+    if (radix != 10) {
+      digits.remove_prefix(2u);
+    } else {
+      digits = s;
+    }
+    const auto de = digits.data() + digits.size();
     // std::from_chars reports the values out of the range of the type
     auto i = IntegerType{};
-    const auto [pi, ec] = std::from_chars(b, e, i);
+    const auto [pi, ec] = std::from_chars(digits.data(), de, i, radix);
     if (ec != std::errc{}) {
       return false;
     }
-    const auto s = std::string_view(pi, e - pi);
-    if (s.find_first_not_of("uUlL") != std::string_view::npos) {
+    const auto suffix = std::string_view(pi, de - pi);
+    if (suffix.find_first_not_of("uUlL") != std::string_view::npos) {
       return false;
     }
-    r = i;
+    r = ((negated) && (radix != 10)) ? static_cast<IntegerType>(-i) : i;
     return true;
   }  // end of convertToInteger
 

@@ -80,8 +80,9 @@ namespace tfel::utilities {
      *   flag of the token only, see issue #1390,
      *
      * - the value of a number does not hold the digit separators of the
-     *   `C++14` integer literals, see the description of the CxxTokenizer
-     *   class.
+     *   `C++14` literals, whereas it holds the suffix of the literal, which is
+     *   removed from the value of a floating point literal when it is read, see
+     *   the description of the CxxTokenizer class.
      */
     std::string value;
     //! \brief line number
