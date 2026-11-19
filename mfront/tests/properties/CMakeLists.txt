@@ -14,9 +14,13 @@ function(add_mfront_generated_source lib interface ext file)
     set(mfront_flags "")
   endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    # `cmake -E env` is used instead of a `set PATH=…;%PATH%` command
+    # (which requires `cmd.exe` and may exceed its command line length
+    # limit, in particular with the `Ninja` generator)
+    # See https://github.com/thelfer/tfel/issues/1464
     add_custom_command(
       OUTPUT  "${mfront_output}"
-      COMMAND "set"
+      COMMAND "${CMAKE_COMMAND}" -E env
       ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;\
 $<TARGET_FILE_DIR:MFrontLogStream>;\
 $<TARGET_FILE_DIR:TFELMaterial>;\
@@ -28,8 +32,8 @@ $<TARGET_FILE_DIR:TFELUtilities>;\
 $<TARGET_FILE_DIR:TFELException>;\
 $<TARGET_FILE_DIR:TFELConfig>;\
 $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
-%PATH%"
-      COMMAND "${mfront_executable}"
+$ENV{PATH}"
+      ARGS "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
       DEPENDS mfront
