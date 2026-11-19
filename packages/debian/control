@@ -35,10 +35,14 @@ Description: numerical library for material laws (shared libraries)
 Package: libtfel-dev
 Section: libdevel
 Architecture: any
-Multi-Arch: same
+# No Multi-Arch: same: this package installs the tfel-config binary
+# program in /usr/bin and CMake configuration files containing
+# architecture dependent paths in /usr/share, which cannot be
+# co-installable for several architectures.
 Depends:
  libtfel-5.2.0 (= ${binary:Version}),
  ${misc:Depends},
+ ${shlibs:Depends},
 Description: numerical library for material laws (development files)
  TFEL is a numerical library developped by CEA and EDF. It provides
  the infrastructure to implement material knowledge (material

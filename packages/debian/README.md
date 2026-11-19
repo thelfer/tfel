@@ -42,6 +42,10 @@ Planned follow-ups (see the issue for details):
   reversed when the bindings are enabled;
 - `tfel-doc`: reference documentation (requires the `pandoc` and
   `texlive` tool chains);
+- `Multi-Arch: same` for `libtfel-dev`: `tfel-config` is installed in
+  `/usr/bin` and the `CMake` configuration files, whose content is
+  architecture dependent, in `/usr/share`; both should move to
+  architecture specific directories upstream;
 - manual pages for `mfront`, `mtest`, etc. (currently missing).
 
 Note that `mfront`/`mtest` compile material laws by invoking the

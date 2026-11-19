@@ -231,6 +231,11 @@ The following points are tracked in [issue
 - `SOVERSION`: the shared libraries use the full version as SONAME,
   which forces the renaming of the `libtfel-x.y.z` package at each
   release (see above); a major-only SONAME policy should be discussed;
+- `Multi-Arch`: `libtfel-dev` does not declare `Multi-Arch: same`
+  because it installs the `tfel-config` binary program in `/usr/bin`
+  and `CMake` configuration files with architecture dependent paths in
+  `/usr/share`; both paths should become architecture specific
+  (`CMAKE_INSTALL_BINDIR` and `CMAKE_INSTALL_LIBDIR`) upstream;
 - man pages for `mfront`, `mtest`, etc. are missing (expected
   `lintian` tags).
 
