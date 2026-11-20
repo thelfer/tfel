@@ -21,36 +21,45 @@ ad-hoc binary `.deb` generation, not official Debian packages.
 
 # Binary packages
 
-| Package        | Contents                                              |
-| -------------- | ----------------------------------------------------- |
-| `libtfel-5.2.0` | TFEL/MFront shared libraries (SONAME = full version) |
-| `libtfel-dev`  | headers, CMake configuration files, `tfel-config`     |
-| `mfront`       | `mfront`, `mfront-query`, `mfront-doc`, `tfel-doc`, `mfm` |
-| `mtest`        | the `MTest` solver and its documentation              |
-| `tfel-examples` | gallery of MFront source files (behaviours, etc.)    |
-| `tfel-check`   | validation tool and test suite                        |
+| Package           | Contents                                              |
+| ----------------- | ----------------------------------------------------- |
+| `libtfel-5.2.0`   | TFEL/MFront shared libraries (SONAME = full version)  |
+| `libtfel-dev`     | TFEL headers, CMake configuration files, `tfel-config` |
+| `mfront`          | `mfront`, `mfront-query`, `mfront-doc`, `tfel-doc`, `mfm` |
+| `mfront-dev`      | headers and CMake configuration files of the MFront libraries |
+| `mtest`           | the `MTest` solver and its documentation              |
+| `mtest-dev`       | headers and CMake configuration files of the MTest library |
+| `mfront-examples` | gallery of MFront source files (behaviours, etc.)    |
+| `tfel-check`      | validation tool and test suite                        |
+| `python3-tfel`    | python 3 bindings of TFEL                             |
+| `python3-mfront`  | python 3 bindings of MFront                           |
+| `python3-mtest`   | python 3 bindings of MTest                            |
+| `tfel-mfront-all` | metapackage installing all the above                   |
+
+All the solver interfaces are enabled in `debian/rules` except those
+of `ZMAT`, `Comsol` and `LS-DYNA`, which require the installation of
+those proprietary solvers to be configured; the generated code still
+requires the solver itself, which is not packaged in Debian. The
+material property interfaces additionally pull dependencies on
+`java` (`default-jdk-headless` at build time, `default-jdk` as a
+recommendation), `octave`, `gnuplot` and `gfortran`.
 
 Planned follow-ups (see the issue for details):
 
-- `tfel-python`: Python bindings. They are disabled in
-  `debian/rules` for the first iteration because `TFEL` installs them
-  in `lib/python3.X/site-packages` while Debian policy requires
-  `dist-packages`. NumPy is only used by those bindings, hence
-  `-Denable-numpy-support=OFF` in `debian/rules`: `-Denable-python=ON`
-  makes the NumPy component of `FindPython` mandatory, so leaving the
-  support on would require installing `python3-numpy`. Both choices are
-  reversed when the bindings are enabled;
 - `tfel-doc`: reference documentation (requires the `pandoc` and
   `texlive` tool chains);
 - `Multi-Arch: same` for `libtfel-dev`: `tfel-config` is installed in
   `/usr/bin` and the `CMake` configuration files, whose content is
   architecture dependent, in `/usr/share`; both should move to
   architecture specific directories upstream;
+- byte compilation of the python modules and `${python3:Depends}`
+  (`dh-python`);
 - manual pages for `mfront`, `mtest`, etc. (currently missing).
 
 Note that `mfront`/`mtest` compile material laws by invoking the
-system C++ compiler: users need `g++` and `libtfel-dev` installed to
-actually use them (`--obuild`, MTest on-the-fly compilation).
+system C++ compiler: `g++` is a recommended dependency and
+`libtfel-dev` a strict one, as the generated code is built on top of
+the TFEL header files (`--obuild`, MTest on-the-fly compilation).
 
 # Building
 

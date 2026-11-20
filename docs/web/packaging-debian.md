@@ -37,8 +37,9 @@ On a `Debian` or `Ubuntu` system:
 ~~~~ {#tools .bash}
 $ sudo apt-get update
 $ sudo apt-get install -y --no-install-recommends \
-  build-essential cmake debhelper devscripts dpkg-dev \
-  fakeroot gfortran libpython3-dev python3-dev
+  build-essential cmake debhelper default-jdk-headless devscripts \
+  dpkg-dev fakeroot gfortran gnuplot-nox libpython3-dev pybind11-dev \
+  python3-dev python3-numpy
 ~~~~~~~~~~~~~~~~~~~~~~
 
 `dpkg-checkbuilddeps`, run from the directory of the sources, checks
@@ -58,10 +59,10 @@ $ ln -sfn packages/debian debian
 $ DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -b
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The unit tests are skipped (`DEB_BUILD_OPTIONS=nocheck`) since they
-are run by the `GitHub Actions` workflow when the release is tested;
-remove this variable to run them during the package build as well
-(`tests` are built by default).
+The unit tests are not built nor run by the package build
+(`-Denable-testing=OFF` in `debian/rules`): they are built and run by
+the `GitHub Actions` CMake workflow. The `DEB_BUILD_OPTIONS=nocheck`
+variable is passed for consistency and is otherwise superfluous.
 
 The `.deb` files are written in the parent directory of the sources.
 The following binary packages are generated:
@@ -69,11 +70,22 @@ The following binary packages are generated:
 | Package | Contents |
 | :-----: | :------- |
 | `libtfel-x.y.z` | `TFEL` and `MFront` shared libraries |
-| `libtfel-dev` | headers, CMake configuration files, `tfel-config` |
+| `libtfel-dev` | `TFEL` headers, CMake configuration files, `tfel-config` |
 | `mfront` | the `MFront` code generator and companion tools |
+| `mfront-dev` | headers and CMake configuration files of the `MFront` libraries |
 | `mtest` | the `MTest` solver and its markdown documentation |
-| `tfel-examples` | gallery of MFront source files |
+| `mtest-dev` | headers and CMake configuration files of the `MTest` library |
+| `mfront-examples` | gallery of MFront source files |
 | `tfel-check` | validation tool and test suite |
+| `python3-tfel` | python 3 bindings of `TFEL` |
+| `python3-mfront` | python 3 bindings of `MFront` |
+| `python3-mtest` | python 3 bindings of `MTest` |
+| `tfel-mfront-all` | metapackage installing all the above |
+
+All the solver interfaces are enabled except those of `ZMAT`, `Comsol`
+and `LS-DYNA` (which require the proprietary solver to be installed
+for the build to even configure); the `Cast3M` interface uses the
+`castem.h` header shipped by `TFEL`.
 
 Automatic debug symbol packages (`*-dbgsym`) are also produced.
 
@@ -94,8 +106,8 @@ $ lintian --no-tag-display-limit ../*.changes
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The `GitHub Actions` `Debian` workflow runs the same commands on every
-push to `master`. The `tfel-python` and `tfel-doc` packages, which are
-still to be introduced, are discussed in [issue
+push to `master`. The `tfel-doc` package, which is still to be
+introduced, is discussed in [issue
 \#1466](https://github.com/thelfer/tfel/issues/1466), as well as the
 absence of man pages.
 
@@ -166,9 +178,9 @@ $ dch -v x.y.z-1 "New upstream release TFEL x.y.z."
 1. check the packaging metadata for the new release:
    - `debian/copyright`: copyright years, new third party code,
    - `debian/control`: new build dependencies if the release requires
-     a new optional dependency (remember that `TFEL` only depends on
-     `pybind11`, when the `python` bindings are enabled, which is not
-     the case in the current packaging),
+     a new optional dependency (remember that `TFEL` depends on
+     `pybind11` and `NumPy` for the `python` bindings, which are
+     enabled in the current packaging),
    - `debian/install` files, as explained above, using the `dh_missing`
      diagnostics,
    - `debian/README.md` (binary package table).
@@ -212,15 +224,11 @@ order of effort:
 The following points are tracked in [issue
 \#1466](https://github.com/thelfer/tfel/issues/1466):
 
-- `tfel-python`: the `python` bindings are disabled in
-  `debian/rules` because `TFEL` installs them in
-  `lib/python3.X/site-packages` whereas `Debian` policy requires
-  `dist-packages` (the `TFEL_PYTHON_SITE_PACKAGES_DIR` CMake variable
-  is already honoured by the build system). Enabling them will also
-  mean dropping `-Denable-numpy-support=OFF`, which is only needed
-  because `-Denable-python=ON` makes the `NumPy` component of
-  `FindPython` mandatory whereas `NumPy` is used by the bindings only,
-  and adding `python3-numpy` to the build dependencies;
+- `dh-python`: the `python` bindings are installed in `dist-packages`
+  through the `TFEL_PYTHON_SITE_PACKAGES_DIR` CMake variable, but the
+  modules are not byte-compiled and `python3` is a plain dependency
+  (`dh-python` and `${python3:Depends}` should be used to let the tool
+  chain handle them);
 - `tfel-doc`: the reference documentation and the website require the
   `pandoc` and `texlive` tool chains and are disabled in
   `debian/rules`;
@@ -231,9 +239,10 @@ The following points are tracked in [issue
 - `SOVERSION`: the shared libraries use the full version as SONAME,
   which forces the renaming of the `libtfel-x.y.z` package at each
   release (see above); a major-only SONAME policy should be discussed;
-- `Multi-Arch`: `libtfel-dev` does not declare `Multi-Arch: same`
-  because it installs the `tfel-config` binary program in `/usr/bin`
-  and `CMake` configuration files with architecture dependent paths in
+- `Multi-Arch`: `libtfel-dev`, `mfront-dev` and `mtest-dev` do not
+  declare `Multi-Arch: same` because `libtfel-dev` installs the
+  `tfel-config` binary program in `/usr/bin` and the `CMake`
+  configuration files, with architecture dependent paths, in
   `/usr/share`; both paths should become architecture specific
   (`CMAKE_INSTALL_BINDIR` and `CMAKE_INSTALL_LIBDIR`) upstream;
 - man pages for `mfront`, `mtest`, etc. are missing (expected
