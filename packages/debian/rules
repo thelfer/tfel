@@ -8,22 +8,50 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 %:
 	dh $@ --buildsystem=cmake
 
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DLIB_SUFFIX=/$(DEB_HOST_MULTIARCH) \
+		-DTFEL_PYTHON_SITE_PACKAGES_DIR=lib/python3/dist-packages \
+		-Denable-portable-build=ON \
+		-Denable-fortran=ON \
+		-Denable-java=ON \
+		-Denable-python=ON \
+		-Denable-python-bindings=ON \
+		-Denable-numpy-support=ON \
+		-Denable-pybind11-stubgen=OFF \
+		-Dlocal-castem-header=ON \
+		-Denable-aster=ON \
+		-Denable-abaqus=ON \
+		-Denable-ansys=ON \
+		-Denable-calculix=ON \
+		-Denable-cyrano=ON \
+		-Denable-diana-fea=ON \
+		-Denable-comsol=OFF \
+		-Denable-lsdyna=OFF \
+		-Denable-zmat=OFF \
+		-Denable-testing=OFF \
+		-Denable-reference-doc=OFF \
+		-Denable-website=OFF \
+		-DTFEL_APPEND_VERSION=OFF
+
+override_dh_auto_test:
+	@echo "The unit tests are not run during the package build:"
+	@echo "they are built and run by the CMake GitHub Actions workflow"
+	@echo "(-Denable-testing=OFF above)."
+
 override_dh_auto_install:
 	dh_auto_install
 	# licence files are redundant with debian/copyright
 	rm -rf debian/tmp/usr/share/doc/tfel/LICENCE-*
 
-override_dh_auto_configure:
-	dh_auto_configure -- \
-		-DLIB_SUFFIX=/$(DEB_HOST_MULTIARCH) \
-		-Denable-portable-build=ON \
-		-Denable-fortran=ON \
-		-Denable-python=ON \
-		-Denable-python-bindings=OFF \
-		-Denable-numpy-support=OFF \
-		-Denable-reference-doc=OFF \
-		-Denable-website=OFF \
-		-DTFEL_APPEND_VERSION=OFF
+# CMake installs the __init__.py files of the python modules as
+# programs whereas they are not executable: drop the execute bit once
+# the python packages have been populated (dh_fixperms does not detect
+# them as programs only by luck of their extension)
+override_dh_fixperms:
+	dh_fixperms
+	find debian/python3-*/usr/lib/python3/dist-packages -name '__init__.py' \
+	  -exec chmod a-x {} +
 
 # Notes:
 #
@@ -33,17 +61,36 @@ override_dh_auto_configure:
 #    `CMAKE_INSTALL_LIBDIR` (upstream change to be proposed, see
 #    issue #1466).
 #
-#  - python bindings are disabled for the first iteration: TFEL
-#    installs them in `lib/python3.X/site-packages` whereas Debian
-#    policy requires `dist-packages`. This can be addressed either by
-#    passing -DTFEL_PYTHON_SITE_PACKAGES_DIR=lib/python3/dist-packages
-#    (the variable is already honoured by the CMake code) or by an
-#    upstream change; a `tfel-python` binary package will then be
-#    added (see issue #1466).
+#  - all the solver interfaces are enabled except those of ZMAT,
+#    Comsol and LS-DYNA, which require the installation of those
+#    proprietary solvers to be configured. The Cast3M interface uses
+#    the `castem.h` header shipped by TFEL
+#    (`-Dlocal-castem-header=ON`) since Cast3M is not packaged in
+#    Debian. The generated code requires the solver itself, which the
+#    user must install independently.
 #
-#  - `enable-numpy-support` is off: NumPy headers are only used by the
-#    python bindings; leaving it on would make `-Denable-python=ON`
-#    require the `python3-numpy` package without any benefit.
+#  - `enable-java` adds the Java material property interface to MFront,
+#    which requires a JDK (`default-jdk-headless`) to be detected at
+#    configure time; the generated code requires a JDK to be compiled.
+#
+#  - `gnuplot-nox` is a build dependency because the path of the
+#    `gnuplot` program is baked into MFront, which uses it for the
+#    Gnuplot material property interface.
+#
+#  - the python bindings are installed in `dist-packages`, as required
+#    by the Debian policy, through `TFEL_PYTHON_SITE_PACKAGES_DIR`
+#    (which the CMake code honours). NumPy support is on: it is used by
+#    the bindings only and `-Denable-python=ON` makes the NumPy
+#    component of `FindPython` mandatory anyway.
+#
+#  - the stubs of the python extensions are not generated:
+#    `pybind11-stubgen` is not packaged in Debian (`pip` only).
+#
+#  - the unit tests are not built: they are run by the CMake GitHub
+#    Actions workflow and building them would needlessly double the
+#    duration of the package build. This does not affect the test suite
+#    installed by the `tfel-check` package, which is a copy of the test
+#    sources and data, independent from this option.
 #
 #  - the reference documentation and the website require the
 #    pandoc/texlive tool chain; a `tfel-doc` binary package will be

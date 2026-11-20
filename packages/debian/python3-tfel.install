@@ -1,0 +1,4 @@
+# python 3 bindings of the TFEL library (installed in
+# dist-packages, as required by the Debian policy, thanks to
+# TFEL_PYTHON_SITE_PACKAGES_DIR)
+usr/lib/python3/dist-packages/tfel
