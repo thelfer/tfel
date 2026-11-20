@@ -1,0 +1,89 @@
+#! /bin/sh
+# Launcher of the programs of the build tree used as
+# `CMAKE_CROSSCOMPILING_EMULATOR` when TFEL is cross-compiled for `Windows`
+# using `wine`, and when `mfront` is run at build time to generate sources.
+# The exit status of the program is propagated so that a failing test is
+# reported as a failure, and the `wine` prefix is local to the build tree so
+# that the user's own prefix is left untouched.
+
+# disabling the messages of `wine`, which would pollute the output of the tests,
+# the installation prompts, and using the prefix of the build tree so that the
+# prefix of the user is neither used, nor modified, by the tests
+export WINEDEBUG=-all
+export WINEDLLOVERRIDES="mscoree,mshtml="
+export WINEPREFIX=@TFEL_WINE_PREFIX_DIR@
+
+build_dir=@TFEL_WINE_BUILD_DIR@
+prefix_dir=@TFEL_WINE_PREFIX_DIR@
+runtime_dirs="@TFEL_WINE_RUNTIME_DIRS@"
+
+# `wine` ignores the `PATH` of the host: a program run through `wine` only looks
+# for its shared libraries in the system directory of the prefix it uses, in its
+# own directory, and in the `PATH` of the *guest*. The shared libraries of the
+# build tree are thus copied in the system directory of the prefix, which is
+# always searched, so that the programs of the build tree find the libraries of
+# the build tree, as the environment files generated for native `Windows` builds
+# do. Note that `wine` considers `windows` and `windows/system32` as being the
+# same directory.
+windows_dir=${prefix_dir}/drive_c/windows
+stamp=${prefix_dir}/tfel-libraries.stamp
+
+# looking for a shared library of the build tree newer than the stamp of the
+# mirrored libraries, which stops at the first one: mirroring is only needed
+# when a new shared library has been built, which is not the common case. The
+# prefix is pruned from the search since it contains the libraries mirrored from
+# the build tree and those of `wine` itself
+if test -f ${stamp} &&
+   test -z "$(find ${build_dir} -path ${prefix_dir} -prune -o \
+                     -name '*.dll' -newer ${stamp} -print -quit)"
+then
+  exec @WINE@ "$@"
+fi
+
+# taking a lock: the code generation performed by `mfront` runs in parallel at
+# build time and the prefix can neither be created nor updated concurrently. A
+# lock left by a killed process is discarded after 2 minutes
+mkdir -p ${prefix_dir}
+lock=${prefix_dir}/tfel-lock
+while ! mkdir ${lock} 2>/dev/null
+do
+  find ${lock} -mmin +2 -exec rmdir {} ';' 2>/dev/null
+  sleep 1
+done
+
+# checking again: a parallel call may have mirrored the libraries in the
+# meantime
+if ! (test -f ${stamp} &&
+      test -z "$(find ${build_dir} -path ${prefix_dir} -prune -o \
+                        -name '*.dll' -newer ${stamp} -print -quit)")
+then
+  # creating the prefix if necessary, without connecting to the network and
+  # without installing the components `wine` would otherwise try to download
+  if test ! -e ${prefix_dir}/system.reg
+  then
+    @WINEBOOT@ -i >/dev/null 2>&1
+  fi
+  mkdir -p ${windows_dir}
+  # the pipe and `read` are used so that the paths containing spaces are
+  # handled correctly
+  find ${build_dir} -path ${prefix_dir} -prune -o \
+       -name '*.dll' -print |
+  while IFS= read -r lib
+  do
+    cp -f "${lib}" "${windows_dir}"
+  done
+  for dir in ${runtime_dirs}
+  do
+    for lib in "${dir}"/*.dll
+    do
+      if test -f "${lib}"
+      then
+        cp -f "${lib}" "${windows_dir}"
+      fi
+    done
+  done
+  : > ${stamp}
+fi
+rmdir ${lock}
+
+exec @WINE@ "$@"

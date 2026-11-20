@@ -16,8 +16,11 @@ if(NOT REFERENCE_FILE)
 endif(NOT REFERENCE_FILE)
 
 # run the test program, capture the stdout/stderr and the result var
+# `CROSSCOMPILING_EMULATOR` is empty except when cross-compiling, in which case
+# `execute_process` cannot run the test program directly: `cmake` itself is run
+# on the host, so the emulator (`wine`) has to be used explicitly
 execute_process(
-  COMMAND ${TEST_PROGRAM}
+  COMMAND ${CROSSCOMPILING_EMULATOR} ${TEST_PROGRAM}
   --unicode-output=false
   --report-warnings=false
   ${TEST_ARGS} ${MFRONT_FILE}
@@ -29,6 +32,14 @@ execute_process(
 if(TEST_RESULT)
   message(FATAL_ERROR "Failed: Test program ${TEST_PROGRAM} exited != 0.\n${TEST_ERROR}")
 endif(TEST_RESULT)
+
+# the line endings of the output are normalized: the output of the test program
+# is written to a file, which uses the `\r\n` line endings under `Windows`,
+# whereas the reference files always use the Unix ones, as stated by the
+# `.gitattributes` file
+file(READ ${TEST_OUTPUT} test_output)
+string(REPLACE "\r\n" "\n" test_output "${test_output}")
+file(WRITE ${TEST_OUTPUT} "${test_output}")
 
 # now compare the output with the reference
 execute_process(

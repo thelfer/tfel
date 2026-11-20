@@ -19,7 +19,7 @@
 
 #include "omi_for_c.h"
 
-#if (__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) && (!defined(TFEL_MISSING_STD_THREADS_SUPPORT))
 #include <mutex>
 #define HAVE_STD_MUTEX
 #define NULLPTR(X) nullptr

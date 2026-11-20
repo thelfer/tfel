@@ -424,6 +424,74 @@ endif(enable-tdls)
 # cadna
 include(cmake/modules/cadna.cmake)
 
+# Cross-compiling for `Windows` using `wine` to run the tests: a `wine`
+# launcher is generated so that the shared libraries of the build tree are
+# found by the programs run through `wine`, as the environment files
+# (`env.bat`, ...) generated for native `Windows` builds do.
+# This launcher is used as `CMAKE_CROSSCOMPILING_EMULATOR`, which `add_test`
+# honours, and as `mfront_launcher` by the macros generating sources with
+# `mfront` at build time since `add_custom_command` does not honour
+# `CMAKE_CROSSCOMPILING_EMULATOR`. It is defined before the subdirectories are
+# processed so that all of them can use it.
+if(CMAKE_CROSSCOMPILING AND MINGW)
+  # searching `wine` in the host environment, as stated by
+  # `CMAKE_FIND_ROOT_PATH_MODE_PROGRAM` in the tool chain files
+  find_program(WINE NAMES wine)
+  find_program(WINEBOOT NAMES wineboot)
+endif(CMAKE_CROSSCOMPILING AND MINGW)
+if(CMAKE_CROSSCOMPILING AND MINGW AND WINE)
+  set(TFEL_WINE_BUILD_DIR "${PROJECT_BINARY_DIR}")
+  set(TFEL_WINE_PREFIX_DIR "${PROJECT_BINARY_DIR}/wine-prefix")
+  # directories of the runtime of the cross compiler: the `dll`s are not
+  # installed next to the drivers, so the compilers are asked where those
+  # libraries are. `-print-file-name` echoes the library name back when the
+  # library is not found, which is why the answer is only retained when it is an
+  # absolute path. The version of the runtime libraries is part of their name,
+  # which depends on the compiler, so several candidates are tried. The `C++`
+  # compiler knows about the libraries of the other front ends, so asking the
+  # compilers that are enabled is enough
+  set(TFEL_WINE_RUNTIME_LIBS libstdc++-6.dll libgcc_s_seh-1.dll
+    libgcc_s_sjlj-1.dll libwinpthread-1.dll libgfortran-3.dll libgfortran-5.dll
+    libquadmath-0.dll)
+  set(TFEL_WINE_RUNTIME_COMPILERS "${CMAKE_CXX_COMPILER}")
+  if(CMAKE_Fortran_COMPILER)
+    list(APPEND TFEL_WINE_RUNTIME_COMPILERS "${CMAKE_Fortran_COMPILER}")
+  endif(CMAKE_Fortran_COMPILER)
+  set(TFEL_WINE_RUNTIME_DIRS)
+  foreach(runtime_compiler ${TFEL_WINE_RUNTIME_COMPILERS})
+    foreach(runtime_lib ${TFEL_WINE_RUNTIME_LIBS})
+      execute_process(COMMAND ${runtime_compiler} -print-file-name=${runtime_lib}
+        OUTPUT_VARIABLE runtime_lib_path
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET)
+      if(IS_ABSOLUTE "${runtime_lib_path}")
+        # `REALPATH` is used because the answer may contain `..`
+        get_filename_component(runtime_lib_dir "${runtime_lib_path}" REALPATH)
+        get_filename_component(runtime_lib_dir "${runtime_lib_dir}" DIRECTORY)
+        list(APPEND TFEL_WINE_RUNTIME_DIRS ${runtime_lib_dir})
+      endif(IS_ABSOLUTE "${runtime_lib_path}")
+    endforeach(runtime_lib)
+  endforeach(runtime_compiler)
+  list(REMOVE_DUPLICATES TFEL_WINE_RUNTIME_DIRS)
+  list(JOIN TFEL_WINE_RUNTIME_DIRS " " TFEL_WINE_RUNTIME_DIRS)
+  if(NOT WINEBOOT)
+    # the launcher falls back to searching `wineboot` itself
+    set(WINEBOOT wineboot)
+  endif(NOT WINEBOOT)
+  configure_file(cmake/wine-launcher.sh.in
+    ${PROJECT_BINARY_DIR}/wine-launcher.sh @ONLY)
+  file(CHMOD ${PROJECT_BINARY_DIR}/wine-launcher.sh
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+  set(mfront_launcher "${PROJECT_BINARY_DIR}/wine-launcher.sh")
+  set(CMAKE_CROSSCOMPILING_EMULATOR "${PROJECT_BINARY_DIR}/wine-launcher.sh")
+  message(STATUS "wine found: the tests of the cross-compiled build can be run")
+endif(CMAKE_CROSSCOMPILING AND MINGW AND WINE)
+if(CMAKE_CROSSCOMPILING AND MINGW AND (NOT WINE))
+  message(STATUS
+    "wine was not found: the tests of the cross-compiled build cannot be run")
+endif(CMAKE_CROSSCOMPILING AND MINGW AND (NOT WINE))
+
 # sub directories
 add_subdirectory(include) 
 add_subdirectory(src)
