@@ -208,6 +208,10 @@ namespace mfront {
          "- 'Linearised': HPP behaviour\n"
          "- 'GreenLagrange'\n"
          "- 'Hencky'\n"},
+        {"--compute-thermal-expansion",
+         "return if the behaviour computes the thermal expansion internally"},
+        {"--compute-stress-free-expansion",
+         "return if the behaviour computes stress-free expansions internally"},
         {"--symmetry",
          "return the behaviour symmetry. If the returned value is 0, "
          "the behaviour is isotropic. If the returned value is 1, "
@@ -466,6 +470,18 @@ namespace mfront {
                               "internal error "
                               "(unsupported strain measure)");
              }
+           }});
+    } else if (qn == "--compute-thermal-expansion") {
+      this->queries2.push_back(
+          {"compute-thermal-expansion",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             const auto t = d.getBehaviourType();
+             tfel::raise_if(
+                 t != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
+                 "the behaviour is not strain base");
+
+             const auto b = d.areThermalExpansionCoefficientsDefined();
+             cout << (b ? "true\n" : "false\n");
            }});
     } else if (qn == "--symmetry") {
       this->queries2.push_back({"symmetry", [](const FileDescription&,
@@ -849,6 +865,18 @@ namespace mfront {
       this->queries.emplace_back("local-state-variables",
                                  this->generateVariablesListQuery<
                                      &BehaviourData::getLocalVariables>());
+    } else if (qn == "--compute-stress-free-expansion") {
+      this->queries.emplace_back(
+          "compute-stress-free-expansion",
+          [](const FileDescription&, const BehaviourDescription& d,
+             const Hypothesis h) {
+            const auto t = d.getBehaviourType();
+            tfel::raise_if(
+                t != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
+                "the behaviour is not strain base");
+            const auto b = d.requiresStressFreeExpansionTreatment(h);
+            cout << (b ? "true\n" : "false\n");
+          });
     } else if (qn == "--parameters") {
       auto nq = [](const FileDescription&, const BehaviourDescription& bd,
                    const Hypothesis h) {
