@@ -342,9 +342,29 @@ namespace tfel {
             // the file does not exist, create the directory
 #if defined _WIN32 || defined _WIN64
             if (::CreateDirectoryA(path.c_str(), nullptr) == 0) {
+              // Contrary to POSIX functions, Win32 functions report
+              // errors through ::GetLastError and do not set errno.
+              // Testing if errno is equal to EEXIST would always fail
+              // and concurrent directory creations would be reported
+              // as spurious errors.
+              const auto last_error = ::GetLastError();
+              if (last_error == ERROR_FILE_EXISTS) {
+                string msg("systemCall::mkdir : '");
+                msg += path + "' exists and is not a directory.";
+                throw(SystemError(msg));
+              }
+              // ERROR_ALREADY_EXISTS may happen if many processes are
+              // used in the same time. In that case, the directory
+              // exists (a file would have been reported by
+              // ERROR_FILE_EXISTS).
+              if (last_error != ERROR_ALREADY_EXISTS) {
+                string msg("systemCall::mkdir : can't create directory '");
+                msg += dir + "' (last system error: " + std::to_string(last_error) + ")";
+                throw(SystemError(msg));
+              }
+            }
 #else
             if (::mkdir(path.c_str(), mode) != 0) {
-#endif /* defined _WIN32 || _WIN64 */
               if (errno == EEXIST) {
                 // this may happen if many processes are
                 // used in the same time
@@ -362,6 +382,7 @@ namespace tfel {
                   "systemCall::mkdir : can't create directory '" + dir + "'",
                   errno);
             }
+#endif /* defined _WIN32 || _WIN64 */
           } else {
             systemCall::throwSystemError(
                 "systemCall::mkdir : can't stat file '" + *p + "'", errno);
