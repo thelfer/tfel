@@ -159,6 +159,12 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     // TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
     // TFEL_TESTS_ASSERT(t[0].value=="\"\\\"\"");
     // numbers
+    // an identifier which follows a numeric literal is not a part of this
+    // literal: the maximal munch rule of the preprocessing tokens, which states
+    // that a token is the longest sequence of characters which can build one,
+    // is not applied as strictly as `C++` does it since the tokenizer is also
+    // used for the free form texts, as the `@Description` blocks of `MFront`,
+    // see issue #1460
     t.clear();
     t.parseString("12.3a");
     TFEL_TESTS_ASSERT(t.size() == 2u);
@@ -266,8 +272,12 @@ struct CxxTokenizerTest final : public tfel::tests::TestCase {
     // hexadecimal integer
     this->check("0x1F");
     this->check("0X1fUL");
+    // hexadecimal floating point literal, which is supported since C++11: the
+    // exponent, which is introduced by `p`, is required, see issue #1460
+    this->check("0x1p3");
+    this->check("0x1.8p-3");
     t.clear();
-    TFEL_TESTS_CHECK_THROW(t.parseString("0x1p3"), std::runtime_error);
+    TFEL_TESTS_CHECK_THROW(t.parseString("0x1.8"), std::runtime_error);
     return this->result;
   }  // end of execute()
  private:
