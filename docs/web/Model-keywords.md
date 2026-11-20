@@ -393,6 +393,10 @@ assignment (`+=`, `-=`, `*=` or `/=`) starts from its value at the
 beginning of the time step: its depth must be at least one (see the
 `setDepth` method).
 
+An output which is not assigned by the function, for example because
+its only assignment lies in a conditional block, keeps its value at the
+beginning of the time step.
+
 ## Example
 
 ~~~~{.cpp}
