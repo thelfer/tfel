@@ -1,0 +1,13 @@
+tfel (5.2.0-1) UNRELEASED; urgency=medium
+
+  * Initial Debian packaging (see GitHub issue #1466):
+    - TFEL shared libraries (libtfel-5.2.0) with separate development
+      packages for the TFEL, MFront and MTest headers (libtfel-dev,
+      mfront-dev, mtest-dev),
+    - MFront, with all the solver interfaces but those of ZMAT, Comsol
+      and LS-DYNA, and MTest,
+    - python 3 bindings of TFEL, MFront and MTest (python3-tfel,
+      python3-mfront, python3-mtest),
+    - tfel-mfront-all metapackage installing the complete tool chain.
+
+ -- Thomas Helfer <tfel-contact@cea.fr>  Thu, 19 Nov 2026 00:00:00 +0200

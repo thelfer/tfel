@@ -1,0 +1,10 @@
+# headers of the MTest solver and of the MFM test generator
+usr/include/MFMTestGenerator
+usr/include/MTest
+# unversioned symbolic links of the MTest libraries (the versioned
+# shared libraries are shipped by libtfel-5.2.0)
+usr/lib/*/libMFMTestGenerator.so
+usr/lib/*/libTFELMTest.so
+# CMake configuration files of the MTest libraries
+usr/share/tfel/cmake/MFMTestGenerator*.cmake
+usr/share/tfel/cmake/TFELMTest*.cmake

@@ -1,0 +1,186 @@
+name: Debian packages release
+
+# Publishes the Debian packages generated from `packages/debian`:
+#
+#  - on every published GitHub release (tag `TFEL-x.y.z`): the `.deb`
+#    files and the `.changes` file are attached to the release;
+#  - every week: `master` and every `rliv-x.y` maintenance branch
+#    which carries the packaging metadata are built and published to
+#    rolling prereleases named `deb-rolling-<branch>`;
+#  - manually, for any branch or tag (also published to a rolling
+#    prerelease).
+#
+# Only refs which contain `packages/debian/changelog` are built: the
+# packaging must be merged to `master` and backported to the
+# `rliv-x.y` branches for those branches to be published.
+
+on:
+  release:
+    types: [published]
+  schedule:
+    # Mondays at 04:30 UTC
+    - cron: '30 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or tag to build and publish'
+        required: true
+        default: 'master'
+
+jobs:
+  targets:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.compute.outputs.matrix }}
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+
+    - name: Compute the list of refs to build
+      id: compute
+      env:
+        EVENT: ${{ github.event_name }}
+        RELEASE_TAG: ${{ github.event.release.tag_name }}
+        INPUT_REF: ${{ github.event.inputs.ref }}
+      run: |
+        set -eu
+        entry() {
+          # entry <ref> <publish_tag>
+          printf '{"ref":"%s","publish_tag":"%s"},' "$1" "$2"
+        }
+        ref_has_packaging() {
+          local r
+          for r in "$1" "refs/heads/$1" "refs/tags/$1" "origin/$1"; do
+            if git cat-file -e "$r^{commit}:packages/debian/changelog" 2>/dev/null; then
+              return 0
+            fi
+          done
+          return 1
+        }
+        if [ "$EVENT" = "release" ]; then
+          if ! ref_has_packaging "refs/tags/$RELEASE_TAG"; then
+            echo "::error::${RELEASE_TAG} does not carry the Debian packaging"
+            exit 1
+          fi
+          matrix="[$(entry "$RELEASE_TAG" "$RELEASE_TAG")]"
+        elif [ "$EVENT" = "workflow_dispatch" ]; then
+          ref="$INPUT_REF"
+          if ! ref_has_packaging "$ref"; then
+            echo "::error::${ref} does not carry the Debian packaging"
+            exit 1
+          fi
+          publish="deb-rolling-$(echo "$ref" | tr '/.' '--')"
+          matrix="[$(entry "$ref" "$publish")]"
+        else
+          entries=""
+          for r in $(git for-each-ref --format='%(refname:strip=2)' \
+                       'refs/remotes/origin/master' 'refs/remotes/origin/rliv-*') ; do
+            branch="${r#origin/}"
+            if ref_has_packaging "$r"; then
+              entries="${entries}$(entry "$branch" "deb-rolling-${branch}")"
+              echo "selected ${branch}"
+            else
+              echo "skipping ${branch} (no Debian packaging)"
+            fi
+          done
+          if [ -z "$entries" ]; then
+            echo "::error::no branch carries the Debian packaging"
+            exit 1
+          fi
+          matrix="[${entries%,}]"
+        fi
+        echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+        echo "will build ${matrix}"
+
+  build:
+    needs: targets
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    concurrency:
+      group: debian-release-${{ matrix.publish_tag }}
+      cancel-in-progress: false
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ matrix.ref }}
+
+    - name: Install the packaging tools and the build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          cmake \
+          debhelper \
+          devscripts \
+          dpkg-dev \
+          fakeroot \
+          gfortran \
+          libpython3-dev \
+          python3-dev
+
+    - name: Mark development builds with a date stamped version
+      if: github.event_name != 'release'
+      env:
+        DEBEMAIL: tfel-contact@cea.fr
+        DEBFULLNAME: TFEL Continuous Integration
+      run: |
+        set -eu
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        base=$(dpkg-parsechangelog -l packages/debian/changelog -SVersion \
+               | sed -E 's/-[^-]+$//')
+        dch --changelog packages/debian/changelog \
+          --newversion "${base}~dev.$(date -u +%Y%m%d)-1" \
+          --distribution UNRELEASED \
+          "Development build of ${GITHUB_REF_NAME} (run ${GITHUB_RUN_NUMBER})."
+
+    - name: Build the Debian packages
+      # The unit tests are run by the CMake workflow; skip them here
+      # to keep the packaging job fast.
+      run: |
+        set -eu
+        ln -sfn packages/debian debian
+        DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -b
+
+    - name: Publish to the GitHub release
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PUBLISH_TAG: ${{ matrix.publish_tag }}
+        REF: ${{ matrix.ref }}
+      run: |
+        set -eu
+        if ! gh release view "$PUBLISH_TAG" >/dev/null 2>&1; then
+          if [ "$PUBLISH_TAG" = "$REF" ]; then
+            echo "::error::release ${PUBLISH_TAG} does not exist"
+            exit 1
+          fi
+          notes=$(printf 'Automated build of the Debian packages from `%s`.\n\n' "$REF")
+          notes+=$'These packages are rebuilt weekly. Install them with:\n\n'
+          notes+=$'    sudo apt install ./<package>.deb\n\n'
+          notes+=$'See [the Debian packaging guide](https://thelfer.github.io/tfel/web/packaging-debian.html)'
+          notes+=$'and [issue #1466](https://github.com/thelfer/tfel/issues/1466).\n'
+          gh release create "$PUBLISH_TAG" \
+            --prerelease \
+            --title "Debian packages (rolling: ${REF})" \
+            --notes "$notes"
+        fi
+        # the automatic debug symbol packages (*-dbgsym) are the bulk
+        # of the build and are meant for crash reporting only: they
+        # are kept in the workflow artifacts of the `Debian` job but
+        # not attached to the release, whose assets are rebuilt
+        # regularly (see the `--clobber` flag)
+        assets=""
+        for f in ../*.deb; do
+          case "${f}" in
+            *-dbgsym_*) ;;
+            *) assets="${assets:+${assets} }${f}" ;;
+          esac
+        done
+        gh release upload "$PUBLISH_TAG" ${assets} ../*.changes --clobber

@@ -1,0 +1,4 @@
+version=4
+# Upstream tags are named TFEL-<major>.<minor>.<patch>
+opts="mode=archive,uversionmangle=s/^TFEL-//,dversionmangle=s/[~-]dev\w*$//" \
+  https://github.com/thelfer/tfel/tags .*/archive/refs/tags/(TFEL-\d[\d.]*)\.tar\.gz

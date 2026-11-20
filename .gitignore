@@ -1,1 +1,13 @@
 build
+
+# symlink to packages/debian used to run dpkg-buildpackage
+# in place (see packages/debian/README.md)
+/debian
+obj-*
+# debhelper artifacts left by an interrupted build
+/packages/debian/*/
+!/packages/debian/source/
+/packages/debian/debhelper-build-stamp
+/packages/debian/files
+/packages/debian/*.debhelper.log
+/packages/debian/*.substvars
