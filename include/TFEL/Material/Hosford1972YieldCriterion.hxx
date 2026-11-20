@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATERIAL_HOSFORD_HXX
-#define LIB_TFEL_MATERIAL_HOSFORD_HXX
+#ifndef LIB_TFEL_MATERIAL_HOSFORD1972YIELDCRITERION_HXX
+#define LIB_TFEL_MATERIAL_HOSFORD1972YIELDCRITERION_HXX
 
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
@@ -110,4 +110,4 @@ namespace tfel::material {
 
 #include "TFEL/Material/Hosford1972YieldCriterion.ixx"
 
-#endif /* LIB_TFEL_MATERIAL_HOSFORD_HXX */
+#endif /* LIB_TFEL_MATERIAL_HOSFORD1972YIELDCRITERION_HXX */
