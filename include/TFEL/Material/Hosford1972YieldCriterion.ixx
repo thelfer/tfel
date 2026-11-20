@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATERIAL_HOSFORD_IXX
-#define LIB_TFEL_MATERIAL_HOSFORD_IXX
+#ifndef LIB_TFEL_MATERIAL_HOSFORD1972YIELDCRITERION_IXX
+#define LIB_TFEL_MATERIAL_HOSFORD1972YIELDCRITERION_IXX
 
 #include <cmath>
 #include <tuple>
@@ -354,4 +354,4 @@ namespace tfel::material {
 
 }  // end of namespace tfel::material
 
-#endif /* LIB_TFEL_MATERIAL_HOSFORD_IXX */
+#endif /* LIB_TFEL_MATERIAL_HOSFORD1972YIELDCRITERION_IXX */
