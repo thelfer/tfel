@@ -1304,12 +1304,11 @@ consistent tangent operator, as numerical tests showed (or at least
 seemed to show) that they were negligible.
 
 These derivatives are now taken into account by default (see Issue
-#1359). The results are not affected, up to the convergence criteria,
-but the convergence is when the deformation gradient is not fully
-imposed: the global iterations recover their quadratic convergence. The
-boolean option
-`plastic_deformation_gradient_normalisation_corrections` allows to
-neglect them:
+1359). The results are not affected, up to the convergence criteria, but
+the convergence is when the deformation gradient is not fully imposed:
+the global iterations recover their quadratic convergence. The boolean
+option `plastic_deformation_gradient_normalisation_corrections` allows
+to neglect them:
 
 ~~~~{.cpp}
 @Brick FiniteStrainSingleCrystal{
@@ -1369,6 +1368,13 @@ The associated functions of the `TFEL/Material` library are declared in
 the `TFEL/Material/GeneralisedGursonTvergaardNeedlemanStressCriterion.hxx`
 and `TFEL/Material/GeneralisedRousselierTanguyBessonStressCriterion.hxx`
 headers.
+
+# New features in `mfront-query`
+
+## `--compute-thermal-expansion` and `--compute-stress-free-expansion` queries
+
+The queries `--compute-thermal-expansion` and
+`--compute-stress-free-expansion` are now available.
 
 # Documentation
 
