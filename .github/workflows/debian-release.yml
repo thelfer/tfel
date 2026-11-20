@@ -171,4 +171,16 @@ jobs:
             --title "Debian packages (rolling: ${REF})" \
             --notes "$notes"
         fi
-        gh release upload "$PUBLISH_TAG" ../*.deb ../*.changes --clobber
+        # the automatic debug symbol packages (*-dbgsym) are the bulk
+        # of the build and are meant for crash reporting only: they
+        # are kept in the workflow artifacts of the `Debian` job but
+        # not attached to the release, whose assets are rebuilt
+        # regularly (see the `--clobber` flag)
+        assets=""
+        for f in ../*.deb; do
+          case "${f}" in
+            *-dbgsym_*) ;;
+            *) assets="${assets:+${assets} }${f}" ;;
+          esac
+        done
+        gh release upload "$PUBLISH_TAG" ${assets} ../*.changes --clobber
