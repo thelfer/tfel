@@ -8,12 +8,12 @@ set(TFELSystem_SOURCES
   System.cxx
   SystemError.cxx)
 
-if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER) AND (NOT x86_64-w64-mingw32_COMPILER))
   set(TFELSystem_SOURCES
     ThreadPool.cxx
     ThreadedTaskResult.cxx
     ${TFELSystem_SOURCES})
-endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER) AND (NOT x86_64-w64-mingw32_COMPILER))
 
 if(UNIX)
   set(TFELSystem_SOURCES
@@ -64,7 +64,7 @@ if(TFEL_DL_LIBRARY)
     PRIVATE ${TFEL_DL_LIBRARY}
     PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 else(TFEL_DL_LIBRARY)
-  if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+  if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER) AND (NOT x86_64-w64-mingw32_COMPILER))
     if(Threads_FOUND)
       target_link_libraries(TFELSystem 
 		PUBLIC tfel::TFELException
@@ -73,10 +73,10 @@ else(TFEL_DL_LIBRARY)
       target_link_libraries(TFELSystem
         PUBLIC tfel::TFELException)
     endif(Threads_FOUND)
-  else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+  else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER) AND (NOT x86_64-w64-mingw32_COMPILER))
     target_link_libraries(TFELSystem
       PUBLIC tfel::TFELException)
-  endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+  endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER) AND (NOT x86_64-w64-mingw32_COMPILER))
 endif(TFEL_DL_LIBRARY)
 if(enable-static)
   target_include_directories(TFELSystem-static
@@ -98,7 +98,7 @@ if(enable-static)
       PRIVATE ${TFEL_DL_LIBRARY}
       PRIVATE ${CMAKE_THREAD_LIBS_INIT})
   else(TFEL_DL_LIBRARY)
-    if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+    if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER) AND (NOT x86_64-w64-mingw32_COMPILER))
       if(Threads_FOUND)
         target_link_libraries(TFELSystem-static 
           PUBLIC tfel::TFELException-static
@@ -107,9 +107,9 @@ if(enable-static)
         target_link_libraries(TFELSystem-static
       PUBLIC tfel::TFELException-static)
       endif(Threads_FOUND)
-    else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+    else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER) AND (NOT x86_64-w64-mingw32_COMPILER))
       target_link_libraries(TFELSystem-static
         PUBLIC TFELException-static)
-    endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+    endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER) AND (NOT x86_64-w64-mingw32_COMPILER))
   endif(TFEL_DL_LIBRARY)
 endif(enable-static)

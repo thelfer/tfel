@@ -54,7 +54,7 @@ macro(mfront_model)
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
 	OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/include/MFront/${source}.hxx"
-	COMMAND "${mfront_executable}"
+	COMMAND ${mfront_launcher} "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
 	DEPENDS mfront
 	DEPENDS "${mfront_source}"
@@ -62,7 +62,7 @@ macro(mfront_model)
       file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
       if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
 	add_test(NAME mfront-${source}-${interface}
-	  COMMAND ${mfront_executable}
+	  COMMAND ${mfront_launcher} ${mfront_executable}
 	  ${mfront_flags}
 	  --interface=mfront ${mfront_source}
 	  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")

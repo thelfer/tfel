@@ -126,6 +126,7 @@ For developers and contributors.
 | [Running Sanitized Tests](sanitizers.html) | Building and testing TFEL/MFront with sanitizers. |
 | [Fuzz Testing The Tokenizer](testing-fuzzing.html) | Running libFuzzer based analyses of the tokenizer of MFront files. |
 | [Packages](packages.html) | Creating binary packages for TFEL. |
+| [Cross-compiling for Windows](win32-cross-compiling.html) | Cross-compiling `TFEL` using `MinGW` and running the tests of such a build using `wine`. |
 | [Release How-To](release-howto.html) | Preparing a TFEL/MFront release. |
 | [TFEL System](TFELSystem.html) | Overview of TFEL's architecture. |
 
