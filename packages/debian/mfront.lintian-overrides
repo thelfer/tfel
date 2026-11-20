@@ -1,0 +1,5 @@
+# environment setup files, installed as data, which are meant to be
+# sourced by the user shell, not executed (the wildcards cover the
+# parentheses lintian puts around the file name in some versions)
+script-not-executable *usr/share/tfel/env/env.sh*
+script-not-executable *usr/share/tfel/env/env.fish*

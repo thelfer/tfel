@@ -11,6 +11,11 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 override_dh_auto_configure:
 	dh_auto_configure -- \
 		-DLIB_SUFFIX=/$(DEB_HOST_MULTIARCH) \
+		-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
+		-DCMAKE_SKIP_INSTALL_RPATH=ON \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DTFEL_CMAKE_C_FLAGS_RELEASE=-g \
+		-DTFEL_CMAKE_CXX_FLAGS_RELEASE=-g \
 		-DTFEL_PYTHON_SITE_PACKAGES_DIR=lib/python3/dist-packages \
 		-Denable-portable-build=ON \
 		-Denable-fortran=ON \
@@ -44,13 +49,13 @@ override_dh_auto_install:
 	# licence files are redundant with debian/copyright
 	rm -rf debian/tmp/usr/share/doc/tfel/LICENCE-*
 
-# CMake installs the __init__.py files of the python modules as
-# programs whereas they are not executable: drop the execute bit once
-# the python packages have been populated (dh_fixperms does not detect
-# them as programs only by luck of their extension)
+# CMake installs the python files of the python modules (the
+# __init__.py files and companion scripts) as programs whereas they
+# are not executable: drop the execute bit once the python packages
+# have been populated
 override_dh_fixperms:
 	dh_fixperms
-	find debian/python3-*/usr/lib/python3/dist-packages -name '__init__.py' \
+	find debian/python3-*/usr/lib/python3/dist-packages -name '*.py' \
 	  -exec chmod a-x {} +
 
 # Notes:
@@ -60,6 +65,22 @@ override_dh_fixperms:
 #    injected through `LIB_SUFFIX` until upstream honours
 #    `CMAKE_INSTALL_LIBDIR` (upstream change to be proposed, see
 #    issue #1466).
+#
+#  - `CMAKE_INSTALL_RPATH_USE_LINK_PATH` is off and
+#    `CMAKE_SKIP_INSTALL_RPATH` is on: TFEL turns the former on when
+#    undefined and sets `CMAKE_INSTALL_RPATH` to the installation
+#    directory whenever that directory escapes its system directory
+#    check (`CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES` is lazily
+#    populated and empty at that point), which bakes a RUNPATH
+#    pointing at the system library directory into every binary and
+#    trips lintian's custom-library-search-path error. The RUNPATH is
+#    useless on Debian: the libraries are in the default search path.
+#
+#  - the build type is `Release` with `-g` added to the optimisation
+#    flags (the `TFEL_CMAKE_CXX_FLAGS_RELEASE` cache variable is
+#    appended to, not overridden, by TFEL): the binaries are built
+#    without debug information otherwise and the automatic `*-dbgsym`
+#    packages would contain empty debug files.
 #
 #  - all the solver interfaces are enabled except those of ZMAT,
 #    Comsol and LS-DYNA, which require the installation of those
