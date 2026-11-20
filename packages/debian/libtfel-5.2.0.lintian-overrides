@@ -3,10 +3,11 @@
 # names lintian cannot relate to the library SONAMEs (the conventional
 # names would be libabaqusinterface5.2.0-dev, etc.); the full version
 # as SONAME is discussed as an upstream issue in GitHub issue #1466
-lacks-unversioned-link-to-shared-library usr/lib/*
+lacks-unversioned-link-to-shared-library *
 package-name-doesnt-match-sonames *
-# pure C++ libraries which do not reference any libc symbol directly:
-# the libc DT_NEEDED entry is dropped by the linker (--as-needed), as
-# their symbols are provided by libstdc++ itself
-library-not-linked-against-libc usr/lib/*/libMFrontGenericParallelRuntime.so.*
-library-not-linked-against-libc usr/lib/*/libTFELMathCubicSpline.so.*
+# old lintian versions (up to 2.115) additionally report
+# library-not-linked-against-libc for libMFrontGenericParallelRuntime
+# and libTFELMathCubicSpline: pure C++ libraries which do not
+# reference any libc symbol directly, so the linker (--as-needed)
+# drops the libc DT_NEEDED entry; the tag no longer exists in later
+# versions of lintian, which makes an override of it an error there.
