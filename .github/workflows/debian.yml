@@ -24,13 +24,17 @@ jobs:
           build-essential \
           cmake \
           debhelper \
+          default-jdk-headless \
           devscripts \
           dpkg-dev \
           fakeroot \
           gfortran \
+          gnuplot-nox \
           libpython3-dev \
           lintian \
-          python3-dev
+          pybind11-dev \
+          python3-dev \
+          python3-numpy
 
     - name: Check the build dependencies declared in the control file
       working-directory: tfel
@@ -54,8 +58,8 @@ jobs:
 
     - name: Analyse the generated packages with lintian
       # Informational only: the packaging is not polished yet, the
-      # missing man pages and the not yet introduced tfel-python and
-      # tfel-doc packages are tracked in issue #1466.
+      # missing man pages and the not yet introduced tfel-doc package
+      # are tracked in issue #1466.
       run: lintian --no-tag-display-limit *.changes || true
 
     - name: Upload the generated packages
