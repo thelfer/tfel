@@ -66,10 +66,19 @@ namespace mfront {
           convertFiniteStrainBehaviourTangentOperatorFlagToString(op1);
       const auto s2 =
           convertFiniteStrainBehaviourTangentOperatorFlagToString(op2);
+      // type of the result of the conversion
+      const auto t2 = "tangent_operator<" + s2 + ",N,stress>";
+      // The result of the final conversion is computed in the storage of the
+      // variant holding the tangent operator, which avoids its copies. The
+      // source of this conversion is never stored in this variant: it is
+      // either a copy of the operator computed by the user or the result of
+      // an intermediate conversion.
       add({op1, op2,
            "const auto tangentOperator_" + s2 + " = convert<" + s2 + "," + s1 +
                ">(tangentOperator_" + s1 + ",this->F0,this->F1,this->sig);",
-           "this->Dt = convert<" + s2 + "," + s1 + ">(tangentOperator_" + s1 +
+           "this->Dt.template set_uninitialised<" + t2 + ">();\n" +
+               "convert<" + s2 + "," + s1 + ">(this->Dt.template get<" + t2 +
+               ">(),tangentOperator_" + s1 +
                ",this->F0,this->F1,this->sig);"});
     };
     // for all this converters, a specialisation of the
