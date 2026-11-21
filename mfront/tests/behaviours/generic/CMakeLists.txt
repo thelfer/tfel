@@ -20,6 +20,7 @@ set(mfront_tests_SOURCES
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
   InitializationFailureTest
+  UninitializedVariablesTest
   Elasticity3
   Elasticity4
   Elasticity5
@@ -484,6 +485,7 @@ endfunction(test_generic_fs)
 
 test_generic(InitializationFailureTest
   NO_XML_OUTPUT WILL_FAIL)
+test_generic(UninitializedVariablesTest)
 test_generic(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_generic(materialpropertiesboundscheck2 

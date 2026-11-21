@@ -22,6 +22,20 @@ except the first:
 One may declare an array of integration variables by specifying the array
 size after the integration variable name.
 
+## Uninitialized integration variables
+
+The `setUninitialized` method states that the values of an integration
+variable which is not a state variable shall be left uninitialized when
+the behaviour is built, rather than set to zero (see the
+`@LocalVariable` keyword for details). The variable must then be
+assigned before the integration, in the `@InitializeLocalVariables` code
+block for instance.
+
+~~~~{.cpp}
+@IntegrationVariable StrainStensor evp;
+evp.setUninitialized();
+~~~~
+
 ## Example
 
 ~~~~{.cpp}

@@ -1424,6 +1424,34 @@ the `TFEL/Material/GeneralisedGursonTvergaardNeedlemanStressCriterion.hxx`
 and `TFEL/Material/GeneralisedRousselierTanguyBessonStressCriterion.hxx`
 headers.
 
+## Variables left uninitialized: the `setUninitialized` method {#sec:tfel:5.2:mfront:uninitialized_variables}
+
+The values of the non scalar local variables and of the non scalar
+integration variables which are not state variables are set to zero when
+the behaviour is built, i.e. at each integration point and at each time
+step. Those values are never read when the variable is assigned before
+being used, which is generally the case of the local variables.
+
+The `setUninitialized` method states that the values of such a variable
+shall be left uninitialized:
+
+~~~~{.cpp}
+@LocalVariable Stensor4 De;
+De.setUninitialized();
+~~~~
+
+This method relies on the `tfel::math::uninitialized` tag (see Section
+@sec:tfel:5.2:tfel_math:uninitialized). It is only available for local
+variables and for integration variables which are not state variables,
+and is not available for scalars. It is up to the user to guarantee that
+the variable is assigned before being used.
+
+By default, nothing is changed: variables are only left uninitialized on
+explicit request.
+
+See the documentation of the `@LocalVariable` and `@IntegrationVariable`
+keywords for details.
+
 # New features in `mfront-query`
 
 ## `--compute-thermal-expansion` and `--compute-stress-free-expansion` queries

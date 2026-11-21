@@ -53,6 +53,15 @@ namespace mfront {
      * algorithms.
      */
     static const char* const variableDeclaredInBaseClass;
+    /*!
+     * \brief attribute stating that the values of a variable are left
+     * uninitialized when the behaviour is built.
+     *
+     * This attribute is set by the `setUninitialized` method, which is only
+     * available for the local variables and the integration variables which
+     * are not state variables.
+     */
+    static const char* const uninitialized;
     //! \brief default constructor
     VariableDescription();
     //! \brief copy constructor
