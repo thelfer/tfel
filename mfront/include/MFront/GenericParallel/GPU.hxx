@@ -31,6 +31,23 @@
 #include "MFront/GenericParallel/CUDABackendExecutionPolicy.hxx"
 #endif
 
+/*!
+ * \brief qualifier of the function object passed by value to the kernels.
+ *
+ * The member functions of this object take its address. nvcc then copies it
+ * in the stack of each thread (local memory), unless the parameter is
+ * declared `__grid_constant__`: the threads then read it in place. This
+ * qualifier is defined by the headers of CUDA 11.7 or later and requires a
+ * compute capability of 7.0 or later. clang reads this parameter in place
+ * without it, as do the HIP compilers for AMD GPUs.
+ */
+#if defined(__grid_constant__) && (!defined(__HIP_PLATFORM_AMD__)) && \
+    ((!defined(__CUDA_ARCH__)) || (__CUDA_ARCH__ >= 700))
+#define MFRONT_GENERIC_PARALLEL_GPU_GRID_CONSTANT __grid_constant__
+#else
+#define MFRONT_GENERIC_PARALLEL_GPU_GRID_CONSTANT
+#endif
+
 namespace mfront::generic_parallel::gpu {
 
   namespace internals {
@@ -134,10 +151,11 @@ namespace mfront::generic_parallel::gpu {
      * \param[in] rdt0: ordered key of the initial time step scaling factor
      */
     template <typename Statistics, typename PointFunction>
-    __global__ void apply(const PointFunction f,
-                          const size_type n,
-                          Statistics* const s,
-                          const atomic_size_type rdt0) {
+    __global__ void apply(
+        const MFRONT_GENERIC_PARALLEL_GPU_GRID_CONSTANT PointFunction f,
+        const size_type n,
+        Statistics* const s,
+        const atomic_size_type rdt0) {
       const auto i = static_cast<size_type>(blockIdx.x) * blockDim.x +
                      static_cast<size_type>(threadIdx.x);
       auto failures = 0u;
