@@ -22,31 +22,27 @@ macro(mfront_model)
   foreach(source ${ARGN})
     set(mfront_source "${PROJECT_SOURCE_DIR}/mfront/tests/models/${source}.mfront")
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      # `cmake -E env` is used instead of chained `set PATH=…;%PATH%`
+      # commands (which require `cmd.exe` and may exceed its command line
+      # length limit, in particular with the `Ninja` generator)
+      # See https://github.com/thelfer/tfel/issues/1464
       add_custom_command(
 	OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/include/MFront/${source}.hxx"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELNUMODIS>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
-	COMMAND "${mfront_executable}"
+	COMMAND "${CMAKE_COMMAND}" -E env
+	ARGS "PATH=\
+$<TARGET_FILE_DIR:TFELMFront>;\
+$<TARGET_FILE_DIR:MFrontLogStream>;\
+$<TARGET_FILE_DIR:TFELMaterial>;\
+$<TARGET_FILE_DIR:TFELNUMODIS>;\
+$<TARGET_FILE_DIR:TFELMathParser>;\
+$<TARGET_FILE_DIR:TFELGlossary>;\
+$<TARGET_FILE_DIR:TFELSystem>;\
+$<TARGET_FILE_DIR:TFELUtilities>;\
+$<TARGET_FILE_DIR:TFELException>;\
+$<TARGET_FILE_DIR:TFELConfig>;\
+$<TARGET_FILE_DIR:TFELUnicodeSupport>;\
+$ENV{PATH}"
+	ARGS "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
 	DEPENDS mfront
 	DEPENDS "${mfront_source}"
