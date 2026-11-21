@@ -85,18 +85,18 @@ struct mfront_gb_BehaviourData {
    * used:
    *
    * - if K[1] < 0.5, the Cauchy stress is used
-   * - if 0.5 < K[1] < 1.5, the second Piola-Kirchoff stress is used
-   * - if 1.5 < K[1] < 2.5, the first Piola-Kirchoff stress is used
+   * - if 0.5 < K[1] < 1.5, the second Piola-Kirchhoff stress is used
+   * - if 1.5 < K[1] < 2.5, the first Piola-Kirchhoff stress is used
    *
    * For finite strain behaviours, K[2] holds the consistent tangent
    * operator returned by the behaviour:
    *
    * - if K[2]<0.5, the derivative of the Cauchy stress with respect
    *   to the deformation gradient is returned
-   * - if 0.5<K[2]<1.5, the derivative of the second Piola-Kirchoff
+   * - if 0.5<K[2]<1.5, the derivative of the second Piola-Kirchhoff
    *   stress with respect to the Green-Lagrange strain
    *   is returned
-   * - if 1.5<K[2]<2.5, the derivative of the first Piola-Kirchoff
+   * - if 1.5<K[2]<2.5, the derivative of the first Piola-Kirchhoff
    *   stress with respect to the deformation gradient is returned
    * - if 2.5<K[2]<3.5, the derivative of the Kirchhoff stress with
    *   respect to the spatial increment of the deformation gradient

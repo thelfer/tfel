@@ -256,10 +256,10 @@ namespace tfel::math {
    *
    * This function is typically used to compute the derivative of
    * the Kirchhoff stress tensor knowing the derivative of the second
-   * Piola-Kirschoff stress.
+   * Piola-Kirchhoff stress.
    *
    * \param[in]  : derivative of the orginal tensor
-   * \param[in]  : orginal tensor (second Piola-Kirschoff stress)
+   * \param[in]  : orginal tensor (second Piola-Kirchhoff stress)
    * \param[in]  : deformation gradient
    */
   template <T2toST2Concept T2toST2Type,
@@ -283,11 +283,11 @@ namespace tfel::math {
    *
    * This function is typically used to compute the derivative of
    * the Kirchhoff stress tensor knowing the derivative of the second
-   * Piola-Kirschoff stress.
+   * Piola-Kirchhoff stress.
    *
    * \param[out] : derivative of the push-forward symmetric tensor
    * \param[in]  : derivative of the orginal tensor
-   * \param[in]  : orginal tensor (second Piola-Kirschoff stress)
+   * \param[in]  : orginal tensor (second Piola-Kirchhoff stress)
    * \param[in]  : deformation gradient
    */
   template <T2toST2Concept T2toST2ResultType,

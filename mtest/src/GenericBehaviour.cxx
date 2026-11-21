@@ -237,9 +237,9 @@ namespace mtest {
       if (p.first == "stress_measure") {
         const auto& ss = p.second.get<std::string>();
         if ((ss == "CAUCHY") || (ss == "CauchyStress")) {
-        } else if ((ss == "PK2") || (ss == "SecondPiolaKirchoffStress")) {
+        } else if ((ss == "PK2") || (ss == "SecondPiolaKirchhoffStress")) {
           this->stress_measure = PK2;
-        } else if ((ss == "PK1") || (ss == "FirstPiolaKirchoffStress")) {
+        } else if ((ss == "PK1") || (ss == "FirstPiolaKirchhoffStress")) {
           this->stress_measure = PK1;
         } else {
           tfel::raise(

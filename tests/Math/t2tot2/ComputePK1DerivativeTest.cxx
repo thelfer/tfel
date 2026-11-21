@@ -53,7 +53,7 @@ struct ComputePK1DerivativeTest final : public tfel::tests::TestCase {
     const auto S = lambda * trace(e) * stensor<N, double>::Id() + 2 * mu * e;
     const auto s = convertSecondPiolaKirchhoffStressToCauchyStress(S, F);
     const auto dPK1 =
-        convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+        convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
             D, F, s);
     t2tot2<N, double> ndPK1;
     for (unsigned short i = 0; i != F.size(); ++i) {

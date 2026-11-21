@@ -400,7 +400,7 @@ TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(SPATIAL_MODULI,
         const StressStensor<N, stress>& s){const auto J = tfel::math::det(F1);
 // a little trick: the invert of the transformation from the
 // spatial moduli to the KirchhoffJaumanRateModuli is obtained
-// by changing the sign of the Kirchoff stress
+// by changing the sign of the Kirchhoff stress
 Kr = tfel::math::convertSpatialModuliToKirchhoffJaumanRateModuli(Ks * J, -s* J);
 }  // end of exe
 }
@@ -819,7 +819,7 @@ TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(SPATIAL_MODULI,
         const StressStensor<N, stress>& s){const auto J = tfel::math::det(F1);
 // a little trick: the invert of the transformation from the
 // spatial moduli to the KirchhoffJaumanRateModuli is obtained
-// by changing the sign of the Kirchoff stress
+// by changing the sign of the Kirchhoff stress
 Kr = tfel::math::convertSpatialModuliToKirchhoffJaumanRateModuli(Ks, -J* s);
 }  // end of exe
 }
@@ -1172,7 +1172,7 @@ TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DPK1_DF, DSIG_DF){
         const DeformationGradientTensor<N, stress>& F1,
         const StressStensor<N, stress>& s){
         tfel::math::
-            convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+            convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
                 Kr, Ks, F1, s);
 }  // end of exe
 }
@@ -1198,7 +1198,7 @@ TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DTAU_DF, DPK1_DF){
         const DeformationGradientTensor<N, stress>& F1,
         const StressStensor<N, stress>& s){
         tfel::math::
-            convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+            convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative(
                 Kr, Ks, F1, s);
 }  // end of exe
 }
@@ -1251,7 +1251,7 @@ TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DPK1_DF, DS_DEGL){
         const DeformationGradientTensor<N, stress>& F1,
         const StressStensor<N, stress>& s){
         tfel::math::
-            convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+            convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
                 Kr, Ks, F1, s);
 }  // end of exe
 }

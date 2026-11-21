@@ -41,7 +41,7 @@ namespace tfel ::math {
    */
   template <unsigned short N, typename stress, typename real>
   [[nodiscard]] TFEL_HOST_DEVICE constexpr t2tost2<N, stress>
-  convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+  convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative(
       const t2tot2<N, stress>&,
       const tensor<N, real>&,
       const stensor<N, stress>&) noexcept;
@@ -64,7 +64,7 @@ namespace tfel ::math {
    */
   template <unsigned short N, typename stress, typename real>
   TFEL_HOST_DEVICE constexpr void
-  convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+  convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative(
       t2tost2<N, stress>&,
       const t2tot2<N, stress>&,
       const tensor<N, real>&,

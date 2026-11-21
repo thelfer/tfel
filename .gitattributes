@@ -1020,9 +1020,9 @@ docs/texmacs/FiniteStrain2D-planestress.tm -text
 docs/texmacs/FiniteStrain2D.tm -text
 docs/texmacs/FiniteStrain3D.tm -text
 docs/texmacs/FiniteStrain_dC_dF-3D.tm -text
-docs/texmacs/KirchhoffStresssJaumanRateModuliToKirchoffStressDerivative1D.tm -text
-docs/texmacs/KirchhoffStresssJaumanRateModuliToKirchoffStressDerivative2D.tm -text
-docs/texmacs/KirchhoffStresssJaumanRateModuliToKirchoffStressDerivative3D.tm -text
+docs/texmacs/KirchhoffStresssJaumanRateModuliToKirchhoffStressDerivative1D.tm -text
+docs/texmacs/KirchhoffStresssJaumanRateModuliToKirchhoffStressDerivative2D.tm -text
+docs/texmacs/KirchhoffStresssJaumanRateModuliToKirchhoffStressDerivative3D.tm -text
 docs/texmacs/LeftCauchyDerivative1D.tm -text
 docs/texmacs/LeftCauchyDerivative2D.tm -text
 docs/texmacs/LeftCauchyDerivative3D.tm -text
@@ -7259,7 +7259,7 @@ tests/Material/SlipSystemsDescriptionTest.cxx -text
 tests/Material/boundsCheck.cxx -text
 tests/Math/BissectionAlgorithmTest.cxx -text
 tests/Math/CMakeLists.txt -text
-tests/Math/CorotationnalCauchyStressToSecondPioloKirchhoffStressTest.cxx -text
+tests/Math/CorotationnalCauchyStressToSecondPiolaKirchhoffStressTest.cxx -text
 tests/Math/CubicRoots.cxx -text
 tests/Math/CubicSplineTest.cxx -text
 tests/Math/DifferenceRandomAccessIteratorTest.cxx -text

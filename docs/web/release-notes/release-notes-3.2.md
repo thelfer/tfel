@@ -565,7 +565,7 @@ The interface handles (See @helfer_extension_2015 for details):
 - the pre-processing stage (computation of the logarithmic strain from
   the linearised strain).
 - the post-processing stage (conversion of the dual stress to the first
-  Piola-Kirchoff stress, conversion of the consistent tangent operator),
+  Piola-Kirchhoff stress, conversion of the consistent tangent operator),
 
 ## The generic behaviour interface
 

@@ -56,7 +56,7 @@ namespace tfel::material {
    * \param[in] deto: total (in plane) increment of the logarithmic
    *                  strain. Axially, deto(1) contains the strains generated
    *                  by the stress-free expansions, if any.
-   * \param[in] Pzz: axial component of the first Piola-Kirchoff stress
+   * \param[in] Pzz: axial component of the first Piola-Kirchhoff stress
    *                 at \f$t+\theta\,\Delta\,t\f$
    * \param[in] t: theta value
    * \param[in] e: criterion value
