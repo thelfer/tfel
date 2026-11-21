@@ -110,6 +110,8 @@ namespace mfront {
     std_add(TangentOperator::DS_DEGL, TangentOperator::DPK1_DF);
     std_add(TangentOperator::DPK1_DF, TangentOperator::DTAU_DF);
     std_add(TangentOperator::DPK1_DF, TangentOperator::DSIG_DF);
+    std_add(TangentOperator::DTAU_DF, TangentOperator::DPK1_DF);
+    std_add(TangentOperator::DTAU_DDF, TangentOperator::DPK1_DF);
     return converters;
   }  // end of
      // FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions

@@ -642,6 +642,314 @@ namespace tfel::math::internals {
     }
   };  // end of struct DSIG_DF_to_DPK1_DF_Converter<3u>
 
+  /*!
+   * \brief an helper structure meant to be specialized in each spatial
+   * dimension. The derivative of the first Piola-Kirchhoff stress
+   * \f$P=\tau\,F^{-T}\f$ is computed column by column, i.e. component by
+   * component of the deformation gradient:
+   * \f[
+   * \frac{\partial P_{iJ}}{\partial F_{pq}}=
+   * \frac{\partial \tau_{ik}}{\partial F_{pq}}\,F^{-1}_{Jk}-
+   * F^{-1}_{Jp}\,P_{iq}
+   * \f]
+   * \tparam N: spatial dimension
+   */
+  template <unsigned short N>
+  struct DTAU_DF_to_DPK1_DF_Converter;
+
+  /*!
+   * \brief partial specialisation in 1D
+   */
+  template <>
+  struct DTAU_DF_to_DPK1_DF_Converter<1u> {
+    /*!
+     * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
+     *                 respect to the deformation gradient
+     * \param[in] dtau: derivative of the Kirchhoff stress with respect to the
+     *                  deformation gradient
+     * \param[in] F: deformation gradient
+     * \param[in] s: Cauchy stress
+     */
+    template <StressT2toT2Concept PK1StressDerivativeType,
+              StressT2toST2Concept KirchhoffStressDerivativeType,
+              NoUnitTensorConcept DeformationGradientType,
+              StressStensorConcept CauchyStressType>
+    requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                                 KirchhoffStressDerivativeType,
+                                                 DeformationGradientType,
+                                                 CauchyStressType>())  //
+        TFEL_HOST_DEVICE static constexpr void                         //
+        exe(PK1StressDerivativeType& dP,
+            const KirchhoffStressDerivativeType& dtau,
+            const DeformationGradientType& F,
+            const CauchyStressType& s) noexcept {
+      const auto iF = invert(F);
+      const auto P = convertCauchyStressToFirstPiolaKirchhoffStress(s, F);
+      dP(0, 0) = dtau(0, 0) * iF[0] - iF[0] * P[0];
+      dP(1, 0) = dtau(1, 0) * iF[1];
+      dP(2, 0) = dtau(2, 0) * iF[2];
+      dP(0, 1) = dtau(0, 1) * iF[0];
+      dP(1, 1) = dtau(1, 1) * iF[1] - iF[1] * P[1];
+      dP(2, 1) = dtau(2, 1) * iF[2];
+      dP(0, 2) = dtau(0, 2) * iF[0];
+      dP(1, 2) = dtau(1, 2) * iF[1];
+      dP(2, 2) = dtau(2, 2) * iF[2] - iF[2] * P[2];
+    }
+  };  // end of struct DTAU_DF_to_DPK1_DF_Converter<1u>
+
+  /*!
+   * \brief partial specialisation in 2D
+   */
+  template <>
+  struct DTAU_DF_to_DPK1_DF_Converter<2u> {
+    /*!
+     * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
+     *                 respect to the deformation gradient
+     * \param[in] dtau: derivative of the Kirchhoff stress with respect to the
+     *                  deformation gradient
+     * \param[in] F: deformation gradient
+     * \param[in] s: Cauchy stress
+     */
+    template <StressT2toT2Concept PK1StressDerivativeType,
+              StressT2toST2Concept KirchhoffStressDerivativeType,
+              NoUnitTensorConcept DeformationGradientType,
+              StressStensorConcept CauchyStressType>
+    requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                                 KirchhoffStressDerivativeType,
+                                                 DeformationGradientType,
+                                                 CauchyStressType>())  //
+        TFEL_HOST_DEVICE static constexpr void                         //
+        exe(PK1StressDerivativeType& dP,
+            const KirchhoffStressDerivativeType& dtau,
+            const DeformationGradientType& F,
+            const CauchyStressType& s) noexcept {
+      using real = numeric_type<DeformationGradientType>;
+      constexpr auto cste = Cste<real>::isqrt2;
+      const auto iF = invert(F);
+      const auto P = convertCauchyStressToFirstPiolaKirchhoffStress(s, F);
+      dP(0, 0) = dtau(0, 0) * iF[0] + cste * dtau(3, 0) * iF[3] - iF[0] * P[0];
+      dP(1, 0) = cste * dtau(3, 0) * iF[4] + dtau(1, 0) * iF[1] - iF[4] * P[4];
+      dP(2, 0) = dtau(2, 0) * iF[2];
+      dP(3, 0) = dtau(0, 0) * iF[4] + cste * dtau(3, 0) * iF[1] - iF[4] * P[0];
+      dP(4, 0) = cste * dtau(3, 0) * iF[0] + dtau(1, 0) * iF[3] - iF[0] * P[4];
+      dP(0, 1) = dtau(0, 1) * iF[0] + cste * dtau(3, 1) * iF[3] - iF[3] * P[3];
+      dP(1, 1) = cste * dtau(3, 1) * iF[4] + dtau(1, 1) * iF[1] - iF[1] * P[1];
+      dP(2, 1) = dtau(2, 1) * iF[2];
+      dP(3, 1) = dtau(0, 1) * iF[4] + cste * dtau(3, 1) * iF[1] - iF[1] * P[3];
+      dP(4, 1) = cste * dtau(3, 1) * iF[0] + dtau(1, 1) * iF[3] - iF[3] * P[1];
+      dP(0, 2) = dtau(0, 2) * iF[0] + cste * dtau(3, 2) * iF[3];
+      dP(1, 2) = cste * dtau(3, 2) * iF[4] + dtau(1, 2) * iF[1];
+      dP(2, 2) = dtau(2, 2) * iF[2] - iF[2] * P[2];
+      dP(3, 2) = dtau(0, 2) * iF[4] + cste * dtau(3, 2) * iF[1];
+      dP(4, 2) = cste * dtau(3, 2) * iF[0] + dtau(1, 2) * iF[3];
+      dP(0, 3) = dtau(0, 3) * iF[0] + cste * dtau(3, 3) * iF[3] - iF[0] * P[3];
+      dP(1, 3) = cste * dtau(3, 3) * iF[4] + dtau(1, 3) * iF[1] - iF[4] * P[1];
+      dP(2, 3) = dtau(2, 3) * iF[2];
+      dP(3, 3) = dtau(0, 3) * iF[4] + cste * dtau(3, 3) * iF[1] - iF[4] * P[3];
+      dP(4, 3) = cste * dtau(3, 3) * iF[0] + dtau(1, 3) * iF[3] - iF[0] * P[1];
+      dP(0, 4) = dtau(0, 4) * iF[0] + cste * dtau(3, 4) * iF[3] - iF[3] * P[0];
+      dP(1, 4) = cste * dtau(3, 4) * iF[4] + dtau(1, 4) * iF[1] - iF[1] * P[4];
+      dP(2, 4) = dtau(2, 4) * iF[2];
+      dP(3, 4) = dtau(0, 4) * iF[4] + cste * dtau(3, 4) * iF[1] - iF[1] * P[0];
+      dP(4, 4) = cste * dtau(3, 4) * iF[0] + dtau(1, 4) * iF[3] - iF[3] * P[4];
+    }
+  };  // end of struct DTAU_DF_to_DPK1_DF_Converter<2u>
+
+  /*!
+   * \brief partial specialisation in 3D
+   */
+  template <>
+  struct DTAU_DF_to_DPK1_DF_Converter<3u> {
+    /*!
+     * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
+     *                 respect to the deformation gradient
+     * \param[in] dtau: derivative of the Kirchhoff stress with respect to the
+     *                  deformation gradient
+     * \param[in] F: deformation gradient
+     * \param[in] s: Cauchy stress
+     */
+    template <StressT2toT2Concept PK1StressDerivativeType,
+              StressT2toST2Concept KirchhoffStressDerivativeType,
+              NoUnitTensorConcept DeformationGradientType,
+              StressStensorConcept CauchyStressType>
+    requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                                 KirchhoffStressDerivativeType,
+                                                 DeformationGradientType,
+                                                 CauchyStressType>())  //
+        TFEL_HOST_DEVICE static constexpr void                         //
+        exe(PK1StressDerivativeType& dP,
+            const KirchhoffStressDerivativeType& dtau,
+            const DeformationGradientType& F,
+            const CauchyStressType& s) noexcept {
+      using real = numeric_type<DeformationGradientType>;
+      constexpr auto cste = Cste<real>::isqrt2;
+      const auto iF = invert(F);
+      const auto P = convertCauchyStressToFirstPiolaKirchhoffStress(s, F);
+      dP(0, 0) = dtau(0, 0) * iF[0] + cste * dtau(3, 0) * iF[3] +
+                 cste * dtau(4, 0) * iF[5] - iF[0] * P[0];
+      dP(1, 0) = cste * dtau(3, 0) * iF[4] + dtau(1, 0) * iF[1] +
+                 cste * dtau(5, 0) * iF[7] - iF[4] * P[4];
+      dP(2, 0) = cste * dtau(4, 0) * iF[6] + cste * dtau(5, 0) * iF[8] +
+                 dtau(2, 0) * iF[2] - iF[6] * P[6];
+      dP(3, 0) = dtau(0, 0) * iF[4] + cste * dtau(3, 0) * iF[1] +
+                 cste * dtau(4, 0) * iF[7] - iF[4] * P[0];
+      dP(4, 0) = cste * dtau(3, 0) * iF[0] + dtau(1, 0) * iF[3] +
+                 cste * dtau(5, 0) * iF[5] - iF[0] * P[4];
+      dP(5, 0) = dtau(0, 0) * iF[6] + cste * dtau(3, 0) * iF[8] +
+                 cste * dtau(4, 0) * iF[2] - iF[6] * P[0];
+      dP(6, 0) = cste * dtau(4, 0) * iF[0] + cste * dtau(5, 0) * iF[3] +
+                 dtau(2, 0) * iF[5] - iF[0] * P[6];
+      dP(7, 0) = cste * dtau(3, 0) * iF[6] + dtau(1, 0) * iF[8] +
+                 cste * dtau(5, 0) * iF[2] - iF[6] * P[4];
+      dP(8, 0) = cste * dtau(4, 0) * iF[4] + cste * dtau(5, 0) * iF[1] +
+                 dtau(2, 0) * iF[7] - iF[4] * P[6];
+      dP(0, 1) = dtau(0, 1) * iF[0] + cste * dtau(3, 1) * iF[3] +
+                 cste * dtau(4, 1) * iF[5] - iF[3] * P[3];
+      dP(1, 1) = cste * dtau(3, 1) * iF[4] + dtau(1, 1) * iF[1] +
+                 cste * dtau(5, 1) * iF[7] - iF[1] * P[1];
+      dP(2, 1) = cste * dtau(4, 1) * iF[6] + cste * dtau(5, 1) * iF[8] +
+                 dtau(2, 1) * iF[2] - iF[8] * P[8];
+      dP(3, 1) = dtau(0, 1) * iF[4] + cste * dtau(3, 1) * iF[1] +
+                 cste * dtau(4, 1) * iF[7] - iF[1] * P[3];
+      dP(4, 1) = cste * dtau(3, 1) * iF[0] + dtau(1, 1) * iF[3] +
+                 cste * dtau(5, 1) * iF[5] - iF[3] * P[1];
+      dP(5, 1) = dtau(0, 1) * iF[6] + cste * dtau(3, 1) * iF[8] +
+                 cste * dtau(4, 1) * iF[2] - iF[8] * P[3];
+      dP(6, 1) = cste * dtau(4, 1) * iF[0] + cste * dtau(5, 1) * iF[3] +
+                 dtau(2, 1) * iF[5] - iF[3] * P[8];
+      dP(7, 1) = cste * dtau(3, 1) * iF[6] + dtau(1, 1) * iF[8] +
+                 cste * dtau(5, 1) * iF[2] - iF[8] * P[1];
+      dP(8, 1) = cste * dtau(4, 1) * iF[4] + cste * dtau(5, 1) * iF[1] +
+                 dtau(2, 1) * iF[7] - iF[1] * P[8];
+      dP(0, 2) = dtau(0, 2) * iF[0] + cste * dtau(3, 2) * iF[3] +
+                 cste * dtau(4, 2) * iF[5] - iF[5] * P[5];
+      dP(1, 2) = cste * dtau(3, 2) * iF[4] + dtau(1, 2) * iF[1] +
+                 cste * dtau(5, 2) * iF[7] - iF[7] * P[7];
+      dP(2, 2) = cste * dtau(4, 2) * iF[6] + cste * dtau(5, 2) * iF[8] +
+                 dtau(2, 2) * iF[2] - iF[2] * P[2];
+      dP(3, 2) = dtau(0, 2) * iF[4] + cste * dtau(3, 2) * iF[1] +
+                 cste * dtau(4, 2) * iF[7] - iF[7] * P[5];
+      dP(4, 2) = cste * dtau(3, 2) * iF[0] + dtau(1, 2) * iF[3] +
+                 cste * dtau(5, 2) * iF[5] - iF[5] * P[7];
+      dP(5, 2) = dtau(0, 2) * iF[6] + cste * dtau(3, 2) * iF[8] +
+                 cste * dtau(4, 2) * iF[2] - iF[2] * P[5];
+      dP(6, 2) = cste * dtau(4, 2) * iF[0] + cste * dtau(5, 2) * iF[3] +
+                 dtau(2, 2) * iF[5] - iF[5] * P[2];
+      dP(7, 2) = cste * dtau(3, 2) * iF[6] + dtau(1, 2) * iF[8] +
+                 cste * dtau(5, 2) * iF[2] - iF[2] * P[7];
+      dP(8, 2) = cste * dtau(4, 2) * iF[4] + cste * dtau(5, 2) * iF[1] +
+                 dtau(2, 2) * iF[7] - iF[7] * P[2];
+      dP(0, 3) = dtau(0, 3) * iF[0] + cste * dtau(3, 3) * iF[3] +
+                 cste * dtau(4, 3) * iF[5] - iF[0] * P[3];
+      dP(1, 3) = cste * dtau(3, 3) * iF[4] + dtau(1, 3) * iF[1] +
+                 cste * dtau(5, 3) * iF[7] - iF[4] * P[1];
+      dP(2, 3) = cste * dtau(4, 3) * iF[6] + cste * dtau(5, 3) * iF[8] +
+                 dtau(2, 3) * iF[2] - iF[6] * P[8];
+      dP(3, 3) = dtau(0, 3) * iF[4] + cste * dtau(3, 3) * iF[1] +
+                 cste * dtau(4, 3) * iF[7] - iF[4] * P[3];
+      dP(4, 3) = cste * dtau(3, 3) * iF[0] + dtau(1, 3) * iF[3] +
+                 cste * dtau(5, 3) * iF[5] - iF[0] * P[1];
+      dP(5, 3) = dtau(0, 3) * iF[6] + cste * dtau(3, 3) * iF[8] +
+                 cste * dtau(4, 3) * iF[2] - iF[6] * P[3];
+      dP(6, 3) = cste * dtau(4, 3) * iF[0] + cste * dtau(5, 3) * iF[3] +
+                 dtau(2, 3) * iF[5] - iF[0] * P[8];
+      dP(7, 3) = cste * dtau(3, 3) * iF[6] + dtau(1, 3) * iF[8] +
+                 cste * dtau(5, 3) * iF[2] - iF[6] * P[1];
+      dP(8, 3) = cste * dtau(4, 3) * iF[4] + cste * dtau(5, 3) * iF[1] +
+                 dtau(2, 3) * iF[7] - iF[4] * P[8];
+      dP(0, 4) = dtau(0, 4) * iF[0] + cste * dtau(3, 4) * iF[3] +
+                 cste * dtau(4, 4) * iF[5] - iF[3] * P[0];
+      dP(1, 4) = cste * dtau(3, 4) * iF[4] + dtau(1, 4) * iF[1] +
+                 cste * dtau(5, 4) * iF[7] - iF[1] * P[4];
+      dP(2, 4) = cste * dtau(4, 4) * iF[6] + cste * dtau(5, 4) * iF[8] +
+                 dtau(2, 4) * iF[2] - iF[8] * P[6];
+      dP(3, 4) = dtau(0, 4) * iF[4] + cste * dtau(3, 4) * iF[1] +
+                 cste * dtau(4, 4) * iF[7] - iF[1] * P[0];
+      dP(4, 4) = cste * dtau(3, 4) * iF[0] + dtau(1, 4) * iF[3] +
+                 cste * dtau(5, 4) * iF[5] - iF[3] * P[4];
+      dP(5, 4) = dtau(0, 4) * iF[6] + cste * dtau(3, 4) * iF[8] +
+                 cste * dtau(4, 4) * iF[2] - iF[8] * P[0];
+      dP(6, 4) = cste * dtau(4, 4) * iF[0] + cste * dtau(5, 4) * iF[3] +
+                 dtau(2, 4) * iF[5] - iF[3] * P[6];
+      dP(7, 4) = cste * dtau(3, 4) * iF[6] + dtau(1, 4) * iF[8] +
+                 cste * dtau(5, 4) * iF[2] - iF[8] * P[4];
+      dP(8, 4) = cste * dtau(4, 4) * iF[4] + cste * dtau(5, 4) * iF[1] +
+                 dtau(2, 4) * iF[7] - iF[1] * P[6];
+      dP(0, 5) = dtau(0, 5) * iF[0] + cste * dtau(3, 5) * iF[3] +
+                 cste * dtau(4, 5) * iF[5] - iF[0] * P[5];
+      dP(1, 5) = cste * dtau(3, 5) * iF[4] + dtau(1, 5) * iF[1] +
+                 cste * dtau(5, 5) * iF[7] - iF[4] * P[7];
+      dP(2, 5) = cste * dtau(4, 5) * iF[6] + cste * dtau(5, 5) * iF[8] +
+                 dtau(2, 5) * iF[2] - iF[6] * P[2];
+      dP(3, 5) = dtau(0, 5) * iF[4] + cste * dtau(3, 5) * iF[1] +
+                 cste * dtau(4, 5) * iF[7] - iF[4] * P[5];
+      dP(4, 5) = cste * dtau(3, 5) * iF[0] + dtau(1, 5) * iF[3] +
+                 cste * dtau(5, 5) * iF[5] - iF[0] * P[7];
+      dP(5, 5) = dtau(0, 5) * iF[6] + cste * dtau(3, 5) * iF[8] +
+                 cste * dtau(4, 5) * iF[2] - iF[6] * P[5];
+      dP(6, 5) = cste * dtau(4, 5) * iF[0] + cste * dtau(5, 5) * iF[3] +
+                 dtau(2, 5) * iF[5] - iF[0] * P[2];
+      dP(7, 5) = cste * dtau(3, 5) * iF[6] + dtau(1, 5) * iF[8] +
+                 cste * dtau(5, 5) * iF[2] - iF[6] * P[7];
+      dP(8, 5) = cste * dtau(4, 5) * iF[4] + cste * dtau(5, 5) * iF[1] +
+                 dtau(2, 5) * iF[7] - iF[4] * P[2];
+      dP(0, 6) = dtau(0, 6) * iF[0] + cste * dtau(3, 6) * iF[3] +
+                 cste * dtau(4, 6) * iF[5] - iF[5] * P[0];
+      dP(1, 6) = cste * dtau(3, 6) * iF[4] + dtau(1, 6) * iF[1] +
+                 cste * dtau(5, 6) * iF[7] - iF[7] * P[4];
+      dP(2, 6) = cste * dtau(4, 6) * iF[6] + cste * dtau(5, 6) * iF[8] +
+                 dtau(2, 6) * iF[2] - iF[2] * P[6];
+      dP(3, 6) = dtau(0, 6) * iF[4] + cste * dtau(3, 6) * iF[1] +
+                 cste * dtau(4, 6) * iF[7] - iF[7] * P[0];
+      dP(4, 6) = cste * dtau(3, 6) * iF[0] + dtau(1, 6) * iF[3] +
+                 cste * dtau(5, 6) * iF[5] - iF[5] * P[4];
+      dP(5, 6) = dtau(0, 6) * iF[6] + cste * dtau(3, 6) * iF[8] +
+                 cste * dtau(4, 6) * iF[2] - iF[2] * P[0];
+      dP(6, 6) = cste * dtau(4, 6) * iF[0] + cste * dtau(5, 6) * iF[3] +
+                 dtau(2, 6) * iF[5] - iF[5] * P[6];
+      dP(7, 6) = cste * dtau(3, 6) * iF[6] + dtau(1, 6) * iF[8] +
+                 cste * dtau(5, 6) * iF[2] - iF[2] * P[4];
+      dP(8, 6) = cste * dtau(4, 6) * iF[4] + cste * dtau(5, 6) * iF[1] +
+                 dtau(2, 6) * iF[7] - iF[7] * P[6];
+      dP(0, 7) = dtau(0, 7) * iF[0] + cste * dtau(3, 7) * iF[3] +
+                 cste * dtau(4, 7) * iF[5] - iF[3] * P[5];
+      dP(1, 7) = cste * dtau(3, 7) * iF[4] + dtau(1, 7) * iF[1] +
+                 cste * dtau(5, 7) * iF[7] - iF[1] * P[7];
+      dP(2, 7) = cste * dtau(4, 7) * iF[6] + cste * dtau(5, 7) * iF[8] +
+                 dtau(2, 7) * iF[2] - iF[8] * P[2];
+      dP(3, 7) = dtau(0, 7) * iF[4] + cste * dtau(3, 7) * iF[1] +
+                 cste * dtau(4, 7) * iF[7] - iF[1] * P[5];
+      dP(4, 7) = cste * dtau(3, 7) * iF[0] + dtau(1, 7) * iF[3] +
+                 cste * dtau(5, 7) * iF[5] - iF[3] * P[7];
+      dP(5, 7) = dtau(0, 7) * iF[6] + cste * dtau(3, 7) * iF[8] +
+                 cste * dtau(4, 7) * iF[2] - iF[8] * P[5];
+      dP(6, 7) = cste * dtau(4, 7) * iF[0] + cste * dtau(5, 7) * iF[3] +
+                 dtau(2, 7) * iF[5] - iF[3] * P[2];
+      dP(7, 7) = cste * dtau(3, 7) * iF[6] + dtau(1, 7) * iF[8] +
+                 cste * dtau(5, 7) * iF[2] - iF[8] * P[7];
+      dP(8, 7) = cste * dtau(4, 7) * iF[4] + cste * dtau(5, 7) * iF[1] +
+                 dtau(2, 7) * iF[7] - iF[1] * P[2];
+      dP(0, 8) = dtau(0, 8) * iF[0] + cste * dtau(3, 8) * iF[3] +
+                 cste * dtau(4, 8) * iF[5] - iF[5] * P[3];
+      dP(1, 8) = cste * dtau(3, 8) * iF[4] + dtau(1, 8) * iF[1] +
+                 cste * dtau(5, 8) * iF[7] - iF[7] * P[1];
+      dP(2, 8) = cste * dtau(4, 8) * iF[6] + cste * dtau(5, 8) * iF[8] +
+                 dtau(2, 8) * iF[2] - iF[2] * P[8];
+      dP(3, 8) = dtau(0, 8) * iF[4] + cste * dtau(3, 8) * iF[1] +
+                 cste * dtau(4, 8) * iF[7] - iF[7] * P[3];
+      dP(4, 8) = cste * dtau(3, 8) * iF[0] + dtau(1, 8) * iF[3] +
+                 cste * dtau(5, 8) * iF[5] - iF[5] * P[1];
+      dP(5, 8) = dtau(0, 8) * iF[6] + cste * dtau(3, 8) * iF[8] +
+                 cste * dtau(4, 8) * iF[2] - iF[2] * P[3];
+      dP(6, 8) = cste * dtau(4, 8) * iF[0] + cste * dtau(5, 8) * iF[3] +
+                 dtau(2, 8) * iF[5] - iF[5] * P[8];
+      dP(7, 8) = cste * dtau(3, 8) * iF[6] + dtau(1, 8) * iF[8] +
+                 cste * dtau(5, 8) * iF[2] - iF[2] * P[1];
+      dP(8, 8) = cste * dtau(4, 8) * iF[4] + cste * dtau(5, 8) * iF[1] +
+                 dtau(2, 8) * iF[7] - iF[7] * P[8];
+    }
+  };  // end of struct DTAU_DF_to_DPK1_DF_Converter<3u>
+
 }  // end of namespace tfel::math::internals
 
 namespace tfel::math {
@@ -684,6 +992,47 @@ namespace tfel::math {
     tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
   }  // end of
      // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
+
+  template <StressT2toST2Concept KirchhoffStressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkThatAllSpaceDimensionsAreEqual<KirchhoffStressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      [[nodiscard]] TFEL_HOST_DEVICE constexpr                       //
+      t2tot2<space_dimension<KirchhoffStressDerivativeType>,
+             numeric_type<KirchhoffStressDerivativeType>>  //
+      convertKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+          const KirchhoffStressDerivativeType& dtau,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept {
+    constexpr auto N = space_dimension<KirchhoffStressDerivativeType>;
+    t2tot2<N, numeric_type<KirchhoffStressDerivativeType>> dP;
+    tfel::math::internals::DTAU_DF_to_DPK1_DF_Converter<N>::exe(dP, dtau, F,
+                                                                s);
+    return dP;
+  }  // end of
+     // convertKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative
+
+  template <StressT2toT2Concept PK1StressDerivativeType,
+            StressT2toST2Concept KirchhoffStressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                               KirchhoffStressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE constexpr void                                //
+      convertKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+          PK1StressDerivativeType& dP,
+          const KirchhoffStressDerivativeType& dtau,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept {
+    constexpr auto N = space_dimension<KirchhoffStressDerivativeType>;
+    tfel::math::internals::DTAU_DF_to_DPK1_DF_Converter<N>::exe(dP, dtau, F,
+                                                                s);
+  }  // end of
+     // convertKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative
 
   template <StressST2toST2Concept PK2StressDerivativeType,
             NoUnitTensorConcept DeformationGradientType,
