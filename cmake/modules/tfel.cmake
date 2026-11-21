@@ -638,6 +638,19 @@ if(TFEL_REQUIRES_CUDA)
   endif(CUDAToolkit_LIBRARY_ROOT)  
   add_tfel_substitution(TFEL_CUDA_PATH "${TFEL_CUDA_PATH}")
   add_tfel_substitution(TFEL_CUDA_LIBRARY_DIR "${CUDAToolkit_LIBRARY_DIR}")
+  # CUDA used by clang (`cuda-clang` and `hip-clang` configurations): clang
+  # only supports the versions of CUDA released before it, so that another
+  # CUDA than the one of nvcc may be required.
+  set(TFEL_CLANG_CUDA_PATH "${TFEL_CUDA_PATH}" CACHE PATH
+      "CUDA used by clang in the cuda-clang and hip-clang configurations")
+  if(TFEL_CLANG_CUDA_PATH STREQUAL TFEL_CUDA_PATH)
+    set(_tfel_clang_cuda_library_dir "${CUDAToolkit_LIBRARY_DIR}")
+  else()
+    set(_tfel_clang_cuda_library_dir "${TFEL_CLANG_CUDA_PATH}/lib64")
+  endif()
+  add_tfel_substitution(TFEL_CLANG_CUDA_PATH "${TFEL_CLANG_CUDA_PATH}")
+  add_tfel_substitution(TFEL_CLANG_CUDA_LIBRARY_DIR
+                        "${_tfel_clang_cuda_library_dir}")
 endif()
 
 if(TFEL_REQUIRES_HIP)

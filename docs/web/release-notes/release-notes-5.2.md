@@ -356,6 +356,10 @@ sanitizers.
 - `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler.
 - `TFEL_NVHPC_COMPILER`: path to NVIDIA's `nvhpc` compiler.
 - `TFEL_ACPP_COMPILER`: path to AdaptativeCpp's `acpp` compiler.
+- `TFEL_CLANG_CUDA_PATH`: path to the `CUDA` toolkit used by `clang` in
+  the `cuda-clang` and `hip-clang` configurations (by default, the
+  toolkit of `nvcc`). A version of `clang` only supports the versions of
+  `CUDA` released before it.
 - `tdls_DIR`: directory where to find the `cmake` files installed by the
   Tiny Device-callable Linear Solvers (`TDLS`) library.
 
@@ -562,6 +566,9 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
   `CMake`'s `FindCUDAToolkit` module.
 - `TFEL_CUDA_LIBRARY_DIR`: path to the libraries of the NVIDIA's `CUDA`
   toolkit as found by `CMake`'s `FindCUDAToolkit` module.
+- `TFEL_CLANG_CUDA_PATH`: path to the `CUDA` toolkit used by `clang`
+  (`cuda-clang` and `hip-clang` configurations).
+- `TFEL_CLANG_CUDA_LIBRARY_DIR`: path to the libraries of this toolkit.
 
 ## `--cmake-prefix-path`
 
