@@ -16,9 +16,9 @@ compilation_options : {
     compilation_flags: {"-O3 -std=c++@TFEL_CXX_STANDARD@ -march=native",
       "-x cuda -I@TFEL_HIP_INCLUDE_DIR@",
       "--cuda-compile-host-device --cuda-gpu-arch=native",
-      "-D__HIP_PLATFORM_NVIDIA__", "--cuda-path=@TFEL_CUDA_PATH@ -fPIC -DPIC"}
+      "-D__HIP_PLATFORM_NVIDIA__", "--cuda-path=@TFEL_CLANG_CUDA_PATH@ -fPIC -DPIC"}
   }
 },
 linking_options: {
-  linker_flags: "-L@TFEL_CUDA_LIBRARY_DIR@ -lcudart -ldl -lrt -pthread"
+  linker_flags: "-L@TFEL_CLANG_CUDA_LIBRARY_DIR@ -lcudart -ldl -lrt -pthread"
 }
