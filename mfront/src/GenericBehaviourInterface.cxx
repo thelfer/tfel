@@ -1949,6 +1949,21 @@ namespace mfront {
     }
   }  // end of writeBehaviourConstructorHeader
 
+  /*!
+   * \return if the given gradient is left uninitialized by the constructors
+   * of the behaviour data and of the integration data.
+   *
+   * The gradients at the beginning of the time step, and their increments or
+   * their values at the end of the time step, are assigned in the body of the
+   * constructor of the behaviour (see the `writeBehaviourConstructorBody`
+   * method): setting the values of the tensorial ones to zero before is
+   * useless.
+   * \param[in] g: gradient
+   */
+  static bool GenericBehaviourInterface_isLeftUninitialized(const Gradient& g) {
+    return (g.arraySize == 1u) && (!g.isScalar());
+  }  // end of GenericBehaviourInterface_isLeftUninitialized
+
   static void GenericBehaviourInterface_initializeVariable(
       std::ostream& os,
       const BehaviourDescription& bd,
@@ -2254,6 +2269,15 @@ namespace mfront {
       }
       mps_offset += ">::value";
     }
+    for (const auto& mv : bd.getMainVariables()) {
+      const auto& g = mv.first;
+      if (GenericBehaviourInterface_isLeftUninitialized(g)) {
+        os << (first ? "\n: " : ",\n")
+           << (Gradient::isIncrementKnown(g) ? g.name : g.name + "0")
+           << "(tfel::math::uninitialized)";
+        first = false;
+      }
+    }
     for (const auto& mp : d.getMaterialProperties()) {
       const auto& m =
           findBehaviourMaterialProperty(mprops.first, mp.getExternalName());
@@ -2374,7 +2398,15 @@ namespace mfront {
        << " */\n"
        << bd.getClassName()
        << "IntegrationData(const mfront::gb::BehaviourData& mgb_d)\n"
-       << ": dt(mgb_d.dt)";
+       << ": ";
+    for (const auto& mv : bd.getMainVariables()) {
+      const auto& g = mv.first;
+      if (GenericBehaviourInterface_isLeftUninitialized(g)) {
+        os << (Gradient::isIncrementKnown(g) ? "d" + g.name : g.name + "1")
+           << "(tfel::math::uninitialized),\n";
+      }
+    }
+    os << "dt(mgb_d.dt)";
     auto o = SupportedTypes::TypeSize{};
     for (const auto& ev : evs) {
       if ((ev.arraySize != 1u) || (!ev.isScalar())) {
