@@ -715,6 +715,31 @@ out of plane component of this matrix is
 \(\det\left(F\right)/F_{33}^{2}\), where \(\det\left(F\right)\) is the
 determinant of the two dimensional deformation gradient.
 
+## Fixed size arrays left uninitialized {#sec:tfel:5.2:tfel_math:uninitialized}
+
+By default, the values of the fixed size mathematical objects (`fsarray`,
+`tvector`, `tmatrix`, `stensor`, `tensor`, `st2tost2`, `t2tot2`,
+`t2tost2`, `st2tot2`, etc.) are set to zero by their default
+constructors. This is unchanged.
+
+Those objects now provide an explicit constructor which leaves their
+values uninitialized. This constructor is selected by the
+`tfel::math::uninitialized` tag:
+
+~~~~{.cxx}
+tmatrix<6, 6, double> m(tfel::math::uninitialized);
+~~~~
+
+This constructor is meant for objects whose values are all assigned
+before being read, when the compiler can't remove the initialization by
+itself. This is typically the case of the data members of an object
+which are assigned in a method called after the constructor, and of the
+objects built on the stack of a kernel running on a GPU, where writing
+those zeros is not negligible.
+
+The values of class type, such as quantities or nested arrays, are built
+by their default constructors.
+
 # New `TFEL/Material` features
 
 ## Finite strain heat transfer
