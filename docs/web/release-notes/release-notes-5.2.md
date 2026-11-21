@@ -253,6 +253,14 @@ and to
   the end of the file held an additional end of line character, and the last
   line of a file which is not terminated by an end of line character was
   tokenized twice. The line numbers are unaffected.
+- The workspaces allocated on the stack by the non linear solvers of
+  `TFEL/Math` do not set the residual (`fzeros`) to zero anymore, nor the
+  jacobian matrix (`jacobian`) for the Newton-Raphson algorithm (see
+  Section @sec:tfel:5.2:tfel_math:uninitialized). Those values are
+  computed before being used by the solvers. Code reading them before
+  their first computation would read uninitialized values. The estimate
+  of the unknowns (`zeros`) and the correction (`delta_zeros`) are still
+  initially null.
 
 # Improvements to the build system
 
@@ -739,6 +747,21 @@ those zeros is not negligible.
 
 The values of class type, such as quantities or nested arrays, are built
 by their default constructors.
+
+### Workspaces of the non linear solvers
+
+The workspaces allocated on the stack by the non linear solvers (see
+the `StackAllocatedTinyNonLinearSolverWorkspace` class and the classes
+derived from it) leave uninitialized:
+
+- the residual (`fzeros`), which the `computeResidual` method computes
+  before it is used,
+- the jacobian matrix (`jacobian`) of the Newton-Raphson algorithm
+  (`TinyNewtonRaphsonSolver`), which is computed at each iteration.
+
+The estimate of the unknowns (`zeros`) and the correction
+(`delta_zeros`), which may be read before being computed, are still
+initially null.
 
 # New `TFEL/Material` features
 

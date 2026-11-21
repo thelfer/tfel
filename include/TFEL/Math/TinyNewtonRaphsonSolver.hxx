@@ -31,8 +31,13 @@ namespace tfel::math {
   template <unsigned short N, typename NumericType>
   struct StackAllocatedTinyNewtonRaphsonSolverWorkspace
       : public StackAllocatedTinyNonLinearSolverWorkspace<N, NumericType> {
-    //! \brief jacobian matrix
-    tmatrix<N, N, NumericType> jacobian;
+    /*!
+     * \brief jacobian matrix
+     *
+     * The jacobian matrix is left uninitialized: it is computed at each
+     * iteration before being used.
+     */
+    tmatrix<N, N, NumericType> jacobian{uninitialized};
   };
 
   /*!
