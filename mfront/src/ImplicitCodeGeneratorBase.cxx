@@ -1070,16 +1070,18 @@ namespace mfront {
         } else if ((flag == SupportedTypes::TVECTOR) ||
                    (flag == SupportedTypes::STENSOR) ||
                    (flag == SupportedTypes::TENSOR)) {
+          const auto size = SupportedTypes::getTypeSize(v.type, 1u);
           if (v.arraySize == 1u) {
-            os << "for(ushort mfront_idx2=" << n2;
-            os << "; mfront_idx2!=";
-            n2 += SupportedTypes::getTypeSize(v.type, v.arraySize);
-            os << n2 << "; ++mfront_idx2){\n";
-            os << "partial_jacobian_" << v.name
-               << "(mfront_idx2,mfront_idx)=vect_e(mfront_idx2);\n";
-            os << "}\n";
+            os << "for(ushort mfront_idx2=0; mfront_idx2!=" << size
+               << "; ++mfront_idx2){\n"
+               << "partial_jacobian_" << v.name
+               << "(mfront_idx2,mfront_idx)=vect_e(";
+            if (!n2.isNull()) {
+              os << n2 << "+";
+            }
+            os << "mfront_idx2);\n"
+               << "}\n";
           } else {
-            const auto size = SupportedTypes::getTypeSize(v.type, 1u);
             os << "for(ushort mfront_idx2=0; mfront_idx2!=" << v.arraySize
                << "; ++mfront_idx2){\n"
                << "for(ushort mfront_idx3=0; mfront_idx3!= " << size
@@ -1090,8 +1092,8 @@ namespace mfront {
                << ");\n"
                << "}\n"
                << "}\n";
-            n2 += SupportedTypes::getTypeSize(v.type, v.arraySize);
           }
+          n2 += SupportedTypes::getTypeSize(v.type, v.arraySize);
         } else {
           this->throwRuntimeError(
               "ImplicitCodeGeneratorBase::writeComputePartialJacobianInvert",
