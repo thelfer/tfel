@@ -734,6 +734,11 @@ the terms which are null by construction:
 const t2tost2<3u, real> dS_dF = dS_dFe * t2tot2<3u, real>::tpld(iFp);
 ~~~~
 
+The opposite of those derivatives and their products or divisions by a
+scalar have the same null components: the terms which are null by
+construction are not computed either in
+`-t2tost2<3u, real>::dCdF(Fe) * dFe_dF / 2`.
+
 The other terms are summed in the same order as in the standard product.
 The results are thus unchanged, with the following exceptions:
 
@@ -752,9 +757,6 @@ The standard product is still used when:
   (`const t2tot2<3u, real> dFe_dF = t2tot2<3u, real>::tpld(iFp);`). The
   derivative can be stored as an expression to avoid this
   (`const auto dFe_dF = t2tot2<3u, real>::tpld(iFp);`).
-- the derivative is used in another expression before the product, as in
-  `-t2tost2<3u, real>::dCdF(Fe) * X`. This product can be written
-  `-(t2tost2<3u, real>::dCdF(Fe) * X)`.
 - the derivative is composed with a fourth order tensor by the overloads
   of `tpld` and `tprd` which take two arguments.
 

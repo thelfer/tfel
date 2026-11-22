@@ -22,6 +22,7 @@
 #include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/Forward/Expr.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
@@ -54,6 +55,34 @@ namespace tfel::math {
       return false;
     }
   };  // end of struct SparsityPattern
+
+  /*!
+   * \brief partial specialisation of the `SparsityPattern` metafunction for
+   * the opposite of an object, whose null components are the ones of this
+   * object.
+   */
+  template <typename ResultType, typename T1>
+  struct SparsityPattern<Expr<ResultType, UnaryOperation<T1, OpNeg>>>
+      : SparsityPattern<std::decay_t<T1>> {};
+
+  /*!
+   * \brief partial specialisation of the `SparsityPattern` metafunction for
+   * the product of a scalar and an object, whose null components are the
+   * ones of this object.
+   */
+  template <typename ResultType, typename T1, typename T2>
+  struct SparsityPattern<
+      Expr<ResultType, ScalarObjectOperation<T1, T2, OpMult>>>
+      : SparsityPattern<std::decay_t<T2>> {};
+
+  /*!
+   * \brief partial specialisation of the `SparsityPattern` metafunction for
+   * the product and the division of an object by a scalar, whose null
+   * components are the ones of this object.
+   */
+  template <typename ResultType, typename T1, typename T2, typename Op>
+  struct SparsityPattern<Expr<ResultType, ObjectScalarOperation<T1, T2, Op>>>
+      : SparsityPattern<std::decay_t<T1>> {};
 
   /*!
    * \brief sparsity pattern of an expression built from a single argument.

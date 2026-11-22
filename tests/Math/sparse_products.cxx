@@ -279,6 +279,27 @@ constexpr bool checkExpressions() {
 }  // end of checkExpressions
 
 /*!
+ * \return true if the products with the opposite of a derivative, or with
+ * its product or its division by a scalar, give the results of the standard
+ * products
+ * \tparam N: space dimension
+ * \tparam real: numeric type
+ */
+template <unsigned short N, typename real>
+constexpr bool checkOppositesAndScalarProducts() {
+  using namespace tfel::math;
+  using T2toT2 = t2tot2<N, real>;
+  using T2toST2 = t2tost2<N, real>;
+  const auto [A, B, X, Y, Z, S, ld, rd, dC, dB] = Operands<N, real>{};
+  return same(eval(-T2toST2::dCdF(A) * X / 2), eval(-dC * X / 2)) &&
+         same(eval((T2toST2::dBdF(A) / 2) * Z), eval((dB / 2) * Z)) &&
+         same(eval(X * (2 * T2toT2::tprd(A))), eval(X * (2 * rd))) &&
+         same(eval(Y * (T2toT2::tpld(B) * 2)), eval(Y * (ld * 2))) &&
+         same(eval(-T2toST2::dCdF(A) * (-T2toT2::tpld(B) / 2)),
+              eval(dC * ld / 2));
+}  // end of checkOppositesAndScalarProducts
+
+/*!
  * \brief check the types of the products: the standard products are
  * unchanged when no component of their operands is null by construction
  * \tparam N: space dimension
@@ -337,6 +358,19 @@ constexpr bool checkTypes() {
                                Expr<ST2toT2, SparseProductExpr>>);
   static_assert(std::is_same_v<decltype(Z * T2toST2::dCdF(A)),
                                Expr<T2toT2, SparseProductExpr>>);
+  // the opposite of a derivative and its product or its division by a
+  // scalar have the same null components
+  static_assert(std::is_same_v<decltype(-T2toST2::dCdF(A) * X),
+                               Expr<T2toST2, SparseProductExpr>>);
+  static_assert(std::is_same_v<decltype(Y * (2 * T2toT2::tprd(A))),
+                               Expr<T2toST2, SparseProductExpr>>);
+  static_assert(std::is_same_v<decltype((T2toT2::tpld(A) * 2) * Z),
+                               Expr<ST2toT2, SparseProductExpr>>);
+  static_assert(std::is_same_v<decltype(S * (T2toST2::dBdF(A) / 2)),
+                               Expr<T2toST2, SparseProductExpr>>);
+  static_assert(!SparsityPattern<decltype(-X)>::isSparse);
+  static_assert(!SparsityPattern<decltype(2 * X)>::isSparse);
+  static_assert(!SparsityPattern<decltype(X / 2)>::isSparse);
   // the derivatives and the products still match the concepts of their
   // results
   static_assert(T2toT2Concept<decltype(T2toT2::tpld(A))>);
@@ -403,11 +437,13 @@ struct SparseProductsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT((checkProductsWithST2toT2<N, real>()));
     TFEL_TESTS_STATIC_ASSERT((checkProductsOfDerivatives<N, real>()));
     TFEL_TESTS_STATIC_ASSERT((checkExpressions<N, real>()));
+    TFEL_TESTS_STATIC_ASSERT((checkOppositesAndScalarProducts<N, real>()));
     TFEL_TESTS_ASSERT((checkProductsWithT2toT2<N, real>()));
     TFEL_TESTS_ASSERT((checkProductsWithT2toST2AndST2toST2<N, real>()));
     TFEL_TESTS_ASSERT((checkProductsWithST2toT2<N, real>()));
     TFEL_TESTS_ASSERT((checkProductsOfDerivatives<N, real>()));
     TFEL_TESTS_ASSERT((checkExpressions<N, real>()));
+    TFEL_TESTS_ASSERT((checkOppositesAndScalarProducts<N, real>()));
   }  // end of check
 };
 
