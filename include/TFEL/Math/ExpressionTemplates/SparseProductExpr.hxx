@@ -95,7 +95,10 @@ namespace tfel::math {
    * components of one of them at least are null by construction (see
    * `SparsityPattern`). The terms associated with those components are not
    * computed. The other terms are summed in the same order as in the standard
-   * product. The results are thus the same, except that:
+   * product, the first two ones being swapped when this leads a compiler
+   * contracting floating-point expressions to the operations of the standard
+   * product, which does not change their sum. The results are thus the same,
+   * except that:
    *
    * - a non finite value of one object is only propagated by the terms which
    *   are computed.
@@ -186,11 +189,24 @@ namespace tfel::math {
       template <typename ValueType>
       [[nodiscard]] TFEL_HOST_DEVICE static constexpr ValueType exe(
           const A& a, const B& b) noexcept {
-        constexpr auto k = next(0);
-        if constexpr (k == n) {
+        constexpr auto k1 = next(0);
+        constexpr auto k2 = k1 == n ? n : next(k1 + 1);
+        if constexpr (k1 == n) {
           return ValueType{};
+        } else if constexpr (k2 == n) {
+          return a(i, k1) * b(k1, j);
+        } else if constexpr (k2 == 1) {
+          return add<k2>(a(i, k1) * b(k1, j) + a(i, k2) * b(k2, j), a, b);
         } else {
-          return add<k>(a(i, k) * b(k, j), a, b);
+          // The standard product sums every term in order. A compiler
+          // contracting this sum fuses the multiplication of each term with
+          // the addition of the partial sum, except for the second term,
+          // which is rounded: the first one is fused with its addition. The
+          // first term which is not null is thus rounded as soon as one of
+          // the first two terms is null, the following ones being fused.
+          // Writing the second term which is not null first leads the
+          // compiler to the same operations.
+          return add<k2>(a(i, k2) * b(k2, j) + a(i, k1) * b(k1, j), a, b);
         }
       }  // end of exe
     };  // end of struct SparseProductComponent
