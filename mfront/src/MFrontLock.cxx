@@ -34,7 +34,7 @@ namespace mfront {
     return lock;
   }  // end of MFrontLock::getMFrontLock
 
-  MFrontLock::MFrontLock() {
+  MFrontLock::MFrontLock() : count(0) {
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     this->ghMutex = CreateMutex(nullptr,    // default security attributes
                                 FALSE,      // initially not owned
@@ -56,6 +56,10 @@ namespace mfront {
   }  // end of MFrontLock::MFrontLock()
 
   void MFrontLock::lock() {
+    if (this->count++ != 0) {
+      // the lock is reentrant: only the outermost acquisition acts
+      return;
+    }
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "MFrontLock::lock: "
                      << "trying to lock semaphore\n";
@@ -75,6 +79,13 @@ namespace mfront {
   }  // end of MFrontLock::lock()
 
   void MFrontLock::unlock() {
+    if (this->count == 0) {
+      return;
+    }
+    if (--(this->count) != 0) {
+      // the lock is reentrant: only the outermost release acts
+      return;
+    }
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "MFrontLock::unlock: "
                      << "unlocking semaphore\n";
