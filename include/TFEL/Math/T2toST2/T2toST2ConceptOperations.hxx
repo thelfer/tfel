@@ -25,6 +25,7 @@
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/ExpressionTemplates/StandardOperations.hxx"
+#include "TFEL/Math/ExpressionTemplates/SparseProductExpr.hxx"
 #include "TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include "TFEL/Math/T2toST2/StensorT2toST2ProductExpr.hxx"
 #include "TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx"
@@ -49,7 +50,11 @@ namespace tfel::math {
     using Handle = std::conditional_t<
         isInvalid<Result>(),
         DummyHandle,
-        Expr<Result, ST2toST2T2toST2ProductExpr<getSpaceDimension<Result>()>>>;
+        Expr<Result,
+             ProductOperation<
+                 A,
+                 B,
+                 ST2toST2T2toST2ProductExpr<getSpaceDimension<Result>()>>>>;
   };
 
   /*
@@ -67,7 +72,11 @@ namespace tfel::math {
     using Handle = std::conditional_t<
         isInvalid<Result>(),
         DummyHandle,
-        Expr<Result, T2toST2T2toT2ProductExpr<getSpaceDimension<Result>()>>>;
+        Expr<Result,
+             ProductOperation<
+                 A,
+                 B,
+                 T2toST2T2toT2ProductExpr<getSpaceDimension<Result>()>>>>;
   };
 
   /*!

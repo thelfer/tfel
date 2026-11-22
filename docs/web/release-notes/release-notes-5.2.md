@@ -715,6 +715,53 @@ out of plane component of this matrix is
 \(\det\left(F\right)/F_{33}^{2}\), where \(\det\left(F\right)\) is the
 determinant of the two dimensional deformation gradient.
 
+## Products with the derivatives of the product of two tensors and of the Cauchy-Green tensors
+
+Most components of the fourth order tensors returned by
+`t2tot2<N, T>::tpld(B)`, `t2tot2<N, T>::tprd(A)`,
+`t2tost2<N, T>::dCdF(F)` and `t2tost2<N, T>::dBdF(F)` are null whatever
+the values of their argument. In 3D, only \(27\) of the \(81\)
+components of the derivatives of the product of two tensors and \(27\)
+of the \(54\) components of the derivatives of the Cauchy-Green tensors
+are not null.
+
+The products of those objects with a fourth order tensor (`t2tot2`,
+`t2tost2`, `st2tot2`, `st2tost2`), or with one another, no longer compute
+the terms which are null by construction:
+
+~~~~{.cxx}
+// each component is the sum of 3 terms in 3D, 9 terms were computed before
+const t2tost2<3u, real> dS_dF = dS_dFe * t2tot2<3u, real>::tpld(iFp);
+~~~~
+
+The other terms are summed in the same order as in the standard product.
+The results are thus unchanged, with the following exceptions:
+
+- a non finite value of an operand is only propagated by the terms which
+  are computed. The result is still non finite, but fewer of its
+  components may be affected.
+- a null component of the result may have a different sign.
+- a compiler contracting floating-point expressions (see the
+  `-ffp-contract` option of `gcc` and `clang`) may fuse different
+  multiplications and additions, which may change the last bits of the
+  result.
+
+The standard product is still used when:
+
+- the derivative is stored in a fourth order tensor before the product
+  (`const t2tot2<3u, real> dFe_dF = t2tot2<3u, real>::tpld(iFp);`). The
+  derivative can be stored as an expression to avoid this
+  (`const auto dFe_dF = t2tot2<3u, real>::tpld(iFp);`).
+- the derivative is used in another expression before the product, as in
+  `-t2tost2<3u, real>::dCdF(Fe) * X`. This product can be written
+  `-(t2tost2<3u, real>::dCdF(Fe) * X)`.
+- the derivative is composed with a fourth order tensor by the overloads
+  of `tpld` and `tprd` which take two arguments.
+
+The null components of an expression are described by the
+`SparsityPattern` metafunction, declared in the
+`TFEL/Math/ExpressionTemplates/SparseProductExpr.hxx` header.
+
 # New `TFEL/Material` features
 
 ## Finite strain heat transfer

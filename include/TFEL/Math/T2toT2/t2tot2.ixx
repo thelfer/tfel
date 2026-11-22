@@ -196,7 +196,7 @@ namespace tfel::math {
       const TensorType& B) noexcept
       requires(getSpaceDimension<TensorType>() == N &&
                isAssignableTo<numeric_type<TensorType>, T>()) {
-    return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B);
+    return Expr<t2tot2<N, T>, SparseTensorProductLeftDerivativeExpr<N>>(B);
   }  // end of t2tot2<N,T>
 
   template <unsigned short N, typename T>
@@ -219,7 +219,7 @@ namespace tfel::math {
       const TensorType& A) noexcept
       requires(getSpaceDimension<TensorType>() == N &&
                isAssignableTo<numeric_type<TensorType>, T>()) {
-    return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A);
+    return Expr<t2tot2<N, T>, SparseTensorProductRightDerivativeExpr<N>>(A);
   }
 
   template <unsigned short N, typename T>
