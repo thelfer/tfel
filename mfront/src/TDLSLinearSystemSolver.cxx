@@ -36,7 +36,7 @@ namespace mfront {
             .addDataTypeValidator<bool>("simultaneous_substitutions");
     validator.validate(opts);
     this->simultaneous_substitutions =
-        get_if<bool>(opts, "simultaneous_substitutions", false);
+        get_if<bool>(opts, "simultaneous_substitutions", true);
     if (opts.contains("tile_size")) {
       if (is<int>(opts, "tile_size")) {
         const auto ts = get<int>(opts, "tile_size");

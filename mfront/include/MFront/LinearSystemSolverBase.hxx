@@ -57,7 +57,7 @@ namespace mfront {
      * first columns of the identity matrix are solved by a single
      * substitution
      */
-    bool simultaneous_substitutions = false;
+    bool simultaneous_substitutions = true;
   };  // end of struct LinearSystemSolverBase
 
 }  // end of namespace mfront

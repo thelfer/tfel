@@ -25,7 +25,7 @@ namespace mfront {
         .addDataTypeValidator<bool>("simultaneous_substitutions")
         .validate(opts);
     this->simultaneous_substitutions =
-        get_if<bool>(opts, "simultaneous_substitutions", false);
+        get_if<bool>(opts, "simultaneous_substitutions", true);
   }  // end of DefaultLinearSystemSolver
 
   void DefaultLinearSystemSolver::writeLinearSystemResolution(
