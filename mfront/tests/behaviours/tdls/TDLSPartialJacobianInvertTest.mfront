@@ -1,0 +1,4 @@
+@DSL Implicit;
+@Behaviour TDLSPartialJacobianInvertTest;
+@LinearSystemSolver TDLS;
+@Import "PartialJacobianInvertTest-common.mfront";

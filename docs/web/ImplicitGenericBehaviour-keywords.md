@@ -1894,6 +1894,15 @@ The following options are supported:
   readable in user code blocks, reports the number of out-of-tile
   searches of the last linear solve. If `false` (the default), the
   generated code is unchanged.
+- `simultaneous_substitutions`: expected values are either `true` or
+  `false`. This option has the same meaning as for the `Default` linear
+  solver. If `false` (the default), each column of the blocks of the
+  inverse of the jacobian matrix returned by the
+  `getPartialJacobianInvert` function object is computed by its own
+  substitution. If `true`, those blocks are computed by a single call to
+  the `substitute_canonical` function of the `TDLS` library, which
+  solves the linear systems whose right-hand sides are the first columns
+  of the identity matrix.
 
 If a parameter is not defined, the default values are inherited from the
 `TiledLUppConfig` class defined by the `TDLS` library. See the

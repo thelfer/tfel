@@ -57,9 +57,13 @@ mfront_behaviour_brick_check_library(MFrontTDLSBehaviours
     TDLSElasticity2
     TDLSElasticity3
     TDLSElasticity4
-    TDLSElasticity11)
+    TDLSElasticity11
+    TDLSPartialJacobianInvertTest
+    TDLSPartialJacobianInvertTest2)
 
 test_tdls(TDLSElasticity11)
+test_tdls(TDLSPartialJacobianInvertTest)
+test_tdls(TDLSPartialJacobianInvertTest2)
 
 mfront_tdls_unit_test(TDLSElasticity5 WILL_FAIL)
 mfront_tdls_unit_test(TDLSElasticity6 WILL_FAIL)

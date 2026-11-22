@@ -54,6 +54,10 @@ namespace mfront {
         std::ostream &,
         const MatrixDecompositionResult &,
         const LinearSystemSubstitutionVariables &) const override;
+    void writeIdentityColumnsSubstitution(
+        std::ostream &,
+        const MatrixDecompositionResult &,
+        const LinearSystemSubstitutionVariables &) const override;
     //! \brief destructor
     ~TDLSLinearSystemSolver() override;
 

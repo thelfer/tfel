@@ -1,0 +1,6 @@
+@DSL Implicit;
+@Behaviour TDLSPartialJacobianInvertTest2;
+@LinearSystemSolver TDLS {
+  simultaneous_substitutions : true
+};
+@Import "PartialJacobianInvertTest-common.mfront";
