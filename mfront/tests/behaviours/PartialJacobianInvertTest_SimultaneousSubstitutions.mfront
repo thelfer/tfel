@@ -1,0 +1,4 @@
+@DSL Implicit;
+@Behaviour PartialJacobianInvertTest_SimultaneousSubstitutions;
+@LinearSystemSolver Default{simultaneous_substitutions : true};
+@Import "PartialJacobianInvertTest-common.mfront";

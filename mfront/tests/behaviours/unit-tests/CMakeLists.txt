@@ -162,3 +162,6 @@ mfront_unit_test(Plasticity2 WILL_FAIL)
 mfront_unit_test(MultipleFlows1 WILL_FAIL)
 mfront_unit_test(MultipleFlows2 WILL_FAIL)
 mfront_unit_test(MisesCreep1 WILL_FAIL)
+
+mfront_unit_test(DefaultLinearSystemSolver1 WILL_FAIL)
+mfront_unit_test(DefaultLinearSystemSolver2 WILL_FAIL)

@@ -1,0 +1,3 @@
+@DSL Implicit;
+@Behaviour PartialJacobianInvertTest;
+@Import "PartialJacobianInvertTest-common.mfront";

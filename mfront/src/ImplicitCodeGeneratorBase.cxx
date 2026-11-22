@@ -1020,6 +1020,19 @@ namespace mfront {
     const auto n = mfront::getTypeSize(isvs);
     const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
                                         "eto", 1u, 0u};
+    // The columns of the inverse of the jacobian are either computed one
+    // after the other in the vector `vect_e`, or by a single substitution
+    // in the matrix `mfront_partial_jacobian_invert`.
+    const auto simultaneous_substitutions =
+        this->linear_solver.usesSimultaneousSubstitutions();
+    // value of the row `r` of the column `mfront_idx` of the inverse of the
+    // jacobian
+    const auto value = [simultaneous_substitutions](const std::string& r) {
+      if (simultaneous_substitutions) {
+        return "mfront_partial_jacobian_invert(" + r + ", mfront_idx)";
+      }
+      return "vect_e(" + r + ")";
+    };
     for (std::size_t i = 0; i != isvs.size(); ++i) {
       os << "[[nodiscard]] TFEL_HOST_DEVICE "
             "bool\ncomputePartialJacobianInvert(";
@@ -1036,34 +1049,49 @@ namespace mfront {
       }
       os << ")\n"
          << "{\n"
-         << "using namespace tfel::math;\n"
-         << "for(ushort mfront_idx=0; mfront_idx !=StensorSize; "
-            "++mfront_idx){\n"
-         << "tvector<" << n << ", NumericType> vect_e(NumericType(0));\n"
-         << "vect_e(mfront_idx) = NumericType(1);\n";
-      os << "auto mfront_jacobian_substitution_success = true;\n";
-      this->linear_solver.writeLinearSystemSubstitution(
-          os, decomposition_results,
-          {.returned_value = "mfront_jacobian_substitution_success",
-           .rhs = "vect_e",
-           .rhs_column_size = n.asString()});
-      os << "if(!mfront_jacobian_substitution_success){\n"
-         << "return false;\n"
-         << "}\n";
+         << "using namespace tfel::math;\n";
+      if (simultaneous_substitutions) {
+        os << "tmatrix<" << n << ", StensorSize, NumericType> "
+           << "mfront_partial_jacobian_invert;\n"
+           << "auto mfront_jacobian_substitution_success = true;\n";
+        this->linear_solver.writeIdentityColumnsSubstitution(
+            os, decomposition_results,
+            {.returned_value = "mfront_jacobian_substitution_success",
+             .rhs = "mfront_partial_jacobian_invert",
+             .rhs_column_size = "StensorSize"});
+        os << "if(!mfront_jacobian_substitution_success){\n"
+           << "return false;\n"
+           << "}\n"
+           << "for(ushort mfront_idx=0; mfront_idx !=StensorSize; "
+              "++mfront_idx){\n";
+      } else {
+        os << "for(ushort mfront_idx=0; mfront_idx !=StensorSize; "
+              "++mfront_idx){\n"
+           << "tvector<" << n << ", NumericType> vect_e(NumericType(0));\n"
+           << "vect_e(mfront_idx) = NumericType(1);\n";
+        os << "auto mfront_jacobian_substitution_success = true;\n";
+        this->linear_solver.writeLinearSystemSubstitution(
+            os, decomposition_results,
+            {.returned_value = "mfront_jacobian_substitution_success",
+             .rhs = "vect_e",
+             .rhs_column_size = n.asString()});
+        os << "if(!mfront_jacobian_substitution_success){\n"
+           << "return false;\n"
+           << "}\n";
+      }
       SupportedTypes::TypeSize n2;
       for (std::size_t i2 = 0; i2 <= i; ++i2) {
         const auto& v = d.getIntegrationVariables()[i2];
         const auto flag = SupportedTypes::getTypeFlag(v.type);
         if (flag == SupportedTypes::SCALAR) {
           if (v.arraySize == 1u) {
-            os << "partial_jacobian_" << v.name << "(mfront_idx)=vect_e(" << n2
-               << ");\n";
+            os << "partial_jacobian_" << v.name
+               << "(mfront_idx)=" << value(n2.asString()) << ";\n";
           } else {
             os << "for(ushort mfront_idx2=0; mfront_idx2!=" << v.arraySize
                << "; ++mfront_idx2){\n"
-               << "partial_jacobian_" << v.name
-               << "(mfront_idx2)(mfront_idx)=vect_e(" << n2
-               << "+mfront_idx2);\n"
+               << "partial_jacobian_" << v.name << "(mfront_idx2)(mfront_idx)="
+               << value(n2.asString() + "+mfront_idx2") << ";\n"
                << "}\n";
           }
           n2 += SupportedTypes::getTypeSize(v.type, v.arraySize);
@@ -1074,12 +1102,10 @@ namespace mfront {
           if (v.arraySize == 1u) {
             os << "for(ushort mfront_idx2=0; mfront_idx2!=" << size
                << "; ++mfront_idx2){\n"
-               << "partial_jacobian_" << v.name
-               << "(mfront_idx2,mfront_idx)=vect_e(";
-            if (!n2.isNull()) {
-              os << n2 << "+";
-            }
-            os << "mfront_idx2);\n"
+               << "partial_jacobian_" << v.name << "(mfront_idx2,mfront_idx)="
+               << value(n2.isNull() ? std::string("mfront_idx2")
+                                    : n2.asString() + "+mfront_idx2")
+               << ";\n"
                << "}\n";
           } else {
             os << "for(ushort mfront_idx2=0; mfront_idx2!=" << v.arraySize
@@ -1088,8 +1114,9 @@ namespace mfront {
                << "; ++mfront_idx3){\n"
                << "partial_jacobian_" << v.name
                << "(mfront_idx2)(mfront_idx3,mfront_idx) = "
-               << "vect_e(" << n2 << "+ mfront_idx3 + mfront_idx2 * " << size
-               << ");\n"
+               << value(n2.asString() + "+ mfront_idx3 + mfront_idx2 * " +
+                        size.asString())
+               << ";\n"
                << "}\n"
                << "}\n";
           }

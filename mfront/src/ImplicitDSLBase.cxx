@@ -562,12 +562,7 @@ namespace mfront {
       this->setLinearSystemSolver("Default", {});
 #endif
     } else if (n == "Default") {
-      if (!opts.empty()) {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::setLinearSystemSolver",
-            "no options expected for the 'Default' linear solver");
-      }
-      auto ptr = std::make_shared<DefaultLinearSystemSolver>();
+      auto ptr = std::make_shared<DefaultLinearSystemSolver>(opts);
       this->setLinearSystemSolver(ptr, n);
     } else {
       this->throwRuntimeError(

@@ -1,0 +1,8 @@
+@DSL Implicit;
+@Behaviour DefaultLinearSystemSolver1;
+@Description{
+  "This behaviour is invalid since the `simultaneous_substitutions` "
+  "option of the `Default` linear system solver must be a boolean."
+}
+@LinearSystemSolver Default{simultaneous_substitutions : 1};
+@Import "PartialJacobianInvertTest-common.mfront";

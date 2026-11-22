@@ -1,0 +1,8 @@
+@DSL Implicit;
+@Behaviour DefaultLinearSystemSolver2;
+@Description{
+  "This behaviour is invalid since the `Default` linear system solver "
+  "has no option named `tile_size`."
+}
+@LinearSystemSolver Default{tile_size : 3};
+@Import "PartialJacobianInvertTest-common.mfront";

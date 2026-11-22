@@ -141,6 +141,29 @@ namespace mfront {
         const MatrixDecompositionResult &,
         const LinearSystemSubstitutionVariables &) const = 0;
     /*!
+     * \return true if the linear systems whose right-hand sides are the first
+     * columns of the identity matrix must be solved by a single substitution
+     * (see `writeIdentityColumnsSubstitution`), false if each of them must be
+     * solved by its own substitution (see `writeLinearSystemSubstitution`)
+     */
+    [[nodiscard]] virtual bool usesSimultaneousSubstitutions() const = 0;
+    /*!
+     * \brief write the resolution, after the matrix decomposition, of the
+     * linear systems whose right-hand sides are the first columns of the
+     * identity matrix. The solutions are the first columns of the inverse of
+     * the matrix.
+     *
+     * \param[in] os: output stream
+     * \param[in] r: result of the matrix decomposition
+     * \param[in] s: description of the substitution variables. The right hand
+     * side is a matrix which has as many columns as linear systems. Its
+     * values, meaningless on input, are the solutions on output.
+     */
+    virtual void writeIdentityColumnsSubstitution(
+        std::ostream &,
+        const MatrixDecompositionResult &,
+        const LinearSystemSubstitutionVariables &) const = 0;
+    /*!
      * \brief write the solver specific members
      * \param[in] out : output file
      * \param[in] md  : mechanical description

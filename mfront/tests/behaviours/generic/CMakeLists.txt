@@ -75,6 +75,8 @@ set(mfront_tests_SOURCES
   ImplicitNorton_PowellDogLegBroyden
   ImplicitNorton_Broyden2
   ImplicitNorton_LevenbergMarquardt
+  PartialJacobianInvertTest
+  PartialJacobianInvertTest_SimultaneousSubstitutions
   JohnsonCook_s
   JohnsonCook_ssr
   JohnsonCook_ssrt
@@ -568,6 +570,8 @@ test_generic(implicitnorton-smallstraintridimensionbehaviourwrapper)
 test_generic(implicitnorton-broyden implicitnorton-uniaxialstrain.ref)
 test_generic(implicitnorton-powelldoglegbroyden implicitnorton-uniaxialstrain.ref)
 test_generic(implicitnorton-broyden2)
+test_generic(partialjacobianinverttest)
+test_generic(partialjacobianinverttest-simultaneoussubstitutions)
 # test_generic(implicitnorton-levenbergmarquardt)
 # test_generic(implicitnorton4-planestress)
 # test_generic(implicitorthotropiccreep2-planestress)

@@ -1,0 +1,69 @@
+@Author Tristan Chenaille;
+@Date 22/11/2026;
+@Description{
+  "This file is used to test the `getPartialJacobianInvert` function "
+  "object with a symmetric tensor, a scalar and an array of scalars as "
+  "integration variables. The stress is given by an isotropic elastic law "
+  "affected by three damage variables, whose rates are proportional to "
+  "the square of the norm of the elastic strain. The blocks of the "
+  "inverse of the jacobian are compared to their analytical values when "
+  "the tangent operator is computed."
+}
+
+@Epsilon 1.e-14;
+
+@Parameter stress young = 78e9;
+young.setGlossaryName("YoungModulus");
+@Parameter real nu = 0.3;
+nu.setGlossaryName("PoissonRatio");
+@Parameter real A = 2e5;
+@Parameter real B[2] = {1e5, 3e5};
+
+@StateVariable real p;
+@StateVariable real d[2];
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables {
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+}
+
+@ComputeFinalStress {
+  sig = (1 - p - d[0] - d[1]) *
+        (lambda * trace(eel) * Stensor::Id() + 2 * mu * eel);
+}
+
+@Integrator {
+  const auto e = eel + theta * deel;
+  const auto e2 = e | e;
+  feel -= deto;
+  fp -= A * dt * e2;
+  dfp_ddeel = -2 * A * dt * theta * e;
+  for (unsigned short i = 0; i != 2; ++i) {
+    fd[i] -= B[i] * dt * e2;
+    dfd_ddeel(i) = -2 * B[i] * dt * theta * e;
+  }
+}
+
+@TangentOperator {
+  static_cast<void>(smt);
+  Stensor4 Je;
+  Stensor Jp;
+  tvector<2u, Stensor> Jd;
+  getPartialJacobianInvert(Je, Jp, Jd);
+  // The jacobian being triangular by blocks, the blocks of its inverse are
+  // known: the integration fails if the blocks returned differ from them.
+  constexpr auto eps = real(1.e-10);
+  const auto de2_ddeel = 2 * theta * (eel - (1 - theta) * deel);
+  if ((abs(Je - Stensor4::Id()) > eps) ||
+      (abs(Jp - A * dt * de2_ddeel) > eps) ||
+      (abs(Jd[0] - B[0] * dt * de2_ddeel) > eps) ||
+      (abs(Jd[1] - B[1] * dt * de2_ddeel) > eps)) {
+    return false;
+  }
+  StiffnessTensor De;
+  computeElasticStiffness<N, Type>::exe(De, lambda, mu);
+  Dt = (1 - p - d[0] - d[1]) * De * Je - ((De * eel) ^ (Jp + Jd[0] + Jd[1]));
+}

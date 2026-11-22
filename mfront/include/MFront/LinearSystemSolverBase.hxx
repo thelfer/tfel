@@ -34,8 +34,30 @@ namespace mfront {
     void writeSpecificMembers(std::ostream&,
                               const BehaviourDescription&,
                               const Hypothesis) const override;
+    bool usesSimultaneousSubstitutions() const override;
+    /*!
+     * \brief write the initialisation of the right hand side to the first
+     * columns of the identity matrix, followed by its substitution (see
+     * `writeLinearSystemSubstitution`)
+     *
+     * \param[in] os: output stream
+     * \param[in] r: result of the matrix decomposition
+     * \param[in] s: description of the substitution variables
+     */
+    void writeIdentityColumnsSubstitution(
+        std::ostream&,
+        const MatrixDecompositionResult&,
+        const LinearSystemSubstitutionVariables&) const override;
     //! \brief destructor
     ~LinearSystemSolverBase() override;
+
+   protected:
+    /*!
+     * \brief if true, the linear systems whose right-hand sides are the
+     * first columns of the identity matrix are solved by a single
+     * substitution
+     */
+    bool simultaneous_substitutions = false;
   };  // end of struct LinearSystemSolverBase
 
 }  // end of namespace mfront

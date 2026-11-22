@@ -19,6 +19,15 @@
 
 namespace mfront {
 
+  DefaultLinearSystemSolver::DefaultLinearSystemSolver(
+      const tfel::utilities::DataMap& opts) {
+    tfel::utilities::DataMapValidator{}
+        .addDataTypeValidator<bool>("simultaneous_substitutions")
+        .validate(opts);
+    this->simultaneous_substitutions =
+        get_if<bool>(opts, "simultaneous_substitutions", false);
+  }  // end of DefaultLinearSystemSolver
+
   void DefaultLinearSystemSolver::writeLinearSystemResolution(
       std::ostream& os,
       const BehaviourDescription& bd,

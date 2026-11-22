@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "MFront/LinearSystemSolverBase.hxx"
 
 namespace mfront {
@@ -29,6 +30,23 @@ namespace mfront {
                                                     const BehaviourDescription&,
                                                     const Hypothesis) const {
   }  // end of writeSpecificMembers
+
+  bool LinearSystemSolverBase::usesSimultaneousSubstitutions() const {
+    return this->simultaneous_substitutions;
+  }  // end of usesSimultaneousSubstitutions
+
+  void LinearSystemSolverBase::writeIdentityColumnsSubstitution(
+      std::ostream& os,
+      const MatrixDecompositionResult& r,
+      const LinearSystemSubstitutionVariables& s) const {
+    os << "std::fill(" << s.rhs << ".begin(), " << s.rhs
+       << ".end(), NumericType(0));\n"
+       << "for(ushort mfront_idx = 0; mfront_idx != " << s.rhs_column_size
+       << "; ++mfront_idx){\n"
+       << s.rhs << "(mfront_idx, mfront_idx) = NumericType(1);\n"
+       << "}\n";
+    this->writeLinearSystemSubstitution(os, r, s);
+  }  // end of writeIdentityColumnsSubstitution
 
   LinearSystemSolverBase::~LinearSystemSolverBase() = default;
 
