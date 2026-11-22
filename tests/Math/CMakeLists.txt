@@ -86,6 +86,7 @@ tests_math(invert)
 tests_math(invert2)
 tests_math(tinymatrixsolve)
 tests_math(tinymatrixsolve2)
+tests_math(tinymatrixsolve3)
 
 if(enable-tdls)
   tests_math(lu-tdls)  
