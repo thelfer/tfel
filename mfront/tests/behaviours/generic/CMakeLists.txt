@@ -134,6 +134,7 @@ set(mfront_tests_SOURCES
   GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian
   Hayhurst
   ImplicitHayhurst
+  TensorialIntegrationVariablesPartialJacobianInvert
   Burger
   AgeingBurger
   Tvergaard
@@ -548,6 +549,7 @@ test_generic(plasticity3)
 # test_generic(ddif2-4)
 test_generic(lorentz)
 test_generic(lorentz2)
+test_generic(tensorialintegrationvariablespartialjacobianinvert)
 # test_generic(mazars)
 # test_generic(mazars2)
 # test_generic(druckerprager)

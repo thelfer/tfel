@@ -1418,6 +1418,17 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1494: [mfront] getPartialJacobianInvert: out of bounds rows for a tensorial integration variable which is not the first one
+
+For a tensorial integration variable which is not an array, the rows of
+the block returned by the `getPartialJacobianInvert` function object
+were indexed by the position of the variable among the integration
+variables. When such a variable follows another one, the block was
+written out of its bounds and left unset. The rows are now indexed from
+zero, as they are for the arrays of tensorial variables.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1494>.
+
 ## Issue 969: GPU coalescence/broadcast loss when projectors/identities are accessed with warp-divergent runtime index
 
 The `Id`, `IxI`, `K`, `M` and `J` methods of the `st2tost2` class, the
