@@ -46,12 +46,13 @@ namespace tfel::math {
         return false;
       }
     }
-    tvector<N, T> x = b;
     if (p.isIdentity()) {
+      // the rows of the matrix have been left in place: the substitutions
+      // are made in place
       for (size_type i = 0; i != N; ++i) {
         auto v = T(0);
         for (size_type j = 0; j != i; ++j) {
-          v += m(i, j) * x(j);
+          v += m(i, j) * b(j);
         }
         if (tfel::math::abs(m(i, i)) < eps) {
           if constexpr (use_exceptions) {
@@ -60,19 +61,19 @@ namespace tfel::math {
             return false;
           }
         }
-        auto& xv = x(i);
-        xv -= v;
-        xv /= m(i, i);
+        auto& bv = b(i);
+        bv -= v;
+        bv /= m(i, i);
       }
-      b(N - 1) = x(N - 1);
       for (size_type i = N - 1, pi = N - 2; i != 0; --i, --pi) {
         auto v = T(0);
         for (size_type j = i; j != N; ++j) {
           v += m(pi, j) * b(j);
         }
-        b(pi) = x(pi) - v;
+        b(pi) -= v;
       }
     } else {
+      tvector<N, T> x = b;
       for (size_type i = 0; i != N; ++i) {
         const size_type pi = p(i);
         auto v = T(0);
@@ -115,13 +116,14 @@ namespace tfel::math {
                       tfel::math::tmatrix<N, M, T>& b,
                       const T eps) noexcept(!use_exceptions) {
     using size_type = typename MathObjectTraits<tmatrix<N, N, T>>::IndexType;
-    auto x = b;
     if (p.isIdentity()) {
+      // the rows of the matrix have been left in place: the substitutions
+      // are made in place
       for (size_type i = 0; i != N; ++i) {
         auto v = tvector<M, T>(T(0));
         for (size_type j = 0; j != i; ++j) {
           for (size_type k = 0; k != M; ++k) {
-            v(k) += m(i, j) * x(j, k);
+            v(k) += m(i, j) * b(j, k);
           }
         }
         if (tfel::math::abs(m(i, i)) < eps) {
@@ -132,13 +134,10 @@ namespace tfel::math {
           }
         }
         for (size_type k = 0; k != M; ++k) {
-          auto& xv = x(i, k);
-          xv -= v(k);
-          xv /= m(i, i);
+          auto& bv = b(i, k);
+          bv -= v(k);
+          bv /= m(i, i);
         }
-      }
-      for (size_type k = 0; k != M; ++k) {
-        b(N - 1, k) = x(N - 1, k);
       }
       for (size_type i = N - 1, pi = N - 2; i != 0; --i, --pi) {
         auto v = tvector<M, T>(T(0));
@@ -148,10 +147,11 @@ namespace tfel::math {
           }
         }
         for (size_type k = 0; k != M; ++k) {
-          b(pi, k) = x(pi, k) - v(k);
+          b(pi, k) -= v(k);
         }
       }
     } else {
+      auto x = b;
       for (size_type i = 0; i != N; ++i) {
         const size_type pi = p(i);
         auto v = tvector<M, T>(T(0));
