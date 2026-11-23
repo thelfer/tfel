@@ -72,11 +72,13 @@ namespace mfront {
       return;
     }
     const auto fn = "include/" + header + ".hxx";
-    std::ofstream os(fn);
-    tfel::raise_if(!os,
-                   "CMaterialPropertyInterfaceBase::writeOutputFiles : "
-                   "unable to open '" +
-                       fn + "' for writing output file.");
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto os = std::ostringstream{};
     os.exceptions(std::ios::badbit | std::ios::failbit);
     const auto headerGard = transformHeaderName(header) + "_HH";
     os << "/*!\n"
@@ -116,7 +118,7 @@ namespace mfront {
     }
     this->writeEndHeaderNamespace(os);
     os << "#endif /* " << headerGard << " */\n";
-    os.close();
+    writeIfDifferentFromExistingFileContent(fn, os.str());
   }  // end of CMaterialPropertyInterfaceBase::writeHeaderFile()
 
   void CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables(
@@ -231,11 +233,13 @@ namespace mfront {
     // opening the source file
     const auto src = this->getSrcFileName(mpd.material, mpd.className);
     const auto fn = "src/" + src + ".cxx";
-    std::ofstream os(fn);
-    tfel::raise_if(!os,
-                   "CMaterialPropertyInterfaceBase::writeOutputFiles : "
-                   "unable to open '" +
-                       fn + "' for writing output file.");
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto os = std::ostringstream{};
     os.exceptions(std::ios::badbit | std::ios::failbit);
     os << "/*!\n"
        << " * \\file   " << fn << '\n'
@@ -333,7 +337,7 @@ namespace mfront {
       os << "return 0;\n} /* end of " << mpd.className << "_checkBounds */\n\n";
     }
     this->writeEndSrcNamespace(os);
-    os.close();
+    writeIfDifferentFromExistingFileContent(fn, os.str());
   }  // end of CMaterialPropertyInterfaceBase::writeSrcFile()
 
   void CMaterialPropertyInterfaceBase::writeCErrorTreatment(
