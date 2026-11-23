@@ -1,5 +1,5 @@
 @DSL MaterialLaw;
-@Law TestUnitSystem;
+@Law TestUnitSystemMaterialProperty;
 @UnitSystem SI;
 
 @Output stress E;
