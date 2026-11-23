@@ -12,7 +12,6 @@
  */
 
 #include <sstream>
-#include <fstream>
 #include <algorithm>
 #include <stdexcept>
 
@@ -233,13 +232,14 @@ namespace mfront {
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     const auto name = mpd.material.empty() ? mpd.className
                                            : mpd.material + "_" + mpd.className;
-    std::ofstream header("include/" + getHeaderFileName(name));
-    tfel::raise_if(!header,
-                   "CppMaterialPropertyInterface::writeHeaderFile: "
-                   "unable to open '" +
-                       getHeaderFileName(name) +
-                       "' "
-                       "for writing output file.");
+    const auto fn = "include/" + getHeaderFileName(name);
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto header = std::ostringstream{};
     header.exceptions(std::ios::badbit | std::ios::failbit);
     header.precision(14);
     header << "/*!\n"
@@ -337,7 +337,7 @@ namespace mfront {
            << "&);\n\n"
            << "} // end of namespace mfront\n\n"
            << "#endif /* LIB_MFRONT_" << makeUpperCase(name) << "_HXX */\n";
-    header.close();
+    writeIfDifferentFromExistingFileContent(fn, header.str());
   }  // end of writeHeaderFile()
 
   void CppMaterialPropertyInterface::writeSrcFile(
@@ -348,8 +348,13 @@ namespace mfront {
     const auto name = mpd.material.empty() ? mpd.className
                                            : mpd.material + "_" + mpd.className;
     const auto src_name = "src/" + name + "-cxx.cxx";
-    std::ofstream src(src_name);
-    throw_if(!src, "unable to open '" + src_name + "'");
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto src = std::ostringstream{};
     src.exceptions(std::ios::badbit | std::ios::failbit);
     src.precision(14);
     src << "/*!\n"
@@ -579,7 +584,7 @@ namespace mfront {
     }
     src << "return os;\n}// end of operator(std::ostream& os," << name << "\n\n"
         << "} // end of namespace mfront\n\n";
-    src.close();
+    writeIfDifferentFromExistingFileContent(src_name, src.str());
   }  // end of writeSrcFile
 
   CppMaterialPropertyInterface::~CppMaterialPropertyInterface() = default;
