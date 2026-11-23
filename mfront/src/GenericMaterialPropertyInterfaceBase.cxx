@@ -12,7 +12,6 @@
  */
 
 #include <algorithm>
-#include <fstream>
 #include <sstream>
 #include <stdexcept>
 #include <iterator>
@@ -248,11 +247,13 @@ namespace mfront {
     const auto types = this->getTypesDescription();
     const auto name = this->getFunctionName(mpd);
     const auto fn = "include/" + this->getHeaderFileName(name);
-    std::ofstream os{fn};
-    tfel::raise_if(!os,
-                   "GenericMaterialPropertyInterfaceBase::writeOutputFiles: "
-                   "unable to open '" +
-                       fn + "'");
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto os = std::ostringstream{};
     os.exceptions(std::ios::badbit | std::ios::failbit);
     os.precision(14);
     os << "/*!\n"
@@ -297,7 +298,7 @@ namespace mfront {
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n"
        << "#endif /* " << makeUpperCase(name) << "_" << iucname << "_HH */\n";
-    os.close();
+    writeIfDifferentFromExistingFileContent(fn, os.str());
   }  // end of writeHeaderFile()
 
   void GenericMaterialPropertyInterfaceBase::writeSrcFile(
@@ -308,11 +309,13 @@ namespace mfront {
     const auto prefix = this->getOutOfBoundsPolicyEnumerationPrefix();
     const auto name = this->getFunctionName(mpd);
     const auto fn = "src/" + this->getSourceFileName(name);
-    std::ofstream os{fn};
-    tfel::raise_if(!os,
-                   "GenericMaterialPropertyInterfaceBase::writeOutputFiles: "
-                   "unable to open '" +
-                       fn + "'");
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto os = std::ostringstream{};
     os.exceptions(std::ios::badbit | std::ios::failbit);
     os.precision(14);
     const auto& file = fd.fileName;
@@ -554,7 +557,7 @@ namespace mfront {
        << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";
-    os.close();
+    writeIfDifferentFromExistingFileContent(fn, os.str());
   }  // end of writeSrcFile()
 
   GenericMaterialPropertyInterfaceBase::
