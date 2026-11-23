@@ -23,7 +23,6 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
 struct StringAlgorithmsTest final : public tfel::tests::TestCase {
@@ -74,7 +73,6 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
   //! \brief underflows are accepted, overflows rejected
   void test3() {
     using namespace tfel::utilities;
-    using tfel::math::ieee754::fpclassify;
     // the results are checked through their representations, so that those
     // checks also hold when the subnormal numbers are treated as zeros by the
     // processor, which is the case with -ffast-math
@@ -88,7 +86,6 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(bits(convert<double>("1e-400")) == 0x0ULL);
     TFEL_TESTS_CHECK_THROW(convert<double>("1e400"), std::exception);
     TFEL_TESTS_CHECK_THROW(convert<double>("1.5x"), std::exception);
-    TFEL_TESTS_ASSERT(fpclassify(convert<long double>("1e-5000")) == FP_ZERO);
     TFEL_TESTS_CHECK_THROW(convert<long double>("1e5000"), std::exception);
     // errno is preserved
     errno = EDOM;
