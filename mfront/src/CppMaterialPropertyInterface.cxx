@@ -114,14 +114,13 @@ namespace mfront {
       const std::vector<VariableBoundsDescription>& physicalBounds) {
     using namespace std;
     this->headerFileName = "include/" + name + "-cxx.hxx";
-    std::ofstream header(this->headerFileName);
-    if (!header) {
-      string msg("MaterialPropertyDSL::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->headerFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto header = std::ostringstream{};
     header.exceptions(ios::badbit | ios::failbit);
     vector<string>::const_iterator p3;
     VariableDescriptionContainer::const_iterator p4;
@@ -220,7 +219,7 @@ namespace mfront {
     header << "&);\n\n";
     header << "} // end of namespace mfront\n\n";
     header << "#endif /* LIB_MFRONT_" << makeUpperCase(name) << "_HXX */\n";
-    header.close();
+    writeIfDifferentFromExistingFileContent(this->headerFileName, header.str());
   }  // end of CppMaterialPropertyInterface::writeHeaderFile(void)
 
   void CppMaterialPropertyInterface::writeSrcFile(
@@ -239,13 +238,13 @@ namespace mfront {
       const std::vector<VariableBoundsDescription>& physicalBounds) {
     using namespace std;
     const auto src_name = "src/" + name + "-cxx.cxx";
-    std::ofstream src(src_name);
-    if (!src) {
-      throw(
-          runtime_error("MaterialPropertyDSL::writeOutputFiles: "
-                        "unable to open '" +
-                        src_name + "'"));
-    }
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto src = std::ostringstream{};
     src.exceptions(ios::badbit | ios::failbit);
     vector<string>::const_iterator p;
     VariableDescriptionContainer::const_iterator p3;
@@ -524,7 +523,7 @@ namespace mfront {
     src << "return os;\n}// end of operator(std::ostream& os," << name
         << "\n\n";
     src << "} // end of namespace mfront\n\n";
-    src.close();
+    writeIfDifferentFromExistingFileContent(src_name, src.str());
   }  // end of CppMaterialPropertyInterface::writeSrcFile(void)
 
   CppMaterialPropertyInterface::~CppMaterialPropertyInterface() = default;

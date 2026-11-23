@@ -110,13 +110,13 @@ namespace mfront {
       const MaterialPropertyDescription& mpd, const FileDescription& fd) {
     const auto name = this->getCastemFunctionName(mpd.material, mpd.className);
     const auto fn = "include/" + this->getHeaderFileName(name);
-    std::ofstream out{fn};
-    if (!out) {
-      throw(std::runtime_error(
-          "CastemMaterialPropertyInterface::writeOutputFiles: "
-          "unable to open '" +
-          fn + "'"));
-    }
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto out = std::ostringstream{};
     out.exceptions(std::ios::badbit | std::ios::failbit);
     out << "/*!\n"
         << "* \\file   " << fn << "\n"
@@ -156,20 +156,20 @@ namespace mfront {
     out << "} // end of extern \"C\"\n";
     out << "#endif /* __cplusplus */\n\n";
     out << "#endif /* " << makeUpperCase(name) << "_CASTEM_HH */\n";
-    out.close();
+    writeIfDifferentFromExistingFileContent(fn, out.str());
   }  // end of CastemMaterialPropertyInterface::writeHeaderFile(void)
 
   void CastemMaterialPropertyInterface::writeSrcFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) {
     const auto name = this->getCastemFunctionName(mpd.material, mpd.className);
     const auto fn = "src/" + this->getSourceFileName(name);
-    std::ofstream out{fn};
-    if (!out) {
-      throw(std::runtime_error(
-          "CastemMaterialPropertyInterface::writeOutputFiles: "
-          "unable to open '" +
-          fn + "'"));
-    }
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto out = std::ostringstream{};
     out.exceptions(std::ios::badbit | std::ios::failbit);
     const auto& file = fd.fileName;
     const auto& author = fd.authorName;
@@ -420,7 +420,7 @@ namespace mfront {
         << "#ifdef __cplusplus\n"
         << "} // end of extern \"C\"\n"
         << "#endif /* __cplusplus */\n\n";
-    out.close();
+    writeIfDifferentFromExistingFileContent(fn, out.str());
   }  // end of CastemMaterialPropertyInterface::writeSrcFile(void)
 
 }  // end of namespace mfront

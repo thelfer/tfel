@@ -13,6 +13,7 @@
  */
 
 #include <stdexcept>
+#include <iterator>
 #include <fstream>
 #include <sstream>
 
@@ -203,5 +204,31 @@ namespace mfront {
       }
     }
   }  // end of displayGlossaryEntryCompleteDescription
+
+
+  bool writeIfDifferentFromExistingFileContent(
+      const std::string& f, const std::string& contents) {
+    // The streams are not opened in binary mode to be consistent with the
+    // way generated files were written previously: on Windows, the end of
+    // lines are converted when reading and writing the file.
+    auto in = std::ifstream{f};
+    if (in) {
+      const auto current = std::string{std::istreambuf_iterator<char>{in},
+                                       std::istreambuf_iterator<char>{}};
+      if (current == contents) {
+        return false;
+      }
+    }
+    auto out = std::ofstream{f};
+    if (!out) {
+      throw std::runtime_error(
+          "mfront::writeIfDifferentFromExistingFileContent: unable to "
+          "open '" +
+          f + "' for writing output file.");
+    }
+    out.exceptions(std::ios::badbit | std::ios::failbit);
+    out << contents;
+    return true;
+  }  // end of writeIfDifferentFromExistingFileContent
 
 }  // end of namespace mfront
