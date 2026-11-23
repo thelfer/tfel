@@ -1,0 +1,35 @@
+@Author Tristan Chenaille;
+@Date 22/11/2026;
+@Description{
+  "This test checks the blocks of the inverse of the jacobian computed by "
+  "the PartialJacobianInvertTest behaviour, "
+  "which compares them to their analytical values and fails otherwise, "
+  "and the evolution of its damage variables."
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'PartialJacobianInvertTest';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStrain 'EXX' {0 : 0, 1 : 1.e-3};
+@ImposedStrain 'EYY' {0 : 0, 1 : -4.e-4};
+@ImposedStrain 'EZZ' {0 : 0, 1 : 2.e-4};
+@ImposedStrain 'EXY' {0 : 0, 1 : 3.e-4};
+@ImposedStrain 'EXZ' {0 : 0, 1 : -2.e-4};
+@ImposedStrain 'EYZ' {0 : 0, 1 : 1.e-4};
+
+@Times {0, 1 in 5};
+
+// The rates of the damage variables are proportional to the square of the
+// norm of the elastic strain, which is equal to the total strain. The
+// implicit scheme evaluates this norm at the middle of each time step,
+// whose length is 0.2.
+@Real 'e2' '1.e-6 + 1.6e-7 + 4.e-8 + 9.e-8 + 4.e-8 + 1.e-8';
+@Real 'A' 2.e5;
+@Real 'B0' 1.e5;
+@Real 'B1' 3.e5;
+@Test<function> 'p' 'A * e2 * (t ** 3 / 3 - 0.04 * t / 12)' 1.e-12;
+@Test<function> 'd[0]' 'B0 * e2 * (t ** 3 / 3 - 0.04 * t / 12)' 1.e-12;
+@Test<function> 'd[1]' 'B1 * e2 * (t ** 3 / 3 - 0.04 * t / 12)' 1.e-12;

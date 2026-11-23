@@ -14,11 +14,17 @@
 #ifndef LIB_MFRONT_DEFAULTLINEARSYSTEMSOLVER_HXX
 #define LIB_MFRONT_DEFAULTLINEARSYSTEMSOLVER_HXX
 
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/LinearSystemSolverBase.hxx"
 
 namespace mfront {
 
   struct DefaultLinearSystemSolver : LinearSystemSolverBase {
+    /*!
+     * \brief constructor
+     * \param[in] opts: options passed to the linear solver
+     */
+    DefaultLinearSystemSolver(const tfel::utilities::DataMap &);
     //
     void writeLinearSystemResolution(
         std::ostream &,
