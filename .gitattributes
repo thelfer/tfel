@@ -20,9 +20,15 @@ bindings/Makefile.am -text
 bindings/fortran77/CMakeLists.txt -text
 bindings/fortran77/Makefile.am -text
 bindings/fortran77/TFELPHYSICALCONSTANTS.INC -text
+bindings/fortran77/TFELPHYSICALCONSTANTS-v5_2_0.INC -text
+bindings/fortran77/TFELPHYSICALCONSTANTS-v6_0_0.INC -text
+bindings/fortran77/TFELPHYSICALCONSTANTS-future.INC -text
 bindings/fortran90/CMakeLists.txt -text
 bindings/fortran90/Makefile.am -text
 bindings/fortran90/tfel_physical_constants.f90 -text
+bindings/fortran90/tfel_physical_constants_v5_2_0.f90 -text
+bindings/fortran90/tfel_physical_constants_v6_0_0.f90 -text
+bindings/fortran90/tfel_physical_constants_future.f90 -text
 bindings/python/CMakeLists.txt -text
 bindings/python/Makefile.am -text
 bindings/python/include/CMakeLists.txt -text

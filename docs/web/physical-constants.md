@@ -192,10 +192,24 @@ in the `future` submodule:
 
 # `Fortran`
 
-The `Fortran` bindings, both the `Fortran 77` include file and the
-`Fortran 95` module, expose a single set of constants, which is that of
-the next major version: they are not affected by compatibility modes at
-the time of writing.
+The `Fortran` bindings provide one `Fortran 77` include file and one
+`Fortran 95` module per compatibility mode:
+
+- `TFELPHYSICALCONSTANTS-v5_2_0.INC` and `TFEL_PHYSICAL_CONSTANTS_V5_2_0`
+  expose the values of the `5.2.0` mode,
+- `TFELPHYSICALCONSTANTS-v6_0_0.INC` and `TFEL_PHYSICAL_CONSTANTS_V6_0_0`
+  expose the values of the `6.0.0` mode.
+
+The `TFELPHYSICALCONSTANTS.INC` file and the `TFEL_PHYSICAL_CONSTANTS`
+module expose the values of the current version of `TFEL`, which are
+those of the `5.2.0` mode. The `TFELPHYSICALCONSTANTS-future.INC` file
+and the `TFEL_PHYSICAL_CONSTANTS_FUTURE` module expose the values of the
+next major version, which are those of the `6.0.0` mode.
+
+The `Fortran` bindings of the `5.2.0` mode are not affected by the
+rounding of the values of the `C++` and `Python` bindings of this mode:
+they expose the `CODATA` 2014 values with all their digits, as the
+previous versions did.
 
 # Changing the values of the physical constants
 
@@ -246,8 +260,9 @@ follows:
    ~~~~
 
    A compatibility mode which does not appear in the `values` field uses
-   the values of the `value` field. The latter are also those used by the
-   language bindings which are not versioned, such as the `Fortran` ones.
+   the values of the `value` field. In the `values` field, the optional
+   `fortran_value` field gives the value exposed by the `Fortran` bindings
+   in a compatibility mode when it differs from the value of this mode.
    As the values of an already published compatibility mode shall never
    change, the values of the mode of the current version of `TFEL` are
    pinned in the `values` field of each constant whose values change:
@@ -265,8 +280,8 @@ follows:
       ../../include/TFEL/
    cp PhysicalConstants-python.cxx \
       ../../bindings/python/tfel/PhysicalConstants.cxx
-   cp TFELPHYSICALCONSTANTS.INC ../../bindings/fortran77/
-   cp tfel_physical_constants.f90 ../../bindings/fortran90/
+   cp TFELPHYSICALCONSTANTS*.INC ../../bindings/fortran77/
+   cp tfel_physical_constants*.f90 ../../bindings/fortran90/
    cp tfel-physical-constants.md ../../docs/web/
    ~~~~
 
@@ -275,8 +290,14 @@ follows:
    and redirects the names without suffix to the values of the
    compatibility mode of the current version of `TFEL` and those of the
    `tfel::future` and `tfel::constants::future` namespaces to the values
-   of the next major version. The `Fortran` bindings expose the values of
-   the next major version. Once formatted by `clang-format`, the
+   of the next major version. One `Fortran 77` include file and one
+   `Fortran 95` module are also generated per compatibility mode, together
+   with the `TFELPHYSICALCONSTANTS.INC` file and the
+   `TFEL_PHYSICAL_CONSTANTS` module, which expose the values of the
+   compatibility mode of the current version of `TFEL`, and with the
+   `TFELPHYSICALCONSTANTS-future.INC` file and the
+   `TFEL_PHYSICAL_CONSTANTS_FUTURE` module, which expose those of the
+   next major version. Once formatted by `clang-format`, the
    regenerated files are identical to the committed ones, except for the
    values which have changed: checking those differences is the way of
    checking that no value has been changed by mistake.
@@ -285,6 +306,10 @@ follows:
    ~~~~{.cmake}
    install_header(TFEL PhysicalConstants-<X>.<Y>.<Z>.hxx)
    ~~~~
+
+   The new `Fortran 77` include file and the file of the new `Fortran 95`
+   module are added to `bindings/fortran77/CMakeLists.txt` and to
+   `bindings/fortran90/CMakeLists.txt`.
 
 5. Describe the new values in the section giving the
    [values of the physical constants](#values-of-the-physical-constants),
@@ -311,8 +336,6 @@ mechanism: a new compatibility mode shall be tested in the same way.
   bindings are generated from the
   `tools/PhysicalConstants/physical_constants.json` file: checking that
   those two descriptions agree is done when the values change.
-- The `Fortran` bindings are not versioned yet: they expose a single set
-  of constants, which is that of the next major version.
 
 # See also
 

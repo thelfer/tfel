@@ -42,8 +42,13 @@ A include file named `TFELPHYSICALCONSTANTS.INC` is provided for `fortran77`. Th
 
 A module named `TFEL_PHYSICAL_CONSTANTS` is provided for `fortran95`. This module exposes the physical constants as `real64` parameters.
 
-The `Fortran` bindings are not versioned: they expose the values of
-the next major version of `TFEL`.
+Those two files expose the values of the current version of `TFEL`.
+The values of a given compatibility mode are exposed by an include
+file and a module of their own, such as
+`TFELPHYSICALCONSTANTS-v6_0_0.INC` and
+`TFEL_PHYSICAL_CONSTANTS_V6_0_0`. The values of the next major
+version are exposed by `TFELPHYSICALCONSTANTS-future.INC` and
+`TFEL_PHYSICAL_CONSTANTS_FUTURE`.
 
 ### `Python` bindings
 

@@ -18,8 +18,8 @@
 // PhysicalConstants.hxx ../../include/TFEL/
 // cp PhysicalConstants-python.cxx
 // ../../bindings/python/tfel/PhysicalConstants.cxx
-// cp TFELPHYSICALCONSTANTS.INC ../../bindings/fortran77/
-// cp tfel_physical_constants.f90 ../../bindings/fortran90/
+// cp TFELPHYSICALCONSTANTS*.INC ../../bindings/fortran77/
+// cp tfel_physical_constants*.f90 ../../bindings/fortran90/
 // cp tfel-physical-constants.md ../../docs/web/
 //
 // A header is generated for each compatibility mode declared in the
@@ -35,12 +35,21 @@
 // compatibility mode to the physical_constants.json file is the way of
 // taking into account a change in the values of the physical constants.
 //
-// The language bindings which are not versioned, such as the `Fortran`
-// ones, use the values of the next major version. The values of the next
-// major version shall be defined in a compatibility mode whose major version
-// is greater than that of the compatibility mode of the current version,
-// since the `Python` bindings select the values to use with the
-// `TFEL_VERSION_MAJOR` preprocessor variable only.
+// The values of the next major version shall be defined in a compatibility
+// mode whose major version is greater than that of the compatibility mode of
+// the current version, since the `Python` bindings select the values to use
+// with the `TFEL_VERSION_MAJOR` preprocessor variable only.
+//
+// A `Fortran 77` include file and a `Fortran 95` module are generated for
+// each compatibility mode, together with the TFELPHYSICALCONSTANTS.INC file
+// and the TFEL_PHYSICAL_CONSTANTS module, which expose the values of the
+// current version of TFEL, and with the TFELPHYSICALCONSTANTS-future.INC
+// file and the TFEL_PHYSICAL_CONSTANTS_FUTURE module, which expose those of
+// the next major version. The values exposed by the `Fortran` bindings in a
+// compatibility mode are those of this mode, unless the `fortran_value`
+// field is given: the `Fortran` bindings of the `5.2.0` compatibility mode
+// are not affected by the rounding of the values of the `C++` and `Python`
+// bindings of this mode.
 
 #include <iostream>
 
@@ -79,17 +88,20 @@ struct Constant {
   bool has_qt_units = false;
   std::array<int, 7> qt_units;
   // value of the constant in the compatibility mode of the next major version
-  // of TFEL, which is the most precise value. This is the value used by the
-  // language bindings which are not versioned, such as the `Fortran` ones.
+  // of TFEL, which is the most precise value.
   long double value;
   // value of the constant in each compatibility mode: values[i] is the value
   // of the constant in modes[i]
   std::vector<long double> values;
+  // value of the constant exposed by the `Fortran` bindings in each
+  // compatibility mode: fortran_values[i] is the value of the constant in
+  // modes[i]. This is the value of the compatibility mode, unless the
+  // `fortran_value` field is given.
+  std::vector<long double> fortran_values;
 
-  // \brief sets the value of the constant in a given compatibility mode
+  // \return the index of a compatibility mode
   // \param[in] mode: version of the compatibility mode
-  // \param[in] v: value of the constant in this compatibility mode
-  void set_value(const std::string& mode, const long double v) {
+  std::size_t get_mode_index(const std::string& mode) const {
     const auto p = std::find_if(
         modes.begin(), modes.end(),
         [&mode](const CompatibilityMode& m) { return m.version == mode; });
@@ -97,7 +109,22 @@ struct Constant {
       throw(std::runtime_error("extract: unknown compatibility mode '" + mode +
                                "' for constant '" + this->name + "'"));
     }
-    this->values[static_cast<std::size_t>(p - modes.begin())] = v;
+    return static_cast<std::size_t>(p - modes.begin());
+  }
+  // \brief sets the value of the constant in a given compatibility mode
+  // \param[in] mode: version of the compatibility mode
+  // \param[in] v: value of the constant in this compatibility mode
+  void set_value(const std::string& mode, const long double v) {
+    const auto i = this->get_mode_index(mode);
+    this->values[i] = v;
+    this->fortran_values[i] = v;
+  }
+  // \brief sets the value of the constant exposed by the `Fortran` bindings
+  // in a given compatibility mode
+  // \param[in] mode: version of the compatibility mode
+  // \param[in] v: value exposed by the `Fortran` bindings in this mode
+  void set_fortran_value(const std::string& mode, const long double v) {
+    this->fortran_values[this->get_mode_index(mode)] = v;
   }
 };
 
@@ -141,6 +168,22 @@ static std::string get_namespace_suffix(const CompatibilityMode& m) {
 // \brief name of the header of a compatibility mode
 static std::string get_header_name(const CompatibilityMode& m) {
   return "PhysicalConstants-" + m.version;
+}
+
+// \brief name of the `Fortran 77` include file of a compatibility mode
+static std::string get_fortran77_file_name(const CompatibilityMode& m) {
+  return "TFELPHYSICALCONSTANTS-" + get_namespace_suffix(m) + ".INC";
+}
+
+// \brief name of the `Fortran 95` module of a compatibility mode
+static std::string get_fortran90_module_name(const CompatibilityMode& m) {
+  return "TFEL_PHYSICAL_CONSTANTS_V" +
+         tfel::utilities::replace_all(m.version, ".", "_");
+}
+
+// \brief name of the file of the `Fortran 95` module of a compatibility mode
+static std::string get_fortran90_file_name(const CompatibilityMode& m) {
+  return "tfel_physical_constants_" + get_namespace_suffix(m) + ".f90";
 }
 
 // \brief part of the include guard of the header of a compatibility mode
@@ -270,6 +313,7 @@ Constant extract(tfel::utilities::CxxTokenizer::const_iterator& p,
   };
   auto c = Constant{};
   c.values.resize(modes.size());
+  c.fortran_values.resize(modes.size());
   read_tokens({"{", "name", ":"});
   c.name = CxxTokenizer::readString(p, pe);
   read_token(";");
@@ -310,6 +354,7 @@ Constant extract(tfel::utilities::CxxTokenizer::const_iterator& p,
   // the values of the compatibility modes which do not define their own
   // values are those of the next major version
   std::fill(c.values.begin(), c.values.end(), c.value);
+  std::fill(c.fortran_values.begin(), c.fortran_values.end(), c.value);
   CxxTokenizer::checkNotEndOfLine("extract", p, pe);
   if (p->value == "values") {
     read_tokens({"values", ":", "["});
@@ -323,6 +368,15 @@ Constant extract(tfel::utilities::CxxTokenizer::const_iterator& p,
       c.set_value(mode, std::stold(p->value));
       ++p;
       read_token(";");
+      CxxTokenizer::checkNotEndOfLine("extract", p, pe);
+      if (p->value == "fortran_value") {
+        // value exposed by the `Fortran` bindings in this compatibility mode
+        read_tokens({"fortran_value", ":"});
+        CxxTokenizer::checkNotEndOfLine("extract", p, pe);
+        c.set_fortran_value(mode, std::stold(p->value));
+        ++p;
+        read_token(";");
+      }
       read_token("}");
       CxxTokenizer::checkNotEndOfLine("extract", p, pe);
       if (p->value == "]") {
@@ -698,16 +752,44 @@ static void generate_python(const std::vector<Constant>& cs) {
   os << "} // end of declarePhysicalConstants\n\n";
 }  // end of generate_python
 
-static void generate_fortran77(const std::vector<Constant>& cs) {
-  auto upper = [](const std::string& n) {
-    std::string r(n);
-    std::transform(r.begin(), r.end(), r.begin(),
-                   [](const char c) { return std::toupper(c); });
-    return r;
-  };
-  std::ofstream os("TFELPHYSICALCONSTANTS.INC");
-  os << "C> \\file   bindings/fortran77/TFELPHYSICALCONSTANTS.cxx\n"
-     << "C> \\brief\n"
+// \return a name in upper case
+static std::string to_upper(const std::string& n) {
+  std::string r(n);
+  std::transform(r.begin(), r.end(), r.begin(),
+                 [](const char c) { return std::toupper(c); });
+  return r;
+}  // end of to_upper
+
+// \return a value written as a `Fortran` double precision constant
+static std::string to_fortran(const double v) {
+  using tfel::utilities::replace_all;
+  std::ostringstream converter;
+  converter.precision(std::numeric_limits<double>::max_digits10);
+  converter << v;
+  const auto f = replace_all(replace_all(converter.str(), 'e', 'D'), 'E', 'D');
+  return (f.find('D') == std::string::npos) ? f + "D0" : f;
+}  // end of to_fortran
+
+/*!
+ * \brief writes a `Fortran 77` include file
+ * \param[in] cs: constants
+ * \param[in] f: name of the file
+ * \param[in] i: index of the compatibility mode whose values are exposed
+ * \param[in] d: version of TFEL which uses this compatibility mode, if the
+ * file is not the one of the compatibility mode itself
+ */
+static void write_fortran77_file(const std::vector<Constant>& cs,
+                                 const std::string& f,
+                                 const std::size_t i,
+                                 const std::string& d = "") {
+  std::ofstream os(f);
+  os << "C> \\file   bindings/fortran77/" << f << "\n"
+     << "C> \\brief  physical constants of the `" << modes[i].version
+     << "` compatibility mode";
+  if (!d.empty()) {
+    os << ",\nC>         which is the one of the " << d;
+  }
+  os << "\n"
      << "C> \\author Thomas Helfer\n"
      << "C> \\date 18/08/2017\n"
      << "C> \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights \n"
@@ -720,50 +802,75 @@ static void generate_fortran77(const std::vector<Constant>& cs) {
      << "C> project under specific licensing conditions.\n\n";
   for (const auto& c : cs) {
     write_comment(os, c, "C>");
-    os << "      DOUBLE PRECISION CSTE_" << upper(c.name) << "\n";
+    os << "      DOUBLE PRECISION CSTE_" << to_upper(c.name) << "\n";
     if (!c.short_name.empty()) {
       write_comment(os, c, "C>");
-      os << "      DOUBLE PRECISION CSTE_" << upper(c.short_name) << "\n";
+      os << "      DOUBLE PRECISION CSTE_" << to_upper(c.short_name) << "\n";
     }
   }
   os << "*\n";
   for (const auto& c : cs) {
-    auto convert = [](const double v) {
-      auto append_if = [](const std::string& f) {
-        if (f.find('D') == std::string::npos) {
-          return f + "D0";
-        }
-        return f;
-      };
-      using tfel::utilities::replace_all;
-      std::ostringstream converter;
-      converter.precision(std::numeric_limits<double>::max_digits10);
-      converter << v;
-      return append_if(
-          replace_all(replace_all(converter.str(), 'e', 'D'), 'E', 'D'));
-    };
-    os << "      PARAMETER (CSTE_" << upper(c.name) << " = "
-       << convert(double(c.value)) << ");\n";
+    const auto v = to_fortran(double(c.fortran_values[i]));
+    os << "      PARAMETER (CSTE_" << to_upper(c.name) << " = " << v << ");\n";
     if (!c.short_name.empty()) {
-      os << "      PARAMETER (CSTE_" << upper(c.short_name) << " = "
-         << convert(double(c.value)) << ");\n";
+      os << "      PARAMETER (CSTE_" << to_upper(c.short_name) << " = " << v
+         << ");\n";
     }
   }
+}  // end of write_fortran77_file
+
+/*!
+ * \brief generates the `Fortran 77` include file of a compatibility mode
+ * \param[in] cs: constants
+ * \param[in] i: index of the compatibility mode
+ */
+static void generate_fortran77(const std::vector<Constant>& cs,
+                               const std::size_t i) {
+  write_fortran77_file(cs, get_fortran77_file_name(modes[i]), i);
 }  // end of generate_fortran77
 
-static void generate_fortran90(const std::vector<Constant>& cs) {
-  auto upper = [](const std::string& n) {
-    std::string r(n);
-    std::transform(r.begin(), r.end(), r.begin(),
-                   [](const char c) { return std::toupper(c); });
-    return r;
-  };
-  const auto t = std::string{"  "};
-  std::ofstream os("tfel_physical_constants.f90");
-  os << "!> \\file   bindings/fortran90/TFELPHYSICALCONSTANTS.mod\n"
-     << "!> \\brief  physical constants from CODATA Internationally "
-        "recommended values,\n"
-     << "!           http://physics.nist.gov/cuu/Constants/index.html\n"
+/*!
+ * \brief generates the `TFELPHYSICALCONSTANTS.INC` file, which exposes the
+ * values of the compatibility mode of the current version of TFEL, and the
+ * `TFELPHYSICALCONSTANTS-future.INC` file, which exposes those of the next
+ * major version.
+ *
+ * Those files hold the same declarations as the include file of the
+ * compatibility mode they expose, rather than an `INCLUDE` line: `gfortran`
+ * does not search an included file in the directory of the file which
+ * includes it.
+ * \param[in] cs: constants
+ */
+static void generate_fortran77_default(const std::vector<Constant>& cs) {
+  write_fortran77_file(cs, "TFELPHYSICALCONSTANTS.INC",
+                       get_current_mode_index(), "current version of TFEL");
+  if (next_mode_is_different()) {
+    write_fortran77_file(cs, "TFELPHYSICALCONSTANTS-future.INC",
+                         get_next_mode_index(), "next major version of TFEL");
+  }
+}  // end of generate_fortran77_default
+
+/*!
+ * \brief writes the header of the file of a `Fortran 95` module
+ * \param[out] os: output stream
+ * \param[in] f: name of the file
+ * \param[in] i: index of the compatibility mode whose values are exposed
+ * \param[in] d: version of TFEL which uses this compatibility mode, if the
+ * module is not the one of the compatibility mode itself
+ */
+static void write_fortran90_file_header(std::ostream& os,
+                                        const std::string& f,
+                                        const std::size_t i,
+                                        const std::string& d = "") {
+  os << "!> \\file   bindings/fortran90/" << f << "\n"
+     << "!> \\brief  physical constants of the `" << modes[i].version
+     << "` compatibility mode";
+  if (!d.empty()) {
+    os << ",\n!          which is the one of the " << d;
+  }
+  os << ", from CODATA\n"
+     << "!          Internationally recommended values,\n"
+     << "!          http://physics.nist.gov/cuu/Constants/index.html\n"
      << "!> \\author Thomas Helfer\n"
      << "!> \\date 18/08/2017\n"
      << "!> \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights \n"
@@ -773,36 +880,75 @@ static void generate_fortran90(const std::vector<Constant>& cs) {
         "\n"
      << "!  or the CECILL-A licence. A copy of thoses licences are delivered \n"
      << "!  with the sources of TFEL. CEA or EDF may also distribute this \n"
-     << "!  project under specific licensing conditions.\n\n"
-     << "module TFEL_PHYSICAL_CONSTANTS\n"
+     << "!  project under specific licensing conditions.\n\n";
+}  // end of write_fortran90_file_header
+
+/*!
+ * \brief generates the `Fortran 95` module of a compatibility mode
+ * \param[in] cs: constants
+ * \param[in] i: index of the compatibility mode
+ */
+static void generate_fortran90(const std::vector<Constant>& cs,
+                               const std::size_t i) {
+  const auto t = std::string{"  "};
+  const auto f = get_fortran90_file_name(modes[i]);
+  const auto m = get_fortran90_module_name(modes[i]);
+  std::ofstream os(f);
+  write_fortran90_file_header(os, f, i);
+  os << "module " << m << "\n"
      << t << "use,intrinsic :: ISO_FORTRAN_ENV\n"
      << t << "implicit none\n";
   for (const auto& c : cs) {
-    auto convert = [](const double v) {
-      using tfel::utilities::replace_all;
-      auto append_if = [](const std::string& f) {
-        if (f.find('D') == std::string::npos) {
-          return f + "D0";
-        }
-        return f;
-      };
-      std::ostringstream converter;
-      converter.precision(std::numeric_limits<double>::max_digits10);
-      converter << v;
-      return append_if(
-          replace_all(replace_all(converter.str(), 'e', 'D'), 'E', 'D'));
-    };
+    const auto v = to_fortran(double(c.fortran_values[i]));
     write_comment(os, c, t + "!>");
-    os << t << "real (real64), parameter :: " << upper(c.name) << " = "
-       << convert(double(c.value)) << "\n";
+    os << t << "real (real64), parameter :: " << to_upper(c.name) << " = " << v
+       << "\n";
     if (!c.short_name.empty()) {
       write_comment(os, c, t + "!>");
-      os << t << "real (real64), parameter :: " << upper(c.short_name) << " = "
-         << convert(double(c.value)) << "\n";
+      os << t << "real (real64), parameter :: " << to_upper(c.short_name)
+         << " = " << v << "\n";
     }
   }
-  os << "endmodule TFEL_PHYSICAL_CONSTANTS\n";
+  os << "endmodule " << m << "\n";
 }  // end of generate_fortran90
+
+/*!
+ * \brief generates a `Fortran 95` module which exposes the module of a
+ * compatibility mode
+ * \param[in] f: name of the file
+ * \param[in] m: name of the module
+ * \param[in] i: index of the compatibility mode whose module is exposed
+ * \param[in] d: version of TFEL which uses this compatibility mode
+ */
+static void write_fortran90_alias_file(const std::string& f,
+                                       const std::string& m,
+                                       const std::size_t i,
+                                       const std::string& d) {
+  const auto t = std::string{"  "};
+  std::ofstream os(f);
+  write_fortran90_file_header(os, f, i, d);
+  os << "module " << m << "\n"
+     << t << "use " << get_fortran90_module_name(modes[i]) << "\n"
+     << t << "implicit none\n"
+     << "endmodule " << m << "\n";
+}  // end of write_fortran90_alias_file
+
+/*!
+ * \brief generates the `TFEL_PHYSICAL_CONSTANTS` module, which exposes the
+ * module of the compatibility mode of the current version of TFEL, and the
+ * `TFEL_PHYSICAL_CONSTANTS_FUTURE` module, which exposes the one of the next
+ * major version
+ */
+static void generate_fortran90_default() {
+  write_fortran90_alias_file(
+      "tfel_physical_constants.f90", "TFEL_PHYSICAL_CONSTANTS",
+      get_current_mode_index(), "current version of TFEL");
+  if (next_mode_is_different()) {
+    write_fortran90_alias_file(
+        "tfel_physical_constants_future.f90", "TFEL_PHYSICAL_CONSTANTS_FUTURE",
+        get_next_mode_index(), "next major version of TFEL");
+  }
+}  // end of generate_fortran90_default
 
 static void generate_pandoc(const std::vector<Constant>& cs) {
   std::ofstream os("tfel-physical-constants.md");
@@ -856,8 +1002,13 @@ static void generate_pandoc(const std::vector<Constant>& cs) {
      << "`fortran95`. This module exposes the physical constants as `real64` "
      << "parameters.\n"
      << "\n"
-     << "The `Fortran` bindings are not versioned: they expose the values of\n"
-     << "the next major version of `TFEL`.\n"
+     << "Those two files expose the values of the current version of `TFEL`.\n"
+     << "The values of a given compatibility mode are exposed by an include\n"
+     << "file and a module of their own, such as\n"
+     << "`TFELPHYSICALCONSTANTS-v6_0_0.INC` and\n"
+     << "`TFEL_PHYSICAL_CONSTANTS_V6_0_0`. The values of the next major\n"
+     << "version are exposed by `TFELPHYSICALCONSTANTS-future.INC` and\n"
+     << "`TFEL_PHYSICAL_CONSTANTS_FUTURE`.\n"
      << "\n"
      << "### `Python` bindings\n"
      << "\n"
@@ -897,8 +1048,12 @@ int main() {
     }
     generate_cxx_default();
     generate_python(cs);
-    generate_fortran77(cs);
-    generate_fortran90(cs);
+    for (std::size_t i = 0; i != modes.size(); ++i) {
+      generate_fortran77(cs, i);
+      generate_fortran90(cs, i);
+    }
+    generate_fortran77_default(cs);
+    generate_fortran90_default();
     generate_pandoc(cs);
   } catch (const std::exception& e) {
     std::cerr << "physical_constants: " << e.what() << '\n';

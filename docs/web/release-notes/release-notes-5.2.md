@@ -1611,9 +1611,15 @@ submodules in `Python` and through the `future` compatibility mode in
 The values used by default, which are those of the `5.2.0` compatibility
 mode, are unchanged.
 
-The `Fortran` bindings, which are not versioned, expose the values of
-the next major version: their values are thus now the `CODATA` 2022
-ones.
+The `Fortran` bindings are versioned as well. The
+`TFELPHYSICALCONSTANTS-v6_0_0.INC` and `TFELPHYSICALCONSTANTS-future.INC`
+include files and the `TFEL_PHYSICAL_CONSTANTS_V6_0_0` and
+`TFEL_PHYSICAL_CONSTANTS_FUTURE` modules expose the `CODATA` 2022 values.
+The `TFELPHYSICALCONSTANTS.INC` include file and the
+`TFEL_PHYSICAL_CONSTANTS` module are equivalent to the
+`TFELPHYSICALCONSTANTS-v5_2_0.INC` include file and to the
+`TFEL_PHYSICAL_CONSTANTS_V5_2_0` module: their values are those of the
+previous versions.
 
 The initial guess of the gas equation of state solver of `MTest` now
 uses the molar gas constant of the `TFEL/PhysicalConstants` library, in

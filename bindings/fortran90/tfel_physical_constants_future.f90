@@ -1,0 +1,18 @@
+!> \file   bindings/fortran90/tfel_physical_constants_future.f90
+!> \brief  physical constants of the `6.0.0` compatibility mode,
+!          which is the one of the next major version of TFEL, from CODATA
+!          Internationally recommended values,
+!          http://physics.nist.gov/cuu/Constants/index.html
+!> \author Thomas Helfer
+!> \date 18/08/2017
+!> \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights 
+!  reserved. 
+!  This project is publicly released under either the GNU GPL Licence with linking exception 
+!  or the CECILL-A licence. A copy of thoses licences are delivered 
+!  with the sources of TFEL. CEA or EDF may also distribute this 
+!  project under specific licensing conditions.
+
+module TFEL_PHYSICAL_CONSTANTS_FUTURE
+  use TFEL_PHYSICAL_CONSTANTS_V6_0_0
+  implicit none
+endmodule TFEL_PHYSICAL_CONSTANTS_FUTURE
