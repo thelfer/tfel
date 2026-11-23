@@ -50,7 +50,7 @@ namespace mfront {
    * `--default-compatibility-mode` or in a file using the `compatibility_mode`
    * DSL option.
    */
-  struct MFRONT_VISIBILITY_EXPORT CompatibilityMode {
+  struct  CompatibilityMode {
     /*!
      * \brief simple data structure describing a version with three numbers
      * named major, minor and patch
@@ -66,7 +66,7 @@ namespace mfront {
      * \return the version read in the string
      * \param[in] s: string
      */
-    [[nodiscard]] static Version fromString(std::string_view);
+  MFRONT_VISIBILITY_EXPORT  [[nodiscard]] static Version fromString(std::string_view);
     /*!
      * \brief compatibility mode with the next (unpublished) major version
      */
