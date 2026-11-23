@@ -721,7 +721,21 @@ namespace mfront {
       dsl->setInterfaces(this->interfaces);
     }
     dsl->analyseFile(f, this->ecmds, this->substitutions);
-    dsl->generateOutputFiles();
+    {
+      // The output files associated with an external mfront file (used
+      // by the '@Law', '@ComputeThermalExpansion', '@ElasticMaterialProperties'
+      // keywords, ...) are generated in the current directory by every
+      // process treating a file which uses it. When several mfront
+      // processes are run in parallel in the same directory (which is
+      // the case when several behaviours using the same external mfront
+      // file are compiled in parallel), this can lead to data races on
+      // these files, which causes random failures, in particular on
+      // Windows. The output files generation is thus performed while
+      // holding the great mfront lock, which serializes this phase
+      // between the mfront processes of a given user.
+      const MFrontLockGuard lock;
+      dsl->generateOutputFiles();
+    }
     auto td = dsl->getTargetsDescription();
     for (auto& l : td.libraries) {
       for (const auto& d : this->defines) {
@@ -803,13 +817,34 @@ namespace mfront {
     using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
     const auto fn = "src" + dirStringSeparator() + "targets.lst";
+    auto t = this->targets;
+    // other mfront processes may have updated the file since it was
+    // read at the beginning of the session: merge its current contents
+    // to avoid losing their modifications (no other process can modify
+    // the file while the lock is held)
+    {
+      const std::ifstream test{fn};
+      if (test) {
+        try {
+          tfel::utilities::CxxTokenizer tokenizer{fn};
+          auto c = tokenizer.begin();
+          mergeTargetsDescription(
+              t, read<TargetsDescription>(c, tokenizer.end()), false);
+        } catch (std::exception& e) {
+          getLogStream() << "can't read file '" << fn << "': " << e.what()
+                         << '\n';
+        } catch (...) {
+          getLogStream() << "can't read file '" << fn << "'\n";
+        }
+      }
+    }
     std::ofstream file{fn};
     file.exceptions(std::ios::badbit | std::ios::failbit);
     if (!file) {
       getLogStream() << "can't open file '" << fn << "'";
       return;
     }
-    file << this->targets;
+    file << t;
   }  // end of MFront::writeTargetDescription
 
   void MFront::exe() {
