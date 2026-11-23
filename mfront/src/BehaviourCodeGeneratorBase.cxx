@@ -1066,14 +1066,20 @@ namespace mfront {
     if (!getDebugMode()) {
       printLinePragma(f, v.lineNumber, this->fd.fileName);
     }
+    // only the variable itself may be left uninitialized, not its increment
+    const auto initializer =
+        ((n == v.name) &&
+         (v.getAttribute<bool>(VariableDescription::uninitialized, false)))
+            ? "{tfel::math::uninitialized}"
+            : "";
     if (v.arraySize == 1u) {
-      f << t << " " << n << ";\n";
+      f << t << " " << n << initializer << ";\n";
     } else {
       if (this->bd.useDynamicallyAllocatedVector(v.arraySize)) {
         f << "tfel::math::runtime_array<" << t << " > " << n << ";\n";
       } else {
         f << "tfel::math::fsarray<" << v.arraySize << ", " << t << " > " << n
-          << ";\n";
+          << initializer << ";\n";
       }
     }
   }  // end of writeVariableDeclaration

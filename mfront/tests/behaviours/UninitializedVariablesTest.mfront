@@ -1,0 +1,80 @@
+@DSL Implicit;
+@Behaviour UninitializedVariablesTest;
+@Date 21 / 11 / 2026;
+@Description {
+  "A Norton behaviour testing the `setUninitialized` method on:"
+  "- a tensorial local variable (`n`),"
+  "- an array of local variables (`lame`),"
+  "- an integration variable which is not a state variable (`evp`)."
+  "Those variables are assigned before being used."
+}
+
+@Epsilon 1.e-16;
+@Theta 1;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+//! the Lamé coefficients, computed in `@InitializeLocalVariables`
+@LocalVariable stress lame[2];
+lame.setUninitialized();
+//! the normal, computed in `@Integrator`
+@LocalVariable Stensor n;
+n.setUninitialized();
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+//! the viscoplastic strain, set in `@InitializeLocalVariables`
+@IntegrationVariable StrainStensor evp;
+evp.setUninitialized();
+
+@AuxiliaryStateVariable StrainStensor evp0;
+evp0.setGlossaryName("ViscoplasticStrain");
+
+@InitializeLocalVariables {
+  lame[0] = computeLambda(young, nu);
+  lame[1] = computeMu(young, nu);
+  evp = evp0;
+}
+
+@ComputeStress {
+  sig = lame[0] * trace(eel) * Stensor::Id() + 2 * lame[1] * eel;
+}
+
+@Integrator {
+  constexpr auto A = real(8.e-67);
+  constexpr auto E = real(8.2);
+  const auto seq = sigmaeq(sig);
+  const auto iseq = 1 / (max(seq, real(1.e-12) * young));
+  const auto vp = A * pow(seq, E - 1);
+  n = 3 * deviator(sig) * (iseq / 2);
+  feel += devp - deto;
+  fp -= vp * seq * dt;
+  fevp -= dp * n;
+  // jacobian
+  dfeel_ddevp = Stensor4::Id();
+  dfp_ddeel = -2 * lame[1] * E * vp * dt * n;
+  dfevp_ddeel = -2 * lame[1] * dp * iseq * (Stensor4::M() - (n ^ n));
+  dfevp_ddp = -n;
+}
+
+@UpdateAuxiliaryStateVariables {
+  evp0 = evp;
+}
+
+@TangentOperator {
+  if ((smt == ELASTIC) || (smt == SECANTOPERATOR)) {
+    computeElasticStiffness<N, Type>::exe(Dt, lame[0], lame[1]);
+  } else if (smt == CONSISTENTTANGENTOPERATOR) {
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N, Type>::exe(De, lame[0], lame[1]);
+    getPartialJacobianInvert(Je);
+    Dt = De * Je;
+  } else {
+    return false;
+  }
+}

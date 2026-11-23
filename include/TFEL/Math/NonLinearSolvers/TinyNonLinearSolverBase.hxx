@@ -29,11 +29,21 @@ namespace tfel::math {
    */
   template <unsigned short N, typename NumericType>
   struct StackAllocatedTinyNonLinearSolverWorkspace {
-    //! \brief residual vector
-    tvector<N, NumericType> fzeros;
-    //! \brief current estimate of the unknowns
+    /*!
+     * \brief residual vector
+     *
+     * The residual is left uninitialized: the `computeResidual` method
+     * computes it before it is used.
+     */
+    tvector<N, NumericType> fzeros{uninitialized};
+    //! \brief current estimate of the unknowns, initially null
     tvector<N, NumericType> zeros;
-    //! \brief current correction
+    /*!
+     * \brief current correction, initially null
+     *
+     * The correction may be read before being computed, by the
+     * `rejectCurrentCorrection` method for instance.
+     */
     tvector<N, NumericType> delta_zeros;
   };
 

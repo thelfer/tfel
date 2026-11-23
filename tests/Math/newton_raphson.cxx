@@ -261,6 +261,38 @@ struct NewtonRaphsonSolver7
   bool updateOrCheckJacobian() noexcept { return false; }
 };  // end of struct NewtonRaphsonSolver7
 
+/*!
+ * \brief a solver which does not set the initial estimate of the unknowns:
+ * the default workspace leaves the residual and the jacobian matrix
+ * uninitialized, but the estimate of the unknowns and the correction are
+ * initially null.
+ */
+struct NewtonRaphsonSolver8
+    : public tfel::math::
+          TinyNewtonRaphsonSolver<2u, double, NewtonRaphsonSolver8> {
+  NewtonRaphsonSolver8() {
+    this->epsilon = 1.e-14;
+    this->iterMax = 20;
+  }
+
+  bool solve() { return this->solveNonLinearSystem(); }
+
+  auto getCurrentEstimate() const noexcept { return this->zeros; }
+
+  auto getCurrentCorrection() const noexcept { return this->delta_zeros; }
+
+  bool computeResidual() noexcept {
+    auto& x = this->zeros;
+    auto& f = this->fzeros;
+    auto& J = this->jacobian;
+    f = {1 - x(0), 100 * (x(1) - x(0) * x(0))};
+    J = {-1., 0.,  //
+         -200 * x(0), 100.};
+    return true;
+  }  // end of computeResidual
+
+};  // end of struct NewtonRaphsonSolver8
+
 struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
   TinyNewtonRaphsonSolverTest()
       : tfel::tests::TestCase("TFEL/Math", "TinyNewtonRaphsonSolverTest") {
@@ -273,6 +305,7 @@ struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
     this->test5();
     this->test6();
     this->test7();
+    this->test8();
     return this->result;
   }  // end of execute
  private:
@@ -328,6 +361,20 @@ struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
     // the failure reported by updateOrCheckJacobian stops the resolution
     auto nr = NewtonRaphsonSolver7{};
     TFEL_TESTS_ASSERT(!nr.solve());
+  }
+  void test8() {
+    // the estimate of the unknowns and the correction are initially null
+    auto nr = NewtonRaphsonSolver8{};
+    const auto x0 = nr.getCurrentEstimate();
+    const auto dx0 = nr.getCurrentCorrection();
+    TFEL_TESTS_ASSERT(std::abs(x0(0)) < 1e-14);
+    TFEL_TESTS_ASSERT(std::abs(x0(1)) < 1e-14);
+    TFEL_TESTS_ASSERT(std::abs(dx0(0)) < 1e-14);
+    TFEL_TESTS_ASSERT(std::abs(dx0(1)) < 1e-14);
+    TFEL_TESTS_ASSERT(nr.solve());
+    const auto x = nr.getCurrentEstimate();
+    TFEL_TESTS_ASSERT(std::abs(x(0) - 1) < 1e-14);
+    TFEL_TESTS_ASSERT(std::abs(x(1) - 1) < 1e-14);
   }
 };
 

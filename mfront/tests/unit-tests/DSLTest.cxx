@@ -28,6 +28,7 @@
 #include "MFront/InitDSLs.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
+#include "MFront/BehaviourDescription.hxx"
 
 struct DSLTest final : public tfel::tests::TestCase {
   DSLTest() : tfel::tests::TestCase("MFront", "DSLTest") {}  // end of DSLTest
@@ -211,6 +212,33 @@ struct DSLTest final : public tfel::tests::TestCase {
                 "@Brick StandardElasticity;"
                 "@Integrator{}",
                 "is not declared for all specialisations");
+    // variables which can't be left uninitialized
+    for (const auto& t : {"MaterialProperty", "StateVariable",
+                          "AuxiliaryStateVariable", "ExternalStateVariable"}) {
+      this->check("Implicit",
+                  "@" + std::string(t) +
+                      " Stensor a;"
+                      "a.setUninitialized();",
+                  "only available for local variables");
+    }
+    this->check("Implicit",
+                "@LocalVariable real a;"
+                "a.setUninitialized();",
+                "not available for scalar variables");
+    this->check("Implicit",
+                "@IntegrationVariable strain a;"
+                "a.setUninitialized();",
+                "not available for scalar variables");
+    this->check("Implicit",
+                "@LocalVariable Stensor a;"
+                "a.setUninitialized();"
+                "a.setUninitialized();",
+                "already declared");
+    this->check("Implicit",
+                "@LocalVariable Stensor a;"
+                "a.setUninitialized(true);",
+                "expected ')'");
+    this->checkUninitializedVariables();
     // name of the DSL stored in the behaviour description
     for (const std::string n : {"ImplicitII", "IsotropicMisesCreep"}) {
       const auto dsl = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(
@@ -259,6 +287,31 @@ struct DSLTest final : public tfel::tests::TestCase {
     TestCase::registerResult(
         "analysing '" + s + "' did *not* throw as expected", false);
   }
+  //! \brief checks the variables flagged by the `setUninitialized` method
+  void checkUninitializedVariables() {
+    using mfront::VariableDescription;
+    constexpr auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto dsl = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(
+        mfront::DSLFactory::getDSLFactory().createNewDSL("Implicit"));
+    TFEL_TESTS_ASSERT(dsl.get() != nullptr);
+    dsl->analyseString(
+        "@LocalVariable Stensor a;"
+        "@LocalVariable real b[2];"
+        "@LocalVariable Stensor c;"
+        "@IntegrationVariable StrainStensor d;"
+        "a.setUninitialized();"
+        "b.setUninitialized();"
+        "d.setUninitialized();");
+    const auto& bd = dsl->getBehaviourDescription().getBehaviourData(h);
+    auto isUninitialized = [&bd](const std::string& n) {
+      return bd.getVariableDescription(n).getAttribute<bool>(
+          VariableDescription::uninitialized, false);
+    };
+    TFEL_TESTS_ASSERT(isUninitialized("a"));
+    TFEL_TESTS_ASSERT(isUninitialized("b"));
+    TFEL_TESTS_ASSERT(!isUninitialized("c"));
+    TFEL_TESTS_ASSERT(isUninitialized("d"));
+  }  // end of checkUninitializedVariables
 };
 
 TFEL_TESTS_GENERATE_PROXY(DSLTest, "DSLTest");

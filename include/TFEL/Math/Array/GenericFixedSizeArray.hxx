@@ -83,10 +83,41 @@
                                            InputIterator>::value_type,        \
                                        base_type<typename X::value_type>>)    \
       : Y(p) {}                                                               \
+  /*!                                                                         \
+   * \brief constructor leaving the values uninitialized                      \
+   * \see `tfel::math::uninitialized`                                         \
+   */                                                                         \
+  TFEL_HOST_DEVICE constexpr explicit X(                                      \
+      const tfel::math::UninitializedTag t) noexcept                          \
+      : Y(t) {}                                                               \
   /* inheriting GenericFixedSizeArray' assignement operators */               \
   using Y::operator=
 
 namespace tfel::math {
+
+  //! \brief type of the `uninitialized` tag
+  struct UninitializedTag {
+    //! \brief default constructor, explicit so that `{}` is not a tag
+    TFEL_HOST_DEVICE constexpr explicit UninitializedTag() noexcept = default;
+  };
+
+  /*!
+   * \brief tag selecting the constructor of a fixed size array which leaves
+   * its values uninitialized.
+   *
+   * By default, the values of a fixed size array are set to zero. This tag
+   * is meant for objects whose values are all assigned before being read,
+   * when the compiler can't remove the initialization by itself, typically
+   * for a data member assigned in another method:
+   *
+   * \code{.cpp}
+   * tmatrix<6, 6, double> m(tfel::math::uninitialized);
+   * \endcode
+   *
+   * \note values of class type (quantities, nested arrays) are built by
+   * their default constructors.
+   */
+  inline constexpr UninitializedTag uninitialized{};
 
   /*!
    * \brief a fixed size array class with storage on the stack.
@@ -116,6 +147,12 @@ namespace tfel::math {
     TFEL_HOST_DEVICE static constexpr Child zero();
     //! \brief default constructor
     TFEL_HOST_DEVICE constexpr GenericFixedSizeArray() noexcept;
+    /*!
+     * \brief constructor leaving the values uninitialized
+     * \see `tfel::math::uninitialized`
+     */
+    TFEL_HOST_DEVICE constexpr explicit GenericFixedSizeArray(
+        const UninitializedTag) noexcept;
     //! \brief copy constructor
     TFEL_HOST_DEVICE constexpr GenericFixedSizeArray(
         const GenericFixedSizeArray&) noexcept;

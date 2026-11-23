@@ -38,6 +38,13 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
+      GenericFixedSizeArray(const UninitializedTag) noexcept {
+  }  // end of GenericFixedSizeArray
+
+  template <typename Child,
+            typename ArrayPolicy,
+            typename ArrayPolicy::IndexingPolicy::size_type N>
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
       GenericFixedSizeArray(const GenericFixedSizeArray& src) noexcept
       : GenericFixedSizeArray() {
     this->operator=(src);

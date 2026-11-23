@@ -2705,6 +2705,8 @@ namespace mfront {
       this->mb.setGlossaryName(h, n, this->treatSetGlossaryNameMethod());
     } else if (this->current->value == "setEntryName") {
       this->mb.setEntryName(h, n, this->treatSetEntryNameMethod());
+    } else if (this->current->value == "setUninitialized") {
+      this->treatSetUninitializedMethod(h, n);
     } else {
       this->treatUnknownVariableMethod(h, n);
     }
@@ -2712,13 +2714,42 @@ namespace mfront {
     this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod", ";");
   }  // end of treatVariableMethod
 
+  void BehaviourDSLCommon::treatSetUninitializedMethod(const Hypothesis h,
+                                                       const std::string& n) {
+    const auto m = "BehaviourDSLCommon::treatSetUninitializedMethod";
+    this->readSpecifiedToken(m, "setUninitialized");
+    this->readSpecifiedToken(m, "(");
+    this->readSpecifiedToken(m, ")");
+    const auto& d = this->mb.getBehaviourData(h);
+    if ((!d.isLocalVariableName(n)) &&
+        ((!d.isIntegrationVariableName(n)) || (d.isStateVariableName(n)))) {
+      this->throwRuntimeError(
+          m,
+          "the 'setUninitialized' method is only available for local "
+          "variables and integration variables which are not state "
+          "variables ('" +
+              n + "' is neither)");
+    }
+    const auto& v = d.getVariableDescription(n);
+    if ((v.arraySize == 1u) && (v.isScalar())) {
+      this->throwRuntimeError(
+          m,
+          "the 'setUninitialized' method is not available for scalar "
+          "variables ('" +
+              n + "' is a scalar)");
+    }
+    this->mb.setVariableAttribute(h, n, VariableDescription::uninitialized,
+                                  VariableAttribute(true), false);
+  }  // end of treatSetUninitializedMethod
+
   void BehaviourDSLCommon::treatUnknownVariableMethod(const Hypothesis,
                                                       const std::string& n) {
     this->throwRuntimeError(
         "BehaviourDSLCommon::treatUnknownVariableMethod : ",
         "unknown method '" + this->current->value + "' for variable '" + n +
             "', "
-            "valid methods are 'setGlossaryName' or 'setEntryName'");
+            "valid methods are 'setGlossaryName', 'setEntryName' or "
+            "'setUninitialized'");
   }  // end of treatUnknownVariableMethod
 
   void BehaviourDSLCommon::treatUnknownKeyword() {

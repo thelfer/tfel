@@ -728,6 +728,14 @@ namespace mfront {
     //! \brief analyse the `setEntryNameMethod` and returns its argument
     virtual std::string treatSetEntryNameMethod();
     /*!
+     * \brief analyse the `setUninitialized` method, which states that the
+     * values of a variable are left uninitialized when the behaviour is built
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : variable name
+     */
+    virtual void treatSetUninitializedMethod(const Hypothesis,
+                                             const std::string&);
+    /*!
      * \return true if the the given variable may have methods
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
