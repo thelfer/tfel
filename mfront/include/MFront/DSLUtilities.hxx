@@ -302,6 +302,28 @@ namespace mfront {
 
 #endif /* MFRONT_HAVE_MADNEX */
 
+
+  /*!
+   * \brief write the contents of a generated file only if the file does
+   * not exist or if its contents differ from the given contents.
+   *
+   * Several mfront processes may generate the files associated with an
+   * external mfront file in the same directory (for instance when
+   * several behaviours use the same external mfront file and are
+   * compiled in parallel). Rewriting such a file which may be
+   * concurrently opened by another process or by the compiler can lead
+   * to spurious failures, in particular on Windows, and triggers
+   * useless rebuilds. This function avoids both by only writing the
+   * file when its contents actually change.
+   *
+   * \param[in] f: file name
+   * \param[in] contents: contents of the file
+   * \return true if the file has been written, false if it was
+   * up-to-date.
+   */
+  MFRONT_VISIBILITY_EXPORT bool writeIfDifferentFromExistingFileContent(
+      const std::string& f, const std::string& contents);
+
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_DSLUTILITIES_HXX */
