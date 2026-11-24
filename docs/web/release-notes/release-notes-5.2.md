@@ -577,6 +577,9 @@ and to
   is replaced by `Scattered` in those names (see Section
   @sec:tfel:5.2:tfel_math:views). The former names will be removed in
   version 6.0.
+- The misspelt names of functions of `TFEL/Math` and of stress measures
+  of `MTest` (`Kirchoff` for `Kirchhoff`) are deprecated and will be
+  removed in version 6.0 (see Issue #1483).
 - The static method `get` of the
   `GlobalDomainSpecificLanguageOptionsManager` class has been removed.
   The global options passed to domain specific languages are now handled
@@ -598,6 +601,56 @@ and to
   exported as `268`, like `Stensor4`, instead of `76`, which `MTest` and
   `MGIS` decode as `derivative_type<stensor<1, real>, real>`. Behaviours
   declaring such variables must be generated again (see Issue #1332).
+- Homogenisation in `TFEL/Material`: `computeSelfConsistent`
+  (`computeSelfConsistentScheme` in python) takes a `Polycrystal`. For a
+  `ParticulateMicrostructure`, `computeAsymmetricSelfConsistent` shall
+  be used: its second argument is a relative tolerance instead of a
+  number of iterations. `ParticulateMicrostructure::replaceMatrixPhase`
+  is replaced by `changeElasticityOfMatrixPhase`, and the `stiffness`
+  data member of the phases by the `getElasticityOfPhase` method.
+- The following installed headers are removed, most of which could not
+  be compiled (see Issues #1205 and #1264):
+  `TFEL/Material/IsotropicLinearFourierHookLaw.hxx`,
+  `TFEL/Material/IsotropicLinearFourierLaw.hxx`,
+  `TFEL/Material/ThermalBehaviour.hxx`,
+  `TFEL/Material/ThermalBehaviourData.hxx`,
+  `TFEL/Material/ThermoMechanicalBehaviour.hxx`,
+  `TFEL/Math/Parser/EvaluatorProxy.hxx`,
+  `MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx` and
+  `TFEL/Check/TestLauncherV1.hxx`.
+- The units of the quantities are refactored (see Issues #1001 and
+  #1013): `tfel::math::GenerateUnit`, the `tfel::math::Unit` class
+  template and the `TFEL/Math/Quantity/Unit.ixx` header are removed, and
+  `UnitConcept` is in the `tfel::math::unit` namespace. User-defined
+  units must be rewritten. The views arrays of quantities map a storage
+  of the underlying numeric type: mapping a storage of quantities no
+  longer compiles (see Issue #1353).
+- Most single-argument constructors of the public classes of `TFEL`,
+  `MFront` and `MTest` are `explicit` (see Issue #1010): implicit
+  conversions, such as `mtest::ConstantEvolution e = 1.;`, no longer
+  compile.
+- The `TFEL_VISIBILITY_EXPORT`, `TFEL_VISIBILITY_IMPORT` and
+  `TFEL_VISIBILITY_LOCAL` macros, and the macros built on them, expand
+  to standard attributes (see Issue #873): they must be placed at the
+  beginning of a declaration, as in
+  `TFEL_VISIBILITY_EXPORT static void f();`.
+- Code extending `MFront` (see Issues #1334, #1340 and #1342): the
+  `computeElasticLimit` and `computeElasticLimitAndDerivative` methods
+  of `IsotropicHardeningRule` take the expression of the `theta`
+  parameter as a new argument; `NonLinearSystemSolver` and its header
+  are renamed `AbstractNonLinearSystemSolver`, the former names being
+  deprecated; the generated `computeNumericalJacobian` and
+  `updateOrCheckJacobian` methods return a boolean.
+- A `YoungNuModuli`, `KGModuli` or `LambdaMuModuli` object can no longer
+  be assigned from another format of isotropic moduli (see Issue #1203):
+  these assignments compiled and did nothing.
+- `tfel::utilities::tokenize` no longer returns an empty first token for
+  a string starting with the delimiter, and `replace_all` with a start
+  position keeps the characters preceding it (see Issue #1201).
+- The symbols exported for the bounds of the elements of array variables
+  are named `..._mfront_index_<i>_LowerBound` instead of
+  `..._mfront_index_<i>__LowerBound`, as `MGIS` expects (see Issue
+  #1205).
 - The value of a raw string literal token given by `CxxTokenizer` holds the
   whole literal, from the `R` delimiter to the closing `"` included, and its
   offset is that of the `R`, as for a quoted string (see Issue #1390): the
@@ -632,6 +685,10 @@ and to
   the end of the file held an additional end of line character, and the last
   line of a file which is not terminated by an end of line character was
   tokenized twice. The line numbers are unaffected.
+- When the `keepCommentBoundaries` option of `CxxTokenizer` is enabled,
+  the offsets of the tokens which follow a comment on the same line are
+  no longer shifted by the size of the delimiter opening the comment
+  (see Issue #1407).
 
 # Improvements to the build system
 
