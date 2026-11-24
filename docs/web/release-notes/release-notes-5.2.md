@@ -1287,100 +1287,6 @@ are available. A new [tutorial](PonteCastaneda1992.html)
 shows how to use them in the implementation of the Ponte-Castaneda
 variational bound (1992), within the framework of non-linear elasticity.
 
-# New features in `tfel-check`
-
-## Parallelization
-
-The commands described in different `.check` files can now be run in
-distinct processes.
-
-Note that the commands described in a `.check` file are still run
-sequentially.
-
-By default, as in previous versions, only one process is used.
-
-### Specifying the number of jobs run simultaneously
-
-The command line argument `--jobs` (`-j`) allows specifying the number
-of jobs run simultaneously.
-
-If no value is given to `--jobs`, the number of available cores
-is used, if the system provides this information.
-
-#### Limit on the number of jobs
-
-By default, this number must not exceed the number of available
-cores. This limit can be discarded by
-passing `--discard-jobs-limit=true` to `tfel-check`.
-
-### Caution
-
-The user must take care that the commands described in `.check` files
-can be run in parallel:
-
-- the jobs shall not exhaust memory.
-- the jobs shall not access the same resources concurrently.
-
-A typical example of conflict would be to have two `.check` files in the
-same directory that call `mfront` to build some shared libraries: the
-two `MFront` processes may concurrently write files in the `src` and
-`include` directories, leading to undefined behaviour.
-
-Another example would be to use `@CleanDirectories` and `@CleanFiles`
-commands inappropriately and erase data used by commands of other
-`.check` files.
-
-## Defining environment variables in configuration files
-
-Configuration files can now contain an `environment_variables` section,
-which introduces a map defining a set of environment variables.
-
-### Example of usage
-
-~~~~{.cxx}
-environment_variables: {"CXXFLAGS": "-Wall"};
-~~~~
-
-### Caution
-
-- An environment variable can only be defined once in configuration
-  files
-- If an environment variable is defined in a configuration file and in a
-  test file (through the `@Environment` keyword), the latter definition
-  is used.
-
-## Controlling clean up of generated files and directories
-
-The `--clean-up` command line argument allows choosing whether the
-generated files and directories listed by the `@CleanFiles` and
-`@CleanDirectories` keywords will be cleaned (this is the case by
-default) or not in case of success.
-
-~~~~{.bash}
-$ tfel-check --clean-up=false
-~~~~
-
-The `--discard-clean-up-on-failure` command line argument allows
-choosing whether the generated files and directories listed by the
-`@CleanFiles` and `@CleanDirectories` keywords will be cleaned or not
-(this is the case by default) in case of failure.
-
-~~~~{.bash}
-$ tfel-check --discard-clean-up-on-failure=false
-~~~~
-
-## Timeout for commands
-
-Commands now have a `timeout` option to limit their duration:
-
-~~~~{.cpp}
-@Command "sleep 10"{
- timeout: 1
-};
-~~~~
-
-This feature requires the `timeout` utility to be available.
-
 # New features in `TFEL/System`
 
 ## Improvements in `ProcessManager`
@@ -1848,6 +1754,100 @@ headers.
 
 The queries `--compute-thermal-expansion` and
 `--compute-stress-free-expansion` are now available.
+
+# New features in `tfel-check`
+
+## Parallelization
+
+The commands described in different `.check` files can now be run in
+distinct processes.
+
+Note that the commands described in a `.check` file are still run
+sequentially.
+
+By default, as in previous versions, only one process is used.
+
+### Specifying the number of jobs run simultaneously
+
+The command line argument `--jobs` (`-j`) allows specifying the number
+of jobs run simultaneously.
+
+If no value is given to `--jobs`, the number of available cores
+is used, if the system provides this information.
+
+#### Limit on the number of jobs
+
+By default, this number must not exceed the number of available
+cores. This limit can be discarded by
+passing `--discard-jobs-limit=true` to `tfel-check`.
+
+### Caution
+
+The user must take care that the commands described in `.check` files
+can be run in parallel:
+
+- the jobs shall not exhaust memory.
+- the jobs shall not access the same resources concurrently.
+
+A typical example of conflict would be to have two `.check` files in the
+same directory that call `mfront` to build some shared libraries: the
+two `MFront` processes may concurrently write files in the `src` and
+`include` directories, leading to undefined behaviour.
+
+Another example would be to use `@CleanDirectories` and `@CleanFiles`
+commands inappropriately and erase data used by commands of other
+`.check` files.
+
+## Defining environment variables in configuration files
+
+Configuration files can now contain an `environment_variables` section,
+which introduces a map defining a set of environment variables.
+
+### Example of usage
+
+~~~~{.cxx}
+environment_variables: {"CXXFLAGS": "-Wall"};
+~~~~
+
+### Caution
+
+- An environment variable can only be defined once in configuration
+  files
+- If an environment variable is defined in a configuration file and in a
+  test file (through the `@Environment` keyword), the latter definition
+  is used.
+
+## Controlling clean up of generated files and directories
+
+The `--clean-up` command line argument allows choosing whether the
+generated files and directories listed by the `@CleanFiles` and
+`@CleanDirectories` keywords will be cleaned (this is the case by
+default) or not in case of success.
+
+~~~~{.bash}
+$ tfel-check --clean-up=false
+~~~~
+
+The `--discard-clean-up-on-failure` command line argument allows
+choosing whether the generated files and directories listed by the
+`@CleanFiles` and `@CleanDirectories` keywords will be cleaned or not
+(this is the case by default) in case of failure.
+
+~~~~{.bash}
+$ tfel-check --discard-clean-up-on-failure=false
+~~~~
+
+## Timeout for commands
+
+Commands now have a `timeout` option to limit their duration:
+
+~~~~{.cpp}
+@Command "sleep 10"{
+ timeout: 1
+};
+~~~~
+
+This feature requires the `timeout` utility to be available.
 
 # Documentation
 
