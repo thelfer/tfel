@@ -1007,7 +1007,7 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
   (`cuda-clang` and `hip-clang` configurations).
 - `TFEL_CLANG_CUDA_LIBRARY_DIR`: path to the libraries of this toolkit.
 
-## `--cmake-prefix-path`
+## The `--cmake-prefix-path` option of `tfel-config`
 
 `--cmake-prefix-path` returns the path to the `CMake` configuration
 files provided by the project:
@@ -1282,6 +1282,11 @@ by using the attributes `.derivative_of_homogenized_stiffness_wrt_kr`
 and `.derivative_of_homogenized_stiffness_wrt_mur` of the
 `HomogenizationScheme` object (only for isotropic phases).
 
+The second moments of strains considering a Hashin-Shtrikman scheme
+are available. A new [tutorial](PonteCastaneda1992.html)
+shows how to use them in the implementation of the Ponte-Castaneda
+variational bound (1992), within the framework of non-linear elasticity.
+
 # New features in `tfel-check`
 
 ## Parallelization
@@ -1387,15 +1392,6 @@ This feature requires the `timeout` utility to be available.
 ## Improvements in `SignalManager`
 
 - `SignalManager` now works properly in a multithreaded context.
-
-# New `TFEL/Material` features
-
-## Homogenization
-
-The second moments of strains considering a Hashin-Shtrikman scheme
-are available. A new [tutorial](PonteCastaneda1992.html)
-shows how to use them in the implementation of the Ponte-Castaneda
-variational bound (1992), within the framework of non-linear elasticity.
 
 # New features in `MFront`
 
