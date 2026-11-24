@@ -245,19 +245,19 @@ namespace tfel::math::internals {
 
   /*!
    * \brief return the number of components of a scalar (1) or of a tensorial
-   * object (the size of its array policy). Used to check that a strided
-   * derivative sub-block fits in its base matrix.
+   * object (the size of its array policy), i.e. the number of rows or columns
+   * of a derivative sub-block in its base matrix.
    * \tparam MathObjectType: scalar or tensorial type.
    */
   template <typename MathObjectType>
-  constexpr unsigned short getStridedDerivativeSubBlockExtent() {
+  constexpr unsigned short getDerivativeSubBlockExtent() {
     if constexpr (tfel::math::isScalar<MathObjectType>()) {
       return 1;
     } else {
       return static_cast<unsigned short>(
           getArrayPolicySize<typename MathObjectType::array_policy>());
     }
-  }  // end of getStridedDerivativeSubBlockExtent
+  }  // end of getDerivativeSubBlockExtent
 
   template <MatrixConcept MatrixType>
   TFEL_HOST_DEVICE constexpr auto det2(const MatrixType& m) noexcept {
@@ -544,11 +544,9 @@ namespace tfel::math {
           numeric_type<derivative_type<FunctionType, VariableType>>>* const p,
       const std::size_t stride) {
     constexpr auto fextent =
-        tfel::math::internals::getStridedDerivativeSubBlockExtent<
-            FunctionType>();
+        tfel::math::internals::getDerivativeSubBlockExtent<FunctionType>();
     constexpr auto vextent =
-        tfel::math::internals::getStridedDerivativeSubBlockExtent<
-            VariableType>();
+        tfel::math::internals::getDerivativeSubBlockExtent<VariableType>();
     static_assert(N >= I + fextent, "invalid row index");
     static_assert(M >= J + vextent, "invalid column index");
     return map_derivative_strided<FunctionType, VariableType, N, M>(p, stride,
@@ -578,6 +576,65 @@ namespace tfel::math {
       return view_type{p + o, stride};
     }
   }  // end of map_derivative_strided
+
+  template <unsigned short I,
+            unsigned short J,
+            typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  TFEL_HOST_DEVICE constexpr scattered_derivative_view_from_tiny_matrix<
+      M,
+      FunctionType,
+      VariableType>
+  map_derivative_scattered(
+      const std::array<
+          base_type<numeric_type<derivative_type<FunctionType, VariableType>>>*,
+          N * M>& p) {
+    constexpr auto fextent =
+        tfel::math::internals::getDerivativeSubBlockExtent<FunctionType>();
+    constexpr auto vextent =
+        tfel::math::internals::getDerivativeSubBlockExtent<VariableType>();
+    static_assert(N >= I + fextent, "invalid row index");
+    static_assert(M >= J + vextent, "invalid column index");
+    return map_derivative_scattered<FunctionType, VariableType, N, M>(p, I, J);
+  }  // end of map_derivative_scattered
+
+  template <typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  TFEL_HOST_DEVICE constexpr scattered_derivative_view_from_tiny_matrix<
+      M,
+      FunctionType,
+      VariableType>
+  map_derivative_scattered(
+      const std::array<
+          base_type<numeric_type<derivative_type<FunctionType, VariableType>>>*,
+          N * M>& p,
+      const unsigned short i,
+      const unsigned short j) {
+    using view_type =
+        scattered_derivative_view_from_tiny_matrix<M, FunctionType,
+                                                   VariableType>;
+    const auto o = static_cast<std::size_t>(i) * M + j;
+    if constexpr (isScalar<FunctionType>() && isScalar<VariableType>()) {
+      return view_type(*(p[o]));
+    } else {
+      constexpr std::size_t fextent =
+          tfel::math::internals::getDerivativeSubBlockExtent<FunctionType>();
+      constexpr std::size_t vextent =
+          tfel::math::internals::getDerivativeSubBlockExtent<VariableType>();
+      auto ptrs = std::array<typename view_type::data_pointer_type,
+                             fextent * vextent>{};
+      for (std::size_t r = 0; r != fextent; ++r) {
+        for (std::size_t c = 0; c != vextent; ++c) {
+          ptrs[r * vextent + c] = p[o + r * M + c];
+        }
+      }
+      return view_type{ptrs};
+    }
+  }  // end of map_derivative_scattered
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr tvector<N, T> change_basis(

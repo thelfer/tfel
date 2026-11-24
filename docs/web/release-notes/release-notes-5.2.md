@@ -643,6 +643,15 @@ The `map`, `map_strided`, `map_strided_array` and
 deprecated aliases and the former headers include the new ones; they
 will be removed in version 6.0.
 
+### Scattered views of derivatives
+
+The `map_derivative_scattered` function creates a view of a derivative
+from the pointers to the components of a matrix. It is the counterpart
+of the `map_derivative_strided` function for a matrix whose components
+are not separated by a constant stride (see the
+[documentation of `TFEL/Math`](tfel-math.html#scattered-views-of-derivatives)
+for details).
+
 ## Walpole basis
 
 The Walpole basis relative to transverse isotropic fourth-order tensors (`st2tost2`)

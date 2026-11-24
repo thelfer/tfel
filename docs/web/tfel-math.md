@@ -922,6 +922,31 @@ map_derivative_strided<4, 0, stensor<2u, double>, stensor<2u, double>, 8, 8>(p, 
 Its component \((a, b)\) is element \((4 + a, b)\) of the base matrix,
 located at address `p + ((4 + a) * 8 + b) * s`.
 
+#### Scattered views of derivatives
+
+The `map_derivative_scattered` function is the counterpart of the
+`map_derivative_strided` function for a base matrix whose components are
+not separated by a constant stride. It has the same template parameters;
+the base matrix is passed as an array of pointers to its components,
+ordered in row-major format:
+
+~~~~{.cxx}
+// pointers to the components of the base matrix
+std::array<double*, 8 * 8> ptrs = ...;
+map_derivative_scattered<4, 0, stensor<2u, double>, stensor<2u, double>, 8, 8>(ptrs) =
+    st2tost2<2u, double>::Id();
+~~~~
+
+Its component \((a, b)\) is element \((4 + a, b)\) of the base matrix,
+pointed to by `ptrs[(4 + a) * 8 + b]`.
+
+The view stores a copy of the pointers to its components, i.e. one
+pointer per component (\(16\) in this example, \(36\) for the derivative
+of a symmetric tensor with respect to a symmetric tensor in \(3D\)). The
+`map_derivative_strided` function, which returns a view storing a single
+pointer and a stride, shall be preferred when the components of the base
+matrix are regularly spaced.
+
 # Solvers for fixed size non-linear systems {#sec:tfel_math:non_linear_solvers}
 
 The `TFEL/Math` library provides several non-linear solvers which are
