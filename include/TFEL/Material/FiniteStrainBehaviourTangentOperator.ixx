@@ -40,6 +40,510 @@
             FiniteStrainBehaviourTangentOperatorBase::OP1,                    \
             FiniteStrainBehaviourTangentOperatorBase::OP2>
 
+namespace tfel::material::internals {
+
+  /*!
+   * \brief an helper structure meant to be specialized in each spatial
+   * dimension, converting the derivative of the Kirchhoff stress with
+   * respect to the deformation gradient increment
+   * \f$\Delta\,F=F\,F_{0}^{-1}\f$ to the derivative of the first
+   * Piola-Kirchhoff stress \f$P=\tau\,F^{-T}\f$ with respect to the
+   * deformation gradient. The latter is computed column by column, i.e.
+   * component by component of the deformation gradient:
+   * \f[
+   * \frac{\partial \tau_{ik}}{\partial F_{pq}}=
+   * \frac{\partial \tau_{ik}}{\partial \Delta\,F_{pm}}\,
+   * F^{-1}_{0\,qm}
+   * \quad\mathrm{and}\quad
+   * \frac{\partial P_{iJ}}{\partial F_{pq}}=
+   * \frac{\partial \tau_{ik}}{\partial F_{pq}}\,F^{-1}_{Jk}-
+   * F^{-1}_{Jp}\,P_{iq}
+   * \f]
+   * so that the derivative of the Kirchhoff stress with respect to the
+   * deformation gradient is never stored.
+   * \tparam N: spatial dimension
+   */
+  template <unsigned short N>
+  struct DTAU_DDF_to_DPK1_DF_Converter;
+
+  /*!
+   * \brief partial specialisation in 1D
+   */
+  template <>
+  struct DTAU_DDF_to_DPK1_DF_Converter<1u> {
+    /*!
+     * \tparam stress: stress type
+     * \tparam real: numeric type
+     * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
+     *                 respect to the deformation gradient
+     * \param[in] dtau: derivative of the Kirchhoff stress with respect to the
+     *                  deformation gradient increment
+     * \param[in] F0: deformation gradient at the beginning of the time step
+     * \param[in] F: deformation gradient at the end of the time step
+     * \param[in] s: Cauchy stress
+     */
+    template <typename stress, typename real>
+    static constexpr void exe(
+        tfel::math::t2tot2<1u, stress>& dP,
+        const tfel::math::t2tost2<1u, stress>& dtau,
+        const tfel::math::tensor<1u, real>& F0,
+        const tfel::math::tensor<1u, real>& F,
+        const tfel::math::stensor<1u, stress>& s) noexcept {
+      const auto iF0 = tfel::math::invert(F0);
+      const auto iF = tfel::math::invert(F);
+      const auto P =
+          tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(s, F);
+      {
+        // derivative of the Kirchhoff stress with respect to F(0, 0)
+        const auto a0 = dtau(0, 0) * iF0[0];
+        const auto a1 = dtau(1, 0) * iF0[0];
+        const auto a2 = dtau(2, 0) * iF0[0];
+        dP(0, 0) = a0 * iF[0] - iF[0] * P[0];
+        dP(1, 0) = a1 * iF[1];
+        dP(2, 0) = a2 * iF[2];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(1, 1)
+        const auto a0 = dtau(0, 1) * iF0[1];
+        const auto a1 = dtau(1, 1) * iF0[1];
+        const auto a2 = dtau(2, 1) * iF0[1];
+        dP(0, 1) = a0 * iF[0];
+        dP(1, 1) = a1 * iF[1] - iF[1] * P[1];
+        dP(2, 1) = a2 * iF[2];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(2, 2)
+        const auto a0 = dtau(0, 2) * iF0[2];
+        const auto a1 = dtau(1, 2) * iF0[2];
+        const auto a2 = dtau(2, 2) * iF0[2];
+        dP(0, 2) = a0 * iF[0];
+        dP(1, 2) = a1 * iF[1];
+        dP(2, 2) = a2 * iF[2] - iF[2] * P[2];
+      }
+    }
+  };  // end of struct DTAU_DDF_to_DPK1_DF_Converter<1u>
+
+  /*!
+   * \brief partial specialisation in 2D
+   */
+  template <>
+  struct DTAU_DDF_to_DPK1_DF_Converter<2u> {
+    /*!
+     * \tparam stress: stress type
+     * \tparam real: numeric type
+     * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
+     *                 respect to the deformation gradient
+     * \param[in] dtau: derivative of the Kirchhoff stress with respect to the
+     *                  deformation gradient increment
+     * \param[in] F0: deformation gradient at the beginning of the time step
+     * \param[in] F: deformation gradient at the end of the time step
+     * \param[in] s: Cauchy stress
+     */
+    template <typename stress, typename real>
+    static constexpr void exe(
+        tfel::math::t2tot2<2u, stress>& dP,
+        const tfel::math::t2tost2<2u, stress>& dtau,
+        const tfel::math::tensor<2u, real>& F0,
+        const tfel::math::tensor<2u, real>& F,
+        const tfel::math::stensor<2u, stress>& s) noexcept {
+      constexpr auto cste = tfel::math::Cste<real>::isqrt2;
+      const auto iF0 = tfel::math::invert(F0);
+      const auto iF = tfel::math::invert(F);
+      const auto P =
+          tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(s, F);
+      {
+        // derivative of the Kirchhoff stress with respect to F(0, 0)
+        const auto a0 = dtau(0, 0) * iF0[0] + dtau(0, 3) * iF0[3];
+        const auto a1 = dtau(1, 0) * iF0[0] + dtau(1, 3) * iF0[3];
+        const auto a2 = dtau(2, 0) * iF0[0] + dtau(2, 3) * iF0[3];
+        const auto a3 = dtau(3, 0) * iF0[0] + dtau(3, 3) * iF0[3];
+        dP(0, 0) = a0 * iF[0] + cste * a3 * iF[3] - iF[0] * P[0];
+        dP(1, 0) = cste * a3 * iF[4] + a1 * iF[1] - iF[4] * P[4];
+        dP(2, 0) = a2 * iF[2];
+        dP(3, 0) = a0 * iF[4] + cste * a3 * iF[1] - iF[4] * P[0];
+        dP(4, 0) = cste * a3 * iF[0] + a1 * iF[3] - iF[0] * P[4];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(1, 1)
+        const auto a0 = dtau(0, 4) * iF0[4] + dtau(0, 1) * iF0[1];
+        const auto a1 = dtau(1, 4) * iF0[4] + dtau(1, 1) * iF0[1];
+        const auto a2 = dtau(2, 4) * iF0[4] + dtau(2, 1) * iF0[1];
+        const auto a3 = dtau(3, 4) * iF0[4] + dtau(3, 1) * iF0[1];
+        dP(0, 1) = a0 * iF[0] + cste * a3 * iF[3] - iF[3] * P[3];
+        dP(1, 1) = cste * a3 * iF[4] + a1 * iF[1] - iF[1] * P[1];
+        dP(2, 1) = a2 * iF[2];
+        dP(3, 1) = a0 * iF[4] + cste * a3 * iF[1] - iF[1] * P[3];
+        dP(4, 1) = cste * a3 * iF[0] + a1 * iF[3] - iF[3] * P[1];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(2, 2)
+        const auto a0 = dtau(0, 2) * iF0[2];
+        const auto a1 = dtau(1, 2) * iF0[2];
+        const auto a2 = dtau(2, 2) * iF0[2];
+        const auto a3 = dtau(3, 2) * iF0[2];
+        dP(0, 2) = a0 * iF[0] + cste * a3 * iF[3];
+        dP(1, 2) = cste * a3 * iF[4] + a1 * iF[1];
+        dP(2, 2) = a2 * iF[2] - iF[2] * P[2];
+        dP(3, 2) = a0 * iF[4] + cste * a3 * iF[1];
+        dP(4, 2) = cste * a3 * iF[0] + a1 * iF[3];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(0, 1)
+        const auto a0 = dtau(0, 0) * iF0[4] + dtau(0, 3) * iF0[1];
+        const auto a1 = dtau(1, 0) * iF0[4] + dtau(1, 3) * iF0[1];
+        const auto a2 = dtau(2, 0) * iF0[4] + dtau(2, 3) * iF0[1];
+        const auto a3 = dtau(3, 0) * iF0[4] + dtau(3, 3) * iF0[1];
+        dP(0, 3) = a0 * iF[0] + cste * a3 * iF[3] - iF[0] * P[3];
+        dP(1, 3) = cste * a3 * iF[4] + a1 * iF[1] - iF[4] * P[1];
+        dP(2, 3) = a2 * iF[2];
+        dP(3, 3) = a0 * iF[4] + cste * a3 * iF[1] - iF[4] * P[3];
+        dP(4, 3) = cste * a3 * iF[0] + a1 * iF[3] - iF[0] * P[1];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(1, 0)
+        const auto a0 = dtau(0, 4) * iF0[0] + dtau(0, 1) * iF0[3];
+        const auto a1 = dtau(1, 4) * iF0[0] + dtau(1, 1) * iF0[3];
+        const auto a2 = dtau(2, 4) * iF0[0] + dtau(2, 1) * iF0[3];
+        const auto a3 = dtau(3, 4) * iF0[0] + dtau(3, 1) * iF0[3];
+        dP(0, 4) = a0 * iF[0] + cste * a3 * iF[3] - iF[3] * P[0];
+        dP(1, 4) = cste * a3 * iF[4] + a1 * iF[1] - iF[1] * P[4];
+        dP(2, 4) = a2 * iF[2];
+        dP(3, 4) = a0 * iF[4] + cste * a3 * iF[1] - iF[1] * P[0];
+        dP(4, 4) = cste * a3 * iF[0] + a1 * iF[3] - iF[3] * P[4];
+      }
+    }
+  };  // end of struct DTAU_DDF_to_DPK1_DF_Converter<2u>
+
+  /*!
+   * \brief partial specialisation in 3D
+   */
+  template <>
+  struct DTAU_DDF_to_DPK1_DF_Converter<3u> {
+    /*!
+     * \tparam stress: stress type
+     * \tparam real: numeric type
+     * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
+     *                 respect to the deformation gradient
+     * \param[in] dtau: derivative of the Kirchhoff stress with respect to the
+     *                  deformation gradient increment
+     * \param[in] F0: deformation gradient at the beginning of the time step
+     * \param[in] F: deformation gradient at the end of the time step
+     * \param[in] s: Cauchy stress
+     */
+    template <typename stress, typename real>
+    static constexpr void exe(
+        tfel::math::t2tot2<3u, stress>& dP,
+        const tfel::math::t2tost2<3u, stress>& dtau,
+        const tfel::math::tensor<3u, real>& F0,
+        const tfel::math::tensor<3u, real>& F,
+        const tfel::math::stensor<3u, stress>& s) noexcept {
+      constexpr auto cste = tfel::math::Cste<real>::isqrt2;
+      const auto iF0 = tfel::math::invert(F0);
+      const auto iF = tfel::math::invert(F);
+      const auto P =
+          tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(s, F);
+      {
+        // derivative of the Kirchhoff stress with respect to F(0, 0)
+        const auto a0 =
+            dtau(0, 0) * iF0[0] + dtau(0, 3) * iF0[3] + dtau(0, 5) * iF0[5];
+        const auto a1 =
+            dtau(1, 0) * iF0[0] + dtau(1, 3) * iF0[3] + dtau(1, 5) * iF0[5];
+        const auto a2 =
+            dtau(2, 0) * iF0[0] + dtau(2, 3) * iF0[3] + dtau(2, 5) * iF0[5];
+        const auto a3 =
+            dtau(3, 0) * iF0[0] + dtau(3, 3) * iF0[3] + dtau(3, 5) * iF0[5];
+        const auto a4 =
+            dtau(4, 0) * iF0[0] + dtau(4, 3) * iF0[3] + dtau(4, 5) * iF0[5];
+        const auto a5 =
+            dtau(5, 0) * iF0[0] + dtau(5, 3) * iF0[3] + dtau(5, 5) * iF0[5];
+        dP(0, 0) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[0] * P[0];
+        dP(1, 0) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[4] * P[4];
+        dP(2, 0) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[6] * P[6];
+        dP(3, 0) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[4] * P[0];
+        dP(4, 0) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[0] * P[4];
+        dP(5, 0) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[6] * P[0];
+        dP(6, 0) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[0] * P[6];
+        dP(7, 0) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[6] * P[4];
+        dP(8, 0) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[4] * P[6];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(1, 1)
+        const auto a0 =
+            dtau(0, 4) * iF0[4] + dtau(0, 1) * iF0[1] + dtau(0, 7) * iF0[7];
+        const auto a1 =
+            dtau(1, 4) * iF0[4] + dtau(1, 1) * iF0[1] + dtau(1, 7) * iF0[7];
+        const auto a2 =
+            dtau(2, 4) * iF0[4] + dtau(2, 1) * iF0[1] + dtau(2, 7) * iF0[7];
+        const auto a3 =
+            dtau(3, 4) * iF0[4] + dtau(3, 1) * iF0[1] + dtau(3, 7) * iF0[7];
+        const auto a4 =
+            dtau(4, 4) * iF0[4] + dtau(4, 1) * iF0[1] + dtau(4, 7) * iF0[7];
+        const auto a5 =
+            dtau(5, 4) * iF0[4] + dtau(5, 1) * iF0[1] + dtau(5, 7) * iF0[7];
+        dP(0, 1) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[3] * P[3];
+        dP(1, 1) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[1] * P[1];
+        dP(2, 1) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[8] * P[8];
+        dP(3, 1) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[1] * P[3];
+        dP(4, 1) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[3] * P[1];
+        dP(5, 1) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[8] * P[3];
+        dP(6, 1) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[3] * P[8];
+        dP(7, 1) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[8] * P[1];
+        dP(8, 1) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[1] * P[8];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(2, 2)
+        const auto a0 =
+            dtau(0, 6) * iF0[6] + dtau(0, 8) * iF0[8] + dtau(0, 2) * iF0[2];
+        const auto a1 =
+            dtau(1, 6) * iF0[6] + dtau(1, 8) * iF0[8] + dtau(1, 2) * iF0[2];
+        const auto a2 =
+            dtau(2, 6) * iF0[6] + dtau(2, 8) * iF0[8] + dtau(2, 2) * iF0[2];
+        const auto a3 =
+            dtau(3, 6) * iF0[6] + dtau(3, 8) * iF0[8] + dtau(3, 2) * iF0[2];
+        const auto a4 =
+            dtau(4, 6) * iF0[6] + dtau(4, 8) * iF0[8] + dtau(4, 2) * iF0[2];
+        const auto a5 =
+            dtau(5, 6) * iF0[6] + dtau(5, 8) * iF0[8] + dtau(5, 2) * iF0[2];
+        dP(0, 2) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[5] * P[5];
+        dP(1, 2) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[7] * P[7];
+        dP(2, 2) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[2] * P[2];
+        dP(3, 2) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[7] * P[5];
+        dP(4, 2) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[5] * P[7];
+        dP(5, 2) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[2] * P[5];
+        dP(6, 2) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[5] * P[2];
+        dP(7, 2) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[2] * P[7];
+        dP(8, 2) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[7] * P[2];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(0, 1)
+        const auto a0 =
+            dtau(0, 0) * iF0[4] + dtau(0, 3) * iF0[1] + dtau(0, 5) * iF0[7];
+        const auto a1 =
+            dtau(1, 0) * iF0[4] + dtau(1, 3) * iF0[1] + dtau(1, 5) * iF0[7];
+        const auto a2 =
+            dtau(2, 0) * iF0[4] + dtau(2, 3) * iF0[1] + dtau(2, 5) * iF0[7];
+        const auto a3 =
+            dtau(3, 0) * iF0[4] + dtau(3, 3) * iF0[1] + dtau(3, 5) * iF0[7];
+        const auto a4 =
+            dtau(4, 0) * iF0[4] + dtau(4, 3) * iF0[1] + dtau(4, 5) * iF0[7];
+        const auto a5 =
+            dtau(5, 0) * iF0[4] + dtau(5, 3) * iF0[1] + dtau(5, 5) * iF0[7];
+        dP(0, 3) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[0] * P[3];
+        dP(1, 3) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[4] * P[1];
+        dP(2, 3) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[6] * P[8];
+        dP(3, 3) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[4] * P[3];
+        dP(4, 3) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[0] * P[1];
+        dP(5, 3) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[6] * P[3];
+        dP(6, 3) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[0] * P[8];
+        dP(7, 3) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[6] * P[1];
+        dP(8, 3) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[4] * P[8];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(1, 0)
+        const auto a0 =
+            dtau(0, 4) * iF0[0] + dtau(0, 1) * iF0[3] + dtau(0, 7) * iF0[5];
+        const auto a1 =
+            dtau(1, 4) * iF0[0] + dtau(1, 1) * iF0[3] + dtau(1, 7) * iF0[5];
+        const auto a2 =
+            dtau(2, 4) * iF0[0] + dtau(2, 1) * iF0[3] + dtau(2, 7) * iF0[5];
+        const auto a3 =
+            dtau(3, 4) * iF0[0] + dtau(3, 1) * iF0[3] + dtau(3, 7) * iF0[5];
+        const auto a4 =
+            dtau(4, 4) * iF0[0] + dtau(4, 1) * iF0[3] + dtau(4, 7) * iF0[5];
+        const auto a5 =
+            dtau(5, 4) * iF0[0] + dtau(5, 1) * iF0[3] + dtau(5, 7) * iF0[5];
+        dP(0, 4) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[3] * P[0];
+        dP(1, 4) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[1] * P[4];
+        dP(2, 4) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[8] * P[6];
+        dP(3, 4) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[1] * P[0];
+        dP(4, 4) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[3] * P[4];
+        dP(5, 4) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[8] * P[0];
+        dP(6, 4) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[3] * P[6];
+        dP(7, 4) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[8] * P[4];
+        dP(8, 4) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[1] * P[6];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(0, 2)
+        const auto a0 =
+            dtau(0, 0) * iF0[6] + dtau(0, 3) * iF0[8] + dtau(0, 5) * iF0[2];
+        const auto a1 =
+            dtau(1, 0) * iF0[6] + dtau(1, 3) * iF0[8] + dtau(1, 5) * iF0[2];
+        const auto a2 =
+            dtau(2, 0) * iF0[6] + dtau(2, 3) * iF0[8] + dtau(2, 5) * iF0[2];
+        const auto a3 =
+            dtau(3, 0) * iF0[6] + dtau(3, 3) * iF0[8] + dtau(3, 5) * iF0[2];
+        const auto a4 =
+            dtau(4, 0) * iF0[6] + dtau(4, 3) * iF0[8] + dtau(4, 5) * iF0[2];
+        const auto a5 =
+            dtau(5, 0) * iF0[6] + dtau(5, 3) * iF0[8] + dtau(5, 5) * iF0[2];
+        dP(0, 5) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[0] * P[5];
+        dP(1, 5) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[4] * P[7];
+        dP(2, 5) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[6] * P[2];
+        dP(3, 5) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[4] * P[5];
+        dP(4, 5) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[0] * P[7];
+        dP(5, 5) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[6] * P[5];
+        dP(6, 5) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[0] * P[2];
+        dP(7, 5) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[6] * P[7];
+        dP(8, 5) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[4] * P[2];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(2, 0)
+        const auto a0 =
+            dtau(0, 6) * iF0[0] + dtau(0, 8) * iF0[3] + dtau(0, 2) * iF0[5];
+        const auto a1 =
+            dtau(1, 6) * iF0[0] + dtau(1, 8) * iF0[3] + dtau(1, 2) * iF0[5];
+        const auto a2 =
+            dtau(2, 6) * iF0[0] + dtau(2, 8) * iF0[3] + dtau(2, 2) * iF0[5];
+        const auto a3 =
+            dtau(3, 6) * iF0[0] + dtau(3, 8) * iF0[3] + dtau(3, 2) * iF0[5];
+        const auto a4 =
+            dtau(4, 6) * iF0[0] + dtau(4, 8) * iF0[3] + dtau(4, 2) * iF0[5];
+        const auto a5 =
+            dtau(5, 6) * iF0[0] + dtau(5, 8) * iF0[3] + dtau(5, 2) * iF0[5];
+        dP(0, 6) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[5] * P[0];
+        dP(1, 6) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[7] * P[4];
+        dP(2, 6) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[2] * P[6];
+        dP(3, 6) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[7] * P[0];
+        dP(4, 6) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[5] * P[4];
+        dP(5, 6) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[2] * P[0];
+        dP(6, 6) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[5] * P[6];
+        dP(7, 6) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[2] * P[4];
+        dP(8, 6) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[7] * P[6];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(1, 2)
+        const auto a0 =
+            dtau(0, 4) * iF0[6] + dtau(0, 1) * iF0[8] + dtau(0, 7) * iF0[2];
+        const auto a1 =
+            dtau(1, 4) * iF0[6] + dtau(1, 1) * iF0[8] + dtau(1, 7) * iF0[2];
+        const auto a2 =
+            dtau(2, 4) * iF0[6] + dtau(2, 1) * iF0[8] + dtau(2, 7) * iF0[2];
+        const auto a3 =
+            dtau(3, 4) * iF0[6] + dtau(3, 1) * iF0[8] + dtau(3, 7) * iF0[2];
+        const auto a4 =
+            dtau(4, 4) * iF0[6] + dtau(4, 1) * iF0[8] + dtau(4, 7) * iF0[2];
+        const auto a5 =
+            dtau(5, 4) * iF0[6] + dtau(5, 1) * iF0[8] + dtau(5, 7) * iF0[2];
+        dP(0, 7) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[3] * P[5];
+        dP(1, 7) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[1] * P[7];
+        dP(2, 7) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[8] * P[2];
+        dP(3, 7) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[1] * P[5];
+        dP(4, 7) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[3] * P[7];
+        dP(5, 7) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[8] * P[5];
+        dP(6, 7) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[3] * P[2];
+        dP(7, 7) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[8] * P[7];
+        dP(8, 7) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[1] * P[2];
+      }
+      {
+        // derivative of the Kirchhoff stress with respect to F(2, 1)
+        const auto a0 =
+            dtau(0, 6) * iF0[4] + dtau(0, 8) * iF0[1] + dtau(0, 2) * iF0[7];
+        const auto a1 =
+            dtau(1, 6) * iF0[4] + dtau(1, 8) * iF0[1] + dtau(1, 2) * iF0[7];
+        const auto a2 =
+            dtau(2, 6) * iF0[4] + dtau(2, 8) * iF0[1] + dtau(2, 2) * iF0[7];
+        const auto a3 =
+            dtau(3, 6) * iF0[4] + dtau(3, 8) * iF0[1] + dtau(3, 2) * iF0[7];
+        const auto a4 =
+            dtau(4, 6) * iF0[4] + dtau(4, 8) * iF0[1] + dtau(4, 2) * iF0[7];
+        const auto a5 =
+            dtau(5, 6) * iF0[4] + dtau(5, 8) * iF0[1] + dtau(5, 2) * iF0[7];
+        dP(0, 8) =
+            a0 * iF[0] + cste * a3 * iF[3] + cste * a4 * iF[5] - iF[5] * P[3];
+        dP(1, 8) =
+            cste * a3 * iF[4] + a1 * iF[1] + cste * a5 * iF[7] - iF[7] * P[1];
+        dP(2, 8) =
+            cste * a4 * iF[6] + cste * a5 * iF[8] + a2 * iF[2] - iF[2] * P[8];
+        dP(3, 8) =
+            a0 * iF[4] + cste * a3 * iF[1] + cste * a4 * iF[7] - iF[7] * P[3];
+        dP(4, 8) =
+            cste * a3 * iF[0] + a1 * iF[3] + cste * a5 * iF[5] - iF[5] * P[1];
+        dP(5, 8) =
+            a0 * iF[6] + cste * a3 * iF[8] + cste * a4 * iF[2] - iF[2] * P[3];
+        dP(6, 8) =
+            cste * a4 * iF[0] + cste * a5 * iF[3] + a2 * iF[5] - iF[5] * P[8];
+        dP(7, 8) =
+            cste * a3 * iF[6] + a1 * iF[8] + cste * a5 * iF[2] - iF[2] * P[1];
+        dP(8, 8) =
+            cste * a4 * iF[4] + cste * a5 * iF[1] + a2 * iF[7] - iF[7] * P[8];
+      }
+    }
+  };  // end of struct DTAU_DDF_to_DPK1_DF_Converter<3u>
+
+}  // end of namespace tfel::material::internals
+
 namespace tfel::material {
 
   /*!
@@ -1174,6 +1678,56 @@ TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DPK1_DF, DSIG_DF){
         tfel::math::
             convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
                 Kr, Ks, F1, s);
+}  // end of exe
+}
+;  // end of struct FiniteStrainBehaviourTangentOperatorConverter
+
+/*!
+ * \brief partial specialisation of
+ * FiniteStrainBehaviourTangentOperatorConverter structure
+ */
+TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DPK1_DF, DTAU_DF){
+    /*!
+     * \param[out] Kr: the result of the convertion
+     * \param[in]  Ks: the initial stiffness tensor
+     * \param[in]  F0:  the deformation gradient
+     * \param[in]  F1:  the deformation gradient
+     * \param[in]  s:  the Cauchy stress tensor
+     */
+    template <unsigned short N, typename stress>
+    static TFEL_MATERIAL_INLINE void exe(
+        Result<N, stress> & Kr,
+        const Source<N, stress>& Ks,
+        const DeformationGradientTensor<N, stress>&,
+        const DeformationGradientTensor<N, stress>& F1,
+        const StressStensor<N, stress>& s){
+        tfel::math::
+            convertKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+                Kr, Ks, F1, s);
+}  // end of exe
+}
+;  // end of struct FiniteStrainBehaviourTangentOperatorConverter
+
+/*!
+ * \brief partial specialisation of
+ * FiniteStrainBehaviourTangentOperatorConverter structure
+ */
+TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DPK1_DF, DTAU_DDF){
+    /*!
+     * \param[out] Kr: the result of the convertion
+     * \param[in]  Ks: the initial stiffness tensor
+     * \param[in]  F0:  the deformation gradient
+     * \param[in]  F1:  the deformation gradient
+     * \param[in]  s:  the Cauchy stress tensor
+     */
+    template <unsigned short N, typename stress>
+    static TFEL_MATERIAL_INLINE void exe(
+        Result<N, stress> & Kr,
+        const Source<N, stress>& Ks,
+        const DeformationGradientTensor<N, stress>& F0,
+        const DeformationGradientTensor<N, stress>& F1,
+        const StressStensor<N, stress>& s){
+        internals::DTAU_DDF_to_DPK1_DF_Converter<N>::exe(Kr, Ks, F0, F1, s);
 }  // end of exe
 }
 ;  // end of struct FiniteStrainBehaviourTangentOperatorConverter
