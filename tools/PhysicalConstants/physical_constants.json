@@ -1,11 +1,13 @@
 // Compatibility modes, in increasing order. The values of the last
 // compatibility mode are those of the next major version of `TFEL`, which
-// are not used yet: this is the value of the `value` field of the constants,
-// which is also the value used by the language bindings which are not
-// versioned, such as the `Fortran` ones. The values of the other
-// compatibility modes are given in the `values` field of the constants,
-// which is only used when those values differ from the values of the next
-// major version.
+// are not used yet: this is the value of the `value` field of the constants.
+// The values of the other compatibility modes are given in the `values`
+// field of the constants, which is only used when those values differ from
+// the values of the next major version. In a compatibility mode, the
+// `fortran_value` field gives the value exposed by the `Fortran` bindings
+// when it differs from the value of the mode: the `Fortran` bindings of the
+// `5.2.0` mode are not affected by the rounding of the values of the `C++`
+// and `Python` bindings.
 {
   mode: "5.2.0";
   description: "Compatibility module with version 5.2.0.";
@@ -28,6 +30,7 @@
    {
      mode: "5.2.0";
      value: 1.66054e-27;
+     fortran_value: 1.660539040e-27;
    }
  ];
 }
@@ -45,6 +48,7 @@
    {
      mode: "5.2.0";
      value: 6.02214e23;
+     fortran_value: 6.022140857e23;
    }
  ];
 }
@@ -62,6 +66,7 @@
    {
      mode: "5.2.0";
      value: 1.38065e-23;
+     fortran_value: 1.38064852e-23;
    }
  ];
 }
@@ -78,6 +83,7 @@
    {
      mode: "5.2.0";
      value: 7.74809e-5;
+     fortran_value: 7.7480917310e-5;
    }
  ];
 }
@@ -95,6 +101,7 @@
    {
      mode: "5.2.0";
      value: 8.85419e-12;
+     fortran_value: 8.854187817e-12;
    }
  ];
 }
@@ -112,6 +119,7 @@
    {
      mode: "5.2.0";
      value: 9.10938e-31;
+     fortran_value: 9.10938356e-31;
    }
  ];
 }
@@ -129,6 +137,7 @@
    {
      mode: "5.2.0";
      value: 1.60218e-19;
+     fortran_value: 1.6021766208e-19;
    }
  ];
 }
@@ -146,6 +155,7 @@
    {
      mode: "5.2.0";
      value: 1.60218e-19;
+     fortran_value: 1.6021766208e-19;
    }
  ];
 }
@@ -163,6 +173,7 @@
    {
      mode: "5.2.0";
      value: 96485.3;
+     fortran_value: 96485.33289;
    }
  ];
 }
@@ -177,6 +188,7 @@
    {
      mode: "5.2.0";
      value: 0.00729735;
+     fortran_value: 7.2973525664e-3;
    }
  ];
 }
@@ -194,6 +206,7 @@
    {
      mode: "5.2.0";
      value: 8.31446;
+     fortran_value: 8.3144598;
    }
  ];
 }
@@ -211,6 +224,7 @@
    {
      mode: "5.2.0";
      value: 5.67037e-8;
+     fortran_value: 5.670367e-8;
    }
  ];
 }
