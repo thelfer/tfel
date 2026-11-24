@@ -98,8 +98,11 @@ namespace tfel::math {
   };
 
   /*!
-   * \brief view of an object from a continuous memory area
-   * \tparam MappedType: type of the object mapped to the memory area
+   * \brief view of an object whose components are not stored contiguously
+   * \tparam MappedType: type of the object mapped
+   * \tparam IndexingPolicyType: indexing policy used by the view
+   * \tparam CoalescedAccessPolicy: policy giving access to the component
+   * associated with an index
    */
   template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType,
