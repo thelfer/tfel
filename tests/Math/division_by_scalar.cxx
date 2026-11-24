@@ -27,7 +27,7 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Array/ViewsArray.hxx"
-#include "TFEL/Math/Array/StridedCoalescedViewsArray.hxx"
+#include "TFEL/Math/Array/StridedViewsArray.hxx"
 
 struct DivisionByScalarTest final : public tfel::tests::TestCase {
   DivisionByScalarTest()
@@ -71,10 +71,10 @@ struct DivisionByScalarTest final : public tfel::tests::TestCase {
     for (unsigned short i = 0; i != 3; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values2[i] - (i + 1)) < eps);
     }
-    // array of strided coalesced views
+    // array of strided views
     auto values3 = std::array<double, 3>{2, 4, 6};
-    auto a2 = StridedCoalescedViewsFixedSizeVector<double, unsigned int, 3>(
-        values3.data());
+    auto a2 =
+        StridedViewsFixedSizeVector<double, unsigned int, 3>(values3.data());
     a2 /= 2;
     for (unsigned short i = 0; i != 3; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values3[i] - (i + 1)) < eps);
@@ -87,11 +87,10 @@ struct DivisionByScalarTest final : public tfel::tests::TestCase {
     for (unsigned short i = 0; i != 8; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values4[i] - (i + 1)) < eps);
     }
-    // array of strided coalesced views of symmetric tensors
+    // array of strided views of symmetric tensors
     auto values5 = std::array<double, 8>{2, 4, 6, 8, 10, 12, 14, 16};
-    auto a4 =
-        StridedCoalescedViewsFixedSizeVector<stensor<2u, double>, unsigned int,
-                                             2>(values5.data());
+    auto a4 = StridedViewsFixedSizeVector<stensor<2u, double>, unsigned int, 2>(
+        values5.data());
     a4 /= 2;
     for (unsigned short i = 0; i != 8; ++i) {
       TFEL_TESTS_ASSERT(std::abs(values5[i] - (i + 1)) < eps);
@@ -108,8 +107,7 @@ struct DivisionByScalarTest final : public tfel::tests::TestCase {
     auto i4 = ViewsFixedSizeVector<int, unsigned short, 3>(values7.data());
     i4 /= 3;
     auto values8 = std::array<int, 3>{9, -6, 12};
-    auto i5 = StridedCoalescedViewsFixedSizeVector<int, unsigned int, 3>(
-        values8.data());
+    auto i5 = StridedViewsFixedSizeVector<int, unsigned int, 3>(values8.data());
     i5 /= 3;
     const auto expected = std::array<int, 3>{3, -2, 4};
     for (unsigned short i = 0; i != 3; ++i) {

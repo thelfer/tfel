@@ -13,6 +13,7 @@
 #ifndef TFEL_MATH_TINY_MATRIX_HXX
 #define TFEL_MATH_TINY_MATRIX_HXX 1
 
+#include <array>
 #include <cstddef>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
@@ -24,7 +25,8 @@
 #include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/StridedCoalescedView.hxx"
+#include "TFEL/Math/Array/ScatteredView.hxx"
+#include "TFEL/Math/Array/StridedView.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -168,7 +170,7 @@ namespace tfel::math::internals {
   };  // end of struct BuildDerivativeViewFromTinyMatrix
 
   /*!
-   * \brief a metafunction returning a strided coalesced view type on a
+   * \brief a metafunction returning a strided view type on a
    * derivative in tiny matrix ordered of M columns.
    * \tparam are_both_scalars: boolean stating if both the function and the
    * variable types are scalars.
@@ -182,7 +184,7 @@ namespace tfel::math::internals {
             typename VariableType>
   struct BuildStridedDerivativeViewFromTinyMatrixImplementation {
     //! \brief result of the metafunction
-    using type = tfel::math::StridedCoalescedView<
+    using type = tfel::math::StridedView<
         tfel::math::derivative_type<FunctionType, VariableType>,
         typename BuildDerivativeViewFromTinyMatrixImplementation<
             tfel::math::isScalar<FunctionType>(),
@@ -214,7 +216,7 @@ namespace tfel::math::internals {
   };  // end of BuildStridedDerivativeViewFromTinyMatrixImplementation
 
   /*!
-   * \brief a metafunction returning a strided coalesced view type on a
+   * \brief a metafunction returning a strided view type on a
    * derivative in tiny matrix ordered in row major format of M columns.
    * \tparam M: number of columns of the tiny matrix
    * \tparam FunctionType: function type.
@@ -231,6 +233,66 @@ namespace tfel::math::internals {
             FunctionType,
             VariableType>::type;
   };  // end of struct BuildStridedDerivativeViewFromTinyMatrix
+
+  /*!
+   * \brief a metafunction returning a scattered view type on a
+   * derivative in tiny matrix ordered of M columns.
+   * \tparam are_both_scalars: boolean stating if both the function and the
+   * variable types are scalars.
+   * \tparam M: number of columns of the tiny matrix
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   */
+  template <bool are_both_scalars,
+            unsigned short M,
+            typename FunctionType,
+            typename VariableType>
+  struct BuildScatteredDerivativeViewFromTinyMatrixImplementation {
+    //! \brief result of the metafunction
+    using type = tfel::math::ScatteredView<
+        tfel::math::derivative_type<FunctionType, VariableType>>;
+  };  // end of BuildScatteredDerivativeViewFromTinyMatrixImplementation
+
+  /*!
+   * \brief partial specialisation when both the function and the variable
+   * types are scalar types.
+   * \tparam M: number of columns of the tiny matrix
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   */
+  template <unsigned short M, typename FunctionType, typename VariableType>
+  struct BuildScatteredDerivativeViewFromTinyMatrixImplementation<
+      true,
+      M,
+      FunctionType,
+      VariableType> {
+    //! \brief result of the metafunction
+    using type = typename BuildDerivativeViewFromTinyMatrixImplementation<
+        true,
+        true,
+        M,
+        FunctionType,
+        VariableType>::type;
+  };  // end of BuildScatteredDerivativeViewFromTinyMatrixImplementation
+
+  /*!
+   * \brief a metafunction returning a scattered view type on a
+   * derivative in tiny matrix ordered in row major format of M columns.
+   * \tparam M: number of columns of the tiny matrix
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   */
+  template <unsigned short M, typename FunctionType, typename VariableType>
+  struct BuildScatteredDerivativeViewFromTinyMatrix {
+    //! \brief result
+    using type =
+        typename BuildScatteredDerivativeViewFromTinyMatrixImplementation<
+            tfel::math::isScalar<FunctionType>() &&
+                tfel::math::isScalar<VariableType>(),
+            M,
+            FunctionType,
+            VariableType>::type;
+  };  // end of struct BuildScatteredDerivativeViewFromTinyMatrix
 
 }  // end of namespace tfel::math::internals
 
@@ -495,7 +557,7 @@ namespace tfel::math {
       BuildDerivativeViewFromTinyMatrix<M, FunctionType, VariableType>::type;
 
   /*!
-   * \brief a simple alias to a strided coalesced view type on a derivative in
+   * \brief a simple alias to a strided view type on a derivative in
    * tiny matrix of M columns.
    * \tparam M: number of columns of the matrix.
    * \tparam FunctionType: function type.
@@ -508,6 +570,23 @@ namespace tfel::math {
           M,
           FunctionType,
           VariableType>::type;
+
+  /*!
+   * \brief a simple alias to a scattered view type on a derivative in
+   * tiny matrix of M columns.
+   * \tparam M: number of columns of the matrix.
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   * \note the view stores the pointers to the components of the derivative,
+   * so that its type does not depend on `M`. This parameter is kept for
+   * consistency with `derivative_view_from_tiny_matrix` and
+   * `strided_derivative_view_from_tiny_matrix`.
+   */
+  template <unsigned short M, typename FunctionType, typename VariableType>
+  using scattered_derivative_view_from_tiny_matrix = typename tfel::math::
+      internals::BuildScatteredDerivativeViewFromTinyMatrix<M,
+                                                            FunctionType,
+                                                            VariableType>::type;
 
   /*!
    * \brief an helper function to create a derivative view from a tiny matrix
@@ -558,7 +637,7 @@ namespace tfel::math {
       const unsigned short);
 
   /*!
-   * \brief an helper function to create a strided coalesced derivative view
+   * \brief an helper function to create a strided derivative view
    * from a structure of arrays memory area.
    * \tparam I: row index.
    * \tparam J: column index.
@@ -585,7 +664,7 @@ namespace tfel::math {
       const std::size_t);
 
   /*!
-   * \brief an helper function to create a strided coalesced derivative view
+   * \brief an helper function to create a strided derivative view
    * from a structure of arrays memory area.
    * \tparam FunctionType: function type.
    * \tparam VariableType: variable type.
@@ -608,6 +687,64 @@ namespace tfel::math {
       base_type<
           numeric_type<derivative_type<FunctionType, VariableType>>>* const,
       const std::size_t,
+      const unsigned short,
+      const unsigned short);
+
+  /*!
+   * \brief an helper function to create a scattered derivative view
+   * from the pointers to the components of a matrix.
+   * \tparam I: row index.
+   * \tparam J: column index.
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   * \tparam N: number of rows of the matrix.
+   * \tparam M: number of columns of the matrix.
+   * \param[in] p: pointers to the components of the matrix, ordered in row
+   * major format.
+   * \note the view stores a copy of the pointers to the components of the
+   * derivative.
+   */
+  template <unsigned short I,
+            unsigned short J,
+            typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  TFEL_HOST_DEVICE constexpr scattered_derivative_view_from_tiny_matrix<
+      M,
+      FunctionType,
+      VariableType>
+  map_derivative_scattered(
+      const std::array<
+          base_type<numeric_type<derivative_type<FunctionType, VariableType>>>*,
+          N * M>& p);
+
+  /*!
+   * \brief an helper function to create a scattered derivative view
+   * from the pointers to the components of a matrix.
+   * \tparam FunctionType: function type.
+   * \tparam VariableType: variable type.
+   * \tparam N: number of rows of the matrix.
+   * \tparam M: number of columns of the matrix.
+   * \param[in] p: pointers to the components of the matrix, ordered in row
+   * major format.
+   * \param[in] I: row index.
+   * \param[in] J: column index.
+   * \note the view stores a copy of the pointers to the components of the
+   * derivative.
+   */
+  template <typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  TFEL_HOST_DEVICE constexpr scattered_derivative_view_from_tiny_matrix<
+      M,
+      FunctionType,
+      VariableType>
+  map_derivative_scattered(
+      const std::array<
+          base_type<numeric_type<derivative_type<FunctionType, VariableType>>>*,
+          N * M>& p,
       const unsigned short,
       const unsigned short);
 

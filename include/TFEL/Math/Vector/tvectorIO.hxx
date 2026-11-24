@@ -17,8 +17,8 @@
 #include <ostream>
 #include "TFEL/FSAlgorithm/copy.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/CoalescedView.hxx"
-#include "TFEL/Math/Array/StridedCoalescedView.hxx"
+#include "TFEL/Math/Array/ScatteredView.hxx"
+#include "TFEL/Math/Array/StridedView.hxx"
 #include "TFEL/Math/tvector.hxx"
 
 namespace tfel::math {
@@ -53,7 +53,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   std::ostream& operator<<(std::ostream& os,
-                           const CoalescedView<tvector<N, T>>& s) {
+                           const ScatteredView<tvector<N, T>>& s) {
     os << "(";
     for (unsigned short i = 0; i != N; ++i) {
       os << " " << s(i);
@@ -64,7 +64,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   std::ostream& operator<<(std::ostream& os,
-                           const CoalescedView<const tvector<N, T>>& s) {
+                           const ScatteredView<const tvector<N, T>>& s) {
     os << "(";
     for (unsigned short i = 0; i != N; ++i) {
       os << " " << s(i);
@@ -75,7 +75,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   std::ostream& operator<<(std::ostream& os,
-                           const StridedCoalescedView<tvector<N, T>>& s) {
+                           const StridedView<tvector<N, T>>& s) {
     os << "(";
     for (unsigned short i = 0; i != N; ++i) {
       os << " " << s(i);
@@ -86,7 +86,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   std::ostream& operator<<(std::ostream& os,
-                           const StridedCoalescedView<const tvector<N, T>>& s) {
+                           const StridedView<const tvector<N, T>>& s) {
     os << "(";
     for (unsigned short i = 0; i != N; ++i) {
       os << " " << s(i);

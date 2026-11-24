@@ -193,6 +193,14 @@ and to
   as documented, if `C++` keywords are allowed (see Issue #964): its
   meaning has been inverted. With the default value (`true`), `C++`
   keywords are now considered as valid identifiers.
+- The `CoalescedView` and `ConstCoalescedView` views of `TFEL/Math`, the
+  `MappableMathObjectUsingCoalescedViewConcept`,
+  `MappableMutableMathObjectUsingCoalescedViewConcept` and
+  `MappableImmutableMathObjectUsingCoalescedViewConcept` concepts and the
+  `TFEL/Math/Array/CoalescedView.hxx` header are deprecated: `Coalesced`
+  is replaced by `Scattered` in those names (see Section
+  @sec:tfel:5.2:tfel_math:views). The former names will be removed in
+  version 6.0.
 - The static method `get` of the
   `GlobalDomainSpecificLanguageOptionsManager` class has been removed.
   The global options passed to domain specific languages are now handled
@@ -592,24 +600,57 @@ $ tfel-config --cmake-prefix-path
 
 # New `TFEL/Math` features
 
-## Views of tensorial objects with coalescent memory access for data separated by a constant stride
+## Views of tensorial objects whose components are not stored contiguously {#sec:tfel:5.2:tfel_math:views}
+
+### Views of data separated by a constant stride
 
 In previous versions, the `View` class allows interpreting a contiguous
-memory area as a tensorial object. The `CoalescedView` class allows to
-create a tensorial object where each component is referred to by its own
-pointer.
+memory area as a tensorial object. The `ScatteredView` class, formerly
+named `CoalescedView` (see below), allows to create a tensorial object
+where each component is referred to by its own pointer.
 
-The `StridedCoalescedView` assumes that each component is separated by a
+The `StridedView` class assumes that each component is separated by a
 constant stride in memory, so that it only have to store one pointer and
 the value of the stride.
 
-Such views are efficient on GPUs where coalescent memory access are
-preferable.
+Such views are typically used on GPUs, where coalesced memory accesses
+are preferable.
 
 ~~~~{.cxx}
 int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
 auto s1 = map_strided<stensor<2u, int>>(values, 2);
 ~~~~
+
+### Views named after the way they address the components
+
+The views of tensorial objects whose components are not stored
+contiguously are renamed after the way they address the components:
+`ScatteredView` (formerly `CoalescedView`) stores one pointer per
+component, `StridedView` (formerly `StridedCoalescedView`) stores a
+pointer to the first component and the stride between two successive
+components, and `StridedViewsArray` replaces
+`StridedCoalescedViewsArray`. The `TFEL/Math/Array/ScatteredView.hxx`,
+`TFEL/Math/Array/StridedView.hxx` and
+`TFEL/Math/Array/StridedViewsArray.hxx` headers replace the headers named
+after the former names.
+
+These classes make no assumption on the layout of the data: whether
+memory accesses are coalesced on a GPU depends on this layout and on the
+mapping of the threads to the data.
+
+The `map`, `map_strided`, `map_strided_array` and
+`map_derivative_strided` functions are unchanged. The former names are
+deprecated aliases and the former headers include the new ones; they
+will be removed in version 6.0.
+
+### Scattered views of derivatives
+
+The `map_derivative_scattered` function creates a view of a derivative
+from the pointers to the components of a matrix. It is the counterpart
+of the `map_derivative_strided` function for a matrix whose components
+are not separated by a constant stride (see the
+[documentation of `TFEL/Math`](tfel-math.html#scattered-views-of-derivatives)
+for details).
 
 ## Walpole basis
 

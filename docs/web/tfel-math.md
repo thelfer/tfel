@@ -679,13 +679,13 @@ const auto c = eval(a + b);
 
 ## Views {#sec:tfel_math:views}
 
-Views allows to map memory area to mathematical objets. Two kind of view
-are available in `TFEL/Math`:
+Views allows to map memory area to mathematical objets. Three kinds of
+views are available in `TFEL/Math`:
 
 - the `View` class which assumes a mapping from a contiguous memory,
-- the `CoalescedView` class which allows to give a pointer for each
-  component of the mapped mathematical object.
-- the `StrideCoalescedView` class which allows to give a pointer and a
+- the `ScatteredView` class which allows to give a pointer for each
+  component of the mapped mathematical object,
+- the `StridedView` class which allows to give a pointer and a
   stride separating two successive components of the mapped mathematical
   object.
 
@@ -808,16 +808,32 @@ The result of this operation is the matrix:
 \end{pmatrix}
 \]
 
-### Views of tensorial objects with coalescent memory access
+### Views of tensorial objects whose components are not stored contiguously
 
 The `View` class allows to interpret a contiguous memory area as a
-tensorial object. Such views are not efficient on GPUs where coalescent
-memory access are preferable. The newly introduced `CoalescedView` class
-offers a solution to this issue by storing one pointer per component.
-This is essentially a "scattered" view that achieves coalescent memory
-access when the backend storage is properly organized.
+tensorial object. The `ScatteredView` and `StridedView` classes map
+tensorial objects whose components are not stored contiguously. They are
+named after the way they address those components:
 
-A coalesced view is initialized by an array of pointers to the
+- a `ScatteredView` stores one pointer per component,
+- a `StridedView` stores a pointer to the first component and the stride
+  between two successive components.
+
+Such views are typically used on GPUs, where coalesced memory accesses
+are preferable, i.e. where the threads executing the same instruction
+shall access neighbouring memory locations. The views make no assumption
+on the layout of the data: whether memory accesses are coalesced depends
+on this layout and on the mapping of the threads to the data.
+
+> **Former names**
+>
+> The `ScatteredView` and `StridedView` classes were named
+> `CoalescedView` and `StridedCoalescedView`. Those names are deprecated,
+> see the [release notes of Version 5.2](release-notes-5.2.html).
+
+#### Scattered views
+
+A scattered view is initialized by an array of pointers to the
 components of the mapped object, as illustrated in the following
 snippet:
 
@@ -831,10 +847,10 @@ In this snippet, the components of the symmetric tensor `s1` are not
 stored continuously but each component is associated to an independent
 pointer.
 
-### Views of tensorial objects with strided coalescent memory access (SoA layout)
+#### Strided views (SoA layout)
 
-While `CoalescedView` stores one pointer per component, the
-`StridedCoalescedView` class provides an alternative approach using a
+While `ScatteredView` stores one pointer per component, the
+`StridedView` class provides an alternative approach using a
 single pointer and a stride value. This is particularly advantageous for
 Structure-of-Arrays (SoA) layouts where components are regularly spaced
 in memory.
@@ -848,7 +864,7 @@ The main benefits of this approach are:
   costs only one floating-point operation (one multiplication and one
   addition), which is essentially free on modern GPU architectures.
 
-A strided coalesced view is created using the `map_strided` function, as
+A strided view is created using the `map_strided` function, as
 illustrated in the following snippet:
 
 ~~~~{.cxx}
@@ -862,12 +878,32 @@ In this example, `s1` and `s2` are two symmetric tensors stored in SoA
 format with a stride of 2. The component `s1[i]` is located at address
 `&values[0] + i * 2`, while `s2[i]` is at `&values[1] + i * 2`.
 
-### Views of derivatives with strided coalescent memory access
+#### Arrays of strided views
+
+The `map_strided_array` function returns an object of type
+`StridedViewsArray` which acts like a fixed size array of mathematical
+objects stored component by component, each element being a strided
+view. As for the `map_array` function, its template argument describes
+an array of mathematical objects:
+
+~~~~{.cxx}
+// SoA layout: [s0_c0, s1_c0, s0_c1, s1_c1, s0_c2, s1_c2, s0_c3, s1_c3]
+int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
+auto a = map_strided_array<tvector<2u, stensor<2u, int>>>(values);
+~~~~
+
+In this example, `a[0]` and `a[1]` refer to the same components as the
+views `s1` and `s2` of the previous snippet: the stride is the number of
+objects of the array. When the mapped objects hold quantities, the memory
+location holds values of their base type, as for the `map_array`
+function.
+
+#### Strided views of derivatives
 
 The `map_derivative_strided` function creates a view of a derivative
 sub-block of a base matrix whose components are stored in SoA layout. It is
-typically used on the GPU to assemble a Jacobian block by block with
-coalescent memory access, without materialising a `tmatrix`.
+typically used on GPUs to assemble a Jacobian block by block, without
+materialising a `tmatrix`.
 
 Its template parameters are the block position `I, J`, the function and
 variable types, and the number of rows `N` and columns `M` of the base
@@ -885,6 +921,31 @@ map_derivative_strided<4, 0, stensor<2u, double>, stensor<2u, double>, 8, 8>(p, 
 
 Its component \((a, b)\) is element \((4 + a, b)\) of the base matrix,
 located at address `p + ((4 + a) * 8 + b) * s`.
+
+#### Scattered views of derivatives
+
+The `map_derivative_scattered` function is the counterpart of the
+`map_derivative_strided` function for a base matrix whose components are
+not separated by a constant stride. It has the same template parameters;
+the base matrix is passed as an array of pointers to its components,
+ordered in row-major format:
+
+~~~~{.cxx}
+// pointers to the components of the base matrix
+std::array<double*, 8 * 8> ptrs = ...;
+map_derivative_scattered<4, 0, stensor<2u, double>, stensor<2u, double>, 8, 8>(ptrs) =
+    st2tost2<2u, double>::Id();
+~~~~
+
+Its component \((a, b)\) is element \((4 + a, b)\) of the base matrix,
+pointed to by `ptrs[(4 + a) * 8 + b]`.
+
+The view stores a copy of the pointers to its components, i.e. one
+pointer per component (\(16\) in this example, \(36\) for the derivative
+of a symmetric tensor with respect to a symmetric tensor in \(3D\)). The
+`map_derivative_strided` function, which returns a view storing a single
+pointer and a stride, shall be preferred when the components of the base
+matrix are regularly spaced.
 
 # Solvers for fixed size non-linear systems {#sec:tfel_math:non_linear_solvers}
 

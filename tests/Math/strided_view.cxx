@@ -1,8 +1,8 @@
 /*!
- * \file   coalesced_view.cxx
+ * \file   strided_view.cxx
  * \brief
- * \author th202608
- * \date 24/10/2025
+ * \author Tristan Chenaille
+ * \date 15/01/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include <cmath>
+#include <limits>
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
@@ -23,7 +24,9 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-#include "TFEL/Math/Array/CoalescedView.hxx"
+#include "TFEL/Math/Array/StridedView.hxx"
+#include "TFEL/Math/Array/StridedViewsArray.hxx"
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -31,10 +34,10 @@
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/Matrix/tmatrixIO.hxx"
 
-struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
-  StensorCoalescedViewTest()
-      : tfel::tests::TestCase("TFEL/Math", "StensorCoalescedViewTest") {
-  }  // end of StensorCoalescedViewTest
+struct StensorStridedViewTest final : public tfel::tests::TestCase {
+  StensorStridedViewTest()
+      : tfel::tests::TestCase("TFEL/Math", "StensorStridedViewTest") {
+  }  // end of StensorStridedViewTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
@@ -47,6 +50,10 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     this->test8();
     this->test9();
     this->test10();
+    this->test11();
+    this->test12();
+    this->test13();
+    this->test14();
     return this->result;
   }  // end of execute
  private:
@@ -54,12 +61,10 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   static constexpr auto eps = 1e-14;
   void test1() {
     using namespace tfel::math;
+    // SoA layout: [s0_c0, s1_c0, s0_c1, s1_c1, s0_c2, s1_c2, s0_c3, s1_c3]
     int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
-    std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
-    std::array<const int*, 4> ptrs2{&values[1], &values[3], &values[5],
-                                    &values[7]};
-    auto s1 = map<stensor<2u, int>>(ptrs);
-    const auto s2 = map<const stensor<2u, int>>(ptrs2);
+    auto s1 = map_strided<stensor<2u, int>>(&values[0], 2);
+    const auto s2 = map_strided<const stensor<2u, int>>(&values[1], 2);
     TFEL_TESTS_ASSERT(s1[0] == 1);
     TFEL_TESTS_ASSERT(s1[1] == 2);
     TFEL_TESTS_ASSERT(s1[2] == 3);
@@ -80,11 +85,10 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   void test2() {
     using namespace tfel::math;
     constexpr auto s = []() constexpr->stensor<2, int> {
+      // SoA layout: [s0_c0, s1_c0, s0_c1, s1_c1, s0_c2, s1_c2, s0_c3, s1_c3]
       int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
-      std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
-      std::array ptrs2{&values[1], &values[3], &values[5], &values[7]};
-      auto s1 = map<stensor<2u, int>>(ptrs);
-      auto s2 = map<stensor<2u, int>>(ptrs2);
+      auto s1 = map_strided<stensor<2u, int>>(&values[0], 2);
+      auto s2 = map_strided<stensor<2u, int>>(&values[1], 2);
       static_assert(StensorConcept<decltype(s1)>);
       static_assert(StensorConcept<decltype(s2)>);
       static_assert(s1.size(0) == 4);
@@ -100,11 +104,10 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   void test2b() {
     using namespace tfel::math;
     constexpr auto s = []() constexpr->stensor<2, int> {
+      // SoA layout: [s0_c0, s1_c0, s0_c1, s1_c1, s0_c2, s1_c2, s0_c3, s1_c3]
       const int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
-      std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
-      std::array ptrs2{&values[1], &values[3], &values[5], &values[7]};
-      auto s1 = map<const stensor<2u, int>>(ptrs);
-      auto s2 = map<const stensor<2u, int>>(ptrs2);
+      auto s1 = map_strided<const stensor<2u, int>>(&values[0], 2);
+      auto s2 = map_strided<const stensor<2u, int>>(&values[1], 2);
       static_assert(StensorConcept<decltype(s1)>);
       static_assert(StensorConcept<decltype(s2)>);
       static_assert(s1.size(0) == 4);
@@ -120,11 +123,10 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   void test3() {
     using namespace tfel::math;
     constexpr auto s = []() constexpr->std::array<int, 8> {
+      // SoA layout: [s0_c0, s1_c0, s0_c1, s1_c1, s0_c2, s1_c2, s0_c3, s1_c3]
       std::array<int, 8> values = {1, 10, 2, 20, 3, 30, 4, 40};
-      std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
-      std::array ptrs2{&values[1], &values[3], &values[5], &values[7]};
-      auto s1 = map<stensor<2u, int>>(ptrs);
-      const auto s2 = map<stensor<2u, int>>(ptrs2);
+      auto s1 = map_strided<stensor<2u, int>>(&values[0], 2);
+      const auto s2 = map_strided<stensor<2u, int>>(&values[1], 2);
       s1 = s2;
       return values;
     }
@@ -142,8 +144,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     constexpr auto s = []() constexpr->std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
-      std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
-      auto s1 = map<stensor<2u, int>>(ptrs);
+      auto s1 = map_strided<stensor<2u, int>>(&values[0], 1);
       s1 = stensor<2, int>::Id();
       return values;
     }
@@ -157,8 +158,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     constexpr auto s = []() constexpr->std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
-      std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
-      auto s1 = map<stensor<2u, int>>(ptrs);
+      auto s1 = map_strided<stensor<2u, int>>(&values[0], 1);
       s1 += stensor<2, int>::Id();
       return values;
     }
@@ -172,8 +172,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     constexpr auto s = []() constexpr->std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
-      std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
-      auto s1 = map<stensor<2u, int>>(ptrs);
+      auto s1 = map_strided<stensor<2u, int>>(&values[0], 1);
       s1 -= stensor<2, int>::Id();
       return values;
     }
@@ -187,16 +186,14 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     constexpr auto s = []() constexpr->std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
-      std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
-      auto s1 = map<stensor<2u, int>>(ptrs);
+      auto s1 = map_strided<stensor<2u, int>>(&values[0], 1);
       s1 *= 2;
       return values;
     }
     ();
     constexpr auto s2 = []() constexpr->std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
-      std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
-      auto s1 = map<stensor<2u, int>>(ptrs);
+      auto s1 = map_strided<stensor<2u, int>>(&values[0], 1);
       s1 /= 2;
       return values;
     }
@@ -214,8 +211,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     auto os = std::ostringstream{};
     using namespace tfel::math;
     std::array<int, 4> values = {0, 1, 2, 3};
-    std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
-    auto s1 = map<stensor<2u, int>>(ptrs);
+    auto s1 = map_strided<stensor<2u, int>>(&values[0], 1);
     os << s1;
     TFEL_TESTS_CHECK_EQUAL(os.str(), "[ 0 1 2 3 ]");
   }
@@ -223,8 +219,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     auto os = std::ostringstream{};
     using namespace tfel::math;
     std::array<int, 3> values = {1, 2, 3};
-    std::array ptrs{&values[0], &values[1], &values[2]};
-    auto s1 = map<tvector<3u, int>>(ptrs);
+    auto s1 = map_strided<tvector<3u, int>>(&values[0], 1);
     os << s1;
     TFEL_TESTS_CHECK_EQUAL(os.str(), "( 1 2 3 )");
   }
@@ -232,18 +227,103 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     auto os = std::ostringstream{};
     using namespace tfel::math;
     std::array<int, 4> values = {0, 1, 2, 3};
-    std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
-    auto s1 = map<tmatrix<2u, 2u, int>>(ptrs);
+    auto s1 = map_strided<tmatrix<2u, 2u, int>>(&values[0], 1);
     os << s1;
     TFEL_TESTS_CHECK_EQUAL(os.str(), "[[0,1][2,3]]");
   }
+  void test11() {
+    // Test StridedViewsArray
+    using namespace tfel::math;
+    // SoA layout for 3 stensor<2>: 3 objects with 4 components each
+    // Memory: [c0_s0, c0_s1, c0_s2, c1_s0, c1_s1, c1_s2, ...]
+    std::array<int, 12> values = {1,   2,   3,   10,   20,   30,
+                                  100, 200, 300, 1000, 2000, 3000};
+    auto arr = StridedViewsFixedSizeVector<stensor<2u, int>, unsigned short, 3>(
+        &values[0]);
+    // Check object 0: components at indices 0, 3, 6, 9
+    TFEL_TESTS_ASSERT(arr[0][0] == 1);
+    TFEL_TESTS_ASSERT(arr[0][1] == 10);
+    TFEL_TESTS_ASSERT(arr[0][2] == 100);
+    TFEL_TESTS_ASSERT(arr[0][3] == 1000);
+    // Check object 1: components at indices 1, 4, 7, 10
+    TFEL_TESTS_ASSERT(arr[1][0] == 2);
+    TFEL_TESTS_ASSERT(arr[1][1] == 20);
+    TFEL_TESTS_ASSERT(arr[1][2] == 200);
+    TFEL_TESTS_ASSERT(arr[1][3] == 2000);
+    // Check object 2: components at indices 2, 5, 8, 11
+    TFEL_TESTS_ASSERT(arr[2][0] == 3);
+    TFEL_TESTS_ASSERT(arr[2][1] == 30);
+    TFEL_TESTS_ASSERT(arr[2][2] == 300);
+    TFEL_TESTS_ASSERT(arr[2][3] == 3000);
+    // Test modification through view
+    arr[1] = stensor<2, int>::Id();
+    TFEL_TESTS_ASSERT(values[1] == 1);   // c0_s1
+    TFEL_TESTS_ASSERT(values[4] == 1);   // c1_s1
+    TFEL_TESTS_ASSERT(values[7] == 1);   // c2_s1
+    TFEL_TESTS_ASSERT(values[10] == 0);  // c3_s1
+    // Test a view of constant data
+    const auto& cvalues = values;
+    const auto carr =
+        map_strided_array<const tvector<3u, stensor<2u, int>>>(cvalues.data());
+    TFEL_TESTS_ASSERT(carr[1][0] == 1);
+    TFEL_TESTS_ASSERT(carr[2][1] == 30);
+  }
+  void test12() {
+    // Test StridedViewsArray with quantities, which are mapped on
+    // values of their base type
+    using namespace tfel::math;
+    using stress = qt<unit::Stress, double>;
+    // SoA layout for 2 stensor<2>: [c0_s0, c0_s1, c1_s0, c1_s1, ...]
+    std::array<double, 8> values = {1, 2, 10, 20, 100, 200, 1000, 2000};
+    auto arr =
+        map_strided_array<tvector<2u, stensor<2u, stress>>>(values.data());
+    TFEL_TESTS_ASSERT(std::abs(arr[1][2].getValue() - 200) < eps);
+    arr[0] = 2 * arr[1];
+    TFEL_TESTS_ASSERT(std::abs(values[0] - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[2] - 40) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[4] - 400) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[6] - 4000) < eps);
+    const auto& cvalues = values;
+    const auto carr = map_strided_array<const tvector<2u, stensor<2u, stress>>>(
+        cvalues.data());
+    TFEL_TESTS_ASSERT(std::abs(carr[0][3].getValue() - 4000) < eps);
+    // scalar quantities
+    auto sarr = map_strided_array<tvector<8u, stress>>(values.data());
+    sarr[1] = stress(3);
+    TFEL_TESTS_ASSERT(std::abs(values[1] - 3) < eps);
+    const auto csarr =
+        map_strided_array<const tvector<8u, stress>>(cvalues.data());
+    TFEL_TESTS_ASSERT(std::abs(csarr[7].getValue() - 2000) < eps);
+  }
+  void test13() {
+    // Test StridedViewsArray with a memory indexing policy whose
+    // stride is not one
+    using namespace tfel::math;
+    std::array<int, 5> values = {1, 2, 3, 4, 5};
+    auto arr = StridedViewsArray<
+        int, FixedSizeVectorIndexingPolicy<unsigned short, 3, 2>>(&values[0]);
+    TFEL_TESTS_ASSERT(arr[1] == 3);
+    TFEL_TESTS_ASSERT(arr(1) == 3);
+    TFEL_TESTS_ASSERT(arr[2] == 5);
+    TFEL_TESTS_ASSERT(arr(2) == 5);
+  }
+  void test14() {
+    // the stride is not converted to the size type of the indexing policy
+    using namespace tfel::math;
+    constexpr auto stride = std::numeric_limits<std::size_t>::max();
+    int value = 0;
+    const auto s = map_strided<stensor<2u, int>>(&value, stride);
+    const auto cs = map_strided<const stensor<2u, int>>(&value, stride);
+    TFEL_TESTS_ASSERT(s.data().second == stride);
+    TFEL_TESTS_ASSERT(cs.data().second == stride);
+  }
 };
 
-TFEL_TESTS_GENERATE_PROXY(StensorCoalescedViewTest, "StensorCoalescedViewTest");
+TFEL_TESTS_GENERATE_PROXY(StensorStridedViewTest, "StensorStridedViewTest");
 
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("CoalescedView.xml");
+  m.addXMLTestOutput("StridedView.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main
