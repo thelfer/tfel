@@ -108,12 +108,16 @@ and to
   by the Euler angles in the convention of Bunge, as the polycrystal
   classes of `MFront` (see Issue #1270): the rotation matrix was the
   Bunge matrix instead of its transpose, i.e. the inverse rotation was
-  applied.
-- `abaqusexplicit` interface (see Issue #1274): the results of
-  orthotropic behaviours using the `MFront` orthotropy management policy
-  change when the material frame is not symmetric with respect to the
-  global frame: the integration applied the inverse rotation, and the
-  second material axis was read beyond the orientation in 2D.
+  applied. The results of the `MTest` files using this option change,
+  unless the rotation matrix is symmetric.
+- `abaqusexplicit` interface (see Issues #1274 and #1431): the results
+  of orthotropic behaviours using the `MFront` orthotropy management
+  policy change. The integration applied the inverse rotation: in 3D,
+  the results are only unchanged when the rotation matrix is symmetric.
+  In 2D, the second material axis was read beyond the orientation, and
+  the axial strain of plane stress computations was read without the
+  offset of the material axes: the results change whatever the
+  orientation.
 - `MTest` assembles the equations associated with the off-diagonal
   components of the deformation gradient of finite strain behaviours
   with the off-diagonal stresses, and applies the imposed off-diagonal
@@ -122,10 +126,10 @@ and to
   wrong state, converge to the right state, and the number of
   iterations of the other ones may change.
 - In the homogenisation schemes of `TFEL/Material`, the elasticity of an
-  anisotropic `OrientedDistribution` or `Grain`, given in the local basis
-  of its inclusions, is rotated to the global basis (see Issue #1299):
-  it was used as a global elasticity, so that the orientation of these
-  phases was ignored. `computeEllipsoidLocalisationTensor` and
+  anisotropic `OrientedDistribution`, given in the local basis of its
+  inclusions, is rotated to the global basis (see Issue #1299): it was
+  used as a global elasticity, so that the orientation of the elasticity
+  of these phases was ignored. `computeEllipsoidLocalisationTensor` and
   `computePlaneStrainLocalisationTensor` with an isotropic matrix rotate
   the elasticity of the inclusion as well, as documented. The results of
   the dilute, Mori-Tanaka and self-consistent schemes with such phases
@@ -133,7 +137,8 @@ and to
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
-  previous results, which were the derivative of the adjugate.
+  previous results, which were the derivative of the adjugate (also in
+  Version 5.1.1).
 
 ## Fixes improving convergence
 
@@ -147,6 +152,10 @@ and to
   (respectively `TinyBroyden2Solver`), the update is performed by the
   `updateJacobian` (respectively `updateJacobianInvert`) method, which
   replaces their `updateOrCheckJacobian` method.
+- The tiny non-linear solvers (and the `Implicit` DSLs) evaluate the
+  estimate given by the last allowed correction (see Issue #1288): an
+  integration that converges with exactly `iterMax` corrections now
+  succeeds, and a failing one evaluates its residual once more.
 - The `FiniteStrainSingleCrystal` brick takes into account, in the
   jacobian and the consistent tangent operator, the derivatives of the
   normalisation of the inverse of the plastic deformation gradient
@@ -165,9 +174,8 @@ and to
 ## Fixes affecting user's experience
 
 - In the python bindings, the `None` value of the `OutOfBoundsPolicy`
-  enumeration is renamed `None_`, and the first argument of the `execute`
-  method of `ProcessManagerCommand` is renamed `in_`, as `None` and `in`
-  are reserved keywords in python (see Issue #1072).
+  enumeration is renamed `None_`, as `None` is a reserved keyword in
+  python (see Issue #1072).
 - `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
   expansion coefficients is now an error (except `ThermalExpansion1` and
   `ThermalExpansion2` in plane stress).
@@ -176,7 +184,19 @@ and to
   `MFront` and `tfel-check` files (numbers of iterations and of
   sub-steps, columns, array sizes of the DSLs, ...), shall be written
   without decimal point nor exponent: `3.0`, `3.` or `3e0` are now
-  rejected (see Issue #1326).
+  rejected (see Issue #1326). They were read up to the first character
+  which is not a digit: `2.5` was read as `2` and `1e2` as `1`. Negative
+  values given for an unsigned integer and values out of the range of
+  the type are rejected as well (see Issue #1201).
+- Inputs that were silently ignored are now rejected (see Issue #1256):
+  the `overriding_parameters` option of the model DSLs, `@Bounds` and
+  `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
+  component of a scalar variable, and the `Ksf` option of the
+  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
+- The array sizes of the variables of `MFront` and the integer
+  formulas evaluated by `IntegerEvaluator` shall only contain integers:
+  a number with a decimal point or an exponent, such as `2.5` (which was
+  truncated to `2`), `1e1` or `2.0`, is now rejected (see Issue #1321).
 
 ## Internal incompatibilities
 
@@ -192,7 +212,8 @@ and to
 - The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
   as documented, if `C++` keywords are allowed (see Issue #964): its
   meaning has been inverted. With the default value (`true`), `C++`
-  keywords are now considered as valid identifiers.
+  keywords are now considered as valid identifiers (also in Version
+  5.1.1).
 - The `CoalescedView` and `ConstCoalescedView` views of `TFEL/Math`, the
   `MappableMathObjectUsingCoalescedViewConcept`,
   `MappableMutableMathObjectUsingCoalescedViewConcept` and
@@ -211,18 +232,9 @@ and to
   ordered by their positions (the order given to the constructor, or the
   order of their first appearance in the expression), instead of the
   alphabetical order (see Issue #1209).
-- The tiny non-linear solvers (and the `Implicit` DSLs) evaluate the
-  estimate given by the last allowed correction (see Issue #1288): an
-  integration that converges with exactly `iterMax` corrections now
-  succeeds, and a failing one evaluates its residual once more.
 - The Levenberg-Marquardt minimisers (`LevenbergMarquardt`,
   `FSLevenbergMarquardt`) reject the steps that increase the cost (see
   Issue #1288): the iterates of every fit change.
-- Inputs that were silently ignored are now rejected (see Issue #1256):
-  the `overriding_parameters` option of the model DSLs, `@Bounds` and
-  `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
-  component of a scalar variable, and the `Ksf` option of the
-  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
 - The type identifiers exported by `MFront` for the variables whose
   type is the derivative of a tensorial type alias (such as
   `StressStensor`, `Stensor`, `TVector` or `Tensor`) with respect to a
@@ -231,12 +243,6 @@ and to
   exported as `268`, like `Stensor4`, instead of `76`, which `MTest` and
   `MGIS` decode as `derivative_type<stensor<1, real>, real>`. Behaviours
   declaring such variables must be generated again (see Issue #1332).
-- The array sizes of the variables of `MFront` and the integer
-  formulas evaluated by `IntegerEvaluator` (for instance the
-  `tile_size` option of the `TDLS` linear solver) shall only contain
-  integers: a number with a decimal point or an exponent, such as `2.5`
-  (which was truncated to `2`), `1e1` or `2.0`, is now rejected (see
-  Issue #1321).
 - The value of a raw string literal token given by `CxxTokenizer` holds the
   whole literal, from the `R` delimiter to the closing `"` included, and its
   offset is that of the `R`, as for a quoted string (see Issue #1390): the
