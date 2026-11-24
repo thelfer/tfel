@@ -166,7 +166,7 @@ namespace tfel::math {
     operator[](const typename MemoryIndexingPolicyType::size_type i) noexcept {
       static_assert(MemoryIndexingPolicyType::arity == 1u, "invalid call");
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
-      auto* const d = this->data_pointer + i;
+      auto* const d = this->data_pointer + this->getIndex(i);
       if constexpr (is_scalar) {
         return typename StridedCoalescedViewsArray::view_type(*d);
       } else {
@@ -180,7 +180,7 @@ namespace tfel::math {
             const noexcept {
       static_assert(MemoryIndexingPolicyType::arity == 1u, "invalid call");
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
-      auto* const d = this->data_pointer + i;
+      auto* const d = this->data_pointer + this->getIndex(i);
       if constexpr (is_scalar) {
         return typename StridedCoalescedViewsArray::const_view_type(*d);
       } else {

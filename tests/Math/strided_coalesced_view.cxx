@@ -51,6 +51,7 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     this->test10();
     this->test11();
     this->test12();
+    this->test13();
     return this->result;
   }  // end of execute
  private:
@@ -292,6 +293,18 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     const auto csarr =
         map_strided_array<const tvector<8u, stress>>(cvalues.data());
     TFEL_TESTS_ASSERT(std::abs(csarr[7].getValue() - 2000) < eps);
+  }
+  void test13() {
+    // Test StridedCoalescedViewsArray with a memory indexing policy whose
+    // stride is not one
+    using namespace tfel::math;
+    std::array<int, 5> values = {1, 2, 3, 4, 5};
+    auto arr = StridedCoalescedViewsArray<
+        int, FixedSizeVectorIndexingPolicy<unsigned short, 3, 2>>(&values[0]);
+    TFEL_TESTS_ASSERT(arr[1] == 3);
+    TFEL_TESTS_ASSERT(arr(1) == 3);
+    TFEL_TESTS_ASSERT(arr[2] == 5);
+    TFEL_TESTS_ASSERT(arr(2) == 5);
   }
 };
 
