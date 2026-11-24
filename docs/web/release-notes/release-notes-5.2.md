@@ -104,12 +104,67 @@ and to
 
 ## Issues affecting end-users's results
 
+- Formulas given as strings in `MFront` files, such as material
+  properties or options of the bricks (see Issue #1103): a ratio of
+  integer literals, such as `1/2`, was compiled as an integer division
+  and evaluated to `0` (also in Version 5.1.1).
+- `RungeKutta` DSLs, `rk54` (the default) and `rk4` algorithms (see
+  Issues #1095 and #1109): the final stress was computed with the
+  stiffness tensor of the middle of the time step, when this tensor is
+  computed by the behaviour, and the last stage of `rk4` was evaluated
+  at the middle of the time step (also in Version 5.1.1).
+- `RungeKutta` DSLs (see Issue #1430): in the final stress, the values
+  at the end of the time step of the temperature, the external state
+  variables and the gradients were substituted in `@ComputeStress`
+  without parentheses: `200e9 - 1e8 * T` was evaluated as
+  `200e9 - 1e8 * T + dT`.
+- `RungeKutta` DSLs (see Issue #1347): in
+  `@UpdateAuxiliaryStateVariables`, the gradients, the external state
+  variables and the variables computed by models have their values at
+  the current date, not at the beginning of the time step. Blocks using
+  `T + dT` to get the value at the end of the time step must be
+  modified.
+- `generic` interface, finite strain behaviours in plane stress and
+  axisymmetrical generalised plane stress (see Issues #1285 and #1326):
+  the stresses and the tangent operators are converted with the axial
+  component of the deformation gradient computed by the behaviour. This
+  component was added to the one given by the solver for the behaviours
+  based on the Green-Lagrange strain and for those declaring an
+  `AxialDeformationGradient`: with the solvers giving `1`, as `MTest`
+  and `mfem-mgis` do, the Cauchy stress of the former and the
+  Piola-Kirchhoff stresses of the latter were wrong by a factor of about
+  two. For the behaviours based on the Hencky strain, the component
+  given by the solver was used: the Cauchy stress is unchanged, the
+  Piola-Kirchhoff stresses and the tangent operators change.
+- `@ComputeThermalExpansion` with options and the thermal expansion
+  options of the stress potentials (see Issue #1303): the
+  `ReferenceTemperature` declared by an external `MFront` file was
+  ignored and 293.15 K was used.
+- In-place division of the arrays and views of `TFEL/Math` (tensors,
+  vectors, matrices) by an integer, as in `s /= 2;` (see Issue #1097):
+  every component was set to zero (also in Version 5.1.1).
+- Isotropic DSLs (see Issue #1107): when several external state
+  variables are declared in the same statement, only the value at the
+  middle of the time step of the last one was initialised (also in
+  Version 5.1.1).
 - `@RotationMatrix<Euler>` of `MTest` now gives the rotation described
   by the Euler angles in the convention of Bunge, as the polycrystal
   classes of `MFront` (see Issue #1270): the rotation matrix was the
   Bunge matrix instead of its transpose, i.e. the inverse rotation was
   applied. The results of the `MTest` files using this option change,
   unless the rotation matrix is symmetric.
+- `MTest` (see Issue #1260): in plane stress, the thermal strain of the
+  orthotropic behaviours which only declare `ThermalExpansion1` and
+  `ThermalExpansion2`, as the `castem` ones, was silently null.
+- Stress-free expansions in the `castem`, `aster`, `abaqus`, `ansys`,
+  `dianafea` and `lsdyna` interfaces (see Issue #1099): the shear
+  components of the expansion were subtracted from the wrong component
+  of the strain, with a wrong factor or in the wrong order. With
+  `ansys`, the shear components of the stress at the beginning of the
+  time step were halved (also in Version 5.1.1).
+- `abaqus` and `ansys` interfaces, plane stress (see Issue #1307): the
+  axial stress-free expansion (thermal expansion, swelling) of small
+  strain behaviours was subtracted from the in-plane shear strain.
 - `abaqusexplicit` interface (see Issues #1274 and #1431): the results
   of orthotropic behaviours using the `MFront` orthotropy management
   policy change. The integration applied the inverse rotation: in 3D,
@@ -118,6 +173,32 @@ and to
   the axial strain of plane stress computations was read without the
   offset of the material axes: the results change whatever the
   orientation.
+- `abaqus` interface (see Issue #1432): the rotation by `DROT`, applied
+  by `Abaqus/Standard` to the stress at the beginning of the time step,
+  is cancelled for the finite strain behaviours and for the
+  `FiniteRotationSmallStrain` and `MieheApelLambrechtLogarithmicStrain`
+  strategies. The results of the behaviours using this stress change
+  when `DROT` is not the identity.
+- The `aster`, `ansys`, `dianafea`, `cyrano` and `zmat` interfaces
+  evaluate the `@APrioriTimeStepScalingFactor` and
+  `@APosterioriTimeStepScalingFactor` blocks, which were ignored (see
+  Issue #1307): the time steps rejected by those blocks were accepted.
+- The `**` operator of the formulas read by `MTest`, `MFront` and
+  `tfel-check` is right-associative (see Issue #1349): `a**b**c` is
+  `a**(b**c)` and was `(a**b)**c`.
+- Formulas (see Issues #1103 and #1209): `&&` has precedence over `||`,
+  the integer formulas are evaluated from left to right (`2*3/4` gave
+  `0`), and the derivatives of `log10` and of the formulas whose
+  variables are not in alphabetical order are fixed (also in Version
+  5.1.1).
+- HCP crystals (see Issue #1135): some families of slip systems, such as
+  the pyramidal `<-1-123>{11-22}` systems, have 6 systems instead of 3.
+  The results of the behaviours using them change (also in Version
+  5.1.1).
+- The default values of the parameters and the bounds of the material
+  properties and of the models are written with 14 significant digits in
+  the generated sources (see Issues #953, #1068 and #1187): they were
+  written with 6 digits (also in Version 5.1.1).
 - `MTest` assembles the equations associated with the off-diagonal
   components of the deformation gradient of finite strain behaviours
   with the off-diagonal stresses, and applies the imposed off-diagonal
@@ -125,6 +206,122 @@ and to
   leaving one of these components free, which failed or converged to a
   wrong state, converge to the right state, and the number of
   iterations of the other ones may change.
+- `MTest` (see Issue #1315): the external state variables declared after
+  a tensorial one are read at the right position in `@Test`,
+  `@UserDefinedPostProcessing` and the `PTest` extractors.
+- `MTest` with `@DynamicTimeStepScaling` (see Issues #1313 and #1351):
+  the `generic` behaviours may increase the time step, and the tests and
+  post-processings are only evaluated on the accepted time steps.
+- `MTest` (see Issue #1111): with a dynamic time step scaling and no
+  `@MinimalTimeStep`, the last time step of a period could end after it,
+  and any `@Event` activated every constraint (also in Version 5.1.1).
+- `PTest` (see Issue #1313): the contact pressure of a mandrel no longer
+  contributes to the end cap effect.
+- `MTest` (see Issues #1129, #1161 and #1185): the results change for
+  the Piola-Kirchhoff stresses of the rotated orthotropic `generic`
+  behaviours, the `castem_umat` behaviours having external state
+  variables, the orthotropic `castem` finite strain behaviours in plane
+  stress and the `dianafea` behaviours in 3D (also in Version 5.1.1).
+- `MTest` (see Issue #1307): the results change for the orthotropic
+  `abaqus` behaviours having a thermal expansion in plane stress, in a
+  rotated frame, and for the `ansys` finite strain behaviours using the
+  stress at the beginning of the time step in 3D.
+- `generic` interface (see Issue #1137): the deformation gradient of the
+  orthotropic behaviours based on a strain measure was rotated as a
+  symmetric tensor. The results of `MTest` for such behaviours in a
+  rotated frame change (also in Version 5.1.1).
+- `generic` interface (see Issue #1051): for the orthotropic behaviours
+  having several gradients, the `rotateArrayOfGradients`,
+  `rotateArrayOfThermodynamicForces` and
+  `rotateArrayOfTangentOperatorBlocks` functions wrote the variables
+  following the first one at the position of the first integration
+  point.
+- `generic` interface, finite strain behaviours (see Issues #951 and
+  #1050): the stress is converted when the integration succeeds with
+  unreliable results, and the stress returned with a prediction operator
+  is the one at the beginning of the time step (also in Version 5.1.1).
+- `ScalarDamage` stress potential in axisymmetrical generalised plane
+  stress (see Issue #1256): the axial stress was `(1 - d)` times the
+  imposed one.
+- `StandardElastoViscoPlasticity` brick, porous plasticity (see Issues
+  #1309, #1324 and #1336): a negative estimate of the porosity is
+  brought back to zero (the porosity was doubled), the staggered scheme
+  updates the porosity for the flows without isotropic hardening rule
+  which save their porosity increase, and the Gurson-Tvergaard-Needleman
+  and Rousselier-Tanguy-Besson equivalent stresses change for null or
+  very small porosities.
+- `StandardElastoViscoPlasticity` brick, porous plasticity (see Issues
+  #1101 and #1113): the nucleation models take all the inelastic flows
+  into account, not only the first one, and the
+  Gurson-Tvergaard-Needleman equivalent stress is no longer negative
+  under hydrostatic compression (also in Version 5.1.1).
+- `StandardElastoViscoPlasticity` brick (see Issues #1309 and #1340):
+  the static recovery of the `DRS` kinematic hardening rule is applied
+  when the flow is not active (the back strain was frozen). The values
+  saved by `save_stress_criterion` and `save_yield_surface_radius`
+  change when the flow is not active.
+- `MultipleIsotropicMisesFlows` DSL (see Issue #1340): the isotropic
+  hardening rules of a flow use the `theta` parameter of this flow, not
+  the one of the behaviour.
+- Bricks (see Issues #1055, #1123 and #1131): the `Barlat`,
+  `Cazacu 2001` and `Orthotropic Cazacu 2004` flow criteria used the
+  coefficients of the stress criterion, the `DDIF2` brick used the first
+  of three non constant fracture stresses or fracture energies in every
+  direction, and the broken state tests of the isotropic `Hooke` stress
+  potential were exchanged (also in Version 5.1.1).
+- Generated code (see Issues #1137 and #1151): `@Relocation` was ignored
+  in plane strain and plane stress, and when computed by an external
+  model; the isotropic hardening rules of the
+  `MultipleIsotropicMisesFlows` DSL used the equivalent plastic strains
+  at the beginning of the time step during the iterations (also in
+  Version 5.1.1).
+- Models (see Issue #1344): an output updated by a compound assignment
+  (`+=`, `-=`, `*=`, `/=`) starts from its value at the beginning of the
+  time step, also when the model is called by a behaviour, where it was
+  uninitialised. When a model defines several functions, each of them
+  reads the values at the beginning of the time step, and an output can
+  only be modified by one function.
+- `Implicit` DSLs (see Issue #1303): the material properties depending
+  on a state variable having a normalisation factor are evaluated with
+  the increment of this variable, not with its normalised increment.
+- `abaqusexplicit` interface (see Issue #1431): with the
+  `MieheApelLambrechtLogarithmicStrain` strategy in plane stress, the
+  stress at the beginning of the time step is converted with the right
+  axial stretch. The energies are incremented from their values at the
+  beginning of the increment.
+- `ansys` interface, finite strain strategies in 3D (see Issue #1119):
+  with `MieheApelLambrechtLogarithmicStrain`, the XZ and YZ strain
+  increments were exchanged; with `FiniteRotationSmallStrain`, a part of
+  the XY Green-Lagrange strain was divided by two (also in Version
+  5.1.1).
+- `ansys` interface (see Issues #1093 and #1307): the finite strain
+  behaviours read the deformation gradients in plane stress, which were
+  left uninitialised, and the internal and dissipated energies computed
+  by the behaviour are returned.
+- `calculix` interface (see Issue #1125): the rotation matrix of
+  cylindrical orientations was not orthogonal, and the Cauchy stress at
+  the beginning of the increment of the finite strain behaviours was
+  computed with the deformation gradient at its end (also in Version
+  5.1.1).
+- `calculix` interface, `MieheApelLambrechtLogarithmicStrain` strategies
+  (see Issues #1258 and #1326): the dual stress of orthotropic
+  behaviours is rotated back to the global frame before its conversion,
+  and the `MieheApelLambrechtLogarithmicStrainII` strategy reads the
+  dual stress at the beginning of the time step in the state variables
+  at the beginning of the increment.
+- Other interfaces (see Issues #1117, #1157 and #1177): with `aster`,
+  the deformation gradient of orthotropic finite strain behaviours was
+  rotated with shifted components in 2D; with `dianafea`, six components
+  of the strain were read in 2D; with `comsol`, and with the `castem`
+  models whose temperature is not the first input, the temperature was
+  read out of bounds (also in Version 5.1.1).
+- `zmat` interface (see Issue #1205): the elements of an array of non
+  symmetric tensors were stored with the size of a symmetric tensor.
+- Behaviours based on the Hencky strain (see Issue #1349): two
+  eigenvalues of the right Cauchy-Green tensor are considered equal on a
+  relative criterion. The stresses and the tangent operators may change
+  when two principal stretches are almost equal.
+  `LogarithmicStrainHandler::eps` is now a relative threshold.
 - In the homogenisation schemes of `TFEL/Material`, the elasticity of an
   anisotropic `OrientedDistribution`, given in the local basis of its
   inclusions, is rotated to the global basis (see Issue #1299): it was
@@ -134,11 +331,69 @@ and to
   the elasticity of the inclusion as well, as documented. The results of
   the dilute, Mori-Tanaka and self-consistent schemes with such phases
   change.
+- The self-consistent scheme of a `ParticulateMicrostructure`, now
+  computed by `computeAsymmetricSelfConsistent`, no longer normalises
+  the localisation tensors of the inclusions: the one of the matrix is
+  deduced from the average of the strain, and the homogenised stiffness
+  changes. The localisation tensor of the matrix returned by
+  `computeDilute`, which was the identity, is deduced likewise.
+- `computeEshelbyTensor` compares the differences of the semi-axes to
+  the smallest one to decide if an ellipsoid is axisymmetric (see Issue
+  #1349): the results change for elongated ellipsoids having two close
+  semi-axes.
+- Homogenisation (see Issues #1121 and #1153): the Hill tensor of an
+  ellipsoid whose two largest semi-axes are equal and the plane strain
+  Hill tensor of a rotated ellipse in an anisotropic matrix were wrong,
+  and the Hashin-Shtrikman bounds of the shear modulus were too narrow
+  for phases which are not well ordered (also in Version 5.1.1).
+- `MetallicCFCGenericSlidingSystemsInteractionMatrix` (see Issue #1056):
+  `getInteractionMatrix` and `getSecondInteractionMatrix` build the
+  matrix from their arguments at each call. Every call returned the
+  matrix built by the first one.
+- Altered stiffness tensors in axisymmetrical generalised plane stress
+  (see Issue #1121): the hoop component was condensed instead of the
+  axial one (also in Version 5.1.1).
+- The parameters of a material property are local to the library
+  defining it (see Issue #1323): two libraries defining a material
+  property of the same name and loaded in the same process could share
+  their parameters.
 - `computeDeterminantSecondDerivative` of a non-symmetric tensor now
   returns the second derivative of the determinant in 2D and 3D (see
   Issue #1262): the rows of the off-diagonal components differ from the
   previous results, which were the derivative of the adjugate (also in
   Version 5.1.1).
+- `symmetric_product(s1, s2)` returns half of `s1 * s2 + s2 * s1`, as
+  documented (see Issue #998): the factor `1/2` was missing (also in
+  Version 5.1.1).
+- Eigen solvers of 3D symmetric tensors (see Issue #1254): the
+  eigenvectors given by `FSESANALYTICALEIGENSOLVER`,
+  `FSESCUPPENEIGENSOLVER` and `HARARIEIGENSOLVER` were wrong or
+  inaccurate for equal or close eigenvalues. With the default solver,
+  the changes are within its accuracy.
+- `TFEL/Math` (see Issues #1109, #1115, #1133, #1147 and #1153): the
+  following results change: order of the eigenvalues of a 3D symmetric
+  tensor having two equal eigenvalues, `FSESQLEIGENSOLVER` and
+  `FSESHYBRIDEIGENSOLVER` for uniaxial states (`NaN`), derivative of the
+  negative part, `st2tost2::convert`, `st2tot2::tpld`, `CubicRoots`,
+  `TinyMatrixInvert`, `Kriging` after a second build, final time of the
+  `RungeKutta54` and `RungeKutta42` solvers (also in Version 5.1.1).
+- `TFEL/Math`: `convertToTangentModuli` halved the shear columns, and
+  `det` of `st2tost2` and `t2tot2` objects ignored the row exchanges of
+  the LU decomposition (see Issue #1433); `RungeKutta2::exe` and
+  `RungeKutta4::exe` overshot the final time (see Issue #1317); nested
+  calls of an external function in a formula used wrong arguments (see
+  Issue #1321); `setMultiplicationFactor` of the Levenberg-Marquardt
+  minimisers was ignored (see Issue #1203).
+- `SlipSystemsDescription::getClimbTensors` and the `--climb-tensors`
+  queries of `mfront-query` return the tensorial product of the slip
+  direction by itself, as the generated behaviours do, instead of the
+  one of the normal to the slip plane (see Issue #1437).
+- `tfel-check` (see Issues #1032 and #1209): the column formulas such as
+  `'$2+2*$1'` were evaluated with exchanged columns, and a `NaN` in a
+  compared column made the comparison succeed (also in Version 5.1.1).
+- In the python bindings, `ExternalBehaviourDescription.evtypes`
+  returned the types of the internal state variables (see Issue #1139)
+  (also in Version 5.1.1).
 
 ## Fixes improving convergence
 
