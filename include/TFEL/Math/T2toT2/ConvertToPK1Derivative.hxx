@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_CONVERTTOPK1DERIVATIVE_HXX
 #define LIB_TFEL_MATH_CONVERTTOPK1DERIVATIVE_HXX
 
+#include <utility>
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
@@ -127,6 +128,40 @@ namespace tfel::math {
           const PK2StressDerivativeType&,
           const DeformationGradientType&,
           const CauchyStressType&) noexcept;
+
+  /*!
+   * \brief former, misspelled, name of
+   * `convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative`
+   * \deprecated use
+   * `convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative`
+   */
+  template <typename... ArgumentsTypes>
+  [[deprecated(
+      "misspelled name, see TFEL issue #1483")]] TFEL_HOST_DEVICE constexpr auto
+  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      ArgumentsTypes&&... args) noexcept
+      -> decltype(convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+          std::forward<ArgumentsTypes>(args)...)) {
+    return convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+        std::forward<ArgumentsTypes>(args)...);
+  }  // end of deprecated function
+
+  /*!
+   * \brief former, misspelled, name of
+   * `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative`
+   * \deprecated use
+   * `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative`
+   */
+  template <typename... ArgumentsTypes>
+  [[deprecated(
+      "misspelled name, see TFEL issue #1483")]] TFEL_HOST_DEVICE constexpr auto
+  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      ArgumentsTypes&&... args) noexcept
+      -> decltype(convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+          std::forward<ArgumentsTypes>(args)...)) {
+    return convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+        std::forward<ArgumentsTypes>(args)...);
+  }  // end of deprecated function
 
 }  // end of namespace tfel::math
 

@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_CONVERTFROMPK1DERIVATIVE_HXX
 #define LIB_TFEL_MATH_CONVERTFROMPK1DERIVATIVE_HXX
 
+#include <utility>
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
@@ -69,6 +70,23 @@ namespace tfel ::math {
       const t2tot2<N, stress>&,
       const tensor<N, real>&,
       const stensor<N, stress>&) noexcept;
+
+  /*!
+   * \brief former, misspelled, name of
+   * `convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative`
+   * \deprecated use
+   * `convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative`
+   */
+  template <typename... ArgumentsTypes>
+  [[deprecated(
+      "misspelled name, see TFEL issue #1483")]] TFEL_HOST_DEVICE constexpr auto
+  convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+      ArgumentsTypes&&... args) noexcept
+      -> decltype(convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative(
+          std::forward<ArgumentsTypes>(args)...)) {
+    return convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative(
+        std::forward<ArgumentsTypes>(args)...);
+  }  // end of deprecated function
 
 }  // end of namespace tfel::math
 

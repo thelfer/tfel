@@ -1439,6 +1439,21 @@ zero, as they are for the arrays of tensorial variables.
 
 For more details, see <https://github.com/thelfer/tfel/issues/1494>.
 
+## Issue 1483: Misspellings of Kirchhoff and Piola
+
+`Kirchoff`, `Kirschoff`, `Piolo` and `Piolay` are replaced by the right
+spellings in the names of the functions of `TFEL/Math`, the options of
+`MTest`, the tests and the documentation. The former names of the
+functions
+`convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative`,
+`convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative`
+and `convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative`
+are kept as deprecated functions, and `MTest` still accepts the
+`SecondPiolaKirchoffStress` and `FirstPiolaKirchoffStress` stress measures
+with a deprecation message. They will be removed in version 6.0.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1483>.
+
 ## Issue 969: GPU coalescence/broadcast loss when projectors/identities are accessed with warp-divergent runtime index
 
 The `Id`, `IxI`, `K`, `M` and `J` methods of the `st2tost2` class, the
