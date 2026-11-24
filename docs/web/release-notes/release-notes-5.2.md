@@ -1896,7 +1896,7 @@ variables. When such a variable follows another one, the block was
 written out of its bounds and left unset. The rows are now indexed from
 zero, as they are for the arrays of tensorial variables.
 
-For more details, see <https://github.com/thelfer/tfel/issues/1494>.
+For more details, see <https://github.com/thelfer/tfel/issues/1494>
 
 ## Issue 1483: Misspellings of Kirchhoff and Piola
 
@@ -1911,7 +1911,7 @@ are kept as deprecated functions, and `MTest` still accepts the
 `SecondPiolaKirchoffStress` and `FirstPiolaKirchoffStress` stress measures
 with a deprecation message. They will be removed in version 6.0.
 
-For more details, see <https://github.com/thelfer/tfel/issues/1483>.
+For more details, see <https://github.com/thelfer/tfel/issues/1483>
 
 ## Issue 969: GPU coalescence/broadcast loss when projectors/identities are accessed with warp-divergent runtime index
 
@@ -1932,7 +1932,7 @@ type of the object.
 On GPUs, those overloads avoid storing and reading a table when an
 index is only known at run time. The existing methods are unchanged.
 
-For more details, see <https://github.com/thelfer/tfel/issues/969>.
+For more details, see <https://github.com/thelfer/tfel/issues/969>
 
 ## Issue 1414: [mfront] generic-parallel material properties: generated code on shared runtime headers
 
@@ -1944,7 +1944,7 @@ API of the generated functions is unchanged.
 
 For more details, see <https://github.com/thelfer/tfel/issues/1414>
 
-## Issue 1451: [doc] Keywords cited in the documentation which do not exist (@StiffnessTensor, @ElasticProperties, @Parameters)
+## Issue 1451: [doc] Keywords cited in the documentation which do not exist (`@StiffnessTensor`, `@ElasticProperties`, `@Parameters`)
 
 The description of the `@OrthotropicBehaviour` keyword now refers to
 the `@ComputeStiffnessTensor` and `@ElasticMaterialProperties` keywords.
@@ -1952,7 +1952,7 @@ The example of the manual construction of the interaction matrix of the
 single crystal page now uses the `@Parameter` keyword and gives default
 values.
 
-For more details, see <https://github.com/thelfer/tfel/issues/1451>.
+For more details, see <https://github.com/thelfer/tfel/issues/1451>
 
 ## Issue 1440: [tfel-material] HCP slip systems: the c/a ratio is fixed to the ideal value
 
@@ -1967,7 +1967,7 @@ The default value is unchanged: it is the one of the ideal structure,
 \(\sqrt{8/3}\). The ratio is an argument of a new constructor of the
 `tfel::material::SlipSystemsDescription` and `numodis::HCP` classes.
 
-For more details, see <https://github.com/thelfer/tfel/issues/1440>.
+For more details, see <https://github.com/thelfer/tfel/issues/1440>
 
 ## Issue 431: Extend the GursonTvergaardNeedleman model to account for other equivalent stresses
 
@@ -1980,7 +1980,7 @@ through the `GeneralisedRousselierTanguyBesson` stress criterion.
 See Section @sec:tfel:5.2:mfront:generalised_porous_stress_criteria for
 details.
 
-For more details, see <https://github.com/thelfer/tfel/issues/431>.
+For more details, see <https://github.com/thelfer/tfel/issues/431>
 
 ## Issue 440: There is no tangent operator for DSL MultipleIsotropicMisesFlows
 
@@ -1997,7 +1997,7 @@ The consistent tangent operator is symmetric, unless a specific value of
 \(\theta\) is given to one of the flows. In this case, the behaviour is
 declared as having a non symmetric tangent operator.
 
-For more details, see <https://github.com/thelfer/tfel/issues/440>.
+For more details, see <https://github.com/thelfer/tfel/issues/440>
 
 ## Issue 617: [mfront] add support for parameter override through a text file for Model DSL
 
@@ -2022,7 +2022,7 @@ This feature is controlled by the `parameters_initialization_from_file`
 DSL option, which was already accepted by the `Model` domain specific
 language but had no effect.
 
-For more details, see <https://github.com/thelfer/tfel/issues/617>.
+For more details, see <https://github.com/thelfer/tfel/issues/617>
 
 ## Issue 796: Remarks on the documentation of the StandardElastoViscoPlasticity Brick of MFront
 
@@ -2035,7 +2035,7 @@ of the equivalent strain and \(\tenseur{n}\) is the flow direction, and
 the expression of \(\dot{p}\). A section describing this general form
 has been added.
 
-For more details, see <https://github.com/thelfer/tfel/issues/796>.
+For more details, see <https://github.com/thelfer/tfel/issues/796>
 
 ## Issue 641: [Miscellaneous] Is a library a MFront library?
 
@@ -2053,7 +2053,7 @@ The files which can't be analysed are still silently ignored.
 
 For more details, see <https://github.com/thelfer/tfel/issues/641>
 
-## Issue 954: [msys2] the environment scripts are not the good ones (use `.sh.in`, not  `.bat.in` or `.ps1.in`)
+## Issue 954: [msys2] the environment scripts are not the good ones (use `.sh.in`, not `.bat.in` or `.ps1.in`)
 
 With a `MinGW` compiler, such as the ones provided by `MSYS2`, only the
 `env.bat` and `env.ps1` environment scripts were installed, although the
@@ -2183,12 +2183,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/932>
 ## Issue 1376: [mfront-doc] Formula of the Chaboche 2012 kinematic hardening rule differs from the code for m != 1
 
 For more details, see <https://github.com/thelfer/tfel/issues/1376>
+
 ## Issue 1359: [mfront] FiniteStrainSingleCrystal: corrections of the derivatives of the normalised plastic deformation gradient increment, test behaviours and option of the brick
 
 For more details, see <https://github.com/thelfer/tfel/issues/1359>
-## Issue 1273: [tfel-check] Warning when @Precision with one value keeps the second precision of a previous @Precision
+
+## Issue 1273: [tfel-check] Warning when `@Precision` with one value keeps the second precision of a previous `@Precision`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1273>
+
 ## Issue 1371: [mtest] Generalised plane strain elastic stiffness used with the generic plane stress algorithm of the castem wrappers
 
 For more details, see <https://github.com/thelfer/tfel/issues/1371>
@@ -2225,7 +2228,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1317>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1313>
 
-## Issue 1311: [mfront] Material properties given by formulas or external laws do not compile with @UseQt
+## Issue 1311: [mfront] Material properties given by formulas or external laws do not compile with `@UseQt`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1311>
 
@@ -2237,7 +2240,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1309>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1307>
 
-## Issue 1305: [mfront] Material property and model interfaces: validator symbols, octave static parameters, castem bounds and models, gnuplot @Graph, java with MSVC, bounds of model outputs, out of bounds policy of generic models
+## Issue 1305: [mfront] Material property and model interfaces: validator symbols, octave static parameters, castem bounds and models, gnuplot `@Graph`, java with MSVC, bounds of model outputs, out of bounds policy of generic models
 
 For more details, see <https://github.com/thelfer/tfel/issues/1305>
 
@@ -2285,7 +2288,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1281>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1274>
 
-## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
+## Issue 1270: [mtest] `@RotationMatrix<Euler>` applies the inverse rotation, convention of `@RotationMatrix` undocumented, rotation matrix of the generic interface described by its transpose
 
 For more details, see <https://github.com/thelfer/tfel/issues/1270>
 
@@ -2357,7 +2360,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1227>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1225>
 
-## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
+## Issue 1223: [mtest] Thirty test files give the same variable twice in a `@Test` map
 
 For more details, see <https://github.com/thelfer/tfel/issues/1223>
 
@@ -2377,7 +2380,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1215>
 
-## Issue 1213: [mfront] @RequireThermalExpansionCoefficientTensor is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
+## Issue 1213: [mfront] `@RequireThermalExpansionCoefficientTensor` is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
 
 For more details, see <https://github.com/thelfer/tfel/issues/1213>
 
@@ -2389,7 +2392,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1211>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
-## Issue 1207: [mfront] Logarithm of the stress-free expansion stretch (abaqus, ansys, calculix, lsdyna), castem tangent operators in 1D and with FiniteRotationSmallStrain, cyrano hypothesis identifier, repeated @Test keys
+## Issue 1207: [mfront] Logarithm of the stress-free expansion stretch (abaqus, ansys, calculix, lsdyna), castem tangent operators in 1D and with FiniteRotationSmallStrain, cyrano hypothesis identifier, repeated `@Test` keys
 
 For more details, see <https://github.com/thelfer/tfel/issues/1207>
 
@@ -2405,7 +2408,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1203>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1201>
 
-## Issue 1199: [mfront] Code block option ".+", @PhysicalBounds on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
+## Issue 1199: [mfront] Code block option ".+", `@PhysicalBounds` on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/1199>
 
@@ -2425,7 +2428,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1193>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1191>
 
-## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
+## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, `@Initialize`, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1189>
 
@@ -2517,7 +2520,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1147>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1145>
 
-## Issue 1143: [mfront] DSLs: bricks, behaviour variables, @TangentOperator, initialisation values, targets.lst, overriding increments and bounds
+## Issue 1143: [mfront] DSLs: bricks, behaviour variables, `@TangentOperator`, initialisation values, targets.lst, overriding increments and bounds
 
 For more details, see <https://github.com/thelfer/tfel/issues/1143>
 
@@ -2529,7 +2532,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1141>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1139>
 
-## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, @Relocation, rotation functions and MTest files on failure
+## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, `@Relocation`, rotation functions and MTest files on failure
 
 For more details, see <https://github.com/thelfer/tfel/issues/1137>
 
@@ -2631,13 +2634,16 @@ The `SpecificTargetDescription` class is now available in the `mfront`
 python module, so that the `specific_targets` member of the
 `TargetsDescription` class can be read. The libraries exported to `CMake`
 require the `C++20` standard, which is thus enabled in the projects using
-them. For more details, see <https://github.com/thelfer/tfel/issues/1072>
+them.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1072>
 
 ## Issue 1089: Add debug mode + hardening in the test matrix
 
 The sanitizers options have been modularised to allow the continuous
-integration to enable sanitizers individually. For more details, see
-<https://github.com/thelfer/tfel/issues/1089>
+integration to enable sanitizers individually.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1089>
 
 ## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
 
@@ -2675,19 +2681,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/1012>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1010>
 
-## Issue 1007: [github-actions] Add continuous integration for the generic-parallel interface with CUDA backend
-
-For more details, see <https://github.com/thelfer/tfel/issues/1007>
-
 ## Issue 1006: [github-actions] Add tests based on `tfel-check`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1006>
 
-## Issue 1004:  [github-actions] Add support actions based on Visual Studio
+## Issue 1004: [github-actions] Add support actions based on Visual Studio
 
 For more details, see <https://github.com/thelfer/tfel/issues/1004>
 
-## Issue 1003:[tfel-math] Improve error messages when using quantities
+## Issue 1003: [tfel-math] Improve error messages when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/1003>
 
@@ -2695,7 +2697,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1003>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1001>
 
-## Issue 995: [tfel-check] Adding @Environment section in configuration file
+## Issue 995: [tfel-check] Adding `@Environment` section in configuration file
 
 For more details, see <https://github.com/thelfer/tfel/issues/995>
 
@@ -2711,11 +2713,11 @@ For more details, see <https://github.com/thelfer/tfel/issues/926>
 
 For more details, see <https://github.com/thelfer/tfel/issues/925>
 
-## Issue 922: [tfel-math] two functions have no GPU device support
+## Issue 922: [tfel-math] Improve `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative`
 
 For more details, see <https://github.com/thelfer/tfel/issues/922>
 
-## Issue 890: [mfront][homogenization] Add Ponte Castaneda 1992 non linear scheme
+## Issue 890: [mfront, homogenization] Add Ponte Castaneda 1992 non linear scheme
 
 For more details, see <https://github.com/thelfer/tfel/issues/890>
 
@@ -2723,6 +2725,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/890>
 
 For more details, see <https://github.com/thelfer/tfel/issues/905>
 
-## Issue 853: [tfel-fcheck] Have the possibility to launch multiple call to `tfel-check` simultaenously in a CI context
+## Issue 853: [tfel-check] Have the possibility to launch multiple call to `tfel-check` simultaenously in a CI context
 
 For more details, see <https://github.com/thelfer/tfel/issues/853>
