@@ -28,7 +28,7 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
 
-The page describes the new functionalities of Version 5.2 of the
+This page describes the new functionalities of Version 5.2 of the
 `TFEL` project.
 
 # Highlights
@@ -102,7 +102,7 @@ and to
 
 # Known incompatibilities
 
-## Issues affecting end-users's results
+## Issues affecting end users' results
 
 - Formulas given as strings in `MFront` files, such as material
   properties or options of the bricks (see Issue #1103): a ratio of
@@ -462,7 +462,7 @@ and to
   #1101, #1107, #1113, #1119, #1123, #1125, #1131, #1133, #1157, #1159,
   #1177, #1189, #1209 and #1301) (also in Version 5.1.1).
 
-## Fixes affecting user's experience
+## Fixes affecting the user experience
 
 - The `calculix` and `comsol` interfaces reject the behaviours declaring
   a stress-free expansion, such as `@ComputeThermalExpansion` or
@@ -562,8 +562,8 @@ and to
   combined (for instance `address`, `thread` and `memory`). Each
   sanitizer can also be enabled individually using its dedicated
   `enable-<name>-sanitizer` option, see below.
-- `cmake` \(3.20\) or later is now required to build `TFEL`.
-- `MFront`' interfaces have to implement a method named `setOptions`.
+- `cmake` 3.20 or later is now required to build `TFEL`.
+- The interfaces of `MFront` must implement a method named `setOptions`.
 - The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
   as documented, if `C++` keywords are allowed (see Issue #964): its
   meaning has been inverted. With the default value (`true`), `C++`
@@ -694,8 +694,8 @@ and to
 
 ## New `cmake` options
 
-- `enable-tdls`: add support for Tiny Device-callable Linear Solvers
-  (`TDLS`) library. `OFF` by default.
+- `enable-tdls`: adds support for the Tiny Device-callable Linear
+  Solvers (`TDLS`) library. `OFF` by default.
 - `enable-tdls-as-default-linear-system-solver-in-mfront`: use `TDLS`
   as the default linear solver. Requires `enable-tdls` to be `ON`.
   `OFF` by default.
@@ -789,9 +789,9 @@ sanitizers.
   configurations.
 - `TFEL_GXX_COMPILER`: path to the `g++` compiler.
 - `TFEL_CLANGXX_COMPILER`: path to the `clang++` compiler.
-- `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler.
+- `TFEL_ICPX_COMPILER`: path to Intel's `icpx` compiler.
 - `TFEL_NVHPC_COMPILER`: path to NVIDIA's `nvhpc` compiler.
-- `TFEL_ACPP_COMPILER`: path to AdaptativeCpp's `acpp` compiler.
+- `TFEL_ACPP_COMPILER`: path to AdaptiveCpp's `acpp` compiler.
 - `TFEL_CLANG_CUDA_PATH`: path to the `CUDA` toolkit used by `clang` in
   the `cuda-clang` and `hip-clang` configurations (by default, the
   toolkit of `nvcc`). A version of `clang` only supports the versions of
@@ -823,17 +823,18 @@ The following configurations are supported for parallel computations:
 - `stlpar-parunseq-nvhpc-gpu`: configuration associated with `C++`
   standard parallel algorithms using the parallel unsequenced execution
   policy and NVIDIA's `nvhpc` compiler with offloading on the GPU.
-- `sycl-default-icpx`: configuration associated with `SYCL` programming
-  model INTEL's `icpx` compiler.
-- `sycl-default-acpp`: configuration associated with `SYCL` programming
-  model and AdaptativeCpp's `acpp` compiler.
-- `sycl-gpu-acpp`: configuration associated with `SYCL` programming
-  model and AdaptativeCpp's `acpp` compiler, with offloading on the GPU.
+- `sycl-default-icpx`: configuration associated with the `SYCL`
+  programming model and Intel's `icpx` compiler.
+- `sycl-default-acpp`: configuration associated with the `SYCL`
+  programming model and AdaptiveCpp's `acpp` compiler.
+- `sycl-gpu-acpp`: configuration associated with the `SYCL`
+  programming model and AdaptiveCpp's `acpp` compiler, with offloading
+  on the GPU.
 
 ## Add a `build-tests` target
 
 In previous versions, tests were compiled and run using the `check`
-target, which internally calls `ctest` for running the test. One
+target, which internally calls `ctest` to run the tests. One
 drawback of this approach is that `ctest` could not be run in parallel.
 
 The `build-tests` target (which is a dependency of the `check` target)
@@ -917,8 +918,8 @@ The contract of the tokens given by `CxxTokenizer` is documented now, on the
 the digit separators of the `C++14` integer literals, whereas the offsets
 remain those of the file, so that a source code can be rewritten from the
 offsets of its tokens (see Issue #1393); a `C` style comment and a raw string
-literal which are not closed at the end of a file are on the contrary accepted,
-and leave the state of the tokenizer open, on the contrary to a quoted string
+literal which are not closed at the end of a file are accepted,
+and leave the state of the tokenizer open, contrary to a quoted string
 and a character literal, which are rejected (see Issue #1395). Checking that
 the tokens describe the file they come from is what the fuzz testing analysis
 of the tokenizer does, see above.
@@ -942,14 +943,14 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 ### Supported compilers
 
-- `TFEL_GXX_COMPILER`: path the `g++` compiler. The value associated
+- `TFEL_GXX_COMPILER`: path to the `g++` compiler. The value associated
   with this key is determined as follows, by order of priority:
 
   1. by passing the variable `TFEL_GXX_COMPILER` during the invocation of
   `cmake`.
   2. by using `g++` as the main compiler to compile `TFEL`
   3. by searching `g++` using `cmake`'s `find_program` function.
-- `TFEL_CLANGXX_COMPILER`: path to `LLVM` `clang++` compiler. The value
+- `TFEL_CLANGXX_COMPILER`: path to LLVM's `clang++` compiler. The value
   associated with this key is determined as follows, by order of
   priority:
 
@@ -957,7 +958,7 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
   `cmake`,
   2. by using `clang++` as the main compiler to compile `TFEL`,
   3. by searching `clang++` using `cmake`'s `find_program` function.
-- `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler. The value
+- `TFEL_ICPX_COMPILER`: path to Intel's `icpx` compiler. The value
   associated with this key is determined as follows, by order of
   priority:
 
@@ -965,7 +966,7 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
   `cmake`,
   2. by using `icpx` as the main compiler to compile `TFEL`,
   3. by searching `icpx` using `cmake`'s `find_program` function.
-- `TFEL_ACPP_COMPILER`: path to AdaptativeCpp `acpp` compiler. The value
+- `TFEL_ACPP_COMPILER`: path to AdaptiveCpp's `acpp` compiler. The value
   associated with this key is determined as follows, by order of
   priority:
 
@@ -994,13 +995,13 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 - `TFEL_HIPCC_FLAGS`: additional flags to be passed to the `hipcc`
   compiler.
-- `TFEL_HIP_INCLUDE_DIR`: paths to `HIP` headers
+- `TFEL_HIP_INCLUDE_DIR`: path to the `HIP` headers.
 
 ### Substitutions related to the `CUDA` platform
 
 - `TFEL_CUDA_PATH`: path to NVIDIA's `CUDA` toolkit as found by
   `CMake`'s `FindCUDAToolkit` module.
-- `TFEL_CUDA_LIBRARY_DIR`: path to the libraries of the NVIDIA's `CUDA`
+- `TFEL_CUDA_LIBRARY_DIR`: path to the libraries of NVIDIA's `CUDA`
   toolkit as found by `CMake`'s `FindCUDAToolkit` module.
 - `TFEL_CLANG_CUDA_PATH`: path to the `CUDA` toolkit used by `clang`
   (`cuda-clang` and `hip-clang` configurations).
@@ -1009,7 +1010,7 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
 ## `--cmake-prefix-path`
 
 `--cmake-prefix-path` returns the path to the `CMake` configuration
-files provided by the project
+files provided by the project:
 
 ~~~~{.bash}
 $ tfel-config --cmake-prefix-path
@@ -1022,13 +1023,13 @@ $ tfel-config --cmake-prefix-path
 
 ### Views of data separated by a constant stride
 
-In previous versions, the `View` class allows interpreting a contiguous
-memory area as a tensorial object. The `ScatteredView` class, formerly
-named `CoalescedView` (see below), allows to create a tensorial object
-where each component is referred to by its own pointer.
+The `View` class, available in previous versions, allows interpreting a
+contiguous memory area as a tensorial object. The `ScatteredView` class,
+formerly named `CoalescedView` (see below), allows creating a tensorial
+object where each component is referred to by its own pointer.
 
 The `StridedView` class assumes that each component is separated by a
-constant stride in memory, so that it only have to store one pointer and
+constant stride in memory, so that it only has to store one pointer and
 the value of the stride.
 
 Such views are typically used on GPUs, where coalesced memory accesses
@@ -1082,7 +1083,7 @@ Quantities were deeply refactored to:
 
 - improve maintainability (code is much more compact),
 - allow creating surrogate classes for quantities,
-- improve error message,
+- improve error messages,
 - reduce size of the generated symbols.
 
 ## Adjugate of a tensor and its derivative
@@ -1153,7 +1154,7 @@ const auto [Q, dQ_dq, dQ_dF] = computePiolaTransformAndDerivatives(q, F);
 The derivative with respect to the vector is a `tmatrix`. The
 derivative with respect to the deformation gradient is of type
 `derivative_type<tvector<N, T>, tensor<N, real>>`. A `tmatrix` can now
-be multiplied by such a derivative, which allows to apply the chain
+be multiplied by such a derivative, which allows applying the chain
 rule:
 
 ~~~~{.cxx}
@@ -1255,7 +1256,7 @@ to modify the microstructure:
  - `changeElasticityOfInclusionPhase`
  - `changeFractionOfInclusionPhase`
 
-The `UserDefinedDistributionOfSpheroids` allows to define
+The `UserDefinedDistributionOfSpheroids` class allows defining
 a distribution of spheroids defined by two orientation
 tensors. This distribution can be used in a `ParticulateMicrostructure`
 and the associated homogenization schemes can be used with
@@ -1267,7 +1268,7 @@ An object `Grain` was created for this class of microstructures.
 
 The `computeSelfConsistent` function (`computeSelfConsistentScheme` in
 the `Python` bindings) has been modified in order to be
-more consistent with the literature. Now, This scheme takes a `Polycrystal`
+more consistent with the literature. This scheme now takes a `Polycrystal`
 in which no matrix phase exists. For the `ParticulateMicrostructure`,
 the function `computeAsymmetricSelfConsistent`
 (`computeAsymmetricSelfConsistentScheme` in the `Python` bindings) has
@@ -1288,37 +1289,37 @@ and `.derivative_of_homogenized_stiffness_wrt_mur` of the
 The commands described in different `.check` files can now be run in
 distinct processes.
 
-Note that the command described in a `.check` are still run
+Note that the commands described in a `.check` file are still run
 sequentially.
 
 By default, as in previous versions, only one process is used.
 
 ### Specifying the number of jobs run simultaneously
 
-The command line argument `--jobs` (`-j`) allow specifying the number
+The command line argument `--jobs` (`-j`) allows specifying the number
 of jobs run simultaneously.
 
-If no option is given to `--jobs`, the number of available cores
-is used, if the system provide this information.
+If no value is given to `--jobs`, the number of available cores
+is used, if the system provides this information.
 
 #### Limit on the number of jobs
 
 By default, this number must not exceed the number of available
 cores. This limit can be discarded by
-passing`--discard-jobs-limit=true` to `tfel-check`.
+passing `--discard-jobs-limit=true` to `tfel-check`.
 
 ### Caution
 
 The user must take care that the commands described in `.check` files
-can be run in parallel.
+can be run in parallel:
 
-- the jobs shall no exhaust memory.
-- the jobs shall not access concurrently to the same resources.
+- the jobs shall not exhaust memory.
+- the jobs shall not access the same resources concurrently.
 
 A typical example of conflict would be to have two `.check` files in the
-same directory that call `mfront` to build somes shared libraries: the
-two `MFront`'s processes may write concurrently files in the `src` and
-`include` directories, leading to an undefined behaviour.
+same directory that call `mfront` to build some shared libraries: the
+two `MFront` processes may concurrently write files in the `src` and
+`include` directories, leading to undefined behaviour.
 
 Another example would be to use `@CleanDirectories` and `@CleanFiles`
 commands inappropriately and erase data used by commands of other
@@ -1326,8 +1327,8 @@ commands inappropriately and erase data used by commands of other
 
 ## Defining environment variables in configuration files
 
-Configuration files can now contain an `environment_variables` sections
-which can introduce a map defining a set of environment variables.
+Configuration files can now contain an `environment_variables` section,
+which introduces a map defining a set of environment variables.
 
 ### Example of usage
 
@@ -1345,7 +1346,7 @@ environment_variables: {"CXXFLAGS": "-Wall"};
 
 ## Controlling clean up of generated files and directories
 
-The `--clean-up` command line argument allows to choose whether the
+The `--clean-up` command line argument allows choosing whether the
 generated files and directories listed by the `@CleanFiles` and
 `@CleanDirectories` keywords will be cleaned (this is the case by
 default) or not in case of success.
@@ -1354,8 +1355,8 @@ default) or not in case of success.
 $ tfel-check --clean-up=false
 ~~~~
 
-The `--discard-clean-up-on-failure` command line argument allows to
-choose whether the generated files and directories listed by the
+The `--discard-clean-up-on-failure` command line argument allows
+choosing whether the generated files and directories listed by the
 `@CleanFiles` and `@CleanDirectories` keywords will be cleaned or not
 (this is the case by default) in case of failure.
 
@@ -1373,19 +1374,19 @@ Commands now have a `timeout` option to limit their duration:
 };
 ~~~~
 
-This feature requires the `timeout` utility to be be available.
+This feature requires the `timeout` utility to be available.
 
-#  New features in `TFEL/System`
+# New features in `TFEL/System`
 
 ## Improvements in `ProcessManager`
 
 - New overloads of the `createProcess` and `execute` methods allow
   specifying the directory where a command shall be executed.
-- `ProcessManager` shall now work properly in a multithreaded context.
+- `ProcessManager` now works properly in a multithreaded context.
 
 ## Improvements in `SignalManager`
 
-- `SignalManager` shall now work properly in a multithreaded context.
+- `SignalManager` now works properly in a multithreaded context.
 
 # New `TFEL/Material` features
 
@@ -1393,8 +1394,8 @@ This feature requires the `timeout` utility to be be available.
 
 The second moments of strains considering a Hashin-Shtrikman scheme
 are available. A new [tutorial](PonteCastaneda1992.html)
-shows how to use it in the implementation of Ponte-Castaneda variational
-bound (1992), within the framework of non-linear elasticity.
+shows how to use them in the implementation of the Ponte-Castaneda
+variational bound (1992), within the framework of non-linear elasticity.
 
 # New features in `MFront`
 
@@ -1412,15 +1413,15 @@ are supported:
   this solver falls back to the `Default` solver.
 
 The name of the solver can optionally be followed by a dictionary
-allowing to parametrize the solver.
+giving the parameters of the solver.
 
-### Supported Parameters
+### Supported parameters
 
-#### Parameters of the `Default` Linear Solver
+#### Parameters of the `Default` linear solver
 
-The `Default` Linear Solver does not accept any parameter.
+The `Default` linear solver does not accept any parameter.
 
-#### Parameters of the `TDLS` Linear Solver
+#### Parameters of the `TDLS` linear solver
 
 The following options are supported:
 
@@ -1507,14 +1508,14 @@ are:
 
 ## Configuration file
 
-`MFront` now allows to define options in a configuration file define
+`MFront` now allows defining options in a configuration file given
 through the `--configuration-file` command line argument as follows:
 
 ~~~~{.bash}
 $ mfront --configuration-file=config.json --interface=generic-parallel UO2_ShearModulus.mfront
 ~~~~
 
-Configuration file follows an extented `JSON`-like syntax. It contains
+The configuration file follows an extended `JSON`-like syntax. It contains
 the following sections:
 
 - `dsl_options`
@@ -1535,7 +1536,7 @@ dictionary.
 >
 > The options given in sections `dsl_options`,
 > `material_property_dsl_options`, `behaviour_dsl_options` and
-> `model_dsl_options` may also be retrieved in dedicated configurations
+> `model_dsl_options` may also be given in dedicated configuration
 > files, respectively specified by the `--dsl-options-file`,
 > `--material-property-dsl-options-file`, `--behaviour-dsl-options-file`,
 > and `--model-dsl-options-file` command line arguments introduced in
@@ -1553,8 +1554,8 @@ interfaces_options: {
 
 ### The `interfaces_options` section
 
-The `interfaces_options` section associates to the name of an interface
-a dictionary of options passed to this interface, as in the previous
+The `interfaces_options` section associates the name of an interface
+with a dictionary of options passed to this interface, as in the previous
 example. The `material_property_interfaces_options`,
 `behaviour_interfaces_options` and `model_interfaces_options` sections
 have the same syntax, but their options are only passed to the
@@ -1563,8 +1564,8 @@ respectively.
 
 ### The `compilation_options` section
 
-The `compilation_options` section associates to a language (`c`,
-`cxx`, `cuda` or `hip`) a dictionary of options, as follows:
+The `compilation_options` section associates a language (`c`,
+`cxx`, `cuda` or `hip`) with a dictionary of options, as follows:
 
 ~~~~{.json}
 compilation_options : {
@@ -1752,10 +1753,10 @@ MinGW, and the reverse.
 ### Improved generation of `Gibiane` input file
 
 The `Cast3M` interface generates automatically an example of `Gibiane`
-input file to integrate which each `MFront` behaviour. This example is
-meant to be used a template and do not pretend to be usable without
+input file for each `MFront` behaviour. This example is
+meant to be used as a template and does not pretend to be usable without
 modification by the user. For instance, previous versions of `MFront`
-did not guarantee that the name of the variables (limited to `4`
+did not guarantee that the names of the variables (limited to `4`
 characters) were unique. Version 5.2 improves this. To illustrate this,
 one may compare the output of Version 5.1 and Version 5.2:
 
@@ -1767,7 +1768,7 @@ statev = 'MOTS' 'EERR' 'EEZZ' 'EETT' 'EERZ' 'KHRR' 'KHZZ' 'KHTT' 'KHRZ' 'V0' 'V1
 ~~~~
 
 In Version 5.1, the variable name `KHRR` is declared twice. `Cast3M`
-does not generate an error although duplicated names leads to erroneous
+does not generate an error although duplicated names lead to erroneous
 results. Version 5.2 avoids this pitfall.
 
 ## The `plastic_deformation_gradient_normalisation_corrections` option of the `FiniteStrainSingleCrystal` brick
@@ -1780,11 +1781,11 @@ consistent tangent operator, as numerical tests showed (or at least
 seemed to show) that they were negligible.
 
 These derivatives are now taken into account by default (see Issue
-1359). The results are not affected, up to the convergence criteria, but
-the convergence is when the deformation gradient is not fully imposed:
+#1359). The results are not affected, up to the convergence criteria, but
+the convergence is, when the deformation gradient is not fully imposed:
 the global iterations recover their quadratic convergence. The boolean
 option `plastic_deformation_gradient_normalisation_corrections` allows
-to neglect them:
+neglecting them:
 
 ~~~~{.cpp}
 @Brick FiniteStrainSingleCrystal{
@@ -1870,9 +1871,9 @@ libraries](tfel-compatibility-modes.html)) and how they are used by
 
 # Continuous integration
 
-## Github actions
+## GitHub Actions
 
-Github actions have been updated to supported a wider range of
+GitHub Actions have been updated to support a wider range of
 configurations, including testing based on `Visual Studio 2022` and
 `Visual Studio 2026`.
 
