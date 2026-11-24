@@ -23,7 +23,7 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-#include "TFEL/Math/Array/CoalescedView.hxx"
+#include "TFEL/Math/Array/ScatteredView.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include "TFEL/Math/tvector.hxx"

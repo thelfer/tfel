@@ -24,8 +24,8 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-#include "TFEL/Math/Array/StridedCoalescedView.hxx"
-#include "TFEL/Math/Array/StridedCoalescedViewsArray.hxx"
+#include "TFEL/Math/Array/StridedView.hxx"
+#include "TFEL/Math/Array/StridedViewsArray.hxx"
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
@@ -232,15 +232,14 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_CHECK_EQUAL(os.str(), "[[0,1][2,3]]");
   }
   void test11() {
-    // Test StridedCoalescedViewsArray
+    // Test StridedViewsArray
     using namespace tfel::math;
     // SoA layout for 3 stensor<2>: 3 objects with 4 components each
     // Memory: [c0_s0, c0_s1, c0_s2, c1_s0, c1_s1, c1_s2, ...]
     std::array<int, 12> values = {1,   2,   3,   10,   20,   30,
                                   100, 200, 300, 1000, 2000, 3000};
-    auto arr =
-        StridedCoalescedViewsFixedSizeVector<stensor<2u, int>, unsigned short,
-                                             3>(&values[0]);
+    auto arr = StridedViewsFixedSizeVector<stensor<2u, int>, unsigned short, 3>(
+        &values[0]);
     // Check object 0: components at indices 0, 3, 6, 9
     TFEL_TESTS_ASSERT(arr[0][0] == 1);
     TFEL_TESTS_ASSERT(arr[0][1] == 10);
@@ -270,7 +269,7 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(carr[2][1] == 30);
   }
   void test12() {
-    // Test StridedCoalescedViewsArray with quantities, which are mapped on
+    // Test StridedViewsArray with quantities, which are mapped on
     // values of their base type
     using namespace tfel::math;
     using stress = qt<unit::Stress, double>;
@@ -297,11 +296,11 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(csarr[7].getValue() - 2000) < eps);
   }
   void test13() {
-    // Test StridedCoalescedViewsArray with a memory indexing policy whose
+    // Test StridedViewsArray with a memory indexing policy whose
     // stride is not one
     using namespace tfel::math;
     std::array<int, 5> values = {1, 2, 3, 4, 5};
-    auto arr = StridedCoalescedViewsArray<
+    auto arr = StridedViewsArray<
         int, FixedSizeVectorIndexingPolicy<unsigned short, 3, 2>>(&values[0]);
     TFEL_TESTS_ASSERT(arr[1] == 3);
     TFEL_TESTS_ASSERT(arr(1) == 3);

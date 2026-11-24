@@ -24,7 +24,7 @@
 #include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/StridedCoalescedView.hxx"
+#include "TFEL/Math/Array/StridedView.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -168,7 +168,7 @@ namespace tfel::math::internals {
   };  // end of struct BuildDerivativeViewFromTinyMatrix
 
   /*!
-   * \brief a metafunction returning a strided coalesced view type on a
+   * \brief a metafunction returning a strided view type on a
    * derivative in tiny matrix ordered of M columns.
    * \tparam are_both_scalars: boolean stating if both the function and the
    * variable types are scalars.
@@ -182,7 +182,7 @@ namespace tfel::math::internals {
             typename VariableType>
   struct BuildStridedDerivativeViewFromTinyMatrixImplementation {
     //! \brief result of the metafunction
-    using type = tfel::math::StridedCoalescedView<
+    using type = tfel::math::StridedView<
         tfel::math::derivative_type<FunctionType, VariableType>,
         typename BuildDerivativeViewFromTinyMatrixImplementation<
             tfel::math::isScalar<FunctionType>(),
@@ -214,7 +214,7 @@ namespace tfel::math::internals {
   };  // end of BuildStridedDerivativeViewFromTinyMatrixImplementation
 
   /*!
-   * \brief a metafunction returning a strided coalesced view type on a
+   * \brief a metafunction returning a strided view type on a
    * derivative in tiny matrix ordered in row major format of M columns.
    * \tparam M: number of columns of the tiny matrix
    * \tparam FunctionType: function type.
@@ -495,7 +495,7 @@ namespace tfel::math {
       BuildDerivativeViewFromTinyMatrix<M, FunctionType, VariableType>::type;
 
   /*!
-   * \brief a simple alias to a strided coalesced view type on a derivative in
+   * \brief a simple alias to a strided view type on a derivative in
    * tiny matrix of M columns.
    * \tparam M: number of columns of the matrix.
    * \tparam FunctionType: function type.
@@ -558,7 +558,7 @@ namespace tfel::math {
       const unsigned short);
 
   /*!
-   * \brief an helper function to create a strided coalesced derivative view
+   * \brief an helper function to create a strided derivative view
    * from a structure of arrays memory area.
    * \tparam I: row index.
    * \tparam J: column index.
@@ -585,7 +585,7 @@ namespace tfel::math {
       const std::size_t);
 
   /*!
-   * \brief an helper function to create a strided coalesced derivative view
+   * \brief an helper function to create a strided derivative view
    * from a structure of arrays memory area.
    * \tparam FunctionType: function type.
    * \tparam VariableType: variable type.

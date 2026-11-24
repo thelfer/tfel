@@ -1,5 +1,5 @@
 /*!
- * \file  include/TFEL/Math/Array/StridedCoalescedView.hxx
+ * \file  include/TFEL/Math/Array/StridedView.hxx
  * \brief
  * \author Tristan Chenaille
  * \date 15/01/2026
@@ -11,32 +11,35 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX
-#define LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX
+#ifndef LIB_TFEL_MATH_ARRAY_STRIDEDVIEW_HXX
+#define LIB_TFEL_MATH_ARRAY_STRIDEDVIEW_HXX
 
 #include <utility>
-#include "TFEL/Math/Array/CoalescedView.hxx"
+#include "TFEL/Math/Array/ScatteredView.hxx"
 
 namespace tfel::math {
 
-  template <MappableMathObjectUsingCoalescedViewConcept MappedType,
+  /*!
+   * \brief access policy storing a pointer to the first component of the
+   * mapped object and the stride between two successive components
+   */
+  template <MappableMathObjectUsingScatteredViewConcept MappedType,
             typename IndexingPolicyType>
-  struct StridedCoalescedAccessPolicy {
+  struct StridedAccessPolicy {
     //
     static inline constexpr auto N = [] {
       typename MappedType::indexing_policy p;
       return p.size();
     }();
     //! \brief default constructor
-    explicit TFEL_HOST_DEVICE constexpr StridedCoalescedAccessPolicy(
+    explicit TFEL_HOST_DEVICE constexpr StridedAccessPolicy(
         const ViewDataPointerType<MappedType> p, std::size_t s) noexcept
         : ptr(p), stride(s) {}
     //! \brief copy constructor
-    constexpr StridedCoalescedAccessPolicy(
-        const StridedCoalescedAccessPolicy&) noexcept = default;
+    constexpr StridedAccessPolicy(const StridedAccessPolicy&) noexcept =
+        default;
     //! \brief move constructor
-    constexpr StridedCoalescedAccessPolicy(
-        StridedCoalescedAccessPolicy&&) noexcept = default;
+    constexpr StridedAccessPolicy(StridedAccessPolicy&&) noexcept = default;
 
     /*!
      * \return the pointer to the first component of the mapped object
@@ -61,48 +64,49 @@ namespace tfel::math {
     std::size_t stride;
   };
 
-  template <MappableMathObjectUsingCoalescedViewConcept MappedType,
+  /*!
+   * \brief view storing a pointer to the first component of the mapped object
+   * and the stride between two successive components
+   */
+  template <MappableMathObjectUsingScatteredViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  using StridedCoalescedView = CoalescedViewBase<
+  using StridedView = AccessPolicyBasedView<
       MappedType,
       IndexingPolicyType,
-      StridedCoalescedAccessPolicy<MappedType, IndexingPolicyType>>;
+      StridedAccessPolicy<MappedType, IndexingPolicyType>>;
 
-  template <MappableMathObjectUsingCoalescedViewConcept MappedType,
+  template <MappableMathObjectUsingScatteredViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  using ConstStridedCoalescedView =
-      StridedCoalescedView<const std::remove_cv_t<MappedType>,
-                           IndexingPolicyType>;
+  using ConstStridedView =
+      StridedView<const std::remove_cv_t<MappedType>, IndexingPolicyType>;
 
   /*!
-   * \brief return a strided coalesced view from a base pointer and a stride
+   * \brief return a strided view from a base pointer and a stride
    * \tparam MappedType: object mapped
    * \param[in] p: pointer to the first component
    * \param[in] s: stride between successive components
    */
-  template <MappableMutableMathObjectUsingCoalescedViewConcept MappedType,
+  template <MappableMutableMathObjectUsingScatteredViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  TFEL_HOST_DEVICE constexpr StridedCoalescedView<MappedType,
-                                                  IndexingPolicyType>
+  TFEL_HOST_DEVICE constexpr StridedView<MappedType, IndexingPolicyType>
   map_strided(const ViewDataPointerType<MappedType> p,
               const std::size_t s)  //
       requires((!std::is_const_v<MappedType>)&&(
           std::remove_cv_t<MappedType>::hasFixedSizes)) {
-    return StridedCoalescedView<MappedType, IndexingPolicyType>{p, s};
+    return StridedView<MappedType, IndexingPolicyType>{p, s};
   }  // end of map_strided
 
-  template <MappableImmutableMathObjectUsingCoalescedViewConcept MappedType,
+  template <MappableImmutableMathObjectUsingScatteredViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  TFEL_HOST_DEVICE constexpr StridedCoalescedView<MappedType,
-                                                  IndexingPolicyType>
+  TFEL_HOST_DEVICE constexpr StridedView<MappedType, IndexingPolicyType>
   map_strided(const ViewConstDataPointerType<std::remove_cv_t<MappedType>> p,
               const std::size_t s)  //
       requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
-    return StridedCoalescedView<MappedType, IndexingPolicyType>{p, s};
+    return StridedView<MappedType, IndexingPolicyType>{p, s};
   }  // end of map_strided
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX */
+#endif /* LIB_TFEL_MATH_ARRAY_STRIDEDVIEW_HXX */
