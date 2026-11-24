@@ -1,7 +1,7 @@
 ---
 title: Release notes of the 5.2 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer, Antoine Martin
-date: 2025
+date: 2026
 lang: en-EN
 numbersections: true
 documentclass: article
@@ -728,10 +728,10 @@ sanitizer name: `enable-<name>-sanitizer`, e.g.
 `-Denable-bounds-strict-sanitizer=ON`. Such options can be combined with the
 `enable-sanitize-options` option: the enabled sanitizers are the sanitizers
 listed in the `enable-sanitize-options` option and the sanitizers whose
-dedicated option is enabled. Dedicated options are also defined for the
-sanitizers which are not supported by the current compiler (enabling them
-issues a warning and they are ignored), so that the same options can be
-used whatever the compiler is.
+dedicated option is enabled. A dedicated option is also defined for
+`integer` with `gcc` and for `bounds-strict` with `clang`, which those
+compilers do not support: enabling it issues a warning and the sanitizer
+is ignored.
 
 The following sanitizers are declared for `gcc` (the sanitizers corresponding
 to a subset of the undefined behaviour sanitizer can be enabled
@@ -752,8 +752,8 @@ The following sanitizers are declared for `clang`:
 - `address`, `thread`, `memory` (the memory sanitizer also enables
   `-fsanitize-memory-track-origins=2`), `leak`, `hwaddress`,
 - `cfi`, `cfi-icall`, `safe-stack`, `shadow-call-stack`, `dataflow`,
-- `undefined` and its subsets: `alignment`, `bool`, `bounds`, `builtin`,
-  `enum`, `float-cast-overflow`, `float-divide-by-zero`, `integer`,
+- `undefined` and its subsets: `alignment`, `bool`, `bounds`, `enum`,
+  `float-cast-overflow`, `float-divide-by-zero`, `integer`,
   `unsigned-integer-overflow`, `null`, `object-size`, `return`, `shift`,
   `shift-base`, `shift-exponent`, `signed-integer-overflow`, `vptr`,
 - `pointer-compare`, `pointer-subtract` (the address sanitizer and the link
@@ -1219,7 +1219,7 @@ const auto K =
 
 The out of plane thermal conductivity \(k_3\) is not used: the out of
 plane component of the three dimensional result,
-\(\det\left(F\right)\,k_3/F_{33}\), is indeed of no use in a two
+\(\det\left(F\right)\,k_3/F_{33}^{2}\), is indeed of no use in a two
 dimensional computation. The out of plane stretch is nevertheless taken
 into account, as for Piola's transformation.
 
@@ -1237,11 +1237,11 @@ configuration, its derivative with respect to the temperature gradient
 and its derivative with respect to the deformation gradient, which
 strongly coupled resolutions need. The thermal conductivity matrix
 \(K\) must be given by one of the
-`computeThermalConductivyMatrixInReferenceConfiguration` functions.
+`computeThermalConductivityMatrixInReferenceConfiguration` functions.
 
 ~~~~{.cxx}
 const auto K =
-  computeThermalConductivyMatrixInReferenceConfiguration(k, F);
+  computeThermalConductivityMatrixInReferenceConfiguration(k, F);
 const auto [Q, dQ_dgT, dQ_dF] =
   computeHeatFluxInReferenceConfigurationAndDerivatives(K, gT, F);
 ~~~~
@@ -1303,8 +1303,8 @@ is used, if the system provide this information.
 
 #### Limit on the number of jobs
 
-By default, this number must be lower than the number of cores
-available. This limit can be discarded by
+By default, this number must not exceed the number of available
+cores. This limit can be discarded by
 passing`--discard-jobs-limit=true` to `tfel-check`.
 
 ### Caution
@@ -1367,7 +1367,7 @@ $ tfel-check --discard-clean-up-on-failure=false
 
 Commands now have a `timeout` option to limit their duration:
 
-~~~~{c++}
+~~~~{.cpp}
 @Command "sleep 10"{
  timeout: 1
 };
@@ -1407,7 +1407,7 @@ are supported:
 - `Default`. This uses the solvers provided natively by the `TFEL/Math`
   library. As implied by its name, this solver is used by default.
 - `TDLS` (or equivalently `TinyDeviceCallableLinearSolver`). See
-  <https://trsxvz.github.io/TDLS/getting_started.html> for details. If
+  <https://trsxvz.github.io/TDLS/main/getting_started.html> for details. If
   `TFEL` is not compiled with support for the `TDLS` library, selecting
   this solver falls back to the `Default` solver.
 
@@ -1492,14 +1492,14 @@ are:
 
 ### Examples
 
-~~~~ {#LinearSystemSolver .cpp}
+~~~~{.cpp}
 @LinearSystemSolver TDLS{
   tile_size: 4,
   unroll_inner_loop: false
 };
 ~~~~
 
-~~~~ {#LinearSystemSolver .cpp}
+~~~~{.cpp}
 @LinearSystemSolver TDLS{
   tile_size: "StensorSize"
 };
@@ -1510,7 +1510,7 @@ are:
 `MFront` now allows to define options in a configuration file define
 through the `--configuration-file` command line argument as follows:
 
-~~~~{bash}
+~~~~{.bash}
 $ mfront --configuration-file=config.json --interface=generic-parallel UO2_ShearModulus.mfront
 ~~~~
 
@@ -1608,13 +1608,13 @@ takes precedence over this option.
 
 ### First syntax
 
-~~~~{bash}
+~~~~{.bash}
 $ mfront --obuild --interface='generic-parallel{backend:{"stlpar": {execution_policy:"par_unseq"}}}' UO2_ShearModulus.mfront
 ~~~~
 
 ### Second syntax
 
-~~~~{bash}
+~~~~{.bash}
 $ mfront --obuild --interface='{generic-parallel:{backend:"stlpar"{execution_policy:"par_unseq"}}}' UO2_ShearModulus.mfront
 ~~~~
 
