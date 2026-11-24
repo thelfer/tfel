@@ -215,18 +215,18 @@ namespace tfel::math {
 
   template <unsigned short N, typename stress, typename real>
   TFEL_HOST_DEVICE constexpr void
-  convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+  convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative(
       t2tost2<N, stress>& dtau,
       const t2tot2<N, stress>& dP,
       const tensor<N, real>& F,
       const stensor<N, stress>& s) noexcept {
     tfel::math::internals::DPK1_DF_to_DTAU_DF_Converter<N>::exe(dtau, dP, F, s);
   }  // end of
-     // convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative
+     // convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative
 
   template <unsigned short N, typename stress, typename real>
   TFEL_HOST_DEVICE constexpr t2tost2<N, stress>
-  convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+  convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative(
       const t2tot2<N, stress>& dP,
       const tensor<N, real>& F,
       const stensor<N, stress>& s) noexcept {
@@ -234,7 +234,7 @@ namespace tfel::math {
     tfel::math::internals::DPK1_DF_to_DTAU_DF_Converter<N>::exe(dtau, dP, F, s);
     return dtau;
   }  // end of
-     // convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative
+     // convertFirstPiolaKirchhoffStressDerivativeToKirchhoffStressDerivative
 
 }  // end of namespace tfel::math
 

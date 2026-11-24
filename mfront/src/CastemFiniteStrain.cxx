@@ -532,7 +532,7 @@ namespace castem {
     using namespace tfel::math;
     constexpr auto cste = Cste<CastemReal>::sqrt2;
     constexpr auto icste = Cste<CastemReal>::isqrt2;
-    // now, we compute the second Piolay Kirchhoff stress
+    // now, we compute the second Piola-Kirchhoff stress
     CastemReal sk2[6u];
     // first we compute the second Piola-Kirchhoff stress
     CastemFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(

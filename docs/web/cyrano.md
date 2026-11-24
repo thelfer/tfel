@@ -156,7 +156,7 @@ where :
 
 - the gradients in the divergence operator \(\Divergence\) are computed
   in the reference configuration.
-- \(\tns{\Pi}\) is the first Piola-Kirchoff stress (which is equal to
+- \(\tns{\Pi}\) is the first Piola-Kirchhoff stress (which is equal to
   the nominal stress in \(1D\), as all tensors are symmetric).
 
 ### Boundary conditions
@@ -164,7 +164,7 @@ where :
 If \(\dtot\,\vec{f}\) is the force applied to an infinitesimal surface
 \(\dtot\,\vec{s}\) in the current configuration which maps to the
 infinitesimal surface \(\dtot\,\vec{S}_{0}\) in the reference
-configuration, the first Piola-Kirchoff stress \(\tns{\Pi}\) has the
+configuration, the first Piola-Kirchhoff stress \(\tns{\Pi}\) has the
 following property:
 
 \[

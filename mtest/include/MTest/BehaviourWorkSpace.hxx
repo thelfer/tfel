@@ -83,22 +83,22 @@ namespace mtest {
      */
     tfel::math::vector<real> s0;
     /*!
-     * \brief temporary vector for second Piola-Kirchoff stress at the beginning
-     * of the time step (for internal use by the behaviour)
+     * \brief temporary vector for second Piola-Kirchhoff stress at the
+     * beginning of the time step (for internal use by the behaviour)
      */
     tfel::math::vector<real> S0;
     /*!
-     * \brief temporary vector for second Piola-Kirchoff stress at the end
+     * \brief temporary vector for second Piola-Kirchhoff stress at the end
      * of the time step (for internal use by the behaviour)
      */
     tfel::math::vector<real> S1;
     /*!
-     * \brief temporary vector for first Piola-Kirchoff stress at the beginning
+     * \brief temporary vector for first Piola-Kirchhoff stress at the beginning
      * of the time step (for internal use by the behaviour)
      */
     tfel::math::vector<real> pk0;
     /*!
-     * \brief temporary vector for first Piola-Kirchoff stress at the end
+     * \brief temporary vector for first Piola-Kirchhoff stress at the end
      * of the time step (for internal use by the behaviour)
      */
     tfel::math::vector<real> pk1;

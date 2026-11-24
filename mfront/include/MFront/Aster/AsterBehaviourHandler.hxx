@@ -372,7 +372,7 @@ namespace aster {
           this->behaviour.checkBounds();
           this->behaviour.ASTERexportStateData(STRESS, STATEV);
           // For the GROT_GDEP finite strain formulation, one must
-          // convert the Cauchy stress to the Piola-Kirchoff stress.
+          // convert the Cauchy stress to the Piola-Kirchhoff stress.
           AsterConvertStress<AsterTraits<BV>::btype, AsterTraits<BV>::afsf,
                              N>::exe(STRESS, DSTRAN);
         }

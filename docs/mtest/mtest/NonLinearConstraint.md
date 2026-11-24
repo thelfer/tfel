@@ -18,7 +18,7 @@ constraints on driving variables and thermodynamic forces.
 Abritray non linear constraints can be used to:
 
 - Impose a constant stress triaxiality.
-- Impose a constant first Piola-Kirchoff stress in a creep test
+- Impose a constant first Piola-Kirchhoff stress in a creep test
   described in finite strain.
 
 ## On the physical meaning of a constraint
@@ -62,7 +62,7 @@ policy. The normalisation policy can have one of the following values:
 ~~~~~~~~~~
 
 ~~~~~ {.cpp}
-// impose the first piola kirchoff stress
+// impose the first piola kirchhoff stress
 // in an uniaxial compression test
 @Real 'Pi0' -40e6;
 @NonLinearConstraint<Stress> 'SXX*FYY*FZZ-Pi0';

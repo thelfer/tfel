@@ -118,8 +118,8 @@ namespace mtest {
     //! \brief stress measure requested for finite strain behaviours
     enum {
       CAUCHY,  //!< Cauchy stress
-      PK2,     //!< Second Piola-Kirchoff stress
-      PK1      //!< First Piola-Kirchoff stress
+      PK2,     //!< Second Piola-Kirchhoff stress
+      PK1      //!< First Piola-Kirchhoff stress
     } stress_measure = CAUCHY;
     /*!
      * \brief type of finite strain tangent operator requested for finite
@@ -128,11 +128,11 @@ namespace mtest {
     enum {
       DSIG_DF, /*!< derivative of the Cauchy stress with respect to the
                     deformation gradient */
-      DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
+      DS_DEGL, /*!< derivative of the second Piola-Kirchhoff stress with
                     respect to the Green-Lagrange strain */
-      DPK1_DF, /*!< derivative of the first Piola-Kirchoff stress with
+      DPK1_DF, /*!< derivative of the first Piola-Kirchhoff stress with
                    respect to the deformation gradient  */
-      DTAU_DDF /*!< derivative of the Kirchoff stress with
+      DTAU_DDF /*!< derivative of the Kirchhoff stress with
                    respect to the spatial increment of the deformation gradient,
                   i.e. F1 * F0 ^ -1  */
     } fsto = DSIG_DF;

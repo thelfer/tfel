@@ -655,7 +655,7 @@ namespace tfel::math {
       [[nodiscard]] TFEL_HOST_DEVICE constexpr                       //
       t2tot2<space_dimension<CauchyStressDerivativeType>,
              numeric_type<CauchyStressDerivativeType>>  //
-      convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
           const CauchyStressDerivativeType& ds,
           const DeformationGradientType& F,
           const CauchyStressType& s) noexcept {
@@ -664,7 +664,7 @@ namespace tfel::math {
     tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
     return dP;
   }  // end of
-     // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
+     // convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative
 
   template <StressT2toT2Concept PK1StressDerivativeType,
             StressT2toST2Concept CauchyStressDerivativeType,
@@ -675,7 +675,7 @@ namespace tfel::math {
                                                DeformationGradientType,
                                                CauchyStressType>())  //
       TFEL_HOST_DEVICE constexpr void                                //
-      convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
           PK1StressDerivativeType& dP,
           const CauchyStressDerivativeType& ds,
           const DeformationGradientType& F,
@@ -683,7 +683,7 @@ namespace tfel::math {
     constexpr auto N = space_dimension<CauchyStressDerivativeType>;
     tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
   }  // end of
-     // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
+     // convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative
 
   template <StressST2toST2Concept PK2StressDerivativeType,
             NoUnitTensorConcept DeformationGradientType,
@@ -694,17 +694,17 @@ namespace tfel::math {
       [[nodiscard]] TFEL_HOST_DEVICE constexpr                       //
       t2tot2<space_dimension<PK2StressDerivativeType>,
              numeric_type<PK2StressDerivativeType>>  //
-      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
           const PK2StressDerivativeType& dS,
           const DeformationGradientType& F,
           const CauchyStressType& s) noexcept {
     constexpr auto N = space_dimension<PK2StressDerivativeType>;
     t2tot2<N, numeric_type<PK2StressDerivativeType>> dP;
-    convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+    convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
         dP, dS, F, s);
     return dP;
   }  // end of
-     // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
+     // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative
 
   template <StressT2toT2Concept PK1StressDerivativeType,
             StressST2toST2Concept PK2StressDerivativeType,
@@ -715,7 +715,7 @@ namespace tfel::math {
                                                DeformationGradientType,
                                                CauchyStressType>())  //
       TFEL_HOST_DEVICE constexpr void                                //
-      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
           PK1StressDerivativeType& dP,
           const PK2StressDerivativeType& dS,
           const DeformationGradientType& F,
@@ -729,7 +729,7 @@ namespace tfel::math {
         unsyme(convertCauchyStressToSecondPiolaKirchhoffStress(s, F));
     dP = t2tot2<N, stress>::tpld(S) + t2tot2<N, stress>::tprd(F, dS_dF);
   }  // end of
-     // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
+     // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative
 
 }  // end of namespace tfel::math
 

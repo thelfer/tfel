@@ -3,7 +3,7 @@
 @Author Thomas Helfer;
 @Date 16 / 08 / 2020;
 @Description {
-  An implementation of the SaintVenant-Kirchoff
+  An implementation of the SaintVenant-Kirchhoff
   hyperelastic behaviour using the DefaultGenericBehaviour
   domain specific language.
 }

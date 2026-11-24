@@ -37,7 +37,7 @@ inherits from the bug fixes of:
 
 For more details, see <https://github.com/thelfer/tfel/issues/548.
 
-## Issue 541: [tfel-math] support for quantities in `computePushForwardDerivative` and `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative`
+## Issue 541: [tfel-math] support for quantities in `computePushForwardDerivative` and `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative`
 
 For more details, see <https://github.com/thelfer/tfel/issues/540.
 

@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_CONVERTTOPK1DERIVATIVE_HXX
 #define LIB_TFEL_MATH_CONVERTTOPK1DERIVATIVE_HXX
 
+#include <utility>
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
@@ -45,7 +46,7 @@ namespace tfel::math {
       [[nodiscard]] TFEL_HOST_DEVICE constexpr                       //
       t2tot2<space_dimension<CauchyStressDerivativeType>,
              numeric_type<CauchyStressDerivativeType>>  //
-      convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
           const CauchyStressDerivativeType&,
           const DeformationGradientType&,
           const CauchyStressType&) noexcept;
@@ -70,17 +71,17 @@ namespace tfel::math {
                                                DeformationGradientType,
                                                CauchyStressType>())  //
       TFEL_HOST_DEVICE
-      constexpr void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      constexpr void convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
           PK1StressDerivativeType& dP,
           const CauchyStressDerivativeType& ds,
           const DeformationGradientType& F,
           const CauchyStressType& s) noexcept;
   /*!
-   * \brief convert the derivative of the second Piola-Kirchoff stress with
+   * \brief convert the derivative of the second Piola-Kirchhoff stress with
    * respect to the Green-Lagrange strain to the derivative of the
    * first Piola-Kirchhoff stress with respect to the deformation gradient.
    *
-   * \param[in] dS: derivative of the second Piola-Kirchoff stress with
+   * \param[in] dS: derivative of the second Piola-Kirchhoff stress with
    *                respect to the Green-Lagrange strain
    * \param[in] F: deformation gradient
    * \param[in] s: Cauchy stress
@@ -97,18 +98,18 @@ namespace tfel::math {
       [[nodiscard]] TFEL_HOST_DEVICE constexpr                       //
       t2tot2<space_dimension<PK2StressDerivativeType>,
              numeric_type<PK2StressDerivativeType>>  //
-      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
           const PK2StressDerivativeType&,
           const DeformationGradientType&,
           const CauchyStressType&) noexcept;
   /*!
-   * \brief convert the derivative of the second Piola-Kirchoff stress with
+   * \brief convert the derivative of the second Piola-Kirchhoff stress with
    * respect to the Green-Lagrange strain to the derivative of the
    * first Piola-Kirchhoff stress with respect to the deformation gradient.
    *
    * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
    *                 respect to the deformation gradient
-   * \param[in] dS: derivative of the second Piola-Kirchoff stress with
+   * \param[in] dS: derivative of the second Piola-Kirchhoff stress with
    *                respect to the Green-Lagrange strain
    * \param[in] F: deformation gradient
    * \param[in] s: Cauchy stress
@@ -122,11 +123,45 @@ namespace tfel::math {
                                                DeformationGradientType,
                                                CauchyStressType>())  //
       TFEL_HOST_DEVICE constexpr void                                //
-      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
           PK1StressDerivativeType&,
           const PK2StressDerivativeType&,
           const DeformationGradientType&,
           const CauchyStressType&) noexcept;
+
+  /*!
+   * \brief former, misspelled, name of
+   * `convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative`
+   * \deprecated use
+   * `convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative`
+   */
+  template <typename... ArgumentsTypes>
+  [[deprecated(
+      "misspelled name, see TFEL issue #1483")]] TFEL_HOST_DEVICE constexpr auto
+  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      ArgumentsTypes&&... args) noexcept
+      -> decltype(convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+          std::forward<ArgumentsTypes>(args)...)) {
+    return convertCauchyStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+        std::forward<ArgumentsTypes>(args)...);
+  }  // end of deprecated function
+
+  /*!
+   * \brief former, misspelled, name of
+   * `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative`
+   * \deprecated use
+   * `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative`
+   */
+  template <typename... ArgumentsTypes>
+  [[deprecated(
+      "misspelled name, see TFEL issue #1483")]] TFEL_HOST_DEVICE constexpr auto
+  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      ArgumentsTypes&&... args) noexcept
+      -> decltype(convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+          std::forward<ArgumentsTypes>(args)...)) {
+    return convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative(
+        std::forward<ArgumentsTypes>(args)...);
+  }  // end of deprecated function
 
 }  // end of namespace tfel::math
 

@@ -1094,7 +1094,7 @@ configuration with respect to the right Cauchy tensor in the initial
 configuration \(\ets{\Cr}=\ets{\transpose{\F}}\,\cdot\,\ets{\F}\).
 
 The second Piola-Kirchhoff stress \(\ets{\Sr}\) can be computed by the
-pull-back of the Kirchoff stress \(\ets{\tenseur{\tau}}\):
+pull-back of the Kirchhoff stress \(\ets{\tenseur{\tau}}\):
 \[
 \begin{aligned}
 \ets{\Sr}

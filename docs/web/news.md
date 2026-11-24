@@ -979,7 +979,7 @@ Arbitrary non linear constraints can be now imposed in `MTest` using
 Abritray non linear constraints can be used to:
 
 - Impose a constant stress triaxiality.
-- Impose a constant first Piola-Kirchoff stress in a creep test
+- Impose a constant first Piola-Kirchhoff stress in a creep test
   described in finite strain.
 
 ## On the physical meaning of a constraint

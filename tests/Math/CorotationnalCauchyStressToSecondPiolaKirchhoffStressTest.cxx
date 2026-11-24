@@ -1,6 +1,6 @@
 /*!
  * \file
- * tests/Math/ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest.cxx
+ * tests/Math/ConvertionBetweenCorotationnalCauchyStressAndSecondPiolaKirchhoffStressTest.cxx
  * \brief
  * \author Thomas Helfer
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -26,14 +26,14 @@
 #include "TFEL/Math/tensor.hxx"
 
 struct
-    ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest
+    ConvertionBetweenCorotationnalCauchyStressAndSecondPiolaKirchhoffStressTest
         final : public tfel::tests::TestCase {
-  ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest()
+  ConvertionBetweenCorotationnalCauchyStressAndSecondPiolaKirchhoffStressTest()
       : tfel::tests::TestCase("TFEL/Math",
                               "ConvertionBetweenCorotationnalCauchyStressAndSec"
-                              "ondPioloKirchhoffStressTest") {
+                              "ondPiolaKirchhoffStressTest") {
   }  // end of
-     // ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest
+     // ConvertionBetweenCorotationnalCauchyStressAndSecondPiolaKirchhoffStressTest
   tfel::tests::TestResult execute() override {
     this->test1<1u>();
     this->test1<2u>();
@@ -78,8 +78,8 @@ struct
 };
 
 TFEL_TESTS_GENERATE_PROXY(
-    ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest,
-    "ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTes"
+    ConvertionBetweenCorotationnalCauchyStressAndSecondPiolaKirchhoffStressTest,
+    "ConvertionBetweenCorotationnalCauchyStressAndSecondPiolaKirchhoffStressTes"
     "t");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
@@ -87,7 +87,7 @@ int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput(
-      "ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressT"
+      "ConvertionBetweenCorotationnalCauchyStressAndSecondPiolaKirchhoffStressT"
       "est.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

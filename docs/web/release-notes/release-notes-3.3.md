@@ -460,14 +460,14 @@ welcomed.
 The following options can be passed to the behaviour:
 
 - `stress_measure`. The value of this option must be either
-  `CauchyStress` (or `CAUCHY`), `SecondPiolaKirchoffStress` (or `PK2`)
-  or `FirstPiolaKirchoffStress` (or `PK1`).
+  `CauchyStress` (or `CAUCHY`), `SecondPiolaKirchhoffStress` (or `PK2`)
+  or `FirstPiolaKirchhoffStress` (or `PK1`).
 - `tangent_operator`. The value of this option must be either:
     - `DCAUCHY_DF` (or `DSIG_DF`): the derivative of the Cauchy stress
 	  with respect to the deformation gradient
-    - `DS_DEGL`: the derivative of the second Piola-Kirchoff stress
+    - `DS_DEGL`: the derivative of the second Piola-Kirchhoff stress
       with respect to the Green-Lagrange strain
-	- `DPK1_DF`: the derivative of the first Piola-Kirchoff
+	- `DPK1_DF`: the derivative of the first Piola-Kirchhoff
       stress with respect to the deformation gradient is returned
 
 ~~~~{.cxx}
@@ -609,22 +609,22 @@ If `K` is the array used to store the consistent tangent operator,
 For finite strain behaviours `K[1]` must now hold the stress measure used:
 
 - if `K[1]` < 0.5, the Cauchy stress is used
-- if 0.5 < `K[1]` < 1.5, the second Piola-Kirchoff stress is used
-- if 1.5 < `K[1]` < 2.5, the first Piola-Kirchoff stress is used
+- if 0.5 < `K[1]` < 1.5, the second Piola-Kirchhoff stress is used
+- if 1.5 < `K[1]` < 2.5, the first Piola-Kirchhoff stress is used
 
 `K[2]` must hold the consitent tangent operator returned by the behaviour:
 
 - if `K[2]`<0.5, the derivative of the Cauchy stress with respect
   to the deformation gradient is returned
-- if 0.5<`K[2]`<1.5, the derivative of the second Piola-Kirchoff
+- if 0.5<`K[2]`<1.5, the derivative of the second Piola-Kirchhoff
   stress with respect to the Green-Lagrange strain
   is returned
-- if 1.5<`K[2]`<2.5, the derivative of the first Piola-Kirchoff
+- if 1.5<`K[2]`<2.5, the derivative of the first Piola-Kirchhoff
   stress with respect to the deformation gradient is returned
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/172/>
 
-## Ticket #171: Add the derivative of the first Piola-Kirchoff stress as a possible consistent tangentor for finite strain behaviours
+## Ticket #171: Add the derivative of the first Piola-Kirchhoff stress as a possible consistent tangentor for finite strain behaviours
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/171/>
 

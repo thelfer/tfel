@@ -236,10 +236,23 @@ namespace mtest {
                          p.first + "'");
       if (p.first == "stress_measure") {
         const auto& ss = p.second.get<std::string>();
+        if ((ss == "SecondPiolaKirchoffStress") ||
+            (ss == "FirstPiolaKirchoffStress")) {
+          auto& log = mfront::getLogStream();
+          log << "GenericBehaviour::GenericBehaviour: the stress measure '"
+              << ss << "' is deprecated, use '"
+              << (ss == "SecondPiolaKirchoffStress"
+                      ? "SecondPiolaKirchhoffStress"
+                      : "FirstPiolaKirchhoffStress")
+              << "' instead. Refer to "
+              << "https://github.com/thelfer/tfel/issues/1483 for details\n";
+        }
         if ((ss == "CAUCHY") || (ss == "CauchyStress")) {
-        } else if ((ss == "PK2") || (ss == "SecondPiolaKirchoffStress")) {
+        } else if ((ss == "PK2") || (ss == "SecondPiolaKirchhoffStress") ||
+                   (ss == "SecondPiolaKirchoffStress")) {
           this->stress_measure = PK2;
-        } else if ((ss == "PK1") || (ss == "FirstPiolaKirchoffStress")) {
+        } else if ((ss == "PK1") || (ss == "FirstPiolaKirchhoffStress") ||
+                   (ss == "FirstPiolaKirchoffStress")) {
           this->stress_measure = PK1;
         } else {
           tfel::raise(
