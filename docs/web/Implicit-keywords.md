@@ -1858,7 +1858,7 @@ are supported:
 - `Default`. This uses the solvers provided natively by the `TFEL/Math`
   library. As implied by its name, this solver is used by default.
 - `TDLS` (or equivalently `TinyDeviceCallableLinearSolver`). See
-  <https://trsxvz.github.io/TDLS/getting_started.html> for details. If
+  <https://trsxvz.github.io/TDLS/main/getting_started.html> for details. If
   `TFEL` is not compiled with support for the `TDLS` library, selecting
   this solver falls back to the `Default` solver.
 
