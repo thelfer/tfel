@@ -66,7 +66,7 @@ namespace mfront {
      * \return the version read in the string
      * \param[in] s: string
      */
-  MFRONT_VISIBILITY_EXPORT  [[nodiscard]] static Version fromString(std::string_view);
+    MFRONT_VISIBILITY_EXPORT static Version fromString(std::string_view);
     /*!
      * \brief compatibility mode with the next (unpublished) major version
      */
