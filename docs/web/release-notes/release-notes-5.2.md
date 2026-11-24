@@ -410,7 +410,9 @@ and to
 - The tiny non-linear solvers (and the `Implicit` DSLs) evaluate the
   estimate given by the last allowed correction (see Issue #1288): an
   integration that converges with exactly `iterMax` corrections now
-  succeeds, and a failing one evaluates its residual once more.
+  succeeds, and a failing one evaluates its residual once more. The
+  isotropic DSLs also accept a convergence reached at the last allowed
+  iteration, which was reported as a failure (see Issue #1199).
 - The `FiniteStrainSingleCrystal` brick takes into account, in the
   jacobian and the consistent tangent operator, the derivatives of the
   normalisation of the inverse of the plastic deformation gradient
@@ -425,12 +427,59 @@ and to
   which is `true` by default, allows users to easily test if this
   correction affects their results: setting it to `false` restores the
   previous derivatives.
+- `Implicit` DSLs (see Issues #1303, #1334 and #1494): the blocks of the
+  inverse of the jacobian (`iJ_X_Y`, `getPartialJacobianInvert`) are
+  fixed when a block of the same row is not used and for a tensorial
+  variable which is not the first one, as are the increments of the
+  variables having a normalisation factor in `@TangentOperator` and
+  their maximum increment per iteration. The correction of an iteration
+  includes the projection on the physical bounds.
+- `LogarithmicStrainHandler` (see Issue #1292): in 3D, the tangent
+  moduli of the behaviours based on the Hencky strain are fixed when two
+  eigenvalues of the right Cauchy-Green tensor are equal and the dual
+  stress is not coaxial with the strain. The stresses are unchanged.
+- The non symmetric tangent operators of the `castem` interface were
+  returned transposed in 1D and with the `FiniteRotationSmallStrain`
+  strategy (see Issue #1207). The consistent tangent operators of the
+  `ansys` interface with the `FiniteRotationSmallStrain` strategy in 3D
+  (see Issue #1307) and of the `DDIF2` brick when the
+  `AngularCoordinate` is not null (see Issue #1309) are fixed.
+- `MTest` (see Issues #1260, #1313 and #1371): the first iterate of the
+  `UAnderson` acceleration algorithm, the elastic stiffness of the
+  `castem` behaviours with the generic plane stress algorithm and the
+  initial stiffness of the `Abaqus/Explicit` behaviours in a rotated
+  frame are fixed.
+- The jacobians, the consistent tangent operators or the prediction
+  operators of the following components are fixed: second derivatives of
+  the `Cazacu 2001`, `Drucker 1949` and `MohrCoulomb` criteria,
+  derivatives of the `ChuNeedleman1980` and `PowerLaw` nucleation
+  models, helpers of the `Implicit` DSLs with normalisation factors,
+  hardening rules and flows of the `StandardElastoViscoPlasticity`
+  brick, plane stress equation of the `Hooke` stress potentials with a
+  stiffness tensor, Powell dog leg algorithms, tangent operators of the
+  `ansys`, `abaqus`, `aster`, `castem` (cohesive zone models) and
+  `comsol` interfaces, conversion of `DS_DEGL` to `DS_DF` (see Issues
+  #1101, #1107, #1113, #1119, #1123, #1125, #1131, #1133, #1157, #1159,
+  #1177, #1189, #1209 and #1301) (also in Version 5.1.1).
 
 ## Fixes affecting user's experience
 
+- The `calculix` and `comsol` interfaces reject the behaviours declaring
+  a stress-free expansion, such as `@ComputeThermalExpansion` or
+  `@Swelling` (see Issue #1338): these solvers only give the temperature
+  at the end of the time step, so that the increment of the expansion
+  was null and the results wrong. With `CalculiX`, the thermal expansion
+  shall be declared with the `*EXPANSION` keyword.
+- Normalisation factors are rejected on the integration variables
+  handled by the bricks, such as `eel` or the equivalent plastic strains
+  (see Issue #1347): the bricks did not take them into account, which
+  led to wrong results.
 - In the python bindings, the `None` value of the `OutOfBoundsPolicy`
   enumeration is renamed `None_`, as `None` is a reserved keyword in
   python (see Issue #1072).
+- In the python bindings, the argument of
+  `TargetsDescription.getLibrary` is named `n` instead of `library` (see
+  Issue #1073).
 - `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
   expansion coefficients is now an error (except `ThermalExpansion1` and
   `ThermalExpansion2` in plane stress).
@@ -447,11 +496,62 @@ and to
   the `overriding_parameters` option of the model DSLs, `@Bounds` and
   `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
   component of a scalar variable, and the `Ksf` option of the
-  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
+  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow. Bounds on
+  the first component of a tensorial variable, such as `eel(0)`, are
+  only checked on this component: all the components were checked.
 - The array sizes of the variables of `MFront` and the integer
   formulas evaluated by `IntegerEvaluator` shall only contain integers:
   a number with a decimal point or an exponent, such as `2.5` (which was
   truncated to `2`), `1e1` or `2.0`, is now rejected (see Issue #1321).
+- The `save_strain` and `save_stress` options of `@StrainMeasure`, when
+  set to `false`, no longer add the `StrainMeasure` and `DualStress`
+  auxiliary state variables (see Issue #1330): the number of internal
+  state variables of such behaviours changes.
+- Models (see Issues #617, #1305, #1355 and #1358): the `generic` and
+  `castem` interfaces check the bounds of the outputs after their
+  computation, the `castem` models apply the policy given by the
+  `CASTEM_OUT_OF_BOUNDS_POLICY` environment variable, and the models
+  read the `<ClassName>-parameters.txt` file of the current directory,
+  if any.
+- A failure of the behaviour stops the computation with the `dianafea`
+  interface, which returned silently (see Issue #1258), and makes the
+  `comsol` interface return `3` instead of `-1` (see Issue #1205). The
+  `abaqusexplicit` interface reports the exceptions thrown by the
+  behaviour, and the `zmat` interface checks the bounds of the variables
+  (see Issue #1307).
+- The following inputs are now rejected: in `MTest`, the parameters of
+  the acceleration algorithms which are not integers between 0 and 65535
+  (see Issue #1197) and the bare name of a tensorial external state
+  variable in `@Test` (see Issue #1315); in `PTest`,
+  `@MandrelRadiusEvolution` with the `TightPipe` radial loading (see
+  Issue #1351); the negative values of the unsigned parameters in the
+  `<Behaviour>-parameters.txt` files (see Issue #1319); the constants of
+  `@ElasticMaterialProperties`, `@ComputeThermalExpansion`,
+  `@ComputeStiffnessTensor` and `@HillTensor` followed by a suffix, such
+  as `0.3f` (see Issue #1436).
+- `is_delta_zeros_defined`, `fzeros_1`, `inv_jacobian`, `levmar_first`
+  and the names of the tangent operator blocks are reserved names in the
+  `Implicit` DSLs (see Issues #1303 and #1355), as are `fsscb_c`,
+  `fsscb_iinv_dFp_t` and `fsscb_mu` with the `FiniteStrainSingleCrystal`
+  brick (see Issue #1309).
+- `mfront-query`, `mfront-doc`, `mtest`, `mfm` and `mfm-test-generator`
+  install the terminate handler of `mfront` (see Issue #1211): an input
+  error makes them exit with the status `1` instead of aborting. The
+  `--no-terminate-handler` command line argument restores the former
+  behaviour.
+- In the text files read by `MTest` and `tfel-check`, a `#` character
+  starts a comment anywhere in a line (see Issue #1201). `tfel-check`
+  applies the output check of a command declared with `shall_fail` to
+  the output of the failed command (see Issue #1342).
+- `MaterialLaw` DSL (see Issue #1319): the physical bounds deduced from
+  the glossary are also declared, and thus checked, when `@UnitSystem`
+  follows `@Function`.
+- With the `icpx` compiler, `TFEL` and the libraries built by
+  `mfront --obuild` are compiled with `-fno-fast-math` unless
+  `enable-fast-math` is set (see Issue #1416): the results may change at
+  the level of rounding errors. With `MinGW`, the python modules are
+  installed in `lib/python<X.Y>/site-packages` instead of
+  `bin/python<X.Y>/site-packages` (see Issue #955).
 
 ## Internal incompatibilities
 
