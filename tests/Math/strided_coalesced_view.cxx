@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include <cmath>
+#include <limits>
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
@@ -52,6 +53,7 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     this->test11();
     this->test12();
     this->test13();
+    this->test14();
     return this->result;
   }  // end of execute
  private:
@@ -305,6 +307,16 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(arr(1) == 3);
     TFEL_TESTS_ASSERT(arr[2] == 5);
     TFEL_TESTS_ASSERT(arr(2) == 5);
+  }
+  void test14() {
+    // the stride is not converted to the size type of the indexing policy
+    using namespace tfel::math;
+    constexpr auto stride = std::numeric_limits<std::size_t>::max();
+    int value = 0;
+    const auto s = map_strided<stensor<2u, int>>(&value, stride);
+    const auto cs = map_strided<const stensor<2u, int>>(&value, stride);
+    TFEL_TESTS_ASSERT(s.data().second == stride);
+    TFEL_TESTS_ASSERT(cs.data().second == stride);
   }
 };
 
