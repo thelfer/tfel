@@ -535,9 +535,10 @@ namespace tfel::math {
             typename VariableType,
             unsigned short N,
             unsigned short M>
-  constexpr strided_derivative_view_from_tiny_matrix<M,
-                                                     FunctionType,
-                                                     VariableType>
+  TFEL_HOST_DEVICE constexpr strided_derivative_view_from_tiny_matrix<
+      M,
+      FunctionType,
+      VariableType>
   map_derivative_strided(
       base_type<
           numeric_type<derivative_type<FunctionType, VariableType>>>* const p,
@@ -558,9 +559,10 @@ namespace tfel::math {
             typename VariableType,
             unsigned short N,
             unsigned short M>
-  constexpr strided_derivative_view_from_tiny_matrix<M,
-                                                     FunctionType,
-                                                     VariableType>
+  TFEL_HOST_DEVICE constexpr strided_derivative_view_from_tiny_matrix<
+      M,
+      FunctionType,
+      VariableType>
   map_derivative_strided(
       base_type<
           numeric_type<derivative_type<FunctionType, VariableType>>>* const p,
