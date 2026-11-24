@@ -107,6 +107,25 @@ namespace tfel::math {
     return StridedView<MappedType, IndexingPolicyType>{p, s};
   }  // end of map_strided
 
+  /*!
+   * \brief former name of `StridedView`
+   * \deprecated use `StridedView`
+   */
+  template <MappableMathObjectUsingScatteredViewConcept MappedType,
+            typename IndexingPolicyType = typename MappedType::indexing_policy>
+  using StridedCoalescedView [[deprecated("use StridedView")]] =
+      StridedView<MappedType, IndexingPolicyType>;
+
+  /*!
+   * \brief former name of `ConstStridedView`
+   * \deprecated use `ConstStridedView`
+   */
+  template <MappableMathObjectUsingScatteredViewConcept MappedType,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy>
+  using ConstStridedCoalescedView [[deprecated("use ConstStridedView")]] =
+      ConstStridedView<MappedType, IndexingPolicyType>;
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_ARRAY_STRIDEDVIEW_HXX */

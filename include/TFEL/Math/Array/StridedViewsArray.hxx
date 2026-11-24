@@ -290,6 +290,30 @@ namespace tfel::math {
     }
   }
 
+  /*!
+   * \brief former name of `StridedViewsArray`
+   * \deprecated use `StridedViewsArray`
+   */
+  template <
+      typename MappedType,
+      typename MemoryIndexingPolicyType,
+      typename ViewIndexingPolicyType = typename tfel::math::internals::
+          StridedViewsArrayDefaultViewIndexingPolicy<isScalar<MappedType>(),
+                                                     MappedType>::type>
+  using StridedCoalescedViewsArray [[deprecated("use StridedViewsArray")]] =
+      StridedViewsArray<MappedType,
+                        MemoryIndexingPolicyType,
+                        ViewIndexingPolicyType>;
+
+  /*!
+   * \brief former name of `StridedViewsFixedSizeVector`
+   * \deprecated use `StridedViewsFixedSizeVector`
+   */
+  template <typename MappedType, typename SizeType, SizeType N>
+  using StridedCoalescedViewsFixedSizeVector
+      [[deprecated("use StridedViewsFixedSizeVector")]] =
+          StridedViewsFixedSizeVector<MappedType, SizeType, N>;
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_STRIDEDVIEWSARRAY_HXX */

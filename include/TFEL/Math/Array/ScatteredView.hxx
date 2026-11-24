@@ -443,6 +443,44 @@ namespace tfel::math {
     return ScatteredView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
+  /*!
+   * \brief former name of `ScatteredView`
+   * \deprecated use `ScatteredView`
+   */
+  template <MappableMathObjectUsingScatteredViewConcept MappedType,
+            typename IndexingPolicyType = typename MappedType::indexing_policy>
+  using CoalescedView [[deprecated("use ScatteredView")]] =
+      ScatteredView<MappedType, IndexingPolicyType>;
+
+  /*!
+   * \brief former name of `ConstScatteredView`
+   * \deprecated use `ConstScatteredView`
+   */
+  template <MappableMutableMathObjectUsingScatteredViewConcept MappedType,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy>
+  using ConstCoalescedView [[deprecated("use ConstScatteredView")]] =
+      ConstScatteredView<MappedType, IndexingPolicyType>;
+
+  // The former names of the concepts are not marked with the `[[deprecated]]`
+  // attribute, which gcc 12, clang 17, nvcc 13.0 and nvc++ 25.11 reject on the
+  // definition of a concept.
+
+  //! \deprecated use `MappableMutableMathObjectUsingScatteredViewConcept`
+  template <typename MathObjectType>
+  concept MappableMutableMathObjectUsingCoalescedViewConcept =
+      MappableMutableMathObjectUsingScatteredViewConcept<MathObjectType>;
+
+  //! \deprecated use `MappableImmutableMathObjectUsingScatteredViewConcept`
+  template <typename MathObjectType>
+  concept MappableImmutableMathObjectUsingCoalescedViewConcept =
+      MappableImmutableMathObjectUsingScatteredViewConcept<MathObjectType>;
+
+  //! \deprecated use `MappableMathObjectUsingScatteredViewConcept`
+  template <typename MathObjectType>
+  concept MappableMathObjectUsingCoalescedViewConcept =
+      MappableMathObjectUsingScatteredViewConcept<MathObjectType>;
+
 }  // end of namespace tfel::math
 
 namespace tfel::typetraits {
