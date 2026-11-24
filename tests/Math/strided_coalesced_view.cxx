@@ -25,6 +25,7 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/Array/StridedCoalescedView.hxx"
 #include "TFEL/Math/Array/StridedCoalescedViewsArray.hxx"
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -49,6 +50,7 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     this->test9();
     this->test10();
     this->test11();
+    this->test12();
     return this->result;
   }  // end of execute
  private:
@@ -263,6 +265,33 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
         map_strided_array<const tvector<3u, stensor<2u, int>>>(cvalues.data());
     TFEL_TESTS_ASSERT(carr[1][0] == 1);
     TFEL_TESTS_ASSERT(carr[2][1] == 30);
+  }
+  void test12() {
+    // Test StridedCoalescedViewsArray with quantities, which are mapped on
+    // values of their base type
+    using namespace tfel::math;
+    using stress = qt<unit::Stress, double>;
+    // SoA layout for 2 stensor<2>: [c0_s0, c0_s1, c1_s0, c1_s1, ...]
+    std::array<double, 8> values = {1, 2, 10, 20, 100, 200, 1000, 2000};
+    auto arr =
+        map_strided_array<tvector<2u, stensor<2u, stress>>>(values.data());
+    TFEL_TESTS_ASSERT(std::abs(arr[1][2].getValue() - 200) < eps);
+    arr[0] = 2 * arr[1];
+    TFEL_TESTS_ASSERT(std::abs(values[0] - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[2] - 40) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[4] - 400) < eps);
+    TFEL_TESTS_ASSERT(std::abs(values[6] - 4000) < eps);
+    const auto& cvalues = values;
+    const auto carr = map_strided_array<const tvector<2u, stensor<2u, stress>>>(
+        cvalues.data());
+    TFEL_TESTS_ASSERT(std::abs(carr[0][3].getValue() - 4000) < eps);
+    // scalar quantities
+    auto sarr = map_strided_array<tvector<8u, stress>>(values.data());
+    sarr[1] = stress(3);
+    TFEL_TESTS_ASSERT(std::abs(values[1] - 3) < eps);
+    const auto csarr =
+        map_strided_array<const tvector<8u, stress>>(cvalues.data());
+    TFEL_TESTS_ASSERT(std::abs(csarr[7].getValue() - 2000) < eps);
   }
 };
 

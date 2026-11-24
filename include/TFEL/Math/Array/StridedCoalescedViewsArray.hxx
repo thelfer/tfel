@@ -16,6 +16,7 @@
 
 #include <array>
 #include <type_traits>
+#include "TFEL/Math/Array/ViewsArray.hxx"
 #include "TFEL/Math/Array/StridedCoalescedView.hxx"
 #include "TFEL/Math/Array/FixedSizeIndexingPolicies.hxx"
 
@@ -54,9 +55,9 @@ namespace tfel::math::internals {
                                         ViewIndexingPolicyType> {
     static_assert(tfel::math::isScalar<MappedType>());
     //! \brief type of views
-    using view_type = MappedType&;
+    using view_type = tfel::math::scalar_view<MappedType>;
     //! \brief type of read-only views
-    using const_view_type = const MappedType&;
+    using const_view_type = tfel::math::scalar_view<const MappedType>;
   };  // end of StridedCoalescedViewsArrayBase
 
   /*!
@@ -88,20 +89,6 @@ namespace tfel::math::internals {
 
 namespace tfel::math {
 
-  //! \brief the numeric type used by the mapped type
-  template <typename MappedType>
-  using StridedCoalescedViewsArrayNumericType =
-      std::conditional_t<isScalar<MappedType>(),
-                         std::remove_cv_t<MappedType>,
-                         numeric_type<MappedType>>;
-
-  //! \brief the pointer type used to build the view
-  template <typename MappedType>
-  using StridedCoalescedViewsArrayDataPointerType = std::conditional_t<
-      std::is_const_v<MappedType>,
-      const StridedCoalescedViewsArrayNumericType<MappedType>*,
-      StridedCoalescedViewsArrayNumericType<MappedType>*>;
-
   /*!
    * \brief a structure used to represent an array of strided coalesced views.
    * \tparam MappedType: mapped type
@@ -124,8 +111,7 @@ namespace tfel::math {
     //! \brief boolean stating if views to scalars are considered
     static constexpr bool is_scalar = isScalar<MappedType>();
     //! \brief type of the pointer to the underlying data
-    using data_pointer_type =
-        StridedCoalescedViewsArrayDataPointerType<MappedType>;
+    using data_pointer_type = ViewsArrayDataPointerType<MappedType>;
     //! brief default constructor
     explicit TFEL_HOST_DEVICE constexpr StridedCoalescedViewsArray(
         const data_pointer_type p) noexcept
@@ -182,7 +168,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + i;
       if constexpr (is_scalar) {
-        return *d;
+        return typename StridedCoalescedViewsArray::view_type(*d);
       } else {
         return typename StridedCoalescedViewsArray::view_type{d, this->size()};
       }
@@ -196,7 +182,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + i;
       if constexpr (is_scalar) {
-        return *d;
+        return typename StridedCoalescedViewsArray::const_view_type(*d);
       } else {
         return typename StridedCoalescedViewsArray::const_view_type{
             d, this->size()};
@@ -209,7 +195,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + this->getIndex(i...);
       if constexpr (is_scalar) {
-        return *d;
+        return typename StridedCoalescedViewsArray::view_type(*d);
       } else {
         return typename StridedCoalescedViewsArray::view_type{d, this->size()};
       }
@@ -222,7 +208,7 @@ namespace tfel::math {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       const auto* const d = this->data_pointer + this->getIndex(i...);
       if constexpr (is_scalar) {
-        return *d;
+        return typename StridedCoalescedViewsArray::const_view_type(*d);
       } else {
         return typename StridedCoalescedViewsArray::const_view_type{
             d, this->size()};
@@ -300,7 +286,7 @@ namespace tfel::math {
 
   template <typename ArrayType>
   constexpr auto map_strided_array(
-      const StridedCoalescedViewsArrayDataPointerType<
+      const ViewsArrayDataPointerType<
           std::conditional_t<std::is_const_v<ArrayType>,
                              const numeric_type<ArrayType>,
                              numeric_type<ArrayType>>> p) {
