@@ -113,11 +113,10 @@ and to
   stiffness tensor of the middle of the time step, when this tensor is
   computed by the behaviour, and the last stage of `rk4` was evaluated
   at the middle of the time step (also in Version 5.1.1).
-- `RungeKutta` DSLs (see Issue #1430): in the final stress, the values
-  at the end of the time step of the temperature, the external state
-  variables and the gradients were substituted in `@ComputeStress`
-  without parentheses: `200e9 - 1e8 * T` was evaluated as
-  `200e9 - 1e8 * T + dT`.
+- `RungeKutta` DSLs (see Issue #1430): the expressions substituted in
+  `@ComputeStress` for the temperature, the external state variables and
+  the gradients lacked parentheses. In the final stress,
+  `200e9 - 1e8 * T` was evaluated as `200e9 - 1e8 * T + dT`.
 - `RungeKutta` DSLs (see Issue #1347): in
   `@UpdateAuxiliaryStateVariables`, the gradients, the external state
   variables and the variables computed by models have their values at
@@ -156,12 +155,12 @@ and to
 - `MTest` (see Issue #1260): in plane stress, the thermal strain of the
   orthotropic behaviours which only declare `ThermalExpansion1` and
   `ThermalExpansion2`, as the `castem` ones, was silently null.
-- Stress-free expansions in the `castem`, `aster`, `abaqus`, `ansys`,
-  `dianafea` and `lsdyna` interfaces (see Issue #1099): the shear
-  components of the expansion were subtracted from the wrong component
-  of the strain, with a wrong factor or in the wrong order. With
-  `ansys`, the shear components of the stress at the beginning of the
-  time step were halved (also in Version 5.1.1).
+- Stress-free expansions in the `castem`, `aster`, `abaqus`, `ansys` and
+  `dianafea` interfaces (see Issue #1099): the shear components of the
+  expansion were subtracted from the wrong component of the strain, with
+  a wrong factor or in the wrong order. With `ansys`, the shear
+  components of the stress at the beginning of the time step were halved
+  (also in Version 5.1.1).
 - `abaqus` and `ansys` interfaces, plane stress (see Issue #1307): the
   axial stress-free expansion (thermal expansion, swelling) of small
   strain behaviours was subtracted from the in-plane shear strain.
@@ -240,6 +239,9 @@ and to
   #1050): the stress is converted when the integration succeeds with
   unreliable results, and the stress returned with a prediction operator
   is the one at the beginning of the time step (also in Version 5.1.1).
+- `generic` interface (see Issue #1050): the post-processings executed
+  before the update of the state read the internal state variables at
+  the beginning of the time step (also in Version 5.1.1).
 - `ScalarDamage` stress potential in axisymmetrical generalised plane
   stress (see Issue #1256): the axial stress was `(1 - d)` times the
   imposed one.
@@ -391,9 +393,15 @@ and to
 - `tfel-check` (see Issues #1032 and #1209): the column formulas such as
   `'$2+2*$1'` were evaluated with exchanged columns, and a `NaN` in a
   compared column made the comparison succeed (also in Version 5.1.1).
+- In the python bindings of `MTest`, `istates[i]` returns a reference to
+  the state of the integration point, not a copy (see Issue #1163): the
+  values set through it were lost, and a state kept in a variable now
+  follows the computation.
 - In the python bindings, `ExternalBehaviourDescription.evtypes`
-  returned the types of the internal state variables (see Issue #1139)
-  (also in Version 5.1.1).
+  returned the types of the internal state variables, and
+  `mfront.umatxx.Behaviour.isIsotropic` and `isOrthotropic` the type of
+  the behaviour instead of its symmetry (see Issue #1139) (also in
+  Version 5.1.1).
 
 ## Fixes improving convergence
 
@@ -427,6 +435,11 @@ and to
   which is `true` by default, allows users to easily test if this
   correction affects their results: setting it to `false` restores the
   previous derivatives.
+- `castem` interface (see Issue #1157): with
+  `@CastemUseTimeSubStepping`, a time step scaling factor lower than one
+  returned by a successful integration no longer triggers the local
+  sub-stepping, unless `@CastemDoSubSteppingOnInvalidResults true;` is
+  given (also in Version 5.1.1).
 - `Implicit` DSLs (see Issues #1303, #1334 and #1494): the blocks of the
   inverse of the jacobian (`iJ_X_Y`, `getPartialJacobianInvert`) are
   fixed when a block of the same row is not used and for a tensorial
@@ -480,6 +493,11 @@ and to
 - In the python bindings, the argument of
   `TargetsDescription.getLibrary` is named `n` instead of `library` (see
   Issue #1073).
+- In the python bindings, the `source` attribute of the entry points of
+  `mfront.database` returns the source file, not the type, now given by
+  `type` (see Issue #1181), and `mtest.makeConstraintOptions` takes
+  keyword arguments, not a tuple and a dictionary (see Issue #897) (also
+  in Version 5.1.1).
 - `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
   expansion coefficients is now an error (except `ThermalExpansion1` and
   `ThermalExpansion2` in plane stress).
@@ -534,15 +552,40 @@ and to
   `Implicit` DSLs (see Issues #1303 and #1355), as are `fsscb_c`,
   `fsscb_iinv_dFp_t` and `fsscb_mu` with the `FiniteStrainSingleCrystal`
   brick (see Issue #1309).
+- On Linux, the libraries built by `mfront --obuild` contain the
+  directory of the libraries of `TFEL` in their run path (see Issue
+  #1077). The `--set-rpath=false` command line option restores the
+  previous behaviour.
+- In the `Makefile` generated by `mfront`, `$(LDFLAGS)` ends the link
+  command, and the default warning flags are not added to a user-defined
+  `CXXFLAGS` or `CFLAGS` (see Issues #962 and #1054).
+- The `env.sh` script no longer adds an empty entry to `LD_LIBRARY_PATH`
+  and `PYTHONPATH` when they are not set (see Issue #1251): the current
+  directory is no longer searched for libraries and python modules.
 - `mfront-query`, `mfront-doc`, `mtest`, `mfm` and `mfm-test-generator`
   install the terminate handler of `mfront` (see Issue #1211): an input
   error makes them exit with the status `1` instead of aborting. The
   `--no-terminate-handler` command line argument restores the former
   behaviour.
+- `mfront-query` takes into account the
+  `--dsl-material-property-option`, `--dsl-behaviour-option` and
+  `--dsl-model-option` options and the associated `...-options-file`
+  ones, which were ignored (see Issue #1191) (also in Version 5.1.1).
+- `tfel-config --tfel-home` returns the installation path of `TFEL`, not
+  the name of the environment variable (see Issue #1048) (also in
+  Version 5.1.1).
+- `PTest` writes the oxidation lengths in their own columns of the
+  output file (see Issue #1161) (also in Version 5.1.1).
 - In the text files read by `MTest` and `tfel-check`, a `#` character
   starts a comment anywhere in a line (see Issue #1201). `tfel-check`
   applies the output check of a command declared with `shall_fail` to
   the output of the failed command (see Issue #1342).
+- `tfel-check` runs once the `.check` files of a directory reachable
+  through several paths (see Issue #1321).
+- `tfel-check` (see Issue #892): two columns of two files are compared
+  by `@Test {'reference.res' : 2} {'results.res' : 3};`. The form
+  `@Test {{'reference.res' : 2}, {'results.res' : 3}};`, the only one
+  accepted, is rejected (also in Version 5.1.1).
 - `MaterialLaw` DSL (see Issue #1319): the physical bounds deduced from
   the glossary are also declared, and thus checked, when `@UnitSystem`
   follows `@Function`.
@@ -608,6 +651,11 @@ and to
   number of iterations. `ParticulateMicrostructure::replaceMatrixPhase`
   is replaced by `changeElasticityOfMatrixPhase`, and the `stiffness`
   data member of the phases by the `getElasticityOfPhase` method.
+- A `ParticulateMicrostructure` stores copies of the distributions given
+  to `addInclusionPhase`, and `get_inclusionPhase` returns a copy (see
+  Issues #946 and #978): `changeElasticityOfInclusionPhase` and
+  `changeFractionOfInclusionPhase` shall be used to modify them. A
+  `ParticulateMicrostructure` can no longer be copied.
 - The following installed headers are removed, most of which could not
   be compiled (see Issues #1205 and #1264):
   `TFEL/Material/IsotropicLinearFourierHookLaw.hxx`,
@@ -615,9 +663,8 @@ and to
   `TFEL/Material/ThermalBehaviour.hxx`,
   `TFEL/Material/ThermalBehaviourData.hxx`,
   `TFEL/Material/ThermoMechanicalBehaviour.hxx`,
-  `TFEL/Math/Parser/EvaluatorProxy.hxx`,
-  `MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx` and
-  `TFEL/Check/TestLauncherV1.hxx`.
+  `TFEL/Math/Parser/EvaluatorProxy.hxx` and
+  `MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx`.
 - The units of the quantities are refactored (see Issues #1001 and
   #1013): `tfel::math::GenerateUnit`, the `tfel::math::Unit` class
   template and the `TFEL/Math/Quantity/Unit.ixx` header are removed, and
@@ -625,6 +672,12 @@ and to
   units must be rewritten. The views arrays of quantities map a storage
   of the underlying numeric type: mapping a storage of quantities no
   longer compiles (see Issue #1353).
+- `tfel::math::qt`, `qt_ref` and `const_qt_ref` are classes deriving
+  from `Quantity`, not aliases (see Issue #1003).
+- The `size_type` of the fixed-size objects of `TFEL/Math` (`tvector`,
+  `tmatrix`, `stensor`, `tensor`, `st2tost2`...), returned by their
+  `size` method, is `unsigned int` instead of `unsigned short` (see
+  Issue #905).
 - Most single-argument constructors of the public classes of `TFEL`,
   `MFront` and `MTest` are `explicit` (see Issue #1010): implicit
   conversions, such as `mtest::ConstantEvolution e = 1.;`, no longer
@@ -651,6 +704,22 @@ and to
   are named `..._mfront_index_<i>_LowerBound` instead of
   `..._mfront_index_<i>__LowerBound`, as `MGIS` expects (see Issue
   #1205).
+- The `TFEL_TESTS_ASSERT` macro stops the test at the first failed
+  assertion, by throwing an exception (see Issue #1024). The new
+  `TFEL_TESTS_CHECK` macro reports the failure and continues the test,
+  as before.
+- With quantities, the units of `PhysicalConstants::ElementaryCharge`
+  and `FaradayConstant` are `A.s` and `A.s/mol` instead of `A/s` and
+  `A/s/mol` (see Issue #1175) (also in Version 5.1.1).
+- With `TFEL_APPEND_VERSION` or `TFEL_VERSION_FLAVOUR`, the static
+  libraries are named `lib<name>-<suffix>.a` instead of
+  `lib<name>-{TFEL_SUFFIX}.a` (see Issue #1183) (also in Version 5.1.1).
+- On Windows, `tfel::system::dirSeparator` returns the backslash (see
+  Issues #947 and #948) (also in Version 5.1.1).
+- The `Conan` recipe and the `Homebrew` patches are no longer provided,
+  and `tfel-config --oflags` no longer returns `-O2 -DNDEBUG` when
+  `TFEL` is built in `Debug` mode with `gcc`, `nvc++` or MSVC (see Issue
+  #1239).
 - The value of a raw string literal token given by `CxxTokenizer` holds the
   whole literal, from the `R` delimiter to the closing `"` included, and its
   offset is that of the `R`, as for a quoted string (see Issue #1390): the
