@@ -95,10 +95,10 @@ namespace tfel::material {
    *
    * \note The out of plane stretch, given by the third component of the
    * deformation gradient, is taken into account. On the other hand, the out of
-   * plane component of the result, i.e. \f$\det\left(F\right)\,k_3/F_{33}\f$,
-   * is not returned: this function is only suitable for problems whose thermal
-   * conductivity in the out of plane direction is not needed, such as plane
-   * stress or plane strain problems.
+   * plane component of the result, i.e.
+   * \f$\det\left(F\right)\,k_3/F_{33}^{2}\f$, is not returned: this function is
+   * only suitable for problems whose thermal conductivity in the out of plane
+   * direction is not needed, such as plane stress or plane strain problems.
    */
   template <tfel::math::ScalarConcept ThermalConductivityOrDerivativeType,
             tfel::math::NoUnitTensorConcept DeformationGradientType>
@@ -156,7 +156,7 @@ namespace tfel::material {
    * conductivity matrix \f$k\f$ of the current configuration which does
    * not depend on \f$F\f$ and, in 1D and 2D, for which the out-of-plane
    * direction is a principal direction. This is the case of the matrices
-   * returned by the `computeThermalConductivyMatrixInReferenceConfiguration`
+   * returned by the `computeThermalConductivityMatrixInReferenceConfiguration`
    * functions.
    */
   template <unsigned short N,

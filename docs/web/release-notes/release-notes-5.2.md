@@ -1,7 +1,7 @@
 ---
 title: Release notes of the 5.2 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer, Antoine Martin
-date: 2025
+date: 2026
 lang: en-EN
 numbersections: true
 documentclass: article
@@ -28,7 +28,7 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
 
-The page describes the new functionalities of Version 5.2 of the
+This page describes the new functionalities of Version 5.2 of the
 `TFEL` project.
 
 # Highlights
@@ -102,18 +102,68 @@ and to
 
 # Known incompatibilities
 
-## Issues affecting end-users's results
+## Issues affecting end users' results
 
+- Formulas of material properties or brick options given as strings in
+  `MFront` files (see Issue #1103): `1/2` was compiled as an integer
+  division and gave `0` (also in Version 5.1.1).
+- In-place division of the arrays and views of `TFEL/Math` (tensors,
+  vectors, matrices) by an integer, as in `s /= 2;` (see Issue #1097):
+  every component was set to zero (also in Version 5.1.1).
+- `RungeKutta` DSLs, `rk54` (the default) and `rk4` algorithms (see
+  Issues #1095 and #1109): the final stress used the stiffness tensor
+  computed by the behaviour at the middle of the time step. The last
+  stage of `rk4` was evaluated at that date (also in Version 5.1.1).
+- `RungeKutta` DSLs (see Issue #1430): the expressions substituted in
+  `@ComputeStress` for the temperature, the external state variables and
+  the gradients lacked parentheses. In the final stress,
+  `200e9 - 1e8 * T` was evaluated as `200e9 - 1e8 * T + dT`.
+- `generic` interface, plane stress and axisymmetrical generalised plane
+  stress (see Issue #1285): when the solver gives `1` as axial
+  deformation gradient, as `MTest` and `mfem-mgis` do, the Cauchy stress
+  (with the Green-Lagrange strain) or the Piola-Kirchhoff stresses (with
+  `AxialDeformationGradient`) were wrong by a factor of about two.
+- `RungeKutta` DSLs, `@UpdateAuxiliaryStateVariables` (see Issue #1347):
+  the gradients, the external state variables and the outputs of models
+  have their current values, not those at the beginning of the time
+  step. Blocks using `T + dT` must be modified.
+- Isotropic DSLs (see Issue #1107): when several external state
+  variables are declared in the same statement, only the value at the
+  middle of the time step of the last one was initialised (also in
+  Version 5.1.1).
+- Models (see Issue #1344): an output updated by a compound assignment,
+  such as `+=`, was uninitialised when the model is called by a
+  behaviour. With several functions, each reads the values at the
+  beginning of the time step, and only one can modify a given output.
+- `@ComputeThermalExpansion` with options and thermal expansion options
+  of the stress potentials (see Issue #1303): the `ReferenceTemperature`
+  declared by an external `MFront` file was replaced by 293.15 K.
 - `@RotationMatrix<Euler>` of `MTest` now gives the rotation described
   by the Euler angles in the convention of Bunge, as the polycrystal
   classes of `MFront` (see Issue #1270): the rotation matrix was the
   Bunge matrix instead of its transpose, i.e. the inverse rotation was
   applied.
-- `abaqusexplicit` interface (see Issue #1274): the results of
-  orthotropic behaviours using the `MFront` orthotropy management policy
-  change when the material frame is not symmetric with respect to the
-  global frame: the integration applied the inverse rotation, and the
-  second material axis was read beyond the orientation in 2D.
+- Formulas (see Issues #1103 and #1209): `&&` has precedence over `||`,
+  and integer formulas are evaluated from left to right (`2*3/4` gave
+  `0`). The derivatives of `log10` and of formulas whose variables are
+  not in alphabetical order are fixed (also in Version 5.1.1).
+- The `**` operator of the formulas read by `MTest`, `MFront` and
+  `tfel-check` is right-associative (see Issue #1349): `a**b**c` is
+  `a**(b**c)` and was `(a**b)**c`.
+- `generic` interface (see Issue #1137): in a rotated frame, the
+  deformation gradient of the orthotropic behaviours based on a strain
+  measure was rotated as a symmetric tensor (also in Version 5.1.1).
+- `generic` interface, finite strain behaviours (see Issues #951 and
+  #1050): the stress is converted when the integration succeeds with
+  unreliable results, and the stress returned with a prediction operator
+  is the one at the beginning of the time step (also in Version 5.1.1).
+- `generic` interface (see Issue #1050): the post-processings executed
+  before the update of the state read the internal state variables at
+  the beginning of the time step (also in Version 5.1.1).
+- `generic` interface, orthotropic behaviours having several gradients
+  (see Issue #1051): the functions rotating arrays of gradients,
+  thermodynamic forces and tangent operator blocks wrote the variables
+  following the first one at a wrong position.
 - `MTest` assembles the equations associated with the off-diagonal
   components of the deformation gradient of finite strain behaviours
   with the off-diagonal stresses, and applies the imposed off-diagonal
@@ -121,22 +171,223 @@ and to
   leaving one of these components free, which failed or converged to a
   wrong state, converge to the right state, and the number of
   iterations of the other ones may change.
+- `MTest` (see Issue #1260): in plane stress, the thermal strain of the
+  orthotropic behaviours which only declare `ThermalExpansion1` and
+  `ThermalExpansion2`, as the `castem` ones, was silently null.
+- `MTest` (see Issue #1111): with a dynamic time step scaling and no
+  `@MinimalTimeStep`, the last time step of a period could end after it,
+  and any `@Event` activated every constraint (also in Version 5.1.1).
+- `MTest` (see Issue #1315): the external state variables declared after
+  a tensorial one are read at the right position in `@Test`,
+  `@UserDefinedPostProcessing` and the `PTest` extractors.
+- `PTest` (see Issue #1313): the contact pressure of a mandrel no longer
+  contributes to the end cap effect.
+- The parameters of a material property are local to the library
+  defining it (see Issue #1323): two libraries of the same process
+  defining a material property of the same name could share them.
+- `generic` interface, Hencky strain, plane stress and axisymmetrical
+  generalised plane stress (see Issue #1326): the Piola-Kirchhoff
+  stresses and the tangent operators use the axial stretch computed by
+  the behaviour, not the one given by the solver.
+- `MTest` with `@DynamicTimeStepScaling` (see Issues #1313 and #1351):
+  the `generic` behaviours may increase the time step, and the tests and
+  post-processings are only evaluated on the accepted time steps.
+- Material properties and models (see Issues #953, #1068 and #1187): the
+  default values of the parameters and the bounds are written with 14
+  significant digits in the generated sources, instead of 6 (also in
+  Version 5.1.1).
+- Behaviours based on the Hencky strain (see Issue #1349): the stresses
+  and the tangent operators may change when two principal stretches are
+  almost equal. `LogarithmicStrainHandler::eps` is now a relative
+  threshold.
+- `castem`, `aster`, `abaqus`, `ansys` and `dianafea` interfaces (see
+  Issue #1099): the shear components of the stress-free expansions were
+  wrongly subtracted from the strain, and `ansys` halved the shear
+  stresses at the beginning of the time step (also in Version 5.1.1).
+- `abaqus` and `ansys` interfaces, plane stress (see Issue #1307): the
+  axial stress-free expansion (thermal expansion, swelling) of small
+  strain behaviours was subtracted from the in-plane shear strain.
+- `abaqus` interface (see Issue #1432): the rotation `DROT` applied by
+  `Abaqus/Standard` to the stress before the call is cancelled for the
+  finite strain behaviours and the `FiniteRotationSmallStrain` and
+  `MieheApelLambrechtLogarithmicStrain` strategies.
+- `abaqusexplicit` interface (see Issues #1274 and #1431): the results
+  of orthotropic behaviours using the `MFront` orthotropy management
+  policy change. In 3D, the inverse rotation was applied: only symmetric
+  rotation matrices are unaffected. In 2D, the second material axis and
+  the axial strain of plane stress were also read at wrong positions.
+- `ansys` interface (see Issues #1093 and #1307): the finite strain
+  behaviours read the deformation gradients in plane stress, which were
+  left uninitialised, and the internal and dissipated energies computed
+  by the behaviour are returned.
+- `ansys` interface, finite strain strategies in 3D (see Issue #1119):
+  with `MieheApelLambrechtLogarithmicStrain`, the XZ and YZ strain
+  increments were exchanged; with `FiniteRotationSmallStrain`, a part of
+  the XY Green-Lagrange strain was halved (also in Version 5.1.1).
+- The `aster`, `ansys`, `dianafea`, `cyrano` and `zmat` interfaces
+  evaluate the `@APrioriTimeStepScalingFactor` and
+  `@APosterioriTimeStepScalingFactor` blocks, which were ignored (see
+  Issue #1307): the time steps rejected by those blocks were accepted.
+- `abaqusexplicit` interface (see Issue #1431): in plane stress, the
+  `MieheApelLambrechtLogarithmicStrain` strategy converts the stress at
+  the beginning of the time step with the right axial stretch. The
+  energies are incremented from their previous values.
+- `calculix` interface (see Issue #1125): the rotation matrix of
+  cylindrical orientations was not orthogonal, and the Cauchy stress at
+  the beginning of the increment of the finite strain behaviours used
+  the deformation gradient at its end (also in Version 5.1.1).
+- `calculix` interface, `MieheApelLambrechtLogarithmicStrain` strategies
+  (see Issues #1258 and #1326): the dual stress of orthotropic
+  behaviours is rotated back to the global frame before its conversion,
+  and the `MieheApelLambrechtLogarithmicStrainII` strategy reads the
+  dual stress in the state variables at the beginning of the increment.
+- Other interfaces (see Issues #1117, #1157 and #1177): in 2D, `aster`
+  wrongly rotated the deformation gradient of orthotropic finite strain
+  behaviours and `dianafea` read six components of the strain. `comsol`,
+  and the `castem` models whose temperature is not the first input, read
+  the temperature out of bounds (also in Version 5.1.1).
+- `zmat` interface (see Issue #1205): the elements of an array of non
+  symmetric tensors were stored with the size of a symmetric tensor.
+- `MTest` (see Issues #1129, #1161 and #1185): the results change for
+  `castem_umat` behaviours with external state variables, orthotropic
+  `castem` finite strain behaviours in plane stress, `dianafea`
+  behaviours in 3D, and for the Piola-Kirchhoff stresses of rotated
+  orthotropic `generic` behaviours (also in Version 5.1.1).
+- `MTest` (see Issue #1307): the results change for the orthotropic
+  `abaqus` behaviours having a thermal expansion in plane stress, in a
+  rotated frame, and for the `ansys` finite strain behaviours using the
+  stress at the beginning of the time step in 3D.
+- Bricks (see Issues #1055, #1123 and #1131): the `Barlat`,
+  `Cazacu 2001` and `Orthotropic Cazacu 2004` flow criteria used the
+  coefficients of the stress criterion, `DDIF2` its first non constant
+  fracture stress or energy in all directions. The broken state tests of
+  the isotropic `Hooke` potential were swapped (also in Version 5.1.1).
+- Generated code (see Issues #1137 and #1151): `@Relocation` was ignored
+  in plane strain, in plane stress and when computed by an external
+  model. The isotropic hardening rules of the
+  `MultipleIsotropicMisesFlows` DSL used the equivalent plastic strains
+  at the beginning of the time step (also in Version 5.1.1).
+- HCP crystals (see Issue #1135): some families of slip systems, such as
+  the pyramidal `<-1-123>{11-22}` one, have 6 systems instead of 3 (also
+  in Version 5.1.1).
+- `StandardElastoViscoPlasticity` brick (see Issues #1309 and #1340):
+  when the flow is not active, the static recovery of the `DRS`
+  kinematic hardening rule is applied (the back strain was frozen), and
+  the values saved by `save_stress_criterion` and
+  `save_yield_surface_radius` change.
+- `StandardElastoViscoPlasticity` brick (see Issues #1101 and #1113):
+  the nucleation models take all the inelastic flows into account, not
+  only the first one, and the Gurson-Tvergaard-Needleman stress is no
+  longer negative under hydrostatic compression (also in Version 5.1.1).
+- `StandardElastoViscoPlasticity` brick (see Issues #1324 and #1336):
+  the porosity was doubled when its estimate was negative, and the
+  Gurson-Tvergaard-Needleman and Rousselier-Tanguy-Besson stresses
+  change for null or very small porosities.
+- `StandardElastoViscoPlasticity` brick (see Issue #1309): with the
+  staggered scheme, the porosity was never updated when a flow without
+  isotropic hardening rule sets `save_porosity_increase`.
+- `MultipleIsotropicMisesFlows` DSL (see Issue #1340): the isotropic
+  hardening rules of a flow use the `theta` parameter of this flow, not
+  the one of the behaviour.
+- `Implicit` DSLs (see Issue #1303): the material properties depending
+  on a state variable having a normalisation factor are evaluated with
+  the increment of this variable, not with its normalised increment.
+- `ScalarDamage` stress potential in axisymmetrical generalised plane
+  stress (see Issue #1256): the axial stress was `(1 - d)` times the
+  imposed one.
+- Altered stiffness tensors in axisymmetrical generalised plane stress
+  (see Issue #1121): the hoop component was condensed instead of the
+  axial one (also in Version 5.1.1).
+- `TFEL/Math` (see Issues #1109, #1115, #1133 and #1147): the derivative
+  of the negative part, `st2tost2::convert`, `st2tot2::tpld`,
+  `CubicRoots`, `TinyMatrixInvert`, a rebuilt `Kriging` and the final
+  time of the `RungeKutta54` and `RungeKutta42` solvers are fixed (also
+  in Version 5.1.1).
+- Eigenvalues of 3D symmetric tensors (see Issues #1115 and #1153): the
+  eigenvalues and eigenvectors were wrongly sorted when two eigenvalues
+  are equal, and `FSESQLEIGENSOLVER` and `FSESHYBRIDEIGENSOLVER`
+  returned `NaN` for uniaxial states (also in Version 5.1.1).
+- `symmetric_product(s1, s2)` returns half of `s1 * s2 + s2 * s1`, as
+  documented (see Issue #998): the factor `1/2` was missing (also in
+  Version 5.1.1).
+- `TFEL/Math` (see Issue #1433): `convertToTangentModuli` halved the
+  shear columns, and `det` of `st2tost2` and `t2tot2` objects ignored
+  the row exchanges of the LU decomposition.
+- `computeDeterminantSecondDerivative` of a non-symmetric tensor now
+  returns the second derivative of the determinant in 2D and 3D (see
+  Issue #1262): the rows of the off-diagonal components differ from the
+  previous results, which were the derivative of the adjugate (also in
+  Version 5.1.1).
+- `TFEL/Math` (see Issues #1203, #1317 and #1321): `RungeKutta2::exe`
+  and `RungeKutta4::exe` overshot the final time, nested calls of an
+  external function in a formula used wrong arguments, and the
+  Levenberg-Marquardt minimisers ignored `setMultiplicationFactor`.
+- The self-consistent scheme of a `ParticulateMicrostructure` no longer
+  normalises the localisation tensors of the inclusions: the homogenised
+  stiffness changes. The localisation tensor of the matrix returned by
+  `computeDilute` is no longer the identity.
 - In the homogenisation schemes of `TFEL/Material`, the elasticity of an
-  anisotropic `OrientedDistribution` or `Grain`, given in the local basis
-  of its inclusions, is rotated to the global basis (see Issue #1299):
-  it was used as a global elasticity, so that the orientation of these
-  phases was ignored. `computeEllipsoidLocalisationTensor` and
+  anisotropic `OrientedDistribution`, given in the local basis of its
+  inclusions, is rotated to the global basis (see Issue #1299): it was
+  used as a global elasticity, so that the orientation of the elasticity
+  of these phases was ignored. `computeEllipsoidLocalisationTensor` and
   `computePlaneStrainLocalisationTensor` with an isotropic matrix rotate
   the elasticity of the inclusion as well, as documented. The results of
   the dilute, Mori-Tanaka and self-consistent schemes with such phases
   change.
-- `computeDeterminantSecondDerivative` of a non-symmetric tensor now
-  returns the second derivative of the determinant in 2D and 3D (see
-  Issue #1262): the rows of the off-diagonal components differ from the
-  previous results, which were the derivative of the adjugate.
+- Homogenisation (see Issues #1121 and #1153): the Hill tensor of an
+  ellipsoid whose two largest semi-axes are equal and the plane strain
+  Hill tensor of a rotated ellipse in an anisotropic matrix were wrong.
+  The Hashin-Shtrikman bounds of the shear modulus were too narrow for
+  phases which are not well ordered (also in Version 5.1.1).
+- `MetallicCFCGenericSlidingSystemsInteractionMatrix` (see Issue #1056):
+  every call of `getInteractionMatrix` and `getSecondInteractionMatrix`
+  returned the matrix built by the first one.
+- `SlipSystemsDescription::getClimbTensors` and the `--climb-tensors`
+  queries of `mfront-query` (see Issue #1437): the tensors are built on
+  the slip direction, as in the generated behaviours, not on the normal
+  to the slip plane.
+- In the python bindings of `MTest`, `istates[i]` returns a reference to
+  the state of the integration point, not a copy (see Issue #1163): the
+  values set through it were lost, and a state kept in a variable now
+  follows the computation.
+- In the python bindings, `ExternalBehaviourDescription.evtypes`
+  returned the types of the internal state variables, and
+  `mfront.umatxx.Behaviour.isIsotropic` and `isOrthotropic` the type of
+  the behaviour instead of its symmetry (see Issue #1139, also in
+  Version 5.1.1).
+- `tfel-check` (see Issues #1032 and #1209): the column formulas such as
+  `'$2+2*$1'` were evaluated with exchanged columns, and a `NaN` in a
+  compared column made the comparison succeed (also in Version 5.1.1).
+- Eigen solvers of 3D symmetric tensors (see Issue #1254):
+  `FSESANALYTICALEIGENSOLVER`, `FSESCUPPENEIGENSOLVER` and
+  `HARARIEIGENSOLVER` gave wrong or inaccurate eigenvectors for equal or
+  close eigenvalues. The default solver changes within its accuracy.
+- `computeEshelbyTensor` (see Issue #1349): the results change for
+  elongated ellipsoids having two close semi-axes, as the test of
+  axisymmetry is now relative to the smallest semi-axis.
 
 ## Fixes improving convergence
 
+- Jacobians and tangent operators (see Issues #1101, #1107, #1113,
+  #1119, #1123, #1125, #1131, #1133, #1157, #1159, #1177, #1189, #1209
+  and #1301): fixes in the `StandardElastoViscoPlasticity` brick, the
+  stress criteria, the `Implicit` DSLs and the `ansys`, `abaqus`,
+  `aster`, `castem` and `comsol` interfaces (also in Version 5.1.1).
+- `Implicit` DSLs (see Issues #1303 and #1334): the variables having a
+  normalisation factor have the right increments in `@TangentOperator`
+  and the right maximum increment per iteration. The correction of an
+  iteration includes the projection on the physical bounds.
+- The tiny non-linear solvers (and the `Implicit` DSLs) evaluate the
+  estimate given by the last allowed correction (see Issue #1288): an
+  integration that converges with exactly `iterMax` corrections now
+  succeeds, and a failing one evaluates its residual once more.
+- The isotropic DSLs accept a convergence reached at the last allowed
+  iteration, which was reported as a failure (see Issue #1199).
+- `LogarithmicStrainHandler` (see Issue #1292): in 3D, the tangent
+  moduli of the behaviours based on the Hencky strain are fixed when two
+  eigenvalues of the right Cauchy-Green tensor are equal and the dual
+  stress is not coaxial with the strain. The stresses are unchanged.
 - The Broyden algorithms of the `Implicit` DSLs (`Broyden`,
   `PowellDogLeg_Broyden` and `Broyden2`) update the jacobian, or its
   inverse, again (see Issue #1295): since `TFEL-4.0`, the update was
@@ -147,6 +398,10 @@ and to
   (respectively `TinyBroyden2Solver`), the update is performed by the
   `updateJacobian` (respectively `updateJacobianInvert`) method, which
   replaces their `updateOrCheckJacobian` method.
+- `Implicit` DSLs, inverse of the jacobian (see Issues #1303 and #1494):
+  the `iJ_X_Y` blocks are fixed when a block of the same row is not
+  used, and `getPartialJacobianInvert` for a tensorial variable which is
+  not the first one.
 - The `FiniteStrainSingleCrystal` brick takes into account, in the
   jacobian and the consistent tangent operator, the derivatives of the
   normalisation of the inverse of the plastic deformation gradient
@@ -161,38 +416,155 @@ and to
   which is `true` by default, allows users to easily test if this
   correction affects their results: setting it to `false` restores the
   previous derivatives.
+- `castem` interface with `@CastemUseTimeSubStepping` (see Issue #1157):
+  unless `@CastemDoSubSteppingOnInvalidResults` is `true`, a successful
+  integration asking for a smaller time step no longer triggers the
+  local sub-stepping (also in Version 5.1.1).
+- Consistent tangent operators (see Issues #1207, #1307 and #1309): the
+  non symmetric operators of the `castem` interface were transposed in
+  1D and with `FiniteRotationSmallStrain`. Those of the `ansys`
+  interface with `FiniteRotationSmallStrain` in 3D and of the `DDIF2`
+  brick with a non null `AngularCoordinate` are fixed.
+- `MTest` (see Issues #1260, #1313 and #1371): the first iterate of the
+  `UAnderson` acceleration algorithm, the elastic stiffness of the
+  `castem` behaviours with the generic plane stress algorithm and the
+  initial stiffness of the `Abaqus/Explicit` behaviours in a rotated
+  frame are fixed.
 
-## Fixes affecting user's experience
+## Fixes affecting the user experience
 
-- In the python bindings, the `None` value of the `OutOfBoundsPolicy`
-  enumeration is renamed `None_`, and the first argument of the `execute`
-  method of `ProcessManagerCommand` is renamed `in_`, as `None` and `in`
-  are reserved keywords in python (see Issue #1072).
-- `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
-  expansion coefficients is now an error (except `ThermalExpansion1` and
-  `ThermalExpansion2` in plane stress).
 - The integer values read by `CxxTokenizer::readInt` and
   `CxxTokenizer::readUnsignedInt`, i.e. the integers of the `MTest`,
   `MFront` and `tfel-check` files (numbers of iterations and of
   sub-steps, columns, array sizes of the DSLs, ...), shall be written
   without decimal point nor exponent: `3.0`, `3.` or `3e0` are now
   rejected (see Issue #1326).
+- Integers written with a decimal point or an exponent were truncated:
+  `1e2` was read as `1` (see Issue #1326). Negative values of unsigned
+  integers and out of range values are now rejected (see Issue #1201).
+- The array sizes of the variables of `MFront` and the integer
+  formulas evaluated by `IntegerEvaluator` shall only contain integers:
+  a number with a decimal point or an exponent, such as `2.5` (which was
+  truncated to `2`), `1e1` or `2.0`, is now rejected (see Issue #1321).
+- Inputs that were silently ignored are now rejected (see Issue #1256):
+  the `overriding_parameters` option of the model DSLs, `@Bounds` and
+  `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
+  component of a scalar variable, and the `Ksf` option of the
+  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
+- The `calculix` and `comsol` interfaces reject the behaviours declaring
+  a stress-free expansion, such as `@ComputeThermalExpansion` or
+  `@Swelling` (see Issue #1338): the results were wrong. With
+  `CalculiX`, the `*EXPANSION` keyword shall be used.
+- `mfront-query`, `mfront-doc`, `mtest`, `mfm` and `mfm-test-generator`
+  exit with the status `1` on an input error, instead of aborting (see
+  Issue #1211). The `--no-terminate-handler` command line argument
+  restores the former behaviour.
+- On Linux, the libraries built by `mfront --obuild` contain the
+  directory of the libraries of `TFEL` in their run path, unless
+  `--set-rpath=false` is given (see Issue #1077).
+- The `env.sh` script no longer adds an empty entry to `LD_LIBRARY_PATH`
+  and `PYTHONPATH` when they are not set (see Issue #1251): the current
+  directory is no longer searched for libraries and python modules.
+- The negative values of unsigned parameters in the
+  `<Behaviour>-parameters.txt` files are rejected, as are the constants
+  followed by a suffix, such as `0.3f`, in `@ElasticMaterialProperties`,
+  `@ComputeThermalExpansion`, `@ComputeStiffnessTensor` and
+  `@HillTensor` (see Issues #1319 and #1436).
+- Models (see Issues #617, #1305, #1355 and #1358): the `generic` and
+  `castem` interfaces check the bounds of the outputs, the `castem`
+  models follow the `CASTEM_OUT_OF_BOUNDS_POLICY` environment variable,
+  and the models read the `<ClassName>-parameters.txt` file of the
+  current directory.
+- `is_delta_zeros_defined`, `fzeros_1`, `inv_jacobian`, `levmar_first`
+  and the names of the tangent operator blocks are reserved names in the
+  `Implicit` DSLs (see Issues #1303 and #1355), as are `fsscb_c`,
+  `fsscb_iinv_dFp_t` and `fsscb_mu` with the `FiniteStrainSingleCrystal`
+  brick (see Issue #1309).
+- Normalisation factors are rejected on the integration variables
+  handled by the bricks, such as `eel` or the equivalent plastic strains
+  (see Issue #1347): the bricks ignored them, which led to wrong
+  results.
+- The `save_strain` and `save_stress` options of `@StrainMeasure`, when
+  set to `false`, no longer add the `StrainMeasure` and `DualStress`
+  auxiliary state variables (see Issue #1330): the number of internal
+  state variables of such behaviours changes.
+- Bounds on the first component of a tensorial variable, such as
+  `eel(0)`, were checked on all its components (see Issue #1256).
+- `MaterialLaw` DSL (see Issue #1319): the physical bounds deduced from
+  the glossary are also declared, and thus checked, when `@UnitSystem`
+  follows `@Function`.
+- `MTest` (see Issue #1260): an incomplete set of orthotropic thermal
+  expansion coefficients is now an error (except `ThermalExpansion1` and
+  `ThermalExpansion2` in plane stress).
+- `MTest` and `PTest` reject the parameters of the acceleration
+  algorithms which are not integers between 0 and 65535, the bare name
+  of a tensorial external state variable in `@Test`, and
+  `@MandrelRadiusEvolution` with the `TightPipe` radial loading (see
+  Issues #1197, #1315 and #1351).
+- In the text files read by `MTest` and `tfel-check`, a `#` character
+  starts a comment anywhere in a line (see Issue #1201).
+- Failures of the behaviour (see Issues #1205, #1258 and #1307): the
+  `dianafea` interface stops the computation instead of returning
+  silently, the `comsol` interface returns `3` instead of `-1`, and the
+  `abaqusexplicit` interface reports the exceptions. The `zmat`
+  interface checks the bounds of the variables.
+- In the `Makefile` generated by `mfront`, `$(LDFLAGS)` ends the link
+  command, and the default warning flags are not added to a user-defined
+  `CXXFLAGS` or `CFLAGS` (see Issues #962 and #1054).
+- `PTest` writes the oxidation lengths in their own columns of the
+  output file (see Issue #1161, also in Version 5.1.1).
+- `mfront-query` takes into account the
+  `--dsl-material-property-option`, `--dsl-behaviour-option` and
+  `--dsl-model-option` options and the associated `...-options-file`
+  ones, which were ignored (see Issue #1191, also in Version 5.1.1).
+- `tfel-config --tfel-home` returns the installation path of `TFEL`, not
+  the name of the environment variable (see Issue #1048, also in
+  Version 5.1.1).
+- In the python bindings, the `None` value of the `OutOfBoundsPolicy`
+  enumeration is renamed `None_`, as `None` is a reserved keyword in
+  python (see Issue #1072).
+- In the python bindings, `mtest.makeConstraintOptions` takes keyword
+  arguments, not a tuple and a dictionary (see Issue #897, also in
+  Version 5.1.1).
+- In the python bindings, the `source` attribute of the entry points of
+  `mfront.database` returns the source file, not the type, now given by
+  `type` (see Issue #1181, also in Version 5.1.1).
+- In the python bindings, the argument of
+  `TargetsDescription.getLibrary` is named `n` instead of `library` (see
+  Issue #1073).
+- `tfel-check` (see Issue #892): two columns of two files are compared
+  by `@Test {'reference.res' : 2} {'results.res' : 3};`. The form
+  `@Test {{'reference.res' : 2}, {'results.res' : 3}};`, formerly the
+  only one accepted, is rejected (also in Version 5.1.1).
+- `tfel-check` applies the output check of a command declared with
+  `shall_fail` to the output of the failed command (see Issue #1342),
+  and runs once the `.check` files of a directory reachable through
+  several paths (see Issue #1321).
+- With the `icpx` compiler, `TFEL` and the libraries built by
+  `mfront --obuild` are compiled with `-fno-fast-math` unless
+  `enable-fast-math` is set (see Issue #1416): the results may change at
+  the level of rounding errors.
+- With `MinGW`, the python modules are installed in
+  `lib/python<X.Y>/site-packages` instead of
+  `bin/python<X.Y>/site-packages` (see Issue #955).
 
 ## Internal incompatibilities
 
-- The `enable-sanitize-options` option is no longer a boolean option: it
-  now takes the list of the sanitizers to enable, e.g.
-  `-Denable-sanitize-options="address;undefined"`. Enabling all the
-  sanitizers at once was indeed meaningless as most sanitizers cannot be
-  combined (for instance `address`, `thread` and `memory`). Each
-  sanitizer can also be enabled individually using its dedicated
-  `enable-<name>-sanitizer` option, see below.
-- `cmake` \(3.20\) or later is now required to build `TFEL`.
-- `MFront`' interfaces have to implement a method named `setOptions`.
-- The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
-  as documented, if `C++` keywords are allowed (see Issue #964): its
-  meaning has been inverted. With the default value (`true`), `C++`
-  keywords are now considered as valid identifiers.
+- `cmake` 3.20 or later is now required to build `TFEL`.
+- Most single-argument constructors of the public classes of `TFEL`,
+  `MFront` and `MTest` are `explicit` (see Issue #1010): implicit
+  conversions, such as `mtest::ConstantEvolution e = 1.;`, no longer
+  compile.
+- The `size_type` of the fixed-size objects of `TFEL/Math` (`tvector`,
+  `stensor`, `st2tost2`...), returned by `size`, is `unsigned int`
+  instead of `unsigned short` (see Issue #905).
+- The `TFEL_VISIBILITY_EXPORT`, `TFEL_VISIBILITY_IMPORT` and
+  `TFEL_VISIBILITY_LOCAL` macros, and the macros built on them, expand
+  to standard attributes (see Issue #873): they must start a
+  declaration, as in `TFEL_VISIBILITY_EXPORT static void f();`.
+- The misspelt names of functions of `TFEL/Math` and of stress measures
+  of `MTest` (`Kirchoff` for `Kirchhoff`) are deprecated and will be
+  removed in version 6.0 (see Issue #1483).
 - The `CoalescedView` and `ConstCoalescedView` views of `TFEL/Math`, the
   `MappableMathObjectUsingCoalescedViewConcept`,
   `MappableMutableMathObjectUsingCoalescedViewConcept` and
@@ -201,28 +573,6 @@ and to
   is replaced by `Scattered` in those names (see Section
   @sec:tfel:5.2:tfel_math:views). The former names will be removed in
   version 6.0.
-- The static method `get` of the
-  `GlobalDomainSpecificLanguageOptionsManager` class has been removed.
-  The global options passed to domain specific languages are now handled
-  by the `ConfigurationManager` class, which derives from the
-  `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
-  instance is returned by `ConfigurationManager::get()`.
-- `Evaluator::getVariablesNames` returns the names of the variables
-  ordered by their positions (the order given to the constructor, or the
-  order of their first appearance in the expression), instead of the
-  alphabetical order (see Issue #1209).
-- The tiny non-linear solvers (and the `Implicit` DSLs) evaluate the
-  estimate given by the last allowed correction (see Issue #1288): an
-  integration that converges with exactly `iterMax` corrections now
-  succeeds, and a failing one evaluates its residual once more.
-- The Levenberg-Marquardt minimisers (`LevenbergMarquardt`,
-  `FSLevenbergMarquardt`) reject the steps that increase the cost (see
-  Issue #1288): the iterates of every fit change.
-- Inputs that were silently ignored are now rejected (see Issue #1256):
-  the `overriding_parameters` option of the model DSLs, `@Bounds` and
-  `@PhysicalBounds` on gradients and thermodynamic forces, bounds on a
-  component of a scalar variable, and the `Ksf` option of the
-  `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow.
 - The type identifiers exported by `MFront` for the variables whose
   type is the derivative of a tensorial type alias (such as
   `StressStensor`, `Stensor`, `TVector` or `Tensor`) with respect to a
@@ -231,12 +581,66 @@ and to
   exported as `268`, like `Stensor4`, instead of `76`, which `MTest` and
   `MGIS` decode as `derivative_type<stensor<1, real>, real>`. Behaviours
   declaring such variables must be generated again (see Issue #1332).
-- The array sizes of the variables of `MFront` and the integer
-  formulas evaluated by `IntegerEvaluator` (for instance the
-  `tile_size` option of the `TDLS` linear solver) shall only contain
-  integers: a number with a decimal point or an exponent, such as `2.5`
-  (which was truncated to `2`), `1e1` or `2.0`, is now rejected (see
-  Issue #1321).
+- The symbols exported for the bounds of the elements of array variables
+  are named `..._mfront_index_<i>_LowerBound` instead of
+  `..._mfront_index_<i>__LowerBound`, as `MGIS` expects (see Issue
+  #1205).
+- Quantities (see Issues #1003 and #1353): `qt`, `qt_ref` and
+  `const_qt_ref` are classes deriving from `Quantity`, not aliases. The
+  views arrays of quantities map a storage of the underlying numeric
+  type: mapping a storage of quantities no longer compiles.
+- Units of the quantities (see Issues #1001 and #1013): `GenerateUnit`,
+  the `Unit` class template and the `TFEL/Math/Quantity/Unit.ixx` header
+  are removed, and `UnitConcept` moves to the `tfel::math::unit`
+  namespace. User-defined units must be rewritten.
+- `Evaluator::getVariablesNames` returns the names of the variables
+  ordered by their positions (the order given to the constructor, or the
+  order of their first appearance in the expression), instead of the
+  alphabetical order (see Issue #1209).
+- The Levenberg-Marquardt minimisers (`LevenbergMarquardt`,
+  `FSLevenbergMarquardt`) reject the steps that increase the cost (see
+  Issue #1288): the iterates of every fit change.
+- A `YoungNuModuli`, `KGModuli` or `LambdaMuModuli` object can no longer
+  be assigned from another format of isotropic moduli (see Issue #1203):
+  these assignments compiled and did nothing.
+- The `TFEL_TESTS_ASSERT` macro throws at the first failed assertion
+  (see Issue #1024). The new `TFEL_TESTS_CHECK` macro reports the
+  failure and continues the test, as before.
+- `computeSelfConsistent` (`computeSelfConsistentScheme` in python)
+  takes a `Polycrystal`. For a `ParticulateMicrostructure`,
+  `computeAsymmetricSelfConsistent` shall be used: its second argument
+  is a relative tolerance instead of a number of iterations.
+- `ParticulateMicrostructure::replaceMatrixPhase` is replaced by
+  `changeElasticityOfMatrixPhase`, and the `stiffness` data member of
+  the phases by the `getElasticityOfPhase` method.
+- A `ParticulateMicrostructure` stores copies of the distributions given
+  to `addInclusionPhase` and can no longer be copied (see Issues #946
+  and #978): `changeElasticityOfInclusionPhase` and
+  `changeFractionOfInclusionPhase` shall be used to modify them.
+- The interfaces of `MFront` must implement a method named `setOptions`.
+- The static method `get` of the
+  `GlobalDomainSpecificLanguageOptionsManager` class has been removed.
+  The global options passed to domain specific languages are now handled
+  by the `ConfigurationManager` class, which derives from the
+  `GlobalDomainSpecificLanguageOptionsManager` class and whose unique
+  instance is returned by `ConfigurationManager::get()`.
+- Code extending `MFront` (see Issues #1334 and #1340):
+  `computeElasticLimit` and `computeElasticLimitAndDerivative` of
+  `IsotropicHardeningRule` take the expression of `theta` as a new
+  argument, and the generated `computeNumericalJacobian` and
+  `updateOrCheckJacobian` methods return a boolean.
+- The following installed headers are removed (see Issues #1205 and
+  #1264):
+  `IsotropicLinearFourierHookLaw.hxx`, `IsotropicLinearFourierLaw.hxx`,
+  `ThermalBehaviour.hxx`, `ThermalBehaviourData.hxx` and
+  `ThermoMechanicalBehaviour.hxx` in `TFEL/Material`,
+  `TFEL/Math/Parser/EvaluatorProxy.hxx` and
+  `MFront/Cyrano/CyranoGenericPlaneStressHandler.hxx`.
+- The boolean argument of `CxxTokenizer::isValidIdentifier` now states,
+  as documented, if `C++` keywords are allowed (see Issue #964): its
+  meaning has been inverted. With the default value (`true`), `C++`
+  keywords are now considered as valid identifiers (also in Version
+  5.1.1).
 - The value of a raw string literal token given by `CxxTokenizer` holds the
   whole literal, from the `R` delimiter to the closing `"` included, and its
   offset is that of the `R`, as for a quoted string (see Issue #1390): the
@@ -249,14 +653,6 @@ and to
   reads the contents of a string token shall use the new
   `tfel::utilities::getContents` function rather than removing the first and
   last characters of the value.
-- The offset of a comment token which has no contents on the line it starts on
-  is that of the delimiter which opens the comment (see Issue #1391): it was
-  the offset reached after the delimiters and the spaces which would have
-  surrounded the contents, so that it pointed past the end of the line for an
-  empty `C++` style comment, as `a; //`, and beyond the opening delimiter for an
-  empty `C` style comment or for a comment opened at the end of a line, as the
-  header comments of the `MFront` files starting with `/*!`. The flags, the
-  lines and the values of the tokens are unaffected.
 - `CxxTokenizer::stripComments` gathers all the comments of a line, separated
   by a space character, instead of keeping only the last one (see Issue
   #1392): the comments of a line holding `//! first` and `//! second` are
@@ -271,13 +667,47 @@ and to
   the end of the file held an additional end of line character, and the last
   line of a file which is not terminated by an end of line character was
   tokenized twice. The line numbers are unaffected.
+- The offset of a comment token which has no contents on the line it starts on
+  is that of the delimiter which opens the comment (see Issue #1391): it was
+  the offset reached after the delimiters and the spaces which would have
+  surrounded the contents, so that it pointed past the end of the line for an
+  empty `C++` style comment, as `a; //`, and beyond the opening delimiter for an
+  empty `C` style comment or for a comment opened at the end of a line, as the
+  header comments of the `MFront` files starting with `/*!`. The flags, the
+  lines and the values of the tokens are unaffected.
+- When the `keepCommentBoundaries` option of `CxxTokenizer` is enabled,
+  the offsets of the tokens which follow a comment on the same line are
+  no longer shifted by the size of the delimiter opening the comment
+  (see Issue #1407).
+- `tfel::utilities::tokenize` no longer returns an empty first token for
+  a string starting with the delimiter, and `replace_all` with a start
+  position keeps the characters preceding it (see Issue #1201).
+- With quantities, the units of `PhysicalConstants::ElementaryCharge`
+  and `FaradayConstant` are `A.s` and `A.s/mol` instead of `A/s` and
+  `A/s/mol` (see Issue #1175, also in Version 5.1.1).
+- The `enable-sanitize-options` option is no longer a boolean option: it
+  now takes the list of the sanitizers to enable, e.g.
+  `-Denable-sanitize-options="address;undefined"`. Enabling all the
+  sanitizers at once was indeed meaningless as most sanitizers cannot be
+  combined (for instance `address`, `thread` and `memory`). Each
+  sanitizer can also be enabled individually using its dedicated
+  `enable-<name>-sanitizer` option, see below.
+- The `Conan` recipe and the `Homebrew` patches are no longer provided,
+  and `tfel-config --oflags` no longer returns `-O2 -DNDEBUG` when
+  `TFEL` is built in `Debug` mode with `gcc`, `nvc++` or MSVC (see Issue
+  #1239).
+- With `TFEL_APPEND_VERSION` or `TFEL_VERSION_FLAVOUR`, the static
+  libraries are named `lib<name>-<suffix>.a` instead of
+  `lib<name>-{TFEL_SUFFIX}.a` (see Issue #1183, also in Version 5.1.1).
+- On Windows, `tfel::system::dirSeparator` returns the backslash (see
+  Issues #947 and #948, also in Version 5.1.1).
 
 # Improvements to the build system
 
 ## New `cmake` options
 
-- `enable-tdls`: add support for Tiny Device-callable Linear Solvers
-  (`TDLS`) library. `OFF` by default.
+- `enable-tdls`: adds support for the Tiny Device-callable Linear
+  Solvers (`TDLS`) library. `OFF` by default.
 - `enable-tdls-as-default-linear-system-solver-in-mfront`: use `TDLS`
   as the default linear solver. Requires `enable-tdls` to be `ON`.
   `OFF` by default.
@@ -310,10 +740,10 @@ sanitizer name: `enable-<name>-sanitizer`, e.g.
 `-Denable-bounds-strict-sanitizer=ON`. Such options can be combined with the
 `enable-sanitize-options` option: the enabled sanitizers are the sanitizers
 listed in the `enable-sanitize-options` option and the sanitizers whose
-dedicated option is enabled. Dedicated options are also defined for the
-sanitizers which are not supported by the current compiler (enabling them
-issues a warning and they are ignored), so that the same options can be
-used whatever the compiler is.
+dedicated option is enabled. A dedicated option is also defined for
+`integer` with `gcc` and for `bounds-strict` with `clang`, which those
+compilers do not support: enabling it issues a warning and the sanitizer
+is ignored.
 
 The following sanitizers are declared for `gcc` (the sanitizers corresponding
 to a subset of the undefined behaviour sanitizer can be enabled
@@ -334,8 +764,8 @@ The following sanitizers are declared for `clang`:
 - `address`, `thread`, `memory` (the memory sanitizer also enables
   `-fsanitize-memory-track-origins=2`), `leak`, `hwaddress`,
 - `cfi`, `cfi-icall`, `safe-stack`, `shadow-call-stack`, `dataflow`,
-- `undefined` and its subsets: `alignment`, `bool`, `bounds`, `builtin`,
-  `enum`, `float-cast-overflow`, `float-divide-by-zero`, `integer`,
+- `undefined` and its subsets: `alignment`, `bool`, `bounds`, `enum`,
+  `float-cast-overflow`, `float-divide-by-zero`, `integer`,
   `unsigned-integer-overflow`, `null`, `object-size`, `return`, `shift`,
   `shift-base`, `shift-exponent`, `signed-integer-overflow`, `vptr`,
 - `pointer-compare`, `pointer-subtract` (the address sanitizer and the link
@@ -371,9 +801,9 @@ sanitizers.
   configurations.
 - `TFEL_GXX_COMPILER`: path to the `g++` compiler.
 - `TFEL_CLANGXX_COMPILER`: path to the `clang++` compiler.
-- `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler.
+- `TFEL_ICPX_COMPILER`: path to Intel's `icpx` compiler.
 - `TFEL_NVHPC_COMPILER`: path to NVIDIA's `nvhpc` compiler.
-- `TFEL_ACPP_COMPILER`: path to AdaptativeCpp's `acpp` compiler.
+- `TFEL_ACPP_COMPILER`: path to AdaptiveCpp's `acpp` compiler.
 - `TFEL_CLANG_CUDA_PATH`: path to the `CUDA` toolkit used by `clang` in
   the `cuda-clang` and `hip-clang` configurations (by default, the
   toolkit of `nvcc`). A version of `clang` only supports the versions of
@@ -405,17 +835,18 @@ The following configurations are supported for parallel computations:
 - `stlpar-parunseq-nvhpc-gpu`: configuration associated with `C++`
   standard parallel algorithms using the parallel unsequenced execution
   policy and NVIDIA's `nvhpc` compiler with offloading on the GPU.
-- `sycl-default-icpx`: configuration associated with `SYCL` programming
-  model INTEL's `icpx` compiler.
-- `sycl-default-acpp`: configuration associated with `SYCL` programming
-  model and AdaptativeCpp's `acpp` compiler.
-- `sycl-gpu-acpp`: configuration associated with `SYCL` programming
-  model and AdaptativeCpp's `acpp` compiler, with offloading on the GPU.
+- `sycl-default-icpx`: configuration associated with the `SYCL`
+  programming model and Intel's `icpx` compiler.
+- `sycl-default-acpp`: configuration associated with the `SYCL`
+  programming model and AdaptiveCpp's `acpp` compiler.
+- `sycl-gpu-acpp`: configuration associated with the `SYCL`
+  programming model and AdaptiveCpp's `acpp` compiler, with offloading
+  on the GPU.
 
 ## Add a `build-tests` target
 
 In previous versions, tests were compiled and run using the `check`
-target, which internally calls `ctest` for running the test. One
+target, which internally calls `ctest` to run the tests. One
 drawback of this approach is that `ctest` could not be run in parallel.
 
 The `build-tests` target (which is a dependency of the `check` target)
@@ -499,8 +930,8 @@ The contract of the tokens given by `CxxTokenizer` is documented now, on the
 the digit separators of the `C++14` integer literals, whereas the offsets
 remain those of the file, so that a source code can be rewritten from the
 offsets of its tokens (see Issue #1393); a `C` style comment and a raw string
-literal which are not closed at the end of a file are on the contrary accepted,
-and leave the state of the tokenizer open, on the contrary to a quoted string
+literal which are not closed at the end of a file are accepted,
+and leave the state of the tokenizer open, contrary to a quoted string
 and a character literal, which are rejected (see Issue #1395). Checking that
 the tokens describe the file they come from is what the fuzz testing analysis
 of the tokenizer does, see above.
@@ -524,14 +955,14 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 ### Supported compilers
 
-- `TFEL_GXX_COMPILER`: path the `g++` compiler. The value associated
+- `TFEL_GXX_COMPILER`: path to the `g++` compiler. The value associated
   with this key is determined as follows, by order of priority:
 
   1. by passing the variable `TFEL_GXX_COMPILER` during the invocation of
   `cmake`.
   2. by using `g++` as the main compiler to compile `TFEL`
   3. by searching `g++` using `cmake`'s `find_program` function.
-- `TFEL_CLANGXX_COMPILER`: path to `LLVM` `clang++` compiler. The value
+- `TFEL_CLANGXX_COMPILER`: path to LLVM's `clang++` compiler. The value
   associated with this key is determined as follows, by order of
   priority:
 
@@ -539,7 +970,7 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
   `cmake`,
   2. by using `clang++` as the main compiler to compile `TFEL`,
   3. by searching `clang++` using `cmake`'s `find_program` function.
-- `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler. The value
+- `TFEL_ICPX_COMPILER`: path to Intel's `icpx` compiler. The value
   associated with this key is determined as follows, by order of
   priority:
 
@@ -547,7 +978,7 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
   `cmake`,
   2. by using `icpx` as the main compiler to compile `TFEL`,
   3. by searching `icpx` using `cmake`'s `find_program` function.
-- `TFEL_ACPP_COMPILER`: path to AdaptativeCpp `acpp` compiler. The value
+- `TFEL_ACPP_COMPILER`: path to AdaptiveCpp's `acpp` compiler. The value
   associated with this key is determined as follows, by order of
   priority:
 
@@ -576,22 +1007,22 @@ by this function, e.g. `@TFEL_CXX_STANDARD@`.
 
 - `TFEL_HIPCC_FLAGS`: additional flags to be passed to the `hipcc`
   compiler.
-- `TFEL_HIP_INCLUDE_DIR`: paths to `HIP` headers
+- `TFEL_HIP_INCLUDE_DIR`: path to the `HIP` headers.
 
 ### Substitutions related to the `CUDA` platform
 
 - `TFEL_CUDA_PATH`: path to NVIDIA's `CUDA` toolkit as found by
   `CMake`'s `FindCUDAToolkit` module.
-- `TFEL_CUDA_LIBRARY_DIR`: path to the libraries of the NVIDIA's `CUDA`
+- `TFEL_CUDA_LIBRARY_DIR`: path to the libraries of NVIDIA's `CUDA`
   toolkit as found by `CMake`'s `FindCUDAToolkit` module.
 - `TFEL_CLANG_CUDA_PATH`: path to the `CUDA` toolkit used by `clang`
   (`cuda-clang` and `hip-clang` configurations).
 - `TFEL_CLANG_CUDA_LIBRARY_DIR`: path to the libraries of this toolkit.
 
-## `--cmake-prefix-path`
+## The `--cmake-prefix-path` option of `tfel-config`
 
 `--cmake-prefix-path` returns the path to the `CMake` configuration
-files provided by the project
+files provided by the project:
 
 ~~~~{.bash}
 $ tfel-config --cmake-prefix-path
@@ -604,13 +1035,13 @@ $ tfel-config --cmake-prefix-path
 
 ### Views of data separated by a constant stride
 
-In previous versions, the `View` class allows interpreting a contiguous
-memory area as a tensorial object. The `ScatteredView` class, formerly
-named `CoalescedView` (see below), allows to create a tensorial object
-where each component is referred to by its own pointer.
+The `View` class, available in previous versions, allows interpreting a
+contiguous memory area as a tensorial object. The `ScatteredView` class,
+formerly named `CoalescedView` (see below), allows creating a tensorial
+object where each component is referred to by its own pointer.
 
 The `StridedView` class assumes that each component is separated by a
-constant stride in memory, so that it only have to store one pointer and
+constant stride in memory, so that it only has to store one pointer and
 the value of the stride.
 
 Such views are typically used on GPUs, where coalesced memory accesses
@@ -664,7 +1095,7 @@ Quantities were deeply refactored to:
 
 - improve maintainability (code is much more compact),
 - allow creating surrogate classes for quantities,
-- improve error message,
+- improve error messages,
 - reduce size of the generated symbols.
 
 ## Adjugate of a tensor and its derivative
@@ -735,7 +1166,7 @@ const auto [Q, dQ_dq, dQ_dF] = computePiolaTransformAndDerivatives(q, F);
 The derivative with respect to the vector is a `tmatrix`. The
 derivative with respect to the deformation gradient is of type
 `derivative_type<tvector<N, T>, tensor<N, real>>`. A `tmatrix` can now
-be multiplied by such a derivative, which allows to apply the chain
+be multiplied by such a derivative, which allows applying the chain
 rule:
 
 ~~~~{.cxx}
@@ -801,7 +1232,7 @@ const auto K =
 
 The out of plane thermal conductivity \(k_3\) is not used: the out of
 plane component of the three dimensional result,
-\(\det\left(F\right)\,k_3/F_{33}\), is indeed of no use in a two
+\(\det\left(F\right)\,k_3/F_{33}^{2}\), is indeed of no use in a two
 dimensional computation. The out of plane stretch is nevertheless taken
 into account, as for Piola's transformation.
 
@@ -819,11 +1250,11 @@ configuration, its derivative with respect to the temperature gradient
 and its derivative with respect to the deformation gradient, which
 strongly coupled resolutions need. The thermal conductivity matrix
 \(K\) must be given by one of the
-`computeThermalConductivyMatrixInReferenceConfiguration` functions.
+`computeThermalConductivityMatrixInReferenceConfiguration` functions.
 
 ~~~~{.cxx}
 const auto K =
-  computeThermalConductivyMatrixInReferenceConfiguration(k, F);
+  computeThermalConductivityMatrixInReferenceConfiguration(k, F);
 const auto [Q, dQ_dgT, dQ_dF] =
   computeHeatFluxInReferenceConfigurationAndDerivatives(K, gT, F);
 ~~~~
@@ -837,7 +1268,7 @@ to modify the microstructure:
  - `changeElasticityOfInclusionPhase`
  - `changeFractionOfInclusionPhase`
 
-The `UserDefinedDistributionOfSpheroids` allows to define
+The `UserDefinedDistributionOfSpheroids` class allows defining
 a distribution of spheroids defined by two orientation
 tensors. This distribution can be used in a `ParticulateMicrostructure`
 and the associated homogenization schemes can be used with
@@ -849,7 +1280,7 @@ An object `Grain` was created for this class of microstructures.
 
 The `computeSelfConsistent` function (`computeSelfConsistentScheme` in
 the `Python` bindings) has been modified in order to be
-more consistent with the literature. Now, This scheme takes a `Polycrystal`
+more consistent with the literature. This scheme now takes a `Polycrystal`
 in which no matrix phase exists. For the `ParticulateMicrostructure`,
 the function `computeAsymmetricSelfConsistent`
 (`computeAsymmetricSelfConsistentScheme` in the `Python` bindings) has
@@ -863,120 +1294,22 @@ by using the attributes `.derivative_of_homogenized_stiffness_wrt_kr`
 and `.derivative_of_homogenized_stiffness_wrt_mur` of the
 `HomogenizationScheme` object (only for isotropic phases).
 
-# New features in `tfel-check`
+The second moments of strains considering a Hashin-Shtrikman scheme
+are available. A new [tutorial](PonteCastaneda1992.html)
+shows how to use them in the implementation of the Ponte-Castaneda
+variational bound (1992), within the framework of non-linear elasticity.
 
-## Parallelization
-
-The commands described in different `.check` files can now be run in
-distinct processes.
-
-Note that the command described in a `.check` are still run
-sequentially.
-
-By default, as in previous versions, only one process is used.
-
-### Specifying the number of jobs run simultaneously
-
-The command line argument `--jobs` (`-j`) allow specifying the number
-of jobs run simultaneously.
-
-If no option is given to `--jobs`, the number of available cores
-is used, if the system provide this information.
-
-#### Limit on the number of jobs
-
-By default, this number must be lower than the number of cores
-available. This limit can be discarded by
-passing`--discard-jobs-limit=true` to `tfel-check`.
-
-### Caution
-
-The user must take care that the commands described in `.check` files
-can be run in parallel.
-
-- the jobs shall no exhaust memory.
-- the jobs shall not access concurrently to the same resources.
-
-A typical example of conflict would be to have two `.check` files in the
-same directory that call `mfront` to build somes shared libraries: the
-two `MFront`'s processes may write concurrently files in the `src` and
-`include` directories, leading to an undefined behaviour.
-
-Another example would be to use `@CleanDirectories` and `@CleanFiles`
-commands inappropriately and erase data used by commands of other
-`.check` files.
-
-## Defining environment variables in configuration files
-
-Configuration files can now contain an `environment_variables` sections
-which can introduce a map defining a set of environment variables.
-
-### Example of usage
-
-~~~~{.cxx}
-environment_variables: {"CXXFLAGS": "-Wall"};
-~~~~
-
-### Caution
-
-- An environment variable can only be defined once in configuration
-  files
-- If an environment variable is defined in a configuration file and in a
-  test file (through the `@Environment` keyword), the latter definition
-  is used.
-
-## Controlling clean up of generated files and directories
-
-The `--clean-up` command line argument allows to choose whether the
-generated files and directories listed by the `@CleanFiles` and
-`@CleanDirectories` keywords will be cleaned (this is the case by
-default) or not in case of success.
-
-~~~~{.bash}
-$ tfel-check --clean-up=false
-~~~~
-
-The `--discard-clean-up-on-failure` command line argument allows to
-choose whether the generated files and directories listed by the
-`@CleanFiles` and `@CleanDirectories` keywords will be cleaned or not
-(this is the case by default) in case of failure.
-
-~~~~{.bash}
-$ tfel-check --discard-clean-up-on-failure=false
-~~~~
-
-## Timeout for commands
-
-Commands now have a `timeout` option to limit their duration:
-
-~~~~{c++}
-@Command "sleep 10"{
- timeout: 1
-};
-~~~~
-
-This feature requires the `timeout` utility to be be available.
-
-#  New features in `TFEL/System`
+# New features in `TFEL/System`
 
 ## Improvements in `ProcessManager`
 
 - New overloads of the `createProcess` and `execute` methods allow
   specifying the directory where a command shall be executed.
-- `ProcessManager` shall now work properly in a multithreaded context.
+- `ProcessManager` now works properly in a multithreaded context.
 
 ## Improvements in `SignalManager`
 
-- `SignalManager` shall now work properly in a multithreaded context.
-
-# New `TFEL/Material` features
-
-## Homogenization
-
-The second moments of strains considering a Hashin-Shtrikman scheme
-are available. A new [tutorial](PonteCastaneda1992.html)
-shows how to use it in the implementation of Ponte-Castaneda variational
-bound (1992), within the framework of non-linear elasticity.
+- `SignalManager` now works properly in a multithreaded context.
 
 # New features in `MFront`
 
@@ -989,20 +1322,20 @@ are supported:
 - `Default`. This uses the solvers provided natively by the `TFEL/Math`
   library. As implied by its name, this solver is used by default.
 - `TDLS` (or equivalently `TinyDeviceCallableLinearSolver`). See
-  <https://trsxvz.github.io/TDLS/getting_started.html> for details. If
+  <https://trsxvz.github.io/TDLS/main/getting_started.html> for details. If
   `TFEL` is not compiled with support for the `TDLS` library, selecting
   this solver falls back to the `Default` solver.
 
 The name of the solver can optionally be followed by a dictionary
-allowing to parametrize the solver.
+giving the parameters of the solver.
 
-### Supported Parameters
+### Supported parameters
 
-#### Parameters of the `Default` Linear Solver
+#### Parameters of the `Default` linear solver
 
-The `Default` Linear Solver does not accept any parameter.
+The `Default` linear solver does not accept any parameter.
 
-#### Parameters of the `TDLS` Linear Solver
+#### Parameters of the `TDLS` linear solver
 
 The following options are supported:
 
@@ -1074,14 +1407,14 @@ are:
 
 ### Examples
 
-~~~~ {#LinearSystemSolver .cpp}
+~~~~{.cpp}
 @LinearSystemSolver TDLS{
   tile_size: 4,
   unroll_inner_loop: false
 };
 ~~~~
 
-~~~~ {#LinearSystemSolver .cpp}
+~~~~{.cpp}
 @LinearSystemSolver TDLS{
   tile_size: "StensorSize"
 };
@@ -1089,14 +1422,14 @@ are:
 
 ## Configuration file
 
-`MFront` now allows to define options in a configuration file define
+`MFront` now allows defining options in a configuration file given
 through the `--configuration-file` command line argument as follows:
 
-~~~~{bash}
+~~~~{.bash}
 $ mfront --configuration-file=config.json --interface=generic-parallel UO2_ShearModulus.mfront
 ~~~~
 
-Configuration file follows an extented `JSON`-like syntax. It contains
+The configuration file follows an extended `JSON`-like syntax. It contains
 the following sections:
 
 - `dsl_options`
@@ -1117,7 +1450,7 @@ dictionary.
 >
 > The options given in sections `dsl_options`,
 > `material_property_dsl_options`, `behaviour_dsl_options` and
-> `model_dsl_options` may also be retrieved in dedicated configurations
+> `model_dsl_options` may also be given in dedicated configuration
 > files, respectively specified by the `--dsl-options-file`,
 > `--material-property-dsl-options-file`, `--behaviour-dsl-options-file`,
 > and `--model-dsl-options-file` command line arguments introduced in
@@ -1135,8 +1468,8 @@ interfaces_options: {
 
 ### The `interfaces_options` section
 
-The `interfaces_options` section associates to the name of an interface
-a dictionary of options passed to this interface, as in the previous
+The `interfaces_options` section associates the name of an interface
+with a dictionary of options passed to this interface, as in the previous
 example. The `material_property_interfaces_options`,
 `behaviour_interfaces_options` and `model_interfaces_options` sections
 have the same syntax, but their options are only passed to the
@@ -1145,8 +1478,8 @@ respectively.
 
 ### The `compilation_options` section
 
-The `compilation_options` section associates to a language (`c`,
-`cxx`, `cuda` or `hip`) a dictionary of options, as follows:
+The `compilation_options` section associates a language (`c`,
+`cxx`, `cuda` or `hip`) with a dictionary of options, as follows:
 
 ~~~~{.json}
 compilation_options : {
@@ -1190,13 +1523,13 @@ takes precedence over this option.
 
 ### First syntax
 
-~~~~{bash}
+~~~~{.bash}
 $ mfront --obuild --interface='generic-parallel{backend:{"stlpar": {execution_policy:"par_unseq"}}}' UO2_ShearModulus.mfront
 ~~~~
 
 ### Second syntax
 
-~~~~{bash}
+~~~~{.bash}
 $ mfront --obuild --interface='{generic-parallel:{backend:"stlpar"{execution_policy:"par_unseq"}}}' UO2_ShearModulus.mfront
 ~~~~
 
@@ -1334,10 +1667,10 @@ MinGW, and the reverse.
 ### Improved generation of `Gibiane` input file
 
 The `Cast3M` interface generates automatically an example of `Gibiane`
-input file to integrate which each `MFront` behaviour. This example is
-meant to be used a template and do not pretend to be usable without
+input file for each `MFront` behaviour. This example is
+meant to be used as a template and does not pretend to be usable without
 modification by the user. For instance, previous versions of `MFront`
-did not guarantee that the name of the variables (limited to `4`
+did not guarantee that the names of the variables (limited to `4`
 characters) were unique. Version 5.2 improves this. To illustrate this,
 one may compare the output of Version 5.1 and Version 5.2:
 
@@ -1349,7 +1682,7 @@ statev = 'MOTS' 'EERR' 'EEZZ' 'EETT' 'EERZ' 'KHRR' 'KHZZ' 'KHTT' 'KHRZ' 'V0' 'V1
 ~~~~
 
 In Version 5.1, the variable name `KHRR` is declared twice. `Cast3M`
-does not generate an error although duplicated names leads to erroneous
+does not generate an error although duplicated names lead to erroneous
 results. Version 5.2 avoids this pitfall.
 
 ## The `plastic_deformation_gradient_normalisation_corrections` option of the `FiniteStrainSingleCrystal` brick
@@ -1362,11 +1695,11 @@ consistent tangent operator, as numerical tests showed (or at least
 seemed to show) that they were negligible.
 
 These derivatives are now taken into account by default (see Issue
-1359). The results are not affected, up to the convergence criteria, but
-the convergence is when the deformation gradient is not fully imposed:
+#1359). The results are not affected, up to the convergence criteria, but
+the convergence is, when the deformation gradient is not fully imposed:
 the global iterations recover their quadratic convergence. The boolean
 option `plastic_deformation_gradient_normalisation_corrections` allows
-to neglect them:
+neglecting them:
 
 ~~~~{.cpp}
 @Brick FiniteStrainSingleCrystal{
@@ -1434,6 +1767,100 @@ headers.
 The queries `--compute-thermal-expansion` and
 `--compute-stress-free-expansion` are now available.
 
+# New features in `tfel-check`
+
+## Parallelization
+
+The commands described in different `.check` files can now be run in
+distinct processes.
+
+Note that the commands described in a `.check` file are still run
+sequentially.
+
+By default, as in previous versions, only one process is used.
+
+### Specifying the number of jobs run simultaneously
+
+The command line argument `--jobs` (`-j`) allows specifying the number
+of jobs run simultaneously.
+
+If no value is given to `--jobs`, the number of available cores
+is used, if the system provides this information.
+
+#### Limit on the number of jobs
+
+By default, this number must not exceed the number of available
+cores. This limit can be discarded by
+passing `--discard-jobs-limit=true` to `tfel-check`.
+
+### Caution
+
+The user must take care that the commands described in `.check` files
+can be run in parallel:
+
+- the jobs shall not exhaust memory.
+- the jobs shall not access the same resources concurrently.
+
+A typical example of conflict would be to have two `.check` files in the
+same directory that call `mfront` to build some shared libraries: the
+two `MFront` processes may concurrently write files in the `src` and
+`include` directories, leading to undefined behaviour.
+
+Another example would be to use `@CleanDirectories` and `@CleanFiles`
+commands inappropriately and erase data used by commands of other
+`.check` files.
+
+## Defining environment variables in configuration files
+
+Configuration files can now contain an `environment_variables` section,
+which introduces a map defining a set of environment variables.
+
+### Example of usage
+
+~~~~{.cxx}
+environment_variables: {"CXXFLAGS": "-Wall"};
+~~~~
+
+### Caution
+
+- An environment variable can only be defined once in configuration
+  files
+- If an environment variable is defined in a configuration file and in a
+  test file (through the `@Environment` keyword), the latter definition
+  is used.
+
+## Controlling clean up of generated files and directories
+
+The `--clean-up` command line argument allows choosing whether the
+generated files and directories listed by the `@CleanFiles` and
+`@CleanDirectories` keywords will be cleaned (this is the case by
+default) or not in case of success.
+
+~~~~{.bash}
+$ tfel-check --clean-up=false
+~~~~
+
+The `--discard-clean-up-on-failure` command line argument allows
+choosing whether the generated files and directories listed by the
+`@CleanFiles` and `@CleanDirectories` keywords will be cleaned or not
+(this is the case by default) in case of failure.
+
+~~~~{.bash}
+$ tfel-check --discard-clean-up-on-failure=false
+~~~~
+
+## Timeout for commands
+
+Commands now have a `timeout` option to limit their duration:
+
+~~~~{.cpp}
+@Command "sleep 10"{
+ timeout: 1
+};
+~~~~
+
+This feature requires the `timeout` utility to be available.
+
 # Documentation
 
 ## New coding guidelines page
@@ -1452,9 +1879,9 @@ libraries](tfel-compatibility-modes.html)) and how they are used by
 
 # Continuous integration
 
-## Github actions
+## GitHub Actions
 
-Github actions have been updated to supported a wider range of
+GitHub Actions have been updated to support a wider range of
 configurations, including testing based on `Visual Studio 2022` and
 `Visual Studio 2026`.
 
@@ -1478,7 +1905,7 @@ variables. When such a variable follows another one, the block was
 written out of its bounds and left unset. The rows are now indexed from
 zero, as they are for the arrays of tensorial variables.
 
-For more details, see <https://github.com/thelfer/tfel/issues/1494>.
+For more details, see <https://github.com/thelfer/tfel/issues/1494>
 
 ## Issue 1483: Misspellings of Kirchhoff and Piola
 
@@ -1493,7 +1920,7 @@ are kept as deprecated functions, and `MTest` still accepts the
 `SecondPiolaKirchoffStress` and `FirstPiolaKirchoffStress` stress measures
 with a deprecation message. They will be removed in version 6.0.
 
-For more details, see <https://github.com/thelfer/tfel/issues/1483>.
+For more details, see <https://github.com/thelfer/tfel/issues/1483>
 
 ## Issue 969: GPU coalescence/broadcast loss when projectors/identities are accessed with warp-divergent runtime index
 
@@ -1514,7 +1941,7 @@ type of the object.
 On GPUs, those overloads avoid storing and reading a table when an
 index is only known at run time. The existing methods are unchanged.
 
-For more details, see <https://github.com/thelfer/tfel/issues/969>.
+For more details, see <https://github.com/thelfer/tfel/issues/969>
 
 ## Issue 1414: [mfront] generic-parallel material properties: generated code on shared runtime headers
 
@@ -1526,7 +1953,7 @@ API of the generated functions is unchanged.
 
 For more details, see <https://github.com/thelfer/tfel/issues/1414>
 
-## Issue 1451: [doc] Keywords cited in the documentation which do not exist (@StiffnessTensor, @ElasticProperties, @Parameters)
+## Issue 1451: [doc] Keywords cited in the documentation which do not exist (`@StiffnessTensor`, `@ElasticProperties`, `@Parameters`)
 
 The description of the `@OrthotropicBehaviour` keyword now refers to
 the `@ComputeStiffnessTensor` and `@ElasticMaterialProperties` keywords.
@@ -1534,7 +1961,7 @@ The example of the manual construction of the interaction matrix of the
 single crystal page now uses the `@Parameter` keyword and gives default
 values.
 
-For more details, see <https://github.com/thelfer/tfel/issues/1451>.
+For more details, see <https://github.com/thelfer/tfel/issues/1451>
 
 ## Issue 1440: [tfel-material] HCP slip systems: the c/a ratio is fixed to the ideal value
 
@@ -1549,7 +1976,7 @@ The default value is unchanged: it is the one of the ideal structure,
 \(\sqrt{8/3}\). The ratio is an argument of a new constructor of the
 `tfel::material::SlipSystemsDescription` and `numodis::HCP` classes.
 
-For more details, see <https://github.com/thelfer/tfel/issues/1440>.
+For more details, see <https://github.com/thelfer/tfel/issues/1440>
 
 ## Issue 431: Extend the GursonTvergaardNeedleman model to account for other equivalent stresses
 
@@ -1562,7 +1989,7 @@ through the `GeneralisedRousselierTanguyBesson` stress criterion.
 See Section @sec:tfel:5.2:mfront:generalised_porous_stress_criteria for
 details.
 
-For more details, see <https://github.com/thelfer/tfel/issues/431>.
+For more details, see <https://github.com/thelfer/tfel/issues/431>
 
 ## Issue 440: There is no tangent operator for DSL MultipleIsotropicMisesFlows
 
@@ -1579,7 +2006,7 @@ The consistent tangent operator is symmetric, unless a specific value of
 \(\theta\) is given to one of the flows. In this case, the behaviour is
 declared as having a non symmetric tangent operator.
 
-For more details, see <https://github.com/thelfer/tfel/issues/440>.
+For more details, see <https://github.com/thelfer/tfel/issues/440>
 
 ## Issue 617: [mfront] add support for parameter override through a text file for Model DSL
 
@@ -1604,7 +2031,7 @@ This feature is controlled by the `parameters_initialization_from_file`
 DSL option, which was already accepted by the `Model` domain specific
 language but had no effect.
 
-For more details, see <https://github.com/thelfer/tfel/issues/617>.
+For more details, see <https://github.com/thelfer/tfel/issues/617>
 
 ## Issue 796: Remarks on the documentation of the StandardElastoViscoPlasticity Brick of MFront
 
@@ -1617,7 +2044,7 @@ of the equivalent strain and \(\tenseur{n}\) is the flow direction, and
 the expression of \(\dot{p}\). A section describing this general form
 has been added.
 
-For more details, see <https://github.com/thelfer/tfel/issues/796>.
+For more details, see <https://github.com/thelfer/tfel/issues/796>
 
 ## Issue 641: [Miscellaneous] Is a library a MFront library?
 
@@ -1635,7 +2062,7 @@ The files which can't be analysed are still silently ignored.
 
 For more details, see <https://github.com/thelfer/tfel/issues/641>
 
-## Issue 954: [msys2] the environment scripts are not the good ones (use `.sh.in`, not  `.bat.in` or `.ps1.in`)
+## Issue 954: [msys2] the environment scripts are not the good ones (use `.sh.in`, not `.bat.in` or `.ps1.in`)
 
 With a `MinGW` compiler, such as the ones provided by `MSYS2`, only the
 `env.bat` and `env.ps1` environment scripts were installed, although the
@@ -1765,12 +2192,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/932>
 ## Issue 1376: [mfront-doc] Formula of the Chaboche 2012 kinematic hardening rule differs from the code for m != 1
 
 For more details, see <https://github.com/thelfer/tfel/issues/1376>
+
 ## Issue 1359: [mfront] FiniteStrainSingleCrystal: corrections of the derivatives of the normalised plastic deformation gradient increment, test behaviours and option of the brick
 
 For more details, see <https://github.com/thelfer/tfel/issues/1359>
-## Issue 1273: [tfel-check] Warning when @Precision with one value keeps the second precision of a previous @Precision
+
+## Issue 1273: [tfel-check] Warning when `@Precision` with one value keeps the second precision of a previous `@Precision`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1273>
+
 ## Issue 1371: [mtest] Generalised plane strain elastic stiffness used with the generic plane stress algorithm of the castem wrappers
 
 For more details, see <https://github.com/thelfer/tfel/issues/1371>
@@ -1807,7 +2237,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1317>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1313>
 
-## Issue 1311: [mfront] Material properties given by formulas or external laws do not compile with @UseQt
+## Issue 1311: [mfront] Material properties given by formulas or external laws do not compile with `@UseQt`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1311>
 
@@ -1819,7 +2249,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1309>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1307>
 
-## Issue 1305: [mfront] Material property and model interfaces: validator symbols, octave static parameters, castem bounds and models, gnuplot @Graph, java with MSVC, bounds of model outputs, out of bounds policy of generic models
+## Issue 1305: [mfront] Material property and model interfaces: validator symbols, octave static parameters, castem bounds and models, gnuplot `@Graph`, java with MSVC, bounds of model outputs, out of bounds policy of generic models
 
 For more details, see <https://github.com/thelfer/tfel/issues/1305>
 
@@ -1867,7 +2297,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1281>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1274>
 
-## Issue 1270: [mtest] @RotationMatrix<Euler> applies the inverse rotation, convention of @RotationMatrix undocumented, rotation matrix of the generic interface described by its transpose
+## Issue 1270: [mtest] `@RotationMatrix<Euler>` applies the inverse rotation, convention of `@RotationMatrix` undocumented, rotation matrix of the generic interface described by its transpose
 
 For more details, see <https://github.com/thelfer/tfel/issues/1270>
 
@@ -1939,7 +2369,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1227>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1225>
 
-## Issue 1223: [mtest] Thirty test files give the same variable twice in a @Test map
+## Issue 1223: [mtest] Thirty test files give the same variable twice in a `@Test` map
 
 For more details, see <https://github.com/thelfer/tfel/issues/1223>
 
@@ -1959,7 +2389,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1217>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1215>
 
-## Issue 1213: [mfront] @RequireThermalExpansionCoefficientTensor is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
+## Issue 1213: [mfront] `@RequireThermalExpansionCoefficientTensor` is unusable: missing alias, documented syntax, castem finite strain, stype of the other interfaces
 
 For more details, see <https://github.com/thelfer/tfel/issues/1213>
 
@@ -1971,7 +2401,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1211>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1209>
 
-## Issue 1207: [mfront] Logarithm of the stress-free expansion stretch (abaqus, ansys, calculix, lsdyna), castem tangent operators in 1D and with FiniteRotationSmallStrain, cyrano hypothesis identifier, repeated @Test keys
+## Issue 1207: [mfront] Logarithm of the stress-free expansion stretch (abaqus, ansys, calculix, lsdyna), castem tangent operators in 1D and with FiniteRotationSmallStrain, cyrano hypothesis identifier, repeated `@Test` keys
 
 For more details, see <https://github.com/thelfer/tfel/issues/1207>
 
@@ -1987,7 +2417,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1203>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1201>
 
-## Issue 1199: [mfront] Code block option ".+", @PhysicalBounds on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
+## Issue 1199: [mfront] Code block option ".+", `@PhysicalBounds` on array elements, thermal expansion options, external files registered twice, isotropic DSLs last iteration, bricks and generic behaviours with quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/1199>
 
@@ -2007,7 +2437,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1193>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1191>
 
-## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, @Initialize, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
+## Issue 1189: [mfront] Cazacu Pipe convention, StrainRateSensitive derivative, `@Initialize`, command line keywords, StringArray defaults, array bounds, log stream, fortran03/python/octave/java interfaces and parser messages
 
 For more details, see <https://github.com/thelfer/tfel/issues/1189>
 
@@ -2099,7 +2529,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1147>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1145>
 
-## Issue 1143: [mfront] DSLs: bricks, behaviour variables, @TangentOperator, initialisation values, targets.lst, overriding increments and bounds
+## Issue 1143: [mfront] DSLs: bricks, behaviour variables, `@TangentOperator`, initialisation values, targets.lst, overriding increments and bounds
 
 For more details, see <https://github.com/thelfer/tfel/issues/1143>
 
@@ -2111,7 +2541,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1141>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1139>
 
-## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, @Relocation, rotation functions and MTest files on failure
+## Issue 1137: [mfront] Generated code: amitex template, arrays of state variables and gradients, profiling, `@Relocation`, rotation functions and MTest files on failure
 
 For more details, see <https://github.com/thelfer/tfel/issues/1137>
 
@@ -2213,13 +2643,16 @@ The `SpecificTargetDescription` class is now available in the `mfront`
 python module, so that the `specific_targets` member of the
 `TargetsDescription` class can be read. The libraries exported to `CMake`
 require the `C++20` standard, which is thus enabled in the projects using
-them. For more details, see <https://github.com/thelfer/tfel/issues/1072>
+them.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1072>
 
 ## Issue 1089: Add debug mode + hardening in the test matrix
 
 The sanitizers options have been modularised to allow the continuous
-integration to enable sanitizers individually. For more details, see
-<https://github.com/thelfer/tfel/issues/1089>
+integration to enable sanitizers individually.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1089>
 
 ## Issue 1038: [tfel-check] don't execute cleaning tasks when a test fails
 
@@ -2257,19 +2690,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/1012>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1010>
 
-## Issue 1007: [github-actions] Add continuous integration for the generic-parallel interface with CUDA backend
-
-For more details, see <https://github.com/thelfer/tfel/issues/1007>
-
 ## Issue 1006: [github-actions] Add tests based on `tfel-check`
 
 For more details, see <https://github.com/thelfer/tfel/issues/1006>
 
-## Issue 1004:  [github-actions] Add support actions based on Visual Studio
+## Issue 1004: [github-actions] Add support actions based on Visual Studio
 
 For more details, see <https://github.com/thelfer/tfel/issues/1004>
 
-## Issue 1003:[tfel-math] Improve error messages when using quantities
+## Issue 1003: [tfel-math] Improve error messages when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/1003>
 
@@ -2277,7 +2706,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/1003>
 
 For more details, see <https://github.com/thelfer/tfel/issues/1001>
 
-## Issue 995: [tfel-check] Adding @Environment section in configuration file
+## Issue 995: [tfel-check] Adding `@Environment` section in configuration file
 
 For more details, see <https://github.com/thelfer/tfel/issues/995>
 
@@ -2293,11 +2722,11 @@ For more details, see <https://github.com/thelfer/tfel/issues/926>
 
 For more details, see <https://github.com/thelfer/tfel/issues/925>
 
-## Issue 922: [tfel-math] two functions have no GPU device support
+## Issue 922: [tfel-math] Improve `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchhoffStressDerivative`
 
 For more details, see <https://github.com/thelfer/tfel/issues/922>
 
-## Issue 890: [mfront][homogenization] Add Ponte Castaneda 1992 non linear scheme
+## Issue 890: [mfront, homogenization] Add Ponte Castaneda 1992 non linear scheme
 
 For more details, see <https://github.com/thelfer/tfel/issues/890>
 
@@ -2305,6 +2734,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/890>
 
 For more details, see <https://github.com/thelfer/tfel/issues/905>
 
-## Issue 853: [tfel-fcheck] Have the possibility to launch multiple call to `tfel-check` simultaenously in a CI context
+## Issue 853: [tfel-check] Have the possibility to launch multiple call to `tfel-check` simultaenously in a CI context
 
 For more details, see <https://github.com/thelfer/tfel/issues/853>
