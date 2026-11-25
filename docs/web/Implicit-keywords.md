@@ -1860,7 +1860,10 @@ are supported:
 - `TDLS` (or equivalently `TinyDeviceCallableLinearSolver`). See
   <https://trsxvz.github.io/TDLS/main/getting_started.html> for details. If
   `TFEL` is not compiled with support for the `TDLS` library, selecting
-  this solver falls back to the `Default` solver.
+  this solver falls back to the `Default` solver and a warning is
+  reported. The parameters of the `TDLS` solver are checked, but not
+  used. The `safe` option disables this warning, as in
+  `@LinearSystemSolver<safe> TDLS;`.
 
 The name of the solver can optionally be followed by a dictionary
 allowing to parametrize the solver.

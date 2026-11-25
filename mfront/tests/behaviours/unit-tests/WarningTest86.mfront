@@ -1,0 +1,10 @@
+@DSL Implicit;
+@Behaviour WarningTest86;
+@Description {
+  "This test checks that a warning is reported if the `TDLS` linear "
+  "solver is selected while MFront was not built with TDLS support."
+}
+
+@Epsilon 1e-14;
+@LinearSystemSolver TDLS;
+@Brick StandardElasticity;

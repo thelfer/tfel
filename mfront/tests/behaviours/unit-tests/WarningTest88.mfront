@@ -1,0 +1,10 @@
+@DSL Implicit;
+@Behaviour WarningTest88;
+@Description {
+  "This test checks that the options of the `TDLS` linear solver "
+  "are checked even if MFront was not built with TDLS support."
+}
+
+@Epsilon 1e-14;
+@LinearSystemSolver<safe> TDLS{tile_size : 0};
+@Brick StandardElasticity;

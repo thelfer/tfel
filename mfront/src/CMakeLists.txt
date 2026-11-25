@@ -185,6 +185,7 @@ set(TFELMFront_SOURCES
     AbstractLinearSystemSolver.cxx
     LinearSystemSolverBase.cxx
     DefaultLinearSystemSolver.cxx
+    TDLSLinearSystemSolver.cxx
     AbstractNonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
     NonLinearSystemSolverFactory.cxx
@@ -535,12 +536,6 @@ if(HAVE_CYRANO)
     TFELUtilities
     TFELException)
 endif(HAVE_CYRANO)
-
-if(enable-tdls)
-  set(TFELMFront_SOURCES
-      TDLSLinearSystemSolver.cxx
-      ${TFELMFront_SOURCES})
-endif(enable-tdls)
 
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
 if(enable-tdls)

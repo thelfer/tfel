@@ -152,9 +152,12 @@ namespace mfront {
      * \brief set the linear solver
      * \param[in] s: linear solver
      * \param[in] opts: option passed to solver
+     * \param[in] safe: if true, no warning is reported if the linear solver
+     * is not available and replaced by the default one
      */
     virtual void setLinearSystemSolver(const std::string&,
-                                       const tfel::utilities::DataMap&);
+                                       const tfel::utilities::DataMap&,
+                                       const bool);
     /*!
      * \brief set the non linear solver
      * \param[in] s: non linear solver

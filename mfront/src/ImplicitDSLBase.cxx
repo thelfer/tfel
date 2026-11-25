@@ -29,9 +29,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/AbstractLinearSystemSolver.hxx"
 #include "MFront/DefaultLinearSystemSolver.hxx"
-#ifdef TFEL_MATH_TDLS_SUPPORT
 #include "MFront/TDLSLinearSystemSolver.hxx"
-#endif /* TFEL_MATH_TDLS_SUPPORT */
 #include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/NonLinearSystemSolverFactory.hxx"
@@ -282,6 +280,8 @@ namespace mfront {
 
   void ImplicitDSLBase::treatLinearSystemSolver() {
     this->checkNotEndOfFile("ImplicitDSLBase::treatLinearSystemSolver");
+    const auto safe = this->readSafeOptionTypeIfPresent();
+    this->checkNotEndOfFile("ImplicitDSLBase::treatLinearSystemSolver");
     const auto& s = this->current->value;
     ++this->current;
     this->checkNotEndOfFile("ImplicitDSLBase::treatLinearSystemSolver");
@@ -300,7 +300,7 @@ namespace mfront {
       }
       return DataMap{};
     }();
-    this->setLinearSystemSolver(s, opts);
+    this->setLinearSystemSolver(s, opts, safe);
     this->readSpecifiedToken("ImplicitDSLBase::treatLinearSystemSolver", ";");
   }  // end of treatLinearSystemSolver
 
@@ -549,17 +549,24 @@ namespace mfront {
   }  // end of setLinearSystemSolver
 
   void ImplicitDSLBase::setLinearSystemSolver(
-      const std::string& n, const tfel::utilities::DataMap& opts) {
+      const std::string& n,
+      const tfel::utilities::DataMap& opts,
+      [[maybe_unused]] const bool safe) {
     if ((n == "TDLS") || (n == "TinyDeviceCallableLinearSolver")) {
-#ifdef TFEL_MATH_TDLS_SUPPORT
+      // the options are checked even if MFront was not built with TDLS support
       auto ptr = std::make_shared<TDLSLinearSystemSolver>(opts);
+#ifdef TFEL_MATH_TDLS_SUPPORT
       this->setLinearSystemSolver(ptr, n);
 #else
-      reportWarning(
-          "ImplicitDSLBase::setLinearSystemSolver: "
-          "MFront was not built with TDLS support, "
-          "falling back to default linear solver");
-      this->setLinearSystemSolver("Default", {});
+      if (!safe) {
+        reportWarning(
+            "the '" + n +
+            "' linear solver is not available since MFront was not built "
+            "with TDLS support. The 'Default' linear solver is used instead "
+            "and the options of the '" +
+            n + "' linear solver are ignored.");
+      }
+      this->setLinearSystemSolver("Default", {}, safe);
 #endif
     } else if (n == "Default") {
       if (!opts.empty()) {
@@ -1348,12 +1355,12 @@ namespace mfront {
     if (this->linear_solver == nullptr) {
 #ifdef TFEL_MATH_TDLS_SUPPORT
 #ifdef MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER
-      this->setLinearSystemSolver("TDLS", {});
+      this->setLinearSystemSolver("TDLS", {}, false);
 #else  /* MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER*/
-      this->setLinearSystemSolver("Default", {});
+      this->setLinearSystemSolver("Default", {}, false);
 #endif /* MFRONT_USE_TDLS_AS_DEFAULT_LINEAR_SYSTEM_SOLVER */
 #else  /* TFEL_MATH_TDLS_SUPPORT */
-      this->setLinearSystemSolver("Default", {});
+      this->setLinearSystemSolver("Default", {}, false);
 #endif /* TFEL_MATH_TDLS_SUPPORT*/
     }
     BehaviourDSLCommon::completeVariableDeclaration();
