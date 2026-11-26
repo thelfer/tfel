@@ -291,6 +291,10 @@ function(mtest_library name)
   tfel_library_internal(${name} mtest ${ARGN})
 endfunction(mtest_library)
 
+# generating the sources of an `mfront` test. `mfront_launcher` is defined by
+# the top-level `CMakeLists.txt`: `add_custom_command` does not honour
+# `CMAKE_CROSSCOMPILING_EMULATOR`, so the emulator has to be given explicitly to
+# run `mfront` when it is a binary of the target platform. It is empty otherwise
 macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source file)
   set(mfront_file "${PROJECT_SOURCE_DIR}/mfront/tests/${dir}/${file}.mfront")
   set(iprefix "")
@@ -350,7 +354,7 @@ $ENV{PATH}"
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
     	OUTPUT  ${output_files}
-	COMMAND "${mfront_executable}"
+	COMMAND ${mfront_launcher} "${mfront_executable}"
         ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/${dir}"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
@@ -362,7 +366,7 @@ $ENV{PATH}"
       file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
       if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
 	add_test(NAME mfront-${file}-${interface}
-	  COMMAND ${mfront_executable}
+	  COMMAND ${mfront_launcher} ${mfront_executable}
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/${dir}
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
@@ -418,7 +422,7 @@ $ENV{PATH}"
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
 	OUTPUT  "src/${source}-mfront.cxx"
-	COMMAND "${mfront_executable}"
+	COMMAND ${mfront_launcher} "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS mfront
 	DEPENDS "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"

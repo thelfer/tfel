@@ -9,6 +9,7 @@ macro(mfront_query_test args mfront_file file)
       -D TEST_ARGS=${args}
       -D MFRONT_FILE=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
       -D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
+      -D CROSSCOMPILING_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}
       -D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake )
   set_property(TEST ${test} PROPERTY DEPENDS "mfront-query")

@@ -18,8 +18,10 @@ macro(mfront_tdls_unit_test file)
   if(_WARNING_ERROR)
     list(APPEND _mfront_args "-Werror")
   endif(_WARNING_ERROR)
+  # `mfront_launcher` is empty except when cross-compiling: `add_test` only runs
+  # the emulator for a test command given by target name, not for a path
   add_test(NAME mfront-tdls-unit-tests-${file}
-    COMMAND ${_mfront_executable} ${_mfront_args} ${_mfront_file})
+    COMMAND ${mfront_launcher} ${_mfront_executable} ${_mfront_args} ${_mfront_file})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST mfront-tdls-unit-tests-${file}
  	         APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")

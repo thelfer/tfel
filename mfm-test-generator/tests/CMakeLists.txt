@@ -17,6 +17,10 @@ function(mfm_test_generator_test test_case extension)
     "-Dgenerated_file=${test_case}.${extension}"
     "-Dtests=${CMAKE_CURRENT_SOURCE_DIR}/${test_case}-tests.${extension}"
     "-Doutput_file=${test_case}-with-tests.${extension}"
+    # `mfm-test-generator` and `mtest` are run by `execute_process` from a script
+    # executed by `cmake` on the host: when cross-compiling, the emulator has to
+    # be used explicitly to run them
+    "-DCROSSCOMPILING_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
     -P "${CMAKE_CURRENT_SOURCE_DIR}/mfm-test-generator-test.cmake")
   # on native Windows, the executables of the build tree find the TFEL
   # libraries through PATH: mfm-test-generator and mtest, run by

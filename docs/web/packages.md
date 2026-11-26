@@ -137,6 +137,10 @@ associated with the cross compiler won't be present on `Windows`.
 One may use another cross-compiler by providing an appropriate
 tool-chain file.
 
+The tests of a `Windows` cross-compiled build can be run on `LiNuX` using
+`wine`, as described in the
+[dedicated page](win32-cross-compiling.html).
+
 ## 
 
 <!-- Local IspellDict: english -->

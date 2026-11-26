@@ -20,7 +20,8 @@
 #        tests where the rounding modes changes randomly shall be executed.
 #        Valid options are ON and OFF. The default value is ON.
 # - `-w` (short for win-build): if specified, try to cross-compile TFEL
-#        with mingw32
+#        with the available `MinGW-w64` compilers (`x86_64`, `i686`) and, when
+#        `wine` is available, run the cross-compiled tests with it
 
 # Exit if any error detected
 set -e
@@ -171,6 +172,25 @@ fi
 
 if test "x$wbuild" == "xyes" ;
 then
+    if [ "x$(which x86_64-w64-mingw32-gcc)" != "x" ];
+    then
+	mkdir build-cmake-x86_64-w64-mingw32
+	pushd build-cmake-x86_64-w64-mingw32
+	cmake ${src} -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-x86_64-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=${src}/cmake/ToolChain-x86_64-w64-mingw32.cmake
+	$make_exec
+	if [ "x$(which wine)" != "x" ];
+	then
+	    if test "x$pbuild" == "xyes" ;
+	    then
+		make check ARGS="-j $nbproc"
+	    else
+		$make_exec check 
+	    fi
+	fi
+	$make_exec install
+	popd #from build-cmake-x86_64-w64-mingw32
+    fi
+    
     if [ "x$(which i686-w64-mingw32-gcc)" != "x" ];
     then
 	mkdir build-cmake-i686-w64-mingw32

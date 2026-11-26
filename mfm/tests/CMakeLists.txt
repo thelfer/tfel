@@ -8,6 +8,7 @@ macro(mfm_test args mfront_library file)
       -D TEST_PROGRAM=$<TARGET_FILE:mfm>
       -D TEST_ARGS=${args}
       -D LIBRARY=${mfront_library}
+      -D CROSSCOMPILING_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}
       -D TEST_OUTPUT=mfm-result-${MFM_TEST_ID}.txt
       -D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/mfm.cmake )

@@ -908,6 +908,27 @@ beyond the absence of any sanitizer report. The `all` value of the
 For more details, see the documentation on [fuzz testing the
 tokenizer](testing-fuzzing.html).
 
+## Running the tests of a build cross-compiled for `Windows`
+
+A tool chain file for the 64 bits `MinGW` cross compiler,
+`cmake/ToolChain-x86_64-w64-mingw32.cmake`, is added to those already provided
+for the 32 bits ones.
+
+The tests of a build cross-compiled for `Windows` can now be built, and run on
+the host using `wine`, which is searched when cross-compiling with a `MinGW` tool
+chain. The programs of the build tree are run through a launcher,
+`wine-launcher.sh`, generated at the top of the build directory and used as
+`CMAKE_CROSSCOMPILING_EMULATOR`: `wine` ignores the environment of the host, so
+this launcher copies the shared libraries of the build tree and the runtime
+libraries of the cross compiler in the system directory of a `wine` prefix
+created in the build directory, as the environment files generated for native
+`Windows` builds do using the `PATH` variable. The code generation performed by
+`mfront` at build time uses the same launcher, as `add_custom_command` does not
+honour `CMAKE_CROSSCOMPILING_EMULATOR`.
+
+For more details, see the documentation on [cross-compiling for
+`Windows`](win32-cross-compiling.html).
+
 # New features in `TFEL/Utilities`
 
 ## Contents of the string tokens

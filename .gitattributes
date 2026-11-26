@@ -149,6 +149,7 @@ bindings/python/tfel/vector.cxx -text
 cmake/Makefile.am -text
 cmake/ToolChain-i586-mingw32msvc.cmake -text
 cmake/ToolChain-i686-w64-mingw32.cmake -text
+cmake/ToolChain-x86_64-w64-mingw32.cmake -text
 cmake/ctest2junix.xsl -text
 cmake/modules/CodeCoverage.cmake -text
 cmake/modules/CppCheckTargets.cmake -text
@@ -179,6 +180,7 @@ cmake/modules/tfel.cmake -text
 cmake/modules/zset.cmake -text
 cmake/pyc-compile.py -text
 cmake/pyo-compile.py -text
+cmake/wine-launcher.sh.in -text
 /configure.ac -text
 /cppcheck.sh -text
 /debug.sh.in -text

@@ -42,7 +42,7 @@ $ENV{PATH}"
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
     add_custom_command(
       OUTPUT  "${mfront_output}"
-      COMMAND "${mfront_executable}"
+      COMMAND ${mfront_launcher} "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
       DEPENDS mfront
@@ -51,7 +51,7 @@ $ENV{PATH}"
     if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
       file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
       add_test(NAME mfront-${file}-${interface}
-	COMMAND ${mfront_executable} ${mfront_flags}
+	COMMAND ${mfront_launcher} ${mfront_executable} ${mfront_flags}
 	--interface=${interface}
 	--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
 	${mfront_file}
