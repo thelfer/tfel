@@ -221,7 +221,7 @@ const auto status =
 The report function is only meaningful if the evaluation returned `0`.
 An evaluation without statistics calls the same report function on
 statistics held by blocks of device memory reused from one call to
-another and copied to the host after the computations (`CUDA`, `HIP` and
+another and copied to the host if an event occurred (`CUDA`, `HIP` and
 `SYCL` backends), or by a local variable (C++ parallel algorithms): the
 output status is the same.
 
@@ -498,14 +498,20 @@ handling. Without statistics given by the calling code, the statistics are
 held by a block of device memory taken from a pool of blocks allocated at
 the first call on a device and reused by the following calls (see
 `mfront::generic_parallel::StatusBlockPool`), so that no memory is
-allocated per call. Each generated function has its own pool. The block is
-initialized by a copy of statistics initialized on the host, just before
-the launch of the kernel, and copied back once the computations are
-completed: the host never accesses it. The `HIP` backend handles
-the errors in the same way. The `SYCL` backend also holds the statistics
-in a block of device memory taken from a pool, but updates them point by
-point. Those blocks are never freed. The C++ parallel
-algorithms merge the statuses of the points by a reduction.
+allocated per call. Each generated function has its own pool. Between two
+calls, the statistics of a block hold their neutral value. The first
+thread recording an event sets a flag in pinned host memory (see
+`mfront::generic_parallel::StatisticsBlock`), which is the only store of a
+call to the memory of the host. The statistics are only copied to the host
+if this flag is set, and are then reset by the next call using the block,
+by a copy performed before its computations: the host never accesses
+them. The `HIP` backend handles the errors in the same way. The `SYCL`
+backend also holds the statistics in a block of device memory taken from a
+pool, but updates them point by point. A `SYCL` device which does not
+support the host allocations of the unified shared memory can't set the
+flag: its statistics are reset and copied to the host at each call. Those
+blocks are never freed. The C++ parallel algorithms merge the statuses of
+the points by a reduction.
 
 Before launching a kernel, the stack size of the threads is increased if
 the kernel requires it (see the `preserve_stack_size` option of the
