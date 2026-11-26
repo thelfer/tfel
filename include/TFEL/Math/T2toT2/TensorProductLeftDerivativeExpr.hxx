@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_TENSORPRODUCTLEFTDERIVATIVEEXPR_HXX
 
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/ExpressionTemplates/SparseProductExpr.hxx"
 #include "TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 
@@ -403,6 +404,48 @@ namespace tfel::math {
     }
   };  // end of struct Expr<T2toT2ResultType,TensorProductLeftDerivativeExpr<1u>
       // >
+
+  /*!
+   * \brief empty structure allowing partial specialisation
+   *
+   * The associated expression is the one returned by
+   * `t2tot2<N, T>::tpld(B)`. Contrary to the expressions associated with
+   * `TensorProductLeftDerivativeExpr`, which may also describe the
+   * composition with the derivative of the first tensor, its components
+   * which are null whatever the tensor `B` are known, see
+   * `SparsityPattern`.
+   */
+  template <unsigned short N>
+  struct SparseTensorProductLeftDerivativeExpr {
+  };  // end of struct SparseTensorProductLeftDerivativeExpr
+
+  /*!
+   * \brief expression returned by `t2tot2<N, T>::tpld(B)`
+   */
+  template <typename T2toT2ResultType, unsigned short N>
+  struct Expr<T2toT2ResultType, SparseTensorProductLeftDerivativeExpr<N>>
+      : public Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<N>> {
+    // NOLINTBEGIN(google-explicit-constructor)
+    /*!
+     * \param[in] B : second tensor of the product
+     */
+    template <TensorConcept TensorType>
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& B) noexcept
+        : Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<N>>(B) {}
+    // NOLINTEND(google-explicit-constructor)
+  };  // end of struct Expr<T2toT2ResultType,
+      // SparseTensorProductLeftDerivativeExpr<N>>
+
+  /*!
+   * \brief partial specialisation of the `SparsityPattern` metafunction for
+   * the expressions returned by `t2tot2<N, T>::tpld(B)`
+   */
+  template <typename T2toT2ResultType, unsigned short N>
+  struct SparsityPattern<
+      Expr<T2toT2ResultType, SparseTensorProductLeftDerivativeExpr<N>>>
+      : SingleArgumentExprSparsityPattern<
+            Expr<t2tot2<N, double>, TensorProductLeftDerivativeExpr<N>>,
+            tensor<N, double>> {};
 
 }  // end of namespace tfel::math
 

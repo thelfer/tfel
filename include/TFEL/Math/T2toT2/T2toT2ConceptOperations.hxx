@@ -18,6 +18,7 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/ExpressionTemplates/StandardOperations.hxx"
+#include "TFEL/Math/ExpressionTemplates/SparseProductExpr.hxx"
 #include "TFEL/Math/T2toT2/T2toT2TensorProductExpr.hxx"
 #include "TFEL/Math/T2toT2/TensorT2toT2ProductExpr.hxx"
 #include "TFEL/Math/T2toT2/T2toT2T2toT2ProductExpr.hxx"
@@ -40,7 +41,11 @@ namespace tfel::math {
     using Handle = std::conditional_t<
         isInvalid<Result>(),
         DummyHandle,
-        Expr<Result, T2toT2T2toT2ProductExpr<getSpaceDimension<Result>()>>>;
+        Expr<Result,
+             ProductOperation<
+                 A,
+                 B,
+                 T2toT2T2toT2ProductExpr<getSpaceDimension<Result>()>>>>;
   };
   /*!
    * \brief partial specialisation of ComputeBinaryOperationHandler for

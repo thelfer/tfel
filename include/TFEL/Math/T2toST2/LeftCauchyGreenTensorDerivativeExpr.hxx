@@ -18,6 +18,7 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
+#include "TFEL/Math/ExpressionTemplates/SparseProductExpr.hxx"
 #include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include "TFEL/Math/fsarray.hxx"
 
@@ -213,6 +214,17 @@ namespace tfel::math {
     }  // end of operator()
   };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
        // >
+
+  /*!
+   * \brief partial specialisation of the `SparsityPattern` metafunction for
+   * the derivative of the left Cauchy-Green tensor
+   */
+  template <typename T2toST2Type, unsigned short N>
+  struct SparsityPattern<
+      Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<N>>>
+      : SingleArgumentExprSparsityPattern<
+            Expr<t2tost2<N, double>, LeftCauchyGreenTensorDerivativeExpr<N>>,
+            tensor<N, double>> {};
 
 }  // end of namespace tfel::math
 
