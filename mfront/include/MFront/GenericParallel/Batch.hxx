@@ -163,24 +163,34 @@ namespace mfront::generic_parallel {
    * of a point or of a group of points, by atomic operations. The shared
    * statistics are only accessed if an event occurred: a failure, an
    * unreliable result, or a time step scaling factor lower than the initial
-   * one.
+   * one. The event is first signalled to the host if the shared statistics
+   * are the ones of a block (see `signalEvents`).
    * \tparam Atomics: atomic operations of the backend, given by the static
-   * functions `add` and `min` on values of type `atomic_size_type`
+   * functions `add`, `min` and `testAndSet` on values of type
+   * `atomic_size_type`
    * \param[in,out] s: shared statistics
    * \param[in] r: statistics of a point or of a group of points
    * \param[in] rdt0: ordered key of the initial time step scaling factor
    * (see `toOrderedKey`)
+   * \param[in,out] signalled: flag of the block holding the shared
+   * statistics, in device memory, if any
+   * \param[out] events: flag of the block holding the shared statistics, or
+   * null
    */
   template <typename Atomics, typename Statistics, typename real>
   TFEL_HOST_DEVICE void updateStatistics(Statistics& s,
                                          const BatchStatistics<real>& r,
-                                         const atomic_size_type rdt0) {
+                                         const atomic_size_type rdt0,
+                                         atomic_size_type* const signalled,
+                                         int* const events) {
     if (r.number_of_failures != 0) {
+      signalEvents<Atomics>(signalled, events);
       Atomics::add(&(s.number_of_failures),
                    static_cast<atomic_size_type>(r.number_of_failures));
       Atomics::min(&(s.first_failure), r.first_failure);
     }
     if (r.number_of_unreliable_results != 0) {
+      signalEvents<Atomics>(signalled, events);
       Atomics::add(
           &(s.number_of_unreliable_results),
           static_cast<atomic_size_type>(r.number_of_unreliable_results));
@@ -189,6 +199,7 @@ namespace mfront::generic_parallel {
     if constexpr (hasTimeStepScalingFactor<Statistics>) {
       const auto rdt = toOrderedKey(r.rdt);
       if (rdt < rdt0) {
+        signalEvents<Atomics>(signalled, events);
         Atomics::min(&(s.rdt), rdt);
       }
     }

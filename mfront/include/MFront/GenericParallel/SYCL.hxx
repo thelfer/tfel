@@ -14,8 +14,10 @@
 #ifndef LIB_MFRONT_GENERICPARALLEL_SYCL_HXX
 #define LIB_MFRONT_GENERICPARALLEL_SYCL_HXX
 
+#include <new>
 #include <cstddef>
 #include <utility>
+#include <cstdlib>
 #include <sycl/sycl.hpp>
 #include "MFront/GenericParallel/Batch.hxx"
 #include "MFront/GenericParallel/DeviceStackSize.hxx"
@@ -42,6 +44,15 @@ namespace mfront::generic_parallel::sycl {
       static void min(atomic_size_type* const p, const atomic_size_type v) {
         AtomicCounter{*p}.fetch_min(v);
       }
+      /*!
+       * \brief set a flag (see `signalEvents`), by an addition: contrary to
+       * the exchanges, the additions of the threads of a warp of an NVIDIA
+       * device are merged in a single atomic operation by its compiler
+       * \return true if the flag was already set
+       */
+      static bool testAndSet(atomic_size_type* const p) {
+        return AtomicCounter{*p}.fetch_add(1) != 0;
+      }
     };
 
     /*!
@@ -62,7 +73,8 @@ namespace mfront::generic_parallel::sycl {
       void operator()(const ::sycl::id<1> i) const {
         const auto r = this->f(i[0]);
         if (this->statistics != nullptr) {
-          updateStatistics<Atomics>(*(this->statistics), r, this->rdt0);
+          updateStatistics<Atomics>(*(this->statistics), r, this->rdt0,
+                                    this->signalled, this->events);
         }
       }
       //! \brief function object applied at one point
@@ -70,15 +82,54 @@ namespace mfront::generic_parallel::sycl {
       //! \brief statistics, accessible by the device, or null if the
       //! function never reports an event
       Statistics* statistics;
+      //! \brief flag set by the threads which signal an event, if the
+      //! statistics are the ones of a block (see `StatisticsBlock`)
+      atomic_size_type* signalled;
+      //! \brief flag set by the first thread which signals an event (see
+      //! `signalEvents`), or null
+      int* events;
       //! \brief ordered key of the initial time step scaling factor
       atomic_size_type rdt0;
     };
 
     /*!
-     * \return the pool of blocks of device memory holding the statistics
-     * of the synchronous computations of a function of the generated
-     * library. The blocks are identified by the device and the context of
-     * the queue.
+     * \return a block of statistics (see `StatisticsBlock`), the statistics
+     * being allocated in the memory of the device of the queue, or a null
+     * pointer if an allocation failed
+     * \tparam Statistics: statistics updated by the devices
+     * \param[in] q: queue
+     * \param[in] shared: if true, the block is allocated in host memory
+     * accessible by the device (host allocation in the sense of USM)
+     */
+    template <typename Statistics>
+    StatisticsBlock<Statistics>* allocateStatisticsBlock(
+        const ::sycl::queue& q, const bool shared) noexcept {
+      using Block = StatisticsBlock<Statistics>;
+      try {
+        auto* const device =
+            ::sycl::malloc_device<DeviceStatistics<Statistics>>(1, q);
+        if (device == nullptr) {
+          return nullptr;
+        }
+        auto* const block =
+            shared ? ::sycl::malloc_host<Block>(1, q)
+                   : static_cast<Block*>(std::malloc(sizeof(Block)));
+        if (block == nullptr) {
+          ::sycl::free(device, q);
+          return nullptr;
+        }
+        return ::new (block) Block{
+            .device = device, .neutral = false, .events = 0, .statistics = {}};
+      } catch (...) {
+      }
+      return nullptr;
+    }  // end of allocateStatisticsBlock
+
+    /*!
+     * \return the pool of blocks holding the statistics of the synchronous
+     * computations of a function of the generated library (see
+     * `StatisticsBlock`). The blocks are identified by the device and the
+     * context of the queue.
      * \tparam Statistics: statistics updated by the devices
      * \tparam PointFunction: function applied at the points, which is
      * specific to a generated function, so that each generated library has
@@ -86,7 +137,7 @@ namespace mfront::generic_parallel::sycl {
      */
     template <typename Statistics, typename PointFunction>
     auto& getStatisticsBlocks() noexcept {
-      using Pool = StatusBlockPool<Statistics,
+      using Pool = StatusBlockPool<StatisticsBlock<Statistics>,
                                    std::pair<::sycl::device, ::sycl::context>>;
       static auto pool = Pool{};
       return pool;
@@ -141,10 +192,14 @@ namespace mfront::generic_parallel::sycl {
    * are submitted to the queue. Otherwise, it waits for their completion.
    *
    * Without statistics given by the calling code, the statistics are held by
-   * a block of device memory of a pool of blocks (see `StatusBlockPool`): no
-   * memory is allocated per call. Local statistics are initialized on the
-   * host, copied to the block before the computations and copied back once
-   * they are completed: the host never accesses the block.
+   * a block of a pool (see `StatisticsBlock` and `StatusBlockPool`): no
+   * memory is allocated per call. The device only accesses the statistics,
+   * in device memory, if an event occurs at a point, and then signals it to
+   * the host: a call without event submits a single command, the kernel.
+   * The statistics are only copied back after an event, and reset by the
+   * next call using the block. A device which can't access the memory of
+   * the host (no host allocation in the sense of USM) can't signal events:
+   * the statistics are then reset and copied back at each call.
    *
    * If the function never reports an event (see the `hasEvents` method of
    * the handler), the statistics are neither combined nor reported, and no
@@ -210,28 +265,47 @@ namespace mfront::generic_parallel::sycl {
       // report function of the library. Without event, the statistics, if
       // any, are not accessed by the kernel
       auto* const statistics = h.hasEvents() ? e.statistics : nullptr;
-      auto event = q.parallel_for(range, Kernel{f, statistics, rdt0});
+      auto event =
+          q.parallel_for(range, Kernel{f, statistics, nullptr, nullptr, rdt0});
       if (!p.common_options.asynchronous) {
         event.wait_and_throw();
       }
       return s.status;
     }
-    // synchronous computations
+    // synchronous computations: block of statistics of the pool (see
+    // `StatisticsBlock`). A device which can't access the memory of the host
+    // can't signal events: the flag of the block is then left set
+    const auto shared =
+        q.get_device().has(::sycl::aspect::usm_host_allocations);
     const auto block =
         internals::getStatisticsBlocks<Statistics, PointFunction>().acquire(
-            {q.get_device(), q.get_context()},
-            [&q] { return ::sycl::malloc_device<Statistics>(1, q); });
-    auto* const statistics = block.get();
-    if (statistics == nullptr) {
+            {q.get_device(), q.get_context()}, [&q, shared] {
+              return internals::allocateStatisticsBlock<Statistics>(q, shared);
+            });
+    auto* const b = block.get();
+    if (b == nullptr) {
       return report(s, -7,
                     "unable to allocate the statistics of the evaluation");
     }
-    auto host_statistics = Statistics{};
-    h.initialize(host_statistics);
-    q.copy(&host_statistics, statistics, 1).wait_and_throw();
-    q.parallel_for(range, Kernel{f, statistics, rdt0}).wait_and_throw();
-    q.copy(statistics, &host_statistics, 1).wait_and_throw();
-    return h.report(s, host_statistics);
+    auto statistics = Statistics{};
+    h.initialize(statistics);
+    if (!b->neutral) {
+      // reset, after an event or at the first use
+      const auto neutral = getNeutralStatistics(statistics);
+      q.copy(&neutral, b->device, 1).wait_and_throw();
+    }
+    b->neutral = false;
+    b->events = shared ? 0 : 1;
+    q.parallel_for(range,
+                   Kernel{f, &(b->device->statistics), &(b->device->signalled),
+                          shared ? &(b->events) : nullptr, rdt0})
+        .wait_and_throw();
+    if (b->events == 0) {
+      b->neutral = true;
+      return h.report(s, statistics);
+    }
+    q.copy(&(b->device->statistics), &(b->statistics), 1).wait_and_throw();
+    return h.report(s, mergeBlockStatistics(statistics, b->statistics));
   }  // end of apply
 
   /*!
