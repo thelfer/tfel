@@ -1,0 +1,7 @@
+SOURCES/
+SRPMS/
+RPMS/
+BUILD/
+BUILDROOT/
+BUILD_TMP/
+*.src.rpm
