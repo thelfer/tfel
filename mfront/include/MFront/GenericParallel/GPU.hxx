@@ -19,6 +19,7 @@
 #ifndef LIB_MFRONT_GENERICPARALLEL_GPU_HXX
 #define LIB_MFRONT_GENERICPARALLEL_GPU_HXX
 
+#include <new>
 #include <limits>
 #include <string>
 #include <cstdint>
@@ -148,6 +149,11 @@ namespace mfront::generic_parallel::gpu {
      * \param[in] n: number of points
      * \param[out] s: statistics, or null if the function never reports an
      * event (see the `hasEvents` method of the handlers of the statistics)
+     * \param[in,out] signalled: flag set by the threads which signal an
+     * event, if the statistics are the ones of a block (see
+     * `StatisticsBlock`)
+     * \param[out] events: flag set by the first thread which signals an
+     * event, or null if the statistics are not the ones of a block
      * \param[in] rdt0: ordered key of the initial time step scaling factor
      */
     template <typename Statistics, typename PointFunction>
@@ -155,6 +161,8 @@ namespace mfront::generic_parallel::gpu {
         const MFRONT_GENERIC_PARALLEL_GPU_GRID_CONSTANT PointFunction f,
         const size_type n,
         Statistics* const s,
+        atomic_size_type* const signalled,
+        int* const events,
         const atomic_size_type rdt0) {
       const auto i = static_cast<size_type>(blockIdx.x) * blockDim.x +
                      static_cast<size_type>(threadIdx.x);
@@ -185,6 +193,12 @@ namespace mfront::generic_parallel::gpu {
       first_unreliable_result = warpMin(first_unreliable_result);
       rdt = warpMin(rdt);
       if (threadIdx.x % warpSize == 0) {
+        // the first thread which sets the flag of the device signals the
+        // events to the host (see `signalEvents`)
+        if ((events != nullptr) && (*signalled == 0) &&
+            (atomicExch(signalled, atomic_size_type{1}) == 0)) {
+          *events = 1;
+        }
         if (failures != 0) {
           atomicAdd(&(s->number_of_failures),
                     static_cast<atomic_size_type>(failures));
@@ -204,8 +218,43 @@ namespace mfront::generic_parallel::gpu {
     }  // end of apply
 
     /*!
-     * \return the pool of blocks of device memory holding the statistics of
-     * the synchronous computations of a function of the generated library
+     * \return a block of statistics (see `StatisticsBlock`), allocated in
+     * pinned host memory, the statistics being allocated in the memory of the
+     * current device, or a null pointer if an allocation failed
+     * \tparam Statistics: statistics updated by the devices
+     */
+    template <typename Statistics>
+    StatisticsBlock<Statistics>* allocateStatisticsBlock() noexcept {
+      void* device = nullptr;
+      if (MFRONT_GENERIC_PARALLEL_GPU_API(Malloc)(
+              &device, sizeof(DeviceStatistics<Statistics>)) !=
+          MFRONT_GENERIC_PARALLEL_GPU_API(Success)) {
+        return nullptr;
+      }
+      // portable and mapped: accessible by all the devices
+      void* block = nullptr;
+#if defined(__HIPCC__) || defined(__HIP__)
+      const auto e = hipHostMalloc(&block, sizeof(StatisticsBlock<Statistics>),
+                                   hipHostMallocPortable | hipHostMallocMapped);
+#else
+      const auto e = cudaHostAlloc(&block, sizeof(StatisticsBlock<Statistics>),
+                                   cudaHostAllocPortable | cudaHostAllocMapped);
+#endif
+      if (e != MFRONT_GENERIC_PARALLEL_GPU_API(Success)) {
+        static_cast<void>(MFRONT_GENERIC_PARALLEL_GPU_API(Free)(device));
+        return nullptr;
+      }
+      return ::new (block) StatisticsBlock<Statistics>{
+          .device = static_cast<DeviceStatistics<Statistics>*>(device),
+          .neutral = false,
+          .events = 0,
+          .statistics = {}};
+    }  // end of allocateStatisticsBlock
+
+    /*!
+     * \return the pool of blocks holding the statistics of the synchronous
+     * computations of a function of the generated library (see
+     * `StatisticsBlock`)
      * \tparam Statistics: statistics updated by the devices
      * \tparam PointFunction: function applied at the points, which is
      * specific to a generated function
@@ -219,7 +268,7 @@ namespace mfront::generic_parallel::gpu {
      */
     template <typename Statistics, typename PointFunction>
     auto& getStatisticsBlocks() noexcept {
-      using Pool = StatusBlockPool<Statistics, int>;
+      using Pool = StatusBlockPool<StatisticsBlock<Statistics>, int>;
       static auto pool = Pool{};
       return pool;
     }  // end of getStatisticsBlocks
@@ -235,13 +284,12 @@ namespace mfront::generic_parallel::gpu {
    * kernel is launched. Otherwise, it waits for its completion.
    *
    * Without statistics given by the calling code, the statistics are held by
-   * a block of device memory of a pool of blocks (see `StatusBlockPool`): no
-   * memory is allocated per call. Local statistics are initialized on the
-   * host, copied to the block just before the launch and copied back once
-   * the computations are completed: the host never accesses the block,
-   * which the device may not share with the host while kernels run (devices
-   * without concurrent access to managed memory). The device only accesses
-   * the block if an event occurs at a point.
+   * a block of a pool (see `StatisticsBlock` and `StatusBlockPool`): no
+   * memory is allocated per call. The device only accesses the statistics,
+   * in device memory, if an event occurs at a point, and then signals it to
+   * the host: a call without event performs no copy and a single
+   * synchronization. The statistics are only copied back after an event,
+   * and reset by the next call using the block.
    *
    * If the function never reports an event (see the `hasEvents` method of
    * the handler), the statistics are neither combined nor reported, and no
@@ -317,73 +365,74 @@ namespace mfront::generic_parallel::gpu {
     const auto stream = p.policy == nullptr ? Stream{} : p.policy->stream;
     const auto rdt0 = toOrderedKey(h.initial().rdt);
     // launch the kernel and return the error of the launch
-    auto launch = [&k, &f, n, nblocks, nthreads, stream,
-                   rdt0](Statistics* const statistics) {
+    auto launch = [&k, &f, n, nblocks, nthreads, stream, rdt0](
+                      Statistics* const statistics,
+                      atomic_size_type* const signalled, int* const events) {
       // an error left by a previous call of the calling code must not be
       // taken for an error of the launch
       static_cast<void>(MFRONT_GENERIC_PARALLEL_GPU_API(GetLastError)());
       k<<<static_cast<unsigned int>(nblocks), nthreads, 0, stream>>>(
-          f, n, statistics, rdt0);
+          f, n, statistics, signalled, events, rdt0);
       return MFRONT_GENERIC_PARALLEL_GPU_API(GetLastError)();
     };
     if ((e.statistics != nullptr) || (!h.hasEvents())) {
       // statistics given by the calling code: the result is given by the
       // report function of the library. Without event, the statistics, if
       // any, are not accessed by the kernel
-      if (failed(s, launch(e.statistics)) || p.common_options.asynchronous) {
+      if (failed(s, launch(e.statistics, nullptr, nullptr)) ||
+          p.common_options.asynchronous) {
         return s.status;
       }
       failed(s, MFRONT_GENERIC_PARALLEL_GPU_API(StreamSynchronize)(stream));
       return s.status;
     }
-    // synchronous computations: the statistics are held by a block of the
-    // pool, initialized after the checks: a copy still in progress when the
-    // block is given back to the pool would overwrite the statistics of the
-    // next call using it
+    // synchronous computations: block of statistics of the pool (see
+    // `StatisticsBlock`)
     const auto block =
         internals::getStatisticsBlocks<Statistics, PointFunction>().acquire(
-            device, [] {
-              Statistics* ptr = nullptr;
-              const auto r = MFRONT_GENERIC_PARALLEL_GPU_API(Malloc)(
-                  reinterpret_cast<void**>(&ptr), sizeof(Statistics));
-              return r == MFRONT_GENERIC_PARALLEL_GPU_API(Success) ? ptr
-                                                                   : nullptr;
-            });
-    auto* const statistics = block.get();
-    if (statistics == nullptr) {
+            device, internals::allocateStatisticsBlock<Statistics>);
+    auto* const b = block.get();
+    if (b == nullptr) {
       return report(s, -7,
                     "unable to allocate the statistics of the evaluation");
     }
-    auto host_statistics = Statistics{};
-    h.initialize(host_statistics);
-    if (MFRONT_GENERIC_PARALLEL_GPU_API(MemcpyAsync)(
-            statistics, &host_statistics, sizeof(Statistics),
-            MFRONT_GENERIC_PARALLEL_GPU_API(MemcpyHostToDevice),
-            stream) != MFRONT_GENERIC_PARALLEL_GPU_API(Success)) {
+    auto statistics = Statistics{};
+    h.initialize(statistics);
+    // reset, after an event or at the first use, by a copy performed on the
+    // stream before the kernel, whose source is kept until the stream is
+    // synchronized
+    const auto neutral = getNeutralStatistics(statistics);
+    if ((!b->neutral) &&
+        (MFRONT_GENERIC_PARALLEL_GPU_API(MemcpyAsync)(
+             b->device, &neutral, sizeof(neutral),
+             MFRONT_GENERIC_PARALLEL_GPU_API(MemcpyHostToDevice),
+             stream) != MFRONT_GENERIC_PARALLEL_GPU_API(Success))) {
       return report(s, -7,
                     "unable to initialize the statistics of the evaluation");
     }
-    if (const auto le = launch(statistics);
-        le != MFRONT_GENERIC_PARALLEL_GPU_API(Success)) {
-      // the copy of the statistics must be completed before the block is
-      // given back to the pool
-      static_cast<void>(
-          MFRONT_GENERIC_PARALLEL_GPU_API(StreamSynchronize)(stream));
-      failed(s, le);
+    b->neutral = false;
+    b->events = 0;
+    // the stream is synchronized even if the launch failed: the copy must be
+    // completed before the block is given back to the pool
+    const auto le =
+        launch(&(b->device->statistics), &(b->device->signalled), &(b->events));
+    const auto se = MFRONT_GENERIC_PARALLEL_GPU_API(StreamSynchronize)(stream);
+    if (failed(s, le) || failed(s, se)) {
       return s.status;
     }
-    if (failed(s, MFRONT_GENERIC_PARALLEL_GPU_API(StreamSynchronize)(stream))) {
-      return s.status;
+    if (b->events == 0) {
+      b->neutral = true;
+      return h.report(s, statistics);
     }
     if ((MFRONT_GENERIC_PARALLEL_GPU_API(MemcpyAsync)(
-             &host_statistics, statistics, sizeof(Statistics),
+             &(b->statistics), &(b->device->statistics), sizeof(Statistics),
              MFRONT_GENERIC_PARALLEL_GPU_API(MemcpyDeviceToHost),
              stream) != MFRONT_GENERIC_PARALLEL_GPU_API(Success)) ||
         (MFRONT_GENERIC_PARALLEL_GPU_API(StreamSynchronize)(stream) !=
          MFRONT_GENERIC_PARALLEL_GPU_API(Success))) {
       return report(s, -7, "unable to copy the statistics of the evaluation");
     }
-    return h.report(s, host_statistics);
+    return h.report(s, mergeBlockStatistics(statistics, b->statistics));
   }  // end of apply
 
   /*!
