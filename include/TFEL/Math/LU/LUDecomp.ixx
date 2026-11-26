@@ -52,58 +52,32 @@ namespace tfel::math {
       }
     }
     int d = 1;
-    for (size_type i = 0; i != nr; ++i) {
+    size_type i = 0;
+    // As long as no rows have been exchanged, the permutation is the identity
+    // and the columns are treated without indirection
+    for (; (i != nr) && (p.isIdentity()); ++i) {
       // L update (column)
-      if (p.isIdentity()) {
-        for (size_type j = i; j != nr; ++j) {
-          real v = real(0);
-          for (size_type k = 0; k != i; ++k) {
-            v += m(j, k) * m(k, i);
-          }
-          m(j, i) -= v;
+      for (size_type j = i; j != nr; ++j) {
+        real v = real(0);
+        for (size_type k = 0; k != i; ++k) {
+          v += m(j, k) * m(k, i);
         }
-      } else {
-        for (size_type j = i; j != nr; ++j) {
-          size_type pj = p(j);
-          real v = real(0);
-          for (size_type k = 0; k != i; ++k) {
-            v += m(pj, k) * m(p(k), i);
-          }
-          m(pj, i) -= v;
-        }
+        m(j, i) -= v;
       }
       // search for pivot
       size_type piv = i;
-      if (p.isIdentity()) {
-        auto cmax = tfel::math::abs(m(i, i));
-        for (auto j = static_cast<size_type>(i + 1u); j != nr; ++j) {
-          if (tfel::math::abs(m(j, i)) > cmax) {
-            cmax = tfel::math::abs(m(j, i));
-            piv = j;
-          }
+      auto cmax = tfel::math::abs(m(i, i));
+      for (auto j = static_cast<size_type>(i + 1u); j != nr; ++j) {
+        if (tfel::math::abs(m(j, i)) > cmax) {
+          cmax = tfel::math::abs(m(j, i));
+          piv = j;
         }
-        if (piv != i) {
-          if (!((tfel::math::abs(m(i, i)) > c * cmax) &&
-                (tfel::math::abs(m(i, i)) > eps))) {
-            d *= -1;
-            p.swap(piv, i);
-          }
-        }
-      } else {
-        auto cmax = tfel::math::abs(m(p(i), i));
-        for (auto j = static_cast<size_type>(i + 1u); j != nr; ++j) {
-          size_type pj = p(j);
-          if (tfel::math::abs(m(pj, i)) > cmax) {
-            cmax = tfel::math::abs(m(pj, i));
-            piv = j;
-          }
-        }
-        if (piv != i) {
-          if (!((tfel::math::abs(m(p(i), i)) > c * cmax) &&
-                (tfel::math::abs(m(p(i), i)) > eps))) {
-            d *= -1;
-            p.swap(piv, i);
-          }
+      }
+      if (piv != i) {
+        if (!((tfel::math::abs(m(i, i)) > c * cmax) &&
+              (tfel::math::abs(m(i, i)) > eps))) {
+          d *= -1;
+          p.swap(piv, i);
         }
       }
       if (tfel::math::abs(m(p(i), i)) < eps) {
@@ -113,6 +87,7 @@ namespace tfel::math {
           return {false, 0};
         }
       }
+      // U update (row)
       if (p.isIdentity()) {
         auto j = i;
         for (++j; j != nr; ++j) {
@@ -124,8 +99,8 @@ namespace tfel::math {
           m(i, j) /= m(i, i);
         }
       } else {
+        // the rows have just been exchanged
         size_type pi = p(i);
-        // U update
         auto j = i;
         for (++j; j != nr; ++j) {
           for (size_type k = 0; k != i; ++k) {
@@ -133,6 +108,51 @@ namespace tfel::math {
           }
           m(pi, j) /= m(pi, i);
         }
+      }
+    }
+    // remaining columns, once rows have been exchanged
+    for (; i != nr; ++i) {
+      // L update (column)
+      for (size_type j = i; j != nr; ++j) {
+        size_type pj = p(j);
+        real v = real(0);
+        for (size_type k = 0; k != i; ++k) {
+          v += m(pj, k) * m(p(k), i);
+        }
+        m(pj, i) -= v;
+      }
+      // search for pivot
+      size_type piv = i;
+      auto cmax = tfel::math::abs(m(p(i), i));
+      for (auto j = static_cast<size_type>(i + 1u); j != nr; ++j) {
+        size_type pj = p(j);
+        if (tfel::math::abs(m(pj, i)) > cmax) {
+          cmax = tfel::math::abs(m(pj, i));
+          piv = j;
+        }
+      }
+      if (piv != i) {
+        if (!((tfel::math::abs(m(p(i), i)) > c * cmax) &&
+              (tfel::math::abs(m(p(i), i)) > eps))) {
+          d *= -1;
+          p.swap(piv, i);
+        }
+      }
+      if (tfel::math::abs(m(p(i), i)) < eps) {
+        if constexpr (use_exceptions) {
+          tfel::raise<LUNullPivot>();
+        } else {
+          return {false, 0};
+        }
+      }
+      // U update (row)
+      size_type pi = p(i);
+      auto j = i;
+      for (++j; j != nr; ++j) {
+        for (size_type k = 0; k != i; ++k) {
+          m(pi, j) -= m(pi, k) * m(p(k), j);
+        }
+        m(pi, j) /= m(pi, i);
       }
     }
     return {true, d};
