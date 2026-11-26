@@ -955,13 +955,18 @@ namespace mfront {
     throw_if(f.modifiedVariables.size() != outputVariables.size(),
              "invalid number of functions in model '" + md.className + "'");
     throw_if(f.name.empty(), "unnamed function");
-    // the values at the beginning of the time step of the outputs updated by
-    // a compound assignment are passed as arguments, as the other values at
-    // the beginning of the time step (see the mfront model interface)
-    const auto& updatedOutputs = f.compoundAssignedVariables;
-    throw_if((f.usedVariables.empty()) && (updatedOutputs.empty()) &&
+    throw_if((f.usedVariables.empty()) &&
+                 (f.compoundAssignedVariables.empty()) &&
                  (!f.useTimeIncrement),
              "no used variable for function '" + f.name + "'");
+    // the values at the beginning of the time step of the outputs are passed
+    // as arguments, as the other values at the beginning of the time step
+    // (see the mfront model interface)
+    const auto getInitialValueName = [&md](const std::string& n) {
+      const auto d = md.outputs.getVariable(n).getAttribute<unsigned short>(
+          VariableDescription::depth, 0);
+      return d == 0 ? "mfront_" + n + "_bts" : n + "_1";
+    };
     const auto sm = getTemporaryVariableName(tmpnames, this->bd, bn);
     if (inputVariables.size() == 1) {
       out << "// updating " << inputVariables[0] << "\n";
@@ -985,10 +990,10 @@ namespace mfront {
         out << "this->" << outputVariables[p - pb] << ", ";
       }
     }
-    const auto args = [&f, &updatedOutputs] {
+    const auto args = [&f, &getInitialValueName] {
       auto vars = f.usedVariables;
-      for (const auto& v : updatedOutputs) {
-        vars.insert(v + "_1");
+      for (const auto& v : f.modifiedVariables) {
+        vars.insert(getInitialValueName(v));
       }
       auto a = std::vector<std::string>{};
       for (const auto& uv : vars) {
@@ -1009,7 +1014,15 @@ namespace mfront {
         }
         continue;
       }
-      const auto a = md.decomposeVariableName(*pa);
+      const auto a = [&md, &f, &getInitialValueName,
+                      &pa]() -> std::pair<std::string, unsigned short> {
+        for (const auto& mv : f.modifiedVariables) {
+          if (*pa == getInitialValueName(mv)) {
+            return {mv, 1};
+          }
+        }
+        return md.decomposeVariableName(*pa);
+      }();
       const auto& ea = md.getVariableDescription(a.first).getExternalName();
       auto treated = false;
       for (const auto& vs : inputVariables) {
