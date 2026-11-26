@@ -131,28 +131,66 @@ namespace mfront::generic_parallel {
   };
 
   /*!
+   * \brief signal to the host that the statistics of a block were updated
+   * (see `StatisticsBlock`).
+   *
+   * The first thread which sets the flag of the device sets the flag read
+   * by the host: one store to the memory of the host per call, whatever the
+   * number of events. The flag of the device is read first, so that the
+   * threads perform no atomic operation once an event is signalled. This
+   * read is not an atomic operation, which the devices do not all provide
+   * and which would bypass their caches: a thread which reads an outdated
+   * value only performs a useless atomic operation.
+   *
+   * \tparam Atomics: atomic operations of the backend, whose static
+   * function `testAndSet` sets a flag and returns true if it was already
+   * set
+   * \param[in,out] signalled: flag of the block, in device memory
+   * \param[out] events: flag of the block, in the memory of the host, or
+   * null if the statistics are not the ones of a block
+   */
+  template <typename Atomics>
+  TFEL_HOST_DEVICE void signalEvents(atomic_size_type* const signalled,
+                                     int* const events) {
+    if ((events != nullptr) && (*signalled == 0) &&
+        (!Atomics::testAndSet(signalled))) {
+      *events = 1;
+    }
+  }  // end of signalEvents
+
+  /*!
    * \brief update the statistics shared by the threads with the statistics
    * of a point or of a group of points, by atomic operations. The shared
    * statistics are only accessed if an event occurred: a failure, an
    * unreliable result, or a time step scaling factor lower than the initial
-   * one.
+   * one. The event is first signalled to the host if the shared statistics
+   * are the ones of a block (see `signalEvents`).
    * \tparam Atomics: atomic operations of the backend, given by the static
-   * functions `add` and `min` on values of type `atomic_size_type`
+   * functions `add`, `min` and `testAndSet` on values of type
+   * `atomic_size_type`
    * \param[in,out] s: shared statistics
    * \param[in] r: statistics of a point or of a group of points
    * \param[in] rdt0: ordered key of the initial time step scaling factor
    * (see `toOrderedKey`)
+   * \param[in,out] signalled: flag of the block holding the shared
+   * statistics, in device memory, if any
+   * \param[out] events: flag of the block holding the shared statistics, or
+   * null
    */
   template <typename Atomics, typename Statistics, typename real>
   TFEL_HOST_DEVICE void updateStatistics(Statistics& s,
                                          const BatchStatistics<real>& r,
-                                         const atomic_size_type rdt0) {
+                                         const atomic_size_type rdt0,
+                                         atomic_size_type* const signalled,
+                                         int* const events) {
     if (r.number_of_failures != 0) {
+      signalEvents<Atomics>(signalled, events);
       Atomics::add(&(s.number_of_failures),
                    static_cast<atomic_size_type>(r.number_of_failures));
       Atomics::min(&(s.first_failure), r.first_failure);
     }
     if (r.number_of_unreliable_results != 0) {
+      signalEvents<Atomics>(signalled, events);
       Atomics::add(
           &(s.number_of_unreliable_results),
           static_cast<atomic_size_type>(r.number_of_unreliable_results));
@@ -161,10 +199,99 @@ namespace mfront::generic_parallel {
     if constexpr (hasTimeStepScalingFactor<Statistics>) {
       const auto rdt = toOrderedKey(r.rdt);
       if (rdt < rdt0) {
+        signalEvents<Atomics>(signalled, events);
         Atomics::min(&(s.rdt), rdt);
       }
     }
   }  // end of updateStatistics
+
+  /*!
+   * \brief statistics of a block, in device memory (see `StatisticsBlock`)
+   * \tparam Statistics: statistics updated by the devices
+   */
+  template <typename Statistics>
+  struct DeviceStatistics {
+    //! \brief statistics updated by the atomic operations of the threads
+    Statistics statistics;
+    /*!
+     * \brief keeps `signalled` out of the cache lines of the statistics,
+     * which every event modifies: the threads read a value which is no more
+     * modified once the first event is signalled
+     */
+    char padding[128];
+    //! \brief not null if a thread signalled an event (see `signalEvents`)
+    atomic_size_type signalled;
+  };
+
+  /*!
+   * \brief block of statistics of the synchronous computations on a device,
+   * reused from one call to another (see `StatusBlockPool`).
+   *
+   * The statistics live in device memory, where the atomic operations of
+   * the kernels are performed, and the host only accesses them by copies.
+   * The block lives in host memory accessible by the device (pinned memory,
+   * or host allocation of the unified shared memory), where a call performs
+   * at most one store, to `events`, and no atomic operation.
+   *
+   * Between two calls, `neutral` tells if the statistics of the device hold
+   * their neutral value (see `getNeutralStatistics`). The first thread
+   * which updates them sets `events` (see `signalEvents`). Once the
+   * computations are completed, the host only reads the statistics if
+   * `events` is set: a call without event performs neither copy nor
+   * additional synchronization.
+   *
+   * `neutral` is only accessed by the host. It is cleared before each
+   * launch and only set by a call which completed without event. Otherwise
+   * (allocation of the block, events, failure of the call), the next call
+   * resets the statistics of the device, by a copy performed before its
+   * computations.
+   *
+   * \tparam Statistics: statistics updated by the devices
+   */
+  template <typename Statistics>
+  struct StatisticsBlock {
+    //! \brief statistics updated by the device, in device memory
+    DeviceStatistics<Statistics>* device;
+    //! \brief true if the statistics of the device hold their neutral value
+    bool neutral;
+    //! \brief set by the device if it updated its statistics
+    int events;
+    //! \brief copy of the statistics of the device, made after an event
+    Statistics statistics;
+  };
+
+  /*!
+   * \return the neutral value of the statistics of a block: the initial
+   * statistics of a call, without event, except the time step scaling
+   * factor, which is set to the largest key. The devices only write a time
+   * step scaling factor lower than the initial one of the call (see
+   * `updateStatistics`), which is restored by `mergeBlockStatistics`.
+   * \param[in] s: initial statistics of a call
+   */
+  template <typename Statistics>
+  DeviceStatistics<Statistics> getNeutralStatistics(Statistics s) noexcept {
+    if constexpr (hasTimeStepScalingFactor<Statistics>) {
+      s.rdt = no_event;
+    }
+    return {.statistics = s, .padding = {}, .signalled = 0};
+  }  // end of getNeutralStatistics
+
+  /*!
+   * \return the statistics of a call, given its initial statistics and the
+   * statistics of the block, read once the computations are completed
+   * \param[in] initial: initial statistics of the call
+   * \param[in] s: statistics of the block
+   */
+  template <typename Statistics>
+  Statistics mergeBlockStatistics(const Statistics& initial,
+                                  Statistics s) noexcept {
+    if constexpr (hasTimeStepScalingFactor<Statistics>) {
+      if (initial.rdt < s.rdt) {
+        s.rdt = initial.rdt;
+      }
+    }
+    return s;
+  }  // end of mergeBlockStatistics
 
   /*!
    * \brief execution of the computations on a batch, as given by the

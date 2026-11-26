@@ -25,11 +25,9 @@ namespace mfront::generic_parallel {
    * of synchronous computations performed on a device.
    *
    * The kernels only write in a block when an event occurs (failure at a
-   * point, bound violated, etc.). The primitives of the backends allocate
-   * the blocks in device memory, initialize them by a copy before the
-   * computations and copy them back once the computations are completed:
-   * the host never accesses a block, which the device may not share with
-   * the host while kernels run.
+   * point, bound violated, etc.). The primitives of the backends use blocks
+   * of statistics (see `StatisticsBlock`): a call reads the statistics of
+   * its block only if the device signalled an event.
    *
    * The blocks are allocated at their first use on a device and reused by
    * the following calls: no memory is allocated per call. A block is used

@@ -1592,8 +1592,9 @@ int S_generic_parallel_report(mfront_gpmp_OutputStatus* const,
 - the kernels only update the statistics of the evaluation when an event
   occurs at a point: with atomic operations (`cuda`, `hip` and `sycl`
   backends), the cost of the error reporting is null when the evaluation
-  succeeds. The `stlpar` backend merges the statuses of the points by a
-  reduction.
+  succeeds. Without statistics given by the calling code, those backends
+  only copy the statistics to the host if an event occurred. The `stlpar`
+  backend merges the statuses of the points by a reduction.
 - with statistics given by the calling code, the output status only
   reports the errors of the batch, and the result is given by the
   `<name>_generic_parallel_report` function once the computations are
