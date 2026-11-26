@@ -157,6 +157,24 @@ namespace tfel::material {
       }
       return *this;
     }
+    /*!
+     * \brief assignement operator
+     */
+    template <tfel::math::T2toT2Concept T>
+    FiniteStrainBehaviourTangentOperator& operator=(const T& e) requires(
+        tfel::math::getSpaceDimension<T>() == N &&
+        std::is_same_v<tfel::math::numeric_type<T>, StressType>) {
+      using namespace tfel::math;
+      if (this->template is<t2tot2<N, StressType>*>()) {
+        *(this->template get<t2tot2<N, StressType>*>()) = e;
+      } else {
+        if (!this->template is<t2tot2<N, StressType>>()) {
+          this->template set_uninitialised<t2tot2<N, StressType>>();
+        }
+        this->template get<t2tot2<N, StressType>>() = e;
+      }
+      return *this;
+    }
   };  // end of struct FiniteStrainBehaviourTangentOperator
 
   /*!
