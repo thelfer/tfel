@@ -1,0 +1,3 @@
+usr/bin/tfel-check
+usr/bin/tfel-unicode-filt
+usr/share/tfel/test-suite/*

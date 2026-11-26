@@ -1,0 +1,36 @@
+usr/bin/tfel-config
+# headers of the TFEL core libraries, including the Cyrano and NUMODIS
+# sub-libraries and the Fortran 77/90 bindings
+# (the MFront and MTest headers are shipped by mfront-dev and mtest-dev)
+usr/include/Cyrano
+usr/include/FSES
+usr/include/NUMODIS
+usr/include/TFEL
+# unversioned symbolic links of the TFEL core libraries (the versioned
+# shared libraries are shipped by libtfel-5.2.0; the links of the
+# MFront and MTest libraries are shipped by mfront-dev and mtest-dev)
+usr/lib/*/libTFELCheck.so
+usr/lib/*/libTFELConfig.so
+usr/lib/*/libTFELException.so
+usr/lib/*/libTFELGlossary.so
+usr/lib/*/libTFELMaterial.so
+usr/lib/*/libTFELMath*.so
+usr/lib/*/libTFELNUMODIS.so
+usr/lib/*/libTFELSystem.so
+usr/lib/*/libTFELTests.so
+usr/lib/*/libTFELUnicodeSupport.so
+usr/lib/*/libTFELUtilities.so
+# CMake configuration files of the TFEL core libraries
+usr/share/tfel/cmake/tfel-config-version.cmake
+usr/share/tfel/cmake/tfel-modules-common.cmake
+usr/share/tfel/cmake/TFELCheck*.cmake
+usr/share/tfel/cmake/TFELConfig*.cmake
+usr/share/tfel/cmake/TFELException*.cmake
+usr/share/tfel/cmake/TFELGlossary*.cmake
+usr/share/tfel/cmake/TFELMaterial*.cmake
+usr/share/tfel/cmake/TFELMath*.cmake
+usr/share/tfel/cmake/TFELNUMODIS*.cmake
+usr/share/tfel/cmake/TFELSystem*.cmake
+usr/share/tfel/cmake/TFELTests*.cmake
+usr/share/tfel/cmake/TFELUnicodeSupport*.cmake
+usr/share/tfel/cmake/TFELUtilities*.cmake

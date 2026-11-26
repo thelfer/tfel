@@ -1,0 +1,29 @@
+# headers of the MFront code generator: the DSLs, the code generators
+# and the helper headers of the solver interfaces (Code_Aster,
+# Cast3M, Abaqus, CalculiX, Ansys, Cyrano, Diana FEA) used to compile
+# the generated code
+usr/include/MFront
+usr/include/castem.h
+# unversioned symbolic links of the MFront libraries (the versioned
+# shared libraries are shipped by libtfel-5.2.0)
+usr/lib/*/libAbaqusInterface.so
+usr/lib/*/libAnsysInterface.so
+usr/lib/*/libAsterInterface.so
+usr/lib/*/libCalculiXInterface.so
+usr/lib/*/libCastemInterface.so
+usr/lib/*/libCyranoInterface.so
+usr/lib/*/libDianaFEAInterface.so
+usr/lib/*/libMFront*.so
+usr/lib/*/libMTestFileGenerator.so
+usr/lib/*/libTFELMFront*.so
+# CMake configuration files of the MFront libraries
+usr/share/tfel/cmake/AbaqusInterface*.cmake
+usr/share/tfel/cmake/AnsysInterface*.cmake
+usr/share/tfel/cmake/AsterInterface*.cmake
+usr/share/tfel/cmake/CalculiXInterface*.cmake
+usr/share/tfel/cmake/CastemInterface*.cmake
+usr/share/tfel/cmake/CyranoInterface*.cmake
+usr/share/tfel/cmake/DianaFEAInterface*.cmake
+usr/share/tfel/cmake/MFront*.cmake
+usr/share/tfel/cmake/MTestFileGenerator*.cmake
+usr/share/tfel/cmake/TFELMFront*.cmake

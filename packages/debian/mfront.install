@@ -1,0 +1,8 @@
+usr/bin/mfront
+usr/bin/mfront-query
+usr/bin/mfront-doc
+usr/bin/tfel-doc
+usr/bin/mfm
+usr/bin/mfm-test-generator
+usr/share/tfel/env/*
+usr/share/doc/mfront/*
