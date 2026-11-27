@@ -458,9 +458,15 @@ struct CxxTokenizerContractTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(t[2].offset == 14u);
     TFEL_TESTS_ASSERT(t[3].value == "tfel");
     TFEL_TESTS_ASSERT(t[3].offset == 16u);
-    // the digit separators are not supported in the hexadecimal literals
+    // the digit separators are supported in the hexadecimal literals, including
+    // in the exponent part of the hexadecimal floating point literals, and are
+    // not a part of the value of the token, see issue #1460
     t.clear();
-    TFEL_TESTS_CHECK_THROW(t.parseString("0x1'fp3"), std::runtime_error);
+    t.parseString("0x1'fp3");
+    TFEL_TESTS_ASSERT(t.size() == 1u);
+    TFEL_TESTS_ASSERT(t[0].flag == Token::Number);
+    TFEL_TESTS_ASSERT(t[0].value == "0x1fp3");
+    TFEL_TESTS_ASSERT(t[0].offset == 0u);
   }  // end of testNumbersWithDigitSeparators
 };   // end of struct CxxTokenizerContractTest
 
