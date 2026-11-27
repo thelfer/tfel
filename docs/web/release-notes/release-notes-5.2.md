@@ -1899,6 +1899,33 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 1502: [mfront] data races on the files generated for external mfront files in parallel builds
+
+The files generated for an external mfront file (used through the
+`@Law`, `@ComputeThermalExpansion`, `@ElasticMaterialProperties`,
+`@MFront` keywords, ...) are written in the current directory by every
+`mfront` process treating a file which uses them. When several `mfront`
+processes are run in parallel in the same directory, which is the case
+when several behaviours using the same external mfront file are
+compiled in parallel, this leads to data races on these files, which
+causes random failures, in particular on Windows, and triggers useless
+rebuilds. Three complementary changes fix this issue:
+
+- `MFrontLock` is now reentrant (acquisition counter) and is held by
+  `MFront::treatFile` during the generation of the output files, which
+  serializes this (short) phase between the `mfront` processes of a
+  given user. Compilation remains fully parallel.
+- the header and source files generated for material properties are
+  only rewritten if their contents change, which removes the window in
+  which the compiler can read a file being truncated by another
+  `mfront` process. This applies to the `mfront`, `c`, `generic`,
+  `generic-parallel`, `castem` and `C++` interfaces.
+- `MFront::writeTargetsDescription` re-reads and merges the contents of
+  `src/targets.lst` before writing it (under the lock) so that the
+  modifications performed by concurrent sessions are not lost.
+
+For more details, see <https://github.com/thelfer/tfel/issues/1502>.
+
 ## Issue 1494: [mfront] getPartialJacobianInvert: out of bounds rows for a tensorial integration variable which is not the first one
 
 For a tensorial integration variable which is not an array, the rows of

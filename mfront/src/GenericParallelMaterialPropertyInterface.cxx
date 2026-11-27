@@ -12,7 +12,6 @@
  */
 
 #include <algorithm>
-#include <fstream>
 #include <sstream>
 #include <stdexcept>
 #include <iterator>
@@ -575,12 +574,13 @@ namespace mfront {
       getLogStream() << "GenericParallelMaterialPropertyInterface::"
                         "writeHeaderFile: begin\n";
     }
-    std::ofstream os{fn};
-    tfel::raise_if(
-        !os,
-        "GenericParallelMaterialPropertyInterface::writeOutputFiles: "
-        "unable to open '" +
-            fn + "'");
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto os = std::ostringstream{};
     os.exceptions(std::ios::badbit | std::ios::failbit);
     os << "/*!\n"
        << "* \\file   " << fn << "\n"
@@ -628,7 +628,7 @@ namespace mfront {
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n"
        << "#endif /* " << guard << " */\n";
-    os.close();
+    writeIfDifferentFromExistingFileContent(fn, os.str());
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "GenericParallelMaterialPropertyInterface::"
                         "writeHeaderFile: end\n";
@@ -644,12 +644,13 @@ namespace mfront {
     const auto nname = this->getInterfaceInternalNamespace();
     const auto name = this->getFunctionName(mpd);
     const auto fn = "src/" + this->getSourceFileName(name);
-    std::ofstream os{fn};
-    tfel::raise_if(
-        !os,
-        "GenericParallelMaterialPropertyInterface::writeOutputFiles: "
-        "unable to open '" +
-            fn + "'");
+    // the generated files are written in an internal stream and only
+    // written if they differ: such a file may be regenerated
+    // concurrently by several mfront processes (when several behaviours
+    // use the same external mfront file) or read by the compiler while
+    // another mfront process regenerates it, which can lead to spurious
+    // failures, in particular on Windows
+    auto os = std::ostringstream{};
     os.exceptions(std::ios::badbit | std::ios::failbit);
     // precision of the bounds and of the default values of the parameters
     os.precision(14);
@@ -749,7 +750,7 @@ namespace mfront {
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";
 
-    os.close();
+    writeIfDifferentFromExistingFileContent(fn, os.str());
 
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "GenericParallelMaterialPropertyInterface::"
